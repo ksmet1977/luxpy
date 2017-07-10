@@ -3,7 +3,7 @@
 * Author: K. A.G. Smet
 * Version: 1.1.4
 * Date: July 10, 2017
-* License: GLPv3
+* License: GPLv3
 
 -------------------------------------------------------------------------------
 ## Overview of modules (in order as loaded in __init__):
