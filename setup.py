@@ -25,5 +25,5 @@ setup(
     'License :: OSI Approved :: GLPv3 License',
     'Programming Language :: Python :: 3.5',
     ],  
-  python_requires='>=3',
+  python_requires='>=3.5',
 )
