@@ -1,0 +1,54 @@
+# -*- coding: utf-8 -*-
+
+Install luxpy:
+
+	1) 	Install miniconda (download installer from: https://conda.io/miniconda.html / https://repo.continuum.io/miniconda/)
+		e.g. https://repo.continuum.io/miniconda/Miniconda3-latest-Windows-x86_64.exe
+		(make sure 'conda.exe' can be found on the windows system path, if necessary do a manual add)
+		
+	2)  Create a virtual environment with full anaconda distribution:
+		Type the following at a windows commandline
+		>> conda create --name py35 python=3.5 anaconda
+		
+	3)  Activate virtual environment:
+		>> activate py35
+		
+	3)  Install pip to virtual environment 
+		(just to ensure any packages to be installed with pip to this virt. env. will be installed here and not globally):
+		>> conda install -n py35 pip
+		
+	4)  Install luxpy package from pypi:
+		>> pip install luxpy
+		
+		(if any errors show up, try and do a manual install of the dependencies: scipy, numpy, pandas, matplotlib and setuptools,
+			either using e.g. ">> conda install scipy" or ">> pip install scipy",
+			and try and reinstall luxpy using pip) 
+
+Use of luxpy package in "spyder" / "jupyter notebook": 
+
+	a. Spyder: matlab-like IDE:
+		
+		5a) Install spyder in py35 environment:
+			>> conda install -n py35 spyder 
+			
+		6a) Run spyder 
+			>> spdyer
+		
+		7a) To import luxpy packgage, on sypyder's commandline for the IPython kernel (or in script) type:
+			import luxpy as lx 
+		
+	b. Jupyter notebook:
+	
+		5b) Start jupyter notebook:
+			>> jupyter notebook
+			
+		6b) Open an existing or new notebook: 
+			e.g. open "luxpy example code 1.ipynb" for an overview of how to use the luxpy package 
+			(or see README.md on www.github.com/ksmet1977/luxpy)
+			
+		7b) To import luxpy packgage type:
+			import luxpy as lx
+		
+		
+	
+	
