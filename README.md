@@ -441,6 +441,11 @@ Plot blackbody locus (for 'ccts', default = 4000 K to 1e19 K) for 'cieobs' in 'c
 ### plotSL():
 Plot spectrum locus for 'cieobs' in 'cspace'. plotBB and plotDL are also called, but can be turned off.
 
+### plotceruleanline():
+Plot cerulean (yellow (577 nm) - blue (472 nm)) line (Kuehni, CRA, 2013: Table II: spectral lights).
+
+### plotUH():
+Plot unique hue line from centerpoint xyz0 (Kuehni, CRA, 2013: uY,uB,uG: Table II: spectral lights; uR: Table IV: Xiao data)
 
 -------------------------------------------------------------------------------
 ## 0.1.  helpers.py 

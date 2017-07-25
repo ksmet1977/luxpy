@@ -85,7 +85,7 @@ def plotBB(ccts = None, cieobs =_cieobs, cspace = _cspace, axh = None, cctlabels
 
     if (cctlabels == True) & (ccts1 is not None):
         for i in range(ccts1.shape[0]):
-            if ccts1[i]>= 1000:
+            if ccts1[i]>= 3000:
                 if i%2 == 0:
                     plt.plot(x[i],y[i],'k+', color = '0.5')
                     plt.text(x[i]*1.05,y[i]*0.95,'{:1.0f}K'.format(ccts1[i]), color = '0.5')
@@ -94,7 +94,7 @@ def plotBB(ccts = None, cieobs =_cieobs, cspace = _cspace, axh = None, cctlabels
     if show == False:
         return axh
     
-def plotSL(cieobs =_cieobs, cspace = _cspace,  DL = True, BBL = True, D65 = False, EEW = False, axh = None, show = True, cspace_pars = {}, formatstr = 'k-', **kwargs):
+def plotSL(cieobs =_cieobs, cspace = _cspace,  DL = True, BBL = True, D65 = False, EEW = False, cctlabels = False, axh = None, show = True, cspace_pars = {}, formatstr = 'k-', **kwargs):
     """
     Plot spectrum locus for cieobs in cspace.
     """
@@ -114,7 +114,7 @@ def plotSL(cieobs =_cieobs, cspace = _cspace,  DL = True, BBL = True, D65 = Fals
     if DL == True:
         plotDL(ccts = None, cieobs = cieobs, cspace = cspace, axh = axh, show = show, cspace_pars = cspace_pars, formatstr = 'b:',  **kwargs)
     if BBL == True:
-        plotBB(ccts = None, cieobs = cieobs, cspace = cspace, axh = axh, show = show, cspace_pars = cspace_pars, formatstr = 'r-.',  **kwargs)
+        plotBB(ccts = None, cieobs = cieobs, cspace = cspace, axh = axh, show = show, cspace_pars = cspace_pars, cctlabels = cctlabels, formatstr = 'r-.',  **kwargs)
     
     if D65 == True:
         YxyD65 = colortf(spd_to_xyz(_cie_illuminants['D65']), tf = cspace, tfa0 = cspace_pars)
@@ -127,3 +127,46 @@ def plotSL(cieobs =_cieobs, cspace = _cspace,  DL = True, BBL = True, D65 = Fals
         return axh_
     else:
         plt.show()
+        
+        
+def plotceruleanline(cieobs = lx._cieobs, cspace = 'Yuv', axh = None,formatstr = 'ko-'):
+    """
+    Plot cerulean (yellow (577 nm) - blue (472 nm)) line (Kuehni, CRA, 2013: Table II: spectral lights).
+    """
+    cmf = _cmf['bar'][cieobs]
+    p_y = cmf[0] == 577 #Kuehni, CRA 2013 (mean, table IV)
+    p_b = cmf[0] == 472 #Kuehni, CRA 2013 (mean, table IV)
+    xyz_y = cmf[1:,p_y].T
+    xyz_b = cmf[1:,p_b].T
+    lab = colortf(np.vstack((xyz_b,xyz_y)),cspace)
+    if axh is None:
+        axh = plt.gca()
+    hcerline = axh.plot(lab[:,1],lab[:,2],formatstr,label = 'Cerulean line')    
+    return hcerline
+
+    
+def plotUH(xyz0 = None, uhues = [0,1,2,3], cieobs = _cieobs, cspace = 'Yuv', axh = None,formatstr = ['yo-.','bo-.','ro-.','go-.'], excludefromlegend = ''):
+    """ 
+    Plot unique hue line from centerpoint xyz0 (Kuehni, CRA, 2013: uY,uB,uG: Table II: spectral lights; uR: Table IV: Xiao data)
+    """
+    hues = ['yellow','blue','red','green']
+    cmf = _cmf['bar'][cieobs]
+    p_y = cmf[0] == 577 #unique yellow,#Kuehni, CRA 2013 (mean, table IV: spectral data)
+    p_b = cmf[0] == 472 #unique blue,Kuehni, CRA 2013 (mean, table IV: spectral data)
+    p_g = cmf[0] == 514 #unique green, Kuehni, CRA 2013 (mean, table II: spectral data)
+    p_r = cmf[0] == 650 #unique red, Kuehni, CRA 2013 (Xiao data, table IV: display data)
+    xyz_y = 100*cmf[1:,p_y].T
+    xyz_b = 100*cmf[1:,p_b].T
+    xyz_g = 100*cmf[1:,p_g].T
+    xyz_r = 100*cmf[1:,p_r].T
+    xyz_uh = np.vstack((xyz_y,xyz_b,xyz_r,xyz_g))
+    huniquehues = []
+    if xyz0 is None:
+        xyz0 = np.array([100,100,100])
+    if axh is None:
+        axh = plt.gca()
+    for huenr in uhues:
+        lab = colortf(np.vstack((xyz0,xyz_uh[huenr])),cspace)
+        huh = axh.plot(lab[:,1],lab[:,2],formatstr[huenr],label = excludefromlegend + 'Unique '+ hues[huenr])
+        huniquehues = [huniquehues,huh]
+    return  huniquehues
