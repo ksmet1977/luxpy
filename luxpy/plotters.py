@@ -129,7 +129,7 @@ def plotSL(cieobs =_cieobs, cspace = _cspace,  DL = True, BBL = True, D65 = Fals
         plt.show()
         
         
-def plotceruleanline(cieobs = lx._cieobs, cspace = 'Yuv', axh = None,formatstr = 'ko-'):
+def plotceruleanline(cieobs = _cieobs, cspace = 'Yuv', axh = None,formatstr = 'ko-'):
     """
     Plot cerulean (yellow (577 nm) - blue (472 nm)) line (Kuehni, CRA, 2013: Table II: spectral lights).
     """

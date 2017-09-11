@@ -136,21 +136,24 @@ def getdata(data,kind = 'np', index=None, columns=None,header = None,sep = ',',d
     """
     #idx = index
     if isinstance(data,str):
+        datafile = data
         data = pd.read_csv(data,names=None,index_col=0,header = header,sep = sep)
 
         # Set column headers:
         if header == 'infer':
             if verbosity == True:
-                warnings.warn('getdata(): Infering HEADERS from data file: {}!'.format(data))
+                warnings.warn('getdata(): Infering HEADERS from data file: {}!'.format(datafile))
+                columns = data.columns
+                index = data.index.name
         elif (columns is None):
             data.columns = ['{}{}'.format(datatype,x) for x in range(len(data.columns))] 
         if columns is not None:
             data.columns = columns    
-        if index == 'wl':
+        if (index == 'wl') | (index == 'wavelength') :
             data.index.name = 'wl'
-        
+            index = 'wl'
+
     if isinstance(data,np.ndarray) & (kind == 'df'):
-        print(isinstance(index,str))
         if index is None:
             idx = None
         elif isinstance(index,str):
@@ -169,7 +172,7 @@ def getdata(data,kind = 'np', index=None, columns=None,header = None,sep = ',',d
 
     elif isinstance(data,pd.DataFrame) & (kind == 'np'):
         idx = data.index
-        if index == 'wl':
+        if index is not None:
             data = np.concatenate((np.atleast_2d(idx),data.values.transpose()),axis = 0)
         else:
             data.values.transpose()

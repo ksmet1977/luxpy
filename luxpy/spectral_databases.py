@@ -85,7 +85,7 @@ _cie133_1995['8'] = _cie133_1995['14'][0:9].copy()
 # IES TM30-15 color fidelity and color galut indices:
 _iestm30['R'] = {'4880' : {'5nm': getdata(_R_dir + 'IESTM30_R4880.dat',kind='np',index = 'wl')}}
 _iestm30['R']['99'] = {'5nm' : getdata(_R_dir + 'IESTM30_R99.dat',kind='np',index = 'wl')}
-temp = getdata(_R_dir + 'IESTM30_R99info.dat',kind='np',index = 'nr',columns=[i+1 for i in range(99)]).values[0]
+temp = getdata(_R_dir + 'IESTM30_R99info.dat',kind='df',index = 'nr',columns=[i+1 for i in range(99)]).values[0]
 ies99categories = ['nature','skin','textiles','paints','plastic','printed','color system']
 _iestm30['R']['99']['info'] = [ies99categories[int(i-1)] for i in temp]
 

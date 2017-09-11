@@ -172,24 +172,23 @@ def cam_structure_ciecam02_cam16(data, xyzw, camtype = 'ciecam02', mcat = None, 
     data = np2d(data)
     data_original_shape = data.shape
     data = broadcast_shape(data,target_shape = None,expand_2d_to_3d = 0) # avoid looping if not necessary
-    
     xyzw = broadcast_shape(xyzw,target_shape = data.shape,expand_2d_to_3d = np.abs(1*(len(data_original_shape)==2)-1), axis1_repeats = 1) # make xyzw same size as data
     conditions = broadcast_shape(conditions,target_shape = xyzw.shape,expand_2d_to_3d = None,axis1_repeats = 1) # make conditions same size as xyzw
     dshape = list(data.shape)
     dshape[-1] = len(outin) # requested number of correlates
     camout = np.nan*np.ones(dshape)
     Yw = broadcast_shape(Yw,target_shape = xyzw.shape,expand_2d_to_3d = None,axis1_repeats = 1)
-    
+
     # get general data:
     if camtype == 'ciecam02':
-        if mcat is None:
+        if (mcat is None) | (mcat == 'cat02'):
             mcat = cat._mcats['cat02']
             if yellowbluepurplecorrect == 'brill-suss':
                 mcat = cat._mcats['cat02-bs']  # for yellow-blue problem, Brill [Color Res Appl 2006;31:142-145] and Brill and Süsstrunk [Color Res Appl 2008;33:424-426] 
             elif yellowbluepurplecorrect == 'jiang-luo':
                 mcat = cat._mcats['cat02-jiang-luo'] # for yellow-blue problem + purple line problem
         elif isinstance(mcat,str):
-            mcat = cat._mcats['cat02']
+            mcat = cat._mcats[mcat]
         invmcat = np.linalg.inv(mcat)
         mhpe = cat._mcats['hpe']
         mhpe_x_invmcat = np.dot(mhpe,invmcat)
@@ -199,12 +198,11 @@ def cam_structure_ciecam02_cam16(data, xyzw, camtype = 'ciecam02', mcat = None, 
         if mcat is None:
             mcat = cat._mcats['cat16']
         elif isinstance(mcat,str):
-            mcat = cat._mcats['cat16']
+            mcat = cat._mcats[mcat]
             
         invmcat = np.linalg.inv(mcat)
     else:
             raise Exception('.cam.cam_structure_ciecam02_cam16(): Unrecognized camtype')
-    
     
     # loop through all xyzw:
     for i in range(xyzw.shape[0]):
@@ -226,17 +224,16 @@ def cam_structure_ciecam02_cam16(data, xyzw, camtype = 'ciecam02', mcat = None, 
         Nbb = 0.725*(1/n)**0.2   
         Ncb = Nbb
         z = 1.48 + FLL*n**0.5
-        
         yw = xyzw[i,:,1,None]#.take(1,axis = len(xyzw[i].shape)-1)
         xyzwi = Yw[i]*xyzw[i]/yw # normalize xyzw
-        
+
         # calculate D:
         if D is None:
             D = F*(1-(1/3.6)*np.exp((-La-42)/92))
-        
+
         # transform from xyzw to cat sensor space:
         rgbw = np.dot(mcat,xyzwi.T)
-        
+
         # apply von Kries cat to white:
         rgbwc = ((100*D/rgbw) + (1 - D))*rgbw # factor 100 from ciecam02 is replaced with Yw[i] in cam16, but see 'note' in Fairchild's "Color Appearance Models" (p291 ni 3ed.)
 
@@ -267,24 +264,22 @@ def cam_structure_ciecam02_cam16(data, xyzw, camtype = 'ciecam02', mcat = None, 
             # calculate stimuli:
             xyzi = Yw[i]*data[i]/yw # normalize xyzw
             
-            
             # transform from xyz to cat02 sensor space:
             rgb = np.dot(mcat,xyzi.T)
-            
+
             # apply von Kries cat:
             rgbc = ((100*D/rgbw) + (1 - D))*rgb
-        
+
             if camtype == 'ciecam02':
                 # convert from cat02 sensor space to cone sensors (hpe):
                 rgbp = np.dot(mhpe_x_invmcat,rgbc).T
             elif camtype == 'cam16':
                 rgbp = rgbc.T # in cam16, cat and cone sensor spaces are the same
-                        
             p = np.where(rgbp<0)
             
             if (yellowbluepurplecorrect == 'brill-suss') & (camtype=='ciecam02'): # Brill & Susstrunck approach, for purple line problem
                 rgbp[p]=0
-           
+
             # apply repsonse compression:
             rgbpa = naka_rushton(FL*rgbp/100, cam = camtype)
             rgbpa[p] = 0.1 - (naka_rushton(FL*np.abs(rgbp[p])/100, cam = camtype) - 0.1)
@@ -549,7 +544,7 @@ def cam02ucs(data, xyzw = _cam_default_white_point, Yw = 100, conditions = None,
                     = 'backward': cam02... [ucs/lcd/scd] -> xyz (input data must be (J or Q,aM,bM) or (J or Q,aC,bC) or (J or Q,aS,bS) !!)
         * yellowbluepurplecorrect = True: correct for yellow-blue and purple problems in ciecam02 
     """
-    return camucs_structure(data, xyzw = _cam_default_white_point, camtype = 'ciecam02', mcat = mcat, Yw = Yw, conditions = conditions, direction = direction, ucstype = ucstype, yellowbluepurplecorrect = yellowbluepurplecorrect)
+    return camucs_structure(data, xyzw = xyzw, camtype = 'ciecam02', mcat = mcat, Yw = Yw, conditions = conditions, direction = direction, ucstype = ucstype, yellowbluepurplecorrect = yellowbluepurplecorrect)
 
  #---------------------------------------------------------------------------------------------------------------------
 def cam16ucs(data, xyzw = _cam_default_white_point, Yw = 100, conditions = None, direction = 'forward', ucstype = 'ucs',  mcat = None):
@@ -562,7 +557,7 @@ def cam16ucs(data, xyzw = _cam_default_white_point, Yw = 100, conditions = None,
         * direction = 'forward': xyz -> cam16... [ucs/lcd/scd]
                     = 'backward': cam16... [ucs/lcd/scd] -> xyz (input data must be (J or Q,aM,bM) or (J or Q,aC,bC) or (J or Q,aS,bS) !!)
     """
-    return camucs_structure(data, xyzw = _cam_default_white_point, camtype = 'cam16', mcat = mcat, Yw = Yw, conditions = conditions, direction = direction, ucstype = ucstype, yellowbluepurplecorrect = yellowbluepurplecorrect)
+    return camucs_structure(data, xyzw = xyzw, camtype = 'cam16', mcat = mcat, Yw = Yw, conditions = conditions, direction = direction, ucstype = ucstype, yellowbluepurplecorrect = yellowbluepurplecorrect)
      
 
 

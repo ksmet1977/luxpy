@@ -100,19 +100,19 @@ __all__+=['spd_to_mcri', 'spd_to_cqs']
 
 #------------------------------------------------------------------------------
 # define cri scale functions:
-def linear_scale(data, scale_factor = 4.6, scale_max = 100): # defaults from cie-13.3-1995 cri
+def linear_scale(data, scale_factor = [4.6], scale_max = 100): # defaults from cie-13.3-1995 cri
     """
     Linear color rendering index scale from CIE13.3-1974/1995: 
         Ri,a = 100 - c1*DEi,a. (c1 = 4.6)
     """
-    return scale_max - scale_factor*data
+    return scale_max - scale_factor[0]*data
 
-def log_scale(data, scale_factor = 6.73, scale_max = 100): # defaults from cie-224-2017 cri
+def log_scale(data, scale_factor = [6.73], scale_max = 100): # defaults from cie-224-2017 cri
     """
     Log-based color rendering index scale from Davis & Ohno (2009): 
         Ri,a = 10 * ln(exp((100 - c1*DEi,a)/10) + 1).
     """
-    return 10*np.log(np.exp((scale_max - scale_factor*data)/10) + 1)
+    return 10*np.log(np.exp((scale_max - scale_factor[0]*data)/10) + 1)
 
 def psy_scale(data, scale_factor = [1/55, 3/2, 2], scale_max = 100): # defaults for cri2012
     """
@@ -124,16 +124,16 @@ def psy_scale(data, scale_factor = [1/55, 3/2, 2], scale_max = 100): # defaults 
 #------------------------------------------------------------------------------
 # create default settings for different color rendition indices: (major dict has 9 keys (04-Jul-2017): sampleset [str/dict], ref_type [str], cieobs [str], avg [fcn handle], scale [dict], cspace [dict], catf [dict], rg_pars [dict], cri_specific_pars [dict])
 _cri_defaults = {'cri_types' : ['ciera','ciera-8','ciera-14','cierf','iesrf','cri2012','cri2012-hl17','cri2012-hl1000','cri2012-real210','mcri','cqs-v7.5','cqs-v9.0']}
-_cri_defaults['ciera'] = {'sampleset' : "_cri_rfl['cie-13.3-1995']['8']", 'ref_type' : 'ciera', 'cieobs' : {'xyz': '1931_2', 'cct' : '1931_2'}, 'avg' : np.mean, 'scale' :{'fcn' : linear_scale, 'cfactor' : 4.6}, 'cspace' : {'type':'wuv', 'xyzw' : None}, 'catf': {'xyzw':None, 'mcat':'judd-1945','D':1,'La':None,'cattype':'vonkries','Dtype':None, 'catmode' : '1>2'}, 'rg_pars' : {'nhbins': None, 'start_hue':0.0, 'normalize_gamut': False}, 'cri_specific_pars' : None}
+_cri_defaults['ciera'] = {'sampleset' : "_cri_rfl['cie-13.3-1995']['8']", 'ref_type' : 'ciera', 'cieobs' : {'xyz': '1931_2', 'cct' : '1931_2'}, 'avg' : np.mean, 'scale' :{'fcn' : linear_scale, 'cfactor' : [4.6]}, 'cspace' : {'type':'wuv', 'xyzw' : None}, 'catf': {'xyzw':None, 'mcat':'judd-1945','D':1,'La':None,'cattype':'vonkries','Dtype':None, 'catmode' : '1>2'}, 'rg_pars' : {'nhbins': None, 'start_hue':0.0, 'normalize_gamut': False}, 'cri_specific_pars' : None}
 _cri_defaults['ciera-8'] = _cri_defaults['ciera'].copy()
 _cri_defaults['ciera-14'] = _cri_defaults['ciera'].copy() 
 _cri_defaults['ciera-14']['sampleset'] = "_cri_rfl['cie-13.3-1995']['14']"
-_cri_defaults['cierf'] = {'sampleset' : "_cri_rfl['cie-224-2017']['99']['5nm']", 'ref_type' : 'cierf', 'cieobs' : {'xyz': '1964_10', 'cct' : '1931_2'}, 'avg' : np.mean, 'scale' : {'fcn' : log_scale, 'cfactor' : 6.73}, 'cspace' : {'type' : 'jab_cam02ucs' , 'xyzw': None, 'mcat':'cat02', 'Yw':100, 'conditions' :{'La':100,'surround':'avg','D':1,'Yb':20,'Dtype':None}},'catf': None, 'rg_pars' : {'nhbins': 8, 'start_hue':0.0, 'normalize_gamut': False}, 'cri_specific_pars' : None}
-_cri_defaults['iesrf'] = {'sampleset' : "_cri_rfl['ies-tm30-15']['99']['5nm']", 'ref_type' : 'iesrf', 'cieobs' : {'xyz': '1964_10', 'cct' : '1931_2'}, 'avg' : np.mean, 'scale' :{'fcn' : log_scale, 'cfactor' : 7.54}, 'cspace' : {'type': 'jab_cam02ucs', 'xyzw':None, 'mcat':'cat02', 'Yw':100, 'conditions' :{'La':100,'surround':'avg','D':1,'Yb':20,'Dtype':None}},'catf': None, 'rg_pars' : {'nhbins': 16, 'start_hue':0.0, 'normalize_gamut': False}, 'cri_specific_pars' : None}
-_cri_defaults['cri2012'] = {'sampleset' : "_cri_rfl['cri2012']['HL17']", 'ref_type' : 'ciera', 'cieobs' : {'xyz': '1964_10', 'cct' : '1931_2'}, 'avg' : math.rms, 'scale' : {'fcn': psy_scale, 'cfactor' : [1/55, 3/2, 2]}, 'cspace' : {'type': 'jab_cam02ucs', 'xyzw':None, 'mcat':'cat02', 'Yw':100, 'conditions' :{'La':100,'surround':'avg','D':1,'Yb':20,'Dtype':None}},'catf': None, 'rg_pars' : {'nhbins': None, 'start_hue':0.0, 'normalize_gamut': False}, 'cri_specific_pars' : None}
+_cri_defaults['cierf'] = {'sampleset' : "_cri_rfl['cie-224-2017']['99']['5nm']", 'ref_type' : 'cierf', 'cieobs' : {'xyz': '1964_10', 'cct' : '1931_2'}, 'avg' : np.mean, 'scale' : {'fcn' : log_scale, 'cfactor' : [6.73]}, 'cspace' : {'type' : 'jab_cam02ucs' , 'xyzw': None, 'mcat':'cat02', 'Yw':100, 'conditions' :{'La':100,'surround':'avg','D':1,'Yb':20,'Dtype':None},'yellowbluepurplecorrect' : None},'catf': None, 'rg_pars' : {'nhbins': 8, 'start_hue':0.0, 'normalize_gamut': False}, 'cri_specific_pars' : None}
+_cri_defaults['iesrf'] = {'sampleset' : "_cri_rfl['ies-tm30-15']['99']['5nm']", 'ref_type' : 'iesrf', 'cieobs' : {'xyz': '1964_10', 'cct' : '1931_2'}, 'avg' : np.mean, 'scale' :{'fcn' : log_scale, 'cfactor' : [7.54]}, 'cspace' : {'type': 'jab_cam02ucs', 'xyzw':None, 'mcat':'cat02', 'Yw':100, 'conditions' :{'La':100,'surround':'avg','D':1,'Yb':20,'Dtype':None},'yellowbluepurplecorrect' : None},'catf': None, 'rg_pars' : {'nhbins': 16, 'start_hue':0.0, 'normalize_gamut': False}, 'cri_specific_pars' : None}
+_cri_defaults['cri2012'] = {'sampleset' : "_cri_rfl['cri2012']['HL17']", 'ref_type' : 'ciera', 'cieobs' : {'xyz': '1964_10', 'cct' : '1931_2'}, 'avg' : math.rms, 'scale' : {'fcn': psy_scale, 'cfactor' : [1/55, 3/2, 2]}, 'cspace' : {'type': 'jab_cam02ucs', 'xyzw':None, 'mcat':'cat02', 'Yw':100, 'conditions' :{'La':100,'surround':'avg','D':1,'Yb':20,'Dtype':None},'yellowbluepurplecorrect' : 'brill-suss'},'catf': None, 'rg_pars' : {'nhbins': None, 'start_hue':0.0, 'normalize_gamut': False}, 'cri_specific_pars' : None}
 _cri_defaults['cri2012-hl17'] = _cri_defaults['cri2012'].copy()
-_cri_defaults['cri2012-hl1000'] = {'sampleset' : "_cri_rfl['cri2012']['HL1000']", 'ref_type' : 'ciera','cieobs' : {'xyz': '1964_10', 'cct' : '1931_2'}, 'avg' : math.rms,'scale': {'fcn' : psy_scale, 'cfactor' : [1/50, 3/2, 2]}, 'cspace' : {'type' : 'jab_cam02ucs','xyzw':None, 'mcat':'cat02', 'Yw':100, 'conditions' :{'La':100,'surround':'avg','D':1,'Yb':20,'Dtype':None}},'catf': None, 'rg_pars' : {'nhbins': None, 'start_hue':0.0, 'normalize_gamut': False}, 'cri_specific_pars' : None}
-_cri_defaults['cri2012-real210'] = {'sampleset' : "_cri_rfl['cri2012']['Real210']",'ref_type' : 'ciera', 'cieobs' : {'xyz': '1964_10', 'cct' : '1931_2'},'avg' : math.rms, 'scale' : {'fcn' : psy_scale, 'cfactor' : [2/45, 3/2, 2]},'cspace' : {'type': 'jab_cam02ucs', 'xyzw':None, 'mcat':'cat02', 'Yw':100, 'conditions' :{'La':100,'surround':'avg','D':1,'Yb':20,'Dtype':None}}, 'catf': None, 'rg_pars' : {'nhbins': None, 'start_hue':0.0, 'normalize_gamut': False}, 'cri_specific_pars' : None}
+_cri_defaults['cri2012-hl1000'] = {'sampleset' : "_cri_rfl['cri2012']['HL1000']", 'ref_type' : 'ciera','cieobs' : {'xyz': '1964_10', 'cct' : '1931_2'}, 'avg' : math.rms,'scale': {'fcn' : psy_scale, 'cfactor' : [1/50, 3/2, 2]}, 'cspace' : {'type' : 'jab_cam02ucs','xyzw':None, 'mcat':'cat02', 'Yw':100, 'conditions' :{'La':100,'surround':'avg','D':1,'Yb':20,'Dtype':None},'yellowbluepurplecorrect' : 'brill-suss'},'catf': None, 'rg_pars' : {'nhbins': None, 'start_hue':0.0, 'normalize_gamut': False}, 'cri_specific_pars' : None}
+_cri_defaults['cri2012-real210'] = {'sampleset' : "_cri_rfl['cri2012']['Real210']",'ref_type' : 'ciera', 'cieobs' : {'xyz': '1964_10', 'cct' : '1931_2'},'avg' : math.rms, 'scale' : {'fcn' : psy_scale, 'cfactor' : [2/45, 3/2, 2]},'cspace' : {'type': 'jab_cam02ucs', 'xyzw':None, 'mcat':'cat02', 'Yw':100, 'conditions' :{'La':100,'surround':'avg','D':1,'Yb':20,'Dtype':None},'yellowbluepurplecorrect' : 'brill-suss'}, 'catf': None, 'rg_pars' : {'nhbins': None, 'start_hue':0.0, 'normalize_gamut': False}, 'cri_specific_pars' : None}
 _cri_defaults['cqs-v7.5'] = {'sampleset' : "_cri_rfl['cqs']['v7.5']",'ref_type' : 'ciera', 'cieobs' : {'xyz': '1931_2', 'cct' : '1931_2'}, 'avg' : math.rms, 'scale' : {'fcn' : log_scale, 'cfactor' : [2.93, 3.10, 3.78]}, 'cspace' : {'type': 'lab', 'xyzw' : None}, 'catf': {'xyzw': None,'mcat':'cmc','D':None,'La':[1000,1000],'cattype':'vonkries','Dtype':'cmc', 'catmode' : '1>2'}, 'rg_pars' : {'nhbins': None, 'start_hue':0.0, 'normalize_gamut': False}, 'cri_specific_pars' : {'maxC': None}}
 _cri_defaults['cqs-v9.0'] = {'sampleset' : "_cri_rfl['cqs']['v9.0']", 'ref_type' : 'ciera','cieobs' : {'xyz': '1931_2', 'cct' : '1931_2'}, 'avg' : math.rms, 'scale' : {'fcn' : log_scale, 'cfactor' : [3.03, 3.20, 3.88]}, 'cspace' : {'type': 'lab', 'xyzw' : None}, 'catf': {'xyzw': None,'mcat':'cmc','D':None,'La':[1000,1000],'cattype':'vonkries','Dtype':'cmc', 'catmode' : '1>2'}, 'rg_pars' : {'nhbins': None, 'start_hue':0.0, 'normalize_gamut': False}, 'cri_specific_pars' : {'maxC': 10}}
 
@@ -491,7 +491,6 @@ def spd_to_DEi(data, cri_type = 'cie_rf', out = 'DEi', wl = None, sampleset = No
     # calculate Jabt of test and Jabr of the reference illuminant corresponding to test: 
     #jabti, jabri, cct, duv = spd_to_jab_t_r(data, cri_type = cri_type, out = 'Jabt,Jabr,cct,duv', wl = wl, sampleset = sampleset, cieobs  = cieobs, cieobs_cct = cieobs_cct, cspace = cspace, catf = catf, ref_type = ref_type, cspace_pars = cspace_pars,cri_specific_pars = cri_specific_pars)
     jabti, jabri, cct, duv = spd_to_jab_t_r(data, cri_type = cri_type, out = 'Jabt,Jabr,cct,duv', wl = wl)
-
       
     # E. calculate DEi, DEa:
     avg = cri_type['avg']
@@ -607,7 +606,7 @@ def spd_to_cri(data, cri_type = 'cie_rf', out = 'Ra', wl = None, sampleset = Non
     # Input parsing: optimize scale_factor for input based on F1-F12 (default) if scale_factor is NaN or None:
     scale_factor = optimize_scale_factor(cri_type,opt_scale_factor, scale_fcn, avg)
 
-    if np.isnan(scale_factor):
+    if np.isnan(scale_factor).any():
         raise Exception ('Unable to optimize scale_factor.')
 #         raise Exception('03-jul-2017: Provide scale_factor(s). Automatic scale_factor search under development.')
 
@@ -624,7 +623,6 @@ def spd_to_cri(data, cri_type = 'cie_rf', out = 'Ra', wl = None, sampleset = Non
     else:
         #DEi, cct,duv = spd_to_DEi(data, out = 'DEi,cct,duv', cri_type = cri_type, sampleset = sampleset, cieobs  = cieobs, cieobs_cct = cieobs_cct, cspace = cspace, catf = catf, ref_type = ref_type, avg = avg, cspace_pars = cspace_pars,cri_specific_pars = cri_specific_pars)
         DEi, cct, duv = spd_to_DEi(data, out = 'DEi,cct,duv', cri_type = cri_type)
-
         
     # B. convert DE to color rendering index:
     Ri = scale_fcn(DEi,scale_factor)
@@ -839,8 +837,8 @@ def  spd_to_cqs(data, version = 'v9.0', out = 'Qa',wl = None):
 
         # loop of light source spds
         for ii in range(labti.shape[0]):
-            Qfi[ii] = GA[ii]*scale_fcn(DEi[ii],scale_factor[0])
-            Qf[ii] = GA[ii]*scale_fcn(avg(DEi[ii],axis = 0),scale_factor[0])
+            Qfi[ii] = GA[ii]*scale_fcn(DEi[ii],[scale_factor[0]])
+            Qf[ii] = GA[ii]*scale_fcn(avg(DEi[ii],axis = 0),[scale_factor[0]])
  
     
     if ('Qa' in outlist) | ('Qai' in outlist) | ('Qp' in outlist) | ('Qpi' in outlist):
@@ -863,14 +861,14 @@ def  spd_to_cqs(data, version = 'v9.0', out = 'Qa',wl = None):
             DEi_Climited[p_deltaC_pos] = np.sqrt(DEi[ii][p_deltaC_pos]**2 - deltaC[p_deltaC_pos]**2) # increase in chroma is not penalized!
 
             if ('Qa' in outlist) | ('Qai' in outlist):
-                Qai[ii] = GA[ii]*scale_fcn(DEi_Climited,scale_factor[1])
-                Qa[ii] = GA[ii]*scale_fcn(avg(DEi_Climited,axis = 0),scale_factor[1])
+                Qai[ii] = GA[ii]*scale_fcn(DEi_Climited,[scale_factor[1]])
+                Qa[ii] = GA[ii]*scale_fcn(avg(DEi_Climited,axis = 0),[scale_factor[1]])
                 
             if ('Qp' in outlist) | ('Qpi' in outlist):
                 deltaC_pos = deltaC * (deltaC >= 0)
                 deltaCmu = np.mean(deltaC * (deltaC >= 0))
-                Qpi[ii] = GA[ii]*scale_fcn((DEi_Climited - deltaC_pos),scale_factor[2]) # or ?? np.sqrt(DEi_Climited**2 - deltaC_pos**2) ??
-                Qp[ii] = GA[ii]*scale_fcn((avg(DEi_Climited, axis = 0) - deltaCmu),scale_factor[2])
+                Qpi[ii] = GA[ii]*scale_fcn((DEi_Climited - deltaC_pos),[scale_factor[2]]) # or ?? np.sqrt(DEi_Climited**2 - deltaC_pos**2) ??
+                Qp[ii] = GA[ii]*scale_fcn((avg(DEi_Climited, axis = 0) - deltaCmu),[scale_factor[2]])
 
     if ('Qg' in outlist):
         Qg = Qf.copy()
