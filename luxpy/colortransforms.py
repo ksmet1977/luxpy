@@ -58,6 +58,7 @@ _cspace_axes['cct'] = ['', 'cct','duv']
 # pre-calculate matrices for conversion of xyz to lms and back for use in xyz_to_ipt() and ipt_to_xyz(): 
 _ipt_M = {'lms2ipt': np.array([[0.4000,0.4000,0.2000],[4.4550,-4.8510,0.3960],[0.8056,0.3572,-1.1628]]), 'xyz2lms' : {x : np.dot(np.diag((1/np.dot(_cmf['M'][x],spd_to_xyz(_cie_illuminants['D65'],cieobs = x).T).T)[0]),_cmf['M'][x]) for x in sorted(_cmf['M'].keys())}}
 _colortf_default_white_point = np.array([100, 100, 100]) # ill. E white point
+
 #------------------------------------------------------------------------------
 #---chromaticity coordinates---------------------------------------------------
 #------------------------------------------------------------------------------
