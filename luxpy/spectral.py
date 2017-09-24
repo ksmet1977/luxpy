@@ -175,6 +175,7 @@ def normalize_spd(data,normalization = None,w_norm = 1, wl = True):
     return data	
 	
 #--------------------------------------------------------------------------------------------------
+
 def cie_interp(data,wl_new, kind = None, negative_values_allowed = False):
     """
     Interpolate / extrapolate (i.e. flat: replicate closest known values) following CIE15-2004. 
@@ -265,6 +266,7 @@ def xyzbar(cieobs = _cieobs, scr = 'dict', wl_new = None, kind = 'df',normalizat
     return spd(wl = wl_new, data = dict_or_file, interpolation = 'linear', data_names = ['xb', 'yb', 'zb'], kind = kind)
 	
 #--------------------------------------------------------------------------------------------------
+
 def spd_to_xyz(data,  relative = True, rfl = None, cieobs = _cieobs, out = None):
     """
     Calculates xyz from spd.

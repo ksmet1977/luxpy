@@ -8,6 +8,7 @@ Created on Sat Sep 23 20:06:06 2017
 import luxpy as lx
 import numpy as np
 
+
 spd = np.vstack((lx._cie_illuminants['D65'],lx._cie_illuminants['A'][1],lx._cie_illuminants['F4'][1],lx._cie_illuminants['F5'][1]))
 HL17 = lx._cri_rfl["cri2012"]["HL17"]
 
