@@ -62,7 +62,7 @@ __all__ = ['_wl3','_BB','_S012_daylightphase','_interp_types','_S_interp_type', 
 
 #--------------------------------------------------------------------------------------------------
 # set standard SPD wavelength interval interval and spacing
-_wl3 = [360,830,1]
+_wl3 = [360.0,830.0,1.0]
 
 #--------------------------------------------------------------------------------------------------
 # set some colorimetric constants related to illuminants
@@ -85,7 +85,7 @@ _R_interp_type = 'linear'
 #--------------------------------------------------------------------------------------------------
 # reference illuminant default and settings:
 _cri_ref_type = 'ciera'
-_cri_ref_types = {'ciera': [5000 , 5000], 'cierf': [4000, 5000], 'iesrf':[4500, 5500],'BB':[5000,5000],'DL':[5000,5000]} #mixing ranges for various cri_reference_illuminant types
+_cri_ref_types = {'ciera': [5000.0 , 5000.0], 'cierf': [4000.0, 5000.0], 'iesrf':[4500.0, 5500.0],'BB':[5000.0,5000.0],'DL':[5000.0,5000.0]} #mixing ranges for various cri_reference_illuminant types
 
 
 
@@ -115,7 +115,7 @@ def getwld(wl):
     Get wavelength spacing of np.array input.
     """
     d=np.diff(wl)
-    dl=(np.hstack((d[0],d[0:-1]/2.0,d[-1]))+np.hstack((0,d[1:]/2.0,0)))
+    dl=(np.hstack((d[0],d[0:-1]/2.0,d[-1]))+np.hstack((0.0,d[1:]/2.0,0.0)))
     if np.array_equal(dl,dl.mean()*np.ones(dl.shape)): dl=dl[0]
     return dl
 
@@ -159,9 +159,9 @@ def normalize_spd(data,normalization = None,w_norm = 1, wl = True):
                     w_norm_ = w_norm[0]
             else:
                 if normalization_ == 'lambda':
-                    w_norm_ = 560    
+                    w_norm_ = 560.0    
                 else:
-                    w_norm_ = 1
+                    w_norm_ = 1.0
       
             if normalization_=='max':
                 data[i+offset]=w_norm_*data[i+offset]/np.max(data[i+offset])
@@ -211,7 +211,7 @@ def cie_interp(data,wl_new, kind = None, negative_values_allowed = False):
             # No negative values allowed for spectra:    
             if negative_values_allowed == False:
                 if np.any(Si):
-                    Si[Si<0] = 0    
+                    Si[Si<0.0] = 0.0
             
             # Add wavelengths to data array: 
             data = np.vstack((wl_new,Si))  
@@ -317,7 +317,7 @@ def spd_to_xyz(data,  relative = True, rfl = None, cieobs = _cieobs, out = None)
         SPD = data[1:,None]
         #rescale xyz using k or 100/Yw:
         if relative == True:
-            xyz = np.array([100*np.array((SPD*dl)*cmf[i+1,None,None]).sum(axis = 2)/np.array((SPD*dl)*cmf[2,None,None]).sum(axis = 2) for i in range(3)]) #calculate tristimulus values
+            xyz = np.array([100.0*np.array((SPD*dl)*cmf[i+1,None,None]).sum(axis = 2)/np.array((SPD*dl)*cmf[2,None,None]).sum(axis = 2) for i in range(3)]) #calculate tristimulus values
         else:
             xyz = np.array([k*np.array((SPD*dl)*cmf[i+1,None,None]).sum(axis = 2) for i in range(3)]) #calculate tristimulus values
         # Rearrange axes: axis = 0,1,2: spd, rfl, xyz axis:     
@@ -354,8 +354,8 @@ def blackbody(cct,wl3 = None, kind = 'np',normalization = None, w_norm = None):
         wl3 = _wl3 
     wl=getwlr(wl3)
     def fSr(x):
-        return (1/np.pi)*_BB['c1']*((x*1e-9)**(-5))*(_BB['n']**(-2))*(np.exp(_BB['c2']*((_BB['n']*x*1e-9*(cct+_eps))**(-1)))-1)**(-1)
-    return spd(data = np.vstack((wl,(fSr(wl)/fSr(560)))),kind = kind, wl = None, datatype = 'S', data_names = ['BB'],normalization = None, w_norm = None)
+        return (1/np.pi)*_BB['c1']*((x*1.0e-9)**(-5))*(_BB['n']**(-2.0))*(np.exp(_BB['c2']*((_BB['n']*x*1.0e-9*(cct+_eps))**(-1.0)))-1.0)**(-1.0)
+    return spd(data = np.vstack((wl,(fSr(wl)/fSr(560.0)))),kind = kind, wl = None, datatype = 'S', data_names = ['BB'],normalization = None, w_norm = None)
 
 #------------------------------------------------------------------------------
 def daylightlocus(cct, force_daylight_below4000K = False):
@@ -364,14 +364,14 @@ def daylightlocus(cct, force_daylight_below4000K = False):
     
     """
     cct = np2d(cct)
-    if np.any((cct < 4000) & (force_daylight_below4000K == False)):
+    if np.any((cct < 4000.0) & (force_daylight_below4000K == False)):
         raise Exception('spectral.daylightlocus(): Daylight locus approximation not defined below 4000 K')
     
         
-    xD=-4.607*((1e3/cct)**3)+2.9678*((1e3/cct)**2)+0.09911*(1000/cct)+0.244063
-    p = cct>=7000
-    xD[p] = -2.0064*((1e3/cct[p])**3)+1.9018*((1e3/cct[p])**2)+0.24748*(1e3/cct[p])+0.23704
-    yD=-3*xD**2+2.87*xD-0.275
+    xD=-4.607*((1e3/cct)**3.0)+2.9678*((1e3/cct)**2.0)+0.09911*(1000.0/cct)+0.244063
+    p = cct>=7000.0
+    xD[p] = -2.0064*((1.0e3/cct[p])**3.0)+1.9018*((1.0e3/cct[p])**2.0)+0.24748*(1.0e3/cct[p])+0.23704
+    yD=-3.0*xD**2.0+2.87*xD-0.275
 #    if ((4000<=cct) | (force_daylight_below4000K == True)) & (cct<7000 ):
 #        xD=-4.607*(1e9/cct**3)+2.9678*(1e6/cct**2)+0.09911*(1000/cct)+0.244063
 #    elif cct>=7000:
@@ -393,7 +393,7 @@ def daylightphase(cct,wl3 = None, kind = 'np',normalization = None, w_norm = Non
     cct=float(cct)
     if wl3 is None: 
         wl3 = _wl3 
-    if (cct < (4000)) & (force_daylight_below4000K == False):
+    if (cct < (4000.0)) & (force_daylight_below4000K == False):
         if verbosity is not None:
             print('Warning daylightphase spd not defined below 4000 K. Using blackbody radiator instead.')
         Sr = blackbody(cct,wl3)
@@ -412,7 +412,7 @@ def daylightphase(cct,wl3 = None, kind = 'np',normalization = None, w_norm = Non
         M1=(-1.3515-1.7703*xD+5.9114*yD)/(0.0241+0.2562*xD-0.7341*yD)
         M2=(0.03-31.4424*xD+30.0717*yD)/(0.0241+0.2562*xD-0.7341*yD)
         Sr=S012_daylightphase[1,:]+M1*S012_daylightphase[2,:]+M2*S012_daylightphase[3,:]
-        Sr560=Sr[:,np.where(np.abs(S012_daylightphase[0,:] - 560) == np.min(np.abs(S012_daylightphase[0,:] - 560)))[0]]
+        Sr560=Sr[:,np.where(np.abs(S012_daylightphase[0,:] - 560.0) == np.min(np.abs(S012_daylightphase[0,:] - 560)))[0]]
         Sr=Sr/Sr560
         Sr[Sr==float('NaN')]=0
         Sr = np.vstack((wl,Sr))
@@ -480,18 +480,18 @@ def cri_ref(ccts,wl3 = None,kind = 'np', ref_type = _cri_ref_type, mix_range = N
                 Te = float(mix_range_[1])
                 cBB = (Te-cct)/(Te-Tb)
                 cDL = (cct-Tb)/(Te-Tb)
-                if cBB < 0:
-                    cBB = 0
+                if cBB < 0.0:
+                    cBB = 0.0
                 elif cBB > 1:
-                    cBB = 1
-                if cDL < 0:
-                    cDL = 0
+                    cBB = 1.0
+                if cDL < 0.0:
+                    cDL = 0.0
                 elif cDL > 1:
-                    cDL = 1
+                    cDL = 1.0
 
                 Sr = SrBB[1]*cBB + SrDL[1]*cDL
-                Sr[Sr==float('NaN')]=0
-                Sr560 = Sr[np.where(np.abs(wl[0] - 560) == np.min(np.abs(wl[0] - 560)))[0]]
+                Sr[Sr==float('NaN')]=0.0
+                Sr560 = Sr[np.where(np.abs(wl[0] - 560.0) == np.min(np.abs(wl[0] - 560.0)))[0]]
     
                 Sr = np.vstack((wl,(Sr/Sr560)))
                      

@@ -45,7 +45,7 @@ def line_intersect(a1, a2, b1, b2):
     Line intersection of two line segments a and b (Nx2) specified by their end points 1,2.
     (https://stackoverflow.com/questions/3252194/numpy-and-line-intersections)
     """
-    T = np.array([[0, -1], [1, 0]])
+    T = np.array([[0.0, -1.0], [1.0, 0.0]])
     da = np.atleast_2d(a2 - a1)
     db = np.atleast_2d(b2 - b1)
     dp = np.atleast_2d(a1 - b1)
@@ -60,11 +60,11 @@ def positive_arctan(x,y, htype = 'deg'):
     Calculate positive angle (0°-360° or 0 - 2*pi rad.) from x and y.
     """
     if htype == 'deg':
-        r2d = 180/np.pi
-        h360 = 360
+        r2d = 180.0/np.pi
+        h360 = 360.0
     else:
-        r2d = 1
-        h360 = 2*np.pi
+        r2d = 1.0
+        h360 = 2.0*np.pi
     h = np.arctan2(y,x)*r2d
     h[np.where(h<0)] = h[np.where(h<0)] + h360
     return h
@@ -86,14 +86,14 @@ def dot23(A,B, keepdims = False):
             
     return dotAB
 #------------------------------------------------------------------------------
-def check_symmetric(A, atol = 1e-9, rtol = 1e-9):
+def check_symmetric(A, atol = 1.0e-9, rtol = 1.0e-9):
     """
     Check if A is symmetric (returns True).
     """
     return np.allclose(A, A.T, atol = atol,rtol = rtol)
 
 
-def check_posdef(A, atol = 1e-9, rtol = 1e-9):
+def check_posdef(A, atol = 1.0e-9, rtol = 1.0e-9):
     """
     Checks positive definiteness of matrix.
     Returns true when input is positive-definite, via Cholesky
@@ -108,7 +108,7 @@ def check_posdef(A, atol = 1e-9, rtol = 1e-9):
         return False
 
 
-def symmM_to_posdefM(A = None, atol = 1e-9, rtol = 1e-9, method = 'make', forcesymm = True):
+def symmM_to_posdefM(A = None, atol = 1.0e-9, rtol = 1.0e-9, method = 'make', forcesymm = True):
     """
     Convert a symmetric matrix to a positive definite one. Two methods are supported.
     methods:
@@ -158,14 +158,14 @@ def symmM_to_posdefM(A = None, atol = 1e-9, rtol = 1e-9, method = 'make', forces
                  #
                  # See: https://stackoverflow.com/questions/43238173/python-convert-matrix-to-positive-semi-definite
                 
-                B = (A + A.T) / 2
+                B = (A + A.T) / 2.0
                 _, s, V = np.linalg.svd(B)
 
                 H = np.dot(V.T, np.dot(np.diag(s), V))
 
-                A2 = (B + H) / 2
+                A2 = (B + H) / 2.0
 
-                A3 = (A2 + A2.T) / 2
+                A3 = (A2 + A2.T) / 2.0
 
                 if check_posdef(A3, atol = atol, rtol = rtol) == True:
                     return A3
@@ -175,7 +175,7 @@ def symmM_to_posdefM(A = None, atol = 1e-9, rtol = 1e-9, method = 'make', forces
                 k = 1
                 while not check_posdef(A3, atol = atol, rtol = rtol):
                     mineig = np.min(np.real(np.linalg.eigvals(A3)))
-                    A3 += I * (-mineig * k**2 + spacing)
+                    A3 += I * (-mineig * k**2.0+ spacing)
                     k += 1
 
                 return A3
@@ -200,7 +200,7 @@ def bvgpdf(x, y = None, mu = None,sigmainv = None):
         x = x - mu # center data on mu    
         x, y = aplit(x)
         
-    mahalanobis = (sigmainv[0,0] * (x**2) + sigmainv[1,1] * (y**2) + 2*sigmainv[0,1]*(x*y))
+    mahalanobis = (sigmainv[0.0,0.0] * (x**2.0) + sigmainv[1.0,1.0] * (y**2.0) + 2.0*sigmainv[0.0,1.0]*(x*y))
 
     return np.exp(-0.5*mahalanobis)
 

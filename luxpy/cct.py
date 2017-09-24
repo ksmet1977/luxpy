@@ -76,18 +76,18 @@ def xyz_to_cct_HA(data):
     t1 = [0.92159, 0.07861]
     A2 = [28.70599, 5.4535*1e-36]
     t2 = [0.20039, 0.01543]
-    A3 = [0.00004, 0]
-    t3 = [0.07125,1]
-    cct_ranges = np.array([[3000,50000],[50000,800000]])
+    A3 = [0.00004, 0.0]
+    t3 = [0.07125,1.0]
+    cct_ranges = np.array([[3000.0,50000.0],[50000.0,800000.0]])
     
     Yxy = xyz_to_Yxy(data)
     CCT = np.ones((1,Yxy.shape[0]))*out_of_range_code
     for i in range(2):
         n = (Yxy[:,1]-xe[i])/(Yxy[:,2]-ye[i])
         CCT_i = np2d(np.array(A0[i] + A1[i]*np.exp(np.divide(-n,t1[i])) + A2[i]*np.exp(np.divide(-n,t2[i])) + A3[i]*np.exp(np.divide(-n,t3[i]))))
-        p = (CCT_i >= (1-0.05*(i == 0))*cct_ranges[i][0]) & (CCT_i < (1+0.05*(i == 0))*cct_ranges[i][1])
+        p = (CCT_i >= (1.0-0.05*(i == 0))*cct_ranges[i][0]) & (CCT_i < (1.0+0.05*(i == 0))*cct_ranges[i][1])
         CCT[p] = CCT_i[p]
-        p = (CCT_i < (1-0.05*cct_ranges[0][0])) #smaller than smallest valid CCT value
+        p = (CCT_i < (1.0-0.05*cct_ranges[0][0])) #smaller than smallest valid CCT value
         CCT[p] = -1
    
     if (np.isnan(CCT.sum()) == True) | (np.any(CCT == -1)):
@@ -126,12 +126,12 @@ def xyz_to_cct_search(data, cieobs = _cieobs, out = 'cct',wl = None, accuracy = 
     #calculate preliminary solution(s):
     if (approx_cct_temp == True):
         ccts_est = xyz_to_cct_HA(data)
-        procent_estimates = np.array([[3000, 100000,0.05],[100000,200000,0.1],[200000,300000,0.25],[300000,400000,0.4],[400000,600000,0.4],[600000,800000,0.4],[800000,np.inf,0.25]])
+        procent_estimates = np.array([[3000.0, 100000.0,0.05],[100000.0,200000.0,0.1],[200000.0,300000.0,0.25],[300000.0,400000.0,0.4],[400000.0,600000.0,0.4],[600000.0,800000.0,0.4],[800000.0,np.inf,0.25]])
     else:
         upper_cct = np.array(upper_cct_max)
-        lower_cct = np.array(10**2)
+        lower_cct = np.array(10.0**2)
         cct_scale_fun = lambda x: np.log10(x)
-        cct_scale_ifun = lambda x: np.power(10,x)
+        cct_scale_ifun = lambda x: np.power(10.0,x)
         dT = (cct_scale_fun(upper_cct) - cct_scale_fun(lower_cct))/2
         ccttemp = np.array([cct_scale_ifun(cct_scale_fun(lower_cct) + dT)])
         ccts_est = np2d(ccttemp*np.ones((data.shape[0],1)))
@@ -153,7 +153,7 @@ def xyz_to_cct_search(data, cieobs = _cieobs, out = 'cct',wl = None, accuracy = 
             cct_scale_ifun = lambda x: x
             if (ccttemp != -1) & (np.isnan(ccttemp) == False): # within validity range of CCT estimator-function
                 for ii in range(procent_estimates.shape[0]):
-                    if (ccttemp >= (1-0.05*(i == 0))*procent_estimates[ii,0]) & (ccttemp < (1+0.05*(i == 0))*procent_estimates[ii,1]):
+                    if (ccttemp >= (1.0-0.05*(i == 0))*procent_estimates[ii,0]) & (ccttemp < (1.0+0.05*(i == 0))*procent_estimates[ii,1]):
                         procent_estimate = procent_estimates[ii,2]
                         break
 
@@ -164,9 +164,9 @@ def xyz_to_cct_search(data, cieobs = _cieobs, out = 'cct',wl = None, accuracy = 
                 dT = np.multiply(ccttemp,procent_estimate)
             elif (np.isnan(ccttemp) == True):
                 upper_cct = np.array(upper_cct_max)
-                lower_cct = np.array(10**2)
+                lower_cct = np.array(10.0**2)
                 cct_scale_fun = lambda x: np.log10(x)
-                cct_scale_ifun = lambda x: np.power(10,x)
+                cct_scale_ifun = lambda x: np.power(10.0,x)
                 dT = (cct_scale_fun(upper_cct) - cct_scale_fun(lower_cct))/2
                 ccttemp = np.array([cct_scale_ifun(cct_scale_fun(lower_cct) + dT)])
                 approx_cct_temp = False
@@ -176,7 +176,7 @@ def xyz_to_cct_search(data, cieobs = _cieobs, out = 'cct',wl = None, accuracy = 
             dT = dT_approx_cct_False
       
         nsteps = 3 
-        signduv = 1 
+        signduv = 1.0 
         ccttemp = ccttemp[0]
         delta_cct = dT
         while ((delta_cct > accuracy)):# keep converging on CCT 
@@ -184,7 +184,7 @@ def xyz_to_cct_search(data, cieobs = _cieobs, out = 'cct',wl = None, accuracy = 
             #generate range of ccts:
             ccts_i = cct_scale_ifun(np.linspace(cct_scale_fun(ccttemp)-dT,cct_scale_fun(ccttemp)+dT,nsteps+1))
             
-            ccts_i[ccts_i < 100] = 100 # avoid nan's in calculation
+            ccts_i[ccts_i < 100.0] = 100.0 # avoid nan's in calculation
 
             # Generate BB:
             BB = cri_ref(ccts_i,wl3 = wl,ref_type = ['BB'],cieobs = cieobs)
@@ -196,7 +196,7 @@ def xyz_to_cct_search(data, cieobs = _cieobs, out = 'cct',wl = None, accuracy = 
             Yuv = xyz_to_Yuv(np.squeeze(xyz)) # remove possible 1-dim + convert data to CIE 1976 u',v'
             axis_of_v3 = len(Yuv.shape)-1 # axis containing color components
             u = Yuv[:,1,None] # get CIE 1960 u
-            v = (2/3)*Yuv[:,2,None] # get CIE 1960 v
+            v = (2.0/3.0)*Yuv[:,2,None] # get CIE 1960 v
             
             # Calculate distance between list of uv's and uv of test source:
             dc = ((ut[i] - u)**2 + (vt[i] - v)**2)**0.5
@@ -226,9 +226,9 @@ def xyz_to_cct_search(data, cieobs = _cieobs, out = 'cct',wl = None, accuracy = 
                 if (q > 0) & (q < np.size(ccts_i)-1):
                     dT = 2*dT/nsteps
                     # get Duv sign:
-                    d_p1m1 = ((u[q+1] - u[q-1])**2 + (v[q+1] - v[q-1])**2)**0.5
+                    d_p1m1 = ((u[q+1] - u[q-1])**2.0 + (v[q+1] - v[q-1])**2.0)**0.5
     
-                    x = (dc[q-1]**2 - dc[q+1]**2 + d_p1m1**2)/2*d_p1m1
+                    x = (dc[q-1]**2.0 - dc[q+1]**2.0 + d_p1m1**2.0)/2.0*d_p1m1
                     vBB = v[q-1] + ((v[q+1] - v[q-1]) * (x / d_p1m1))
                     signduv =np.sign(vt[i]-vBB)
 
@@ -271,7 +271,7 @@ def xyz_to_cct_ohno(data, cieobs = _cieobs, out = 'cct', wl = None, accuracy = 0
     Yuv = xyz_to_Yuv(data) # remove possible 1-dim + convert data to CIE 1976 u',v'
     axis_of_v3 = len(Yuv.shape)-1 # axis containing color components
     u = Yuv[:,1,None] # get CIE 1960 u
-    v = (2/3)*Yuv[:,2,None] # get CIE 1960 v
+    v = (2.0/3.0)*Yuv[:,2,None] # get CIE 1960 v
 
     uv = np2d(np.concatenate((u,v),axis = axis_of_v3))
     
@@ -286,7 +286,7 @@ def xyz_to_cct_ohno(data, cieobs = _cieobs, out = 'cct', wl = None, accuracy = 0
     idx_M = uv_LUT.shape[0]-1
     for i in range(uv.shape[0]):
         out_of_lut = False
-        delta_uv = (((uv_LUT - uv[i])**2).sum(axis = 1))**0.5 # calculate distance of uv with uv_LUT
+        delta_uv = (((uv_LUT - uv[i])**2.0).sum(axis = 1))**0.5 # calculate distance of uv with uv_LUT
         idx_min = delta_uv.argmin() # find index of minimum distance 
 
         # find Tm, delta_uv and u,v for 2 points surrounding uv corresponding to idx_min:
@@ -324,7 +324,7 @@ def xyz_to_cct_ohno(data, cieobs = _cieobs, out = 'cct', wl = None, accuracy = 0
         delta_uv_0 = delta_uv[idx_min]
             
         # calculate uv distance between Tm_m1 & Tm_p1:
-        delta_uv_p1m1 = ((uv_p1[0] - uv_m1[0])**2 + (uv_p1[1] - uv_m1[1])**2)**0.5
+        delta_uv_p1m1 = ((uv_p1[0] - uv_m1[0])**2.0 + (uv_p1[1] - uv_m1[1])**2.0)**0.5
 
         # Triangular solution:
         x = ((delta_uv_m1**2)-(delta_uv_p1**2)+(delta_uv_p1m1**2))/(2*delta_uv_p1m1)
@@ -335,7 +335,7 @@ def xyz_to_cct_ohno(data, cieobs = _cieobs, out = 'cct', wl = None, accuracy = 0
 
         Tx_corrected_triangular = Tx*0.99991
         signDuv = np.sign(uv[i][1]-vBB)
-        Duv_triangular = signDuv*np.atleast_1d(((delta_uv_m1**2) - (x**2))**0.5)
+        Duv_triangular = signDuv*np.atleast_1d(((delta_uv_m1**2.0) - (x**2.0))**0.5)
 
                                 
         # Parabolic solution:   
@@ -401,9 +401,9 @@ def cct_to_xyz(data, duv = None, cieobs = _cieobs, wl = None, mode = 'lut', out 
         # optimization/minimization setup:
         def objfcn(uv_offset, uv0, cct,duv, out = 1):#, cieobs = cieobs, wl = wl, mode = mode):
             uv0 = np2d(uv0 + uv_offset)
-            Yuv0 = np.concatenate((np2d([100]), uv0),axis=1)
+            Yuv0 = np.concatenate((np2d([100.0]), uv0),axis=1)
             cct_min, duv_min = xyz_to_cct(Yuv_to_xyz(Yuv0),cieobs = cieobs, out = 'cct,duv',wl = wl, mode = mode, accuracy = accuracy, force_out_of_lut = force_out_of_lut, upper_cct_max = upper_cct_max, approx_cct_temp = approx_cct_temp)
-            F = np.sqrt(((100*(cct_min[0] - cct[0])/(cct[0]))**2) + (((duv_min[0] - duv[0])/(duv[0]))**2))
+            F = np.sqrt(((100.0*(cct_min[0] - cct[0])/(cct[0]))**2.0) + (((duv_min[0] - duv[0])/(duv[0]))**2.0))
             if out == 'F':
                 return F
             else:
@@ -423,7 +423,7 @@ def cct_to_xyz(data, duv = None, cieobs = _cieobs, wl = None, mode = 'lut', out 
 
                 OptimizeResult = minimize(fun = objfcn,x0 = np.zeros((1,2)), args = (uv0,cct_i, duv_i, 'F'), method = 'Nelder-Mead',options={"maxiter":np.inf, "maxfev":np.inf, 'xatol': 0.000001, 'fatol': 0.000001})
                 uv0 = np2d(uv0 + OptimizeResult['x'])
-                Yuv0 = np.concatenate((np2d([100]),uv0),axis=1)
+                Yuv0 = np.concatenate((np2d([100.0]),uv0),axis=1)
                 xyz_est[i] = Yuv_to_xyz(Yuv0)
 
                 if out is not None:

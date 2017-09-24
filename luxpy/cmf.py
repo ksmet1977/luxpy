@@ -24,27 +24,27 @@ def dictkv(keys=None,values=None, ordered = True):
     else:
         return dict(zip(keys,values))
 
-_cmf_K = dictkv(keys = _cmf_types, values = [683,683.6,683,683],ordered = True) # K-factors for calculating absolute tristimulus values
+_cmf_K = dictkv(keys = _cmf_types, values = [683.0,683.6,683.0,683.0],ordered = True) # K-factors for calculating absolute tristimulus values
 
 _cmf_M_1931_2=np.array([     # definition of 3x3 matrices to convert from xyz to lms
 [0.38971,0.68898,-0.07868],
 [-0.22981,1.1834,0.04641],
-[0,0,1]
+[0.0,0.0,1.0]
  ])
 _cmf_M_1964_10=np.array([
 [0.38971,0.68898,-0.07868],
 [-0.22981,1.1834,0.04641],
-[0,0,1]
+[0.0,0.0,1.0]
 ])
 _cmf_M_2006_2=np.array([
 [0.21057582,0.85509764,-0.039698265],
 [-0.41707637,1.1772611,0.078628251],
-[0,0,0.51683501]
+[0.0,0.0,0.51683501]
 ])
 _cmf_M_2006_10=np.array([
 [0.21701045,0.83573367,-0.043510597],
 [-0.42997951,1.2038895,0.086210895],
-[0,0,0.46579234]
+[0.0,0.0,0.46579234]
 ])
 _cmf_M = dictkv(keys = _cmf_types, values= [_cmf_M_1931_2,_cmf_M_1964_10,_cmf_M_2006_2,_cmf_M_2006_10],ordered = True)
 

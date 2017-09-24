@@ -52,7 +52,7 @@ def plotDL(ccts = None, cieobs =_cieobs, cspace = _cspace, axh = None, show = Tr
     Plot daylight locus (for ccts, default = 4000 K to 1e19 K) for cieobs in cspace.
     """
     if ccts is None:
-        ccts = 10**np.linspace(np.log10(4000.0),np.log10(10.0**19),100)
+        ccts = 10**np.linspace(np.log10(4000.0),np.log10(10.0**19.0),100.0)
         
     xD,yD = daylightlocus(ccts, force_daylight_below4000K = force_daylight_below4000K)
     Y = 100*np.ones(xD.shape)
@@ -70,8 +70,8 @@ def plotBB(ccts = None, cieobs =_cieobs, cspace = _cspace, axh = None, cctlabels
     Plot blackbody locus (for ccts) for cieobs in cspace.
     """
     if ccts is None:
-        ccts1 = np.array([1000,1500,2000,2500,3000,3500,4000,5000,6000,8000,10000])
-        ccts2 = 10**np.linspace(np.log10(15000.0),np.log10(10.0**19),100)
+        ccts1 = np.array([1000.0,1500.0,2000.0,2500.0,3000.0,3500.0,4000.0,5000.0,6000.0,8000.0,10000.0])
+        ccts2 = 10**np.linspace(np.log10(15000.0),np.log10(10.0**19.0),100.0)
         ccts = np.hstack((ccts1,ccts2))
     else:
         ccts1 = None
@@ -85,8 +85,8 @@ def plotBB(ccts = None, cieobs =_cieobs, cspace = _cspace, axh = None, cctlabels
 
     if (cctlabels == True) & (ccts1 is not None):
         for i in range(ccts1.shape[0]):
-            if ccts1[i]>= 3000:
-                if i%2 == 0:
+            if ccts1[i]>= 3000.0:
+                if i%2 == 0.0:
                     plt.plot(x[i],y[i],'k+', color = '0.5')
                     plt.text(x[i]*1.05,y[i]*0.95,'{:1.0f}K'.format(ccts1[i]), color = '0.5')
         plt.plot(x[-1],y[-1],'k+', color = '0.5')
@@ -100,7 +100,7 @@ def plotSL(cieobs =_cieobs, cspace = _cspace,  DL = True, BBL = True, D65 = Fals
     """
     SL = _cmf['bar'][cieobs][1:4].T
     SL = np.vstack((SL,SL[0]))
-    SL = 100*SL/SL[:,1,None]
+    SL = 100.0*SL/SL[:,1,None]
     SL = colortf(SL, tf = cspace, tfa0 = cspace_pars)
     Y,x,y = asplit(SL)
     
@@ -134,8 +134,8 @@ def plotceruleanline(cieobs = _cieobs, cspace = 'Yuv', axh = None,formatstr = 'k
     Plot cerulean (yellow (577 nm) - blue (472 nm)) line (Kuehni, CRA, 2013: Table II: spectral lights).
     """
     cmf = _cmf['bar'][cieobs]
-    p_y = cmf[0] == 577 #Kuehni, CRA 2013 (mean, table IV)
-    p_b = cmf[0] == 472 #Kuehni, CRA 2013 (mean, table IV)
+    p_y = cmf[0] == 577.0 #Kuehni, CRA 2013 (mean, table IV)
+    p_b = cmf[0] == 472.0 #Kuehni, CRA 2013 (mean, table IV)
     xyz_y = cmf[1:,p_y].T
     xyz_b = cmf[1:,p_b].T
     lab = colortf(np.vstack((xyz_b,xyz_y)),cspace)
@@ -151,18 +151,18 @@ def plotUH(xyz0 = None, uhues = [0,1,2,3], cieobs = _cieobs, cspace = 'Yuv', axh
     """
     hues = ['yellow','blue','red','green']
     cmf = _cmf['bar'][cieobs]
-    p_y = cmf[0] == 577 #unique yellow,#Kuehni, CRA 2013 (mean, table IV: spectral data)
-    p_b = cmf[0] == 472 #unique blue,Kuehni, CRA 2013 (mean, table IV: spectral data)
-    p_g = cmf[0] == 514 #unique green, Kuehni, CRA 2013 (mean, table II: spectral data)
-    p_r = cmf[0] == 650 #unique red, Kuehni, CRA 2013 (Xiao data, table IV: display data)
-    xyz_y = 100*cmf[1:,p_y].T
-    xyz_b = 100*cmf[1:,p_b].T
-    xyz_g = 100*cmf[1:,p_g].T
-    xyz_r = 100*cmf[1:,p_r].T
+    p_y = cmf[0] == 577.0 #unique yellow,#Kuehni, CRA 2013 (mean, table IV: spectral data)
+    p_b = cmf[0] == 472.0 #unique blue,Kuehni, CRA 2013 (mean, table IV: spectral data)
+    p_g = cmf[0] == 514.0 #unique green, Kuehni, CRA 2013 (mean, table II: spectral data)
+    p_r = cmf[0] == 650.0 #unique red, Kuehni, CRA 2013 (Xiao data, table IV: display data)
+    xyz_y = 100.0*cmf[1:,p_y].T
+    xyz_b = 100.0*cmf[1:,p_b].T
+    xyz_g = 100.0*cmf[1:,p_g].T
+    xyz_r = 100.0*cmf[1:,p_r].T
     xyz_uh = np.vstack((xyz_y,xyz_b,xyz_r,xyz_g))
     huniquehues = []
     if xyz0 is None:
-        xyz0 = np.array([100,100,100])
+        xyz0 = np.array([100.0,100.0,100.0])
     if axh is None:
         axh = plt.gca()
     for huenr in uhues:

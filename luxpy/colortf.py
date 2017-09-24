@@ -14,7 +14,7 @@ from luxpy import *
 __all__ = ['_colortf_default_white_point','colortf']
 
 
-_colortf_default_white_point = np.array([100, 100, 100]) # ill. E white point
+_colortf_default_white_point = np.array([100.0, 100.0, 100.0]) # ill. E white point
 
 #------------------------------------------------------------------------------------------------
 def colortf(data, tf = 'Yuv>Yxy', tfa0 = {}, tfa1 = {}):

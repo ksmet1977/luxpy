@@ -57,7 +57,7 @@ _cspace_axes['cct'] = ['', 'cct','duv']
 
 # pre-calculate matrices for conversion of xyz to lms and back for use in xyz_to_ipt() and ipt_to_xyz(): 
 _ipt_M = {'lms2ipt': np.array([[0.4000,0.4000,0.2000],[4.4550,-4.8510,0.3960],[0.8056,0.3572,-1.1628]]), 'xyz2lms' : {x : np.dot(np.diag((1/np.dot(_cmf['M'][x],spd_to_xyz(_cie_illuminants['D65'],cieobs = x).T).T)[0]),_cmf['M'][x]) for x in sorted(_cmf['M'].keys())}}
-_colortf_default_white_point = np.array([100, 100, 100]) # ill. E white point
+_colortf_default_white_point = np.array([100.0, 100.0, 100.0]) # ill. E white point
 
 #------------------------------------------------------------------------------
 #---chromaticity coordinates---------------------------------------------------
@@ -83,7 +83,7 @@ def Yxy_to_xyz(data):
     
     Y,x,y = asplit(data) 
     X = Y*x/y
-    Z = Y*(1-x-y)/y
+    Z = Y*(1.0-x-y)/y
     return ajoin((X,Y,Z))
 
 def xyz_to_Yuv(data):
@@ -93,9 +93,9 @@ def xyz_to_Yuv(data):
     data = np2d(data)
     
     X,Y,Z = asplit(data)
-    denom = X + 15*Y + 3*Z
-    u = 4*X / denom
-    v = 9*Y / denom
+    denom = X + 15.0*Y + 3.0*Z
+    u = 4.0*X / denom
+    v = 9.0*Y / denom
     return ajoin((Y,u,v))
 
 def Yuv_to_xyz(data):
@@ -106,8 +106,8 @@ def Yuv_to_xyz(data):
     data = np2d(data)
     
     Y,u,v = asplit(data)
-    X = Y*(9*u)/(4*v)
-    Z = Y*(12 - 3*u - 20*v)/(4*v)
+    X = Y*(9.0*u)/(4.0*v)
+    Z = Y*(12.0 - 3.0*u - 20.0*v)/(4.0*v)
     return ajoin((X,Y,Z))
 
 
@@ -121,11 +121,11 @@ def xyz_to_wuv(data, xyzw = _colortf_default_white_point):
     Yuvw = xyz_to_Yuv(xyzw)
     Y, u, v = asplit(Yuv)
     Yw, uw, vw = asplit(Yuvw)
-    v = (2/3)*v # convert to cie 1960 u, v
-    vw = (2/3)*vw # convert to cie 1960 u, v
-    W = 25*(Y**(1/3)) - 17
-    U = 13*W*(u - uw)
-    V = 13*W*(v - vw)
+    v = (2.0/3.0)*v # convert to cie 1960 u, v
+    vw = (2.0/3.0)*vw # convert to cie 1960 u, v
+    W = 25.0*(Y**(1/3)) - 17.0
+    U = 13.0*W*(u - uw)
+    V = 13.0*W*(v - vw)
     return ajoin((W,U,V))    
 
 def wuv_to_xyz(data,xyzw = _colortf_default_white_point):
@@ -137,11 +137,11 @@ def wuv_to_xyz(data,xyzw = _colortf_default_white_point):
     
     Yuvw = xyz_to_Yuv(xyzw) # convert to cie 1976 u'v'
     Yw, uw, vw = asplit(Yuvw)
-    vw = (2/3)*vw # convert to cie 1960 u, v
+    vw = (2.0/3.0)*vw # convert to cie 1960 u, v
     W,U,V = asplit(data)
-    Y = ((W + 17) / 25)**3
-    u = uw + U/(13*W) 
-    v = (vw + V/(13*W)) * (3/2)
+    Y = ((W + 17.0) / 25.0)**3.0
+    u = uw + U/(13.0*W) 
+    v = (vw + V/(13.0*W)) * (3.0/2.0)
     Yuv = ajoin((Y,u,v)) # = 1976 u',v'
     return Yuv_to_xyz(Yuv)
     
@@ -172,19 +172,19 @@ def xyz_to_lab(data,xyzw = None, cieobs = _cieobs):
     Xr,Yr,Zr = asplit(data/xyzw)
        
     # Apply cube-root compression:
-    fX,fY,fZ = [x**(1/3) for x in (Xr,Yr,Zr)]
+    fX,fY,fZ = [x**(1.0/3.0) for x in (Xr,Yr,Zr)]
     
     # Check for T/Tn <= 0.008856:
     p,q,r = [np.where(x<=0.008856) for x in (Xr,Yr,Zr)]
 
     # calculate f(T) for T/Tn <= 0.008856:
-    fX[p], fY[q] ,fZ[r] = [(7.787*x+16/116) for x in (Xr[p],Yr[q],Zr[r])]  
+    fX[p], fY[q] ,fZ[r] = [(7.787*x+16.0/116.0) for x in (Xr[p],Yr[q],Zr[r])]  
 
     # calculate L*, a*, b*:
-    L = 116*(Yr**(1/3)) - 16
+    L = 116.0*(Yr**(1.0/3.0)) - 16.0
     L[p] = 903.3*Yr[p]
-    a = 500*(fX-fY)
-    b = 200*(fY-fZ)
+    a = 500.0*(fX-fY)
+    b = 200.0*(fY-fZ)
 
     return ajoin((L,a,b))
 
@@ -210,16 +210,16 @@ def lab_to_xyz(data,xyzw = None, cieobs = _cieobs):
     L,a,b = asplit(data)
     Xw,Yw,Zw = asplit(xyzw)
    
-    fy = (L + 16) / 116 
-    fx = a / 500 + fy
-    fz = fy - b/200
+    fy = (L + 16.0) / 116.0 
+    fx = a / 500.0 + fy
+    fz = fy - b/200.0
 
     # apply 3rd power:
-    X,Y,Z = [xw*(x**3) for (x,xw) in ((fx,Xw),(fy,Yw),(fz,Zw))]
+    X,Y,Z = [xw*(x**3.0) for (x,xw) in ((fx,Xw),(fy,Yw),(fz,Zw))]
 
     # Now calculate T where T/Tn is below the knee point:
     p,q,r = [np.where(x<k) for x in (fx,fy,fz)]   
-    X[p],Y[q],Z[r] = [np.squeeze(xw[xp]*((x[xp] - 16/116) / 7.787)) for (x,xw,xp) in ((fx,Xw,p),(fy,Yw,q),(fz,Zw,r))]
+    X[p],Y[q],Z[r] = [np.squeeze(xw[xp]*((x[xp] - 16.0/116.0) / 7.787)) for (x,xw,xp) in ((fx,Xw,p),(fy,Yw,q),(fz,Zw,r))]
  
     return ajoin((X,Y,Z))  
 
@@ -242,11 +242,11 @@ def xyz_to_luv(data,xyzw = None, cieobs = _cieobs):
     
     #uv1976 to CIELUV
     YdivYw = Y / Yw
-    L = 116*YdivYw**(1/3) - 16
-    p = np.where(YdivYw <= (6/29)**3)
-    L[p] = ((29/3)**3)*YdivYw[p]
-    u = 13*L*(u-uw)
-    v = 13*L*(v-vw)
+    L = 116.0*YdivYw**(1.0/3.0) - 16.0
+    p = np.where(YdivYw <= (6.0/29.0)**3.0)
+    L[p] = ((29.0/3.0)**3.0)*YdivYw[p]
+    u = 13.0*L*(u-uw)
+    v = 13.0*L*(v-vw)
 
     return ajoin((L,u,v))
 
@@ -270,13 +270,13 @@ def luv_to_xyz(data,xyzw = None, cieobs = _cieobs):
     # calculate u'v' from u*,v*:
     L,u,v = asplit(data)
     up,vp = [(x / (13*L)) + xw for (x,xw) in ((u,uw),(v,vw))]
-    up[np.where(L == 0)] = 0
-    vp[np.where(L == 0)] = 0
+    up[np.where(L == 0.0)] = 0.0
+    vp[np.where(L == 0.0)] = 0.0
     
-    fy = (L + 16) / 116
-    Y = Yw*(fy**3)
-    p = np.where((Y/Yw) < ((6/29)**3))
-    Y[p] = Yw[p]*(L[p]/((29/3)**3))
+    fy = (L + 16.0) / 116.0
+    Y = Yw*(fy**3.0)
+    p = np.where((Y/Yw) < ((6.0/29.0)**3.0))
+    Y[p] = Yw[p]*(L[p]/((29.0/3.0)**3.0))
 
     return Yuv_to_xyz(ajoin((Y,up,vp)))
  
@@ -329,15 +329,15 @@ def xyz_to_ipt(data,cieobs = _cieobs, xyz0 = None, Mxyz2lms = None):
     if Mxyz2lms is None:
         M = _ipt_M['xyz2lms'][cieobs] # matrix conversions from xyz to lms
         if xyz0 is None:
-            xyz0 = spd_to_xyz(_cie_illuminants['D65'],cieobs = cieobs, out = 1)[0]/100
+            xyz0 = spd_to_xyz(_cie_illuminants['D65'],cieobs = cieobs, out = 1)[0]/100.0
         else:
-            xyz0 = xyz0/100    
+            xyz0 = xyz0/100.0    
         M = normalize_mcat(M,xyz0)
     else:
         M = Mxyz2lms
 
     # get xyz and normalize to 1:
-    xyz = data/100
+    xyz = data/100.0
     
     # convert xyz to lms:
     if len(xyz.shape) == 3:
@@ -348,7 +348,7 @@ def xyz_to_ipt(data,cieobs = _cieobs, xyz0 = None, Mxyz2lms = None):
 
     #response compression: lms to lms'
     lmsp = lms**0.43
-    p = np.where(lms<0)
+    p = np.where(lms<0.0)
     lmsp[p] = -np.abs(lms[p])**0.43
     
     # convert lms' to ipt coordinates:
@@ -370,9 +370,9 @@ def ipt_to_xyz(data,cieobs = _cieobs, xyz0 = None, Mxyz2lms = None):
     if Mxyz2lms is None:
         M = _ipt_M['xyz2lms'][cieobs] # matrix conversions from xyz to lms
         if xyz0 is None:
-            xyz0 = spd_to_xyz(_cie_illuminants['D65'],cieobs = cieobs, out = 1)[0]/100
+            xyz0 = spd_to_xyz(_cie_illuminants['D65'],cieobs = cieobs, out = 1)[0]/100.0
         else:
-            xyz0 = xyz0/100    
+            xyz0 = xyz0/100.0    
         M = normalize_mcat(M,xyz0)
     else:
         M = Mxyz2lms
@@ -385,9 +385,9 @@ def ipt_to_xyz(data,cieobs = _cieobs, xyz0 = None, Mxyz2lms = None):
     #lmsp = np.dot(np.linalg.inv(_ipt_M['lms2ipt']),data.T).T
 
     # reverse response compression: lms' to lms
-    lms = lmsp**(1/0.43)
-    p = np.where(lmsp<0)
-    lms[p] = -np.abs(lmsp[p])**(1/0.43)
+    lms = lmsp**(1.0/0.43)
+    p = np.where(lmsp<0.0)
+    lms[p] = -np.abs(lmsp[p])**(1.0/0.43)
 
     # convert from lms to xyz:
     if len(data.shape) == 3:
@@ -395,14 +395,14 @@ def ipt_to_xyz(data,cieobs = _cieobs, xyz0 = None, Mxyz2lms = None):
     else:
         xyz = np.einsum('ij,lj->li', np.linalg.inv(M), lms)    
     #xyz = np.dot(np.linalg.inv(M),lms.T).T
-    xyz = xyz * 100
-    xyz[np.where(xyz<0)] = 0
+    xyz = xyz * 100.0
+    xyz[np.where(xyz<0.0)] = 0.0
     
     return xyz
     
 
 #------------------------------------------------------------------------------
-def xyz_to_Ydlep(data, cieobs = _cieobs, xyzw = np.array([[100,100,100]])):
+def xyz_to_Ydlep(data, cieobs = _cieobs, xyzw = np.array([[100.0,100.0,100.0]])):
     """
     Calculates Y, dominant (complementary) wavelength and excitation purity.
     """
@@ -449,14 +449,14 @@ def xyz_to_Ydlep(data, cieobs = _cieobs, xyzw = np.array([[100,100,100]])):
     for i in range(data.shape[0]):
 
             # find index of complementary wavelengths/hues:
-            pc = np.where((h[i,:] >= hsl_max) & (h[i,:] <= hsl_min + 360)) # hue's requiring complementary wavelength (purple line)
-            h[i,:][pc] = h[i,:][pc] - np.sign(h[i,:][pc] - 180)*180 # add/subtract 180° to get positive complementary wavelength
+            pc = np.where((h[i,:] >= hsl_max) & (h[i,:] <= hsl_min + 360.0)) # hue's requiring complementary wavelength (purple line)
+            h[i,:][pc] = h[i,:][pc] - np.sign(h[i,:][pc] - 180.0)*180.0 # add/subtract 180° to get positive complementary wavelength
 
             # find 2 closest hues in sl:
             hslb,hib = meshblock(hsl,h[i,:])    
             dh = np.abs(hslb-hib)
             q1 = dh.argmin(axis=0) # index of closest hue
-            dh[q1] = 1000
+            dh[q1] = 1000.0
             q2 = dh.argmin(axis=0) # index of second closest hue
             dominantwavelength[i,:] = wlsl[q1] + np.divide(np.multiply((wlsl[q2] - wlsl[q1]),(h[i,:] - hsl[q1,0])),(hsl[q2,0] - hsl[q1,0])) # calculate wl corresponding to h: y = y1 + (y2-y1)*(x-x1)/(x2-x1)
             dominantwavelength[i,:][pc] = - dominantwavelength[i,:][pc] #complementary wavelengths are specified by '-' sign
@@ -464,8 +464,8 @@ def xyz_to_Ydlep(data, cieobs = _cieobs, xyzw = np.array([[100,100,100]])):
             # calculate excitation purity:
             x_dom_wl = xsl[q1,0] + (xsl[q2,0] - xsl[q1,0])*(h[i,:] - hsl[q1,0])/(hsl[q2,0] - hsl[q1,0]) # calculate x of dom. wl
             y_dom_wl = ysl[q1,0] + (ysl[q2,0] - ysl[q1,0])*(h[i,:] - hsl[q1,0])/(hsl[q2,0] - hsl[q1,0]) # calculate y of dom. wl
-            d_wl = (x_dom_wl**2 + y_dom_wl**2)**0.5 # distance from white point to sl
-            d = (x[i,:]**2 + y[i,:]**2)**0.5 # distance from white point to test point 
+            d_wl = (x_dom_wl**2.0 + y_dom_wl**2.0)**0.5 # distance from white point to sl
+            d = (x[i,:]**2.0 + y[i,:]**2.0)**0.5 # distance from white point to test point 
             purity[i,:] = d/d_wl
             
             # correct for those test points that have a complementary wavelength
@@ -477,12 +477,12 @@ def xyz_to_Ydlep(data, cieobs = _cieobs, xyzw = np.array([[100,100,100]])):
             da = (xy-xyw)
             db = (xypl2-xypl1)
             dp = (xyw - xypl1)
-            T = np.array([[0, -1], [1, 0]])
+            T = np.array([[0.0, -1.0], [1.0, 0.0]])
             dap = np.dot(da,T)
             denom = np.sum(dap * db,axis=1,keepdims=True)
             num = np.sum(dap * dp,axis=1,keepdims=True)
             xy_linecross = (num/denom) *db + xypl1
-            d_linecross = np.atleast_2d((xy_linecross[:,0]**2 + xy_linecross[:,1]**2)**0.5).T
+            d_linecross = np.atleast_2d((xy_linecross[:,0]**2.0 + xy_linecross[:,1]**2.0)**0.5).T
             purity[i,:][pc] = d[pc]/d_linecross[pc]
             
     Ydlep = np.dstack((data[:,:,1],dominantwavelength,purity))  
@@ -493,7 +493,7 @@ def xyz_to_Ydlep(data, cieobs = _cieobs, xyzw = np.array([[100,100,100]])):
 
     
 
-def Ydlep_to_xyz(data, cieobs = _cieobs, xyzw = np.array([[100,100,100]])):
+def Ydlep_to_xyz(data, cieobs = _cieobs, xyzw = np.array([[100.0,100.0,100.0]])):
     """
     Calculates xyz from Y, dominant (complementary) wavelength and excitation purity.
     """
@@ -536,7 +536,7 @@ def Ydlep_to_xyz(data, cieobs = _cieobs, xyzw = np.array([[100,100,100]])):
         wlslb,wlib = meshblock(wlsl,np.abs(dom[i,:])) #abs because dom<0--> complemtary wl    
         dwl = np.abs(wlslb-wlib)
         q1 = dwl.argmin(axis=0) # index of closest wl
-        dwl[q1] = 10000
+        dwl[q1] = 10000.0
         q2 = dwl.argmin(axis=0) # index of second closest wl
         
         # calculate x,y of dom:
@@ -544,15 +544,15 @@ def Ydlep_to_xyz(data, cieobs = _cieobs, xyzw = np.array([[100,100,100]])):
         y_dom_wl = ysl[q1,0] + (ysl[q2,0] - ysl[q1,0])*(np.abs(dom[i,:]) - wlsl[q1,0])/(wlsl[q2,0] - wlsl[q1,0]) # calculate y of dom. wl
 
         # calculate x,y of test:
-        d_wl = (x_dom_wl**2 + y_dom_wl**2)**0.5 # distance from white point to dom
+        d_wl = (x_dom_wl**2.0 + y_dom_wl**2.0)**0.5 # distance from white point to dom
         d = pur[i,:]*d_wl
         hdom = math.positive_arctan(x_dom_wl,y_dom_wl,htype = 'deg')  
-        x[i,:] = d*np.cos(hdom*np.pi/180)
-        y[i,:] = d*np.sin(hdom*np.pi/180)
+        x[i,:] = d*np.cos(hdom*np.pi/180.0)
+        y[i,:] = d*np.sin(hdom*np.pi/180.0)
 
         # complementary:
-        pc = np.where(dom[i,:] < 0)
-        hdom[pc] = hdom[pc] - np.sign(dom[i,:][pc] - 180)*180 # get positive hue angle
+        pc = np.where(dom[i,:] < 0.0)
+        hdom[pc] = hdom[pc] - np.sign(dom[i,:][pc] - 180.0)*180.0 # get positive hue angle
                   
                     
         # calculate intersection of line through white point and test point and purple line:
@@ -563,12 +563,12 @@ def Ydlep_to_xyz(data, cieobs = _cieobs, xyzw = np.array([[100,100,100]])):
         da = (xy-xyw)
         db = (xypl2-xypl1)
         dp = (xyw - xypl1)
-        T = np.array([[0, -1], [1, 0]])
+        T = np.array([[0.0, -1.0], [1.0, 0.0]])
         dap = np.dot(da,T)
         denom = np.sum(dap * db,axis=1,keepdims=True)
         num = np.sum(dap * dp,axis=1,keepdims=True)
         xy_linecross = (num/denom) *db + xypl1
-        d_linecross = np.atleast_2d((xy_linecross[:,0]**2 + xy_linecross[:,1]**2)**0.5).T
+        d_linecross = np.atleast_2d((xy_linecross[:,0]**2.0 + xy_linecross[:,1]**2.0)**0.5).T
         
         x[i,:][pc] = pur[i,:][pc]*d_linecross[pc]*np.cos(hdom[pc]*np.pi/180)
         y[i,:][pc] = pur[i,:][pc]*d_linecross[pc]*np.sin(hdom[pc]*np.pi/180)
