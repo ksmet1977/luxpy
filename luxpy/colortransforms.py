@@ -438,7 +438,7 @@ def xyz_to_Ydlep(data, cieobs = _cieobs, xyzw = np.array([[100,100,100]])):
     
     # calculate hue:
     h = math.positive_arctan(x,y, htype = 'deg')
-    ho = h.copy()
+    
     hsl = math.positive_arctan(xsl,ysl, htype = 'deg')
     
     hsl_max = hsl[0] # max hue angle at min wavelength
@@ -448,7 +448,7 @@ def xyz_to_Ydlep(data, cieobs = _cieobs, xyzw = np.array([[100,100,100]])):
     purity = dominantwavelength.copy()
     for i in range(data.shape[0]):
 
-            # find index of complementary wavelenths/hues:
+            # find index of complementary wavelengths/hues:
             pc = np.where((h[i,:] >= hsl_max) & (h[i,:] <= hsl_min + 360)) # hue's requiring complementary wavelength (purple line)
             h[i,:][pc] = h[i,:][pc] - np.sign(h[i,:][pc] - 180)*180 # add/subtract 180° to get positive complementary wavelength
 
@@ -537,7 +537,7 @@ def Ydlep_to_xyz(data, cieobs = _cieobs, xyzw = np.array([[100,100,100]])):
         dwl = np.abs(wlslb-wlib)
         q1 = dwl.argmin(axis=0) # index of closest wl
         dwl[q1] = 10000
-        q2 = dwl.argmin(axis=0) # index of second closest hue
+        q2 = dwl.argmin(axis=0) # index of second closest wl
         
         # calculate x,y of dom:
         x_dom_wl = xsl[q1,0] + (xsl[q2,0] - xsl[q1,0])*(np.abs(dom[i,:]) - wlsl[q1,0])/(wlsl[q2,0] - wlsl[q1,0]) # calculate x of dom. wl
@@ -545,7 +545,6 @@ def Ydlep_to_xyz(data, cieobs = _cieobs, xyzw = np.array([[100,100,100]])):
 
         # calculate x,y of test:
         d_wl = (x_dom_wl**2 + y_dom_wl**2)**0.5 # distance from white point to dom
-
         d = pur[i,:]*d_wl
         hdom = math.positive_arctan(x_dom_wl,y_dom_wl,htype = 'deg')  
         x[i,:] = d*np.cos(hdom*np.pi/180)

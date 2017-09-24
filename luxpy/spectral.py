@@ -438,8 +438,9 @@ def cri_ref(ccts,wl3 = None,kind = 'np', ref_type = _cri_ref_type, mix_range = N
 
             # get ref_type and mix_range:
             if isinstance(ref_type,dict):
-                ref_type_ = list(ref_type.keys())[i]
-                mix_range_ = list(ref_type.values())[i]
+                #ref_type_ = list(ref_type.keys())[i]
+                #mix_range_ = list(ref_type.values())[i]
+                raise Exception("cri_ref(): dictionary ref_type: Not yet implemented")
             else:
 
                 if len(ref_type)>1:
