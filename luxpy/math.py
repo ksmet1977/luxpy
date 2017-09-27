@@ -180,7 +180,6 @@ def symmM_to_posdefM(A = None, atol = 1.0e-9, rtol = 1.0e-9, method = 'make', fo
 
                 return A3
 
-
 #-----------------------------------------------------------------------------
 def bvgpdf(x, y = None, mu = None,sigmainv = None):
     """
