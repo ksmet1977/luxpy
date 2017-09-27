@@ -14,7 +14,7 @@ spd = lx._iestm30["S"]["data"]
 HL17 = lx._cri_rfl["cri2012"]["HL17"]
 rfl =HL17
 rfl = lx._iestm30["R"]["99"]["5nm"]
-xyz1 = lx.spd_to_xyz(spd,rfl=HL17,cieobs = "1931_2",relative=True)
+xyz1 = lx.spd_to_xyz(spd,rfl=rfl,cieobs = "1931_2",relative=True)
 xyz2 = lx.spd_to_xyz(spd)
 Ydlep1 = lx.xyz_to_Ydlep(xyz1)
 Ydlep2 = lx.xyz_to_Ydlep(xyz2)

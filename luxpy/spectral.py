@@ -292,36 +292,19 @@ def spd_to_xyz(data,  relative = True, rfl = None, cieobs = _cieobs, out = None)
     else:
         rfl = np.ones((1,data.shape[1]))
         rflwasnotnone = 0
-    
-    ## Create blocks of spd and rfl for direct mutiplication and summing:
-    #SPD,RFL = meshblock(np2d(data[1:]),np2d(rfl))
-    #           
-    ##rescale xyz using k or 100/Yw:
-    #if relative == True:
-    #    xyz = [100*np.array((SPD*RFL*dl)*cmf[i+1]).sum(axis = 2)/np.array((SPD*dl)*cmf[2]).sum(axis = 2) for i in range(3)] #calculate tristimulus values
-    #else:
-    #    xyz = [k*np.array((SPD*RFL*dl)*cmf[i+1]).sum(axis = 2) for i in range(3)] #calculate tristimulus values
 
     if rflwasnotnone == 1:
         #rescale xyz using k or 100/Yw:
-        xyz = np.nan*np.ones((data.shape[0]-1,rfl.shape[0],3))
-        for ii in range(data.shape[0]-1): #loop much faster dan use of meshblock when rfl is not None
-            if relative == True:
-                xyz[ii,:,:] = np.array([100*np.array((rfl*(data[ii+1,:]*dl*cmf[i+1,:]))).sum(axis = 1)/np.array((data[ii+1,:]*dl*cmf[2,:])).sum(axis = 0) for i in range(3)]).T #calculate tristimulus values
-            else:
-                xyz[ii,:,:] = np.array([k*np.array((rfl*(data[ii+1,:,None]*dl*cmf[i+1,:,None]))).sum(axis = 1) for i in range(3)]) #calculate tristimulus values
-    
-    else:
-        # Create blocks of spd and rfl for direct mutiplication and summing:
-        #SPD,RFL = meshblock(np2d(data[1:]),np2d(rfl))
-        SPD = data[1:,None]
-        #rescale xyz using k or 100/Yw:
         if relative == True:
-            xyz = np.array([100.0*np.array((SPD*dl)*cmf[i+1,None,None]).sum(axis = 2)/np.array((SPD*dl)*cmf[2,None,None]).sum(axis = 2) for i in range(3)]) #calculate tristimulus values
+            xyz = 100.0*np.array([np.dot(rfl,(data[1:]*cmf[i,:]*dl).T)/np.dot(data[1:],cmf[2,:]*dl) for i in range(3)]).T#calculate tristimulus values
         else:
-            xyz = np.array([k*np.array((SPD*dl)*cmf[i+1,None,None]).sum(axis = 2) for i in range(3)]) #calculate tristimulus values
-        # Rearrange axes: axis = 0,1,2: spd, rfl, xyz axis:     
-        xyz = np.transpose(xyz,axes = [1,2,0])
+            xyz = k*np.array([np.dot(rfl,(data[1:]*cmf[i,:]*dl).T)/np.dot(data[1:],cmf[2,:]*dl) for i in range(3)]).T #calculate tristimulus values
+
+    else:
+        if relative == True:
+            xyz = 100.0*(np.dot(data[1:],(cmf[1:]*dl).T)/np.dot(data[1:],(cmf[2,:]*dl).T)[:,None])[:,None,:] #calculate tristimulus values
+        else:
+            xyz = k*(np.dot(data[1:],(cmf[1:]*dl).T))[:,None,:] #calculate tristimulus values
 
     
     if out == 2:
