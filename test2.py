@@ -8,6 +8,7 @@ Created on Sun Sep 24 15:44:24 2017
 import luxpy as lx
 import timeit
 import numpy as np
+import matplotlib.pyplot as plt
 
 def func(n):
     for i in range(1):
@@ -29,3 +30,5 @@ for i in range(300):
         x = timeit.timeit(wrapped, number=1);
         xj = np.hstack((xj,float(x)));
     xi = np.hstack((xi,xj.min()))
+    
+plt.plot(list(range(300)),xi)
