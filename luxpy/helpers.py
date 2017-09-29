@@ -75,7 +75,7 @@ def np3d(data):
         else:
             return np.expand_dims(np.atleast_2d(data),axis=0)
     else:
-        return np.expand_dims(np.atleast_2d(np.aray(data)),axis=0)
+        return np.expand_dims(np.atleast_2d(np.array(data)),axis=0)
     
 def np3dT(data): # keep last axis the same
     """

@@ -435,7 +435,7 @@ def xyz_to_Ydlep(data, cieobs = _cieobs, xyzw = np.array([[100.0,100.0,100.0]]))
     Y, x, y = asplit(Yxy)
     Yw,xw,yw = asplit(Yxyw)
     Ysl,xsl,ysl = asplit(Yxysl)
-    
+
     # calculate hue:
     h = math.positive_arctan(x,y, htype = 'deg')
     
@@ -569,7 +569,6 @@ def Ydlep_to_xyz(data, cieobs = _cieobs, xyzw = np.array([[100.0,100.0,100.0]]))
         num = np.sum(dap * dp,axis=1,keepdims=True)
         xy_linecross = (num/denom) *db + xypl1
         d_linecross = np.atleast_2d((xy_linecross[:,0]**2.0 + xy_linecross[:,1]**2.0)**0.5).T
-        
         x[i,:][pc] = pur[i,:][pc]*d_linecross[pc]*np.cos(hdom[pc]*np.pi/180)
         y[i,:][pc] = pur[i,:][pc]*d_linecross[pc]*np.sin(hdom[pc]*np.pi/180)
 

@@ -296,9 +296,9 @@ def spd_to_xyz(data,  relative = True, rfl = None, cieobs = _cieobs, out = None)
     if rflwasnotnone == 1:
         #rescale xyz using k or 100/Yw:
         if relative == True:
-            xyz = 100.0*np.array([np.dot(rfl,(data[1:]*cmf[i,:]*dl).T)/np.dot(data[1:],cmf[2,:]*dl) for i in range(3)]).T#calculate tristimulus values
+            xyz = 100.0*np.array([np.dot(rfl,(data[1:]*cmf[i+1,:]*dl).T)/np.dot(data[1:],cmf[2,:]*dl) for i in range(3)]).T#calculate tristimulus values
         else:
-            xyz = k*np.array([np.dot(rfl,(data[1:]*cmf[i,:]*dl).T)/np.dot(data[1:],cmf[2,:]*dl) for i in range(3)]).T #calculate tristimulus values
+            xyz = k*np.array([np.dot(rfl,(data[1:]*cmf[i+1,:]*dl).T)/np.dot(data[1:],cmf[1,:]*dl) for i in range(3)]).T #calculate tristimulus values
 
     else:
         if relative == True:
