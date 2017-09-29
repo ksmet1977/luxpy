@@ -249,7 +249,7 @@ def ajoin(data, axis = None):
 def broadcast_shape(data,target_shape = None, expand_2d_to_3d = None, axis1_repeats = None, axis0_repeats = None):
     """
     Broadcasts shapes of data to a target_shape, expand_2d_to_3d if not None and data.ndim == 2, axis0,1_repeats specify how many times data much be repeated along axis (default = same axis size).
-    Useful for block/vector calculation in which nupy fails to broadcast correctly.
+    Useful for block/vector calculation in which numpy fails to broadcast correctly.
     """
     data = np2d(data)
     
@@ -280,7 +280,31 @@ def broadcast_shape(data,target_shape = None, expand_2d_to_3d = None, axis1_repe
     return data
 
 
-
+def todim(x,sa, fullshape = False): 
+    """
+    Expand x to dimensions that are broadcast compatable to a.
+    If fullshape == True: expand to identical dimensions.
+    """
+    sx = x.shape
+    lsx = len(sx)
+    lsa = len(sa)
+    if (sx == sa):
+        pass
+    else:
+        if lsx == 1: 
+            x = np.expand_dims(x,lsx-1)
+        elif (lsx == 2):
+            if (lsa == 3):
+                x = np.expand_dims(x,sa.index(list(set(sa).difference(sx))[0]))
+            else:
+                raise Exception("todim(x,a): dims do not match for 2d arrays.")  
+        else:
+            raise Exception("todim(x,a): no matching dims between 3d x and a.")
+    if fullshape == False:
+        return x
+    else:
+        return np.ones(sa)*x #make dims of x identcal to those of a
+    
 #---------------------------------------------------------------------------------------------------
 #def takea(data,indices,axis):
 #    """
