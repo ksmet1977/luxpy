@@ -15,7 +15,7 @@ spd = np.vstack((spd,spd[1:],spd[1:]))
 
 def func(n):
     for i in range(1):
-        lx.Yuv_to_xyz(lx.xyz_to_Yuv(lx.spd_to_xyz(spd[:(n+1)],rfl = rfl)))
+        lx.spd_to_xyz(spd[:(n+1)],rfl = rfl)
     return True
 
 
