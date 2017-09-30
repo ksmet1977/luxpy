@@ -34,10 +34,12 @@ Created on Sun Jun 18 21:12:30 2017
 # broadcast_shape(): Broadcasts shapes of data to a target_shape, expand_2d_to_3d if not None and data.ndim == 2, axis0,1_repeats specify how many times data much be repeated along axis (default = same axis size).
 #                    Useful for block/vector calculation in which nupy fails to broadcast correctly.
 #
+# todim():  Expand array x to dimensions that are broadcast compatable with a shape sa.
+#           If equal_shape == True: expand to identical dimensions.
 #------------------------------------------------------------------------------
 
 from luxpy import *
-__all__ = ['np2d','np3d','np2dT','np3dT','put_args_in_db','getdata','dictkv','OD','meshblock','asplit','ajoin','broadcast_shape']
+__all__ = ['np2d','np3d','np2dT','np3dT','put_args_in_db','getdata','dictkv','OD','meshblock','asplit','ajoin','broadcast_shape','todim']
 
 #--------------------------------------------------------------------------------------------------
 def np2d(data):
@@ -280,30 +282,36 @@ def broadcast_shape(data,target_shape = None, expand_2d_to_3d = None, axis1_repe
     return data
 
 
-def todim(x,sa, fullshape = False): 
+def todim(x,sa, equal_shape = False): 
     """
-    Expand x to dimensions that are broadcast compatable to a.
-    If fullshape == True: expand to identical dimensions.
+    Expand array x to dimensions that are broadcast compatable with a shape sa.
+    If equal_shape == True: expand to identical dimensions.
     """
-    sx = x.shape
-    lsx = len(sx)
-    lsa = len(sa)
-    if (sx == sa):
-        pass
+    if x is None:
+        return np.broadcast_arrays(x,np.ones(sa))[0]
     else:
-        if lsx == 1: 
-            x = np.expand_dims(x,lsx-1)
-        elif (lsx == 2):
-            if (lsa == 3):
-                x = np.expand_dims(x,sa.index(list(set(sa).difference(sx))[0]))
-            else:
-                raise Exception("todim(x,a): dims do not match for 2d arrays.")  
+        x = np2d(x)
+        sx = x.shape
+        lsx = len(sx)
+        lsa = len(sa)
+        if (sx == sa):
+            pass
         else:
-            raise Exception("todim(x,a): no matching dims between 3d x and a.")
-    if fullshape == False:
-        return x
-    else:
-        return np.ones(sa)*x #make dims of x identcal to those of a
+            if ((lsx == 1) | (sx == (1,sa[-1])) | (sx == (sa[-1],1))): 
+                if (sx == (sa[-1],1)):
+                    x = x.T
+                x = np.expand_dims(x,0)
+            elif (lsx == 2):
+                if (lsa == 3):
+                    x = np.expand_dims(x,sa.index(list(set(sa).difference(sx))[0]))
+                else:
+                    raise Exception("todim(x,a): dims do not match for 2d arrays.")  
+            else:
+                raise Exception("todim(x,a): no matching dims between 3d x and a.")
+        if equal_shape == False:
+            return x
+        else:
+            return np.ones(sa)*x #make dims of x equal to those of a
     
 #---------------------------------------------------------------------------------------------------
 #def takea(data,indices,axis):

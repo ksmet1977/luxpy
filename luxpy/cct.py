@@ -87,7 +87,7 @@ def xyz_to_cct_HA(data):
         CCT_i = np2d(np.array(A0[i] + A1[i]*np.exp(np.divide(-n,t1[i])) + A2[i]*np.exp(np.divide(-n,t2[i])) + A3[i]*np.exp(np.divide(-n,t3[i]))))
         p = (CCT_i >= (1.0-0.05*(i == 0))*cct_ranges[i][0]) & (CCT_i < (1.0+0.05*(i == 0))*cct_ranges[i][1])
         CCT[p] = CCT_i[p]
-        p = (CCT_i < (1.0-0.05*cct_ranges[0][0])) #smaller than smallest valid CCT value
+        p = (CCT_i < (1.0-0.05)*cct_ranges[0][0]) #smaller than smallest valid CCT value
         CCT[p] = -1
    
     if (np.isnan(CCT.sum()) == True) | (np.any(CCT == -1)):
@@ -153,12 +153,12 @@ def xyz_to_cct_search(data, cieobs = _cieobs, out = 'cct',wl = None, accuracy = 
             cct_scale_ifun = lambda x: x
             if (ccttemp != -1) & (np.isnan(ccttemp) == False): # within validity range of CCT estimator-function
                 for ii in range(procent_estimates.shape[0]):
-                    if (ccttemp >= (1.0-0.05*(i == 0))*procent_estimates[ii,0]) & (ccttemp < (1.0+0.05*(i == 0))*procent_estimates[ii,1]):
+                    if (ccttemp >= (1.0-0.05*(ii == 0))*procent_estimates[ii,0]) & (ccttemp < (1.0+0.05*(ii == 0))*procent_estimates[ii,1]):
                         procent_estimate = procent_estimates[ii,2]
                         break
 
                 dT = np.multiply(ccttemp,procent_estimate) # determines range around CCTtemp (25% around estimate) or 100 K
-            elif (ccttemp != -1) & (np.isnan(ccttemp) == False):
+            elif (ccttemp == -1) & (np.isnan(ccttemp) == False):
                 ccttemp = np.array([procent_estimates[0,0]/2])
                 procent_estimate = 1 # cover 0 K to min_CCT of estimator
                 dT = np.multiply(ccttemp,procent_estimate)
@@ -216,12 +216,14 @@ def xyz_to_cct_search(data, cieobs = _cieobs, out = 'cct',wl = None, accuracy = 
                     
                 
                 if (q == 0):
-                    ccttemp = cct_scale_ifun(np.array(cct_scale_fun([cct])) - 2*dT/nsteps)
-                    continue # look in lower section of planckian locus
+                    ccttemp = cct_scale_ifun(np.array(cct_scale_fun([cct])) + 2*dT/nsteps)
+                    #dT = 2.0*dT/nsteps
+                    continue # look in higher section of planckian locus
                     
                 if (q == np.size(ccts_i)):
-                    ccttemp = cct_scale_ifun(np.array(cct_scale_fun([cct])) + 2*dT/nsteps)
-                    continue # look in higher section of planckian locus
+                    ccttemp = cct_scale_ifun(np.array(cct_scale_fun([cct])) - 2*dT/nsteps)
+                    #dT = 2.0*dT/nsteps
+                    continue # look in lower section of planckian locus
                     
                 if (q > 0) & (q < np.size(ccts_i)-1):
                     dT = 2*dT/nsteps
@@ -254,6 +256,8 @@ def xyz_to_cct_search(data, cieobs = _cieobs, out = 'cct',wl = None, accuracy = 
         return np2d(duvs)
     elif (out == 'cct,duv') | (out == 2):
         return np2d(ccts), np2d(duvs)
+    elif (out == "[cct,duv]") | (out == 3):
+        return np.hstack((np2d(ccts), np2d(duvs)))
 
 def xyz_to_cct_ohno(data, cieobs = _cieobs, out = 'cct', wl = None, accuracy = 0.1, force_out_of_lut = True, upper_cct_max = 10.0**20, approx_cct_temp = True):
     """
@@ -422,12 +426,13 @@ def cct_to_xyz(data, duv = None, cieobs = _cieobs, wl = None, mode = 'lut', out 
                 uv0 = Yuv0[0] [1:3]
 
                 OptimizeResult = minimize(fun = objfcn,x0 = np.zeros((1,2)), args = (uv0,cct_i, duv_i, 'F'), method = 'Nelder-Mead',options={"maxiter":np.inf, "maxfev":np.inf, 'xatol': 0.000001, 'fatol': 0.000001})
+                
+                if out is not None:
+                    results[i] = objfcn(OptimizeResult['x'],uv0,cct_i, duv_i, out = 3)
+                
                 uv0 = np2d(uv0 + OptimizeResult['x'])
                 Yuv0 = np.concatenate((np2d([100.0]),uv0),axis=1)
                 xyz_est[i] = Yuv_to_xyz(Yuv0)
-
-                if out is not None:
-                    results[i] = objfcn(OptimizeResult['x'],uv0,cct_i, duv_i, out = 3)
             
             else:
                 xyz_est[i] = xyz0
@@ -440,7 +445,7 @@ def cct_to_xyz(data, duv = None, cieobs = _cieobs, wl = None, mode = 'lut', out 
 
 
 #-------------------------------------------------------------------------------------------------   
-# general CCT-warpper function
+# general CCT-wrapper function
 def xyz_to_cct(data, cieobs = _cieobs, out = 'cct',mode = 'lut', wl = None,accuracy = 0.1, force_out_of_lut = True, upper_cct_max = 10.0**20,approx_cct_temp = True): 
     """
     Convert data = np.array([[x,y,z]]) tristimlus values to cct (correlated color temperature) 
@@ -449,7 +454,7 @@ def xyz_to_cct(data, cieobs = _cieobs, out = 'cct',mode = 'lut', wl = None,accur
     if (mode == 'lut') | (mode == 'ohno'):
         return xyz_to_cct_ohno(data = data, cieobs = cieobs, out = out, accuracy = accuracy, force_out_of_lut = force_out_of_lut)
     elif (mode == 'search'):
-        return xyz_to_cct_search(data = data, cieobs = cieobs, out = out, wl = wl, accuracy = 0.1, upper_cct_max = upper_cct_max, approx_cct_temp = approx_cct_temp)
+        return xyz_to_cct_search(data = data, cieobs = cieobs, out = out, wl = wl, accuracy = accuracy, upper_cct_max = upper_cct_max, approx_cct_temp = approx_cct_temp)
 
 
 def xyz_to_duv(data, cieobs = _cieobs, out = 'duv',mode = 'lut', wl = None,accuracy = 0.1, force_out_of_lut = True, upper_cct_max = 10.0**20,approx_cct_temp = True): 
@@ -461,7 +466,7 @@ def xyz_to_duv(data, cieobs = _cieobs, out = 'duv',mode = 'lut', wl = None,accur
     if (mode == 'lut') | (mode == 'ohno'):
         return xyz_to_cct_ohno(data = data, cieobs = cieobs, out = out, accuracy = accuracy, force_out_of_lut = force_out_of_lut)
     elif (mode == 'search'):
-        return xyz_to_cct_search(data = data, cieobs = cieobs, out = out, wl = wl, accuracy = 0.1, upper_cct_max = upper_cct_max, approx_cct_temp = approx_cct_temp)
+        return xyz_to_cct_search(data = data, cieobs = cieobs, out = out, wl = wl, accuracy = accuracy, upper_cct_max = upper_cct_max, approx_cct_temp = approx_cct_temp)
    
    
 #-------------------------------------------------------------------------------------------------   

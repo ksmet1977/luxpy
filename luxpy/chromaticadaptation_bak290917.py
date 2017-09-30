@@ -236,7 +236,7 @@ def parse_x1x2_parameters(x,target_shape, catmode,expand_2d_to_3d = None, defaul
    with a different value for each xyzw)
    """
    if x is None:
-        #x10 = broadcast_shape(default[0],target_shape = target_shape, expand_2d_to_3d = None, axis1_repeats=1)
+        x10 = broadcast_shape(default[0],target_shape = target_shape, expand_2d_to_3d = None, axis1_repeats=1)
         x10 = todim(default[0],target_shape,equal_shape=True)
         if (catmode == '1>0>2') | (catmode == '1>2'):
             #x20 = broadcast_shape(default[1],target_shape = target_shape, expand_2d_to_3d = None,axis1_repeats=1)

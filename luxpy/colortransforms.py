@@ -166,7 +166,7 @@ def xyz_to_lab(data,xyzw = None, cieobs = _cieobs):
         xyzw = spd_to_xyz(_cie_illuminants['D65'],cieobs = cieobs)
     
     # make xyzw same shape as data:
-    xyzw = broadcast_shape(xyzw, data.shape)
+    xyzw = todim(xyzw, data.shape)
 
     # get and normalize (X,Y,Z) to white point:
     Xr,Yr,Zr = asplit(data/xyzw)
@@ -200,7 +200,7 @@ def lab_to_xyz(data,xyzw = None, cieobs = _cieobs):
         xyzw = spd_to_xyz(_cie_illuminants['D65'],cieobs = cieobs)
     
     # make xyzw same shape as data:
-    xyzw = broadcast_shape(xyzw, data.shape)
+    xyzw = todim(xyzw, data.shape, equal_shape = True)
 
     
     # set knee point of function:
@@ -234,7 +234,7 @@ def xyz_to_luv(data,xyzw = None, cieobs = _cieobs):
         xyzw = spd_to_xyz(_cie_illuminants['D65'],cieobs = cieobs)
     
     # make xyzw same shape as data:
-    xyzw = broadcast_shape(xyzw, data.shape)
+    xyzw = todim(xyzw, data.shape)
     
     # Calculate u',v' of test and white:
     Y,u,v = asplit(xyz_to_Yuv(data))
@@ -262,10 +262,10 @@ def luv_to_xyz(data,xyzw = None, cieobs = _cieobs):
         xyzw = spd_to_xyz(_cie_illuminants['D65'],cieobs = cieobs)
     
     # Make xyzw same shape as data:
-    xyzw = broadcast_shape(xyzw, data.shape)
+    Yuvw = todim(xyz_to_Yuv(xyzw), data.shape, equal_shape = True)
     
     # Get Yw, uw,vw:
-    Yw,uw,vw = asplit(xyz_to_Yuv(xyzw))
+    Yw,uw,vw = asplit(Yuvw)
 
     # calculate u'v' from u*,v*:
     L,u,v = asplit(data)
