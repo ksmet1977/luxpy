@@ -256,8 +256,8 @@ def xyz_to_cct_search(data, cieobs = _cieobs, out = 'cct',wl = None, accuracy = 
         return np2d(duvs)
     elif (out == 'cct,duv') | (out == 2):
         return np2d(ccts), np2d(duvs)
-    elif (out == "[cct,duv]") | (out == 3):
-        return np.hstack((np2d(ccts), np2d(duvs)))
+    elif (out == "[cct,duv]") | (out == -2):
+        return np.vstack((ccts,duvs))
 
 def xyz_to_cct_ohno(data, cieobs = _cieobs, out = 'cct', wl = None, accuracy = 0.1, force_out_of_lut = True, upper_cct_max = 10.0**20, approx_cct_temp = True):
     """
@@ -369,6 +369,8 @@ def xyz_to_cct_ohno(data, cieobs = _cieobs, out = 'cct', wl = None, accuracy = 0
         return np2dT(Duv)
     elif (out == 'cct,duv') | (out == 2):
         return np2dT(CCT), np2dT(Duv)
+    elif (out == "[cct,duv]") | (out == -2):
+        return np.vstack((CCT,Duv))
 
 
 #---------------------------------------------------------------------------------------------------
@@ -426,11 +428,12 @@ def cct_to_xyz(data, duv = None, cieobs = _cieobs, wl = None, mode = 'lut', out 
                 uv0 = Yuv0[0] [1:3]
 
                 OptimizeResult = minimize(fun = objfcn,x0 = np.zeros((1,2)), args = (uv0,cct_i, duv_i, 'F'), method = 'Nelder-Mead',options={"maxiter":np.inf, "maxfev":np.inf, 'xatol': 0.000001, 'fatol': 0.000001})
-                
+                betas = OptimizeResult['x']
+                #betas = np.zeros(uv0.shape)
                 if out is not None:
-                    results[i] = objfcn(OptimizeResult['x'],uv0,cct_i, duv_i, out = 3)
+                    results[i] = objfcn(betas,uv0,cct_i, duv_i, out = 3)
                 
-                uv0 = np2d(uv0 + OptimizeResult['x'])
+                uv0 = np2d(uv0 + betas)
                 Yuv0 = np.concatenate((np2d([100.0]),uv0),axis=1)
                 xyz_est[i] = Yuv_to_xyz(Yuv0)
             
