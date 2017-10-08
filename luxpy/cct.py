@@ -53,7 +53,7 @@ def xyz_to_cct_mcamy(data):
     Yxy = xyz_to_Yxy(data)
     axis_of_v3 = len(data.shape)-1
     n = (Yxy[:,1]-0.3320)/(Yxy[:,2]-0.1858)
-    return  -449.0*(n**3) + 3525.0*(n**2) - 6823.3*n + 5520.33
+    return  np2d(-449.0*(n**3) + 3525.0*(n**2) - 6823.3*n + 5520.33).T
 
 
 def xyz_to_cct_HA(data):
@@ -257,7 +257,7 @@ def xyz_to_cct_search(data, cieobs = _cieobs, out = 'cct',wl = None, accuracy = 
     elif (out == 'cct,duv') | (out == 2):
         return np2d(ccts), np2d(duvs)
     elif (out == "[cct,duv]") | (out == -2):
-        return np.vstack((ccts,duvs))
+        return np.vstack((ccts,duvs)).T
 
 def xyz_to_cct_ohno(data, cieobs = _cieobs, out = 'cct', wl = None, accuracy = 0.1, force_out_of_lut = True, upper_cct_max = 10.0**20, approx_cct_temp = True):
     """
@@ -370,7 +370,7 @@ def xyz_to_cct_ohno(data, cieobs = _cieobs, out = 'cct', wl = None, accuracy = 0
     elif (out == 'cct,duv') | (out == 2):
         return np2dT(CCT), np2dT(Duv)
     elif (out == "[cct,duv]") | (out == -2):
-        return np.vstack((CCT,Duv))
+        return np.vstack((CCT,Duv)).T
 
 
 #---------------------------------------------------------------------------------------------------
