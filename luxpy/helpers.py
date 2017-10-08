@@ -282,7 +282,7 @@ def broadcast_shape(data,target_shape = None, expand_2d_to_3d = None, axis1_repe
     return data
 
 
-def todim(x,sa, equal_shape = False): 
+def todim(x,sa, add_axis = 1, equal_shape = False): 
     """
     Expand array x to dimensions that are broadcast compatable with a shape sa.
     If equal_shape == True: expand to identical dimensions.
@@ -303,7 +303,12 @@ def todim(x,sa, equal_shape = False):
                 x = np.expand_dims(x,0)
             elif (lsx == 2):
                 if (lsa == 3):
-                    x = np.expand_dims(x,sa.index(list(set(sa).difference(sx))[0]))
+                    sd = np.setdiff1d(sa, sx,assume_unique=True)
+                    if len(sd) == 0:
+                        ax = add_axis
+                    else:
+                        ax = sa.index(sd)
+                    x = np.expand_dims(x,ax)
                 else:
                     raise Exception("todim(x,a): dims do not match for 2d arrays.")  
             else:
