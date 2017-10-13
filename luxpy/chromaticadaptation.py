@@ -31,8 +31,6 @@ Created on Wed Jun 25 12:12:28 2017
 #
 # check_dimensions():  Check if dimensions of data and xyzw match. If xyzw.shape[0] > 1 then len(data.shape) > 2 & (data.shape[0] = xyzw.shape[0]).
 #
-# normalize_mcat():  Normalize mcat matrix to xyz0 -- > [1,1,1]
-#
 # get_transfer_function():  Calculate the chromatic adaptation diagonal matrix transfer function Dt.  
 #                           Default = 'vonkries' (others: 'rlab')
 #
@@ -54,7 +52,7 @@ Created on Wed Jun 25 12:12:28 2017
        
 from luxpy import *
 
-#__all__ = ['_white_point','_La', '_mcats','normalize_mcat','degree_of_adaptation_D','transferfunction_Dt','degree_of_adaptation_D','parse_x1x2_parameters','apply','smet2017_D']
+#__all__ = ['_white_point','_La', '_mcats','normalize_3x3_matrix','degree_of_adaptation_D','transferfunction_Dt','degree_of_adaptation_D','parse_x1x2_parameters','apply','smet2017_D']
 
 _white_point = np2d([100,100,100]) #default adopted white point
 _La = 100.0 #cd/m²
@@ -83,23 +81,6 @@ def check_dimensions(data,xyzw, caller = 'cat.apply()'):
     data = np2d(data)
     if ((xyzw.shape[0]> 1)  & (data.shape[0] != xyzw.shape[0]) & (len(data.shape) == 2)):# | ((xyzw.shape[0]> 1) & (len(data.shape) == 2)):
         raise Exception('{}: Cannot match dim of xyzw with data: xyzw0.shape[0]>1 & != data.shape[0]'.format(caller))
-        
-        
-
-
-#------------------------------------------------------------------------------
-def normalize_mcat(mcat,xyz0 = _white_point):
-    """
-    Normalize mcat matrix to xyz0 -- > [1,1,1]
-    If mcat == 1by9: reshape
-    """
-    mcat = np2d(mcat)
-    if mcat.shape[-1]==9:
-        mcat = mcat.reshape(3,3)
- 
-    #mcat = np.dot(np.diag((xyz0/xyz0[1])*mcat.sum(axis = 1)).T, mcat)
-    mcat = np.dot(np.diag(1/(np.dot(mcat,xyz0.T))),mcat)
-    return mcat
 
 #------------------------------------------------------------------------------
 def get_transfer_function(cattype = 'vonkries', catmode = '1>0>2',lmsw1 = None,lmsw2 = None,lmsw0 = _white_point,D10 = 1.0,D20 = 1.0,La1=_La,La2=_La,La0 = _La):
@@ -149,9 +130,10 @@ def smet2017_D(xyzw, Dmax = None, cieobs = '1964_10'):
     """
     
     # Convert xyzw to log-compressed Macleod_Boyton coordinates:
+    xyz_to_Yuv(xyzw)
     Vl, rl, bl = asplit(np.log(xyz_to_Vrb_mb(xyzw,cieobs = cieobs)))
 
-    # apply Dmodel (techincally only for cieobs = '1964_10')
+    # apply Dmodel (technically only for cieobs = '1964_10')
     pD = (1e7)*np.array([0.021081326530436, 4.751255762876845, -0.000000071025181, -0.000000063627042, -0.146952821492957, 3.117390441655821]) #D model parameters for gaussian model in log(MB)-space (july 2016) 
     Dmax_exp = 0.6539 # max D obtained under experimental conditions (probably too low due to dark surround leading to incomplete chromatic adaptation even for neutral illuminants resulting in background luminance (fov~50°) of 760 cd/m²)
     D = math.bvgpdf(x= rl, y=bl, mu = pD[2:4], sigmainv = np.linalg.inv(np.array([[pD[0],pD[4]],[pD[4],pD[1]]])))
@@ -351,7 +333,7 @@ def apply(data, catmode = '1>0>2', cattype = 'vonkries', xyzw1 = None,xyzw2 = No
             
             # normalize sensor matrix:
             if normxyz0 is not None:
-                mcati = normalize_mcat(mcati, xyz0 = normxyz0)
+                mcati = normalize_3x3_matrix(mcati, xyz0 = normxyz0)
             
             # convert from xyz to lms:
             lms = np.dot(mcati,data[i].T).T

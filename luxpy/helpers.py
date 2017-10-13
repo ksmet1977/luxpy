@@ -16,6 +16,8 @@ Created on Sun Jun 18 21:12:30 2017
 #
 # np3dT(): Make a tupple, list or numpy array at least 3d array and tranpose (swap) first two axes.
 #
+# normalize_3x3_matrix(): Normalize 3x3 matrix to xyz0 -- > [1,1,1]
+#
 # put_args_in_db(): Overwrites values in dict db with 'not-None' input arguments from function (obtained with built-in locals()).
 #                   See put_args_in_db? for more info.
 #
@@ -39,7 +41,7 @@ Created on Sun Jun 18 21:12:30 2017
 #------------------------------------------------------------------------------
 
 from luxpy import *
-__all__ = ['np2d','np3d','np2dT','np3dT','put_args_in_db','getdata','dictkv','OD','meshblock','asplit','ajoin','broadcast_shape','todim']
+__all__ = ['np2d','np3d','np2dT','np3dT','put_args_in_db','getdata','dictkv','OD','meshblock','asplit','ajoin','broadcast_shape','todim','normalize_3x3_matrix']
 
 #--------------------------------------------------------------------------------------------------
 def np2d(data):
@@ -90,6 +92,18 @@ def np3dT(data): # keep last axis the same
             return np.expand_dims(np.atleast_2d(data),axis=0).transpose((1,0,2))
     else:
         return np.expand_dims(np.atleast_2d(np.aray(data)),axis=0).transpose((1,0,2))
+
+
+#------------------------------------------------------------------------------
+def normalize_3x3_matrix(M,xyz0 = np.array([[1.0,1.0,1.0]])):
+    """
+    Normalize 3x3 matrix to xyz0 -- > [1,1,1]
+    If M == 1by9: reshape
+    """
+    M = np2d(M)
+    if M.shape[-1]==9:
+        M = M.reshape(3,3)
+    return np.dot(np.diag(1/(np.dot(M,xyz0.T))),M)
 
 #------------------------------------------------------------------------------
 def put_args_in_db(db,args):

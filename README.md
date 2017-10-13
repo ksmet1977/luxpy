@@ -213,9 +213,6 @@ Default chromatic adaptation sensor spaces
 ### cat.check_dimensions():  
 Check if dimensions of data and xyzw match. If xyzw.shape[0] > 1 then len(data.shape) > 2 & (data.shape[0] = xyzw.shape[0]).
 
-### cat.normalize_mcat():  
-Normalize mcat matrix to xyz0 -- > [1,1,1]
-
 ### cat.get_transfer_function():  
 Calculate the chromatic adaptation diagonal matrix transfer function Dt. 
 Default = 'vonkries' (others: 'rlab')
@@ -464,6 +461,9 @@ Make a tupple, list or numpy array at least 3d array.
 
 ### np3dT():
 Make a tupple, list or numpy array at least 3d array and tranpose (swap) first two axes.
+
+### normalize_3x3_matrix():  
+Normalize 3x3 matrix to xyz0 -- > [1,1,1]
 
 ### put_args_in_db():
 Overwrites values in dict db with 'not-None' input arguments from function (obtained with built-in locals()).

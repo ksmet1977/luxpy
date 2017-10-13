@@ -197,11 +197,10 @@ def bvgpdf(x, y = None, mu = None,sigmainv = None):
         y = np2d(y) - mu[1] # center data on mu 
     else:
         x = x - mu # center data on mu    
-        x, y = aplit(x)
+        x, y = asplit(x)
         
-    mahalanobis = (sigmainv[0.0,0.0] * (x**2.0) + sigmainv[1.0,1.0] * (y**2.0) + 2.0*sigmainv[0.0,1.0]*(x*y))
+    return np.exp(-0.5* (sigmainv[0,0] * (x**2.0) + sigmainv[1,1] * (y**2.0) + 2.0*sigmainv[0,1]*(x*y)))
 
-    return np.exp(-0.5*mahalanobis)
 
 #------------------------------------------------------------------------------
 def rms(data,axis = 0, keepdims = False):

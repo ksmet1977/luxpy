@@ -756,7 +756,7 @@ def cam_sww_2016(data, dataw = None, Yb = 20.0, Lw = 400.0, relative = True, par
   
     
     # precomputations:
-    Mxyz2lms = np.dot(np.diag(cLMS),cat.normalize_mcat(Mxyz2lms, np.array([1, 1, 1]))) # normalize matrix for xyz-> lms conversion to ill. E weighted with cLMS   
+    Mxyz2lms = np.dot(np.diag(cLMS),normalize_3x3_matrix(Mxyz2lms, np.array([1, 1, 1]))) # normalize matrix for xyz-> lms conversion to ill. E weighted with cLMS   
     invMxyz2lms = np.linalg.inv(Mxyz2lms)
     MAab = np.array([clambda,calpha,cbeta])
     invMAab = np.linalg.inv(MAab)

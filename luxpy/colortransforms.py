@@ -11,7 +11,7 @@ Created on Wed Jun 28 22:48:09 2017
 # functions related to basic colorimetry
 ###################################################################################################
 from luxpy import *
-from luxpy.chromaticadaptation import normalize_mcat
+#from luxpy.chromaticadaptation import normalize_mcat
 
 __all__ = ['_cspace_axes', '_ipt_M','xyz_to_Yxy','Yxy_to_xyz','xyz_to_Yuv','Yuv_to_xyz',
            'xyz_to_wuv','wuv_to_xyz','xyz_to_xyz','xyz_to_lab','lab_to_xyz','xyz_to_luv','luv_to_xyz',
@@ -27,11 +27,11 @@ __all__ = ['_cspace_axes', '_ipt_M','xyz_to_Yxy','Yxy_to_xyz','xyz_to_Yuv','Yuv_
 #   Yuv_to_Yxy():      "
 #   xyz_to_Yuv():      "
 #   Yuv_to_xyz():      "
-#	 xyz_to_xyz():	   "
-#	 xyz_to_lab():	   "
-#	 lab_to_xyz():	   "
-#	 xyz_to_luv():	   "
-#	 luv_to_xyz():	   "
+#	   xyz_to_xyz():	   "
+#	   xyz_to_lab():	   "
+#	   lab_to_xyz():	   "
+#	   xyz_to_luv():	   "
+#	   luv_to_xyz():	   "
 #   xyz_to_Vrb_mb():   convert xyz to macleod boyton type coordinates (r,b) = (l,s)
 #   Vrb_mb_to_xyz():   convert macleod boyton type coordinates (r,b) = (l,s) to xyz
 #   xyz_to_ipt():   self-explanatory
@@ -332,7 +332,7 @@ def xyz_to_ipt(data,cieobs = _cieobs, xyz0 = None, Mxyz2lms = None):
             xyz0 = spd_to_xyz(_cie_illuminants['D65'],cieobs = cieobs, out = 1)[0]/100.0
         else:
             xyz0 = xyz0/100.0    
-        M = normalize_mcat(M,xyz0)
+        M = normalize_3x3_matrix(M,xyz0)
     else:
         M = Mxyz2lms
 
@@ -373,7 +373,7 @@ def ipt_to_xyz(data,cieobs = _cieobs, xyz0 = None, Mxyz2lms = None):
             xyz0 = spd_to_xyz(_cie_illuminants['D65'],cieobs = cieobs, out = 1)[0]/100.0
         else:
             xyz0 = xyz0/100.0    
-        M = normalize_mcat(M,xyz0)
+        M = normalize_3x3_matrix(M,xyz0)
     else:
         M = Mxyz2lms
     
