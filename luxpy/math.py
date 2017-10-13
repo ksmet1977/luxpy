@@ -180,10 +180,18 @@ def symmM_to_posdefM(A = None, atol = 1.0e-9, rtol = 1.0e-9, method = 'make', fo
 
                 return A3
 
+
 #-----------------------------------------------------------------------------
 def bvgpdf(x, y = None, mu = None,sigmainv = None):
     """
     Calculate bivariate Gaussian (PD) function, with center mu and shape and orientation determined by sigmainv. 
+    """
+    return np.exp(-0.5*mahalanobis(x,y = y, mu = mu, sigmainv= sigmainv))
+
+#-----------------------------------------------------------------------------
+def mahalanobis2(x, y = None, mu = None,sigmainv = None):
+    """
+    Calculate mahalanobis.^2 distance with center mu and shape and orientation determined by sigmainv. 
     """
     if mu is None:
         mu = np.zeros(2)
@@ -199,7 +207,8 @@ def bvgpdf(x, y = None, mu = None,sigmainv = None):
         x = x - mu # center data on mu    
         x, y = asplit(x)
         
-    return np.exp(-0.5* (sigmainv[0,0] * (x**2.0) + sigmainv[1,1] * (y**2.0) + 2.0*sigmainv[0,1]*(x*y)))
+    return (sigmainv[0,0] * (x**2.0) + sigmainv[1,1] * (y**2.0) + 2.0*sigmainv[0,1]*(x*y))
+
 
 
 #------------------------------------------------------------------------------

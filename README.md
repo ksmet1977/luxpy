@@ -519,6 +519,10 @@ Converts a symmetric matrix to a positive definite one. Two methods are supporte
 ### bvgpdf():
 Calculates bivariate Gaussian (PD) function, with center mu and shape and orientation determined by sigmainv. 
 
+### mahalanobis2():
+Calculates mahalanobis.^2 distance with center mu and shape and orientation determined by sigmainv. 
+
+
 ### rms():
 Calculates root-mean-square along axis.
 
