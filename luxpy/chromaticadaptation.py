@@ -134,7 +134,7 @@ def smet2017_D(xyzw, Dmax = None, cieobs = '1964_10'):
     Vl, rl, bl = asplit(np.log(xyz_to_Vrb_mb(xyzw,cieobs = cieobs)))
 
     # apply Dmodel (technically only for cieobs = '1964_10')
-    pD = (1e7)*np.array([0.021081326530436, 4.751255762876845, -0.000000071025181, -0.000000063627042, -0.146952821492957, 3.117390441655821]) #D model parameters for gaussian model in log(MB)-space (july 2016) 
+    pD = (1.0e7)*np.array([0.021081326530436, 4.751255762876845, -0.000000071025181, -0.000000063627042, -0.146952821492957, 3.117390441655821]) #D model parameters for gaussian model in log(MB)-space (july 2016) 
     Dmax_exp = 0.6539 # max D obtained under experimental conditions (probably too low due to dark surround leading to incomplete chromatic adaptation even for neutral illuminants resulting in background luminance (fov~50°) of 760 cd/m²)
     D = math.bvgpdf(x= rl, y=bl, mu = pD[2:4], sigmainv = np.linalg.inv(np.array([[pD[0],pD[4]],[pD[4],pD[1]]])))
     D = D**pD[5]
