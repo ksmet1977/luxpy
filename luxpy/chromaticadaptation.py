@@ -10,7 +10,8 @@ Created on Wed Jun 25 12:12:28 2017
 # chromatic adaptation models
 ###################################################################################################
 
-# _xyz0 :   default adopted white point
+# _white_point :   default adopted white point
+# _La :  default luminance of the adaptation field
 #
 # _ mcats: default chromatic adaptation sensor spaces
 #        - 'hpe': Hunt-Pointer-Estevez: R. W. G. Hunt, The Reproduction of Colour: Sixth Edition, 6th ed. Chichester, UK: John Wiley & Sons Ltd, 2004.
@@ -53,9 +54,10 @@ Created on Wed Jun 25 12:12:28 2017
        
 from luxpy import *
 
-#__all__ = ['_xyz0','_mcats','normalize_mcat','degree_of_adaptation_D','transferfunction_Dt','degree_of_adaptation_D','parse_x1x2_parameters','apply','smet2017_D']
+#__all__ = ['_white_point','_La', '_mcats','normalize_mcat','degree_of_adaptation_D','transferfunction_Dt','degree_of_adaptation_D','parse_x1x2_parameters','apply','smet2017_D']
 
-_xyz0 = np2d([100,100,100]) #default adopted white point
+_white_point = np2d([100,100,100]) #default adopted white point
+_La = 100.0 #cd/m²
 
 _mcats = {x : _cmf['M'][x] for x in _cmf['types']}
 _mcats['hpe'] = _mcats['1931_2']
@@ -86,7 +88,7 @@ def check_dimensions(data,xyzw, caller = 'cat.apply()'):
 
 
 #------------------------------------------------------------------------------
-def normalize_mcat(mcat,xyz0 = _xyz0):
+def normalize_mcat(mcat,xyz0 = _white_point):
     """
     Normalize mcat matrix to xyz0 -- > [1,1,1]
     If mcat == 1by9: reshape
@@ -100,12 +102,12 @@ def normalize_mcat(mcat,xyz0 = _xyz0):
     return mcat
 
 #------------------------------------------------------------------------------
-def get_transfer_function(cattype = 'vonkries', catmode = '1>0>2',lmsw1 = None,lmsw2 = None,lmsw0 = None,D10 = None,D20 = None,La1=None,La2=None,La0 = None):
+def get_transfer_function(cattype = 'vonkries', catmode = '1>0>2',lmsw1 = None,lmsw2 = None,lmsw0 = _white_point,D10 = 1.0,D20 = 1.0,La1=_La,La2=_La,La0 = _La):
     """
     Calculate the chromatic adaptation diagonal matrix transfer function Dt.
     Default = 'vonkries' (others: 'rlab')
     """
-    
+
     if (catmode is None) & (cattype == 'vonkries'):
         if (lmsw1 is not None) & (lmsw2 is not None):
             catmode = '1>0>2'

@@ -187,8 +187,11 @@ Converts from CCT to Mired scale (or back)
 
 ## 6. chromaticadaptation.py (cat)
 
-### cat._xyz0:   
+### cat._white_point:   
 Default adopted white point
+
+### cat._La:   
+Default luminance of adapting field
 
 ### cat._mcats: 
 Default chromatic adaptation sensor spaces
