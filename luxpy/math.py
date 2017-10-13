@@ -186,7 +186,7 @@ def bvgpdf(x, y = None, mu = None,sigmainv = None):
     """
     Calculate bivariate Gaussian (PD) function, with center mu and shape and orientation determined by sigmainv. 
     """
-    return np.exp(-0.5*mahalanobis(x,y = y, mu = mu, sigmainv= sigmainv))
+    return np.exp(-0.5*mahalanobis2(x,y = y, mu = mu, sigmainv= sigmainv))
 
 #-----------------------------------------------------------------------------
 def mahalanobis2(x, y = None, mu = None,sigmainv = None):
