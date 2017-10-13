@@ -94,7 +94,7 @@ def get_transfer_function(cattype = 'vonkries', catmode = '1>0>2',lmsw1 = None,l
             catmode = '1>0>2'
         elif (lmsw2 is None) & (lmsw1 is not None): # apply one-step CAT: 1-->0
             catmode = '1>0'
-        elif (xyzw1 is None) & (xyzw2 is not None):
+        elif (lmsw1 is None) & (lmsw2 is not None):
             catmode = '0>2' # apply one-step CAT: 0-->2
 
     if cattype == 'vonkries':
@@ -109,7 +109,6 @@ def get_transfer_function(cattype = 'vonkries', catmode = '1>0>2',lmsw1 = None,l
             Dt = (D10*lmsw2/lmsw1 + (1-D10))
 
     elif cattype == 'rlab': # Farchild 1990
-        axis_of_v3 = len(lmsw0.shape)-1
         lmsw1divlmsw0 = (lmsw1/lmsw0).T
         lmsw2divlmsw0 = (lmsw2/lmsw0).T
         lmse1 = 3*lmsw1divlmsw0/lmsw1divlmsw0.sum(axis = 0)
