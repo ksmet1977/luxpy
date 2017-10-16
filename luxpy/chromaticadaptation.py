@@ -190,7 +190,6 @@ def get_degree_of_adaptation(Dtype = None, **kwargs):
             xyzw = np.array([kwargs['xyzw']])
             Dmax = np.array([kwargs['Dmax']])
             D = smet2017_Dmodel(xyzw,Dmax = Dmax)
-            print('\nException: degree_of_adaptation_D(): Smet et al., Study of chromatic adaptation using memory color matches. Part II: Colored illuminants. (2017). 2017 Apr 3;25(7):8350-8365. doi: 10.1364/OE.25.008350. NOT YET IMPLEMENTED !\n')
         else:
             PAR = ["? user defined"]
             D = np.array(eval(Dtype))
