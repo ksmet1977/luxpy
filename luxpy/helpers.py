@@ -321,7 +321,7 @@ def todim(x,sa, add_axis = 1, equal_shape = False):
                     if len(sd) == 0:
                         ax = add_axis
                     else:
-                        ax = sa.index(sd)
+                        ax = np.where(sa==sd)[0][0]
                     x = np.expand_dims(x,ax)
                 else:
                     raise Exception("todim(x,a): dims do not match for 2d arrays.")  

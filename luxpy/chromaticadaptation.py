@@ -212,31 +212,31 @@ def parse_x1x2_parameters(x,target_shape, catmode,expand_2d_to_3d = None, defaul
    with a different value for each xyzw)
    """
    if x is None:
-        #x10 = broadcast_shape(default[0],target_shape = target_shape, expand_2d_to_3d = None, axis1_repeats=1)
-        x10 = todim(default[0],target_shape,equal_shape=True)
+        x10 = broadcast_shape(default[0],target_shape = target_shape, expand_2d_to_3d = None, axis1_repeats=1)
+        #x10 = todim(default[0],target_shape,equal_shape=True)
         if (catmode == '1>0>2') | (catmode == '1>2'):
-            #x20 = broadcast_shape(default[1],target_shape = target_shape, expand_2d_to_3d = None,axis1_repeats=1)
-            x20 = todim(default[1],target_shape,equal_shape=True)
+            x20 = broadcast_shape(default[1],target_shape = target_shape, expand_2d_to_3d = None,axis1_repeats=1)
+            #x20 = todim(default[1],target_shape,equal_shape=True)
         else:
-            #x20 = broadcast_shape(None,target_shape = target_shape, expand_2d_to_3d = None,axis1_repeats=1)
-            x20 = todim(None,target_shape,equal_shape=True)
+            x20 = broadcast_shape(None,target_shape = target_shape, expand_2d_to_3d = None,axis1_repeats=1)
+            #x20 = todim(None,target_shape,equal_shape=True)
    else:
         x = np2d(x)
         if (catmode == '1>0>2') |(catmode == '1>2'):
             if x.shape[-1] == 2:
-                #x10 = broadcast_shape(x[:,0,None],target_shape = target_shape, expand_2d_to_3d = None,axis1_repeats=1)
-                x10 = todim(x[:,0,None],target_shape,equal_shape=True)
-                #x20 = broadcast_shape(x[:,1,None],target_shape = target_shape, expand_2d_to_3d = None,axis1_repeats=1)
-                x20 = todim(x[:,1,None],target_shape,equal_shape=True)
+                x10 = broadcast_shape(x[:,0,None],target_shape = target_shape, expand_2d_to_3d = None,axis1_repeats=1)
+                #x10 = todim(x[:,0,None],target_shape,equal_shape=True)
+                x20 = broadcast_shape(x[:,1,None],target_shape = target_shape, expand_2d_to_3d = None,axis1_repeats=1)
+                #x20 = todim(x[:,1,None],target_shape,equal_shape=True)
             else:
-                 #x10 = broadcast_shape(x,target_shape = target_shape, expand_2d_to_3d = None,axis1_repeats=1)
-                 x10 = todim(x,target_shape,equal_shape=True)
+                 x10 = broadcast_shape(x,target_shape = target_shape, expand_2d_to_3d = None,axis1_repeats=1)
+                 #x10 = todim(x,target_shape,equal_shape=True)
                  x20 = x10.copy()
         elif catmode == '1>0':
-            #x10 = broadcast_shape(x[:,0,None],target_shape = target_shape, expand_2d_to_3d = None,axis1_repeats=1)
-            x10 = todim(x[:,0,None],target_shape,equal_shape=True)
-            #x20 = broadcast_shape(None,target_shape = target_shape, expand_2d_to_3d = None,axis1_repeats=1)
-            x20 = todim(None,target_shape,equal_shape=True)
+            x10 = broadcast_shape(x[:,0,None],target_shape = target_shape, expand_2d_to_3d = None,axis1_repeats=1)
+            #x10 = todim(x[:,0,None],target_shape,equal_shape=True)
+            x20 = broadcast_shape(None,target_shape = target_shape, expand_2d_to_3d = None,axis1_repeats=1)
+            #x20 = todim(None,target_shape,equal_shape=True)
     
    return x10, x20
 
@@ -257,9 +257,14 @@ def apply(data, catmode = '1>0>2', cattype = 'vonkries', xyzw1 = None,xyzw2 = No
         # Make data 2d:
         data = np2d(data)
         data_original_shape = data.shape
-        #data = broadcast_shape(data,target_shape = None,expand_2d_to_3d = 0, axis1_repeats = 1) # make xyzw0 same 'size' as data
-        data = todim(data,target_shape,equal_shape=True)
-       
+        if data.ndim < 3:
+            target_shape = np.hstack((1,data.shape))
+        else:
+            target_shape = data.shape
+
+        #data = broadcast_shape(data,target_shape = None,expand_2d_to_3d = 0, axis1_repeats = 1) 
+        data = todim(data,target_shape,equal_shape=False)
+
         # initialize xyzw0:
         if (xyzw0 is None): # set to iLL.E
             xyzw0 = np.array([100.0,100.0,100.0])
@@ -360,7 +365,7 @@ def apply(data, catmode = '1>0>2', cattype = 'vonkries', xyzw1 = None,xyzw2 = No
                 lms = (La2[i]/La1[i])*lms
             elif (catmode == '1>0'):
                 lms = (La0[i]/La1[i])*lms
-            if (catmode == '1>2'):
+            elif (catmode == '1>2'):
                 lms = (La2[i]/La1[i])*lms
 
             
