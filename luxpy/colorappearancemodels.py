@@ -80,24 +80,24 @@ _unique_hue_data['cam15u'] = _unique_hue_data['ciecam02']
 _unique_hue_data['cam16'] = {'hues': 'red yellow green blue red'.split(), 'i': np.arange(5.0), 'hi':[20.14, 90.0, 164.25,237.53,380.14],'ei':[0.8,0.7,1.0,1.2,0.8],'Hi':[0.0,100.0,200.0,300.0,400.0]}
 
 _surround_parameters = {'parameters': 'c Nc F FLL'.split()}
-_surround_parameters['models'] = 'ciecam02 ciecam97s cam15u'.split()
-_surround_parameters['ciecam02'] =  {'surrounds': ['avg dim dark'], 'avg' : {'c':0.69, 'Nc':1.0, 'F':1.0,'FLL': 1.0}, 'dim' : {'c':0.59, 'Nc':0.9, 'F':0.9,'FLL':1.0} ,'dark' : {'c':0.525, 'Nc':0.8, 'F':0.8,'FLL':1.0}}
+_surround_parameters['models'] = 'ciecam02 ciecam97s cam15u cam16'.split()
+_surround_parameters['ciecam02'] =  {'surrounds': ['avg', 'dim', 'dark'], 'avg' : {'c':0.69, 'Nc':1.0, 'F':1.0,'FLL': 1.0}, 'dim' : {'c':0.59, 'Nc':0.9, 'F':0.9,'FLL':1.0} ,'dark' : {'c':0.525, 'Nc':0.8, 'F':0.8,'FLL':1.0}}
 _surround_parameters['ciecam97s'] = {'surrounds': ['avg', 'avg,stim>4°','dim', 'dark','cutsheet'], 'avg' : {'c':0.69, 'Nc':1.0, 'F':1.0,'FLL': 1.0}, 'avg,stim>4°' : {'c':0.69, 'Nc':1.0, 'F':1.0,'FLL': 0.0}, 'dim' : {'c':0.59, 'Nc':1.1, 'F':0.9,'FLL':1.0} ,'dark' : {'c':0.525, 'Nc':0.8, 'F':0.9,'FLL':1.0},'cutsheet': {'c':0.41, 'Nc':0.8, 'F':0.9,'FLL':1.0}}
 _surround_parameters['cam15u'] =  {'surrounds': ['dark'], 'dark' : {'c': None, 'Nc':None,'F':None,'FLL':None}}
-_surround_parameters['cam16'] =  {'surrounds': ['avg dim dark'], 'avg' : {'c':0.69, 'Nc':1.0, 'F':1.0,'FLL': 1.0}, 'dim' : {'c':0.59, 'Nc':0.9, 'F':0.9,'FLL':1.0} ,'dark' : {'c':0.525, 'Nc':0.8, 'F':0.8,'FLL':1.0}}
+_surround_parameters['cam16'] =  {'surrounds': ['avg', 'dim', 'dark'], 'avg' : {'c':0.69, 'Nc':1.0, 'F':1.0,'FLL': 1.0}, 'dim' : {'c':0.59, 'Nc':0.9, 'F':0.9,'FLL':1.0} ,'dark' : {'c':0.525, 'Nc':0.8, 'F':0.8,'FLL':1.0}}
 
 _naka_rushton_parameters = {'parameters': 'n sig scaling noise'.split()}
-_naka_rushton_parameters['models'] = 'ciecam02 ciecam97s cam15u'.split()
+_naka_rushton_parameters['models'] = 'ciecam02 ciecam97s cam15u cam16'.split()
 _naka_rushton_parameters['ciecam02'] = {'n':0.42, 'sig': 27.13**(1/0.42), 'scaling': 400.0, 'noise': 0.1}
 _naka_rushton_parameters['ciecam97s'] = {'n':0.73, 'sig': 2.0**(1/0.73), 'scaling': 40.0, 'noise': 1.0}
 _naka_rushton_parameters['cam15u'] = {'n':None, 'sig': None, 'scaling': None, 'noise': None}
 _naka_rushton_parameters['cam16'] = {'n':0.42, 'sig': 27.13**(1/0.42), 'scaling': 400.0, 'noise': 0.1}
 
 _camucs_parameters = {'ciecam02': {'ucs':{'KL': 1.0, 'c1':0.007,'c2':0.0228},'lcd':{'KL': 0.77, 'c1':0.007,'c2':0.0053}, 'scd':{'KL': 1.24, 'c1':0.007,'c2':0.0363}}}
-_camucs_parameters['cam16'] = {'k': [666.7, 782.3,1444.6],'cp': 1.0/3, 'cA':3.22 ,'cAlms':[2.0, 1.0, 1/20] ,'ca' : 1.0, 'calms':[1.0,-12/11,1/11],'cb': 0.117, 'cblms': [1.0, 1.0,-2.0], 'unique_hue_data':_unique_hue_data['ciecam02'], 'cM': 135.52, 'cHK': [2.559,0.561], 'cW': [2.29,2.68], 'cfov': 0.271, 'Mxyz2rgb': np.array([[0.211831, 0.815789, -0.042472],[-0.492493, 1.378921, 0.098745],[0.0, 0.0, 0.985188]])}
+_camucs_parameters['cam16'] = {'ucs':{'KL': 1.0, 'c1':0.007,'c2':0.0228},'lcd':{'KL': 0.77, 'c1':0.007,'c2':0.0053}, 'scd':{'KL': 1.24, 'c1':0.007,'c2':0.0363}}
 
 
-_cam15u_parameters = {'k': [666.7, 782.3,1444.6],'cp': 1/3, 'cA':3.22 ,'cAlms':[2, 1, 1/20] ,'ca' : 1.0, 'calms':[1,-12/11,1/11],'cb': 0.117, 'cblms': [1.0, 1.0,-2.0], 'unique_hue_data':_unique_hue_data['ciecam02'], 'cM': 135.52, 'cHK': [2.559,0.561], 'cW': [2.29,2.68], 'cfov': 0.271, 'Mxyz2rgb': np.array([[0.211831, 0.815789, -0.042472],[-0.492493, 1.378921, 0.098745],[0.0, 0.0, 0.985188]])}
+_cam15u_parameters = {'k': [666.7, 782.3,1444.6],'cp': 1.0/3, 'cA':3.22 ,'cAlms':[2.0, 1.0, 1/20] ,'ca' : 1.0, 'calms':[1.0,-12/11,1/11],'cb': 0.117, 'cblms': [1.0, 1.0,-2.0], 'unique_hue_data':_unique_hue_data['cam15u'], 'cM': 135.52, 'cHK': [2.559,0.561], 'cW': [2.29,2.68], 'cfov': 0.271, 'Mxyz2rgb': np.array([[0.211831, 0.815789, -0.042472],[-0.492493, 1.378921, 0.098745],[0.0, 0.0, 0.985188]])}
 
 _cam_sww_2016_parameters = {'JOSA': {'cLMS': [1.0,1.0,1.0], 'lms0': [4985.0,5032.0,4761.0] , 'Cc': 0.252, 'Cf': -0.4, 'clambda': [0.5, 0.5, 0.0], 'calpha': [1.0, -1.0, 0.0], 'cbeta': [0.5, 0.5, -1.0], 'cga1': [26.1, 34.0], 'cgb1': [6.76, 10.9], 'cga2': [0.587], 'cgb2': [-0.952], 'cl_int': [14.0,1.0], 'cab_int': [4.99,65.8], 'cab_out' : [-0.1,-1.0], 'Ccwb': None, 'Mxyz2lms': [[ 0.21701045,  0.83573367, -0.0435106 ],[-0.42997951,  1.2038895 ,  0.08621089],[ 0.,  0.,  0.46579234]]}}
 _cam_sww_2016_parameters['best-fit-JOSA'] = {'cLMS': [1.0,1.0,1.0], 'lms0': [4208.0,  4447.0,  4199.0] , 'Cc': 0.243, 'Cf': -0.269, 'clambda': [0.5, 0.5, 0.0], 'calpha': [1.0, -1.0, 0.0], 'cbeta': [0.5, 0.5, -1.0], 'cga1': [22.38, 26.42], 'cgb1': [5.36, 9.61], 'cga2': [0.668], 'cgb2': [-1.214], 'cl_int': [15.0, 1.04], 'cab_int': [5.85,65.86], 'cab_out' : [-1.008,-1.037], 'Ccwb': 0.80, 'Mxyz2lms': [[ 0.21701045,  0.83573367, -0.0435106 ],[-0.42997951,  1.2038895 ,  0.08621089],[ 0.,  0.,  0.46579234]]}
