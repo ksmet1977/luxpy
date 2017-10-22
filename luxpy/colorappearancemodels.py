@@ -128,6 +128,7 @@ def hue_angle(a,b, htype = 'deg'):
     """
     Calculate positive hue angle (0°-360° or 0 - 2*pi rad.) from opponent signals a and b.
     """
+    #return np.squeeze(math.positive_arctan(a,b, htype = htype),axis = 0)
     return math.positive_arctan(a,b, htype = htype)
 
 def hue_quadrature(h, unique_hue_data = None):
@@ -138,18 +139,25 @@ def hue_quadrature(h, unique_hue_data = None):
         return h
     elif isinstance(unique_hue_data,str):
         unique_hue_data = _unique_hue_data[unique_hue_data]
-        
+    
+    squeezed = 0
+    if h.shape[0] == 1:
+        h = np.squeeze(h,axis = 0)
+        squeezed = 1
+    
     hi = unique_hue_data['hi']
     Hi = unique_hue_data['Hi']
     ei = unique_hue_data['ei']
     h[h<hi[0]] = h[h<hi[0]] + 360.0
-    h_hi = np.repeat(np.atleast_2d(h),repeats=hi.shape[0],axis = 0).T
+    h_hi = np.repeat(np.atleast_2d(h),repeats=len(hi),axis = 1)
     hi_h = np.repeat(np.atleast_2d(hi),repeats=h.shape[0],axis = 0)
     d = h_hi-hi_h
     d[d<0] = 1000.0
     p = d.argmin(axis=1)
-    p[p==len(hi)] = 0.0 # make sure last unique hue data is not selected
-    H = Hi[p] + (100.0*(h-hi[p])/ei[p])/((h-hi[p])/ei[p] + (hi[p+1] - h)/ei[p+1])
+    p[p==(len(hi)-1)] = 0 # make sure last unique hue data is not selected
+    H = np.array([Hi[pi] + (100.0*(h[i]-hi[pi])/ei[pi])/((h[i]-hi[pi])/ei[pi] + (hi[pi+1] - h[i])/ei[pi+1]) for (i,pi) in enumerate(p)])
+    if squeezed == 1:
+        H = np.expand_dims(H,axis=0)
     return H
 
 
@@ -161,7 +169,7 @@ def cam_structure_ciecam02_cam16(data, xyzw, camtype = 'ciecam02', mcat = None, 
         * Yw: luminance factor of white point (normally 100 for perfect white diffuser, < 100 for e.g. paper as white point)         
         * camtype: specify type of cam:  'ciecam02' or 'cam16'
         * mcat: specify cat sensor space, default = cat02 (others e.g. 'cat02-bs', 'cat02-jiang', all trying to correct gamut problems of original cat02 matrix)
-        * condition: dict specifying condition parameters, La, surround ([c,Nc,F]), Yb
+        * condition: dict specifying condition parameters, D, La, surround ([c,Nc,F]), Yb
         * direction = 'forward': xyz -> ciecam02 / cam16
                     = 'backward': ciecam02 / cam16 -> xyz (input data must be (J or Q,aM,bM) or (J or Q,aC,bC) or (J or Q,aS,bS) !!)
         * yellowbluepurplecorrect = True: correct for yellow-blue and purple problems in ciecam02 (not used in cam16 because cat16 solves issues)
@@ -208,7 +216,7 @@ def cam_structure_ciecam02_cam16(data, xyzw, camtype = 'ciecam02', mcat = None, 
     for i in range(xyzw.shape[0]):
         # Get condition parameters:
         if conditions[i][0][0] is None: #defaults
-            condition = np.array([{'La': 100.0, 'Yb': 20.0, 'surround': 'avg','D': 1.0}]) # D = 1: assume full adaptation, if D = None: calculate using  D = F*(1-(1/3.6)*np.exp((-La-42)/92))
+            condition = np.array([{'La': 100.0, 'Yb': 20.0, 'surround': 'avg','D': 1.0, 'Dtype':None}]) # D = 1: assume full adaptation, if D = None: calculate using  D = F*(1-(1/3.6)*np.exp((-La-42)/92))
         else:
             condition = [conditions[i][0][0]]
         D, Dtype, La, Yb, surround = [condition[0][x] for x in sorted(condition[0].keys())] # unpack dictionary
