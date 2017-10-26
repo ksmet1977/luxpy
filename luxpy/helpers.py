@@ -314,7 +314,8 @@ def todim(x,sa, add_axis = 1, equal_shape = False):
             if ((lsx == 1) | (sx == (1,sa[-1])) | (sx == (sa[-1],1))): 
                 if (sx == (sa[-1],1)):
                     x = x.T
-                x = np.expand_dims(x,0)
+                if lsx != lsa:
+                    x = np.expand_dims(x,0)
             elif (lsx == 2):
                 if (lsa == 3):
                     sd = np.setdiff1d(sa, sx,assume_unique=True)
