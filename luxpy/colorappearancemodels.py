@@ -755,7 +755,7 @@ def cam_sww_2016(data, dataw = None, Yb = 20.0, Lw = 400.0, relative = True, par
         dataw = _cie_illuminants['C'] # get illuminant C
         xyzw = spd_to_xyz(dataw, cieobs = cieobs,relative=False) # get abs. tristimulus values
         if relative == False: #input is expected to be absolute
-            dataw = Lw*dataw # make absolute
+            dataw[1:] = Lw*dataw[1:]/xyzw[0,1] #dataw = Lw*dataw # make absolute
         else:
             dataw = dataw # make relative (Y=100)
         if inputtype == 'xyz':
@@ -1005,7 +1005,7 @@ def xyz_to_jab_cam16ucs(data, xyzw = _cam_default_white_point, Yw = 100.0, condi
     """
     Wrapper function for cam16ucs forward mode with J,aM,bM output.
     """
-    return cam02ucs(data, xyzw = xyzw, Yw = Yw, conditions = conditions, direction = 'forward', ucstype = 'ucs', mcat = mcat)
+    return cam16ucs(data, xyzw = xyzw, Yw = Yw, conditions = conditions, direction = 'forward', ucstype = 'ucs', mcat = mcat)
                 
 def jab_cam16ucs_to_xyz(data, xyzw = _cam_default_white_point, Yw = 100.0, conditions = None, mcat = 'cat16'):
     """
@@ -1018,7 +1018,7 @@ def xyz_to_jab_cam16lcd(data, xyzw = _cam_default_white_point, Yw = 100.0, condi
     """
     Wrapper function for cam16ucs forward mode with J,aM,bM output.
     """
-    return cam02ucs(data, xyzw = xyzw, Yw = Yw, conditions = conditions, direction = 'forward', ucstype = 'lcd', mcat = mcat)
+    return cam16ucs(data, xyzw = xyzw, Yw = Yw, conditions = conditions, direction = 'forward', ucstype = 'lcd', mcat = mcat)
                 
 def jab_cam16lcd_to_xyz(data, xyzw = _cam_default_white_point, Yw = 100.0, conditions = None, mcat = 'cat16'):
     """
@@ -1032,7 +1032,7 @@ def xyz_to_jab_cam16scd(data, xyzw = _cam_default_white_point, Yw = 100.0, condi
     """
     Wrapper function for cam16ucs forward mode with J,aM,bM output.
     """
-    return cam02ucs(data, xyzw = xyzw, Yw = Yw, conditions = conditions, direction = 'forward', ucstype = 'scd', mcat = mcat)
+    return cam16ucs(data, xyzw = xyzw, Yw = Yw, conditions = conditions, direction = 'forward', ucstype = 'scd', mcat = mcat)
                 
 def jab_cam16scd_to_xyz(data, xyzw = _cam_default_white_point, Yw = 100.0, conditions = None, mcat = 'cat16'):
     """
