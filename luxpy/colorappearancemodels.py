@@ -161,7 +161,6 @@ def hue_quadrature(h, unique_hue_data = None):
     return H
 
 
-
 def cam_structure_ciecam02_cam16(data, xyzw, camtype = 'ciecam02', mcat = None, Yw = 100, conditions = None, direction = 'forward', outin = 'J,aM,bM', yellowbluepurplecorrect = None):
     """
     Convert between np.array([[x,y,z]]) (N [, xM], x 3) tristimulus values and ciecam02 /cam16 color appearance correlates (out).
