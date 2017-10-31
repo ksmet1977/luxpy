@@ -269,7 +269,7 @@ def xyzbar(cieobs = _cieobs, scr = 'dict', wl_new = None, kind = 'df',normalizat
 
 def spd_to_xyz(data,  relative = True, rfl = None, cieobs = _cieobs, out = None):
     """
-    Calculates xyz from spd.
+    Calculates xyz tristimulus values from spd [, rfl].
     """
     
     if isinstance(data,pd.DataFrame): # convert to np format
@@ -296,32 +296,31 @@ def spd_to_xyz(data,  relative = True, rfl = None, cieobs = _cieobs, out = None)
     if rflwasnotnone == 1:
         #rescale xyz using k or 100/Yw:
         if relative == True:
-            xyz = 100.0*np.array([np.dot(rfl,(data[1:]*cmf[i+1,:]*dl).T)/np.dot(data[1:],cmf[2,:]*dl) for i in range(3)]).T#calculate tristimulus values
-        else:
-            xyz = k*np.array([np.dot(rfl,(data[1:]*cmf[i+1,:]*dl).T)/np.dot(data[1:],cmf[1,:]*dl) for i in range(3)]).T #calculate tristimulus values
-
+            k = 100.0/np.dot(data[1:],cmf[2,:]*dl)
+            xyz = k*np.array([np.dot(rfl,(data[1:]*cmf[i+1,:]*dl).T) for i in range(3)])#calculate tristimulus values
     else:
         if relative == True:
-            xyz = 100.0*(np.dot(data[1:],(cmf[1:]*dl).T)/np.dot(data[1:],(cmf[2,:]*dl).T)[:,None])[:,None,:] #calculate tristimulus values
-        else:
-            xyz = k*(np.dot(data[1:],(cmf[1:]*dl).T))[:,None,:] #calculate tristimulus values
-
+            k = 100.0/np.dot(data[1:],(cmf[2,:]*dl).T)
+        xyz = (k*(np.dot((cmf[1:]*dl),data[1:].T))[:,None,:]) #calculate tristimulus values
+    xyz = np.transpose(xyz,[1,2,0]) #order [rfl,spd,xyz]
     
     if out == 2:
-        xyzw = np.atleast_2d(np.squeeze(np.take(xyz,0,axis = 1)))
-        xyz  = np.atleast_2d(np.squeeze(np.take(xyz,[i+rflwasnotnone for i in range(rfl.shape[0]-rflwasnotnone)],axis = 1)))
+        xyzw = np.atleast_2d(np.take(xyz,0,axis = 0))#[:,:,None]
+        xyz  = np.atleast_2d(np.take(xyz,[i+rflwasnotnone for i in range(rfl.shape[0]-rflwasnotnone)],axis = 0))
+        if rflwasnotnone == 0:
+            xyz = np.squeeze(xyz,axis = 0)
+            xyzw = np.squeeze(xyzw,axis = 0)
         return xyz,xyzw
     elif out == 1:
-        return np.atleast_2d(np.squeeze(xyz))
+        if rflwasnotnone == 0:
+            xyz = np.squeeze(xyz,axis = 0)
+        return xyz
     else: 
-        return np.atleast_2d(np.squeeze(np.take(xyz,[i+rflwasnotnone for i in range(rfl.shape[0]-rflwasnotnone)],axis = 1)))
-    
-    
+        xyz = np.atleast_2d(np.take(xyz,[i+rflwasnotnone for i in range(rfl.shape[0]-rflwasnotnone)],axis = 0))
+        if rflwasnotnone == 0:
+            xyz = np.squeeze(xyz,axis = 0)
+        return xyz
 
-
-
-	
-#--------------------------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------
 #---CIE illuminants------------------------------------------------------------
@@ -355,14 +354,6 @@ def daylightlocus(cct, force_daylight_below4000K = False):
     p = cct>=7000.0
     xD[p] = -2.0064*((1.0e3/cct[p])**3.0)+1.9018*((1.0e3/cct[p])**2.0)+0.24748*(1.0e3/cct[p])+0.23704
     yD=-3.0*xD**2.0+2.87*xD-0.275
-#    if ((4000<=cct) | (force_daylight_below4000K == True)) & (cct<7000 ):
-#        xD=-4.607*(1e9/cct**3)+2.9678*(1e6/cct**2)+0.09911*(1000/cct)+0.244063
-#    elif cct>=7000:
-#            xD=-2.0064*(1e9/cct**3)+1.9018*(1e6/cct**2)+0.24748*(1000/cct)+0.23704;
-#    else:
-#        raise Exception('spectral.daylightlocus(): Daylight locus approximation not defined below 4000 K')
-#    yD=-3*xD**2+2.87*xD-0.275
-    
     return xD,yD
     
    

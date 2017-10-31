@@ -206,7 +206,6 @@ def mahalanobis2(x, y = None, mu = None,sigmainv = None):
     else:
         x = x - mu # center data on mu    
         x, y = asplit(x)
-        
     return (sigmainv[0,0] * (x**2.0) + sigmainv[1,1] * (y**2.0) + 2.0*sigmainv[0,1]*(x*y))
 
 

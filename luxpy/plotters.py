@@ -20,7 +20,7 @@ Created on Tue Jul  4 14:44:45 2017
 #--------------------------------------------------------------------------------------------------
 from luxpy import *
 import matplotlib.pyplot as plt 
-__all__ = ['plotSL','plotDL','plotBB','plot_color_data']
+__all__ = ['plotSL','plotDL','plotBB','plot_color_data','plotceruleanline','plotUH']
 
 
 

@@ -104,7 +104,8 @@ _cam_sww_2016_parameters['best-fit-JOSA'] = {'cLMS': [1.0,1.0,1.0], 'lms0': [420
 _cam_sww_2016_parameters['best-fit-all-Munsell'] = {'cLMS': [1.0,1.0,1.0], 'lms0': [5405.0, 5617.0,  5520.0] , 'Cc': 0.206, 'Cf': -0.128, 'clambda': [0.5, 0.5, 0.0], 'calpha': [1.0, -1.0, 0.0], 'cbeta': [0.5, 0.5, -1.0], 'cga1': [38.26, 43.35], 'cgb1': [8.97, 16.18], 'cga2': [0.512], 'cgb2': [-0.896], 'cl_int': [19.3, 0.99], 'cab_int': [5.87,63.24], 'cab_out' : [-0.545,-0.978], 'Ccwb': 0.736, 'Mxyz2lms': [[ 0.21701045,  0.83573367, -0.0435106 ],[-0.42997951,  1.2038895 ,  0.08621089],[ 0.,  0.,  0.46579234]]}
 
 
-_cam_default_white_point = np.array([100.0, 100.0, 100.0]) # ill. E white point
+_cam_default_white_point = np2d([100.0, 100.0, 100.0]) # ill. E white point
+_cam_default_conditions = {'La': 100.0, 'Yb': 20.0, 'surround': 'avg','D': 1.0, 'Dtype':None}
 
 def naka_rushton(data, sig = 2.0, n = 0.73, scaling = 1.0, noise = 0.0, cam = None, direction = 'forward'):
     """
@@ -161,7 +162,7 @@ def hue_quadrature(h, unique_hue_data = None):
     return H
 
 
-def cam_structure_ciecam02_cam16(data, xyzw, camtype = 'ciecam02', mcat = None, Yw = 100, conditions = None, direction = 'forward', outin = 'J,aM,bM', yellowbluepurplecorrect = None):
+def cam_structure_ciecam02_cam16(data, xyzw, camtype = 'ciecam02', mcat = None, Yw = np2d(100), conditions = _cam_default_conditions, direction = 'forward', outin = 'J,aM,bM', yellowbluepurplecorrect = False):
     """
     Convert between np.array([[x,y,z]]) (N [, xM], x 3) tristimulus values and ciecam02 /cam16 color appearance correlates (out).
         * xyzw: tristimulus values of white point
@@ -178,14 +179,30 @@ def cam_structure_ciecam02_cam16(data, xyzw, camtype = 'ciecam02', mcat = None, 
     #initialize data, xyzw, conditions and camout:
     data = np2d(data)
     data_original_shape = data.shape
-    data = broadcast_shape(data,target_shape = None,expand_2d_to_3d = 0) # avoid looping if not necessary
-    xyzw = broadcast_shape(xyzw,target_shape = data.shape,expand_2d_to_3d = np.abs(1*(len(data_original_shape)==2)-1), axis1_repeats = 1) # make xyzw same size as data
-    conditions = broadcast_shape(conditions,target_shape = xyzw.shape,expand_2d_to_3d = None,axis1_repeats = 1) # make conditions same size as xyzw
+
+    #prepare input parameters related to viewing conditions.
+    if data.ndim == 2:
+        data = data[:,None] # add dim to avoid looping
+    if xyzw.ndim < 3:
+        if xyzw.shape[0]==1:
+            xyzw = (xyzw*np.ones(data.shape[1:]))[None] #make xyzw same looping size
+        elif (xyzw.shape[0] == data.shape[1]):
+            xyzw = xyzw[None]
+        else:
+            xyzw = xyzw[:,None]
+    if isinstance(conditions,dict):
+        conditions = np.repeat(conditions,data.shape[1]) #create condition dict for each xyzw
+
+    Yw = np2d(Yw)
+    if Yw.shape[0]==1:
+        Yw = np.repeat(Yw,data.shape[1])
+#    if len(mcat)==1:
+#        mcat = np.repeat(mcat,data.shape[1]) #create mcat for each xyzw
+
     dshape = list(data.shape)
     dshape[-1] = len(outin) # requested number of correlates
     camout = np.nan*np.ones(dshape)
-    Yw = broadcast_shape(Yw,target_shape = xyzw.shape,expand_2d_to_3d = None,axis1_repeats = 1)
-
+    
     # get general data:
     if camtype == 'ciecam02':
         if (mcat is None) | (mcat == 'cat02'):
@@ -212,13 +229,9 @@ def cam_structure_ciecam02_cam16(data, xyzw, camtype = 'ciecam02', mcat = None, 
             raise Exception('.cam.cam_structure_ciecam02_cam16(): Unrecognized camtype')
     
     # loop through all xyzw:
-    for i in range(xyzw.shape[0]):
+    for i in range(xyzw.shape[1]):
         # Get condition parameters:
-        if conditions[i][0][0] is None: #defaults
-            condition = np.array([{'La': 100.0, 'Yb': 20.0, 'surround': 'avg','D': 1.0, 'Dtype':None}]) # D = 1: assume full adaptation, if D = None: calculate using  D = F*(1-(1/3.6)*np.exp((-La-42)/92))
-        else:
-            condition = [conditions[i][0][0]]
-        D, Dtype, La, Yb, surround = [condition[0][x] for x in sorted(condition[0].keys())] # unpack dictionary
+        D, Dtype, La, Yb, surround = [conditions[i][x] for x in sorted(conditions[i].keys())] # unpack dictionary
         if isinstance(surround,str):
             surround = _surround_parameters[camtype][surround] #if surround is not a dict of F,Nc,c values --> get from _surround_parameters
         F, FLL, Nc, c = [surround[x] for x in sorted(surround.keys())]
@@ -231,8 +244,8 @@ def cam_structure_ciecam02_cam16(data, xyzw, camtype = 'ciecam02', mcat = None, 
         Nbb = 0.725*(1/n)**0.2   
         Ncb = Nbb
         z = 1.48 + FLL*n**0.5
-        yw = xyzw[i,:,1,None]#.take(1,axis = len(xyzw[i].shape)-1)
-        xyzwi = Yw[i]*xyzw[i]/yw # normalize xyzw
+        yw = xyzw[:,i,1,None]
+        xyzwi = Yw[i]*xyzw[:,i]/yw # normalize xyzw
 
         # calculate D:
         if D is None:
@@ -269,7 +282,7 @@ def cam_structure_ciecam02_cam16(data, xyzw, camtype = 'ciecam02', mcat = None, 
         if (direction == 'forward'):
         
             # calculate stimuli:
-            xyzi = Yw[i]*data[i]/yw # normalize xyzw
+            xyzi = Yw[i]*data[:,i]/yw # normalize xyzw
             
             # transform from xyz to cat02 sensor space:
             rgb = np.dot(mcat,xyzi.T)
@@ -353,13 +366,13 @@ def cam_structure_ciecam02_cam16(data, xyzw, camtype = 'ciecam02', mcat = None, 
             else:
                 out_i = ajoin((J,aM,bM))
 
-            camout[i] = out_i
+            camout[:,i] = out_i
             
             
         elif (direction == 'inverse'):
             
             # input = J, a, b:
-            J, aMCs, bMCs = asplit(data[i])
+            J, aMCs, bMCs = asplit(data[:,i])
             
             # calculate hue h:
             h = hue_angle(aMCs,bMCs, htype = 'deg')
@@ -441,11 +454,11 @@ def cam_structure_ciecam02_cam16(data, xyzw, camtype = 'ciecam02', mcat = None, 
             xyzi = xyzi*yw/Yw[i] 
             #xyzi[xyzi<0] = 0
             
-            camout[i] = xyzi
+            camout[:,i] = xyzi
     
     # return to original shape:
     if len(data_original_shape) == 2:
-        camout = camout[0]   
+        camout = camout[:,0]   
    
     return camout    
 
@@ -453,7 +466,7 @@ def cam_structure_ciecam02_cam16(data, xyzw, camtype = 'ciecam02', mcat = None, 
     
     
 #---------------------------------------------------------------------------------------------------------------------
-def ciecam02(data, xyzw, mcat = 'cat02', Yw = 100.0, conditions = None, direction = 'forward', outin = 'J,aM,bM', yellowbluepurplecorrect = None):
+def ciecam02(data, xyzw, mcat = 'cat02', Yw = np2d(100.0), conditions = _cam_default_conditions, direction = 'forward', outin = 'J,aM,bM', yellowbluepurplecorrect = False):
     """
     Convert between np.array([[x,y,z]]) (N [, xM], x 3) tristimulus values and ciecam02  color appearance correlates (out).
         * xyzw: tristimulus values of white point
@@ -468,7 +481,7 @@ def ciecam02(data, xyzw, mcat = 'cat02', Yw = 100.0, conditions = None, directio
 
 
 #---------------------------------------------------------------------------------------------------------------------
-def cam16(data, xyzw, mcat = 'cat16', Yw = 100.0, conditions = None, direction = 'forward', outin = 'J,aM,bM'):
+def cam16(data, xyzw, mcat = 'cat16', Yw = np2d(100.0), conditions = _cam_default_conditions, direction = 'forward', outin = 'J,aM,bM'):
     """
     Convert between np.array([[x,y,z]]) (N [, xM], x 3) tristimulus values and cam16 color appearance correlates (out).
         * xyzw: tristimulus values of white point
@@ -481,7 +494,7 @@ def cam16(data, xyzw, mcat = 'cat16', Yw = 100.0, conditions = None, direction =
     return cam_structure_ciecam02_cam16(data, xyzw, camtype = 'cam16', mcat = mcat, Yw = Yw, conditions = conditions, direction = direction, outin = outin, yellowbluepurplecorrect = yellowbluepurplecorrect)
 
 #---------------------------------------------------------------------------------------------------------------------
-def camucs_structure(data, xyzw = _cam_default_white_point, camtype = 'ciecam02', mcat = None, Yw = 100.0, conditions = None, direction = 'forward', ucstype = 'ucs', yellowbluepurplecorrect = None):
+def camucs_structure(data, xyzw = _cam_default_white_point, camtype = 'ciecam02', mcat = None, Yw = np2d(100.0), conditions = _cam_default_conditions, direction = 'forward', ucstype = 'ucs', yellowbluepurplecorrect = False):
     """
     Convert between np.array([[x,y,z]]) (N [, xM], x 3) tristimulus values and ciecam02 / cam16 [ucs/lcd/scd] color appearance correlates (out).
         * xyzw: tristimulus values of white point
@@ -540,7 +553,7 @@ def camucs_structure(data, xyzw = _cam_default_white_point, camtype = 'ciecam02'
         return cam_structure_ciecam02_cam16(data, xyzw = xyzw, camtype = camtype, Yw = Yw, conditions = conditions, direction = 'inverse', outin = 'J,aM,bM',yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
      
 #---------------------------------------------------------------------------------------------------------------------
-def cam02ucs(data, xyzw = _cam_default_white_point, Yw = 100.0, conditions = None, direction = 'forward', ucstype = 'ucs', yellowbluepurplecorrect = None, mcat = None):
+def cam02ucs(data, xyzw = _cam_default_white_point, Yw = np2d(100.0), conditions = _cam_default_conditions, direction = 'forward', ucstype = 'ucs', yellowbluepurplecorrect = False, mcat = None):
     """
     Convert between np.array([[x,y,z]]) (N [, xM], x 3) tristimulus values and cam02... [ucs/lcd/scd] color appearance correlates (out).
         * xyzw: tristimulus values of white point

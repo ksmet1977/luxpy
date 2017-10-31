@@ -103,7 +103,7 @@ def normalize_3x3_matrix(M,xyz0 = np.array([[1.0,1.0,1.0]])):
     M = np2d(M)
     if M.shape[-1]==9:
         M = M.reshape(3,3)
-    return np.dot(np.diag(1/(np.dot(M,xyz0.T))),M)
+    return np.dot(np.diagflat(1/(np.dot(M,xyz0.T))),M)
 
 #------------------------------------------------------------------------------
 def put_args_in_db(db,args):
@@ -224,42 +224,30 @@ def meshblock(x,y):
     X = np.repeat(x,y.shape[0],axis=0).reshape((x.shape[0],y.shape[0],x.shape[1]))
     return X,Y
 
-#--------------------------------------------------------------------------------------------------
-#def take_f(data,indices = 0, f = None, f_axis = None,t_axis = None, e_axis = None):
-#    """
-#    Take a subset of data determined by indices list along (t_axis: take()) of data,
-#    additionally perform function f and expand dim of result of f to e_axis.
-#    """  
-#    axis_ = len(data.shape)-1
-#    if t_axis == None: # axis along which to take indices
-#        t_axis = axis_
-#    if e_axis == None: # expansion axis
-#        e_axis = axis_
-#    if f_axis == None: # function axis
-#        f_axis = axis_
-#    out = data.take(indices,axis = t_axis)
-#    if f is not None:
-#        out = f(out,axis = f_axis)
-#        out = np.expand_dims(out,axis = e_axis)
-#    return out
-
 #---------------------------------------------------------------------------------------------------
-def asplit(data, axis = None):
+def asplit(data):
     """
-    Split np.array data on (last) axis
+    Split np.array data on last axis
     """
-    if axis is None:
-        axis = len(data.shape)-1
-    return np.array([data.take([x],axis = axis) for x in range(data.shape[-1])])
+    #return np.array([data.take([x],axis = len(data.shape)-1) for x in range(data.shape[-1])])
+    return [data[...,x] for x in range(data.shape[-1])]
 
 
-def ajoin(data, axis = None):
+def ajoin(data):
     """
-    Join np.array data on (last) axis
+    Join np.array data on last axis
     """
-    if axis is None:
-        axis = len(data[0].shape)-1
-    return np.concatenate(data, axis = axis)
+#    if data[0].ndim == 2:
+#        return np.dstack(data)
+#    elif data[0].ndim == 1:
+#        return np.hstack(data)
+    if data[0].ndim == 2: #faster implementation
+        return np.transpose(np.concatenate(data,axis=0).reshape((np.hstack((len(data),data[0].shape)))),(1,2,0))
+    elif data[0].ndim == 1:
+        return np.concatenate(data,axis=0).reshape((np.hstack((len(data),data[0].shape)))).T
+    else:
+        return np.hstack(data)[0]
+    
 
 #---------------------------------------------------------------------------------------------------
 def broadcast_shape(data,target_shape = None, expand_2d_to_3d = None, axis1_repeats = None, axis0_repeats = None):
@@ -311,6 +299,7 @@ def todim(x,sa, add_axis = 1, equal_shape = False):
         if (sx == sa):
             pass
         else:
+            
             if ((lsx == 1) | (sx == (1,sa[-1])) | (sx == (sa[-1],1))): 
                 if (sx == (sa[-1],1)):
                     x = x.T
@@ -332,55 +321,3 @@ def todim(x,sa, add_axis = 1, equal_shape = False):
             return x
         else:
             return np.ones(sa)*x #make dims of x equal to those of a
-    
-#---------------------------------------------------------------------------------------------------
-#def takea(data,indices,axis):
-#    """
-#    Take subset of data specified by indices and axis by []-indexing.
-#    """
-#    if len(data.shape) == 1:
-#        if axis == 0:
-#            return data[indices,None]
-#        else:
-#            raise Exception('axis = {}, but shape = {}'.format(axis,data.shape))
-#    elif len(data.shape) == 2:
-#        if axis == 0:
-#            return data[indices,None]
-#        elif axis == 1:
-#            return data[:,indices,None]
-#        else:
-#            raise Exception('axis = {}, but shape = {}'.format(axis,data.shape))
-#    elif len(data.shape) == 3:
-#        if axis == 0:
-#            return data[indices,None]
-#        elif axis == 1:
-#            return data[:,indices,None]
-#        elif axis == 2:
-#            return data[:,:,indices,None]
-#        else:
-#            raise Exception('axis = {}, but shape = {}'.format(axis,data.shape))
-#    else:
-#        raise Exception('axis > 3, not supported by takea')
-            
-
-#---------------------------------------------------------------------------------------------------
-#def wrapper(f,*args,**kwargs):
-#    """
-#    Wrapper function for wrapped function f.
-#    """
-#    def wrapped():
-#        return f(*args,**kwargs)
-#    return wrapped
-
-#----------------------------------------------------------------------------------------------------
-#def np2dT0(data, T = 0, *args, **kwargs):
-#    # make a tupple, list or numpy array at least 2d array and transpose (1) or not(0)
-#    
-#    if T == 0:
-#        return np.atleast_2d(np.array(data))
-#    elif T == 1:
-#        return np.atleast_2d(np.array(data)).T
-#    elif T is None:
-#        return data # do nothing
-#    else:
-#        return data

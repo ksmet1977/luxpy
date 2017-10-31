@@ -164,28 +164,29 @@ def gamut_slicer(jab_test,jab_ref, out = 'jabt,jabr', nhbins = None, start_hue =
     """
     # make 3d for easy looping:
     test_original_shape = jab_test.shape
+
     if len(test_original_shape)<3:
-        jab_test = broadcast_shape(jab_test,target_shape = None,expand_2d_to_3d = 0) # expand 2-array to 3-array by adding '0'-axis
-        jab_ref = broadcast_shape(jab_ref,target_shape = None,expand_2d_to_3d = 0) # expand 2-array to 3-array by adding '0'-axis
+        jab_test = jab_test[None]# add axis 0 #broadcast_shape(jab_test,target_shape = None,expand_2d_to_3d = 0) # expand 2-array to 3-array by adding '0'-axis
+        jab_ref = jab_ref[None]# add axis 0 #broadcast_shape(jab_ref,target_shape = None,expand_2d_to_3d = 0) # expand 2-array to 3-array by adding '0'-axis
     
     #initialize Jabt, Jabr
     test_shape = list(jab_test.shape)
     if nhbins is not None:
-        test_shape[1] = nhbins + close_gamut*1
+        test_shape[0] = nhbins + close_gamut*1
     else:
-        test_shape[1] = test_shape[1] + close_gamut*1
+        test_shape[0] = test_shape[0] + close_gamut*1
     Jabt = np.zeros(test_shape)
     Jabr = Jabt.copy()
-    for ii in range(jab_test.shape[0]):
+    for ii in range(jab_test.shape[1]):
           
         # calculate hue angles:
-        ht = cam.hue_angle(jab_test[ii,:,1],jab_test[ii,:,2], htype='rad')
-        hr = cam.hue_angle(jab_ref[ii,:,1],jab_ref[ii,:,2], htype='rad')
+        ht = cam.hue_angle(jab_test[:,ii,1],jab_test[:,ii,2], htype='rad')
+        hr = cam.hue_angle(jab_ref[:,ii,1],jab_ref[:,ii,2], htype='rad')
 
         if nhbins is None:
             Ir = np.argsort(hr)
-            jabt = jab_test[ii,Ir,:]
-            jabr = jab_ref[ii,Ir,:]
+            jabt = jab_test[Ir,ii,:]
+            jabr = jab_ref[Ir,ii,:]
             nhbins = (jabt.shape[0])
 
         else:
@@ -198,9 +199,8 @@ def gamut_slicer(jab_test,jab_ref, out = 'jabt,jabr', nhbins = None, start_hue =
             jabr = np.zeros((nhbins,3))
             for i in range(nhbins):
                 if i in hbins:
-                    jab_test[ii,hbins==i,:]
-                    jabt[i,:] = jab_test[ii,hbins==i,:].mean(axis = 0)
-                    jabr[i,:] = jab_ref[ii,hbins==i,:].mean(axis = 0)
+                    jabt[i,:] = jab_test[hbins==i,ii,:].mean(axis = 0)
+                    jabr[i,:] = jab_ref[hbins==i,ii,:].mean(axis = 0)
 
         if normalize_gamut == True:
             #renormalize jabt using jabr:
@@ -209,7 +209,6 @@ def gamut_slicer(jab_test,jab_ref, out = 'jabt,jabr', nhbins = None, start_hue =
             ht = cam.hue_angle(jabt[:,1],jabt[:,2], htype = 'rad')
             hr = cam.hue_angle(jabr[:,1],jabr[:,2], htype = 'rad')
         
-            
             # calculate rescaled chroma of test:
             C = normalized_chroma_ref*(Ct/Cr) 
         
@@ -223,8 +222,8 @@ def gamut_slicer(jab_test,jab_ref, out = 'jabt,jabr', nhbins = None, start_hue =
             jabt = np.vstack((jabt,jabt[0,:])) # to create closed curve when plotting
             jabr = np.vstack((jabr,jabr[0,:])) # to create closed curve when plotting
 
-        Jabt[ii] = jabt
-        Jabr[ii] = jabr
+        Jabt[:,ii,:] = jabt
+        Jabr[:,ii,:] = jabr
 
     # circle coordinates for plotting:
     hc = np.arange(360.0)*np.pi/180.0
@@ -233,8 +232,8 @@ def gamut_slicer(jab_test,jab_ref, out = 'jabt,jabr', nhbins = None, start_hue =
     jabc[:,0] = normalized_chroma_ref*np.sin(hc)
 
     if len(test_original_shape) == 2:
-        Jabt = Jabt[0]
-        Jabr = Jabr[0]
+        Jabt = Jabt[:,0]
+        Jabr = Jabr[:,0]
 
     if out == 'Jabt,Jabr':
         return Jabt, Jabr
@@ -253,19 +252,18 @@ def jab_to_rg(jabt,jabr, max_scale = 100, ordered_and_sliced = False, nhbins = N
     # make 3d:
     test_original_shape = jabt.shape
     if len(test_original_shape)<3:
-        jabt = broadcast_shape(jabt,target_shape = None,expand_2d_to_3d = 0) # expand 2-array to 3-array by adding '0'-axis
-        jabr = broadcast_shape(jabr,target_shape = None,expand_2d_to_3d = 0) # expand 2-array to 3-array by adding '0'-axis
+        jabt = jabt[None] #broadcast_shape(jabt,target_shape = None,expand_2d_to_3d = 0) # expand 2-array to 3-array by adding '0'-axis
+        jabr = jabt[None] #broadcast_shape(jabr,target_shape = None,expand_2d_to_3d = 0) # expand 2-array to 3-array by adding '0'-axis
     
     # calculate Rg for each spd:
-    Rg = np.zeros((jabt.shape[0],1))
-    
-    
-    for ii in range(jabt.shape[0]):
-        Rg[ii] = max_scale*polyarea(jabt[ii,:,1],jabt[ii,:,2])/polyarea(jabr[ii,:,1],jabr[ii,:,2]) # calculate Rg =  gamut area ratio of test and ref
+    Rg = np.zeros((1,jabt.shape[1]))
+
+    for ii in range(jabt.shape[1]):
+        Rg[:,ii] = max_scale*polyarea(jabt[:,ii,1],jabt[:,ii,2])/polyarea(jabr[:,ii,1],jabr[:,ii,2]) # calculate Rg =  gamut area ratio of test and ref
     return Rg
 
 #------------------------------------------------------------------------------
-def spd_to_jab_t_r(data, cri_type = 'cie_rf', out = 'Jabt,Jabr', wl = None, sampleset = None, ref_type = None, cieobs  = None, cspace = None, catf = None, cri_specific_pars = None):
+def spd_to_jab_t_r(data, cri_type = 'cierf', out = 'Jabt,Jabr', wl = None, sampleset = None, ref_type = None, cieobs  = None, cspace = None, catf = None, cri_specific_pars = None):
     """
     Calculates jab color values for a sample set illuminated with test source (data) and its reference illuminant.
         * out = output requested (e.g. 'Jabt,Jabr' or 'Jabt,Jabr, cct, duv') 
@@ -315,7 +313,7 @@ def spd_to_jab_t_r(data, cri_type = 'cie_rf', out = 'Jabt,Jabr', wl = None, samp
     cct, duv = xyz_to_cct(xyztw, cieobs = cieobs['cct'], out = 'cct,duv',mode = 'lut')
     
     # A.c. get reference ill.:
-    Sr = cri_ref(cct, ref_type = ref_type, cieobs = cieobs['xyz'], wl3 = data[0])    
+    Sr = cri_ref(cct, ref_type = ref_type, cieobs = cieobs['xyz'], wl3 = data[0])
     
     # B. calculate xyz and xyzw of data (spds) and Sr:
     xyzti, xyztw = spd_to_xyz(data, cieobs = cieobs['xyz'], rfl = sampleset, out = 2)
@@ -325,39 +323,22 @@ def spd_to_jab_t_r(data, cri_type = 'cie_rf', out = 'Jabt,Jabr', wl = None, samp
     if catf is not None:
         D_cat, Dtype_cat, La_cat, catmode_cat, cattype_cat, mcat_cat, xyzw_cat = [catf[x] for x in sorted(catf.keys())]
         
-        if not isinstance(D_cat,list): D_cat = [D_cat]
+        #if not isinstance(D_cat,list): D_cat = [D_cat]
         if xyzw_cat is None: #transform from xyzwt --> xyzwr
-            #if len(D_cat) == 1: 
-            # 1-step transform or #two-step cat with xyzw0 = [100,100,100]
-            xyzti = cat.apply(xyzti, cattype = cattype_cat, catmode = catmode_cat, xyzw1 = xyztw,xyzw0 = None, xyzw2 = xyzrw, D = D_cat, La = La_cat, mcat = [mcat_cat],Dtype = Dtype_cat)
-            xyztw = cat.apply(xyztw, cattype = cattype_cat, catmode = catmode_cat, xyzw1 = xyztw,xyzw0 = None, xyzw2 = xyzrw, D = D_cat, La = La_cat, mcat = [mcat_cat],Dtype = Dtype_cat)
-            xyzri = cat.apply(xyzri, cattype = cattype_cat, catmode = catmode_cat, xyzw1 = xyzrw,xyzw0 = None, xyzw2 = xyzrw, D = D_cat, La = La_cat, mcat = [mcat_cat],Dtype = Dtype_cat)
-            xyzrw = cat.apply(xyzrw, cattype = cattype_cat, catmode = catmode_cat, xyzw1 = xyzrw,xyzw0 = None, xyzw2 = xyzrw, D = D_cat, La = La_cat, mcat = [mcat_cat],Dtype = Dtype_cat)
-
-#            elif len(D_cat) == 2: #two-step cat with xyzw0 = [100,100,100]
-#                xyzti = cat.apply(xyzti, cattype = cattype_cat, catmode = catmode_cat, xyzw1 = xyztw,xyzw2 = xyzrw, xyzw0 = None, D = D_cat, La = La_cat, mcat = [mcat_cat],Dtype = Dtype_cat)
-#                xyztw = cat.apply(xyztw, cattype = cattype_cat, catmode = catmode_cat, xyzw1 = xyztw,xyzw2 = xyzrw, xyzw0 = None, D = D_cat, La = La_cat, mcat = [mcat_cat],Dtype = Dtype_cat)
-#                xyzri = cat.apply(xyzri, cattype = cattype_cat, catmode = catmode_cat, xyzw1 = xyzrw,xyzw2 = xyzrw, xyzw0 = None, D = D_cat, La = La_cat, mcat = [mcat_cat],Dtype = Dtype_cat)
-#                xyzrw = cat.apply(xyzrw, cattype = cattype_cat, catmode = catmode_cat, xyzw1 = xyzrw,xyzw2 = xyzrw, xyzw0 = None, D = D_cat, La = La_cat, mcat = [mcat_cat],Dtype = Dtype_cat)
-    
+            xyzti = cat.apply(xyzti, cattype = cattype_cat, catmode = catmode_cat, xyzw1 = xyztw, xyzw0 = None, xyzw2 = xyzrw, D = D_cat, La = La_cat, mcat = [mcat_cat], Dtype = Dtype_cat)
+            xyztw = cat.apply(xyztw, cattype = cattype_cat, catmode = catmode_cat, xyzw1 = xyztw, xyzw0 = None, xyzw2 = xyzrw, D = D_cat, La = La_cat, mcat = [mcat_cat], Dtype = Dtype_cat)
+            xyzri = cat.apply(xyzri, cattype = cattype_cat, catmode = catmode_cat, xyzw1 = xyzrw, xyzw0 = None, xyzw2 = xyzrw, D = D_cat, La = La_cat, mcat = [mcat_cat], Dtype = Dtype_cat)
+            xyzrw = cat.apply(xyzrw, cattype = cattype_cat, catmode = catmode_cat, xyzw1 = xyzrw, xyzw0 = None, xyzw2 = xyzrw, D = D_cat, La = La_cat, mcat = [mcat_cat], Dtype = Dtype_cat)
         else: # transform both xyzwr and xyzwt to xyzw_cat
-#            if len(D_cat) == 1: # 1-step transform
-                xyzti = cat.apply(xyzti, cattype = cattype_cat, catmode = catmode_cat, xyzw1 = xyztw,xyzw0 = None, xyzw2 = xyzw_cat, D = D_cat, La = La_cat, mcat = [mcat_cat],Dtype = Dtype_cat)
-                xyztw = cat.apply(xyztw, cattype = cattype_cat, catmode = catmode_cat, xyzw1 = xyztw,xyzw0 = None, xyzw2 = xyzw_cat, D = D_cat, La = La_cat, mcat = [mcat_cat],Dtype = Dtype_cat)
-                xyzri = cat.apply(xyzri, cattype = cattype_cat, catmode = catmode_cat, xyzw1 = xyzrw,xyzw0 = None, xyzw2 = xyzw_cat, D = D_cat, La = La_cat, mcat = [mcat_cat],Dtype = Dtype_cat)
-                xyzrw = cat.apply(xyzrw, cattype = cattype_cat, catmode = catmode_cat, xyzw1 = xyzrw,xyzw0 = None, xyzw2 = xyzw_cat, D = D_cat, La = La_cat, mcat = [mcat_cat],Dtype = Dtype_cat)
+            xyzti = cat.apply(xyzti, cattype = cattype_cat, catmode = catmode_cat, xyzw1 = xyztw, xyzw0 = None, xyzw2 = xyzw_cat, D = D_cat, La = La_cat, mcat = [mcat_cat], Dtype = Dtype_cat)
+            xyztw = cat.apply(xyztw, cattype = cattype_cat, catmode = catmode_cat, xyzw1 = xyztw, xyzw0 = None, xyzw2 = xyzw_cat, D = D_cat, La = La_cat, mcat = [mcat_cat], Dtype = Dtype_cat)
+            xyzri = cat.apply(xyzri, cattype = cattype_cat, catmode = catmode_cat, xyzw1 = xyzrw, xyzw0 = None, xyzw2 = xyzw_cat, D = D_cat, La = La_cat, mcat = [mcat_cat], Dtype = Dtype_cat)
+            xyzrw = cat.apply(xyzrw, cattype = cattype_cat, catmode = catmode_cat, xyzw1 = xyzrw, xyzw0 = None, xyzw2 = xyzw_cat, D = D_cat, La = La_cat, mcat = [mcat_cat], Dtype = Dtype_cat)
 
-#            elif len(D_cat) == 2: #two-step cat with xyzw0 = [100,100,100]
-#                xyzti = cat.apply(xyzti, cattype = cattype_cat, catmode = catmode_cat, xyzw1 = xyztw,xyzw2 = xyzw_cat, xyzw0 = None, D = D_cat, La = La_cat, mcat = [mcat_cat],Dtype = Dtype_cat)
-#                xyztw = cat.apply(xyztw, cattype = cattype_cat, catmode = catmode_cat, xyzw1 = xyztw,xyzw2 = xyzw_cat, xyzw0 = None, D = D_cat, La = La_cat, mcat = [mcat_cat],Dtype = Dtype_cat)
-#                xyzri = cat.apply(xyzri, cattype = cattype_cat, catmode = catmode_cat, xyzw1 = xyzrw,xyzw2 = xyzw_cat, xyzw0 = None, D = D_cat, La = La_cat, mcat = [mcat_cat],Dtype = Dtype_cat)
-#                xyzrw = cat.apply(xyzrw, cattype = cattype_cat, catmode = catmode_cat, xyzw1 = xyzrw,xyzw2 = xyzw_cat, xyzw0 = None, D = D_cat, La = La_cat, mcat = [mcat_cat],Dtype = Dtype_cat)
-
-  
     # D. convert xyz to colorspace, cam or chromaticity co. lab (i.e. lab, ipt, Yuv, jab, wuv,..):
     # D.a. broadcast xyzw to shape of xyzi:
-    xyztw = cat.broadcast_shape(xyztw,target_shape = xyzti.shape,expand_2d_to_3d = None, axis1_repeats = 1) 
-    xyzrw = cat.broadcast_shape(xyzrw,target_shape = xyzri.shape,expand_2d_to_3d = None, axis1_repeats = 1) 
+    xyztw = xyztw[None] #cat.broadcast_shape(xyztw,target_shape = xyzti.shape,expand_2d_to_3d = None, axis1_repeats = 1) 
+    xyzrw = xyzrw[None] #cat.broadcast_shape(xyzrw,target_shape = xyzri.shape,expand_2d_to_3d = None, axis1_repeats = 1) 
 
     cspace_pars = cspace.copy()
     cspace_pars.pop('type')
@@ -375,7 +356,7 @@ def spd_to_jab_t_r(data, cri_type = 'cie_rf', out = 'Jabt,Jabr', wl = None, samp
     del cspace_pars
 
 
-    # E. Regulate output: 
+    # E. Regulate output:
     if out == 'Jabt,Jabr':
         return Jabt, Jabr
     elif out == 'Jabt,Jabr,cct,duv':
@@ -385,7 +366,7 @@ def spd_to_jab_t_r(data, cri_type = 'cie_rf', out = 'Jabt,Jabr', wl = None, samp
 
 
 #------------------------------------------------------------------------------
-def spd_to_rg(data, cri_type = 'cie_rf', out = 'Rg', wl = None, sampleset = None, ref_type = None, cieobs  = None, avg = None, cspace = None, catf = None, cri_specific_pars = None, rg_pars = {'nhbins' : None, 'start_hue' : 0, 'normalize_gamut' : True}):
+def spd_to_rg(data, cri_type = 'cierf', out = 'Rg', wl = None, sampleset = None, ref_type = None, cieobs  = None, avg = None, cspace = None, catf = None, cri_specific_pars = None, rg_pars = {'nhbins' : None, 'start_hue' : 0, 'normalize_gamut' : True}):
     """
     Calculates the color gamut index of data (= np.array([[wl,spds]]) (data_axis = 0) for a sample set illuminated with test source (data) with respect to some reference illuminant.
     For use in color rendition calculation with free choice of :
@@ -433,7 +414,7 @@ def spd_to_rg(data, cri_type = 'cie_rf', out = 'Rg', wl = None, sampleset = None
     #Override input parameters with data specified in cri_type:
     args = locals().copy() # get dict with keyword input arguments to function (used to overwrite non-None input arguments present in cri_type dict)
     cri_type = process_cri_type_input(cri_type, args, callerfunction = 'cri.spd_to_rg')
-    
+
     #avg, catf, cieobs, cieobs_cct, cri_specific_pars, cspace, cspace_pars, ref_type, rg_pars, sampleset, scale_factor, scale_fcn = [cri_type[x] for x in sorted(cri_type.keys())] 
 
        
@@ -444,9 +425,9 @@ def spd_to_rg(data, cri_type = 'cie_rf', out = 'Rg', wl = None, sampleset = None
     
     # calculate gamut area index:
     rg_pars = cri_type['rg_pars']
-    rg_pars = put_args_in_db(rg_pars,{'nhbins':nhbins,'start_hue':start_hue,'normalize_gamut':normalize_gamut}) #override with not-None input from function
+    #rg_pars = put_args_in_db(cri_type['rg_pars'],rg_pars)#{'nhbins':nhbins,'start_hue':start_hue,'normalize_gamut':normalize_gamut}) #override with not-None input from function
     nhbins, start_hue, normalize_gamut = [rg_pars[x] for x in sorted(rg_pars.keys())]
-    Rg = np2d(jab_to_rg(jabti,jabri, ordered_and_sliced = False, nhbins = nhbins, start_hue = start_hue, normalize = normalize_gamut))
+    Rg = np2d(jab_to_rg(jabti,jabri, ordered_and_sliced = False, nhbins = nhbins, start_hue = start_hue, normalize_gamut = normalize_gamut))
    
     if out == 'Rg':
         return Rg
@@ -457,7 +438,7 @@ def spd_to_rg(data, cri_type = 'cie_rf', out = 'Rg', wl = None, sampleset = None
 
 
 #------------------------------------------------------------------------------
-def spd_to_DEi(data, cri_type = 'cie_rf', out = 'DEi', wl = None, sampleset = None, ref_type = None, cieobs = None, avg = None, cspace = None, catf = None, cri_specific_pars = None):
+def spd_to_DEi(data, cri_type = 'cierf', out = 'DEi', wl = None, sampleset = None, ref_type = None, cieobs = None, avg = None, cspace = None, catf = None, cri_specific_pars = None):
     """
     Calculates color difference (~fidelity) of data (= np.array([[wl,spds]]) (data_axis = 0) between sample set illuminated with test source (data) and some reference illuminant.
         * out = output requested (e.g. 'DEa', 'DEi' or 'DEa,DEii', or 'DEa, DEi, cct', ...; default = 'DEi'
@@ -487,15 +468,15 @@ def spd_to_DEi(data, cri_type = 'cie_rf', out = 'DEi', wl = None, sampleset = No
     args = locals().copy() # get dict with keyword input arguments to function (used to overwrite non-None input arguments present in cri_type dict)
     cri_type = process_cri_type_input(cri_type, args, callerfunction = 'cri.spd_to_DEi')
 
-       
     # calculate Jabt of test and Jabr of the reference illuminant corresponding to test: 
     #jabti, jabri, cct, duv = spd_to_jab_t_r(data, cri_type = cri_type, out = 'Jabt,Jabr,cct,duv', wl = wl, sampleset = sampleset, cieobs  = cieobs, cieobs_cct = cieobs_cct, cspace = cspace, catf = catf, ref_type = ref_type, cspace_pars = cspace_pars,cri_specific_pars = cri_specific_pars)
     jabti, jabri, cct, duv = spd_to_jab_t_r(data, cri_type = cri_type, out = 'Jabt,Jabr,cct,duv', wl = wl)
       
     # E. calculate DEi, DEa:
     avg = cri_type['avg']
-    DEi = np.power((jabti - jabri),2).sum(axis = len(jabti.shape)-1,keepdims = True)**0.5
-    DEa = avg(DEi, axis = len(jabti.shape)-2)
+    DEi = np.power((jabti - jabri),2).sum(axis = len(jabti.shape)-1,keepdims = False)**0.5
+    #DEi = np.power((jabti - jabri),2).sum(axis = len(jabti.shape)-1,keepdims = True)**0.5
+    DEa = avg(DEi, axis = 0) #len(jabti.shape)-2)
     DEa = np2d(DEa)
   
      # output:
@@ -514,8 +495,7 @@ def optimize_scale_factor(cri_type,opt_scale_factor, scale_fcn, avg) :
         if 'opt_cri_type' not in cri_type['scale'].keys(): 
             opt_cri_type = _cri_defaults['ciera'] # use CIE Ra-13.3-1995 as target
         if 'opt_spd_set' not in cri_type['scale'].keys(): 
-            opt_spd_set = _iestm30['S']['data'][0:11] # use CIE F1-F12
-        
+            opt_spd_set = _iestm30['S']['data'][0:13] # use CIE F1-F12
         scale_fcn_opt = opt_cri_type ['scale']['fcn']
         scale_factor_opt = opt_cri_type ['scale']['cfactor']
         avg_opt = opt_cri_type ['avg']
@@ -527,28 +507,38 @@ def optimize_scale_factor(cri_type,opt_scale_factor, scale_fcn, avg) :
         
         # optimize scale_factor to minimize rms difference:
         sf = cri_type['scale']['cfactor'] # get scale_factor of cri_type to determine len and non-optimized factors
-        if (isinstance(1.0*sf,float)):
+
+        if (isinstance(sf,float)): #(isinstance(1.0*sf,float))
             sf = [sf]
         if isinstance(opt_scale_factor, bool):
             opt_scale_factor = [opt_scale_factor] 
         if (len(opt_scale_factor)==1) & (len(sf) == 1):
             x0 = 1
-            optfcn = lambda x : math.rms(avg(scale_fcn(DEa,x)) - Ra_opt,axis=0) # optimize the only cfactor
+            optfcn = lambda x : math.rms(avg(scale_fcn(DEa,x)) - Ra_opt,axis=1) # optimize the only cfactor
         elif (len(opt_scale_factor)==1) & (len(sf) > 1):     
             x0 = 1
-            optfcn = lambda x : math.rms(avg(scale_fcn(DEa,np.hstack(x,sf[1:]))) - Ra_opt,axis=0) # optimize the first cfactor (for scale_factor input of len = 1)
+            optfcn = lambda x : math.rms(avg(scale_fcn(DEa,np.hstack( (x,sf[1:]) ))) - Ra_opt,axis=1) # optimize the first cfactor (for scale_factor input of len = 1)
         else:
             x0 = np.ones(np.sum(opt_scale_factor))
-            optfcn = lambda x : math.rms(avg(scale_fcn(DEa,np.hstack(x,sf[np.invert(opt_scale_factor)]))) - Ra_opt,axis=0) # optimize first N 'True' cfactor (for scale_factor input of len = n>=N)
+            optfcn = lambda x : math.rms(avg(scale_fcn(DEa,np.hstack( (x,sf[np.invert(opt_scale_factor)]) ))) - Ra_opt,axis=1) # optimize first N 'True' cfactor (for scale_factor input of len = n>=N)
         
         optresult = minimize(fun = optfcn, x0 = x0, args=(), method = 'Nelder-Mead')
         scale_factor = optresult['x']
+        
+        #Reconstruct 'scale_factor' from optimized and fixed parts:
+        if (len(opt_scale_factor)==1) & (len(sf) == 1):
+            pass #only cfactor
+        elif (len(opt_scale_factor)==1) & (len(sf) > 1):     
+            scale_factor = np.hstack( (scale_factor,sf[1:]) )
+        else:
+          scale_factor = np.hstack( (scale_factor,sf[np.invert(opt_scale_factor)]) ) # optimize first N 'True' cfactor (for scale_factor input of len = n>=N)
+
     else:
         scale_factor = cri_type['scale']['cfactor']
     return scale_factor
 
 #------------------------------------------------------------------------------
-def spd_to_cri(data, cri_type = 'cie_rf', out = 'Ra', wl = None, sampleset = None, ref_type = None, cieobs = None, avg = None, scale = None, opt_scale_factor = False, cspace = None, catf = None, cri_specific_pars = None, rg_pars = None):
+def spd_to_cri(data, cri_type = 'cierf', out = 'Ra', wl = None, sampleset = None, ref_type = None, cieobs = None, avg = None, scale = None, opt_scale_factor = False, cspace = None, catf = None, cri_specific_pars = None, rg_pars = None):
     """
     Calculates color rendition (~fidelity) index of data (= np.array([[wl,spds]]) (data_axis = 0) free choice of :
         * out = output requested (e.g. 'Ra', 'Ri' or 'Ra,Ri', or 'Ra, Ri, cct', ...; default = 'Ra', 'a' stands for average --> general color rendition index, i for individual regardless of cri_type
@@ -625,8 +615,9 @@ def spd_to_cri(data, cri_type = 'cie_rf', out = 'Ra', wl = None, sampleset = Non
         DEi, cct, duv = spd_to_DEi(data, out = 'DEi,cct,duv', cri_type = cri_type)
         
     # B. convert DE to color rendering index:
+
     Ri = scale_fcn(DEi,scale_factor)
-    Ra = np2d(scale_fcn(avg(DEi,axis = len(Ri.shape)-2),scale_factor))
+    Ra = np2d(scale_fcn(avg(DEi,axis = 0),scale_factor))
       
  
     if (out == 'Ra'):
@@ -752,32 +743,32 @@ def spd_to_mcri(data, D = 0.9, E = None, Yb = 20.0, out = 'Rm', wl = None):
 
     # D. calculate specific (hue dependent) similarity indicators, Si:
     if len(xyzti.shape) == 3:
-        ai = np.expand_dims(similarity_ai, axis = 0)
+        ai = np.expand_dims(similarity_ai, axis = 1)
     else: 
         ai = similarity_ai
-    a1,a2,a3,a4,a5 = asplit(ai)    
+    a1,a2,a3,a4,a5 = asplit(ai)
     mahalanobis_d2 = (a3*np.power((P - a1),2.0) + a4*np.power((T - a2),2.0) + 2.0*a5*(P-a1)*(T-a2))
     if (len(mahalanobis_d2.shape)==3) & (mahalanobis_d2.shape[-1]==1):
         mahalanobis_d2 = mahalanobis_d2[:,:,0].T
     Si = np.exp(-0.5*mahalanobis_d2)
 
     # E. calculate general similarity indicator, Sa:
-    Sa = avg(Si, axis = len(Si.shape)-2,keepdims = True)
+    Sa = avg(Si, axis = 0,keepdims = True)
 
     # F. rescale similarity indicators (Si, Sa) with a 0-1 scale to memory color rendition indices (Rmi, Rm) with a 0 - 100 scale:
     Rmi = scale_fcn(np.log(Si),scale_factor = scale_factor)
     Rm = np2d(scale_fcn(np.log(Sa),scale_factor = scale_factor))
 
     # G. calculate Rg (polyarea of test / polyarea of memory colours):
-    a1 = broadcast_shape(a1, target_shape = None,expand_2d_to_3d = 0)
-    a2 = broadcast_shape(a2, target_shape = None,expand_2d_to_3d = 0)
-    ipt = broadcast_shape(ipt, target_shape = None,expand_2d_to_3d = 0)
-    I = broadcast_shape(I, target_shape = None,expand_2d_to_3d = 0)
+    a1 = a1[:,None] #broadcast_shape(a1, target_shape = None,expand_2d_to_3d = 0)
+    a2 = a2[:,None] #broadcast_shape(a2, target_shape = None,expand_2d_to_3d = 0)
+    #ipt = ipt[:,None] #broadcast_shape(ipt, target_shape = None,expand_2d_to_3d = 0)
+    I = I[:,None] #broadcast_shape(I, target_shape = None,expand_2d_to_3d = 0)
     a12 = np.concatenate((a1,a2),axis=2) #broadcast_shape(np.hstack((a1,a2)), target_shape = ipt.shape,expand_2d_to_3d = 0)
-    a12 = broadcast_shape(a12, target_shape = ipt.shape,expand_2d_to_3d = 0)
+    #a12 = broadcast_shape(a12, target_shape = ipt.shape,expand_2d_to_3d = 0)
     ipt_mc = np.concatenate((I,a12),axis=2)
-    ipt_mc = broadcast_shape(ipt_mc, target_shape = None,expand_2d_to_3d = 0)
-    ipt_test = broadcast_shape(ipt, target_shape = None,expand_2d_to_3d = 0)
+    #ipt_mc = broadcast_shape(ipt_mc, target_shape = None,expand_2d_to_3d = 0)
+    ipt_test = ipt #broadcast_shape(ipt, target_shape = None,expand_2d_to_3d = 0)
     nhbins, start_hue, normalize_gamut = [rg_pars[x] for x in sorted(rg_pars.keys())]
     Rg = jab_to_rg(ipt_test,ipt_mc, ordered_and_sliced = False, nhbins = nhbins, start_hue = start_hue, normalize_gamut = normalize_gamut)
 
@@ -798,7 +789,6 @@ def  spd_to_cqs(data, version = 'v9.0', out = 'Qa',wl = None):
     elif isinstance(version, dict):
         cri_type = version
      
-        
     # calculate DEI, labti, labri and get cspace_pars and rg_pars:
     DEi, labti, labri, cct, duv, cri_type = spd_to_DEi(data, cri_type = cri_type, out = 'DEi,jabti,jabri,cct,duv,cri_type', wl = wl)
     
@@ -815,16 +805,16 @@ def  spd_to_cqs(data, version = 'v9.0', out = 'Qa',wl = None):
     # make 3d:
     test_original_shape = labti.shape
     if len(test_original_shape)<3:
-        labti = broadcast_shape(labti,target_shape = None,expand_2d_to_3d = 0) # expand 2-array to 3-array by adding '0'-axis
-        labri = broadcast_shape(labri,target_shape = None,expand_2d_to_3d = 0) # expand 2-array to 3-array by adding '0'-axis
-        DEi = broadcast_shape(DEi,target_shape = None,expand_2d_to_3d = 0) # expand 2-array to 3-array by adding '0'-axis
-        cct = broadcast_shape(cct,target_shape = None,expand_2d_to_3d = 0) # expand 2-array to 3-array by adding '0'-axis
+        labti = labti[:,None] #broadcast_shape(labti,target_shape = None,expand_2d_to_3d = 0) # expand 2-array to 3-array by adding '0'-axis
+        labri = labri[:,None] #broadcast_shape(labri,target_shape = None,expand_2d_to_3d = 0) # expand 2-array to 3-array by adding '0'-axis
+        DEi = DEi[:,None] #broadcast_shape(DEi,target_shape = None,expand_2d_to_3d = 0) # expand 2-array to 3-array by adding '0'-axis
+        cct = cct[:,None] #broadcast_shape(cct,target_shape = None,expand_2d_to_3d = 0) # expand 2-array to 3-array by adding '0'-axis
 
 
     
     # calculate Rg for each spd:
-    Qf = np.zeros((labti.shape[0],1))
-    Qfi = np.zeros((labti.shape[0],labti.shape[1],1))
+    Qf = np.zeros((1,labti.shape[1]))
+    Qfi = np.zeros((labti.shape[0],labti.shape[1]))
     
     if version == 'v7.5':
         GA = (9.2672*(1.0e-11))*cct**3.0  - (8.3959*(1.0e-7))*cct**2.0 + 0.00255*cct - 1.612 
@@ -836,56 +826,46 @@ def  spd_to_cqs(data, version = 'v9.0', out = 'Qa',wl = None):
     if ('Qf' in outlist) | ('Qfi' in outlist):
 
         # loop of light source spds
-        for ii in range(labti.shape[0]):
-            Qfi[ii] = GA[ii]*scale_fcn(DEi[ii],[scale_factor[0]])
-            Qf[ii] = GA[ii]*scale_fcn(avg(DEi[ii],axis = 0),[scale_factor[0]])
- 
-    
+        for ii in range(labti.shape[1]):
+            Qfi[:,ii] = GA[ii]*scale_fcn(DEi[:,ii],[scale_factor[0]])
+            Qf[:,ii] = GA[ii]*scale_fcn(avg(DEi[:,ii,None],axis = 0),[scale_factor[0]])
+
     if ('Qa' in outlist) | ('Qai' in outlist) | ('Qp' in outlist) | ('Qpi' in outlist):
         Qa = Qf.copy()
         Qai = Qfi.copy()
         Qp = Qf.copy()
         Qpi = Qfi.copy()
          # loop of light source spds
-        for ii in range(labti.shape[0]):
+        for ii in range(labti.shape[1]):
             # calculate deltaC 
-            deltaC = np.sqrt(np.power(labti[ii,:,1:3],2).sum(axis = 1,keepdims=True)) - np.sqrt(np.power(labri[ii,:,1:3],2).sum(axis = 1,keepdims=True)) 
+            deltaC = np.sqrt(np.power(labti[:,ii,1:3],2).sum(axis = 1,keepdims=True)) - np.sqrt(np.power(labri[:,ii,1:3],2).sum(axis = 1,keepdims=True)) 
             
             # limit chroma increase:
-            DEi_Climited = DEi[ii].copy()
+            DEi_Climited = DEi[:,ii,None].copy()
             if maxC is None:
                 maxC = 10000.0
             limitC = np.where(deltaC >= maxC)
             DEi_Climited[limitC] = maxC
             p_deltaC_pos = np.where(deltaC>0.0)
-            DEi_Climited[p_deltaC_pos] = np.sqrt(DEi[ii][p_deltaC_pos]**2.0 - deltaC[p_deltaC_pos]**2.0) # increase in chroma is not penalized!
+            DEi_Climited[p_deltaC_pos] = np.sqrt(DEi[:,ii,None][p_deltaC_pos]**2.0 - deltaC[p_deltaC_pos]**2.0) # increase in chroma is not penalized!
 
             if ('Qa' in outlist) | ('Qai' in outlist):
-                Qai[ii] = GA[ii]*scale_fcn(DEi_Climited,[scale_factor[1]])
-                Qa[ii] = GA[ii]*scale_fcn(avg(DEi_Climited,axis = 0),[scale_factor[1]])
+                Qai[:,ii,None] = GA[ii]*scale_fcn(DEi_Climited,[scale_factor[1]])
+                Qa[:,ii] = GA[ii]*scale_fcn(avg(DEi_Climited,axis = 0),[scale_factor[1]])
                 
             if ('Qp' in outlist) | ('Qpi' in outlist):
                 deltaC_pos = deltaC * (deltaC >= 0.0)
                 deltaCmu = np.mean(deltaC * (deltaC >= 0.0))
-                Qpi[ii] = GA[ii]*scale_fcn((DEi_Climited - deltaC_pos),[scale_factor[2]]) # or ?? np.sqrt(DEi_Climited**2 - deltaC_pos**2) ??
-                Qp[ii] = GA[ii]*scale_fcn((avg(DEi_Climited, axis = 0) - deltaCmu),[scale_factor[2]])
+                Qpi[:,ii,None] = GA[ii]*scale_fcn((DEi_Climited - deltaC_pos),[scale_factor[2]]) # or ?? np.sqrt(DEi_Climited**2 - deltaC_pos**2) ??
+                Qp[:,ii] = GA[ii]*scale_fcn((avg(DEi_Climited, axis = 0) - deltaCmu),[scale_factor[2]])
 
     if ('Qg' in outlist):
         Qg = Qf.copy()
-        for ii in range(labti.shape[0]):
-            Qg[ii] = 100.0*polyarea(labti[ii,:,1],labti[ii,:,2])/polyarea(labri[ii,:,1],labri[ii,:,2]) # calculate Rg =  gamut area ratio of test and ref
+        for ii in range(labti.shape[1]):
+            Qg[:,ii] = 100.0*polyarea(labti[:,ii,1],labti[:,ii,2])/polyarea(labri[:,ii,1],labri[:,ii,2]) # calculate Rg =  gamut area ratio of test and ref
 
      
     if out == 'Qa':
         return Qa
     else:
         return eval(out)
-               
-            
-
-    
-    
-        
-            
-    
-    

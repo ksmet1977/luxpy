@@ -113,8 +113,10 @@ def get_transfer_function(cattype = 'vonkries', catmode = '1>0>2',lmsw1 = None,l
         lmsw2divlmsw0 = (lmsw2/lmsw0).T
         lmse1 = 3*lmsw1divlmsw0/lmsw1divlmsw0.sum(axis = 0)
         lmse2 = 3*lmsw2divlmsw0/lmsw2divlmsw0.sum(axis = 0)
-        lmsp1 = (1 + La1**(1/3) + lmse1) / (1 + La1**(1/3) + 1/lmse1)
-        lmsp2 = (1 + La2**(1/3) + lmse2) / (1 + La2**(1/3) + 1/lmse2)
+        La1p = La1**(1/3.0)
+        La2p = La2**(1/3.0)
+        lmsp1 = (1 + La1p + lmse1) / (1 + La1p + 1/lmse1)
+        lmsp2 = (1 + La2p + lmse2) / (1 + La2p + 1/lmse2)
         Dt =    ((lmsw2 / lmsw1).T * (lmsp1 + D10*(1 - lmsp1)) / (lmsp2 + D20*(1 - lmsp2))).T
 
     return Dt     
@@ -203,6 +205,32 @@ def get_degree_of_adaptation(Dtype = None, **kwargs):
     return D
 
 
+##------------------------------------------------------------------------------
+#def parse_x1x2_parameters2(x,target_shape, catmode,expand_2d_to_3d = None, default = [1.0,1.0]):
+#   """
+#   Parse input parameters x and make them the target_shape for easy calculation 
+#   (input in main function can now be a single value valid for all xyzw or an array 
+#   with a different value for each xyzw)
+#   """
+#   if x is None:
+#        x10 = broadcast_shape(default[0],target_shape = target_shape, expand_2d_to_3d = None, axis0_repeats=1)
+#        if (catmode == '1>0>2') | (catmode == '1>2'):
+#            x20 = broadcast_shape(default[1],target_shape = target_shape, expand_2d_to_3d = None,axis0_repeats=1)
+#        else:
+#            x20 = broadcast_shape(None,target_shape = target_shape, expand_2d_to_3d = None,axis0_repeats=1)
+#   else:
+#        x = np2d(x)
+#        if (catmode == '1>0>2') |(catmode == '1>2'):
+#            if x.shape[-1] == 2:
+#                x10 = broadcast_shape(x[:,0,None],target_shape = target_shape, expand_2d_to_3d = None,axis0_repeats=1)
+#                x20 = broadcast_shape(x[:,1,None],target_shape = target_shape, expand_2d_to_3d = None,axis0_repeats=1)
+#            else:
+#                 x10 = broadcast_shape(x,target_shape = target_shape, expand_2d_to_3d = None,axis0_repeats=1)
+#                 x20 = x10.copy()
+#        elif catmode == '1>0':
+#            x10 = broadcast_shape(x[:,0,None],target_shape = target_shape, expand_2d_to_3d = None,axis0_repeats=1)
+#            x20 = broadcast_shape(None,target_shape = target_shape, expand_2d_to_3d = None,axis0_repeats=1)
+#   return x10, x20
 
 #------------------------------------------------------------------------------
 def parse_x1x2_parameters(x,target_shape, catmode,expand_2d_to_3d = None, default = [1.0,1.0]):
@@ -212,34 +240,24 @@ def parse_x1x2_parameters(x,target_shape, catmode,expand_2d_to_3d = None, defaul
    with a different value for each xyzw)
    """
    if x is None:
-        x10 = broadcast_shape(default[0],target_shape = target_shape, expand_2d_to_3d = None, axis1_repeats=1)
-        #x10 = todim(default[0],target_shape,equal_shape=True)
+        x10 = np.ones(target_shape)*default[0]
         if (catmode == '1>0>2') | (catmode == '1>2'):
-            x20 = broadcast_shape(default[1],target_shape = target_shape, expand_2d_to_3d = None,axis1_repeats=1)
-            #x20 = todim(default[1],target_shape,equal_shape=True)
+            x20 = np.ones(target_shape)*default[1]
         else:
-            x20 = broadcast_shape(None,target_shape = target_shape, expand_2d_to_3d = None,axis1_repeats=1)
-            #x20 = todim(None,target_shape,equal_shape=True)
+            x20 = np.ones(target_shape)*np.nan
    else:
         x = np2d(x)
         if (catmode == '1>0>2') |(catmode == '1>2'):
             if x.shape[-1] == 2:
-                x10 = broadcast_shape(x[:,0,None],target_shape = target_shape, expand_2d_to_3d = None,axis1_repeats=1)
-                #x10 = todim(x[:,0,None],target_shape,equal_shape=True)
-                x20 = broadcast_shape(x[:,1,None],target_shape = target_shape, expand_2d_to_3d = None,axis1_repeats=1)
-                #x20 = todim(x[:,1,None],target_shape,equal_shape=True)
+                x10 = np.ones(target_shape)*x[...,0]
+                x20 = np.ones(target_shape)*x[...,1]
             else:
-                 x10 = broadcast_shape(x,target_shape = target_shape, expand_2d_to_3d = None,axis1_repeats=1)
-                 #x10 = todim(x,target_shape,equal_shape=True)
+                 x10 = np.ones(target_shape)*x
                  x20 = x10.copy()
         elif catmode == '1>0':
-            x10 = broadcast_shape(x[:,0,None],target_shape = target_shape, expand_2d_to_3d = None,axis1_repeats=1)
-            #x10 = todim(x[:,0,None],target_shape,equal_shape=True)
-            x20 = broadcast_shape(None,target_shape = target_shape, expand_2d_to_3d = None,axis1_repeats=1)
-            #x20 = todim(None,target_shape,equal_shape=True)
-    
+            x10 = np.ones(target_shape)*x[...,0]
+            x10 = np.ones(target_shape)*np.nan
    return x10, x20
-
 
 #------------------------------------------------------------------------------
 def apply(data, catmode = '1>0>2', cattype = 'vonkries', xyzw1 = None,xyzw2 = None,xyzw0 = None, D = None,mcat = ['cat02'], normxyz0 = None, outtype = 'xyz', La = None, F = None, Dtype = None):
@@ -259,49 +277,42 @@ def apply(data, catmode = '1>0>2', cattype = 'vonkries', xyzw1 = None,xyzw2 = No
         data_original_shape = data.shape
         if data.ndim < 3:
             target_shape = np.hstack((1,data.shape))
+            data = data*np.ones(target_shape)
         else:
             target_shape = data.shape
 
-        #data = broadcast_shape(data,target_shape = None,expand_2d_to_3d = 0, axis1_repeats = 1) 
-        data = todim(data,target_shape,equal_shape=False)
+        target_shape = data.shape
 
         # initialize xyzw0:
         if (xyzw0 is None): # set to iLL.E
-            xyzw0 = np.array([100.0,100.0,100.0])
-        #xyzw0 = broadcast_shape(xyzw0,target_shape = data.shape,expand_2d_to_3d = np.abs(1*(len(data_original_shape)==2)-1), axis1_repeats = 1) # make xyzw0 same 'size' as data
-        xyzw0 = todim(xyzw0,target_shape,equal_shape=True)
-        La0 = xyzw0[:,:,1,None]
+            xyzw0 = np2d([100.0,100.0,100.0])
+        xyzw0 = np.ones(target_shape)*xyzw0
+        La0 = xyzw0[...,1,None]
 
         
         # Determine cat-type (1-step or 2-step) + make input same shape as data for block calculations:
         expansion_axis = np.abs(1*(len(data_original_shape)==2)-1)
         if ((xyzw1 is not None) & (xyzw2 is not None)):
-            #xyzw1 = broadcast_shape(xyzw1,target_shape = data.shape, expand_2d_to_3d = expansion_axis, axis1_repeats = 1) # make xyzw0 same 'size' as data
-            xyzw1 = todim(xyzw1,target_shape,equal_shape=True)
-            #xyzw2 = broadcast_shape(xyzw2,target_shape = data.shape, expand_2d_to_3d = expansion_axis, axis1_repeats = 1) # make xyzw0 same 'size' as data
-            xyzw2 = todim(xyzw2,target_shape,equal_shape=True)
-            default_La12 = [xyzw1[:,:,1,None],xyzw2[:,:,1,None]]
+            xyzw1 = xyzw1*np.ones(target_shape) 
+            xyzw2 = xyzw2*np.ones(target_shape)
+            default_La12 = [xyzw1[...,1,None],xyzw2[...,1,None]]
             
         elif (xyzw2 is None) & (xyzw1 is not None): # apply one-step CAT: 1-->0
             catmode = '1>0' #override catmode input
-            #xyzw1 = broadcast_shape(xyzw1,target_shape = data.shape, expand_2d_to_3d = expansion_axis, axis1_repeats = 1) # make xyzw0 same 'size' as data
-            xyzw1 = todim(xyzw1,target_shape,equal_shape=True)
-            default_La12 = [xyzw1[:,:,1,None],La0]
+            xyzw1 = xyzw1*np.ones(target_shape)
+            default_La12 = [xyzw1[...,1,None],La0]
             
         elif (xyzw1 is None) & (xyzw2 is not None):
             raise Exception("von_kries(): cat transformation '0>2' not supported, use '1>0' !")
-        
-      
-           
-        # Get or set La (La == None: xyz are absolute or relative, La != None: xyz are relative):  
-        La1, La2 = parse_x1x2_parameters(La,target_shape = data.shape, catmode = catmode, expand_2d_to_3d = expansion_axis, default = default_La12)            
 
-        # Set degrees of adaptation, D10, D20:  (note D20 is degree of adaptation for 2-->0!!)  
-        
-        D10, D20 = parse_x1x2_parameters(D,target_shape = data.shape, catmode = catmode, expand_2d_to_3d = expansion_axis)
+        # Get or set La (La == None: xyz are absolute or relative, La != None: xyz are relative):  
+        target_shape_1 = tuple(np.hstack((target_shape[:-1],1)))
+        La1, La2 = parse_x1x2_parameters(La,target_shape = target_shape_1, catmode = catmode, expand_2d_to_3d = expansion_axis, default = default_La12)
+        # Set degrees of adaptation, D10, D20:  (note D20 is degree of adaptation for 2-->0!!)
+        D10, D20 = parse_x1x2_parameters(D,target_shape = target_shape_1, catmode = catmode, expand_2d_to_3d = expansion_axis)
 
         # Set F surround in case of Dtype == 'cat02':
-        F1, F2 =  parse_x1x2_parameters(F,target_shape = data.shape, catmode = catmode, expand_2d_to_3d = expansion_axis)
+        F1, F2 =  parse_x1x2_parameters(F,target_shape = target_shape_1, catmode = catmode, expand_2d_to_3d = expansion_axis)
             
         # Make xyz relative to go to relative xyz0:
         if La is None:
@@ -315,13 +326,12 @@ def apply(data, catmode = '1>0>2', cattype = 'vonkries', xyzw1 = None,xyzw2 = No
         # transform data (xyz) to sensor space (lms) and perform cat:
         xyzc = np.ones(data.shape)*np.nan
         mcat = np.array(mcat)
-        
-        if (mcat.shape[0] != data.shape[0]) & (mcat.shape[0]==1):
-            mcat = np.repeat(mcat,data.shape[0],axis = 0)
-        elif (mcat.shape[0] != data.shape[0]) & (mcat.shape[0]>1):
+        if (mcat.shape[0] != data.shape[1]) & (mcat.shape[0]==1):
+            mcat = np.repeat(mcat,data.shape[1],axis = 0)
+        elif (mcat.shape[0] != data.shape[1]) & (mcat.shape[0]>1):
             raise Exception('von_kries(): mcat.shape[0] > 1 and does not match data.shape[0]!')
-        
-        for i in range(xyzc.shape[0]):
+
+        for i in range(xyzc.shape[1]):
             # get cat sensor matrix:
             if  mcat[i].dtype == np.float64:
                 mcati = mcat[i]
@@ -331,59 +341,53 @@ def apply(data, catmode = '1>0>2', cattype = 'vonkries', xyzw1 = None,xyzw2 = No
             # normalize sensor matrix:
             if normxyz0 is not None:
                 mcati = normalize_3x3_matrix(mcati, xyz0 = normxyz0)
-            
-            # convert from xyz to lms:
-            lms = np.dot(mcati,data[i].T).T
-            lmsw0 = np.dot(mcati,xyzw0[i].T).T
 
+            # convert from xyz to lms:
+            lms = np.dot(mcati,data[:,i].T).T
+            lmsw0 = np.dot(mcati,xyzw0[:,i].T).T
             if (catmode == '1>0>2') | (catmode == '1>0'):
-                lmsw1 = np.dot(mcati,xyzw1[i].T).T
-                Dpar1 = dict(D = D10[i][0][0], F = F1[i][0][0] , La = La1[i][0][0], La0 = La0[i][0][0], order = '1>0')
-                D10[i] = get_degree_of_adaptation(Dtype = Dtype, **Dpar1) #get degree of adaptation depending on Dtype
+                lmsw1 = np.dot(mcati,xyzw1[:,i].T).T
+                Dpar1 = dict(D = D10[:,i], F = F1[:,i] , La = La1[:,i], La0 = La0[:,i], order = '1>0')
+                D10[:,i] = get_degree_of_adaptation(Dtype = Dtype, **Dpar1) #get degree of adaptation depending on Dtype
                 lmsw2 = None # in case of '1>0'
                 
             if (catmode == '1>0>2'):
-                lmsw2 = np.dot(mcati,xyzw2[i].T).T
-                Dpar2 = dict(D = D20[i][0][0], F = F2[i][0][0] , La = La2[i][0][0], La0 = La0[i][0][0], order = '0>2')
-                D20[i] = get_degree_of_adaptation(Dtype = Dtype, **Dpar2) #get degree of adaptation depending on Dtype
+                lmsw2 = np.dot(mcati,xyzw2[:,i].T).T
+                Dpar2 = dict(D = D20[:,i], F = F2[:,i] , La = La2[:,i], La0 = La0[:,i], order = '0>2')
+
+                D20[:,i] = get_degree_of_adaptation(Dtype = Dtype, **Dpar2) #get degree of adaptation depending on Dtype
 
             if (catmode == '1>2'):
-                lmsw1 = np.dot(mcati,xyzw1[i].T).T
-                lmsw2 = np.dot(mcati,xyzw2[i].T).T
-                Dpar12 = dict(D = D10[i][0][0], F = F1[i][0][0] , La = La1[i][0][0], La2 = La2[i][0][0], order = '1>2')
-                D10[i] = get_degree_of_adaptation(Dtype = Dtype, **Dpar12) #get degree of adaptation depending on Dtype
+                lmsw1 = np.dot(mcati,xyzw1[:,i].T).T
+                lmsw2 = np.dot(mcati,xyzw2[:,i].T).T
+                Dpar12 = dict(D = D10[:,i], F = F1[:,i] , La = La1[:,i], La2 = La2[:,i], order = '1>2')
+                D10[:,i] = get_degree_of_adaptation(Dtype = Dtype, **Dpar12) #get degree of adaptation depending on Dtype
 
 
             # Determine transfer function Dt:
-            Dt = get_transfer_function(cattype = cattype, catmode = catmode,lmsw1 = lmsw1,lmsw2 = lmsw2,lmsw0 = lmsw0,D10 = D10[i], D20 = D20[i], La1 = La1[i], La2 = La2[i])
+            Dt = get_transfer_function(cattype = cattype, catmode = catmode,lmsw1 = lmsw1,lmsw2 = lmsw2,lmsw0 = lmsw0,D10 = D10[:,i], D20 = D20[:,i], La1 = La1[:,i], La2 = La2[:,i])
 
             # Perform cat:
-            lms = np.dot(np.diag(Dt[0]),lms.T).T
+            lms = np.dot(np.diagflat(Dt[0]),lms.T).T
             
             # Make xyz, lms 'absolute' again:
             if (catmode == '1>0>2'):
-                lms = (La2[i]/La1[i])*lms
+                lms = (La2[:,i]/La1[:,i])*lms
             elif (catmode == '1>0'):
-                lms = (La0[i]/La1[i])*lms
+                lms = (La0[:,i]/La1[:,i])*lms
             elif (catmode == '1>2'):
-                lms = (La2[i]/La1[i])*lms
-
+                lms = (La2[:,i]/La1[:,i])*lms
             
             # transform back from sensor space to xyz (or not):
             if outtype == 'xyz':
                 xyzci = np.dot(np.linalg.inv(mcati),lms.T).T
                 xyzci[np.where(xyzci<0)] = _eps
-                xyzc[i] = xyzci
+                xyzc[:,i] = xyzci
             else:
-                xyzc[i] = lms
+                xyzc[:,i] = lms
                 
         # return data to original shape:
         if len(data_original_shape) == 2:
             xyzc = xyzc[0]
    
         return xyzc
- 
-    
-        
-            
-       
