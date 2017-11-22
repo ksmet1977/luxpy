@@ -41,7 +41,7 @@ _cct_lut_dir = _pckg_dir + _sep + 'data'+ _sep + 'cctluts' + _sep #folder with c
 
 #--------------------------------------------------------------------------------------------------
 # load CCT LUT:
-_cct_LUT = dictkv(keys = sorted(_cmf['types']), values = [getdata('{}cct_lut_{}.dat'.format(_cct_lut_dir,sorted(_cmf['types'])[i]),kind='np',index = 'wl').transpose() for i in range(len(_cmf['types']))],ordered = False)
+_cct_LUT = dictkv(keys = sorted(_cmf['types']), values = [getdata('{}cct_lut_{}.dat'.format(_cct_lut_dir,sorted(_cmf['types'])[i]),kind='np') for i in range(len(_cmf['types']))],ordered = False)
 
 
 

@@ -223,6 +223,10 @@ def spd(data = None, interpolation = None, data_names = None, kind = 'df', wl = 
     """
     All-in-one function: convert spd-like data from np.array to pd.dataframe, interpolate (use wl and interpolation like in cie_interp), normalize.
     """
+    if isinstance(data,str):
+        transpose = True #when spd comes from file -> transpose (columns in files should be different spectra)
+    else:
+        transpose = False
 
     # Wavelength definition:
     wl = getwlr(wl)
@@ -230,9 +234,11 @@ def spd(data = None, interpolation = None, data_names = None, kind = 'df', wl = 
     # Data input:
     if data is not None:
         if (interpolation is None) & (normalization is None):
-            data = getdata(data = data, kind = kind, index = 'wl', columns = data_names, sep = sep, header = header, datatype = datatype) 
+            data = getdata(data = data, kind = kind, columns = data_names, sep = sep, header = header, datatype = datatype)
+            if (transpose == True) & (kind == 'np'): data = data.T
         else:
-            data = getdata(data = data, kind = 'np', index = 'wl', columns = data_names, sep = sep, header = header, datatype = datatype)  #interpolation requires np-array as input
+            data = getdata(data = data, kind = 'np', columns = data_names, sep = sep, header = header, datatype = datatype)#interpolation requires np-array as input
+            if (transpose == True) & (kind == 'np'): data = data.T
             data = cie_interp(data = data, wl_new = wl,kind = interpolation)
             data = normalize_spd(data,normalization = normalization, w_norm = w_norm, wl = True)
         
@@ -246,7 +252,7 @@ def spd(data = None, interpolation = None, data_names = None, kind = 'df', wl = 
         data_names = None
         
     # convert to desired kind:
-    data = getdata(data = data,kind = kind, index = 'wl',columns = data_names, datatype = datatype)
+    data = getdata(data = data,kind = kind,columns = data_names, datatype = datatype)
         
     return data
 
@@ -262,8 +268,8 @@ def xyzbar(cieobs = _cieobs, scr = 'dict', wl_new = None, kind = 'df',normalizat
         dict_or_file = _cmf['bar'][cieobs]
     else:
         dict_or_file = scr #can be file or data itself
-        
-    return spd(wl = wl_new, data = dict_or_file, interpolation = 'linear', data_names = ['xb', 'yb', 'zb'], kind = kind)
+
+    return spd(wl = wl_new, data = dict_or_file, interpolation = 'linear', data_names = ['wl','xb', 'yb', 'zb'], kind = kind)
 	
 #--------------------------------------------------------------------------------------------------
 
@@ -276,12 +282,13 @@ def spd_to_xyz(data,  relative = True, rfl = None, cieobs = _cieobs, out = None)
         data = getdata(data,kind = 'np')
     else:
         data = np2d(data) #ensure 2D-array
-        
+
     # get wl spacing:
     dl=getwld(data[0])
     
     # get cmf,k for cieobs:
     cmf = xyzbar(cieobs = cieobs, scr = 'dict',wl_new = data[0],kind = 'np') #also interpolate to wl of data
+
     k = _cmf['K'][cieobs]
 
     #interpolate rfls to lambda range of spd:
