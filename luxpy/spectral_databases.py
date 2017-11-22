@@ -46,8 +46,8 @@ _R_dir = _pckg_dir + _sep + 'data'+ _sep + 'rfls' + _sep #folder with rfl data
 # spectral power distributions:
     
 # load TM30 spd data base:
-_iestm30 = {'S': {'data': getdata(_S_dir + 'IESTM30_Sspds.dat',kind='np',index = 'wl')}}
-_iestm30['S']['info'] = getdata(_S_dir + 'IESTM30_Sinfo.txt',kind='np',index = 'nr',header='infer',verbosity = False).transpose()
+_iestm30 = {'S': {'data': getdata(_S_dir + 'IESTM30_Sspds.dat',kind='np').transpose()}}
+_iestm30['S']['info'] = getdata(_S_dir + 'IESTM30_Sinfo.txt',kind='np',header='infer',verbosity = False)
 _iestm30_S = _iestm30['S']
 
 
@@ -77,41 +77,41 @@ del E, D65, A, C, F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12
 
 #------------------------------------------------------------------------------
 # CIE 13.3-1995 color rendering index:
-_cie133_1995 = {'14': getdata(_R_dir + 'CIE_13_3_1995_R14.dat',kind='np',index = 'wl')}
+_cie133_1995 = {'14': getdata(_R_dir + 'CIE_13_3_1995_R14.dat',kind='np').T}
 _cie133_1995['8'] = _cie133_1995['14'][0:9].copy()
    
  
 #------------------------------------------------------------------------------  
 # IES TM30-15 color fidelity and color galut indices:
-_iestm30['R'] = {'4880' : {'5nm': getdata(_R_dir + 'IESTM30_R4880.dat',kind='np',index = 'wl')}}
-_iestm30['R']['99'] = {'5nm' : getdata(_R_dir + 'IESTM30_R99.dat',kind='np',index = 'wl')}
-temp = getdata(_R_dir + 'IESTM30_R99info.dat',kind='df',index = 'nr',columns=[i+1 for i in range(99)]).values[0]
+_iestm30['R'] = {'4880' : {'5nm': getdata(_R_dir + 'IESTM30_R4880.dat',kind='np').T}}
+_iestm30['R']['99'] = {'5nm' : getdata(_R_dir + 'IESTM30_R99.dat',kind='np').T}
+temp = getdata(_R_dir + 'IESTM30_R99info.dat',kind='df').values[0]
 ies99categories = ['nature','skin','textiles','paints','plastic','printed','color system']
 _iestm30['R']['99']['info'] = [ies99categories[int(i-1)] for i in temp]
 
 
 #------------------------------------------------------------------------------
 # cie 224:2017 (color fidelity index based on IES TM-30-15):
-_cie224_2017 = {'99': {'1nm' : getdata(_R_dir + 'CIE224_2017_R99_1nm.dat',kind='np',index = 'wl')}}
-_cie224_2017['99']['5nm'] = getdata(_R_dir + 'CIE224_2017_R99_5nm.dat',kind='np',index = 'wl')
+_cie224_2017 = {'99': {'1nm' : getdata(_R_dir + 'CIE224_2017_R99_1nm.dat',kind='np').T}}
+_cie224_2017['99']['5nm'] = getdata(_R_dir + 'CIE224_2017_R99_5nm.dat',kind='np').T
 _cie224_2017['99']['info'] = _iestm30['R']['99']['info']
 
 #------------------------------------------------------------------------------
 # CRI2012 spectrally uniform mathematical sampleset:
-_cri2012 = {'HL17' : getdata(_R_dir + 'CRI2012_HL17.dat',kind='np',index = 'wl')}
-_cri2012['HL1000'] = getdata(_R_dir +'CRI2012_Hybrid14_1000.dat',kind='np',index = 'wl')
-_cri2012['Real210'] = getdata(_R_dir +'CRI2012_R210.dat',kind='np',index = 'wl')
+_cri2012 = {'HL17' : getdata(_R_dir + 'CRI2012_HL17.dat',kind='np').T}
+_cri2012['HL1000'] = getdata(_R_dir +'CRI2012_Hybrid14_1000.dat',kind='np').T
+_cri2012['Real210'] = getdata(_R_dir +'CRI2012_R210.dat',kind='np').T
 
 #------------------------------------------------------------------------------
 # MCRI (memory color rendition index, Rm) sampleset:
-_mcri = {'R' : getdata(_R_dir + 'MCRI_R10.dat',kind='np',index = 'wl')}
+_mcri = {'R' : getdata(_R_dir + 'MCRI_R10.dat',kind='np').T}
 _mcri['info'] = ['apple','banana','orange','lavender','smurf','strawberry yoghurt','sliced cucumber', 'cauliflower','caucasian skin','N4'] # familiar objects, N4: neutral (approx. N4) gray sphere 
 
 
 #------------------------------------------------------------------------------
 # CQS versions 7.5 and 9.0:
-_cqs = {'v7.5': getdata(_R_dir + 'CQSv7dot5.dat',kind='np',index = 'wl')}
-_cqs['v9.0'] =  getdata(_R_dir + 'CQSv9dot0.dat',kind='np',index = 'wl')
+_cqs = {'v7.5': getdata(_R_dir + 'CQSv7dot5.dat',kind='np').T}
+_cqs['v9.0'] =  getdata(_R_dir + 'CQSv9dot0.dat',kind='np').T
 
 #------------------------------------------------------------------------------
 # collect in one dict:
@@ -125,8 +125,8 @@ _cri_rfl['cqs'] = _cqs
 #------------------------------------------------------------------------------
 # 1269 Munsell spectral reflectance functions:
 _munsell = {'cieobs':'1931_2', 'Lw' : 400.0, 'Yb':0.2}
-_munsell['R'] = getdata(_R_dir + 'munsell1269.dat',kind='np',index = 'wl')
-temp = getdata(_R_dir + 'Munsell_VabCh.dat',kind='np',index = 'wl')
+_munsell['R'] = getdata(_R_dir + 'munsell1269.dat',kind='np').T
+temp = getdata(_R_dir + 'Munsell_VabCh.dat',kind='np')
 _munsell['V'] = temp[:,0,None]
 _munsell['ab'] = temp[:,1:2]
 _munsell['C'] = temp[:,3,None]

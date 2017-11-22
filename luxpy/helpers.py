@@ -146,7 +146,36 @@ def put_args_in_db(db,args):
 
 
 #--------------------------------------------------------------------------------------------------
-def getdata(data,kind = 'np', index=None, columns=None,header = None,sep = ',',datatype = 'S',verbosity = True):
+def getdata(data,kind = 'np', columns=None,header = None,sep = ',',datatype = 'S',verbosity = True):
+    """
+    Get data from csv-file or convert between pandas dataframe and numpy 2d-array.
+    """
+    if isinstance(data,str):
+        datafile = data
+        data = pd.read_csv(data,names=None,index_col = None,header = header,sep = sep)
+
+        # Set column headers:
+        if header == 'infer':
+            if verbosity == True:
+                warnings.warn('getdata(): Infering HEADERS from data file: {}!'.format(datafile))
+                columns = data.columns
+                #index = data.index.name
+        elif (columns is None):
+            data.columns = ['{}{}'.format(datatype,x) for x in range(len(data.columns))] 
+        if columns is not None:
+            data.columns = columns
+
+    if isinstance(data,np.ndarray) & (kind == 'df'):
+        if columns is None:
+            columns = ['{}{}'.format(datatype,x)  for x in range(data.shape[1])] 
+        data = pd.DataFrame(data, columns = columns)
+
+    elif isinstance(data,pd.DataFrame) & (kind == 'np'):
+        data = data.values
+    return data
+
+#--------------------------------------------------------------------------------------------------
+def getdata_bak(data,kind = 'np', index=None, columns=None,header = None,sep = ',',datatype = 'S',verbosity = True):
     """
     Get data from csv-file or convert between pandas dataframe and numpy 2d-array.
     """
