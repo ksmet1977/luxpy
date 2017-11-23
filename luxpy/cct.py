@@ -316,23 +316,21 @@ def xyz_to_cct_ohno(data, cieobs = _cieobs, out = 'cct', wl = None, accuracy = 0
             Duv[i] = np.nan
             
             
-        cct_m1 = cct_LUT[idx_min_m1] - 2*_eps
+        cct_m1 = cct_LUT[idx_min_m1] # - 2*_eps
         delta_uv_m1 = delta_uv[idx_min_m1]
         uv_m1 = uv_LUT[idx_min_m1]
-        
         cct_p1 = cct_LUT[idx_min_p1] 
         delta_uv_p1 = delta_uv[idx_min_p1]
         uv_p1 = uv_LUT[idx_min_p1]
-        
+
         cct_0 = cct_LUT[idx_min]
         delta_uv_0 = delta_uv[idx_min]
-            
+
         # calculate uv distance between Tm_m1 & Tm_p1:
         delta_uv_p1m1 = ((uv_p1[0] - uv_m1[0])**2.0 + (uv_p1[1] - uv_m1[1])**2.0)**0.5
 
         # Triangular solution:
         x = ((delta_uv_m1**2)-(delta_uv_p1**2)+(delta_uv_p1m1**2))/(2*delta_uv_p1m1)
-        
         Tx = cct_m1 + ((cct_p1 - cct_m1) * (x / delta_uv_p1m1))
         uBB = uv_m1[0] + (uv_p1[0] - uv_m1[0]) * (x / delta_uv_p1m1)
         vBB = uv_m1[1] + (uv_p1[1] - uv_m1[1]) * (x / delta_uv_p1m1)

@@ -18,11 +18,11 @@ Created on Thu Jun 29 11:42:10 2017
 # _cri_defaults: default settings for different color rendition indices: (major dict has 9 keys (04-Jul-2017): sampleset [str/dict], ref_type [str], cieobs [str], avg [fcn handle], scale [dict], cspace [dict], catf [dict], rg_pars [dict], cri_specific_pars [dict])
 #               types supported: 'ciera','ciera-8','ciera-14','cierf','iesrf','cri2012','cri2012-hl17', 'cri2012-hl1000','cri2012-real210','cqs-v7.5', 'cqs-v9.0', mcri'
 #
-# linear_scale():  Linear color rendering index scale from CIE13.3-1974/1995:   Ri,a = 100 - c1*DEi,a. (c1 = 4.6)
+# linear_scale():  Linear color rendering index scale from CIE13.3-1974/1995:   Rfi,a = 100 - c1*DEi,a. (c1 = 4.6)
 #
-# log_scale(): Log-based color rendering index scale from Davis & Ohno (2009):  Ri,a = 10 * ln(exp((100 - c1*DEi,a)/10) + 1)
+# log_scale(): Log-based color rendering index scale from Davis & Ohno (2009):  Rfi,a = 10 * ln(exp((100 - c1*DEi,a)/10) + 1)
 #
-# psy_scale():  Psychometric based color rendering index scale from CRI2012 (Smet et al. 2013, LRT):  Ri,a = 100 * (2 / (exp(c1*abs(DEi,a)**(c2) + 1))) ** c3
+# psy_scale():  Psychometric based color rendering index scale from CRI2012 (Smet et al. 2013, LRT):  Rfi,a = 100 * (2 / (exp(c1*abs(DEi,a)**(c2) + 1))) ** c3
 #
 # process_cri_type_input(): load a cri_type dict but overwrites any keys that have a non-None input in calling function
 #
@@ -36,10 +36,10 @@ Created on Thu Jun 29 11:42:10 2017
 #
 # spd_to_DEi(): Calculates color difference (~fidelity) of data (= np.array([[wl,spds]]) (data_axis = 0) between sample set illuminated with test source (data) and some reference illuminant.
 #
-# optimize_scale_factor(): Optimize scale_factor of cri-model in cri_type such that average Ra for a set of light sources is the same as that of a target-cri (default: 'ciera').
+# optimize_scale_factor(): Optimize scale_factor of cri-model in cri_type such that average Rf for a set of light sources is the same as that of a target-cri (default: 'ciera').
 #
 # spd_to_cri(): Calculates color rendition (~fidelity) index of data (= np.array([[wl,spds]]) (data_axis = 0) free choice of:
-#     * out = output requested (e.g. 'Ra', 'Ri' or 'Ra,Ri', or 'Ra, Ri, cct', ...; default = 'Ra', 'a' stands for average --> general color rendition index, i for individual regardless of cri_type
+#     * out = output requested (e.g. 'Rf', 'Rfi' or 'Rf,Rfi', or 'Rf, Rfi, cct', ...; default = 'Rf', with 'Rf' general color fidelity index, Rfi individual color fidelity indices
 #        * wl: wavelengths (or [start, end, spacing]) to interpolate the SPD's in data argument to. Default = None (no interpolation) 
 #        * cri_type: str input specifying dict with default settings or user defined dict with parameters specifying color rendering index specifics (see e.g. luxpy.cri._cri_defaults['cierf'])
 #                    non-None input arguments to function will override defaults in cri_type dict
@@ -68,7 +68,7 @@ Created on Thu Jun 29 11:42:10 2017
 #                    psy_scale (Smet et al.'s cri2012,See: LRT 2013)
 #                + 'cfactor': factors used in scaling function, 
 #                          if True: 
-#                              will be optimized to minimize the rms between the Ra's of the requested metric and some target metric specified in:
+#                              will be optimized to minimize the rms between the Rf's of the requested metric and some target metric specified in:
 #                                  + opt_cri_type:  str (one of the preset _cri_defaults) or dict (dict must contain all keys as normal)
 #                                        default = 'ciera' (if 'opt_cri_type' -key not in 'scale' dict)
 #                                  + opt_spd_set: set of light source spds used to optimize cfactor 
@@ -103,21 +103,21 @@ __all__+=['spd_to_mcri', 'spd_to_cqs']
 def linear_scale(data, scale_factor = [4.6], scale_max = 100.0): # defaults from cie-13.3-1995 cri
     """
     Linear color rendering index scale from CIE13.3-1974/1995: 
-        Ri,a = 100 - c1*DEi,a. (c1 = 4.6)
+        Rfi,a = 100 - c1*DEi,a. (c1 = 4.6)
     """
     return scale_max - scale_factor[0]*data
 
 def log_scale(data, scale_factor = [6.73], scale_max = 100.0): # defaults from cie-224-2017 cri
     """
     Log-based color rendering index scale from Davis & Ohno (2009): 
-        Ri,a = 10 * ln(exp((100 - c1*DEi,a)/10) + 1).
+        Rfi,a = 10 * ln(exp((100 - c1*DEi,a)/10) + 1).
     """
     return 10.0*np.log(np.exp((scale_max - scale_factor[0]*data)/10.0) + 1.0)
 
 def psy_scale(data, scale_factor = [1.0/55.0, 3.0/2.0, 2.0], scale_max = 100.0): # defaults for cri2012
     """
     Psychometric based color rendering index scale from CRI2012 (Smet et al. 2013, LRT): 
-        Ri,a = 100 * (2 / (exp(c1*abs(DEi,a)**(c2) + 1))) ** c3.
+        Rfi,a = 100 * (2 / (exp(c1*abs(DEi,a)**(c2) + 1))) ** c3.
     """
     return scale_max*np.power(2.0 / (np.exp(scale_factor[0]*np.power(np.abs(data),scale_factor[1])) + 1.0), scale_factor[2])
 
@@ -399,7 +399,7 @@ def spd_to_rg(data, cri_type = 'cierf', out = 'Rg', wl = None, sampleset = None,
                     psy_scale (Smet et al.'s cri2012,See: LRT 2013)
                 + 'cfactor': factors used in scaling function, 
                           if None: 
-                              will be optimized to minimize the rms between the Ra's of the requested metric and some target metric specified in:
+                              will be optimized to minimize the rms between the Rf's of the requested metric and some target metric specified in:
                                   + opt_cri_type:  str (one of the preset _cri_defaults) or dict (dict must contain all keys as normal)
                                         default = 'ciera' (if 'opt_cri_type' -key not in 'scale' dict)
                                   + opt_spd_set: set of light source spds used to optimize cfactor 
@@ -469,14 +469,14 @@ def spd_to_DEi(data, cri_type = 'cierf', out = 'DEi', wl = None, sampleset = Non
     cri_type = process_cri_type_input(cri_type, args, callerfunction = 'cri.spd_to_DEi')
 
     # calculate Jabt of test and Jabr of the reference illuminant corresponding to test: 
-    #jabti, jabri, cct, duv = spd_to_jab_t_r(data, cri_type = cri_type, out = 'Jabt,Jabr,cct,duv', wl = wl, sampleset = sampleset, cieobs  = cieobs, cieobs_cct = cieobs_cct, cspace = cspace, catf = catf, ref_type = ref_type, cspace_pars = cspace_pars,cri_specific_pars = cri_specific_pars)
-    jabti, jabri, cct, duv = spd_to_jab_t_r(data, cri_type = cri_type, out = 'Jabt,Jabr,cct,duv', wl = wl)
+    #Jabt, Jabr, cct, duv = spd_to_jab_t_r(data, cri_type = cri_type, out = 'Jabt,Jabr,cct,duv', wl = wl, sampleset = sampleset, cieobs  = cieobs, cieobs_cct = cieobs_cct, cspace = cspace, catf = catf, ref_type = ref_type, cspace_pars = cspace_pars,cri_specific_pars = cri_specific_pars)
+    Jabt, Jabr, cct, duv = spd_to_jab_t_r(data, cri_type = cri_type, out = 'Jabt,Jabr,cct,duv', wl = wl)
       
     # E. calculate DEi, DEa:
     avg = cri_type['avg']
-    DEi = np.power((jabti - jabri),2).sum(axis = len(jabti.shape)-1,keepdims = False)**0.5
-    #DEi = np.power((jabti - jabri),2).sum(axis = len(jabti.shape)-1,keepdims = True)**0.5
-    DEa = avg(DEi, axis = 0) #len(jabti.shape)-2)
+    DEi = np.power((Jabt - Jabr),2).sum(axis = len(Jabt.shape)-1,keepdims = False)**0.5
+    #DEi = np.power((Jabt - Jabr),2).sum(axis = len(Jabt.shape)-1,keepdims = True)**0.5
+    DEa = avg(DEi, axis = 0) #len(Jabt.shape)-2)
     DEa = np2d(DEa)
   
      # output:
@@ -489,7 +489,7 @@ def spd_to_DEi(data, cri_type = 'cierf', out = 'DEi', wl = None, sampleset = Non
 #------------------------------------------------------------------------------
 def optimize_scale_factor(cri_type,opt_scale_factor, scale_fcn, avg) :
     """
-    Optimize scale_factor of cri-model in cri_type such that average Ra for a set of light sources is the same as that of a target-cri (default: 'ciera').
+    Optimize scale_factor of cri-model in cri_type such that average Rf for a set of light sources is the same as that of a target-cri (default: 'ciera').
     """
     if  np.any(opt_scale_factor):
         if 'opt_cri_type' not in cri_type['scale'].keys(): 
@@ -500,7 +500,7 @@ def optimize_scale_factor(cri_type,opt_scale_factor, scale_fcn, avg) :
         scale_factor_opt = opt_cri_type ['scale']['cfactor']
         avg_opt = opt_cri_type ['avg']
         DEa_opt = spd_to_DEi(opt_spd_set, out ='DEa', cri_type = opt_cri_type) # DEa using target cri
-        Ra_opt = avg(scale_fcn_opt(DEa_opt,scale_factor_opt))
+        Rf_opt = avg(scale_fcn_opt(DEa_opt,scale_factor_opt))
         
         DEa = spd_to_DEi(opt_spd_set, out ='DEa', cri_type = cri_type) # DEa using current cri
 
@@ -514,13 +514,13 @@ def optimize_scale_factor(cri_type,opt_scale_factor, scale_fcn, avg) :
             opt_scale_factor = [opt_scale_factor] 
         if (len(opt_scale_factor)==1) & (len(sf) == 1):
             x0 = 1
-            optfcn = lambda x : math.rms(avg(scale_fcn(DEa,x)) - Ra_opt,axis=1) # optimize the only cfactor
+            optfcn = lambda x : math.rms(avg(scale_fcn(DEa,x)) - Rf_opt,axis=1) # optimize the only cfactor
         elif (len(opt_scale_factor)==1) & (len(sf) > 1):     
             x0 = 1
-            optfcn = lambda x : math.rms(avg(scale_fcn(DEa,np.hstack( (x,sf[1:]) ))) - Ra_opt,axis=1) # optimize the first cfactor (for scale_factor input of len = 1)
+            optfcn = lambda x : math.rms(avg(scale_fcn(DEa,np.hstack( (x,sf[1:]) ))) - Rf_opt,axis=1) # optimize the first cfactor (for scale_factor input of len = 1)
         else:
             x0 = np.ones(np.sum(opt_scale_factor))
-            optfcn = lambda x : math.rms(avg(scale_fcn(DEa,np.hstack( (x,sf[np.invert(opt_scale_factor)]) ))) - Ra_opt,axis=1) # optimize first N 'True' cfactor (for scale_factor input of len = n>=N)
+            optfcn = lambda x : math.rms(avg(scale_fcn(DEa,np.hstack( (x,sf[np.invert(opt_scale_factor)]) ))) - Rf_opt,axis=1) # optimize first N 'True' cfactor (for scale_factor input of len = n>=N)
         
         optresult = minimize(fun = optfcn, x0 = x0, args=(), method = 'Nelder-Mead')
         scale_factor = optresult['x']
@@ -538,10 +538,10 @@ def optimize_scale_factor(cri_type,opt_scale_factor, scale_fcn, avg) :
     return scale_factor
 
 #------------------------------------------------------------------------------
-def spd_to_cri(data, cri_type = 'cierf', out = 'Ra', wl = None, sampleset = None, ref_type = None, cieobs = None, avg = None, scale = None, opt_scale_factor = False, cspace = None, catf = None, cri_specific_pars = None, rg_pars = None):
+def spd_to_cri(data, cri_type = 'cierf', out = 'Rf', wl = None, sampleset = None, ref_type = None, cieobs = None, avg = None, scale = None, opt_scale_factor = False, cspace = None, catf = None, cri_specific_pars = None, rg_pars = None):
     """
     Calculates color rendition (~fidelity) index of data (= np.array([[wl,spds]]) (data_axis = 0) free choice of :
-        * out = output requested (e.g. 'Ra', 'Ri' or 'Ra,Ri', or 'Ra, Ri, cct', ...; default = 'Ra', 'a' stands for average --> general color rendition index, i for individual regardless of cri_type
+        * out = output requested (e.g. 'Rf', 'Rfi' or 'Rf,Rfi', or 'Rf, Rfi, cct', ...; default = 'Rf', with 'Rf' general color fidelity index, Rfi individual color fidelity indices
         * wl: wavelengths (or [start, end, spacing]) to interpolate the SPD's in data argument to. Default = None (no interpolation) 
         * cri_type: str input specifying dict with default settings or user defined dict with parameters specifying color rendering index specifics (see e.g. luxpy.cri._cri_defaults['cierf'])
                     non-None input arguments to function will override defaults in cri_type dict
@@ -570,7 +570,7 @@ def spd_to_cri(data, cri_type = 'cierf', out = 'Ra', wl = None, sampleset = None
                     psy_scale (Smet et al.'s cri2012,See: LRT 2013)
                 + 'cfactor': factors used in scaling function, 
                           if True: 
-                              will be optimized to minimize the rms between the Ra's of the requested metric and some target metric specified in:
+                              will be optimized to minimize the rms between the Rf's of the requested metric and some target metric specified in:
                                   + opt_cri_type:  str (one of the preset _cri_defaults) or dict (dict must contain all keys as normal)
                                         default = 'ciera' (if 'opt_cri_type' -key not in 'scale' dict)
                                   + opt_spd_set: set of light source spds used to optimize cfactor 
@@ -601,27 +601,28 @@ def spd_to_cri(data, cri_type = 'cierf', out = 'Ra', wl = None, sampleset = None
 #         raise Exception('03-jul-2017: Provide scale_factor(s). Automatic scale_factor search under development.')
 
     # A. get DEi of for ciera and of requested cri metric for spds in or specified by scale_factor_optimization_spds':
+    DEi, Jabt, Jabr, cct, duv = spd_to_DEi(data, out = 'DEi,Jabt,Jabr,cct,duv', cri_type = cri_type)
     if 'Rg' in out.split(','):
-        #DEi, jabti, jabri, cct, duv = spd_to_DEi(data, out = 'DEi,jabti,jabri,cct, duv', cri_type = cri_type, sampleset = sampleset, cieobs  = cieobs, cieobs_cct = cieobs_cct, cspace = cspace, catf = catf, ref_type = ref_type, avg = avg, cspace_pars = cspace_pars, cri_specific_pars = cri_specific_pars)
-        DEi, jabti, jabri, cct, duv = spd_to_DEi(data, out = 'DEi,jabti,jabri,cct, duv', cri_type = cri_type)
+        ##DEi, Jabt, Jabr, cct, duv = spd_to_DEi(data, out = 'DEi,Jabt,Jabr,cct, duv', cri_type = cri_type, sampleset = sampleset, cieobs  = cieobs, cieobs_cct = cieobs_cct, cspace = cspace, catf = catf, ref_type = ref_type, avg = avg, cspace_pars = cspace_pars, cri_specific_pars = cri_specific_pars)
+        #DEi, Jabt, Jabr, cct, duv = spd_to_DEi(data, out = 'DEi,Jabt,Jabr,cct,duv', cri_type = cri_type)
 
         # calculate gamut area index:
         rg_pars = cri_type['rg_pars']    
         nhbins, start_hue, normalize_gamut = [rg_pars[x] for x in sorted(rg_pars.keys())]
-        Rg = jab_to_rg(jabti,jabri, ordered_and_sliced = False, nhbins = nhbins, start_hue = start_hue, normalize_gamut = normalize_gamut)
+        Rg = jab_to_rg(Jabt,Jabr, ordered_and_sliced = False, nhbins = nhbins, start_hue = start_hue, normalize_gamut = normalize_gamut)
 
-    else:
-        #DEi, cct,duv = spd_to_DEi(data, out = 'DEi,cct,duv', cri_type = cri_type, sampleset = sampleset, cieobs  = cieobs, cieobs_cct = cieobs_cct, cspace = cspace, catf = catf, ref_type = ref_type, avg = avg, cspace_pars = cspace_pars,cri_specific_pars = cri_specific_pars)
-        DEi, cct, duv = spd_to_DEi(data, out = 'DEi,cct,duv', cri_type = cri_type)
+    #else:
+        ##DEi, cct,duv = spd_to_DEi(data, out = 'DEi,cct,duv', cri_type = cri_type, sampleset = sampleset, cieobs  = cieobs, cieobs_cct = cieobs_cct, cspace = cspace, catf = catf, ref_type = ref_type, avg = avg, cspace_pars = cspace_pars,cri_specific_pars = cri_specific_pars)
+        #DEi, Jabt,Jabr, cct, duv = spd_to_DEi(data, out = 'DEi,Jabt,Jabr,cct,duv', cri_type = cri_type)
         
     # B. convert DE to color rendering index:
 
-    Ri = scale_fcn(DEi,scale_factor)
-    Ra = np2d(scale_fcn(avg(DEi,axis = 0),scale_factor))
+    Rfi = scale_fcn(DEi,scale_factor)
+    Rf = np2d(scale_fcn(avg(DEi,axis = 0),scale_factor))
       
  
-    if (out == 'Ra'):
-        return Ra
+    if (out == 'Rf'):
+        return Rf
     elif (out == 'Rg'):
         return Rg
     else:
@@ -629,14 +630,14 @@ def spd_to_cri(data, cri_type = 'cierf', out = 'Ra', wl = None, sampleset = None
 
     
 #------------------------------------------------------------------------------
-def spd_to_ciera(data, out = 'Ra', wl = None):
+def spd_to_ciera(data, out = 'Rf', wl = None):
     """
     Wrapper function the 'ciera' color rendition (fidelity) metric. 
     """
     return spd_to_cri(data, cri_type = 'ciera', out = out, wl = wl)
 
 #------------------------------------------------------------------------------
-def spd_to_cierf(data, out = 'Ra', wl = None):
+def spd_to_cierf(data, out = 'Rf', wl = None):
     """
     Wrapper function the 'cierf' color rendition (fidelity) metric. 
     """
@@ -644,14 +645,14 @@ def spd_to_cierf(data, out = 'Ra', wl = None):
 
 
 #------------------------------------------------------------------------------
-def spd_to_iesrf(data, out = 'Ra', wl = None):
+def spd_to_iesrf(data, out = 'Rf', wl = None):
     """
     Wrapper function the 'iesrf' color rendition (fidelity) metric. 
     """
     return spd_to_cri(data, cri_type = 'iesrf', out = out, wl = wl)
 
 #------------------------------------------------------------------------------
-def spd_to_cri2012(data, out = 'Ra', wl = None):
+def spd_to_cri2012(data, out = 'Rf', wl = None):
     """
     Wrapper function the 'cri2012' color rendition (fidelity) metric
     with the spectally uniform HL17 mathematical sampleset.
@@ -659,7 +660,7 @@ def spd_to_cri2012(data, out = 'Ra', wl = None):
     return spd_to_cri(data, cri_type = 'cri2012', out = out, wl = wl)
 
 #------------------------------------------------------------------------------
-def spd_to_cri2012_hl17(data, out = 'Ra', wl = None):
+def spd_to_cri2012_hl17(data, out = 'Rf', wl = None):
     """
     Wrapper function the 'cri2012' color rendition (fidelity) metric
     with the spectally uniform HL17 mathematical sampleset.
@@ -667,7 +668,7 @@ def spd_to_cri2012_hl17(data, out = 'Ra', wl = None):
     return spd_to_cri(data, cri_type = 'cri2012-hl17', out = out, wl = wl)
 
 #------------------------------------------------------------------------------
-def spd_to_cri2012_hl1000(data, out = 'Ra', wl = None):
+def spd_to_cri2012_hl1000(data, out = 'Rf', wl = None):
     """
     Wrapper function the 'cri2012' color rendition (fidelity) metric
     with the spectally uniform Hybrid HL1000 sampleset.
@@ -675,7 +676,7 @@ def spd_to_cri2012_hl1000(data, out = 'Ra', wl = None):
     return spd_to_cri(data, cri_type = 'cri2012-hl1000', out = out, wl = wl)
 
 #------------------------------------------------------------------------------
-def spd_to_cri2012_real210(data, out = 'Ra', wl = None):
+def spd_to_cri2012_real210(data, out = 'Rf', wl = None):
     """
     Wrapper function the 'cri2012' color rendition (fidelity) metric 
     with the Real-210 sampleset (normally for special color rendering indices).
@@ -790,7 +791,7 @@ def  spd_to_cqs(data, version = 'v9.0', out = 'Qa',wl = None):
         cri_type = version
      
     # calculate DEI, labti, labri and get cspace_pars and rg_pars:
-    DEi, labti, labri, cct, duv, cri_type = spd_to_DEi(data, cri_type = cri_type, out = 'DEi,jabti,jabri,cct,duv,cri_type', wl = wl)
+    DEi, labti, labri, cct, duv, cri_type = spd_to_DEi(data, cri_type = cri_type, out = 'DEi,Jabt,Jabr,cct,duv,cri_type', wl = wl)
     
     # further unpack cri_type:
     scale_fcn = cri_type['scale']['fcn']     
