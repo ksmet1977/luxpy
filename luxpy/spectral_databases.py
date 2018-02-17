@@ -125,7 +125,7 @@ _cri_rfl['cqs'] = _cqs
 #------------------------------------------------------------------------------
 # 1269 Munsell spectral reflectance functions:
 _munsell = {'cieobs':'1931_2', 'Lw' : 400.0, 'Yb':0.2}
-_munsell['R'] = getdata(_R_dir + 'munsell1269.dat',kind='np').T
+_munsell['R'] = getdata(_R_dir + 'Munsell1269.dat',kind='np').T
 temp = getdata(_R_dir + 'Munsell_VabCh.dat',kind='np')
 _munsell['V'] = temp[:,0,None]
 _munsell['ab'] = temp[:,1:2]
