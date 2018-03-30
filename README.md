@@ -6,8 +6,8 @@
 * License: GPLv3
 
 -------------------------------------------------------------------------------
-## Overview of modules (in order as loaded in __init__):
-
+## Overview of modules (in order as loaded in \__init__()):
+    
     0.1.  helpers.py (imported directly into luxpy namespace, details see end of this file)
     0.2.  math.py (imported as math into the luxpy namespace, details see end of this file)
     
@@ -24,42 +24,59 @@
     
  
 -------------------------------------------------------------------------------
+## \__init__.py
+ Loads above modules and sets some default global (specified with '_') variables/constants:
+ * _PKG_PATH (absolute path to luxpy package)
+ * _SEP (operating system operator)
+ * _EPS = 7./3 - 4./3 -1 (machine epsilon)
+ * _CIEOBS = '1931_2' (default CIE observer color matching function)
+ * _CSPACE = 'Yuv' (default color space / chromaticity diagram)
+ 
+More info:
+
+    ?luxpy
+ 
+-------------------------------------------------------------------------------
 ## 1. cmf.py
 
-### _cmf:
+### _CMF:
 Dict with info on several sets of color matching functions:
  * '1931_2', '1964_10','2006_2','2006_10' (CIE 1931 2°, CIE 1964 10°, CIE 2006 2° and CIE 2006 10° observers)
  * Dict keys are: 'types, 'K' (lm/W), 'M' (xyz -- > lms conversion matrix), 'bar' (color matching functions, downloaded from cvrl.org)
 
+For more info:
+
+    ?luxpy._CMF
+
 ## 2. spectral.py
 
-### _wl3:
+### _WL3:
 Default wavelength specification in vector-3 format: [start, end, spacing]
 
 ### _BB:
-Constants for blackbody radiator calculation (c1, c2, n) 
+Dict with constants for blackbody radiator calculation (c1, c2, n) 
 * [CIE15:2004, “Colorimetry,” CIE, Vienna, Austria, 2004.](http://www.cie.co.at/index.php/index.php?i_ca_id=304)
 
 
-### _S012_daylightphase: 
+### _S012_DAYLIGHTPHASE: 
 CIE S0,S1, S2 curves for daylight phase calculation. 
 * [CIE15:2004, “Colorimetry,” CIE, Vienna, Austria, 2004.](http://www.cie.co.at/index.php/index.php?i_ca_id=304)
 
-### _interp_types:
+### _INTERP_TYPES:
 Dict with interpolation types associated with various types of spectral data according to CIE recommendation
 * [CIE15:2004, “Colorimetry,” CIE, Vienna, Austria, 2004.](http://www.cie.co.at/index.php/index.php?i_ca_id=304)
 
-### _S_interp_type:
+### _S_INTERP_TYPE:
 Interpolation type for light source spectral data
 
-### _R_interp_type:
+### _R_INTERP_TYPE:
 Interpolation type for reflective/transmissive spectral data
 
-### _cri_ref_type:
+### _CRI_REF_TYPE:
 Dict with blackbody to daylight transition (mixing) ranges for various types of reference illuminants used in color rendering index calculations.
 
 ### getwlr():
-Get/construct a wavelength range from a 3-vector (start, stop, spacing), output is a (n,)-vector.
+Get/construct a wavelength range from a 3-vector (start, stop, spacing).
 
 ### getwld():
 Get wavelength spacing of np.array input.
@@ -68,54 +85,54 @@ Get wavelength spacing of np.array input.
 Spectrum normalization (supports: area, max and lambda)
 
 ### cie_interp():
-Interpolate / extrapolate (i.e. flat: replicate closest known values) following [CIE15:2004](http://www.cie.co.at/index.php/index.php?i_ca_id=304).
+Interpolate / extrapolate spectral data following standard [CIE15:2004](http://www.cie.co.at/index.php/index.php?i_ca_id=304).
 
 ### spd():
-All-in-one function: convert spd-like data from np.array to pd.dataframe, interpolate (use wl and interpolation like in cie_interp), normalize.
+All-in-one function that can:
+ * Read spectral data from data file or take input directly as pandas.dataframe or numpy.array.
+ * Convert spd-like data from numpy.array to pandas.dataframe and back.
+ * Interpolate spectral data.
+ * Normalize spectral data.
 
 ### xyzbar():
-Get color matching functions from file (./data/cmfs/) 
-Load cmfs from file or get from dict defined in .cmf.py.
+Get color matching functions.
 
 ### spd_to_xyz():
-Calculates xyz from spd following [CIE15:2004](http://www.cie.co.at/index.php/index.php?i_ca_id=304).
-If rfl input argument is not None, the first input argument is assumed to contain light source spectra illuminating the spectral reflection functions contained in 'rfl'.
-Output will be [N x M x 3], with N number of light source spectra, M, number of spectral reflectance function and last axis referring to xyz. 
+Calculates xyz from spectral data. ([CIE15:2004](http://www.cie.co.at/index.php/index.php?i_ca_id=304)).
 
 ### blackbody():
-Calculate blackbody radiator spd for correlated color temperature = cct. ([CIE15:2004](http://www.cie.co.at/index.php/index.php?i_ca_id=304))
-Input cct must be float (for multiple cct, use cri_ref() with ref_type = 'BB').
+Calculate blackbody radiator spectrum for correlated color temperature (cct). ([CIE15:2004](http://www.cie.co.at/index.php/index.php?i_ca_id=304))
 
 ### daylightlocus():
-Calculates daylight chromaticity for cct ([CIE15:2004](http://www.cie.co.at/index.php/index.php?i_ca_id=304)).
+Calculates daylight chromaticity from cct. ([CIE15:2004](http://www.cie.co.at/index.php/index.php?i_ca_id=304)).
 
 ### daylightphase():
-Calculate daylight phase spd for correlated color temperature = cct. ([CIE15:2004](http://www.cie.co.at/index.php/index.php?i_ca_id=304)) 
-Default lower cct-limit is 4000 K, but can be turned off by setting 'force_daylight_below4000K' to True
-Input cct must be float (for multiple cct, use cri_ref() with ref_type = 'DL').
+Calculate daylight phase spectrum for correlated color temperature (cct). ([CIE15:2004](http://www.cie.co.at/index.php/index.php?i_ca_id=304)) 
 
 ### cri_ref():
-Calculates a reference illuminant for cri calculation based on cct. Type and CIE observer can be set in resp. ref_type and cieobs. 
-Input cct can be np.array, in which case output is 2d-array of spectra.
+Calculates a reference illuminant spectrum for color rendering index calculations based on cct.
+([CIE15:2004](http://www.cie.co.at/index.php/index.php?i_ca_id=304), 
+[cie224:2017, CIE 2017 Colour Fidelity Index for accurate scientific use. (2017), ISBN 978-3-902842-61-9](http://www.cie.co.at/index.php?i_ca_id=1027),
+IESTM-30) 
 
 
 
 ## 3. spectral_databases.py
 
-### _S_dir:
-Folder with light source spectra data.
+### _S_PATH:
+Path to light source spectra data.
 
-### _R_dir:
-Folder with spectral reflectance data
+### _R_PATH:
+Path to spectral reflectance data
 
-### _iestm30:
+### _IESTM30:
 Database with spectral reflectances related to and light source spectra contained excel calculator of [IES TM30-15](https://www.ies.org/store/technical-memoranda/ies-method-for-evaluating-light-source-color-rendition/) publication.
 
-### _cie_illuminants:
+### _CIE_ILLUMINANTS:
 Database with CIE illuminants:
 * 'E', 'D65', 'A', 'C', 'F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8', 'F9', 'F10', 'F11', 'F12' 
 
-### _cri_rfl:
+### _CRI_RFL:
 Database with spectral reflectance functions for various color rendition calculators
 * 'cie-13.3-1995': [CIE 13.3-1995 (8, 14 munsell samples)](http://www.cie.co.at/index.php/index.php?i_ca_id=303), 
 * 'cie-224-2017': [CIE 224:2015 (99 set)](http://www.cie.co.at/index.php?i_ca_id=1027)
@@ -124,38 +141,46 @@ Database with spectral reflectance functions for various color rendition calcula
 * 'mcri': [MCRI (10 familiar object set)](http://www.sciencedirect.com/science/article/pii/S0378778812000837)
 * 'cqs': [CQS (v7.5 and v9.0 sets)](http://spie.org/Publications/Journal/10.1117/1.3360335)
 
-### _munsell:
+### _MUNSELL:
 Database with 1269 Munsell spectral reflectance functions + Value (V), Chroma (C), hue (h) and (ab) specifications.
 
 ## 4. colortransforms.py
 Module with basic colorimetric functions (xyz_to_chromaticity, chromaticity_to_xyz conversions):
 ### xyz_to_Yxy(), Yxy_to_xyz(): 
 CIE xyz <--> CIE Yxy 
+
 ### xyz_to_Yuv(), Yuv_to_xyz(): 
 CIE xyz <--> CIE 1976 Yu'v' 
+
 ### Yxy_to_Yuv(), Yuv_to_Yxy(): 
 CIE 1976 Yu'v' <--> CIE Yxy 
+
 ###	 xyz_to_xyz():	
 CIE xyz <--> CIE xyz (forward = inverse)
+
 ###	 xyz_to_lab(), lab_to_xyz(): 
 CIE xyz <--> CIELAB 
+
 ###	 lab_to_xyz(), xyz_to_luv(): 
 CIE xyz <--> CIELUV 
+
 ###  xyz_to_Vrb_mb(), Vrb_mb_to_xyz():  
 CIE xyz <--> Macleod-Boyton type coordinates (V,r,b) = (V,l,s) with V = L + M, l=L/V, m = M/V (related to luminance)
+
 ###   xyz_to_ipt(), ipt_to_xyz():   
 CIE xyz <--> IPT ()
 * [F. Ebner and M. D. Fairchild, “Development and testing of a color space (IPT) with improved hue uniformity,” in IS&T 6th Color Imaging Conference, 1998, pp. 8–13.](http://www.ingentaconnect.com/content/ist/cic/1998/00001998/00000001/art00003?crawler=true)
+
 ###  xyz_to_Ydlep(), Ydlep_to_xyz(): 
 CIE xyz <--> Y, dominant / complementary wavelength (dl, compl. wl: specified by < 0) and excitation purity (ep)
 
 ## 5. cct.py
 
-### _cct_lut_dir:
-Folder with Look-Up-Tables (LUT) for correlated color temperature calculation followings [Ohno's method](http://www.tandfonline.com/doi/abs/10.1080/15502724.2014.839020).
+### _CCT_LUT_PATH:
+Path to Look-Up-Tables (LUT) for correlated color temperature calculation followings [Ohno's method](http://www.tandfonline.com/doi/abs/10.1080/15502724.2014.839020).
 
-### _cct_LUT:
-Dict with LUT.
+### _CCT_LUT:
+Dict with LUTs for cct calculations.
 
 ### xyz_to_cct(): 
 Calculates CCT,Duv from XYZ, wrapper for ..._ohno() & ..._search()
@@ -169,7 +194,6 @@ Calculates xyz from CCT, Duv [100 K < CCT < 10**20]
 ### xyz_to_cct_mcamy(): 
 Calculates CCT from XYZ using Mcamy model:
 * [McCamy, Calvin S. (April 1992). "Correlated color temperature as an explicit function of chromaticity coordinates". Color Research & Application. 17 (2): 142–144.](http://onlinelibrary.wiley.com/doi/10.1002/col.5080170211/abstract)
-
 
 ### xyz_to_cct_HA(): 
 Calculate CCT from XYZ using Hernández-Andrés et al. model .
@@ -187,13 +211,13 @@ Converts from CCT to Mired scale (or back)
 
 ## 6. chromaticadaptation.py (cat)
 
-### cat._white_point:   
+### cat._WHITE_POINT:   
 Default adopted white point
 
-### cat._La:   
+### cat._LA:   
 Default luminance of adapting field
 
-### cat._mcats: 
+### cat._MCATS: 
 Default chromatic adaptation sensor spaces
 * 'hpe': Hunt-Pointer-Estevez: R. W. G. Hunt, The Reproduction of Colour: Sixth Edition, 6th ed. Chichester, UK: John Wiley & Sons Ltd, 2004.
 * 'cat02': from ciecam02: [CIE159-2004, “A Colour Apperance Model for Color Management System: CIECAM02,” CIE, Vienna, 2004.](http://onlinelibrary.wiley.com/doi/10.1002/col.20198/abstract)
@@ -211,11 +235,11 @@ Default chromatic adaptation sensor spaces
 * 'cat16': [C. Li, Z. Li, Z. Wang, Y. Xu, M. R. Luo, G. Cui, M. Melgosa, M. H. Brill, and M. Pointer, “Comprehensive color solutions: CAM16, CAT16, and CAM16-UCS,” Color Res. Appl., p. n/a–n/a.](http://onlinelibrary.wiley.com/doi/10.1002/col.22131/abstract)
 
 ### cat.check_dimensions():  
-Check if dimensions of data and xyzw match. If xyzw.shape[0] > 1 then len(data.shape) > 2 & (data.shape[0] = xyzw.shape[0]).
+Check if dimensions of data and xyzw match.
 
 ### cat.get_transfer_function():  
 Calculate the chromatic adaptation diagonal matrix transfer function Dt. 
-Default = 'vonkries' (others: 'rlab')
+Default = 'vonkries' (others: 'rlab', see Fairchild 1990)
 
 ### cat.smet2017_D(): 
 Calculate the degree of adaptation based on chromaticity. 
@@ -231,8 +255,9 @@ D-function (Dtype) published in literature (cat02, cat16, cmccat, smet2017, manu
 Local helper function that parses input parameters and makes them the target_shape for easy calculation 
 
 ### cat.apply(): 
-Applies a von kries (independent rescaling of 'sensor sensitivity' = diag. tf.) to adapt from 
-current adaptation conditions (1) to the new conditions (2). 
+Calculate corresponding colors by applying a von Kries chromatic adaptation
+transform (CAT), i.e. independent rescaling of 'sensor sensitivity' to data
+to adapt from current adaptation conditions (1) to the new conditions (2). 
 
 
 ## 7. colorappearancemodels.py (cam)
@@ -325,9 +350,13 @@ These functions are imported directly into the luxpy namespace.
 
 
 ## 8. colortf.py
-### colortf():
-Calculates conversion between any two color spaces for which xyz_to_...() and ..._to_xyz() exists.
 
+## _COLORTF_DEFAULT_WHITE_POINT: 
+XYZ values (numpy.ndarray) of default white point (equi-energy white) 
+for color transformations using colortf if none is supplied.
+
+### colortf():
+Calculates conversion between any two color spaces for which functions xyz_to_...() and ..._to_xyz() are defined.
 
 ## 9. colorrenditionindices.py (cri)
 
@@ -451,22 +480,22 @@ Plot unique hue line from centerpoint xyz0 (Kuehni, CRA, 2013: uY,uB,uG: Table I
 ## 0.1.  helpers.py 
 
 ### np2d():
-Make a tupple, list or numpy array at least 2d array.
+Make a tuple, list or numpy array at least 2d array.
 
 ### np2dT():
-Make a tupple, list or numpy array at least 2d array and tranpose.
+Make a tuple, list or numpy array at least 2d array and tranpose.
 
 ### np3d():
-Make a tupple, list or numpy array at least 3d array.
+Make a tuple, list or numpy array at least 3d array.
 
 ### np3dT():
-Make a tupple, list or numpy array at least 3d array and tranpose (swap) first two axes.
+Make a tuple, list or numpy array at least 3d array and tranpose (swap) first two axes.
 
 ### normalize_3x3_matrix():  
-Normalize 3x3 matrix to xyz0 -- > [1,1,1]
+Normalize 3x3 matrix M to xyz0 -- > [1,1,1]
 
 ### put_args_in_db():
-Overwrites values in dict db with 'not-None' input arguments from function (obtained with built-in locals()).
+Takes the **args with not-None input values of a function fcn and overwrites the values of the corresponding keys in Dict db.
 See put_args_in_db? for more info.
 
 ### getdata():
@@ -479,37 +508,38 @@ Easy input of of keys and values into dict (both should be iterable lists).
 Provides a nice way to create OrderedDict "literals".
 
 ### meshblock():
-Create a meshed black (similar to meshgrid, but axis = 0 is retained) to enable fast blockwise calculation.
+Create a meshed block (similar to meshgrid, but axis = 0 is retained) to enable fast blockwise calculation.
 
 ### aplit():
 Split np.array data on (default = last) axis.
 
 ### ajoin():
-Join tupple of np.array data on (default = last) axis.
+Join tuple of np.array data on (default = last) axis.
 
 ### broadcast_shape():
-Broadcasts shapes of data to a target_shape, expand_2d_to_3d if not None and data.ndim == 2, axis0,1_repeats specify how many times data much be repeated along axis (default = same axis size).
-Useful for block/vector calculation in which nupy fails to broadcast correctly.
+Broadcasts shapes of data to a target_shape. Useful for block/vector calculation in which nupy fails to broadcast correctly.
+
+## todim():  
+Expand x to dimensions that are broadcast-compatable with shape_ of another array.
 
 
 ## 0.2.  math.py 
 
 ### line_intersect():
-Line intersection of two line segments a and b (Nx2) specified by their end points 1,2.
+Line intersections of series of two line segments a and b.
 * From [https://stackoverflow.com/questions/3252194/numpy-and-line-intersections](https://stackoverflow.com/questions/3252194/numpy-and-line-intersections)
 
 ### positive_arctan():
 Calculates positive angle (0°-360° or 0 - 2*pi rad.) from x and y.
 
 ### dot23():
-Dot product of a (M x N) 2-d np.array with a (N x K x L) 3-d np.array using einsum().
+Dot product of a 2-d numpy.ndarray with a (N x K x L) 3-d numpy.array using einsum().
 
 ### check_symmetric():
-Checks if A is symmetric (returns bool).
+Checks if A is symmetric.
 
 ### check_posdef():
-Checks positive definiteness of matrix.
-Returns true when input is positive-definite, via Cholesky
+Checks positive definiteness of a matrix via Cholesky.
 
 ### symmM_to_posdefM():
 Converts a symmetric matrix to a positive definite one. Two methods are supported:
@@ -530,7 +560,7 @@ Calculates root-mean-square along axis.
 Calculates geometric mean along axis.
 
 ### polyarea():
-Calculates area of polygon. (first coordinate should also be last)
+Calculates area of polygon. (First coordinate should also be last)
 
 ### erf(), erfinv(): 
 erf-function (and inverse), direct import from scipy.special

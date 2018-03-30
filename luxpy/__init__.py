@@ -1,8 +1,36 @@
 # -*- coding: utf-8 -*-
 """
+Package for color science, colorimetric and color appearance calculations.
+
+Loads the following luxpy modules:
+    
+    0.1.  helpers.py (imported directly into luxpy namespace, details see end of this file)
+    0.2.  math.py (imported as math into the luxpy namespace, details see end of this file)
+    
+    1.  cmf.py
+    2.  spectral.py
+    3.  spectral_databases
+    4.  colortransforms.py (imported directly into luxpy namespace)
+    5.  cct.py (imported directly into luxpy namespace)
+    6.  chromaticadaptation.py (imported in luxpy namespace as .cat)
+    7.  colorappearancemodels.py (imported in luxpy namespace as .cam)
+    8.  colortf.py (imported directly into luxpy namespace)
+    9.  colorrenditionindices.py (imported in luxpy namespace as .cri)
+    10. plotters.py (imported directly into luxpy namespace)
+
+Loads the following global default constants:
+    
+ * _PKG_PATH (absolute path to luxpy package)
+ * _SEP (operating system operator)
+ * _EPS = 7./3 - 4./3 -1 (machine epsilon)
+ * _CIEOBS = '1931_2' (default CIE observer color matching function)
+ * _CSPACE = 'Yuv' (default color space / chromaticity diagram)
+ 
+Note. In luxpy 'global constants' start with '_'
+
 Created on Sat Jun 17 15:44:10 2017
 
-@author: kevin.smet
+@author: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 ###################################################################################################
 # Set up basic luxpy parameters
@@ -25,20 +53,20 @@ __all__ = ['plt','np','pd','os','warnings','interpolate','minimize','odict']
 
 #--------------------------------------------------------------------------------------------------
 # os related:
-_pckg_dir = os.path.dirname(__file__)  # Get absolute path to package: 
-_sep = os.sep # operating system separator
-__all__ += ['_pckg_dir','_sep']
+_PKG_PATH = os.path.dirname(__file__)  # Get absolute path to package: 
+_SEP = os.sep # operating system separator
+__all__ += ['_PKG_PATH','_SEP']
 
 #--------------------------------------------------------------------------------------------------
 # set some general parameters:
-_eps = 7./3 - 4./3 -1 # get machine epsilon
-__all__+=['_eps']
+_EPS = 7./3 - 4./3 -1 # get machine epsilon
+__all__+=['_EPS']
 
 #--------------------------------------------------------------------------------------------------
 # set default colorimetric observer
-_cieobs = '1931_2' #(CMF selection)
-_cspace = 'Yuv'
-__all__+=['_cieobs','_cspace']
+_CIEOBS = '1931_2' #(CMF selection)
+_CSPACE = 'Yuv'
+__all__+=['_CIEOBS','_CSPACE']
 
 
 
@@ -62,12 +90,12 @@ __all__ += cmf.__all__
 from . spectral import *
 __all__ += spectral.__all__
 
-## Set xyzbar in _cmf dict:
-_cmf['bar'] = {_cmf['types'][i] : (xyzbar(cieobs = _cmf['types'][i], scr = 'file', kind = 'np')) for i in range(len(_cmf['types']))}
+## Set xyzbar in _CMF dict:
+_CMF['bar'] = {_CMF['types'][i] : (xyzbar(cieobs = _CMF['types'][i], scr = 'file', kind = 'np')) for i in range(len(_CMF['types']))}
 
 # load spd and rfl data in /spd/:
-from . spectral_databases import _R_dir, _S_dir, _cie_illuminants, _iestm30, _cri_rfl, _munsell
-__all__ += ['_R_dir', '_S_dir', '_cri_rfl', '_cie_illuminants', '_iestm30','_munsell'] 
+from . spectral_databases import _R_PATH, _S_PATH, _CIE_ILLUMINANTS, _IESTM30, _CRI_RFL, _MUNSELL
+__all__ += ['_R_PATH', '_S_PATH', '_CRI_RFL', '_CIE_ILLUMINANTS', '_IESTM30','_MUNSELL'] 
 
 # Load color/chromaticty transforms module:
 from . colortransforms import *

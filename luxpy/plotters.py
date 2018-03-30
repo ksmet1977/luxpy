@@ -2,7 +2,7 @@
 """
 Created on Tue Jul  4 14:44:45 2017
 
-@author: kevin.smet
+@author: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
 ###################################################################################################
@@ -24,7 +24,7 @@ __all__ = ['plotSL','plotDL','plotBB','plot_color_data','plotceruleanline','plot
 
 
 
-def plot_color_data(x,y,z=None, axh=None, show = True, cieobs =_cieobs, cspace = _cspace,  formatstr = 'k-', **kwargs):
+def plot_color_data(x,y,z=None, axh=None, show = True, cieobs =_CIEOBS, cspace = _CSPACE,  formatstr = 'k-', **kwargs):
     """
     Plot data.
     """
@@ -33,12 +33,12 @@ def plot_color_data(x,y,z=None, axh=None, show = True, cieobs =_cieobs, cspace =
         plt.grid(kwargs['grid']);kwargs.pop('grid')
     if z is not None:
         plt.plot(x,y,z,formatstr, linewidth = 2)
-        plt.xlabel(_cspace_axes[cspace][0], kwargs)
+        plt.xlabel(_CSPACE_axes[cspace][0], kwargs)
     else:
         plt.plot(x,y,formatstr,linewidth = 2)
         
-    plt.xlabel(_cspace_axes[cspace][1], kwargs)
-    plt.ylabel(_cspace_axes[cspace][2], kwargs)
+    plt.xlabel(_CSPACE_axes[cspace][1], kwargs)
+    plt.ylabel(_CSPACE_axes[cspace][2], kwargs)
 
     if show == True:
         plt.show()
@@ -47,7 +47,7 @@ def plot_color_data(x,y,z=None, axh=None, show = True, cieobs =_cieobs, cspace =
 
 
 
-def plotDL(ccts = None, cieobs =_cieobs, cspace = _cspace, axh = None, show = True, force_daylight_below4000K = False, cspace_pars = {}, formatstr = 'k-',  **kwargs):
+def plotDL(ccts = None, cieobs =_CIEOBS, cspace = _CSPACE, axh = None, show = True, force_daylight_below4000K = False, cspace_pars = {}, formatstr = 'k-',  **kwargs):
     """
     Plot daylight locus (for ccts, default = 4000 K to 1e19 K) for cieobs in cspace.
     """
@@ -65,7 +65,7 @@ def plotDL(ccts = None, cieobs =_cieobs, cspace = _cspace, axh = None, show = Tr
     if show == False:
         return axh
     
-def plotBB(ccts = None, cieobs =_cieobs, cspace = _cspace, axh = None, cctlabels = True, show = True, cspace_pars = {}, formatstr = 'k-',  **kwargs):  
+def plotBB(ccts = None, cieobs =_CIEOBS, cspace = _CSPACE, axh = None, cctlabels = True, show = True, cspace_pars = {}, formatstr = 'k-',  **kwargs):  
     """
     Plot blackbody locus (for ccts) for cieobs in cspace.
     """
@@ -94,11 +94,11 @@ def plotBB(ccts = None, cieobs =_cieobs, cspace = _cspace, axh = None, cctlabels
     if show == False:
         return axh
     
-def plotSL(cieobs =_cieobs, cspace = _cspace,  DL = True, BBL = True, D65 = False, EEW = False, cctlabels = False, axh = None, show = True, cspace_pars = {}, formatstr = 'k-', **kwargs):
+def plotSL(cieobs =_CIEOBS, cspace = _CSPACE,  DL = True, BBL = True, D65 = False, EEW = False, cctlabels = False, axh = None, show = True, cspace_pars = {}, formatstr = 'k-', **kwargs):
     """
     Plot spectrum locus for cieobs in cspace.
     """
-    SL = _cmf['bar'][cieobs][1:4].T
+    SL = _CMF['bar'][cieobs][1:4].T
     SL = np.vstack((SL,SL[0]))
     SL = 100.0*SL/SL[:,1,None]
     SL = colortf(SL, tf = cspace, tfa0 = cspace_pars)
@@ -117,10 +117,10 @@ def plotSL(cieobs =_cieobs, cspace = _cspace,  DL = True, BBL = True, D65 = Fals
         plotBB(ccts = None, cieobs = cieobs, cspace = cspace, axh = axh, show = show, cspace_pars = cspace_pars, cctlabels = cctlabels, formatstr = 'r-.',  **kwargs)
     
     if D65 == True:
-        YxyD65 = colortf(spd_to_xyz(_cie_illuminants['D65']), tf = cspace, tfa0 = cspace_pars)
+        YxyD65 = colortf(spd_to_xyz(_CIE_ILLUMINANTS['D65']), tf = cspace, tfa0 = cspace_pars)
         plt.plot(YxyD65[...,1],YxyD65[...,2],'bo')
     if EEW == True:
-        YxyEEW = colortf(spd_to_xyz(_cie_illuminants['E']), tf = cspace, tfa0 = cspace_pars)
+        YxyEEW = colortf(spd_to_xyz(_CIE_ILLUMINANTS['E']), tf = cspace, tfa0 = cspace_pars)
         plt.plot(YxyEEW[...,1],YxyEEW[...,2],'ko')
         
     if showcopy == False:
@@ -129,11 +129,11 @@ def plotSL(cieobs =_cieobs, cspace = _cspace,  DL = True, BBL = True, D65 = Fals
         plt.show()
         
         
-def plotceruleanline(cieobs = _cieobs, cspace = 'Yuv', axh = None,formatstr = 'ko-'):
+def plotceruleanline(cieobs = _CIEOBS, cspace = 'Yuv', axh = None,formatstr = 'ko-'):
     """
     Plot cerulean (yellow (577 nm) - blue (472 nm)) line (Kuehni, CRA, 2013: Table II: spectral lights).
     """
-    cmf = _cmf['bar'][cieobs]
+    cmf = _CMF['bar'][cieobs]
     p_y = cmf[0] == 577.0 #Kuehni, CRA 2013 (mean, table IV)
     p_b = cmf[0] == 472.0 #Kuehni, CRA 2013 (mean, table IV)
     xyz_y = cmf[1:,p_y].T
@@ -145,12 +145,12 @@ def plotceruleanline(cieobs = _cieobs, cspace = 'Yuv', axh = None,formatstr = 'k
     return hcerline
 
     
-def plotUH(xyz0 = None, uhues = [0,1,2,3], cieobs = _cieobs, cspace = 'Yuv', axh = None,formatstr = ['yo-.','bo-.','ro-.','go-.'], excludefromlegend = ''):
+def plotUH(xyz0 = None, uhues = [0,1,2,3], cieobs = _CIEOBS, cspace = 'Yuv', axh = None,formatstr = ['yo-.','bo-.','ro-.','go-.'], excludefromlegend = ''):
     """ 
     Plot unique hue line from centerpoint xyz0 (Kuehni, CRA, 2013: uY,uB,uG: Table II: spectral lights; uR: Table IV: Xiao data)
     """
     hues = ['yellow','blue','red','green']
-    cmf = _cmf['bar'][cieobs]
+    cmf = _CMF['bar'][cieobs]
     p_y = cmf[0] == 577.0 #unique yellow,#Kuehni, CRA 2013 (mean, table IV: spectral data)
     p_b = cmf[0] == 472.0 #unique blue,Kuehni, CRA 2013 (mean, table IV: spectral data)
     p_g = cmf[0] == 514.0 #unique green, Kuehni, CRA 2013 (mean, table II: spectral data)

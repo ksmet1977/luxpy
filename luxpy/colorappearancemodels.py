@@ -2,7 +2,7 @@
 """
 Created on Sun Jun 25 09:55:05 2017
 
-@author: kevin.smet
+@author: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
 ###################################################################################################
@@ -21,7 +21,7 @@ Created on Sun Jun 25 09:55:05 2017
 #
 # _cam_sww_2016_parameters: database with cam_sww_2016 parameters (model by Smet, Webster and Whitehead published in JOSA A in 2016)
 # 
-# _cam_default_white_point: Default internal reference white point (xyz)
+# _cam_default_WHITE_POINT: Default internal reference white point (xyz)
 #
 # naka_rushton(): applies a Naka-Rushton function to the input
 # 
@@ -57,13 +57,13 @@ Created on Sun Jun 25 09:55:05 2017
 # 'xyz_to_jab_cam16lcd', 'jab_cam16lcd_to_xyz',
 # 'xyz_to_jab_cam16scd', 'jab_cam16scd_to_xyz', 
 # 'xyz_to_qabW_cam15u', 'qabW_cam15u_to_xyz'
-# 'xyz_to_lab_cam_sww_2016', 'lab_cam_sww_2016_to_xyz'
+# 'xyz_to_LAb_cam_sww_2016', 'lab_cam_sww_2016_to_xyz'
 
 
 
 from luxpy import *
 
-__all__ = ['_unique_hue_data','_surround_parameters','_naka_rushton_parameters','_camucs_parameters','_cam15u_parameters','_cam_sww_2016_parameters', '_cam_default_white_point','hue_angle', 'hue_quadrature','naka_rushton','ciecam02','cam02ucs','cam15u','cam_sww_2016']
+__all__ = ['_unique_hue_data','_surround_parameters','_naka_rushton_parameters','_camucs_parameters','_cam15u_parameters','_cam_sww_2016_parameters', '_cam_default_WHITE_POINT','hue_angle', 'hue_quadrature','naka_rushton','ciecam02','cam02ucs','cam15u','cam_sww_2016']
 __all__ += ['xyz_to_jabM_ciecam02', 'jabM_ciecam02_to_xyz', 'xyz_to_jabC_ciecam02', 'jabC_ciecam02_to_xyz',
             'xyz_to_jabM_cam16', 'jabM_cam16_to_xyz', 'xyz_to_jabC_cam16', 'jabC_cam16_to_xyz',
             'xyz_to_jab_cam02ucs', 'jab_cam02ucs_to_xyz', 'xyz_to_jab_cam02lcd', 'jab_cam02lcd_to_xyz','xyz_to_jab_cam02scd', 'jab_cam02scd_to_xyz', 
@@ -104,7 +104,7 @@ _cam_sww_2016_parameters['best-fit-JOSA'] = {'cLMS': [1.0,1.0,1.0], 'lms0': [420
 _cam_sww_2016_parameters['best-fit-all-Munsell'] = {'cLMS': [1.0,1.0,1.0], 'lms0': [5405.0, 5617.0,  5520.0] , 'Cc': 0.206, 'Cf': -0.128, 'clambda': [0.5, 0.5, 0.0], 'calpha': [1.0, -1.0, 0.0], 'cbeta': [0.5, 0.5, -1.0], 'cga1': [38.26, 43.35], 'cgb1': [8.97, 16.18], 'cga2': [0.512], 'cgb2': [-0.896], 'cl_int': [19.3, 0.99], 'cab_int': [5.87,63.24], 'cab_out' : [-0.545,-0.978], 'Ccwb': 0.736, 'Mxyz2lms': [[ 0.21701045,  0.83573367, -0.0435106 ],[-0.42997951,  1.2038895 ,  0.08621089],[ 0.,  0.,  0.46579234]]}
 
 
-_cam_default_white_point = np2d([100.0, 100.0, 100.0]) # ill. E white point
+_cam_default_WHITE_POINT = np2d([100.0, 100.0, 100.0]) # ill. E white point
 _cam_default_conditions = {'La': 100.0, 'Yb': 20.0, 'surround': 'avg','D': 1.0, 'Dtype':None}
 
 def naka_rushton(data, sig = 2.0, n = 0.73, scaling = 1.0, noise = 0.0, cam = None, direction = 'forward'):
@@ -206,23 +206,23 @@ def cam_structure_ciecam02_cam16(data, xyzw, camtype = 'ciecam02', mcat = None, 
     # get general data:
     if camtype == 'ciecam02':
         if (mcat is None) | (mcat == 'cat02'):
-            mcat = cat._mcats['cat02']
+            mcat = cat._MCATS['cat02']
             if yellowbluepurplecorrect == 'brill-suss':
-                mcat = cat._mcats['cat02-bs']  # for yellow-blue problem, Brill [Color Res Appl 2006;31:142-145] and Brill and Süsstrunk [Color Res Appl 2008;33:424-426] 
+                mcat = cat._MCATS['cat02-bs']  # for yellow-blue problem, Brill [Color Res Appl 2006;31:142-145] and Brill and Süsstrunk [Color Res Appl 2008;33:424-426] 
             elif yellowbluepurplecorrect == 'jiang-luo':
-                mcat = cat._mcats['cat02-jiang-luo'] # for yellow-blue problem + purple line problem
+                mcat = cat._MCATS['cat02-jiang-luo'] # for yellow-blue problem + purple line problem
         elif isinstance(mcat,str):
-            mcat = cat._mcats[mcat]
+            mcat = cat._MCATS[mcat]
         invmcat = np.linalg.inv(mcat)
-        mhpe = cat._mcats['hpe']
+        mhpe = cat._MCATS['hpe']
         mhpe_x_invmcat = np.dot(mhpe,invmcat)
         if direction == 'inverse':
             mcat_x_invmhpe = np.dot(mcat,np.linalg.inv(mhpe))
     elif camtype =='cam16':
         if mcat is None:
-            mcat = cat._mcats['cat16']
+            mcat = cat._MCATS['cat16']
         elif isinstance(mcat,str):
-            mcat = cat._mcats[mcat]
+            mcat = cat._MCATS[mcat]
             
         invmcat = np.linalg.inv(mcat)
     else:
@@ -495,7 +495,7 @@ def cam16(data, xyzw, mcat = 'cat16', Yw = np2d(100.0), conditions = _cam_defaul
     return cam_structure_ciecam02_cam16(data, xyzw, camtype = 'cam16', mcat = mcat, Yw = Yw, conditions = conditions, direction = direction, outin = outin, yellowbluepurplecorrect = yellowbluepurplecorrect)
 
 #---------------------------------------------------------------------------------------------------------------------
-def camucs_structure(data, xyzw = _cam_default_white_point, camtype = 'ciecam02', mcat = None, Yw = np2d(100.0), conditions = _cam_default_conditions, direction = 'forward', ucstype = 'ucs', yellowbluepurplecorrect = False):
+def camucs_structure(data, xyzw = _cam_default_WHITE_POINT, camtype = 'ciecam02', mcat = None, Yw = np2d(100.0), conditions = _cam_default_conditions, direction = 'forward', ucstype = 'ucs', yellowbluepurplecorrect = False):
     """
     Convert between np.array([[x,y,z]]) (N [, xM], x 3) tristimulus values and ciecam02 / cam16 [ucs/lcd/scd] color appearance correlates (out).
         * xyzw: tristimulus values of white point
@@ -554,7 +554,7 @@ def camucs_structure(data, xyzw = _cam_default_white_point, camtype = 'ciecam02'
         return cam_structure_ciecam02_cam16(data, xyzw = xyzw, camtype = camtype, Yw = Yw, conditions = conditions, direction = 'inverse', outin = 'J,aM,bM',yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
      
 #---------------------------------------------------------------------------------------------------------------------
-def cam02ucs(data, xyzw = _cam_default_white_point, Yw = np2d(100.0), conditions = _cam_default_conditions, direction = 'forward', ucstype = 'ucs', yellowbluepurplecorrect = False, mcat = None):
+def cam02ucs(data, xyzw = _cam_default_WHITE_POINT, Yw = np2d(100.0), conditions = _cam_default_conditions, direction = 'forward', ucstype = 'ucs', yellowbluepurplecorrect = False, mcat = None):
     """
     Convert between np.array([[x,y,z]]) (N [, xM], x 3) tristimulus values and cam02... [ucs/lcd/scd] color appearance correlates (out).
         * xyzw: tristimulus values of white point
@@ -568,7 +568,7 @@ def cam02ucs(data, xyzw = _cam_default_white_point, Yw = np2d(100.0), conditions
     return camucs_structure(data, xyzw = xyzw, camtype = 'ciecam02', mcat = mcat, Yw = Yw, conditions = conditions, direction = direction, ucstype = ucstype, yellowbluepurplecorrect = yellowbluepurplecorrect)
 
  #---------------------------------------------------------------------------------------------------------------------
-def cam16ucs(data, xyzw = _cam_default_white_point, Yw = 100.0, conditions = _cam_default_conditions, direction = 'forward', ucstype = 'ucs',  mcat = None):
+def cam16ucs(data, xyzw = _cam_default_WHITE_POINT, Yw = 100.0, conditions = _cam_default_conditions, direction = 'forward', ucstype = 'ucs',  mcat = None):
     """
     Convert between np.array([[x,y,z]]) (N [, xM], x 3) tristimulus values and cam16... [ucs/lcd/scd] color appearance correlates (out).
         * xyzw: tristimulus values of white point
@@ -622,8 +622,8 @@ def cam15u(data, fov = 10.0, direction = 'forward', outin = 'Q,aW,bW', inputtype
         
         if (inputtype != 'xyz') & (direction == 'forward'):
             xyz = spd_to_xyz(data[i], cieobs = '2006_10', relative = False)
-            lms = np.dot(_cmf['M']['2006_10'],xyz.T).T # convert to l,m,s
-            rgb = (lms / _cmf['K']['2006_10']) * k # convert to rho, gamma, beta
+            lms = np.dot(_CMF['M']['2006_10'],xyz.T).T # convert to l,m,s
+            rgb = (lms / _CMF['K']['2006_10']) * k # convert to rho, gamma, beta
         elif (inputtype == 'xyz') & (direction == 'forward'):
             rgb = np.dot(Mxyz2rgb,data[i].T).T
        
@@ -765,7 +765,7 @@ def cam_sww_2016(data, dataw = None, Yb = 20.0, Lw = 400.0, relative = True, par
     
     # setup default adaptation field:   
     if dataw == None:
-        dataw = _cie_illuminants['C'] # get illuminant C
+        dataw = _CIE_ILLUMINANTS['C'] # get illuminant C
         xyzw = spd_to_xyz(dataw, cieobs = cieobs,relative=False) # get abs. tristimulus values
         if relative == False: #input is expected to be absolute
             dataw[1:] = Lw*dataw[1:]/xyzw[0,1] #dataw = Lw*dataw # make absolute
@@ -800,13 +800,13 @@ def cam_sww_2016(data, dataw = None, Yb = 20.0, Lw = 400.0, relative = True, par
         if (inputtype != 'xyz') :
             if relative == True:
                 dataw[i+1] = Lw*dataw[i+1]/100.0 # make absolute
-            xyzw = spd_to_xyz(np.vstack((dataw[0],dataw[i+1])), cieobs = cieobs, relative = False)/_cmf['K'][cieobs]
+            xyzw = spd_to_xyz(np.vstack((dataw[0],dataw[i+1])), cieobs = cieobs, relative = False)/_CMF['K'][cieobs]
             lmsf = (Yb/100.0)*683.0*np.dot(Mxyz2lms,xyzw.T).T # calculate adaptation field and convert to l,m,s
 
             if (direction == 'forward'):
                 if relative == True:
                     data[i] = Lw*data[i]/100.0 # make absolute
-                xyzt = spd_to_xyz(data[i], cieobs = cieobs, relative = False)/_cmf['K'][cieobs] 
+                xyzt = spd_to_xyz(data[i], cieobs = cieobs, relative = False)/_CMF['K'][cieobs] 
                 lmst = 683.0*np.dot(Mxyz2lms,xyzt.T).T # convert to l,m,s
             else:
                 lmst = lmsf # put lmsf in lmst for inverse-mode
@@ -814,13 +814,13 @@ def cam_sww_2016(data, dataw = None, Yb = 20.0, Lw = 400.0, relative = True, par
         elif (inputtype == 'xyz'):
             if relative == True: 
                 dataw[i] = Lw*dataw[i]/100.0 # make absolute
-            lmsw = 683.0* np.dot(Mxyz2lms, dataw[i].T).T /_cmf['K'][cieobs]  # convert to lms
+            lmsw = 683.0* np.dot(Mxyz2lms, dataw[i].T).T /_CMF['K'][cieobs]  # convert to lms
             lmsf = (Yb/100.0)*lmsw
 
             if (direction == 'forward'):
                 if relative == True:
                     data[i] = Lw*data[i]/100.0 # make absolute
-                lmst = 683.0* np.dot(Mxyz2lms, data[i].T).T /_cmf['K'][cieobs] # convert to lms
+                lmst = 683.0* np.dot(Mxyz2lms, data[i].T).T /_CMF['K'][cieobs] # convert to lms
             else:
                  lmst = lmsf # put lmsf in lmst for inverse-mode
                  
@@ -916,13 +916,13 @@ def cam_sww_2016(data, dataw = None, Yb = 20.0, Lw = 400.0, relative = True, par
        
 #------------------------------------------------------------------------------
 # wrapper function for use with colortf():
-def xyz_to_jabM_ciecam02(data, xyzw = _cam_default_white_point, Yw = 100.0, conditions = _cam_default_conditions, yellowbluepurplecorrect = None, mcat = 'cat02'):
+def xyz_to_jabM_ciecam02(data, xyzw = _cam_default_WHITE_POINT, Yw = 100.0, conditions = _cam_default_conditions, yellowbluepurplecorrect = None, mcat = 'cat02'):
     """
     Wrapper function for ciecam02 forward mode with J,aM,bM output.
     """
     return ciecam02(data, xyzw = xyzw, Yw = Yw, conditions = conditions, direction = 'forward', outin = 'J,aM,bM', yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
    
-def jabM_ciecam02_to_xyz(data, xyzw = _cam_default_white_point, Yw = 100.0, conditions = _cam_default_conditions, yellowbluepurplecorrect = None, mcat = 'cat02'):
+def jabM_ciecam02_to_xyz(data, xyzw = _cam_default_WHITE_POINT, Yw = 100.0, conditions = _cam_default_conditions, yellowbluepurplecorrect = None, mcat = 'cat02'):
     """
     Wrapper function for ciecam02 inverse mode with J,aM,bM input.
     """
@@ -930,13 +930,13 @@ def jabM_ciecam02_to_xyz(data, xyzw = _cam_default_white_point, Yw = 100.0, cond
 
 
 
-def xyz_to_jabC_ciecam02(data, xyzw = _cam_default_white_point, Yw = 100.0, conditions = _cam_default_conditions, yellowbluepurplecorrect = None, mcat = 'cat02'):
+def xyz_to_jabC_ciecam02(data, xyzw = _cam_default_WHITE_POINT, Yw = 100.0, conditions = _cam_default_conditions, yellowbluepurplecorrect = None, mcat = 'cat02'):
     """
     Wrapper function for ciecam02 forward mode with J,aC,bC output.
     """
     return ciecam02(data, xyzw = xyzw, Yw = Yw, conditions = conditions, direction = 'forward', outin = 'J,aC,bC', yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
  
-def jabC_ciecam02_to_xyz(data, xyzw = _cam_default_white_point, Yw = 100.0, conditions = _cam_default_conditions, yellowbluepurplecorrect = None, mcat = 'cat02'):
+def jabC_ciecam02_to_xyz(data, xyzw = _cam_default_WHITE_POINT, Yw = 100.0, conditions = _cam_default_conditions, yellowbluepurplecorrect = None, mcat = 'cat02'):
     """
     Wrapper function for ciecam02 inverse mode with J,aC,bC input.
     """
@@ -944,13 +944,13 @@ def jabC_ciecam02_to_xyz(data, xyzw = _cam_default_white_point, Yw = 100.0, cond
 
 
               
-def xyz_to_jab_cam02ucs(data, xyzw = _cam_default_white_point, Yw = 100.0, conditions = _cam_default_conditions, yellowbluepurplecorrect = None, mcat = 'cat02'):
+def xyz_to_jab_cam02ucs(data, xyzw = _cam_default_WHITE_POINT, Yw = 100.0, conditions = _cam_default_conditions, yellowbluepurplecorrect = None, mcat = 'cat02'):
     """
     Wrapper function for cam02ucs forward mode with J,aM,bM output.
     """
     return cam02ucs(data, xyzw = xyzw, Yw = Yw, conditions = conditions, direction = 'forward', ucstype = 'ucs', yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
                 
-def jab_cam02ucs_to_xyz(data, xyzw = _cam_default_white_point, Yw = 100.0, conditions = _cam_default_conditions, yellowbluepurplecorrect = None, mcat = 'cat02'):
+def jab_cam02ucs_to_xyz(data, xyzw = _cam_default_WHITE_POINT, Yw = 100.0, conditions = _cam_default_conditions, yellowbluepurplecorrect = None, mcat = 'cat02'):
     """
     Wrapper function for cam02ucs inverse mode with J,aM,bM input.
     """
@@ -958,13 +958,13 @@ def jab_cam02ucs_to_xyz(data, xyzw = _cam_default_white_point, Yw = 100.0, condi
 
 
 
-def xyz_to_jab_cam02lcd(data, xyzw = _cam_default_white_point, Yw = 100.0, conditions = _cam_default_conditions, yellowbluepurplecorrect = None, mcat = 'cat02'):
+def xyz_to_jab_cam02lcd(data, xyzw = _cam_default_WHITE_POINT, Yw = 100.0, conditions = _cam_default_conditions, yellowbluepurplecorrect = None, mcat = 'cat02'):
     """
     Wrapper function for cam02ucs forward mode with J,aMp,bMp output and camtype = lcd.
     """
     return cam02ucs(data, xyzw = xyzw, Yw = Yw, conditions = conditions, direction = 'forward', ucstype = 'lcd', yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
                 
-def jab_cam02lcd_to_xyz(data, xyzw = _cam_default_white_point, Yw = 100.0, conditions = _cam_default_conditions, yellowbluepurplecorrect = None, mcat = 'cat02'):
+def jab_cam02lcd_to_xyz(data, xyzw = _cam_default_WHITE_POINT, Yw = 100.0, conditions = _cam_default_conditions, yellowbluepurplecorrect = None, mcat = 'cat02'):
     """
     Wrapper function for cam02ucs inverse mode with J,aMp,bMp input and camtype = lcd.
     """
@@ -972,13 +972,13 @@ def jab_cam02lcd_to_xyz(data, xyzw = _cam_default_white_point, Yw = 100.0, condi
 
 
 
-def xyz_to_jab_cam02scd(data, xyzw = _cam_default_white_point, Yw = 100.0, conditions = _cam_default_conditions, yellowbluepurplecorrect = None, mcat = 'cat02'):
+def xyz_to_jab_cam02scd(data, xyzw = _cam_default_WHITE_POINT, Yw = 100.0, conditions = _cam_default_conditions, yellowbluepurplecorrect = None, mcat = 'cat02'):
     """
     Wrapper function for cam02ucs forward mode with J,aMp,bMp output and camtype = scd.
     """
     return cam02ucs(data, xyzw = xyzw, Yw = Yw, conditions = conditions, direction = 'forward', ucstype = 'scd', yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
                 
-def jab_cam02scd_to_xyz(data, xyzw = _cam_default_white_point, Yw = 100.0, conditions = _cam_default_conditions, yellowbluepurplecorrect = None, mcat = 'cat02'):
+def jab_cam02scd_to_xyz(data, xyzw = _cam_default_WHITE_POINT, Yw = 100.0, conditions = _cam_default_conditions, yellowbluepurplecorrect = None, mcat = 'cat02'):
     """
     Wrapper function for cam02ucs inverse mode with J,aMp,bMp input and camtype = scd.
     """
@@ -987,26 +987,26 @@ def jab_cam02scd_to_xyz(data, xyzw = _cam_default_white_point, Yw = 100.0, condi
 
 
 #------------------------------------------------------------------------------
-def xyz_to_jabM_cam16(data, xyzw = _cam_default_white_point, Yw = 100.0, conditions = _cam_default_conditions,  mcat = 'cat16'):
+def xyz_to_jabM_cam16(data, xyzw = _cam_default_WHITE_POINT, Yw = 100.0, conditions = _cam_default_conditions,  mcat = 'cat16'):
     """
     Wrapper function for cam16 forward mode with J,aM,bM output.
     """
     return cam16(data, xyzw = xyzw, Yw = Yw, conditions = conditions, direction = 'forward', outin = 'J,aM,bM',  mcat = mcat)
    
-def jabM_cam16_to_xyz(data, xyzw = _cam_default_white_point, Yw = 100.0, conditions = _cam_default_conditions,  mcat = 'cat16'):
+def jabM_cam16_to_xyz(data, xyzw = _cam_default_WHITE_POINT, Yw = 100.0, conditions = _cam_default_conditions,  mcat = 'cat16'):
     """
     Wrapper function for cam16 inverse mode with J,aM,bM input.
     """
     return cam16(data, xyzw = xyzw, Yw = Yw, conditions = conditions, direction = 'inverse', outin = 'J,aM,bM',  mcat = mcat)
 
 
-def xyz_to_jabC_cam16(data, xyzw = _cam_default_white_point, Yw = 100.0, conditions = _cam_default_conditions,  mcat = 'cat16'):
+def xyz_to_jabC_cam16(data, xyzw = _cam_default_WHITE_POINT, Yw = 100.0, conditions = _cam_default_conditions,  mcat = 'cat16'):
     """
     Wrapper function for cam16 forward mode with J,aC,bC output.
     """
     return cam16(data, xyzw = xyzw, Yw = Yw, conditions = conditions, direction = 'forward', outin = 'J,aC,bC',  mcat = mcat)
    
-def jabC_cam16_to_xyz(data, xyzw = _cam_default_white_point, Yw = 100.0, conditions = _cam_default_conditions,  mcat = 'cat16'):
+def jabC_cam16_to_xyz(data, xyzw = _cam_default_WHITE_POINT, Yw = 100.0, conditions = _cam_default_conditions,  mcat = 'cat16'):
     """
     Wrapper function for cam16 inverse mode with J,aC,bC input.
     """
@@ -1014,26 +1014,26 @@ def jabC_cam16_to_xyz(data, xyzw = _cam_default_white_point, Yw = 100.0, conditi
 
 
               
-def xyz_to_jab_cam16ucs(data, xyzw = _cam_default_white_point, Yw = 100.0, conditions = _cam_default_conditions,  mcat = 'cat16'):
+def xyz_to_jab_cam16ucs(data, xyzw = _cam_default_WHITE_POINT, Yw = 100.0, conditions = _cam_default_conditions,  mcat = 'cat16'):
     """
     Wrapper function for cam16ucs forward mode with J,aM,bM output.
     """
     return cam16ucs(data, xyzw = xyzw, Yw = Yw, conditions = conditions, direction = 'forward', ucstype = 'ucs', mcat = mcat)
                 
-def jab_cam16ucs_to_xyz(data, xyzw = _cam_default_white_point, Yw = 100.0, conditions = _cam_default_conditions, mcat = 'cat16'):
+def jab_cam16ucs_to_xyz(data, xyzw = _cam_default_WHITE_POINT, Yw = 100.0, conditions = _cam_default_conditions, mcat = 'cat16'):
     """
     Wrapper function for cam16ucs inverse mode with J,aM,bM input.
     """
     return cam16ucs(data, xyzw = xyzw, Yw = Yw, conditions = conditions, direction = 'inverse', ucstype = 'ucs', mcat = mcat)
 
 
-def xyz_to_jab_cam16lcd(data, xyzw = _cam_default_white_point, Yw = 100.0, conditions = _cam_default_conditions,  mcat = 'cat16'):
+def xyz_to_jab_cam16lcd(data, xyzw = _cam_default_WHITE_POINT, Yw = 100.0, conditions = _cam_default_conditions,  mcat = 'cat16'):
     """
     Wrapper function for cam16ucs forward mode with J,aM,bM output.
     """
     return cam16ucs(data, xyzw = xyzw, Yw = Yw, conditions = conditions, direction = 'forward', ucstype = 'lcd', mcat = mcat)
                 
-def jab_cam16lcd_to_xyz(data, xyzw = _cam_default_white_point, Yw = 100.0, conditions = _cam_default_conditions, mcat = 'cat16'):
+def jab_cam16lcd_to_xyz(data, xyzw = _cam_default_WHITE_POINT, Yw = 100.0, conditions = _cam_default_conditions, mcat = 'cat16'):
     """
     Wrapper function for cam16ucs inverse mode with J,aM,bM input.
     """
@@ -1041,13 +1041,13 @@ def jab_cam16lcd_to_xyz(data, xyzw = _cam_default_white_point, Yw = 100.0, condi
 
 
 
-def xyz_to_jab_cam16scd(data, xyzw = _cam_default_white_point, Yw = 100.0, conditions = _cam_default_conditions,  mcat = 'cat16'):
+def xyz_to_jab_cam16scd(data, xyzw = _cam_default_WHITE_POINT, Yw = 100.0, conditions = _cam_default_conditions,  mcat = 'cat16'):
     """
     Wrapper function for cam16ucs forward mode with J,aM,bM output.
     """
     return cam16ucs(data, xyzw = xyzw, Yw = Yw, conditions = conditions, direction = 'forward', ucstype = 'scd', mcat = mcat)
                 
-def jab_cam16scd_to_xyz(data, xyzw = _cam_default_white_point, Yw = 100.0, conditions = _cam_default_conditions, mcat = 'cat16'):
+def jab_cam16scd_to_xyz(data, xyzw = _cam_default_WHITE_POINT, Yw = 100.0, conditions = _cam_default_conditions, mcat = 'cat16'):
     """
     Wrapper function for cam16ucs inverse mode with J,aM,bM input.
     """

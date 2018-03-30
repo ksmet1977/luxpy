@@ -2,14 +2,14 @@
 """
 Created on Fri Jun 30 00:10:59 2017
 
-@author: kevin.smet
+@author: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
 # -*- coding: utf-8 -*-
 """
 Created on Thu Jun 29 11:42:10 2017
 
-@author: kevin.smet
+@author: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 ###############################################################################
 # Color rendition and color quality metrics
@@ -124,20 +124,20 @@ def psy_scale(data, scale_factor = [1.0/55.0, 3.0/2.0, 2.0], scale_max = 100.0):
 #------------------------------------------------------------------------------
 # create default settings for different color rendition indices: (major dict has 9 keys (04-Jul-2017): sampleset [str/dict], ref_type [str], cieobs [str], avg [fcn handle], scale [dict], cspace [dict], catf [dict], rg_pars [dict], cri_specific_pars [dict])
 _cri_defaults = {'cri_types' : ['ciera','ciera-8','ciera-14','cierf','iesrf','cri2012','cri2012-hl17','cri2012-hl1000','cri2012-real210','mcri','cqs-v7.5','cqs-v9.0']}
-_cri_defaults['ciera'] = {'sampleset' : "_cri_rfl['cie-13.3-1995']['8']", 'ref_type' : 'ciera', 'cieobs' : {'xyz': '1931_2', 'cct' : '1931_2'}, 'avg' : np.mean, 'scale' :{'fcn' : linear_scale, 'cfactor' : [4.6]}, 'cspace' : {'type':'wuv', 'xyzw' : None}, 'catf': {'xyzw':None, 'mcat':'judd-1945','D':1.0,'La':None,'cattype':'vonkries','Dtype':None, 'catmode' : '1>2'}, 'rg_pars' : {'nhbins': None, 'start_hue':0.0, 'normalize_gamut': False}, 'cri_specific_pars' : None}
+_cri_defaults['ciera'] = {'sampleset' : "_CRI_RFL['cie-13.3-1995']['8']", 'ref_type' : 'ciera', 'cieobs' : {'xyz': '1931_2', 'cct' : '1931_2'}, 'avg' : np.mean, 'scale' :{'fcn' : linear_scale, 'cfactor' : [4.6]}, 'cspace' : {'type':'wuv', 'xyzw' : None}, 'catf': {'xyzw':None, 'mcat':'judd-1945','D':1.0,'La':None,'cattype':'vonkries','Dtype':None, 'catmode' : '1>2'}, 'rg_pars' : {'nhbins': None, 'start_hue':0.0, 'normalize_gamut': False}, 'cri_specific_pars' : None}
 _cri_defaults['ciera-8'] = _cri_defaults['ciera'].copy()
 _cri_defaults['ciera-14'] = _cri_defaults['ciera'].copy() 
-_cri_defaults['ciera-14']['sampleset'] = "_cri_rfl['cie-13.3-1995']['14']"
-_cri_defaults['cierf'] = {'sampleset' : "_cri_rfl['cie-224-2017']['99']['5nm']", 'ref_type' : 'cierf', 'cieobs' : {'xyz': '1964_10', 'cct' : '1931_2'}, 'avg' : np.mean, 'scale' : {'fcn' : log_scale, 'cfactor' : [6.73]}, 'cspace' : {'type' : 'jab_cam02ucs' , 'xyzw': None, 'mcat':'cat02', 'Yw':100.0, 'conditions' :{'La':100.0,'surround':'avg','D':1.0,'Yb':20.0,'Dtype':None},'yellowbluepurplecorrect' : None},'catf': None, 'rg_pars' : {'nhbins': 8.0, 'start_hue':0.0, 'normalize_gamut': False}, 'cri_specific_pars' : None}
-_cri_defaults['iesrf'] = {'sampleset' : "_cri_rfl['ies-tm30-15']['99']['5nm']", 'ref_type' : 'iesrf', 'cieobs' : {'xyz': '1964_10', 'cct' : '1931_2'}, 'avg' : np.mean, 'scale' :{'fcn' : log_scale, 'cfactor' : [7.54]}, 'cspace' : {'type': 'jab_cam02ucs', 'xyzw':None, 'mcat':'cat02', 'Yw':100.0, 'conditions' :{'La':100.0,'surround':'avg','D':1.0,'Yb':20.0,'Dtype':None},'yellowbluepurplecorrect' : None},'catf': None, 'rg_pars' : {'nhbins': 16.0, 'start_hue':0.0, 'normalize_gamut': False}, 'cri_specific_pars' : None}
-_cri_defaults['cri2012'] = {'sampleset' : "_cri_rfl['cri2012']['HL17']", 'ref_type' : 'ciera', 'cieobs' : {'xyz': '1964_10', 'cct' : '1931_2'}, 'avg' : math.rms, 'scale' : {'fcn': psy_scale, 'cfactor' : [1/55, 3/2, 2]}, 'cspace' : {'type': 'jab_cam02ucs', 'xyzw':None, 'mcat':'cat02', 'Yw':100.0, 'conditions' :{'La':100.0,'surround':'avg','D':1.0,'Yb':20.0,'Dtype':None},'yellowbluepurplecorrect' : 'brill-suss'},'catf': None, 'rg_pars' : {'nhbins': None, 'start_hue':0.0, 'normalize_gamut': False}, 'cri_specific_pars' : None}
+_cri_defaults['ciera-14']['sampleset'] = "_CRI_RFL['cie-13.3-1995']['14']"
+_cri_defaults['cierf'] = {'sampleset' : "_CRI_RFL['cie-224-2017']['99']['5nm']", 'ref_type' : 'cierf', 'cieobs' : {'xyz': '1964_10', 'cct' : '1931_2'}, 'avg' : np.mean, 'scale' : {'fcn' : log_scale, 'cfactor' : [6.73]}, 'cspace' : {'type' : 'jab_cam02ucs' , 'xyzw': None, 'mcat':'cat02', 'Yw':100.0, 'conditions' :{'La':100.0,'surround':'avg','D':1.0,'Yb':20.0,'Dtype':None},'yellowbluepurplecorrect' : None},'catf': None, 'rg_pars' : {'nhbins': 8.0, 'start_hue':0.0, 'normalize_gamut': False}, 'cri_specific_pars' : None}
+_cri_defaults['iesrf'] = {'sampleset' : "_CRI_RFL['ies-tm30-15']['99']['5nm']", 'ref_type' : 'iesrf', 'cieobs' : {'xyz': '1964_10', 'cct' : '1931_2'}, 'avg' : np.mean, 'scale' :{'fcn' : log_scale, 'cfactor' : [7.54]}, 'cspace' : {'type': 'jab_cam02ucs', 'xyzw':None, 'mcat':'cat02', 'Yw':100.0, 'conditions' :{'La':100.0,'surround':'avg','D':1.0,'Yb':20.0,'Dtype':None},'yellowbluepurplecorrect' : None},'catf': None, 'rg_pars' : {'nhbins': 16.0, 'start_hue':0.0, 'normalize_gamut': False}, 'cri_specific_pars' : None}
+_cri_defaults['cri2012'] = {'sampleset' : "_CRI_RFL['cri2012']['HL17']", 'ref_type' : 'ciera', 'cieobs' : {'xyz': '1964_10', 'cct' : '1931_2'}, 'avg' : math.rms, 'scale' : {'fcn': psy_scale, 'cfactor' : [1/55, 3/2, 2]}, 'cspace' : {'type': 'jab_cam02ucs', 'xyzw':None, 'mcat':'cat02', 'Yw':100.0, 'conditions' :{'La':100.0,'surround':'avg','D':1.0,'Yb':20.0,'Dtype':None},'yellowbluepurplecorrect' : 'brill-suss'},'catf': None, 'rg_pars' : {'nhbins': None, 'start_hue':0.0, 'normalize_gamut': False}, 'cri_specific_pars' : None}
 _cri_defaults['cri2012-hl17'] = _cri_defaults['cri2012'].copy()
-_cri_defaults['cri2012-hl1000'] = {'sampleset' : "_cri_rfl['cri2012']['HL1000']", 'ref_type' : 'ciera','cieobs' : {'xyz': '1964_10', 'cct' : '1931_2'}, 'avg' : math.rms,'scale': {'fcn' : psy_scale, 'cfactor' : [1/50, 3/2, 2]}, 'cspace' : {'type' : 'jab_cam02ucs','xyzw':None, 'mcat':'cat02', 'Yw':100.0, 'conditions' :{'La':100.0,'surround':'avg','D':1.0,'Yb':20.0,'Dtype':None},'yellowbluepurplecorrect' : 'brill-suss'},'catf': None, 'rg_pars' : {'nhbins': None, 'start_hue':0.0, 'normalize_gamut': False}, 'cri_specific_pars' : None}
-_cri_defaults['cri2012-real210'] = {'sampleset' : "_cri_rfl['cri2012']['Real210']",'ref_type' : 'ciera', 'cieobs' : {'xyz': '1964_10', 'cct' : '1931_2'},'avg' : math.rms, 'scale' : {'fcn' : psy_scale, 'cfactor' : [2/45, 3/2, 2]},'cspace' : {'type': 'jab_cam02ucs', 'xyzw':None, 'mcat':'cat02', 'Yw':100.0, 'conditions' :{'La':100.0,'surround':'avg','D':1.0,'Yb':20.0,'Dtype':None},'yellowbluepurplecorrect' : 'brill-suss'}, 'catf': None, 'rg_pars' : {'nhbins': None, 'start_hue':0.0, 'normalize_gamut': False}, 'cri_specific_pars' : None}
-_cri_defaults['cqs-v7.5'] = {'sampleset' : "_cri_rfl['cqs']['v7.5']",'ref_type' : 'ciera', 'cieobs' : {'xyz': '1931_2', 'cct' : '1931_2'}, 'avg' : math.rms, 'scale' : {'fcn' : log_scale, 'cfactor' : [2.93, 3.10, 3.78]}, 'cspace' : {'type': 'lab', 'xyzw' : None}, 'catf': {'xyzw': None,'mcat':'cmc','D':None,'La':[1000.0,1000.0],'cattype':'vonkries','Dtype':'cmc', 'catmode' : '1>2'}, 'rg_pars' : {'nhbins': None, 'start_hue':0.0, 'normalize_gamut': False}, 'cri_specific_pars' : {'maxC': None}}
-_cri_defaults['cqs-v9.0'] = {'sampleset' : "_cri_rfl['cqs']['v9.0']", 'ref_type' : 'ciera','cieobs' : {'xyz': '1931_2', 'cct' : '1931_2'}, 'avg' : math.rms, 'scale' : {'fcn' : log_scale, 'cfactor' : [3.03, 3.20, 3.88]}, 'cspace' : {'type': 'lab', 'xyzw' : None}, 'catf': {'xyzw': None,'mcat':'cmc','D':None,'La':[1000.0,1000.0],'cattype':'vonkries','Dtype':'cmc', 'catmode' : '1>2'}, 'rg_pars' : {'nhbins': None, 'start_hue':0.0, 'normalize_gamut': False}, 'cri_specific_pars' : {'maxC': 10.0}}
+_cri_defaults['cri2012-hl1000'] = {'sampleset' : "_CRI_RFL['cri2012']['HL1000']", 'ref_type' : 'ciera','cieobs' : {'xyz': '1964_10', 'cct' : '1931_2'}, 'avg' : math.rms,'scale': {'fcn' : psy_scale, 'cfactor' : [1/50, 3/2, 2]}, 'cspace' : {'type' : 'jab_cam02ucs','xyzw':None, 'mcat':'cat02', 'Yw':100.0, 'conditions' :{'La':100.0,'surround':'avg','D':1.0,'Yb':20.0,'Dtype':None},'yellowbluepurplecorrect' : 'brill-suss'},'catf': None, 'rg_pars' : {'nhbins': None, 'start_hue':0.0, 'normalize_gamut': False}, 'cri_specific_pars' : None}
+_cri_defaults['cri2012-real210'] = {'sampleset' : "_CRI_RFL['cri2012']['Real210']",'ref_type' : 'ciera', 'cieobs' : {'xyz': '1964_10', 'cct' : '1931_2'},'avg' : math.rms, 'scale' : {'fcn' : psy_scale, 'cfactor' : [2/45, 3/2, 2]},'cspace' : {'type': 'jab_cam02ucs', 'xyzw':None, 'mcat':'cat02', 'Yw':100.0, 'conditions' :{'La':100.0,'surround':'avg','D':1.0,'Yb':20.0,'Dtype':None},'yellowbluepurplecorrect' : 'brill-suss'}, 'catf': None, 'rg_pars' : {'nhbins': None, 'start_hue':0.0, 'normalize_gamut': False}, 'cri_specific_pars' : None}
+_cri_defaults['cqs-v7.5'] = {'sampleset' : "_CRI_RFL['cqs']['v7.5']",'ref_type' : 'ciera', 'cieobs' : {'xyz': '1931_2', 'cct' : '1931_2'}, 'avg' : math.rms, 'scale' : {'fcn' : log_scale, 'cfactor' : [2.93, 3.10, 3.78]}, 'cspace' : {'type': 'lab', 'xyzw' : None}, 'catf': {'xyzw': None,'mcat':'cmc','D':None,'La':[1000.0,1000.0],'cattype':'vonkries','Dtype':'cmc', 'catmode' : '1>2'}, 'rg_pars' : {'nhbins': None, 'start_hue':0.0, 'normalize_gamut': False}, 'cri_specific_pars' : {'maxC': None}}
+_cri_defaults['cqs-v9.0'] = {'sampleset' : "_CRI_RFL['cqs']['v9.0']", 'ref_type' : 'ciera','cieobs' : {'xyz': '1931_2', 'cct' : '1931_2'}, 'avg' : math.rms, 'scale' : {'fcn' : log_scale, 'cfactor' : [3.03, 3.20, 3.88]}, 'cspace' : {'type': 'lab', 'xyzw' : None}, 'catf': {'xyzw': None,'mcat':'cmc','D':None,'La':[1000.0,1000.0],'cattype':'vonkries','Dtype':'cmc', 'catmode' : '1>2'}, 'rg_pars' : {'nhbins': None, 'start_hue':0.0, 'normalize_gamut': False}, 'cri_specific_pars' : {'maxC': 10.0}}
 
-_cri_defaults['mcri'] = {'sampleset': "_cri_rfl['mcri']", 'ref_type' : None, 'cieobs' : {'xyz' : '1964_10', 'cct': '1931_2'}, 'avg': math.geomean, 'scale' : {'fcn': psy_scale, 'cfactor': [21.7016,   4.2106,   2.4154]}, 'cspace': {'type': 'ipt', 'Mxyz2lms': [[ 0.400070,	0.707270,	-0.080674],[-0.228111, 1.150561,	0.061230],[0.0, 0.0,	0.931757]]}, 'catf': {'xyzw': [94.81,  100.00,  107.32], 'mcat': 'cat02', 'cattype': 'vonkries', 'F':1, 'Yb': 20.0,'Dtype':None, 'catmode' : '1>2'}, 'rg_pars' : {'nhbins': None, 'start_hue':0.0, 'normalize_gamut': False}, 'cri_specific_pars' : {'similarity_ai' : np.array([[-0.09651, 0.41354, 40.64, 16.55, -0.17],[0.16548, 0.38877, 58.27,	20.37,	-0.59],[0.32825, 0.49673, 35.97	, 18.05,-6.04],[0.02115, -0.13658, 261.62, 110.99, -44.86], [-0.12686,	-0.22593, 99.06, 55.90, -39.86],[ 0.18488, 0.01172, 58.23, 62.55,	-22.86],[-0.03440,	0.23480, 94.71,	32.12, 2.90],[ 0.04258, 0.05040, 205.54,	53.08,	-35.20], [0.15829,  0.13624, 90.21,  70.83,	-19.01],[-0.01933,	-0.02168,	742.97, 297.66,	-227.30]])}}
+_cri_defaults['mcri'] = {'sampleset': "_CRI_RFL['mcri']", 'ref_type' : None, 'cieobs' : {'xyz' : '1964_10', 'cct': '1931_2'}, 'avg': math.geomean, 'scale' : {'fcn': psy_scale, 'cfactor': [21.7016,   4.2106,   2.4154]}, 'cspace': {'type': 'ipt', 'Mxyz2lms': [[ 0.400070,	0.707270,	-0.080674],[-0.228111, 1.150561,	0.061230],[0.0, 0.0,	0.931757]]}, 'catf': {'xyzw': [94.81,  100.00,  107.32], 'mcat': 'cat02', 'cattype': 'vonkries', 'F':1, 'Yb': 20.0,'Dtype':None, 'catmode' : '1>2'}, 'rg_pars' : {'nhbins': None, 'start_hue':0.0, 'normalize_gamut': False}, 'cri_specific_pars' : {'similarity_ai' : np.array([[-0.09651, 0.41354, 40.64, 16.55, -0.17],[0.16548, 0.38877, 58.27,	20.37,	-0.59],[0.32825, 0.49673, 35.97	, 18.05,-6.04],[0.02115, -0.13658, 261.62, 110.99, -44.86], [-0.12686,	-0.22593, 99.06, 55.90, -39.86],[ 0.18488, 0.01172, 58.23, 62.55,	-22.86],[-0.03440,	0.23480, 94.71,	32.12, 2.90],[ 0.04258, 0.05040, 205.54,	53.08,	-35.20], [0.15829,  0.13624, 90.21,  70.83,	-19.01],[-0.01933,	-0.02168,	742.97, 297.66,	-227.30]])}}
 
 
 #------------------------------------------------------------------------------
@@ -299,7 +299,7 @@ def spd_to_jab_t_r(data, cri_type = 'cierf', out = 'Jabt,Jabr', wl = None, sampl
     data = np2d(data)
 
     if wl is not None: 
-        data = spd(data = data, interpolation = _S_interp_type, kind = 'np', wl = wl)
+        data = spd(data = data, interpolation = _S_INTERP_TYPE, kind = 'np', wl = wl)
       
     # obtain sampleset:
     if isinstance(sampleset,str):
@@ -495,7 +495,7 @@ def optimize_scale_factor(cri_type,opt_scale_factor, scale_fcn, avg) :
         if 'opt_cri_type' not in cri_type['scale'].keys(): 
             opt_cri_type = _cri_defaults['ciera'] # use CIE Ra-13.3-1995 as target
         if 'opt_spd_set' not in cri_type['scale'].keys(): 
-            opt_spd_set = _iestm30['S']['data'][0:13] # use CIE F1-F12
+            opt_spd_set = _IESTM30['S']['data'][0:13] # use CIE F1-F12
         scale_fcn_opt = opt_cri_type ['scale']['fcn']
         scale_factor_opt = opt_cri_type ['scale']['cfactor']
         avg_opt = opt_cri_type ['avg']
@@ -702,7 +702,7 @@ def spd_to_mcri(data, D = 0.9, E = None, Yb = 20.0, out = 'Rm', wl = None):
     data = np2d(data)
     
     if wl is not None: 
-        data = spd(data = data, interpolation = _S_interp_type, kind = 'np', wl = wl)
+        data = spd(data = data, interpolation = _S_INTERP_TYPE, kind = 'np', wl = wl)
     
     
     # unpack metric default values:
