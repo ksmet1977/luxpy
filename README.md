@@ -115,7 +115,11 @@ Calculates a reference illuminant spectrum for color rendering index calculation
 [cie224:2017, CIE 2017 Colour Fidelity Index for accurate scientific use. (2017), ISBN 978-3-902842-61-9](http://www.cie.co.at/index.php?i_ca_id=1027),
 IESTM-30) 
 
+For more info:
 
+    ?luxpy.spectral
+    ?luxpy.spd_to_xyz()
+    etc.
 
 ## 3. spectral_databases.py
 
@@ -143,6 +147,11 @@ Database with spectral reflectance functions for various color rendition calcula
 
 ### _MUNSELL:
 Database with 1269 Munsell spectral reflectance functions + Value (V), Chroma (C), hue (h) and (ab) specifications.
+
+For more info:
+
+    ?luxpy.spectral_databases
+
 
 ## 4. colortransforms.py
 Module with basic colorimetric functions (xyz_to_chromaticity, chromaticity_to_xyz conversions):
@@ -174,6 +183,12 @@ CIE xyz <--> IPT ()
 ###  xyz_to_Ydlep(), Ydlep_to_xyz(): 
 CIE xyz <--> Y, dominant / complementary wavelength (dl, compl. wl: specified by < 0) and excitation purity (ep)
 
+For more info:
+
+    ?luxpy.colortransforms
+    ?luxpy.xyz_to_Yuv()
+    etc.
+    
 ## 5. cct.py
 
 ### _CCT_LUT_PATH:
@@ -208,6 +223,12 @@ Calculates CCT,Duv from XYZ using brute-force search algorithm (between 1e2 K - 
 
 ###	 cct_to_mired(): 
 Converts from CCT to Mired scale (or back)
+
+For more info:
+
+    ?luxpy.cct
+    ?luxpy.xyz_to_cct()
+    etc.
 
 ## 6. chromaticadaptation.py (cat)
 
@@ -259,6 +280,11 @@ Calculate corresponding colors by applying a von Kries chromatic adaptation
 transform (CAT), i.e. independent rescaling of 'sensor sensitivity' to data
 to adapt from current adaptation conditions (1) to the new conditions (2). 
 
+For more info:
+
+    ?luxpy.cat
+    ?luxpy.cat.apply()
+    etc.
 
 ## 7. colorappearancemodels.py (cam)
 ### cam._UNIQUE_HUE_DATA: 
@@ -352,15 +378,26 @@ This function implements the JOSA A (parameters = 'JOSA') published model.
 
 These functions are imported directly into the luxpy namespace. 
 
+For more info:
+
+    ?luxpy.cam
+    ?luxpy.cam.xyz_to_cam16()
+    etc.
+
 
 ## 8. colortf.py
 
-## _COLORTF_DEFAULT_WHITE_POINT: 
+### _COLORTF_DEFAULT_WHITE_POINT: 
 XYZ values (numpy.ndarray) of default white point (equi-energy white) 
 for color transformations using colortf if none is supplied.
 
 ### colortf():
 Calculates conversion between any two color spaces for which functions xyz_to_...() and ..._to_xyz() are defined.
+
+For more info:
+
+    ?luxpy.colortf
+    etc.
 
 
 ## 9. colorrenditionindices.py (cri)
@@ -430,6 +467,13 @@ Calculates the memory color rendition index, Rm:
 Versions 7.5 and 9.0 are supported.  
 * [W. Davis and Y. Ohno, “Color quality scale,” (2010), Opt. Eng., vol. 49, no. 3, pp. 33602–33616.](http://spie.org/Publications/Journal/10.1117/1.3360335)
 
+For more info:
+
+    ?luxpy.cri
+    ?luxpy.cri.spd_to_cri()
+    etc.
+
+
 ## 10. plotters.py
 
 ### plot_color_data():
@@ -449,6 +493,12 @@ Plot cerulean (yellow (577 nm) - blue (472 nm)) line (Kuehni, CRA, 2014: Table I
 
 ### plotUH():
 Plot unique hue lines from color space center point xyz0. (Kuehni, CRA, 2014: uY,uB,uG: Table II: spectral lights; uR: Table IV: Xiao data) [Kuehni, R. G. (2014). Unique hues and their stimuli—state of the art. Color Research & Application, 39(3), 279–287](https://doi.org/10.1002/col.21793)
+
+For more info:
+
+    ?luxpy.plotters
+    ?luxpy.plotDL()
+    etc.
 
 
 -------------------------------------------------------------------------------
@@ -497,45 +547,57 @@ Broadcasts shapes of data to a target_shape. Useful for block/vector calculation
 ## todim():  
 Expand x to dimensions that are broadcast-compatable with shape_ of another array.
 
+For more info:
 
-## 0.2.  math.py 
+    ?luxpy.helpers
+    ?luxpy.np2d()
+    etc.
 
-### line_intersect():
+
+## 0.2.  math.py (math)
+
+### math.line_intersect():
 Line intersections of series of two line segments a and b.
 * From [https://stackoverflow.com/questions/3252194/numpy-and-line-intersections](https://stackoverflow.com/questions/3252194/numpy-and-line-intersections)
 
-### positive_arctan():
+### math.positive_arctan():
 Calculates positive angle (0°-360° or 0 - 2*pi rad.) from x and y.
 
-### dot23():
+### math.dot23():
 Dot product of a 2-d numpy.ndarray with a (N x K x L) 3-d numpy.array using einsum().
 
-### check_symmetric():
+### math.check_symmetric():
 Checks if A is symmetric.
 
-### check_posdef():
+### math.check_posdef():
 Checks positive definiteness of a matrix via Cholesky.
 
-### symmM_to_posdefM():
+### math.symmM_to_posdefM():
 Converts a symmetric matrix to a positive definite one. Two methods are supported:
 * 'make': A Python/Numpy port of Muhammad Asim Mubeen's matlab function Spd_Mat.m (https://nl.mathworks.com/matlabcentral/fileexchange/45873-positive-definite-matrix)
 * 'nearest': A Python/Numpy port of John D'Errico's `nearestSPD` MATLAB code. (https://stackoverflow.com/questions/43238173/python-convert-matrix-to-positive-semi-definite)
 
-### bvgpdf():
+### math.bvgpdf():
 Calculates bivariate Gaussian (PD) function, with center mu and shape and orientation determined by sigmainv. 
 
-### mahalanobis2():
+### math.mahalanobis2():
 Calculates mahalanobis.^2 distance with center mu and shape and orientation determined by sigmainv. 
 
 
-### rms():
+### math.rms():
 Calculates root-mean-square along axis.
 
-### geomean():
+### math.geomean():
 Calculates geometric mean along axis.
 
-### polyarea():
+### math.polyarea():
 Calculates area of polygon. (First coordinate should also be last)
 
-### erf(), erfinv(): 
+### math.erf(), math.erfinv(): 
 erf-function (and inverse), direct import from scipy.special
+
+For more info:
+
+    ?luxpy.math
+    ?luxpy.math.bvgpdf()
+    etc.
