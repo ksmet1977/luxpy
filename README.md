@@ -436,19 +436,20 @@ Versions 7.5 and 9.0 are supported.
 Plot color data (local helper function)
 
 ### plotDL():
-Plot daylight locus (for 'ccts', default = 4000 K to 1e19 K) for 'cieobs' in 'cspace'.
+Plot daylight locus. 
 
 ### plotBB():
-Plot blackbody locus (for 'ccts', default = 4000 K to 1e19 K) for 'cieobs' in 'cspace'.
+Plot blackbody locus. 
 
 ### plotSL():
-Plot spectrum locus for 'cieobs' in 'cspace'. plotBB and plotDL are also called, but can be turned off.
+Plot spectrum locus. (plotBB() and plotDL() are also called, but can be turned off).
 
 ### plotceruleanline():
-Plot cerulean (yellow (577 nm) - blue (472 nm)) line (Kuehni, CRA, 2013: Table II: spectral lights).
+Plot cerulean (yellow (577 nm) - blue (472 nm)) line (Kuehni, CRA, 2014: Table II: spectral lights) [Kuehni, R. G. (2014). Unique hues and their stimuli—state of the art. Color Research & Application, 39(3), 279–287](https://doi.org/10.1002/col.21793)
 
 ### plotUH():
-Plot unique hue line from centerpoint xyz0 (Kuehni, CRA, 2013: uY,uB,uG: Table II: spectral lights; uR: Table IV: Xiao data)
+Plot unique hue lines from color space center point xyz0. (Kuehni, CRA, 2014: uY,uB,uG: Table II: spectral lights; uR: Table IV: Xiao data) [Kuehni, R. G. (2014). Unique hues and their stimuli—state of the art. Color Research & Application, 39(3), 279–287](https://doi.org/10.1002/col.21793)
+
 
 -------------------------------------------------------------------------------
 ## 0.1.  helpers.py 
