@@ -261,28 +261,34 @@ to adapt from current adaptation conditions (1) to the new conditions (2).
 
 
 ## 7. colorappearancemodels.py (cam)
-### cam._unique_hue_data: 
+### cam._UNIQUE_HUE_DATA: 
 Database of unique hues with corresponding Hue quadratures and eccentricity factors
 (ciecam02, cam16, ciecam97s, cam15u)
 
-### cam._surround_parameters: 
+### cam._SURROUND_PARAMETERS: 
 Database of surround parameters c, Nc, F and FLL for ciecam02, cam16, ciecam97s and cam15u.
 
-### cam._naka_rushton_parameters: 
+### cam._NAKA_RUSHTON_PARAMETERS: 
 Database with parameters (n, sig, scaling and noise) for the Naka-Rushton function: 
 scaling * ((data^n) / ((data^n) + (sig^n))) + noise
 
-### cam._camucs_parameters: 
+### cam._CAMUCS_PARAMETERS: 
 Database with parameters specifying the conversion from ciecam02/cam16 to cam[x]ucs (uniform color space), cam[x]lcd (large color diff.), cam[x]scd (small color diff).
 
-### cam._cam15u_parameters: 
+### cam._CAM15U_PARAMETERS: 
 Database with CAM15u model parameters.
 
-### cam._cam_sww_2016_parameters: 
+### cam._CAM_SWW_2016_PARAMETERS: 
 Database with cam_sww_2016 parameters (model by Smet, Webster and Whitehead published in JOSA A in 2016)
 
-### cam._cam_default_white_point: 
+### cam._CAM_DEFAULT_TYPE: 
+Default CAM type ('ciecam02')
+
+### cam._CAM_DEFAULT_WHITE_POINT: 
 Default internal reference white point (xyz)
+
+### cam._CAM_DEFAULT_CONDITIONS:
+Default CAM model parameters for model in cam._CAM_DEFAULT_TYPE
 
 ### cam.naka_rushton(): 
 Applies a Naka-Rushton function to the input (forward and inverse available)
@@ -325,10 +331,8 @@ Calculates the output for the CAM15u model for self-luminous unrelated stimuli.
 * [M. Withouck, K. A. G. Smet, and P. Hanselaer, (2015), “Brightness prediction of different sized unrelated self-luminous stimuli,” Opt. Express, vol. 23, no. 10, pp. 13455–13466.](https://www.osapublishing.org/oe/abstract.cfm?uri=oe-23-10-13455&origin=search)
 
 ### cam_sww_2016(): 
-Calculates output for the principled color appearance model developped by Smet, Webster and Whitehead 
-that is based on a mapping of the Munsell color system.
-This function implements the JOSA A (parameters = 'JOSA') published model (with a correction for the parameter in Eq.4 of Fig. 11: 0.952 --> -0.952 and the delta_ac and delta_bc white-balance shifts in Eq. 5e & 5f should be: -0.028 & 0.821),
-as well as using a set of other parameters providing a better fit (parameters = 'best fit'). 
+A simple principled color appearance model based on a mapping of the Munsell color system.
+This function implements the JOSA A (parameters = 'JOSA') published model. 
 * [Smet, K. A. G., Webster, M. A., & Whitehead, L. A. (2016). A simple principled approach for modeling and understanding uniform color metrics. Journal of the Optical Society of America A, 33(3), A319–A331.](https://www.osapublishing.org/josaa/abstract.cfm?URI=josaa-33-3-a319)
 
 
