@@ -83,7 +83,7 @@ def positive_arctan(x,y, htype = 'deg'):
             'deg': hue angle between 0° and 360°
             'rad': hue angle between 0 and 2pi radians
     Returns:
-        :returns: numpy.ndarray of positive hue angles.
+        :returns: numpy.ndarray of positive angles.
     """
     if htype == 'deg':
         r2d = 180.0/np.pi

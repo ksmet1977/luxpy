@@ -329,7 +329,7 @@ Calculates output for the principled color appearance model developped by Smet, 
 that is based on a mapping of the Munsell color system.
 This function implements the JOSA A (parameters = 'JOSA') published model (with a correction for the parameter in Eq.4 of Fig. 11: 0.952 --> -0.952 and the delta_ac and delta_bc white-balance shifts in Eq. 5e & 5f should be: -0.028 & 0.821),
 as well as using a set of other parameters providing a better fit (parameters = 'best fit'). 
-* [K. Smet, M. Webster, and L. Whitehead, “A Simple Principled Approach for Modeling and Understanding Uniform Color Metrics,” HHS Public Access, vol. 8, no. 12, pp. 1699–1712, 2015.](https://www.osapublishing.org/josaa/abstract.cfm?URI=josaa-33-3-a319)
+* [Smet, K. A. G., Webster, M. A., & Whitehead, L. A. (2016). A simple principled approach for modeling and understanding uniform color metrics. Journal of the Optical Society of America A, 33(3), A319–A331.](https://www.osapublishing.org/josaa/abstract.cfm?URI=josaa-33-3-a319)
 
 
 ### specific wrappers in the xyz_to_...() and ..._to_xyz() format:
