@@ -1,126 +1,156 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Jun 28 22:48:09 2017
-
-@author: kevin.smet
-"""
-
-# -*- coding: utf-8 -*-
 
 ###################################################################################################
-# functions related to basic colorimetry
+# Module with functions related to basic colorimetry
 ###################################################################################################
-from luxpy import *
-#from luxpy.chromaticadaptation import normalize_mcat
-
-__all__ = ['_cspace_axes', '_ipt_M','xyz_to_Yxy','Yxy_to_xyz','xyz_to_Yuv','Yuv_to_xyz',
-           'xyz_to_wuv','wuv_to_xyz','xyz_to_xyz','xyz_to_lab','lab_to_xyz','xyz_to_luv','luv_to_xyz',
-           'xyz_to_Vrb_mb','Vrb_mb_to_xyz','xyz_to_ipt','ipt_to_xyz','xyz_to_Ydlep','Ydlep_to_xyz']
-
-
+#
+# Note that colorimetric data is always located in the last axis of the data arrays.
+# (see also xyz specification in docstring of luxpy.spd_to_xyz())
+#
 #------------------------------------------------------------------------------
 # COLORIMETRIC functions:
 # Chromaticity / colorspace functions:
 #   xyz_to_Yxy(): self-explanatory
-#   Yxy_to_xyz():      "
-#   Yxy_to_Yuv():      "
-#   Yuv_to_Yxy():      "
-#   xyz_to_Yuv():      "
-#   Yuv_to_xyz():      "
-#	   xyz_to_xyz():	   "
-#	   xyz_to_lab():	   "
-#	   lab_to_xyz():	   "
-#	   xyz_to_luv():	   "
-#	   luv_to_xyz():	   "
+#   Yxy_to_xyz():       "
+#   Yxy_to_Yuv():       "
+#   Yuv_to_Yxy():       "
+#   xyz_to_Yuv():       "
+#   Yuv_to_xyz():       "
+#	 xyz_to_xyz():	      "
+#	 xyz_to_lab():	      "
+#	 lab_to_xyz():	      "
+#	 xyz_to_luv():	      "
+#	 luv_to_xyz():	      "
 #   xyz_to_Vrb_mb():   convert xyz to macleod boyton type coordinates (r,b) = (l,s)
 #   Vrb_mb_to_xyz():   convert macleod boyton type coordinates (r,b) = (l,s) to xyz
 #   xyz_to_ipt():   self-explanatory
-#   ipt_to_xyz():  
+#   ipt_to_xyz():       "
 #   xyz_to_Ydlep(): convert xyz to Y, dominant wavelength (dl) and excitation purity (ep)
 #   Ydlep_to_xyz(): convert Y, dominant wavelength (dl) and excitation purity (ep) to xyz
 #
 #------------------------------------------------------------------------------
 
+Created on Wed Jun 28 22:48:09 2017
+
+@author: Kevin A.G. Smet (ksmet1977 at gmail.com)
+"""
+
+from luxpy import *
+#from luxpy.chromaticadaptation import normalize_mcat
+
+__all__ = ['_CSPACE_AXES', '_IPT_M','xyz_to_Yxy','Yxy_to_xyz','xyz_to_Yuv','Yuv_to_xyz',
+           'xyz_to_wuv','wuv_to_xyz','xyz_to_xyz','xyz_to_lab','lab_to_xyz','xyz_to_luv','luv_to_xyz',
+           'xyz_to_Vrb_mb','Vrb_mb_to_xyz','xyz_to_ipt','ipt_to_xyz','xyz_to_Ydlep','Ydlep_to_xyz']
+
 
 #------------------------------------------------------------------------------
 # Database with cspace-axis strings (for plotting):
-_cspace_axes = {'Yxy': ['Y / L (cd/m²)', 'x', 'y']}
-_cspace_axes['Yuv'] = ['Y / L (cd/m²)', "u'", "v'"]
-_cspace_axes['xyz'] = ['X', 'Y', 'Z']
-_cspace_axes['lab'] = ['L*', "a*", "b*"]
-_cspace_axes['luv'] = ['L*', "u*", "u*"]
-_cspace_axes['ipt'] = ['I', "P", "T"]
-_cspace_axes['wuv'] = ['W*', "U*", "V*"]
-_cspace_axes['Vrb_mb'] = ['V (Macleod-Boyton)', "r (Macleod-Boyton)", "b (Macleod-Boyton)"]
-_cspace_axes['cct'] = ['', 'cct','duv']
+_CSPACE_AXES = {'Yxy': ['Y / L (cd/m²)', 'x', 'y']}
+_CSPACE_AXES['Yuv'] = ['Y / L (cd/m²)', "u'", "v'"]
+_CSPACE_AXES['xyz'] = ['X', 'Y', 'Z']
+_CSPACE_AXES['lab'] = ['L*', "a*", "b*"]
+_CSPACE_AXES['luv'] = ['L*', "u*", "u*"]
+_CSPACE_AXES['ipt'] = ['I', "P", "T"]
+_CSPACE_AXES['wuv'] = ['W*', "U*", "V*"]
+_CSPACE_AXES['Vrb_mb'] = ['V (Macleod-Boyton)', "r (Macleod-Boyton)", "b (Macleod-Boyton)"]
+_CSPACE_AXES['cct'] = ['', 'cct','duv']
 
 
 # pre-calculate matrices for conversion of xyz to lms and back for use in xyz_to_ipt() and ipt_to_xyz(): 
-_ipt_M = {'lms2ipt': np.array([[0.4000,0.4000,0.2000],[4.4550,-4.8510,0.3960],[0.8056,0.3572,-1.1628]]),
-                              'xyz2lms' : {x : normalize_3x3_matrix(_cmf['M'][x],spd_to_xyz(_cie_illuminants['D65'],cieobs = x)) for x in sorted(_cmf['M'].keys())}}
-_colortf_default_white_point = np.array([100.0, 100.0, 100.0]) # ill. E white point
+_IPT_M = {'lms2ipt': np.array([[0.4000,0.4000,0.2000],[4.4550,-4.8510,0.3960],[0.8056,0.3572,-1.1628]]),
+                              'xyz2lms' : {x : normalize_3x3_matrix(_CMF['M'][x],spd_to_xyz(_CIE_ILLUMINANTS['D65'],cieobs = x)) for x in sorted(_CMF['M'].keys())}}
+_COLORTF_DEFAULT_WHITE_POINT = np.array([100.0, 100.0, 100.0]) # ill. E white point
 
 #------------------------------------------------------------------------------
 #---chromaticity coordinates---------------------------------------------------
 #------------------------------------------------------------------------------
-def xyz_to_Yxy(data):
+def xyz_to_Yxy(xyz):
     """ 
-	 Convert data = np.array([[x,y,z]]) tristimulus values to np.array([[Y,x,y]]).
+	 Convert XYZ tristimulus values CIE Yxy chromaticity values.
+     
+    Args:
+        :xyz: numpy.array with tristimulus values
+        
+    Returns:
+        :Yxy: numpy.array with Yxy chromaticity values (Y value refers to luminance or luminance factor)
 	 """
-    data = np2d(data)
-#    sumxyz = data[...,0] + data[...,1] + data[...,2]
-#    return ajoin((data[...,1],data[...,0]/sumxyz,data[...,1]/sumxyz))
-    X,Y,Z = asplit(data) 
+    xyz = np2d(xyz)
+    X,Y,Z = asplit(xyz) 
     sumxyz = X + Y + Z 
     x = X / sumxyz
     y = Y / sumxyz
     return ajoin((Y,x,y))
    
 
-def Yxy_to_xyz(data):
+def Yxy_to_xyz(Yxy):
     """ 
-	 Convert data = np.array([[Y,x,y]]) chromaticity coordinates 
-	 to np.array([[x,y,z]]) tristimulus values.
+	 Convert CIE Yxy chromaticity values to XYZ tristimulus values.
+     
+    Args:
+        :Yxy: numpy.array with Yxy chromaticity values (Y value refers to luminance or luminance factor)
+        
+    Returns:
+        :xyz: numpy.array with tristimulus values
 	 """
-    data = np2d(data)
+    Yxy = np2d(Yxy)
     
-    Y,x,y = asplit(data) 
+    Y,x,y = asplit(Yxy) 
     X = Y*x/y
     Z = Y*(1.0-x-y)/y
     return ajoin((X,Y,Z))
 
-def xyz_to_Yuv(data):
+def xyz_to_Yuv(xyz):
     """ 
-	 Convert data = np.array([[x,y,z]]) tristimulus values to CIE 1976 np.array([[Y,u',v']]).
+	 Convert XYZ tristimulus values CIE 1976 Yu'v' chromaticity values.
+     
+    Args:
+        :xyz: numpy.array with tristimulus values
+        
+    Returns:
+        :Yuv: numpy.array with CIE 1976 Yu'v' chromaticity values (Y value refers to luminance or luminance factor)
 	 """
-    data = np2d(data)
+    xyz = np2d(xyz)
     
-    X,Y,Z = asplit(data)
+    X,Y,Z = asplit(xyz)
     denom = X + 15.0*Y + 3.0*Z
     u = 4.0*X / denom
     v = 9.0*Y / denom
     return ajoin((Y,u,v))
 
-def Yuv_to_xyz(data):
+def Yuv_to_xyz(Yuv):
     """ 
-	 Convert data = np.array([[Y,u',v']]) CIE 1976 chromaticity coordinates 
-	 to np.array([[x,y,z]]) tristimulus values.
-	 """	
-    data = np2d(data)
+	 Convert CIE 1976 Yu'v' chromaticity values to XYZ tristimulus values.
+     
+    Args:
+        :Yuv: numpy.array with CIE 1976 Yu'v' chromaticity values (Y value refers to luminance or luminance factor)
+        
+    Returns:
+        :xyz: numpy.array with tristimulus values
+	 """
+    Yuv = np2d(Yuv)
     
-    Y,u,v = asplit(data)
+    Y,u,v = asplit(Yuv)
     X = Y*(9.0*u)/(4.0*v)
     Z = Y*(12.0 - 3.0*u - 20.0*v)/(4.0*v)
     return ajoin((X,Y,Z))
 
 
-def xyz_to_wuv(data, xyzw = _colortf_default_white_point):
+def xyz_to_wuv(xyz, xyzw = _COLORTF_DEFAULT_WHITE_POINT):
     """ 
-	 Convert data = np.array([[x,y,z]]) tristimulus values to CIE 1964 np.array([[W*,U*,V*]]).
+	 Convert XYZ tristimulus values CIE 1964 U*V*W* color space.
+     
+    Args:
+        :xyz: numpy.array with tristimulus values
+        :xyzw: numpy.array with tristimulus values of white point, optional
+            Defaults to luxpy._COLORTF_DEFAULT_WHITE_POINT
+        
+    Returns:
+        :wuv: numpy.array with W*U*V* values 
 	 """
-    data = np2d(data)
+    xyz = np2d(xyz)
     xyzw = np2d(xyzw)
-    Yuv = xyz_to_Yuv(data) # convert to cie 1976 u'v'
+    Yuv = xyz_to_Yuv(xyz) # convert to cie 1976 u'v'
     Yuvw = xyz_to_Yuv(xyzw)
     Y, u, v = asplit(Yuv)
     Yw, uw, vw = asplit(Yuvw)
@@ -131,17 +161,25 @@ def xyz_to_wuv(data, xyzw = _colortf_default_white_point):
     V = 13.0*W*(v - vw)
     return ajoin((W,U,V))    
 
-def wuv_to_xyz(data,xyzw = _colortf_default_white_point):
+def wuv_to_xyz(wuv,xyzw = _COLORTF_DEFAULT_WHITE_POINT):
     """ 
-	 Convert data = np.array([[W*,U*,V*]]) CIE 1964 cooridnates to np.array([[x,y,z]]) tristimulus values.
+	 Convert CIE 1964 U*V*W* color space coordinates to XYZ tristimulus values.
+     
+    Args:
+        :wuv: numpy.array with W*U*V* values 
+        :xyzw: numpy.array with tristimulus values of white point, optional
+            Defaults to luxpy._COLORTF_DEFAULT_WHITE_POINT
+        
+    Returns:
+        :xyz: numpy.array with tristimulus values
 	 """
-    data = np2d(data)
+    wuv = np2d(wuv)
     xyzw = np2d(xyzw)
     
     Yuvw = xyz_to_Yuv(xyzw) # convert to cie 1976 u'v'
     Yw, uw, vw = asplit(Yuvw)
     vw = (2.0/3.0)*vw # convert to cie 1960 u, v
-    W,U,V = asplit(data)
+    W,U,V = asplit(wuv)
     Y = ((W + 17.0) / 25.0)**3.0
     u = uw + U/(13.0*W) 
     v = (vw + V/(13.0*W)) * (3.0/2.0)
@@ -149,27 +187,42 @@ def wuv_to_xyz(data,xyzw = _colortf_default_white_point):
     return Yuv_to_xyz(Yuv)
     
  
-def xyz_to_xyz(data):
-    """
-	 Convert np.array([[x,y,z]]) tristimulus values to itself: dummy function for colortf().
-	 """
-    data = np2d(data)
-    
-    return data 
-
-
-def xyz_to_lab(data,xyzw = None, cieobs = _cieobs):
+def xyz_to_xyz(xyz):
     """ 
-    Convert data = np.array([[x,y,z]]) tristimulus values to CIELab np.array([[L*,a*,b*]]).
-    Default white point xyzw is D65 using CIE _cieobs observer. 
+	 Convert XYZ tristimulus values to XYZ tristimulus values.
+     
+    Dummy function for use with luxpy.colortf().
+     
+    Args:
+        :xyz: numpy.array with tristimulus values
+        
+    Returns:
+        :xyz: numpy.array with tristimulus values	
     """
-    data = np2d(data)
+    return np2d(xyz)
+
+
+def xyz_to_lab(xyz, xyzw = None, cieobs = _CIEOBS):
+    """ 
+	 Convert XYZ tristimulus values to CIE 1976 L*a*b* (CIELAB) color coordinates.
+     
+    Args:
+        :xyz: numpy.array with tristimulus values
+        :xyzw: None or numpy.array with tristimulus values of white point, optional
+            None defaults to xyz of CIE D65 using the :cieobs: observer.
+        :cieobs: luxpy._CIEOBS, optional
+            CMF set to use when calculating xyzw.
+        
+    Returns:
+        :lab: numpy.array with CIE 1976 L*a*b* (CIELAB) color coordinates
+    """
+    xyz = np2d(xyz)
        
     if xyzw is None:
-        xyzw = spd_to_xyz(_cie_illuminants['D65'],cieobs = cieobs)
+        xyzw = spd_to_xyz(_CIE_ILLUMINANTS['D65'], cieobs = cieobs)
     
     # get and normalize (X,Y,Z) to white point:
-    XYZr = data/xyzw
+    XYZr = xyz/xyzw
        
     # Apply cube-root compression:
     fXYZr = XYZr**(1.0/3.0)
@@ -187,56 +240,34 @@ def xyz_to_lab(data,xyzw = None, cieobs = _cieobs):
     b = 200.0*(fXYZr[...,1]-fXYZr[...,2])
     return ajoin((L,a,b))
 
-#def xyz_to_lab2(data,xyzw = None, cieobs = _cieobs):
-#    """ 
-#    Convert data = np.array([[x,y,z]]) tristimulus values to CIELab np.array([[L*,a*,b*]]).
-#    Default white point xyzw is D65 using CIE _cieobs observer. 
-#    """
-#    data = np2d(data)
-#       
-#    if xyzw is None:
-#        xyzw = spd_to_xyz(_cie_illuminants['D65'],cieobs = cieobs)
-#    
-#    # get and normalize (X,Y,Z) to white point:
-#    Xr,Yr,Zr = asplit(data/xyzw)
-#       
-#    # Apply cube-root compression:
-#    fX,fY,fZ = [x**(1.0/3.0) for x in (Xr,Yr,Zr)]
-#    
-#    # Check for T/Tn <= 0.008856:
-#    p,q,r = [np.where(x<=0.008856) for x in (Xr,Yr,Zr)]
-#
-#    # calculate f(T) for T/Tn <= 0.008856:
-#    fX[p], fY[q] ,fZ[r] = [(7.787*x+16.0/116.0) for x in (Xr[p],Yr[q],Zr[r])]  
-#
-#    # calculate L*, a*, b*:
-#    L = 116.0*(Yr**(1.0/3.0)) - 16.0
-#    L[q] = 903.3*Yr[q]
-#    a = 500.0*(fX-fY)
-#    b = 200.0*(fY-fZ)
-#    return ajoin((L,a,b))
 
-
-
-def lab_to_xyz(data,xyzw = None, cieobs = _cieobs):
+def lab_to_xyz(lab,xyzw = None, cieobs = _CIEOBS):
     """ 
-    Convert data = CIELab np.array([[L*,a*,b*]]) to np.array([[x,y,z]]) tristimulus values.
-    Default white point xyzw is D65 using CIE _cieobs observer. 
+	 Convert CIE 1976 L*a*b* (CIELAB) color coordinates to XYZ tristimulus values.
+     
+    Args:
+        :lab: numpy.array with CIE 1976 L*a*b* (CIELAB) color coordinates
+        :xyzw: None or numpy.array with tristimulus values of white point, optional
+            None defaults to xyz of CIE D65 using the :cieobs: observer.
+        :cieobs: luxpy._CIEOBS, optional
+            CMF set to use when calculating xyzw.
+        
+    Returns:
+        :xyz: numpy.array with tristimulus values
     """
-    data = np2d(data)
+    lab = np2d(lab)
          
     if xyzw is None:
-        xyzw = spd_to_xyz(_cie_illuminants['D65'],cieobs = cieobs)
+        xyzw = spd_to_xyz(_CIE_ILLUMINANTS['D65'],cieobs = cieobs)
     
     # make xyzw same shape as data:
-    #xyzw = todim(xyzw, data.shape, equal_shape = True)
-    xyzw = xyzw*np.ones(data.shape)
+    xyzw = xyzw*np.ones(lab.shape)
     
     # set knee point of function:
     k=0.008856**(1/3)
     
     # get L*, a*, b* and Xw, Yw, Zw:
-    L,a,b = asplit(data)
+    L,a,b = asplit(lab)
     Xw,Yw,Zw = asplit(xyzw)
    
     fy = (L + 16.0) / 116.0 
@@ -252,15 +283,24 @@ def lab_to_xyz(data,xyzw = None, cieobs = _cieobs):
  
     return ajoin((X,Y,Z))  
 
-def xyz_to_luv(data,xyzw = None, cieobs = _cieobs):
+def xyz_to_luv(data,xyzw = None, cieobs = _CIEOBS):
     """ 
-    Convert data = np.array([[x,y,z]]) tristimulus values to CIELuv np.array([[L*,u*,v*]]).
-    Default white point xyzw is D65 using CIE _cieobs observer. 
+	 Convert XYZ tristimulus values to CIE 1976 L*u*v* (CIELUV) color coordinates.
+     
+    Args:
+        :xyz: numpy.array with tristimulus values
+        :xyzw: None or numpy.array with tristimulus values of white point, optional
+            None defaults to xyz of CIE D65 using the :cieobs: observer.
+        :cieobs: luxpy._CIEOBS, optional
+            CMF set to use when calculating xyzw.
+        
+    Returns:
+        :luv: numpy.array with CIE 1976 L*u*v* (CIELUV) color coordinates
     """
     data = np2d(data)
     
     if xyzw is None:
-        xyzw = spd_to_xyz(_cie_illuminants['D65'],cieobs = cieobs)
+        xyzw = spd_to_xyz(_CIE_ILLUMINANTS['D65'],cieobs = cieobs)
     
     # make xyzw same shape as data:
     xyzw = todim(xyzw, data.shape)
@@ -279,16 +319,25 @@ def xyz_to_luv(data,xyzw = None, cieobs = _cieobs):
 
     return ajoin((L,u,v))
 
-def luv_to_xyz(data,xyzw = None, cieobs = _cieobs):
+def luv_to_xyz(data,xyzw = None, cieobs = _CIEOBS):
     """ 
-    Convert data = CIELuv np.array([[L*,u*,v*]]) to np.array([[x,y,z]]) tristimulus values.
-    Default white point xyzw is D65 using CIE _cieobs observer. 
+	 Convert CIE 1976 L*u*v* (CIELUVB) color coordinates to XYZ tristimulus values.
+     
+    Args:
+        :lab: numpy.array with CIE 1976 L*u*v* (CIELUV) color coordinates
+        :xyzw: None or numpy.array with tristimulus values of white point, optional
+            None defaults to xyz of CIE D65 using the :cieobs: observer.
+        :cieobs: luxpy._CIEOBS, optional
+            CMF set to use when calculating xyzw.
+        
+    Returns:
+        :xyz: numpy.array with tristimulus values
     """
     data = np2d(data)
     
     
     if xyzw is None:
-        xyzw = spd_to_xyz(_cie_illuminants['D65'],cieobs = cieobs)
+        xyzw = spd_to_xyz(_CIE_ILLUMINANTS['D65'],cieobs = cieobs)
     
     # Make xyzw same shape as data:
     Yuvw = todim(xyz_to_Yuv(xyzw), data.shape, equal_shape = True)
@@ -310,55 +359,100 @@ def luv_to_xyz(data,xyzw = None, cieobs = _cieobs):
     return Yuv_to_xyz(ajoin((Y,up,vp)))
  
 #-------------------------------------------------------------------------------------------------   
-def xyz_to_Vrb_mb(data,cieobs = _cieobs, scaling = [1,1],M = None):
+def xyz_to_Vrb_mb(xyz,cieobs = _CIEOBS, scaling = [1,1], M = None):
     """ 
-    Convert data = np.array([[x,y,z]]) tristimulus values to Macleod-Boynton coordinates np.array([[V,r,b]]), 
-    with V = R+G, r = R/V, b = B/V (note that R,G,B ~ L,M,S)
-    If M is None: cieobs determines the conversion matrix M for going from XYZ to RGB (LMS).
-    """
-    data = np2d(data)
+	 Convert XYZ tristimulus values to V,r,b (Macleod-Boynton) color coordinates.
     
-    X,Y,Z = asplit(data)
+    Macleod Boynton: V = R+G, r = R/V, b = B/V 
+    Note that R,G,B ~ L,M,S
+     
+    Args:
+        :xyz: numpy.array with tristimulus values
+        :cieobs: luxpy._CIEOBS, optional
+            CMF set to use when calculating xyzw.
+        :scaling: list of scaling factors for r and b dimensions.
+        :M: None, optional
+            Conversion matrix for going from XYZ to RGB (LMS) 
+            If None, :cieobs: determines the M (function does inversion)
+            
+    Returns:
+        :Vrb: numpy.array with V,r,b (Macleod-Boynton) color coordinates
+    """
+    xyz = np2d(xyz)
+    
+    X,Y,Z = asplit(xyz)
     if M is None:
-        M = _cmf['M'][cieobs]
+        M = _CMF['M'][cieobs]
     R, G, B = [M[i,0]*X + M[i,1]*Y + M[i,2]*Z for i in range(3)]
     V = R + G
-    r = R / V
-    b = B / V
+    r = R / V * scaling[0]
+    b = B / V * scaling[1]
     return ajoin((V,r,b))
 
      
-def Vrb_mb_to_xyz(data,cieobs = _cieobs, scaling = [1,1],M = None, Minverted = False):
+def Vrb_mb_to_xyz(Vrb,cieobs = _CIEOBS, scaling = [1,1], M = None, Minverted = False):
     """ 
-    Convert data = np.array([[V,r,b]]) Macleod-Boynton coordinates to np.array([[x,y,z]]) tristimulus values 
-    Macleod Boynton: V = R+G, r = R/V, b = B/V (note that R,G,B ~ L,M,S)
-    If M is None: cieobs determines the conversion matrix M for going from XYZ to RGB (LMS) (function does inversion).
-    """
-    data = np2d(data)
+	 Convert V,r,b (Macleod-Boynton) color coordinates to XYZ tristimulus values.
     
-    V,r,b = asplit(data)
-    R = r*V
-    B = b*V
+    Macleod Boynton: V = R+G, r = R/V, b = B/V 
+    Note that R,G,B ~ L,M,S
+     
+    Args:
+        :Vrb: numpy.array with V,r,b (Macleod-Boynton) color coordinates
+        :cieobs: luxpy._CIEOBS, optional
+            CMF set to use when calculating xyzw.
+        :scaling: list of scaling factors for r and b dimensions.
+        :M: None, optional
+            Conversion matrix for going from XYZ to RGB (LMS) 
+            If None, :cieobs: determines the M (function does inversion)
+        :Minverted: False, optional
+            Bool that determines whether M should be inverted.
+            
+    Returns:
+        :xyz: numpy.array with tristimulus values
+    """
+    Vrb = np2d(Vrb)
+    
+    V,r,b = asplit(Vrb)
+    R = r*V / scaling[0]
+    B = b*V / scaling[1]
     G = V-R
     if M is None:
-        M = _cmf['M'][cieobs]
+        M = _CMF['M'][cieobs]
     if Minverted == False:
         M = np.linalg.inv(M)
     X, Y, Z = [M[i,0]*R + M[i,1]*G + M[i,2]*B for i in range(3)]
     return ajoin((X,Y,Z))
 
-def xyz_to_ipt(data,cieobs = _cieobs, xyz0 = None, Mxyz2lms = None):
+def xyz_to_ipt(xyz, cieobs = _CIEOBS, xyz0 = None, Mxyz2lms = None):
+    """ 
+	 Convert XYZ tristimulus values to IPT color coordinates.
+     
+    I: Lightness axis, P, red-green axis, T: yellow-blue axis.
+     
+    Args:
+        :xyz: numpy.array with tristimulus values
+        :xyz0: None or numpy.array with tristimulus values of white point, optional
+            None defaults to xyz of CIE D65 using the :cieobs: observer.
+        :cieobs: luxpy._CIEOBS, optional
+            CMF set to use when calculating xyz0 for rescaling Mxyz2lms (only when not None).
+        :Mxyz2lms: None, optional
+            None defaults to conversion matrix determined by :cieobs:
+        
+    Returns:
+        :ipt: numpy.array with IPT color coordinates
+        
+    Note: 
+        :xyz: is assumed to be under D65 viewing conditions!! 
+        If necessary perform chromatic adaptation !!
     """
-    Convert data = np.array([[x,y,z]]) relative (Ymax = 100) tristimulus values to I,P,T coordinates (I: lightness, P: red-green, T: yellow-blue).
-    Note: data must be under D65 viewing conditions!! If necessary perform chromatic adaptation !!
-    """
-    data = np2d(data)
+    xyz = np2d(xyz)
     
     # get M to convert xyz to lms and apply normalization to matrix or input your own:
     if Mxyz2lms is None:
-        M = _ipt_M['xyz2lms'][cieobs] # matrix conversions from xyz to lms
+        M = _IPT_M['xyz2lms'][cieobs] # matrix conversions from xyz to lms
         if xyz0 is None:
-            xyz0 = spd_to_xyz(_cie_illuminants['D65'],cieobs = cieobs, out = 1)[0]/100.0
+            xyz0 = spd_to_xyz(_CIE_ILLUMINANTS['D65'],cieobs = cieobs, out = 1)[0]/100.0
         else:
             xyz0 = xyz0/100.0    
         M = normalize_3x3_matrix(M,xyz0)
@@ -366,7 +460,7 @@ def xyz_to_ipt(data,cieobs = _cieobs, xyz0 = None, Mxyz2lms = None):
         M = Mxyz2lms
 
     # get xyz and normalize to 1:
-    xyz = data/100.0
+    xyz = xyz/100.0
     
     # convert xyz to lms:
     if len(xyz.shape) == 3:
@@ -382,24 +476,41 @@ def xyz_to_ipt(data,cieobs = _cieobs, xyz0 = None, Mxyz2lms = None):
     
     # convert lms' to ipt coordinates:
     if len(xyz.shape) == 3:
-        ipt = np.einsum('ij,klj->kli', _ipt_M['lms2ipt'], lmsp)
+        ipt = np.einsum('ij,klj->kli', _IPT_M['lms2ipt'], lmsp)
     else:
-        ipt = np.einsum('ij,lj->li', _ipt_M['lms2ipt'], lmsp)    
-    #ipt = np.dot(_ipt_M['lms2ipt'],lmsp.T).T
+        ipt = np.einsum('ij,lj->li', _IPT_M['lms2ipt'], lmsp)    
+
     return ipt
 
-def ipt_to_xyz(data,cieobs = _cieobs, xyz0 = None, Mxyz2lms = None):
+def ipt_to_xyz(ipt, cieobs = _CIEOBS, xyz0 = None, Mxyz2lms = None):
+    """ 
+	 Convert XYZ tristimulus values to IPT color coordinates.
+     
+    I: Lightness axis, P, red-green axis, T: yellow-blue axis.
+     
+    Args:
+        :ipt: numpy.array with IPT color coordinates
+        :xyz0: None or numpy.array with tristimulus values of white point, optional
+            None defaults to xyz of CIE D65 using the :cieobs: observer.
+        :cieobs: luxpy._CIEOBS, optional
+            CMF set to use when calculating xyz0 for rescaling Mxyz2lms (only when not None).
+        :Mxyz2lms: None, optional
+            None defaults to conversion matrix determined by :cieobs:
+        
+    Returns:
+        :xyz: numpy.array with tristimulus values
+        
+    Note: 
+        :xyz: is assumed to be under D65 viewing conditions!! 
+        If necessary perform chromatic adaptation !!
     """
-    Convert data = np.array([[I,P,T]]) coordinates (I: lightness, P: red-green, T: yellow-blue) to np.array([[x,y,z]]) relative (Ymax = 100) tristimulus values.
-    Note: data is assumed to be under D65 viewing conditions!! If necessary perform chromatic adaptation !!
-    """
-    data = np2d(data)
+    ipt = np2d(ipt)
     
     # get M to convert xyz to lms and apply normalization to matrix or input your own:
     if Mxyz2lms is None:
-        M = _ipt_M['xyz2lms'][cieobs] # matrix conversions from xyz to lms
+        M = _IPT_M['xyz2lms'][cieobs] # matrix conversions from xyz to lms
         if xyz0 is None:
-            xyz0 = spd_to_xyz(_cie_illuminants['D65'],cieobs = cieobs, out = 1)[0]/100.0
+            xyz0 = spd_to_xyz(_CIE_ILLUMINANTS['D65'],cieobs = cieobs, out = 1)[0]/100.0
         else:
             xyz0 = xyz0/100.0    
         M = normalize_3x3_matrix(M,xyz0)
@@ -407,11 +518,10 @@ def ipt_to_xyz(data,cieobs = _cieobs, xyz0 = None, Mxyz2lms = None):
         M = Mxyz2lms
     
     # convert from ipt to lms':
-    if len(data.shape) == 3:
-        lmsp = np.einsum('ij,klj->kli', np.linalg.inv(_ipt_M['lms2ipt']), data)
+    if len(ipt.shape) == 3:
+        lmsp = np.einsum('ij,klj->kli', np.linalg.inv(_IPT_M['lms2ipt']), ipt)
     else:
-        lmsp = np.einsum('ij,lj->li', np.linalg.inv(_ipt_M['lms2ipt']), data)
-    #lmsp = np.dot(np.linalg.inv(_ipt_M['lms2ipt']),data.T).T
+        lmsp = np.einsum('ij,lj->li', np.linalg.inv(_IPT_M['lms2ipt']), ipt)
 
     # reverse response compression: lms' to lms
     lms = lmsp**(1.0/0.43)
@@ -419,7 +529,7 @@ def ipt_to_xyz(data,cieobs = _cieobs, xyz0 = None, Mxyz2lms = None):
     lms[p] = -np.abs(lmsp[p])**(1.0/0.43)
 
     # convert from lms to xyz:
-    if len(data.shape) == 3:
+    if len(ipt.shape) == 3:
         xyz = np.einsum('ij,klj->kli', np.linalg.inv(M), lms)
     else:
         xyz = np.einsum('ij,lj->li', np.linalg.inv(M), lms)    
@@ -430,26 +540,36 @@ def ipt_to_xyz(data,cieobs = _cieobs, xyz0 = None, Mxyz2lms = None):
     return xyz
     
 #------------------------------------------------------------------------------
-def xyz_to_Ydlep(data, cieobs = _cieobs, xyzw = np2d([100.0,100.0,100.0])):
-    """
-    Calculates Y, dominant (complementary) wavelength and excitation purity.
+def xyz_to_Ydlep(xyz, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT):
+    """ 
+	 Convert XYZ tristimulus values to Y, dominant (complementary) wavelength and excitation purity.
+     
+    Args:
+        :xyz: numpy.array with tristimulus values
+        :xyzw: None or numpy.array with tristimulus values of white point, optional
+            None defaults to xyz of CIE D65 using the :cieobs: observer.
+        :cieobs: luxpy._CIEOBS, optional
+            CMF set to use when calculating spectrum locus coordinates.
+        
+    Returns:
+        :Ydlep: numpy.array with Y, dominant (complementary) wavelength and excitation purity
     """
     
-    data3 = np3d(data).copy()
+    xyz3 = np3d(xyz).copy()
     
-       # flip axis so that shortest dim is on axis0 (save time in looping):
-    if data3.shape[0] > data3.shape[1]:
+    # flip axis so that shortest dim is on axis0 (save time in looping):
+    if xyz3.shape[0] > xyz3.shape[1]:
         axes12flipped = True
-        data3 = data3.transpose((1,0,2))
+        xyz3 = xyz3.transpose((1,0,2))
     else:
         axes12flipped = False
     
     # convert xyz to Yxy:
-    Yxy = xyz_to_Yxy(data3)
+    Yxy = xyz_to_Yxy(xyz3)
     Yxyw = xyz_to_Yxy(xyzw)
 
     # get spectrum locus Y,x,y and wavelengths:
-    SL = _cmf['bar'][cieobs]
+    SL = _CMF['bar'][cieobs]
 
     wlsl = SL[0]
     Yxysl = xyz_to_Yxy(SL[1:4].T)[:,None]
@@ -474,7 +594,7 @@ def xyz_to_Ydlep(data, cieobs = _cieobs, xyzw = np2d([100.0,100.0,100.0])):
 
     dominantwavelength = np.zeros(Y.shape)
     purity = dominantwavelength.copy()
-    for i in range(data3.shape[1]):
+    for i in range(xyz3.shape[1]):
 
             # find index of complementary wavelengths/hues:
             pc = np.where((h[:,i] >= hsl_max) & (h[:,i] <= hsl_min + 360.0)) # hue's requiring complementary wavelength (purple line)
@@ -512,30 +632,40 @@ def xyz_to_Ydlep(data, cieobs = _cieobs, xyzw = np2d([100.0,100.0,100.0])):
             denom = np.sum(dap * db,axis=1,keepdims=True)
             num = np.sum(dap * dp,axis=1,keepdims=True)
             xy_linecross = (num/denom) *db + xypl1
-            d_linecross = np.atleast_2d((xy_linecross[:,0]**2.0 + xy_linecross[:,1]**2.0)**0.5).T
+            d_linecross = np.atleast_2d((xy_linecross[:,0]**2.0 + xy_linecross[:,1]**2.0)**0.5).T[0]
             purity[:,i][pc] = d[pc]/d_linecross[pc]
-    Ydlep = np.dstack((data3[:,:,1],dominantwavelength,purity))  
+    Ydlep = np.dstack((xyz3[:,:,1],dominantwavelength,purity))  
     
     if axes12flipped == True:
         Ydlep = Ydlep.transpose((1,0,2))
     else:
         Ydlep = Ydlep.transpose((0,1,2))
-    return Ydlep.reshape(data.shape)
+    return Ydlep.reshape(xyz.shape)
 
     
 
-def Ydlep_to_xyz(data, cieobs = _cieobs, xyzw = np2d([100.0,100.0,100.0])):
-    """
-    Calculates xyz from Y, dominant (complementary) wavelength and excitation purity.
+def Ydlep_to_xyz(Ydlep, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT):
+    """ 
+	 Convert Y, dominant (complementary) wavelength and excitation purity to XYZ tristimulus values.
+     
+    Args:
+        :Ydlep: numpy.array with Y, dominant (complementary) wavelength and excitation purity
+        :xyzw: None or numpy.array with tristimulus values of white point, optional
+            None defaults to xyz of CIE D65 using the :cieobs: observer.
+        :cieobs: luxpy._CIEOBS, optional
+            CMF set to use when calculating spectrum locus coordinates.
+        
+    Returns:
+        :xyz: numpy.array with tristimulus values
     """
     
     
-    data3 = np3d(data).copy()
+    Ydlep3 = np3d(Ydlep).copy()
     
     # flip axis so that shortest dim is on axis0 (save time in looping):
-    if data3.shape[2] > data3.shape[1]:
+    if Ydlep3.shape[2] > Ydlep3.shape[1]:
         axes12flipped = True
-        data3 = data3.transpose((1,0,2))
+        Ydlep3 = Ydlep3.transpose((1,0,2))
     else:
         axes12flipped = False
     
@@ -544,7 +674,7 @@ def Ydlep_to_xyz(data, cieobs = _cieobs, xyzw = np2d([100.0,100.0,100.0])):
     Yxywo = Yxyw.copy()
 
     # get spectrum locus Y,x,y and wavelengths:
-    SL = _cmf['bar'][cieobs]
+    SL = _CMF['bar'][cieobs]
     wlsl = SL[0,None].T
     Yxysl = xyz_to_Yxy(SL[1:4].T)[:,None]
     
@@ -553,7 +683,7 @@ def Ydlep_to_xyz(data, cieobs = _cieobs, xyzw = np2d([100.0,100.0,100.0])):
     Yxyw = Yxyw - Yxyw
     
     #split:
-    Y, dom, pur = asplit(data3)
+    Y, dom, pur = asplit(Ydlep3)
     Yw,xw,yw = asplit(Yxyw)
     Ywo,xwo,ywo = asplit(Yxywo)
     Ysl,xsl,ysl = asplit(Yxysl)
@@ -561,7 +691,7 @@ def Ydlep_to_xyz(data, cieobs = _cieobs, xyzw = np2d([100.0,100.0,100.0])):
     # loop over longest dim:
     x = np.zeros(Y.shape)
     y = x.copy()
-    for i in range(data3.shape[1]):
+    for i in range(Ydlep3.shape[1]):
 
         # find closest wl's to dom:
         #wlslb,wlib = meshblock(wlsl,np.abs(dom[i,:])) #abs because dom<0--> complemtary wl    
@@ -601,13 +731,13 @@ def Ydlep_to_xyz(data, cieobs = _cieobs, xyzw = np2d([100.0,100.0,100.0])):
         denom = np.sum(dap * db,axis=1,keepdims=True)
         num = np.sum(dap * dp,axis=1,keepdims=True)
         xy_linecross = (num/denom) *db + xypl1
-        d_linecross = np.atleast_2d((xy_linecross[:,0]**2.0 + xy_linecross[:,1]**2.0)**0.5).T
+        d_linecross = np.atleast_2d((xy_linecross[:,0]**2.0 + xy_linecross[:,1]**2.0)**0.5).T[:,0]
         x[:,i][pc] = pur[:,i][pc]*d_linecross[pc]*np.cos(hdom[pc]*np.pi/180)
         y[:,i][pc] = pur[:,i][pc]*d_linecross[pc]*np.sin(hdom[pc]*np.pi/180)
-    Yxy = np.dstack((data3[:,:,0],x + xwo, y + ywo))
+    Yxy = np.dstack((Ydlep3[:,:,0],x + xwo, y + ywo))
     if axes12flipped == True:
         Yxy = Yxy.transpose((1,0,2))
     else:
         Yxy = Yxy.transpose((0,1,2))
-    return Yxy_to_xyz(Yxy).reshape(data.shape)
+    return Yxy_to_xyz(Yxy).reshape(Ydlep.shape)
     

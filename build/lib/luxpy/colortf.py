@@ -1,26 +1,39 @@
 # -*- coding: utf-8 -*-
 """
+###############################################################################
+# _COLORTF_DEFAULT_WHITE_POINT: numpy.ndarray with XYZ values of default white point 
+#                               (equi-energy white) for color transformation if none is supplied.
+#
+# colortf(): Calculates conversion between any two color spaces 
+#            for which functions xyz_to_...() and ..._to_xyz() are defined.
+###############################################################################
+
 Created on Fri Jun 30 18:34:34 2017
 
-@author: kevin.smet
+@author: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
-###############################################################################
-# Calculates conversion between any two color spaces 
-# for which xyz_to_...() and ..._to_xyz() exists.
-###############################################################################
-
 
 from luxpy import *
-__all__ = ['_colortf_default_white_point','colortf']
+__all__ = ['_COLORTF_DEFAULT_WHITE_POINT','colortf']
 
 
-_colortf_default_white_point = np.array([100.0, 100.0, 100.0]) # ill. E white point
+_COLORTF_DEFAULT_WHITE_POINT = np.array([100.0, 100.0, 100.0]) # ill. E white point
 
 #------------------------------------------------------------------------------------------------
 def colortf(data, tf = 'Yuv>Yxy', tfa0 = {}, tfa1 = {}):
     """
-    Wrapper function to perform various color transformations, e.g. tf = 'spd>xyz', 'spd>Yuv', 'Yuv>cct',...
-    Provide additional keyword arguments for the '..>xyz' and 'xyz>..' transformations as dicts in respectively, tfa1 & tfa2 
+    Wrapper function to perform various color transformations.
+    
+    Args:
+        :data: numpy.ndarray
+        :tf: str specifying transform type, optional
+            E.g. tf = 'spd>xyz' or 'spd>Yuv' or 'Yuv>cct' or ...
+            If tf is for example 'Yuv' it is assumed to be a transformation of type: 'xyz>Yuv'
+        :tfa0: dict with parameters (keys) and values required by some color transformations ('...>xyz')
+        :tfa1: dict with parameters (keys) and values required by some color transformations ('xyz>...')
+
+    Returns:
+        :returns: numpy.ndarray with data transformed to new color space
     """
     data = np2d(data)
     tf = tf.split('>')
