@@ -158,11 +158,11 @@ def xyz_to_cct_search(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None, accuracy = 
 
     xyzw = np2d(xyzw)   
     
-    if len(data.shape)>2:
-        raise Exception('xyz_to_cct_search(): Input data.shape must be <= 2 !')
+    if len(xyzw.shape)>2:
+        raise Exception('xyz_to_cct_search(): Input xyzw.shape must be <= 2 !')
        
     # get 1960 u,v of test source:
-    Yuvt = xyz_to_Yuv(np.squeeze(xyzw)) # remove possible 1-dim + convert data to CIE 1976 u',v'
+    Yuvt = xyz_to_Yuv(np.squeeze(xyzw)) # remove possible 1-dim + convert xyzw to CIE 1976 u',v'
     axis_of_v3t = len(Yuvt.shape)-1 # axis containing color components
     ut = Yuvt[:,1,None] #.take([1],axis = axis_of_v3t) # get CIE 1960 u
     vt = (2/3)*Yuvt[:,2,None] #.take([2],axis = axis_of_v3t) # get CIE 1960 v
@@ -182,7 +182,7 @@ def xyz_to_cct_search(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None, accuracy = 
         cct_scale_ifun = lambda x: np.power(10.0,x)
         dT = (cct_scale_fun(upper_cct) - cct_scale_fun(lower_cct))/2
         ccttemp = np.array([cct_scale_ifun(cct_scale_fun(lower_cct) + dT)])
-        ccts_est = np2d(ccttemp*np.ones((data.shape[0],1)))
+        ccts_est = np2d(ccttemp*np.ones((xyzw.shape[0],1)))
         dT_approx_cct_False = dT.copy()
 
     
@@ -239,7 +239,7 @@ def xyz_to_cct_search(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None, accuracy = 
             xyz = spd_to_xyz(BB,cieobs = cieobs)
     
             # Convert to CIE 1960 u,v:
-            Yuv = xyz_to_Yuv(np.squeeze(xyz)) # remove possible 1-dim + convert data to CIE 1976 u',v'
+            Yuv = xyz_to_Yuv(np.squeeze(xyz)) # remove possible 1-dim + convert xyz to CIE 1976 u',v'
             axis_of_v3 = len(Yuv.shape)-1 # axis containing color components
             u = Yuv[:,1,None] # get CIE 1960 u
             v = (2.0/3.0)*Yuv[:,2,None] # get CIE 1960 v
@@ -344,7 +344,7 @@ def xyz_to_cct_ohno(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, accuracy = 0
         raise Exception('xyz_to_cct_ohno(): Input xyzwa.ndim must be <= 2 !')
       
     # get 1960 u,v of test source:
-    Yuv = xyz_to_Yuv(xyzw) # remove possible 1-dim + convert data to CIE 1976 u',v'
+    Yuv = xyz_to_Yuv(xyzw) # remove possible 1-dim + convert xyzw to CIE 1976 u',v'
     axis_of_v3 = len(Yuv.shape)-1 # axis containing color components
     u = Yuv[:,1,None] # get CIE 1960 u
     v = (2.0/3.0)*Yuv[:,2,None] # get CIE 1960 v
@@ -379,7 +379,7 @@ def xyz_to_cct_ohno(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, accuracy = 0
         
 
         if (out_of_lut == True) & (force_out_of_lut == True): # calculate using search-function
-            cct_i, Duv_i = xyz_to_cct_search(data[i], cieobs = cieobs, wl = wl, accuracy = accuracy,out = 'cct,duv',upper_cct_max = upper_cct_max, approx_cct_temp = approx_cct_temp)
+            cct_i, Duv_i = xyz_to_cct_search(xyzw[i], cieobs = cieobs, wl = wl, accuracy = accuracy,out = 'cct,duv',upper_cct_max = upper_cct_max, approx_cct_temp = approx_cct_temp)
             CCT[i] = cct_i
             Duv[i] = Duv_i
             continue
@@ -479,14 +479,14 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut', out 
     Note:
         If duv is not supplied (:ccts:.shape is (N,1) and :duv: is None), source is assumed to be on the Planckian locus.
 	 """
-    # make data a min. 2d np.array:
+    # make ccts a min. 2d np.array:
     if isinstance(ccts,list):
         ccts = np2dT(np.array(ccts))
     else:
         ccts = np2d(ccts) 
     
     if len(ccts.shape)>2:
-        raise Exception('cct_to_xyz(): Input data.shape must be <= 2 !')
+        raise Exception('cct_to_xyz(): Input ccts.shape must be <= 2 !')
     
     # get cct and duv arrays from :ccts:
     cct = np2d(ccts[:,0,None])
@@ -588,7 +588,7 @@ def xyz_to_cct(xyzw, cieobs = _CIEOBS, out = 'cct',mode = 'lut', wl = None,accur
         return xyz_to_cct_search(xyzw = xyzw, cieobs = cieobs, out = out, wl = wl, accuracy = accuracy, upper_cct_max = upper_cct_max, approx_cct_temp = approx_cct_temp)
 
 
-def xyz_to_duv(data, cieobs = _CIEOBS, out = 'duv', mode = 'lut', wl = None,accuracy = 0.1, force_out_of_lut = True, upper_cct_max = 10.0**20,approx_cct_temp = True): 
+def xyz_to_duv(xyzw, cieobs = _CIEOBS, out = 'duv', mode = 'lut', wl = None,accuracy = 0.1, force_out_of_lut = True, upper_cct_max = 10.0**20,approx_cct_temp = True): 
     """
 	 Convert XYZ tristimulus values to Duv (distance above (>0) or below (<0) the Planckian locus)
      and correlated color temperature (CCT) values
