@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 ###################################################################################################
-# Module with functions related to plotting 
+# Module with functions related to plotting of color data
 ###################################################################################################
 #
 # plot_color_data(): Plot color data (local helper function)
@@ -60,12 +60,12 @@ def plot_color_data(x,y,z=None, axh=None, show = True, cieobs =_CIEOBS, cspace =
         plt.grid(kwargs['grid']);kwargs.pop('grid')
     if z is not None:
         plt.plot(x,y,z,formatstr, linewidth = 2)
-        plt.xlabel(_CSPACE_axes[cspace][0], kwargs)
+        plt.xlabel(_CSPACE_AXES[cspace][0], kwargs)
     else:
         plt.plot(x,y,formatstr,linewidth = 2)
         
-    plt.xlabel(_CSPACE_axes[cspace][1], kwargs)
-    plt.ylabel(_CSPACE_axes[cspace][2], kwargs)
+    plt.xlabel(_CSPACE_AXES[cspace][1], kwargs)
+    plt.ylabel(_CSPACE_AXES[cspace][2], kwargs)
 
     if show == True:
         plt.show()
@@ -211,7 +211,7 @@ def plotSL(cieobs =_CIEOBS, cspace = _CSPACE,  DL = True, BBL = True, D65 = Fals
     SL = colortf(SL, tf = cspace, tfa0 = cspace_pars)
     Y,x,y = asplit(SL)
     
-    showcopy = show.copy()
+    showcopy = show
     if np.any([DL,BBL,D65,EEW]):
         show = False
 
