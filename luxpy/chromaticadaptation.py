@@ -410,12 +410,12 @@ def apply(data, catmode = '1>0>2', cattype = 'vonkries', xyzw1 = None, xyzw2 = N
         if ((xyzw1 is not None) & (xyzw2 is not None)):
             xyzw1 = xyzw1*np.ones(target_shape) 
             xyzw2 = xyzw2*np.ones(target_shape)
-            default_LA12 = [xyzw1[...,1,None],xyzw2[...,1,None]]
+            default_La12 = [xyzw1[...,1,None],xyzw2[...,1,None]]
             
         elif (xyzw2 is None) & (xyzw1 is not None): # apply one-step CAT: 1-->0
             catmode = '1>0' #override catmode input
             xyzw1 = xyzw1*np.ones(target_shape)
-            default_LA12 = [xyzw1[...,1,None],La0]
+            default_La12 = [xyzw1[...,1,None],La0]
             
         elif (xyzw1 is None) & (xyzw2 is not None):
             raise Exception("von_kries(): cat transformation '0>2' not supported, use '1>0' !")

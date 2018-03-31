@@ -362,6 +362,7 @@ for color transformations using colortf if none is supplied.
 ### colortf():
 Calculates conversion between any two color spaces for which functions xyz_to_...() and ..._to_xyz() are defined.
 
+
 ## 9. colorrenditionindices.py (cri)
 
 ### cri._cri_defaults: 
@@ -404,46 +405,12 @@ Calculates color difference (~fidelity) of data (= np.array([[wl,spds]]) (data_a
 ### cri.optimize_scale_factor():
 Optimize scale_factor of cri-model in cri_type such that average Ra for a set of light sources is the same as that of a target-cri (default: 'ciera').
 
-### cri.spd_to_cri(): 
-Calculates color rendition (~fidelity) index of data (= np.array([[wl,spds]]) (data_axis = 0) free choice of:
-* out = output requested (e.g. 'Ra', 'Ri' or 'Ra,Ri', or 'Ra, Ri, cct', ...; default = 'Ra', 'a' stands for average --> general color rendition index, i for individual regardless of cri_type
-
-* wl: wavelengths (or [start, end, spacing]) to interpolate the SPD's in data argument to. Default = None (no interpolation) 
-
-* cri_type: str input specifying dict with default settings or user defined dict with parameters specifying color rendering index specifics (see e.g. luxpy.cri._cri_defaults['cierf'])
-non-None input arguments to function will override defaults in cri_type dict
-
-* cri_type keys / further function arguments:
-    1. sampleset: np.array([[wl,rfl]]) or str for built-in rfl-set
-    2. ref_type: reference illuminant type ('BB' : Blackbody radiatiors, 'DL': daylightphase, 'ciera': used in [CIE CRI-13.3-1995](http://www.cie.co.at/index.php/index.php?i_ca_id=303), 'cierf': used in [CIE 224-2017](http://www.cie.co.at/index.php?i_ca_id=1027), 'iesrf': used in [TM30-15](https://www.ies.org/store/technical-memoranda/ies-method-for-evaluating-light-source-color-rendition/), ...)
-    3. cieobs: dict:
-         * 'xyz': cie observer for calculating xyz of samples and white 
-         * 'cct': cie observer for calculating cct
-    4. cspace: 
-         * 'type': color space used to calculate color differences
-         * 'xyzw': white point of color space, (None: use xyzw of test / reference (after chromatic adaptation, if specified))
-         * ' ...' : other possible parameters needed for color space calculation
-    5. catf: None: don't apply a cat (other than perhaps the one built into the colorspace), 
-    OR dict:
-         * 'D': degree of adaptation
-         * 'mcat': sensor matrix specification,
-         * 'xyzw': (None: use xyzw of reference otherwise transform both test and ref to xyzw)
-    6. avg: averaging function (handle) for color differences, DEi (e.g. numpy.mean, .math.rms, .math.geomean)
-    7. scale
-         * 'fcn': function handle to type of cri scale, e.g.  linear_scale, log_scale, psy_scale
-         * 'cfactor': factors used in scaling function: if True: cfactor will be optimized to minimize the rms between the Ra's of the requested metric and some target metric specified in:
-              * opt_cri_type:  str (one of the preset _cri_defaults) or dict (dict must contain all keys as normal), default = 'ciera' (if 'opt_cri_type' -key not in 'scale' dict)
-              * opt_spd_set: set of light source spds used to optimize cfactor, default = 'F1-F12' (if 'opt_spd_set' -key not in 'scale' dict)
-    8. opt_scale_factor: True: optimize c-factor, else do nothing and use value of cfactor in 'scale'.    
-    9. cri_specific_pars: other parameters specific to type of cri, e.g. maxC for CQS calculations
-    10. rg_pars: dict containing:
-         * 'nhbins' (int): number of hue bins to divide the gamut in
-         * 'start_hue' (float,°): hue at which to start slicing
-         * 'normalize_gamut' (bool): normalize gamut or not before calculating a gamut area index Rg. 
+### spd_to_cri(): 
+Calculates the color rendering fidelity index (CIE Ra, CIE Rf, IES Rf, CRI2012 Rf) of spectral data. 
 
 ### wrapper functions for fidelity type metrics:
 * cri.spd_to_ciera()
-    * [[1] CIE13.3-1995, “Method of Measuring and Specifying Colour Rendering Properties of Light Sources,” CIE, Vienna, Austria, 1995.,ISBN 978 3 900734 57 2](http://www.cie.co.at/index.php/index.php?i_ca_id=303)
+    * [CIE13.3-1995, “Method of Measuring and Specifying Colour Rendering Properties of Light Sources,” CIE, Vienna, Austria, 1995.,ISBN 978 3 900734 57 2](http://www.cie.co.at/index.php/index.php?i_ca_id=303)
 * cri.spd_to_cierf()
     * [cie224:2017, CIE 2017 Colour Fidelity Index for accurate scientific use. (2017), ISBN 978-3-902842-61-9](http://www.cie.co.at/index.php?i_ca_id=1027)
 * cri.spd_to_iesrf()
@@ -451,6 +418,9 @@ non-None input arguments to function will override defaults in cri_type dict
     * [K. A. G. Smet, A. David, and L. Whitehead, “Why color space uniformity and sample set spectral uniformity are essential for color rendering measures,” LEUKOS, vol. 12, no. 1–2, pp. 39–50, 2016](http://www.tandfonline.com/doi/abs/10.1080/15502724.2015.1091356)
 * cri.spd_to_cri2012(), cri.spd_to_cri2012_hl17(), cri.spd_to_cri2012_hl1000(), cri.spd_to_cri2012_real210
     * [K. Smet, J. Schanda, L. Whitehead, and R. Luo, “CRI2012: A proposal for updating the CIE colour rendering index,” Light. Res. Technol., vol. 45, pp. 689–709, 2013](http://journals.sagepub.com/doi/abs/10.1177/1477153513481375)
+
+### wrapper functions for gamut area type metrics:
+ * cri.spd_to_iesrg()
 
 ### cri.spd_to_mcri(): 
 Calculates the memory color rendition index, Rm:  

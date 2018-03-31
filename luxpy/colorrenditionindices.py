@@ -27,94 +27,13 @@
 #
 # optimize_scale_factor(): Optimize scale_factor of cri-model in cri_type such that average Rf for a set of light sources is the same as that of a target-cri (default: 'ciera').
 #
-# spd_to_cri(): Calculates the color rendering fidelity index, Rf, of spectral data. 
-#    
-#    Args:
-#        :data: numpy.ndarray with spectral data (can be multiple SPDs, first axis are the wavelengths)
-#        :out:  'Rf' or str, optional
-#            Specifies requested output (e.g. 'Rf,'Rfi',cct,duv') 
-#        :wl: None, optional
-#            Wavelengths (or [start, end, spacing]) to interpolate the SPD's in :data:. 
-#            None: default to no interpolation
-#        :cri_type: 'cierf' or str or dict, optional
-#            -'str: specifies dict with default cri model parameters (for supported types, see luxpy.cri._CRI_DEFAULTS['cri_types'])
-#            - dict: user defined model parameters (see e.g. luxpy.cri._CRI_DEFAULTS['cierf'] for required structure)
-#            Note that any non-None input arguments to the function will override default values in cri_type dict.
-#            
-#        :sampleset: None or numpy.ndarray or str, optional
-#            Specifies set of spectral reflectance samples for cri calculations.
-#                - None defaults to standard set for metric specified by cri_type.
-#                - numpy.ndarray: user defined set of spectral reflectance functions (.shape = (N+1, number of wavelengths); first axis are wavelengths)
-#        :ref_type: None or str or numpy.ndarray, optional
-#            Specifies type of reference illuminant type.
-#                - None: defaults to metric_specific reference illuminant in accordance with cri_type.
-#                - str: 'BB' : Blackbody radiatiors, 'DL': daylightphase, 
-#                        'ciera': used in CIE CRI-13.3-1995, 
-#                        'cierf': used in CIE 224-2017, 
-#                        'iesrf': used in TM30-15, ...
-#                - numpy.ndarray: user defined reference SPD
-#        :cieobs: None or dict, optional
-#            Specifies which CMF sets to use for the calculation of the sample XYZs and the CCT (for reference illuminant calculation).
-#            None defaults to the one specified in :cri_type: dict.    
-#                - key: 'xyz': str specifying CMF set for calculating xyz of samples and white 
-#                - key: 'cct': str specifying CMF set for calculating cct
-#        :cspace:  None or dict, optional
-#            Specifies which color space to use.
-#            None defaults to the one specified in  :cri_type: dict.  
-#                - key: 'type': str specifying color space used to calculate color differences
-#                - key: 'xyzw': None or numpy.ndarray with white point of color space
-#                     If None: use xyzw of test / reference (after chromatic adaptation, if specified)
-#                - other keys specify other possible parameters needed for color space calculation, 
-#                    see lx.cri._CRI_DEFAULTS['iesrf']['cspace'] for details. 
-#        :catf: None or dict, optional
-#            Perform explicit CAT before converting to color space coordinates.
-#                - None: don't apply a cat (other than perhaps the one built into the colorspace) 
-#                - dict: with CAT parameters:
-#                    - key: 'D': numpy.ndarray with degree of adaptation
-#                    - key: 'mcat': numpy.ndarray with sensor matrix specification
-#                    - key: 'xyzw': None or numpy.ndarray with white point
-#                        None: use xyzw of reference otherwise transform both test and ref to xyzw
-#        :cri_specific_pars: None or dict, optional
-#            Specifies other parameters specific to type of cri (e.g. maxC for CQS calculations)
-#                - None: default to the one specified in  :cri_type: dict. 
-#                - dict: user specified parameters. 
-#                    See for example luxpy.cri._CRI_DEFAULTS['mcri']['cri_specific_pars'] for its use.
-#        :rg_pars: {'nhbins' : None, 'start_hue' : 0, 'normalize_gamut' : True}, optional
-#            Dict containing specifying parameters for slicing the gamut.
-#                - key: 'nhbins': int, number of hue bins to slice gamut (None use the one specified in :cri_type: dict).
-#                - key: 'start_hue': float (°), hue at which to start slicing
-#                - key: 'normalize_gamut': True or False: normalize gamut or not before calculating a gamut area index Rg. 
-#        :avg: None or fcn handle, optional
-#            Averaging function (handle) for color differences, DEi (e.g. numpy.mean, .math.rms, .math.geomean)
-#            None use the one specified in :cri_type: dict.
-#        :scale: None or dict, optional
-#            Specifies scaling of color differences to obtain CRI.
-#                - None use the one specified in :cri_type: dict.
-#                - dict: user specified dict with scaling parameters.
-#                    - key: 'fcn': function handle to type of cri scale, 
-#                            e.g. 
-#                            * linear()_scale --> (100 - scale_factor*DEi), 
-#                            * log_scale --> (cfr. Ohno's CQS), 
-#                            * psy_scale (Smet et al.'s cri2012,See: LRT 2013)
-#                    - key: 'cfactor': factors used in scaling function, 
-#                          If None: 
-#                              Scaling factor value(s) will be optimized to minimize 
-#                              the rms between the Rf's of the requested metric 
-#                              and some target metric specified in:
-#                                  - key: 'opt_cri_type':  str 
-#                                      * str: one of the preset _CRI_DEFAULTS
-#                                      * dict: user speciied (dict must contain all keys as normal)
-#                                     Note that if key not in :scale: dict, then 'opt_cri_type' is added with default setting = 'ciera'.
-#                                  - key: 'opt_spd_set': numpy.ndarray with set of light source spds used to optimize cfactor 
-#                                     Note that if key not in :scale: dict, then default = 'F1-F12'.
-#        :opt_scale: True or False, optional
-#            True: optimize scaling-factor, else do nothing and use value of scaling-factor in :scale: dict.   
-#    Returns:
-#        :returns: float or numpy.ndarray with Rf for :out: 'Rf'
-#            Other output is also possible by changing the :out: str value.
+# spd_to_cri(): Calculates the color rendering fidelity index (CIE Ra, CIE Rf, IES Rf, CRI2012 Rf) of spectral data. 
 #
 # wrapper functions for fidelity type metrics:
-#               spd_to_ciera(), spd_to_cierf(), spd_to_iesrf(), spd_to_cri2012(), spd_to_cri2012_hl17(), spd_to_cri2012_hl1000(), spd_to_cri2012_real210
+#     spd_to_ciera(), spd_to_cierf(), spd_to_iesrf(), spd_to_cri2012(), spd_to_cri2012_hl17(), spd_to_cri2012_hl1000(), spd_to_cri2012_real210
+#
+# wrapper functions for gamuta area metrics:
+#      spd_to_iesrf(),
 #
 # spd_to_mcri(): Calculates the memory color rendition index, Rm:  K. A. G. Smet, W. R. Ryckaert, M. R. Pointer, G. Deconinck, and P. Hanselaer, (2012) “A memory colour quality metric for white light sources,” Energy Build., vol. 49, no. C, pp. 216–225.
 #
@@ -131,8 +50,8 @@ from luxpy import *
 from luxpy.colorappearancemodels import hue_angle
 from luxpy.math import polyarea
 
-__all__ = ['cie_ra','_CRI_DEFAULTS','linsear_scale','log_scale','psy_scale','gamut_slicer','jab_to_rg','spd_to_rg','spd_to_DEi','spd_to_cri']
-__all__ +=['spd_to_ciera','spd_to_cierf','spd_to_iesrf','spd_to_cri2012','spd_to_cri2012_hl17','spd_to_cri2012_hl1000','spd_to_cri2012_real201']
+__all__ = ['_CRI_DEFAULTS','linsear_scale','log_scale','psy_scale','gamut_slicer','jab_to_rg','spd_to_rg','spd_to_DEi','spd_to_cri']
+__all__ +=['spd_to_ciera','spd_to_cierf','spd_to_iesrf','spd_to_iesrg','spd_to_cri2012','spd_to_cri2012_hl17','spd_to_cri2012_hl1000','spd_to_cri2012_real210']
 __all__+=['spd_to_mcri', 'spd_to_cqs']
 
 
@@ -405,16 +324,16 @@ def jab_to_rg(jabt,jabr, max_scale = 100, ordered_and_sliced = False, nhbins = N
     return Rg
 
 #------------------------------------------------------------------------------
-def spd_to_jab_t_r(data, cri_type = 'cierf', out = 'Jabt,Jabr', wl = None, sampleset = None, ref_type = None, cieobs  = None, cspace = None, catf = None, cri_specific_pars = None):
+def spd_to_jab_t_r(SPD, cri_type = 'cierf', out = 'Jabt,Jabr', wl = None, sampleset = None, ref_type = None, cieobs  = None, cspace = None, catf = None, cri_specific_pars = None):
     """
     Calculates jab color values for a sample set illuminated with test source SPD and its reference illuminant.
         
     Args:
-        :data: numpy.ndarray with spectral data (can be multiple SPDs, first axis are the wavelengths)
+        :SPD: numpy.ndarray with spectral data (can be multiple SPDs, first axis are the wavelengths)
         :out:  'Jabt,Jabr' or str, optional
             Specifies requested output (e.g. 'Jabt,Jabr' or 'Jabt,Jabr,cct,duv') 
         :wl: None, optional
-            Wavelengths (or [start, end, spacing]) to interpolate the SPD's in :data:. 
+            Wavelengths (or [start, end, spacing]) to interpolate the SPD's in :SPD:. 
             None: default to no interpolation
         :cri_type: 'cierf' or str or dict, optional
             -'str: specifies dict with default cri model parameters (for supported types, see luxpy.cri._CRI_DEFAULTS['cri_types'])
@@ -469,11 +388,11 @@ def spd_to_jab_t_r(data, cri_type = 'cierf', out = 'Jabt,Jabr', wl = None, sampl
     cri_type = process_cri_type_input(cri_type, args, callerfunction = 'cri.spd_to_jab_t_r')
     avg, catf, cieobs, cri_specific_pars, cspace, ref_type, rg_pars, sampleset, scale = [cri_type[x] for x in sorted(cri_type.keys())] 
    
-    # make data atleast_2d:
-    data = np2d(data)
+    # make SPD atleast_2d:
+    SPD = np2d(SPD)
 
     if wl is not None: 
-        data = spd(data = data, interpolation = _S_INTERP_TYPE, kind = 'np', wl = wl)
+        SPD = spd(data = SPD, interpolation = _S_INTERP_TYPE, kind = 'np', wl = wl)
       
     # obtain sampleset:
     if isinstance(sampleset,str):
@@ -481,16 +400,16 @@ def spd_to_jab_t_r(data, cri_type = 'cierf', out = 'Jabt,Jabr', wl = None, sampl
     
     # A. calculate reference illuminant:
     # A.a. get xyzw:
-    xyztw = spd_to_xyz(data, cieobs = cieobs['cct'], rfl = None, out = 1)
+    xyztw = spd_to_xyz(SPD, cieobs = cieobs['cct'], rfl = None, out = 1)
 
     # A.b. get cct:
     cct, duv = xyz_to_cct(xyztw, cieobs = cieobs['cct'], out = 'cct,duv',mode = 'lut')
     
     # A.c. get reference ill.:
-    Sr = cri_ref(cct, ref_type = ref_type, cieobs = cieobs['xyz'], wl3 = data[0])
+    Sr = cri_ref(cct, ref_type = ref_type, cieobs = cieobs['xyz'], wl3 = SPD[0])
     
     # B. calculate xyz and xyzw of data (spds) and Sr:
-    xyzti, xyztw = spd_to_xyz(data, cieobs = cieobs['xyz'], rfl = sampleset, out = 2)
+    xyzti, xyztw = spd_to_xyz(SPD, cieobs = cieobs['xyz'], rfl = sampleset, out = 2)
     xyzri, xyzrw = spd_to_xyz(Sr, cieobs = cieobs['xyz'], rfl = sampleset, out = 2)
 
     # C. apply chromatic adaptation for non-cam/lab cspaces:
@@ -540,22 +459,21 @@ def spd_to_jab_t_r(data, cri_type = 'cierf', out = 'Jabt,Jabr', wl = None, sampl
 
 
 #------------------------------------------------------------------------------
-def spd_to_rg(data, cri_type = 'cierf', out = 'Rg', wl = None, sampleset = None, ref_type = None, cieobs  = None, avg = None, cspace = None, catf = None, cri_specific_pars = None, rg_pars = {'nhbins' : None, 'start_hue' : 0, 'normalize_gamut' : True}):
+def spd_to_rg(SPD, cri_type = 'cierf', out = 'Rg', wl = None, sampleset = None, ref_type = None, cieobs  = None, avg = None, cspace = None, catf = None, cri_specific_pars = None, rg_pars = {'nhbins' : None, 'start_hue' : 0, 'normalize_gamut' : True}):
     """
     Calculates the color gamut index, Rg, of spectral data. 
     
     Args:
-        :data: numpy.ndarray with spectral data (can be multiple SPDs, first axis are the wavelengths)
+        :SPD: numpy.ndarray with spectral data (can be multiple SPDs, first axis are the wavelengths)
         :out:  'Rg' or str, optional
             Specifies requested output (e.g. 'Rg,cct,duv') 
         :wl: None, optional
-            Wavelengths (or [start, end, spacing]) to interpolate the SPD's in :data:. 
+            Wavelengths (or [start, end, spacing]) to interpolate the SPD's in :SPD:. 
             None: default to no interpolation
         :cri_type: 'cierf' or str or dict, optional
             -'str: specifies dict with default cri model parameters (for supported types, see luxpy.cri._CRI_DEFAULTS['cri_types'])
             - dict: user defined model parameters (see e.g. luxpy.cri._CRI_DEFAULTS['cierf'] for required structure)
             Note that any non-None input arguments to the function will override default values in cri_type dict.
-            
         :sampleset: None or numpy.ndarray or str, optional
             Specifies set of spectral reflectance samples for cri calculations.
                 - None defaults to standard set for metric specified by cri_type.
@@ -626,7 +544,15 @@ def spd_to_rg(data, cri_type = 'cierf', out = 'Rg', wl = None, sampleset = None,
     Returns:
         :returns: float or numpy.ndarray with Rg for :out: 'Rg'
             Other output is also possible by changing the :out: str value.
-        """
+            
+    References:
+        ..[1] IES. (2015). IES-TM-30-15: Method for Evaluating Light Source Color Rendition. 
+                New York, NY: The Illuminating Engineering Society of North America.
+        ..[2] David, A., Fini, P. T., Houser, K. W., Ohno, Y., Royer, M. P., Smet, K. A. G., … Whitehead, L. (2015). 
+            Development of the IES method for evaluating the color rendition of light sources. 
+            Optics Express, 23(12), 15888–15906. 
+            https://doi.org/10.1364/OE.23.015888
+    """
     #Override input parameters with data specified in cri_type:
     args = locals().copy() # get dict with keyword input arguments to function (used to overwrite non-None input arguments present in cri_type dict)
     cri_type = process_cri_type_input(cri_type, args, callerfunction = 'cri.spd_to_rg')
@@ -635,8 +561,7 @@ def spd_to_rg(data, cri_type = 'cierf', out = 'Rg', wl = None, sampleset = None,
 
        
     # calculate Jabt of test and Jabr of the reference illuminant corresponding to test: 
-    #jabti, jabri,cct,duv = spd_to_jab_t_r(data, cri_type = cri_type, out = 'Jabt,Jabr,cct,duv', wl = wl, sampleset = sampleset, cieobs  = cieobs, cieobs_cct = cieobs_cct, cspace = cspace, catf = catf, ref_type = ref_type, cspace_pars = cspace_pars, cri_specific_pars = cri_specific_pars)
-    jabti, jabri,cct,duv = spd_to_jab_t_r(data, cri_type = cri_type, out = 'Jabt,Jabr,cct,duv', wl = wl) 
+    jabti, jabri,cct,duv = spd_to_jab_t_r(SPD, cri_type = cri_type, out = 'Jabt,Jabr,cct,duv', wl = wl) 
 
     
     # calculate gamut area index:
@@ -651,25 +576,22 @@ def spd_to_rg(data, cri_type = 'cierf', out = 'Rg', wl = None, sampleset = None,
         return eval(out)
 
 
-
-
 #------------------------------------------------------------------------------
-def spd_to_DEi(data, cri_type = 'cierf', out = 'DEi', wl = None, sampleset = None, ref_type = None, cieobs = None, avg = None, cspace = None, catf = None, cri_specific_pars = None):
+def spd_to_DEi(SPD, cri_type = 'cierf', out = 'DEi', wl = None, sampleset = None, ref_type = None, cieobs = None, avg = None, cspace = None, catf = None, cri_specific_pars = None):
     """
     Calculates color differences (~fidelity), DEi, of spectral data.
     
     Args:
-        :data: numpy.ndarray with spectral data (can be multiple SPDs, first axis are the wavelengths)
+        :SPD: numpy.ndarray with spectral data (can be multiple SPDs, first axis are the wavelengths)
         :out:  'DEi' or str, optional
             Specifies requested output (e.g. 'DEi,DEa,cct,duv') 
         :wl: None, optional
-            Wavelengths (or [start, end, spacing]) to interpolate the SPD's in :data:. 
+            Wavelengths (or [start, end, spacing]) to interpolate the SPD's in :SPD:. 
             None: default to no interpolation
         :cri_type: 'cierf' or str or dict, optional
             -'str: specifies dict with default cri model parameters (for supported types, see luxpy.cri._CRI_DEFAULTS['cri_types'])
             - dict: user defined model parameters (see e.g. luxpy.cri._CRI_DEFAULTS['cierf'] for required structure)
             Note that any non-None input arguments to the function will override default values in cri_type dict.
-            
         :sampleset: None or numpy.ndarray or str, optional
             Specifies set of spectral reflectance samples for cri calculations.
                 - None defaults to standard set for metric specified by cri_type.
@@ -719,7 +641,7 @@ def spd_to_DEi(data, cri_type = 'cierf', out = 'DEi', wl = None, sampleset = Non
 
     # calculate Jabt of test and Jabr of the reference illuminant corresponding to test: 
     #Jabt, Jabr, cct, duv = spd_to_jab_t_r(data, cri_type = cri_type, out = 'Jabt,Jabr,cct,duv', wl = wl, sampleset = sampleset, cieobs  = cieobs, cieobs_cct = cieobs_cct, cspace = cspace, catf = catf, ref_type = ref_type, cspace_pars = cspace_pars,cri_specific_pars = cri_specific_pars)
-    Jabt, Jabr, cct, duv = spd_to_jab_t_r(data, cri_type = cri_type, out = 'Jabt,Jabr,cct,duv', wl = wl)
+    Jabt, Jabr, cct, duv = spd_to_jab_t_r(SPD, cri_type = cri_type, out = 'Jabt,Jabr,cct,duv', wl = wl)
       
     # E. calculate DEi, DEa:
     avg = cri_type['avg']
@@ -806,22 +728,21 @@ def optimize_scale_factor(cri_type, opt_scale_factor, scale_fcn, avg) :
     return scale_factor
 
 #------------------------------------------------------------------------------
-def spd_to_cri(data, cri_type = 'cierf', out = 'Rf', wl = None, sampleset = None, ref_type = None, cieobs = None, avg = None, scale = None, opt_scale_factor = False, cspace = None, catf = None, cri_specific_pars = None, rg_pars = None):
+def spd_to_cri(SPD, cri_type = 'cierf', out = 'Rf', wl = None, sampleset = None, ref_type = None, cieobs = None, avg = None, scale = None, opt_scale_factor = False, cspace = None, catf = None, cri_specific_pars = None, rg_pars = None):
     """
     Calculates the color rendering fidelity index, Rf, of spectral data. 
     
     Args:
-        :data: numpy.ndarray with spectral data (can be multiple SPDs, first axis are the wavelengths)
+        :SPD: numpy.ndarray with spectral data (can be multiple SPDs, first axis are the wavelengths)
         :out:  'Rf' or str, optional
-            Specifies requested output (e.g. 'Rf,'Rfi',cct,duv') 
+            Specifies requested output (e.g. 'Rf,Rfi,cct,duv') 
         :wl: None, optional
-            Wavelengths (or [start, end, spacing]) to interpolate the SPD's in :data:. 
+            Wavelengths (or [start, end, spacing]) to interpolate the SPD's in :SPD:. 
             None: default to no interpolation
         :cri_type: 'cierf' or str or dict, optional
             -'str: specifies dict with default cri model parameters (for supported types, see luxpy.cri._CRI_DEFAULTS['cri_types'])
             - dict: user defined model parameters (see e.g. luxpy.cri._CRI_DEFAULTS['cierf'] for required structure)
             Note that any non-None input arguments to the function will override default values in cri_type dict.
-            
         :sampleset: None or numpy.ndarray or str, optional
             Specifies set of spectral reflectance samples for cri calculations.
                 - None defaults to standard set for metric specified by cri_type.
@@ -890,9 +811,24 @@ def spd_to_cri(data, cri_type = 'cierf', out = 'Rf', wl = None, sampleset = None
                                      Note that if key not in :scale: dict, then default = 'F1-F12'.
         :opt_scale: True or False, optional
             True: optimize scaling-factor, else do nothing and use value of scaling-factor in :scale: dict.   
+    
     Returns:
         :returns: float or numpy.ndarray with Rf for :out: 'Rf'
             Other output is also possible by changing the :out: str value.
+            
+    References:
+        ..[1] IES. (2015). IES-TM-30-15: Method for Evaluating Light Source Color Rendition. 
+                New York, NY: The Illuminating Engineering Society of North America.
+        ..[2] David, A., Fini, P. T., Houser, K. W., Ohno, Y., Royer, M. P., Smet, K. A. G., … Whitehead, L. (2015). 
+                Development of the IES method for evaluating the color rendition of light sources. 
+                Optics Express, 23(12), 15888–15906. 
+                https://doi.org/10.1364/OE.23.015888
+        ..[3] CIE224:2017. (2017). CIE 2017 Colour Fidelity Index for accurate scientific use. Vienna, Austria.
+        ..[4] Smet, K., Schanda, J., Whitehead, L., & Luo, R. (2013). 
+                CRI2012: A proposal for updating the CIE colour rendering index. 
+                Lighting Research and Technology, 45, 689–709. 
+                Retrieved from http://lrt.sagepub.com/content/45/6/689    
+        ..[5] CIE13.3-1995. (1995). Method of Measuring and Specifying Colour Rendering Properties of Light Sources (Vol. CIE13.3-19). Vienna, Austria: CIE.
     """
     
     #Override input parameters with data specified in cri_type:
@@ -913,22 +849,15 @@ def spd_to_cri(data, cri_type = 'cierf', out = 'Rf', wl = None, sampleset = None
 #         raise Exception('03-jul-2017: Provide scale_factor(s). Automatic scale_factor search under development.')
 
     # A. get DEi of for ciera and of requested cri metric for spds in or specified by scale_factor_optimization_spds':
-    DEi, Jabt, Jabr, cct, duv = spd_to_DEi(data, out = 'DEi,Jabt,Jabr,cct,duv', cri_type = cri_type)
+    DEi, Jabt, Jabr, cct, duv = spd_to_DEi(SPD, out = 'DEi,Jabt,Jabr,cct,duv', cri_type = cri_type)
     if 'Rg' in out.split(','):
-        ##DEi, Jabt, Jabr, cct, duv = spd_to_DEi(data, out = 'DEi,Jabt,Jabr,cct, duv', cri_type = cri_type, sampleset = sampleset, cieobs  = cieobs, cieobs_cct = cieobs_cct, cspace = cspace, catf = catf, ref_type = ref_type, avg = avg, cspace_pars = cspace_pars, cri_specific_pars = cri_specific_pars)
-        #DEi, Jabt, Jabr, cct, duv = spd_to_DEi(data, out = 'DEi,Jabt,Jabr,cct,duv', cri_type = cri_type)
-
         # calculate gamut area index:
         rg_pars = cri_type['rg_pars']    
         nhbins, start_hue, normalize_gamut = [rg_pars[x] for x in sorted(rg_pars.keys())]
         Rg = jab_to_rg(Jabt,Jabr, ordered_and_sliced = False, nhbins = nhbins, start_hue = start_hue, normalize_gamut = normalize_gamut)
 
-    #else:
-        ##DEi, cct,duv = spd_to_DEi(data, out = 'DEi,cct,duv', cri_type = cri_type, sampleset = sampleset, cieobs  = cieobs, cieobs_cct = cieobs_cct, cspace = cspace, catf = catf, ref_type = ref_type, avg = avg, cspace_pars = cspace_pars,cri_specific_pars = cri_specific_pars)
-        #DEi, Jabt,Jabr, cct, duv = spd_to_DEi(data, out = 'DEi,Jabt,Jabr,cct,duv', cri_type = cri_type)
         
     # B. convert DE to color rendering index:
-
     Rfi = scale_fcn(DEi,scale_factor)
     Rf = np2d(scale_fcn(avg(DEi,axis = 0),scale_factor))
       
@@ -942,79 +871,248 @@ def spd_to_cri(data, cri_type = 'cierf', out = 'Rf', wl = None, sampleset = None
 
     
 #------------------------------------------------------------------------------
-def spd_to_ciera(data, out = 'Rf', wl = None):
+def spd_to_ciera(SPD, out = 'Rf', wl = None):
     """
-    Wrapper function the 'ciera' color rendition (fidelity) metric. 
+    Wrapper function the 'ciera' color rendition (fidelity) metric (CIE 13.3-1995). 
+    
+    Args:
+        :SPD: numpy.ndarray with spectral data (can be multiple SPDs, first axis are the wavelengths)
+        :wl: None, optional
+            Wavelengths (or [start, end, spacing]) to interpolate the SPD's in :SPD:. 
+            None: default to no interpolation
+        :out:  'Rf' or str, optional
+            Specifies requested output (e.g. 'Rf,Rfi,cct,duv') 
+    
+    Returns:
+        :returns: float or numpy.ndarray with CIE13.3 Ra for :out: 'Rf'
+            Other output is also possible by changing the :out: str value.
+    
+    References:
+        ..[1] CIE13.3-1995. (1995). Method of Measuring and Specifying Colour Rendering Properties of Light Sources (Vol. CIE13.3-19). Vienna, Austria: CIE.
+
     """
-    return spd_to_cri(data, cri_type = 'ciera', out = out, wl = wl)
+    return spd_to_cri(SPD, cri_type = 'ciera', out = out, wl = wl)
 
 #------------------------------------------------------------------------------
-def spd_to_cierf(data, out = 'Rf', wl = None):
+def spd_to_cierf(SPD, out = 'Rf', wl = None):
     """
-    Wrapper function the 'cierf' color rendition (fidelity) metric. 
+    Wrapper function the 'cierf' color rendition (fidelity) metric (CIE224-2017). 
+    
+    Args:
+        :SPD: numpy.ndarray with spectral data (can be multiple SPDs, first axis are the wavelengths)
+        :wl: None, optional
+            Wavelengths (or [start, end, spacing]) to interpolate the SPD's in :SPD:. 
+            None: default to no interpolation
+        :out:  'Rf' or str, optional
+            Specifies requested output (e.g. 'Rf,Rfi,cct,duv') 
+    
+    Returns:
+        :returns: float or numpy.ndarray with CIE224-2017 Rf for :out: 'Rf'
+            Other output is also possible by changing the :out: str value.
+    References:
+        ..[1] CIE224:2017. (2017). CIE 2017 Colour Fidelity Index for accurate scientific use. Vienna, Austria.
+    
     """
-    return spd_to_cri(data, cri_type = 'cierf', out = out, wl = wl)
+    return spd_to_cri(SPD, cri_type = 'cierf', out = out, wl = wl)
 
 
 #------------------------------------------------------------------------------
-def spd_to_iesrf(data, out = 'Rf', wl = None):
+def spd_to_iesrf(SPD, out = 'Rf', wl = None):
     """
-    Wrapper function the 'iesrf' color rendition (fidelity) metric. 
+    Wrapper function the 'iesrf' color rendition (fidelity) metric (IES TM30-15). 
+    
+    Args:
+        :SPD: numpy.ndarray with spectral data (can be multiple SPDs, first axis are the wavelengths)
+        :wl: None, optional
+            Wavelengths (or [start, end, spacing]) to interpolate the SPD's in :SPD:. 
+            None: default to no interpolation
+        :out:  'Rf' or str, optional
+            Specifies requested output (e.g. 'Rf,Rfi,cct,duv') 
+    
+    Returns:
+        :returns: float or numpy.ndarray with IES TM30_15 Rf for :out: 'Rf'
+            Other output is also possible by changing the :out: str value.
+    
+    References:
+        ..[1] IES. (2015). IES-TM-30-15: Method for Evaluating Light Source Color Rendition. 
+                New York, NY: The Illuminating Engineering Society of North America.
+        ..[2] David, A., Fini, P. T., Houser, K. W., Ohno, Y., Royer, M. P., Smet, K. A. G., … Whitehead, L. (2015). 
+                Development of the IES method for evaluating the color rendition of light sources. 
+                Optics Express, 23(12), 15888–15906. 
+                https://doi.org/10.1364/OE.23.015888
+    
     """
-    return spd_to_cri(data, cri_type = 'iesrf', out = out, wl = wl)
+    return spd_to_cri(SPD, cri_type = 'iesrf', out = out, wl = wl)
 
 #------------------------------------------------------------------------------
-def spd_to_cri2012(data, out = 'Rf', wl = None):
+def spd_to_iesrg(SPD, out = 'Rg', wl = None):
+    """
+    Wrapper function the 'spd_to_rg' color rendition gamut area metric (IES TM30-15). 
+    
+    Args:
+        :SPD: numpy.ndarray with spectral data (can be multiple SPDs, first axis are the wavelengths)
+        :wl: None, optional
+            Wavelengths (or [start, end, spacing]) to interpolate the SPD's in :SPD:. 
+            None: default to no interpolation
+        :out:  'Rg' or str, optional
+            Specifies requested output (e.g. 'Rg,Rf,Rfi,cct,duv') 
+    
+    Returns:
+        :returns: float or numpy.ndarray with IES TM30_15 Rg for :out: 'Rg'
+            Other output is also possible by changing the :out: str value.
+    
+    References:
+        ..[1] IES. (2015). IES-TM-30-15: Method for Evaluating Light Source Color Rendition. 
+                New York, NY: The Illuminating Engineering Society of North America.
+        ..[2] David, A., Fini, P. T., Houser, K. W., Ohno, Y., Royer, M. P., Smet, K. A. G., … Whitehead, L. (2015). 
+                Development of the IES method for evaluating the color rendition of light sources. 
+                Optics Express, 23(12), 15888–15906. 
+                https://doi.org/10.1364/OE.23.015888
+    
+    """
+    return spd_to_rg(SPD, cri_type = 'iesrf', out = out, wl = wl)
+
+#------------------------------------------------------------------------------
+def spd_to_cri2012(SPD, out = 'Rf', wl = None):
     """
     Wrapper function the 'cri2012' color rendition (fidelity) metric
     with the spectally uniform HL17 mathematical sampleset.
+
+    Args:
+        :SPD: numpy.ndarray with spectral data (can be multiple SPDs, first axis are the wavelengths)
+        :wl: None, optional
+            Wavelengths (or [start, end, spacing]) to interpolate the SPD's in :SPD:. 
+            None: default to no interpolation
+        :out:  'Rf' or str, optional
+            Specifies requested output (e.g. 'Rf,Rfi,cct,duv') 
+    
+    Returns:
+        :returns: float or numpy.ndarray with CRI2012 Rf for :out: 'Rf'
+            Other output is also possible by changing the :out: str value.
+            
+    References:
+        ..[1] Smet, K., Schanda, J., Whitehead, L., & Luo, R. (2013). 
+                CRI2012: A proposal for updating the CIE colour rendering index. 
+                Lighting Research and Technology, 45, 689–709. 
+                Retrieved from http://lrt.sagepub.com/content/45/6/689
     """
-    return spd_to_cri(data, cri_type = 'cri2012', out = out, wl = wl)
+    return spd_to_cri(SPD, cri_type = 'cri2012', out = out, wl = wl)
 
 #------------------------------------------------------------------------------
-def spd_to_cri2012_hl17(data, out = 'Rf', wl = None):
+def spd_to_cri2012_hl17(SPD, out = 'Rf', wl = None):
     """
     Wrapper function the 'cri2012' color rendition (fidelity) metric
     with the spectally uniform HL17 mathematical sampleset.
+    
+    Args:
+        :SPD: numpy.ndarray with spectral data (can be multiple SPDs, first axis are the wavelengths)
+        :wl: None, optional
+            Wavelengths (or [start, end, spacing]) to interpolate the SPD's in :SPD:. 
+            None: default to no interpolation
+        :out:  'Rf' or str, optional
+            Specifies requested output (e.g. 'Rf,Rfi,cct,duv') 
+    
+    Returns:
+        :returns: float or numpy.ndarray with CRI2012 Rf for :out: 'Rf'
+            Other output is also possible by changing the :out: str value.
+    
+    References:
+        ..[1] Smet, K., Schanda, J., Whitehead, L., & Luo, R. (2013). 
+                CRI2012: A proposal for updating the CIE colour rendering index. 
+                Lighting Research and Technology, 45, 689–709. 
+                Retrieved from http://lrt.sagepub.com/content/45/6/689
     """
-    return spd_to_cri(data, cri_type = 'cri2012-hl17', out = out, wl = wl)
+    return spd_to_cri(SPD, cri_type = 'cri2012-hl17', out = out, wl = wl)
 
 #------------------------------------------------------------------------------
-def spd_to_cri2012_hl1000(data, out = 'Rf', wl = None):
+def spd_to_cri2012_hl1000(SPD, out = 'Rf', wl = None):
     """
     Wrapper function the 'cri2012' color rendition (fidelity) metric
     with the spectally uniform Hybrid HL1000 sampleset.
+    
+    Args:
+        :SPD: numpy.ndarray with spectral data (can be multiple SPDs, first axis are the wavelengths)
+        :wl: None, optional
+            Wavelengths (or [start, end, spacing]) to interpolate the SPD's in :SPD:. 
+            None: default to no interpolation
+        :out:  'Rf' or str, optional
+            Specifies requested output (e.g. 'Rf,Rfi,cct,duv') 
+    
+    Returns:
+        :returns: float or numpy.ndarray with CRI2012 Rf for :out: 'Rf'
+            Other output is also possible by changing the :out: str value.
+    
+    References:
+        ..[1] Smet, K., Schanda, J., Whitehead, L., & Luo, R. (2013). 
+                CRI2012: A proposal for updating the CIE colour rendering index. 
+                Lighting Research and Technology, 45, 689–709. 
+                Retrieved from http://lrt.sagepub.com/content/45/6/689
     """
-    return spd_to_cri(data, cri_type = 'cri2012-hl1000', out = out, wl = wl)
+    return spd_to_cri(SPD, cri_type = 'cri2012-hl1000', out = out, wl = wl)
 
 #------------------------------------------------------------------------------
-def spd_to_cri2012_real210(data, out = 'Rf', wl = None):
+def spd_to_cri2012_real210(SPD, out = 'Rf', wl = None):
     """
     Wrapper function the 'cri2012' color rendition (fidelity) metric 
     with the Real-210 sampleset (normally for special color rendering indices).
+    
+    Args:
+        :SPD: numpy.ndarray with spectral data (can be multiple SPDs, first axis are the wavelengths)
+        :wl: None, optional
+            Wavelengths (or [start, end, spacing]) to interpolate the SPD's in :SPD:. 
+            None: default to no interpolation
+        :out:  'Rf' or str, optional
+            Specifies requested output (e.g. 'Rf,Rfi,cct,duv') 
+    
+    Returns:
+        :returns: float or numpy.ndarray with CRI2012 Rf for :out: 'Rf'
+            Other output is also possible by changing the :out: str value.
+    
+    References:
+        ..[1] Smet, K., Schanda, J., Whitehead, L., & Luo, R. (2013). 
+                CRI2012: A proposal for updating the CIE colour rendering index. 
+                Lighting Research and Technology, 45, 689–709. 
+                Retrieved from http://lrt.sagepub.com/content/45/6/689
+    
     """
-    return spd_to_cri(data, cri_type = 'cri2012-real210', out = out, wl = wl)
+    return spd_to_cri(SPD, cri_type = 'cri2012-real210', out = out, wl = wl)
 
 
 ###############################################################################
-# MCRI: Memory Color Rendition Index, Rm: (See Smet et al. 2012, Energy & Buildings, 49 (2012) 216–225)
-def spd_to_mcri(data, D = 0.9, E = None, Yb = 20.0, out = 'Rm', wl = None):
+def spd_to_mcri(SPD, D = 0.9, E = None, Yb = 20.0, out = 'Rm', wl = None):
     """
-    MCRI: Memory Color Rendition Index, Rm: (See Smet et al. 2012, Energy & Buildings, 49 (2012) 216–225)
-    Input: 
-        * data: spectral power distribution(s)
-        * D: degree of adaptation (default = 0.9)
-        * E: Illuminance in lux (used to calculate La = (Yb/100)*(E/pi) to calculate D following the 'cat02' model). 
-             If E is None: the degree is determined by input parameter D
-             If (E is not None) & (Yb is None): then E is assumed to contain the adapting field luminance La.
-        * wl: wavelengths (or [start, end, spacing]) to interpolate the SPD's in data argument to. Default = None (no interpolation) 
-    Output:
-        * out: determines output. default = Rm (general mcri index), more / other output can be specified as e.g. 'Rm, Rmi' or 'Rmi'.  
+    Calculates the MCRI or Memory Color Rendition Index, Rm
+    
+    Args: 
+        :SPD: numpy.ndarray with spectral data (can be multiple SPDs, first axis are the wavelengths)
+        :D: 0.9, optional
+            Degree of adaptation.
+        :E: None, optional
+            Illuminance in lux (used to calculate La = (Yb/100)*(E/pi) to calculate D following the 'cat02' model). 
+             If None: the degree is determined by :D:
+             If (:E: is not None) & (:Yb: is None):  :E: is assumed to contain the adapting field luminance La.
+        :Yb: 20.0, optional
+            Luminance factor of background. (used in the calculation of La from E)
+        :out:  'Rm' or str, optional
+            Specifies requested output (e.g. 'Rm,Rmi,cct,duv') 
+        :wl: None, optional
+            Wavelengths (or [start, end, spacing]) to interpolate the SPD's in :data:. 
+            None: default to no interpolation   
+    
+    Returns:
+        :returns: float or numpy.ndarray with MCRI Rm for :out: 'Rm'
+            Other output is also possible by changing the :out: str value.        
+          
+    References:
+        ..[1] Smet, K. A. G., Ryckaert, W. R., Pointer, M. R., Deconinck, G., & Hanselaer, P. (2012)
+                A memory colour quality metric for white light sources. 
+                Energy and Buildings, 49(C), 216–225. 
+                https://doi.org/10.1016/j.enbuild.2012.02.008
     """
-    data = np2d(data)
+    SPD = np2d(SPD)
     
     if wl is not None: 
-        data = spd(data = data, interpolation = _S_INTERP_TYPE, kind = 'np', wl = wl)
+        data = spd(data = SPD, interpolation = _S_INTERP_TYPE, kind = 'np', wl = wl)
     
     
     # unpack metric default values:
@@ -1028,7 +1126,7 @@ def spd_to_mcri(data, D = 0.9, E = None, Yb = 20.0, out = 'Rm', wl = None):
     
     
     # A. calculate xyz:
-    xyzti, xyztw = spd_to_xyz(data, cieobs = cieobs['xyz'],  rfl = sampleset, out = 2)
+    xyzti, xyztw = spd_to_xyz(SPD, cieobs = cieobs['xyz'],  rfl = sampleset, out = 2)
 
     # B. perform chromatic adaptation to adopted whitepoint of ipt color space, i.e. D65:
     if catf is not None:
@@ -1073,17 +1171,15 @@ def spd_to_mcri(data, D = 0.9, E = None, Yb = 20.0, out = 'Rm', wl = None):
     Rm = np2d(scale_fcn(np.log(Sa),scale_factor = scale_factor))
 
     # G. calculate Rg (polyarea of test / polyarea of memory colours):
-    a1 = a1[:,None] #broadcast_shape(a1, target_shape = None,expand_2d_to_3d = 0)
-    a2 = a2[:,None] #broadcast_shape(a2, target_shape = None,expand_2d_to_3d = 0)
-    #ipt = ipt[:,None] #broadcast_shape(ipt, target_shape = None,expand_2d_to_3d = 0)
-    I = I[:,None] #broadcast_shape(I, target_shape = None,expand_2d_to_3d = 0)
-    a12 = np.concatenate((a1,a2),axis=2) #broadcast_shape(np.hstack((a1,a2)), target_shape = ipt.shape,expand_2d_to_3d = 0)
-    #a12 = broadcast_shape(a12, target_shape = ipt.shape,expand_2d_to_3d = 0)
-    ipt_mc = np.concatenate((I,a12),axis=2)
-    #ipt_mc = broadcast_shape(ipt_mc, target_shape = None,expand_2d_to_3d = 0)
-    ipt_test = ipt #broadcast_shape(ipt, target_shape = None,expand_2d_to_3d = 0)
-    nhbins, start_hue, normalize_gamut = [rg_pars[x] for x in sorted(rg_pars.keys())]
-    Rg = jab_to_rg(ipt_test,ipt_mc, ordered_and_sliced = False, nhbins = nhbins, start_hue = start_hue, normalize_gamut = normalize_gamut)
+    if 'Rg' in out.split(','):
+        I = I[...,None] #broadcast_shape(I, target_shape = None,expand_2d_to_3d = 0)
+        a1 = a1[:,None]*np.ones(I.shape)#broadcast_shape(a1, target_shape = None,expand_2d_to_3d = 0)
+        a2 = a2[:,None]*np.ones(I.shape) #broadcast_shape(a2, target_shape = None,expand_2d_to_3d = 0)
+        a12 = np.concatenate((a1,a2),axis=2) #broadcast_shape(np.hstack((a1,a2)), target_shape = ipt.shape,expand_2d_to_3d = 0)
+        ipt_mc = np.concatenate((I,a12),axis=2)
+        nhbins, start_hue, normalize_gamut = [rg_pars[x] for x in sorted(rg_pars.keys())]
+    
+        Rg = jab_to_rg(ipt,ipt_mc, ordered_and_sliced = False, nhbins = nhbins, start_hue = start_hue, normalize_gamut = normalize_gamut)
 
 
     if (out != 'Rm'):
@@ -1092,9 +1188,27 @@ def spd_to_mcri(data, D = 0.9, E = None, Yb = 20.0, out = 'Rm', wl = None):
         return Rm
     
 #-----------------------------------------------------------------------------
-def  spd_to_cqs(data, version = 'v9.0', out = 'Qa',wl = None):
+def  spd_to_cqs(SPD, version = 'v9.0', out = 'Qa',wl = None):
     """
-    Calculates CQS Qa (Qai) or Qf (Qfi) or Qp (Qpi) for versions v9.0 (default) or v7.5.
+    Calculates CQS Qa (Qai) or Qf (Qfi) or Qp (Qpi) for versions v9.0 or v7.5.
+    
+    Args:
+        :SPD: numpy.ndarray with spectral data (can be multiple SPDs, first axis are the wavelengths)
+        :version: 'v9.0' or 'v7.5', optional
+        :out:  'Qa' or str, optional
+            Specifies requested output (e.g. 'Qa,Qai,Qf,cct,duv') 
+        :wl: None, optional
+            Wavelengths (or [start, end, spacing]) to interpolate the SPD's in :data:. 
+            None: default to no interpolation   
+    
+    Returns:
+        :returns: float or numpy.ndarray with CQS Qa for :out: 'Qa'
+            Other output is also possible by changing the :out: str value. 
+    
+    References:
+        ..[1] Davis, W., & Ohno, Y. (2010). Color quality scale. 
+                Optical Engineering, 49(3), 33602–33616.
+    
     """  
     outlist = out.split()    
     if isinstance(version,str):
@@ -1103,7 +1217,7 @@ def  spd_to_cqs(data, version = 'v9.0', out = 'Qa',wl = None):
         cri_type = version
      
     # calculate DEI, labti, labri and get cspace_pars and rg_pars:
-    DEi, labti, labri, cct, duv, cri_type = spd_to_DEi(data, cri_type = cri_type, out = 'DEi,Jabt,Jabr,cct,duv,cri_type', wl = wl)
+    DEi, labti, labri, cct, duv, cri_type = spd_to_DEi(SPD, cri_type = cri_type, out = 'DEi,Jabt,Jabr,cct,duv,cri_type', wl = wl)
     
     # further unpack cri_type:
     scale_fcn = cri_type['scale']['fcn']     
@@ -1122,9 +1236,7 @@ def  spd_to_cqs(data, version = 'v9.0', out = 'Qa',wl = None):
         labri = labri[:,None] #broadcast_shape(labri,target_shape = None,expand_2d_to_3d = 0) # expand 2-array to 3-array by adding '0'-axis
         DEi = DEi[:,None] #broadcast_shape(DEi,target_shape = None,expand_2d_to_3d = 0) # expand 2-array to 3-array by adding '0'-axis
         cct = cct[:,None] #broadcast_shape(cct,target_shape = None,expand_2d_to_3d = 0) # expand 2-array to 3-array by adding '0'-axis
-
-
-    
+  
     # calculate Rg for each spd:
     Qf = np.zeros((1,labti.shape[1]))
     Qfi = np.zeros((labti.shape[0],labti.shape[1]))
