@@ -596,6 +596,12 @@ Calculates area of polygon. (First coordinate should also be last)
 ### math.erf(), math.erfinv(): 
 erf-function (and inverse), direct import from scipy.special
 
+# cart2pol(): 
+Converts Cartesian to polar coordinates.
+
+# pol2cart(): 
+Converts polar to Cartesian coordinates.
+
 For more info:
 
     ?luxpy.math

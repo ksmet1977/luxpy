@@ -135,16 +135,16 @@ _CRI_DEFAULTS['ciera'] = {'sampleset' : "_CRI_RFL['cie-13.3-1995']['8']", 'ref_t
 _CRI_DEFAULTS['ciera-8'] = _CRI_DEFAULTS['ciera'].copy()
 _CRI_DEFAULTS['ciera-14'] = _CRI_DEFAULTS['ciera'].copy() 
 _CRI_DEFAULTS['ciera-14']['sampleset'] = "_CRI_RFL['cie-13.3-1995']['14']"
-_CRI_DEFAULTS['cierf'] = {'sampleset' : "_CRI_RFL['cie-224-2017']['99']['5nm']", 'ref_type' : 'cierf', 'cieobs' : {'xyz': '1964_10', 'cct' : '1931_2'}, 'avg' : np.mean, 'scale' : {'fcn' : log_scale, 'cfactor' : [6.73]}, 'cspace' : {'type' : 'jab_cam02ucs' , 'xyzw': None, 'mcat':'cat02', 'Yw':100.0, 'conditions' :{'La':100.0,'surround':'avg','D':1.0,'Yb':20.0,'Dtype':None},'yellowbluepurplecorrect' : None},'catf': None, 'rg_pars' : {'nhbins': 8.0, 'start_hue':0.0, 'normalize_gamut': False}, 'cri_specific_pars' : None}
-_CRI_DEFAULTS['iesrf'] = {'sampleset' : "_CRI_RFL['ies-tm30-15']['99']['5nm']", 'ref_type' : 'iesrf', 'cieobs' : {'xyz': '1964_10', 'cct' : '1931_2'}, 'avg' : np.mean, 'scale' :{'fcn' : log_scale, 'cfactor' : [7.54]}, 'cspace' : {'type': 'jab_cam02ucs', 'xyzw':None, 'mcat':'cat02', 'Yw':100.0, 'conditions' :{'La':100.0,'surround':'avg','D':1.0,'Yb':20.0,'Dtype':None},'yellowbluepurplecorrect' : None},'catf': None, 'rg_pars' : {'nhbins': 16.0, 'start_hue':0.0, 'normalize_gamut': False}, 'cri_specific_pars' : None}
-_CRI_DEFAULTS['cri2012'] = {'sampleset' : "_CRI_RFL['cri2012']['HL17']", 'ref_type' : 'ciera', 'cieobs' : {'xyz': '1964_10', 'cct' : '1931_2'}, 'avg' : math.rms, 'scale' : {'fcn': psy_scale, 'cfactor' : [1/55, 3/2, 2]}, 'cspace' : {'type': 'jab_cam02ucs', 'xyzw':None, 'mcat':'cat02', 'Yw':100.0, 'conditions' :{'La':100.0,'surround':'avg','D':1.0,'Yb':20.0,'Dtype':None},'yellowbluepurplecorrect' : 'brill-suss'},'catf': None, 'rg_pars' : {'nhbins': None, 'start_hue':0.0, 'normalize_gamut': False}, 'cri_specific_pars' : None}
+_CRI_DEFAULTS['cierf'] = {'sampleset' : "_CRI_RFL['cie-224-2017']['99']['5nm']", 'ref_type' : 'cierf', 'cieobs' : {'xyz': '1964_10', 'cct' : '1931_2'}, 'avg' : np.mean, 'scale' : {'fcn' : log_scale, 'cfactor' : [6.73]}, 'cspace' : {'type' : 'jab_cam02ucs' , 'xyzw': None, 'mcat':'cat02', 'Yw':100.0, 'conditions' :{'La':100.0,'surround':'avg','D':1.0,'Yb':20.0,'Dtype':None},'yellowbluepurplecorrect' : None},'catf': None, 'rg_pars' : {'nhbins': 8, 'start_hue':0.0, 'normalize_gamut': False, 'normalized_chroma_ref' : 100}, 'cri_specific_pars' : None}
+_CRI_DEFAULTS['iesrf'] = {'sampleset' : "_CRI_RFL['ies-tm30-15']['99']['5nm']", 'ref_type' : 'iesrf', 'cieobs' : {'xyz': '1964_10', 'cct' : '1931_2'}, 'avg' : np.mean, 'scale' :{'fcn' : log_scale, 'cfactor' : [7.54]}, 'cspace' : {'type': 'jab_cam02ucs', 'xyzw':None, 'mcat':'cat02', 'Yw':100.0, 'conditions' :{'La':100.0,'surround':'avg','D':1.0,'Yb':20.0,'Dtype':None},'yellowbluepurplecorrect' : None},'catf': None, 'rg_pars' : {'nhbins': 16, 'start_hue':0.0, 'normalize_gamut': False, 'normalized_chroma_ref' : 100}, 'cri_specific_pars' : None}
+_CRI_DEFAULTS['cri2012'] = {'sampleset' : "_CRI_RFL['cri2012']['HL17']", 'ref_type' : 'ciera', 'cieobs' : {'xyz': '1964_10', 'cct' : '1931_2'}, 'avg' : math.rms, 'scale' : {'fcn': psy_scale, 'cfactor' : [1/55, 3/2, 2]}, 'cspace' : {'type': 'jab_cam02ucs', 'xyzw':None, 'mcat':'cat02', 'Yw':100.0, 'conditions' :{'La':100.0,'surround':'avg','D':1.0,'Yb':20.0,'Dtype':None},'yellowbluepurplecorrect' : 'brill-suss'},'catf': None, 'rg_pars' : {'nhbins': None, 'start_hue':0.0, 'normalize_gamut': False, 'normalized_chroma_ref' : 100}, 'cri_specific_pars' : None}
 _CRI_DEFAULTS['cri2012-hl17'] = _CRI_DEFAULTS['cri2012'].copy()
-_CRI_DEFAULTS['cri2012-hl1000'] = {'sampleset' : "_CRI_RFL['cri2012']['HL1000']", 'ref_type' : 'ciera','cieobs' : {'xyz': '1964_10', 'cct' : '1931_2'}, 'avg' : math.rms,'scale': {'fcn' : psy_scale, 'cfactor' : [1/50, 3/2, 2]}, 'cspace' : {'type' : 'jab_cam02ucs','xyzw':None, 'mcat':'cat02', 'Yw':100.0, 'conditions' :{'La':100.0,'surround':'avg','D':1.0,'Yb':20.0,'Dtype':None},'yellowbluepurplecorrect' : 'brill-suss'},'catf': None, 'rg_pars' : {'nhbins': None, 'start_hue':0.0, 'normalize_gamut': False}, 'cri_specific_pars' : None}
-_CRI_DEFAULTS['cri2012-real210'] = {'sampleset' : "_CRI_RFL['cri2012']['Real210']",'ref_type' : 'ciera', 'cieobs' : {'xyz': '1964_10', 'cct' : '1931_2'},'avg' : math.rms, 'scale' : {'fcn' : psy_scale, 'cfactor' : [2/45, 3/2, 2]},'cspace' : {'type': 'jab_cam02ucs', 'xyzw':None, 'mcat':'cat02', 'Yw':100.0, 'conditions' :{'La':100.0,'surround':'avg','D':1.0,'Yb':20.0,'Dtype':None},'yellowbluepurplecorrect' : 'brill-suss'}, 'catf': None, 'rg_pars' : {'nhbins': None, 'start_hue':0.0, 'normalize_gamut': False}, 'cri_specific_pars' : None}
-_CRI_DEFAULTS['cqs-v7.5'] = {'sampleset' : "_CRI_RFL['cqs']['v7.5']",'ref_type' : 'ciera', 'cieobs' : {'xyz': '1931_2', 'cct' : '1931_2'}, 'avg' : math.rms, 'scale' : {'fcn' : log_scale, 'cfactor' : [2.93, 3.10, 3.78]}, 'cspace' : {'type': 'lab', 'xyzw' : None}, 'catf': {'xyzw': None,'mcat':'cmc','D':None,'La':[1000.0,1000.0],'cattype':'vonkries','Dtype':'cmc', 'catmode' : '1>2'}, 'rg_pars' : {'nhbins': None, 'start_hue':0.0, 'normalize_gamut': False}, 'cri_specific_pars' : {'maxC': None}}
-_CRI_DEFAULTS['cqs-v9.0'] = {'sampleset' : "_CRI_RFL['cqs']['v9.0']", 'ref_type' : 'ciera','cieobs' : {'xyz': '1931_2', 'cct' : '1931_2'}, 'avg' : math.rms, 'scale' : {'fcn' : log_scale, 'cfactor' : [3.03, 3.20, 3.88]}, 'cspace' : {'type': 'lab', 'xyzw' : None}, 'catf': {'xyzw': None,'mcat':'cmc','D':None,'La':[1000.0,1000.0],'cattype':'vonkries','Dtype':'cmc', 'catmode' : '1>2'}, 'rg_pars' : {'nhbins': None, 'start_hue':0.0, 'normalize_gamut': False}, 'cri_specific_pars' : {'maxC': 10.0}}
+_CRI_DEFAULTS['cri2012-hl1000'] = {'sampleset' : "_CRI_RFL['cri2012']['HL1000']", 'ref_type' : 'ciera','cieobs' : {'xyz': '1964_10', 'cct' : '1931_2'}, 'avg' : math.rms,'scale': {'fcn' : psy_scale, 'cfactor' : [1/50, 3/2, 2]}, 'cspace' : {'type' : 'jab_cam02ucs','xyzw':None, 'mcat':'cat02', 'Yw':100.0, 'conditions' :{'La':100.0,'surround':'avg','D':1.0,'Yb':20.0,'Dtype':None},'yellowbluepurplecorrect' : 'brill-suss'},'catf': None, 'rg_pars' : {'nhbins': None, 'start_hue':0.0, 'normalize_gamut': False,'normalized_chroma_ref' : 100}, 'cri_specific_pars' : None}
+_CRI_DEFAULTS['cri2012-real210'] = {'sampleset' : "_CRI_RFL['cri2012']['Real210']",'ref_type' : 'ciera', 'cieobs' : {'xyz': '1964_10', 'cct' : '1931_2'},'avg' : math.rms, 'scale' : {'fcn' : psy_scale, 'cfactor' : [2/45, 3/2, 2]},'cspace' : {'type': 'jab_cam02ucs', 'xyzw':None, 'mcat':'cat02', 'Yw':100.0, 'conditions' :{'La':100.0,'surround':'avg','D':1.0,'Yb':20.0,'Dtype':None},'yellowbluepurplecorrect' : 'brill-suss'}, 'catf': None, 'rg_pars' : {'nhbins': None, 'start_hue':0.0, 'normalize_gamut': False, 'normalized_chroma_ref' : 100}, 'cri_specific_pars' : None, 'normalized_chroma_ref' : 100}
+_CRI_DEFAULTS['cqs-v7.5'] = {'sampleset' : "_CRI_RFL['cqs']['v7.5']",'ref_type' : 'ciera', 'cieobs' : {'xyz': '1931_2', 'cct' : '1931_2'}, 'avg' : math.rms, 'scale' : {'fcn' : log_scale, 'cfactor' : [2.93, 3.10, 3.78]}, 'cspace' : {'type': 'lab', 'xyzw' : None}, 'catf': {'xyzw': None,'mcat':'cmc','D':None,'La':[1000.0,1000.0],'cattype':'vonkries','Dtype':'cmc', 'catmode' : '1>2'}, 'rg_pars' : {'nhbins': None, 'start_hue':0.0, 'normalize_gamut': False, 'normalized_chroma_ref' : 100}, 'cri_specific_pars' : {'maxC': None}}
+_CRI_DEFAULTS['cqs-v9.0'] = {'sampleset' : "_CRI_RFL['cqs']['v9.0']", 'ref_type' : 'ciera','cieobs' : {'xyz': '1931_2', 'cct' : '1931_2'}, 'avg' : math.rms, 'scale' : {'fcn' : log_scale, 'cfactor' : [3.03, 3.20, 3.88]}, 'cspace' : {'type': 'lab', 'xyzw' : None}, 'catf': {'xyzw': None,'mcat':'cmc','D':None,'La':[1000.0,1000.0],'cattype':'vonkries','Dtype':'cmc', 'catmode' : '1>2'}, 'rg_pars' : {'nhbins': None, 'start_hue':0.0, 'normalize_gamut': False, 'normalized_chroma_ref' : 100}, 'cri_specific_pars' : {'maxC': 10.0}}
 
-_CRI_DEFAULTS['mcri'] = {'sampleset': "_CRI_RFL['mcri']", 'ref_type' : None, 'cieobs' : {'xyz' : '1964_10', 'cct': '1931_2'}, 'avg': math.geomean, 'scale' : {'fcn': psy_scale, 'cfactor': [21.7016,   4.2106,   2.4154]}, 'cspace': {'type': 'ipt', 'Mxyz2lms': [[ 0.400070,	0.707270,	-0.080674],[-0.228111, 1.150561,	0.061230],[0.0, 0.0,	0.931757]]}, 'catf': {'xyzw': [94.81,  100.00,  107.32], 'mcat': 'cat02', 'cattype': 'vonkries', 'F':1, 'Yb': 20.0,'Dtype':None, 'catmode' : '1>2'}, 'rg_pars' : {'nhbins': None, 'start_hue':0.0, 'normalize_gamut': False}, 'cri_specific_pars' : {'similarity_ai' : np.array([[-0.09651, 0.41354, 40.64, 16.55, -0.17],[0.16548, 0.38877, 58.27,	20.37,	-0.59],[0.32825, 0.49673, 35.97	, 18.05,-6.04],[0.02115, -0.13658, 261.62, 110.99, -44.86], [-0.12686,	-0.22593, 99.06, 55.90, -39.86],[ 0.18488, 0.01172, 58.23, 62.55,	-22.86],[-0.03440,	0.23480, 94.71,	32.12, 2.90],[ 0.04258, 0.05040, 205.54,	53.08,	-35.20], [0.15829,  0.13624, 90.21,  70.83,	-19.01],[-0.01933,	-0.02168,	742.97, 297.66,	-227.30]])}}
+_CRI_DEFAULTS['mcri'] = {'sampleset': "_CRI_RFL['mcri']", 'ref_type' : None, 'cieobs' : {'xyz' : '1964_10', 'cct': '1931_2'}, 'avg': math.geomean, 'scale' : {'fcn': psy_scale, 'cfactor': [21.7016,   4.2106,   2.4154]}, 'cspace': {'type': 'ipt', 'Mxyz2lms': [[ 0.400070,	0.707270,	-0.080674],[-0.228111, 1.150561,	0.061230],[0.0, 0.0,	0.931757]]}, 'catf': {'xyzw': [94.81,  100.00,  107.32], 'mcat': 'cat02', 'cattype': 'vonkries', 'F':1, 'Yb': 20.0,'Dtype':None, 'catmode' : '1>2'}, 'rg_pars' : {'nhbins': None, 'start_hue':0.0, 'normalize_gamut': False, 'normalized_chroma_ref' : 100}, 'cri_specific_pars' : {'similarity_ai' : np.array([[-0.09651, 0.41354, 40.64, 16.55, -0.17],[0.16548, 0.38877, 58.27,	20.37,	-0.59],[0.32825, 0.49673, 35.97	, 18.05,-6.04],[0.02115, -0.13658, 261.62, 110.99, -44.86], [-0.12686,	-0.22593, 99.06, 55.90, -39.86],[ 0.18488, 0.01172, 58.23, 62.55,	-22.86],[-0.03440,	0.23480, 94.71,	32.12, 2.90],[ 0.04258, 0.05040, 205.54,	53.08,	-35.20], [0.15829,  0.13624, 90.21,  70.83,	-19.01],[-0.01933,	-0.02168,	742.97, 297.66,	-227.30]])}}
 
 
 #------------------------------------------------------------------------------
@@ -198,10 +198,11 @@ def gamut_slicer(jab_test,jab_ref, out = 'jabt,jabr', nhbins = None, start_hue =
             True appends the first jab coordinates to the end of the output (for plotting closed gamuts)
     
     Returns:
-        :returns: numpy.ndarray with average Jabt,Jabr of each hue bin. (.shape = (number of hue bins, 3))
+        :returns: numpy.ndarray with average jabt,jabr of each hue bin. (.shape = (number of hue bins, 3))
             (or whatever is specified in :out:) 
         
     """
+
     # make 3d for easy looping:
     test_original_shape = jab_test.shape
 
@@ -212,11 +213,12 @@ def gamut_slicer(jab_test,jab_ref, out = 'jabt,jabr', nhbins = None, start_hue =
     #initialize Jabt, Jabr
     test_shape = list(jab_test.shape)
     if nhbins is not None:
+        nhbins = np.int(nhbins)
         test_shape[0] = nhbins + close_gamut*1
     else:
         test_shape[0] = test_shape[0] + close_gamut*1
-    Jabt = np.zeros(test_shape)
-    Jabr = Jabt.copy()
+    jabt = np.zeros(test_shape)
+    jabr = jabt.copy()
     for ii in range(jab_test.shape[1]):
           
         # calculate hue angles:
@@ -225,9 +227,9 @@ def gamut_slicer(jab_test,jab_ref, out = 'jabt,jabr', nhbins = None, start_hue =
 
         if nhbins is None:
             Ir = np.argsort(hr)
-            jabt = jab_test[Ir,ii,:]
-            jabr = jab_ref[Ir,ii,:]
-            nhbins = (jabt.shape[0])
+            jabtii = jab_test[Ir,ii,:]
+            jabrii = jab_ref[Ir,ii,:]
+            nhbins = (jabtii.shape[0])
 
         else:
             
@@ -235,53 +237,56 @@ def gamut_slicer(jab_test,jab_ref, out = 'jabt,jabr', nhbins = None, start_hue =
             hbins = np.floor(((hr - start_hue*np.pi/180)/2/np.pi) * nhbins) # because of start_hue bin range can be different from 0 : n-1
             hbins[hbins>=nhbins] = hbins[hbins>=nhbins] - nhbins # reset binnumbers to 0 : n-1 range
             hbins[hbins < 0] = (nhbins - 2) - hbins[hbins < 0] # reset binnumbers to 0 : n-1 range
-            jabt = np.zeros((nhbins,3))
-            jabr = np.zeros((nhbins,3))
+
+            jabtii = np.zeros((nhbins,3))
+            jabrii = np.zeros((nhbins,3))
             for i in range(nhbins):
                 if i in hbins:
-                    jabt[i,:] = jab_test[hbins==i,ii,:].mean(axis = 0)
-                    jabr[i,:] = jab_ref[hbins==i,ii,:].mean(axis = 0)
+                    jabtii[i,:] = jab_test[hbins==i,ii,:].mean(axis = 0)
+                    jabrii[i,:] = jab_ref[hbins==i,ii,:].mean(axis = 0)
 
         if normalize_gamut == True:
-            #renormalize jabt using jabr:
-            Ct = np.sqrt(jabt[:,1]**2 + jabt[:,2]**2)
-            Cr = np.sqrt(jabr[:,1]**2 + jabr[:,2]**2)
-            ht = cam.hue_angle(jabt[:,1],jabt[:,2], htype = 'rad')
-            hr = cam.hue_angle(jabr[:,1],jabr[:,2], htype = 'rad')
+            #renormalize jabtii using jabrii:
+            Ct = np.sqrt(jabtii[:,1]**2 + jabtii[:,2]**2)
+            Cr = np.sqrt(jabrii[:,1]**2 + jabrii[:,2]**2)
+            ht = cam.hue_angle(jabtii[:,1],jabtii[:,2], htype = 'rad')
+            hr = cam.hue_angle(jabrii[:,1],jabrii[:,2], htype = 'rad')
         
             # calculate rescaled chroma of test:
             C = normalized_chroma_ref*(Ct/Cr) 
         
             # calculate normalized cart. co.: 
-            jabt[:,2] = C*np.cos(ht)
-            jabt[:,3] = C*np.sin(ht)
-            jabr[:,2] = normalized_chroma_ref*np.cos(hr)
-            jabr[:,3] = normalized_chroma_ref*np.sin(hr)
+            jabtii[:,1] = C*np.cos(ht)
+            jabtii[:,2] = C*np.sin(ht)
+            jabrii[:,1] = normalized_chroma_ref*np.cos(hr)
+            jabrii[:,2] = normalized_chroma_ref*np.sin(hr)
         
         if close_gamut == True:
-            jabt = np.vstack((jabt,jabt[0,:])) # to create closed curve when plotting
-            jabr = np.vstack((jabr,jabr[0,:])) # to create closed curve when plotting
+            jabtii = np.vstack((jabtii,jabtii[0,:])) # to create closed curve when plotting
+            jabrii = np.vstack((jabrii,jabrii[0,:])) # to create closed curve when plotting
 
-        Jabt[:,ii,:] = jabt
-        Jabr[:,ii,:] = jabr
+        jabt[:,ii,:] = jabtii
+        jabr[:,ii,:] = jabrii
 
     # circle coordinates for plotting:
     hc = np.arange(360.0)*np.pi/180.0
-    jabc = np.zeros((hc.shape[0],2))
-    jabc[:,0] = normalized_chroma_ref*np.cos(hc)
-    jabc[:,0] = normalized_chroma_ref*np.sin(hc)
+    jabc = np.ones((hc.shape[0],3))*100
+    jabc[:,1] = normalized_chroma_ref*np.cos(hc)
+    jabc[:,2] = normalized_chroma_ref*np.sin(hc)
 
     if len(test_original_shape) == 2:
-        Jabt = Jabt[:,0]
-        Jabr = Jabr[:,0]
+        jabt = jabt[:,0]
+        jabr = jabr[:,0]
 
-    if out == 'Jabt,Jabr':
-        return Jabt, Jabr
+    if out == 'jabt,jabr':
+        return jabt, jabr
+    elif out == 'jabt,jabr,jabc':
+        return jabt, jabr, jabc
     else:
         return eval(out)        
  
 #------------------------------------------------------------------------------
-def jab_to_rg(jabt,jabr, max_scale = 100, ordered_and_sliced = False, nhbins = None, start_hue = 0.0, normalize_gamut = True, normalized_chroma_ref = 100):
+def jab_to_rg(jabt,jabr, max_scale = 100, ordered_and_sliced = False, nhbins = None, start_hue = 0.0, normalize_gamut = True, normalized_chroma_ref = 100, out = 'Rg,jabt,jabr'):
     """
     Calculates gamut area index, Rg.
     
@@ -302,14 +307,18 @@ def jab_to_rg(jabt,jabr, max_scale = 100, ordered_and_sliced = False, nhbins = N
             True normalizes the gamut of test to that of ref (perfect agreement results in circle).
         :normalized_chroma_ref: 100.0 or float, optional
             Controls the size (chroma/radius) of the normalization circle/gamut.
-    
+        :out: 'Rg,jabt,jabr' or str, optional
+            Specifies which variables to output as numpy.ndarray
+
     Returns: 
         :Rg: float or numpy.ndarray with gamut area indices Rg.
     """    
     # slice, order and normalize jabt and jabr:
     if ordered_and_sliced == False: 
-        jabt, jabr = gamut_slicer(jabt,jabr, out = 'Jabt,Jabr', nhbins = nhbins, start_hue = start_hue, normalize_gamut = normalize_gamut, normalized_chroma_ref = normalized_chroma_ref, close_gamut = True)
-
+        jabt, jabr, jabc = gamut_slicer(jabt,jabr, out = 'jabt,jabr,jabc', nhbins = nhbins, start_hue = start_hue, normalize_gamut = normalize_gamut, normalized_chroma_ref = normalized_chroma_ref, close_gamut = True)
+    else:
+        jabc = None
+        
     # make 3d:
     test_original_shape = jabt.shape
     if len(test_original_shape)<3:
@@ -321,17 +330,25 @@ def jab_to_rg(jabt,jabr, max_scale = 100, ordered_and_sliced = False, nhbins = N
 
     for ii in range(jabt.shape[1]):
         Rg[:,ii] = max_scale*polyarea(jabt[:,ii,1],jabt[:,ii,2])/polyarea(jabr[:,ii,1],jabr[:,ii,2]) # calculate Rg =  gamut area ratio of test and ref
-    return Rg
+    
+    if out == 'Rg':
+        return Rg
+    elif (out == 'Rg,jabt,jabr'):
+        return Rg, jabt, jabr
+    elif (out == 'Rg,jabt,jabr,jabc'):
+        return Rg, jabt, jabr, jabc
+    else:
+        return eval(out)
 
 #------------------------------------------------------------------------------
-def spd_to_jab_t_r(SPD, cri_type = 'cierf', out = 'Jabt,Jabr', wl = None, sampleset = None, ref_type = None, cieobs  = None, cspace = None, catf = None, cri_specific_pars = None):
+def spd_to_jab_t_r(SPD, cri_type = 'cierf', out = 'jabt,jabr', wl = None, sampleset = None, ref_type = None, cieobs  = None, cspace = None, catf = None, cri_specific_pars = None):
     """
     Calculates jab color values for a sample set illuminated with test source SPD and its reference illuminant.
         
     Args:
         :SPD: numpy.ndarray with spectral data (can be multiple SPDs, first axis are the wavelengths)
-        :out:  'Jabt,Jabr' or str, optional
-            Specifies requested output (e.g. 'Jabt,Jabr' or 'Jabt,Jabr,cct,duv') 
+        :out:  'jabt,jabr' or str, optional
+            Specifies requested output (e.g. 'jabt,jabr' or 'jabt,jabr,cct,duv') 
         :wl: None, optional
             Wavelengths (or [start, end, spacing]) to interpolate the SPD's in :SPD:. 
             None: default to no interpolation
@@ -379,7 +396,7 @@ def spd_to_jab_t_r(SPD, cri_type = 'cierf', out = 'Jabt,Jabr', wl = None, sample
                 - dict: user specified parameters. 
                     See for example luxpy.cri._CRI_DEFAULTS['mcri']['cri_specific_pars'] for its use.
     Returns:
-        :returns: (numpy.ndarray, numpy.ndarray) with Jabt and Jabr data for :out: 'Jabt,Jabr'
+        :returns: (numpy.ndarray, numpy.ndarray) with jabt and jabr data for :out: 'jabt,jabr'
             Other output is also possible by changing the :out: str value.
     """
    
@@ -438,28 +455,28 @@ def spd_to_jab_t_r(SPD, cri_type = 'cierf', out = 'Jabt,Jabr', wl = None, sample
     if 'xyzw' in cspace_pars.keys(): 
         if cspace_pars['xyzw'] is None: 
             cspace_pars['xyzw'] = xyztw # enter test whitepoint
-    Jabt = colortf(xyzti, tf = cspace['type'], tfa0 = cspace_pars)
+    jabt = colortf(xyzti, tf = cspace['type'], tfa0 = cspace_pars)
     
     cspace_pars = cspace.copy()
     cspace_pars.pop('type')
     if 'xyzw' in cspace_pars.keys(): 
         if cspace_pars['xyzw'] is None: 
             cspace_pars['xyzw'] = xyzrw # enter ref. whitepoint
-    Jabr = colortf(xyzri, tf = cspace['type'], tfa0 = cspace_pars)    
+    jabr = colortf(xyzri, tf = cspace['type'], tfa0 = cspace_pars)    
     del cspace_pars
 
 
     # E. Regulate output:
-    if out == 'Jabt,Jabr':
-        return Jabt, Jabr
-    elif out == 'Jabt,Jabr,cct,duv':
-        return Jabt,Jabr,cct,duv
+    if out == 'jabt,jabr':
+        return jabt, jabr
+    elif out == 'jabt,jabr,cct,duv':
+        return jabt,jabr,cct,duv
     else:
         eval(out)
 
 
 #------------------------------------------------------------------------------
-def spd_to_rg(SPD, cri_type = 'cierf', out = 'Rg', wl = None, sampleset = None, ref_type = None, cieobs  = None, avg = None, cspace = None, catf = None, cri_specific_pars = None, rg_pars = {'nhbins' : None, 'start_hue' : 0, 'normalize_gamut' : True}):
+def spd_to_rg(SPD, cri_type = 'cierf', out = 'Rg', wl = None, sampleset = None, ref_type = None, cieobs  = None, avg = None, cspace = None, catf = None, cri_specific_pars = None, rg_pars = {'nhbins' : None,  'normalize_gamut' : True,'start_hue' : 0, 'normalized_chroma_ref' : 100}):
     """
     Calculates the color gamut index, Rg, of spectral data. 
     
@@ -517,6 +534,8 @@ def spd_to_rg(SPD, cri_type = 'cierf', out = 'Rg', wl = None, sampleset = None, 
                 - key: 'nhbins': int, number of hue bins to slice gamut (None use the one specified in :cri_type: dict).
                 - key: 'start_hue': float (°), hue at which to start slicing
                 - key: 'normalize_gamut': True or False: normalize gamut or not before calculating a gamut area index Rg. 
+                - key: 'normalized_chroma_ref': 100.0 or float, optional
+                    Controls the size (chroma/radius) of the normalization circle/gamut.
         :avg: None or fcn handle, optional
             Averaging function (handle) for color differences, DEi (e.g. numpy.mean, .math.rms, .math.geomean)
             None use the one specified in :cri_type: dict.
@@ -561,17 +580,22 @@ def spd_to_rg(SPD, cri_type = 'cierf', out = 'Rg', wl = None, sampleset = None, 
 
        
     # calculate Jabt of test and Jabr of the reference illuminant corresponding to test: 
-    jabti, jabri,cct,duv = spd_to_jab_t_r(SPD, cri_type = cri_type, out = 'Jabt,Jabr,cct,duv', wl = wl) 
+    jabt, jabr,cct,duv = spd_to_jab_t_r(SPD, cri_type = cri_type, out = 'jabt,jabr,cct,duv', wl = wl) 
 
     
     # calculate gamut area index:
     rg_pars = cri_type['rg_pars']
     #rg_pars = put_args_in_db(cri_type['rg_pars'],rg_pars)#{'nhbins':nhbins,'start_hue':start_hue,'normalize_gamut':normalize_gamut}) #override with not-None input from function
-    nhbins, start_hue, normalize_gamut = [rg_pars[x] for x in sorted(rg_pars.keys())]
-    Rg = np2d(jab_to_rg(jabti,jabri, ordered_and_sliced = False, nhbins = nhbins, start_hue = start_hue, normalize_gamut = normalize_gamut))
-   
-    if out == 'Rg':
+    nhbins, normalize_gamut, normalized_chroma_ref, start_hue  = [rg_pars[x] for x in sorted(rg_pars.keys())]
+    Rg, jabt_binned, jabr_binned, jabc_binned = jab_to_rg(jabt,jabr, ordered_and_sliced = False, nhbins = nhbins, start_hue = start_hue, normalize_gamut = normalize_gamut, out = 'Rg,jabt,jabr,jabc')
+    Rg = np2d(Rg)
+    
+    if (out == 'Rg'):
         return Rg
+    elif (out == 'Rg,jabt,jabr'):
+        return Rg, jabt_binned,jabr_binned
+    elif (out == 'Rg,jabt,jabr,jabc'):
+        return Rg, jabt_binned,jabr_binned,jabc_binned
     else:
         return eval(out)
 
@@ -641,12 +665,12 @@ def spd_to_DEi(SPD, cri_type = 'cierf', out = 'DEi', wl = None, sampleset = None
 
     # calculate Jabt of test and Jabr of the reference illuminant corresponding to test: 
     #Jabt, Jabr, cct, duv = spd_to_jab_t_r(data, cri_type = cri_type, out = 'Jabt,Jabr,cct,duv', wl = wl, sampleset = sampleset, cieobs  = cieobs, cieobs_cct = cieobs_cct, cspace = cspace, catf = catf, ref_type = ref_type, cspace_pars = cspace_pars,cri_specific_pars = cri_specific_pars)
-    Jabt, Jabr, cct, duv = spd_to_jab_t_r(SPD, cri_type = cri_type, out = 'Jabt,Jabr,cct,duv', wl = wl)
+    jabt, jabr, cct, duv = spd_to_jab_t_r(SPD, cri_type = cri_type, out = 'jabt,jabr,cct,duv', wl = wl)
       
     # E. calculate DEi, DEa:
     avg = cri_type['avg']
-    DEi = np.power((Jabt - Jabr),2).sum(axis = len(Jabt.shape)-1,keepdims = False)**0.5
-    #DEi = np.power((Jabt - Jabr),2).sum(axis = len(Jabt.shape)-1,keepdims = True)**0.5
+    DEi = np.power((jabt - jabr),2).sum(axis = len(jabt.shape)-1,keepdims = False)**0.5
+    #DEi = np.power((jabt - jabr),2).sum(axis = len(Jabt.shape)-1,keepdims = True)**0.5
     DEa = avg(DEi, axis = 0) #len(Jabt.shape)-2)
     DEa = np2d(DEa)
   
@@ -786,6 +810,8 @@ def spd_to_cri(SPD, cri_type = 'cierf', out = 'Rf', wl = None, sampleset = None,
                 - key: 'nhbins': int, number of hue bins to slice gamut (None use the one specified in :cri_type: dict).
                 - key: 'start_hue': float (°), hue at which to start slicing
                 - key: 'normalize_gamut': True or False: normalize gamut or not before calculating a gamut area index Rg. 
+                - key: 'normalized_chroma_ref': 100.0 or float, optional
+                    Controls the size (chroma/radius) of the normalization circle/gamut.
         :avg: None or fcn handle, optional
             Averaging function (handle) for color differences, DEi (e.g. numpy.mean, .math.rms, .math.geomean)
             None use the one specified in :cri_type: dict.
@@ -849,13 +875,14 @@ def spd_to_cri(SPD, cri_type = 'cierf', out = 'Rf', wl = None, sampleset = None,
 #         raise Exception('03-jul-2017: Provide scale_factor(s). Automatic scale_factor search under development.')
 
     # A. get DEi of for ciera and of requested cri metric for spds in or specified by scale_factor_optimization_spds':
-    DEi, Jabt, Jabr, cct, duv = spd_to_DEi(SPD, out = 'DEi,Jabt,Jabr,cct,duv', cri_type = cri_type)
+    DEi, jabt, jabr, cct, duv = spd_to_DEi(SPD, out = 'DEi,jabt,jabr,cct,duv', cri_type = cri_type)
     if 'Rg' in out.split(','):
         # calculate gamut area index:
-        rg_pars = cri_type['rg_pars']    
-        nhbins, start_hue, normalize_gamut = [rg_pars[x] for x in sorted(rg_pars.keys())]
-        Rg = jab_to_rg(Jabt,Jabr, ordered_and_sliced = False, nhbins = nhbins, start_hue = start_hue, normalize_gamut = normalize_gamut)
-
+        rg_pars = cri_type['rg_pars'] 
+        nhbins, normalize_gamut, normalized_chroma_ref, start_hue = [rg_pars[x] for x in sorted(rg_pars.keys())]
+        Rg, jabt_binned, jabr_binned, jabc_binned = jab_to_rg(jabt,jabr, ordered_and_sliced = False, nhbins = nhbins, start_hue = start_hue, normalize_gamut = normalize_gamut, out = 'Rg,jabt,jabr,jabc')
+    else:
+        jabt_binned, jabr_binned, jabc_binned = None, None, None
         
     # B. convert DE to color rendering index:
     Rfi = scale_fcn(DEi,scale_factor)
@@ -1177,7 +1204,7 @@ def spd_to_mcri(SPD, D = 0.9, E = None, Yb = 20.0, out = 'Rm', wl = None):
         a2 = a2[:,None]*np.ones(I.shape) #broadcast_shape(a2, target_shape = None,expand_2d_to_3d = 0)
         a12 = np.concatenate((a1,a2),axis=2) #broadcast_shape(np.hstack((a1,a2)), target_shape = ipt.shape,expand_2d_to_3d = 0)
         ipt_mc = np.concatenate((I,a12),axis=2)
-        nhbins, start_hue, normalize_gamut = [rg_pars[x] for x in sorted(rg_pars.keys())]
+        nhbins, normalize_gamut, normalized_chroma_ref, start_hue  = [rg_pars[x] for x in sorted(rg_pars.keys())]
     
         Rg = jab_to_rg(ipt,ipt_mc, ordered_and_sliced = False, nhbins = nhbins, start_hue = start_hue, normalize_gamut = normalize_gamut)
 

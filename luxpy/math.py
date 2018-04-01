@@ -30,6 +30,10 @@
 # polyarea(): Calculates area of polygon. (First coordinate should also be last)
 #
 # erf(): erf-function, direct import from scipy.special
+# 
+# cart2pol(): Converts Cartesian to polar coordinates.
+#
+# pol2cart(): Converts polar to Cartesian coordinates.
 #------------------------------------------------------------------------------
 
 Created on Tue Jun 27 11:50:32 2017
@@ -39,7 +43,7 @@ Created on Tue Jun 27 11:50:32 2017
 
 from luxpy import *
 from scipy.special import erf, erfinv
-__all__ = ['symmM_to_posdefM','check_symmetric','check_posdef','positive_arctan','line_intersect','erf', 'erfinv']
+__all__ = ['symmM_to_posdefM','check_symmetric','check_posdef','positive_arctan','line_intersect','erf', 'erfinv', 'pol2cart', 'cart2pol']
 __all__+= ['bvgpdf','mahalanobis2','dot23', 'rms','geomean','polyarea']
 
 
@@ -359,3 +363,47 @@ def polyarea(x,y):
     
     """
     return 0.5*np.abs(np.dot(x,np.roll(y,1).T)-np.dot(y,np.roll(x,1).T))
+
+#------------------------------------------------------------------------------
+def cart2pol(x,y = None, htype = 'deg'):
+    """
+    Convert Cartesion to polar coordinates.
+    
+    Args:
+        :x: float or numpy.ndarray with x-coordinates
+        :y: None or float or numpy.ndarray with x-coordinates, optional
+            If None, y-coordinates are assumed to be in :x:.
+        :htype: 'deg' or 'rad, optional
+            Output type of theta.
+    
+    Returns:
+        :returns: (float or numpy.ndarray of theta, float or numpy.ndarray of r) values
+    """
+    if y is None:
+        y = x[...,1].copy()
+        x = x[...,0].copy()
+    return positive_arctan(x,y, htype = htype), np.sqrt(x**2 + y**2)
+
+def pol2cart(theta, r = None, htype = 'deg'):
+    """
+    Convert Cartesion to polar coordinates.
+    
+    Args:
+        :theta: float or numpy.ndarray with theta-coordinates
+        :r: None or float or numpy.ndarray with r-coordinates, optional
+            If None, r-coordinates are assumed to be in :theta:.
+        :htype: 'deg' or 'rad, optional
+            Intput type of :theta:.
+    
+    Returns:
+        :returns: (float or numpy.ndarray of x, float or numpy.ndarray of y) coordinate values
+    """
+    if htype == 'deg':
+        d2r = np.pi/180.0
+    else:
+        d2r = 1.0
+    if r is None:
+        r = theta[...,1].copy()
+        theta = theta[...,0].copy()
+    theta = theta*d2r
+    return r*np.cos(theta), r*np.sin(theta)
