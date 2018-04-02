@@ -148,7 +148,7 @@ def plot_hue_bins(hbins = 16, start_hue = 0.0, scalef = 100, plot_axis_labels = 
             
             if axtype == 'polar':
                 if plot_edge_lines == True:
-                    ax.plot(edges[:,i],r[:,i]*1.2,color = 'grey',marker = 'None',linestyle = ':',linewidth = 2, markersize = 2)
+                    ax.plot(edges[:,i],r[:,i]*1.2,color = 'grey',marker = 'None',linestyle = ':',linewidth = 3, markersize = 2)
                 if plot_center_lines == True:
                     if np.mod(i,2) == 1:
                         ax.plot(theta[:,i],r[:,i],color = c,marker = None,linestyle = '--',linewidth = 2)
@@ -162,7 +162,7 @@ def plot_hue_bins(hbins = 16, start_hue = 0.0, scalef = 100, plot_axis_labels = 
                     ax.set_yticklabels([])
             else:
                 if plot_edge_lines == True:
-                    ax.plot(hxe[:,i],hye[:,i],color = 'grey',marker = 'None',linestyle = ':',linewidth = 2, markersize = 2)
+                    ax.plot(hxe[:,i],hye[:,i],color = 'grey',marker = 'None',linestyle = ':',linewidth = 3, markersize = 2)
 
                 if plot_center_lines == True:
                     if np.mod(i,2) == 1:
@@ -231,7 +231,7 @@ def plot_ColorVectorGraphic(jabt, jabr, hbins = 16, start_hue = 0.0, scalef = 10
         jabt_theta, jabt_r = math.cart2pol(jabt[...,1:3], htype = 'rad') 
         
         #ax.quiver(jabrtheta,jabr_r,jabt[...,1]-jabr[...,1], jabt[...,2]-jabr_binned[...,2], color = 'k', headlength=3, angles='uv', scale_units='y', scale = 2,linewidth = 0.5)
-        ax.plot(jabt_theta,jabt_r, color = 'grey',linewidth = 2)   
+        ax.plot(jabt_theta,jabt_r, color = 'grey',linewidth = 2)
         for j in range(hbins):
             c = cmap[j]
             ax.quiver(jabr_theta[j],jabr_r[j],jabt[j,1]-jabr[j,1], jabt[j,2]-jabr[j,2], edgecolor = 'k',facecolor = c, headlength=3, angles='uv', scale_units='y', scale = 2,linewidth = 0.5)
@@ -247,7 +247,7 @@ def plot_ColorVectorGraphic(jabt, jabr, hbins = 16, start_hue = 0.0, scalef = 10
     
     return plt.gcf(), plt.gca(), cmap
 
-def plot_cri_graphics(data, cri_type = None, hbins = 16, start_hue = 0.0, scalef = 100, plot_axis_labels = False, bin_labels = None, plot_edge_lines = True, plot_center_lines = False, axtype = 'polar', fig = None, force_CVG_layout = False):
+def plot_cri_graphics(data, cri_type = None, hbins = 16, start_hue = 0.0, scalef = 100, plot_axis_labels = False, bin_labels = None, plot_edge_lines = True, plot_center_lines = False, axtype = 'polar', fig = None, force_CVG_layout = True):
     """
     Plot graphical information on color rendition properties.
     
@@ -340,8 +340,7 @@ def plot_cri_graphics(data, cri_type = None, hbins = 16, start_hue = 0.0, scalef
         
         # Plot CVG:
         ax_CVG = plt.subplot2grid((3, 3), (1, 0), colspan=2, rowspan=2, polar = True, frameon=False)
-        force_CVG_plot = True
-        figCVG, ax, cmap = plot_ColorVectorGraphic(bjabt[...,i,:], bjabr[...,i,:], hbins = hbins, axtype = axtype, fig = ax_CVG, plot_center_lines = False, plot_edge_lines = True, scalef = scalef, force_CVG_layout = force_CVG_plot)
+        figCVG, ax, cmap = plot_ColorVectorGraphic(bjabt[...,i,:], bjabr[...,i,:], hbins = hbins, axtype = axtype, fig = ax_CVG, plot_center_lines = False, plot_edge_lines = True, scalef = scalef, force_CVG_layout = force_CVG_layout)
         #ax_CVG.set_title('Color Vector Graphic')
     
         
