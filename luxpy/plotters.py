@@ -333,3 +333,5 @@ def plotUH(xyz0 = None, uhues = [0,1,2,3], cieobs = _CIEOBS, cspace = _CSPACE, a
         huh = axh.plot(lab[:,1],lab[:,2],formatstr[huenr],label = excludefromlegend + 'Unique '+ hues[huenr])
         huniquehues = [huniquehues,huh]
     return  huniquehues
+
+#------------------------------------------------------------------------------

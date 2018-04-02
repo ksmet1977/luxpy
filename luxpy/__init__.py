@@ -126,8 +126,12 @@ __all__ += ['xyz_to_jabM_ciecam02', 'jabM_ciecam02_to_xyz', 'xyz_to_jabC_ciecam0
 from .colortf import colortf
 __all__+=['colortf']
 
-from luxpy import colorrenditionindices as cri
+from luxpy import colorrendition as cri
 __all__ += ['cri'] 
+
 
 from . plotters import *
 __all__ += plotters.__all__
+
+#from .cri_graphics import *
+#__all__ += cri_graphics.__all__
