@@ -298,7 +298,7 @@ def plot_cri_graphics(data, cri_type = None, hbins = 16, start_hue = 0.0, scalef
             :data: dict with color rendering data
             :[...]: list with handles to current figure and 4 axes.
             :cmap: list with rgb colors for hue bins (for use in other plotting fcns)
-       
+  
     """
     
     if isinstance(data,dict):
