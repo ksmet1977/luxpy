@@ -34,6 +34,10 @@
 # cart2pol(): Converts Cartesian to polar coordinates.
 #
 # pol2cart(): Converts polar to Cartesian coordinates.
+#
+# magnitude_v():  Calculates magnitude of vector.
+#
+# angle_v1v2():  Calculates angle between two vectors.
 #------------------------------------------------------------------------------
 
 Created on Tue Jun 27 11:50:32 2017
@@ -43,8 +47,9 @@ Created on Tue Jun 27 11:50:32 2017
 
 from luxpy import *
 from scipy.special import erf, erfinv
-__all__ = ['symmM_to_posdefM','check_symmetric','check_posdef','positive_arctan','line_intersect','erf', 'erfinv', 'pol2cart', 'cart2pol']
-__all__+= ['bvgpdf','mahalanobis2','dot23', 'rms','geomean','polyarea']
+__all__  = ['symmM_to_posdefM','check_symmetric','check_posdef','positive_arctan','line_intersect','erf', 'erfinv', 'pol2cart', 'cart2pol']
+__all__ += ['bvgpdf','mahalanobis2','dot23', 'rms','geomean','polyarea']
+__all__ += ['magnitude_v','angle_v1v2']
 
 
 #------------------------------------------------------------------------------
@@ -407,3 +412,40 @@ def pol2cart(theta, r = None, htype = 'deg'):
         theta = theta[...,0].copy()
     theta = theta*d2r
     return r*np.cos(theta), r*np.sin(theta)
+
+#------------------------------------------------------------------------------
+# magnitude of a vector
+def magnitude_v(v):
+    """
+    Calculates magnitude of vector.
+    
+    Args:
+        :v: numpy.ndarray with vector
+ 
+    Returns:
+        :magnitude: numpy.ndarray 
+    """
+    magnitude = np.sqrt(v[:,0]**2 + v[:,1]**2)
+    return magnitude
+
+
+# angle between vectors
+def angle_v1v2(v1,v2,htype = 'deg'):
+    """
+    Calculates angle between two vectors.
+    
+    Args:
+        :v1: numpy.ndarray with vector 1
+        :v2: numpy.ndarray with vector 2
+        :htype: 'deg' or 'rad', optional
+            Requested angle type.
+    
+    Returns:
+        :ang: numpy.ndarray 
+    """
+    denom = magnitude_v(v1)*magnitude_v(v2)
+    denom[denom==0.] = np.nan
+    ang = np.arccos(np.sum(v1*v2,axis=1)/denom)
+    if htype == 'deg':
+        ang = ang*180/np.pi
+    return ang

@@ -133,5 +133,3 @@ __all__ += ['cri']
 from . plotters import *
 __all__ += plotters.__all__
 
-#from .cri_graphics import *
-#__all__ += cri_graphics.__all__

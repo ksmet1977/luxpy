@@ -16,6 +16,7 @@
 #
 # plotUH(): Plot unique hue lines from color space center point xyz0. (Kuehni, CRA, 2013: uY,uB,uG: Table II: spectral lights; uR: Table IV: Xiao data) [Kuehni, R. G. (n.d.). Unique hues and their stimuli—state of the art. Color Research & Application, 39(3), 279–287](https://doi.org/10.1002/col.21793)
 #
+# plotcircle(): Plot one or more concentric circles.
 #--------------------------------------------------------------------------------------------------
 
 Created on Tue Jul  4 14:44:45 2017
@@ -25,7 +26,7 @@ Created on Tue Jul  4 14:44:45 2017
 
 from luxpy import *
 import matplotlib.pyplot as plt 
-__all__ = ['plotSL','plotDL','plotBB','plot_color_data','plotceruleanline','plotUH']
+__all__ = ['plotSL','plotDL','plotBB','plot_color_data','plotceruleanline','plotUH','plotcircle']
 
 
 
@@ -335,3 +336,29 @@ def plotUH(xyz0 = None, uhues = [0,1,2,3], cieobs = _CIEOBS, cspace = _CSPACE, a
     return  huniquehues
 
 #------------------------------------------------------------------------------
+def plotcircle(center = np.array([0.,0.]),radii = np.arange(0,60,10), angles = np.arange(0,350,10),color = 'k',linestyle = '--', out = None):
+    """
+    Plot one or more concentric circles.
+    
+    Args:
+        :center: np.array([0.,0.]) or numpy.ndarray with center coordinates, optional
+        :radii: np.arange(0,60,10) or numpy.ndarray with radii of circle(s), optional
+        :angles: np.arange(0,350,10) or numpy.ndarray with angles (°), optional
+        :color: 'k', optional
+            Color for plotting.
+        :linestyle: '--', optional
+            Linestyle of circles.
+        :out: None, optional
+            If None: plot circles, return (x,y) otherwise.
+    """
+    xs = np.array([0])
+    ys = xs.copy()
+    for ri in radii:
+        x = ri*np.cos(angles*np.pi/180)
+        y = ri*np.sin(angles*np.pi/180)
+        xs = np.hstack((xs,x))
+        ys = np.hstack((ys,y))
+        if out != 'x,y':
+            plt.plot(x,y,color = color, linestyle = linestyle)
+    if out == 'x,y':
+        return xs,ys

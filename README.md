@@ -494,6 +494,9 @@ Plot cerulean (yellow (577 nm) - blue (472 nm)) line (Kuehni, CRA, 2014: Table I
 ### plotUH():
 Plot unique hue lines from color space center point xyz0. (Kuehni, CRA, 2014: uY,uB,uG: Table II: spectral lights; uR: Table IV: Xiao data) [Kuehni, R. G. (2014). Unique hues and their stimuli—state of the art. Color Research & Application, 39(3), 279–287](https://doi.org/10.1002/col.21793)
 
+### plotcircle():
+Plot one or more concentric circles.
+
 For more info:
 
     ?luxpy.plotters
@@ -583,7 +586,6 @@ Calculates bivariate Gaussian (PD) function, with center mu and shape and orient
 ### math.mahalanobis2():
 Calculates mahalanobis.^2 distance with center mu and shape and orientation determined by sigmainv. 
 
-
 ### math.rms():
 Calculates root-mean-square along axis.
 
@@ -601,6 +603,12 @@ Converts Cartesian to polar coordinates.
 
 # pol2cart(): 
 Converts polar to Cartesian coordinates.
+
+# magnitude_v():  
+Calculates magnitude of vector.
+
+# angle_v1v2():  
+Calculates angle between two vectors.
 
 For more info:
 

@@ -128,10 +128,11 @@ _CRI_RFL['cqs'] = _CQS
 # 1269 Munsell spectral reflectance functions:
 _MUNSELL = {'cieobs':'1931_2', 'Lw' : 400.0, 'Yb': 0.2}
 _MUNSELL['R'] = getdata(_R_PATH + 'Munsell1269.dat',kind='np').T
-temp = getdata(_R_PATH + 'Munsell_VabCh.dat',kind='np')
-_MUNSELL['V'] = temp[:,0,None]
-_MUNSELL['ab'] = temp[:,1:2]
+temp = getdata(_R_PATH + 'Munsell1269_notations.dat',kind='np',header = 'infer',verbosity=0)
+_MUNSELL['H'] = temp[:,1,None]
+_MUNSELL['V'] = temp[:,2,None]
 _MUNSELL['C'] = temp[:,3,None]
 _MUNSELL['h'] = temp[:,4,None]
+_MUNSELL['ab'] = temp[:,5:7]
 
 del temp, ies99categories

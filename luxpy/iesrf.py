@@ -47,7 +47,7 @@ if plot_iestm30_output == True:
     # plot ColorVectorGraphic:
     axtype ='polar'
     #rect = [0.1, 0.1, 0.9, 0.9]
-    lx.cri.plot_cri_graphics(SPD, hbins = nhbins, axtype = axtype, fig = None, plot_center_lines = False, plot_edge_lines = True, scalef = normalized_chroma_ref*1.2, force_CVG_layout = True)
+    lx.cri.plot_cri_graphics(SPD, hbins = nhbins, axtype = axtype, ax = None, plot_center_lines = False, plot_edge_lines = True, scalef = normalized_chroma_ref*1.2, force_CVG_layout = True)
     #lx.cri.plot_cri_graphics(data, hbins = nhbins, axtype = axtype, fig = ax_CVG, plot_center_lines = False, plot_edge_lines = True, scalef = normalized_chroma_ref*1.2, force_CVG_layout = True)
 
                

@@ -8,7 +8,8 @@
 #
 # plot_ColorVectorGraphic(): Plots Color Vector Graphic (see IES TM30).
 #
-# plot_cri_grpahics(): Plot graphical information on color rendition properties.
+# plot_cri_grpahics(): Plots graphical information on color rendition properties.
+
 #------------------------------------------------------------------------------
 
 
@@ -17,15 +18,20 @@ Created on Mon Apr  2 02:00:50 2018
 @author: kevin.smet
 """
 
+
 from luxpy import *
 from luxpy.colorrendition_indices import *
 import numpy as np
 import matplotlib.pyplot as plt
 import colorsys
 
-__all__ = ['plot_hue_bins','plot_ColorVectorGraphic','plot_cri_graphics']
 
-def plot_hue_bins(hbins = 16, start_hue = 0.0, scalef = 100, plot_axis_labels = False, bin_labels = '#', plot_edge_lines = True, plot_center_lines = False, axtype = 'polar', fig = None, force_CVG_layout = False):
+__all__ = [ 'plot_hue_bins','plot_ColorVectorGraphic','plot_cri_graphics']
+
+
+
+
+def plot_hue_bins(hbins = 16, start_hue = 0.0, scalef = 100, plot_axis_labels = False, bin_labels = '#', plot_edge_lines = True, plot_center_lines = False, axtype = 'polar', ax = None, force_CVG_layout = False):
     """
     Makes basis plot for Color Vector Graphic (CVG).
     
@@ -47,7 +53,7 @@ def plot_hue_bins(hbins = 16, start_hue = 0.0, scalef = 100, plot_axis_labels = 
             Plot colored lines at 'center' of hue bin.
         :axtype: 'polar' or 'cart', optional
             Make polar or Cartesian plot.
-        :fig: None or 'new' or 'same', optional
+        :ax: None or 'new' or 'same', optional
             - None or 'new' creates new plot
             - 'same': continue plot on same axes.
             - axes handle: plot on specified axes.
@@ -80,7 +86,8 @@ def plot_hue_bins(hbins = 16, start_hue = 0.0, scalef = 100, plot_axis_labels = 
         bin_labels = ['#{:1.0f}'.format(i+1) for i in range(nhbins)]
       
     # initializing the figure
-    if (fig == None) or (fig == 'new'):
+    cmap = None
+    if (ax == None) or (ax == 'new'):
         fig = plt.figure()
         newfig = True
     else:
@@ -91,15 +98,12 @@ def plot_hue_bins(hbins = 16, start_hue = 0.0, scalef = 100, plot_axis_labels = 
         # the polar axis:
         if newfig == True:
             ax = fig.add_axes(rect, polar=True, frameon=False)
-        else:
-            ax = fig
     else:
         #cartesian axis:
         if newfig == True:
             ax = fig.add_axes(rect)
-        else:
-            ax = fig
 
+    
     if (newfig == True) | (force_CVG_layout == True):
         
         # Calculate hue-bin boundaries:
@@ -183,7 +187,7 @@ def plot_hue_bins(hbins = 16, start_hue = 0.0, scalef = 100, plot_axis_labels = 
 
     return plt.gcf(), plt.gca(), cmap
 
-def plot_ColorVectorGraphic(jabt, jabr, hbins = 16, start_hue = 0.0, scalef = 100, plot_axis_labels = False, bin_labels = None, plot_edge_lines = True, plot_center_lines = False, axtype = 'polar', fig = None, force_CVG_layout = False):
+def plot_ColorVectorGraphic(jabt, jabr, hbins = 16, start_hue = 0.0, scalef = 100, plot_axis_labels = False, bin_labels = None, plot_edge_lines = True, plot_center_lines = False, axtype = 'polar', ax = None, force_CVG_layout = False):
     """
     Plot Color Vector Graphic (CVG).
     
@@ -207,7 +211,7 @@ def plot_ColorVectorGraphic(jabt, jabr, hbins = 16, start_hue = 0.0, scalef = 10
             Plot colored lines at 'center' of hue bin.
         :axtype: 'polar' or 'cart', optional
             Make polar or Cartesian plot.
-        :fig: None or 'new' or 'same', optional
+        :ax: None or 'new' or 'same', optional
             - None or 'new' creates new plot
             - 'same': continue plot on same axes.
             - axes handle: plot on specified axes.
@@ -220,7 +224,7 @@ def plot_ColorVectorGraphic(jabt, jabr, hbins = 16, start_hue = 0.0, scalef = 10
     """
     
     # Plot basis of CVG:
-    figCVG, ax, cmap = plot_hue_bins(hbins = hbins, axtype = axtype, fig = fig, plot_center_lines = plot_center_lines, plot_edge_lines = plot_edge_lines, scalef = scalef, force_CVG_layout = force_CVG_layout)
+    figCVG, ax, cmap = plot_hue_bins(hbins = hbins, axtype = axtype, ax = ax, plot_center_lines = plot_center_lines, plot_edge_lines = plot_edge_lines, scalef = scalef, force_CVG_layout = force_CVG_layout)
 
     if cmap == []:
         cmap = ['k' for i in range(hbins)]
@@ -247,7 +251,7 @@ def plot_ColorVectorGraphic(jabt, jabr, hbins = 16, start_hue = 0.0, scalef = 10
     
     return plt.gcf(), plt.gca(), cmap
 
-def plot_cri_graphics(data, cri_type = None, hbins = 16, start_hue = 0.0, scalef = 100, plot_axis_labels = False, bin_labels = None, plot_edge_lines = True, plot_center_lines = False, axtype = 'polar', fig = None, force_CVG_layout = True):
+def plot_cri_graphics(data, cri_type = None, hbins = 16, start_hue = 0.0, scalef = 100, plot_axis_labels = False, bin_labels = None, plot_edge_lines = True, plot_center_lines = False, axtype = 'polar', ax = None, force_CVG_layout = True):
     """
     Plot graphical information on color rendition properties.
     
@@ -285,7 +289,7 @@ def plot_cri_graphics(data, cri_type = None, hbins = 16, start_hue = 0.0, scalef
             Plot colored lines at 'center' of hue bin.
         :axtype: 'polar' or 'cart', optional
             Make polar or Cartesian plot.
-        :fig: None or 'new' or 'same', optional
+        :ax: None or 'new' or 'same', optional
             - None or 'new' creates new plot
             - 'same': continue plot on same axes.
             - axes handle: plot on specified axes.
@@ -298,7 +302,7 @@ def plot_cri_graphics(data, cri_type = None, hbins = 16, start_hue = 0.0, scalef
             :data: dict with color rendering data
             :[...]: list with handles to current figure and 4 axes.
             :cmap: list with rgb colors for hue bins (for use in other plotting fcns)
-  
+        
     """
     
     if isinstance(data,dict):
@@ -344,7 +348,7 @@ def plot_cri_graphics(data, cri_type = None, hbins = 16, start_hue = 0.0, scalef
         
         # Plot CVG:
         ax_CVG = plt.subplot2grid((3, 3), (1, 0), colspan=2, rowspan=2, polar = True, frameon=False)
-        figCVG, ax, cmap = plot_ColorVectorGraphic(bjabt[...,i,:], bjabr[...,i,:], hbins = hbins, axtype = axtype, fig = ax_CVG, plot_center_lines = False, plot_edge_lines = True, scalef = scalef, force_CVG_layout = force_CVG_layout)
+        figCVG, ax, cmap = plot_ColorVectorGraphic(bjabt[...,i,:], bjabr[...,i,:], hbins = hbins, axtype = axtype, ax = ax_CVG, plot_center_lines = False, plot_edge_lines = True, scalef = scalef, force_CVG_layout = force_CVG_layout)
         #ax_CVG.set_title('Color Vector Graphic')
     
         
@@ -385,4 +389,5 @@ def plot_cri_graphics(data, cri_type = None, hbins = 16, start_hue = 0.0, scalef
         
         plt.tight_layout()
         
-    return  data, [plt.gcf(),ax_spd, ax_CVG, ax_locC, ax_locH],cmap
+    return  data,  [plt.gcf(),ax_spd, ax_CVG, ax_locC, ax_locH], cmap
+
