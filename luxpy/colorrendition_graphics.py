@@ -148,7 +148,7 @@ def plot_hue_bins(hbins = 16, start_hue = 0.0, scalef = 100, plot_axis_labels = 
             
             if axtype == 'polar':
                 if plot_edge_lines == True:
-                    ax.plot(edges[:,i],r[:,i]*1.2,color = 'grey',marker = 'None',linestyle = ':',linewidth = 3, markersize = 2)
+                    ax.plot(edges[:,i],r[:,i]*1.2,color = 'grey',marker = 'None',linestyle = ':',linewidth = 2, markersize = 2)
                 if plot_center_lines == True:
                     if np.mod(i,2) == 1:
                         ax.plot(theta[:,i],r[:,i],color = c,marker = None,linestyle = '--',linewidth = 2)
@@ -162,7 +162,7 @@ def plot_hue_bins(hbins = 16, start_hue = 0.0, scalef = 100, plot_axis_labels = 
                     ax.set_yticklabels([])
             else:
                 if plot_edge_lines == True:
-                    ax.plot(hxe[:,i],hye[:,i],color = 'grey',marker = 'None',linestyle = ':',linewidth = 3, markersize = 2)
+                    ax.plot(hxe[:,i],hye[:,i],color = 'grey',marker = 'None',linestyle = ':',linewidth = 2, markersize = 2)
 
                 if plot_center_lines == True:
                     if np.mod(i,2) == 1:
