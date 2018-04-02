@@ -228,13 +228,16 @@ def plot_ColorVectorGraphic(jabt, jabr, hbins = 16, start_hue = 0.0, scalef = 10
     if axtype == 'polar':
        
         jabr_theta, jabr_r = math.cart2pol(jabr[...,1:3], htype = 'rad') 
+        jabt_theta, jabt_r = math.cart2pol(jabt[...,1:3], htype = 'rad') 
         
         #ax.quiver(jabrtheta,jabr_r,jabt[...,1]-jabr[...,1], jabt[...,2]-jabr_binned[...,2], color = 'k', headlength=3, angles='uv', scale_units='y', scale = 2,linewidth = 0.5)
+        ax.plot(jabt_theta,jabt_r, color = 'grey',linewidth = 2)   
         for j in range(hbins):
             c = cmap[j]
             ax.quiver(jabr_theta[j],jabr_r[j],jabt[j,1]-jabr[j,1], jabt[j,2]-jabr[j,2], edgecolor = 'k',facecolor = c, headlength=3, angles='uv', scale_units='y', scale = 2,linewidth = 0.5)
     else:
         #ax.quiver(jabr[...,1],jabr[...,2],jabt[...,1]-jabr[...,1], jabt[...,2]-jabr[...,2], color = 'k', headlength=3, angles='uv', scale_units='xy', scale = 1,linewidth = 0.5)
+        ax.plot(jabt,jabt, color = 'grey',linewidth = 2)
         for j in range(hbins):
             ax.quiver(jabr[j,1],jabr[j,2],jabt[j,1]-jabr[j,1], jabt[j,2]-jabr[j,2], color = cmap[j], headlength=3, angles='uv', scale_units='xy', scale = 1,linewidth = 0.5)
 
