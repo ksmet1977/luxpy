@@ -293,8 +293,12 @@ def plot_cri_graphics(data, cri_type = None, hbins = 16, start_hue = 0.0, scalef
             True: Force plot of basis of CVG.
             
     Returns:
-        :returns: gcf(), gca(), list with rgb colors for hue bins (for use in other plotting fcns)
+        :returns: data, [plt.gcf(),ax_spd, ax_CVG, ax_locC, ax_locH], cmap 
         
+            :data: dict with color rendering data
+            :[...]: list with handles to current figure and 4 axes.
+            :cmap: list with rgb colors for hue bins (for use in other plotting fcns)
+       
     """
     
     if isinstance(data,dict):
@@ -381,4 +385,4 @@ def plot_cri_graphics(data, cri_type = None, hbins = 16, start_hue = 0.0, scalef
         
         plt.tight_layout()
         
-    return  data, plt.gcf()
+    return  data, [plt.gcf(),ax_spd, ax_CVG, ax_locC, ax_locH],cmap
