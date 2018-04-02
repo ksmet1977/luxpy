@@ -130,13 +130,15 @@ def psy_scale(data, scale_factor = [1.0/55.0, 3.0/2.0, 2.0], scale_max = 100.0):
 
 #------------------------------------------------------------------------------
 # create default settings for different color rendition indices: (major dict has 9 keys (04-Jul-2017): sampleset [str/dict], ref_type [str], cieobs [str], avg [fcn handle], scale [dict], cspace [dict], catf [dict], rg_pars [dict], cri_specific_pars [dict])
-_CRI_DEFAULTS = {'cri_types' : ['ciera','ciera-8','ciera-14','cierf','iesrf','cri2012','cri2012-hl17','cri2012-hl1000','cri2012-real210','mcri','cqs-v7.5','cqs-v9.0']}
+_CRI_DEFAULTS = {'cri_types' : ['ciera','ciera-8','ciera-14','cierf','iesrf','iesrf-tm30-15','iesrf-tm30-18','cri2012','cri2012-hl17','cri2012-hl1000','cri2012-real210','mcri','cqs-v7.5','cqs-v9.0']}
 _CRI_DEFAULTS['ciera'] = {'sampleset' : "_CRI_RFL['cie-13.3-1995']['8']", 'ref_type' : 'ciera', 'cieobs' : {'xyz': '1931_2', 'cct' : '1931_2'}, 'avg' : np.mean, 'scale' :{'fcn' : linear_scale, 'cfactor' : [4.6]}, 'cspace' : {'type':'wuv', 'xyzw' : None}, 'catf': {'xyzw':None, 'mcat':'judd-1945','D':1.0,'La':None,'cattype':'vonkries','Dtype':None, 'catmode' : '1>2'}, 'rg_pars' : {'nhbins': None, 'start_hue':0.0, 'normalize_gamut': False}, 'cri_specific_pars' : None}
 _CRI_DEFAULTS['ciera-8'] = _CRI_DEFAULTS['ciera'].copy()
 _CRI_DEFAULTS['ciera-14'] = _CRI_DEFAULTS['ciera'].copy() 
 _CRI_DEFAULTS['ciera-14']['sampleset'] = "_CRI_RFL['cie-13.3-1995']['14']"
 _CRI_DEFAULTS['cierf'] = {'sampleset' : "_CRI_RFL['cie-224-2017']['99']['5nm']", 'ref_type' : 'cierf', 'cieobs' : {'xyz': '1964_10', 'cct' : '1931_2'}, 'avg' : np.mean, 'scale' : {'fcn' : log_scale, 'cfactor' : [6.73]}, 'cspace' : {'type' : 'jab_cam02ucs' , 'xyzw': None, 'mcat':'cat02', 'Yw':100.0, 'conditions' :{'La':100.0,'surround':'avg','D':1.0,'Yb':20.0,'Dtype':None},'yellowbluepurplecorrect' : None},'catf': None, 'rg_pars' : {'nhbins': 8, 'start_hue':0.0, 'normalize_gamut': False, 'normalized_chroma_ref' : 100}, 'cri_specific_pars' : None}
-_CRI_DEFAULTS['iesrf'] = {'sampleset' : "_CRI_RFL['ies-tm30-15']['99']['5nm']", 'ref_type' : 'iesrf', 'cieobs' : {'xyz': '1964_10', 'cct' : '1931_2'}, 'avg' : np.mean, 'scale' :{'fcn' : log_scale, 'cfactor' : [7.54]}, 'cspace' : {'type': 'jab_cam02ucs', 'xyzw':None, 'mcat':'cat02', 'Yw':100.0, 'conditions' :{'La':100.0,'surround':'avg','D':1.0,'Yb':20.0,'Dtype':None},'yellowbluepurplecorrect' : None},'catf': None, 'rg_pars' : {'nhbins': 16, 'start_hue':0.0, 'normalize_gamut': False, 'normalized_chroma_ref' : 100}, 'cri_specific_pars' : None}
+_CRI_DEFAULTS['iesrf'] = {'sampleset' : "_CRI_RFL['ies-tm30-18']['99']['5nm']", 'ref_type' : 'iesrf', 'cieobs' : {'xyz': '1964_10', 'cct' : '1931_2'}, 'avg' : np.mean, 'scale' :{'fcn' : log_scale, 'cfactor' : [6.73]}, 'cspace' : {'type': 'jab_cam02ucs', 'xyzw':None, 'mcat':'cat02', 'Yw':100.0, 'conditions' :{'La':100.0,'surround':'avg','D':1.0,'Yb':20.0,'Dtype':None},'yellowbluepurplecorrect' : None},'catf': None, 'rg_pars' : {'nhbins': 16, 'start_hue':0.0, 'normalize_gamut': False, 'normalized_chroma_ref' : 100}, 'cri_specific_pars' : None}
+_CRI_DEFAULTS['iesrf-tm30-15'] = {'sampleset' : "_CRI_RFL['ies-tm30-15']['99']['5nm']", 'ref_type' : 'iesrf', 'cieobs' : {'xyz': '1964_10', 'cct' : '1931_2'}, 'avg' : np.mean, 'scale' :{'fcn' : log_scale, 'cfactor' : [7.54]}, 'cspace' : {'type': 'jab_cam02ucs', 'xyzw':None, 'mcat':'cat02', 'Yw':100.0, 'conditions' :{'La':100.0,'surround':'avg','D':1.0,'Yb':20.0,'Dtype':None},'yellowbluepurplecorrect' : None},'catf': None, 'rg_pars' : {'nhbins': 16, 'start_hue':0.0, 'normalize_gamut': False, 'normalized_chroma_ref' : 100}, 'cri_specific_pars' : None}
+_CRI_DEFAULTS['iesrf-tm30-18'] = {'sampleset' : "_CRI_RFL['ies-tm30-18']['99']['5nm']", 'ref_type' : 'iesrf', 'cieobs' : {'xyz': '1964_10', 'cct' : '1931_2'}, 'avg' : np.mean, 'scale' :{'fcn' : log_scale, 'cfactor' : [6.73]}, 'cspace' : {'type': 'jab_cam02ucs', 'xyzw':None, 'mcat':'cat02', 'Yw':100.0, 'conditions' :{'La':100.0,'surround':'avg','D':1.0,'Yb':20.0,'Dtype':None},'yellowbluepurplecorrect' : None},'catf': None, 'rg_pars' : {'nhbins': 16, 'start_hue':0.0, 'normalize_gamut': False, 'normalized_chroma_ref' : 100}, 'cri_specific_pars' : None}
 _CRI_DEFAULTS['cri2012'] = {'sampleset' : "_CRI_RFL['cri2012']['HL17']", 'ref_type' : 'ciera', 'cieobs' : {'xyz': '1964_10', 'cct' : '1931_2'}, 'avg' : math.rms, 'scale' : {'fcn': psy_scale, 'cfactor' : [1/55, 3/2, 2]}, 'cspace' : {'type': 'jab_cam02ucs', 'xyzw':None, 'mcat':'cat02', 'Yw':100.0, 'conditions' :{'La':100.0,'surround':'avg','D':1.0,'Yb':20.0,'Dtype':None},'yellowbluepurplecorrect' : 'brill-suss'},'catf': None, 'rg_pars' : {'nhbins': None, 'start_hue':0.0, 'normalize_gamut': False, 'normalized_chroma_ref' : 100}, 'cri_specific_pars' : None}
 _CRI_DEFAULTS['cri2012-hl17'] = _CRI_DEFAULTS['cri2012'].copy()
 _CRI_DEFAULTS['cri2012-hl1000'] = {'sampleset' : "_CRI_RFL['cri2012']['HL1000']", 'ref_type' : 'ciera','cieobs' : {'xyz': '1964_10', 'cct' : '1931_2'}, 'avg' : math.rms,'scale': {'fcn' : psy_scale, 'cfactor' : [1/50, 3/2, 2]}, 'cspace' : {'type' : 'jab_cam02ucs','xyzw':None, 'mcat':'cat02', 'Yw':100.0, 'conditions' :{'La':100.0,'surround':'avg','D':1.0,'Yb':20.0,'Dtype':None},'yellowbluepurplecorrect' : 'brill-suss'},'catf': None, 'rg_pars' : {'nhbins': None, 'start_hue':0.0, 'normalize_gamut': False,'normalized_chroma_ref' : 100}, 'cri_specific_pars' : None}
@@ -219,6 +221,8 @@ def gamut_slicer(jab_test,jab_ref, out = 'jabt,jabr', nhbins = None, start_hue =
         test_shape[0] = test_shape[0] + close_gamut*1
     jabt = np.zeros(test_shape)
     jabr = jabt.copy()
+    binnr = jab_test[...,0].copy()
+    DEi = jabt[...,0].copy()
     for ii in range(jab_test.shape[1]):
           
         # calculate hue angles:
@@ -230,7 +234,7 @@ def gamut_slicer(jab_test,jab_ref, out = 'jabt,jabr', nhbins = None, start_hue =
             jabtii = jab_test[Ir,ii,:]
             jabrii = jab_ref[Ir,ii,:]
             nhbins = (jabtii.shape[0])
-
+            DEi[...,ii] =  np.sqrt(np.power((jabtii - jabtii),2).sum(axis = jabtii.ndim -1))
         else:
             
             #divide huecircle/data in n hue slices:
@@ -244,7 +248,8 @@ def gamut_slicer(jab_test,jab_ref, out = 'jabt,jabr', nhbins = None, start_hue =
                 if i in hbins:
                     jabtii[i,:] = jab_test[hbins==i,ii,:].mean(axis = 0)
                     jabrii[i,:] = jab_ref[hbins==i,ii,:].mean(axis = 0)
-
+                    DEi[i,ii] =  np.sqrt(np.power((jab_test[hbins==i,ii,:] - jab_ref[hbins==i,ii,:]),2).sum(axis = jab_test[hbins==i,ii,:].ndim -1)).mean(axis = 0)
+        
         if normalize_gamut == True:
             #renormalize jabtii using jabrii:
             Ct = np.sqrt(jabtii[:,1]**2 + jabtii[:,2]**2)
@@ -267,6 +272,7 @@ def gamut_slicer(jab_test,jab_ref, out = 'jabt,jabr', nhbins = None, start_hue =
 
         jabt[:,ii,:] = jabtii
         jabr[:,ii,:] = jabrii
+        binnr[:,ii] = hbins
 
     # circle coordinates for plotting:
     hc = np.arange(360.0)*np.pi/180.0
@@ -280,8 +286,10 @@ def gamut_slicer(jab_test,jab_ref, out = 'jabt,jabr', nhbins = None, start_hue =
 
     if out == 'jabt,jabr':
         return jabt, jabr
-    elif out == 'jabt,jabr,jabc':
-        return jabt, jabr, jabc
+    elif out == 'jabt,jabr,DEi':
+        return jabt, jabr, DEi
+    elif out == 'jabt,jabr,DEi,binnr':
+        return jabt, jabr, DEi, binnr
     else:
         return eval(out)        
  
@@ -315,10 +323,8 @@ def jab_to_rg(jabt,jabr, max_scale = 100, ordered_and_sliced = False, nhbins = N
     """    
     # slice, order and normalize jabt and jabr:
     if ordered_and_sliced == False: 
-        jabt, jabr, jabc = gamut_slicer(jabt,jabr, out = 'jabt,jabr,jabc', nhbins = nhbins, start_hue = start_hue, normalize_gamut = normalize_gamut, normalized_chroma_ref = normalized_chroma_ref, close_gamut = True)
-    else:
-        jabc = None
-        
+        jabt, jabr, DEi = gamut_slicer(jabt,jabr, out = 'jabt,jabr,DEi', nhbins = nhbins, start_hue = start_hue, normalize_gamut = normalize_gamut, normalized_chroma_ref = normalized_chroma_ref, close_gamut = True)
+ 
     # make 3d:
     test_original_shape = jabt.shape
     if len(test_original_shape)<3:
@@ -335,8 +341,8 @@ def jab_to_rg(jabt,jabr, max_scale = 100, ordered_and_sliced = False, nhbins = N
         return Rg
     elif (out == 'Rg,jabt,jabr'):
         return Rg, jabt, jabr
-    elif (out == 'Rg,jabt,jabr,jabc'):
-        return Rg, jabt, jabr, jabc
+    elif (out == 'Rg,jabt,jabr,DEi'):
+        return Rg, jabt, jabr, DEi
     else:
         return eval(out)
 
@@ -475,7 +481,7 @@ def spd_to_jab_t_r(SPD, cri_type = 'cierf', out = 'jabt,jabr', wl = None, sample
         eval(out)
 
 #------------------------------------------------------------------------------
-def jab_to_rhi(jabt, jabr, cri_type = 'cierf', start_hue = None, nhbins = None, scale_factor = None, scale_fcn = None):
+def jab_to_rhi(jabt, jabr, DEi, cri_type = 'cierf', start_hue = None, nhbins = None, scale_factor = None, scale_fcn = None, use_bin_avg_DEi = True):
     """
     Calculate hue bin measures: Rfhi, Rcshi and Rhshi.
     
@@ -488,6 +494,10 @@ def jab_to_rhi(jabt, jabr, cri_type = 'cierf', start_hue = None, nhbins = None, 
     Args:
         :jabt: numpy.ndarray with jab coordinates under test SPD
         :jabr: numpy.ndarray with jab coordinates under reference SPD
+        :DEi: numpy.ndarray with DEi (from gamut_slicer()).
+        :use_bin_avg_DEi: True, optional
+            Note that following IES-TM30 DEi from gamut_slicer() is obtained by averaging the DEi per hue bin (True), and
+            NOT by averaging the jabt and jabr per hue  bin and then calculating the DEi (False).
         :nhbins: int, number of hue bins to slice gamut (None use the one specified in :cri_type: dict).
         :start_hue: float (°), hue at which to start slicing
         :scale_fcn: function handle to type of cri scale, 
@@ -508,6 +518,7 @@ def jab_to_rhi(jabt, jabr, cri_type = 'cierf', start_hue = None, nhbins = None, 
     if isinstance(cri_type, str): 
         args = locals().copy() # get dict with keyword input arguments to function (used to overwrite non-None input arguments present in cri_type dict)
         cri_type = process_cri_type_input(cri_type, args, callerfunction = 'cri.jab_to_rhi')
+    
 
     # Get scale factor and function:
     if (scale_factor is None):
@@ -518,10 +529,10 @@ def jab_to_rhi(jabt, jabr, cri_type = 'cierf', start_hue = None, nhbins = None, 
         start_hue = cri_type['rg_pars']['start_hue']
     if (nhbins is None):
         nhbins = cri_type['rg_pars']['nhbins']
-        
-    
+     
     # A. Local Color Fidelity, Rfhi:
-    DEi = np.power((jabt - jabr), 2).sum(axis = len(jabt.shape)-1,keepdims = False)**0.5
+    if use_bin_avg_DEi == False:
+        DEi = np.power((bjabt - bjabr), 2).sum(axis = len(bjabt.shape)-1,keepdims = False)**0.5
     Rfhi = scale_fcn(DEi,scale_factor)
     
     # B.Local chroma shift and hue shift, [Rcshi, Rhshi]:
@@ -657,7 +668,7 @@ def spd_to_rg(SPD, cri_type = 'cierf', out = 'Rg', wl = None, sampleset = None, 
     rg_pars = cri_type['rg_pars']
     #rg_pars = put_args_in_db(cri_type['rg_pars'],rg_pars)#{'nhbins':nhbins,'start_hue':start_hue,'normalize_gamut':normalize_gamut}) #override with not-None input from function
     nhbins, normalize_gamut, normalized_chroma_ref, start_hue  = [rg_pars[x] for x in sorted(rg_pars.keys())]
-    Rg, jabt_binned, jabr_binned, jabc_binned = jab_to_rg(jabt,jabr, ordered_and_sliced = False, nhbins = nhbins, start_hue = start_hue, normalize_gamut = normalize_gamut, out = 'Rg,jabt,jabr,jabc')
+    Rg, jabt_binned, jabr_binned, DEi_binned = jab_to_rg(jabt,jabr, ordered_and_sliced = False, nhbins = nhbins, start_hue = start_hue, normalize_gamut = normalize_gamut, out = 'Rg,jabt,jabr,DEi')
     Rg = np2d(Rg)
     
    
@@ -665,8 +676,8 @@ def spd_to_rg(SPD, cri_type = 'cierf', out = 'Rg', wl = None, sampleset = None, 
         return Rg
     elif (out == 'Rg,jabt,jabr'):
         return Rg, jabt_binned,jabr_binned
-    elif (out == 'Rg,jabt,jabr,jabc'):
-        return Rg, jabt_binned,jabr_binned,jabc_binned
+    elif (out == 'Rg,jabt,jabr,DEi'):
+        return Rg, jabt_binned,jabr_binned,DEi_binned
     else:
         return eval(out)
 
@@ -951,9 +962,9 @@ def spd_to_cri(SPD, cri_type = 'cierf', out = 'Rf', wl = None, sampleset = None,
         # calculate gamut area index:
         rg_pars = cri_type['rg_pars'] 
         nhbins, normalize_gamut, normalized_chroma_ref, start_hue = [rg_pars[x] for x in sorted(rg_pars.keys())]
-        Rg, jabt_binned, jabr_binned, jabc_binned = jab_to_rg(jabt,jabr, ordered_and_sliced = False, nhbins = nhbins, start_hue = start_hue, normalize_gamut = normalize_gamut, out = 'Rg,jabt,jabr,jabc')
+        Rg, jabt_binned, jabr_binned, DEi_binned = jab_to_rg(jabt,jabr, ordered_and_sliced = False, nhbins = nhbins, start_hue = start_hue, normalize_gamut = normalize_gamut, out = 'Rg,jabt,jabr,DEi')
     else:
-        jabt_binned, jabr_binned, jabc_binned = None, None, None
+        jabt_binned, jabr_binned, DEi_binned = None, None, None
         
     # B. convert DE to color rendering index:
     Rfi = scale_fcn(DEi,scale_factor)
@@ -961,7 +972,7 @@ def spd_to_cri(SPD, cri_type = 'cierf', out = 'Rf', wl = None, sampleset = None,
     
     # C. Calculate Rfhi, Rhshi and Rcshi:
     if ('Rfhi' in out.split(',')) | ('Rhshi' in out.split(',')) | ('Rcshi' in out.split(',')):
-        Rfhi, Rcshi, Rhshi = jab_to_rhi(jabt = jabt_binned[:-1,...], jabr = jabr_binned[:-1,...], cri_type = cri_type, scale_factor = scale_factor, scale_fcn = scale_fcn) # [:-1,...] removes last row from jab as this was added to close the gamut. 
+        Rfhi, Rcshi, Rhshi = jab_to_rhi(jabt = jabt_binned[:-1,...], jabr = jabr_binned[:-1,...], DEi = DEi_binned, cri_type = cri_type, scale_factor = scale_factor, scale_fcn = scale_fcn, use_bin_avg_DEi = True) # [:-1,...] removes last row from jab as this was added to close the gamut. 
  
     if (out == 'Rf'):
         return Rf

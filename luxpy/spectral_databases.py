@@ -83,7 +83,7 @@ _CIE133_1995['8'] = _CIE133_1995['14'][0:9].copy()
    
  
 #------------------------------------------------------------------------------  
-# IES TM30-15 color fidelity and color galut indices:
+# IES TM30-15/18 color fidelity and color galut indices:
 _IESTM30['R'] = {'4880' : {'5nm': getdata(_R_PATH + 'IESTM30_R4880.dat',kind='np').T}}
 _IESTM30['R']['99'] = {'5nm' : getdata(_R_PATH + 'IESTM30_R99.dat',kind='np').T}
 temp = getdata(_R_PATH + 'IESTM30_R99info.dat',kind='df').values[0]
@@ -120,6 +120,7 @@ _CRI_RFL = {'cie-13.3-1995': _CIE133_1995}
 _CRI_RFL['cie-224-2017'] = _CIE224_2017
 _CRI_RFL['cri2012'] = _CRI2012
 _CRI_RFL['ies-tm30-15'] = _IESTM30['R']
+_CRI_RFL['ies-tm30-18'] = _IESTM30['R']
 _CRI_RFL['mcri'] = _MCRI['R']
 _CRI_RFL['cqs'] = _CQS
 

@@ -83,8 +83,9 @@ _R_INTERP_TYPE = 'linear'
 #--------------------------------------------------------------------------------------------------
 # reference illuminant default and mixing range settings:
 _CRI_REF_TYPE = 'ciera'
-_CRI_REF_TYPES = {'ciera': [5000.0 , 5000.0], 'cierf': [4000.0, 5000.0], 'iesrf':[4500.0, 5500.0],'BB':[5000.0,5000.0],'DL':[5000.0,5000.0]} #mixing ranges for various cri_reference_illuminant types
-
+_CRI_REF_TYPES = {'ciera': [5000.0 , 5000.0], 'cierf': [4000.0, 5000.0], 'cierf-224-2017': [4000.0, 5000.0],\
+                  'iesrf':[4000.0, 5000.0],'iesrf-tm30-15':[4500.0, 5500.0],'iesrf-tm30-18':[4000.0, 5000.0],\
+                  'BB':[5000.0,5000.0],'DL':[5000.0,5000.0]} #mixing ranges for various cri_reference_illuminant types
 
 #--------------------------------------------------------------------------------------------------
 def getwlr(wl3 = None):
