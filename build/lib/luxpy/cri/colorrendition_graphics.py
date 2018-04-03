@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 ###############################################################################
-# Module for color rendition graphical output
+# Module for color rendition graphical output, 1
 ###############################################################################
 #
 # plot_hue_bins(): Makes basis plot for Color Vector Graphic (CVG).
@@ -20,11 +20,9 @@ Created on Mon Apr  2 02:00:50 2018
 
 from .. import np, plt, colorsys
 from ..math import cart2pol 
-from .colorrendition_indices import spd_to_cri, gamut_slicer
+#from .colorrendition_indices import _CRI_RFL, spd_to_cri, gamut_slicer,jab_to_rhi
 
-__all__ = [ 'plot_hue_bins','plot_ColorVectorGraphic','plot_cri_graphics']
-
-
+__all__ = [ 'plot_hue_bins','plot_ColorVectorGraphic']
 
 
 def plot_hue_bins(hbins = 16, start_hue = 0.0, scalef = 100, plot_axis_labels = False, bin_labels = '#', plot_edge_lines = True, plot_center_lines = False, axtype = 'polar', ax = None, force_CVG_layout = False):
@@ -54,7 +52,7 @@ def plot_hue_bins(hbins = 16, start_hue = 0.0, scalef = 100, plot_axis_labels = 
             - 'same': continue plot on same axes.
             - axes handle: plot on specified axes.
         :force_CVG_layout: False or True, optional
-            True: Force plot of basis of CVG.
+            True: Force plot of basis of CVG on first encounter.
             
     Returns:
         :returns: gcf(), gca(), list with rgb colors for hue bins (for use in other plotting fcns)
@@ -78,7 +76,7 @@ def plot_hue_bins(hbins = 16, start_hue = 0.0, scalef = 100, plot_axis_labels = 
     hbincenters = hbincenters*np.pi/180
     
     # Setup hbin labels:
-    if bin_labels == '#':
+    if bin_labels is '#':
         bin_labels = ['#{:1.0f}'.format(i+1) for i in range(nhbins)]
       
     # initializing the figure
@@ -220,7 +218,7 @@ def plot_ColorVectorGraphic(jabt, jabr, hbins = 16, start_hue = 0.0, scalef = 10
     """
     
     # Plot basis of CVG:
-    figCVG, ax, cmap = plot_hue_bins(hbins = hbins, axtype = axtype, ax = ax, plot_center_lines = plot_center_lines, plot_edge_lines = plot_edge_lines, scalef = scalef, force_CVG_layout = force_CVG_layout)
+    figCVG, ax, cmap = plot_hue_bins(hbins = hbins, start_hue = start_hue, scalef = scalef, axtype = axtype, ax = ax, plot_center_lines = plot_center_lines, plot_edge_lines = plot_edge_lines, force_CVG_layout = force_CVG_layout, bin_labels = bin_labels)
 
     if cmap == []:
         cmap = ['k' for i in range(hbins)]
@@ -246,144 +244,4 @@ def plot_ColorVectorGraphic(jabt, jabr, hbins = 16, start_hue = 0.0, scalef = 10
         plt.ylabel("b'")
     
     return plt.gcf(), plt.gca(), cmap
-
-def plot_cri_graphics(data, cri_type = None, hbins = 16, start_hue = 0.0, scalef = 100, plot_axis_labels = False, bin_labels = None, plot_edge_lines = True, plot_center_lines = False, axtype = 'polar', ax = None, force_CVG_layout = True):
-    """
-    Plot graphical information on color rendition properties.
-    
-    Args:
-        :data: numpy.ndarray with spectral data or dict with pre-calculated info on color rendering properties of SPDs
-            If numpy.ndarray: calculate everything in current function, 
-            If dict, it must have the following keys:
-            - key: 'SPD' : numpy.ndarray test SPDs
-            - key: 'bjabt': numpy.ndarray with binned jab data under test SPDs
-            - key: 'bjabr': numpy.ndarray with binned jab data under reference SPDs
-            - key: 'cct' : numpy.ndarray with correlated color temperatures of test SPD
-            - key: 'duv' : numpy.ndarray with distance to blackbody locus of test SPD
-            - key: 'Rf'  : numpy.ndarray with general color fidelity indices
-            - key: 'Rg'  : numpy.ndarray with gamut area indices
-            - key: 'Rfi'  : numpy.ndarray with specific color fidelity indices
-            - key: 'Rfhi'  : numpy.ndarray with local (hue binned) color fidelity indices
-            - key: 'Rcshi'  : numpy.ndarray with local chroma shifts indices
-            - key: 'Rhshi'  : numpy.ndarray with local hue shifts indices
-        :cri_type: None, optional
-            Only needed when :data: is numpy.ndarray of spectral data. If None: defaults to cri_type = 'iesrf'.
-        :hbins: 16 or numpy.ndarray with sorted hue bin centers (°), optional
-        :start_hue: 0.0, optional
-        :scalef: 100, optional
-            Scale factor for graphic.
-        :plot_axis_labels: False, optional
-            Turns axis ticks on/off (True/False).
-        :bin_labels: None or list[str] or '#', optional
-            Plots labels at the bin center hues.
-            - None: don't plot.
-            - list[str]: list with str for each bin. (len(:bin_labels:) = :nhbins:)
-            - '#': plots number.
-        :plot_edge_lines: True or False, optional
-            Plot grey bin edge lines with '--'.
-        :plot_center_lines: False or True, optional
-            Plot colored lines at 'center' of hue bin.
-        :axtype: 'polar' or 'cart', optional
-            Make polar or Cartesian plot.
-        :ax: None or 'new' or 'same', optional
-            - None or 'new' creates new plot
-            - 'same': continue plot on same axes.
-            - axes handle: plot on specified axes.
-        :force_CVG_layout: False or True, optional
-            True: Force plot of basis of CVG.
-            
-    Returns:
-        :returns: data, [plt.gcf(),ax_spd, ax_CVG, ax_locC, ax_locH], cmap 
-        
-            :data: dict with color rendering data
-            :[...]: list with handles to current figure and 4 axes.
-            :cmap: list with rgb colors for hue bins (for use in other plotting fcns)
-        
-    """
-    
-    if isinstance(data,dict):
-        #Unpack dict with pre-calculated data:
-        Rcshi, Rf, Rfhi, Rfi, Rg, Rhshi, SPD, bjabr, bjabt, cct, duv = [data[x] for x in sorted(data.keys())]
-        
-    else:
-        if cri_type is None:
-            cri_type = 'iesrf'
-        
-        SPD = data 
-        
-        #Calculate color rendering measures for SPDs in data:
-        out = 'Rf,Rg,cct,duv,Rfi,jabt,jabr,Rfhi,Rcshi,Rhshi,cri_type'
-        spd_to_iestm30 = lambda x: spd_to_cri(x, cri_type = cri_type, out = out)
-        Rf,Rg,cct,duv,Rfi,jabt,jabr,Rfhi,Rcshi,Rhshi,cri_type = spd_to_iestm30(SPD)
-        
-        # Get normalized and sliced data for plotting:
-        rg_pars = cri_type['rg_pars']
-        nhbins, normalize_gamut, normalized_chroma_ref, start_hue = [rg_pars[x] for x in sorted(rg_pars.keys())]
-        normalize_gamut = True #(for plotting)
-        normalized_chroma_ref = scalef; # np.sqrt((jabr[...,1]**2 + jabr[...,2]**2)).mean(axis = 0).mean()
-
-        bjabt, bjabr = gamut_slicer(jabt,jabr, out = 'jabt,jabr', nhbins = nhbins, start_hue = start_hue, normalize_gamut = normalize_gamut, normalized_chroma_ref = normalized_chroma_ref, close_gamut = True)
-
-        # Create dict with CRI info:
-        data = {'SPD' : data, 'cct' : cct, 'duv' : duv, 'bjabt' : bjabt, 'bjabr' : bjabr,\
-               'Rf' : Rf, 'Rg' : Rg, 'Rfi': Rfi, 'Rfhi' : Rfhi, 'Rchhi' : Rcshi, 'Rhshi' : Rhshi, 'cri_type' : cri_type}
-  
-        
-    for i in range(cct.shape[0]):
-        # Plot test SPD:
-        fig = plt.figure(figsize=(10, 6), dpi=144)
-        ax_spd = plt.subplot2grid((3, 3), (0, 0), colspan=2, rowspan=1)
-        ax_spd.plot(SPD[0],SPD[i+1]/SPD[i+1].max(),'r-')
-        ax_spd.text(730,0.9,'CCT = {:1.0f}K'.format(cct[i][0]),fontsize = 9, horizontalalignment='left',verticalalignment='center',rotation = 0, color = np.array([1,1,1])*0.3)
-        ax_spd.text(730,0.8,'Duv = {:1.4f}'.format(duv[i][0]),fontsize = 9, horizontalalignment='left',verticalalignment='center',rotation = 0, color = np.array([1,1,1])*0.3)
-        ax_spd.text(730,0.7,'IES Rf = {:1.0f}'.format(Rf[:,i][0]),fontsize = 9, horizontalalignment='left',verticalalignment='center',rotation = 0, color = np.array([1,1,1])*0.3)
-        ax_spd.text(730,0.6,'IES Rg = {:1.0f}'.format(Rg[:,i][0]),fontsize = 9, horizontalalignment='left',verticalalignment='center',rotation = 0, color = np.array([1,1,1])*0.3)
-        ax_spd.set_xlabel('Wavelength (nm)')
-        ax_spd.set_ylabel('Rel. spectral intensity')
-        ax_spd.set_xlim([360,830])
-        
-        # Plot CVG:
-        ax_CVG = plt.subplot2grid((3, 3), (1, 0), colspan=2, rowspan=2, polar = True, frameon=False)
-        figCVG, ax, cmap = plot_ColorVectorGraphic(bjabt[...,i,:], bjabr[...,i,:], hbins = hbins, axtype = axtype, ax = ax_CVG, plot_center_lines = False, plot_edge_lines = True, scalef = scalef, force_CVG_layout = force_CVG_layout)
-        #ax_CVG.set_title('Color Vector Graphic')
-    
-        
-        # Plot local chroma shift, Rcshi:
-        ax_locC = plt.subplot2grid((3, 3), (0, 2), colspan=1, rowspan=1)
-        for j in np.arange(hbins):
-            ax_locC.bar(np.arange(hbins)[j],Rcshi[j,i], color = cmap[j], width = 1,edgecolor = 'k', alpha = 0.4)
-            ax_locC.text(np.arange(hbins)[j],-np.sign(Rcshi[j,i])*0.1, '{:1.0f}%'.format(100*Rcshi[j,i]) ,fontsize = 9,horizontalalignment='center',verticalalignment='center',rotation = 90, color = np.array([1,1,1])*0.3)
-        ylim = np.array([np.abs(Rcshi.min()),np.abs(Rcshi.min()),0.2]).max()*1.5
-        ax_locC.set_ylim([-ylim,ylim])
-        ax_locC.set_ylabel(r'Local chroma shift, $R_{cs,hi}$')
-        ax_locC.set_xticklabels([])
-        ax_locC.set_yticklabels(['{:1.2f}'.format(ii) for ii in ax_locC.set_ylim()], color = 'white')
-    
-        # Plot local hue shift, Rhshi:
-        ax_locH = plt.subplot2grid((3, 3), (1, 2), colspan=1, rowspan=1)
-        for j in np.arange(hbins):
-            ax_locH.bar(np.arange(hbins)[j],Rhshi[j,i], color = cmap[j], width = 1,edgecolor = 'k', alpha = 0.4)
-            ax_locH.text(np.arange(hbins)[j],-np.sign(Rhshi[j,i])*0.2, '{:1.3f}'.format(Rhshi[j,i]) ,fontsize = 9,horizontalalignment='center',verticalalignment='center',rotation = 90, color = np.array([1,1,1])*0.3)
-        ylim = np.array([np.abs(Rhshi.min()),np.abs(Rhshi.min()),0.2]).max()*1.5
-        ax_locH.set_ylim([-ylim,ylim])
-        ax_locH.set_ylabel(r'Local hue shift, $R_{hs,hi}$')
-        ax_locH.set_xticklabels([])
-        ax_locH.set_yticklabels(['{:1.2f}'.format(ii) for ii in ax_locH.set_ylim()], color = 'white')
-        
-        # Plot local color fidelity, Rfhi:
-        ax_Rfi = plt.subplot2grid((3, 3), (2, 2), colspan=1, rowspan=1)
-        for j in np.arange(hbins):
-            ax_Rfi.bar(np.arange(hbins)[j],Rfhi[j,i], color = cmap[j], width = 1,edgecolor = 'k', alpha = 0.4)
-            ax_Rfi.text(np.arange(hbins)[j],Rfhi[j,i]*1.1, '{:1.0f}'.format(Rfhi[j,i]) ,fontsize = 9,horizontalalignment='center',verticalalignment='center',color = np.array([1,1,1])*0.3)
-        ax_Rfi.set_ylim([0,120])
-        xticks = np.arange(hbins)
-        xtickslabels = ['{:1.0f}'.format(ii+1) for ii in range(hbins)]
-        ax_Rfi.set_xticks(xticks)
-        ax_Rfi.set_xticklabels(xtickslabels, fontsize = 8)
-        ax_Rfi.set_ylabel(r'Local color fidelity $R_{f,hi}$')
-        ax_Rfi.set_xlabel('Hue bin #')
-        
-        plt.tight_layout()
-        
-    return  data,  [plt.gcf(),ax_spd, ax_CVG, ax_locC, ax_locH], cmap
 

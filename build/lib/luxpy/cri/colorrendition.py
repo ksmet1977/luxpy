@@ -62,6 +62,8 @@ Created on Mon Apr  2 03:35:33 2018
 from .colorrendition_indices import *
 from .colorrendition_graphics import *
 from . import colorrendition_VF_PX_models as VFPX
+from .colorrendition_ies_graphics import plot_cri_graphics
+from .ies_tm30_metrics import spd_to_ies_tm30_metrics
 
 # .colorrendition_indices:
 __all__ =  ['_CRI_DEFAULTS','linear_scale','log_scale','psy_scale','gamut_slicer','jab_to_rg','spd_to_rg','spd_to_DEi','spd_to_cri']
@@ -69,7 +71,13 @@ __all__ += ['spd_to_ciera','spd_to_cierf','spd_to_iesrf','spd_to_iesrg','spd_to_
 __all__ += ['spd_to_mcri', 'spd_to_cqs']
 
 # .colorrendition_graphics:
-__all__ += ['plot_hue_bins','plot_ColorVectorGraphic','plot_cri_graphics']
+__all__ += ['plot_hue_bins','plot_ColorVectorGraphic']
 
 # colorrendition_VF_PX_models:
 __all__ += ['VFPX']
+
+# .ies_tm30_metrics:
+__all__ += ['spd_to_ies_tm30_metrics']
+
+# .colorrendition_ies_graphics:
+__all__ += ['plot_cri_graphics']
