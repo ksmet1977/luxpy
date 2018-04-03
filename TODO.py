@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sat Jul  8 13:33:02 2017
 
 @author: kevin.smet
 """
 #
-#TO DO:
-#    colormixer
+#TO DO: (03/04/2018)
+#   colormixer
+#	SPDbuilder
+#	Asano (2016) Individual colorimetric observer model
+#	?
