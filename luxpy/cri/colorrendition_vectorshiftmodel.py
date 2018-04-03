@@ -575,7 +575,7 @@ def calculate_shiftvectors(jabt,jabr, average = True, vtype = 'ab'):
 #------------------------------------------------------------------------------
 def plot_shift_data(data, fieldtype = 'vectorfield', scalef = _VF_MAXR, color = 'k', axtype = 'polar', ax = None, \
                     hbins = 10,  start_hue = 0.0, bin_labels = '#', plot_center_lines = True,  \
-                    plot_axis_labels = False, plot_edge_lines = False, force_CVG_layout = True):
+                    plot_axis_labels = False, plot_edge_lines = False, plot_bin_colors = True, force_CVG_layout = True):
      
     """
     Plots vector or circle fields generated with VFcolorshiftmodel() or PXcolorshiftmodel().
@@ -607,6 +607,8 @@ def plot_shift_data(data, fieldtype = 'vectorfield', scalef = _VF_MAXR, color = 
             Plot grey bin edge lines with '--'.
         :plot_center_lines: False or True, optional
             Plot colored lines at 'center' of hue bin.
+        :plot_bin_colors: True, optional
+            Colorize hue-bins.
         :force_CVG_layout: False or True, optional
             True: Force plot of basis of CVG.
     
@@ -620,7 +622,7 @@ def plot_shift_data(data, fieldtype = 'vectorfield', scalef = _VF_MAXR, color = 
     """
        
     # Plot basis of CVG:
-    figCVG, hax, cmap = plot_hue_bins(hbins = hbins, axtype = axtype, ax = ax, plot_center_lines = plot_center_lines, plot_edge_lines = plot_edge_lines, scalef = scalef, force_CVG_layout = force_CVG_layout, bin_labels = bin_labels)
+    figCVG, hax, cmap = plot_hue_bins(hbins = hbins, axtype = axtype, ax = ax, plot_center_lines = plot_center_lines, plot_edge_lines = plot_edge_lines, plot_bin_colors = plot_bin_colors, scalef = scalef, force_CVG_layout = force_CVG_layout, bin_labels = bin_labels)
     
     # plot vector field:
     if data is not None:
@@ -639,7 +641,7 @@ def plot_shift_data(data, fieldtype = 'vectorfield', scalef = _VF_MAXR, color = 
                     dh = dh/np.nanmax(dh)
                     plt.set_cmap('jet')
                     hax.scatter(vfttheta, vftr, s = 100*dh, c = dh, linestyle = 'None', marker = 'o',norm = None)
-                    
+                hax.set_ylim([0, 1.1*scalef])     
             else:
                 if fieldtype == 'vectorfield':
                     hax.quiver(vf['axr'], vf['bxr'], vf['axt'] - vf['axr'], vf['bxt'] - vf['bxr'],  headlength=1,color = color,angles='uv', scale_units='xy', scale = 1,linewidth = 0.5)

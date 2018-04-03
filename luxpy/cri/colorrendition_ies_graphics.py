@@ -27,9 +27,10 @@ __all__ = ['plot_cri_graphics']
 
 def plot_cri_graphics(data, cri_type = None, hbins = 16, start_hue = 0.0, scalef = 100, \
                       plot_axis_labels = False, bin_labels = None, plot_edge_lines = True, \
-                      plot_center_lines = False, axtype = 'polar', ax = None, force_CVG_layout = True,
+                      plot_center_lines = False, plot_bin_colors = True, axtype = 'polar', ax = None, force_CVG_layout = True,
                       vf_model_type = _VF_MODEL_TYPE, vf_pcolorshift = _VF_PCOLORSHIFT, vf_color = 'k', \
-                      vf_bin_labels = _VF_PCOLORSHIFT['labels'], scale_vf_chroma_to_sample_chroma = False):
+                      vf_bin_labels = _VF_PCOLORSHIFT['labels'], vf_plot_bin_colors = True, scale_vf_chroma_to_sample_chroma = False,\
+                      plot_VF = True, plot_CF = False, plot_SF = False):
     """
     Plot graphical information on color rendition properties.
     
@@ -54,6 +55,8 @@ def plot_cri_graphics(data, cri_type = None, hbins = 16, start_hue = 0.0, scalef
             Plot grey bin edge lines with '--'.
         :plot_center_lines: False or True, optional
             Plot colored lines at 'center' of hue bin.
+        :plot_bin_colors: True, optional
+            Colorize hue bins.
         :axtype: 'polar' or 'cart', optional
             Make polar or Cartesian plot.
         :ax: None or 'new' or 'same', optional
@@ -71,12 +74,20 @@ def plot_cri_graphics(data, cri_type = None, hbins = 16, start_hue = 0.0, scalef
             :VF_pcolorshift: specifies these hues and chroma level.
         :vf_color: 'k', optional
             For plotting the vector fields.
+        :vf_plot_bin_colors: True, optional
+            Colorize hue bins of VF graph.
         :scale_vf_chroma_to_sample_chroma: False, optional
            Scale chroma of reference and test vf fields such that average of 
            binned reference chroma equals that of the binned sample chroma
            before calculating hue bin metrics.
         :vf_bin_labels: see :bin_labels:
             Set VF model hue-bin labels.
+        :plot_CF: False, optional
+            Plot circle fields.
+        :plot_VF: True, optional
+            Plot vector fields.
+        :plot_SF: True, optional
+            Plot sample shifts.   
             
     Returns:
         :returns: data, [plt.gcf(),ax_spd, ax_CVG, ax_locC, ax_locH, ax_VF], cmap 
@@ -125,22 +136,22 @@ def plot_cri_graphics(data, cri_type = None, hbins = 16, start_hue = 0.0, scalef
     
         # Plot CVG:
         ax_CVG = create_subplot(layout,1, polar = True, frameon = False)
-        figCVG, ax, cmap = plot_ColorVectorGraphic(bjabt[...,i,:], bjabr[...,i,:], hbins = hbins, axtype = axtype, ax = ax_CVG, plot_center_lines = False, plot_edge_lines = True, scalef = scalef, force_CVG_layout = force_CVG_layout, bin_labels = '#')
+        figCVG, ax, cmap = plot_ColorVectorGraphic(bjabt[...,i,:], bjabr[...,i,:], hbins = hbins, axtype = axtype, ax = ax_CVG, plot_center_lines = plot_center_lines, plot_edge_lines = plot_edge_lines,  plot_bin_colors = plot_bin_colors, scalef = scalef, force_CVG_layout = force_CVG_layout, bin_labels = '#')
         
         # Plot VF:
         ax_VF = create_subplot(layout,2, polar = True, frameon = False)
         if i == 0:
             hbin_cmap = None
     
-        ax_VF, hbin_cmap = plot_VF_PX_models([dataVF[i]], dataPX = None, plot_VF = True, plot_PX = None, axtype = 'polar', ax = ax_VF, \
-                           plot_circle_field = False, plot_sample_shifts = False, \
+        ax_VF, hbin_cmap = plot_VF_PX_models([dataVF[i]], dataPX = None, plot_VF = plot_VF, plot_PX = None, axtype = 'polar', ax = ax_VF, \
+                           plot_circle_field = plot_CF, plot_sample_shifts = plot_SF, plot_bin_colors = vf_plot_bin_colors, \
                            plot_samples_shifts_at_pixel_center = False, jabp_sampled = None, \
-                           plot_VF_colors = ['k'], plot_PX_colors = ['r'], hbin_cmap = hbin_cmap, force_CVG_layout = True, bin_labels = vf_bin_labels)
+                           plot_VF_colors = [vf_color], plot_PX_colors = ['r'], hbin_cmap = hbin_cmap, force_CVG_layout = True, bin_labels = vf_bin_labels)
     
         # Plot test SPD:
         ax_spd = create_subplot(layout,3)
         ax_spd.plot(SPD[0],SPD[i+1]/SPD[i+1].max(),'r-')
-        ax_spd.text(730,0.9,'CCT = {:1.0f}K'.format(cct[i][0]),fontsize = 9, horizontalalignment='left',verticalalignment='center',rotation = 0, color = np.array([1,1,1])*0.3)
+        ax_spd.text(730,0.9,'CCT = {:1.0f} K'.format(cct[i][0]),fontsize = 9, horizontalalignment='left',verticalalignment='center',rotation = 0, color = np.array([1,1,1])*0.3)
         ax_spd.text(730,0.8,'Duv = {:1.4f}'.format(duv[i][0]),fontsize = 9, horizontalalignment='left',verticalalignment='center',rotation = 0, color = np.array([1,1,1])*0.3)
         ax_spd.text(730,0.7,'IES Rf = {:1.0f}'.format(Rf[:,i][0]),fontsize = 9, horizontalalignment='left',verticalalignment='center',rotation = 0, color = np.array([1,1,1])*0.3)
         ax_spd.text(730,0.6,'IES Rg = {:1.0f}'.format(Rg[:,i][0]),fontsize = 9, horizontalalignment='left',verticalalignment='center',rotation = 0, color = np.array([1,1,1])*0.3)
