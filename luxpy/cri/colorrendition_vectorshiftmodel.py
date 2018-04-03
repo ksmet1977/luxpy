@@ -336,7 +336,7 @@ def VF_colorshift_model(S, cri_type = _VF_CRI_DEFAULT, model_type = _VF_MODEL_TY
             Sampleset to be used when calculating vector field model.
         :pool: False, optional
             If :S: contains multiple spectra, True pools all jab data before modeling the vector field, False models a different field for each spectrum.
-        :pcolorshift:  {'href': np.arange(np.pi/10,2*np.pi,2*np.pi/10),'Cref' : _VF_MAXR, 'sig' : _VF_SIG} or user defined dict, optional
+        :pcolorshift:  {'href': np.arange(np.pi/10,2*np.pi,2*np.pi/10),'Cref' : _VF_MAXR, 'sig' : _VF_SIG, 'labels' : '#'} or user defined dict, optional
             Dict containing the specifications input for apply_poly_model_at_hue_x().
             The polynomial models of degree 5 and 6 can be fully specified or summarized 
             by the model parameters themselved OR by calculating the dCoverC and dH at resp. 5 and 6 hues.
@@ -698,7 +698,7 @@ def initialize_VF_hue_angles(hx = None, Cxr = _VF_MAXR, cri_type = _VF_CRI_DEFAU
             Note that for 'M6', an additional 
             
     Returns:
-        :pcolorshift: {'href': href,'Cref' : _VF_MAXR, 'sig' : _VF_SIG}
+        :pcolorshift: {'href': href,'Cref' : _VF_MAXR, 'sig' : _VF_SIG, 'labels' : list[str]}
     """
     
     ###########################################

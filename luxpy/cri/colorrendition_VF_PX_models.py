@@ -223,7 +223,7 @@ def subsample_RFL_set(rfl, rflpath = '', samplefcn = 'rand', S = _CIE_ILLUMINANT
 def plot_VF_PX_models(dataVF = None, dataPX = None, plot_VF = True, plot_PX = True, axtype='polar', ax = 'new', \
                       plot_circle_field = True, plot_sample_shifts = False, plot_samples_shifts_at_pixel_center = False, \
                       jabp_sampled = None, plot_VF_colors = ['g'], plot_PX_colors = ['r'], hbin_cmap = None, \
-                      bin_labels = '#', force_CVG_layout = False):
+                      bin_labels = None, force_CVG_layout = False):
     """
     Plot the VF and PX model color shift vectors.
     
@@ -263,6 +263,13 @@ def plot_VF_PX_models(dataVF = None, dataPX = None, plot_VF = True, plot_PX = Tr
         :hbin_cmap: None or colormap, optional
             Color map with RGB entries for each of the hue bins specified by the hues in _VF_PCOLORSHIFT.
             If None: will be obtained on first run by luxpy.cri.plot_shift_data() and returned as :cmap: for use in other functions.
+        :bin_labels: None or list[str] or '#', optional
+            Plots labels at the bin center hues.
+            - None: don't plot.
+            - list[str]: list with str for each bin. (len(:bin_labels:) = :nhbins:)
+            - '#': plots number.
+            - '_VF_PCOLORSHIFT': uses labels in _VF_PCOLORSHIFT['labels']
+            - 'pcolorshift': uses the labels in dataVF['modeldata']['pcolorshift']['labels']
         :force_CVG_layout: False or True, optional
             True: Force plot of basis of CVG.
     Returns:
@@ -276,11 +283,20 @@ def plot_VF_PX_models(dataVF = None, dataPX = None, plot_VF = True, plot_PX = Tr
             plot_PX_colors = [plot_PX_colors.append('r') for i in range(len(dataPX))]       
     
     cmap = hbin_cmap
-    hbins = _VF_PCOLORSHIFT['href']*180/np.pi
-    start_hue = 0
-    scalef = _VF_PCOLORSHIFT['Cref']
+    
     for Snr in range(len(dataVF)):  
-        
+        if bin_labels is not None:
+            if (bin_labels is 'pcolorshift') & (dataVF is not None):
+                hbins = dataVF[Snr]['modeldata']['pcolorshift']['href']*180/np.pi
+                start_hue = 0
+                scalef = dataVF[Snr]['modeldata']['pcolorshift']['Cref']
+                bin_labels = dataVF[Snr]['modeldata']['pcolorshift']['labels']
+            else: 
+                hbins = _VF_PCOLORSHIFT['href']*180/np.pi
+                start_hue = 0
+                scalef = _VF_PCOLORSHIFT['Cref']
+                bin_labels = _VF_PCOLORSHIFT['labels']
+
         # Plot shift vectors obtained using VF method:    
         if (dataVF is not None) & (plot_VF == True):
             if ((Snr==0) & (ax == 'new')):

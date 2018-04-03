@@ -15,11 +15,11 @@ Created on Tue Apr  3 20:34:09 2018
 """
 
 from .. import np, plt, colorsys
-from .colorrendition_indices import _CRI_RFL, spd_to_cri, gamut_slicer,jab_to_rhi
+from .colorrendition_indices import _CRI_RFL, _CRI_DEFAULTS, spd_to_cri, gamut_slicer,jab_to_rhi
 from .colorrendition_graphics import plot_ColorVectorGraphic
 from .colorrendition_vectorshiftmodel import  _VF_MODEL_TYPE, _VF_PCOLORSHIFT, VF_colorshift_model
 from .colorrendition_VF_PX_models import plot_VF_PX_models
-
+from .ies_tm30_metrics import spd_to_ies_tm30_metrics
 __all__ = ['plot_cri_graphics']
 
 
@@ -34,25 +34,11 @@ def plot_cri_graphics(data, cri_type = None, hbins = 16, start_hue = 0.0, scalef
     Plot graphical information on color rendition properties.
     
     Args:
-        :data: numpy.ndarray with spectral data or dict with pre-calculated info on color rendering properties of SPDs
-            If numpy.ndarray: calculate everything in current function, 
-            If dict, it must have the following keys:
-            - key: 'SPD' : numpy.ndarray test SPDs
-            - key: 'bjabt': numpy.ndarray with binned jab data under test SPDs
-            - key: 'bjabr': numpy.ndarray with binned jab data under reference SPDs
-            - key: 'cct' : numpy.ndarray with correlated color temperatures of test SPD
-            - key: 'duv' : numpy.ndarray with distance to blackbody locus of test SPD
-            - key: 'Rf'  : numpy.ndarray with general color fidelity indices
-            - key: 'Rg'  : numpy.ndarray with gamut area indices
-            - key: 'Rfi'  : numpy.ndarray with specific color fidelity indices
-            - key: 'Rfhi'  : numpy.ndarray with local (hue binned) color fidelity indices
-            - key: 'Rcshi'  : numpy.ndarray with local chroma shifts indices
-            - key: 'Rhshi'  : numpy.ndarray with local hue shifts indices
-            - key: 'Rfm' : numpy.ndarray with general metameric uncertainty index Rfm
-            - key: 'Rfmi' : numpy.ndarray with specific metameric uncertainty indices Rfmi
-            
+        :data: numpy.ndarray with spectral data or dict with pre-computed metrics.
         :cri_type: None, optional
-            Only needed when :data: is numpy.ndarray of spectral data. If None: defaults to cri_type = 'iesrf'.
+            If None: defaults to cri_type = 'iesrf'.
+            :hbins:, :start_hue: and :scalef: are ignored when cri_type is not None 
+            and values are replaced by those in cri_type['rg_pars']
         :hbins: 16 or numpy.ndarray with sorted hue bin centers (°), optional
         :start_hue: 0.0, optional
         :scalef: 100, optional
@@ -96,98 +82,47 @@ def plot_cri_graphics(data, cri_type = None, hbins = 16, start_hue = 0.0, scalef
         :returns: data, [plt.gcf(),ax_spd, ax_CVG, ax_locC, ax_locH, ax_VF], cmap 
         
             :data: dict with color rendering data
+                - key: 'SPD' : numpy.ndarray test SPDs
+                - key: 'bjabt': numpy.ndarray with binned jab data under test SPDs
+                - key: 'bjabr': numpy.ndarray with binned jab data under reference SPDs
+                - key: 'cct' : numpy.ndarray with correlated color temperatures of test SPD
+                - key: 'duv' : numpy.ndarray with distance to blackbody locus of test SPD
+                - key: 'Rf'  : numpy.ndarray with general color fidelity indices
+                - key: 'Rg'  : numpy.ndarray with gamut area indices
+                - key: 'Rfi'  : numpy.ndarray with specific color fidelity indices
+                - key: 'Rfhi'  : numpy.ndarray with local (hue binned) color fidelity indices
+                - key: 'Rcshi'  : numpy.ndarray with local chroma shifts indices
+                - key: 'Rhshi'  : numpy.ndarray with local hue shifts indices
+                - key: 'Rfm' : numpy.ndarray with general metameric uncertainty index Rfm
+                - key: 'Rfmi' : numpy.ndarray with specific metameric uncertainty indices Rfmi
+                - key: 'Rfhi_vf'  : numpy.ndarray with local (hue binned) color fidelity indices 
+                                    obtained from VF model predictions at color space pixel coordinates
+                - key: 'Rcshi_vf'  : numpy.ndarray with local chroma shifts indices (same as above)
+                - key: 'Rhshi_vf'  : numpy.ndarray with local hue shifts indices (same as above)
             :[...]: list with handles to current figure and 5 axes.
             :cmap: list with rgb colors for hue bins (for use in other plotting fcns)
         
     """
-    
-    if isinstance(data,dict):
-        #Unpack dict with pre-calculated data:
-        Rcshi, Rf, Rfhi, Rfi, Rg, Rhshi, SPD, bjabr, bjabt, cct, duv = [data[x] for x in sorted(data.keys())]
-        
-    else:
-        if cri_type is None:
-            cri_type = 'iesrf'
-        
-        SPD = data 
-        
-        #Calculate color rendering measures for SPDs in data:
-        out = 'Rf,Rg,cct,duv,Rfi,jabt,jabr,Rfhi,Rcshi,Rhshi,cri_type'
-        Rf,Rg,cct,duv,Rfi,jabt,jabr,Rfhi,Rcshi,Rhshi,cri_type = spd_to_cri(SPD, cri_type = cri_type, out = out)
-        rg_pars = cri_type['rg_pars']
+    if not isinstance(data,dict):
+        data = spd_to_ies_tm30_metrics(data, cri_type = cri_type, hbins = hbins, start_hue = start_hue, scalef = scalef, vf_model_type = vf_model_type, vf_pcolorshift = vf_pcolorshift, scale_vf_chroma_to_sample_chroma = scale_vf_chroma_to_sample_chroma)
 
+    Rcshi, Rf, Rfchhi_vf, Rfhi, Rfhi_vf, Rfhshi_vf, Rfi, Rfm, Rfmi, Rg, Rhshi, SPD, bjabr, bjabt, cct, cri_type, dataVF, duv = [data[x] for x in sorted(data.keys())]
+    hbins = cri_type['rg_pars']['nhbins']
+    start_hue = cri_type['rg_pars']['start_hue']
+    scalef = cri_type['rg_pars']['normalized_chroma_ref']
         
-        #Calculate Metameric uncertainty and base color shifts:
-        dataVF = VF_colorshift_model(SPD, cri_type = cri_type, model_type = vf_model_type, cspace = cri_type['cspace'], sampleset = eval(cri_type['sampleset']), pool = False, pcolorshift = vf_pcolorshift, vfcolor = vf_color)
-        Rf_ = np.array([dataVF[i]['metrics']['Rf'] for i in range(len(dataVF))]).T
-        Rfm = np.array([dataVF[i]['metrics']['Rfm'] for i in range(len(dataVF))]).T
-        Rfmi = np.array([dataVF[i]['metrics']['Rfmi'] for i in range(len(dataVF))][0])
-        
-        # Get normalized and sliced sample data for plotting:
-        rg_pars = cri_type['rg_pars']
-        nhbins, normalize_gamut, normalized_chroma_ref, start_hue = [rg_pars[x] for x in sorted(rg_pars.keys())]
-        normalized_chroma_ref = scalef; # np.sqrt((jabr[...,1]**2 + jabr[...,2]**2)).mean(axis = 0).mean()
-        
-        if scale_vf_chroma_to_sample_chroma == True:
-            normalize_gamut = False 
-            bjabt, bjabr = gamut_slicer(jabt,jabr, out = 'jabt,jabr', nhbins = nhbins, start_hue = start_hue, normalize_gamut = normalize_gamut, normalized_chroma_ref = normalized_chroma_ref, close_gamut = True)
-            Cr_s = (np.sqrt(bjabr[:-1,...,1]**2 + bjabr[:-1,...,2]**2)).mean(axis=0) # for rescaling vector field average reference chroma
-
-        normalize_gamut = True #(for plotting)
-        bjabt, bjabr = gamut_slicer(jabt,jabr, out = 'jabt,jabr', nhbins = nhbins, start_hue = start_hue, normalize_gamut = normalize_gamut, normalized_chroma_ref = normalized_chroma_ref, close_gamut = True)
-
-
-        Rfhi_vf = np.empty(Rfhi.shape)
-        Rcshi_vf = np.empty(Rcshi.shape)
-        Rhshi_vf = np.empty(Rhshi.shape)
-        for i in range(cct.shape[0]):
-            
-            # Get normalized and sliced VF data for hue specific metrics:
-            vfjabt = np.hstack((np.ones(dataVF[i]['fielddata']['vectorfield']['axt'].shape),dataVF[i]['fielddata']['vectorfield']['axt'],dataVF[i]['fielddata']['vectorfield']['bxt']))
-            vfjabr = np.hstack((np.ones(dataVF[i]['fielddata']['vectorfield']['axr'].shape),dataVF[i]['fielddata']['vectorfield']['axr'],dataVF[i]['fielddata']['vectorfield']['bxr']))
-            nhbins, normalize_gamut, normalized_chroma_ref, start_hue = [rg_pars[x] for x in sorted(rg_pars.keys())]
-            vfbjabt, vfbjabr, vfbDEi = gamut_slicer(vfjabt, vfjabr, out = 'jabt,jabr,DEi', nhbins = nhbins, start_hue = start_hue, normalize_gamut = normalize_gamut, normalized_chroma_ref = normalized_chroma_ref, close_gamut = False)
-            
-            if scale_vf_chroma_to_sample_chroma == True:
-                #rescale vfbjabt and vfbjabr to same chroma level as bjabr.
-                Cr_vfb = np.sqrt(vfbjabr[...,1]**2 + vfbjabr[...,2]**2)
-                Cr_vf = np.sqrt(vfjabr[...,1]**2 + vfjabr[...,2]**2)
-                hr_vf = np.arctan2(vfjabr[...,2],vfjabr[...,1])
-                Ct_vf = np.sqrt(vfjabt[...,1]**2 + vfjabt[...,2]**2)
-                ht_vf = np.arctan2(vfjabt[...,2],vfjabt[...,1])
-                fC = Cr_s.mean()/Cr_vfb.mean()
-                vfjabr[...,1] = fC * Cr_vf*np.cos(hr_vf)
-                vfjabr[...,2] = fC * Cr_vf*np.sin(hr_vf)
-                vfjabt[...,1] = fC * Ct_vf*np.cos(ht_vf)
-                vfjabt[...,2] = fC * Ct_vf*np.sin(ht_vf)
-                vfbjabt, vfbjabr, vfbDEi = gamut_slicer(vfjabt, vfjabr, out = 'jabt,jabr,DEi', nhbins = nhbins, start_hue = start_hue, normalize_gamut = normalize_gamut, normalized_chroma_ref = normalized_chroma_ref, close_gamut = False)
-    
-            scale_factor = cri_type['scale']['cfactor']
-            scale_fcn = cri_type['scale']['fcn']
-            vfRfhi, vfRcshi, vfRhshi = jab_to_rhi(jabt = vfbjabt, jabr = vfbjabr, DEi = vfbDEi, cri_type = cri_type, scale_factor = scale_factor, scale_fcn = scale_fcn, use_bin_avg_DEi = True) # [:-1,...] removes last row from jab as this was added to close the gamut. 
-
-            Rfhi_vf[:,i:i+1] = vfRfhi
-            Rhshi_vf[:,i:i+1] = vfRhshi
-            Rcshi_vf[:,i:i+1] = vfRcshi
-
-        # Create dict with CRI info:
-        data = {'SPD' : data, 'cct' : cct, 'duv' : duv, 'bjabt' : bjabt, 'bjabr' : bjabr,\
-               'Rf' : Rf, 'Rg' : Rg, 'Rfi': Rfi, 'Rfhi' : Rfhi, 'Rchhi' : Rcshi, 'Rhshi' : Rhshi, \
-               'Rfm' : Rfm, 'Rfmi' : Rfmi,  'Rfhi_vf' : Rfhi_vf, 'Rfchhi_vf' : Rcshi_vf, 'Rfhshi_vf' : Rhshi_vf, \
-               'cri_type' : cri_type}
-  
-    layout = np.array([[3,3,0,0],[1,0,2,2],[0,0,2,1],[2,2,1,1],[0,2,1,1],[1,2,1,1]])
-    layout = np.array([[6,6,0,0],[0,3,3,3],[3,3,3,3],[0,0,3,2],[2,2,2,2],[2,0,2,2],[4,0,2,2]])
+    #layout = np.array([[3,3,0,0],[1,0,2,2],[0,0,2,1],[2,2,1,1],[0,2,1,1],[1,2,1,1]])
+    #layout = np.array([[6,6,0,0],[0,3,3,3],[3,3,3,3],[0,0,3,2],[2,2,2,2],[2,0,2,2],[4,0,2,2]])
     layout = np.array([[6,7,0,0],[0,4,3,3],[3,4,3,3],[0,0,4,2],[2,0,2,2],[4,2,2,2],[4,0,2,2],[2,2,2,2]])
-
+    
     def create_subplot(layout,n, polar = False, frameon = True):
         ax = plt.subplot2grid(layout[0,0:2], layout[n,0:2], colspan = layout[n,2], rowspan = layout[n,3], polar = polar, frameon = frameon)
         return ax
-
+    
     for i in range(cct.shape[0]):
         
         fig = plt.figure(figsize=(10, 6), dpi=144)
-
+    
         # Plot CVG:
         ax_CVG = create_subplot(layout,1, polar = True, frameon = False)
         figCVG, ax, cmap = plot_ColorVectorGraphic(bjabt[...,i,:], bjabr[...,i,:], hbins = hbins, axtype = axtype, ax = ax_CVG, plot_center_lines = False, plot_edge_lines = True, scalef = scalef, force_CVG_layout = force_CVG_layout, bin_labels = '#')
@@ -196,12 +131,12 @@ def plot_cri_graphics(data, cri_type = None, hbins = 16, start_hue = 0.0, scalef
         ax_VF = create_subplot(layout,2, polar = True, frameon = False)
         if i == 0:
             hbin_cmap = None
-
+    
         ax_VF, hbin_cmap = plot_VF_PX_models([dataVF[i]], dataPX = None, plot_VF = True, plot_PX = None, axtype = 'polar', ax = ax_VF, \
                            plot_circle_field = False, plot_sample_shifts = False, \
                            plot_samples_shifts_at_pixel_center = False, jabp_sampled = None, \
                            plot_VF_colors = ['k'], plot_PX_colors = ['r'], hbin_cmap = hbin_cmap, force_CVG_layout = True, bin_labels = vf_bin_labels)
-
+    
         # Plot test SPD:
         ax_spd = create_subplot(layout,3)
         ax_spd.plot(SPD[0],SPD[i+1]/SPD[i+1].max(),'r-')
