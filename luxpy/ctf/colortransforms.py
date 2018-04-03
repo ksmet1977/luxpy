@@ -36,13 +36,12 @@ Created on Wed Jun 28 22:48:09 2017
 @author: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
-from luxpy import *
-#from luxpy.chromaticadaptation import normalize_mcat
+from .. import np, _CMF, _CIE_ILLUMINANTS, _CIEOBS, _CSPACE, math, spd_to_xyz, np2d, np2dT, asplit, ajoin  
+
 
 __all__ = ['_CSPACE_AXES', '_IPT_M','xyz_to_Yxy','Yxy_to_xyz','xyz_to_Yuv','Yuv_to_xyz',
            'xyz_to_wuv','wuv_to_xyz','xyz_to_xyz','xyz_to_lab','lab_to_xyz','xyz_to_luv','luv_to_xyz',
            'xyz_to_Vrb_mb','Vrb_mb_to_xyz','xyz_to_ipt','ipt_to_xyz','xyz_to_Ydlep','Ydlep_to_xyz']
-
 
 #------------------------------------------------------------------------------
 # Database with cspace-axis strings (for plotting):
@@ -59,7 +58,7 @@ _CSPACE_AXES['cct'] = ['', 'cct','duv']
 
 # pre-calculate matrices for conversion of xyz to lms and back for use in xyz_to_ipt() and ipt_to_xyz(): 
 _IPT_M = {'lms2ipt': np.array([[0.4000,0.4000,0.2000],[4.4550,-4.8510,0.3960],[0.8056,0.3572,-1.1628]]),
-                              'xyz2lms' : {x : normalize_3x3_matrix(_CMF['M'][x],spd_to_xyz(_CIE_ILLUMINANTS['D65'],cieobs = x)) for x in sorted(_CMF['M'].keys())}}
+                              'xyz2lms' : {x : math.normalize_3x3_matrix(_CMF['M'][x],spd_to_xyz(_CIE_ILLUMINANTS['D65'],cieobs = x)) for x in sorted(_CMF['M'].keys())}}
 _COLORTF_DEFAULT_WHITE_POINT = np.array([100.0, 100.0, 100.0]) # ill. E white point
 
 #------------------------------------------------------------------------------
@@ -455,7 +454,7 @@ def xyz_to_ipt(xyz, cieobs = _CIEOBS, xyz0 = None, Mxyz2lms = None):
             xyz0 = spd_to_xyz(_CIE_ILLUMINANTS['D65'],cieobs = cieobs, out = 1)[0]/100.0
         else:
             xyz0 = xyz0/100.0    
-        M = normalize_3x3_matrix(M,xyz0)
+        M = math.normalize_3x3_matrix(M,xyz0)
     else:
         M = Mxyz2lms
 
@@ -513,7 +512,7 @@ def ipt_to_xyz(ipt, cieobs = _CIEOBS, xyz0 = None, Mxyz2lms = None):
             xyz0 = spd_to_xyz(_CIE_ILLUMINANTS['D65'],cieobs = cieobs, out = 1)[0]/100.0
         else:
             xyz0 = xyz0/100.0    
-        M = normalize_3x3_matrix(M,xyz0)
+        M = math.normalize_3x3_matrix(M,xyz0)
     else:
         M = Mxyz2lms
     
@@ -740,4 +739,4 @@ def Ydlep_to_xyz(Ydlep, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT):
     else:
         Yxy = Yxy.transpose((0,1,2))
     return Yxy_to_xyz(Yxy).reshape(Ydlep.shape)
-    
+

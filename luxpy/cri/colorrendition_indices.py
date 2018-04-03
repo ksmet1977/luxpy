@@ -19,6 +19,8 @@
 #
 # jab_to_rg(): Calculates gamut area index, Rg based on hue-ordered jabt and jabr input (first element must also be last)
 #
+# jab_to_rhi(): Calculate hue bin measures: Rfhi (local (hue bin) color fidelity), Rcshi (local chroma shift) and Rhshi (local hue shift).
+#
 # spd_to_jab_t_r(): Calculates jab color values for a sample set illuminated with test source and its reference illuminant.
 #                   
 # spd_to_rg(): Calculates the color gamut index of data (= np.array([[wl,spds]]) (data_axis = 0) for a sample set illuminated with test source (data) with respect to some reference illuminant.
@@ -46,9 +48,7 @@ Created on Fri Jun 30 00:10:59 2017
 @author: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
-from luxpy import *
-from luxpy.colorappearancemodels import hue_angle
-from luxpy.math import polyarea
+from .. import np, _S_INTERP_TYPE, _CRI_RFL, math, cam, cat, put_args_in_db, colortf, spd_to_xyz, cri_ref, xyz_to_cct, xyz_to_ipt, asplit, np2d, spd
 
 __all__ = ['_CRI_DEFAULTS','linear_scale','log_scale','psy_scale','gamut_slicer','jab_to_rg','spd_to_rg','spd_to_DEi','spd_to_cri']
 __all__ +=['spd_to_ciera','spd_to_cierf','spd_to_iesrf','spd_to_iesrg','spd_to_cri2012','spd_to_cri2012_hl17','spd_to_cri2012_hl1000','spd_to_cri2012_real210']
@@ -335,7 +335,7 @@ def jab_to_rg(jabt,jabr, max_scale = 100, ordered_and_sliced = False, nhbins = N
     Rg = np.zeros((1,jabt.shape[1]))
 
     for ii in range(jabt.shape[1]):
-        Rg[:,ii] = max_scale*polyarea(jabt[:,ii,1],jabt[:,ii,2])/polyarea(jabr[:,ii,1],jabr[:,ii,2]) # calculate Rg =  gamut area ratio of test and ref
+        Rg[:,ii] = max_scale*math.polyarea(jabt[:,ii,1],jabt[:,ii,2])/math.polyarea(jabr[:,ii,1],jabr[:,ii,2]) # calculate Rg =  gamut area ratio of test and ref
     
     if out == 'Rg':
         return Rg
@@ -1399,7 +1399,7 @@ def  spd_to_cqs(SPD, version = 'v9.0', out = 'Qa',wl = None):
     if ('Qg' in outlist):
         Qg = Qf.copy()
         for ii in range(labti.shape[1]):
-            Qg[:,ii] = 100.0*polyarea(labti[:,ii,1],labti[:,ii,2])/polyarea(labri[:,ii,1],labri[:,ii,2]) # calculate Rg =  gamut area ratio of test and ref
+            Qg[:,ii] = 100.0*math.polyarea(labti[:,ii,1],labti[:,ii,2])/math.polyarea(labri[:,ii,1],labri[:,ii,2]) # calculate Rg =  gamut area ratio of test and ref
 
      
     if out == 'Qa':

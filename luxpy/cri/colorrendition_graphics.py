@@ -18,13 +18,9 @@ Created on Mon Apr  2 02:00:50 2018
 @author: kevin.smet
 """
 
-
-from luxpy import *
-from luxpy.colorrendition_indices import *
-import numpy as np
-import matplotlib.pyplot as plt
-import colorsys
-
+from .. import np, plt, colorsys
+from ..math import cart2pol 
+from .colorrendition_indices import spd_to_cri, gamut_slicer
 
 __all__ = [ 'plot_hue_bins','plot_ColorVectorGraphic','plot_cri_graphics']
 
@@ -231,8 +227,8 @@ def plot_ColorVectorGraphic(jabt, jabr, hbins = 16, start_hue = 0.0, scalef = 10
         
     if axtype == 'polar':
        
-        jabr_theta, jabr_r = math.cart2pol(jabr[...,1:3], htype = 'rad') 
-        jabt_theta, jabt_r = math.cart2pol(jabt[...,1:3], htype = 'rad') 
+        jabr_theta, jabr_r = cart2pol(jabr[...,1:3], htype = 'rad') 
+        jabt_theta, jabt_r = cart2pol(jabt[...,1:3], htype = 'rad') 
         
         #ax.quiver(jabrtheta,jabr_r,jabt[...,1]-jabr[...,1], jabt[...,2]-jabr_binned[...,2], color = 'k', headlength=3, angles='uv', scale_units='y', scale = 2,linewidth = 0.5)
         ax.plot(jabt_theta,jabt_r, color = 'grey',linewidth = 2)

@@ -49,7 +49,7 @@ Created on Wed Jun 25 12:12:28 2017
 @author: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
        
-from luxpy import *
+from .. import np, _CMF, math, np2d, asplit, ajoin
 
 #__all__ = ['_WHITE_POINT','_LA', '_MCATS','normalize_3x3_matrix','degree_of_adaptation_D','transferfunction_Dt','degree_of_adaptation_D','parse_x1x2_parameters','apply','smet2017_D']
 
@@ -72,6 +72,7 @@ _MCATS['bianco'] = np2d([[0.8752, 0.2787, -0.1539],[-0.8904, 1.8709, 0.0195],[-0
 _MCATS['biaco-pc'] = np2d([[0.6489, 0.3915, -0.0404],[-0.3775, 1.3055,  0.0720],[-0.0271, 0.0888, 0.9383]])
 _MCATS['cat16'] = np2d([[0.401288, 0.650173, -0.051461],[-0.250268, 1.204414, 0.045854],[-0.002079, 0.048952, 0.953127]])
 
+
 def check_dimensions(data,xyzw, caller = 'cat.apply()'):
     """
     Check if dimensions of data and xyzw match. 
@@ -91,7 +92,8 @@ def check_dimensions(data,xyzw, caller = 'cat.apply()'):
         raise Exception('{}: Cannot match dim of xyzw with data: xyzw.shape[0]>1 & != data.shape[0]'.format(caller))
 
 #------------------------------------------------------------------------------
-def get_transfer_function(cattype = 'vonkries', catmode = '1>0>2', lmsw1 = None, lmsw2 = None, lmsw0 = _WHITE_POINT, D10 = 1.0, D20 = 1.0, La1 = _LA, La2 = _LA, La0 = _LA):
+def get_transfer_function(cattype = 'vonkries', catmode = '1>0>2', lmsw1 = None, lmsw2 = None, \
+                          lmsw0 = _WHITE_POINT, D10 = 1.0, D20 = 1.0, La1 = _LA, La2 = _LA, La0 = _LA):
     """
     Calculate the chromatic adaptation diagonal matrix transfer function Dt.
     
@@ -271,33 +273,6 @@ def get_degree_of_adaptation(Dtype = None, **kwargs):
     return D
 
 
-##------------------------------------------------------------------------------
-#def parse_x1x2_parameters2(x,target_shape, catmode,expand_2d_to_3d = None, default = [1.0,1.0]):
-#   """
-#   Parse input parameters x and make them the target_shape for easy calculation 
-#   (input in main function can now be a single value valid for all xyzw or an array 
-#   with a different value for each xyzw)
-#   """
-#   if x is None:
-#        x10 = broadcast_shape(default[0],target_shape = target_shape, expand_2d_to_3d = None, axis0_repeats=1)
-#        if (catmode == '1>0>2') | (catmode == '1>2'):
-#            x20 = broadcast_shape(default[1],target_shape = target_shape, expand_2d_to_3d = None,axis0_repeats=1)
-#        else:
-#            x20 = broadcast_shape(None,target_shape = target_shape, expand_2d_to_3d = None,axis0_repeats=1)
-#   else:
-#        x = np2d(x)
-#        if (catmode == '1>0>2') |(catmode == '1>2'):
-#            if x.shape[-1] == 2:
-#                x10 = broadcast_shape(x[:,0,None],target_shape = target_shape, expand_2d_to_3d = None,axis0_repeats=1)
-#                x20 = broadcast_shape(x[:,1,None],target_shape = target_shape, expand_2d_to_3d = None,axis0_repeats=1)
-#            else:
-#                 x10 = broadcast_shape(x,target_shape = target_shape, expand_2d_to_3d = None,axis0_repeats=1)
-#                 x20 = x10.copy()
-#        elif catmode == '1>0':
-#            x10 = broadcast_shape(x[:,0,None],target_shape = target_shape, expand_2d_to_3d = None,axis0_repeats=1)
-#            x20 = broadcast_shape(None,target_shape = target_shape, expand_2d_to_3d = None,axis0_repeats=1)
-#   return x10, x20
-
 #------------------------------------------------------------------------------
 def parse_x1x2_parameters(x,target_shape, catmode, expand_2d_to_3d = None, default = [1.0,1.0]):
    """
@@ -343,7 +318,8 @@ def parse_x1x2_parameters(x,target_shape, catmode, expand_2d_to_3d = None, defau
    return x10, x20
 
 #------------------------------------------------------------------------------
-def apply(data, catmode = '1>0>2', cattype = 'vonkries', xyzw1 = None, xyzw2 = None, xyzw0 = None, D = None, mcat = ['cat02'], normxyz0 = None, outtype = 'xyz', La = None, F = None, Dtype = None):
+def apply(data, catmode = '1>0>2', cattype = 'vonkries', xyzw1 = None, xyzw2 = None, xyzw0 = None,\
+          D = None, mcat = ['cat02'], normxyz0 = None, outtype = 'xyz', La = None, F = None, Dtype = None):
     """
     Calculate corresponding colors by applying a von Kries chromatic adaptation
     transform (CAT), i.e. independent rescaling of 'sensor sensitivity' to data

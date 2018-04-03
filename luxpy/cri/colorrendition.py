@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-
 ###############################################################################
 # Module for color rendition calculations and graphical output
 ###############################################################################
+#
 # _CRI_DEFAULTS: default settings for different color rendition indices: (major dict has 9 keys (04-Jul-2017): sampleset [str/dict], ref_type [str], cieobs [str], avg [fcn handle], scale [dict], cspace [dict], catf [dict], rg_pars [dict], cri_specific_pars [dict])
 #               types supported: 'ciera','ciera-8','ciera-14','cierf','iesrf','cri2012','cri2012-hl17', 'cri2012-hl1000','cri2012-real210','cqs-v7.5', 'cqs-v9.0', mcri'
 #
@@ -18,6 +18,8 @@
 # gamut_slicer(): Slices the gamut in nhbins slices and provides normalization of test gamut to reference gamut.
 #
 # jab_to_rg(): Calculates gamut area index, Rg based on hue-ordered jabt and jabr input (first element must also be last)
+#
+# jab_to_rhi(): Calculate hue bin measures: Rfhi (local (hue bin) color fidelity), Rcshi (local chroma shift) and Rhshi (local hue shift).
 #
 # spd_to_jab_t_r(): Calculates jab color values for a sample set illuminated with test source and its reference illuminant.
 #                   
@@ -45,24 +47,29 @@
 #
 # plot_ColorVectorGraphic(): Plots Color Vector Graphic (see IES TM30).
 #
-# plot_cri_grpahics(): Plot graphical information on color rendition properties.
+# plot_cri_graphics(): Plot graphical information on color rendition properties.
+#
 #------------------------------------------------------------------------------
-
+#
+#
+# Module for VectorField and Pixelation CRI models.
+# see ?luxpy.cri.VFPX
+#------------------------------------------------------------------------------
 Created on Mon Apr  2 03:35:33 2018
 
 @author: kevin.smet
 """
 from .colorrendition_indices import *
 from .colorrendition_graphics import *
-from .colorrendition_vectorshiftmodel import *
+from . import colorrendition_VF_PX_models as VFPX
 
-
+# .colorrendition_indices:
 __all__ =  ['_CRI_DEFAULTS','linear_scale','log_scale','psy_scale','gamut_slicer','jab_to_rg','spd_to_rg','spd_to_DEi','spd_to_cri']
 __all__ += ['spd_to_ciera','spd_to_cierf','spd_to_iesrf','spd_to_iesrg','spd_to_cri2012','spd_to_cri2012_hl17','spd_to_cri2012_hl1000','spd_to_cri2012_real210']
 __all__ += ['spd_to_mcri', 'spd_to_cqs']
 
+# .colorrendition_graphics:
 __all__ += ['plot_hue_bins','plot_ColorVectorGraphic','plot_cri_graphics']
 
-__all__ += ['_VF_CRI_DEFAULT','_VF_CSPACE','_VF_MAXR','_VF_DELTAR','_VF_MODEL_TYPE','_VF_SIG','_VF_PCOLORSHIFT']
-__all__ += ['get_poly_model','apply_poly_model_at_x','generate_vector_field','VF_colorshift_model','initialize_VF_hue_angles']
-__all__ += ['generate_grid','calculate_shiftvectors','plot_shift_data','plotcircle']
+# colorrendition_VF_PX_models:
+__all__ += ['VFPX']

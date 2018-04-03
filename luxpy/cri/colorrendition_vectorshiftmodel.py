@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 """
-###################################################################################################
+###############################################################################
 # Module with functions related to color rendering Vector Field model
-###################################################################################################
+###############################################################################
 #
 # _VF_CRI_DEFAULT: default cri_type parameters for VF model
 #
-# _VF_CSPACE: default color space
+# _VF_CSPACE: default dict with color space parameters.
 #
 # _VF_MAXR: maximum C to use in calculations and plotting of vector fields
 #
@@ -38,7 +38,7 @@
 #
 # initialize_VF_hue_angles(): Initialize the hue angles that will be used to 'summarize' the VF model fitting parameters.
 #
-
+#------------------------------------------------------------------------------
 
 Created on Wed Mar 28 18:59:16 2018
 
@@ -46,24 +46,22 @@ Created on Wed Mar 28 18:59:16 2018
 """
 
 
-import matplotlib.pyplot as plt
-import matplotlib.cm as cm
-import colorsys
-
-from luxpy import *
-from .colorrendition_indices import *
-from .colorrendition_graphics import *
+from .. import np, plt, _CIE_ILLUMINANTS, _MUNSELL,_EPS
+from ..math import positive_arctan, angle_v1v2
+from .colorrendition_indices import _CRI_DEFAULTS, spd_to_cri
+from .colorrendition_graphics import plot_hue_bins
 
 #from munsell import *
 
-__all__ = ['_VF_CRI_DEFAULT','_VF_CSPACE','_VF_MAXR','_VF_DELTAR','_VF_MODEL_TYPE','_VF_SIG','_VF_PCOLORSHIFT']
+__all__ = ['_VF_CRI_DEFAULT','_VF_CSPACE','_VF_CSPACE_EXAMPLE','_VF_CIEOBS','_VF_MAXR','_VF_DELTAR','_VF_MODEL_TYPE','_VF_SIG','_VF_PCOLORSHIFT']
 __all__ += ['get_poly_model','apply_poly_model_at_x','generate_vector_field','VF_colorshift_model','initialize_VF_hue_angles']
 __all__ += ['generate_grid','calculate_shiftvectors','plot_shift_data','plotcircle']
 
 # Default color space for Vector Field model:
-#_VF_CSPACE = {'type' : 'jab_cam02ucs','xyzw':None, 'mcat':'cat02', 'Yw':100.0, 'conditions' :{'La':100.0,'surround':'avg','D':1.0,'Yb':20.0,'Dtype':None},'yellowbluepurplecorrect' : None}
 _VF_CRI_DEFAULT = 'iesrf'
 _VF_CSPACE = _CRI_DEFAULTS[_VF_CRI_DEFAULT]['cspace']
+_VF_CSPACE_EXAMPLE = {'type' : 'jab_cam02ucs','xyzw':None, 'mcat':'cat02', 'Yw':100.0, 'conditions' :{'La':100.0,'surround':'avg','D':1.0,'Yb':20.0,'Dtype':None},'yellowbluepurplecorrect' : None}
+_VF_CIEOBS = _CRI_DEFAULTS[_VF_CRI_DEFAULT]['cieobs']['xyz']
 
 _VF_MAXR = 40 #maximum C to use in calculations and plotting of vector fields
 _VF_DELTAR = 5 # grid spacing, pixel size
@@ -320,22 +318,25 @@ def generate_vector_field(poly_model, pmodel, axr = np.arange(-_VF_MAXR,_VF_MAXR
         return axt,bxt,axr,bxr
 
 
-def VF_colorshift_model(S, cri_type = _VF_CRI_DEFAULT, model_type = _VF_MODEL_TYPE, cspace = _VF_CSPACE, sampleset = None, pool = False, pcolorshift = {'href': np.arange(np.pi/10,2*np.pi,2*np.pi/10),'Cref' : 40, 'sig' : _VF_SIG}, vfcolor = 'k',verbosity = 0):
+def VF_colorshift_model(S, cri_type = _VF_CRI_DEFAULT, model_type = _VF_MODEL_TYPE, cspace = _VF_CSPACE, sampleset = None, pool = False, pcolorshift = {'href': np.arange(np.pi/10,2*np.pi,2*np.pi/10),'Cref' : _VF_MAXR, 'sig' : _VF_SIG}, vfcolor = 'k',verbosity = 0):
     """
     Applies full vector field model calculations to spectral data.
     
     Args:
         :S: nump.ndarray with spectral data.
         :cri_type: _VF_CRI_DEFAULT or str or dict, optional
+            Specifies type of color fidelity model to use. 
+            Controls choice of reference illuminant, sample set, averaging, scaling, etc.
+            See luxpy.cri.spd_to_cri for more info.
         :modeltype: _VF_MODEL_TYPE or 'M6' or 'M5', optional
             Specifies degree 5 or degree 6 polynomial model in ab-coordinates.
-        :cspace: _VF_CSPACE or str, optional
-            Specifies color space.
+        :cspace: _VF_CSPACE or dict, optional
+            Specifies color space. See _VF_CSPACE_EXAMPLE for example structure.
         :sampleset:  None or str or numpy.ndarray, optional
             Sampleset to be used when calculating vector field model.
         :pool: False, optional
             If :S: contains multiple spectra, True pools all jab data before modeling the vector field, False models a different field for each spectrum.
-        :pcolorshift:  {'href': np.arange(np.pi/10,2*np.pi,2*np.pi/10),'Cref' : 40, 'sig' : _VF_SIG} or user defined dict, optional
+        :pcolorshift:  {'href': np.arange(np.pi/10,2*np.pi,2*np.pi/10),'Cref' : _VF_MAXR, 'sig' : _VF_SIG} or user defined dict, optional
             Dict containing the specifications input for apply_poly_model_at_hue_x().
             The polynomial models of degree 5 and 6 can be fully specified or summarized 
             by the model parameters themselved OR by calculating the dCoverC and dH at resp. 5 and 6 hues.
@@ -345,7 +346,8 @@ def VF_colorshift_model(S, cri_type = _VF_CRI_DEFAULT, model_type = _VF_MODEL_TY
             Report warnings or not.
             
     Returns:
-        :returns: dict with the following keys:
+        :returns: list[dict] (each list element refers to a different test SPD)
+            with the following keys:
             - 'Source': dict with numpy.ndarrays of the S, cct and duv of source spectrum
             - 'metrics': dict with numpy.ndarrays for:
                     * Rf (color fidelity: base + metameric shift)
@@ -370,7 +372,6 @@ def VF_colorshift_model(S, cri_type = _VF_CRI_DEFAULT, model_type = _VF_MODEL_TY
                     * 'vshift_ab_s_vf' : vshift_ab_s_vf: ab-shift vectors of VF model predictions of samples
                     * 'vshift_ab_vf' : vshift_ab_vf: ab-shift vectors of VF model predictions of vector field grid
     """
-    
     
     if type(cri_type) == str:
         cri_type_str = cri_type
@@ -433,7 +434,7 @@ def VF_colorshift_model(S, cri_type = _VF_CRI_DEFAULT, model_type = _VF_MODEL_TY
         scale_fcn = cri_type['scale']['fcn']
         avg = cri_type['avg']  
         Rfi_deshifted = scale_fcn(DEi,scale_factor)
-        Rf_deshifted = np2d(scale_fcn(avg(DEi,axis = 0),scale_factor))
+        Rf_deshifted = np.atleast_2d(scale_fcn(avg(DEi,axis = 0),scale_factor))
     
     
         # Generate vector field:
@@ -481,6 +482,7 @@ def generate_grid(jab_ranges = None, out = 'grid', ax = np.arange(-_VF_MAXR,_VF_
             'grid' outputs a single 2d numpy.nd-vector with the grid coordinates
             'vector': outputs each dimension seperately.
         :jab_ranges: None or numpy.ndarray (.shape =(3,3), first axis: J,a,b, second axis: min, max, delta), optional
+            Specifies the pixelization of color space.
         :ax: np.arange(-_VF_MAXR,_VF_MAXR+_VF_DELTAR,_VF_DELTAR) or numpy.ndarray, optional
         :ax: np.arange(-_VF_MAXR,_VF_MAXR+_VF_DELTAR,_VF_DELTAR) or numpy.ndarray, optional
         :jx: None, optional
@@ -493,10 +495,7 @@ def generate_grid(jab_ranges = None, out = 'grid', ax = np.arange(-_VF_MAXR,_VF_
         :returns: single numpy.ndarray with ax,bx [,jx] 
                     or
                   seperate numpy.ndarrays for each dimension specified.
-            
     """
-    
-    
     # generate grid from jab_ranges array input, otherwise use ax, bx, jx input:
     if jab_ranges is not None:
         if jab_ranges.shape[0] == 3:
@@ -547,6 +546,7 @@ def generate_grid(jab_ranges = None, out = 'grid', ax = np.arange(-_VF_MAXR,_VF_
             return ax, bx
         else:
             return jx, ax, bx
+
 
 def calculate_shiftvectors(jabt,jabr, average = True, vtype = 'ab'):
     """
@@ -628,14 +628,14 @@ def plot_shift_data(data, fieldtype = 'vectorfield', scalef = _VF_MAXR, color = 
             vf = data['fielddata'][fieldtype]
             if axtype == 'polar':
                 if fieldtype == 'vectorfield':
-                    vfrtheta = math.positive_arctan(vf['axr'], vf['bxr'],htype = 'rad')
+                    vfrtheta = positive_arctan(vf['axr'], vf['bxr'],htype = 'rad')
                     vfrr = np.sqrt(vf['axr']**2 + vf['bxr']**2)
                     hax.quiver(vfrtheta, vfrr, vf['axt'] - vf['axr'], vf['bxt'] - vf['bxr'],  headlength=3,color = color,angles='uv', scale_units='y', scale = 2,linewidth = 0.5)
                 else:
-                    vfttheta = math.positive_arctan(vf['axt'], vf['bxt'],htype = 'rad')
-                    vfrtheta = math.positive_arctan(vf['axr'], vf['bxr'],htype = 'rad')
+                    vfttheta = positive_arctan(vf['axt'], vf['bxt'],htype = 'rad')
+                    vfrtheta = positive_arctan(vf['axr'], vf['bxr'],htype = 'rad')
                     vftr = np.sqrt(vf['axt']**2 + vf['bxt']**2)
-                    dh = (math.angle_v1v2(np.hstack((vf['axt'],vf['bxt'])),np.hstack((vf['axr'],vf['bxr'])),htype='deg')[:,None]) #hue shift
+                    dh = (angle_v1v2(np.hstack((vf['axt'],vf['bxt'])),np.hstack((vf['axr'],vf['bxr'])),htype='deg')[:,None]) #hue shift
                     dh = dh/np.nanmax(dh)
                     plt.set_cmap('jet')
                     hax.scatter(vfttheta, vftr, s = 100*dh, c = dh, linestyle = 'None', marker = 'o',norm = None)
@@ -721,7 +721,7 @@ def initialize_VF_hue_angles(hx = None, Cxr = _VF_MAXR, cri_type = _VF_CRI_DEFAU
         Jabt_IllC = outM[0]['Jab']['Jabt']
         for i,v in enumerate(hns5):
             hm = np.where(hn == v)[0]
-            all_h5_Munsell_cam02ucs[i] = math.positive_arctan([Jabt_IllC[hm,0,1].mean()],[Jabt_IllC[hm,0,2].mean()],htype = 'rad')[0]
+            all_h5_Munsell_cam02ucs[i] = positive_arctan([Jabt_IllC[hm,0,1].mean()],[Jabt_IllC[hm,0,2].mean()],htype = 'rad')[0]
         hx = all_h5_Munsell_cam02ucs
     #------------------------------------------------------------------------------
     # Setp color shift parameters:

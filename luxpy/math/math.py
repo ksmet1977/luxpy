@@ -4,6 +4,8 @@
 # Module with useful math functions
 ###############################################################################
 #
+# normalize_3x3_matrix(): Normalize 3x3 matrix M to xyz0 -- > [1,1,1]
+#
 # line_intersect(): Line intersections of series of two line segments a and b. 
 #                  From https://stackoverflow.com/questions/3252194/numpy-and-line-intersections
 #
@@ -45,12 +47,30 @@ Created on Tue Jun 27 11:50:32 2017
 @author: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
-from luxpy import *
+from luxpy import np, np2d
 from scipy.special import erf, erfinv
-__all__  = ['symmM_to_posdefM','check_symmetric','check_posdef','positive_arctan','line_intersect','erf', 'erfinv', 'pol2cart', 'cart2pol']
+__all__  = ['normalize_3x3_matrix','symmM_to_posdefM','check_symmetric','check_posdef','positive_arctan','line_intersect','erf', 'erfinv', 'pol2cart', 'cart2pol']
 __all__ += ['bvgpdf','mahalanobis2','dot23', 'rms','geomean','polyarea']
 __all__ += ['magnitude_v','angle_v1v2']
 
+
+#------------------------------------------------------------------------------
+def normalize_3x3_matrix(M, xyz0 = np.array([[1.0,1.0,1.0]])):
+    """
+    Normalize 3x3 matrix M to xyz0 -- > [1,1,1]
+    If M.shape == (1,9): M is reshaped to (3,3)
+    
+    Args:
+        :M: numpy.array((3,3) or numpy.array((1,9))
+        :xyz0: np.2darray, optional 
+        
+    Returns:
+        :returns: normalized matrix such that M*xyz0 = [1,1,1]
+    """
+    M = np2d(M)
+    if M.shape[-1]==9:
+        M = M.reshape(3,3)
+    return np.dot(np.diagflat(1/(np.dot(M,xyz0.T))),M)
 
 #------------------------------------------------------------------------------
 def line_intersect(a1, a2, b1, b2):

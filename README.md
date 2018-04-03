@@ -519,9 +519,6 @@ Make a tuple, list or numpy array at least 3d array.
 ### np3dT():
 Make a tuple, list or numpy array at least 3d array and tranpose (swap) first two axes.
 
-### normalize_3x3_matrix():  
-Normalize 3x3 matrix M to xyz0 -- > [1,1,1]
-
 ### put_args_in_db():
 Takes the **args with not-None input values of a function fcn and overwrites the values of the corresponding keys in Dict db.
 See put_args_in_db? for more info.
@@ -558,6 +555,9 @@ For more info:
 
 
 ## 0.2.  math.py (math)
+
+### normalize_3x3_matrix():  
+Normalize 3x3 matrix M to xyz0 -- > [1,1,1]
 
 ### math.line_intersect():
 Line intersections of series of two line segments a and b.

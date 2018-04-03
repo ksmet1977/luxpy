@@ -24,8 +24,8 @@ Created on Tue Jul  4 14:44:45 2017
 @author: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
-from luxpy import *
-import matplotlib.pyplot as plt 
+from .. import np, plt, _CIEOBS, _CSPACE, _CSPACE_AXES, _CIE_ILLUMINANTS, _CMF, daylightlocus, colortf, Yxy_to_xyz, asplit, spd_to_xyz, cri_ref
+
 __all__ = ['plotSL','plotDL','plotBB','plot_color_data','plotceruleanline','plotUH','plotcircle']
 
 

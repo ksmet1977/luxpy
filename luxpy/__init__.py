@@ -46,6 +46,7 @@ import warnings
 import os
 from collections import OrderedDict as odict
 import matplotlib.pyplot as plt
+import colorsys
 
 __all__ = ['plt','np','pd','os','warnings','interpolate','minimize','odict']
 
@@ -75,46 +76,35 @@ __all__+=['_CIEOBS','_CSPACE']
 # Load luxpy specific modules:
 
 # Load helper module:
-from . helpers import *
+from .helpers import *
 __all__ += helpers.__all__
 
 # Load math module:
-from luxpy import math  
+from .math  import math as math 
 __all__ += ['math']  
 
-# Load cmfs, part 1 (prepare basic data dict, no actual cmfs)
-from . cmf import *
-__all__ += cmf.__all__
-#
 # Load spectral module:
-from . spectral import *
+from .spectral import *
 __all__ += spectral.__all__
 
-## Set xyzbar in _CMF dict:
-_CMF['bar'] = {_CMF['types'][i] : (xyzbar(cieobs = _CMF['types'][i], scr = 'file', kind = 'np')) for i in range(len(_CMF['types']))}
-
-# load spd and rfl data in /spd/:
-from . spectral_databases import _R_PATH, _S_PATH, _CIE_ILLUMINANTS, _IESTM30, _CRI_RFL, _MUNSELL
-__all__ += ['_R_PATH', '_S_PATH', '_CRI_RFL', '_CIE_ILLUMINANTS', '_IESTM30','_MUNSELL'] 
-
 # Load color/chromaticty transforms module:
-from . colortransforms import *
-__all__ += colortransforms.__all__
+from .ctf import *
+__all__ += ctf.__all__
 
 # Load correlated color temperature module:
-from . cct import *
+from .cct import *
 __all__ += cct.__all__
 
 # Load chromatic adaptation module:
-from luxpy import chromaticadaptation as cat
+from .cat import chromaticadaptation as cat
 __all__ += ['cat']  
 
 # Load color appearance model functions:
-from luxpy import colorappearancemodels as cam
+from .cam import colorappearancemodels as cam
 __all__ += ['cam']  
 
 # load cam wrapper functions for use with colortf() from .colortransforms module:
-from luxpy.colorappearancemodels import xyz_to_jabM_ciecam02, jabM_ciecam02_to_xyz, xyz_to_jabC_ciecam02, jabC_ciecam02_to_xyz,xyz_to_jabM_cam16, jabM_cam16_to_xyz, xyz_to_jabC_cam16, jabC_cam16_to_xyz, xyz_to_jab_cam02ucs, jab_cam02ucs_to_xyz, xyz_to_jab_cam02lcd, jab_cam02lcd_to_xyz,xyz_to_jab_cam02scd, jab_cam02scd_to_xyz, xyz_to_jab_cam16ucs, jab_cam16ucs_to_xyz, xyz_to_jab_cam16lcd, jab_cam16lcd_to_xyz,xyz_to_jab_cam16scd, jab_cam16scd_to_xyz, xyz_to_qabW_cam15u, qabW_cam15u_to_xyz, xyz_to_lab_cam_sww_2016, lab_cam_sww_2016_to_xyz
+from .cam.colorappearancemodels import xyz_to_jabM_ciecam02, jabM_ciecam02_to_xyz, xyz_to_jabC_ciecam02, jabC_ciecam02_to_xyz,xyz_to_jabM_cam16, jabM_cam16_to_xyz, xyz_to_jabC_cam16, jabC_cam16_to_xyz, xyz_to_jab_cam02ucs, jab_cam02ucs_to_xyz, xyz_to_jab_cam02lcd, jab_cam02lcd_to_xyz,xyz_to_jab_cam02scd, jab_cam02scd_to_xyz, xyz_to_jab_cam16ucs, jab_cam16ucs_to_xyz, xyz_to_jab_cam16lcd, jab_cam16lcd_to_xyz,xyz_to_jab_cam16scd, jab_cam16scd_to_xyz, xyz_to_qabW_cam15u, qabW_cam15u_to_xyz, xyz_to_lab_cam_sww_2016, lab_cam_sww_2016_to_xyz
 
 __all__ += ['xyz_to_jabM_ciecam02', 'jabM_ciecam02_to_xyz', 'xyz_to_jabC_ciecam02', 'jabC_ciecam02_to_xyz',
             'xyz_to_jabM_cam16', 'jabM_cam16_to_xyz', 'xyz_to_jabC_cam16', 'jabC_cam16_to_xyz',
@@ -123,13 +113,11 @@ __all__ += ['xyz_to_jabM_ciecam02', 'jabM_ciecam02_to_xyz', 'xyz_to_jabC_ciecam0
             'xyz_to_qabW_cam15u', 'qabW_cam15u_to_xyz',
             'xyz_to_lab_cam_sww_2016', 'lab_cam_sww_2016_to_xyz']
 
-from .colortf import colortf
+from .ctf.colortf import *
 __all__+=['colortf']
 
-from luxpy import colorrendition as cri
+from .cri import colorrendition as cri
 __all__ += ['cri'] 
 
-
-from . plotters import *
-__all__ += plotters.__all__
-
+from .graphics.plotters import *
+__all__ += graphics.__all__

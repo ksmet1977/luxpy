@@ -52,7 +52,8 @@ Created on Sat Jun 24 21:12:30 2017
 """
 
 #--------------------------------------------------------------------------------------------------
-from luxpy import *
+from .. import np, pd, interpolate, _PKG_PATH, _SEP, _EPS, _CIEOBS, np2d, getdata
+from .cmf import _CMF
 __all__ = ['_WL3','_BB','_S012_DAYLIGHTPHASE','_INTERP_TYPES','_S_INTERP_TYPE', '_R_INTERP_TYPE','_CRI_REF_TYPE',
            '_CRI_REF_TYPES', 'getwlr','getwld','normalize_spd','cie_interp','spd','xyzbar', 'spd_to_xyz',
            'blackbody','daylightlocus','daylightphase','cri_ref']
@@ -86,6 +87,7 @@ _CRI_REF_TYPE = 'ciera'
 _CRI_REF_TYPES = {'ciera': [5000.0 , 5000.0], 'cierf': [4000.0, 5000.0], 'cierf-224-2017': [4000.0, 5000.0],\
                   'iesrf':[4000.0, 5000.0],'iesrf-tm30-15':[4500.0, 5500.0],'iesrf-tm30-18':[4000.0, 5000.0],\
                   'BB':[5000.0,5000.0],'DL':[5000.0,5000.0]} #mixing ranges for various cri_reference_illuminant types
+
 
 #--------------------------------------------------------------------------------------------------
 def getwlr(wl3 = None):

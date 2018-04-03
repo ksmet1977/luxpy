@@ -32,8 +32,7 @@ Created on Wed Jun 28 20:25:52 2017
 
 @author: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
-
-from luxpy import *
+from .. import np, pd, _PKG_PATH, _SEP, _EPS, getdata 
 __all__ = ['_R_PATH','_S_PATH', '_IESTM30','_IESTM30_S','_CRI_RFL','_CIE_ILLUMINANTS','_MUNSELL']
 
 
