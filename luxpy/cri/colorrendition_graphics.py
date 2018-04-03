@@ -69,7 +69,7 @@ def plot_hue_bins(hbins = 16, start_hue = 0.0, scalef = 100, plot_axis_labels = 
     else:
         hbincenters = hbins
         idx = np.argsort(hbincenters)
-        if isinstance(bin_labels,list):
+        if isinstance(bin_labels,list) | isinstance(bin_labels,np.ndarray):
             bin_labels = bin_labels[idx]
         hbincenters = hbincenters[idx]
         nhbins = hbincenters.shape[0]

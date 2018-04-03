@@ -35,7 +35,7 @@ Created on Wed Jun 28 22:52:28 2017
 @author: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
-from .. import np, _PKG_PATH, _SEP, _EPS, _CMF, _CIEOBS, minimize, np2d, np2dT, getdata, dictkv, spd_to_xyz, cri_ref, xyz_to_Yxy, xyz_to_Yuv, Yuv_to_xyz
+from .. import np, _PKG_PATH, _SEP, _EPS, _CMF, _CIEOBS, minimize, np2d, np2dT, getdata, dictkv, spd_to_xyz, cri_ref, xyz_to_Yxy, xyz_to_Yuv,Yuv_to_xyz
 __all__ = ['_CCT_LUT','xyz_to_cct','cct_to_xyz','cct_to_mired','xyz_to_cct_ohno','xyz_to_cct_search','xyz_to_cct_HA','xyz_to_cct_mcamy']
 
 #------------------------------------------------------------------------------
