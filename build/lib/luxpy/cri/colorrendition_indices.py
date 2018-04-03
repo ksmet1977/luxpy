@@ -209,8 +209,8 @@ def gamut_slicer(jab_test,jab_ref, out = 'jabt,jabr', nhbins = None, start_hue =
     test_original_shape = jab_test.shape
 
     if len(test_original_shape)<3:
-        jab_test = jab_test[:,None]# add axis 0 #broadcast_shape(jab_test,target_shape = None,expand_2d_to_3d = 0) # expand 2-array to 3-array by adding '0'-axis
-        jab_ref = jab_ref[:,None]# add axis 0 #broadcast_shape(jab_ref,target_shape = None,expand_2d_to_3d = 0) # expand 2-array to 3-array by adding '0'-axis
+        jab_test = jab_test[None]# add axis 0 #broadcast_shape(jab_test,target_shape = None,expand_2d_to_3d = 0) # expand 2-array to 3-array by adding '0'-axis
+        jab_ref = jab_ref[None]# add axis 0 #broadcast_shape(jab_ref,target_shape = None,expand_2d_to_3d = 0) # expand 2-array to 3-array by adding '0'-axis
     
     #initialize Jabt, Jabr
     test_shape = list(jab_test.shape)
@@ -249,7 +249,7 @@ def gamut_slicer(jab_test,jab_ref, out = 'jabt,jabr', nhbins = None, start_hue =
                     jabtii[i,:] = jab_test[hbins==i,ii,:].mean(axis = 0)
                     jabrii[i,:] = jab_ref[hbins==i,ii,:].mean(axis = 0)
                     DEi[i,ii] =  np.sqrt(np.power((jab_test[hbins==i,ii,:] - jab_ref[hbins==i,ii,:]),2).sum(axis = jab_test[hbins==i,ii,:].ndim -1)).mean(axis = 0)
-
+        
         if normalize_gamut == True:
             #renormalize jabtii using jabrii:
             Ct = np.sqrt(jabtii[:,1]**2 + jabtii[:,2]**2)
@@ -519,10 +519,6 @@ def jab_to_rhi(jabt, jabr, DEi, cri_type = 'cierf', start_hue = None, nhbins = N
         args = locals().copy() # get dict with keyword input arguments to function (used to overwrite non-None input arguments present in cri_type dict)
         cri_type = process_cri_type_input(cri_type, args, callerfunction = 'cri.jab_to_rhi')
     
-    if jabt.ndim < 3:
-        jabt = jabt[:,None,:]
-    if jabr.ndim < 3:
-        jabr = jabr[:,None,:]
 
     # Get scale factor and function:
     if (scale_factor is None):
@@ -536,22 +532,21 @@ def jab_to_rhi(jabt, jabr, DEi, cri_type = 'cierf', start_hue = None, nhbins = N
      
     # A. Local Color Fidelity, Rfhi:
     if use_bin_avg_DEi == False:
-        DEi = np.power((jabt - bjabr), 2).sum(axis = len(jabt.shape)-1,keepdims = False)**0.5
+        DEi = np.power((bjabt - bjabr), 2).sum(axis = len(bjabt.shape)-1,keepdims = False)**0.5
     Rfhi = scale_fcn(DEi,scale_factor)
     
     # B.Local chroma shift and hue shift, [Rcshi, Rhshi]:
     # B.1 relative paths:
     Cr = np.sqrt((jabr[...,1:3]**2).sum(axis = jabr[...,1:3].ndim-1))
-    da = np.atleast_2d((jabt[...,1] - jabr[...,1])/Cr)
-    db = np.atleast_2d((jabt[...,2] - jabr[...,2])/Cr)
+    da = (jabt[...,1] - jabr[...,1])/Cr
+    db = (jabt[...,2] - jabr[...,2])/Cr
 
     # B.2 Reference unit circle:
     dhbins = 2*np.pi/nhbins
+    hbincenters = np.arange(start_hue + dhbins/2, 2*np.pi, dhbins)
+    arc = np.cos(hbincenters)[:,None]
+    brc = np.sin(hbincenters)[:,None]
     
-    hbincenters = np.arange(start_hue + dhbins/2, 2*np.pi, dhbins)[...,None]
-    arc = np.cos(hbincenters)
-    brc = np.sin(hbincenters)
-
     # B.3 calculate local chroma shift, Rcshi:
     Rcshi = da * arc + db * brc
     
@@ -977,8 +972,8 @@ def spd_to_cri(SPD, cri_type = 'cierf', out = 'Rf', wl = None, sampleset = None,
     
     # C. Calculate Rfhi, Rhshi and Rcshi:
     if ('Rfhi' in out.split(',')) | ('Rhshi' in out.split(',')) | ('Rcshi' in out.split(',')):
-        Rfhi, Rcshi, Rhshi = jab_to_rhi(jabt = jabt_binned[:-1,...], jabr = jabr_binned[:-1,...], DEi = DEi_binned[:-1,...], cri_type = cri_type, scale_factor = scale_factor, scale_fcn = scale_fcn, use_bin_avg_DEi = True) # [:-1,...] removes last row from jab as this was added to close the gamut. 
-
+        Rfhi, Rcshi, Rhshi = jab_to_rhi(jabt = jabt_binned[:-1,...], jabr = jabr_binned[:-1,...], DEi = DEi_binned, cri_type = cri_type, scale_factor = scale_factor, scale_fcn = scale_fcn, use_bin_avg_DEi = True) # [:-1,...] removes last row from jab as this was added to close the gamut. 
+ 
     if (out == 'Rf'):
         return Rf
     elif (out == 'Rg'):
