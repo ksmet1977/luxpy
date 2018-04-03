@@ -223,7 +223,7 @@ def subsample_RFL_set(rfl, rflpath = '', samplefcn = 'rand', S = _CIE_ILLUMINANT
 def plot_VF_PX_models(dataVF = None, dataPX = None, plot_VF = True, plot_PX = True, axtype='polar', ax = 'new', \
                       plot_circle_field = True, plot_sample_shifts = False, plot_samples_shifts_at_pixel_center = False, \
                       jabp_sampled = None, plot_VF_colors = ['g'], plot_PX_colors = ['r'], hbin_cmap = None, \
-                      bin_labels = None, force_CVG_layout = False):
+                      bin_labels = None, plot_bin_colors = True, force_CVG_layout = False):
     """
     Plot the VF and PX model color shift vectors.
     
@@ -263,6 +263,8 @@ def plot_VF_PX_models(dataVF = None, dataPX = None, plot_VF = True, plot_PX = Tr
         :hbin_cmap: None or colormap, optional
             Color map with RGB entries for each of the hue bins specified by the hues in _VF_PCOLORSHIFT.
             If None: will be obtained on first run by luxpy.cri.plot_shift_data() and returned as :cmap: for use in other functions.
+        :plot_bin_colors: True, optional
+            Colorize hue-bins.
         :bin_labels: None or list[str] or '#', optional
             Plots labels at the bin center hues.
             - None: don't plot.
@@ -289,28 +291,33 @@ def plot_VF_PX_models(dataVF = None, dataPX = None, plot_VF = True, plot_PX = Tr
             if (bin_labels is 'pcolorshift') & (dataVF is not None):
                 hbins = dataVF[Snr]['modeldata']['pcolorshift']['href']*180/np.pi
                 start_hue = 0
-                scalef = dataVF[Snr]['modeldata']['pcolorshift']['Cref']
+                scalef0 = dataVF[Snr]['modeldata']['pcolorshift']['Cref']
                 bin_labels = dataVF[Snr]['modeldata']['pcolorshift']['labels']
             else: 
                 hbins = _VF_PCOLORSHIFT['href']*180/np.pi
                 start_hue = 0
-                scalef = _VF_PCOLORSHIFT['Cref']
+                scalef0 = _VF_PCOLORSHIFT['Cref']
                 bin_labels = _VF_PCOLORSHIFT['labels']
-
+        else:
+            scalef0 = 100
+        if plot_circle_field == True:
+            scalef = scalef0*1.35
+        else:
+            scalef = scalef0
         # Plot shift vectors obtained using VF method:    
         if (dataVF is not None) & (plot_VF == True):
             if ((Snr==0) & (ax == 'new')):
-                figCVG, ax, cmap = plot_shift_data(dataVF[Snr], fieldtype = 'vectorfield', hbins = hbins, start_hue = start_hue, scalef = scalef, color = plot_VF_colors[Snr],axtype = axtype,  ax = ax, bin_labels = bin_labels)
+                figCVG, ax, cmap = plot_shift_data(dataVF[Snr], fieldtype = 'vectorfield', hbins = hbins, start_hue = start_hue, scalef = scalef, color = plot_VF_colors[Snr],axtype = axtype,  ax = ax, bin_labels = bin_labels, plot_bin_colors = plot_bin_colors)
             else:
-                plot_shift_data(dataVF[Snr], fieldtype = 'vectorfield', hbins = hbins, start_hue = start_hue, scalef = scalef, color = plot_VF_colors[Snr], axtype = axtype, ax = ax,  force_CVG_layout = force_CVG_layout, bin_labels = bin_labels)
+                plot_shift_data(dataVF[Snr], fieldtype = 'vectorfield', hbins = hbins, start_hue = start_hue, scalef = scalef, color = plot_VF_colors[Snr], axtype = axtype, ax = ax,  force_CVG_layout = force_CVG_layout, bin_labels = bin_labels, plot_bin_colors = plot_bin_colors)
                 force_CVG_layout = False
 
         # Plot shift vectors obtined using PX method:  
         if ((dataPX is not None) & (plot_PX == True)):
             if (Snr==0) & (ax == 'new') & (plot_VF == False):
-                figCVG, ax, cmap = plot_shift_data(dataPX[Snr], fieldtype = 'vectorfield', hbins = hbins, start_hue = start_hue, scalef = scalef, color = plot_PX_colors[Snr], ax = ax, axtype = axtype,  bin_labels = bin_labels)
+                figCVG, ax, cmap = plot_shift_data(dataPX[Snr], fieldtype = 'vectorfield', hbins = hbins, start_hue = start_hue, scalef = scalef, color = plot_PX_colors[Snr], ax = ax, axtype = axtype,  bin_labels = bin_labels, plot_bin_colors = plot_bin_colors)
             else:
-                plot_shift_data(dataPX[Snr], fieldtype = 'vectorfield', hbins = hbins, start_hue = start_hue, scalef = scalef, color = plot_PX_colors[Snr], ax = ax, axtype = axtype, force_CVG_layout = force_CVG_layout, bin_labels = bin_labels)
+                plot_shift_data(dataPX[Snr], fieldtype = 'vectorfield', hbins = hbins, start_hue = start_hue, scalef = scalef, color = plot_PX_colors[Snr], ax = ax, axtype = axtype, force_CVG_layout = force_CVG_layout, bin_labels = bin_labels, plot_bin_colors = plot_bin_colors)
                 force_CVG_layout = False
 
         # Plot sample data to check vector field shifts::
@@ -330,16 +337,16 @@ def plot_VF_PX_models(dataVF = None, dataPX = None, plot_VF = True, plot_PX = Tr
                     dataS['fielddata']['vectorfield']['bxt'] = jabp_sampled[:,2] + dataVF[Snr]['Jab']['Jabt'][...,2][:,0] - dataVF[Snr]['Jab']['Jabr'][...,2][:,0]
                    
             if (Snr==0) & (ax == 'new') &  (plot_VF is False):
-                figCVG, ax, cmap = plot_shift_data(dataS, fieldtype = 'vectorfield', hbins = hbins, start_hue = start_hue, scalef = scalef,color = 'k', ax = ax, axtype = axtype,force_CVG_layout = True, bin_labels = bin_labels)
+                figCVG, ax, cmap = plot_shift_data(dataS, fieldtype = 'vectorfield', hbins = hbins, start_hue = start_hue, scalef = scalef,color = 'k', ax = ax, axtype = axtype,force_CVG_layout = True, bin_labels = bin_labels, plot_bin_colors = plot_bin_colors)
             else:
-                plot_shift_data(dataS, fieldtype = 'vectorfield', hbins = hbins, start_hue = start_hue, scalef = scalef,color = 'k', ax = ax, axtype = axtype, force_CVG_layout = force_CVG_layout, bin_labels = bin_labels)
+                plot_shift_data(dataS, fieldtype = 'vectorfield', hbins = hbins, start_hue = start_hue, scalef = scalef,color = 'k', ax = ax, axtype = axtype, force_CVG_layout = force_CVG_layout, bin_labels = bin_labels, plot_bin_colors = plot_bin_colors)
                 force_CVG_layout = False
         
         if (plot_circle_field == True) & (dataVF is not None):
             if  (cmap is None):
-                figCVG, ax, cmap = plot_shift_data(dataVF[Snr], fieldtype = 'circlefield', hbins = hbins, start_hue = start_hue, scalef = scalef,color = 'darkgrey', ax = ax, axtype = axtype, force_CVG_layout = True, bin_labels = bin_labels)
+                figCVG, ax, cmap = plot_shift_data(dataVF[Snr], fieldtype = 'circlefield', hbins = hbins, start_hue = start_hue, scalef = scalef,color = 'darkgrey', ax = ax, axtype = axtype, force_CVG_layout = True, bin_labels = bin_labels, plot_bin_colors = plot_bin_colors)
             else:
-                plot_shift_data(dataVF[Snr], fieldtype = 'circlefield', hbins = hbins, start_hue = start_hue, scalef = scalef,color = 'darkgrey', ax = ax, axtype = axtype, force_CVG_layout = force_CVG_layout, bin_labels = bin_labels)
+                plot_shift_data(dataVF[Snr], fieldtype = 'circlefield', hbins = hbins, start_hue = start_hue, scalef = scalef,color = 'darkgrey', ax = ax, axtype = axtype, force_CVG_layout = force_CVG_layout, bin_labels = bin_labels, plot_bin_colors = plot_bin_colors)
                 force_CVG_layout = False
                 
         if axtype == 'cart':

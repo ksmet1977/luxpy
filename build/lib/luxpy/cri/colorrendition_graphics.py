@@ -25,7 +25,7 @@ from ..math import cart2pol
 __all__ = [ 'plot_hue_bins','plot_ColorVectorGraphic']
 
 
-def plot_hue_bins(hbins = 16, start_hue = 0.0, scalef = 100, plot_axis_labels = False, bin_labels = '#', plot_edge_lines = True, plot_center_lines = False, axtype = 'polar', ax = None, force_CVG_layout = False):
+def plot_hue_bins(hbins = 16, start_hue = 0.0, scalef = 100, plot_axis_labels = False, bin_labels = '#', plot_edge_lines = True, plot_center_lines = False, plot_bin_colors = True, axtype = 'polar', ax = None, force_CVG_layout = False):
     """
     Makes basis plot for Color Vector Graphic (CVG).
     
@@ -45,6 +45,8 @@ def plot_hue_bins(hbins = 16, start_hue = 0.0, scalef = 100, plot_axis_labels = 
             Plot grey bin edge lines with '--'.
         :plot_center_lines: False or True, optional
             Plot colored lines at 'center' of hue bin.
+        :plot_bin_colors: True, optional
+            Colorize hue bins.
         :axtype: 'polar' or 'cart', optional
             Make polar or Cartesian plot.
         :ax: None or 'new' or 'same', optional
@@ -152,7 +154,8 @@ def plot_hue_bins(hbins = 16, start_hue = 0.0, scalef = 100, plot_axis_labels = 
                         ax.plot(theta[:,i],r[:,i],color = c,marker = None,linestyle = '--',linewidth = 2)
                     else:
                         ax.plot(theta[:,i],r[:,i],color = c,marker = 'o',linestyle = '-',linewidth = 3,markersize = 10)
-                bar = ax.bar(dM[i],r[1,i], width = dt[i],color = c,alpha=0.15)
+                if plot_bin_colors == True:
+                    bar = ax.bar(dM[i],r[1,i], width = dt[i],color = c,alpha=0.15)
                 if bin_labels is not None:
                     ax.text(hbincenters[i],1.3*scalef,bin_labels[i],fontsize = 12, horizontalalignment='center',verticalalignment='center',color = np.array([1,1,1])*0.3)
                 if plot_axis_labels == False:
@@ -181,7 +184,7 @@ def plot_hue_bins(hbins = 16, start_hue = 0.0, scalef = 100, plot_axis_labels = 
 
     return plt.gcf(), plt.gca(), cmap
 
-def plot_ColorVectorGraphic(jabt, jabr, hbins = 16, start_hue = 0.0, scalef = 100, plot_axis_labels = False, bin_labels = None, plot_edge_lines = True, plot_center_lines = False, axtype = 'polar', ax = None, force_CVG_layout = False):
+def plot_ColorVectorGraphic(jabt, jabr, hbins = 16, start_hue = 0.0, scalef = 100, plot_axis_labels = False, bin_labels = None, plot_edge_lines = True, plot_center_lines = False, plot_bin_colors = True, axtype = 'polar', ax = None, force_CVG_layout = False):
     """
     Plot Color Vector Graphic (CVG).
     
@@ -203,6 +206,8 @@ def plot_ColorVectorGraphic(jabt, jabr, hbins = 16, start_hue = 0.0, scalef = 10
             Plot grey bin edge lines with '--'.
         :plot_center_lines: False or True, optional
             Plot colored lines at 'center' of hue bin.
+        :plot_bin_colors: True, optional
+            Colorize hue-bins.
         :axtype: 'polar' or 'cart', optional
             Make polar or Cartesian plot.
         :ax: None or 'new' or 'same', optional
@@ -218,7 +223,7 @@ def plot_ColorVectorGraphic(jabt, jabr, hbins = 16, start_hue = 0.0, scalef = 10
     """
     
     # Plot basis of CVG:
-    figCVG, ax, cmap = plot_hue_bins(hbins = hbins, start_hue = start_hue, scalef = scalef, axtype = axtype, ax = ax, plot_center_lines = plot_center_lines, plot_edge_lines = plot_edge_lines, force_CVG_layout = force_CVG_layout, bin_labels = bin_labels)
+    figCVG, ax, cmap = plot_hue_bins(hbins = hbins, start_hue = start_hue, scalef = scalef, axtype = axtype, ax = ax, plot_center_lines = plot_center_lines, plot_edge_lines = plot_edge_lines, force_CVG_layout = force_CVG_layout, bin_labels = bin_labels, plot_bin_colors = plot_bin_colors)
 
     if cmap == []:
         cmap = ['k' for i in range(hbins)]
