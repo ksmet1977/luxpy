@@ -227,7 +227,7 @@ def cie_interp(data,wl_new, kind = None, negative_values_allowed = False):
             # Set interpolation type based on data type:
             if kind in _INTERP_TYPES['linear']:
                 kind = 'linear'
-            if kind in _INTERP_TYPES['cubic']:
+            elif kind in _INTERP_TYPES['cubic']:
                 kind = 'cubic'
 
             # define wl, S, wl_new:
