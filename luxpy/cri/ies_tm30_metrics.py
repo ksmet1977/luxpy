@@ -58,7 +58,7 @@ def spd_to_ies_tm30_metrics(SPD, cri_type = None, hbins = 16, start_hue = 0.0, s
     """
     if cri_type is None:
         cri_type = 'iesrf'
-        
+    print(cri_type)
     #Calculate color rendering measures for SPDs in data:
     out = 'Rf,Rg,cct,duv,Rfi,jabt,jabr,Rfhi,Rcshi,Rhshi,cri_type'
     if isinstance(cri_type,str): # get dict 

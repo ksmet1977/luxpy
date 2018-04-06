@@ -1,7 +1,7 @@
 # luxpy: Python package for lighting and color science
 
 * Author: K. A.G. Smet
-* Version: 1.1.11
+* Version: 1.2.03
 * Date: April 1, 2018
 * License: GPLv3
 

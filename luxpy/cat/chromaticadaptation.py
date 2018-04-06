@@ -49,7 +49,7 @@ Created on Wed Jun 25 12:12:28 2017
 @author: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
        
-from .. import np, _CMF, math, np2d, asplit, ajoin
+from .. import np, _CMF, math, np2d, asplit, ajoin, _EPS
 
 #__all__ = ['_WHITE_POINT','_LA', '_MCATS','normalize_3x3_matrix','degree_of_adaptation_D','transferfunction_Dt','degree_of_adaptation_D','parse_x1x2_parameters','apply','smet2017_D']
 
