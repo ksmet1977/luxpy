@@ -6,7 +6,7 @@ Created on Sat Sep 23 20:06:06 2017
 @author: kevin.smet
 """
 
-xyzimport luxpy as lx
+import luxpy as lx
 import numpy as np
 
 

@@ -143,17 +143,6 @@ def diagr(x):
     
     """
     return np2d(np.diag(x))
-#------------------------------------------------------------------------------
-def normalize_3x3_matrix(M,xyz0 = np.array([[1.0,1.0,1.0]])):
-    """
-    Normalize 3x3 matrix to xyz0 -- > [1,1,1]
-    If M == 1by9: reshape
-    """
-    M = np2d(M)
-    if M.shape[-1]==9:
-        M = M.reshape(3,3)
-    return np.dot(diagm(1/np.dot(M,xyz0)),M)
-
 
 #------------------------------------------------------------------------------
 def normalize_3x3_matrix(M, xyz0 = np.array([[1.0,1.0,1.0]])):
