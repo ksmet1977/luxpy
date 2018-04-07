@@ -41,7 +41,7 @@ Created on Sun Jun 18 21:12:30 2017
 """
 
 from luxpy import np, pd, odict
-__all__ = ['np2d','np3d','np2dT','np3dT','put_args_in_db','getdata','dictkv','OD','meshblock','asplit','ajoin','broadcast_shape','todim']
+__all__ = ['np2d','np3d','np2dT','np3dT','diagc','diagr','put_args_in_db','getdata','dictkv','OD','meshblock','asplit','ajoin','broadcast_shape','todim']
 
 #--------------------------------------------------------------------------------------------------
 def np2d(data):
@@ -116,6 +116,43 @@ def np3dT(data): # keep last axis the same
             return np.expand_dims(np.atleast_2d(data),axis=0).transpose((1,0,2))
     else:
         return np.expand_dims(np.atleast_2d(np.aray(data)),axis=0).transpose((1,0,2))
+
+
+def diagc(x):
+    """
+    Take diagonal of numpy matrix x and store in numpy 2d-column vector.
+    
+    Args:
+        :x: nump.ndarray 
+        
+    Returns:
+        :returns: numpy.ndarray(2d column vector)
+    
+    """
+    return np2dT(np.diag(x))
+
+def diagr(x):
+    """
+    Take diagonal of numpy matrix x and store in numpy 2d-row vector.
+    
+    Args:
+        :x: nump.ndarray column vector
+        
+    Returns:
+        :returns: numpy.ndarray (2d row vector)
+    
+    """
+    return np2d(np.diag(x))
+#------------------------------------------------------------------------------
+def normalize_3x3_matrix(M,xyz0 = np.array([[1.0,1.0,1.0]])):
+    """
+    Normalize 3x3 matrix to xyz0 -- > [1,1,1]
+    If M == 1by9: reshape
+    """
+    M = np2d(M)
+    if M.shape[-1]==9:
+        M = M.reshape(3,3)
+    return np.dot(diagm(1/np.dot(M,xyz0)),M)
 
 
 #------------------------------------------------------------------------------
