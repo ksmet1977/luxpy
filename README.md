@@ -2,7 +2,7 @@
 
 * Author: K. A.G. Smet (ksmet1977 at gmail.com)
 * Version: 1.2.04
-* Date: April 1, 2018
+* Date: April 10, 2018
 * License: GPLv3
 
 -------------------------------------------------------------------------------
