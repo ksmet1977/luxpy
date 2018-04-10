@@ -1,8 +1,14 @@
 # -*- coding: utf-8 -*-
 """
+###############################################################################
+# Module for IES TM30 metric calculation
+###############################################################################
+# spd_to_ies_tm30_metrics(): Calculates IES TM30 metrics from spectral data
+
+
 Created on Tue Apr  3 22:16:08 2018
 
-@author: kevin.smet
+@author: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 from .. import np
 from .colorrendition_indices import _CRI_RFL, _CRI_DEFAULTS, spd_to_cri, gamut_slicer,jab_to_rhi

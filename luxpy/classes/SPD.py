@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 """
+SPD: Class functionality for spectral data
+
+
 Created on Fri Apr  6 15:50:05 2018
 
-@author: kevin.smet
+@author: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
 from .. import _CIEOBS, _WL3, _BB, _S012_DAYLIGHTPHASE, _INTERP_TYPES, _S_INTERP_TYPE, _R_INTERP_TYPE, _CRI_REF_TYPE, _CRI_REF_TYPES

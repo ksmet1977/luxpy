@@ -1,7 +1,7 @@
 # luxpy: Python package for lighting and color science
 
-* Author: K. A.G. Smet
-* Version: 1.2.03
+* Author: K. A.G. Smet (ksmet1977 at gmail.com)
+* Version: 1.2.04
 * Date: April 1, 2018
 * License: GPLv3
 
@@ -11,18 +11,18 @@
     0.1.  helpers/ helpers.py (imported directly into luxpy namespace, details see end of this file)
     0.2.  math/ math.py (imported as math into the luxpy namespace, details see end of this file)
     
-    1.  spectral/ cmf.py
-    2.  spectral/ spectral.py
-    3.  spectral/ spectral_databases
-    4.  ctf/ colortransforms.py (imported directly into luxpy namespace)
-    5.  cct/ cct.py (imported directly into luxpy namespace)
-    6.  cat/ chromaticadaptation.py (imported in luxpy namespace as .cat)
-    7.  cam/ colorappearancemodels.py (imported in luxpy namespace as .cam)
-    8.  ctf/ colortf.py (imported directly into luxpy namespace)
-    9.  cri/ colorrenditionindices.py (imported in luxpy namespace as .cri)
-    10. graphics/ plotters.py (imported directly into luxpy namespace)
-    11. classes/ SPD (imported directly into luxpy namespace)
-    12. classes/ CDATA, XYZ, LAB (imported directly into luxpy namespace)
+    1a.  spectral/ cmf.py
+    1b.  spectral/ spectral.py
+    1c.  spectral/ spectral_databases
+    2a.  ctf/ colortransforms.py (imported directly into luxpy namespace)
+    3a.  cct/ cct.py (imported directly into luxpy namespace)
+    4a.  cat/ chromaticadaptation.py (imported in luxpy namespace as .cat)
+    5a.  cam/ colorappearancemodels.py (imported in luxpy namespace as .cam)
+    2b.  ctf/ colortf.py (imported directly into luxpy namespace)
+    6a.  cri/ colorrendition_indices.py (imported in luxpy namespace as .cri)
+    7a. graphics/ plotters.py (imported directly into luxpy namespace)
+    8a. classes/ SPD (imported directly into luxpy namespace)
+    8b. classes/ CDATA, XYZ, LAB (imported directly into luxpy namespace)
     
  
 -------------------------------------------------------------------------------
@@ -39,7 +39,7 @@ More info:
     ?luxpy
  
 -------------------------------------------------------------------------------
-## 1. cmf.py
+## 1a. spectral/ cmf.py
 
 ### _CMF:
 Dict with info on several sets of color matching functions:
@@ -50,7 +50,7 @@ For more info:
 
     ?luxpy._CMF
 
-## 2. spectral.py
+## 1b. spectral/ spectral.py
 
 ### _WL3:
 Default wavelength specification in vector-3 format: [start, end, spacing]
@@ -123,7 +123,7 @@ For more info:
     ?luxpy.spd_to_xyz()
     etc.
 
-## 3. spectral_databases.py
+## 1c. spectral/ spectral_databases.py
 
 ### _S_PATH:
 Path to light source spectra data.
@@ -155,19 +155,23 @@ For more info:
     ?luxpy.spectral_databases
 
 
-## 4. colortransforms.py
+## 2a. ctf/ colortransforms.py
 Module with basic colorimetric functions (xyz_to_chromaticity, chromaticity_to_xyz conversions):
+
 ### xyz_to_Yxy(), Yxy_to_xyz(): 
 CIE xyz <--> CIE Yxy 
 
 ### xyz_to_Yuv(), Yuv_to_xyz(): 
 CIE xyz <--> CIE 1976 Yu'v' 
 
-### Yxy_to_Yuv(), Yuv_to_Yxy(): 
-CIE 1976 Yu'v' <--> CIE Yxy 
+### xyz_to_wuv(), wuv_to_xyz(): 
+CIE 1964 W*U*V* <--> CIE xyz 
 
 ###	 xyz_to_xyz():	
 CIE xyz <--> CIE xyz (forward = inverse)
+
+###	 xyz_to_lms(), lms_to_xyz:	
+CIE xyz <--> CIE lms (cone fundamentals)
 
 ###	 xyz_to_lab(), lab_to_xyz(): 
 CIE xyz <--> CIELAB 
@@ -191,7 +195,7 @@ For more info:
     ?luxpy.xyz_to_Yuv()
     etc.
     
-## 5. cct.py
+## 3a. cct/ cct.py
 
 ### _CCT_LUT_PATH:
 Path to Look-Up-Tables (LUT) for correlated color temperature calculation followings [Ohno's method](http://www.tandfonline.com/doi/abs/10.1080/15502724.2014.839020).
@@ -223,7 +227,7 @@ Calculates CCT,Duv from XYZ using LUT following:
 ### xyz_to_cct_search(): 
 Calculates CCT,Duv from XYZ using brute-force search algorithm (between 1e2 K - 1e20 K on a log scale)
 
-###	 cct_to_mired(): 
+### cct_to_mired(): 
 Converts from CCT to Mired scale (or back)
 
 For more info:
@@ -232,7 +236,7 @@ For more info:
     ?luxpy.xyz_to_cct()
     etc.
 
-## 6. chromaticadaptation.py (cat)
+## 4a. cat/ chromaticadaptation.py (cat)
 
 ### cat._WHITE_POINT:   
 Default adopted white point
@@ -288,7 +292,8 @@ For more info:
     ?luxpy.cat.apply()
     etc.
 
-## 7. colorappearancemodels.py (cam)
+## 5a. cam/ colorappearancemodels.py (cam)
+
 ### cam._UNIQUE_HUE_DATA: 
 Database of unique hues with corresponding Hue quadratures and eccentricity factors
 (ciecam02, cam16, ciecam97s, cam15u)
@@ -317,6 +322,9 @@ Default internal reference white point (xyz)
 
 ### cam._CAM_DEFAULT_CONDITIONS:
 Default CAM model parameters for model in cam._CAM_DEFAULT_TYPE
+
+### cam._CAM_AXES: 
+Dict with list[str,str,str] containing axis labels of defined cspaces.
 
 ### cam.naka_rushton(): 
 Applies a Naka-Rushton function to the input (forward and inverse available)
@@ -387,7 +395,7 @@ For more info:
     etc.
 
 
-## 8. colortf.py
+## 2b. ctf/ colortf.py
 
 ### _COLORTF_DEFAULT_WHITE_POINT: 
 XYZ values (numpy.ndarray) of default white point (equi-energy white) 
@@ -402,14 +410,18 @@ For more info:
     etc.
 
 
-## 9. colorrenditionindices.py (cri)
+## 6a. cri/ colorrendition.py (cri)
 
-### cri._cri_defaults: 
+
+### cri._CRI_TYPE_DEFAULT:
+Default cri_type str.
+
+### cri._CRI_DEFAULTS: 
 Default settings for different color rendition indices: (major dict has 9 keys (04-Jul-2017): 
 * sampleset [str/dict],  ref_type [str], cieobs [str], avg [fcn handle], scale [dict], cspace [dict], catf [dict], rg_pars [dict], cri_specific_pars [dict]
 
 Supported cri-types:
-* 'ciera', 'ciera-8', 'ciera-14', 'cierf', 'iesrf', 'cri2012', 'cri2012-hl17', 'cri2012-hl1000', 'cri2012-real210', 'cqs-v7.5', 'cqs-v9.0', mcri'
+* 'ciera','ciera-8','ciera-14','cierf','iesrf','iesrf-tm30-15','iesrf-tm30-18','cri2012','cri2012-hl17','cri2012-hl1000','cri2012-real210','mcri','cqs-v7.5','cqs-v9.0'
 
 ### cri.linear_scale():  
 Linear color rendering index scale from [CIE13.3-1974/1995](http://www.cie.co.at/index.php/index.php?i_ca_id=303):   Ri,a = 100 - c1*DEi,a. (c1 = 4.6)
@@ -428,6 +440,9 @@ Slices the gamut in nhbins slices and provides normalization of test gamut to re
 
 ### cri.jab_to_rg(): 
 Calculates gamut area index, Rg based on hue-ordered jabt and jabr input (first element must also be last)
+
+### jab_to_rhi(): 
+Calculate hue bin measures: Rfhi (local (hue bin) color fidelity), Rcshi (local chroma shift) and Rhshi (local hue shift).
 
 ### cri.spd_to_jab_t_r(): 
 Calculates jab color values for a sample set illuminated with test source and its reference illuminant.
@@ -469,14 +484,37 @@ Calculates the memory color rendition index, Rm:
 Versions 7.5 and 9.0 are supported.  
 * [W. Davis and Y. Ohno, “Color quality scale,” (2010), Opt. Eng., vol. 49, no. 3, pp. 33602–33616.](http://spie.org/Publications/Journal/10.1117/1.3360335)
 
+
+### plot_hue_bins(): 
+Makes basis plot for Color Vector Graphic (CVG).
+
+### plot_ColorVectorGraphic():
+Plots Color Vector Graphic (see IES TM30).
+
+
+### colorrendition_VF_PX_models module
+* VF: Implements a Vector Field model to calculate the base color shift generated by a light source.
+and to calculate a Metameric uncertainty index
+* PX: Implements a Color Space Pixelation method to assess light source induced color shifts across color space.
+
 For more info:
+
+    ?luxpy.cri.VFPX
+
+### spd_to_ies_tm30_metrics(): 
+Calculates IES TM30 metrics from spectral data
+
+### plot_cri_graphics(): 
+Plot_cri_graphics(): Plots graphical information on color rendition properties based on spectral data input or dict with pre-calculated measures.
+
+
+For more info on .cri module:
 
     ?luxpy.cri
     ?luxpy.cri.spd_to_cri()
     etc.
 
-
-## 10. plotters.py
+## 7a. raphics/ plotters.py
 
 ### plot_color_data():
 Plot color data (local helper function)
@@ -507,7 +545,7 @@ For more info:
 
 
 -------------------------------------------------------------------------------
-## 0.1.  helpers.py 
+## 0.1.  helpers/ helpers.py 
 
 ### np2d():
 Make a tuple, list or numpy array at least 2d array.
@@ -556,7 +594,7 @@ For more info:
     etc.
 
 
-## 0.2.  math.py (math)
+## 0.2.  math/ math.py (math)
 
 ### normalize_3x3_matrix():  
 Normalize 3x3 matrix M to xyz0 -- > [1,1,1]
