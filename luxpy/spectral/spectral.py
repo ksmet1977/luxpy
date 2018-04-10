@@ -22,7 +22,7 @@
 #
 # getwld(): Get wavelength spacing of numpy.ndarray with wavelengths.
 #
-# normalize_spd(): Spectrum normalization (supports: area, max and lambda)
+# spd_normalize(): Spectrum normalization (supports: area, max and lambda)
 #
 # cie_interp(): Interpolate / extrapolate spectral data following standard [CIE15:2004](http://www.cie.co.at/index.php/index.php?i_ca_id=304).
 #
@@ -55,7 +55,7 @@ Created on Sat Jun 24 21:12:30 2017
 from .. import np, pd, interpolate, _PKG_PATH, _SEP, _EPS, _CIEOBS, np2d, getdata
 from .cmf import _CMF
 __all__ = ['_WL3','_BB','_S012_DAYLIGHTPHASE','_INTERP_TYPES','_S_INTERP_TYPE', '_R_INTERP_TYPE','_CRI_REF_TYPE',
-           '_CRI_REF_TYPES', 'getwlr','getwld','normalize_spd','cie_interp','spd','xyzbar', 'spd_to_xyz',
+           '_CRI_REF_TYPES', 'getwlr','getwld','spd_normalize','cie_interp','spd','xyzbar', 'spd_to_xyz',
            'blackbody','daylightlocus','daylightphase','cri_ref']
 
 
@@ -131,7 +131,7 @@ def getwld(wl):
 
 
 #------------------------------------------------------------------------------
-def normalize_spd(data, norm_type = None,norm_f = 1, wl = True):
+def spd_normalize(data, norm_type = None,norm_f = 1, wl = True):
     """
     Normalize a spectral power distribution (SPD).
     
@@ -311,7 +311,7 @@ def spd(data = None, interpolation = None, wl = None, columns = None, kind = 'np
             data = getdata(data = data, kind = 'np', columns = columns, sep = sep, header = header, datatype = datatype)#interpolation requires np-array as input
             if (transpose == True): data = data.T
             data = cie_interp(data = data, wl_new = wl,kind = interpolation)
-            data = normalize_spd(data,norm_type = norm_type, norm_f = norm_f, wl = True)
+            data = spd_normalize(data,norm_type = norm_type, norm_f = norm_f, wl = True)
         
         if isinstance(data,pd.DataFrame):
             columns = data.columns #get possibly updated column names

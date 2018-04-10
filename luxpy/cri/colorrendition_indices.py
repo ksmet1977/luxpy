@@ -1266,7 +1266,7 @@ def spd_to_mcri(SPD, D = 0.9, E = None, Yb = 20.0, out = 'Rm', wl = None):
         xyztw = cat.apply(xyztw, cattype = cattype_cat, catmode = catmode_cat, xyzw1 = xyztw,xyzw0 = None, xyzw2 = xyzw_cat, D = D, mcat = [mcat_cat], Dtype = Dtype_cat)
      
     # C. convert xyz to ipt and split:
-    ipt = xyz_to_ipt(xyzti, cieobs = cieobs['xyz'], Mxyz2lms = Mxyz2lms) #input matrix as published in Smet et al. 2012, Energy and Buildings
+    ipt = xyz_to_ipt(xyzti, cieobs = cieobs['xyz'], M = Mxyz2lms) #input matrix as published in Smet et al. 2012, Energy and Buildings
     I,P,T = asplit(ipt)  
 
     # D. calculate specific (hue dependent) similarity indicators, Si:

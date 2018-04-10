@@ -46,9 +46,10 @@ import warnings
 import os
 from collections import OrderedDict as odict
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 import colorsys
 
-__all__ = ['plt','np','pd','os','warnings','interpolate','minimize','odict']
+__all__ = ['plt','Axes3D','np','pd','os','warnings','interpolate','minimize','odict']
 
 
 
