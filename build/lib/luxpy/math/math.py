@@ -53,7 +53,6 @@ __all__  = ['normalize_3x3_matrix','symmM_to_posdefM','check_symmetric','check_p
 __all__ += ['bvgpdf','mahalanobis2','dot23', 'rms','geomean','polyarea']
 __all__ += ['magnitude_v','angle_v1v2']
 
-
 #------------------------------------------------------------------------------
 def normalize_3x3_matrix(M, xyz0 = np.array([[1.0,1.0,1.0]])):
     """

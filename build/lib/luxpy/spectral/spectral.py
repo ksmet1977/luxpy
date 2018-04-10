@@ -22,7 +22,7 @@
 #
 # getwld(): Get wavelength spacing of numpy.ndarray with wavelengths.
 #
-# normalize_spd(): Spectrum normalization (supports: area, max and lambda)
+# spd_normalize(): Spectrum normalization (supports: area, max and lambda)
 #
 # cie_interp(): Interpolate / extrapolate spectral data following standard [CIE15:2004](http://www.cie.co.at/index.php/index.php?i_ca_id=304).
 #
@@ -55,7 +55,7 @@ Created on Sat Jun 24 21:12:30 2017
 from .. import np, pd, interpolate, _PKG_PATH, _SEP, _EPS, _CIEOBS, np2d, getdata
 from .cmf import _CMF
 __all__ = ['_WL3','_BB','_S012_DAYLIGHTPHASE','_INTERP_TYPES','_S_INTERP_TYPE', '_R_INTERP_TYPE','_CRI_REF_TYPE',
-           '_CRI_REF_TYPES', 'getwlr','getwld','normalize_spd','cie_interp','spd','xyzbar', 'spd_to_xyz',
+           '_CRI_REF_TYPES', 'getwlr','getwld','spd_normalize','cie_interp','spd','xyzbar', 'spd_to_xyz',
            'blackbody','daylightlocus','daylightphase','cri_ref']
 
 
@@ -131,66 +131,67 @@ def getwld(wl):
 
 
 #------------------------------------------------------------------------------
-def normalize_spd(data, normalization = None,w_norm = 1, wl = True):
+def spd_normalize(data, norm_type = None,norm_f = 1, wl = True):
     """
     Normalize a spectral power distribution (SPD).
     
     Args:
         :data: numpy.ndarray
-        :normalization: None, optional 
-            - 'lambda': make lambda in w_norm equal to 1
-            - 'area': area-normalization times w_norm
-            - 'max': max-normalization times w_norm
-        :wnorm: 1, optional
-            Determines size of normalization for 'max' and 'area' or which wavelength is normalized to 1 for 'lambda' option.
+        :norm_type: None, optional 
+            - 'lambda': make lambda in norm_f equal to 1
+            - 'area': area-normalization times norm_f
+            - 'max': max-normalization times norm_f
+        :norm_f: 1, optional
+            Normalization factor: determines size of normalization for 'max' and 'area' or which wavelength is normalized to 1 for 'lambda' option.
         :wl: True or False, optional 
             If True, the first column of data contains wavelengths.
     
     Returns:
         :returns: numpy.ndarray with normalized data.
     """
-    if normalization is not None:
-        if not isinstance(normalization,list):
-            normalization = [normalization]
-        if w_norm is not None:
-            if not isinstance(w_norm,list):
-                w_norm = [w_norm]
+    if norm_type is not None:
+        if not isinstance(norm_type,list):
+            norm_type = [norm_type]
+        if norm_f is not None:
+            if not isinstance(norm_f,list):
+                norm_f = [norm_f]
                 
-        if ('lambda' in normalization):
+        if ('lambda' in norm_type):
             wl = True # for lambda normalization wl MUST be first column
             wlr = data[0]
             
-        if ('area' in normalization) & (wl == True):
+        if ('area' in norm_type) & (wl == True):
             dl = getwld(data[0])
         else:
             dl = 1 #no wavelengths provided
             
         offset = int(wl)
         for i in range(data.shape[0]-offset):  
-            if len(normalization)>1:
-                normalization_ = normalization[i]
+            if len(norm_type)>1:
+                norm_type_ = norm_type[i]
             else:
-                normalization_ = normalization[0]
-            if w_norm is not None:
-                if len(w_norm)>1:
-                    w_norm_ = w_norm[i]
+                norm_type_ = norm_type[0]
+            if norm_f is not None:
+                if len(norm_f)>1:
+                    norm_f_ = norm_f[i]
                 else:
-                    w_norm_ = w_norm[0]
+                    norm_f_ = norm_f[0]
             else:
-                if normalization_ == 'lambda':
-                    w_norm_ = 560.0    
+                if norm_type_ == 'lambda':
+                    norm_f_ = 560.0    
                 else:
-                    w_norm_ = 1.0
+                    norm_f_ = 1.0
       
-            if normalization_=='max':
-                data[i+offset]=w_norm_*data[i+offset]/np.max(data[i+offset])
-            elif normalization_=='area':
-                data[i+offset]=w_norm_*data[i+offset]/(np.sum(data[i+offset])*dl)
-            elif normalization_=='lambda':
-                wl_index = np.where((np.abs(wlr-w_norm_)==np.min(np.abs(wlr-w_norm_))))
-                data[i+offset]=data[i+offset]/data[i+offset][wl_index[0]]
+            if norm_type_=='max':
+                data[i+offset]=norm_f_*data[i+offset]/np.max(data[i+offset])
+            elif norm_type_=='area':
+                data[i+offset]=norm_f_*data[i+offset]/(np.sum(data[i+offset])*dl)
+            elif norm_type_=='lambda':
+                #wl_index = np.where((np.abs(wlr-norm_f_)==np.min(np.abs(wlr-norm_f_))))[0]
+                wl_index = np.abs(wlr-norm_f_).argmin()
+                data[i+offset]=data[i+offset]/data[i+offset][wl_index]
             else:
-                data[i+offset]=data[i+offset]/w_norm_
+                data[i+offset]=data[i+offset]/norm_f_
     return data	
 	
 #--------------------------------------------------------------------------------------------------
@@ -227,7 +228,7 @@ def cie_interp(data,wl_new, kind = None, negative_values_allowed = False):
             # Set interpolation type based on data type:
             if kind in _INTERP_TYPES['linear']:
                 kind = 'linear'
-            if kind in _INTERP_TYPES['cubic']:
+            elif kind in _INTERP_TYPES['cubic']:
                 kind = 'cubic'
 
             # define wl, S, wl_new:
@@ -257,7 +258,7 @@ def cie_interp(data,wl_new, kind = None, negative_values_allowed = False):
     return data
 	
 #--------------------------------------------------------------------------------------------------
-def spd(data = None, interpolation = None, wl = None, columns = None, kind = 'np', sep = ',',header = None,datatype = 'S', normalization = None, w_norm = None):
+def spd(data = None, interpolation = None, wl = None, columns = None, kind = 'np', sep = ',',header = None,datatype = 'S', norm_type = None, norm_f = None):
     """
     All-in-one function that can:
         1. Read spectral data from data file or take input directly as pandas.dataframe or numpy.array.
@@ -283,12 +284,12 @@ def spd(data = None, interpolation = None, wl = None, columns = None, kind = 'np
             Column separator in case :data: specifies a data file. 
         :datatype': 'S' (light source spectrum) or 'R' (reflectance spectrum) or other, optional
             Specifies a type of data. Is used when creating column headers when :column: is None.
-        :normalization: None, optional 
-            - 'lambda': make lambda in w_norm equal to 1
-            - 'area': area-normalization times w_norm
-            - 'max': max-normalization times w_norm
-        :wnorm: 1, optional
-            Determines size of normalization for 'max' and 'area' or which wavelength is normalized to 1 for 'lambda' option.
+        :norm_type: None, optional 
+            - 'lambda': make lambda in norm_f equal to 1
+            - 'area': area-normalization times norm_f
+            - 'max': max-normalization times norm_f
+        :norm_f: 1, optional
+            Normalization factor: determines size of normalization for 'max' and 'area' or which wavelength is normalized to 1 for 'lambda' option.
     
     Returns:
         :returns: pandas.dataframe or numpy.ndarray with interpolated and/or normalized spectral data
@@ -303,14 +304,14 @@ def spd(data = None, interpolation = None, wl = None, columns = None, kind = 'np
     
     # Data input:
     if data is not None:
-        if (interpolation is None) & (normalization is None):
+        if (interpolation is None) & (norm_type is None):
             data = getdata(data = data, kind = 'np', columns = columns, sep = sep, header = header, datatype = datatype)
             if (transpose == True): data = data.T
         else:
             data = getdata(data = data, kind = 'np', columns = columns, sep = sep, header = header, datatype = datatype)#interpolation requires np-array as input
             if (transpose == True): data = data.T
             data = cie_interp(data = data, wl_new = wl,kind = interpolation)
-            data = normalize_spd(data,normalization = normalization, w_norm = w_norm, wl = True)
+            data = spd_normalize(data,norm_type = norm_type, norm_f = norm_f, wl = True)
         
         if isinstance(data,pd.DataFrame):
             columns = data.columns #get possibly updated column names
@@ -331,7 +332,7 @@ def spd(data = None, interpolation = None, wl = None, columns = None, kind = 'np
     return data
 
 #--------------------------------------------------------------------------------------------------
-def xyzbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, normalization = None, w_norm = None, kind = 'np'):
+def xyzbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, norm_type = None, norm_f = None, kind = 'np'):
     """
     Get color matching functions.  
     
@@ -342,12 +343,12 @@ def xyzbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, normalization = None, 
             Determines whether to load cmfs from file (./data/cmfs/) or from dict defined in .cmf.py
         :wl: None, optional
              New wavelength range for interpolation. Defaults to wavelengths specified by luxpy._WL3.
-        :normalization: None, optional 
-            - 'lambda': make lambda in w_norm equal to 1
-            - 'area': area-normalization times w_norm
-            - 'max': max-normalization times w_norm
-        :wnorm: 1, optional
-            Determines size of normalization for 'max' and 'area' or which wavelength is normalized to 1 for 'lambda' option.
+        :norm_type: None, optional 
+            - 'lambda': make lambda in norm_f equal to 1
+            - 'area': area-normalization times norm_f
+            - 'max': max-normalization times norm_f
+        :norm_f: 1, optional
+            Normalization factor: determines size of normalization for 'max' and 'area' or which wavelength is normalized to 1 for 'lambda' option.
         :kind: str ['np','df'], optional 
             Determines type(:returns:), np: numpy.ndarray, df: pandas.dataframe
 
@@ -463,7 +464,7 @@ def spd_to_xyz(data,  relative = True, rfl = None, cieobs = _CIEOBS, out = None)
 #---CIE illuminants------------------------------------------------------------
 #------------------------------------------------------------------------------
 
-def blackbody(cct, wl3 = None, normalization = None, w_norm = None):
+def blackbody(cct, wl3 = None, norm_type = None, norm_f = None):
     """
     Calculate blackbody radiator spectrum for correlated color temperature (cct).
     
@@ -471,12 +472,12 @@ def blackbody(cct, wl3 = None, normalization = None, w_norm = None):
         :cct: int or float (for list of cct values, use cri_ref() with ref_type = 'BB')
         :wl3: None, optional
              New wavelength range for interpolation. Defaults to wavelengths specified by luxpy._WL3.
-        :normalization: None, optional 
-            - 'lambda': make lambda in w_norm equal to 1
-            - 'area': area-normalization times w_norm
-            - 'max': max-normalization times w_norm
-        :wnorm: 1, optional
-            Determines size of normalization for 'max' and 'area' or which wavelength is normalized to 1 for 'lambda' option.
+        :norm_type: None, optional 
+            - 'lambda': make lambda in norm_f equal to 1
+            - 'area': area-normalization times norm_f
+            - 'max': max-normalization times norm_f
+        :norm_f: 1, optional
+            Normalization factor: determines size of normalization for 'max' and 'area' or which wavelength is normalized to 1 for 'lambda' option.
 
     Returns:
         :returns: numpy.ndarray with blackbody radiator spectrum
@@ -492,7 +493,7 @@ def blackbody(cct, wl3 = None, normalization = None, w_norm = None):
     wl=getwlr(wl3)
     def fSr(x):
         return (1/np.pi)*_BB['c1']*((x*1.0e-9)**(-5))*(_BB['n']**(-2.0))*(np.exp(_BB['c2']*((_BB['n']*x*1.0e-9*(cct+_EPS))**(-1.0)))-1.0)**(-1.0)
-#    return spd(data = np.vstack((wl,(fSr(wl)/fSr(560.0)))), wl = None, normalization = None, w_norm = None)
+#    return spd(data = np.vstack((wl,(fSr(wl)/fSr(560.0)))), wl = None, norm_type = None, norm_f = None)
     return np.vstack((wl,(fSr(wl)/fSr(560.0))))
 
 #------------------------------------------------------------------------------
@@ -526,7 +527,7 @@ def daylightlocus(cct, force_daylight_below4000K = False):
    
    
 #------------------------------------------------------------------------------
-def daylightphase(cct, wl3 = None, normalization = None, w_norm = None, force_daylight_below4000K = False, verbosity = None):
+def daylightphase(cct, wl3 = None, norm_type = None, norm_f = None, force_daylight_below4000K = False, verbosity = None):
     """
     Calculate daylight phase spectrum for correlated color temperature (cct).
         
@@ -534,12 +535,12 @@ def daylightphase(cct, wl3 = None, normalization = None, w_norm = None, force_da
         :cct: int or float (for list of cct values, use cri_ref() with ref_type = 'DL')
         :wl3: None, optional
              New wavelength range for interpolation. Defaults to wavelengths specified by luxpy._WL3.
-        :normalization: None, optional 
-            - 'lambda': make lambda in w_norm equal to 1
-            - 'area': area-normalization times w_norm
-            - 'max': max-normalization times w_norm
-        :wnorm: 1, optional
-            Determines size of normalization for 'max' and 'area' or which wavelength is normalized to 1 for 'lambda' option.
+        :norm_type: None, optional 
+            - 'lambda': make lambda in norm_f equal to 1
+            - 'area': area-normalization times norm_f
+            - 'max': max-normalization times norm_f
+        :norm_f: 1, optional
+            Normalization factor: determines size of normalization for 'max' and 'area' or which wavelength is normalized to 1 for 'lambda' option.
         :force_daylight_below4000K: False or True, optional
             Daylight locus approximation is not defined below 4000 K, but by setting this to True,
             the calculation can be forced to calculate it anyway.
@@ -581,10 +582,10 @@ def daylightphase(cct, wl3 = None, normalization = None, w_norm = None, force_da
         Sr[Sr==float('NaN')]=0
         Sr = np.vstack((wl,Sr))
     return Sr
-#    return spd(Sr, wl = None, normalization = None, w_norm = None)  
+#    return spd(Sr, wl = None, norm_type = None, norm_f = None)  
     
 #------------------------------------------------------------------------------
-def cri_ref(ccts, wl3 = None, ref_type = _CRI_REF_TYPE, mix_range = None, cieobs=_CIEOBS, normalization = None, w_norm = None, force_daylight_below4000K = False):
+def cri_ref(ccts, wl3 = None, ref_type = _CRI_REF_TYPE, mix_range = None, cieobs=_CIEOBS, norm_type = None, norm_f = None, force_daylight_below4000K = False):
     """
     Calculates a reference illuminant spectrum for color rendering index calculations based on cct.
     
@@ -608,12 +609,12 @@ def cri_ref(ccts, wl3 = None, ref_type = _CRI_REF_TYPE, mix_range = None, cieobs
             Can be a numpy.ndarray with shape[0] > 1, in which different mixing ranges will be used for cct in :ccts:.
         :cieobs: luxpy._CIEOBS, optional
             Required for the normalization of the Planckian and Daylight SPDs when calculating a 'mixed' reference illuminant.
-        :normalization: None, optional 
-            - 'lambda': make lambda in w_norm equal to 1
-            - 'area': area-normalization times w_norm
-            - 'max': max-normalization times w_norm
-        :wnorm: 1, optional
-            Determines size of normalization for 'max' and 'area' or which wavelength is normalized to 1 for 'lambda' option.
+        :norm_type: None, optional 
+            - 'lambda': make lambda in norm_f equal to 1
+            - 'area': area-normalization times norm_f
+            - 'max': max-normalization times norm_f
+        :norm_f: 1, optional
+            Normalization factor: determines size of normalization for 'max' and 'area' or which wavelength is normalized to 1 for 'lambda' option.
         :force_daylight_below4000K: False or True, optional
             Daylight locus approximation is not defined below 4000 K, but by setting this to True,
             the calculation can be forced to calculate it anyway.
@@ -629,7 +630,7 @@ def cri_ref(ccts, wl3 = None, ref_type = _CRI_REF_TYPE, mix_range = None, cieobs
     if ref_type == 'spd':
         
         # ccts already contains spectrum of reference:
-        return spd(ccts, wl = wl3, normalization = normalization, w_norm = w_norm)	
+        return spd(ccts, wl = wl3, norm_type = norm_type, norm_f = norm_f)	
 
     else:
         if mix_range is not None:
@@ -704,4 +705,4 @@ def cri_ref(ccts, wl3 = None, ref_type = _CRI_REF_TYPE, mix_range = None, cieobs
                     
         Srs = np.vstack((Sr[0],Srs))
             
-        return  spd(Srs, wl = None, normalization = normalization, w_norm = w_norm)	
+        return  spd(Srs, wl = None, norm_type = norm_type, norm_f = norm_f)	
