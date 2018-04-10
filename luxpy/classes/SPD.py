@@ -74,7 +74,7 @@ class SPD:
         self.dtype = dtype
         self.shape = self.value.shape
         self.N = self.shape[0]
-        self.dwl = self.getwld_()
+
         
         if wl_new is not None:
             if interp_method == 'auto':
@@ -103,7 +103,7 @@ class SPD:
         """
         return pd.read_csv(file, names = None, index_col = None, header = header, sep = sep).values.T
 
-    def plot_(self, ylabel = 'Spectrum', *args,**kwargs):
+    def plot(self, ylabel = 'Spectrum', *args,**kwargs):
         """
         Make a plot of the spectral data in SPD instance.
         
@@ -218,7 +218,7 @@ class SPD:
         return self
 
     #--------------------------------------------------------------------------------------------------
-    def cie_interp(self,wl_new, kind = None, negative_values_allowed = False):
+    def cie_interp(self,wl_new, kind = 'auto', negative_values_allowed = False):
         """
         Interpolate / extrapolate spectral data following standard CIE15-2004.
         
@@ -227,10 +227,11 @@ class SPD:
         
         Args:
             :wl_new: numpy.ndarray with new wavelengths
-            :kind: None, optional
+            :kind: 'auto', optional
                 If :kind: is None, return original data.
                 If :kind: is a spectrum type (see _INTERP_TYPES), the correct 
                     interpolation type if automatically chosen.
+                If kind = 'auto': use self.dtype
                 Or :kind: can be any interpolation type supported by scipy.interpolate.interp1d
             :negative_values_allowed: False, optional
                 If False: negative values are clipped to zero
@@ -239,6 +240,8 @@ class SPD:
             :returns: numpy.ndarray of interpolated spectral data.
                 (.shape = (number of spectra + 1, number of wavelength in wl_new))
         """
+        if (kind == 'auto') & (self.dtype is not None):
+            kind = self.dtype
         spd = cie_interp(self.get_(), wl_new, kind = kind, negative_values_allowed = negative_values_allowed)
         self.wl = spd[0]
         self.value = spd[1:]

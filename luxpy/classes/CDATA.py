@@ -6,8 +6,16 @@ Created on Fri Apr  6 13:51:37 2018
 """
 
 from .. import _CMF, _COLORTF_DEFAULT_WHITE_POINT, _CIEOBS, _CSPACE, _CSPACE_AXES
+from ..cam.colorappearancemodels import _CAM_DEFAULT_WHITE_POINT, _CAM_DEFAULT_CONDITIONS 
 from .. import xyz_to_Yxy, xyz_to_Yuv, xyz_to_wuv, xyz_to_lab, xyz_to_luv, xyz_to_Vrb_mb, xyz_to_ipt, xyz_to_Ydlep, xyz_to_xyz, xyz_to_lms
 from .. import Yxy_to_xyz, Yuv_to_xyz, lab_to_xyz, luv_to_xyz, Vrb_mb_to_xyz, ipt_to_xyz, Ydlep_to_xyz, lms_to_xyz
+from .. import xyz_to_jabM_ciecam02, jabM_ciecam02_to_xyz, xyz_to_jabC_ciecam02, jabC_ciecam02_to_xyz
+from .. import xyz_to_jabM_cam16, jabM_cam16_to_xyz, xyz_to_jabC_cam16, jabC_cam16_to_xyz
+from .. import xyz_to_jab_cam02ucs, jab_cam02ucs_to_xyz, xyz_to_jab_cam02lcd, jab_cam02lcd_to_xyz, xyz_to_jab_cam02scd, jab_cam02scd_to_xyz 
+from .. import xyz_to_jab_cam16ucs, jab_cam16ucs_to_xyz, xyz_to_jab_cam16lcd, jab_cam16lcd_to_xyz, xyz_to_jab_cam16scd, jab_cam16scd_to_xyz
+from .. import xyz_to_qabW_cam15u, qabW_cam15u_to_xyz
+from .. import xyz_to_lab_cam_sww_2016, lab_cam_sww_2016_to_xyz
+
 from .. import plt, np, todim
 
 
@@ -145,7 +153,7 @@ class CDATA():
         return self
     
         
-
+###############################################################################
 
 class XYZ(CDATA):
     
@@ -168,7 +176,7 @@ class XYZ(CDATA):
                     with color space coordinates 
 
         """
-        return LAB(value = getattr(self,'to_{:s}'.format(dtype))(**kwargs).value, relative = self.relative, cieobs = self.cieobs, **kwargs)
+        return LAB(value = getattr(self,'to_{:s}'.format(dtype))(**kwargs).value, relative = self.relative, cieobs = self.cieobs, dtype = dtype, **kwargs)
 
     def plot(self,  ax = None, title = None, **kwargs):
         """
@@ -205,7 +213,7 @@ class XYZ(CDATA):
     
     
     #------------------------------------------------------------------------------
-    #---chromaticity coordinates---------------------------------------------------
+    #---chromaticity and color space ----------------------------------------------
     #------------------------------------------------------------------------------
     def to_Yxy(self):
         """ 
@@ -377,15 +385,144 @@ class XYZ(CDATA):
   
     
     
+    #------------------------------------------------------------------------------
+    #---color appearance space coordinates-----------------------------------------
+    #------------------------------------------------------------------------------
+    
+    def to_jabM_ciecam02(self, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, yellowbluepurplecorrect = None, mcat = 'cat02'):
+        """
+        See ?luxpy.xyz_to_jabM_ciecam02
+        """
+        value = xyz_to_jabM_ciecam02(self.value, xyzw = xyzw, Yw = Yw, conditions = conditions, yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
+        return LAB(value = value, relative = self.relative, cieobs = self.cieobs, dtype = 'jabM_ciecam02', xyzw = xyzw, Yw = Yw, conditions = conditions, yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
+
+
+
+    def to_jabC_ciecam02(self, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, yellowbluepurplecorrect = None, mcat = 'cat02'):
+        """
+        See ?luxpy.xyz_to_jabC_ciecam02
+        """
+        value = xyz_to_jabC_ciecam02(self.value, xyzw = xyzw, Yw = Yw, conditions = conditions, yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
+        return LAB(value = value, relative = self.relative, cieobs = self.cieobs, dtype = 'jabC_ciecam02', xyzw = xyzw, Yw = Yw, conditions = conditions, yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
+
+
+    
+    def to_jab_cam02ucs(self, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, yellowbluepurplecorrect = None, mcat = 'cat02'):
+        """
+        See ?luxpy.xyz_to_jab_cam02ucs
+        """
+        value = xyz_to_jab_cam02ucs(self.value, xyzw = xyzw, Yw = Yw, conditions = conditions, yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
+        return LAB(value = value, relative = self.relative, cieobs = self.cieobs, dtype = 'jab_cam02ucs', xyzw = xyzw, Yw = Yw, conditions = conditions, yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
+
+
+
+    def to_jab_cam02lcd(self, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, yellowbluepurplecorrect = None, mcat = 'cat02'):
+        """
+        See ?luxpy.xyz_to_jab_cam02lcd
+        """
+        value = xyz_to_jab_cam02lcd(self.value, xyzw = xyzw, Yw = Yw, conditions = conditions, yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
+        return LAB(value = value, relative = self.relative, cieobs = self.cieobs, dtype = 'jab_cam02lcd', xyzw = xyzw, Yw = Yw, conditions = conditions, yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
+
+
+
+    def to_jab_cam02scd(self, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, yellowbluepurplecorrect = None, mcat = 'cat02'):
+        """
+        See ?luxpy.xyz_to_jab_cam02scd
+        """
+        value = xyz_to_jab_cam02scd(self.value, xyzw = xyzw, Yw = Yw, conditions = conditions, yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
+        return LAB(value = value, relative = self.relative, cieobs = self.cieobs, dtype = 'jab_cam02scd', xyzw = xyzw, Yw = Yw, conditions = conditions, yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
+
+    
+    
+    #------------------------------------------------------------------------------
+    def to_jabM_cam16(self, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS,  mcat = 'cat16'):
+        """
+        See ?luxpy.xyz_to_jabM_cam16
+        """
+        value = xyz_to_jabM_cam16(self.value, xyzw = xyzw, Yw = Yw, conditions = conditions, mcat = mcat)
+        return LAB(value = value, relative = self.relative, cieobs = self.cieobs, dtype = 'jabM_cam16', xyzw = xyzw, Yw = Yw, conditions = conditions, mcat = mcat)
+
+
+
+    def to_jabC_cam16(self, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, mcat = 'cat16'):
+        """
+        See ?luxpy.xyz_to_jabC_cam16
+        """
+        value = xyz_to_jabC_cam16(self.value, xyzw = xyzw, Yw = Yw, conditions = conditions, mcat = mcat)
+        return LAB(value = value, relative = self.relative, cieobs = self.cieobs, dtype = 'jabC_cam16', xyzw = xyzw, Yw = Yw, conditions = conditions, mcat = mcat)
+
+
+    
+    def to_jab_cam16ucs(self, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, mcat = 'cat16'):
+        """
+        See ?luxpy.xyz_to_jab_cam02ucs
+        """
+        value = xyz_to_jab_cam02ucs(self.value, xyzw = xyzw, Yw = Yw, conditions = conditions, mcat = mcat)
+        return LAB(value = value, relative = self.relative, cieobs = self.cieobs, dtype = 'jab_cam162ucs', xyzw = xyzw, Yw = Yw, conditions = conditions,  mcat = mcat)
+
+
+
+    def to_jab_cam16lcd(self, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS,  mcat = 'cat16'):
+        """
+        See ?luxpy.xyz_to_jab_cam16lcd
+        """
+        value = xyz_to_jab_cam02lcd(self.value, xyzw = xyzw, Yw = Yw, conditions = conditions, mcat = mcat)
+        return LAB(value = value, relative = self.relative, cieobs = self.cieobs, dtype = 'jab_cam16lcd', xyzw = xyzw, Yw = Yw, conditions = conditions, mcat = mcat)
+
+
+
+    def to_jab_cam16scd(self, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS,  mcat = 'cat16'):
+        """
+        See ?luxpy.xyz_to_jab_cam16scd
+        """
+        value = xyz_to_jab_cam16scd(self.value, xyzw = xyzw, Yw = Yw, conditions = conditions,  mcat = mcat)
+        return LAB(value = value, relative = self.relative, cieobs = self.cieobs, dtype = 'jab_cam16scd', xyzw = xyzw, Yw = Yw, conditions = conditions, mcat = mcat)
+
+   
+    #--------------------------------------------------------------------------
+    def to_qabW_cam15u(self, fov = 10.0, parameters = None):
+        """
+        See ?luxpy.xyz_to_qabW_cam15u
+        """
+        value = xyz_to_qabW_cam15u(self.value, fov = fov, parameters = parameters)
+        return LAB(value = value, relative = self.relative, cieobs = self.cieobs, dtype = 'qabW_cam15u', fov = fov, parameters = parameters)
+
+
+    #------------------------------------------------------------------------------
+    def to_lab_cam_sww_2016(self, xyzw = None, Yb = 20.0, Lw = 400.0, relative = True, parameters = None, inputtype = 'xyz', cieobs = '2006_10'):
+        """
+        See ?luxpy.xyz_to_lab_cam_sww_2016
+        """
+        value = xyz_to_lab_cam_sww_2016(self.value, dataw = xyzw, Yb = Yb, Lw = Lw, relative = relative, parameters = parameters, inputtype = inputtype, cieobs = cieobs)
+        return LAB(value = value, dtype = 'cam_sww_2016', xyzw = xyzw, Yb = Yb, Lw = Lw, relative = relative, parameters = parameters, cieobs = cieobs)
+          
+###############################################################################
     
 class LAB(CDATA):
   
-    def __init__(self, value = None, relative = True, cieobs = _CIEOBS, dtype = 'lab', xyzw = None, M = None, scaling = None):
+    def __init__(self, value = None, relative = True, cieobs = _CIEOBS, dtype = 'lab', \
+                 xyzw = None, M = None, scaling = None, \
+                 Lw = None, Yw = None, Yb = None, conditions = None, yellowbluepurplecorrect = None, mcat = None, ucstype = None,\
+                 fov = None, parameters = None):
         super().__init__(value = value, relative = relative, dtype = dtype)
-        self.xyzw = xyzw
+        
         self.cieobs = cieobs
+        
+        # specific to some chromaticity / color space transforms    
+        self.xyzw = xyzw
         self.M = M
         self.scaling = scaling
+        
+        # specific to some CAM transforms:
+        self.Lw = Lw
+        self.Yw = Yw
+        self.Yb = Yb
+        self.conditions = conditions
+        self.yellowbluepurplecorrect = yellowbluepurplecorrect
+        self.mcat = mcat
+        self.ucstype = ucstype
+        self.fov = fov
+        self.parameters = parameters
     
     
     def colortf(self, **kwargs):
@@ -402,7 +539,7 @@ class LAB(CDATA):
             :returns: luxpy.XYZ with .value field that is a numpy.array 
                     with tristimulus values 
         """
-        return to_xyz(self,**kwargs)
+        return self.to_xyz(**kwargs)
     
     def plot(self, plt_type = '3d', ax = None, title = None, **kwargs):
         """
@@ -451,7 +588,7 @@ class LAB(CDATA):
         """
         Convert color space coordinates to XYZ tristimulus values.
         """
-        return XYZ(value = getattr(self,'{:s}_to_xyz'.format(self.dtype))(**kwargs), relative = self.relative, cieobs = self.cieobs)
+        return XYZ(value = getattr(self,'{:s}_to_xyz'.format(self.dtype))(**kwargs), relative = self.relative, cieobs = self.cieobs, dtype = 'xyz')
     
     
     
@@ -588,6 +725,117 @@ class LAB(CDATA):
     	  """
         return Ydlep_to_xyz(self.value, xyzw = xyzw, cieobs = cieobs)
     
+    
+    
+    #------------------------------------------------------------------------------
+    #---color appearance space coordinates-----------------------------------------
+    #------------------------------------------------------------------------------
+    
+    def jabM_ciecam02_to_xyz(self, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, yellowbluepurplecorrect = None, mcat = 'cat02',**kwargs):
+        """
+        See ?luxpy.jabM_ciecam02_to_xyz
+        """
+        value = jabM_ciecam02_to_xyz(self.value, xyzw = xyzw, Yw = Yw, conditions = conditions, yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
+        return XYZ(value = value, relative = self.relative, cieobs = self.cieobs, dtype = 'xyz')
+
+
+
+    def jabC_ciecam02_to_xyz(self, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, yellowbluepurplecorrect = None, mcat = 'cat02',**kwargs):
+        """
+        See ?luxpy.jabC_ciecam02_to_xyz
+        """
+        value = jabC_ciecam02_to_xyz(self.value, xyzw = xyzw, Yw = Yw, conditions = conditions, yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
+        return XYZ(value = value, relative = self.relative, cieobs = self.cieobs, dtype = 'xyz')
+
+
+    
+    def jab_cam02ucs_to_xyz(self, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, yellowbluepurplecorrect = None, mcat = 'cat02',**kwargs):
+        """
+        See ?luxpy.jab_cam02ucs_to_xyz
+        """
+        value = jab_cam02ucs_to_xyz(self.value, xyzw = xyzw, Yw = Yw, conditions = conditions, yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
+        return XYZ(value = value, relative = self.relative, cieobs = self.cieobs, dtype = 'xyz')
+
+
+
+    def jab_cam02lcd_to_xyz(self, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, yellowbluepurplecorrect = None, mcat = 'cat02',**kwargs):
+        """
+        See ?luxpy.jab_cam02lcd_to_xyz
+        """
+        value = jab_cam02lcd_to_xyz(self.value, xyzw = xyzw, Yw = Yw, conditions = conditions, yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
+        return XYZ(value = value, relative = self.relative, cieobs = self.cieobs, dtype = 'xyz')
+
+
+
+    def jab_cam02scd_to_xyz(self, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, yellowbluepurplecorrect = None, mcat = 'cat02',**kwargs):
+        """
+        See ?luxpy.jab_cam02scd_to_xyz
+        """
+        value = jab_cam02scd_to_xyz(self.value, xyzw = xyzw, Yw = Yw, conditions = conditions, yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
+        return XYZ(value = value, relative = self.relative, cieobs = self.cieobs, dtype = 'xyz')
+ 
+    
+    
+    def jabM_cam16_to_xyz(self, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, yellowbluepurplecorrect = None, mcat = 'cat16',**kwargs):
+        """
+        See ?luxpy.jabM_cam16_to_xyz
+        """
+        value = jabM_cam16_to_xyz(self.value, xyzw = xyzw, Yw = Yw, conditions = conditions, yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
+        return XYZ(value = value, relative = self.relative, cieobs = self.cieobs, dtype = 'xyz')
+
+
+
+    def jabC_cam16_to_xyz(self, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, yellowbluepurplecorrect = None, mcat = 'cat16',**kwargs):
+        """
+        See ?luxpy.jabC_cam16_to_xyz
+        """
+        value = jabC_cam16_to_xyz(self.value, xyzw = xyzw, Yw = Yw, conditions = conditions, yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
+        return XYZ(value = value, relative = self.relative, cieobs = self.cieobs, dtype = 'xyz')
+    
+    
+    
+    def jab_cam16ucs_to_xyz(self, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, yellowbluepurplecorrect = None, mcat = 'cat16',**kwargs):
+        """
+        See ?luxpy.jab_cam16ucs_to_xyz
+        """
+        value = jab_cam02ucs_to_xyz(self.value, xyzw = xyzw, Yw = Yw, conditions = conditions, yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
+        return XYZ(value = value, relative = self.relative, cieobs = self.cieobs, dtype = 'xyz')
+
+
+
+    def jab_cam16lcd_to_xyz(self, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, yellowbluepurplecorrect = None, mcat = 'cat16',**kwargs):
+        """
+        See ?luxpy.jab_cam16lcd_to_xyz
+        """
+        value = jab_cam16lcd_to_xyz(self.value, xyzw = xyzw, Yw = Yw, conditions = conditions, yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
+        return XYZ(value = value, relative = self.relative, cieobs = self.cieobs, dtype = 'xyz')
+
+
+
+    def jab_cam16scd_to_xyz(self, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, yellowbluepurplecorrect = None, mcat = 'cat16',**kwargs):
+        """
+        See ?luxpy.jab_cam16scd_to_xyz
+        """
+        value = jab_cam16scd_to_xyz(self.value, xyzw = xyzw, Yw = Yw, conditions = conditions, yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
+        return XYZ(value = value, relative = self.relative, cieobs = self.cieobs, dtype = 'xyz')
+    
+    
+    
+    def qabW_cam15u_to_xyz(self, fov = 10.0, parameters = None,**kwargs):
+        """
+        See ?luxpy.qabW_cam15u_to_xyz
+        """
+        value = qabW_cam15u_to_xyz(self.value, fov = fov, parameters = parameters)
+        return XYZ(value = value, relative = self.relative, cieobs = self.cieobs, dtype = 'xyz')
+ 
+    
+    
+    def lab_cam_sww_2016_to_xyz(self, xyzw = None, Yb = 20.0, Lw = 400.0, relative = True, parameters = None, inputtype = 'xyz', cieobs = '2006_10',**kwargs):
+        """
+        See ?luxpy.lab_cam_sww_2016_to_xyz
+        """
+        value = lab_cam_sww_2016_to_xyz(self.value, dataw = xyzw, Yb = Yb, Lw = Lw, relative = relative, parameters = parameters, inputtype = inputtype, cieobs = cieobs)
+        return XYZ(value = value, relative = self.relative, cieobs = self.cieobs, dtype = 'xyz')
 
 
        

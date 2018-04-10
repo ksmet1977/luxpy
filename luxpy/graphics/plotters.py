@@ -30,7 +30,7 @@ __all__ = ['plotSL','plotDL','plotBB','plot_color_data','plotceruleanline','plot
 
 
 
-def plot_color_data(x,y,z = None, axh = None, show = True, cieobs =_CIEOBS, cspace = _CSPACE,  formatstr = 'k-', **kwargs):
+def plot_color_data(x,y,z=None, axh=None, show = True, cieobs =_CIEOBS, cspace = _CSPACE,  formatstr = 'k-', **kwargs):
     """
     Plot color data from x,y [,z].
     

@@ -4,6 +4,8 @@
 # Module for color rendition and color quality metrics
 ###############################################################################
 #
+# _CRI_TYPE_DEFAULT = 'cierf'
+#
 # _CRI_DEFAULTS: default settings for different color rendition indices: (major dict has 9 keys (04-Jul-2017): sampleset [str/dict], ref_type [str], cieobs [str], avg [fcn handle], scale [dict], cspace [dict], catf [dict], rg_pars [dict], cri_specific_pars [dict])
 #               types supported: 'ciera','ciera-8','ciera-14','cierf','iesrf','cri2012','cri2012-hl17', 'cri2012-hl1000','cri2012-real210','cqs-v7.5', 'cqs-v9.0', mcri'
 #
@@ -50,7 +52,7 @@ Created on Fri Jun 30 00:10:59 2017
 
 from .. import np, _S_INTERP_TYPE, _CRI_RFL, math, cam, cat, put_args_in_db, colortf, spd_to_xyz, cri_ref, xyz_to_cct, xyz_to_ipt, asplit, np2d, spd
 
-__all__ = ['_CRI_DEFAULTS','linear_scale','log_scale','psy_scale','gamut_slicer','jab_to_rg','spd_to_rg','spd_to_DEi','spd_to_cri']
+__all__ = ['_CRI_TYPE_DEFAULT','_CRI_DEFAULTS','linear_scale','log_scale','psy_scale','gamut_slicer','jab_to_rg','spd_to_rg','spd_to_DEi','spd_to_cri']
 __all__ +=['spd_to_ciera','spd_to_cierf','spd_to_iesrf','spd_to_iesrg','spd_to_cri2012','spd_to_cri2012_hl17','spd_to_cri2012_hl1000','spd_to_cri2012_real210']
 __all__+=['spd_to_mcri', 'spd_to_cqs']
 
@@ -130,6 +132,7 @@ def psy_scale(data, scale_factor = [1.0/55.0, 3.0/2.0, 2.0], scale_max = 100.0):
 
 #------------------------------------------------------------------------------
 # create default settings for different color rendition indices: (major dict has 9 keys (04-Jul-2017): sampleset [str/dict], ref_type [str], cieobs [str], avg [fcn handle], scale [dict], cspace [dict], catf [dict], rg_pars [dict], cri_specific_pars [dict])
+_CRI_TYPE_DEFAULT = 'cierf'
 _CRI_DEFAULTS = {'cri_types' : ['ciera','ciera-8','ciera-14','cierf','iesrf','iesrf-tm30-15','iesrf-tm30-18','cri2012','cri2012-hl17','cri2012-hl1000','cri2012-real210','mcri','cqs-v7.5','cqs-v9.0']}
 _CRI_DEFAULTS['ciera'] = {'sampleset' : "_CRI_RFL['cie-13.3-1995']['8']", 'ref_type' : 'ciera', 'cieobs' : {'xyz': '1931_2', 'cct' : '1931_2'}, 'avg' : np.mean, 'scale' :{'fcn' : linear_scale, 'cfactor' : [4.6]}, 'cspace' : {'type':'wuv', 'xyzw' : None}, 'catf': {'xyzw':None, 'mcat':'judd-1945','D':1.0,'La':None,'cattype':'vonkries','Dtype':None, 'catmode' : '1>2'}, 'rg_pars' : {'nhbins': None, 'start_hue':0.0, 'normalize_gamut': False}, 'cri_specific_pars' : None}
 _CRI_DEFAULTS['ciera-8'] = _CRI_DEFAULTS['ciera'].copy()
@@ -347,7 +350,7 @@ def jab_to_rg(jabt,jabr, max_scale = 100, ordered_and_sliced = False, nhbins = N
         return eval(out)
 
 #------------------------------------------------------------------------------
-def spd_to_jab_t_r(SPD, cri_type = 'cierf', out = 'jabt,jabr', wl = None, sampleset = None, ref_type = None, cieobs  = None, cspace = None, catf = None, cri_specific_pars = None):
+def spd_to_jab_t_r(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'jabt,jabr', wl = None, sampleset = None, ref_type = None, cieobs  = None, cspace = None, catf = None, cri_specific_pars = None):
     """
     Calculates jab color values for a sample set illuminated with test source SPD and its reference illuminant.
         
@@ -358,7 +361,7 @@ def spd_to_jab_t_r(SPD, cri_type = 'cierf', out = 'jabt,jabr', wl = None, sample
         :wl: None, optional
             Wavelengths (or [start, end, spacing]) to interpolate the SPD's in :SPD:. 
             None: default to no interpolation
-        :cri_type: 'cierf' or str or dict, optional
+        :cri_type: _CRI_TYPE_DEFAULT or str or dict, optional
             -'str: specifies dict with default cri model parameters (for supported types, see luxpy.cri._CRI_DEFAULTS['cri_types'])
             - dict: user defined model parameters (see e.g. luxpy.cri._CRI_DEFAULTS['cierf'] for required structure)
             Note that any non-None input arguments to the function will override default values in cri_type dict.
@@ -481,7 +484,7 @@ def spd_to_jab_t_r(SPD, cri_type = 'cierf', out = 'jabt,jabr', wl = None, sample
         eval(out)
 
 #------------------------------------------------------------------------------
-def jab_to_rhi(jabt, jabr, DEi, cri_type = 'cierf', start_hue = None, nhbins = None, scale_factor = None, scale_fcn = None, use_bin_avg_DEi = True):
+def jab_to_rhi(jabt, jabr, DEi, cri_type = _CRI_TYPE_DEFAULT, start_hue = None, nhbins = None, scale_factor = None, scale_fcn = None, use_bin_avg_DEi = True):
     """
     Calculate hue bin measures: Rfhi, Rcshi and Rhshi.
     
@@ -562,7 +565,7 @@ def jab_to_rhi(jabt, jabr, DEi, cri_type = 'cierf', start_hue = None, nhbins = N
 
 
 #------------------------------------------------------------------------------
-def spd_to_rg(SPD, cri_type = 'cierf', out = 'Rg', wl = None, sampleset = None, ref_type = None, cieobs  = None, avg = None, cspace = None, catf = None, cri_specific_pars = None, rg_pars = {'nhbins' : None,  'normalize_gamut' : True,'start_hue' : 0, 'normalized_chroma_ref' : 100}):
+def spd_to_rg(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'Rg', wl = None, sampleset = None, ref_type = None, cieobs  = None, avg = None, cspace = None, catf = None, cri_specific_pars = None, rg_pars = None):
     """
     Calculates the color gamut index, Rg, of spectral data. 
     
@@ -573,7 +576,7 @@ def spd_to_rg(SPD, cri_type = 'cierf', out = 'Rg', wl = None, sampleset = None, 
         :wl: None, optional
             Wavelengths (or [start, end, spacing]) to interpolate the SPD's in :SPD:. 
             None: default to no interpolation
-        :cri_type: 'cierf' or str or dict, optional
+        :cri_type: _CRI_TYPE_DEFAULT or str or dict, optional
             -'str: specifies dict with default cri model parameters (for supported types, see luxpy.cri._CRI_DEFAULTS['cri_types'])
             - dict: user defined model parameters (see e.g. luxpy.cri._CRI_DEFAULTS['cierf'] for required structure)
             Note that any non-None input arguments to the function will override default values in cri_type dict.
@@ -615,7 +618,7 @@ def spd_to_rg(SPD, cri_type = 'cierf', out = 'Rg', wl = None, sampleset = None, 
                 - None: default to the one specified in  :cri_type: dict. 
                 - dict: user specified parameters. 
                     See for example luxpy.cri._CRI_DEFAULTS['mcri']['cri_specific_pars'] for its use.
-        :rg_pars: {'nhbins' : None, 'start_hue' : 0, 'normalize_gamut' : True}, optional
+        :rg_pars: None or dict of structure {'nhbins' : None, 'start_hue' : 0, 'normalize_gamut' : True}, optional
             Dict containing specifying parameters for slicing the gamut.
                 - key: 'nhbins': int, number of hue bins to slice gamut (None use the one specified in :cri_type: dict).
                 - key: 'start_hue': float (°), hue at which to start slicing
@@ -673,6 +676,7 @@ def spd_to_rg(SPD, cri_type = 'cierf', out = 'Rg', wl = None, sampleset = None, 
     rg_pars = cri_type['rg_pars']
     #rg_pars = put_args_in_db(cri_type['rg_pars'],rg_pars)#{'nhbins':nhbins,'start_hue':start_hue,'normalize_gamut':normalize_gamut}) #override with not-None input from function
     nhbins, normalize_gamut, normalized_chroma_ref, start_hue  = [rg_pars[x] for x in sorted(rg_pars.keys())]
+    
     Rg, jabt_binned, jabr_binned, DEi_binned = jab_to_rg(jabt,jabr, ordered_and_sliced = False, nhbins = nhbins, start_hue = start_hue, normalize_gamut = normalize_gamut, out = 'Rg,jabt,jabr,DEi')
     Rg = np2d(Rg)
     
@@ -688,7 +692,7 @@ def spd_to_rg(SPD, cri_type = 'cierf', out = 'Rg', wl = None, sampleset = None, 
 
 
 #------------------------------------------------------------------------------
-def spd_to_DEi(SPD, cri_type = 'cierf', out = 'DEi', wl = None, sampleset = None, ref_type = None, cieobs = None, avg = None, cspace = None, catf = None, cri_specific_pars = None):
+def spd_to_DEi(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'DEi', wl = None, sampleset = None, ref_type = None, cieobs = None, avg = None, cspace = None, catf = None, cri_specific_pars = None):
     """
     Calculates color differences (~fidelity), DEi, of spectral data.
     
@@ -699,7 +703,7 @@ def spd_to_DEi(SPD, cri_type = 'cierf', out = 'DEi', wl = None, sampleset = None
         :wl: None, optional
             Wavelengths (or [start, end, spacing]) to interpolate the SPD's in :SPD:. 
             None: default to no interpolation
-        :cri_type: 'cierf' or str or dict, optional
+        :cri_type: _CRI_TYPE_DEFAULT or str or dict, optional
             -'str: specifies dict with default cri model parameters (for supported types, see luxpy.cri._CRI_DEFAULTS['cri_types'])
             - dict: user defined model parameters (see e.g. luxpy.cri._CRI_DEFAULTS['cierf'] for required structure)
             Note that any non-None input arguments to the function will override default values in cri_type dict.
@@ -774,7 +778,7 @@ def optimize_scale_factor(cri_type, opt_scale_factor, scale_fcn, avg) :
     Optimize scale_factor of cri-model in cri_type such that average Rf for a set of light sources is the same as that of a target-cri (default: 'ciera').
     
     Args:
-        :cri_type: 'cierf' or str or dict
+        :cri_type: str or dict
             -'str: specifies dict with default cri model parameters (for supported types, see luxpy.cri._CRI_DEFAULTS['cri_types'])
             - dict: user defined model parameters (see e.g. luxpy.cri._CRI_DEFAULTS['cierf'] for required structure)
         :opt_scale: True or False
@@ -839,7 +843,7 @@ def optimize_scale_factor(cri_type, opt_scale_factor, scale_fcn, avg) :
     return scale_factor
 
 #------------------------------------------------------------------------------
-def spd_to_cri(SPD, cri_type = 'cierf', out = 'Rf', wl = None, sampleset = None, ref_type = None, cieobs = None, avg = None, scale = None, opt_scale_factor = False, cspace = None, catf = None, cri_specific_pars = None, rg_pars = None):
+def spd_to_cri(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'Rf', wl = None, sampleset = None, ref_type = None, cieobs = None, avg = None, scale = None, opt_scale_factor = False, cspace = None, catf = None, cri_specific_pars = None, rg_pars = None):
     """
     Calculates the color rendering fidelity index, Rf, of spectral data. 
     
@@ -850,7 +854,7 @@ def spd_to_cri(SPD, cri_type = 'cierf', out = 'Rf', wl = None, sampleset = None,
         :wl: None, optional
             Wavelengths (or [start, end, spacing]) to interpolate the SPD's in :SPD:. 
             None: default to no interpolation
-        :cri_type: 'cierf' or str or dict, optional
+        :cri_type: _CRI_TYPE_DEFAULT or str or dict, optional
             -'str: specifies dict with default cri model parameters (for supported types, see luxpy.cri._CRI_DEFAULTS['cri_types'])
             - dict: user defined model parameters (see e.g. luxpy.cri._CRI_DEFAULTS['cierf'] for required structure)
             Note that any non-None input arguments to the function will override default values in cri_type dict.
@@ -1034,7 +1038,7 @@ def spd_to_cierf(SPD, out = 'Rf', wl = None):
 
 
 #------------------------------------------------------------------------------
-def spd_to_iesrf(SPD, out = 'Rf', wl = None):
+def spd_to_iesrf(SPD, out = 'Rf', wl = None, cri_type = 'iesrf'):
     """
     Wrapper function the 'iesrf' color rendition (fidelity) metric (IES TM30-15). 
     
@@ -1059,10 +1063,10 @@ def spd_to_iesrf(SPD, out = 'Rf', wl = None):
                 https://doi.org/10.1364/OE.23.015888
     
     """
-    return spd_to_cri(SPD, cri_type = 'iesrf', out = out, wl = wl)
+    return spd_to_cri(SPD, cri_type = cri_type, out = out, wl = wl)
 
 #------------------------------------------------------------------------------
-def spd_to_iesrg(SPD, out = 'Rg', wl = None):
+def spd_to_iesrg(SPD, out = 'Rg', wl = None, cri_type ='iesrf'):
     """
     Wrapper function the 'spd_to_rg' color rendition gamut area metric (IES TM30-15). 
     
@@ -1087,7 +1091,7 @@ def spd_to_iesrg(SPD, out = 'Rg', wl = None):
                 https://doi.org/10.1364/OE.23.015888
     
     """
-    return spd_to_rg(SPD, cri_type = 'iesrf', out = out, wl = wl)
+    return spd_to_rg(SPD, cri_type = cri_type, out = out, wl = wl)
 
 #------------------------------------------------------------------------------
 def spd_to_cri2012(SPD, out = 'Rf', wl = None):

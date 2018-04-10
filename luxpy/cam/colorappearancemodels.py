@@ -21,6 +21,8 @@
 #
 # _CAM_DEFAULT_TYPE: Default CAM type str specifier.
 #
+# _CAM_AXES: dict with list[str,str,str] containing axis labels of defined cspaces
+#
 # naka_rushton(): applies a Naka-Rushton function to the input
 # 
 # hue_angle(): calculates a positive hue angle
@@ -63,9 +65,10 @@ Created on Sun Jun 25 09:55:05 2017
 @author: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
-from luxpy import *
+from .. import np, math, cat, _CIEOBS, _CIE_ILLUMINANTS, np2d, np2dT, np3d, put_args_in_db, spd_to_xyz, asplit, ajoin
 
-__all__ = ['_UNIQUE_HUE_DATA','_SURROUND_PARAMETERS','_NAKA_RUSHTON_PARAMETERS','_CAMUCS_PARAMETERS','_CAM15U_PARAMETERS','_CAM_SWW_2016_PARAMETERS', '_CAM_DEFAULT_WHITE_POINT','hue_angle', 'hue_quadrature','naka_rushton','ciecam02','cam02ucs','cam15u','cam_sww_2016']
+
+__all__ = ['_CAM_AXES', '_UNIQUE_HUE_DATA','_SURROUND_PARAMETERS','_NAKA_RUSHTON_PARAMETERS','_CAMUCS_PARAMETERS','_CAM15U_PARAMETERS','_CAM_SWW_2016_PARAMETERS', '_CAM_DEFAULT_WHITE_POINT', '_CAM_DEFAULT_CONDITIONS','hue_angle', 'hue_quadrature','naka_rushton','ciecam02','cam02ucs','cam15u','cam_sww_2016']
 __all__ += ['xyz_to_jabM_ciecam02', 'jabM_ciecam02_to_xyz', 'xyz_to_jabC_ciecam02', 'jabC_ciecam02_to_xyz',
             'xyz_to_jabM_cam16', 'jabM_cam16_to_xyz', 'xyz_to_jabC_cam16', 'jabC_cam16_to_xyz',
             'xyz_to_jab_cam02ucs', 'jab_cam02ucs_to_xyz', 'xyz_to_jab_cam02lcd', 'jab_cam02lcd_to_xyz','xyz_to_jab_cam02scd', 'jab_cam02scd_to_xyz', 
@@ -73,6 +76,16 @@ __all__ += ['xyz_to_jabM_ciecam02', 'jabM_ciecam02_to_xyz', 'xyz_to_jabC_ciecam0
             'xyz_to_qabW_cam15u', 'qabW_cam15u_to_xyz',
             'xyz_to_lab_cam_sww_2016', 'lab_cam_sww_2016_to_xyz']
 
+
+_CAM_AXES = {'jabM_ciecam02' : ["J (ciecam02)", "aM (ciecam02)", "bM (ciecam02)"]}
+_CAM_AXES['jabC_ciecam02'] = ["J (ciecam02)", "aC (ciecam02)", "bC (ciecam02)"] 
+_CAM_AXES['jabM_cam16'] = ["J (cam16)", "aM (cam16)", "bM (cam16)"]
+_CAM_AXES['jabC_cam16'] = ["J (cam16)", "aC (cam16)", "bC (cam16)"] 
+_CAM_AXES['jab_cam02ucs'] = ["J' (cam02ucs)", "a' (cam02ucs)", "b' (cam02ucs)"] 
+_CAM_AXES['jab_cam02lcd'] = ["J' (cam02lcd)", "a' (cam02lcd)", "b' (cam02lcd)"] 
+_CAM_AXES['jab_cam02scd'] = ["J' (cam02scd)", "a' (cam02scd)", "b' (cam02scd)"] 
+_CAM_AXES['qabW_cam15u'] = ["Q (cam15u)", "aW (cam15u)", "bW (cam15u)"] 
+_CAM_AXES['lab_cam_sww_2016'] = ["L (lab_cam_sww_2016)", "a (lab_cam_sww_2016)", "b (lab_cam_sww_2016)"] 
 
 _UNIQUE_HUE_DATA = {'parameters': 'hues i hi ei Hi'.split()}
 _UNIQUE_HUE_DATA['models'] = 'ciecam02 ciecam97s cam15u cam16'.split()
@@ -1059,7 +1072,7 @@ def cam_sww_2016(data, dataw = None, Yb = 20.0, Lw = 400.0, relative = True, par
             dataw = spd_to_xyz(dataw, cieobs = cieobs, relative = relative)
 
     # precomputations:
-    Mxyz2lms = np.dot(np.diag(cLMS),normalize_3x3_matrix(Mxyz2lms, np.array([1, 1, 1]))) # normalize matrix for xyz-> lms conversion to ill. E weighted with cLMS   
+    Mxyz2lms = np.dot(np.diag(cLMS),math.normalize_3x3_matrix(Mxyz2lms, np.array([1, 1, 1]))) # normalize matrix for xyz-> lms conversion to ill. E weighted with cLMS   
     invMxyz2lms = np.linalg.inv(Mxyz2lms)
     MAab = np.array([clambda,calpha,cbeta])
     invMAab = np.linalg.inv(MAab)

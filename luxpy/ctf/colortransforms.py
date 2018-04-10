@@ -8,6 +8,8 @@
 # Note that colorimetric data is always located in the last axis of the data arrays.
 # (see also xyz specification in docstring of luxpy.spd_to_xyz())
 #
+# _CSPACE_AXES: dict with list[str,str,str] containing axis labels of defined cspaces
+#
 #------------------------------------------------------------------------------
 # COLORIMETRIC functions:
 # Chromaticity / colorspace functions:
@@ -30,6 +32,7 @@
 #   ipt_to_xyz():       "
 #   xyz_to_Ydlep(): convert xyz to Y, dominant wavelength (dl) and excitation purity (ep)
 #   Ydlep_to_xyz(): convert Y, dominant wavelength (dl) and excitation purity (ep) to xyz
+#
 #
 #------------------------------------------------------------------------------
 
@@ -255,6 +258,8 @@ def lms_to_xyz(lms, cieobs = _CIEOBS, M = None):
         xyz = np.einsum('ij,klj->kli', np.linalg.inv(M), lms)
     else:
         xyz = np.einsum('ij,lj->li', np.linalg.inv(M), lms)    
+
+
 
 
 def xyz_to_lab(xyz, xyzw = None, cieobs = _CIEOBS):
