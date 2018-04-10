@@ -2,21 +2,23 @@
 """
 Package for color science, colorimetric and color appearance calculations.
 
-Loads the following luxpy modules:
+Loads the following luxpy modules and classes:
     
-    0.1.  helpers.py (imported directly into luxpy namespace, details see end of this file)
-    0.2.  math.py (imported as math into the luxpy namespace, details see end of this file)
+    0.1.  helpers/ helpers.py (imported directly into luxpy namespace, details see end of this file)
+    0.2.  math/ math.py (imported as math into the luxpy namespace, details see end of this file)
     
-    1.  cmf.py
-    2.  spectral.py
-    3.  spectral_databases
-    4.  colortransforms.py (imported directly into luxpy namespace)
-    5.  cct.py (imported directly into luxpy namespace)
-    6.  chromaticadaptation.py (imported in luxpy namespace as .cat)
-    7.  colorappearancemodels.py (imported in luxpy namespace as .cam)
-    8.  colortf.py (imported directly into luxpy namespace)
-    9.  colorrenditionindices.py (imported in luxpy namespace as .cri)
-    10. plotters.py (imported directly into luxpy namespace)
+    1.  spectral/ cmf.py
+    2.  spectral/ spectral.py
+    3.  spectral/ spectral_databases
+    4.  ctf/ colortransforms.py (imported directly into luxpy namespace)
+    5.  cct/ cct.py (imported directly into luxpy namespace)
+    6.  cat/ chromaticadaptation.py (imported in luxpy namespace as .cat)
+    7.  cam/ colorappearancemodels.py (imported in luxpy namespace as .cam)
+    8.  ctf/ colortf.py (imported directly into luxpy namespace)
+    9.  cri/ colorrenditionindices.py (imported in luxpy namespace as .cri)
+    10. graphics/ plotters.py (imported directly into luxpy namespace)
+    11. classes/ SPD (imported directly into luxpy namespace)
+    12. classes/ CDATA, XYZ, LAB (imported directly into luxpy namespace)
 
 Loads the following global default constants:
     
@@ -122,3 +124,6 @@ __all__ += ['cri']
 
 from .graphics.plotters import *
 __all__ += graphics.__all__
+
+from .classes.SPD import SPD
+from .classes.CDATA import CDATA, XYZ, LAB
