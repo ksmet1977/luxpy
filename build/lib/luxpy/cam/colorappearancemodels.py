@@ -21,7 +21,9 @@
 #
 # _CAM_DEFAULT_TYPE: Default CAM type str specifier.
 #
-# _CAM_AXES: dict with list[str,str,str] containing axis labels of defined cspaces
+# _CAM_DEFAULT_CONDITIONS: Default CAM model parameters for model in cam._CAM_DEFAULT_TYPE
+#
+# _CAM_AXES: dict with list[str,str,str] containing axis labels of defined cspaces.
 #
 # naka_rushton(): applies a Naka-Rushton function to the input
 # 

@@ -11,7 +11,7 @@
 #------------------------------------------------------------------------------
 Created on Wed Mar 28 18:57:50 2018
 
-@author: kevin.smet
+@author: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
 #from .colorrendition_indices import *

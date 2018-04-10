@@ -2,10 +2,10 @@
 
 """
 ###############################################################################
-# Module for color rendition graphical output, 12
+# Module for color rendition graphical output, 2
 ###############################################################################
 #
-# plot_cri_grpahics(): Plots graphical information on color rendition properties.
+# plot_cri_graphics(): Plots graphical information on color rendition properties based on spectral data input or dict with pre-calculated measures.
 #
 #
 

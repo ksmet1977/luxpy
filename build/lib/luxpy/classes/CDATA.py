@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 """
+CDATA, XYZ, LAB: Class functionality for colorimetric data.
+
 Created on Fri Apr  6 13:51:37 2018
 
-@author: kevin.smet
+@author: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
 from .. import _CMF, _COLORTF_DEFAULT_WHITE_POINT, _CIEOBS, _CSPACE, _CSPACE_AXES

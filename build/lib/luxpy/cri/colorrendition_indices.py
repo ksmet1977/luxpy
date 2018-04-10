@@ -4,10 +4,10 @@
 # Module for color rendition and color quality metrics
 ###############################################################################
 #
-# _CRI_TYPE_DEFAULT = 'cierf'
+# _CRI_TYPE_DEFAULT: Default cri_type.
 #
 # _CRI_DEFAULTS: default settings for different color rendition indices: (major dict has 9 keys (04-Jul-2017): sampleset [str/dict], ref_type [str], cieobs [str], avg [fcn handle], scale [dict], cspace [dict], catf [dict], rg_pars [dict], cri_specific_pars [dict])
-#               types supported: 'ciera','ciera-8','ciera-14','cierf','iesrf','cri2012','cri2012-hl17', 'cri2012-hl1000','cri2012-real210','cqs-v7.5', 'cqs-v9.0', mcri'
+#               types supported: 'ciera','ciera-8','ciera-14','cierf','iesrf','iesrf-tm30-15','iesrf-tm30-18','cri2012','cri2012-hl17','cri2012-hl1000','cri2012-real210','mcri','cqs-v7.5','cqs-v9.0'
 #
 # linear_scale():  Linear color rendering index scale from CIE13.3-1974/1995:   Rfi,a = 100 - c1*DEi,a. (c1 = 4.6)
 #
@@ -37,7 +37,7 @@
 #     spd_to_ciera(), spd_to_cierf(), spd_to_iesrf(), spd_to_cri2012(), spd_to_cri2012_hl17(), spd_to_cri2012_hl1000(), spd_to_cri2012_real210
 #
 # wrapper functions for gamuta area metrics:
-#      spd_to_iesrf(),
+#      spd_to_iesrg(),
 #
 # spd_to_mcri(): Calculates the memory color rendition index, Rm:  K. A. G. Smet, W. R. Ryckaert, M. R. Pointer, G. Deconinck, and P. Hanselaer, (2012) “A memory colour quality metric for white light sources,” Energy Build., vol. 49, no. C, pp. 216–225.
 #

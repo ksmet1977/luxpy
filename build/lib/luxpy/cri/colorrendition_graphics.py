@@ -8,14 +8,12 @@
 #
 # plot_ColorVectorGraphic(): Plots Color Vector Graphic (see IES TM30).
 #
-# plot_cri_grpahics(): Plots graphical information on color rendition properties.
-
 #------------------------------------------------------------------------------
 
 
 Created on Mon Apr  2 02:00:50 2018
 
-@author: kevin.smet
+@author: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
 from .. import np, plt, colorsys

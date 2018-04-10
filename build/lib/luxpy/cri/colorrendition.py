@@ -4,6 +4,8 @@
 # Module for color rendition calculations and graphical output
 ###############################################################################
 #
+# _CRI_TYPE_DEFAULT: Default cri_type.
+#
 # _CRI_DEFAULTS: default settings for different color rendition indices: (major dict has 9 keys (04-Jul-2017): sampleset [str/dict], ref_type [str], cieobs [str], avg [fcn handle], scale [dict], cspace [dict], catf [dict], rg_pars [dict], cri_specific_pars [dict])
 #               types supported: 'ciera','ciera-8','ciera-14','cierf','iesrf','cri2012','cri2012-hl17', 'cri2012-hl1000','cri2012-real210','cqs-v7.5', 'cqs-v9.0', mcri'
 #
@@ -57,7 +59,7 @@
 #------------------------------------------------------------------------------
 Created on Mon Apr  2 03:35:33 2018
 
-@author: kevin.smet
+@author: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 from .colorrendition_indices import *
 from .colorrendition_graphics import *
@@ -66,7 +68,7 @@ from .colorrendition_ies_graphics import plot_cri_graphics
 from .ies_tm30_metrics import spd_to_ies_tm30_metrics
 
 # .colorrendition_indices:
-__all__ =  ['_CRI_DEFAULTS','linear_scale','log_scale','psy_scale','gamut_slicer','jab_to_rg','spd_to_rg','spd_to_DEi','spd_to_cri']
+__all__ =  ['_CRI_TYPE_DEFAULT','_CRI_DEFAULTS','linear_scale','log_scale','psy_scale','gamut_slicer','jab_to_rg','spd_to_rg','spd_to_DEi','spd_to_cri']
 __all__ += ['spd_to_ciera','spd_to_cierf','spd_to_iesrf','spd_to_iesrg','spd_to_cri2012','spd_to_cri2012_hl17','spd_to_cri2012_hl1000','spd_to_cri2012_real210']
 __all__ += ['spd_to_mcri', 'spd_to_cqs']
 

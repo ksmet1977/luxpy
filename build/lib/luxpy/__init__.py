@@ -1,7 +1,20 @@
 # -*- coding: utf-8 -*-
 """
-Package for color science, colorimetric and color appearance calculations.
+########################################################################################
+# Package for color science, colorimetric and color appearance attribute calculations. #
+########################################################################################
 
+    For an overview of constants, functions, classes and modules of the luxpy package,
+    see: "http://github.com/ksmet1977/luxpy/blob/master/README.md"
+
+    * Author: K. A.G. Smet (ksmet1977 at gmail.com)
+    * Version: 1.2.04
+    * Date: April 10, 2018
+    * License: GPLv3
+
+########################################################################################
+
+#------------------------------------------------------------------------------ 
 Loads the following luxpy modules and classes:
     
     0.1.  helpers/ helpers.py (imported directly into luxpy namespace, details see end of this file)
@@ -20,6 +33,7 @@ Loads the following luxpy modules and classes:
     11. classes/ SPD (imported directly into luxpy namespace)
     12. classes/ CDATA, XYZ, LAB (imported directly into luxpy namespace)
 
+#------------------------------------------------------------------------------ 
 Loads the following global default constants:
     
  * _PKG_PATH (absolute path to luxpy package)
@@ -28,7 +42,10 @@ Loads the following global default constants:
  * _CIEOBS = '1931_2' (default CIE observer color matching function)
  * _CSPACE = 'Yuv' (default color space / chromaticity diagram)
  
-Note. In luxpy 'global constants' start with '_'
+#------------------------------------------------------------------------------ 
+ Note: In luxpy 'global constants' start with '_'
+
+
 
 Created on Sat Jun 17 15:44:10 2017
 
@@ -102,7 +119,7 @@ __all__ += cct.__all__
 from .cat import chromaticadaptation as cat
 __all__ += ['cat']  
 
-# Load color appearance model functions:
+# Load color appearance model module:
 from .cam import colorappearancemodels as cam
 __all__ += ['cam']  
 
@@ -118,14 +135,18 @@ __all__ += ['_CAM_AXES', 'xyz_to_jabM_ciecam02', 'jabM_ciecam02_to_xyz', 'xyz_to
 
 _CSPACE_AXES = {**_CSPACE_AXES, **_CAM_AXES} # merge _CAM_AXES dict with _CSPACE_AXES dict
 
+# Extend colot transform module:
 from .ctf.colortf import *
 __all__+=['colortf']
 
+# Load color rendition module:
 from .cri import colorrendition as cri
 __all__ += ['cri'] 
 
+# Load some basic graphics functions:
 from .graphics.plotters import *
 __all__ += graphics.__all__
 
+# Load classes:
 from .classes.SPD import SPD
 from .classes.CDATA import CDATA, XYZ, LAB

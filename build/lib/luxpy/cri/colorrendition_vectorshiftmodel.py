@@ -42,7 +42,7 @@
 
 Created on Wed Mar 28 18:59:16 2018
 
-@author: kevin.smet
+@author: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
 
