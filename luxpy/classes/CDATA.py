@@ -17,6 +17,7 @@ from .. import xyz_to_jab_cam02ucs, jab_cam02ucs_to_xyz, xyz_to_jab_cam02lcd, ja
 from .. import xyz_to_jab_cam16ucs, jab_cam16ucs_to_xyz, xyz_to_jab_cam16lcd, jab_cam16lcd_to_xyz, xyz_to_jab_cam16scd, jab_cam16scd_to_xyz
 from .. import xyz_to_qabW_cam15u, qabW_cam15u_to_xyz
 from .. import xyz_to_lab_cam_sww_2016, lab_cam_sww_2016_to_xyz
+from .. import colortf
 
 from .. import plt, np, todim
 
@@ -178,7 +179,8 @@ class XYZ(CDATA):
                     with color space coordinates 
 
         """
-        return LAB(value = getattr(self,'to_{:s}'.format(dtype))(**kwargs).value, relative = self.relative, cieobs = self.cieobs, dtype = dtype, **kwargs)
+        return LAB(value = colortf(self.value, tf = dtype, **kwargs), relative = self.relative, cieobs = self.cieobs, dtype = dtype, **kwargs)
+#        return LAB(value = getattr(self,'to_{:s}'.format(dtype))(**kwargs).value, relative = self.relative, cieobs = self.cieobs, dtype = dtype, **kwargs)
 
     def plot(self,  ax = None, title = None, **kwargs):
         """
@@ -590,6 +592,7 @@ class LAB(CDATA):
         """
         Convert color space coordinates to XYZ tristimulus values.
         """
+        #return XYZ(value = colortf(self.value, tf = '{:s}>xyz'.format(self.dtype),**kwargs), relative = self.relative, cieobs = self.cieobs, dtype = 'xyz')
         return XYZ(value = getattr(self,'{:s}_to_xyz'.format(self.dtype))(**kwargs), relative = self.relative, cieobs = self.cieobs, dtype = 'xyz')
     
     
