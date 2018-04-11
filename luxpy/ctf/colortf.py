@@ -20,14 +20,14 @@ __all__ = ['_COLORTF_DEFAULT_WHITE_POINT','colortf']
 _COLORTF_DEFAULT_WHITE_POINT = np.array([100.0, 100.0, 100.0]) # ill. E white point
 
 #------------------------------------------------------------------------------------------------
-def colortf(data, tf = 'Yuv>Yxy', tfa0 = {}, tfa1 = {}):
+def colortf(data, tf = _CSPACE, tfa0 = {}, tfa1 = {}):
     """
     Wrapper function to perform various color transformations.
     
     Args:
         :data: numpy.ndarray
         :tf: str specifying transform type, optional
-            E.g. tf = 'spd>xyz' or 'spd>Yuv' or 'Yuv>cct' or ...
+            E.g. tf = 'spd>xyz' or 'spd>Yuv' or 'Yuv>cct' or 'Yuv' or 'Yxy' or ...
             If tf is for example 'Yuv' it is assumed to be a transformation of type: 'xyz>Yuv'
         :tfa0: dict with parameters (keys) and values required by some color transformations ('...>xyz')
         :tfa1: dict with parameters (keys) and values required by some color transformations ('xyz>...')
@@ -42,11 +42,15 @@ def colortf(data, tf = 'Yuv>Yxy', tfa0 = {}, tfa1 = {}):
             if (ii%2 == 1):
                 out_ = tf[ii]
                 in_ = 'xyz'
+                tfa = tfa0
             else:
                 out_ = 'xyz'
                 in_ = tf[ii]
-            data = eval('{}_to_{}(data,**tfa{})'.format(in_,out_,ii))
+                tfa = tfa1
+            data = globals()['{}_to_{}'.format(in_, out_)](data,**tfa)
+
 	
     else:
-        data = eval('{}_to_{}(data,**tfa0)'.format('xyz',tf[0]))    
+        data = globals()['{}_to_{}'.format('xyz', tf[0])](data,**tfa0)
     return data   
+
