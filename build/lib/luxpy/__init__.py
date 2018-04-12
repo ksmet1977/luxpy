@@ -8,8 +8,8 @@
     see: "http://github.com/ksmet1977/luxpy/blob/master/README.md"
 
     * Author: K. A.G. Smet (ksmet1977 at gmail.com)
-    * Version: 1.2.04
-    * Date: April 10, 2018
+    * Version: 1.2.06
+    * Date: April 12, 2018
     * License: GPLv3
 
 ########################################################################################

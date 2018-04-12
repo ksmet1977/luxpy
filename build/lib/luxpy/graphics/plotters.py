@@ -80,7 +80,7 @@ def plotDL(ccts = None, cieobs =_CIEOBS, cspace = _CSPACE, axh = None, show = Tr
     Plot daylight locus.
     
     Args: 
-        :ccts: None or list{float], optional
+        :ccts: None or list[float], optional
             None defaults to [4000 K to 1e19 K] in 100 steps on a log10 scale.
         :force_daylight_below4000K: False or True, optional
             CIE daylight phases are not defined below 4000 K. If True plot anyway.
@@ -123,7 +123,7 @@ def plotBB(ccts = None, cieobs =_CIEOBS, cspace = _CSPACE, axh = None, cctlabels
     Plot blackbody locus.
         
     Args: 
-        :ccts: None or list{float], optional
+        :ccts: None or list[float], optional
             None defaults to [1000 to 1e19 K].
             Range: [1000.0,1500.0,2000.0,2500.0,3000.0,3500.0,4000.0,5000.0,6000.0,8000.0,10000.0] + [15000 K to 1e19 K] in 100 steps on a log10 scale
         :cctlabels: True or False, optional
@@ -220,9 +220,9 @@ def plotSL(cieobs =_CIEOBS, cspace = _CSPACE,  DL = True, BBL = True, D65 = Fals
     axh_ = plot_color_data(x,y,axh = axh, cieobs = cieobs, cspace = cspace, show = show, formatstr=formatstr,  **kwargs)
     
     if DL == True:
-        plotDL(ccts = None, cieobs = cieobs, cspace = cspace, axh = axh, show = show, cspace_pars = cspace_pars, formatstr = 'b:',  **kwargs)
+        plotDL(ccts = None, cieobs = cieobs, cspace = cspace, axh = axh, show = show, cspace_pars = cspace_pars, formatstr = 'k:',  **kwargs)
     if BBL == True:
-        plotBB(ccts = None, cieobs = cieobs, cspace = cspace, axh = axh, show = show, cspace_pars = cspace_pars, cctlabels = cctlabels, formatstr = 'r-.',  **kwargs)
+        plotBB(ccts = None, cieobs = cieobs, cspace = cspace, axh = axh, show = show, cspace_pars = cspace_pars, cctlabels = cctlabels, formatstr = 'k-.',  **kwargs)
     
     if D65 == True:
         YxyD65 = colortf(spd_to_xyz(_CIE_ILLUMINANTS['D65']), tf = cspace, tfa0 = cspace_pars)

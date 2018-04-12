@@ -199,7 +199,7 @@ def subsample_RFL_set(rfl, rflpath = '', samplefcn = 'rand', S = _CIE_ILLUMINANT
     cspace_pars = cspace.copy()
     cspace_pars.pop('type')
     cspace_pars['xyzw'] = xyzw
-    jab = colortf(xyz,tf = cspace['type'],tfa0 = cspace_pars)
+    jab = colortf(xyz,tf = cspace['type'],fwtf = cspace_pars)
 
     # Generate grid and get samples in each grid:
     gridp,idxp, jabp, pixelsamplenrs, pixelIDs = get_pixel_coordinates(jab, jab_ranges = jab_ranges, jab_deltas = jab_deltas, limit_grid_radius = limit_grid_radius)

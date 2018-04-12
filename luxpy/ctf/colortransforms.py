@@ -70,7 +70,7 @@ _COLORTF_DEFAULT_WHITE_POINT = np.array([100.0, 100.0, 100.0]) # ill. E white po
 #------------------------------------------------------------------------------
 #---chromaticity coordinates---------------------------------------------------
 #------------------------------------------------------------------------------
-def xyz_to_Yxy(xyz):
+def xyz_to_Yxy(xyz, **kwargs):
     """ 
 	 Convert XYZ tristimulus values CIE Yxy chromaticity values.
      
@@ -88,7 +88,7 @@ def xyz_to_Yxy(xyz):
     return ajoin((Y,x,y))
    
 
-def Yxy_to_xyz(Yxy):
+def Yxy_to_xyz(Yxy, **kwargs):
     """ 
 	 Convert CIE Yxy chromaticity values to XYZ tristimulus values.
      
@@ -105,7 +105,7 @@ def Yxy_to_xyz(Yxy):
     Z = Y*(1.0-x-y)/y
     return ajoin((X,Y,Z))
 
-def xyz_to_Yuv(xyz):
+def xyz_to_Yuv(xyz,**kwargs):
     """ 
 	 Convert XYZ tristimulus values CIE 1976 Yu'v' chromaticity values.
      
@@ -123,7 +123,8 @@ def xyz_to_Yuv(xyz):
     v = 9.0*Y / denom
     return ajoin((Y,u,v))
 
-def Yuv_to_xyz(Yuv):
+
+def Yuv_to_xyz(Yuv, **kwargs):
     """ 
 	 Convert CIE 1976 Yu'v' chromaticity values to XYZ tristimulus values.
      
@@ -141,7 +142,7 @@ def Yuv_to_xyz(Yuv):
     return ajoin((X,Y,Z))
 
 
-def xyz_to_wuv(xyz, xyzw = _COLORTF_DEFAULT_WHITE_POINT):
+def xyz_to_wuv(xyz, xyzw = _COLORTF_DEFAULT_WHITE_POINT, **kwargs):
     """ 
 	 Convert XYZ tristimulus values CIE 1964 U*V*W* color space.
      
@@ -166,7 +167,7 @@ def xyz_to_wuv(xyz, xyzw = _COLORTF_DEFAULT_WHITE_POINT):
     V = 13.0*W*(v - vw)
     return ajoin((W,U,V))    
 
-def wuv_to_xyz(wuv,xyzw = _COLORTF_DEFAULT_WHITE_POINT):
+def wuv_to_xyz(wuv,xyzw = _COLORTF_DEFAULT_WHITE_POINT, **kwargs):
     """ 
 	 Convert CIE 1964 U*V*W* color space coordinates to XYZ tristimulus values.
      
@@ -192,7 +193,7 @@ def wuv_to_xyz(wuv,xyzw = _COLORTF_DEFAULT_WHITE_POINT):
     return Yuv_to_xyz(Yuv)
     
  
-def xyz_to_xyz(xyz):
+def xyz_to_xyz(xyz, **kwargs):
     """ 
 	 Convert XYZ tristimulus values to XYZ tristimulus values.
      
@@ -207,7 +208,7 @@ def xyz_to_xyz(xyz):
     return np2d(xyz)
 
 
-def xyz_to_lms(xyz, cieobs = _CIEOBS, M = None):
+def xyz_to_lms(xyz, cieobs = _CIEOBS, M = None, **kwargs):
     """ 
 	 Convert XYZ tristimulus values to LMS cone fundamental responses.
          
@@ -234,7 +235,7 @@ def xyz_to_lms(xyz, cieobs = _CIEOBS, M = None):
     return lms
 
 
-def lms_to_xyz(lms, cieobs = _CIEOBS, M = None):
+def lms_to_xyz(lms, cieobs = _CIEOBS, M = None, **kwargs):
     """ 
 	 Convert LMS cone fundamental responses to XYZ tristimulus values.
          
@@ -262,7 +263,7 @@ def lms_to_xyz(lms, cieobs = _CIEOBS, M = None):
 
 
 
-def xyz_to_lab(xyz, xyzw = None, cieobs = _CIEOBS):
+def xyz_to_lab(xyz, xyzw = None, cieobs = _CIEOBS, **kwargs):
     """ 
 	 Convert XYZ tristimulus values to CIE 1976 L*a*b* (CIELAB) color coordinates.
      
@@ -301,7 +302,7 @@ def xyz_to_lab(xyz, xyzw = None, cieobs = _CIEOBS):
     return ajoin((L,a,b))
 
 
-def lab_to_xyz(lab, xyzw = None, cieobs = _CIEOBS):
+def lab_to_xyz(lab, xyzw = None, cieobs = _CIEOBS, **kwargs):
     """ 
 	 Convert CIE 1976 L*a*b* (CIELAB) color coordinates to XYZ tristimulus values.
      
@@ -345,7 +346,7 @@ def lab_to_xyz(lab, xyzw = None, cieobs = _CIEOBS):
 
 
 
-def xyz_to_luv(xyz, xyzw = None, cieobs = _CIEOBS):
+def xyz_to_luv(xyz, xyzw = None, cieobs = _CIEOBS, **kwargs):
     """ 
 	 Convert XYZ tristimulus values to CIE 1976 L*u*v* (CIELUV) color coordinates.
      
@@ -382,7 +383,7 @@ def xyz_to_luv(xyz, xyzw = None, cieobs = _CIEOBS):
     return ajoin((L,u,v))
 
 
-def luv_to_xyz(luv, xyzw = None, cieobs = _CIEOBS):
+def luv_to_xyz(luv, xyzw = None, cieobs = _CIEOBS, **kwargs):
     """ 
 	 Convert CIE 1976 L*u*v* (CIELUVB) color coordinates to XYZ tristimulus values.
      
@@ -423,7 +424,7 @@ def luv_to_xyz(luv, xyzw = None, cieobs = _CIEOBS):
  
     
 #-------------------------------------------------------------------------------------------------   
-def xyz_to_Vrb_mb(xyz, cieobs = _CIEOBS, scaling = [1,1], M = None):
+def xyz_to_Vrb_mb(xyz, cieobs = _CIEOBS, scaling = [1,1], M = None, **kwargs):
     """ 
 	 Convert XYZ tristimulus values to V,r,b (Macleod-Boynton) color coordinates.
     
@@ -454,7 +455,7 @@ def xyz_to_Vrb_mb(xyz, cieobs = _CIEOBS, scaling = [1,1], M = None):
     return ajoin((V,r,b))
 
      
-def Vrb_mb_to_xyz(Vrb,cieobs = _CIEOBS, scaling = [1,1], M = None, Minverted = False):
+def Vrb_mb_to_xyz(Vrb,cieobs = _CIEOBS, scaling = [1,1], M = None, Minverted = False, **kwargs):
     """ 
 	 Convert V,r,b (Macleod-Boynton) color coordinates to XYZ tristimulus values.
     
@@ -489,7 +490,7 @@ def Vrb_mb_to_xyz(Vrb,cieobs = _CIEOBS, scaling = [1,1], M = None, Minverted = F
     return ajoin((X,Y,Z))
 
 
-def xyz_to_ipt(xyz, cieobs = _CIEOBS, xyzw = None, M = None):
+def xyz_to_ipt(xyz, cieobs = _CIEOBS, xyzw = None, M = None, **kwargs):
     """ 
 	 Convert XYZ tristimulus values to IPT color coordinates.
      
@@ -545,7 +546,7 @@ def xyz_to_ipt(xyz, cieobs = _CIEOBS, xyzw = None, M = None):
 
     return ipt
 
-def ipt_to_xyz(ipt, cieobs = _CIEOBS, xyzw = None, M = None):
+def ipt_to_xyz(ipt, cieobs = _CIEOBS, xyzw = None, M = None, **kwargs):
     """ 
 	 Convert XYZ tristimulus values to IPT color coordinates.
      
@@ -601,7 +602,7 @@ def ipt_to_xyz(ipt, cieobs = _CIEOBS, xyzw = None, M = None):
     return xyz
     
 #------------------------------------------------------------------------------
-def xyz_to_Ydlep(xyz, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT):
+def xyz_to_Ydlep(xyz, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT, **kwargs):
     """ 
 	 Convert XYZ tristimulus values to Y, dominant (complementary) wavelength and excitation purity.
      
@@ -619,12 +620,12 @@ def xyz_to_Ydlep(xyz, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT):
     xyz3 = np3d(xyz).copy()
     
     # flip axis so that shortest dim is on axis0 (save time in looping):
-    if xyz3.shape[0] > xyz3.shape[1]:
+    if xyz3.shape[0] < xyz3.shape[1]:
         axes12flipped = True
         xyz3 = xyz3.transpose((1,0,2))
     else:
         axes12flipped = False
-    
+
     # convert xyz to Yxy:
     Yxy = xyz_to_Yxy(xyz3)
     Yxyw = xyz_to_Yxy(xyzw)
@@ -693,8 +694,8 @@ def xyz_to_Ydlep(xyz, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT):
             denom = np.sum(dap * db,axis=1,keepdims=True)
             num = np.sum(dap * dp,axis=1,keepdims=True)
             xy_linecross = (num/denom) *db + xypl1
-            d_linecross = np.atleast_2d((xy_linecross[:,0]**2.0 + xy_linecross[:,1]**2.0)**0.5).T[0]
-            purity[:,i][pc] = d[pc]/d_linecross[pc]
+            d_linecross = np.atleast_2d((xy_linecross[:,0]**2.0 + xy_linecross[:,1]**2.0)**0.5).T#[0]
+            purity[:,i][pc] = d[pc]/d_linecross[pc][:,0]
     Ydlep = np.dstack((xyz3[:,:,1],dominantwavelength,purity))  
     
     if axes12flipped == True:
@@ -705,7 +706,7 @@ def xyz_to_Ydlep(xyz, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT):
 
     
 
-def Ydlep_to_xyz(Ydlep, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT):
+def Ydlep_to_xyz(Ydlep, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT, **kwargs):
     """ 
 	 Convert Y, dominant (complementary) wavelength and excitation purity to XYZ tristimulus values.
      
@@ -724,7 +725,7 @@ def Ydlep_to_xyz(Ydlep, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT):
     Ydlep3 = np3d(Ydlep).copy()
     
     # flip axis so that shortest dim is on axis0 (save time in looping):
-    if Ydlep3.shape[2] > Ydlep3.shape[1]:
+    if Ydlep3.shape[0] < Ydlep3.shape[1]:
         axes12flipped = True
         Ydlep3 = Ydlep3.transpose((1,0,2))
     else:

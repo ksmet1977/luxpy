@@ -464,14 +464,14 @@ def spd_to_jab_t_r(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'jabt,jabr', wl = No
     if 'xyzw' in cspace_pars.keys(): 
         if cspace_pars['xyzw'] is None: 
             cspace_pars['xyzw'] = xyztw # enter test whitepoint
-    jabt = colortf(xyzti, tf = cspace['type'], tfa0 = cspace_pars)
+    jabt = colortf(xyzti, tf = cspace['type'], fwtf = cspace_pars)
     
     cspace_pars = cspace.copy()
     cspace_pars.pop('type')
     if 'xyzw' in cspace_pars.keys(): 
         if cspace_pars['xyzw'] is None: 
             cspace_pars['xyzw'] = xyzrw # enter ref. whitepoint
-    jabr = colortf(xyzri, tf = cspace['type'], tfa0 = cspace_pars)    
+    jabr = colortf(xyzri, tf = cspace['type'], fwtf = cspace_pars)    
     del cspace_pars
 
 

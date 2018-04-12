@@ -1222,7 +1222,7 @@ def cam_sww_2016(data, dataw = None, Yb = 20.0, Lw = 400.0, relative = True, par
        
 #------------------------------------------------------------------------------
 # wrapper function for use with colortf():
-def xyz_to_jabM_ciecam02(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, yellowbluepurplecorrect = None, mcat = 'cat02'):
+def xyz_to_jabM_ciecam02(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, yellowbluepurplecorrect = None, mcat = 'cat02', **kwargs):
     """
     Wrapper function for ciecam02 forward mode with J,aM,bM output.
     
@@ -1230,7 +1230,7 @@ def xyz_to_jabM_ciecam02(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, cond
     """
     return ciecam02(data, xyzw = xyzw, Yw = Yw, conditions = conditions, direction = 'forward', outin = 'J,aM,bM', yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
    
-def jabM_ciecam02_to_xyz(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, yellowbluepurplecorrect = None, mcat = 'cat02'):
+def jabM_ciecam02_to_xyz(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, yellowbluepurplecorrect = None, mcat = 'cat02', **kwargs):
     """
     Wrapper function for ciecam02 inverse mode with J,aM,bM input.
     
@@ -1240,7 +1240,7 @@ def jabM_ciecam02_to_xyz(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, cond
 
 
 
-def xyz_to_jabC_ciecam02(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, yellowbluepurplecorrect = None, mcat = 'cat02'):
+def xyz_to_jabC_ciecam02(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, yellowbluepurplecorrect = None, mcat = 'cat02', **kwargs):
     """
     Wrapper function for ciecam02 forward mode with J,aC,bC output.
     
@@ -1248,7 +1248,7 @@ def xyz_to_jabC_ciecam02(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, cond
     """
     return ciecam02(data, xyzw = xyzw, Yw = Yw, conditions = conditions, direction = 'forward', outin = 'J,aC,bC', yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
  
-def jabC_ciecam02_to_xyz(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, yellowbluepurplecorrect = None, mcat = 'cat02'):
+def jabC_ciecam02_to_xyz(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, yellowbluepurplecorrect = None, mcat = 'cat02', **kwargs):
     """
     Wrapper function for ciecam02 inverse mode with J,aC,bC input.
     
@@ -1258,7 +1258,7 @@ def jabC_ciecam02_to_xyz(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, cond
 
 
               
-def xyz_to_jab_cam02ucs(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, yellowbluepurplecorrect = None, mcat = 'cat02'):
+def xyz_to_jab_cam02ucs(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, yellowbluepurplecorrect = None, mcat = 'cat02', **kwargs):
     """
     Wrapper function for cam02ucs forward mode with J,aM,bM output.
     
@@ -1266,7 +1266,7 @@ def xyz_to_jab_cam02ucs(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, condi
     """
     return cam02ucs(data, xyzw = xyzw, Yw = Yw, conditions = conditions, direction = 'forward', ucstype = 'ucs', yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
                 
-def jab_cam02ucs_to_xyz(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, yellowbluepurplecorrect = None, mcat = 'cat02'):
+def jab_cam02ucs_to_xyz(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, yellowbluepurplecorrect = None, mcat = 'cat02', **kwargs):
     """
     Wrapper function for cam02ucs inverse mode with J,aM,bM input.
     
@@ -1276,7 +1276,7 @@ def jab_cam02ucs_to_xyz(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, condi
 
 
 
-def xyz_to_jab_cam02lcd(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, yellowbluepurplecorrect = None, mcat = 'cat02'):
+def xyz_to_jab_cam02lcd(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, yellowbluepurplecorrect = None, mcat = 'cat02', **kwargs):
     """
     Wrapper function for cam02ucs forward mode with J,aMp,bMp output and ucstype = lcd.
     
@@ -1284,7 +1284,7 @@ def xyz_to_jab_cam02lcd(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, condi
     """
     return cam02ucs(data, xyzw = xyzw, Yw = Yw, conditions = conditions, direction = 'forward', ucstype = 'lcd', yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
                 
-def jab_cam02lcd_to_xyz(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, yellowbluepurplecorrect = None, mcat = 'cat02'):
+def jab_cam02lcd_to_xyz(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, yellowbluepurplecorrect = None, mcat = 'cat02', **kwargs):
     """
     Wrapper function for cam02ucs inverse mode with J,aMp,bMp input and ucstype = lcd.
     
@@ -1294,7 +1294,7 @@ def jab_cam02lcd_to_xyz(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, condi
 
 
 
-def xyz_to_jab_cam02scd(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, yellowbluepurplecorrect = None, mcat = 'cat02'):
+def xyz_to_jab_cam02scd(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, yellowbluepurplecorrect = None, mcat = 'cat02', **kwargs):
     """
     Wrapper function for cam02ucs forward mode with J,aMp,bMp output and ucstype = scd.
     
@@ -1302,7 +1302,7 @@ def xyz_to_jab_cam02scd(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, condi
     """
     return cam02ucs(data, xyzw = xyzw, Yw = Yw, conditions = conditions, direction = 'forward', ucstype = 'scd', yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
                 
-def jab_cam02scd_to_xyz(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, yellowbluepurplecorrect = None, mcat = 'cat02'):
+def jab_cam02scd_to_xyz(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, yellowbluepurplecorrect = None, mcat = 'cat02', **kwargs):
     """
     Wrapper function for cam02ucs inverse mode with J,aMp,bMp input and ucstype = scd.
     
@@ -1313,7 +1313,7 @@ def jab_cam02scd_to_xyz(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, condi
 
 
 #------------------------------------------------------------------------------
-def xyz_to_jabM_cam16(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS,  mcat = 'cat16'):
+def xyz_to_jabM_cam16(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS,  mcat = 'cat16', **kwargs):
     """
     Wrapper function for cam16 forward mode with J,aM,bM output.
     
@@ -1321,7 +1321,7 @@ def xyz_to_jabM_cam16(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditi
     """
     return cam16(data, xyzw = xyzw, Yw = Yw, conditions = conditions, direction = 'forward', outin = 'J,aM,bM',  mcat = mcat)
    
-def jabM_cam16_to_xyz(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS,  mcat = 'cat16'):
+def jabM_cam16_to_xyz(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS,  mcat = 'cat16', **kwargs):
     """
     Wrapper function for cam16 inverse mode with J,aM,bM input.
     
@@ -1330,7 +1330,7 @@ def jabM_cam16_to_xyz(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditi
     return cam16(data, xyzw = xyzw, Yw = Yw, conditions = conditions, direction = 'inverse', outin = 'J,aM,bM',  mcat = mcat)
 
 
-def xyz_to_jabC_cam16(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS,  mcat = 'cat16'):
+def xyz_to_jabC_cam16(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS,  mcat = 'cat16', **kwargs):
     """
     Wrapper function for cam16 forward mode with J,aC,bC output.
     
@@ -1338,7 +1338,7 @@ def xyz_to_jabC_cam16(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditi
     """
     return cam16(data, xyzw = xyzw, Yw = Yw, conditions = conditions, direction = 'forward', outin = 'J,aC,bC',  mcat = mcat)
    
-def jabC_cam16_to_xyz(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS,  mcat = 'cat16'):
+def jabC_cam16_to_xyz(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS,  mcat = 'cat16', **kwargs):
     """
     Wrapper function for cam16 inverse mode with J,aC,bC input.
     
@@ -1348,7 +1348,7 @@ def jabC_cam16_to_xyz(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditi
 
 
               
-def xyz_to_jab_cam16ucs(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS,  mcat = 'cat16'):
+def xyz_to_jab_cam16ucs(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS,  mcat = 'cat16', **kwargs):
     """
     Wrapper function for cam16ucs forward mode with J,aM,bM output and ucstype = 'ucs'.
     
@@ -1356,7 +1356,7 @@ def xyz_to_jab_cam16ucs(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, condi
     """
     return cam16ucs(data, xyzw = xyzw, Yw = Yw, conditions = conditions, direction = 'forward', ucstype = 'ucs', mcat = mcat)
                 
-def jab_cam16ucs_to_xyz(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, mcat = 'cat16'):
+def jab_cam16ucs_to_xyz(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, mcat = 'cat16', **kwargs):
     """
     Wrapper function for cam16ucs inverse mode with J,aM,bM input and ucstype = 'ucs'.
     
@@ -1365,7 +1365,7 @@ def jab_cam16ucs_to_xyz(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, condi
     return cam16ucs(data, xyzw = xyzw, Yw = Yw, conditions = conditions, direction = 'inverse', ucstype = 'ucs', mcat = mcat)
 
 
-def xyz_to_jab_cam16lcd(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS,  mcat = 'cat16'):
+def xyz_to_jab_cam16lcd(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS,  mcat = 'cat16', **kwargs):
     """
     Wrapper function for cam16ucs forward mode with J,aM,bM output and ucstype = 'lcd'.
     
@@ -1373,7 +1373,7 @@ def xyz_to_jab_cam16lcd(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, condi
     """
     return cam16ucs(data, xyzw = xyzw, Yw = Yw, conditions = conditions, direction = 'forward', ucstype = 'lcd', mcat = mcat)
                 
-def jab_cam16lcd_to_xyz(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, mcat = 'cat16'):
+def jab_cam16lcd_to_xyz(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, mcat = 'cat16', **kwargs):
     """
     Wrapper function for cam16ucs inverse mode with J,aM,bM input and ucstype = 'lcd'.
     
@@ -1383,7 +1383,7 @@ def jab_cam16lcd_to_xyz(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, condi
 
 
 
-def xyz_to_jab_cam16scd(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS,  mcat = 'cat16'):
+def xyz_to_jab_cam16scd(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS,  mcat = 'cat16', **kwargs):
     """
     Wrapper function for cam16ucs forward mode with J,aM,bM output and ucstype = 'scd'.
     
@@ -1391,7 +1391,7 @@ def xyz_to_jab_cam16scd(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, condi
     """
     return cam16ucs(data, xyzw = xyzw, Yw = Yw, conditions = conditions, direction = 'forward', ucstype = 'scd', mcat = mcat)
                 
-def jab_cam16scd_to_xyz(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, mcat = 'cat16'):
+def jab_cam16scd_to_xyz(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, mcat = 'cat16', **kwargs):
     """
     Wrapper function for cam16ucs inverse mode with J,aM,bM input  and ucstype = 'scd'. 
     
@@ -1403,7 +1403,7 @@ def jab_cam16scd_to_xyz(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, condi
 
 
 #------------------------------------------------------------------------------
-def xyz_to_qabW_cam15u(data, fov = 10.0, parameters = None):
+def xyz_to_qabW_cam15u(data, fov = 10.0, parameters = None, **kwargs):
     """
     Wrapper function for cam15u forward mode with 'Q,aW,bW' output.
     
@@ -1411,7 +1411,7 @@ def xyz_to_qabW_cam15u(data, fov = 10.0, parameters = None):
     """
     return cam15u(data, fov = fov, direction = 'forward', outin = 'Q,aW,bW', parameters = parameters)
                 
-def qabW_cam15u_to_xyz(data, fov = 10.0, parameters = None):
+def qabW_cam15u_to_xyz(data, fov = 10.0, parameters = None, **kwargs):
     """
     Wrapper function for cam15u inverse mode with 'Q,aW,bW' input.
     
@@ -1420,7 +1420,7 @@ def qabW_cam15u_to_xyz(data, fov = 10.0, parameters = None):
     return cam15u(data, fov = fov, direction = 'inverse', outin = 'Q,aW,bW', parameters = parameters)
              
 #------------------------------------------------------------------------------
-def xyz_to_lab_cam_sww_2016(data, dataw = None, Yb = 20.0, Lw = 400.0, relative = True, parameters = None, inputtype = 'xyz', cieobs = '2006_10'):
+def xyz_to_lab_cam_sww_2016(data, dataw = None, Yb = 20.0, Lw = 400.0, relative = True, parameters = None, inputtype = 'xyz', cieobs = '2006_10', **kwargs):
     """
     Wrapper function for cam_sww_2016 forward mode with 'xyz' input.
     
@@ -1428,7 +1428,7 @@ def xyz_to_lab_cam_sww_2016(data, dataw = None, Yb = 20.0, Lw = 400.0, relative 
     """
     return cam_sww_2016(data, dataw = dataw, Yb = Yb, Lw = Lw, relative = relative, parameters = parameters, inputtype = 'xyz', direction = 'forward', cieobs = cieobs)
                 
-def lab_cam_sww_2016_to_xyz(data, dataw = None, Yb = 20.0, Lw = 400.0, relative = True, parameters = None, inputtype = 'xyz', cieobs = '2006_10'):
+def lab_cam_sww_2016_to_xyz(data, dataw = None, Yb = 20.0, Lw = 400.0, relative = True, parameters = None, inputtype = 'xyz', cieobs = '2006_10', **kwargs):
     """
     Wrapper function for cam_sww_2016 inverse mode with 'xyz' input.
     
