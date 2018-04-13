@@ -24,42 +24,45 @@
 -------------------------------------------------------------------------------
 
 ## Installation:
-1. Install miniconda (download installer from: https://conda.io/miniconda.html / https://repo.continuum.io/miniconda/)
-e.g. https://repo.continuum.io/miniconda/Miniconda3-latest-Windows-x86_64.exe
-(make sure 'conda.exe' can be found on the windows system path, if necessary do a manual add)
+1. Install miniconda:
+* Download installer from: https://conda.io/miniconda.html or https://repo.continuum.io/miniconda/,
+** https://repo.continuum.io/miniconda/Miniconda3-latest-Windows-x86_64.exe
+* Make sure **conda.exe** can be found on the windows system path (if necessary, do a manual add)
 		
-2. Create a virtual environment with full anaconda distribution:
+2. Create a virtual environment with a full anaconda distribution:
 Type the following at a windows commandline
 		
-        >> conda create --name py35 python=3.5 anaconda
+    conda create --name py36 python=3.6 anaconda
 		
 3. Activate virtual environment:
 	
-    		activate py35
+    activate py36
 		
-4. Install pip to virtual environment 
-		(just to ensure any packages to be installed with pip to this virt. env. will be installed here and not globally):
+4. Install pip to the **py36** virtual (conda) environment: 
+* (just to ensure any packages to be installed with pip to this virtual (conda) environment will be installed here and not globally)
 		
-        	conda install -n py35 pip
+    conda install -n py36 pip
 		
 5. Install luxpy package from pypi:
 	
-        	pip install luxpy
+    pip install luxpy
 		
 (if any errors show up, try and do a manual install of the dependencies: scipy, numpy, pandas, matplotlib and setuptools,
 either using e.g. ">> conda install scipy" or ">> pip install scipy", and try and reinstall luxpy using pip) 
 
 ## Use of luxpy package in "spyder" / "jupyter notebook": 
 
-	a. Spyder: matlab-like IDE:
+a. Spyder: matlab-like IDE:
 		
-		5a) Install spyder in py35 environment:
-			>> conda install -n py35 spyder 
+5a) Install spyder in py35 environment:
+
+		conda install -n py35 spyder 
 			
-		6a) Run spyder 
-			>> spdyer
+6a) Run spyder 
+
+		spdyer
 		
-		7a) To import luxpy packgage, on sypyder's commandline for the IPython kernel (or in script) type:
+7a) To import luxpy packgage, on sypyder's commandline for the IPython kernel (or in script) type:
 			import luxpy as lx 
 		
 	b. Jupyter notebook:
