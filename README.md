@@ -29,7 +29,7 @@
 2. Create a virtual environment with a full anaconda distribution:
 
 		
-    $ conda create --name py36 python=3.6 anaconda
+        $ conda create --name py36 python=3.6 anaconda
     
 		
 3. Activate virtual environment:
