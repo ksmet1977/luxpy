@@ -1,4 +1,20 @@
 # -*- coding: utf-8 -*-
+########################################################################
+# <LUXPY: a Python package for lighting and color science.>
+# Copyright (C) <2017>  <Kevin A.G. Smet> (ksmet1977 at gmail.com)
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#########################################################################
 """
 ###############################################################################
 # Module with functions related to color rendering Vector Field model
@@ -124,7 +140,7 @@ def get_poly_model(jabt, jabr, modeltype = _VF_MODEL_TYPE):
             [np.sum(ar*br*ar), np.sum(ar*br*br), np.sum(ar*br*ar**2),np.sum(ar*br*ar*br),np.sum(ar*br*br**2)],
             [np.sum((br**2)*ar), np.sum((br**2)*br), np.sum((br**2)*ar**2),np.sum((br**2)*ar*br),np.sum((br**2)*br**2)]])
     #6-parameters model
-    M6 = np.array([[np.sum(1.0*1.0),np.sum(1.0*ar), np.sum(1.0*br), np.sum(1.0*ar**2),np.sum(1.0*ar*br),np.sum(1.0*br**2)],
+    M6 = np.array([[ar.size,np.sum(1.0*ar), np.sum(1.0*br), np.sum(1.0*ar**2),np.sum(1.0*ar*br),np.sum(1.0*br**2)],
             [np.sum(ar*1.0),np.sum(ar*ar), np.sum(ar*br), np.sum(ar*ar**2),np.sum(ar*ar*br),np.sum(ar*br**2)],
             [np.sum(br*1.0),np.sum(br*ar), np.sum(br*br), np.sum(br*ar**2),np.sum(br*ar*br),np.sum(br*br**2)],
             [np.sum((ar**2)*1.0),np.sum((ar**2)*ar), np.sum((ar**2)*br), np.sum((ar**2)*ar**2),np.sum((ar**2)*ar*br),np.sum((ar**2)*br**2)],
@@ -141,7 +157,7 @@ def get_poly_model(jabt, jabr, modeltype = _VF_MODEL_TYPE):
     else:
         M = M6
         poly_model = poly6_model
-    
+
     M = np.linalg.inv(M)
 
 
@@ -158,7 +174,7 @@ def get_poly_model(jabt, jabr, modeltype = _VF_MODEL_TYPE):
     da_model = poly_model(ar,br,pmodel[0])
     db_model = poly_model(ar,br,pmodel[1])
     dab_model = np.hstack((da_model,db_model))
-    
+
     # D.2 Calculate residuals for da & db:
     da_res = da - da_model
     db_res = db - db_model
@@ -355,7 +371,7 @@ def VF_colorshift_model(S, cri_type = _VF_CRI_DEFAULT, model_type = _VF_MODEL_TY
                     * Rfi (specific color fidelity indices)
                     * Rfmi (specific metameric uncertainty indices)
                     * cri_type (str with cri_type)
-            - 'Jab': dict with with numpy.ndarrays for Jabt, Jabr and DEi
+            - 'Jab': dict with with numpy.ndarrays for Jabt, Jabr, DEi
             - 'dC/C_dH_x_sig' : np.vstack((dCoverC_x,dCoverC_x_sig,dH_x,dH_x_sig)).T,
                     See get_poly_model() for more info.
             - 'fielddata' dict with dicts containing data on the calculated vector-field and circle-fields 
@@ -365,7 +381,7 @@ def VF_colorshift_model(S, cri_type = _VF_CRI_DEFAULT, model_type = _VF_MODEL_TY
                             {'pmodel': pmodel, 'pcolorshift' : pcolorshift, 
                               'dab_model' : dab_model, 'dab_res' : dab_res,'dab_std' : dab_std,
                               'modeltype' : modeltype, 'fmodel' : poly_model,
-                              'Jabtm' : Jabtm, 'Jabrm' : Jabrm},
+                              'Jabtm' : Jabtm, 'Jabrm' : Jabrm, 'DEim' : DEim},
             - 'vshifts' :dict with various vector shifts:
                     * 'Jabshiftvector_r_to_t' : numpy.ndarray with difference vectors between jabt and jabr
                     * 'vshift_ab_s' : vshift_ab_s: ab-shift vectors of samples 
@@ -404,6 +420,8 @@ def VF_colorshift_model(S, cri_type = _VF_CRI_DEFAULT, model_type = _VF_MODEL_TY
         Jabt_i = Jabt[:,i,:].copy()
         Jabt_i = Jabt_i[:,None,:]
 
+        DEi = np.sqrt((Jabr_i[...,0] - Jabt_i[...,0])**2 + (Jabr_i[...,1] - Jabt_i[...,1])**2 + (Jabr_i[...,2] - Jabt_i[...,2])**2)
+
         # Determine polynomial model:
         poly_model, pmodel, dab_model, dab_res, dCHoverC_res, dab_std, dCHoverC_std = get_poly_model(Jabt_i, Jabr_i, modeltype = _VF_MODEL_TYPE)
         
@@ -427,15 +445,18 @@ def VF_colorshift_model(S, cri_type = _VF_CRI_DEFAULT, model_type = _VF_MODEL_TY
         Jabrm = np.hstack((Jr,ar,br))
         
         # calculate color differences between test and deshifted ref:
-        DEi = np.sqrt((Jr - Jt)**2 + (at - ar)**2 + (bt - br)**2)
-    
-        # Apply scaling function to convert DEi to Rfi:
+#        DEim = np.sqrt((Jr - Jt)**2 + (at - ar)**2 + (bt - br)**2)
+        DEim = np.sqrt(0*(Jr - Jt)**2 + (at - ar)**2 + (bt - br)**2) # J is not used
+
+        # Apply scaling function to convert DEim to Rfmi:
         scale_factor = cri_type['scale']['cfactor']
         scale_fcn = cri_type['scale']['fcn']
         avg = cri_type['avg']  
-        Rfi_deshifted = scale_fcn(DEi,scale_factor)
-        Rf_deshifted = scale_fcn(avg(DEi,axis = 0),scale_factor)
-    
+        Rfi_deshifted = scale_fcn(DEim,scale_factor)
+        Rf_deshifted = scale_fcn(avg(DEim,axis = 0),scale_factor)
+        
+        rms = lambda x: np.sqrt(np.sum(x**2,axis=0)/x.shape[0])
+        Rf_deshifted_rms = scale_fcn(rms(DEim),scale_factor)
     
         # Generate vector field:
         vfaxt,vfbxt,vfaxr,vfbxr = generate_vector_field(poly_model, pmodel,axr = np.arange(-_VF_MAXR,_VF_MAXR+_VF_DELTAR,_VF_DELTAR), bxr = np.arange(-_VF_MAXR,_VF_MAXR+_VF_DELTAR,_VF_DELTAR), limit_grid_radius = _VF_MAXR,color = 0)
@@ -455,15 +476,15 @@ def VF_colorshift_model(S, cri_type = _VF_CRI_DEFAULT, model_type = _VF_MODEL_TY
         cfaxt,cfbxt,cfaxr,cfbxr = generate_vector_field(poly_model, pmodel,make_grid = False,axr = x[:,None], bxr = y[:,None], limit_grid_radius = _VF_MAXR,color = 0)
 
         out[i] = {'Source' : {'S' : S, 'cct' : cct[i] , 'duv': duv[i]},
-               'metrics' : {'Rf':Rf[:,i], 'Rfm': Rf_deshifted, 'Rfi':Rfi[:,i], 'Rfmi': Rfi_deshifted, 'cri_type' : cri_type_str},
-               'Jab' : {'Jabt' : Jabt_i, 'Jabr' : Jabr_i, 'DEi': DEi},
+               'metrics' : {'Rf':Rf[:,i], 'Rfm': Rf_deshifted, 'Rfm_rms' : Rf_deshifted_rms, 'Rfi':Rfi[:,i], 'Rfmi': Rfi_deshifted, 'cri_type' : cri_type_str},
+               'Jab' : {'Jabt' : Jabt_i, 'Jabr' : Jabr_i, 'DEi' : DEi},
                'dC/C_dH_x_sig' : np.vstack((dCoverC_x,dCoverC_x_sig,dH_x,dH_x_sig)).T,
                'fielddata': {'vectorfield' : {'axt': vfaxt, 'bxt' : vfbxt, 'axr' : vfaxr, 'bxr' : vfbxr},
                              'circlefield' : {'axt': cfaxt, 'bxt' : cfbxt, 'axr' : cfaxr, 'bxr' : cfbxr}},
                'modeldata' : {'pmodel': pmodel, 'pcolorshift' : pcolorshift, 
                               'dab_model' : dab_model, 'dab_res' : dab_res,'dab_std' : dab_std,
                               'model_type' : model_type, 'fmodel' : poly_model,
-                              'Jabtm' : Jabtm, 'Jabrm' : Jabrm},
+                              'Jabtm' : Jabtm, 'Jabrm' : Jabrm, 'DEim' : DEim},
                'vshifts' : {'Jabshiftvector_r_to_t' : np.hstack((Jt-Jr,at-ar,bt-br)),
                             'vshift_ab_s' : vshift_ab_s,
                             'vshift_ab_s_vf' : vshift_ab_s_vf,
