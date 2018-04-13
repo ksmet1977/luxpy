@@ -1,4 +1,4 @@
-# Python package for lighting and color science
+# Python toolbox for lighting and color science
 ![alt text][logo]
 
 [logo]: https://github.com/ksmet1977/luxpy/blob/master/images/LUXPY_logo.jpg
@@ -7,6 +7,15 @@
 * Version: 1.2.05
 * Date: April 10, 2018
 * License: GPLv3
+
+Luxpy is an open source package under a GPLv3 license that supports several 
+common lighting, colorimetric and color appearance related calculations, such 
+as spectral data interpolation (conform CIE15-2004) and normalization, 
+calculation of daylight phase, blackbody radiator and other reference illuminant
+spectra, color space transformation, color appearance models 
+and color rendition metrics
+
+-------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
 ## Overview of modules (in order as loaded in \__init__()):
