@@ -24,37 +24,32 @@
 -------------------------------------------------------------------------------
 
 ## Installation:
-	1. Install miniconda (download installer from: https://conda.io/miniconda.html / https://repo.continuum.io/miniconda/)
-		e.g. https://repo.continuum.io/miniconda/Miniconda3-latest-Windows-x86_64.exe
-		(make sure 'conda.exe' can be found on the windows system path, if necessary do a manual add)
+1. Install miniconda (download installer from: https://conda.io/miniconda.html / https://repo.continuum.io/miniconda/)
+e.g. https://repo.continuum.io/miniconda/Miniconda3-latest-Windows-x86_64.exe
+(make sure 'conda.exe' can be found on the windows system path, if necessary do a manual add)
 		
-	2. Create a virtual environment with full anaconda distribution:
-		Type the following at a windows commandline
+2. Create a virtual environment with full anaconda distribution:
+Type the following at a windows commandline
 		
+        >> conda create --name py35 python=3.5 anaconda
 		
-        conda create --name py35 python=3.5 anaconda
-		
-	3. Activate virtual environment:
-	
+3. Activate virtual environment:
 	
     		activate py35
 		
-	4. Install pip to virtual environment 
+4. Install pip to virtual environment 
 		(just to ensure any packages to be installed with pip to this virt. env. will be installed here and not globally):
-		
 		
         	conda install -n py35 pip
 		
-	5. Install luxpy package from pypi:
-	
+5. Install luxpy package from pypi:
 	
         	pip install luxpy
 		
-		(if any errors show up, try and do a manual install of the dependencies: scipy, numpy, pandas, matplotlib and setuptools,
-			either using e.g. ">> conda install scipy" or ">> pip install scipy",
-			and try and reinstall luxpy using pip) 
+(if any errors show up, try and do a manual install of the dependencies: scipy, numpy, pandas, matplotlib and setuptools,
+either using e.g. ">> conda install scipy" or ">> pip install scipy", and try and reinstall luxpy using pip) 
 
-Use of luxpy package in "spyder" / "jupyter notebook": 
+## Use of luxpy package in "spyder" / "jupyter notebook": 
 
 	a. Spyder: matlab-like IDE:
 		
