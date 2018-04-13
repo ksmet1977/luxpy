@@ -1,5 +1,4 @@
 # Python package for lighting and color science
-======================================================
 ![alt text][logo]
 
 [logo]: https://github.com/ksmet1977/luxpy/blob/master/images/LUXPY_logo.jpg
