@@ -30,7 +30,8 @@
 * Make sure **conda.exe** can be found on the windows system path (if necessary, do a manual add)
 		
 2. Create a virtual environment with a full anaconda distribution:
-Type the following at a windows commandline
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp Type the following at a windows commandline
+		
 		
     conda create --name py36 python=3.6 anaconda
 		
