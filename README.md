@@ -11,14 +11,14 @@
 **Luxpy** is an open source package under a GPLv3 license that supports several common
 **lighting**, **colorimetric**, **color appearance** and other **color science**
  related calculations and models, such as:
-* spectral data interpolation (conform CIE15-2004) and normalization (spectral)
-* calculation of daylight phase, blackbody radiator and other reference illuminant spectra (spectral)
-* calculation of tristimulus values (spectral)
-* correlated color temperature and Duv (cct)
-* color space transformations (ctf)
-* chromatic adaptation transforms (cat)
-* color appearance models (cam)
-* color rendition metrics (cri)
+* spectral data interpolation (conform CIE15-2004) and normalization
+* calculation of daylight phase, blackbody radiator and other reference illuminant spectra
+* calculation of tristimulus values
+* correlated color temperature and Duv
+* color space transformations
+* chromatic adaptation transforms 
+* color appearance models 
+* color rendition indices 
 * ...
 
 -------------------------------------------------------------------------------
