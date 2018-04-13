@@ -35,19 +35,19 @@
 3. Activate virtual environment:
 
 
-    $ activate py36
+        $ activate py36
     
 		
 4. Install pip to the **py36** virtual (conda) environment (just to ensure any packages to be installed with pip to this virtual (conda) environment will be installed here and not globally):
 
 
-    $ conda install -n py36 pip
+        $ conda install -n py36 pip
     
 		
 5. Install luxpy package from pypi:
 
 
-    $ pip install luxpy
+        $ pip install luxpy
     
 		
 If any errors show up, try and do a manual install of the dependencies: scipy, numpy, pandas, matplotlib and setuptools,
@@ -55,30 +55,40 @@ either using e.g. "conda install scipy" or "pip install scipy", and try and rein
 
 ## Use of luxpy package in "spyder" / "jupyter notebook": 
 
-a. Spyder: matlab-like IDE:
+### Spyder: a matlab-like IDE:
 		
-5a) Install spyder in py35 environment:
+1. Install spyder in the **py36** environment:
 
-		conda install -n py35 spyder 
+
+        $ conda install -n py36 spyder 
 			
-6a) Run spyder 
+			
+2. Run spyder 
 
-		spdyer
+
+        $ spyder
+        
 		
-7a) To import luxpy packgage, on sypyder's commandline for the IPython kernel (or in script) type:
-			import luxpy as lx 
+3. Import the luxpy package by typing in the commandline or in a script file:
+
+
+        import luxpy as lx 
+        
 		
-	b. Jupyter notebook:
+### Jupyter notebook:
 	
-		5b) Start jupyter notebook:
-			>> jupyter notebook
+1. Start jupyter notebook:
+
+
+        $ jupyter notebook
+        
 			
-		6b) Open an existing or new notebook: 
-			e.g. open "luxpy example code 1.ipynb" for an overview of how to use the luxpy package 
-			(or see README.md on www.github.com/ksmet1977/luxpy)
+2. Open an existing or new notebook (e.g. open "luxpy basic usage.ipynb" for an overview of how to use the luxpy package, or see README.md on www.github.com/ksmet1977/luxpy)
 			
-		7b) To import luxpy packgage type:
-			import luxpy as lx
+3. To import luxpy package type the following a a jupyter notebook cell and run:
+			
+
+        import luxpy as lx
 
 
 -------------------------------------------------------------------------------

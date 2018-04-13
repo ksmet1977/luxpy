@@ -32,9 +32,9 @@ Use of luxpy package in "spyder" / "jupyter notebook":
 			>> conda install -n py35 spyder 
 			
 		6a) Run spyder 
-			>> spdyer
+			>> spyder
 		
-		7a) To import luxpy packgage, on sypyder's commandline for the IPython kernel (or in script) type:
+		7a) To import the luxpy package, on spyder's commandline for the IPython kernel (or in script) type:
 			import luxpy as lx 
 		
 	b. Jupyter notebook:
