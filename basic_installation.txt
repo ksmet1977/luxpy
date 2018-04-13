@@ -44,9 +44,9 @@ Use of luxpy package in "spyder" / "jupyter notebook":
 			
 		6b) Open an existing or new notebook: 
 			e.g. open "luxpy example code 1.ipynb" for an overview of how to use the luxpy package 
-			(or see README.md on www.github.com/ksmet1977/luxpy)
+			(or see luxpy_module_overview.md on www.github.com/ksmet1977/luxpy)
 			
-		7b) To import luxpy packgage type:
+		7b) To import luxpy package type:
 			import luxpy as lx
 		
 		
