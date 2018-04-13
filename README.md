@@ -21,6 +21,8 @@
 * color rendition indices 
 * ...
 
+## Basic Usage:
+An overview of the basic usage is given in the [**luxpy basic usage.ipynb**](https://github.com/ksmet1977/luxpy/blob/master/luxpy_basic_usage.ipynb) jupyter notebook (for instruction on how to install the luxpy package and open up a jupyter notebook, see below).
 -------------------------------------------------------------------------------
 
 ## Installation:
@@ -44,7 +46,7 @@
         (py36) $ conda install -n py36 pip
     
 		
-5. Install luxpy package from the [Python Package Index](https://pypi.python.org/pypi/luxpy/):
+5. Install **luxpy** from the [Python Package Index](https://pypi.python.org/pypi/luxpy/):
 
 
         (py36) $ pip install luxpy
