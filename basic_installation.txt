@@ -13,11 +13,11 @@ Install luxpy:
 	3)  Activate virtual environment:
 		>> activate py35
 		
-	3)  Install pip to virtual environment 
+	4)  Install pip to virtual environment 
 		(just to ensure any packages to be installed with pip to this virt. env. will be installed here and not globally):
 		>> conda install -n py35 pip
 		
-	4)  Install luxpy package from pypi:
+	5)  Install luxpy package from pypi:
 		>> pip install luxpy
 		
 		(if any errors show up, try and do a manual install of the dependencies: scipy, numpy, pandas, matplotlib and setuptools,
