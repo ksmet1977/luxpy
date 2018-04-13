@@ -84,9 +84,9 @@ either using e.g. "conda install scipy" or "pip install scipy", and try and rein
 1. Start jupyter notebook after activating the **py36** environment:
 
 
-    (py36) $ jupyter notebook
+        (py36) $ jupyter notebook
         
-			
+		
 2. Open an existing or new notebook (e.g. open "luxpy basic usage.ipynb" for an overview of how to use the luxpy package, or see README.md on www.github.com/ksmet1977/luxpy)
 			
 3. To import luxpy package type the following a a jupyter notebook cell and run:
