@@ -24,28 +24,29 @@
 -------------------------------------------------------------------------------
 
 ## Installation:
-1. Install miniconda:
-* Download installer from: https://conda.io/miniconda.html or https://repo.continuum.io/miniconda/,
-** https://repo.continuum.io/miniconda/Miniconda3-latest-Windows-x86_64.exe
-* Make sure **conda.exe** can be found on the windows system path (if necessary, do a manual add)
+1. Install miniconda (Download installer from: https://conda.io/miniconda.html or https://repo.continuum.io/miniconda/, e.g. https://repo.continuum.io/miniconda/Miniconda3-latest-Windows-x86_64.exe. Make sure **conda.exe** can be found on the windows system path (if necessary, do a manual add)
 		
 2. Create a virtual environment with a full anaconda distribution:
-				
+
+		
     $ conda create --name py36 python=3.6 anaconda
     
 		
 3. Activate virtual environment:
-	
+
+
     $ activate py36
     
 		
 4. Install pip to the **py36** virtual (conda) environment (just to ensure any packages to be installed with pip to this virtual (conda) environment will be installed here and not globally):
-		
+
+
     $ conda install -n py36 pip
     
 		
 5. Install luxpy package from pypi:
-	
+
+
     $ pip install luxpy
     
 		
