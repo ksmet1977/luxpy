@@ -115,7 +115,7 @@ either using e.g. "conda install scipy" or "pip install scipy", and try and rein
     8b. classes/ CDATA, XYZ, LAB (imported directly into luxpy namespace)
     
 For more details see [luxpy_module_overview.md](https://github.com/ksmet1977/luxpy/blob/master/luxpy_module_overview.md) 
-or \__doc__string of each function. To get help on for example the **spd_to_xyz()** function type:
+or \__doc__string of each function. To get help on, for example the **spd_to_xyz()** function, type:
 
 
     import luxpy as lx
