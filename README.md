@@ -24,7 +24,6 @@
 -------------------------------------------------------------------------------
 
 ## Installation:
-
 	1. Install miniconda (download installer from: https://conda.io/miniconda.html / https://repo.continuum.io/miniconda/)
 		e.g. https://repo.continuum.io/miniconda/Miniconda3-latest-Windows-x86_64.exe
 		(make sure 'conda.exe' can be found on the windows system path, if necessary do a manual add)
