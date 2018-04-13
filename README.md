@@ -64,7 +64,8 @@ either using e.g. "conda install scipy" or "pip install scipy", and try and rein
 
 
         $ conda install -n py36 spyder 
-			
+
+		
 			
 2. Run spyder in the **py36** activate environment
 
