@@ -23,10 +23,9 @@
 
 -------------------------------------------------------------------------------
 ## How to use (basics)?:
-
 An overview of the basic usage is given in the [**luxpy basic usage.ipynb**](https://github.com/ksmet1977/luxpy/blob/master/luxpy_basic_usage.ipynb) jupyter notebook (for instruction on how to install the luxpy package and open up a jupyter notebook, see below).
--------------------------------------------------------------------------------
 
+-------------------------------------------------------------------------------
 ## Installation:
 1. Install miniconda (Download installer from: https://conda.io/miniconda.html or https://repo.continuum.io/miniconda/, e.g. https://repo.continuum.io/miniconda/Miniconda3-latest-Windows-x86_64.exe. Make sure **conda.exe** can be found on the windows system path (if necessary, do a manual add)
 		
