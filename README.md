@@ -41,13 +41,13 @@
 4. Install pip to the **py36** virtual (conda) environment (just to ensure any packages to be installed with pip to this virtual (conda) environment will be installed here and not globally):
 
 
-        $ conda install -n py36 pip
+        (py36) $ conda install -n py36 pip
     
 		
 5. Install luxpy package from pypi:
 
 
-        $ pip install luxpy
+        (py36) $ pip install luxpy
     
 		
 If any errors show up, try and do a manual install of the dependencies: scipy, numpy, pandas, matplotlib and setuptools,
@@ -66,7 +66,7 @@ either using e.g. "conda install scipy" or "pip install scipy", and try and rein
 2. Run spyder 
 
 
-        $ spyder
+        (py36) $ spyder
         
 		
 3. Import the luxpy package by typing in the commandline or in a script file:
@@ -77,10 +77,10 @@ either using e.g. "conda install scipy" or "pip install scipy", and try and rein
 		
 ### Jupyter notebook:
 	
-1. Start jupyter notebook:
+1. Start jupyter notebook after activating the **py36** environment:
 
 
-        $ jupyter notebook
+    (py36) $ jupyter notebook
         
 			
 2. Open an existing or new notebook (e.g. open "luxpy basic usage.ipynb" for an overview of how to use the luxpy package, or see README.md on www.github.com/ksmet1977/luxpy)
