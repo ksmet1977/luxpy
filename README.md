@@ -87,7 +87,7 @@ either using e.g. "conda install scipy" or "pip install scipy", and try and rein
         (py36) $ jupyter notebook
         
 		
-2. Open an existing or new notebook (e.g. open "luxpy basic usage.ipynb" for an overview of how to use the luxpy package, or see README.md on www.github.com/ksmet1977/luxpy)
+2. Open an existing or new notebook (e.g. open "luxpy_basic_usage.ipynb" for an overview of how to use the luxpy package, or see README.md on www.github.com/ksmet1977/luxpy)
 			
 3. To import luxpy package type the following a a jupyter notebook cell and run:
 			
@@ -99,11 +99,11 @@ either using e.g. "conda install scipy" or "pip install scipy", and try and rein
 ## Module overview
     
     0.1.  helpers/ helpers.py (imported directly into luxpy namespace, details see end of this file)
-    0.2.  math/ math.py (imported as math into the luxpy namespace, details see end of this file)
+    0.2.  math/ math.py (imported as .math into the luxpy namespace, details see end of this file)
     
     1a.  spectral/ cmf.py
     1b.  spectral/ spectral.py
-    1c.  spectral/ spectral_databases
+    1c.  spectral/ spectral_databases.py
     2a.  ctf/ colortransforms.py (imported directly into luxpy namespace)
     3a.  cct/ cct.py (imported directly into luxpy namespace)
     4a.  cat/ chromaticadaptation.py (imported in luxpy namespace as .cat)

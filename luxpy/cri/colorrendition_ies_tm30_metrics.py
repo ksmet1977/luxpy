@@ -27,9 +27,9 @@ Created on Tue Apr  3 22:16:08 2018
 @author: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 from .. import np
-from .indices import _CRI_RFL, _CRI_DEFAULTS, spd_to_cri, gamut_slicer,jab_to_rhi
-from .vectorshiftmodel import  _VF_MODEL_TYPE, _VF_PCOLORSHIFT, VF_colorshift_model
-from .VF_PX_models import plot_VF_PX_models
+from .colorrendition_indices import _CRI_RFL, _CRI_DEFAULTS, spd_to_cri, gamut_slicer,jab_to_rhi
+from .colorrendition_vectorshiftmodel import  _VF_MODEL_TYPE, _VF_PCOLORSHIFT, VF_colorshift_model
+from .colorrendition_VF_PX_models import plot_VF_PX_models
 
 __all__ = ['spd_to_ies_tm30_metrics']
 
