@@ -44,7 +44,7 @@
         (py36) $ conda install -n py36 pip
     
 		
-5. Install luxpy package from pypi:
+5. Install luxpy package from the [Python Package Index](https://pypi.python.org/pypi/luxpy/):
 
 
         (py36) $ pip install luxpy
@@ -63,7 +63,7 @@ either using e.g. "conda install scipy" or "pip install scipy", and try and rein
         $ conda install -n py36 spyder 
 			
 			
-2. Run spyder 
+2. Run spyder in the **py36** activate environment
 
 
         (py36) $ spyder
