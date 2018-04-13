@@ -21,7 +21,9 @@
 * color rendition indices 
 * ...
 
-## Basic Usage:
+-------------------------------------------------------------------------------
+## How to use (basics)?:
+
 An overview of the basic usage is given in the [**luxpy basic usage.ipynb**](https://github.com/ksmet1977/luxpy/blob/master/luxpy_basic_usage.ipynb) jupyter notebook (for instruction on how to install the luxpy package and open up a jupyter notebook, see below).
 -------------------------------------------------------------------------------
 
