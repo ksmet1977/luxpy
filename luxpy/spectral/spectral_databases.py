@@ -138,6 +138,7 @@ _CRI_RFL['cie-224-2017'] = _CIE224_2017
 _CRI_RFL['cri2012'] = _CRI2012
 _CRI_RFL['ies-tm30-15'] = _IESTM30['R']
 _CRI_RFL['ies-tm30-18'] = _IESTM30['R']
+_CRI_RFL['ies-tm30'] = _IESTM30['R']
 _CRI_RFL['mcri'] = _MCRI['R']
 _CRI_RFL['cqs'] = _CQS
 
