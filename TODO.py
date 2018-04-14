@@ -4,8 +4,9 @@
 @author: kevin.smet
 """
 #
-#TO DO: (03/04/2018)
-#   colormixer
+#TO DO: (12/04/2018)
+#  DE formulas
+#  colormixer
 #	SPDbuilder
 #	Asano (2016) Individual colorimetric observer model
 #	?
