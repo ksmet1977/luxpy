@@ -46,7 +46,7 @@ def process_DEi(DEi, DEtype = 'jab', avg = None, avg_axis = 0, out = 'DEi'):
         :returns: numpy.ndarray with DEi [, DEa] or other as specified by :out:
     """
 
-    if DEi[0].shape[-1] == 1:
+    if (DEi[0].shape[-1] == 1) & (DEi[0].ndim==3):
         DEi = tuple((map(lambda x: np.squeeze(x, axis = x.ndim-1),DEi)))
     
     # Calculate correct type of DE:
@@ -56,7 +56,7 @@ def process_DEi(DEi, DEtype = 'jab', avg = None, avg_axis = 0, out = 'DEi'):
         DEi = np.sqrt(DEi[1])
     elif DEtype == 'j':
         DEi = np.sqrt(DEi[0])
-
+    
     # Calculate average when requested:
     if (avg is not None) & ('DEa' in out.split(',')):
         if isinstance(DEi, tuple):
@@ -78,7 +78,7 @@ def DE_camucs(xyzt, xyzr, DEtype = 'jab', avg = None, avg_axis = 0, out = 'DEi',
               Ywt = np2d(100.0), conditionst = cam._CAM_02_X_DEFAULT_CONDITIONS,\
               Ywr = np2d(100.0), conditionsr = cam._CAM_02_X_DEFAULT_CONDITIONS,\
               camtype = cam._CAM_02_X_DEFAULT_TYPE, ucstype = 'ucs', mcat = None, \
-              outin = 'J,aM,bM', yellowbluepurplecorrect = False):
+              outin = 'J,aM,bM', yellowbluepurplecorrect = False, **kwargs):
     
     """
     Calculate color appearance difference DE using camucs type model.
@@ -122,8 +122,8 @@ def DE_camucs(xyzt, xyzr, DEtype = 'jab', avg = None, avg_axis = 0, out = 'DEi',
     KL, c1, c2 = [cam._CAM_02_X_UCS_PARAMETERS[camtype][ucstype][x] for x in sorted(cam._CAM_02_X_UCS_PARAMETERS[camtype][ucstype].keys())]
 
     # Calculate color difference and take account of KL:
-    DEi = ((((jabt[...,0:1]-jabr[...,0:1])/KL)**2).sum(axis = jabt[...,0:1].ndim - 1),\
-               ((jabt[...,1:3]-jabr[...,1:3])**2).sum(axis = jabt[...,1:3].ndim - 1))
+    DEi = ((((jabt[...,0:1]-jabr[...,0:1])/KL)**2).sum(axis = jabt[...,0:1].ndim - 1, keepdims = True),\
+               ((jabt[...,1:3]-jabr[...,1:3])**2).sum(axis = jabt[...,1:3].ndim - 1, keepdims = True))
     
     return process_DEi(DEi, DEtype = DEtype, avg = avg, avg_axis = avg_axis, out = out)
     
@@ -305,7 +305,7 @@ def DE_cspace(xyzt, xyzr, dtype = 'xyz', tf = _CSPACE, DEtype = 'jab', avg = Non
         if bool(fwtfr):
             xyzwr = fwtfr['xyzw']
     if xyzwt is not None:
-        fwtft['xyzw'] = xyzwr
+        fwtft['xyzw'] = xyzwt
     else:
         if bool(fwtft):
             xyzwt = fwtft['xyzw']
@@ -319,6 +319,8 @@ def DE_cspace(xyzt, xyzr, dtype = 'xyz', tf = _CSPACE, DEtype = 'jab', avg = Non
                 fwtft['xyzw'] = cam._CAM_DEFAULT_WHITE_POINT
             jabt = cam.camucs_structure(xyzt, camtype = camtype, ucstype = ucstype, **fwtft)
             jabr = cam.camucs_structure(xyzr, camtype = camtype, ucstype = ucstype, **fwtfr)
+
+        
         else:
             jabt = xyzt
             jabr = xyzr
@@ -326,8 +328,8 @@ def DE_cspace(xyzt, xyzr, dtype = 'xyz', tf = _CSPACE, DEtype = 'jab', avg = Non
         KL, c1, c2 = [cam._CAM_02_X_UCS_PARAMETERS[camtype][ucstype][x] for x in sorted(cam._CAM_02_X_UCS_PARAMETERS[camtype][ucstype].keys())]
 
         # Calculate color difference and take account of KL:
-        DEi = ((((jabt[...,0:1]-jabr[...,0:1])/KL)**2).sum(axis = jabt[...,0:1].ndim - 1),\
-                   ((jabt[...,1:3]-jabr[...,1:3])**2).sum(axis = jabt[...,1:3].ndim - 1))
+        DEi = ((((jabt[...,0:1]-jabr[...,0:1])/KL)**2).sum(axis = jabt[...,0:1].ndim - 1, keepdims = True),\
+                   ((jabt[...,1:3]-jabr[...,1:3])**2).sum(axis = jabt[...,1:3].ndim - 1, keepdims = True))
     
     elif (tf == 'DE2000') | (tf == 'DE00'):
         return DE2000(xyzt, xyzr, dtype = 'xyz', DEtype = DEtype, avg = avg,\
@@ -346,8 +348,8 @@ def DE_cspace(xyzt, xyzr, dtype = 'xyz', tf = _CSPACE, DEtype = 'jab', avg = Non
     
         if (KLCH == None) | (KLCH == [1,1,1]):
             # Calculate color difference and take account of KL:
-            DEi = (((jabt[...,0:1]-jabr[...,0:1])**2).sum(axis = jabt[...,0:1].ndim - 1),\
-                   ((jabt[...,1:3]-jabr[...,1:3])**2).sum(axis = jabt[...,1:3].ndim - 1))
+            DEi = (((jabt[...,0:1]-jabr[...,0:1])**2).sum(axis = jabt[...,0:1].ndim - 1, keepdims = True),\
+                   ((jabt[...,1:3]-jabr[...,1:3])**2).sum(axis = jabt[...,1:3].ndim - 1, keepdims = True))
         
         else: #using LCH specification for use with KLCH weights:
             Jt = jabt[...,0:1]

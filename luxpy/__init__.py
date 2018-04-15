@@ -103,7 +103,7 @@ Loads the following global default constants:
  Note: In luxpy 'global constants' start with '_'
 
 
-
+#------------------------------------------------------------------------------ 
 Created on Sat Jun 17 15:44:10 2017
 
 @author: Kevin A.G. Smet (ksmet1977 at gmail.com)
