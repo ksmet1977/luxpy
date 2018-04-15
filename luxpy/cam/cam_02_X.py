@@ -33,6 +33,8 @@
 #
 # _CAM_02_X_DEFAULT_TYPE: Default CAM type str specifier.
 #
+# _CAM_02_X_DEFAULT_MCAT: Default MCAT specifier.
+#
 # _CAM_02_X_DEFAULT_CONDITIONS: Default CAM model parameters for model in cam._CAM_02_X_DEFAULT_TYPE
 #
 # _CAM_02_X_AXES: dict with list[str,str,str] containing axis labels of defined cspaces.
@@ -76,8 +78,10 @@ Created on Sun Jun 25 09:55:05 2017
 from .. import np, math, cat, _CIEOBS, _CIE_ILLUMINANTS, np2d, np2dT, np3d, put_args_in_db, spd_to_xyz, asplit, ajoin
 
 __all__ = ['_CAM_02_X_AXES', '_CAM_02_X_UNIQUE_HUE_DATA','_CAM_02_X_SURROUND_PARAMETERS','_CAM_02_X_NAKA_RUSHTON_PARAMETERS','_CAM_02_X_UCS_PARAMETERS']
-__all__ += ['_CAM_02_X_DEFAULT_TYPE','_CAM_02_X_DEFAULT_WHITE_POINT', '_CAM_02_X_DEFAULT_CONDITIONS']
-__all__ += ['hue_angle', 'hue_quadrature','naka_rushton','ciecam02','cam16','cam02ucs','cam16ucs']
+__all__ += ['_CAM_02_X_DEFAULT_TYPE','_CAM_02_X_DEFAULT_WHITE_POINT','_CAM_02_X_DEFAULT_MCAT', '_CAM_02_X_DEFAULT_CONDITIONS']
+__all__ += ['hue_angle', 'hue_quadrature','naka_rushton',
+            'cam_structure_ciecam02_cam16','camucs_structure',
+            'ciecam02','cam16','cam02ucs','cam16ucs']
 
 __all__ += ['xyz_to_jabM_ciecam02', 'jabM_ciecam02_to_xyz', 
             'xyz_to_jabC_ciecam02', 'jabC_ciecam02_to_xyz',
@@ -120,13 +124,13 @@ _CAM_02_X_NAKA_RUSHTON_PARAMETERS['ciecam97s'] = {'n':0.73, 'sig': 2.0**(1/0.73)
 _CAM_02_X_NAKA_RUSHTON_PARAMETERS['cam16'] = {'n':0.42, 'sig': 27.13**(1/0.42), 'scaling': 400.0, 'noise': 0.1}
 _NAKA_RUSHTON_PARAMETERS = _CAM_02_X_NAKA_RUSHTON_PARAMETERS
 
-_CAM_02_X_UCS_PARAMETERS = {'ciecam02': {'ucs':{'KL': 1.0, 'c1':0.007,'c2':0.0228},'lcd':{'KL': 0.77, 'c1':0.007,'c2':0.0053}, 'scd':{'KL': 1.24, 'c1':0.007,'c2':0.0363}}}
-_CAM_02_X_UCS_PARAMETERS['cam16'] = {'ucs':{'KL': 1.0, 'c1':0.007,'c2':0.0228},'lcd':{'KL': 0.77, 'c1':0.007,'c2':0.0053}, 'scd':{'KL': 1.24, 'c1':0.007,'c2':0.0363}}
+_CAM_02_X_UCS_PARAMETERS = {'ciecam02': {'none': {'KL': 1.0, 'c1':0,'c2':0},'ucs':{'KL': 1.0, 'c1':0.007,'c2':0.0228},'lcd':{'KL': 0.77, 'c1':0.007,'c2':0.0053}, 'scd':{'KL': 1.24, 'c1':0.007,'c2':0.0363}}}
+_CAM_02_X_UCS_PARAMETERS['cam16'] = {'none': {'KL': 1.0, 'c1':0,'c2':0},'ucs':{'KL': 1.0, 'c1':0.007,'c2':0.0228},'lcd':{'KL': 0.77, 'c1':0.007,'c2':0.0053}, 'scd':{'KL': 1.24, 'c1':0.007,'c2':0.0363}}
 
 _CAM_02_X_DEFAULT_TYPE = 'ciecam02'
 _CAM_02_X_DEFAULT_WHITE_POINT = np2d([100.0, 100.0, 100.0]) # ill. E white point
 _CAM_02_X_DEFAULT_CONDITIONS = {'La': 100.0, 'Yb': 20.0, 'surround': 'avg','D': 1.0, 'Dtype':None}
-
+_CAM_02_X_DEFAULT_MCAT = 'cat02'
 
 def naka_rushton(data, sig = 2.0, n = 0.73, scaling = 1.0, noise = 0.0, cam = None, direction = 'forward'):
     """
@@ -227,14 +231,14 @@ def hue_quadrature(h, unique_hue_data = None):
     return H
 
 
-def cam_structure_ciecam02_cam16(data, xyzw, camtype = _CAM_02_X_DEFAULT_TYPE, mcat = None, Yw = np2d(100), conditions = _CAM_02_X_DEFAULT_CONDITIONS, direction = 'forward', outin = 'J,aM,bM', yellowbluepurplecorrect = False):
+def cam_structure_ciecam02_cam16(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, camtype = _CAM_02_X_DEFAULT_TYPE, mcat = None, Yw = np2d(100), conditions = _CAM_02_X_DEFAULT_CONDITIONS, direction = 'forward', outin = 'J,aM,bM', yellowbluepurplecorrect = False):
     """
     Convert between XYZ tristsimulus values and ciecam02 /cam16 color appearance correlates.
     
     Args:
         :data: numpy.ndarray with input tristimulus values or input color appearance correlates
             Can be of shape: (N [, xM], x 3), N specifies samples, M specifies light sources.
-        :xyzw: numpy.ndarray with tristimulus values of white point(s)
+        :xyzw: _CAM_02_X_DEFAULT_WHITE_POINT or numpy.ndarray with tristimulus values of white point(s), optional
             Can be multiple by specifying a Mx3 numpy.ndarray, instead of 1x3.
         :Yw: luxpy.np2d(100), optional
             Luminance factor of white point.
@@ -243,7 +247,7 @@ def cam_structure_ciecam02_cam16(data, xyzw, camtype = _CAM_02_X_DEFAULT_TYPE, m
             Str specifier for CAM type to use, options are 'ciecam02' or 'cam16'.
         :mcat: None or str or numpy.ndarray, optional
             Specifies CAT sensor space.
-            - None defaults to 'cat02' (others e.g. 'cat02-bs', 'cat02-jiang', all trying to correct gamut problems of original cat02 matrix)
+            - None defaults to the one native to the camtype (others e.g. 'cat02-bs', 'cat02-jiang', all trying to correct gamut problems of original cat02 matrix)
             - str: see see luxpy.cat._MCATS.keys() for options (details on type, ?luxpy.cat)
             - numpy.ndarray: matrix with sensor primaries
         :condition: luxpy.cam._CAM_02_X_DEFAULT_CONDITIONS, optional
@@ -290,8 +294,6 @@ def cam_structure_ciecam02_cam16(data, xyzw, camtype = _CAM_02_X_DEFAULT_TYPE, m
     Yw = np2d(Yw)
     if Yw.shape[0]==1:
         Yw = np.repeat(Yw,data.shape[1])
-#    if len(mcat)==1:
-#        mcat = np.repeat(mcat,data.shape[1]) #create mcat for each xyzw
 
     dshape = list(data.shape)
     dshape[-1] = len(outin) # requested number of correlates
@@ -561,7 +563,7 @@ def cam_structure_ciecam02_cam16(data, xyzw, camtype = _CAM_02_X_DEFAULT_TYPE, m
     
     
 #---------------------------------------------------------------------------------------------------------------------
-def ciecam02(data, xyzw, mcat = 'cat02', Yw = np2d(100.0), conditions = _CAM_02_X_DEFAULT_CONDITIONS, direction = 'forward', outin = 'J,aM,bM', yellowbluepurplecorrect = False):
+def ciecam02(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, mcat = 'cat02', Yw = np2d(100.0), conditions = _CAM_02_X_DEFAULT_CONDITIONS, direction = 'forward', outin = 'J,aM,bM', yellowbluepurplecorrect = False):
     """
     Convert between XYZ tristsimulus values and ciecam02 color appearance correlates.
     
@@ -570,7 +572,7 @@ def ciecam02(data, xyzw, mcat = 'cat02', Yw = np2d(100.0), conditions = _CAM_02_
     Args:
         :data: numpy.ndarray with input tristimulus values or input color appearance correlates
             Can be of shape: (N [, xM], x 3), N specifies samples, M specifies light sources.
-        :xyzw: numpy.ndarray with tristimulus values of white point(s)
+        :xyzw: _CAM_02_X_DEFAULT_WHITE_POINT or numpy.ndarray with tristimulus values of white point(s), optional
             Can be multiple by specifying a Mx3 numpy.ndarray, instead of 1x3.
         :Yw: luxpy.np2d(100), optional
             Luminance factor of white point.
@@ -603,7 +605,7 @@ def ciecam02(data, xyzw, mcat = 'cat02', Yw = np2d(100.0), conditions = _CAM_02_
 
 
 #---------------------------------------------------------------------------------------------------------------------
-def cam16(data, xyzw, mcat = 'cat16', Yw = np2d(100.0), conditions = _CAM_02_X_DEFAULT_CONDITIONS, direction = 'forward', outin = 'J,aM,bM'):
+def cam16(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, mcat = 'cat16', Yw = np2d(100.0), conditions = _CAM_02_X_DEFAULT_CONDITIONS, direction = 'forward', outin = 'J,aM,bM'):
     """
     Convert between XYZ tristsimulus values and cam16 color appearance correlates.
     
@@ -612,7 +614,7 @@ def cam16(data, xyzw, mcat = 'cat16', Yw = np2d(100.0), conditions = _CAM_02_X_D
     Args:
         :data: numpy.ndarray with input tristimulus values or input color appearance correlates
             Can be of shape: (N [, xM], x 3), N specifies samples, M specifies light sources.
-        :xyzw: numpy.ndarray with tristimulus values of white point(s)
+        :xyzw: _CAM_02_X_DEFAULT_WHITE_POINT or numpy.ndarray with tristimulus values of white point(s), optional
             Can be multiple by specifying a Mx3 numpy.ndarray, instead of 1x3.
         :Yw: luxpy.np2d(100), optional
             Luminance factor of white point.
@@ -642,20 +644,21 @@ def cam16(data, xyzw, mcat = 'cat16', Yw = np2d(100.0), conditions = _CAM_02_X_D
     return cam_structure_ciecam02_cam16(data, xyzw, camtype = 'cam16', mcat = mcat, Yw = Yw, conditions = conditions, direction = direction, outin = outin, yellowbluepurplecorrect = False)
 
 #---------------------------------------------------------------------------------------------------------------------
-def camucs_structure(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, camtype = 'ciecam02', mcat = None, Yw = np2d(100.0), conditions = _CAM_02_X_DEFAULT_CONDITIONS, direction = 'forward', ucstype = 'ucs', yellowbluepurplecorrect = False):
+def camucs_structure(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, camtype = 'ciecam02', mcat = None, Yw = np2d(100.0), conditions = _CAM_02_X_DEFAULT_CONDITIONS, direction = 'forward', outin = 'J,aM,bM', ucstype = 'ucs', yellowbluepurplecorrect = False):
     """
     Convert between XYZ tristsimulus values and camucs type color appearance correlates.
     
     Wrapper for luxpy.cam.cam_structure_ciecam02_cam16() with additional compression of color attributes
     for the following case:
-        - 'ucs': uniform color space
-        - 'lcd': large color differences
-        - 'scd': small color differences
+        - 'none': original cam space
+        - 'ucs': for uniform color space
+        - 'lcd': for large color differences
+        - 'scd': for small color differences
     
     Args:
         :data: numpy.ndarray with input tristimulus values or input color appearance correlates
             Can be of shape: (N [, xM], x 3), N specifies samples, M specifies light sources.
-        :xyzw: numpy.ndarray with tristimulus values of white point(s)
+        :xyzw: _CAM_02_X_DEFAULT_WHITE_POINT or numpy.ndarray with tristimulus values of white point(s), optional
             Can be multiple by specifying a Mx3 numpy.ndarray, instead of 1x3.
         :Yw: luxpy.np2d(100), optional
             Luminance factor of white point.
@@ -700,13 +703,16 @@ def camucs_structure(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, camtype = 'ciec
     if direction == 'forward':
         
         # calculate ciecam02 J, aM,bM:
-        J, aM, bM = asplit(cam_structure_ciecam02_cam16(data, xyzw = xyzw, camtype = camtype, Yw = Yw, conditions = conditions, direction = 'forward', outin = 'J,aM,bM',yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat))
+        J, aM, bM = asplit(cam_structure_ciecam02_cam16(data, xyzw = xyzw, camtype = camtype, Yw = Yw, conditions = conditions, direction = 'forward', outin = outin,yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat))
 
         # convert to cam02ucs J', aM', bM':
         M  = (aM**2.0 + bM**2.0)**0.5 
         h=np.arctan2(bM,aM)
         Jp = (1.0 + 100.0*c1)*J / (1.0 + c1*J)
-        Mp = (1.0/c2) * np.log(1.0 + c2*M)
+        if c2 == 0:
+            Mp = M
+        else:
+            Mp = (1.0/c2) * np.log(1.0 + c2*M)
         aMp = Mp*np.cos(h)
         bMp = Mp*np.sin(h)
         
@@ -745,7 +751,7 @@ def cam02ucs(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = np2d(100.0), condi
     Args:
         :data: numpy.ndarray with input tristimulus values or input color appearance correlates
             Can be of shape: (N [, xM], x 3), N specifies samples, M specifies light sources.
-        :xyzw: numpy.ndarray with tristimulus values of white point(s)
+        :xyzw: _CAM_02_X_DEFAULT_WHITE_POINT or numpy.ndarray with tristimulus values of white point(s), optional
             Can be multiple by specifying a Mx3 numpy.ndarray, instead of 1x3.
         :Yw: luxpy.np2d(100), optional
             Luminance factor of white point.

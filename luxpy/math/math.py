@@ -135,7 +135,7 @@ def positive_arctan(x,y, htype = 'deg'):
     else:
         r2d = 1.0
         h360 = 2.0*np.pi
-    h = np.arctan2(y,x)*r2d
+    h = np.atleast_1d((np.arctan2(y,x)*r2d))
     h[np.where(h<0)] = h[np.where(h<0)] + h360
     return h
 

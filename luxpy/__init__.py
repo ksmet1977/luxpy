@@ -5,11 +5,11 @@
 ########################################################################################
 
     For an overview of constants, functions, classes and modules of the luxpy package,
-    see: "http://github.com/ksmet1977/luxpy/blob/master/README.md"
+    see: "http://github.com/ksmet1977/luxpy/blob/master/luxpy_module_overview.md"
 
     * Author: K. A.G. Smet (ksmet1977 at gmail.com)
     * Version: 1.2.06
-    * Date: April 12, 2018
+    * Date: April 15, 2018
     * License: GPLv3
 
 ########################################################################################
@@ -33,23 +33,62 @@
 #########################################################################
 
 #------------------------------------------------------------------------------ 
-Loads the following luxpy modules and classes:
+Loads the following luxpy sub-packages, modules and classes:
     
-    0.1.  helpers/ helpers.py (imported directly into luxpy namespace, details see end of this file)
-    0.2.  math/ math.py (imported as math into the luxpy namespace, details see end of this file)
+    0.1.  helpers/ 
+            helpers.py (imported directly into luxpy namespace, details see end of this file)
     
-    1.  spectral/ cmf.py
-    2.  spectral/ spectral.py
-    3.  spectral/ spectral_databases
-    4.  ctf/ colortransforms.py (imported directly into luxpy namespace)
-    5.  cct/ cct.py (imported directly into luxpy namespace)
-    6.  cat/ chromaticadaptation.py (imported in luxpy namespace as .cat)
-    7.  cam/ colorappearancemodels.py (imported in luxpy namespace as .cam)
-    8.  ctf/ colortf.py (imported directly into luxpy namespace)
-    9.  cri/ colorrenditionindices.py (imported in luxpy namespace as .cri)
-    10. graphics/ plotters.py (imported directly into luxpy namespace)
-    11. classes/ SPD (imported directly into luxpy namespace)
-    12. classes/ CDATA, XYZ, LAB (imported directly into luxpy namespace)
+    0.2.  math/ 
+            math.py (imported as math into the luxpy namespace, details see end of this file)
+    
+    1.  spectral/ 
+            cmf.py
+            spectral.py
+            spectral_databases
+            
+    2.  ctf/ 
+            colortransforms.py (imported directly into luxpy namespace)
+            colortf.py (imported directly into luxpy namespace)
+            
+    3.  cct/ 
+            cct.py (imported directly into luxpy namespace)
+            
+    4.  cat/ 
+            chromaticadaptation.py (imported in luxpy namespace as .cat)
+            
+    5.  cam/ 
+            colorappearancemodels.py (imported in luxpy namespace as .cam)
+              cam_02_X.py
+              cam15u.py
+              sww2016.py
+
+    6.  deltaE/ 
+            colordifferences.py (imported in luxpy namespace as .deltaE)
+            
+    7.  cri/ 
+            colorrendition.py (imported in luxpy namespace as .cri)
+                DE_scalers.py
+                helpers.py
+                init_cri_defaults_database.py
+                indices.py
+                    cie_wrappers.py
+                    ies_wrappers.py
+                    cri2012.py
+                    mcri.py
+                    cqs.py
+                graphics.py
+                ies_tm30_metrics.py
+                ies_tm30_graphics.py
+                VF_PX_models.py (imported in .cri as .VFPX)
+                    vectorshiftmodel.py
+                    pixelshiftmodel.py
+            
+    8. graphics/ 
+            plotters.py (imported directly into luxpy namespace)
+            
+    9. classes/ 
+            SPD (imported directly into luxpy namespace)
+            CDATA, XYZ, LAB (imported directly into luxpy namespace)
 
 #------------------------------------------------------------------------------ 
 Loads the following global default constants:
@@ -176,7 +215,11 @@ _CSPACE_AXES = {**_CSPACE_AXES, **_CAM_AXES} # merge _CAM_AXES dict with _CSPACE
 from .ctf.colortf import *
 __all__+=['colortf']
 
-# Load color rendition module:
+# Load DE (color difference) module:
+from .deltaE import colordifferences as deltaE
+__all__ += ['deltaE']
+
+# Load color rendition sub-package:
 from .cri import colorrendition as cri
 __all__ += ['cri'] 
 
