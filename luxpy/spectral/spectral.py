@@ -434,7 +434,7 @@ def spd_to_xyz(data,  relative = True, rfl = None, cieobs = _CIEOBS, out = None)
     dl=getwld(data[0])
     
     # get cmf,k for cieobs:
-    cmf = xyzbar(cieobs = cieobs, scr = 'dict',wl_new = data[0],kind = 'np') #also interpolate to wl of data
+    cmf = xyzbar(cieobs = cieobs, scr = 'dict',wl_new = data[0], kind = 'np') #also interpolate to wl of data
 
     k = _CMF['K'][cieobs]
 

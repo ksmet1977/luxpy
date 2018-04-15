@@ -17,8 +17,10 @@
 #########################################################################
 """
 ###############################################################################
-# Module for IES TM30 metric calculation
+# Extension module for IES TM30 metric calculation 
+# with additional Vector Field support
 ###############################################################################
+
 # spd_to_ies_tm30_metrics(): Calculates IES TM30 metrics from spectral data
 
 
@@ -26,8 +28,11 @@ Created on Tue Apr  3 22:16:08 2018
 
 @author: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
-from .. import np
-from .indices import _CRI_RFL, _CRI_DEFAULTS, spd_to_cri, gamut_slicer,jab_to_rhi
+from .. import np, _CRI_RFL
+
+from .helpers import gamut_slicer, spd_to_cri, jab_to_rhi
+from .init_cri_defaults_database import _CRI_DEFAULTS
+
 from .vectorshiftmodel import  _VF_MODEL_TYPE, _VF_PCOLORSHIFT, VF_colorshift_model
 from .VF_PX_models import plot_VF_PX_models
 

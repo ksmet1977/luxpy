@@ -142,14 +142,33 @@ from .cam import colorappearancemodels as cam
 __all__ += ['cam']  
 
 # load cam wrapper functions for use with colortf() from .colortransforms module:
-from .cam.colorappearancemodels import _CAM_AXES, xyz_to_jabM_ciecam02, jabM_ciecam02_to_xyz, xyz_to_jabC_ciecam02, jabC_ciecam02_to_xyz,xyz_to_jabM_cam16, jabM_cam16_to_xyz, xyz_to_jabC_cam16, jabC_cam16_to_xyz, xyz_to_jab_cam02ucs, jab_cam02ucs_to_xyz, xyz_to_jab_cam02lcd, jab_cam02lcd_to_xyz,xyz_to_jab_cam02scd, jab_cam02scd_to_xyz, xyz_to_jab_cam16ucs, jab_cam16ucs_to_xyz, xyz_to_jab_cam16lcd, jab_cam16lcd_to_xyz,xyz_to_jab_cam16scd, jab_cam16scd_to_xyz, xyz_to_qabW_cam15u, qabW_cam15u_to_xyz, xyz_to_lab_cam_sww_2016, lab_cam_sww_2016_to_xyz
+from .cam import (_CAM_AXES, 
+                  xyz_to_jabM_ciecam02, jabM_ciecam02_to_xyz, 
+                  xyz_to_jabC_ciecam02, jabC_ciecam02_to_xyz,
+                  xyz_to_jabM_cam16, jabM_cam16_to_xyz, 
+                  xyz_to_jabC_cam16, jabC_cam16_to_xyz, 
+                  xyz_to_jab_cam02ucs, jab_cam02ucs_to_xyz, 
+                  xyz_to_jab_cam02lcd, jab_cam02lcd_to_xyz,
+                  xyz_to_jab_cam02scd, jab_cam02scd_to_xyz, 
+                  xyz_to_jab_cam16ucs, jab_cam16ucs_to_xyz, 
+                  xyz_to_jab_cam16lcd, jab_cam16lcd_to_xyz,
+                  xyz_to_jab_cam16scd, jab_cam16scd_to_xyz, 
+                  xyz_to_qabW_cam15u, qabW_cam15u_to_xyz, 
+                  xyz_to_lab_cam_sww16, lab_cam_sww16_to_xyz)
 
-__all__ += ['_CAM_AXES', 'xyz_to_jabM_ciecam02', 'jabM_ciecam02_to_xyz', 'xyz_to_jabC_ciecam02', 'jabC_ciecam02_to_xyz',
-            'xyz_to_jabM_cam16', 'jabM_cam16_to_xyz', 'xyz_to_jabC_cam16', 'jabC_cam16_to_xyz',
-            'xyz_to_jab_cam02ucs', 'jab_cam02ucs_to_xyz', 'xyz_to_jab_cam02lcd', 'jab_cam02lcd_to_xyz','xyz_to_jab_cam02scd', 'jab_cam02scd_to_xyz', 
-            'xyz_to_jab_cam16ucs', 'jab_cam16ucs_to_xyz', 'xyz_to_jab_cam16lcd', 'jab_cam16lcd_to_xyz','xyz_to_jab_cam16scd', 'jab_cam16scd_to_xyz', 
+__all__ += ['_CAM_AXES', 
+            'xyz_to_jabM_ciecam02', 'jabM_ciecam02_to_xyz', 
+            'xyz_to_jabC_ciecam02', 'jabC_ciecam02_to_xyz',
+            'xyz_to_jabM_cam16', 'jabM_cam16_to_xyz', 
+            'xyz_to_jabC_cam16', 'jabC_cam16_to_xyz',
+            'xyz_to_jab_cam02ucs', 'jab_cam02ucs_to_xyz', 
+            'xyz_to_jab_cam02lcd', 'jab_cam02lcd_to_xyz',
+            'xyz_to_jab_cam02scd', 'jab_cam02scd_to_xyz', 
+            'xyz_to_jab_cam16ucs', 'jab_cam16ucs_to_xyz', 
+            'xyz_to_jab_cam16lcd', 'jab_cam16lcd_to_xyz',
+            'xyz_to_jab_cam16scd', 'jab_cam16scd_to_xyz', 
             'xyz_to_qabW_cam15u', 'qabW_cam15u_to_xyz',
-            'xyz_to_lab_cam_sww_2016', 'lab_cam_sww_2016_to_xyz']
+            'xyz_to_lab_cam_sww16', 'lab_cam_sww16_to_xyz']
 
 _CSPACE_AXES = {**_CSPACE_AXES, **_CAM_AXES} # merge _CAM_AXES dict with _CSPACE_AXES dict
 

@@ -64,7 +64,8 @@ Created on Wed Mar 28 18:59:16 2018
 
 from .. import np, plt, _CIE_ILLUMINANTS, _MUNSELL,_EPS
 from ..math import positive_arctan, angle_v1v2
-from .indices import _CRI_DEFAULTS, spd_to_cri
+from .helpers import spd_to_cri
+from .init_cri_defaults_database import _CRI_DEFAULTS
 from .graphics import plot_hue_bins
 
 #from munsell import *
@@ -75,7 +76,7 @@ __all__ += ['generate_grid','calculate_shiftvectors','plot_shift_data','plotcirc
 
 # Default color space for Vector Field model:
 _VF_CRI_DEFAULT = 'iesrf'
-_VF_CSPACE = _CRI_DEFAULTS[_VF_CRI_DEFAULT]['cspace']
+_VF_CSPACE = _CRI_DEFAULTS[_VF_CRI_DEFAULT]['cspace'].copy()
 _VF_CSPACE_EXAMPLE = {'type' : 'jab_cam02ucs','xyzw':None, 'mcat':'cat02', 'Yw':100.0, 'conditions' :{'La':100.0,'surround':'avg','D':1.0,'Yb':20.0,'Dtype':None},'yellowbluepurplecorrect' : None}
 _VF_CIEOBS = _CRI_DEFAULTS[_VF_CRI_DEFAULT]['cieobs']['xyz']
 
