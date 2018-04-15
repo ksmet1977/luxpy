@@ -8,7 +8,7 @@
     see: "http://github.com/ksmet1977/luxpy/blob/master/luxpy_module_overview.md"
 
     * Author: K. A.G. Smet (ksmet1977 at gmail.com)
-    * Version: 1.2.06
+    * Version: 1.3.00
     * Date: April 15, 2018
     * License: GPLv3
 
