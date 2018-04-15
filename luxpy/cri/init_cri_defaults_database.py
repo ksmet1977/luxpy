@@ -35,7 +35,9 @@ __all__ = ['_CRI_TYPE_DEFAULT', '_CRI_DEFAULTS', 'process_cri_type_input']
 # create default settings for different color rendition indices: (major dict has 9 keys (04-Jul-2017): sampleset [str/dict], ref_type [str], cieobs [str], avg [fcn handle], scale [dict], cspace [dict], catf [dict], rg_pars [dict], cri_specific_pars [dict])
 _CRI_TYPE_DEFAULT = 'ies_tm30'
 
-_CRI_DEFAULTS = {'cri_types' : ['ciera','ciera-8','ciera-14','cierf','iesrf','iesrf-tm30-15','iesrf-tm30-18','ies-tm30','cri2012','cri2012-hl17','cri2012-hl1000','cri2012-real210']}
+_CRI_DEFAULTS = {'cri_types' : ['ciera','ciera_8','ciera_14','cierf',
+                                'iesrf','iesrf_tm30_15','iesrf_tm30_18','ies_tm30',
+                                'cri2012','cri2012_hl17','cri2012_hl1000','cri2012_real210']}
 
 _CRI_DEFAULTS['ciera_133_1995'] = {'sampleset' : "_CRI_RFL['cie-13.3-1995']['8']", 
                          'ref_type' : 'ciera', 

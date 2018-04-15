@@ -21,7 +21,7 @@
     Energy Build., vol. 49, no. C, pp. 216–225.
 
 """
-from .. import np, math, _S_INTERP_TYPE, spd, np2d, asplit, spd_to_xyz, xyz_to_ipt
+from .. import np, cat, math, _CRI_RFL, _S_INTERP_TYPE, spd, np2d, asplit, spd_to_xyz, xyz_to_ipt
 from .DE_scalers import psy_scale
 from .helpers import jab_to_rg
 

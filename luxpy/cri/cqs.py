@@ -79,7 +79,7 @@ def  spd_to_cqs(SPD, version = 'v9.0', out = 'Qa',wl = None):
         cri_type = version
      
     # calculate DEI, labti, labri and get cspace_pars and rg_pars:
-    DEi, labti, labri, cct, duv, cri_type = spd_to_DEi(SPD, cri_type = cri_type, out = 'DEi,Jabt,Jabr,cct,duv,cri_type', wl = wl)
+    DEi, labti, labri, cct, duv, cri_type = spd_to_DEi(SPD, cri_type = cri_type, out = 'DEi,jabt,jabr,cct,duv,cri_type', wl = wl)
     
     # further unpack cri_type:
     scale_fcn = cri_type['scale']['fcn']     

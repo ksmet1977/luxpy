@@ -82,7 +82,7 @@ def spd_to_cri2012_hl17(SPD, out = 'Rf', wl = None):
                 Lighting Research and Technology, 45, 689–709. 
                 Retrieved from http://lrt.sagepub.com/content/45/6/689
     """
-    return spd_to_cri(SPD, cri_type = 'cri2012-hl17', out = out, wl = wl)
+    return spd_to_cri(SPD, cri_type = 'cri2012_hl17', out = out, wl = wl)
 
 #------------------------------------------------------------------------------
 def spd_to_cri2012_hl1000(SPD, out = 'Rf', wl = None):
@@ -108,7 +108,7 @@ def spd_to_cri2012_hl1000(SPD, out = 'Rf', wl = None):
                 Lighting Research and Technology, 45, 689–709. 
                 Retrieved from http://lrt.sagepub.com/content/45/6/689
     """
-    return spd_to_cri(SPD, cri_type = 'cri2012-hl1000', out = out, wl = wl)
+    return spd_to_cri(SPD, cri_type = 'cri2012_hl1000', out = out, wl = wl)
 
 #------------------------------------------------------------------------------
 def spd_to_cri2012_real210(SPD, out = 'Rf', wl = None):
@@ -135,5 +135,5 @@ def spd_to_cri2012_real210(SPD, out = 'Rf', wl = None):
                 Retrieved from http://lrt.sagepub.com/content/45/6/689
     
     """
-    return spd_to_cri(SPD, cri_type = 'cri2012-real210', out = out, wl = wl)
+    return spd_to_cri(SPD, cri_type = 'cri2012_real210', out = out, wl = wl)
 
