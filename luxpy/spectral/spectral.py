@@ -378,14 +378,14 @@ def xyzbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, norm_type = None, norm
     References:
         ..[CIE15:2004](http://www.cie.co.at/index.php/index.php?i_ca_id=304)
     """
-    if scr == 'file':
+    if scr is 'file':
         dict_or_file = _PKG_PATH + _SEP + 'data' + _SEP + 'cmfs' + _SEP + 'ciexyz_' + cieobs + '.dat'
-    elif scr == 'dict':
+    elif scr is 'dict':
         dict_or_file = _CMF['bar'][cieobs]
     else:
         dict_or_file = scr #can be file or data itself
 
-    return spd(wl = wl_new, data = dict_or_file, interpolation = 'linear', kind = kind, columns = ['wl','xb','yb','zb'])
+    return spd(data = dict_or_file, wl = wl_new, interpolation = 'linear', kind = kind, columns = ['wl','xb','yb','zb'])
 	
 #--------------------------------------------------------------------------------------------------
 
@@ -438,10 +438,19 @@ def spd_to_xyz(data,  relative = True, rfl = None, cieobs = _CIEOBS, K = None, o
     dl=getwld(data[0])
     
     # get cmf,k for cieobs:
-    cmf = xyzbar(cieobs = cieobs, scr = 'dict',wl_new = data[0], kind = 'np') #also interpolate to wl of data
-
-    if K is None:
-        K = _CMF['K'][cieobs]
+    if isinstance(cieobs,str):
+        if K is None:
+            K = _CMF['K'][cieobs]
+        scr = 'dict'
+    else:
+        scr = cieobs
+        if K is None:
+            raise Exception('spd_to_xyz: user defined CMF set, \
+                            but no scaling factor has been supplied.\
+                            Setting K = 1.')
+            K = 1
+    cmf = xyzbar(cieobs = cieobs, scr = scr,wl_new = data[0], kind = 'np') #also interpolate to wl of data
+    
 
     #interpolate rfls to lambda range of spd:
     if rfl is not None: 
@@ -481,7 +490,7 @@ def spd_to_xyz(data,  relative = True, rfl = None, cieobs = _CIEOBS, K = None, o
             xyz = np.squeeze(xyz,axis = 0)
         return xyz
 
-def spd_to_ler(data, cieobs = _CIEOBS, Vlambda = None):
+def spd_to_ler(data, cieobs = _CIEOBS, Vlambda = None, K = None):
     """
     Calculates Luminous efficacy of radiation (LER) from spectral data.
        
@@ -495,6 +504,9 @@ def spd_to_ler(data, cieobs = _CIEOBS, Vlambda = None):
             calculation of LER. For cieobs = '1931_2' the ybar CMF curve equals
             the CIE Vlambda curve.
         :Vlambda: user defined Vlambda
+        :K: None, optional
+            K-factor (e.g. K for '1931_2' is 683 lm/W (relative = False) or 100/sum(spd*dl))
+
        
     Returns:
         :ler: numpy.ndarray of LER values. 
@@ -509,6 +521,9 @@ def spd_to_ler(data, cieobs = _CIEOBS, Vlambda = None):
         Vl = cmf[2:3,:]
     else:
         Vl = spd(wl = data[0], data = cieobs, interpolation = 'cmf', kind = 'np')[1]
+        if K is None:
+            K = 1
+            raise Exception("spd_to_ler: User defined Vlambda, but no K scaling factor has been supplied.")
     dl = getwld(data[0])
     return(K * np.dot((Vl*dl),data[1:].T))/np.sum(data[1:]*dl, axis = data.ndim-1)
     
