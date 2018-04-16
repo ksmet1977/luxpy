@@ -52,7 +52,9 @@
 # xyzbar(): Get color matching functions.
 #
 # spd_to_xyz(): Calculates xyz tristimulus values from spectral data. [CIE15:2004](http://www.cie.co.at/index.php/index.php?i_ca_id=304).
-#              
+# 
+# spd_to_ler():  Calculates Luminous efficacy of radiation (LER) from spectral data.
+#             
 # blackbody(): Calculate blackbody radiator spectrum for correlated color temperature (cct). ([CIE15:2004](http://www.cie.co.at/index.php/index.php?i_ca_id=304))
 #              
 # daylightlocus(): Calculates daylight chromaticity for cct. ([CIE15:2004](http://www.cie.co.at/index.php/index.php?i_ca_id=304)).
@@ -72,7 +74,7 @@ Created on Sat Jun 24 21:12:30 2017
 from .. import np, pd, interpolate, _PKG_PATH, _SEP, _EPS, _CIEOBS, np2d, getdata
 from .cmf import _CMF
 __all__ = ['_WL3','_BB','_S012_DAYLIGHTPHASE','_INTERP_TYPES','_S_INTERP_TYPE', '_R_INTERP_TYPE','_CRI_REF_TYPE',
-           '_CRI_REF_TYPES', 'getwlr','getwld','spd_normalize','cie_interp','spd','xyzbar', 'spd_to_xyz',
+           '_CRI_REF_TYPES', 'getwlr','getwld','spd_normalize','cie_interp','spd','xyzbar', 'spd_to_xyz', 'spd_to_ler',
            'blackbody','daylightlocus','daylightphase','cri_ref']
 
 
@@ -387,7 +389,7 @@ def xyzbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, norm_type = None, norm
 	
 #--------------------------------------------------------------------------------------------------
 
-def spd_to_xyz(data,  relative = True, rfl = None, cieobs = _CIEOBS, out = None):
+def spd_to_xyz(data,  relative = True, rfl = None, cieobs = _CIEOBS, K = None, out = None):
     """
     Calculates xyz tristimulus values from spectral data.
        
@@ -400,8 +402,10 @@ def spd_to_xyz(data,  relative = True, rfl = None, cieobs = _CIEOBS, out = None)
             Calculate relative XYZ (Yw = 100) or absolute XYZ (Y = Luminance)
         :rfl: numpy.ndarray with spectral reflectance functions.
             Will be interpolated if wavelengths do not match those of :data:
-        :cieobs: luxpy._CIEOBS, optional
+        :cieobs: luxpy._CIEOBS or str, optional
             Determines the color matching functions to be used in the calculation of XYZ.
+        :K: None, optional
+            K-factor (e.g. K for '1931_2' is 683 lm/W (relative = False) or 100/sum(spd*dl))
         :out: None or 1 or 2, optional
             Determines number and shape of output. (see :returns:)
     
@@ -436,7 +440,8 @@ def spd_to_xyz(data,  relative = True, rfl = None, cieobs = _CIEOBS, out = None)
     # get cmf,k for cieobs:
     cmf = xyzbar(cieobs = cieobs, scr = 'dict',wl_new = data[0], kind = 'np') #also interpolate to wl of data
 
-    k = _CMF['K'][cieobs]
+    if K is None:
+        K = _CMF['K'][cieobs]
 
     #interpolate rfls to lambda range of spd:
     if rfl is not None: 
@@ -450,12 +455,12 @@ def spd_to_xyz(data,  relative = True, rfl = None, cieobs = _CIEOBS, out = None)
     if rflwasnotnone == 1:
         #rescale xyz using k or 100/Yw:
         if relative == True:
-            k = 100.0/np.dot(data[1:],cmf[2,:]*dl)
-            xyz = k*np.array([np.dot(rfl,(data[1:]*cmf[i+1,:]*dl).T) for i in range(3)])#calculate tristimulus values
+            K = 100.0/np.dot(data[1:],cmf[2,:]*dl)
+            xyz = K*np.array([np.dot(rfl,(data[1:]*cmf[i+1,:]*dl).T) for i in range(3)])#calculate tristimulus values
     else:
         if relative == True:
-            k = 100.0/np.dot(data[1:],(cmf[2,:]*dl).T)
-        xyz = (k*(np.dot((cmf[1:]*dl),data[1:].T))[:,None,:]) #calculate tristimulus values
+            K = 100.0/np.dot(data[1:],(cmf[2,:]*dl).T)
+        xyz = (K*(np.dot((cmf[1:]*dl),data[1:].T))[:,None,:]) #calculate tristimulus values
     xyz = np.transpose(xyz,[1,2,0]) #order [rfl,spd,xyz]
     
     # Setup output:
@@ -476,7 +481,37 @@ def spd_to_xyz(data,  relative = True, rfl = None, cieobs = _CIEOBS, out = None)
             xyz = np.squeeze(xyz,axis = 0)
         return xyz
 
-
+def spd_to_ler(data, cieobs = _CIEOBS, Vlambda = None):
+    """
+    Calculates Luminous efficacy of radiation (LER) from spectral data.
+       
+    Args: 
+        :data: numpy.ndarray or pandas.dataframe with spectral data
+            (.shape = (number of spectra + 1, number of wavelengths))
+            Note that :data: is never interpolated, only CMFs and RFLs. This way
+            interpolation errors due to peaky spectra are avoided. Conform CIE15-2004.
+        :cieobs: luxpy._CIEOBS, optional
+            Determines the color matching function set used in the 
+            calculation of LER. For cieobs = '1931_2' the ybar CMF curve equals
+            the CIE Vlambda curve.
+        :Vlambda: user defined Vlambda
+       
+    Returns:
+        :ler: numpy.ndarray of LER values. 
+             
+    References:
+        ..[CIE15:2004](http://www.cie.co.at/index.php/index.php?i_ca_id=304)
+    """
+    if isinstance(cieobs,str):    
+        if K == None:
+            K = _CMF['K'][cieobs]
+        cmf = xyzbar(cieobs = cieobs, scr = 'dict',wl_new = data[0], kind = 'np') #also interpolate to wl of data
+        Vl = cmf[2:3,:]
+    else:
+        Vl = spd(wl = data[0], data = cieobs, interpolation = 'cmf', kind = 'np')[1]
+    dl = getwld(data[0])
+    return(K * np.dot((Vl*dl),data[1:].T))/np.sum(data[1:]*dl, axis = data.ndim-1)
+    
 #------------------------------------------------------------------------------
 #---CIE illuminants------------------------------------------------------------
 #------------------------------------------------------------------------------

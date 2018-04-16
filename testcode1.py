@@ -20,3 +20,7 @@ xyz2 = lx.spd_to_xyz(spd)
 D65=lx._CIE_ILLUMINANTS['D65'].copy()
 E=lx._CIE_ILLUMINANTS['E'].copy()
 
+spd1 = np.vstack((lx.getwlr([400,700,1]),np.zeros((1,301))))
+spd1[1,155] = 1
+spd2 = spd1.copy()
+spd2[1,195] =1
