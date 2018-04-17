@@ -221,7 +221,7 @@ class SPD:
 
         
     #------------------------------------------------------------------------------
-    def normalize(self, norm_type = None, norm_f = 1):
+    def normalize(self, norm_type = None, norm_f = 1, cieobs = _CIEOBS):
         """
         Normalize spectral power distributions in SPD instance.
         
@@ -230,10 +230,17 @@ class SPD:
                 - 'lambda': make lambda in norm_f equal to 1
                 - 'area': area-normalization times norm_f
                 - 'max': max-normalization times norm_f
+                - 'ru': to :norm_f: radiometric units 
+                - 'pu': to :norm_f: photometric units 
+                - 'qu': to :norm_f: quantal energy units
             :norm_f: 1, optional
                 Determines size of normalization for 'max' and 'area' or which wavelength is normalized to 1 for 'lambda' option.
+            :cieobs: _CIEOBS or str, optional
+                Type of cmf set to use for normalization using photometric units (norm_type == 'pu')
+
+        
         """
-        self.value = spd_normalize(self.get_(), norm_type = norm_type, norm_f = norm_f)[1:]
+        self.value = spd_normalize(self.get_(), norm_type = norm_type, norm_f = norm_f, cieobs = cieobs)[1:]
         return self
 
     #--------------------------------------------------------------------------------------------------

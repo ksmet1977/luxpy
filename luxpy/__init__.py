@@ -230,3 +230,7 @@ __all__ += graphics.__all__
 # Load classes:
 from .classes.SPD import SPD
 from .classes.CDATA import CDATA, XYZ, LAB
+
+# load cie_photobio sub_package:
+from .ciephotbio import cie_tn003_2015 as ciephotbio
+__all__ += ['ciephotbio']

@@ -54,7 +54,9 @@
 # spd_to_xyz(): Calculates xyz tristimulus values from spectral data. [CIE15:2004](http://www.cie.co.at/index.php/index.php?i_ca_id=304).
 # 
 # spd_to_ler():  Calculates Luminous efficacy of radiation (LER) from spectral data.
-#             
+# 
+# spd_to_power(): Calculate power of spectral data in radiometric, photometric or quantal energy units.
+#           
 # blackbody(): Calculate blackbody radiator spectrum for correlated color temperature (cct). ([CIE15:2004](http://www.cie.co.at/index.php/index.php?i_ca_id=304))
 #              
 # daylightlocus(): Calculates daylight chromaticity for cct. ([CIE15:2004](http://www.cie.co.at/index.php/index.php?i_ca_id=304)).
@@ -74,7 +76,8 @@ Created on Sat Jun 24 21:12:30 2017
 from .. import np, pd, interpolate, _PKG_PATH, _SEP, _EPS, _CIEOBS, np2d, getdata
 from .cmf import _CMF
 __all__ = ['_WL3','_BB','_S012_DAYLIGHTPHASE','_INTERP_TYPES','_S_INTERP_TYPE', '_R_INTERP_TYPE','_CRI_REF_TYPE',
-           '_CRI_REF_TYPES', 'getwlr','getwld','spd_normalize','cie_interp','spd','xyzbar', 'spd_to_xyz', 'spd_to_ler',
+           '_CRI_REF_TYPES', 'getwlr','getwld','spd_normalize','cie_interp','spd','xyzbar', 'vlbar', 
+           'spd_to_xyz', 'spd_to_ler', 'spd_to_power',
            'blackbody','daylightlocus','daylightphase','cri_ref']
 
 
@@ -84,7 +87,7 @@ _WL3 = [360.0,830.0,1.0]
 
 #--------------------------------------------------------------------------------------------------
 # set some colorimetric constants related to illuminants
-_BB = {'c1' : 3.74183e-16, 'c2' : 1.4388*0.01,'n': 1.000} # blackbody c1,c2 & n standard values
+_BB = {'c1' : 3.74183e-16, 'c2' : 1.4388*0.01,'n': 1.000, 'na': 1.00028, 'c' : 299792458, 'h' : 6.626070040e-34, 'k' : 1.38064852e-23} # blackbody c1,c2 & n standard values
 
 _S012_DAYLIGHTPHASE=np.array([[360.000,361.000,362.000,363.000,364.000,365.000,366.000,367.000,368.000,369.000,370.000,371.000,372.000,373.000,374.000,375.000,376.000,377.000,378.000,379.000,380.000,381.000,382.000,383.000,384.000,385.000,386.000,387.000,388.000,389.000,390.000,391.000,392.000,393.000,394.000,395.000,396.000,397.000,398.000,399.000,400.000,401.000,402.000,403.000,404.000,405.000,406.000,407.000,408.000,409.000,410.000,411.000,412.000,413.000,414.000,415.000,416.000,417.000,418.000,419.000,420.000,421.000,422.000,423.000,424.000,425.000,426.000,427.000,428.000,429.000,430.000,431.000,432.000,433.000,434.000,435.000,436.000,437.000,438.000,439.000,440.000,441.000,442.000,443.000,444.000,445.000,446.000,447.000,448.000,449.000,450.000,451.000,452.000,453.000,454.000,455.000,456.000,457.000,458.000,459.000,460.000,461.000,462.000,463.000,464.000,465.000,466.000,467.000,468.000,469.000,470.000,471.000,472.000,473.000,474.000,475.000,476.000,477.000,478.000,479.000,480.000,481.000,482.000,483.000,484.000,485.000,486.000,487.000,488.000,489.000,490.000,491.000,492.000,493.000,494.000,495.000,496.000,497.000,498.000,499.000,500.000,501.000,502.000,503.000,504.000,505.000,506.000,507.000,508.000,509.000,510.000,511.000,512.000,513.000,514.000,515.000,516.000,517.000,518.000,519.000,520.000,521.000,522.000,523.000,524.000,525.000,526.000,527.000,528.000,529.000,530.000,531.000,532.000,533.000,534.000,535.000,536.000,537.000,538.000,539.000,540.000,541.000,542.000,543.000,544.000,545.000,546.000,547.000,548.000,549.000,550.000,551.000,552.000,553.000,554.000,555.000,556.000,557.000,558.000,559.000,560.000,561.000,562.000,563.000,564.000,565.000,566.000,567.000,568.000,569.000,570.000,571.000,572.000,573.000,574.000,575.000,576.000,577.000,578.000,579.000,580.000,581.000,582.000,583.000,584.000,585.000,586.000,587.000,588.000,589.000,590.000,591.000,592.000,593.000,594.000,595.000,596.000,597.000,598.000,599.000,600.000,601.000,602.000,603.000,604.000,605.000,606.000,607.000,608.000,609.000,610.000,611.000,612.000,613.000,614.000,615.000,616.000,617.000,618.000,619.000,620.000,621.000,622.000,623.000,624.000,625.000,626.000,627.000,628.000,629.000,630.000,631.000,632.000,633.000,634.000,635.000,636.000,637.000,638.000,639.000,640.000,641.000,642.000,643.000,644.000,645.000,646.000,647.000,648.000,649.000,650.000,651.000,652.000,653.000,654.000,655.000,656.000,657.000,658.000,659.000,660.000,661.000,662.000,663.000,664.000,665.000,666.000,667.000,668.000,669.000,670.000,671.000,672.000,673.000,674.000,675.000,676.000,677.000,678.000,679.000,680.000,681.000,682.000,683.000,684.000,685.000,686.000,687.000,688.000,689.000,690.000,691.000,692.000,693.000,694.000,695.000,696.000,697.000,698.000,699.000,700.000,701.000,702.000,703.000,704.000,705.000,706.000,707.000,708.000,709.000,710.000,711.000,712.000,713.000,714.000,715.000,716.000,717.000,718.000,719.000,720.000,721.000,722.000,723.000,724.000,725.000,726.000,727.000,728.000,729.000,730.000,731.000,732.000,733.000,734.000,735.000,736.000,737.000,738.000,739.000,740.000,741.000,742.000,743.000,744.000,745.000,746.000,747.000,748.000,749.000,750.000,751.000,752.000,753.000,754.000,755.000,756.000,757.000,758.000,759.000,760.000,761.000,762.000,763.000,764.000,765.000,766.000,767.000,768.000,769.000,770.000,771.000,772.000,773.000,774.000,775.000,776.000,777.000,778.000,779.000,780.000,781.000,782.000,783.000,784.000,785.000,786.000,787.000,788.000,789.000,790.000,791.000,792.000,793.000,794.000,795.000,796.000,797.000,798.000,799.000,800.000,801.000,802.000,803.000,804.000,805.000,806.000,807.000,808.000,809.000,810.000,811.000,812.000,813.000,814.000,815.000,816.000,817.000,818.000,819.000,820.000,821.000,822.000,823.000,824.000,825.000,826.000,827.000,828.000,829.000,830.000],
 [61.500,62.230,62.960,63.690,64.420,65.150,65.880,66.610,67.340,68.070,68.800,68.260,67.720,67.180,66.640,66.100,65.560,65.020,64.480,63.940,63.400,63.640,63.880,64.120,64.360,64.600,64.840,65.080,65.320,65.560,65.800,68.700,71.600,74.500,77.400,80.300,83.200,86.100,89.000,91.900,94.800,95.800,96.800,97.800,98.800,99.800,100.800,101.800,102.800,103.800,104.800,104.910,105.020,105.130,105.240,105.350,105.460,105.570,105.680,105.790,105.900,104.990,104.080,103.170,102.260,101.350,100.440,99.530,98.620,97.710,96.800,98.510,100.220,101.930,103.640,105.350,107.060,108.770,110.480,112.190,113.900,115.070,116.240,117.410,118.580,119.750,120.920,122.090,123.260,124.430,125.600,125.590,125.580,125.570,125.560,125.550,125.540,125.530,125.520,125.510,125.500,125.080,124.660,124.240,123.820,123.400,122.980,122.560,122.140,121.720,121.300,121.300,121.300,121.300,121.300,121.300,121.300,121.300,121.300,121.300,121.300,120.520,119.740,118.960,118.180,117.400,116.620,115.840,115.060,114.280,113.500,113.460,113.420,113.380,113.340,113.300,113.260,113.220,113.180,113.140,113.100,112.870,112.640,112.410,112.180,111.950,111.720,111.490,111.260,111.030,110.800,110.370,109.940,109.510,109.080,108.650,108.220,107.790,107.360,106.930,106.500,106.730,106.960,107.190,107.420,107.650,107.880,108.110,108.340,108.570,108.800,108.450,108.100,107.750,107.400,107.050,106.700,106.350,106.000,105.650,105.300,105.210,105.120,105.030,104.940,104.850,104.760,104.670,104.580,104.490,104.400,103.960,103.520,103.080,102.640,102.200,101.760,101.320,100.880,100.440,100.000,99.600,99.200,98.800,98.400,98.000,97.600,97.200,96.800,96.400,96.000,95.910,95.820,95.730,95.640,95.550,95.460,95.370,95.280,95.190,95.100,94.500,93.900,93.300,92.700,92.100,91.500,90.900,90.300,89.700,89.100,89.240,89.380,89.520,89.660,89.800,89.940,90.080,90.220,90.360,90.500,90.480,90.460,90.440,90.420,90.400,90.380,90.360,90.340,90.320,90.300,90.110,89.920,89.730,89.540,89.350,89.160,88.970,88.780,88.590,88.400,87.960,87.520,87.080,86.640,86.200,85.760,85.320,84.880,84.440,84.000,84.110,84.220,84.330,84.440,84.550,84.660,84.770,84.880,84.990,85.100,84.780,84.460,84.140,83.820,83.500,83.180,82.860,82.540,82.220,81.900,81.970,82.040,82.110,82.180,82.250,82.320,82.390,82.460,82.530,82.600,82.830,83.060,83.290,83.520,83.750,83.980,84.210,84.440,84.670,84.900,84.540,84.180,83.820,83.460,83.100,82.740,82.380,82.020,81.660,81.300,80.360,79.420,78.480,77.540,76.600,75.660,74.720,73.780,72.840,71.900,72.140,72.380,72.620,72.860,73.100,73.340,73.580,73.820,74.060,74.300,74.510,74.720,74.930,75.140,75.350,75.560,75.770,75.980,76.190,76.400,75.090,73.780,72.470,71.160,69.850,68.540,67.230,65.920,64.610,63.300,64.140,64.980,65.820,66.660,67.500,68.340,69.180,70.020,70.860,71.700,72.230,72.760,73.290,73.820,74.350,74.880,75.410,75.940,76.470,77.000,75.820,74.640,73.460,72.280,71.100,69.920,68.740,67.560,66.380,65.200,63.450,61.700,59.950,58.200,56.450,54.700,52.950,51.200,49.450,47.700,49.790,51.880,53.970,56.060,58.150,60.240,62.330,64.420,66.510,68.600,68.240,67.880,67.520,67.160,66.800,66.440,66.080,65.720,65.360,65.000,65.100,65.200,65.300,65.400,65.500,65.600,65.700,65.800,65.900,66.000,65.500,65.000,64.500,64.000,63.500,63.000,62.500,62.000,61.500,61.000,60.230,59.460,58.690,57.920,57.150,56.380,55.610,54.840,54.070,53.300,53.860,54.420,54.980,55.540,56.100,56.660,57.220,57.780,58.340,58.900,59.200,59.500,59.800,60.100,60.400,60.700,61.000,61.300,61.600,61.900],
@@ -150,7 +153,7 @@ def getwld(wl):
 
 
 #------------------------------------------------------------------------------
-def spd_normalize(data, norm_type = None,norm_f = 1, wl = True):
+def spd_normalize(data, norm_type = None, norm_f = 1, wl = True, cieobs = _CIEOBS):
     """
     Normalize a spectral power distribution (SPD).
     
@@ -160,10 +163,15 @@ def spd_normalize(data, norm_type = None,norm_f = 1, wl = True):
             - 'lambda': make lambda in norm_f equal to 1
             - 'area': area-normalization times norm_f
             - 'max': max-normalization times norm_f
+            - 'ru': to :norm_f: radiometric units 
+            - 'pu': to :norm_f: photometric units 
+            - 'qu': to :norm_f: quantal energy units
         :norm_f: 1, optional
             Normalization factor: determines size of normalization for 'max' and 'area' or which wavelength is normalized to 1 for 'lambda' option.
         :wl: True or False, optional 
             If True, the first column of data contains wavelengths.
+        :cieobs: _CIEOBS or str, optional
+            Type of cmf set to use for normalization using photometric units (norm_type == 'pu')
     
     Returns:
         :returns: numpy.ndarray with normalized data.
@@ -179,7 +187,11 @@ def spd_normalize(data, norm_type = None,norm_f = 1, wl = True):
             wl = True # for lambda normalization wl MUST be first column
             wlr = data[0]
             
-        if ('area' in norm_type) & (wl == True):
+        if ('qu' in norm_type):
+            wl = True # for 'qu' (quantal) normalization wl MUST be first column
+            wlr = data[0]
+            
+        if (('area' in norm_type) | ('ru' in norm_type) | ('pu' in norm_type)) & (wl == True):
             dl = getwld(data[0])
         else:
             dl = 1 #no wavelengths provided
@@ -209,6 +221,9 @@ def spd_normalize(data, norm_type = None,norm_f = 1, wl = True):
                 #wl_index = np.where((np.abs(wlr-norm_f_)==np.min(np.abs(wlr-norm_f_))))[0]
                 wl_index = np.abs(wlr-norm_f_).argmin()
                 data[i+offset]=data[i+offset]/data[i+offset][wl_index]
+            elif (norm_type_ == 'ru') | (norm_type_ == 'pu') | (norm_type_ == 'qu'):
+                rpq_power = spd_to_power(data[[0,i+offset],:], cieobs = cieobs, ptype = norm_type_)
+                data[i+offset] = (norm_f/rpq_power)*data[i+offset]
             else:
                 data[i+offset]=data[i+offset]/norm_f_
     return data	
@@ -382,13 +397,58 @@ def xyzbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, norm_type = None, norm
         dict_or_file = _PKG_PATH + _SEP + 'data' + _SEP + 'cmfs' + _SEP + 'ciexyz_' + cieobs + '.dat'
     elif scr is 'dict':
         dict_or_file = _CMF['bar'][cieobs]
-    else:
-        dict_or_file = scr #can be file or data itself
+    elif scr == 'cieobs':
+        dict_or_file = cieobs #can be file or data itself
 
     return spd(data = dict_or_file, wl = wl_new, interpolation = 'linear', kind = kind, columns = ['wl','xb','yb','zb'])
+
+#--------------------------------------------------------------------------------------------------
+def vlbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, norm_type = None, norm_f = None, kind = 'np', out = 1):
+    """
+    Get Vlambda functions.  
+    
+    Args:
+        :cieobs: str, optional
+            Sets the type of Vlambda function to obtain.
+        :scr: 'dict' (get from ybar from _CMF) or 'array' (numpy.ndarray in cieobs), optional
+            Determines whether to load cmfs from file (./data/cmfs/) or from dict defined in .cmf.py
+            Vlambda is obtained by collecting Ybar.
+        :wl: None, optional
+             New wavelength range for interpolation. Defaults to wavelengths specified by luxpy._WL3.
+        :norm_type: None, optional 
+            - 'lambda': make lambda in norm_f equal to 1
+            - 'area': area-normalization times norm_f
+            - 'max': max-normalization times norm_f
+        :norm_f: 1, optional
+            Normalization factor: determines size of normalization for 'max' and 'area' or which wavelength is normalized to 1 for 'lambda' option.
+        :kind: str ['np','df'], optional 
+            Determines type(:returns:), np: numpy.ndarray, df: pandas.dataframe
+        :out: 1 or 2, optional
+            1: returns Vlambda
+            2: returns (Vlambda, Km)
+    
+    Returns:
+        :returns: pandas.dataframe or numpy.ndarray with Vlambda of type :cieobs: 
+        
+            
+    References:
+        ..[CIE15:2004](http://www.cie.co.at/index.php/index.php?i_ca_id=304)
+    """
+    if scr == 'dict':
+        dict_or_file = _CMF['bar'][cieobs][[0,2],:] 
+        K = _CMF['K'][cieobs]
+    elif scr is 'vltype':
+        dict_or_file = cieobs #can be file or data itself
+        K = 1
+    Vl = spd(data = dict_or_file, wl = wl_new, interpolation = 'linear', kind = kind, columns = ['wl','Vl'])
+
+    if out == 2:
+        return Vl, K
+    else:
+        return Vl
+
 	
 #--------------------------------------------------------------------------------------------------
-
 def spd_to_xyz(data,  relative = True, rfl = None, cieobs = _CIEOBS, K = None, out = None):
     """
     Calculates xyz tristimulus values from spectral data.
@@ -405,7 +465,7 @@ def spd_to_xyz(data,  relative = True, rfl = None, cieobs = _CIEOBS, K = None, o
         :cieobs: luxpy._CIEOBS or str, optional
             Determines the color matching functions to be used in the calculation of XYZ.
         :K: None, optional
-            K-factor (e.g. K for '1931_2' is 683 lm/W (relative = False) or 100/sum(spd*dl))
+            (e.g. K for '1931_2' is 683 lm/W (relative = False) or 100/sum(spd*dl))
         :out: None or 1 or 2, optional
             Determines number and shape of output. (see :returns:)
     
@@ -443,14 +503,14 @@ def spd_to_xyz(data,  relative = True, rfl = None, cieobs = _CIEOBS, K = None, o
             K = _CMF['K'][cieobs]
         scr = 'dict'
     else:
-        scr = cieobs
+        scr = 'cieobs'
         if K is None:
+            #K = 1
             raise Exception('spd_to_xyz: user defined CMF set, \
                             but no scaling factor has been supplied.\
                             Setting K = 1.')
-            K = 1
-    cmf = xyzbar(cieobs = cieobs, scr = scr,wl_new = data[0], kind = 'np') #also interpolate to wl of data
-    
+            
+    cmf = xyzbar(cieobs = cieobs, scr = scr, wl_new = data[0], kind = 'np') #also interpolate to wl of data
 
     #interpolate rfls to lambda range of spd:
     if rfl is not None: 
@@ -490,7 +550,7 @@ def spd_to_xyz(data,  relative = True, rfl = None, cieobs = _CIEOBS, K = None, o
             xyz = np.squeeze(xyz,axis = 0)
         return xyz
 
-def spd_to_ler(data, cieobs = _CIEOBS, Vlambda = None, K = None):
+def spd_to_ler(data, cieobs = _CIEOBS, K = None):
     """
     Calculates Luminous efficacy of radiation (LER) from spectral data.
        
@@ -502,11 +562,9 @@ def spd_to_ler(data, cieobs = _CIEOBS, Vlambda = None, K = None):
         :cieobs: luxpy._CIEOBS, optional
             Determines the color matching function set used in the 
             calculation of LER. For cieobs = '1931_2' the ybar CMF curve equals
-            the CIE Vlambda curve.
-        :Vlambda: user defined Vlambda
+            the CIE 1924 Vlambda curve.
         :K: None, optional
             K-factor (e.g. K for '1931_2' is 683 lm/W (relative = False) or 100/sum(spd*dl))
-
        
     Returns:
         :ler: numpy.ndarray of LER values. 
@@ -514,18 +572,64 @@ def spd_to_ler(data, cieobs = _CIEOBS, Vlambda = None, K = None):
     References:
         ..[CIE15:2004](http://www.cie.co.at/index.php/index.php?i_ca_id=304)
     """
+    
     if isinstance(cieobs,str):    
         if K == None:
             K = _CMF['K'][cieobs]
-        cmf = xyzbar(cieobs = cieobs, scr = 'dict',wl_new = data[0], kind = 'np') #also interpolate to wl of data
-        Vl = cmf[2:3,:]
+        Vl = vlbar(cieobs = cieobs, scr = 'dict',wl_new = data[0], kind = 'np')[1:2] #also interpolate to wl of data
     else:
-        Vl = spd(wl = data[0], data = cieobs, interpolation = 'cmf', kind = 'np')[1]
+        Vl = spd(wl = data[0], data = cieobs, interpolation = 'cmf', kind = 'np')[1:2]
         if K is None:
-            K = 1
+            #K = 1
             raise Exception("spd_to_ler: User defined Vlambda, but no K scaling factor has been supplied.")
     dl = getwld(data[0])
-    return(K * np.dot((Vl*dl),data[1:].T))/np.sum(data[1:]*dl, axis = data.ndim-1)
+    return ((K * np.dot((Vl*dl),data[1:].T))/np.sum(data[1:]*dl, axis = data.ndim-1)).T
+
+
+def spd_to_power(data, ptype = 'ru', cieobs = _CIEOBS,):
+    """
+    Calculate power of spectral data in radiometric, photometric or quantal energy units.
+    
+    Args:
+        :data: numpy.ndarray with spectral data
+        :ptype: 'ru' or str, optional
+            str: 'ru': in radiometric units 
+                 'pu': in photometric units 
+                 'qu': in quantal energy units
+        :cieobs: _CIEOBS or str, optional
+            Type of cmf set to use for photometric units.
+    
+    Returns:
+        returns: numpy.ndarray with normalized spectral data (SI units)
+    """
+    # get wavelength spacing:
+    dl = getwld(data[0])
+    
+    if ptype == 'ru': #normalize to radiometric units
+        p = np2d(np.dot(data[1:],dl*np.ones(data.shape[1]))).T
+
+    elif ptype == 'pu': # normalize in photometric units
+    
+        # Calculate correction factor for Km in standard air:
+        na = _BB['na'] # n for standard air
+        c = _BB['c'] # m/s light speed
+        lambdad = c/(na*54*1e13)/(1e-9) # 555 nm lambda in standard air
+        Km_correction_factor = 1/(1 - (1 - 0.9998567)*(lambdad - 555)) # correction factor for Km in standard air
+
+        # Get Vlambda and Km (for E):
+        Vl, Km = vlbar(cieobs = cieobs, wl_new = data[0], out = 2)
+        Km = Km*Km_correction_factor
+        p = Km*np2d(np.dot(data[1:],dl*Vl[1])).T
+    
+    elif ptype == 'qu': # normalize to quantual units
+
+        # Get Quantal conversion factor:
+        fQ = ((1e-9)/(_BB['h']*_BB['c']))
+        p = np2d(fQ*np.dot(data[1:],dl*data[0])).T
+
+    return p
+
+
     
 #------------------------------------------------------------------------------
 #---CIE illuminants------------------------------------------------------------
@@ -560,7 +664,6 @@ def blackbody(cct, wl3 = None, norm_type = None, norm_f = None):
     wl=getwlr(wl3)
     def fSr(x):
         return (1/np.pi)*_BB['c1']*((x*1.0e-9)**(-5))*(_BB['n']**(-2.0))*(np.exp(_BB['c2']*((_BB['n']*x*1.0e-9*(cct+_EPS))**(-1.0)))-1.0)**(-1.0)
-#    return spd(data = np.vstack((wl,(fSr(wl)/fSr(560.0)))), wl = None, norm_type = None, norm_f = None)
     return np.vstack((wl,(fSr(wl)/fSr(560.0))))
 
 #------------------------------------------------------------------------------

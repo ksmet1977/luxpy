@@ -25,6 +25,10 @@
 #
 # _CCT_LUT: Dict with LUT.
 #
+# calculate_luts(): Function that recalculates (and overwrites) LUTs in ./data/cctluts/ 
+#                    for the ccts stored in ./data/cctluts/cct_lut_cctlist.dat or given as input argument.
+#                    Calculation is performed for all CMF sets listed in _CMF['types'].
+#
 # xyz_to_cct(): Calculates CCT,Duv from XYZ, wrapper for ..._ohno() & ..._search()
 #
 # xyz_to_duv(): Calculates Duv, (CCT) from XYZ, wrapper for ..._ohno() & ..._search()
@@ -50,17 +54,47 @@ Created on Wed Jun 28 22:52:28 2017
 
 @author: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
+from . import _CCT_LUT_CALC
 
-from .. import np, _PKG_PATH, _SEP, _EPS, _CMF, _CIEOBS, minimize, np2d, np2dT, getdata, dictkv, spd_to_xyz, cri_ref, xyz_to_Yxy, xyz_to_Yuv,Yuv_to_xyz
-__all__ = ['_CCT_LUT','xyz_to_cct','xyz_to_duv', 'cct_to_xyz','cct_to_mired','xyz_to_cct_ohno','xyz_to_cct_search','xyz_to_cct_HA','xyz_to_cct_mcamy']
+from .. import np, pd, _PKG_PATH, _SEP, _EPS, _CMF, _CIEOBS, minimize, np2d, np2dT, getdata, dictkv, spd_to_xyz, cri_ref, blackbody, xyz_to_Yxy, xyz_to_Yuv,Yuv_to_xyz
+__all__ = ['_CCT_LUT','_CCT_LUT_PATH', 'calculate_luts', 'xyz_to_cct','xyz_to_duv', 'cct_to_xyz','cct_to_mired','xyz_to_cct_ohno','xyz_to_cct_search','xyz_to_cct_HA','xyz_to_cct_mcamy']
 
 #------------------------------------------------------------------------------
 _CCT_LUT_PATH = _PKG_PATH + _SEP + 'data'+ _SEP + 'cctluts' + _SEP #folder with cct lut data
 
 #--------------------------------------------------------------------------------------------------
-# load CCT LUT:
-_CCT_LUT = dictkv(keys = sorted(_CMF['types']), values = [getdata('{}cct_lut_{}.dat'.format(_CCT_LUT_PATH,sorted(_CMF['types'])[i]),kind='np') for i in range(len(_CMF['types']))],ordered = False)
+# load / calculate CCT LUT:
+def calculate_luts(ccts = None):
+    """
+    Function that recalculates (and overwrites) LUTs in ./data/cctluts/ 
+    for the ccts stored in ./data/cctluts/cct_lut_cctlist.dat or given as input argument.
+    Calculation is performed for all CMF sets listed in _CMF['types'].
+    
+    Args:
+        :ccts: numpy.ndarray or str, optional
+            list of ccts for which to (re-)calculate the LUTs.
+            If str, ccts contains path/filename.dat to list.
+    """
+    if ccts is None:
+        ccts = getdata('{}cct_lut_cctlist.dat'.format(_CCT_LUT_PATH))
+    elif isinstance(ccts,str):
+        ccts = getdata(ccts)
 
+    for ii, cieobs in enumerate(sorted(_CMF['types'])):
+        print("Calculating CCT LUT for CMF set: {}".format(cieobs))
+        Yuv = np.ones((ccts.shape[0],2))*np.nan
+        for i,cct in enumerate(ccts):
+            Yuv[i,:] = xyz_to_Yuv(spd_to_xyz(blackbody(cct, wl3 = [360,830,1]), cieobs = cieobs))[:,1:3]
+        u = Yuv[:,0,None] # get CIE 1960 u
+        v = (2.0/3.0)*Yuv[:,1,None] # get CIE 1960 v
+        cctuv = np.hstack((ccts,u,v))
+        pd.DataFrame(cctuv).to_csv('{}cct_lut_{}.dat'.format(_CCT_LUT_PATH,cieobs), header=None, index=None, float_format = '%1.9e')
+
+if _CCT_LUT_CALC == True:
+    calculate_luts()  
+
+_CCT_LUT = dictkv(keys = sorted(_CMF['types']), values = [getdata('{}cct_lut_{}.dat'.format(_CCT_LUT_PATH,sorted(_CMF['types'])[i]),kind='np') for i in range(len(_CMF['types']))],ordered = False)
+      
 
 
 def xyz_to_cct_mcamy(xyzw):

@@ -56,7 +56,7 @@ Created on Sun Jun 18 21:12:30 2017
 @author: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
-from luxpy import np, pd, odict
+from luxpy import np, pd, odict, warnings
 __all__ = ['np2d','np3d','np2dT','np3dT','put_args_in_db','getdata','dictkv','OD','meshblock','asplit','ajoin','broadcast_shape','todim']
 
 #--------------------------------------------------------------------------------------------------

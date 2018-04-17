@@ -16,17 +16,43 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #########################################################################
 """
-luxpy module loading sets of color matching functions.
+luxpy module loading sets of XYZ color matching functions (and Vlambda curves = Ybar)
 
  * luxpy._CMF: Dict with keys 'types', 'bar', 'K', 'M'
  
-     + luxpy._CMF['types'] = ['1931_2','1964_10','2006_2','2006_10']
+     + luxpy._CMF['types'] = ['1931_2','1964_10','2006_2','2006_10','1931_2_judd1951','1931_2_juddvos1978','1951_20_scotopic']
      + luxpy._CMF['bar'] = Dict with CMFs for each of the types between 360 to 830 nm
                              keys are cmf_types, values are CMF numpy arrays with shape: (4,471)
      + luxpy._CMF['K'] = Dict with constants converting Watt to lumen for specified CMF   
                             keys are cmf_types, values are scalars
      + luxpy._CMF['M'] = Dict with XYZ to LMS conversion matrices
                             keys are cmf_types, values are numpy arrays with shape: (3,3)
+                            
+     Notes:
+        1. All functions have been expanded (when necessary) using zeros 
+            to a full 360-830 range. This way those wavelengths do not contribute 
+            in the calculation, AND are not extrapolated using the closest known
+            value as per CIE recommendation.
+
+        2. There are no XYZ to LMS conversion matrices defined for 
+            the 1964 10°, 1931 2° Judd corrected (1951) and 1931 2° Judd-Vos corrected (1978) cmf sets, 
+            The Hunt-Pointer-Estevez conversion matrix of the 1931 2° is therefore
+            used as an approximation!
+            
+        3. The K lm to Watt conversion factors for the Judd and Judd-Vos cmf sets
+            have been set to 683.002 lm/W (same as for standard 1931 2°)
+            
+        4. The 1951 scoptopic V' function has been replicated in the 3 xbar, ybar, zbar columns 
+            to obtain a data format similar to the photopic color matching functions. 
+            This way V' can be called in exactly the same way as other V functions 
+            can be called from the X,Y,Z cmf sets. 
+            The K value has been set to 1700.06 lm/W and the conversion matrix to eye().
+
+    
+     References:
+         1. CIE15-2004 (2004). Colorimetry (Vienna, Austria: CIE).
+         2. CIE, and CIE (2006). Fundamental Chromaticity Diagram with Physiological Axes - Part I (Vienna: CIE).
+                        
                             
 Created on Sat Jun 17 10:43:24 2017
 
@@ -46,7 +72,8 @@ __all__ = ['_CMF']
 
 #--------------------------------------------------------------------------------------------------
 # load all cmfs and set up nested dict:
-_CMF_TYPES = ['1931_2','1964_10','2006_2','2006_10']
+_CMF_TYPES = ['1931_2','1964_10','2006_2','2006_10','1931_2_judd1951','1931_2_juddvos1978','1951_20_scotopic']
+_CMF_K_VALUES = [683.002, 683.6, 683.002, 683.002, 683.002, 683.002, 1700.06] 
 
 def _dictkv(keys=None,values=None, ordered = True): 
     # Easy input of of keys and values into dict (both should be iterable lists)
@@ -55,18 +82,12 @@ def _dictkv(keys=None,values=None, ordered = True):
     else:
         return dict(zip(keys,values))
 
-_CMF_K = _dictkv(keys = _CMF_TYPES, values = [683.0,683.6,683.0,683.0],ordered = True) # K-factors for calculating absolute tristimulus values
 
 _CMF_M_1931_2=np.array([     # definition of 3x3 matrices to convert from xyz to lms
 [0.38971,0.68898,-0.07868],
 [-0.22981,1.1834,0.04641],
 [0.0,0.0,1.0]
  ])
-_CMF_M_1964_10=np.array([
-[0.38971,0.68898,-0.07868],
-[-0.22981,1.1834,0.04641],
-[0.0,0.0,1.0]
-])
 _CMF_M_2006_2=np.array([
 [0.21057582,0.85509764,-0.039698265],
 [-0.41707637,1.1772611,0.078628251],
@@ -77,7 +98,34 @@ _CMF_M_2006_10=np.array([
 [-0.42997951,1.2038895,0.086210895],
 [0.0,0.0,0.46579234]
 ])
-_CMF_M = _dictkv(keys = _CMF_TYPES, values= [_CMF_M_1931_2,_CMF_M_1964_10,_CMF_M_2006_2,_CMF_M_2006_10],ordered = True)
+    
+# Note that for the following, no conversion has been defined, so the 1931 HPE matrix is used:    
+_CMF_M_1964_10=np.array([
+[0.38971,0.68898,-0.07868],
+[-0.22981,1.1834,0.04641],
+[0.0,0.0,1.0]
+]) 
+_CMF_M_1931_2_JUDD1951=np.array([
+[0.38971,0.68898,-0.07868],
+[-0.22981,1.1834,0.04641],
+[0.0,0.0,1.0]
+]) 
+_CMF_M_1931_2_JUDDVOS1978=np.array([
+[0.38971,0.68898,-0.07868],
+[-0.22981,1.1834,0.04641],
+[0.0,0.0,1.0]
+]) 
+
+# Scotopic conversion matrix has been set as the identity matrix (V' was replicated in the Xb,Yb,Zb columns)     
+_CMF_M_1951_20_SCOTOPIC = np.eye(3)    
+   
+
+_CMF_M_list = [_CMF_M_1931_2,_CMF_M_1964_10,_CMF_M_2006_2,_CMF_M_2006_10, _CMF_M_1931_2_JUDD1951, _CMF_M_1931_2_JUDDVOS1978, _CMF_M_1951_20_SCOTOPIC]
+
+
+_CMF_K = _dictkv(keys = _CMF_TYPES, values = _CMF_K_VALUES, ordered = True) # K-factors for calculating absolute tristimulus values
+ 
+_CMF_M = _dictkv(keys = _CMF_TYPES, values= _CMF_M_list, ordered = True)
 
 _CMF = {'types': _CMF_TYPES,'bar': [], 'K': _CMF_K, 'M':_CMF_M} # store all in single nested dict
 			

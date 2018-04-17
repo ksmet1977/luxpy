@@ -49,7 +49,14 @@
 #   xyz_to_Ydlep(): convert xyz to Y, dominant wavelength (dl) and excitation purity (ep)
 #   Ydlep_to_xyz(): convert Y, dominant wavelength (dl) and excitation purity (ep) to xyz
 #
-#
+# References:
+#       1. CIE15-2004 (2004). Colorimetry (Vienna, Austria: CIE)
+#       2. Ebner F, and Fairchild MD (1998). 
+#            Development and testing of a color space (IPT) with improved hue uniformity. 
+#            In IS&T 6th Color Imaging Conference, (Scottsdale, Arizona, USA), pp. 8–13.
+#       3. MacLeod DI, and Boynton RM (1979). 
+#            Chromaticity diagram showing cone excitation by stimuli of equal luminance. 
+#            J. Opt. Soc. Am. 69, 1183–1186.
 #------------------------------------------------------------------------------
 
 Created on Wed Jun 28 22:48:09 2017
@@ -304,11 +311,11 @@ def xyz_to_lab(xyz, xyzw = None, cieobs = _CIEOBS, **kwargs):
     # Apply cube-root compression:
     fXYZr = XYZr**(1.0/3.0)
     
-    # Check for T/Tn <= 0.008856:
-    pqr = XYZr<=0.008856
+    # Check for T/Tn <= 0.008856: (Note (24/116)**3 = 0.008856)
+    pqr = XYZr<=(24/116)**3
 
-    # calculate f(T) for T/Tn <= 0.008856:
-    fXYZr[pqr] = (7.787*XYZr[pqr]+16.0/116.0)
+    # calculate f(T) for T/Tn <= 0.008856: (Note:(1/3)*((116/24)**2) = 841/108 = 7.787)
+    fXYZr[pqr] = ((841/108)*XYZr[pqr]+16.0/116.0)
     
     # calculate L*, a*, b*:
     L = 116.0*(fXYZr[...,1]) - 16.0
@@ -341,7 +348,7 @@ def lab_to_xyz(lab, xyzw = None, cieobs = _CIEOBS, **kwargs):
     xyzw = xyzw*np.ones(lab.shape)
     
     # set knee point of function:
-    k=0.008856**(1/3)
+    k=(24/116) #(24/116)**3**(1/3)
     
     # get L*, a*, b* and Xw, Yw, Zw:
     L,a,b = asplit(lab)
@@ -356,7 +363,7 @@ def lab_to_xyz(lab, xyzw = None, cieobs = _CIEOBS, **kwargs):
 
     # Now calculate T where T/Tn is below the knee point:
     p,q,r = [np.where(x<k) for x in (fx,fy,fz)]   
-    X[p],Y[q],Z[r] = [np.squeeze(xw[xp]*((x[xp] - 16.0/116.0) / 7.787)) for (x,xw,xp) in ((fx,Xw,p),(fy,Yw,q),(fz,Zw,r))]
+    X[p],Y[q],Z[r] = [np.squeeze(xw[xp]*((x[xp] - 16.0/116.0) / (841/108))) for (x,xw,xp) in ((fx,Xw,p),(fy,Yw,q),(fz,Zw,r))]
  
     return ajoin((X,Y,Z))  
 
@@ -458,6 +465,11 @@ def xyz_to_Vrb_mb(xyz, cieobs = _CIEOBS, scaling = [1,1], M = None, **kwargs):
             
     Returns:
         :Vrb: numpy.array with V,r,b (Macleod-Boynton) color coordinates
+    
+    Reference:
+        1. MacLeod DI, and Boynton RM (1979). 
+            Chromaticity diagram showing cone excitation by stimuli of equal luminance. 
+            J. Opt. Soc. Am. 69, 1183–1186.
     """
     xyz = np2d(xyz)
     
@@ -491,6 +503,11 @@ def Vrb_mb_to_xyz(Vrb,cieobs = _CIEOBS, scaling = [1,1], M = None, Minverted = F
             
     Returns:
         :xyz: numpy.array with tristimulus values
+        
+    Reference:
+        1. MacLeod DI, and Boynton RM (1979). 
+            Chromaticity diagram showing cone excitation by stimuli of equal luminance. 
+            J. Opt. Soc. Am. 69, 1183–1186.
     """
     Vrb = np2d(Vrb)
     
@@ -527,6 +544,11 @@ def xyz_to_ipt(xyz, cieobs = _CIEOBS, xyzw = None, M = None, **kwargs):
     Note: 
         :xyz: is assumed to be under D65 viewing conditions!! 
         If necessary perform chromatic adaptation !!
+        
+    Reference:
+        1. Ebner F, and Fairchild MD (1998). 
+            Development and testing of a color space (IPT) with improved hue uniformity. 
+            In IS&T 6th Color Imaging Conference, (Scottsdale, Arizona, USA), pp. 8–13.
     """
     xyz = np2d(xyz)
     
@@ -583,6 +605,11 @@ def ipt_to_xyz(ipt, cieobs = _CIEOBS, xyzw = None, M = None, **kwargs):
     Note: 
         :xyz: is assumed to be under D65 viewing conditions!! 
         If necessary perform chromatic adaptation !!
+    
+    Reference:
+        1. Ebner F, and Fairchild MD (1998). 
+            Development and testing of a color space (IPT) with improved hue uniformity. 
+            In IS&T 6th Color Imaging Conference, (Scottsdale, Arizona, USA), pp. 8–13.
     """
     ipt = np2d(ipt)
     
