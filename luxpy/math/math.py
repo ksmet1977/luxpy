@@ -56,6 +56,8 @@
 # magnitude_v():  Calculates magnitude of vector.
 #
 # angle_v1v2():  Calculates angle between two vectors.
+#
+# histogram() : Histogram function that can take as bins either the center (cfr. matlab hist) or bin-edges.
 #------------------------------------------------------------------------------
 
 Created on Tue Jun 27 11:50:32 2017
@@ -65,7 +67,7 @@ Created on Tue Jun 27 11:50:32 2017
 
 from luxpy import np, np2d
 from scipy.special import erf, erfinv
-__all__  = ['normalize_3x3_matrix','symmM_to_posdefM','check_symmetric','check_posdef','positive_arctan','line_intersect','erf', 'erfinv', 'pol2cart', 'cart2pol']
+__all__  = ['normalize_3x3_matrix','symmM_to_posdefM','check_symmetric','check_posdef','positive_arctan','line_intersect','erf', 'erfinv', 'histogram', 'pol2cart', 'cart2pol']
 __all__ += ['bvgpdf','mahalanobis2','dot23', 'rms','geomean','polyarea']
 __all__ += ['magnitude_v','angle_v1v2']
 
@@ -484,3 +486,33 @@ def angle_v1v2(v1,v2,htype = 'deg'):
     if htype == 'deg':
         ang = ang*180/np.pi
     return ang
+	
+#------------------------------------------------------------------------------
+def histogram(a, bins=10, bin_center = False, range=None, normed=False, weights=None, density=None):
+    """
+    Histogram function that can take as bins either the center (cfr. matlab hist)
+    or bin-edges.
+    
+    Args: 
+        :bin_center: False, optional
+            False: if :bins: int, str or sequence of scalars:
+                    default to numpy.histogram (uses bin edges).
+            True: if :bins: is a sequence of scalars:
+                    bins (containing centers) are transformed to edges
+                    and nump.histogram is run. 
+                    Mimicks matlab hist (uses bin centers).
+        
+    Note for other armuments and output, see ?numpy.histogram
+    """
+    if (isinstance(bins, list) |  isinstance(bins, np.ndarray)) & (bin_center == True):
+        if len(bins) == 1:
+            edges = np.hstack((bins[0],np.inf))
+        else:
+            centers = bins
+            d = np.diff(centers)/2
+            edges = np.hstack((centers[0]-d[0], centers[:-1] + d, centers[-1] + d[-1]))
+            edges[1:] = edges[1:] + np.finfo(float).eps
+        return np.histogram(a, bins=edges, range=range, normed=normed, weights=weights, density=density)
+
+    else:
+        return np.histogram(a, bins=bins, range=range, normed=normed, weights=weights, density=density)
