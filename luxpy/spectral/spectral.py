@@ -274,7 +274,7 @@ def cie_interp(data,wl_new, kind = None, negative_values_allowed = False):
             N = S.shape[0]
             Si=np.ones([N,wl_new.shape[0]])*np.nan 
             for i in range(N):
-                Si_f = interpolate.interp1d(wl,S[i],kind=kind,bounds_error =False)
+                Si_f = interpolate.interp1d(wl,S[i],kind = kind, bounds_error = False)
                 Si[i] = Si_f(wl_new)
                 
                 #extrapolate by replicating closest known (in source data!) value (conform CIE2004 recommendation) 
