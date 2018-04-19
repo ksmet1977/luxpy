@@ -1,9 +1,40 @@
 # -*- coding: utf-8 -*-
 """
 ###############################################################################
-# Module for Individual Observer CMFs (Asano, 2016)
+# Module for Individual Observer lms-CMFs (Asano, 2016)
 ###############################################################################
 
+# cie2006cmfsEx(): Generate Individual Observer CMFs (cone fundamentals) 
+                    based on CIE2006 cone fundamentals and published literature 
+                    on observer variability in color matching and 
+                    in physiological parameters.
+
+# fnc_MonteCarloParam(): Get dict with normally-distributed physiological factors 
+                            for a population of observers.
+
+# fnc_genMonteCarloObs(): Monte-Carlo generation of individual observer 
+                            color matching functions (cone fundamentals) for a
+                            certain age and field size.
+
+# fnc_genMonteCarloObs_USCensusAgeDist(): Monte-Carlo generation of individual 
+                                            observer cone fundamentals using
+                                            US Census Data for list_Age.
+
+# fnc_getCatObs(): Generate cone fundamentals for categorical observers.
+
+
+#------------------------------------------------------------------------------
+
+    References:
+        1. Asano Y, Fairchild MD, and Blondé L (2016). 
+            Individual Colorimetric Observer Model. 
+            PLoS One 11, 1–19.
+        2. Asano Y, Fairchild MD, Blondé L, and Morvan P (2016). 
+            Color matching experiment for highlighting interobserver variability. 
+            Color Res. Appl. 41, 530–539.
+        3. CIE, and CIE (2006). Fundamental Chromaticity Diagram with Physiological Axes - Part I 
+            (Vienna: CIE).
+            
 #------------------------------------------------------------------------------
 Created on Thu Apr 19 13:29:15 2018
 
@@ -49,7 +80,52 @@ def cie2006cmfsEx(age = 32,fieldsize = 10,\
                   var_od_L = 0, var_od_M = 0, var_od_S = 0,\
                   var_shft_L = 0, var_shft_M = 0, var_shft_S = 0,\
                   out = 'LMS'):
-
+    """
+    Generate Individual Observer CMFs (cone fundamentals) 
+    based on CIE2006 cone fundamentals and published literature 
+    on observer variability in color matching and in physiological parameters.
+    
+    Args:
+        :age: 32 or float or int, optional
+            Observer age
+        :fieldsize: 10, optional
+            Field size of stimulus in degrees.
+        :var_od_lens: 0, optional
+            Variance in peak optical density of lens.
+        :var_od_macula: 0, optional
+            Variance in peak optical density of macula.
+        :var_od_L: 0, optional
+            Variance in peak optical density of L-cone.
+        :var_od_M: 0, optional
+            Variance in peak optical density of M-cone.
+        :var_od_S: 0, optional
+            Variance in peak optical density of S-cone.
+        :var_shft_L: 0, optional
+            Variance in peak wavelength shift of L-cone. 
+        :var_shft_L: 0, optional
+            Variance in peak wavelength shift of M-cone.  
+        :var_shft_S: 0, optional
+            Variance in peak wavelength shift of S-cone. 
+        :out: 'LMS' or , optional
+            Determines output.
+            
+    Returns:
+        :returns: 
+            - 'LMS' : numpy.ndarray with individual observer area-normalized cone fundamentals.
+            - 'trans_lens': numpy.ndarray with lens transmission
+            - 'trans_macula': numpy.ndarray with macula transmission
+            - 'sens_photopig' : numpy.ndarray with photopigment sens.
+            
+    References:
+        1. Asano Y, Fairchild MD, and Blondé L (2016). 
+            Individual Colorimetric Observer Model. 
+            PLoS One 11, 1–19.
+        2. Asano Y, Fairchild MD, Blondé L, and Morvan P (2016). 
+            Color matching experiment for highlighting interobserver variability. 
+            Color Res. Appl. 41, 530–539.
+        3. CIE, and CIE (2006). Fundamental Chromaticity Diagram with Physiological Axes - Part I 
+            (Vienna: CIE).
+    """
     fs = fieldsize
     rmd = _INDVCMF_DATA['rmd'].copy() 
     LMSa = _INDVCMF_DATA['LMSa'].copy() 
@@ -112,7 +188,7 @@ def cie2006cmfsEx(age = 32,fieldsize = 10,\
     # Output extra:
     trans_lens = 10**(-correct_lomd) 
     trans_macula = 10**(-corrected_rmd) 
-    sens_photopig = alpha_lms * wl #repmat(wl,1,3)
+    sens_photopig = alpha_lms * wl 
 
     if (out == 'LMS'):
         return LMS
@@ -126,6 +202,16 @@ def cie2006cmfsEx(age = 32,fieldsize = 10,\
 def fnc_MonteCarloParam(n_population = 1, stdDevAllParam = _INDVCMF_STD_DEV_ALL_PARAM.copy()):
     """
     Get dict with normally-distributed physiological factors for a population of observers.
+    
+    Args:
+        :n_population: 1, optional
+            Number of individual observers in population.
+        :stdDevAllParam: _INDVCMF_STD_DEV_ALL_PARAM, optional
+            Dict with parameters for:
+                ['od_lens', 'od_macula', 'od_L', 'od_M', 'od_S', 'shft_L', 'shft_M', 'shft_S']
+    
+    Returns:
+        :returns: dict with n_population randomly drawn parameters.
     """
 
     varParam = {}
@@ -142,7 +228,7 @@ def fnc_MonteCarloParam(n_population = 1, stdDevAllParam = _INDVCMF_STD_DEV_ALL_
 
 def fnc_genMonteCarloObs(n_population = 1, fieldsize = 10, list_Age = [32], out = 'LMS'):
     """
-    Monte-Carlo generation of individual observer color matching functions.
+    Monte-Carlo generation of individual observer cone fundamentals.
     
     Args: 
         :n_population: 1, optional
@@ -159,6 +245,16 @@ def fnc_genMonteCarloObs(n_population = 1, fieldsize = 10, list_Age = [32], out 
             - LMS: numpy.ndarray with population LMS functions.
             - var_age: numpy.ndarray with population observer ages.
             - vAll: dict with population physiological factors (see .keys()) 
+            
+    References:
+        1. Asano Y, Fairchild MD, and Blondé L (2016). 
+            Individual Colorimetric Observer Model. 
+            PLoS One 11, 1–19.
+        2. Asano Y, Fairchild MD, Blondé L, and Morvan P (2016). 
+            Color matching experiment for highlighting interobserver variability. 
+            Color Res. Appl. 41, 530–539.
+        3. CIE, and CIE (2006). Fundamental Chromaticity Diagram with Physiological Axes - Part I 
+            (Vienna: CIE).
     """
 
     # Scale down StdDev by scalars optimized using Asano's 75 observers 
@@ -207,7 +303,7 @@ def fnc_genMonteCarloObs(n_population = 1, fieldsize = 10, list_Age = [32], out 
 
 def fnc_genMonteCarloObs_USCensusAgeDist(n_population = 1, fieldsize = 10, out = 'LMS'):
     """
-    Monte-Carlo generation of individual observer color matching functions using
+    Monte-Carlo generation of individual observer cone fundamentals using
     US Census Data for list_Age.
     
     Args: 
@@ -249,7 +345,7 @@ def fnc_genMonteCarloObs_USCensusAgeDist(n_population = 1, fieldsize = 10, out =
         
 def fnc_getCatObs(n_cat = 10, fieldsize = 2, out = 'LMS'):
     """
-    Generate categorical observers.
+    Generate cone fundamentals for categorical observers.
     
     Args: 
         :n_cat: 10, optional
@@ -300,10 +396,6 @@ if __name__ == '__main__':
     LMS, trans_lens, trans_macula, sens_photopig, LMSa = cie2006cmfsEx(out = 'LMS,trans_lens,trans_macula,sens_photopig,LMSa')
     
     plt.figure()
-#    plt.plot(wl[:,None],LMSa[0].T, color ='r', linestyle='-')
-#    plt.plot(wl[:,None],LMSa[1].T, color ='g', linestyle='-')
-#    plt.plot(wl[:,None],LMSa[2].T, color ='b', linestyle='-')
-    
     plt.plot(wl[:,None],LMS[0].T, color ='r', linestyle='--')
     plt.plot(wl[:,None],LMS[1].T, color ='g', linestyle='--')
     plt.plot(wl[:,None],LMS[2].T, color ='b', linestyle='--')
