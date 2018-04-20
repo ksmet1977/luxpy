@@ -44,7 +44,8 @@ Loads the following luxpy sub-packages, modules and classes:
     1.  spectral/ 
             cmf.py
             spectral.py
-            spectral_databases
+            spectral_databases.py
+            individual_observer_cmf_model.py (imports into indvcmf namespace)
             
     2.  ctf/ 
             colortransforms.py (imported directly into luxpy namespace)
@@ -163,6 +164,10 @@ __all__ += ['math']
 # Load spectral module:
 from .spectral import *
 __all__ += spectral.__all__
+
+# load Asano Individual Observer lms-CMF model:
+from .spectral import individual_observer_cmf_model as indvcmf
+__all__ += ['indvcmf'] 
 
 # Load color/chromaticty transforms module:
 from .ctf import *

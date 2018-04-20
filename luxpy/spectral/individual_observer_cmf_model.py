@@ -329,6 +329,9 @@ def fnc_genMonteCarloObs(n_population = 1, fieldsize = 10, list_Age = [32], out 
 #            trans_macula[:,k] = t_trans_macula 
 #            sens_photopig[:,:,k] = t_sens_photopig 
 
+    if n_population == 1:
+        LMS_All = np.squeeze(LMS_All, axis = 2)
+		
     if (out == 'LMS'):
         return LMS_All
     elif (out == 'LMS,var_age,vAll'):
@@ -371,6 +374,10 @@ def fnc_genMonteCarloObs_USCensusAgeDist(n_population = 1, fieldsize = 10, out =
 
     LMS_All, var_age, vAll = fnc_genMonteCarloObs(n_population = n_population, list_Age = list_Age, fieldsize = fieldsize, out = out) 
     
+	
+    if n_population == 1:
+        LMS_All = np.squeeze(LMS_All, axis = 2)
+	
     if (out == 'LMS'):
         return LMS_All
     elif (out == 'LMS,var_age,vAll'):
@@ -440,6 +447,9 @@ def fnc_getCatObs(n_cat = 10, fieldsize = 2, out = 'LMS'):
         LMS_All[:,:,k] = t_LMS 
     LMS_All[np.where(LMS_All < 0)] = 0
     
+    if n_cat == 1:
+        LMS_All = np.squeeze(LMS_All, axis = 2)
+	
     if (out == 'LMS'):
         return LMS_All
     elif (out == 'LMS,var_age,vAll'):
