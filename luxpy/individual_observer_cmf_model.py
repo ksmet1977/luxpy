@@ -3,6 +3,10 @@
 ###############################################################################
 # Module for Individual Observer lms-CMFs (Asano, 2016)
 ###############################################################################
+ Port of Matlab code from:
+     https://www.rit.edu/cos/colorscience/re_AsanoObserverFunctions.php
+     (Accessed April 20, 2018)
+#------------------------------------------------------------------------------
 
 # cie2006cmfsEx(): Generate Individual Observer CMFs (cone fundamentals) 
                     based on CIE2006 cone fundamentals and published literature 
@@ -44,6 +48,10 @@ from luxpy import np, pd, interpolate, math, _PKG_PATH, _SEP, dictkv,  xyzbar, g
 
 from luxpy import plt
 
+__all__ = ['_INDVCMF_DATA_PATH','_INDVCMF_DATA','_INDVCMF_STD_DEV_ALL_PARAM','_INDVCMF_CATOBSPFCTR', '_INDVCMF_M_2d', '_INDVCMF_M_10d']
+__all__ +=['cie2006cmfsEx','fnc_MonteCarloParam','fnc_genMonteCarloObs','fnc_genMonteCarloObs_USCensusAgeDist','fnc_getCatObs']
+
+
 _INDVCMF_DATA_PATH = _PKG_PATH + _SEP + 'data' + _SEP + 'indvcmfs' + _SEP
 
 # Load data from files:
@@ -56,7 +64,7 @@ _INDVCMF_DATA['CatObsPfctr'] = getdata(_INDVCMF_DATA_PATH  + 'CatObsPfctr.csv', 
 
 # Store var of. physiological parameters in dict:
 _INDVCMF_STD_DEV_ALL_PARAM = {}
-_INDVCMF_STD_DEV_ALL_PARAM['od_lens'] = 19.1
+_INDVCMF_STD_DEV_ALL_PARAM['od_lens'] = 19.1 # from matlab code
 _INDVCMF_STD_DEV_ALL_PARAM['od_macula'] = 37.2
 _INDVCMF_STD_DEV_ALL_PARAM['od_L'] = 17.9
 _INDVCMF_STD_DEV_ALL_PARAM['od_M'] = 17.9
@@ -65,12 +73,39 @@ _INDVCMF_STD_DEV_ALL_PARAM['shft_L'] = 4.0
 _INDVCMF_STD_DEV_ALL_PARAM['shft_M'] = 3.0
 _INDVCMF_STD_DEV_ALL_PARAM['shft_S'] = 2.5
 
+## from website (corrected values from Germany (GE) data):
+## (corrected in fnc_genMonteCarloObs)
+#_INDVCMF_STD_DEV_ALL_PARAM_GE['od_lens'] = 18.7 
+#_INDVCMF_STD_DEV_ALL_PARAM_GE['od_macula'] = 36.5
+#_INDVCMF_STD_DEV_ALL_PARAM_GE['od_L'] = 9.0
+#_INDVCMF_STD_DEV_ALL_PARAM_GE['od_M'] = 9.0
+#_INDVCMF_STD_DEV_ALL_PARAM_GE['od_S'] = 7.4
+#_INDVCMF_STD_DEV_ALL_PARAM_GE['shft_L'] = 2.0
+#_INDVCMF_STD_DEV_ALL_PARAM_GE['shft_M'] = 1.5
+#_INDVCMF_STD_DEV_ALL_PARAM_GE['shft_S'] = 1.3
+
 # Define dict with Iteratively Derived Cat.Obs.:
 t_data = getdata(_INDVCMF_DATA_PATH  + 'CatObsPfctr.csv', header = None).T
 dict_values = [t_data[:,i+1] for i in range(t_data.shape[1]-1)]
 dict_keys = list(_INDVCMF_STD_DEV_ALL_PARAM.keys())
 _INDVCMF_CATOBSPFCTR = dict(zip(dict_keys, dict_values))
 _INDVCMF_CATOBSPFCTR['age'] = t_data[:,0] 
+
+
+# Matrices for conversion from LMS cone fundamentals to XYZ CMFs:
+# (https://www.rit.edu/cos/colorscience/re_AsanoObserverFunctions.php)
+# For 2-degree, the 3x3 matrix is:
+
+_INDVCMF_M_2d = np.array([[0.4151, -0.2424, 0.0425],
+                          [0.1355, 0.0833, -0.0043],
+                          [-0.0093, 0.0125, 0.2136]])
+
+# For 10-degree, the 3x3 matrix is:
+_INDVCMF_M_10d = np.array([[0.4499, -0.2630, 0.0460],
+                           [0.1617, 0.0726, -0.0011],
+                           [-0.0036, 0.0054, 0.2291]])
+
+
 
 _WL_CRIT = 620 # Asano: 620 nm: wavelenght at which interpolation fails for S-cones
 wl = getwlr([390,780,5]) # wavelength range of specrtal data in _INDVCMF_DATA
@@ -91,21 +126,21 @@ def cie2006cmfsEx(age = 32,fieldsize = 10,\
         :fieldsize: 10, optional
             Field size of stimulus in degrees.
         :var_od_lens: 0, optional
-            Variance in peak optical density of lens.
+            Std Dev. in peak optical density [%] of lens.
         :var_od_macula: 0, optional
-            Variance in peak optical density of macula.
+            Std Dev. in peak optical density [%] of macula.
         :var_od_L: 0, optional
-            Variance in peak optical density of L-cone.
+            Std Dev. in peak optical density [%] of L-cone.
         :var_od_M: 0, optional
-            Variance in peak optical density of M-cone.
+            Std Dev. in peak optical density [%] of M-cone.
         :var_od_S: 0, optional
-            Variance in peak optical density of S-cone.
+            Std Dev. in peak optical density [%] of S-cone.
         :var_shft_L: 0, optional
-            Variance in peak wavelength shift of L-cone. 
+            Std Dev. in peak wavelength shift [nm] of L-cone. 
         :var_shft_L: 0, optional
-            Variance in peak wavelength shift of M-cone.  
+            Std Dev. in peak wavelength shift [nm] of M-cone.  
         :var_shft_S: 0, optional
-            Variance in peak wavelength shift of S-cone. 
+            Std Dev. in peak wavelength shift [nm] of S-cone. 
         :out: 'LMS' or , optional
             Determines output.
             
@@ -360,7 +395,28 @@ def fnc_getCatObs(n_cat = 10, fieldsize = 2, out = 'LMS'):
             - LMS: numpy.ndarray with population LMS functions.
             - var_age: numpy.ndarray with population observer ages.
             - vAll: dict with population physiological factors (see .keys()) 
-    
+    Notes:
+        Categorical observers are observer functions that would represent 
+        color-normal populations. They are finite and discrete as opposed to 
+        observer functions generated from the individual colorimetric observer 
+        model. Thus, they would offer more convenient and practical approaches
+        for the personalized color imaging workflow and color matching analyses.
+        Categorical observers were derived in two steps. 
+        At the first step, 10000 observer functions were generated from the 
+        individual colorimetric observer model using Monte Carlo simulation. 
+        At the second step, the cluster analysis, a modified k-medoids algorithm,
+        was applied to the 10000 observers minimizing the squared Euclidean 
+        distance in cone fundamentals space, and categorical observers were 
+        derived iteratively. Since the proposed categorical observers are 
+        defined by their physiological parameters and ages, their CMFs can be 
+        derived for any target field size.
+
+        Categorical observers were ordered by the importance; 
+        the first categorical observer vas the average observer equivalent to 
+        CIEPO06 with 38 year-old for a given field size, followed by the second
+        most important categorical observer, the third, and so on.
+        
+        (see: https://www.rit.edu/cos/colorscience/re_AsanoObserverFunctions.php)
     """
     # Use Iteratively Derived Cat.Obs.:
     var_age = _INDVCMF_CATOBSPFCTR['age'].copy()
