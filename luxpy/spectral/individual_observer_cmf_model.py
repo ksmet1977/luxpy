@@ -15,14 +15,12 @@
 
 # fnc_MonteCarloParam(): Get dict with normally-distributed physiological factors 
                             for a population of observers.
+                            
+# get_USCensusAgeDist(): Get US Census Age Distribution
 
 # fnc_genMonteCarloObs(): Monte-Carlo generation of individual observer 
                             color matching functions (cone fundamentals) for a
                             certain age and field size.
-
-# fnc_genMonteCarloObs_USCensusAgeDist(): Monte-Carlo generation of individual 
-                                            observer cone fundamentals using
-                                            US Census Data for list_Age.
 
 # fnc_getCatObs(): Generate cone fundamentals for categorical observers.
 
@@ -45,7 +43,7 @@ Created on Thu Apr 19 13:29:15 2018
 
 @author: kevin.smet
 """
-from luxpy import np, pd, interpolate, math, _PKG_PATH, _SEP, dictkv,  xyzbar, getdata, getwlr
+from luxpy import np, pd, interpolate, math, _PKG_PATH, _SEP, dictkv,  xyzbar, spd, getdata, getwlr
 
 from luxpy import plt
 
@@ -109,9 +107,9 @@ _INDVCMF_M_10d = np.array([[0.4499, -0.2630, 0.0460],
 
 
 _WL_CRIT = 620 # Asano: 620 nm: wavelenght at which interpolation fails for S-cones
-wl = getwlr([390,780,5]) # wavelength range of specrtal data in _INDVCMF_DATA
+_WL = getwlr([390,780,5]) # wavelength range of specrtal data in _INDVCMF_DATA
 
-def cie2006cmfsEx(age = 32,fieldsize = 10,\
+def cie2006cmfsEx(age = 32,fieldsize = 10, wl = None,\
                   var_od_lens = 0, var_od_macula = 0, \
                   var_od_L = 0, var_od_M = 0, var_od_S = 0,\
                   var_shft_L = 0, var_shft_M = 0, var_shft_S = 0,\
@@ -125,7 +123,10 @@ def cie2006cmfsEx(age = 32,fieldsize = 10,\
         :age: 32 or float or int, optional
             Observer age
         :fieldsize: 10, optional
-            Field size of stimulus in degrees.
+            Field size of stimulus in degrees (between 2° and 10°).
+        :wl: None, optional
+            Interpolation/extraplation of :LMS: output to specified wavelengths.
+            None: output original _WL = np.array([390,780,5])
         :var_od_lens: 0, optional
             Std Dev. in peak optical density [%] of lens.
         :var_od_macula: 0, optional
@@ -151,9 +152,11 @@ def cie2006cmfsEx(age = 32,fieldsize = 10,\
     Returns:
         :returns: 
             - 'LMS' : numpy.ndarray with individual observer area-normalized cone fundamentals.
-            - 'trans_lens': numpy.ndarray with lens transmission
-            - 'trans_macula': numpy.ndarray with macula transmission
-            - 'sens_photopig' : numpy.ndarray with photopigment sens.
+                Wavelength have been added.
+                
+            [- 'trans_lens': numpy.ndarray with lens transmission (no wavelengths added, no interpolation)
+             - 'trans_macula': numpy.ndarray with macula transmission (no wavelengths added, no interpolation)
+             - 'sens_photopig' : numpy.ndarray with photopigment sens. (no wavelengths added, no interpolation)]
             
     References:
         1. Asano Y, Fairchild MD, and Blondé L (2016). 
@@ -183,20 +186,20 @@ def cie2006cmfsEx(age = 32,fieldsize = 10,\
     
     # Peak Wavelength Shift:
     wl_shifted = np.empty(LMSa.shape)
-    wl_shifted[0] = wl + var_shft_L 
-    wl_shifted[1] = wl + var_shft_M 
-    wl_shifted[2] = wl + var_shft_S 
+    wl_shifted[0] = _WL + var_shft_L 
+    wl_shifted[1] = _WL + var_shft_M 
+    wl_shifted[2] = _WL + var_shft_S 
     
     LMSa_shft = np.empty(LMSa.shape)
     kind = 'cubic'
-    LMSa_shft[0] = interpolate.interp1d(wl_shifted[0],LMSa[0], kind = kind, bounds_error = False, fill_value = "extrapolate")(wl)
-    LMSa_shft[1] = interpolate.interp1d(wl_shifted[1],LMSa[1], kind = kind, bounds_error = False, fill_value = "extrapolate")(wl)
-    LMSa_shft[2] = interpolate.interp1d(wl_shifted[2],LMSa[2], kind = kind, bounds_error = False, fill_value = "extrapolate")(wl)
-#    LMSa[2,np.where(wl >= _WL_CRIT)] = 0 #np.nan # Not defined above 620nm
-#    LMSa_shft[2,np.where(wl >= _WL_CRIT)] = 0
+    LMSa_shft[0] = interpolate.interp1d(wl_shifted[0],LMSa[0], kind = kind, bounds_error = False, fill_value = "extrapolate")(_WL)
+    LMSa_shft[1] = interpolate.interp1d(wl_shifted[1],LMSa[1], kind = kind, bounds_error = False, fill_value = "extrapolate")(_WL)
+    LMSa_shft[2] = interpolate.interp1d(wl_shifted[2],LMSa[2], kind = kind, bounds_error = False, fill_value = "extrapolate")(_WL)
+#    LMSa[2,np.where(_WL >= _WL_CRIT)] = 0 #np.nan # Not defined above 620nm
+#    LMSa_shft[2,np.where(_WL >= _WL_CRIT)] = 0
     
     ssw = np.hstack((0,np.sign(np.diff(LMSa_shft[2,:])))) #detect poor interpolation (sign switch due to instability)
-    LMSa_shft[2,np.where((ssw >= 0) & (wl > 560))] = np.nan
+    LMSa_shft[2,np.where((ssw >= 0) & (_WL > 560))] = np.nan
     
     
     # corrected LMS (no age correction):
@@ -210,13 +213,13 @@ def cie2006cmfsEx(age = 32,fieldsize = 10,\
     alpha_lms[2] = 1 - 10**(-pkOd_S*(10**LMSa_shft[2]))
     
     # this fix is required because the above math fails for alpha_lms[2,:]==0
-    alpha_lms[2,np.where(wl >= _WL_CRIT)] = 0 
+    alpha_lms[2,np.where(_WL >= _WL_CRIT)] = 0 
     
     # Corrected to Corneal Incidence:
     lms_barq = alpha_lms * (10**(-corrected_rmd - correct_lomd))*np.ones(alpha_lms.shape)
 
     # Corrected to Energy Terms:
-    lms_bar = lms_barq * wl
+    lms_bar = lms_barq * _WL
 
     # Set NaN values to zero:
     lms_bar[np.isnan(lms_bar)] = 0
@@ -224,15 +227,28 @@ def cie2006cmfsEx(age = 32,fieldsize = 10,\
     # normalized:
     LMS = 100 * lms_bar / np.nansum(lms_bar, axis = 1, keepdims = True)
 
+    
     # Output extra:
     trans_lens = 10**(-correct_lomd) 
     trans_macula = 10**(-corrected_rmd) 
-    sens_photopig = alpha_lms * wl 
+    sens_photopig = alpha_lms * _WL 
 
+    # Add wavelengths:
+    LMS = np.vstack((_WL,LMS))
+    
     if ('xyz' in out.lower().split(',')):
         LMS = fnc_lms_to_xyz(LMS, fieldsize, out = 'xyz', allow_negative_values = allow_negative_values)
         out = out.replace('xyz','LMS').replace('XYZ','LMS')
+    if ('lms' in out.lower().split(',')):
+        out = out.replace('lms','LMS')
    
+    # Interpolate/extrapolate:
+    if wl is None:
+        interpolation = None
+    else:
+        interpolation = 'cubic'
+    LMS = spd(LMS, wl = wl, interpolation = interpolation, norm_type = 'area')
+    
     if (out == 'LMS'):
         return LMS
     elif (out == 'LMS,trans_lens,trans_macula,sens_photopig'):
@@ -268,20 +284,42 @@ def fnc_MonteCarloParam(n_population = 1, stdDevAllParam = _INDVCMF_STD_DEV_ALL_
         
     return varParam  
   
+def get_USCensusAgeDist():
+    """
+    Get US Census Age Distribution
+    """
+    t_num = _INDVCMF_DATA['USCensus2010population'] 
+    
+    list_AgeCensus = t_num[0] 
+    freq_AgeCensus = np.round(t_num[1]/1000) # Reduce # of populations to manageable number, this doesn't change probability
+    
+    # Remove age < 10 and 70 < age:
+    freq_AgeCensus[:10] = 0
+    freq_AgeCensus[71:] = 0
+      
+    list_Age = [] 
+    for k in range(len(list_AgeCensus)):
+        list_Age = np.hstack((list_Age, np.repeat(list_AgeCensus[k],freq_AgeCensus[k]))) 
 
-def fnc_genMonteCarloObs(n_population = 1, fieldsize = 10, list_Age = [32], out = 'LMS', allow_negative_values = False):
+    return list_Age    
+
+def fnc_genMonteCarloObs(n_population = 1, fieldsize = 10, list_Age = [32], out = 'LMS', wl = None, allow_negative_values = False):
     """
     Monte-Carlo generation of individual observer cone fundamentals.
     
     Args: 
         :n_population: 1, optional
             Number of observer CMFs to generate.
-        :list_Age: list of observer ages, optional
+        :list_Age: list of observer ages or str, optional
             Defaults to 32 (cfr. CIE2006 CMFs)
-        :fieldsize: fieldsize in degrees, optional
+            If 'us_census': use US population census of 2010 to generate list_Age.
+        :fieldsize: fieldsize in degrees (between 2° and 10°), optional
             Defaults to 10°.
         :out: 'LMS' or str, optional
             Determines output.
+        :wl: None, optional
+            Interpolation/extraplation of :LMS: output to specified wavelengths.
+            None: output original _WL = np.array([390,780,5])
         :allow_negative_values: False, optional
             Cone fundamentals or color matching functions should not have negative values.
                 If False: X[X<0] = 0.
@@ -312,7 +350,10 @@ def fnc_genMonteCarloObs(n_population = 1, fieldsize = 10, list_Age = [32], out 
 
     # Get Normally-distributed Physiological Factors:
     vAll = fnc_MonteCarloParam(n_population = n_population) 
-      
+     
+    if list_Age is 'us_census':
+        list_Age = get_USCensusAgeDist()
+    
     # Generate Random Ages with the same probability density distribution 
     # as color matching experiment:
     sz_interval = 1 
@@ -323,15 +364,20 @@ def fnc_genMonteCarloObs(n_population = 1, fieldsize = 10, list_Age = [32], out 
     var_age = np.random.choice(np.unique(list_AgeRound), \
                                size = n_population, replace = True,\
                                p = p)
-
-    LMS_All = np.nan*np.ones((3, wl.shape[0],n_population))
+    
+    # Set requested wavelength range:
+    if wl is not None:
+        wl = getwlr(wl3 = wl)
+    else:
+        wl = _WL
+        
+    LMS_All = np.nan*np.ones((3+1, wl.shape[0],n_population))
     for k in range(n_population):
-        t_LMS, t_trans_lens, t_trans_macula, t_sens_photopig = cie2006cmfsEx(age = var_age[k], fieldsize = fieldsize,\
+        t_LMS, t_trans_lens, t_trans_macula, t_sens_photopig = cie2006cmfsEx(age = var_age[k], fieldsize = fieldsize, wl = wl,\
                                                                           var_od_lens = vAll['od_lens'][k], var_od_macula = vAll['od_macula'][k], \
                                                                           var_od_L = vAll['od_L'][k], var_od_M = vAll['od_M'][k], var_od_S = vAll['od_S'][k],\
                                                                           var_shft_L = vAll['shft_L'][k], var_shft_M = vAll['shft_M'][k], var_shft_S = vAll['shft_S'][k],\
                                                                           out = 'LMS,trans_lens,trans_macula,sens_photopig')                                    
-        
         LMS_All[:,:,k] = t_LMS
         
 #        listout = out.split(',')
@@ -346,7 +392,8 @@ def fnc_genMonteCarloObs(n_population = 1, fieldsize = 10, list_Age = [32], out 
     if ('xyz' in out.lower().split(',')):
         LMS_All = fnc_lms_to_xyz(LMS_All, fieldsize, out = 'xyz', allow_negative_values = allow_negative_values)
         out = out.replace('xyz','LMS').replace('XYZ','LMS')
-        
+    if ('lms' in out.lower().split(',')):
+        out = out.replace('lms','LMS')
 
     if (out == 'LMS'):
         return LMS_All
@@ -355,75 +402,21 @@ def fnc_genMonteCarloObs(n_population = 1, fieldsize = 10, list_Age = [32], out 
     else:
         return eval(out)
 
-
-def fnc_genMonteCarloObs_USCensusAgeDist(n_population = 1, fieldsize = 10, out = 'LMS', allow_negative_values = False):
-    """
-    Monte-Carlo generation of individual observer cone fundamentals using
-    US Census Data for list_Age.
-    
-    Args: 
-        :n_population: 1, optional
-            Number of observer CMFs to generate.
-        :fieldsize: fieldsize in degrees, optional
-            Defaults to 10°.
-        :out: 'LMS' or str, optional
-            Determines output.
-        :allow_negative_values: False, optional
-            Cone fundamentals or color matching functions should not have negative values.
-                If False: X[X<0] = 0.
-    
-    Returns:
-        :returns: LMS [,var_age, vAll] 
-            - LMS: numpy.ndarray with population LMS functions.
-            - var_age: numpy.ndarray with population observer ages.
-            - vAll: dict with population physiological factors (see .keys()) 
-    """
-
-    t_num = _INDVCMF_DATA['USCensus2010population'] 
-    
-    list_AgeCensus = t_num[0] 
-    freq_AgeCensus = np.round(t_num[1]/1000) # Reduce # of populations to manageable number, this doesn't change probability
-    
-    # Remove age < 10 and 70 < age:
-    freq_AgeCensus[:10] = 0
-    freq_AgeCensus[71:] = 0
-      
-    list_Age = [] 
-    for k in range(len(list_AgeCensus)):
-        list_Age = np.hstack((list_Age, np.repeat(list_AgeCensus[k],freq_AgeCensus[k]))) 
-
-    LMS_All, var_age, vAll = fnc_genMonteCarloObs(n_population = n_population,\
-                                                  list_Age = list_Age, \
-                                                  fieldsize = fieldsize,\
-                                                  out = 'LMS,var_age,vAll',\
-                                                  allow_negative_values = allow_negative_values) 
-    
-	
-    if n_population == 1:
-        LMS_All = np.squeeze(LMS_All, axis = 2)
-
-    if ('xyz' in out.lower().split(',')):
-        LMS_All = fnc_lms_to_xyz(LMS_All, fieldsize, out = 'xyz', allow_negative_values = allow_negative_values)
-        out = out.replace('xyz','LMS').replace('XYZ','LMS')
-    
-    if (out == 'LMS'):
-        return LMS_All
-    elif (out == 'LMS,var_age,vAll'):
-        return LMS_All,var_age,vAll 
-    else:
-        return eval(out)
         
-def fnc_getCatObs(n_cat = 10, fieldsize = 2, out = 'LMS', allow_negative_values = False):
+def fnc_getCatObs(n_cat = 10, fieldsize = 2, out = 'LMS', wl = None, allow_negative_values = False):
     """
     Generate cone fundamentals for categorical observers.
     
     Args: 
         :n_cat: 10, optional
             Number of observer CMFs to generate.
-        :fieldsize: fieldsize in degrees, optional
+        :fieldsize: fieldsize in degrees (between 2° and 10°), optional
             Defaults to 10°.
         :out: 'LMS' or str, optional
             Determines output.
+        :wl: None, optional
+            Interpolation/extraplation of :LMS: output to specified wavelengths.
+            None: output original _WL = np.array([390,780,5])
         :allow_negative_values: False, optional
             Cone fundamentals or color matching functions should not have negative values.
                 If False: X[X<0] = 0.
@@ -461,10 +454,15 @@ def fnc_getCatObs(n_cat = 10, fieldsize = 2, out = 'LMS', allow_negative_values 
     vAll = _INDVCMF_CATOBSPFCTR.copy()
     vAll.pop('age')
 
+    # Set requested wavelength range:
+    if wl is not None:
+        wl = getwlr(wl3 = wl)
+    else:
+        wl = _WL
 
-    LMS_All = np.nan*np.ones((3,wl.shape[0],n_cat)) 
+    LMS_All = np.nan*np.ones((3+1,_WL.shape[0],n_cat)) 
     for k in range(n_cat):
-        t_LMS = cie2006cmfsEx(age = var_age[k],fieldsize = fieldsize,\
+        t_LMS = cie2006cmfsEx(age = var_age[k],fieldsize = fieldsize, wl = wl,\
                               var_od_lens = vAll['od_lens'][k],\
                               var_od_macula = vAll['od_macula'][k],\
                               var_od_L = vAll['od_L'][k],\
@@ -476,6 +474,7 @@ def fnc_getCatObs(n_cat = 10, fieldsize = 2, out = 'LMS', allow_negative_values 
                               out = 'LMS')
         
         LMS_All[:,:,k] = t_LMS 
+    
     LMS_All[np.where(LMS_All < 0)] = 0
     
     if n_cat == 1:
@@ -484,7 +483,9 @@ def fnc_getCatObs(n_cat = 10, fieldsize = 2, out = 'LMS', allow_negative_values 
     if ('xyz' in out.lower().split(',')):
         LMS_All = fnc_lms_to_xyz(LMS_All, fieldsize, out = 'xyz', allow_negative_values = allow_negative_values)
         out = out.replace('xyz','LMS').replace('XYZ','LMS')
-    
+    if ('lms' in out.lower().split(',')):
+        out = out.replace('lms','LMS')
+        
     if (out == 'LMS'):
         return LMS_All
     elif (out == 'LMS,var_age,vAll'):
@@ -515,57 +516,58 @@ def fnc_lms_to_xyz(lms, fieldsize = 10, out = 'XYZ', allow_negative_values = Fal
         the _INDVCMF_M_2d and _INDVCMF_M_10d matrices.
     """
     a = (10-fieldsize)/(10-2)
+    wl = lms[None,0] #store wavelengths
     if a < 2:
         a = 2
     elif a > 10:
         a = 10        
     M = _INDVCMF_M_2d*(1 - a) + a*_INDVCMF_M_10d
     if lms.ndim > 2:
-        xyz = math.dot23(M,lms, keepdims = False)
+        xyz = np.vstack((wl,math.dot23(M,lms[1:,...], keepdims = False)))
     else:
-        xyz = np.dot(M,lms)
+        xyz = np.vstack((wl,np.dot(M,lms[1:,...])))
     if allow_negative_values == False:
         xyz[np.where(xyz < 0)] = 0
     return xyz
     
 if __name__ == '__main__':
     
-    outcmf = 'xyz'
+    outcmf = 'lms'
     
     out = outcmf + ',trans_lens,trans_macula,sens_photopig,LMSa'
     LMS, trans_lens, trans_macula, sens_photopig, LMSa = cie2006cmfsEx(out = out)
     
     plt.figure()
-    plt.plot(wl[:,None],LMS[0].T, color ='r', linestyle='--')
-    plt.plot(wl[:,None],LMS[1].T, color ='g', linestyle='--')
-    plt.plot(wl[:,None],LMS[2].T, color ='b', linestyle='--')
-    plt.title('cie2006cmfsEx')
+    plt.plot(LMS[0],LMS[1], color ='r', linestyle='--')
+    plt.plot(LMS[0],LMS[2], color ='g', linestyle='--')
+    plt.plot(LMS[0],LMS[3], color ='b', linestyle='--')
+    plt.title('cie2006cmfsEx(...)')
     plt.show()
 
     out = outcmf + ',var_age,vAll'
 
     LMS_All, var_age, vAll = fnc_genMonteCarloObs(n_population = 10, fieldsize = 10, list_Age = [32], out = out)
     plt.figure()
-    plt.plot(wl[:,None],LMS_All[0,:,:], color ='r', linestyle='-')
-    plt.plot(wl[:,None],LMS_All[1,:,:], color ='g', linestyle='-')
-    plt.plot(wl[:,None],LMS_All[2,:,:], color ='b', linestyle='-')
-    plt.title('fnc_genMonteCarloObs')
+    plt.plot(LMS_All[0],LMS_All[1], color ='r', linestyle='-')
+    plt.plot(LMS_All[0],LMS_All[2], color ='g', linestyle='-')
+    plt.plot(LMS_All[0],LMS_All[3], color ='b', linestyle='-')
+    plt.title('fnc_genMonteCarloObs(...)')
     plt.show()
     
-    LMS_All_US, var_age_US, vAll_US = fnc_genMonteCarloObs_USCensusAgeDist(n_population = 10, fieldsize = 10, out = out)
+    LMS_All_US, var_age_US, vAll_US = fnc_genMonteCarloObs(n_population = 10, fieldsize = 10, out = out, list_Age = 'us_census')
     plt.figure()
-    plt.plot(wl[:,None],LMS_All_US[0,:,:], color ='r', linestyle='-')
-    plt.plot(wl[:,None],LMS_All_US[1,:,:], color ='g', linestyle='-')
-    plt.plot(wl[:,None],LMS_All_US[2,:,:], color ='b', linestyle='-')
-    plt.title('fnc_genMonteCarloObs_USCensusAgeDist')
+    plt.plot(LMS_All_US[0],LMS_All_US[1], color ='r', linestyle='-')
+    plt.plot(LMS_All_US[0],LMS_All_US[2], color ='g', linestyle='-')
+    plt.plot(LMS_All_US[0],LMS_All_US[3], color ='b', linestyle='-')
+    plt.title("fnc_genMonteCarloObs(..., list_Age = 'use_census')")
     plt.show()
     
     LMS_All_CatObs, var_age_CatObs, vAll_CatObs  = fnc_getCatObs(n_cat = 10, fieldsize = 2, out = out)
     plt.figure()
-    plt.plot(wl[:,None],LMS_All_CatObs[0,:,:], color ='r', linestyle='-')
-    plt.plot(wl[:,None],LMS_All_CatObs[1,:,:], color ='g', linestyle='-')
-    plt.plot(wl[:,None],LMS_All_CatObs[2,:,:], color ='b', linestyle='-')
-    plt.title('fnc_getCatObs')
+    plt.plot(LMS_All_CatObs[0],LMS_All_CatObs[1], color ='r', linestyle='-')
+    plt.plot(LMS_All_CatObs[0],LMS_All_CatObs[2], color ='g', linestyle='-')
+    plt.plot(LMS_All_CatObs[0],LMS_All_CatObs[3], color ='b', linestyle='-')
+    plt.title('fnc_getCatObs(...)')
     plt.show()
     
 #    XYZ_All_CatObs = fnc_lms_to_xyz(LMS_All_CatObs, fieldsize = 3)
