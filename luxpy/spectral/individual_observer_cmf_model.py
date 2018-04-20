@@ -26,6 +26,7 @@
 
 # fnc_getCatObs(): Generate cone fundamentals for categorical observers.
 
+# fnc_lms_to_xyz(): Convert from LMS cone fundamentals to XYZ color matching functions.
 
 #------------------------------------------------------------------------------
 
@@ -114,7 +115,7 @@ def cie2006cmfsEx(age = 32,fieldsize = 10,\
                   var_od_lens = 0, var_od_macula = 0, \
                   var_od_L = 0, var_od_M = 0, var_od_S = 0,\
                   var_shft_L = 0, var_shft_M = 0, var_shft_S = 0,\
-                  out = 'LMS'):
+                  out = 'LMS', allow_negative_values = False):
     """
     Generate Individual Observer CMFs (cone fundamentals) 
     based on CIE2006 cone fundamentals and published literature 
@@ -143,6 +144,9 @@ def cie2006cmfsEx(age = 32,fieldsize = 10,\
             Std Dev. in peak wavelength shift [nm] of S-cone. 
         :out: 'LMS' or , optional
             Determines output.
+        :allow_negative_values: False, optional
+            Cone fundamentals or color matching functions should not have negative values.
+                If False: X[X<0] = 0.
             
     Returns:
         :returns: 
@@ -225,6 +229,10 @@ def cie2006cmfsEx(age = 32,fieldsize = 10,\
     trans_macula = 10**(-corrected_rmd) 
     sens_photopig = alpha_lms * wl 
 
+    if ('xyz' in out.lower().split(',')):
+        LMS = fnc_lms_to_xyz(LMS, fieldsize, out = 'xyz', allow_negative_values = allow_negative_values)
+        out = out.replace('xyz','LMS').replace('XYZ','LMS')
+   
     if (out == 'LMS'):
         return LMS
     elif (out == 'LMS,trans_lens,trans_macula,sens_photopig'):
@@ -261,7 +269,7 @@ def fnc_MonteCarloParam(n_population = 1, stdDevAllParam = _INDVCMF_STD_DEV_ALL_
     return varParam  
   
 
-def fnc_genMonteCarloObs(n_population = 1, fieldsize = 10, list_Age = [32], out = 'LMS'):
+def fnc_genMonteCarloObs(n_population = 1, fieldsize = 10, list_Age = [32], out = 'LMS', allow_negative_values = False):
     """
     Monte-Carlo generation of individual observer cone fundamentals.
     
@@ -274,6 +282,9 @@ def fnc_genMonteCarloObs(n_population = 1, fieldsize = 10, list_Age = [32], out 
             Defaults to 10°.
         :out: 'LMS' or str, optional
             Determines output.
+        :allow_negative_values: False, optional
+            Cone fundamentals or color matching functions should not have negative values.
+                If False: X[X<0] = 0.
     
     Returns:
         :returns: LMS [,var_age, vAll] 
@@ -331,7 +342,12 @@ def fnc_genMonteCarloObs(n_population = 1, fieldsize = 10, list_Age = [32], out 
 
     if n_population == 1:
         LMS_All = np.squeeze(LMS_All, axis = 2)
-		
+	
+    if ('xyz' in out.lower().split(',')):
+        LMS_All = fnc_lms_to_xyz(LMS_All, fieldsize, out = 'xyz', allow_negative_values = allow_negative_values)
+        out = out.replace('xyz','LMS').replace('XYZ','LMS')
+        
+
     if (out == 'LMS'):
         return LMS_All
     elif (out == 'LMS,var_age,vAll'):
@@ -339,7 +355,8 @@ def fnc_genMonteCarloObs(n_population = 1, fieldsize = 10, list_Age = [32], out 
     else:
         return eval(out)
 
-def fnc_genMonteCarloObs_USCensusAgeDist(n_population = 1, fieldsize = 10, out = 'LMS'):
+
+def fnc_genMonteCarloObs_USCensusAgeDist(n_population = 1, fieldsize = 10, out = 'LMS', allow_negative_values = False):
     """
     Monte-Carlo generation of individual observer cone fundamentals using
     US Census Data for list_Age.
@@ -351,6 +368,9 @@ def fnc_genMonteCarloObs_USCensusAgeDist(n_population = 1, fieldsize = 10, out =
             Defaults to 10°.
         :out: 'LMS' or str, optional
             Determines output.
+        :allow_negative_values: False, optional
+            Cone fundamentals or color matching functions should not have negative values.
+                If False: X[X<0] = 0.
     
     Returns:
         :returns: LMS [,var_age, vAll] 
@@ -372,12 +392,20 @@ def fnc_genMonteCarloObs_USCensusAgeDist(n_population = 1, fieldsize = 10, out =
     for k in range(len(list_AgeCensus)):
         list_Age = np.hstack((list_Age, np.repeat(list_AgeCensus[k],freq_AgeCensus[k]))) 
 
-    LMS_All, var_age, vAll = fnc_genMonteCarloObs(n_population = n_population, list_Age = list_Age, fieldsize = fieldsize, out = out) 
+    LMS_All, var_age, vAll = fnc_genMonteCarloObs(n_population = n_population,\
+                                                  list_Age = list_Age, \
+                                                  fieldsize = fieldsize,\
+                                                  out = 'LMS,var_age,vAll',\
+                                                  allow_negative_values = allow_negative_values) 
     
 	
     if n_population == 1:
         LMS_All = np.squeeze(LMS_All, axis = 2)
-	
+
+    if ('xyz' in out.lower().split(',')):
+        LMS_All = fnc_lms_to_xyz(LMS_All, fieldsize, out = 'xyz', allow_negative_values = allow_negative_values)
+        out = out.replace('xyz','LMS').replace('XYZ','LMS')
+    
     if (out == 'LMS'):
         return LMS_All
     elif (out == 'LMS,var_age,vAll'):
@@ -385,7 +413,7 @@ def fnc_genMonteCarloObs_USCensusAgeDist(n_population = 1, fieldsize = 10, out =
     else:
         return eval(out)
         
-def fnc_getCatObs(n_cat = 10, fieldsize = 2, out = 'LMS'):
+def fnc_getCatObs(n_cat = 10, fieldsize = 2, out = 'LMS', allow_negative_values = False):
     """
     Generate cone fundamentals for categorical observers.
     
@@ -396,6 +424,9 @@ def fnc_getCatObs(n_cat = 10, fieldsize = 2, out = 'LMS'):
             Defaults to 10°.
         :out: 'LMS' or str, optional
             Determines output.
+        :allow_negative_values: False, optional
+            Cone fundamentals or color matching functions should not have negative values.
+                If False: X[X<0] = 0.
     
     Returns:
         :returns: LMS [,var_age, vAll] 
@@ -450,6 +481,10 @@ def fnc_getCatObs(n_cat = 10, fieldsize = 2, out = 'LMS'):
     if n_cat == 1:
         LMS_All = np.squeeze(LMS_All, axis = 2)
 	
+    if ('xyz' in out.lower().split(',')):
+        LMS_All = fnc_lms_to_xyz(LMS_All, fieldsize, out = 'xyz', allow_negative_values = allow_negative_values)
+        out = out.replace('xyz','LMS').replace('XYZ','LMS')
+    
     if (out == 'LMS'):
         return LMS_All
     elif (out == 'LMS,var_age,vAll'):
@@ -457,9 +492,48 @@ def fnc_getCatObs(n_cat = 10, fieldsize = 2, out = 'LMS'):
     else:
         return eval(out)
 
-
+def fnc_lms_to_xyz(lms, fieldsize = 10, out = 'XYZ', allow_negative_values = False):
+    """
+    Convert from LMS cone fundamentals to XYZ color matching functions.
+    
+    Args:
+        :lms: numpy.ndarray with lms cone fundamentals, optional
+            :fieldsize: fieldsize in degrees, optional
+            Defaults to 10°.
+        :out: 'xyz' or str, optional
+            Determines output.
+        :allow_negative_values: False, optional
+            XYZ color matching functions should not have negative values.
+                If False: xyz[xyz<0] = 0.
+    Returns:
+        :returns: LMS 
+            - LMS: numpy.ndarray with population XYZ color matching functions.    
+    
+    Note: 
+        For intermediate field sizes (2° < field size < 10°) a conversion matrix
+        is calculated by linear interpolation between 
+        the _INDVCMF_M_2d and _INDVCMF_M_10d matrices.
+    """
+    a = (10-fieldsize)/(10-2)
+    if a < 2:
+        a = 2
+    elif a > 10:
+        a = 10        
+    M = _INDVCMF_M_2d*(1 - a) + a*_INDVCMF_M_10d
+    if lms.ndim > 2:
+        xyz = math.dot23(M,lms, keepdims = False)
+    else:
+        xyz = np.dot(M,lms)
+    if allow_negative_values == False:
+        xyz[np.where(xyz < 0)] = 0
+    return xyz
+    
 if __name__ == '__main__':
-    LMS, trans_lens, trans_macula, sens_photopig, LMSa = cie2006cmfsEx(out = 'LMS,trans_lens,trans_macula,sens_photopig,LMSa')
+    
+    outcmf = 'xyz'
+    
+    out = outcmf + ',trans_lens,trans_macula,sens_photopig,LMSa'
+    LMS, trans_lens, trans_macula, sens_photopig, LMSa = cie2006cmfsEx(out = out)
     
     plt.figure()
     plt.plot(wl[:,None],LMS[0].T, color ='r', linestyle='--')
@@ -468,7 +542,9 @@ if __name__ == '__main__':
     plt.title('cie2006cmfsEx')
     plt.show()
 
-    LMS_All, var_age, vAll = fnc_genMonteCarloObs(n_population = 10, fieldsize = 10, list_Age = [32], out='LMS,var_age,vAll')
+    out = outcmf + ',var_age,vAll'
+
+    LMS_All, var_age, vAll = fnc_genMonteCarloObs(n_population = 10, fieldsize = 10, list_Age = [32], out = out)
     plt.figure()
     plt.plot(wl[:,None],LMS_All[0,:,:], color ='r', linestyle='-')
     plt.plot(wl[:,None],LMS_All[1,:,:], color ='g', linestyle='-')
@@ -476,7 +552,7 @@ if __name__ == '__main__':
     plt.title('fnc_genMonteCarloObs')
     plt.show()
     
-    LMS_All_US, var_age_US, vAll_US = fnc_genMonteCarloObs_USCensusAgeDist(n_population = 10, fieldsize = 10, out='LMS,var_age,vAll')
+    LMS_All_US, var_age_US, vAll_US = fnc_genMonteCarloObs_USCensusAgeDist(n_population = 10, fieldsize = 10, out = out)
     plt.figure()
     plt.plot(wl[:,None],LMS_All_US[0,:,:], color ='r', linestyle='-')
     plt.plot(wl[:,None],LMS_All_US[1,:,:], color ='g', linestyle='-')
@@ -484,10 +560,18 @@ if __name__ == '__main__':
     plt.title('fnc_genMonteCarloObs_USCensusAgeDist')
     plt.show()
     
-    LMS_All_CatObs, var_age_CatObs, vAll_CatObs  = fnc_getCatObs(n_cat = 10, fieldsize = 2, out = 'LMS,var_age,vAll')
+    LMS_All_CatObs, var_age_CatObs, vAll_CatObs  = fnc_getCatObs(n_cat = 10, fieldsize = 2, out = out)
     plt.figure()
     plt.plot(wl[:,None],LMS_All_CatObs[0,:,:], color ='r', linestyle='-')
     plt.plot(wl[:,None],LMS_All_CatObs[1,:,:], color ='g', linestyle='-')
     plt.plot(wl[:,None],LMS_All_CatObs[2,:,:], color ='b', linestyle='-')
     plt.title('fnc_getCatObs')
     plt.show()
+    
+#    XYZ_All_CatObs = fnc_lms_to_xyz(LMS_All_CatObs, fieldsize = 3)
+#    plt.figure()
+#    plt.plot(wl[:,None],XYZ_All_CatObs[0,:,:], color ='r', linestyle='-')
+#    plt.plot(wl[:,None],XYZ_All_CatObs[1,:,:], color ='g', linestyle='-')
+#    plt.plot(wl[:,None],XYZ_All_CatObs[2,:,:], color ='b', linestyle='-')
+#    plt.title('fnc_getCatObs XYZ')
+#    plt.show()
