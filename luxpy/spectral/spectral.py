@@ -504,7 +504,7 @@ def spd_to_xyz(data,  relative = True, rfl = None, cieobs = _CIEOBS, K = None, o
         scr = 'dict'
     else:
         scr = 'cieobs'
-        if K is None:
+        if (K is None) & (relative == False):
             #K = 1
             raise Exception('spd_to_xyz: user defined CMF set, \
                             but no scaling factor has been supplied.\

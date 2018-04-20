@@ -13,18 +13,18 @@
                     on observer variability in color matching and 
                     in physiological parameters.
 
-# fnc_MonteCarloParam(): Get dict with normally-distributed physiological factors 
+# getMonteCarloParam(): Get dict with normally-distributed physiological factors 
                             for a population of observers.
                             
-# get_USCensusAgeDist(): Get US Census Age Distribution
+# getUSCensusAgeDist(): Get US Census Age Distribution
 
-# fnc_genMonteCarloObs(): Monte-Carlo generation of individual observer 
+# genMonteCarloObs(): Monte-Carlo generation of individual observer 
                             color matching functions (cone fundamentals) for a
                             certain age and field size.
 
-# fnc_getCatObs(): Generate cone fundamentals for categorical observers.
+# getCatObs(): Generate cone fundamentals for categorical observers.
 
-# fnc_lms_to_xyz(): Convert from LMS cone fundamentals to XYZ color matching functions.
+# lmsb_to_xyzb(): Convert from LMS cone fundamentals to XYZ color matching functions.
 
 #------------------------------------------------------------------------------
 
@@ -48,7 +48,7 @@ from luxpy import np, pd, interpolate, math, _PKG_PATH, _SEP, dictkv,  xyzbar, s
 from luxpy import plt
 
 __all__ = ['_INDVCMF_DATA_PATH','_INDVCMF_DATA','_INDVCMF_STD_DEV_ALL_PARAM','_INDVCMF_CATOBSPFCTR', '_INDVCMF_M_2d', '_INDVCMF_M_10d']
-__all__ +=['cie2006cmfsEx','fnc_MonteCarloParam','fnc_genMonteCarloObs','fnc_genMonteCarloObs_USCensusAgeDist','fnc_getCatObs']
+__all__ +=['cie2006cmfsEx','getMonteCarloParam','genMonteCarloObs','getCatObs']
 
 
 _INDVCMF_DATA_PATH = _PKG_PATH + _SEP + 'data' + _SEP + 'indvcmfs' + _SEP
@@ -73,7 +73,7 @@ _INDVCMF_STD_DEV_ALL_PARAM['shft_M'] = 3.0
 _INDVCMF_STD_DEV_ALL_PARAM['shft_S'] = 2.5
 
 ## from website (corrected values from Germany (GE) data):
-## (corrected in fnc_genMonteCarloObs)
+## (corrected in genMonteCarloObs)
 #_INDVCMF_STD_DEV_ALL_PARAM_GE['od_lens'] = 18.7 
 #_INDVCMF_STD_DEV_ALL_PARAM_GE['od_macula'] = 36.5
 #_INDVCMF_STD_DEV_ALL_PARAM_GE['od_L'] = 9.0
@@ -237,7 +237,7 @@ def cie2006cmfsEx(age = 32,fieldsize = 10, wl = None,\
     LMS = np.vstack((_WL,LMS))
     
     if ('xyz' in out.lower().split(',')):
-        LMS = fnc_lms_to_xyz(LMS, fieldsize, out = 'xyz', allow_negative_values = allow_negative_values)
+        LMS = lmsb_to_xyzb(LMS, fieldsize, out = 'xyz', allow_negative_values = allow_negative_values)
         out = out.replace('xyz','LMS').replace('XYZ','LMS')
     if ('lms' in out.lower().split(',')):
         out = out.replace('lms','LMS')
@@ -258,24 +258,24 @@ def cie2006cmfsEx(age = 32,fieldsize = 10, wl = None,\
     else:
         return eval(out)
 
-def fnc_MonteCarloParam(n_population = 1, stdDevAllParam = _INDVCMF_STD_DEV_ALL_PARAM.copy()):
+def getMonteCarloParam(n_obs = 1, stdDevAllParam = _INDVCMF_STD_DEV_ALL_PARAM.copy()):
     """
     Get dict with normally-distributed physiological factors for a population of observers.
     
     Args:
-        :n_population: 1, optional
+        :n_obs: 1, optional
             Number of individual observers in population.
         :stdDevAllParam: _INDVCMF_STD_DEV_ALL_PARAM, optional
             Dict with parameters for:
                 ['od_lens', 'od_macula', 'od_L', 'od_M', 'od_S', 'shft_L', 'shft_M', 'shft_S']
     
     Returns:
-        :returns: dict with n_population randomly drawn parameters.
+        :returns: dict with n_obs randomly drawn parameters.
     """
 
     varParam = {}
     for k in list(stdDevAllParam.keys()):
-        varParam[k] = stdDevAllParam[k] * np.random.randn(n_population)
+        varParam[k] = stdDevAllParam[k] * np.random.randn(n_obs)
   
         # limit varAllParam so that it doesn't create negative val for 
         # lens, macula, pkod_LMS:
@@ -284,7 +284,7 @@ def fnc_MonteCarloParam(n_population = 1, stdDevAllParam = _INDVCMF_STD_DEV_ALL_
         
     return varParam  
   
-def get_USCensusAgeDist():
+def getUSCensusAgeDist():
     """
     Get US Census Age Distribution
     """
@@ -303,12 +303,12 @@ def get_USCensusAgeDist():
 
     return list_Age    
 
-def fnc_genMonteCarloObs(n_population = 1, fieldsize = 10, list_Age = [32], out = 'LMS', wl = None, allow_negative_values = False):
+def genMonteCarloObs(n_obs = 1, fieldsize = 10, list_Age = [32], out = 'LMS', wl = None, allow_negative_values = False):
     """
     Monte-Carlo generation of individual observer cone fundamentals.
     
     Args: 
-        :n_population: 1, optional
+        :n_obs: 1, optional
             Number of observer CMFs to generate.
         :list_Age: list of observer ages or str, optional
             Defaults to 32 (cfr. CIE2006 CMFs)
@@ -349,10 +349,10 @@ def fnc_genMonteCarloObs(n_population = 1, fieldsize = 10, list_Age = [32], out 
     stdDevAllParam = {k : v*scale_factors[k] for (k,v) in stdDevAllParam.items()}
 
     # Get Normally-distributed Physiological Factors:
-    vAll = fnc_MonteCarloParam(n_population = n_population) 
+    vAll = getMonteCarloParam(n_obs = n_obs) 
      
     if list_Age is 'us_census':
-        list_Age = get_USCensusAgeDist()
+        list_Age = getUSCensusAgeDist()
     
     # Generate Random Ages with the same probability density distribution 
     # as color matching experiment:
@@ -362,7 +362,7 @@ def fnc_genMonteCarloObs(n_population = 1, fieldsize = 10, list_Age = [32], out 
     p = h/h.sum() # probability density distribution
 
     var_age = np.random.choice(np.unique(list_AgeRound), \
-                               size = n_population, replace = True,\
+                               size = n_obs, replace = True,\
                                p = p)
     
     # Set requested wavelength range:
@@ -371,8 +371,8 @@ def fnc_genMonteCarloObs(n_population = 1, fieldsize = 10, list_Age = [32], out 
     else:
         wl = _WL
         
-    LMS_All = np.nan*np.ones((3+1, wl.shape[0],n_population))
-    for k in range(n_population):
+    LMS_All = np.nan*np.ones((3+1, wl.shape[0],n_obs))
+    for k in range(n_obs):
         t_LMS, t_trans_lens, t_trans_macula, t_sens_photopig = cie2006cmfsEx(age = var_age[k], fieldsize = fieldsize, wl = wl,\
                                                                           var_od_lens = vAll['od_lens'][k], var_od_macula = vAll['od_macula'][k], \
                                                                           var_od_L = vAll['od_L'][k], var_od_M = vAll['od_M'][k], var_od_S = vAll['od_S'][k],\
@@ -386,11 +386,11 @@ def fnc_genMonteCarloObs(n_population = 1, fieldsize = 10, list_Age = [32], out 
 #            trans_macula[:,k] = t_trans_macula 
 #            sens_photopig[:,:,k] = t_sens_photopig 
 
-    if n_population == 1:
+    if n_obs == 1:
         LMS_All = np.squeeze(LMS_All, axis = 2)
 	
     if ('xyz' in out.lower().split(',')):
-        LMS_All = fnc_lms_to_xyz(LMS_All, fieldsize, out = 'xyz', allow_negative_values = allow_negative_values)
+        LMS_All = lmsb_to_xyzb(LMS_All, fieldsize, out = 'xyz', allow_negative_values = allow_negative_values)
         out = out.replace('xyz','LMS').replace('XYZ','LMS')
     if ('lms' in out.lower().split(',')):
         out = out.replace('lms','LMS')
@@ -403,7 +403,7 @@ def fnc_genMonteCarloObs(n_population = 1, fieldsize = 10, list_Age = [32], out 
         return eval(out)
 
         
-def fnc_getCatObs(n_cat = 10, fieldsize = 2, out = 'LMS', wl = None, allow_negative_values = False):
+def getCatObs(n_cat = 10, fieldsize = 2, out = 'LMS', wl = None, allow_negative_values = False):
     """
     Generate cone fundamentals for categorical observers.
     
@@ -481,7 +481,7 @@ def fnc_getCatObs(n_cat = 10, fieldsize = 2, out = 'LMS', wl = None, allow_negat
         LMS_All = np.squeeze(LMS_All, axis = 2)
 	
     if ('xyz' in out.lower().split(',')):
-        LMS_All = fnc_lms_to_xyz(LMS_All, fieldsize, out = 'xyz', allow_negative_values = allow_negative_values)
+        LMS_All = lmsb_to_xyzb(LMS_All, fieldsize, out = 'xyz', allow_negative_values = allow_negative_values)
         out = out.replace('xyz','LMS').replace('XYZ','LMS')
     if ('lms' in out.lower().split(',')):
         out = out.replace('lms','LMS')
@@ -493,7 +493,7 @@ def fnc_getCatObs(n_cat = 10, fieldsize = 2, out = 'LMS', wl = None, allow_negat
     else:
         return eval(out)
 
-def fnc_lms_to_xyz(lms, fieldsize = 10, out = 'XYZ', allow_negative_values = False):
+def lmsb_to_xyzb(lms, fieldsize = 10, out = 'XYZ', allow_negative_values = False):
     """
     Convert from LMS cone fundamentals to XYZ color matching functions.
     
@@ -546,34 +546,34 @@ if __name__ == '__main__':
 
     out = outcmf + ',var_age,vAll'
 
-    LMS_All, var_age, vAll = fnc_genMonteCarloObs(n_population = 10, fieldsize = 10, list_Age = [32], out = out)
+    LMS_All, var_age, vAll = genMonteCarloObs(n_obs = 10, fieldsize = 10, list_Age = [32], out = out)
     plt.figure()
     plt.plot(LMS_All[0],LMS_All[1], color ='r', linestyle='-')
     plt.plot(LMS_All[0],LMS_All[2], color ='g', linestyle='-')
     plt.plot(LMS_All[0],LMS_All[3], color ='b', linestyle='-')
-    plt.title('fnc_genMonteCarloObs(...)')
+    plt.title('genMonteCarloObs(...)')
     plt.show()
     
-    LMS_All_US, var_age_US, vAll_US = fnc_genMonteCarloObs(n_population = 10, fieldsize = 10, out = out, list_Age = 'us_census')
+    LMS_All_US, var_age_US, vAll_US = genMonteCarloObs(n_obs = 10, fieldsize = 10, out = out, list_Age = 'us_census')
     plt.figure()
     plt.plot(LMS_All_US[0],LMS_All_US[1], color ='r', linestyle='-')
     plt.plot(LMS_All_US[0],LMS_All_US[2], color ='g', linestyle='-')
     plt.plot(LMS_All_US[0],LMS_All_US[3], color ='b', linestyle='-')
-    plt.title("fnc_genMonteCarloObs(..., list_Age = 'use_census')")
+    plt.title("genMonteCarloObs(..., list_Age = 'use_census')")
     plt.show()
     
-    LMS_All_CatObs, var_age_CatObs, vAll_CatObs  = fnc_getCatObs(n_cat = 10, fieldsize = 2, out = out)
+    LMS_All_CatObs, var_age_CatObs, vAll_CatObs  = getCatObs(n_cat = 10, fieldsize = 2, out = out)
     plt.figure()
     plt.plot(LMS_All_CatObs[0],LMS_All_CatObs[1], color ='r', linestyle='-')
     plt.plot(LMS_All_CatObs[0],LMS_All_CatObs[2], color ='g', linestyle='-')
     plt.plot(LMS_All_CatObs[0],LMS_All_CatObs[3], color ='b', linestyle='-')
-    plt.title('fnc_getCatObs(...)')
+    plt.title('getCatObs(...)')
     plt.show()
     
-#    XYZ_All_CatObs = fnc_lms_to_xyz(LMS_All_CatObs, fieldsize = 3)
+#    XYZ_All_CatObs = lmsb_to_xyzb(LMS_All_CatObs, fieldsize = 3)
 #    plt.figure()
 #    plt.plot(wl[:,None],XYZ_All_CatObs[0,:,:], color ='r', linestyle='-')
 #    plt.plot(wl[:,None],XYZ_All_CatObs[1,:,:], color ='g', linestyle='-')
 #    plt.plot(wl[:,None],XYZ_All_CatObs[2,:,:], color ='b', linestyle='-')
-#    plt.title('fnc_getCatObs XYZ')
+#    plt.title('getCatObs XYZ')
 #    plt.show()
