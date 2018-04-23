@@ -24,7 +24,11 @@
 
 # getCatObs(): Generate cone fundamentals for categorical observers.
 
+# get_lms_to_xyz_matrix(): Calculate lms to xyz conversion matrix for specific fieldsize.
+                            
 # lmsb_to_xyzb(): Convert from LMS cone fundamentals to XYZ color matching functions.
+
+# add_to_cmf_dict(): Add set of cmfs to _CMF dict.
 
 #------------------------------------------------------------------------------
 
@@ -43,7 +47,7 @@ Created on Thu Apr 19 13:29:15 2018
 
 @author: kevin.smet
 """
-from luxpy import np, pd, interpolate, math, _PKG_PATH, _SEP, dictkv,  xyzbar, spd, getdata, getwlr
+from luxpy import np, pd, interpolate, math, _PKG_PATH, _SEP, _CMF, dictkv,  xyzbar, spd, getdata, getwlr
 
 from luxpy import plt
 
@@ -493,13 +497,37 @@ def getCatObs(n_cat = 10, fieldsize = 2, out = 'LMS', wl = None, allow_negative_
     else:
         return eval(out)
 
+def get_lms_to_xyz_matrix(fieldsize = 10):
+    """
+    Get the lms to xyz conversion matrix for specific fieldsize.
+    
+    Args:
+        :fieldsize: fieldsize in degrees (between 2° and 10°), optional
+            Defaults to 10°.
+            
+    Returns:
+        :M: numpy array with conversion matrix.
+    
+    Note: 
+        For intermediate field sizes (2° < field size < 10°) the conversion matrix
+        is calculated by linear interpolation between 
+        the _INDVCMF_M_2d and _INDVCMF_M_10d matrices.
+    """
+    a = (10-fieldsize)/(10-2)
+    wl = lms[None,0] #store wavelengths
+    if a < 2:
+        a = 2
+    elif a > 10:
+        a = 10        
+    return _INDVCMF_M_2d*(1 - a) + a*_INDVCMF_M_10d
+
 def lmsb_to_xyzb(lms, fieldsize = 10, out = 'XYZ', allow_negative_values = False):
     """
     Convert from LMS cone fundamentals to XYZ color matching functions.
     
     Args:
         :lms: numpy.ndarray with lms cone fundamentals, optional
-            :fieldsize: fieldsize in degrees, optional
+        :fieldsize: fieldsize in degrees, optional
             Defaults to 10°.
         :out: 'xyz' or str, optional
             Determines output.
@@ -515,13 +543,8 @@ def lmsb_to_xyzb(lms, fieldsize = 10, out = 'XYZ', allow_negative_values = False
         is calculated by linear interpolation between 
         the _INDVCMF_M_2d and _INDVCMF_M_10d matrices.
     """
-    a = (10-fieldsize)/(10-2)
     wl = lms[None,0] #store wavelengths
-    if a < 2:
-        a = 2
-    elif a > 10:
-        a = 10        
-    M = _INDVCMF_M_2d*(1 - a) + a*_INDVCMF_M_10d
+    M = get_lms_to_xyz_matrix(fieldsize = fieldsize)
     if lms.ndim > 2:
         xyz = np.vstack((wl,math.dot23(M,lms[1:,...], keepdims = False)))
     else:
@@ -529,6 +552,31 @@ def lmsb_to_xyzb(lms, fieldsize = 10, out = 'XYZ', allow_negative_values = False
     if allow_negative_values == False:
         xyz[np.where(xyz < 0)] = 0
     return xyz
+
+def add_to_cmf_dict(bar = None, cieobs = 'indv', K = 683, M = np.eye(3)):
+    """
+    Add set of cmfs to _CMF dict.
+    
+    Args:
+        :bar: None, optional
+            Set of CMFs. None: initializes to empty ndarray.
+        :cieobs: 'indv' or str, optional
+            Name of CMF set.
+        :K: 683 (lm/W), optional
+            Conversion factor from radiometric to photometric quantity.
+        :M: np.eye, optional
+            Matrix for lms to xyz conversion.
+
+    """
+    if bar is None:
+        wl3 = getwlr(_WL3)
+        bar = np.vstack((wl3,np.empty((3,wl3.shape[0]))))
+    _CMF['types'].append(cieobs)
+    _CMF['bar'][cieobs] = bar
+    _CMF['K'][cieobs] = K
+    _CMF['M'][cieobs] = M
+    #return _CMF
+    
     
 if __name__ == '__main__':
     
@@ -577,3 +625,16 @@ if __name__ == '__main__':
 #    plt.plot(wl[:,None],XYZ_All_CatObs[2,:,:], color ='b', linestyle='-')
 #    plt.title('getCatObs XYZ')
 #    plt.show()
+    
+    # Calculate new set of CMFs and calculate xyzw and cct, duv:
+    from luxpy import spd_to_xyz, _CIE_ILLUMINANTS, xyz_to_cct_ohno
+    XYZb_All_CatObs, _, _  = getCatObs(n_cat = 1, fieldsize = 10, out = out)
+    add_to_cmf_dict(bar = XYZb_All_CatObs, cieobs = 'CatObs1', K = 683) 
+    xyz2 = spd_to_xyz(_CIE_ILLUMINANTS['F4'], cieobs = '1931_2')
+    xyz = spd_to_xyz(_CIE_ILLUMINANTS['F4'], cieobs = 'CatObs1')
+    cct2,duv2 = xyz_to_cct_ohno(xyz2, cieobs = '1931_2', out = 'cct,duv')
+    cct,duv = xyz_to_cct_ohno(xyz2, cieobs = 'CatObs1', out = 'cct,duv')
+    print(cct2)
+    print(duv2)
+    print(cct)
+    print(duv)

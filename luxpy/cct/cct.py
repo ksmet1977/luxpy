@@ -83,9 +83,12 @@ def calculate_lut(ccts = None, cieobs = None, add_to_lut = True):
             If str, ccts contains path/filename.dat to list.
         :cieobs: None or str, optional
             str specifying cmf set.
-        :add_to_lut: True, optional
-            True: adds calculated lut to _CCT_LUT.
     """
+    if ccts is None:
+        ccts = getdata('{}cct_lut_cctlist.dat'.format(_CCT_LUT_PATH))
+    elif isinstance(ccts,str):
+        ccts = getdata(ccts)
+        
     Yuv = np.ones((ccts.shape[0],2))*np.nan
     for i,cct in enumerate(ccts):
         Yuv[i,:] = xyz_to_Yuv(spd_to_xyz(blackbody(cct, wl3 = [360,830,1]), cieobs = cieobs))[:,1:3]
@@ -107,14 +110,10 @@ def calculate_luts(ccts = None):
             list of ccts for which to (re-)calculate the LUTs.
             If str, ccts contains path/filename.dat to list.
     """
-    if ccts is None:
-        ccts = getdata('{}cct_lut_cctlist.dat'.format(_CCT_LUT_PATH))
-    elif isinstance(ccts,str):
-        ccts = getdata(ccts)
 
     for ii, cieobs in enumerate(sorted(_CMF['types'])):
         print("Calculating CCT LUT for CMF set: {}".format(cieobs))
-        calculate_lut(ccts = ccts, cieobs = cieobs, add_to_lut = False)
+        cctuv = calculate_lut(ccts = ccts, cieobs = cieobs, add_to_lut = False)
         pd.DataFrame(cctuv).to_csv('{}cct_lut_{}.dat'.format(_CCT_LUT_PATH,cieobs), header=None, index=None, float_format = '%1.9e')
 
 if _CCT_LUT_CALC == True:
