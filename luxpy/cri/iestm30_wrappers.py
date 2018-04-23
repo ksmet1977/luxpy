@@ -76,7 +76,7 @@ def spd_to_iesrf_tm30_15(SPD, out = 'Rf', wl = None, cri_type = 'iesrf_tm30_15')
     return spd_to_cri(SPD, cri_type = cri_type, out = out, wl = wl)
 
 #------------------------------------------------------------------------------
-def spd_to_iesrg_tm30_15(SPD, out = 'Rg', wl = None, cri_type ='iesrf_tm30_15'):
+def spd_to_iesrg_tm30_15(SPD, out = 'Rg', wl = None, cri_type ='iesrf-tm30-15'):
     """
     Wrapper function the 'spd_to_rg' color rendition gamut area metric (IES TM30-15). 
     
@@ -104,7 +104,7 @@ def spd_to_iesrg_tm30_15(SPD, out = 'Rg', wl = None, cri_type ='iesrf_tm30_15'):
     return spd_to_rg(SPD, cri_type = cri_type, out = out, wl = wl)
 
 #------------------------------------------------------------------------------
-def spd_to_iesrf_tm30_18(SPD, out = 'Rf', wl = None, cri_type = 'iesrf_tm30_18'):
+def spd_to_iesrf_tm30_18(SPD, out = 'Rf', wl = None, cri_type = 'iesrf-tm30-18'):
     """
     Wrapper function the 'iesrf' color rendition (fidelity) metric (IES TM30-18). 
     
@@ -132,7 +132,7 @@ def spd_to_iesrf_tm30_18(SPD, out = 'Rf', wl = None, cri_type = 'iesrf_tm30_18')
     return spd_to_cri(SPD, cri_type = cri_type, out = out, wl = wl)
 
 #------------------------------------------------------------------------------
-def spd_to_iesrg_tm30_18(SPD, out = 'Rg', wl = None, cri_type ='iesrf_tm30_18'):
+def spd_to_iesrg_tm30_18(SPD, out = 'Rg', wl = None, cri_type ='iesrf-tm30-18'):
     """
     Wrapper function the 'spd_to_rg' color rendition gamut area metric (IES TM30-18). 
     

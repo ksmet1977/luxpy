@@ -35,11 +35,11 @@ __all__ = ['_CRI_TYPE_DEFAULT', '_CRI_DEFAULTS', 'process_cri_type_input']
 # create default settings for different color rendition indices: (major dict has 9 keys (04-Jul-2017): sampleset [str/dict], ref_type [str], cieobs [str], avg [fcn handle], scale [dict], cspace [dict], catf [dict], rg_pars [dict], cri_specific_pars [dict])
 _CRI_TYPE_DEFAULT = 'ies_tm30'
 
-_CRI_DEFAULTS = {'cri_types' : ['ciera','ciera_8','ciera_14','cierf',
-                                'iesrf','iesrf_tm30_15','iesrf_tm30_18','ies_tm30',
-                                'cri2012','cri2012_hl17','cri2012_hl1000','cri2012_real210']}
+_CRI_DEFAULTS = {'cri_types' : ['ciera','ciera-8','ciera-14','cierf',
+                                'iesrf','iesrf-tm30-15','iesrf-tm30-18','ies-tm30',
+                                'cri2012','cri2012-hl17','cri2012-hl1000','cri2012-real210']}
 
-_CRI_DEFAULTS['ciera_133_1995'] = {'sampleset' : "_CRI_RFL['cie_133_1995']['8']", 
+_CRI_DEFAULTS['ciera-13.3-1995'] = {'sampleset' : "_CRI_RFL['cie-13.3-1995']['8']", 
                          'ref_type' : 'ciera', 
                          'cieobs' : {'xyz': '1931_2', 'cct' : '1931_2'}, 
                          'avg' : np.mean, 
@@ -50,13 +50,13 @@ _CRI_DEFAULTS['ciera_133_1995'] = {'sampleset' : "_CRI_RFL['cie_133_1995']['8']"
                          'cri_specific_pars' : None
                          }
 
-_CRI_DEFAULTS['ciera'] = _CRI_DEFAULTS['ciera_133_1995'].copy()
-_CRI_DEFAULTS['ciera_8'] = _CRI_DEFAULTS['ciera_133_1995'].copy()
-_CRI_DEFAULTS['ciera_14'] = _CRI_DEFAULTS['ciera_133_1995'].copy() 
-_CRI_DEFAULTS['ciera_14']['sampleset'] = "_CRI_RFL['cie_133_1995']['14']"
+_CRI_DEFAULTS['ciera'] = _CRI_DEFAULTS['ciera-13.3-1995'].copy()
+_CRI_DEFAULTS['ciera-8'] = _CRI_DEFAULTS['ciera-13.3-1995'].copy()
+_CRI_DEFAULTS['ciera-14'] = _CRI_DEFAULTS['ciera-13.3-1995'].copy() 
+_CRI_DEFAULTS['ciera-14']['sampleset'] = "_CRI_RFL['cie-13.3-1995']['14']"
 
 
-_CRI_DEFAULTS['cierf_224_2017'] = {'sampleset' : "_CRI_RFL['cie_224_2017']['99']['5nm']", 
+_CRI_DEFAULTS['cierf-224-2017'] = {'sampleset' : "_CRI_RFL['cie-224-2017']['99']['5nm']", 
                                  'ref_type' : 'cierf', 
                                  'cieobs' : {'xyz': '1964_10', 'cct' : '1931_2'}, 
                                  'avg' : np.mean, 
@@ -67,10 +67,10 @@ _CRI_DEFAULTS['cierf_224_2017'] = {'sampleset' : "_CRI_RFL['cie_224_2017']['99']
                                  'cri_specific_pars' : None
                                  }
 
-_CRI_DEFAULTS['cierf'] = _CRI_DEFAULTS['cierf_224_2017'].copy()
+_CRI_DEFAULTS['cierf'] = _CRI_DEFAULTS['cierf-224-2017'].copy()
 
 
-_CRI_DEFAULTS['iesrf_tm30_15'] = {'sampleset' : "_CRI_RFL['ies_tm30_15']['99']['5nm']", 
+_CRI_DEFAULTS['iesrf-tm30-15'] = {'sampleset' : "_CRI_RFL['ies-tm30-15']['99']['5nm']", 
                                  'ref_type' : 'iesrf', 
                                  'cieobs' : {'xyz': '1964_10', 'cct' : '1931_2'}, 
                                  'avg' : np.mean, 'scale' :{'fcn' : log_scale, 'cfactor' : [7.54]}, 
@@ -80,7 +80,7 @@ _CRI_DEFAULTS['iesrf_tm30_15'] = {'sampleset' : "_CRI_RFL['ies_tm30_15']['99']['
                                  'cri_specific_pars' : None
                                  }
 
-_CRI_DEFAULTS['iesrf_tm30_18'] = {'sampleset' : "_CRI_RFL['ies_tm30_18']['99']['5nm']", 
+_CRI_DEFAULTS['iesrf-tm30-18'] = {'sampleset' : "_CRI_RFL['ies-tm30-18']['99']['5nm']", 
                                  'ref_type' : 'iesrf', 
                                  'cieobs' : {'xyz': '1964_10', 'cct' : '1931_2'}, 
                                  'avg' : np.mean, 'scale' :{'fcn' : log_scale, 'cfactor' : [6.73]}, 
@@ -90,14 +90,14 @@ _CRI_DEFAULTS['iesrf_tm30_18'] = {'sampleset' : "_CRI_RFL['ies_tm30_18']['99']['
                                  'cri_specific_pars' : None
                                  }
 
-_CRI_DEFAULTS['iesrf'] = _CRI_DEFAULTS['iesrf_tm30_18'].copy()
+_CRI_DEFAULTS['iesrf'] = _CRI_DEFAULTS['iesrf-tm30-18'].copy()
 
-_CRI_DEFAULTS['iesrf_tm30'] = _CRI_DEFAULTS['iesrf_tm30_18'].copy()
+_CRI_DEFAULTS['iesrf-tm30'] = _CRI_DEFAULTS['iesrf-tm30-18'].copy()
 
-_CRI_DEFAULTS['ies_tm30'] = _CRI_DEFAULTS['iesrf_tm30_18'].copy()
+_CRI_DEFAULTS['ies-tm30'] = _CRI_DEFAULTS['iesrf-tm30-18'].copy()
 
 
-_CRI_DEFAULTS['cri2012_hl17'] = {'sampleset' : "_CRI_RFL['cri2012']['HL17']", 
+_CRI_DEFAULTS['cri2012-hl17'] = {'sampleset' : "_CRI_RFL['cri2012']['HL17']", 
                              'ref_type' : 'ciera', 
                              'cieobs' : {'xyz': '1964_10', 'cct' : '1931_2'}, 
                              'avg' : math.rms, 
@@ -108,7 +108,7 @@ _CRI_DEFAULTS['cri2012_hl17'] = {'sampleset' : "_CRI_RFL['cri2012']['HL17']",
                              'cri_specific_pars' : None
                              }
 
-_CRI_DEFAULTS['cri2012_hl1000'] = {'sampleset' : "_CRI_RFL['cri2012']['HL1000']", 
+_CRI_DEFAULTS['cri2012-hl1000'] = {'sampleset' : "_CRI_RFL['cri2012']['HL1000']", 
                                    'ref_type' : 'ciera',
                                    'cieobs' : {'xyz': '1964_10', 'cct' : '1931_2'}, 
                                    'avg' : math.rms,'scale': {'fcn' : psy_scale, 'cfactor' : [1/50, 3/2, 2]}, 
@@ -118,7 +118,7 @@ _CRI_DEFAULTS['cri2012_hl1000'] = {'sampleset' : "_CRI_RFL['cri2012']['HL1000']"
                                    'cri_specific_pars' : None
                                    }
 
-_CRI_DEFAULTS['cri2012_real210'] = {'sampleset' : "_CRI_RFL['cri2012']['Real210']",
+_CRI_DEFAULTS['cri2012-real210'] = {'sampleset' : "_CRI_RFL['cri2012']['Real210']",
                                     'ref_type' : 'ciera', 
                                     'cieobs' : {'xyz': '1964_10', 'cct' : '1931_2'},
                                     'avg' : math.rms, 
@@ -129,7 +129,7 @@ _CRI_DEFAULTS['cri2012_real210'] = {'sampleset' : "_CRI_RFL['cri2012']['Real210'
                                     'cri_specific_pars' : None
                                     }
 
-_CRI_DEFAULTS['cri2012'] = _CRI_DEFAULTS['cri2012_hl17'].copy()
+_CRI_DEFAULTS['cri2012'] = _CRI_DEFAULTS['cri2012-hl17'].copy()
 
 
 #------------------------------------------------------------------------------
