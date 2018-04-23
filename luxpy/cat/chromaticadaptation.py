@@ -72,7 +72,7 @@ from .. import np, _CMF, math, np2d, asplit, ajoin, _EPS
 _WHITE_POINT = np2d([100,100,100]) #default adopted white point
 _LA = 100.0 #cd/m²
 
-_MCATS = {x : _CMF['M'][x] for x in _CMF['types']}
+_MCATS = {x : _CMF[x]['M'] for x in _CMF['types']}
 _MCATS['hpe'] = _MCATS['1931_2']
 _MCATS['cat02'] = np2d([[0.7328, 0.4296, -0.1624],[ -0.7036, 1.6975,  0.0061],[ 0.0030, 0.0136,  0.9834]])
 _MCATS['cat02-bs'] =np2d([[0.7328, 0.4296, -0.1624],[ -0.7036, 1.6975,  0.0061],[ 0.0, 0.0,  1.0]]) #Brill MH, Süsstrunk S. Repairing gamut problems in CIECAM02: A progress report. Color Res Appl 2008;33(5), 424–426.

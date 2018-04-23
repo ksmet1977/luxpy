@@ -87,7 +87,7 @@ _CSPACE_AXES['cct'] = ['', 'cct','duv']
 
 # pre-calculate matrices for conversion of xyz to lms and back for use in xyz_to_ipt() and ipt_to_xyz(): 
 _IPT_M = {'lms2ipt': np.array([[0.4000,0.4000,0.2000],[4.4550,-4.8510,0.3960],[0.8056,0.3572,-1.1628]]),
-                              'xyz2lms' : {x : math.normalize_3x3_matrix(_CMF['M'][x],spd_to_xyz(_CIE_ILLUMINANTS['D65'],cieobs = x)) for x in sorted(_CMF['M'].keys())}}
+                              'xyz2lms' : {x : math.normalize_3x3_matrix(_CMF[x]['M'],spd_to_xyz(_CIE_ILLUMINANTS['D65'],cieobs = x)) for x in sorted(_CMF['types'])}}
 _COLORTF_DEFAULT_WHITE_POINT = np.array([100.0, 100.0, 100.0]) # ill. E white point
 
 #------------------------------------------------------------------------------
@@ -248,7 +248,7 @@ def xyz_to_lms(xyz, cieobs = _CIEOBS, M = None, **kwargs):
     xyz = np2d(xyz)
     
     if M is None:
-        M = _CMF['M'][cieobs]
+        M = _CMF[cieobs]['M']
     
     # convert xyz to lms:
     if len(xyz.shape) == 3:
@@ -275,7 +275,7 @@ def lms_to_xyz(lms, cieobs = _CIEOBS, M = None, **kwargs):
     lms = np2d(lms)
     
     if M is None:
-        M = _CMF['M'][cieobs]
+        M = _CMF[cieobs]['M']
     
     # convert from lms to xyz:
     if len(ipt.shape) == 3:
@@ -475,7 +475,7 @@ def xyz_to_Vrb_mb(xyz, cieobs = _CIEOBS, scaling = [1,1], M = None, **kwargs):
     
     X,Y,Z = asplit(xyz)
     if M is None:
-        M = _CMF['M'][cieobs]
+        M = _CMF[cieobs]['M']
     R, G, B = [M[i,0]*X + M[i,1]*Y + M[i,2]*Z for i in range(3)]
     V = R + G
     r = R / V * scaling[0]
@@ -516,7 +516,7 @@ def Vrb_mb_to_xyz(Vrb,cieobs = _CIEOBS, scaling = [1,1], M = None, Minverted = F
     B = b*V / scaling[1]
     G = V-R
     if M is None:
-        M = _CMF['M'][cieobs]
+        M = _CMF[cieobs]['M']
     if Minverted == False:
         M = np.linalg.inv(M)
     X, Y, Z = [M[i,0]*R + M[i,1]*G + M[i,2]*B for i in range(3)]
@@ -674,7 +674,7 @@ def xyz_to_Ydlep(xyz, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT, **k
     Yxyw = xyz_to_Yxy(xyzw)
 
     # get spectrum locus Y,x,y and wavelengths:
-    SL = _CMF['bar'][cieobs]
+    SL = _CMF[cieobs]['bar']
 
     wlsl = SL[0]
     Yxysl = xyz_to_Yxy(SL[1:4].T)[:,None]
@@ -779,7 +779,7 @@ def Ydlep_to_xyz(Ydlep, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT, *
     Yxywo = Yxyw.copy()
 
     # get spectrum locus Y,x,y and wavelengths:
-    SL = _CMF['bar'][cieobs]
+    SL = _CMF[cieobs]['bar']
     wlsl = SL[0,None].T
     Yxysl = xyz_to_Yxy(SL[1:4].T)[:,None]
     

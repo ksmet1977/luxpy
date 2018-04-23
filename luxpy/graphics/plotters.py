@@ -222,7 +222,7 @@ def plotSL(cieobs =_CIEOBS, cspace = _CSPACE,  DL = True, BBL = True, D65 = Fals
     Returns:
         :returns: None (:show: == True) or handle to current axes (:show: == False)
     """
-    SL = _CMF['bar'][cieobs][1:4].T
+    SL = _CMF[cieobs]['bar'][1:4].T
     SL = np.vstack((SL,SL[0]))
     SL = 100.0*SL/SL[:,1,None]
     SL = colortf(SL, tf = cspace, tfa0 = cspace_pars)
@@ -281,7 +281,7 @@ def plotceruleanline(cieobs = _CIEOBS, cspace = _CSPACE, axh = None,formatstr = 
                 https://doi.org/10.1002/col.21793
                 (see Table II, IV)
     """
-    cmf = _CMF['bar'][cieobs]
+    cmf = _CMF[cieobs]['bar']
     p_y = cmf[0] == 577.0 #Kuehni, CRA 2013 (mean, table IV)
     p_b = cmf[0] == 472.0 #Kuehni, CRA 2013 (mean, table IV)
     xyz_y = cmf[1:,p_y].T
@@ -330,7 +330,7 @@ def plotUH(xyz0 = None, uhues = [0,1,2,3], cieobs = _CIEOBS, cspace = _CSPACE, a
                 (see Table II, IV)
     """
     hues = ['yellow','blue','red','green']
-    cmf = _CMF['bar'][cieobs]
+    cmf = _CMF[cieobs]['bar']
     p_y = cmf[0] == 577.0 #unique yellow,#Kuehni, CRA 2013 (mean, table IV: spectral data)
     p_b = cmf[0] == 472.0 #unique blue,Kuehni, CRA 2013 (mean, table IV: spectral data)
     p_g = cmf[0] == 514.0 #unique green, Kuehni, CRA 2013 (mean, table II: spectral data)

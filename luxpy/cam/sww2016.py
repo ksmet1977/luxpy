@@ -113,13 +113,13 @@ def cam_sww16(data, dataw = None, Yb = 20.0, Lw = 400.0, relative = True, parame
         if (inputtype != 'xyz') :
             if relative == True:
                 dataw[i+1] = Lw*dataw[i+1]/100.0 # make absolute
-            xyzw = spd_to_xyz(np.vstack((dataw[0],dataw[i+1])), cieobs = cieobs, relative = False)/_CMF['K'][cieobs]
+            xyzw = spd_to_xyz(np.vstack((dataw[0],dataw[i+1])), cieobs = cieobs, relative = False)/_CMF[cieobs]['K']
             lmsf = (Yb/100.0)*683.0*np.dot(Mxyz2lms,xyzw.T).T # calculate adaptation field and convert to l,m,s
 
             if (direction == 'forward'):
                 if relative == True:
                     data[i] = Lw*data[i]/100.0 # make absolute
-                xyzt = spd_to_xyz(data[i], cieobs = cieobs, relative = False)/_CMF['K'][cieobs] 
+                xyzt = spd_to_xyz(data[i], cieobs = cieobs, relative = False)/_CMF[cieobs]['K'] 
                 lmst = 683.0*np.dot(Mxyz2lms,xyzt.T).T # convert to l,m,s
             else:
                 lmst = lmsf # put lmsf in lmst for inverse-mode
@@ -127,13 +127,13 @@ def cam_sww16(data, dataw = None, Yb = 20.0, Lw = 400.0, relative = True, parame
         elif (inputtype == 'xyz'):
             if relative == True: 
                 dataw[i] = Lw*dataw[i]/100.0 # make absolute
-            lmsw = 683.0* np.dot(Mxyz2lms, dataw[i].T).T /_CMF['K'][cieobs]  # convert to lms
+            lmsw = 683.0* np.dot(Mxyz2lms, dataw[i].T).T /_CMF[cieobs]['K']  # convert to lms
             lmsf = (Yb/100.0)*lmsw
 
             if (direction == 'forward'):
                 if relative == True:
                     data[i] = Lw*data[i]/100.0 # make absolute
-                lmst = 683.0* np.dot(Mxyz2lms, data[i].T).T /_CMF['K'][cieobs] # convert to lms
+                lmst = 683.0* np.dot(Mxyz2lms, data[i].T).T /_CMF[cieobs]['K'] # convert to lms
             else:
                  lmst = lmsf # put lmsf in lmst for inverse-mode
                  

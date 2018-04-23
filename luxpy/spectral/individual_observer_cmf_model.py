@@ -572,9 +572,9 @@ def add_to_cmf_dict(bar = None, cieobs = 'indv', K = 683, M = np.eye(3)):
         wl3 = getwlr(_WL3)
         bar = np.vstack((wl3,np.empty((3,wl3.shape[0]))))
     _CMF['types'].append(cieobs)
-    _CMF['bar'][cieobs] = bar
-    _CMF['K'][cieobs] = K
-    _CMF['M'][cieobs] = M
+    _CMF[cieobs] = {'bar' : bar}
+    _CMF[cieobs]['K'] = K
+    _CMF[cieobs]['M'] = M
     #return _CMF
     
     

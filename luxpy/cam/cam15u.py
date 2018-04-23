@@ -76,8 +76,8 @@ def cam15u(data, fov = 10.0, inputtype = 'xyz', direction = 'forward', outin = '
         
         if (inputtype != 'xyz') & (direction == 'forward'):
             xyz = spd_to_xyz(data[i], cieobs = '2006_10', relative = False)
-            lms = np.dot(_CMF['M']['2006_10'],xyz.T).T # convert to l,m,s
-            rgb = (lms / _CMF['K']['2006_10']) * k # convert to rho, gamma, beta
+            lms = np.dot(_CMF['2006_10']['M'],xyz.T).T # convert to l,m,s
+            rgb = (lms / _CMF['2006_10']['K']) * k # convert to rho, gamma, beta
         elif (inputtype == 'xyz') & (direction == 'forward'):
             rgb = np.dot(Mxyz2rgb,data[i].T).T
        

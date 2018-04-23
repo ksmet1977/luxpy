@@ -396,7 +396,7 @@ def xyzbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, norm_type = None, norm
     if scr is 'file':
         dict_or_file = _PKG_PATH + _SEP + 'data' + _SEP + 'cmfs' + _SEP + 'ciexyz_' + cieobs + '.dat'
     elif scr is 'dict':
-        dict_or_file = _CMF['bar'][cieobs]
+        dict_or_file = _CMF[cieobs]['bar']
     elif scr == 'cieobs':
         dict_or_file = cieobs #can be file or data itself
 
@@ -435,8 +435,8 @@ def vlbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, norm_type = None, norm_
         ..[CIE15:2004](http://www.cie.co.at/index.php/index.php?i_ca_id=304)
     """
     if scr == 'dict':
-        dict_or_file = _CMF['bar'][cieobs][[0,2],:] 
-        K = _CMF['K'][cieobs]
+        dict_or_file = _CMF[cieobs]['bar'][[0,2],:] 
+        K = _CMF[cieobs]['K']
     elif scr is 'vltype':
         dict_or_file = cieobs #can be file or data itself
         K = 1
@@ -500,7 +500,7 @@ def spd_to_xyz(data,  relative = True, rfl = None, cieobs = _CIEOBS, K = None, o
     # get cmf,k for cieobs:
     if isinstance(cieobs,str):
         if K is None:
-            K = _CMF['K'][cieobs]
+            K = _CMF[cieobs]['K']
         scr = 'dict'
     else:
         scr = 'cieobs'
@@ -575,7 +575,7 @@ def spd_to_ler(data, cieobs = _CIEOBS, K = None):
     
     if isinstance(cieobs,str):    
         if K == None:
-            K = _CMF['K'][cieobs]
+            K = _CMF[cieobs]['K']
         Vl = vlbar(cieobs = cieobs, scr = 'dict',wl_new = data[0], kind = 'np')[1:2] #also interpolate to wl of data
     else:
         Vl = spd(wl = data[0], data = cieobs, interpolation = 'cmf', kind = 'np')[1:2]
@@ -841,7 +841,7 @@ def cri_ref(ccts, wl3 = None, ref_type = _CRI_REF_TYPE, mix_range = None, cieobs
                 SrBB = blackbody(cct,wl3)
                 SrDL = daylightphase(cct,wl3,verbosity = None,force_daylight_below4000K = force_daylight_below4000K)
                 cmf = xyzbar(cieobs = cieobs, scr = 'dict', wl_new = wl3)
-                k = _CMF['K'][cieobs]
+                k = _CMF[cieobs]['K']
                 wl = SrBB[0]
                 ld = getwld(wl)
                 Y_SrBB = np.array(np.sum(SrBB[1]*cmf[2]*ld*k))

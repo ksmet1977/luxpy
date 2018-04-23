@@ -26,7 +26,9 @@ from .spectral import *
 __all__ += spectral.__all__
 
 ## Set xyzbar in _CMF dict:
-_CMF['bar'] = {_CMF['types'][i] : (xyzbar(cieobs = _CMF['types'][i], scr = 'file', kind = 'np')) for i in range(len(_CMF['types']))}
+#_CMF['bar'] = {_CMF['types'][i] : (xyzbar(cieobs = _CMF['types'][i], scr = 'file', kind = 'np')) for i in range(len(_CMF['types']))}
+for i, cmf_type in enumerate(_CMF['types']): # store all in single nested dict
+    _CMF[cmf_type]['bar'] =  xyzbar(cieobs = cmf_type, scr = 'file', kind = 'np')
 
 # load spd and rfl data in /spd/:
 from .spectral_databases import _R_PATH, _S_PATH, _CIE_ILLUMINANTS, _IESTM30, _CRI_RFL, _MUNSELL

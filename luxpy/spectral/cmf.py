@@ -18,15 +18,15 @@
 """
 luxpy module loading sets of XYZ color matching functions (and Vlambda curves = Ybar)
 
- * luxpy._CMF: Dict with keys 'types', 'bar', 'K', 'M'
+ * luxpy._CMF: Dict with keys 'types' and x
+                 x are dicts with keys 'bar', 'K', 'M'
  
      + luxpy._CMF['types'] = ['1931_2','1964_10','2006_2','2006_10','1931_2_judd1951','1931_2_juddvos1978','1951_20_scotopic']
-     + luxpy._CMF['bar'] = Dict with CMFs for each of the types between 360 to 830 nm
-                             keys are cmf_types, values are CMF numpy arrays with shape: (4,471)
-     + luxpy._CMF['K'] = Dict with constants converting Watt to lumen for specified CMF   
-                            keys are cmf_types, values are scalars
-     + luxpy._CMF['M'] = Dict with XYZ to LMS conversion matrices
-                            keys are cmf_types, values are numpy arrays with shape: (3,3)
+     + luxpy._CMF[x]['bar'] = numpy array with CMFs for type x between 360 to 830 nm
+                              has shape: (4,471)
+     + luxpy._CMF[x]['K'] = Constant converting Watt to lumen for CMF type x.
+     + luxpy._CMF[x]['M'] = XYZ to LMS conversion matrix for CMF type x.
+                            Matrix is numpy arrays with shape: (3,3)
                             
      Notes:
         1. All functions have been expanded (when necessary) using zeros 
@@ -123,11 +123,15 @@ _CMF_M_1951_20_SCOTOPIC = np.eye(3)
 _CMF_M_list = [_CMF_M_1931_2,_CMF_M_1964_10,_CMF_M_2006_2,_CMF_M_2006_10, _CMF_M_1931_2_JUDD1951, _CMF_M_1931_2_JUDDVOS1978, _CMF_M_1951_20_SCOTOPIC]
 
 
-_CMF_K = _dictkv(keys = _CMF_TYPES, values = _CMF_K_VALUES, ordered = True) # K-factors for calculating absolute tristimulus values
+#_CMF_K = _dictkv(keys = _CMF_TYPES, values = _CMF_K_VALUES, ordered = True) # K-factors for calculating absolute tristimulus values
  
-_CMF_M = _dictkv(keys = _CMF_TYPES, values= _CMF_M_list, ordered = True)
+#_CMF_M = _dictkv(keys = _CMF_TYPES, values= _CMF_M_list, ordered = True)
 
-_CMF = {'types': _CMF_TYPES,'bar': [], 'K': _CMF_K, 'M':_CMF_M} # store all in single nested dict
+_CMF = {'types': _CMF_TYPES}
+for i, cmf_type in enumerate(_CMF_TYPES): # store all in single nested dict
+    _CMF[cmf_type]  = {'bar':  []}
+    _CMF[cmf_type]['K'] = _CMF_K_VALUES[i]
+    _CMF[cmf_type]['M'] = _CMF_M_list[i] 
 			
 
 
