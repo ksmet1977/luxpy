@@ -75,12 +75,12 @@ __all__ = ['_CMF']
 _CMF_TYPES = ['1931_2','1964_10','2006_2','2006_10','1931_2_judd1951','1931_2_juddvos1978','1951_20_scotopic']
 _CMF_K_VALUES = [683.002, 683.6, 683.002, 683.002, 683.002, 683.002, 1700.06] 
 
-def _dictkv(keys=None,values=None, ordered = True): 
-    # Easy input of of keys and values into dict (both should be iterable lists)
-    if ordered is True:
-        return odict(zip(keys,values))
-    else:
-        return dict(zip(keys,values))
+#def _dictkv(keys=None,values=None, ordered = True): 
+#    # Easy input of of keys and values into dict (both should be iterable lists)
+#    if ordered is True:
+#        return odict(zip(keys,values))
+#    else:
+#        return dict(zip(keys,values))
 
 
 _CMF_M_1931_2=np.array([     # definition of 3x3 matrices to convert from xyz to lms

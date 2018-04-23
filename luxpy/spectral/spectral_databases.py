@@ -133,12 +133,12 @@ _CQS['v9.0'] =  getdata(_R_PATH + 'CQSv9dot0.dat',kind='np').T
 
 #------------------------------------------------------------------------------
 # collect in one dict:
-_CRI_RFL = {'cie-13.3-1995': _CIE133_1995}
-_CRI_RFL['cie-224-2017'] = _CIE224_2017
+_CRI_RFL = {'cie_133_1995': _CIE133_1995}
+_CRI_RFL['cie_224_2017'] = _CIE224_2017
 _CRI_RFL['cri2012'] = _CRI2012
-_CRI_RFL['ies-tm30-15'] = _IESTM30['R']
-_CRI_RFL['ies-tm30-18'] = _IESTM30['R']
-_CRI_RFL['ies-tm30'] = _IESTM30['R']
+_CRI_RFL['ies_tm30_15'] = _IESTM30['R']
+_CRI_RFL['ies_tm30_18'] = _IESTM30['R']
+_CRI_RFL['ies_tm30'] = _IESTM30['R']
 _CRI_RFL['mcri'] = _MCRI['R']
 _CRI_RFL['cqs'] = _CQS
 

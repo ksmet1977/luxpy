@@ -514,7 +514,6 @@ def get_lms_to_xyz_matrix(fieldsize = 10):
         the _INDVCMF_M_2d and _INDVCMF_M_10d matrices.
     """
     a = (10-fieldsize)/(10-2)
-    wl = lms[None,0] #store wavelengths
     if a < 2:
         a = 2
     elif a > 10:

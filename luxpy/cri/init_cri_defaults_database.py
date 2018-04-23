@@ -39,7 +39,7 @@ _CRI_DEFAULTS = {'cri_types' : ['ciera','ciera_8','ciera_14','cierf',
                                 'iesrf','iesrf_tm30_15','iesrf_tm30_18','ies_tm30',
                                 'cri2012','cri2012_hl17','cri2012_hl1000','cri2012_real210']}
 
-_CRI_DEFAULTS['ciera_133_1995'] = {'sampleset' : "_CRI_RFL['cie-13.3-1995']['8']", 
+_CRI_DEFAULTS['ciera_133_1995'] = {'sampleset' : "_CRI_RFL['cie_133_1995']['8']", 
                          'ref_type' : 'ciera', 
                          'cieobs' : {'xyz': '1931_2', 'cct' : '1931_2'}, 
                          'avg' : np.mean, 
@@ -53,10 +53,10 @@ _CRI_DEFAULTS['ciera_133_1995'] = {'sampleset' : "_CRI_RFL['cie-13.3-1995']['8']
 _CRI_DEFAULTS['ciera'] = _CRI_DEFAULTS['ciera_133_1995'].copy()
 _CRI_DEFAULTS['ciera_8'] = _CRI_DEFAULTS['ciera_133_1995'].copy()
 _CRI_DEFAULTS['ciera_14'] = _CRI_DEFAULTS['ciera_133_1995'].copy() 
-_CRI_DEFAULTS['ciera_14']['sampleset'] = "_CRI_RFL['cie-13.3-1995']['14']"
+_CRI_DEFAULTS['ciera_14']['sampleset'] = "_CRI_RFL['cie_133_1995']['14']"
 
 
-_CRI_DEFAULTS['cierf_224_2017'] = {'sampleset' : "_CRI_RFL['cie-224-2017']['99']['5nm']", 
+_CRI_DEFAULTS['cierf_224_2017'] = {'sampleset' : "_CRI_RFL['cie_224_2017']['99']['5nm']", 
                                  'ref_type' : 'cierf', 
                                  'cieobs' : {'xyz': '1964_10', 'cct' : '1931_2'}, 
                                  'avg' : np.mean, 
@@ -70,7 +70,7 @@ _CRI_DEFAULTS['cierf_224_2017'] = {'sampleset' : "_CRI_RFL['cie-224-2017']['99']
 _CRI_DEFAULTS['cierf'] = _CRI_DEFAULTS['cierf_224_2017'].copy()
 
 
-_CRI_DEFAULTS['iesrf_tm30_15'] = {'sampleset' : "_CRI_RFL['ies-tm30-15']['99']['5nm']", 
+_CRI_DEFAULTS['iesrf_tm30_15'] = {'sampleset' : "_CRI_RFL['ies_tm30_15']['99']['5nm']", 
                                  'ref_type' : 'iesrf', 
                                  'cieobs' : {'xyz': '1964_10', 'cct' : '1931_2'}, 
                                  'avg' : np.mean, 'scale' :{'fcn' : log_scale, 'cfactor' : [7.54]}, 
@@ -80,7 +80,7 @@ _CRI_DEFAULTS['iesrf_tm30_15'] = {'sampleset' : "_CRI_RFL['ies-tm30-15']['99']['
                                  'cri_specific_pars' : None
                                  }
 
-_CRI_DEFAULTS['iesrf_tm30_18'] = {'sampleset' : "_CRI_RFL['ies-tm30-18']['99']['5nm']", 
+_CRI_DEFAULTS['iesrf_tm30_18'] = {'sampleset' : "_CRI_RFL['ies_tm30_18']['99']['5nm']", 
                                  'ref_type' : 'iesrf', 
                                  'cieobs' : {'xyz': '1964_10', 'cct' : '1931_2'}, 
                                  'avg' : np.mean, 'scale' :{'fcn' : log_scale, 'cfactor' : [6.73]}, 
