@@ -72,8 +72,8 @@ __all__ = ['_CMF']
 
 #--------------------------------------------------------------------------------------------------
 # load all cmfs and set up nested dict:
-_CMF_TYPES = ['1931_2','1964_10','2006_2','2006_10','1931_2_judd1951','1931_2_juddvos1978','1951_20_scotopic']
-_CMF_K_VALUES = [683.002, 683.6, 683.002, 683.002, 683.002, 683.002, 1700.06] 
+_CMF_TYPES = ['1931_2','1964_10','2006_2','2006_10','1931_2_judd1951','1931_2_juddvos1978','1951_20_scotopic','cie_std_dev_obs_f1']
+_CMF_K_VALUES = [683.002, 683.6, 683.002, 683.002, 683.002, 683.002, 1700.06, 0.0] 
 
 #def _dictkv(keys=None,values=None, ordered = True): 
 #    # Easy input of of keys and values into dict (both should be iterable lists)
@@ -117,10 +117,12 @@ _CMF_M_1931_2_JUDDVOS1978=np.array([
 ]) 
 
 # Scotopic conversion matrix has been set as the identity matrix (V' was replicated in the Xb,Yb,Zb columns)     
-_CMF_M_1951_20_SCOTOPIC = np.eye(3)    
+_CMF_M_1951_20_SCOTOPIC = np.eye(3)   
+
+_CMF_M_cie_std_dev_obs_f1 = np.eye(3)   
    
 
-_CMF_M_list = [_CMF_M_1931_2,_CMF_M_1964_10,_CMF_M_2006_2,_CMF_M_2006_10, _CMF_M_1931_2_JUDD1951, _CMF_M_1931_2_JUDDVOS1978, _CMF_M_1951_20_SCOTOPIC]
+_CMF_M_list = [_CMF_M_1931_2,_CMF_M_1964_10,_CMF_M_2006_2,_CMF_M_2006_10, _CMF_M_1931_2_JUDD1951, _CMF_M_1931_2_JUDDVOS1978, _CMF_M_1951_20_SCOTOPIC,_CMF_M_cie_std_dev_obs_f1]
 
 
 #_CMF_K = _dictkv(keys = _CMF_TYPES, values = _CMF_K_VALUES, ordered = True) # K-factors for calculating absolute tristimulus values

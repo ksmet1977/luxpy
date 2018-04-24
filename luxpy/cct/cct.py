@@ -120,7 +120,11 @@ if _CCT_LUT_CALC == True:
     calculate_luts()  
 
 # Initialize _CCT_LUT dict:
-_CCT_LUT = dictkv(keys = sorted(_CMF['types']), values = [getdata('{}cct_lut_{}.dat'.format(_CCT_LUT_PATH,sorted(_CMF['types'])[i]),kind='np') for i in range(len(_CMF['types']))],ordered = False)
+try:
+    _CCT_LUT = dictkv(keys = sorted(_CMF['types']), values = [getdata('{}cct_lut_{}.dat'.format(_CCT_LUT_PATH,sorted(_CMF['types'])[i]),kind='np') for i in range(len(_CMF['types']))],ordered = False)
+except:
+    calculate_luts()  
+    _CCT_LUT = dictkv(keys = sorted(_CMF['types']), values = [getdata('{}cct_lut_{}.dat'.format(_CCT_LUT_PATH,sorted(_CMF['types'])[i]),kind='np') for i in range(len(_CMF['types']))],ordered = False)
       
 
 

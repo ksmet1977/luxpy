@@ -449,7 +449,7 @@ def vlbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, norm_type = None, norm_
 
 	
 #--------------------------------------------------------------------------------------------------
-def spd_to_xyz(data,  relative = True, rfl = None, cieobs = _CIEOBS, K = None, out = None):
+def spd_to_xyz(data,  relative = True, rfl = None, cieobs = _CIEOBS, K = None, out = None, cie_std_dev_obs = None):
     """
     Calculates xyz tristimulus values from spectral data.
        
@@ -468,6 +468,9 @@ def spd_to_xyz(data,  relative = True, rfl = None, cieobs = _CIEOBS, K = None, o
             (e.g. K for '1931_2' is 683 lm/W (relative = False) or 100/sum(spd*dl))
         :out: None or 1 or 2, optional
             Determines number and shape of output. (see :returns:)
+        :cie_std_dev_obs: None or str, optional
+            None: don't use CIE Standard Deviate Observer function.
+            'f1': use F1 function.
     
     Returns:
         :returns:
@@ -511,6 +514,9 @@ def spd_to_xyz(data,  relative = True, rfl = None, cieobs = _CIEOBS, K = None, o
                             Setting K = 1.')
             
     cmf = xyzbar(cieobs = cieobs, scr = scr, wl_new = data[0], kind = 'np') #also interpolate to wl of data
+    if cie_std_dev_obs is not None:
+        cmf_cie_std_dev_obs = xyzbar(cieobs = 'cie_std_dev_obs_' + cie_std_dev_obs.lower(), scr = scr, wl_new = data[0], kind = 'np')
+        cmf[1:] = cmf[1:] + cmf_cie_std_dev_obs[1:] # add CIE standard deviate observer function to cmf
 
     #interpolate rfls to lambda range of spd:
     if rfl is not None: 
@@ -586,7 +592,7 @@ def spd_to_ler(data, cieobs = _CIEOBS, K = None):
     return ((K * np.dot((Vl*dl),data[1:].T))/np.sum(data[1:]*dl, axis = data.ndim-1)).T
 
 
-def spd_to_power(data, ptype = 'ru', cieobs = _CIEOBS,):
+def spd_to_power(data, ptype = 'ru', cieobs = _CIEOBS):
     """
     Calculate power of spectral data in radiometric, photometric or quantal energy units.
     
