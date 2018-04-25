@@ -304,6 +304,25 @@ def color3mixer(Yxyt,Yxy1,Yxy2,Yxy3):
     M = Yt*np.vstack((m1/Y1,m2/Y2,m3/Y3))
     return M.T
 
+
+def colormixer(Yxyt, Yxyi, ratios):
+    """
+    Calculate fluxes required to obtain a target chromaticity 
+    when (additively) mixing N light sources.
+    
+    Args:
+        :Yxyt: numpy.ndarray with target Yxy chromaticities.
+        :Yxyi: numpy.ndarray with Yxy chromaticities of light sources i.
+        :ratios: numpy.ndarray with light source ratio specifications.  
+        
+    Returns:
+        :M: numpy.ndarray with fluxes.
+        
+    Note:
+        Yxyt, Yxyi, ... can contain multiple rows, each refering to single mixture.
+    """
+    
+
 #------------------------------------------------------------------------------
 def get_w_summed_spd(w,spds):
     """
@@ -482,6 +501,7 @@ def component_triangle_optimizer(component_spds, Yxyi = None, Yxy_target = np2d(
         optcounter = 1
         spd_constructor = get_w_summed_spd # define constructor function
         spd_constructor_pars = spds_rgb  # define constructor  parameters
+        
         def fit_fcn(x, out, obj_fcn, obj_fcn_pars, obj_fcn_weights, obj_tar_vals, F_rss, decimals, verbosity):
             F = fitnessfcn(x, spd_constructor, spd_constructor_pars = spd_constructor_pars,\
                       F_rss = F_rss, decimals = decimals,\
@@ -521,8 +541,8 @@ def component_triangle_optimizer(component_spds, Yxyi = None, Yxy_target = np2d(
 
 #------------------------------------------------------------------------------
 def spd_optimizer(target, tar_type = 'Yxy', cieobs = _CIEOBS,\
-                  optimizer_type = 'mixer', cspace = 'Yuv', cspace_bwtf = {}, cspace_fwtf = {},\
-                  component_spds = None,\
+                  optimizer_type = '3mixer', cspace = 'Yuv', cspace_bwtf = {}, cspace_fwtf = {},\
+                  component_spds = None, N_components = None,\
                   obj_fcn = [None], obj_fcn_pars = [{}], obj_fcn_weights = [1],\
                   obj_tar_vals = [0], decimals = [5], \
                   minimize_method = 'nelder-mead', minimize_opts = None, F_rss = True,\
@@ -541,8 +561,8 @@ def spd_optimizer(target, tar_type = 'Yxy', cieobs = _CIEOBS,\
             Specifies the input type in :target: (e.g. 'Yxy' or 'cct')
         :cieobs: _CIEOBS, optional
             CIE CMF set used to calculate chromaticity values if not provided in :Yxyi:.
-        :optimizer_type: 'mixer',  optional
-            Specifies type of chromaticity optimization ('mixer' or 'search')
+        :optimizer_type: '3mixer',  optional
+            Specifies type of chromaticity optimization ('3mixer' or 'mixer' or 'search')
         :cspace: 'Yuv', optional
             Color space for 'search'-type optimization. 
         :cspace_bwtf: {}, optional
@@ -577,30 +597,42 @@ def spd_optimizer(target, tar_type = 'Yxy', cieobs = _CIEOBS,\
     """
     # Get component spd:
     if component_spds is None:
-        spds = spd_builder(flux = None, peakwl = peakwl, fwhm = fwhm,\
-                        strength_ph = strength_ph,\
-                        peakwl_ph1 = peakwl_ph1, fwhm_ph1 = fwhm_ph1, strength_ph1 = strength_ph1,\
-                        peakwl_ph2 = peakwl_ph2, fwhm_ph2 = fwhm_ph2, strength_ph2 = strength_ph2,\
-                        verbosity = 0)
+        if N_components is None: # Generate component spds from input args:
+            spds = spd_builder(flux = None, peakwl = peakwl, fwhm = fwhm,\
+                               strength_ph = strength_ph,\
+                               peakwl_ph1 = peakwl_ph1, fwhm_ph1 = fwhm_ph1, strength_ph1 = strength_ph1,\
+                               peakwl_ph2 = peakwl_ph2, fwhm_ph2 = fwhm_ph2, strength_ph2 = strength_ph2,\
+                               verbosity = 0)
+            N_components = spds.shape[0]
+        else:
+            spds = None # optimize spd model parameters, such as peakwl, fwhm, ...
+            if optimizer_type == '3mixer':
+                raise Exception("spd_optimizer(): optimizer_type = '3mixer' not supported for component parameter optimization. Use 'search' or 'mixer' instead.")
+                
     else:
         spds = component_spds 
+        N_components = spds.shape[0]
     
     # Check if there are at least 3 spds:
-    if spds.shape[0]-1 < 3:
-        raise Exception('spd_optimizer(): At least 3 component spds are required.')
-       
-    # Calculate xyz:
-    xyzi = spd_to_xyz(spds, relative = False, cieobs = cieobs)
-    lab = colortf(xyz, tf = cspace, **cspace_fwtf)
+    if spds is not None:
+        if (spds.shape[0]-1 < 3):
+            raise Exception('spd_optimizer(): At least 3 component spds are required.')
+                
+        # Calculate xyz of components:
+        xyzi = spd_to_xyz(spds, relative = False, cieobs = cieobs)
+    else:
+        if N_components < 3:
+            raise Exception('spd_optimizer(): At least 3 component spds are required.')
     
-    # Calculate fluxes:
-    if optimizer_type == 'mixer':
-        colormixer = color3mixer # replace later with one that can do more than 3
+    # Optimize spectrum:
+    if optimizer_type == '3mixer': # Optimize fluxes for predefined set of component spectra
+        
+        # Calculate Yxy:
         Yxyt = colortf(target, tf = tar_type+'>Yxy', bwtf = cspace_bwtf)
-        Yxyi = xyz_to_Yxy(xyzi) #input for colormixer is Yxy
+        Yxyi = xyz_to_Yxy(xyzi) #input for color3mixer is Yxy
         
         if xyzi.shape[0] == 3: # Only 1 solution
-            M = colormixer(Yxyt,Yxyi[0:1,:],Yxyi[1:2,:],Yxyi[2:3,:])
+            M = color3mixer(Yxyt,Yxyi[0:1,:],Yxyi[1:2,:],Yxyi[2:3,:])
             if (M<0).any():
                 warnings.warn('spd_optimizer(): target outside of gamut')
         else:
@@ -611,9 +643,20 @@ def spd_optimizer(target, tar_type = 'Yxy', cieobs = _CIEOBS,\
                                                                       minimize_method = minimize_method, F_rss = F_rss,\
                                                                       minimize_opts = minimize_opts,\
                                                                       verbosity = verbosity)
+            
+    elif optimizer_type == 'mixer': # Optimize fluxes and component model parameters 
         
-    elif optimizer_type == 'search':
-        raise Exception("spd_optimizer(): optimizer_type = 'search' not yet implemented. Use 'mixer'. ")
+        # Calculate Yxy:
+        Yxyt = colortf(target, tf = tar_type+'>Yxy', bwtf = cspace_bwtf)
+                
+        # Use Nmixer for optimization:
+        
+        
+        raise Exception("spd_optimizer(): optimizer_type = 'mixer' not yet implemented. Use '3mixer'. ")
+
+        
+    elif optimizer_type == 'search': # Optimize fluxes and component model parameters (chromaticity is part of obj_fcn list)
+        raise Exception("spd_optimizer(): optimizer_type = 'search' not yet implemented. Use '3mixer'. ")
 
     # Calculate combined spd from components and their fluxes:
     spds = (np.atleast_2d(M)*spds[1:].T).T.sum(axis = 0)
@@ -677,18 +720,20 @@ if __name__ == '__main__':
     target = 4000 # 4000 K target cct
     tar_type = 'cct'
     cieobs = '1931_2'
-    peakwl = [450,490,530,570,610]
-    fwhm = [30,30,35,20,15] 
+    peakwl = [450,530,610]
+    fwhm = [30,35,15] 
     obj_fcn1 = spd_to_iesrf
     obj_fcn2 = spd_to_iesrg
     obj_fcn = [obj_fcn1, obj_fcn2]
     obj_tar_vals = [90,110]
     obj_fcn_weights = [1,1]
     decimals = [5,5]
+    N_components = None #if not None, spd model parameters (peakwl, fwhm, ...) are optimized
     S3, _ = spd_optimizer(target, tar_type = tar_type, cspace_bwtf = {'cieobs' : cieobs, 'mode' : 'search'},\
-                       peakwl = peakwl, fwhm = fwhm, obj_fcn = obj_fcn, obj_tar_vals = obj_tar_vals,\
-                       obj_fcn_weights = obj_fcn_weights, decimals = decimals,\
-                       verbosity = 0)
+                          optimizer_type = '3mixer', N_components = N_components,\
+                          peakwl = peakwl, fwhm = fwhm, obj_fcn = obj_fcn, obj_tar_vals = obj_tar_vals,\
+                          obj_fcn_weights = obj_fcn_weights, decimals = decimals,\
+                          verbosity = 0)
     
     # Check output agrees with target:
     xyz = spd_to_xyz(S3, relative = False, cieobs = cieobs)
