@@ -16,7 +16,14 @@
                     when (additively) mixing 3 light sources.
                     
 # get_w_summed_spd(): Calculate weighted sum of spds.
-                    
+ 
+# fitnessfcn(): Fitness function that calculates closeness of solution x to 
+                target values for specified objective functions.
+         
+# component_triangle_optimizer(): Optimizes the weights (fluxes) of a set of component spectra using a triangle method.
+
+# spd_optimizer(): Generate a spectrum with specified white point and optimized for certain objective functions 
+                    from a set of component spectra or component spectrum model parameters.
                     
 #------------------------------------------------------------------------------
 Created on Wed Apr 25 09:07:04 2018
@@ -403,10 +410,49 @@ def fitnessfcn(x, spd_constructor, spd_constructor_pars = None, F_rss = True, de
 #------------------------------------------------------------------------------
 def component_triangle_optimizer(component_spds, Yxyi = None, Yxy_target = np2d([100,1/3,1/3]), cieobs = _CIEOBS,\
                                  obj_fcn = [None], obj_fcn_pars = [{}], obj_fcn_weights = [1],\
-                                 obj_tar_vals = [0], decimals = [3], \
+                                 obj_tar_vals = [0], decimals = [5], \
                                  minimize_method = 'nelder-mead', minimize_opts = None, F_rss = True,\
                                  verbosity = 0):
+    """
+    Optimizes the weights (fluxes) of a set of component spectra using a triangle method.
     
+    The triangle method creates for all possible combinations of 3 primary component spectra 
+    a spectrum that results in the target chromaticity using color3mixer() 
+    and then optimizes the weights of each of the latter spectra such that 
+    adding them (additive mixing) results in obj_vals as close as possible to 
+    the target values.
+    
+    Args:
+        :component_spds: numpy.ndarray of component spectra.
+        :Yxyi:  None or numpy.ndarray, optional
+            Yxy chromaticities of all component spectra.
+            If None: they are calculated from :component_spds:
+        :Yxy_target: np2d([100,1/3,1/3]), optional
+            Numpy.ndarray with Yxy chromaticity of target.
+        :cieobs: _CIEOBS, optional
+            CIE CMF set used to calculate chromaticity values if not provided in :Yxyi:.
+        :F_rss: True, optional
+             Take Root-Sum-of-Squares of 'closeness' values between target and objective function values.
+        :decimals: 5, optional
+            Rounding decimals of objective function values.
+        :obj_fcn: [None] or list of function handles to objective functions, optional
+        :obj_fcn_weights: [1] or list of weigths for each objective function, optional.
+        :obj_fcn_pars: [None] or list of parameter dicts for each objective functions, optional
+        :obj_tar_vals: [0] or list of target values for each objective functions, optional
+        :minimize_method: 'nelder-mead', optional
+            Optimization method used by minimize function.
+        :minimize_opts: None, optional
+             Dict with minimization options. 
+             None defaults to: {'xtol': 1e-5, 'disp': True, 'maxiter' : 1000*Nc, 'maxfev' : 1000*Nc,'fatol': 0.01}
+        :verbosity: 0, optional
+            If > 0: print intermediate results.
+            
+    Returns:
+        :returns: M, spd_opt, obj_vals
+            - 'M': numpy.ndarray with fluxes for each component spectrum.
+            - 'spd_opt': optimized spectrum.
+            - 'obj_vals': values of the objective functions for the optimized spectrum.
+    """
     if Yxyi is None: #if not provided: calculate.
         xyzi = spd_to_xyz(spds, relative = False, cieobs = cieobs)
         Yxyi = xyz_to_Yxy(xyzi)
@@ -477,14 +523,58 @@ def component_triangle_optimizer(component_spds, Yxyi = None, Yxy_target = np2d(
 def spd_optimizer(target, tar_type = 'Yxy', cieobs = _CIEOBS,\
                   optimizer_type = 'mixer', cspace = 'Yuv', cspace_bwtf = {}, cspace_fwtf = {},\
                   component_spds = None,\
+                  obj_fcn = [None], obj_fcn_pars = [{}], obj_fcn_weights = [1],\
+                  obj_tar_vals = [0], decimals = [5], \
+                  minimize_method = 'nelder-mead', minimize_opts = None, F_rss = True,\
                   peakwl = [450,530,600], fwhm = [20,30,10], wl = _WL3, with_wl = True, strength_shoulder = 2,\
                   strength_ph = 0, peakwl_ph1 = 530, fwhm_ph1 = 80, strength_ph1 = 1,\
                   peakwl_ph2 = 560, fwhm_ph2 = 80, strength_ph2 = None,\
-                  obj_fcn = [None], obj_fcn_pars = [{}], obj_fcn_weights = [1],\
-                  obj_tar_vals = [0], decimals = [3], \
-                  minimize_method = 'nelder-mead', minimize_opts = None, F_rss = True,\
                   verbosity = 0):
+    """
+    Generate a spectrum with specified white point and optimized for certain objective functions 
+    from a set of component spectra or component spectrum model parameters.
     
+    Args:
+        :target: np2d([100,1/3,1/3]), optional
+            Numpy.ndarray with Yxy chromaticity of target.
+        :tar_type:  'Yxy' or str, optional
+            Specifies the input type in :target: (e.g. 'Yxy' or 'cct')
+        :cieobs: _CIEOBS, optional
+            CIE CMF set used to calculate chromaticity values if not provided in :Yxyi:.
+        :optimizer_type: 'mixer',  optional
+            Specifies type of chromaticity optimization ('mixer' or 'search')
+        :cspace: 'Yuv', optional
+            Color space for 'search'-type optimization. 
+        :cspace_bwtf: {}, optional
+            Backward (xyz_to_...) transform parameters (see colortf()) to go from :tar_type: to 'Yxy'.
+        :cspace_fwtf = {}, optional
+            Forward (xyz_to_...) transform parameters (see colortf()) to go from xyz to :cspace:.
+        :component_spds: numpy.ndarray of component spectra.
+            If None: they are built from input args.
+        :F_rss: True, optional
+             Take Root-Sum-of-Squares of 'closeness' values between target and objective function values.
+        :decimals: 5, optional
+            Rounding decimals of objective function values.
+        :obj_fcn: [None] or list of function handles to objective functions, optional
+        :obj_fcn_weights: [1] or list of weigths for each objective function, optional.
+        :obj_fcn_pars: [None] or list of parameter dicts for each objective functions, optional
+        :obj_tar_vals: [0] or list of target values for each objective functions, optional
+        :minimize_method: 'nelder-mead', optional
+            Optimization method used by minimize function.
+        :minimize_opts: None, optional
+             Dict with minimization options. 
+             None defaults to: {'xtol': 1e-5, 'disp': True, 'maxiter' : 1000*Nc, 'maxfev' : 1000*Nc,'fatol': 0.01}
+        :verbosity: 0, optional
+            If > 0: print intermediate results.
+         
+         :peakwl:, :fwhm:, ... : see ?spd_builder for more info.   
+            
+    Returns:
+        :returns: spds, M
+            - 'spds': optimized spectrum.
+            - 'M': numpy.ndarray with fluxes for each component spectrum.
+
+    """
     # Get component spd:
     if component_spds is None:
         spds = spd_builder(flux = None, peakwl = peakwl, fwhm = fwhm,\
@@ -530,7 +620,7 @@ def spd_optimizer(target, tar_type = 'Yxy', cieobs = _CIEOBS,\
     
     if with_wl == True:
         spds = np.vstack((getwlr(wl), spds))
-    return spds       
+    return spds, M       
 
 
 
@@ -584,7 +674,7 @@ if __name__ == '__main__':
     
     #--------------------------------------------------------------------------
 #    print('2: spd_optimizer():')
-    target = 3000 # 4000 K target cct
+    target = 4000 # 4000 K target cct
     tar_type = 'cct'
     cieobs = '1931_2'
     peakwl = [450,490,530,570,610]
@@ -593,12 +683,12 @@ if __name__ == '__main__':
     obj_fcn2 = spd_to_iesrg
     obj_fcn = [obj_fcn1, obj_fcn2]
     obj_tar_vals = [90,110]
-    obj_fcn_weights = [1,0]
+    obj_fcn_weights = [1,1]
     decimals = [5,5]
-    S3 = spd_optimizer(target, tar_type = tar_type, cspace_bwtf = {'cieobs' : cieobs, 'mode' : 'search'},\
+    S3, _ = spd_optimizer(target, tar_type = tar_type, cspace_bwtf = {'cieobs' : cieobs, 'mode' : 'search'},\
                        peakwl = peakwl, fwhm = fwhm, obj_fcn = obj_fcn, obj_tar_vals = obj_tar_vals,\
                        obj_fcn_weights = obj_fcn_weights, decimals = decimals,\
-                       verbosity = 1)
+                       verbosity = 0)
     
     # Check output agrees with target:
     xyz = spd_to_xyz(S3, relative = False, cieobs = cieobs)
