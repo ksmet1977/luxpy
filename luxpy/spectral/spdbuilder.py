@@ -720,8 +720,8 @@ if __name__ == '__main__':
     target = 4000 # 4000 K target cct
     tar_type = 'cct'
     cieobs = '1931_2'
-    peakwl = [450,530,610]
-    fwhm = [30,35,15] 
+    peakwl = [450,530,560,610]
+    fwhm = [30,35,30,15] 
     obj_fcn1 = spd_to_iesrf
     obj_fcn2 = spd_to_iesrg
     obj_fcn = [obj_fcn1, obj_fcn2]
