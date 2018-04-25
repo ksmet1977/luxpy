@@ -339,6 +339,7 @@ def fitnessfcn(x, spd_constructor, spd_constructor_pars = None, F_rss = True, de
     Returns:
         :F: float or numpy.ndarray with fitness value for current solution :x:.
     """
+    
     # Keep track of solutions tried:
     global optcounter 
     optcounter = optcounter + 1
@@ -357,8 +358,8 @@ def fitnessfcn(x, spd_constructor, spd_constructor_pars = None, F_rss = True, de
     
     # Calculate all objective functions and closeness to target values
     # store squared weighted differences for speed:
-    F = 1e9*np.ones((N))
-    output_str = 'c{:1.0f}: F = {:1.' + '{}'.format(decimals.max()) + 'f}' + ' : '
+    F = np.nan*np.ones((N))
+    output_str = 'c{:1.0f}: F = {:1.' + '{:1.0f}'.format(decimals.max()) + 'f}' + ' : '
     obj_vals = F.copy()
     for i in range(N):
         if obj_fcn[i] is not None:
@@ -369,16 +370,18 @@ def fitnessfcn(x, spd_constructor, spd_constructor_pars = None, F_rss = True, de
             else:
                 f_normalize = 1
                 
-            F[i] = obj_fcn_weights[i]*((np.round(obj_vals[i],np.int(decimals[i])) - obj_tar_vals[i])/f_normalize)**2
+            F[i] = (obj_fcn_weights[i]*(np.abs((np.round(obj_vals[i],np.int(decimals[i])) - obj_tar_vals[i])/f_normalize)**2))
+            
             if (verbosity > 0):
-                output_str = output_str + r'obj_#{:1.0f} = {:1.' + '{}'.format(decimals[i]) + 'f}'
+                output_str = output_str + r' obj_#{:1.0f}'.format(i+1) + ' = {:1.' + '{:1.0f}'.format(np.int(decimals[i])) + 'f},'
         else:
             obj_vals[i] = np.nan
             F[i] = np.nan
-            
+  
     # Take Root-Sum-of-Squares of delta((val - tar)**2):
     if F_rss == True:
         F = np.sqrt(np.nansum(F))
+
     
     # Print intermediate results:
     if (verbosity > 0):
@@ -455,7 +458,7 @@ def component_triangle_optimizer(component_spds, Yxyi = None, Yxy_target = np2d(
             minimize_opts = {'xtol': 1e-5, 'disp': True, 'maxiter' : 1000*Nc, 'maxfev' : 1000*Nc,'fatol': 0.01}
         input_par = ('F', obj_fcn, obj_fcn_pars, obj_fcn_weights, obj_tar_vals, F_rss, decimals, verbosity)
         res = minimize(fit_fcn, x0, args = input_par, method = minimize_method, options = minimize_opts)
-        x_final = res['x']
+        x_final = np.abs(res['x'])
     else:
         x_final = M3
         
@@ -465,9 +468,8 @@ def component_triangle_optimizer(component_spds, Yxyi = None, Yxy_target = np2d(
     M = np.empty((N))
     for i in range(N):
         M[i] = M_final[np.where(combos == i)].sum()
-
+    
     # Calculate optimized SPD and get obj_vals:
-    #spd_opt = spd_constructor(x_final,spd_constructor_pars)
     spd_opt, obj_vals = fit_fcn(x_final, 'spdi,obj_vals', obj_fcn, obj_fcn_pars, obj_fcn_weights, obj_tar_vals, F_rss, decimals, verbosity)
     return M, spd_opt, obj_vals
 
@@ -522,8 +524,6 @@ def spd_optimizer(target, tar_type = 'Yxy', cieobs = _CIEOBS,\
         
     elif optimizer_type == 'search':
         raise Exception("spd_optimizer(): optimizer_type = 'search' not yet implemented. Use 'mixer'. ")
-
-
 
     # Calculate combined spd from components and their fluxes:
     spds = (np.atleast_2d(M)*spds[1:].T).T.sum(axis = 0)
@@ -584,19 +584,21 @@ if __name__ == '__main__':
     
     #--------------------------------------------------------------------------
 #    print('2: spd_optimizer():')
-    target = 4000
+    target = 3000 # 4000 K target cct
     tar_type = 'cct'
     cieobs = '1931_2'
     peakwl = [450,490,530,570,610]
     fwhm = [30,30,35,20,15] 
     obj_fcn1 = spd_to_iesrf
     obj_fcn2 = spd_to_iesrg
-    obj_tar_vals = [90,110]
     obj_fcn = [obj_fcn1, obj_fcn2]
-    decimals = [9,9]
+    obj_tar_vals = [90,110]
+    obj_fcn_weights = [1,0]
+    decimals = [5,5]
     S3 = spd_optimizer(target, tar_type = tar_type, cspace_bwtf = {'cieobs' : cieobs, 'mode' : 'search'},\
                        peakwl = peakwl, fwhm = fwhm, obj_fcn = obj_fcn, obj_tar_vals = obj_tar_vals,\
-                       decimals = decimals)
+                       obj_fcn_weights = obj_fcn_weights, decimals = decimals,\
+                       verbosity = 1)
     
     # Check output agrees with target:
     xyz = spd_to_xyz(S3, relative = False, cieobs = cieobs)
@@ -605,8 +607,8 @@ if __name__ == '__main__':
     Rg = obj_fcn2(S3)
     print('\nOptimization results:')
     print("Optim / target cct: {:1.1f} K / {:1.1f} K".format(cct[0,0], target))
-    print("Optim / target Rf: {:1.1f} / {:1.1f}".format(Rf[0,0], obj_tar_vals[0]))
-    print("Optim / target Rg: {:1.1f} / {:1.1f}".format(Rg[0,0], obj_tar_vals[1]))
+    print("Optim / target Rf: {:1.3f} / {:1.3f}".format(Rf[0,0], obj_tar_vals[0]))
+    print("Optim / target Rg: {:1.3f} / {:1.3f}".format(Rg[0,0], obj_tar_vals[1]))
     
     #plot spd:
     plt.figure()
