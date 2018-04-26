@@ -363,7 +363,7 @@ def spd_builder(flux = None, peakwl = 450, fwhm = 20, ratios = None, wl = _WL3, 
 #            plt.plot(Yxyi[3*N:4*N,1],Yxyi[3*N:4*N,2],'mo')
 #            plotSL(cspace ='Yxy')
         
-        # Calculate fluxes for obtaining target:
+        # Calculate fluxes for obtaining target chromaticity:
         if component_spds.shape[0] == 1: # mono_led spectra can have more than 3 componenents
             if ratios is None:
                 M3 = np.nan
@@ -456,16 +456,20 @@ def color3mixer(Yxyt,Yxy1,Yxy2,Yxy3):
     return M.T
 
 
-def colormixer(Yxyt = None, Yxyi = None, ratios = None, source_order = None):
+def colormixer(Yxyt = None, Yxyi = None, n = 4, ratios = None, source_order = None):
     """
     Calculate fluxes required to obtain a target chromaticity 
     when (additively) mixing N light sources.
     
     Args:
         :Yxyt: numpy.ndarray with target Yxy chromaticities.
-        :Yxyi: numpy.ndarray with Yxy chromaticities of light sources i.
+            Defaults to equi-energy white.
+        :Yxyi: numpy.ndarray with Yxy chromaticities of light sources i = 1 to n.
+        :n: 4 or int, optional
+            Number of source components to randomly generate when Yxyi is None.
         :ratios: numpy.ndarray with light source ratio specifications.  
-        
+        :source_order: numpy.ndarray with order of source components.
+            If None: use np.arange(n)
     Returns:
         :M: numpy.ndarray with fluxes.
         
@@ -476,7 +480,6 @@ def colormixer(Yxyt = None, Yxyi = None, ratios = None, source_order = None):
     if Yxyt is None:
         Yxyt = np.atleast_2d([100,1/3,1/3])
     if Yxyi is None:
-        n = 11
         Yxyi = np.hstack((np.ones((n,1))*100,np.random.rand(n,2)))
     else:
         n = Yxyi.shape[0]
@@ -484,7 +487,6 @@ def colormixer(Yxyt = None, Yxyi = None, ratios = None, source_order = None):
         ratios = np.random.rand(n-3)
     if source_order is None:
         source_order = np.arange(n)
-
 
     if n > 3:
         m_so = source_order.copy() # all sources
@@ -540,7 +542,7 @@ def colormixer(Yxyt = None, Yxyi = None, ratios = None, source_order = None):
             MA = ratioAB #* YM/YA# * YA / YM
             MB = (1 - ratioAB) #* YM/YB# * YB / YM
             
-            # Store in Mlut:
+            # Do bookkeeping of components:
             pAB = np.hstack((pA,pB))
             mAB = np.hstack((MA,MB))
             if k == 0:
@@ -548,7 +550,7 @@ def colormixer(Yxyt = None, Yxyi = None, ratios = None, source_order = None):
                 m_su_k = pAB
             else:
                 m_s_k = np.hstack((m_s_k,n + kk))
-                m_su_k = np.vstack((m_su_k,pAB))
+                m_su_k = np.vstack((m_su_k, pAB))
             
             if kk == 0:
                 m_s = n + kk
@@ -559,10 +561,14 @@ def colormixer(Yxyt = None, Yxyi = None, ratios = None, source_order = None):
                 m_m = np.vstack((m_m,mAB))
                 m_su = np.vstack((m_su,pAB))
             
+            # Store in lut:
             mlut = np.vstack((mlut,np.hstack((kk+n,YxyM,pAB,mAB))))
 
+            # Get remaining components:
             r_so = np.hstack((np.setdiff1d(m_so[:], np.unique(m_su_k)),m_s_k))
             N_sources = r_so.shape[0]
+            
+            # Reset source list when all pairs have been calculated for current state:
             if (k == np.int(m_so.shape[0]/2)-1):
                 m_so = r_so.copy()
                 k = 0
@@ -571,14 +577,13 @@ def colormixer(Yxyt = None, Yxyi = None, ratios = None, source_order = None):
                 k += 1
             kk += 1
         
-        # Calculate M3 using last 3 intermediate sources:
+        # Calculate M3 using last 3 intermediate component sources:
         M3 = color3mixer(Yxyt,mlut[r_so[0],1:4],mlut[r_so[1],1:4],mlut[r_so[2],1:4])
         M3[M3<0] = np.nan
         
-        # Calculate backward from M3:
+        # Calculate fluxes backward from M3:
         M = np.ones((n))
         k = 0
-        
         if not np.isnan(M3).any():
             n_min = 3 - (mlut.shape[0] - n)
             n_min = n - np.int((n_min + np.abs(n_min))/2)
@@ -601,16 +606,12 @@ def colormixer(Yxyt = None, Yxyi = None, ratios = None, source_order = None):
         else:
             M = np.nan*M
         
-    else:
+    else: # Use fast color3mixer
+        
         M = color3mixer(Yxyt,Yxyi[0,:],Yxyi[1,:],Yxyi[2,:])
                 
     return np.atleast_2d(M)
 
-#M = np.nan
-#while np.isnan(M).any():
-#    M = colormixer()
-#
-#print(M)
 
 #------------------------------------------------------------------------------
 def get_w_summed_spd(w,spds):
