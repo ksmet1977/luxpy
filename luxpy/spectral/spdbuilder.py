@@ -34,6 +34,7 @@ from luxpy import np, warnings, minimize, math, _WL3, _CIEOBS,  np2d, getwlr, SP
 from luxpy.cri import spd_to_iesrf, spd_to_iesrg
 import itertools
 
+np.set_printoptions(formatter={'float': lambda x: "{0:0.2f}".format(x)})
 
 #------------------------------------------------------------------------------
 def gaussian_spd(peakwl = 530, fwhm = 20, wl = _WL3, with_wl = True):
@@ -453,52 +454,46 @@ def colormixer(Yxyt = None, Yxyi = None, ratios = None, source_order = None):
     Note:
         Yxyt, Yxyi, ... can contain multiple rows, each refering to single mixture.
     """
-    np.set_printoptions(precision=3)
-    np.set_printoptions(formatter={'float': lambda x: "{0:0.2f}".format(x)})
+    
     if Yxyt is None:
         Yxyt = np.atleast_2d([100,1/3,1/3])
     if Yxyi is None:
-        n = 9
+        n = 11
         Yxyi = np.hstack((np.ones((n,1))*100,np.random.rand(n,2)))
     if ratios is None:
         ratios = np.random.rand(n-3)
-        print(ratios.shape)
     if source_order is None:
         source_order = np.arange(n)
     
     n = Yxyi.shape[0]
+
     if n > 3:
+        m_so = source_order.copy() # all sources
+        m_ro = ratios.copy()
         
-               
-        Mlut_s = np.arange(n)[:,None]
-        Mlut_Yxy = Yxyi
-        Mlut_su = np.diagflat(np.arange(n))
-        Mlut_m = np.diagflat(2*np.ones((1,n))-1)
+        m_s_ = []
+        m_su_ = []
+        m_m_ = []
+        N_sources = m_so.shape[0]
         
-        Mlut = np.hstack((np.arange(n)[:,None],Yxyi,\
-                          np.diagflat(np.arange(n)),\
-                          np.diagflat(2*np.ones((1,n))-1)))
+        mlut = np.hstack((np.arange(n)[:,None], Yxyi.copy(),\
+                           np.arange(n)[:,None],np.nan*np.ones((n,1)),\
+                           np.ones((n,1)),np.nan*np.ones((n,1))))
         
-        for k in range(n-3):
-            print('k:')
-            print(k)
-            
-            # Create current state:
-            if k == 0:
-                Yxyi_k = Yxyi.copy()
-                ratios_k = ratios.copy()
-                source_order_k = source_order.copy()
-                firstrun = True
+        ml_su = (np.diagflat(np.arange(n)) - 1) + np.diagflat(np.ones((1,n)))
+        ml_m = 2*np.diagflat(np.ones((1,n))) - 1 
+        
+        k = 0
+        kk = 0
+        while (N_sources > 3) or (kk>n-3):
                 
-            # Combine last two sources of current state:
-            ratioAB = ratios_k[k]
-            pA = np.int(source_order_k[2*k])
-            pB = np.int(source_order_k[2*k+1])
-            print(pA)
-            print(pB)
+            # Combine two sources:
+            ratioAB = m_ro[kk]
+            pA = np.int(m_so[2*k])
+            pB = np.int(m_so[2*k+1])
             
-            YxyA = Yxyi_k[pA,:]
-            YxyB = Yxyi_k[pB,:]
+            YxyA = mlut[pA,1:4].copy()
+            YxyB = mlut[pB,1:4].copy()
     
             YA = YxyA[0]
             xA = YxyA[1]
@@ -525,60 +520,72 @@ def colormixer(Yxyt = None, Yxyi = None, ratios = None, source_order = None):
             MB = (1 - ratioAB) * YB / YM
             
             # Store in Mlut:
-            sources_used_k = np.nan*np.ones((Mlut_s.shape[0]))
-            sources_used_k[np.hstack((pA,pB))] = np.hstack((pA,pB))
-            M_k = np.zeros((Mlut_s.shape[0]))
-            M_k[np.hstack((pA,pB))] = np.hstack((MA,MB))
+            pAB = np.hstack((pA,pB))
+            mAB = np.hstack((MA,MB))
+            if k == 0:
+                m_s_k = n + kk
+                m_su_k = pAB
+            else:
+                m_s_k = np.hstack((m_s_k,n + kk))
+                m_su_k = np.vstack((m_su_k,pAB))
             
-            sol_k = np.hstack((Mlut_s.shape[-1] + 1,YxyM,sources_used_k, M_k))
-            Mlut = np.vstack((Mlut, sol_k))
+            if kk == 0:
+                m_s = n + kk
+                m_m = np.hstack((MA,MB))
+                m_su = pAB
+            else:
+                m_s = np.hstack((m_s,n + kk))
+                m_m = np.vstack((m_m,mAB))
+                m_su = np.vstack((m_su,pAB))
             
-            
-            #Create new state if k == int(n/2):
-            nk = np.int(source_order_k.shape[0]/2)
-            print('nk')
-            print(nk)
-            N = Mlut[-1,0]+1
-            if k == nk-1:
-                p = np.int((N-nk))
-                source_order_k = np.hstack((Mlut[p:,0],source_order_k))
-                print(source_order_k)
-                Yxyi_k = np.vstack((Mlut[p:,1:4],Yxyi_k))
+            mlut = np.vstack((mlut,np.hstack((kk+n,YxyM,pAB,mAB))))
 
-#                if nk%2 > 0:
-#                    if firstrun == True:
-#                        p = 0
-#                    else:
-#                        p = -1
-#                        firstrun = False
-#                    source_order_k = np.hstack((source_order_k,source_order_k[-1]+1))
-#                    Yxyi_k = np.vstack((Yxyi_k,Yxyi_k[p]))
-#                    Mlut = np.vstack((Mlut,Mlut[p,:]))
-            print(Mlut)
-        kk = Mlut[n:,4:4+n]
-        print('kk')
-        print(kk)
-        unused_sources = np.where((1*np.isnan(kk)).sum(axis=0)==kk.shape[0])[0]
-        print(unused_sources)
-        Yxyi_final = Mlut[np.hstack((unused_sources,n+k-1,n+k)),1:4]
-        print(Yxyi_final)
+            r_so = np.hstack((np.setdiff1d(m_so[:], np.unique(m_su_k)),m_s_k))
+            N_sources = r_so.shape[0]
+            if (k == np.int(m_so.shape[0]/2)-1):
+                m_so = r_so.copy()
+                k = 0
+            else:
+                # add +1 to k:
+                k += 1
+            kk += 1
         
-        M3 = color3mixer(Yxyt,Yxyi_final[0,:],Yxyi_final[1,:],Yxyi_final[2,:])
-        print('M3')
-        print(M3)
+        # Calculate M3 using last 3 intermediate sources:
+        M3 = color3mixer(Yxyt,mlut[r_so[0],1:4],mlut[r_so[1],1:4],mlut[r_so[2],1:4])
         M3[M3<0] = np.nan
-        print(M3)
-        print('Mlut_M')
-        print(Mlut[np.hstack((0,n+k-1,n+k)),(4+n):])
-        M = np.dot(M3,Mlut[np.hstack((0,n+k-1,n+k)),(4+n):])
-        print(M)
+        
+        # Calculate backward from M3:
+        M = np.ones((n))
+        k = 0
+        if not np.isnan(M3).any():
+            for i in np.arange(mlut.shape[0],n,-1)-1:
+                if k < 3:
+                    m3 = M3[0,-1-k]
+                else:
+                    m3 = 1
+                pA = np.int(mlut[i,4])
+                pB = mlut[i,5]
+                mA = mlut[i,6]*m3
+                mB = mlut[i,7]*m3
+                mlut[pA,6:8] = mlut[pA,6:8]*mA
+                if not np.isnan(pB):
+                    pB = np.int(pB)
+                    mlut[pB,6:8] = mlut[pB,6:8]*mB
+                k += 1
+            M = mlut[:n,6]
+        else:
+            M = np.nan*M
         
     else:
         M = color3mixer(Yxyt,Yxyi[0,:],Yxyi[1,:],Yxyi[2,:])
                 
     return M
 
-colormixer()
+M = np.nan
+while np.isnan(M).any():
+    M = colormixer()
+
+print(M)
 
 #------------------------------------------------------------------------------
 def get_w_summed_spd(w,spds):
