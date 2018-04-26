@@ -437,7 +437,7 @@ def color3mixer(Yxyt,Yxy1,Yxy2,Yxy3):
     return M.T
 
 
-def colormixer(Yxyt, Yxyi, ratios):
+def colormixer(Yxyt = None, Yxyi = None, ratios = None, source_order = None):
     """
     Calculate fluxes required to obtain a target chromaticity 
     when (additively) mixing N light sources.
@@ -453,7 +453,132 @@ def colormixer(Yxyt, Yxyi, ratios):
     Note:
         Yxyt, Yxyi, ... can contain multiple rows, each refering to single mixture.
     """
+    np.set_printoptions(precision=3)
+    np.set_printoptions(formatter={'float': lambda x: "{0:0.2f}".format(x)})
+    if Yxyt is None:
+        Yxyt = np.atleast_2d([100,1/3,1/3])
+    if Yxyi is None:
+        n = 9
+        Yxyi = np.hstack((np.ones((n,1))*100,np.random.rand(n,2)))
+    if ratios is None:
+        ratios = np.random.rand(n-3)
+        print(ratios.shape)
+    if source_order is None:
+        source_order = np.arange(n)
     
+    n = Yxyi.shape[0]
+    if n > 3:
+        
+               
+        Mlut_s = np.arange(n)[:,None]
+        Mlut_Yxy = Yxyi
+        Mlut_su = np.diagflat(np.arange(n))
+        Mlut_m = np.diagflat(2*np.ones((1,n))-1)
+        
+        Mlut = np.hstack((np.arange(n)[:,None],Yxyi,\
+                          np.diagflat(np.arange(n)),\
+                          np.diagflat(2*np.ones((1,n))-1)))
+        
+        for k in range(n-3):
+            print('k:')
+            print(k)
+            
+            # Create current state:
+            if k == 0:
+                Yxyi_k = Yxyi.copy()
+                ratios_k = ratios.copy()
+                source_order_k = source_order.copy()
+                firstrun = True
+                
+            # Combine last two sources of current state:
+            ratioAB = ratios_k[k]
+            pA = np.int(source_order_k[2*k])
+            pB = np.int(source_order_k[2*k+1])
+            print(pA)
+            print(pB)
+            
+            YxyA = Yxyi_k[pA,:]
+            YxyB = Yxyi_k[pB,:]
+    
+            YA = YxyA[0]
+            xA = YxyA[1]
+            yA = YxyA[2]
+            
+            YB = YxyB[0]
+            xB = YxyB[1]
+            yB = YxyB[2]
+            
+            XA = xA * YA / yA
+            XB = xB * YB / yB
+            ZA = (1 - xA - yA) * YA / yA
+            ZB = (1 - xB - yB) * YB / yB
+
+            XM = (ratioAB * XA + (1 - ratioAB) * XB)
+            ZM = (ratioAB * ZA + (1 - ratioAB) * ZB)
+            YM = (ratioAB * YA + (1 - ratioAB) * YB)
+            xM = XM / (XM + YM + ZM)
+            yM = YM / (XM + YM + ZM)
+            YxyM = np.hstack((YM, xM, yM))
+        
+            #calculate the contributions of source 1 and source 2 needed to get the M of the temporary source
+            MA = ratioAB * YA / YM
+            MB = (1 - ratioAB) * YB / YM
+            
+            # Store in Mlut:
+            sources_used_k = np.nan*np.ones((Mlut_s.shape[0]))
+            sources_used_k[np.hstack((pA,pB))] = np.hstack((pA,pB))
+            M_k = np.zeros((Mlut_s.shape[0]))
+            M_k[np.hstack((pA,pB))] = np.hstack((MA,MB))
+            
+            sol_k = np.hstack((Mlut_s.shape[-1] + 1,YxyM,sources_used_k, M_k))
+            Mlut = np.vstack((Mlut, sol_k))
+            
+            
+            #Create new state if k == int(n/2):
+            nk = np.int(source_order_k.shape[0]/2)
+            print('nk')
+            print(nk)
+            N = Mlut[-1,0]+1
+            if k == nk-1:
+                p = np.int((N-nk))
+                source_order_k = np.hstack((Mlut[p:,0],source_order_k))
+                print(source_order_k)
+                Yxyi_k = np.vstack((Mlut[p:,1:4],Yxyi_k))
+
+#                if nk%2 > 0:
+#                    if firstrun == True:
+#                        p = 0
+#                    else:
+#                        p = -1
+#                        firstrun = False
+#                    source_order_k = np.hstack((source_order_k,source_order_k[-1]+1))
+#                    Yxyi_k = np.vstack((Yxyi_k,Yxyi_k[p]))
+#                    Mlut = np.vstack((Mlut,Mlut[p,:]))
+            print(Mlut)
+        kk = Mlut[n:,4:4+n]
+        print('kk')
+        print(kk)
+        unused_sources = np.where((1*np.isnan(kk)).sum(axis=0)==kk.shape[0])[0]
+        print(unused_sources)
+        Yxyi_final = Mlut[np.hstack((unused_sources,n+k-1,n+k)),1:4]
+        print(Yxyi_final)
+        
+        M3 = color3mixer(Yxyt,Yxyi_final[0,:],Yxyi_final[1,:],Yxyi_final[2,:])
+        print('M3')
+        print(M3)
+        M3[M3<0] = np.nan
+        print(M3)
+        print('Mlut_M')
+        print(Mlut[np.hstack((0,n+k-1,n+k)),(4+n):])
+        M = np.dot(M3,Mlut[np.hstack((0,n+k-1,n+k)),(4+n):])
+        print(M)
+        
+    else:
+        M = color3mixer(Yxyt,Yxyi[0,:],Yxyi[1,:],Yxyi[2,:])
+                
+    return M
+
+colormixer()
 
 #------------------------------------------------------------------------------
 def get_w_summed_spd(w,spds):
@@ -648,8 +773,6 @@ def component_triangle_optimizer(component_spds, Yxyi = None, Yxy_target = np2d(
         for i in range(combos.shape[0]):
             Fs[i] = fit_fcn(X0[i], 'F', obj_fcn, obj_fcn_pars, obj_fcn_weights, obj_tar_vals, F_rss, decimals, verbosity)
         x0 = X0[Fs.argmin(),:] + gamma*np.ones((1,combos.shape[0]))
-        intermediate_x = x0.copy()
-        spds = spd_constructor(x0,spd_constructor_pars)
             
         # Perform optimzation:
         if minimize_opts is None:
@@ -857,35 +980,35 @@ if __name__ == '__main__':
 #    plt.figure()
 #    SPD(S2).plot()
     
-    #--------------------------------------------------------------------------
-#    print('2: spd_optimizer():')
-    target = 4000 # 4000 K target cct
-    tar_type = 'cct'
-    peakwl = [450,530,560,610]
-    fwhm = [30,35,30,15] 
-    obj_fcn1 = spd_to_iesrf
-    obj_fcn2 = spd_to_iesrg
-    obj_fcn = [obj_fcn1, obj_fcn2]
-    obj_tar_vals = [90,110]
-    obj_fcn_weights = [1,1]
-    decimals = [5,5]
-    N_components = None #if not None, spd model parameters (peakwl, fwhm, ...) are optimized
-    S3, _ = spd_optimizer(target, tar_type = tar_type, cspace_bwtf = {'cieobs' : cieobs, 'mode' : 'search'},\
-                          optimizer_type = '3mixer', N_components = N_components,\
-                          peakwl = peakwl, fwhm = fwhm, obj_fcn = obj_fcn, obj_tar_vals = obj_tar_vals,\
-                          obj_fcn_weights = obj_fcn_weights, decimals = decimals,\
-                          verbosity = 0)
-    
-    # Check output agrees with target:
-    xyz = spd_to_xyz(S3, relative = False, cieobs = cieobs)
-    cct = xyz_to_cct(xyz, cieobs = cieobs, mode = 'lut')
-    Rf = obj_fcn1(S3)
-    Rg = obj_fcn2(S3)
-    print('\nS3: Optimization results:')
-    print("S3: Optim / target cct: {:1.1f} K / {:1.1f} K".format(cct[0,0], target))
-    print("S3: Optim / target Rf: {:1.3f} / {:1.3f}".format(Rf[0,0], obj_tar_vals[0]))
-    print("S3: Optim / target Rg: {:1.3f} / {:1.3f}".format(Rg[0,0], obj_tar_vals[1]))
-    
-    #plot spd:
-    plt.figure()
-    SPD(S3).plot()
+#    #--------------------------------------------------------------------------
+##    print('2: spd_optimizer():')
+#    target = 4000 # 4000 K target cct
+#    tar_type = 'cct'
+#    peakwl = [450,530,560,610]
+#    fwhm = [30,35,30,15] 
+#    obj_fcn1 = spd_to_iesrf
+#    obj_fcn2 = spd_to_iesrg
+#    obj_fcn = [obj_fcn1, obj_fcn2]
+#    obj_tar_vals = [90,110]
+#    obj_fcn_weights = [1,1]
+#    decimals = [5,5]
+#    N_components = None #if not None, spd model parameters (peakwl, fwhm, ...) are optimized
+#    S3, _ = spd_optimizer(target, tar_type = tar_type, cspace_bwtf = {'cieobs' : cieobs, 'mode' : 'search'},\
+#                          optimizer_type = '3mixer', N_components = N_components,\
+#                          peakwl = peakwl, fwhm = fwhm, obj_fcn = obj_fcn, obj_tar_vals = obj_tar_vals,\
+#                          obj_fcn_weights = obj_fcn_weights, decimals = decimals,\
+#                          verbosity = 0)
+#    
+#    # Check output agrees with target:
+#    xyz = spd_to_xyz(S3, relative = False, cieobs = cieobs)
+#    cct = xyz_to_cct(xyz, cieobs = cieobs, mode = 'lut')
+#    Rf = obj_fcn1(S3)
+#    Rg = obj_fcn2(S3)
+#    print('\nS3: Optimization results:')
+#    print("S3: Optim / target cct: {:1.1f} K / {:1.1f} K".format(cct[0,0], target))
+#    print("S3: Optim / target Rf: {:1.3f} / {:1.3f}".format(Rf[0,0], obj_tar_vals[0]))
+#    print("S3: Optim / target Rg: {:1.3f} / {:1.3f}".format(Rg[0,0], obj_tar_vals[1]))
+#    
+#    #plot spd:
+#    plt.figure()
+#    SPD(S3).plot()
