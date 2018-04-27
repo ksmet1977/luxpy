@@ -1,21 +1,41 @@
 # -*- coding: utf-8 -*-
 """
 ###############################################################################
-# Module with optimizers
+# Module with optimizers : Port from Matlab fminsearchbnd, 
+# but applied to SciPy's minimize fcn.
 ###############################################################################
 
 # minimizebnd(): scipy.minimize() that allows contrained parameters onn otherwise unconstrained methods. 
 
+#------------------------------------------------------------------------------
 Created on Fri Apr 27 12:36:03 2018
 
 @author: kevin.smet
 
 """
 
-from luxpy import np, minimize
+from .. import np, minimize
 
-def minimzebnd(fun, x0, args=(), method = 'nelder-mead', use_bnd = True, bounds = (None,None) , options = None, **kwargs):
+__all__ = ['minimizebnd']
+
+def minimizebnd(fun, x0, args=(), method = 'nelder-mead', use_bnd = True, bounds = (None,None) , options = None, **kwargs):
+    """
+    Minimization functions that allows for bounds on any type of method in SciPy's minimize function
+    by transforming the parameters values (see Matlab's fminsearchbnd).
     
+    Args:
+        :use_bnd: True, optional
+            False: omits bounds in :bounds: and defaults to regular minimize function.
+        :bounds: (lower, upper), optional
+            Tupple with lists of lower and upper bounds for each of the parameters values.
+        :**kwargs: allows input for other type of arguments (e.g. in OutputFcn)
+         For other input arguments, see ?scipy.minimize()
+         
+    Returns:
+        :res: dict with minimize() output. Additionally function value of optimized solution is also a key.
+        
+        
+    """
     
     if use_bnd == False:
         return minimize(fun, x0, options = options, **kwargs)
@@ -60,7 +80,7 @@ def minimzebnd(fun, x0, args=(), method = 'nelder-mead', use_bnd = True, bounds 
     #    % 2 --> upper bound only
     #    % 3 --> dual finite bounds
     #    % 4 --> fixed variable
-        params['BoundClass'] = np.zeros(n,1)
+        params['BoundClass'] = np.zeros(n)
     
         for i in np.arange(n):
           k = np.isfinite(LB[i]) + 2*np.isfinite(UB[i])
@@ -72,7 +92,7 @@ def minimzebnd(fun, x0, args=(), method = 'nelder-mead', use_bnd = True, bounds 
         # surrogates. Check for infeasible starting guesses.
         x0u = x0
         k = 0
-        for i in np.range(n):
+        for i in np.arange(n):
             
             if params['BoundClass'][i] == 1:
                 # lower bound only
@@ -118,8 +138,8 @@ def minimzebnd(fun, x0, args=(), method = 'nelder-mead', use_bnd = True, bounds 
     
         # if any of the unknowns were fixed, then we need to shorten x0u now.
         if k <= n:
-            x0u = x0u[:k]
-    
+            x0u = x0u[:k+1]
+
         # were all the variables fixed?
         if x0u.shape[0] == 0: 
             # All variables were fixed. quit immediately, setting the
@@ -132,7 +152,7 @@ def minimzebnd(fun, x0, args=(), method = 'nelder-mead', use_bnd = True, bounds 
             x = reshape(x,xsize)
               
             # stuff fval with the final value
-            fval = params['fun'](x, **params['args'])
+            fval = params['fun'](x, *params['args'])
               
             # minimize was not called
             output['success'] = False
@@ -177,7 +197,7 @@ def minimzebnd(fun, x0, args=(), method = 'nelder-mead', use_bnd = True, bounds 
     x = xtransform(res['x'], params)
     
     # final reshape
-    x = x.reshape(x, xsize)
+    x = x.reshape(xsize)
     
     res['fval'] = fval
     res['x'] = x #overwrite x in res to unconstrained format
@@ -190,25 +210,29 @@ def minimzebnd(fun, x0, args=(), method = 'nelder-mead', use_bnd = True, bounds 
 # ========= begin subfunctions =========
 # ======================================
 def intrafun(x,params):
+    """
+    Transforms variables, then calls original function.
+    """
     
-    # transform variables, then call original function
     
     # transform
     xtrans = xtransform(x, params)
     
     # and call fun
-    fval = params['fun'](xtrans, params['args'])
+    fval = params['fun'](xtrans, *params['args'])
     
     return fval
 
 # ======================================
 def xtransform(x,params):
-    # converts unconstrained variables into their original domains
+    """
+    Converts unconstrained variables into their original domains.
+    """
     
     xtrans = np.zeros((params['n']))
     
     # k allows some variables to be fixed, thus dropped from the optimization.
-    k=1
+    k=0
     for i in np.arange(params['n']):
         if params['BoundClass'][i] == 1:
               # lower bound only
@@ -220,7 +244,7 @@ def xtransform(x,params):
      
         elif params['BoundClass'][i] == 3:
               # lower and upper bounds
-              xtrans[i]  = (np.sin(x[k] )+1)/2;
+              xtrans[i]  = (np.sin(x[k] )+1)/2
               xtrans[i]  = xtrans[i] * (params['UB'][i]  - params['LB'][i] ) + params['LB'][i] 
               
               # just in case of any floating point problems

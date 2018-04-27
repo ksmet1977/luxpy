@@ -65,11 +65,13 @@ Created on Tue Jun 27 11:50:32 2017
 @author: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
-from luxpy import np, np2d
+from .. import np, np2d
 from scipy.special import erf, erfinv
+from .optimizers import minimizebnd
 __all__  = ['normalize_3x3_matrix','symmM_to_posdefM','check_symmetric','check_posdef','positive_arctan','line_intersect','erf', 'erfinv', 'histogram', 'pol2cart', 'cart2pol']
 __all__ += ['bvgpdf','mahalanobis2','dot23', 'rms','geomean','polyarea']
 __all__ += ['magnitude_v','angle_v1v2']
+__all__ += ['minimizebnd']
 
 #------------------------------------------------------------------------------
 def normalize_3x3_matrix(M, xyz0 = np.array([[1.0,1.0,1.0]])):

@@ -40,7 +40,7 @@ Loads the following luxpy sub-packages, modules and classes:
     
     0.2.  math/ 
             math.py (imported as math into the luxpy namespace, details see end of this file)
-    
+            optimizers.py (imported in math name space)
     1.  spectral/ 
             cmf.py
             spectral.py

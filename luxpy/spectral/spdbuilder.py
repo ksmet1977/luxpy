@@ -1329,7 +1329,10 @@ def component_optimizer(component_data = 4, N_components = None, wl = _WL3,\
     if minimize_opts is None:
         minimize_opts = {'xtol': 1e-8, 'disp': True, 'maxiter' : 1000*len(x0), 'maxfev' : 1000*len(x0),'fatol': 0.01}
     input_par = ('F', spd_constructor, component_pars, obj_fcn, obj_fcn_pars, obj_fcn_weights, obj_tar_vals, F_rss, decimals, verbosity)
-    res = minimize(fit_fcn, x0, args = input_par, method = minimize_method, options = minimize_opts)
+    #res = minimize(fit_fcn, x0, args = input_par, method = minimize_method, options = minimize_opts)
+    
+    bounds = (component_pars['LB'],component_pars['UB'])
+    res = math.minimizebnd(fit_fcn, x0, args = input_par, method = minimize_method, use_bnd = True, bounds = bounds , options = minimize_opts)
 
     x_final = np.abs(res['x'])
    
