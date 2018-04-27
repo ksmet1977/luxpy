@@ -17,6 +17,7 @@ setup(
 		  'scipy',
 		  'matplotlib',
 		  'pandas',
+        'itertools',
       ],
   package_data={'luxpy': ['luxpy/data/cmfs/*.dat',
                           'luxpy/data/cmfs/*.txt',

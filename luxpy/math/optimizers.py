@@ -128,9 +128,9 @@ def minimizebnd(fun, x0, args=(), method = 'nelder-mead', use_bnd = True, bounds
               # unconstrained variable. x0u(i) is set.
               x0u[k] = x0[i]
               
-            if not (params['BoundClass'][i] == 4):
+            if params['BoundClass'][i] != 4:
               # increment k
-              k += k
+              k += 1
             else:
               # fixed variable. drop it before fminsearch sees it.
               # k is not incremented for this variable.
@@ -244,7 +244,7 @@ def xtransform(x,params):
      
         elif params['BoundClass'][i] == 3:
               # lower and upper bounds
-              xtrans[i]  = (np.sin(x[k] )+1)/2
+              xtrans[i]  = (np.sin(x[k])+1)/2
               xtrans[i]  = xtrans[i] * (params['UB'][i]  - params['LB'][i] ) + params['LB'][i] 
               
               # just in case of any floating point problems

@@ -352,12 +352,12 @@ def spd_builder(flux = None, component_spds = None, peakwl = 450, fwhm = 20, \
                                            strength_ph = strength_ph, peakwl_ph1 = peakwl_ph1, fwhm_ph1 = fwhm_ph1, strength_ph1 = strength_ph1,\
                                            peakwl_ph2 = peakwl_ph2, fwhm_ph2 = fwhm_ph2, strength_ph2 = strength_ph2,\
                                            use_piecewise_fcn = use_piecewise_fcn, verbosity = 0, out = 'spd,component_spds')
+        
         wl = getwlr(wl)
     else:
         wl = component_spds[0]
         temp = component_spds[1:][:,:,None].T
         spd, component_spds = (temp, temp)
-
     
     if target is not None: 
         # use component_spectra to build spds with target chromaticity
@@ -377,7 +377,7 @@ def spd_builder(flux = None, component_spds = None, peakwl = 450, fwhm = 20, \
         # Calculate Yxy:
         Yxyt = colortf(target, tf = tar_type+'>Yxy', bwtf = cspace_bwtf)
         Yxyi = xyz_to_Yxy(xyzi) #input for color3mixer is Yxy
-
+        
 #        if verbosity > 0:
 #            plt.figure()
 #            plt.plot(Yxyt[0,1],Yxyt[0,2],'ko')
@@ -396,6 +396,7 @@ def spd_builder(flux = None, component_spds = None, peakwl = 450, fwhm = 20, \
             else:
                 M = colormixer(Yxyt = Yxyt, Yxyi = Yxyi, pair_strengths = pair_strengths)
             M[np.isnan(M)] = -1
+
         else:
             M = color3mixer(Yxyt,Yxyi[:N,:],Yxyi[N:2*N,:],Yxyi[2*N:3*N,:]) # phosphor type spectra (3 components)
 
@@ -448,14 +449,14 @@ def spd_builder(flux = None, component_spds = None, peakwl = 450, fwhm = 20, \
         return M
     elif out == 'spd,M':
         return spd, M
-#    elif out == 'spd,M,component_spds':
-#        return spd, M, component_spds
+    elif out == 'spd,M,component_spds':
+        return spd, M, component_spds
 #    elif out == 'component_spds':
 #        return component_spds
-#    elif out == 'spd,component_spds':
-#        return spd, component_spds
+    elif out == 'spd,component_spds':
+        return spd, component_spds
     else:
-        eval(out)
+        return eval(out)
 
 
 
@@ -546,7 +547,7 @@ def colormixer(Yxyt = None, Yxyi = None, n = 4, pair_strengths = None, source_or
     if source_order is None:
         source_order = np.arange(n)
         #np.random.shuffle(source_order)
-
+        
     if n > 3:
         ps = pair_strengths.copy() # relative pair_strengths of paired sources
         so = source_order.copy() # all sources
@@ -722,8 +723,7 @@ def fitnessfcn(x, spd_constructor, spd_constructor_pars = None, F_rss = True, de
     N = len(obj_fcn)
     
     # Get current spdi:
-    spdi,args_out = spd_constructor(x,spd_constructor_pars)
-
+    spdi,args_out,component_spds = spd_constructor(x,spd_constructor_pars) 
 
     # Goodness-of-fit:
     F = np.nan*np.ones((N))
@@ -761,14 +761,14 @@ def fitnessfcn(x, spd_constructor, spd_constructor_pars = None, F_rss = True, de
                 obj_vals[i] = np.nan
                 F[i] = np.nan
     
+        # Print intermediate results:
+        if (verbosity > 0):
+            print(output_str.format(*np.hstack((optcounter, np.sqrt(np.nansum(F)), obj_vals))))
+    
     # Take Root-Sum-of-Squares of delta((val - tar)**2):
     if F_rss == True:
         F = np.sqrt(np.nansum(F))
 
-    
-    # Print intermediate results:
-    if (verbosity > 0):
-        print(output_str.format(*np.hstack((optcounter, F, obj_vals))))
     
     if out == 'F':
         return F
@@ -782,15 +782,196 @@ def fitnessfcn(x, spd_constructor, spd_constructor_pars = None, F_rss = True, de
         return spdi, obj_vals
     elif out == 'spdi,args_out':
         return spdi, args_out
+    elif out == 'spdi,args_out,component_spds':
+        return spdi, args_out, component_spds
     elif out == 'spdi,obj_vals,args_out':
         return spdi,obj_vals,args_out
+    elif out == 'spdi,obj_vals,args_out,component_spds':
+        return spdi,obj_vals,args_out,component_spds
     else:
         eval(out)
         
+         
                 
+#------------------------------------------------------------------------------
+def component_triangle_optimizer(component_data = 4, N_components = None, wl = _WL3,\
+                        Yxy_target = np2d([100,1/3,1/3]), cieobs = _CIEOBS,\
+                        obj_fcn = [None], obj_fcn_pars = [{}], obj_fcn_weights = [1],\
+                        obj_tar_vals = [0], decimals = [5], \
+                        minimize_method = 'nelder-mead', minimize_opts = None, F_rss = True,\
+                        verbosity = 0,**kwargs):
+    """
+    Optimizes the weights (fluxes) of a set of component spectra using a triangle method.
+    
+    The triangle method creates for all possible combinations of 3 primary component spectra 
+    a spectrum that results in the target chromaticity using color3mixer() 
+    and then optimizes the weights of each of the latter spectra such that 
+    adding them (additive mixing) results in obj_vals as close as possible to 
+    the target values.
+    
+         
+    Args:
+        :component_data: 4, optional
+            Component spectra data: 
+            If int: specifies number of components used in optimization 
+                    (peakwl, fwhm and pair_strengths will be optimized).
+            If dict: generate components based on parameters (peakwl, fwhm, 
+                     pair_strengths, etc.) in dict. 
+                    (keys with None values will be optimized)
+            If ndarray: optimize pair_strengths of component spectra.
+        :N_components: None, optional
+            Specifies number of components used in optimization. (only used when 
+            :component_data: is dict and user wants to override dict value. Note that
+            shape of parameters arrays must match N_components).
+        :wl: _WL3, optional
+            Wavelengths used in optimization when :component_data: is not ndarray with spectral data.
+
+        :Yxy_target: np2d([100,1/3,1/3]), optional
+            Numpy.ndarray with Yxy chromaticity of target.
+        :cieobs: _CIEOBS, optional
+            CIE CMF set used to calculate chromaticity values if not provided in :Yxyi:.
+        :F_rss: True, optional
+             Take Root-Sum-of-Squares of 'closeness' values between target and objective function values.
+        :decimals: 5, optional
+            Rounding decimals of objective function values.
+        :obj_fcn: [None] or list of function handles to objective functions, optional
+        :obj_fcn_weights: [1] or list of weigths for each objective function, optional.
+        :obj_fcn_pars: [None] or list of parameter dicts for each objective functions, optional
+        :obj_tar_vals: [0] or list of target values for each objective functions, optional
+        :minimize_method: 'nelder-mead', optional
+            Optimization method used by minimize function.
+        :minimize_opts: None, optional
+             Dict with minimization options. 
+             None defaults to: {'xtol': 1e-5, 'disp': True, 'maxiter' : 1000*Nc, 'maxfev' : 1000*Nc,'fatol': 0.01}
+        :verbosity: 0, optional
+            If > 0: print intermediate results.
+            
+    Returns:
+        :returns: M, spd_opt, obj_vals
+            - 'M': numpy.ndarray with fluxes for each component spectrum.
+            - 'spd_opt': optimized spectrum.
+            - 'obj_vals': values of the objective functions for the optimized spectrum.
+    """
+
+    component_pars = initialize_component_pars(component_data, optimizer_type = '3mixer', wl = wl)        
+    
+    # Also store the following args in component_pars (needed by spd_constructor):
+    component_pars['target'] = Yxy_target
+    component_pars['tar_type'] = 'Yxy'
+    component_pars['cspace_bwtf'] = {}
+    component_pars['cieobs'] = cieobs
+
+    # Setup optimization:
+    global optcounter
+    optcounter = 1     
+               
+    # define constructor function
+    def spd_constructor(x, constructor_pars = {}):
+        """
+        Construct spd from parameters.
+        """
+        cp = constructor_pars.copy()
+        
+        # replace / init cp with values from x (parameters to optimize)
+        # (opt_list and opt_len refer resp. to the key in cp and the length
+        # of that parameter in x)
+        cp, xisize = vec_to_dict(vec_= x, dict_ = cp, xisize = cp['opt_len'], keys = cp['opt_list'])
+
+        target = None #only calculate component spectra
+        spd, component_spds = spd_builder(peakwl = cp['peakwl'], fwhm = cp['fwhm'],\
+                                          pair_strengths = cp['pair_strengths'],\
+                                          strength_shoulder = cp['strength_shoulder'],\
+                                          target = target, tar_type = cp['tar_type'],\
+                                          cspace_bwtf = cp['cspace_bwtf'], cieobs = cp['cieobs'],\
+                                          use_piecewise_fcn = cp['use_piecewise_fcn'], wl = cp['wl'],\
+                                          component_spds = cp['component_spds'],\
+                                          strength_ph = None,\
+                                          peakwl_ph1 = None, fwhm_ph1 = None, strength_ph1 = None,\
+                                          peakwl_ph2 = None, fwhm_ph2 = None, strength_ph2 = None,\
+                                          flux = None,with_wl = True, verbosity = 0, out = 'spd,component_spds',**kwargs)
+        
+        # store component spectra in spds with first axis components, second axis wavelengths
+        component_spds = np.squeeze(component_spds, axis = 2)
+        component_spds = np.vstack((spd[0],component_spds)) 
+    
+        # Calculate xyzi and Yxyi of component spectra:
+        xyzi = spd_to_xyz(component_spds, relative = False, cieobs = cieobs)
+        Yxyi = xyz_to_Yxy(xyzi)
+    
+        # Generate all possible 3-channel combinations (component triangles):
+        N = Yxyi.shape[0]
+        combos = np.array(list(itertools.combinations(np.arange(N), 3))) 
+       
+        # calculate fluxes to obtain target Yxyt:
+        M3 = color3mixer(Yxy_target,Yxyi[combos[:,0],:],Yxyi[combos[:,1],:],Yxyi[combos[:,2],:])
+            
+        # Get rid of out-of-gamut solutions:
+        is_out_of_gamut =  (((M3<0).sum(axis=1))>0)
+        M3[is_out_of_gamut,:] = 0
+        Nc = combos.shape[0]
+        
+#        # Calculate 3-channel SPDs from individual channels:
+#        spds_rgb = np.empty((Nc,component_spds.shape[-1]))
+#        for i in np.arange(Nc):
+#            spds_rgb[i] = np.dot(M3[i,:],component_spds[combos[i,:]+1])
+#        spds_rgb = np.vstack((component_spds[0],spds_rgb))
+
+        M3[is_out_of_gamut,:] = np.nan
+        if Nc > 1:
+            # Calulate fluxes of all components from M3 and x_final:            
+            M_final = cp['triangle_strengths'][:,None]*M3
+            M = np.empty((N))
+            for i in np.arange(N):
+                M[i] = np.nansum(M_final[np.where(combos == i)])
+        else:
+            M = M3
+        
+        # Calculate optimized SPD:
+        spd = get_w_summed_spd(M, component_spds)
+        
+        # When all out-of-gamut: set spd to NaN's:
+        if sum(M) == 0:
+            spd[1:,:] = np.nan
+            
+        return spd,M,component_spds
+    
+    
+    def fit_fcn(x, out, spd_constructor, component_pars,  obj_fcn, obj_fcn_pars, obj_fcn_weights, obj_tar_vals, F_rss, decimals, verbosity):
+        F = fitnessfcn(x, spd_constructor, spd_constructor_pars = component_pars,\
+                  F_rss = F_rss, decimals = decimals,\
+                  obj_fcn = obj_fcn, obj_fcn_pars = obj_fcn_pars, obj_fcn_weights = obj_fcn_weights,\
+                  obj_tar_vals = obj_tar_vals, verbosity = verbosity, out = out)
+        return F
+
+    # Perform optimzation:
+    x0 = component_pars['x0']
+    lb = component_pars['LB']
+    ub = component_pars['UB']
+
+    if minimize_opts is None:
+        minimize_opts = {'xtol': 1e-5, 'disp': True, 'maxiter' : 1000*len(x0), 'maxfev' : 1000*len(x0),'fatol': 0.01}
+    input_par = ('F', spd_constructor, component_pars, obj_fcn, obj_fcn_pars, obj_fcn_weights, obj_tar_vals, F_rss, decimals, verbosity)
+    #res = minimize(fit_fcn, x0, args = input_par, method = minimize_method, options = minimize_opts)
+    
+    bounds = (component_pars['LB'],component_pars['UB'])
+    res = math.minimizebnd(fit_fcn, x0, args = input_par, method = minimize_method, use_bnd = True, bounds = bounds , options = minimize_opts)
+
+    x_final = np.abs(res['x'])
+   
+    # Calculate optimized SPD and get obj_vals and fluxes:
+    spd_opt, obj_vals, M, component_spds = fit_fcn(x_final, 'spdi,obj_vals,args_out,component_spds', spd_constructor, component_pars, obj_fcn, obj_fcn_pars, obj_fcn_weights, obj_tar_vals, F_rss, decimals, verbosity)
+    
+    res['obj_vals'] = obj_vals
+    res['x_final'] = x_final
+    res['spd_opt'] = spd_opt
+    res['M'] = M
+    res['component_spds'] = component_spds
+    
+    return spd_opt, M, component_spds, obj_vals, res
+
 
 #------------------------------------------------------------------------------
-def component_triangle_optimizer(component_spds, Yxyi = None, Yxy_target = np2d([100,1/3,1/3]), cieobs = _CIEOBS,\
+def component_triangle_optimizer2(component_spds, Yxyi = None, Yxy_target = np2d([100,1/3,1/3]), cieobs = _CIEOBS,\
                                  obj_fcn = [None], obj_fcn_pars = [{}], obj_fcn_weights = [1],\
                                  obj_tar_vals = [0], decimals = [5], \
                                  minimize_method = 'nelder-mead', minimize_opts = None, F_rss = True,\
@@ -901,134 +1082,8 @@ def component_triangle_optimizer(component_spds, Yxyi = None, Yxy_target = np2d(
     return M, spd_opt, obj_vals
 
 #------------------------------------------------------------------------------
-def spd_optimizer2(target, tar_type = 'Yxy', cieobs = _CIEOBS,\
-                  optimizer_type = '3mixer', cspace = 'Yuv', cspace_bwtf = {}, cspace_fwtf = {},\
-                  component_spds = None, N_components = None,\
-                  obj_fcn = [None], obj_fcn_pars = [{}], obj_fcn_weights = [1],\
-                  obj_tar_vals = [0], decimals = [5], \
-                  minimize_method = 'nelder-mead', minimize_opts = None, F_rss = True,\
-                  peakwl = [450,530,600], fwhm = [20,30,10], wl = _WL3, with_wl = True, strength_shoulder = 2,\
-                  strength_ph = 0, peakwl_ph1 = 530, fwhm_ph1 = 80, strength_ph1 = 1,\
-                  peakwl_ph2 = 560, fwhm_ph2 = 80, strength_ph2 = None,\
-                  verbosity = 0):
-    """
-    Generate a spectrum with specified white point and optimized for certain objective functions 
-    from a set of component spectra or component spectrum model parameters.
-    
-    Args:
-        :target: np2d([100,1/3,1/3]), optional
-            Numpy.ndarray with Yxy chromaticity of target.
-        :tar_type:  'Yxy' or str, optional
-            Specifies the input type in :target: (e.g. 'Yxy' or 'cct')
-        :cieobs: _CIEOBS, optional
-            CIE CMF set used to calculate chromaticity values if not provided in :Yxyi:.
-        :optimizer_type: '3mixer',  optional
-            Specifies type of chromaticity optimization ('3mixer' or 'mixer' or 'search')
-        :cspace: 'Yuv', optional
-            Color space for 'search'-type optimization. 
-        :cspace_bwtf: {}, optional
-            Backward (..._to_xyz) transform parameters (see colortf()) to go from :tar_type: to 'Yxy'.
-        :cspace_fwtf = {}, optional
-            Forward (xyz_to_...) transform parameters (see colortf()) to go from xyz to :cspace:.
-        :component_spds: numpy.ndarray of component spectra.
-            If None: they are built from input args.
-        :F_rss: True, optional
-             Take Root-Sum-of-Squares of 'closeness' values between target and objective function values.
-        :decimals: 5, optional
-            Rounding decimals of objective function values.
-        :obj_fcn: [None] or list of function handles to objective functions, optional
-        :obj_fcn_weights: [1] or list of weigths for each objective function, optional.
-        :obj_fcn_pars: [None] or list of parameter dicts for each objective functions, optional
-        :obj_tar_vals: [0] or list of target values for each objective functions, optional
-        :minimize_method: 'nelder-mead', optional
-            Optimization method used by minimize function.
-        :minimize_opts: None, optional
-             Dict with minimization options. 
-             None defaults to: {'xtol': 1e-5, 'disp': True, 'maxiter' : 1000*Nc, 'maxfev' : 1000*Nc,'fatol': 0.01}
-        :verbosity: 0, optional
-            If > 0: print intermediate results.
-         
-         :peakwl:, :fwhm:, ... : see ?spd_builder for more info.   
-            
-    Returns:
-        :returns: spds, M
-            - 'spds': optimized spectrum.
-            - 'M': numpy.ndarray with fluxes for each component spectrum.
-
-    """
-    # Get component spd:
-    if component_spds is None:
-        if N_components is None: # Generate component spds from input args:
-            spds = spd_builder(flux = None, peakwl = peakwl, fwhm = fwhm,\
-                               strength_ph = strength_ph,\
-                               peakwl_ph1 = peakwl_ph1, fwhm_ph1 = fwhm_ph1, strength_ph1 = strength_ph1,\
-                               peakwl_ph2 = peakwl_ph2, fwhm_ph2 = fwhm_ph2, strength_ph2 = strength_ph2,\
-                               verbosity = 0)
-            N_components = spds.shape[0]
-        else:
-            spds = None # optimize spd model parameters, such as peakwl, fwhm, ...
-            if optimizer_type == '3mixer':
-                raise Exception("spd_optimizer(): optimizer_type = '3mixer' not supported for component parameter optimization. Use 'search' or 'mixer' instead.")
-                
-    else:
-        spds = component_spds 
-        N_components = spds.shape[0]
-    
-    # Check if there are at least 3 spds:
-    if spds is not None:
-        if (spds.shape[0]-1 < 3):
-            raise Exception('spd_optimizer(): At least 3 component spds are required.')
-                
-        # Calculate xyz of components:
-        xyzi = spd_to_xyz(spds, relative = False, cieobs = cieobs)
-    else:
-        if N_components < 3:
-            raise Exception('spd_optimizer(): At least 3 component spds are required.')
-    
-    # Optimize spectrum:
-    if optimizer_type == '3mixer': # Optimize fluxes for predefined set of component spectra
-        
-        # Calculate Yxy:
-        Yxyt = colortf(target, tf = tar_type+'>Yxy', bwtf = cspace_bwtf)
-        Yxyi = xyz_to_Yxy(xyzi) #input for color3mixer is Yxy
-        
-        if xyzi.shape[0] == 3: # Only 1 solution
-            M = color3mixer(Yxyt,Yxyi[0:1,:],Yxyi[1:2,:],Yxyi[2:3,:])
-            if (M<0).any():
-                warnings.warn('spd_optimizer(): target outside of gamut')
-        else:
-            # Use triangle optimization:
-            M, spd_opt, obj_vals = component_triangle_optimizer(spds, Yxyi = Yxyi, Yxy_target = Yxyt, cieobs = cieobs,\
-                                                                      obj_fcn = obj_fcn, obj_fcn_pars = obj_fcn_pars, obj_fcn_weights = obj_fcn_weights,\
-                                                                      obj_tar_vals = obj_tar_vals, decimals = decimals, \
-                                                                      minimize_method = minimize_method, F_rss = F_rss,\
-                                                                      minimize_opts = minimize_opts,\
-                                                                      verbosity = verbosity)
-            
-    elif optimizer_type == 'mixer': # Optimize fluxes and component model parameters 
-        
-        # Calculate Yxy:
-        Yxyt = colortf(target, tf = tar_type+'>Yxy', bwtf = cspace_bwtf)
-                
-        # Use Nmixer for optimization:
-        
-        
-        raise Exception("spd_optimizer(): optimizer_type = 'mixer' not yet implemented. Use '3mixer'. ")
-
-        
-    elif optimizer_type == 'search': # Optimize fluxes and component model parameters (chromaticity is part of obj_fcn list)
-        raise Exception("spd_optimizer(): optimizer_type = 'search' not yet implemented. Use '3mixer'. ")
-
-    # Calculate combined spd from components and their fluxes:
-    spds = (np.atleast_2d(M)*spds[1:].T).T.sum(axis = 0)
-    
-    if with_wl == True:
-        spds = np.vstack((getwlr(wl), spds))
-    return spds, M       
-
-
 def default_optim_dict(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs = _CIEOBS,\
-              optimizer_type = '3mixer', cspace = 'Yuv', cspace_bwtf = {}, cspace_fwtf = {},\
+              optimizer_type = 'mixer', cspace = 'Yuv', cspace_bwtf = {}, cspace_fwtf = {},\
               component_spds = None, N_components = None,\
               obj_fcn = [None], obj_fcn_pars = [{}], obj_fcn_weights = [1],\
               obj_tar_vals = [0], decimals = [5], \
@@ -1038,7 +1093,7 @@ def default_optim_dict(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs = 
               peakwl_ph1 = [530], fwhm_ph1 = [80], strength_ph1 = [1],\
               peakwl_ph2 = [560], fwhm_ph2 = [80], strength_ph2 = None,\
               verbosity = 0,\
-              pair_strengths = None,\
+              pair_strengths = None,triangle_strengths=None,\
               peakwl_min = [400], peakwl_max = [700],\
               fwhm_min = [5], fwhm_max = [300]):
     """
@@ -1099,17 +1154,182 @@ def default_optim_dict(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs = 
     opts['fwhm_min'] = fwhm_min
     opts['fwhm_max'] = fwhm_max
     
-    # Generate random set of pair_strengths:
+    # Generate random set of pair_strengths (for 'mixer'):
     if pair_strengths is None:
         opts['pair_strengths'] = np.random.rand(N_components-3)
     else:
         opts['pair_strengths'] = pair_strengths
 
+    # Generate random set of triangle_strengths (for '3mixer'):
+    if triangle_strengths is None:
+        combos = np.array(list(itertools.combinations(np.arange(N_components), 3))) 
+        print('combos')
+        print(N_components)
+        print(combos.shape[0])
+        opts['triangle_strengths'] = np.random.rand(combos.shape[0])
+    else:
+        opts['triangle_strengths'] = triangle_strengths
+
     return opts
 
+
+def initialize_component_pars(component_data, N_components = None, optimizer_type = 'mixer', wl = _WL3):
+    """
+    Initialize component_pars (used by spd_constructor) based on type of component_data.
     
+    Args:
+        :component_data: None, optional
+            Component spectra data: 
+            If int: specifies number of components used in optimization 
+                    (peakwl, fwhm and pair_strengths will be optimized).
+            If dict: generate components based on parameters (peakwl, fwhm, 
+                     pair_strengths, etc.) in dict. 
+                    (keys with None values will be optimized)
+            If ndarray: optimize pair_strengths of component spectra.
+        :N_components: None, optional
+            Specifies number of components used in optimization. (only used when 
+            :component_data: is dict and user wants to override dict value. Note that
+            shape of parameters arrays must match N_components).
+        :optimizer_type: 'mixer', optional
+            Type of spectral optimization routine (other options: '3mixer', 'search')
+        :wl: _WL3, optional
+            Wavelengths used in optimization when :component_data: is not ndarray with spectral data.
+        
+    Returns:
+        :component_pars: dict with spectrum model parameters, optimization parameters, ... 
+        
+    """
+    # Initialize parameter dict:
+    if isinstance(component_data,int):
+        # input is Number of components
+        N = component_data
+        component_pars = default_optim_dict(N_components = N)
+        component_pars['N_components'] = N
+        component_pars['component_spds'] = None
+        
+        component_pars['fluxes'] = np.ones(N)
+        component_pars['peakwl'] = np.linspace(min(component_pars['peakwl_min']),max(component_pars['peakwl_max']),N)
+        component_pars['fwhm'] = (wl[-1]-wl[0])/(N-1)*np.ones(N)
+        if component_pars['fwhm'][0] < min(component_pars['fwhm_min']):
+            component_pars['fwhm'] = min(component_pars['fwhm_min'])*np.ones(N)
+          
+        # Generate list with optimization parameters:    
+        component_pars['opt_list'] = ['peakwl','fwhm']
+        component_pars['opt_len'] = [N, N]
+        
+        # Generate LB, UB, x0 (keys in opt_list):
+        component_pars['LB'] = np.hstack((component_pars['peakwl_min'], component_pars['fwhm_min']))
+        component_pars['UB'] = np.hstack((component_pars['peakwl_max'], component_pars['fwhm_max']))
+        component_pars['x0'] = np.hstack((component_pars['peakwl'], component_pars['fwhm']))
+
+        if optimizer_type == 'mixer':
+            component_pars['opt_list'].append('pair_strengths')
+            component_pars['opt_len'].append(N-3)
+            component_pars['LB'] = np.hstack((component_pars['LB'],np.zeros(N-3)))
+            component_pars['UB'] = np.hstack((component_pars['UB'],np.ones(N-3)))
+            print(component_pars['x0'])
+            print(component_pars['pair_strengths'])
+            print()
+            component_pars['x0'] = np.hstack((component_pars['x0'],component_pars['pair_strengths']))
+
+        elif optimizer_type == '3mixer':
+            component_pars['opt_list'].append('triangle_strengths')
+            component_pars['opt_len'].append(component_pars['triangle_strengths'].shape[0])
+            component_pars['LB'] = np.hstack((component_pars['LB'],np.zeros(component_pars['triangle_strengths'].shape[0])))
+            component_pars['UB'] = np.hstack((component_pars['UB'],np.ones(component_pars['triangle_strengths'].shape[0])))
+            component_pars['x0'] = np.hstack((component_pars['x0'],component_pars['triangle_strengths']))
+        
+        # Overwrite with input args:
+        component_pars['wl'] = wl
+        
+    elif isinstance(component_data,dict):
+        # input is dict with component parameters:
+        component_pars = component_data.copy()
+        
+        if N_components is not None:
+            N = N_components
+        else:
+            N = component_pars['N_components']
+        
+        component_pars['N_components'] = N
+        component_pars['component_spds'] = None
+        component_pars['opt_list'] = []
+        component_pars['opt_len'] = []
+        component_pars['LB'] = []
+        component_pars['UB'] = []
+        component_pars['x0'] = []
+        
+        if component_data['peakwl'] is None:
+            component_pars['opt_list'].append('peakwl')
+            component_pars['opt_len'].append(N)
+            component_pars['LB'].append(component_pars['peakwl_min'])
+            component_pars['UB'].append(component_pars['peakwl_max'])
+            component_pars['x0'].append(list(np.linspace(min(component_pars['peakwl_min']),max(component_pars['peakwl_max']),N)))
+        
+        if component_data['fwhm'] is None:
+            component_pars['opt_list'].append('fwhm')    
+            component_pars['opt_len'].append(N)
+            component_pars['LB'].append(component_pars['fwhm_min'])
+            component_pars['UB'].append(component_pars['fwhm_max'])
+            fwhm_ = (wl[-1]-wl[0])/(N-1)*np.ones(N)
+            if fwhm_[0] < min(component_pars['fwhm_min']):
+                fwhm_ = min(component_pars['fwhm_min'])*np.ones(N)
+            component_pars['x0'].append(list(fwhm_))
+        
+        # Generate LB, UB, x0 (keys in opt_list):
+        component_pars['LB'].append(list(np.zeros(N)))
+        component_pars['UB'].append(list(np.ones(N)))
+        
+        if optimizer_type == 'mixer':
+            component_pars['opt_list'].append('pair_strengths')
+            component_pars['opt_len'].append(N-3)
+            component_pars['LB'].append(list(np.zeros(N-3)))
+            component_pars['UB'] .append(list(np.ones(N-3)))
+            component_pars['x0'].append(component_pars['pair_strengths'])
+        elif optimizer_type == '3mixer':
+            component_pars['opt_list'].append('triangle_strengths')
+            component_pars['opt_len'].append(component_pars['triangle_strengths'].shape[0])
+            component_pars['LB'].append(list(np.zeros(component_pars['triangle_strengths'].shape[0])))
+            component_pars['UB'].append(list(np.ones(component_pars['triangle_strengths'].shape[0])))
+            component_pars['x0'].append(component_pars['triangle_strengths'])
+         
+        # Overwrite with input args:
+        component_pars['wl'] = wl
+ 
+    
+    else:
+        # input is ndarray with component spectra
+        component_pars = default_optim_dict(component_spds = component_data)
+        N = component_data.shape[0] - 1
+        component_pars['N_components'] = N_components
+        component_pars['component_spds'] = component_data
+                
+        if optimizer_type == 'mixer':
+            component_pars['opt_list'].append('pair_strengths')
+            component_pars['opt_len'].append(N-3)
+            component_pars['LB'] =  np.zeros(N-3)
+            component_pars['UB'] =  np.ones(N-3)
+            component_pars['x0'] =  component_pars['pair_strengths'].copy()
+        elif optimizer_type =='3mixer':
+            component_pars['opt_list'].append('triangle_strengths')
+            component_pars['opt_len'].append(component_pars['triangle_strengths'].shape[0])
+            component_pars['LB'] =  np.zeros(component_pars['triangle_strengths'].shape[0])
+            component_pars['UB'] =  np.ones(component_pars['triangle_strengths'].shape[0])
+            component_pars['x0'] =  component_pars['triangle_strengths'].copy()
+        
+        # store input args:
+        component_pars['wl'] = component_data[0]
+        
+           
+    return component_pars
+
+
+
+#------------------------------------------------------------------------------   
 def vec_to_dict(vec_= None, dict_ = {}, xisize = None, keys = None):
-    
+    """
+    Convert dict to vec and vice versa.
+    """
     if vec_ is not None:
         # Put values in vec_ in dict_:
         n = 0 # keeps track of length already read from x
@@ -1140,7 +1360,7 @@ def component_optimizer(component_data = 4, N_components = None, wl = _WL3,\
     
     
     Args:
-        :component_data: None, optional
+        :component_data: 4, optional
             Component spectra data: 
             If int: specifies number of components used in optimization 
                     (peakwl, fwhm and pair_strengths will be optimized).
@@ -1181,106 +1401,13 @@ def component_optimizer(component_data = 4, N_components = None, wl = _WL3,\
             - 'spd_opt': optimized spectrum.
             - 'obj_vals': values of the objective functions for the optimized spectrum.
     """
-    args = locals()
-
+    component_pars = initialize_component_pars(component_data, optimizer_type = 'mixer', wl = wl)        
     
-    # Initialize parameter dict:
-    if isinstance(component_data,int):
-        # input is Number of components
-        N = component_data
-        component_pars = default_optim_dict(N_components = N)
-        component_pars.update(args)
-        component_pars['N_components'] = N
-        component_pars['component_spds'] = None
-        component_pars['opt_list'] = ['peakwl','fwhm','pair_strengths']
-        component_pars['opt_len'] = [N, N, N-3]
-        component_pars['fluxes'] = np.ones(1,N)
-        component_pars['peakwl'] = np.linspace(min(component_pars['peakwl_min']),max(component_pars['peakwl_max']),N)
-        component_pars['fwhm'] = (wl[-1]-wl[0])/(N-1)*np.ones(N)
-        if component_pars['fwhm'][0] < component_pars['fwhm_min'].min():
-            component_pars['fwhm'] = component_pars['fwhm_min'].min()*np.ones(N)
-        
-        # Generate LB, UB, x0 (keys in opt_list):
-        component_pars['LB'] = np.hstack((component_pars['peakwl_min'],\
-                                          component_pars['fwhm_min'], \
-                                          np.zeros(N-3)))
-        component_pars['UB'] = np.hstack((component_pars['peakwl_max'],\
-                                          component_pars['fwhm_max'], \
-                                          np.ones(N-3)))
-        component_pars['x0'] = np.hstack((component_pars['peakwl'],\
-                                          component_pars['fwhm'], \
-                                          component_pars['pair_strengths']))
-        
-    elif isinstance(component_data,dict):
-        # input is dict with component parameters:
-        component_pars = component_data.copy()
-        
-        if N_components is not None:
-            N = N_components
-        else:
-            N = component_pars['N_components']
-        
-        component_pars['N_components'] = N
-        component_pars['component_spds'] = None
-        component_pars['opt_list'] = []
-        component_pars['opt_len'] = []
-        component_pars['LB'] = []
-        component_pars['UB'] = []
-        component_pars['x0'] = []
-        
-        if component_data['peakwl'] is None:
-            component_pars['opt_list'].append('peakwl')
-            component_pars['opt_len'].append(N)
-            component_pars['LB'].append(component_pars['peakwl_min'])
-            component_pars['UB'].append(component_pars['peakwl_max'])
-            component_pars['x0'].append(list(np.linspace(min(component_pars['peakwl_min']),max(component_pars['peakwl_max']),N)))
-        
-        if component_data['fwhm'] is None:
-            component_pars['opt_list'].append('fwhm')    
-            component_pars['opt_len'].append(N)
-            component_pars['LB'].append(component_pars['fwhm_min'])
-            component_pars['UB'].append(component_pars['fwhm_max'])
-            fwhm_ = (wl[-1]-wl[0])/(N-1)*np.ones(N)
-            if fwhm_[0] < component_pars['fwhm_min'].min():
-                fwhm_ = component_pars['fwhm_min'].min()*np.ones(N)
-            component_pars['x0'].append(list(fwhm_))
-        
-        component_pars['opt_list'].append('pair_strengths')
-        component_pars['opt_len'].append(N-3)
-        component_pars['LB'].append(list(np.zeros(N)))
-        component_pars['UB'].append(list(np.ones(N)))
-        component_pars['x0'].append(component_pars['pair_strengths'])
-
-         
-        # Overwrite with input args:
-        component_pars['wl'] = wl
-        component_pars['target'] = Yxy_target
-        component_pars['tar_type'] = 'Yxy'
-        component_pars['cspace_bwtf'] = {}
-        component_pars['cieobs'] = cieobs
- 
-    
-    else:
-        # input is ndarray with component spectra
-        component_pars = default_optim_dict(component_spds = component_data)
-        N = component_data.shape[0] - 1
-        component_pars['N_components'] = N_components
-        component_pars['component_spds'] = component_data
-        component_pars['opt_list'].append('pair_strengths')
-        component_pars['opt_len'].append(N-3)
-        
-        # store input args:
-        component_pars['wl'] = component_data[0]
-        component_pars['target'] = Yxy_target
-        component_pars['tar_type'] = 'Yxy'
-        component_pars['cspace_bwtf'] = {}
-        component_pars['cieobs'] = cieobs
-        
-        # Generate LB, UB, x0 (keys in opt_list):
-        component_pars['LB'] =  np.zeros(N-3)
-        component_pars['UB'] =  np.ones(N-3)
-        component_pars['x0'] =  component_pars['pair_strengths'].copy()
-
+    # Also store the following args in component_pars (needed by spd_constructor):
+    component_pars['target'] = Yxy_target
+    component_pars['tar_type'] = 'Yxy'
+    component_pars['cspace_bwtf'] = {}
+    component_pars['cieobs'] = cieobs
 
     # Setup optimization:
     global optcounter
@@ -1297,22 +1424,21 @@ def component_optimizer(component_data = 4, N_components = None, wl = _WL3,\
         # replace / init cp with values from x (parameters to optimize)
         # (opt_list and opt_len refer resp. to the key in cp and the length
         # of that parameter in x)
-        vec_to_dict(vec_= x, dict_ = cp, xisize = cp['opt_len'], keys = cp['opt_list'])
-              
+        cp, xisize = vec_to_dict(vec_= x, dict_ = cp, xisize = cp['opt_len'], keys = cp['opt_list'])
 
-        spd,M = spd_builder(peakwl = cp['peakwl'], fwhm = cp['fwhm'],\
-                          pair_strengths = cp['pair_strengths'],\
-                          strength_shoulder = cp['strength_shoulder'],\
-                          target = cp['target'], tar_type = cp['tar_type'],\
-                          cspace_bwtf = cp['cspace_bwtf'], cieobs = cp['cieobs'],\
-                          use_piecewise_fcn = cp['use_piecewise_fcn'], wl = cp['wl'],\
-                          component_spds = cp['component_spds'],\
-                          strength_ph = None,\
-                          peakwl_ph1 = None, fwhm_ph1 = None, strength_ph1 = None,\
-                          peakwl_ph2 = None, fwhm_ph2 = None, strength_ph2 = None,\
-                          flux = None, with_wl = True, verbosity = 0, out = 'spd,M',**kwargs)
+        spd,M,component_spds = spd_builder(peakwl = cp['peakwl'], fwhm = cp['fwhm'],\
+                                          pair_strengths = cp['pair_strengths'],\
+                                          strength_shoulder = cp['strength_shoulder'],\
+                                          target = cp['target'], tar_type = cp['tar_type'],\
+                                          cspace_bwtf = cp['cspace_bwtf'], cieobs = cp['cieobs'],\
+                                          use_piecewise_fcn = cp['use_piecewise_fcn'], wl = cp['wl'],\
+                                          component_spds = cp['component_spds'],\
+                                          strength_ph = None,\
+                                          peakwl_ph1 = None, fwhm_ph1 = None, strength_ph1 = None,\
+                                          peakwl_ph2 = None, fwhm_ph2 = None, strength_ph2 = None,\
+                                          flux = None, with_wl = True, verbosity = 0, out = 'spd,M,component_spds',**kwargs)
         
-        return spd,M
+        return spd,M,component_spds
         
     def fit_fcn(x, out, spd_constructor, spd_constructor_pars, obj_fcn, obj_fcn_pars, obj_fcn_weights, obj_tar_vals, F_rss, decimals, verbosity):
         F = fitnessfcn(x, spd_constructor, spd_constructor_pars = spd_constructor_pars,\
@@ -1327,7 +1453,7 @@ def component_optimizer(component_data = 4, N_components = None, wl = _WL3,\
     ub = component_pars['UB']
 
     if minimize_opts is None:
-        minimize_opts = {'xtol': 1e-8, 'disp': True, 'maxiter' : 1000*len(x0), 'maxfev' : 1000*len(x0),'fatol': 0.01}
+        minimize_opts = {'xtol': 1e-5, 'disp': True, 'maxiter' : 1000*len(x0), 'maxfev' : 1000*len(x0),'fatol': 0.01}
     input_par = ('F', spd_constructor, component_pars, obj_fcn, obj_fcn_pars, obj_fcn_weights, obj_tar_vals, F_rss, decimals, verbosity)
     #res = minimize(fit_fcn, x0, args = input_par, method = minimize_method, options = minimize_opts)
     
@@ -1338,9 +1464,15 @@ def component_optimizer(component_data = 4, N_components = None, wl = _WL3,\
    
 
     # Calculate optimized SPD and get obj_vals and fluxes:
-    spd_opt, obj_vals, M = fit_fcn(x_final, 'spdi,obj_vals,args_out', spd_constructor, component_pars, obj_fcn, obj_fcn_pars, obj_fcn_weights, obj_tar_vals, F_rss, decimals, verbosity)
-
-    return M, spd_opt, obj_vals, res
+    spd_opt, obj_vals, M, component_spds = fit_fcn(x_final, 'spdi,obj_vals,args_out,component_spds', spd_constructor, component_pars, obj_fcn, obj_fcn_pars, obj_fcn_weights, obj_tar_vals, F_rss, decimals, verbosity)
+    
+    res['obj_vals'] = obj_vals
+    res['x_final'] = x_final
+    res['spd_opt'] = spd_opt
+    res['M'] = M
+    res['component_spds'] = component_spds
+    
+    return spd_opt, M, component_spds, obj_vals, res
 
 
 #------------------------------------------------------------------------------
@@ -1410,6 +1542,10 @@ def spd_optimizer(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs = _CIEO
             - 'M': numpy.ndarray with fluxes for each component spectrum.
 
     """
+            
+    # Calculate Yxyt (target):
+    Yxyt = colortf(target, tf = tar_type+'>Yxy', bwtf = cspace_bwtf)
+    
     # Get component spd:
     if component_spds is None:
         if N_components is None: # Generate component spds from input args:
@@ -1421,8 +1557,8 @@ def spd_optimizer(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs = _CIEO
             N_components = spds.shape[0]
         else:
             spds = None # optimize spd model parameters, such as peakwl, fwhm, ...
-            if optimizer_type == '3mixer':
-                raise Exception("spd_optimizer(): optimizer_type = '3mixer' not supported for component parameter optimization. Use 'search' or 'mixer' instead.")
+            #if optimizer_type == '3mixer':
+            #    raise Exception("spd_optimizer(): optimizer_type = '3mixer' not supported for component parameter optimization. Use 'search' or 'mixer' instead.")
                 
     else:
         spds = component_spds 
@@ -1435,44 +1571,50 @@ def spd_optimizer(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs = _CIEO
                 
         # Calculate xyz of components:
         xyzi = spd_to_xyz(spds, relative = False, cieobs = cieobs)
+        
+        # Use Nmixer for optimization:
+        Yxyi = xyz_to_Yxy(xyzi) #input for colormixer is Yxy
+        
     else:
         if N_components < 3:
             raise Exception('spd_optimizer(): At least 3 component spds are required.')
     
     # Optimize spectrum:
-    if (optimizer_type == '3mixer') & (spds is not None): # Optimize fluxes for predefined set of component spectra
+    if (optimizer_type == '3mixer'): # Optimize fluxes for predefined set of component spectra
         
-        # Calculate Yxy:
-        Yxyt = colortf(target, tf = tar_type+'>Yxy', bwtf = cspace_bwtf)
-        Yxyi = xyz_to_Yxy(xyzi) #input for color3mixer is Yxy
-        
-        if xyzi.shape[0] == 3: # Only 1 solution
-            M = color3mixer(Yxyt,Yxyi[0:1,:],Yxyi[1:2,:],Yxyi[2:3,:])
-            if (M<0).any():
-                warnings.warn('spd_optimizer(): target outside of gamut')
-        else:
-            # Use triangle optimization:
-            M, spd_opt, obj_vals = component_triangle_optimizer(spds, Yxyi = Yxyi, Yxy_target = Yxyt, cieobs = cieobs,\
-                                                                      obj_fcn = obj_fcn, obj_fcn_pars = obj_fcn_pars, obj_fcn_weights = obj_fcn_weights,\
-                                                                      obj_tar_vals = obj_tar_vals, decimals = decimals, \
-                                                                      minimize_method = minimize_method, F_rss = F_rss,\
-                                                                      minimize_opts = minimize_opts,\
-                                                                      verbosity = verbosity)
-            
-    elif (optimizer_type == 'mixer'): 
-        
-        # Calculate Yxy:
-        Yxyt = colortf(target, tf = tar_type+'>Yxy', bwtf = cspace_bwtf)
-                
         if spds is not None: # Optimize fluxes (pair_strengths) only
             
-            # Use Nmixer for optimization:
-            Yxyi = xyz_to_Yxy(xyzi) #input for colormixer is Yxy
-             
-            M = colormixer(Yxyt, Yxyi, pair_strengths = None, source_order = None) # random pair_strengths
+            if xyzi.shape[0] == 3: # Only 1 solution
+                M = color3mixer(Yxyt,Yxyi[0:1,:],Yxyi[1:2,:],Yxyi[2:3,:])
+                if (M<0).any():
+                    warnings.warn('spd_optimizer(): target outside of gamut')
+            else:
+                # Use triangle optimization to optimize fluxes
+                M, spd_opt, obj_vals = component_triangle_optimizer(spds, Yxyi = Yxyi, Yxy_target = Yxyt, cieobs = cieobs,\
+                                                                          obj_fcn = obj_fcn, obj_fcn_pars = obj_fcn_pars, obj_fcn_weights = obj_fcn_weights,\
+                                                                          obj_tar_vals = obj_tar_vals, decimals = decimals, \
+                                                                          minimize_method = minimize_method, F_rss = F_rss,\
+                                                                          minimize_opts = minimize_opts,\
+                                                                          verbosity = verbosity)
+        else: 
+                # Use triangle optimization to optimize spectrum model parameters
+                M, spd_opt, obj_vals = component_triangle_optimizer(component_data = N_components, wl = wl,\
+                                                                Yxy_target = Yxyt, cieobs = cieobs,\
+                                                                obj_fcn = obj_fcn, obj_fcn_pars = obj_fcn_pars, obj_fcn_weights = obj_fcn_weights,\
+                                                                obj_tar_vals = obj_tar_vals, decimals = decimals, \
+                                                                minimize_method = minimize_method, F_rss = F_rss,\
+                                                                minimize_opts = minimize_opts,\
+                                                                verbosity = verbosity)
 
-            
-            M, spd_opt, obj_vals, res = component_optimizer(component_data = spds, wl = wl,\
+              
+    
+    elif (optimizer_type == 'mixer'): 
+                
+        if spds is not None: # Optimize fluxes (pair_strengths) only
+             
+           # M = colormixer(Yxyt, Yxyi, pair_strengths = None, source_order = None) # random pair_strengths
+           
+            spd_opt, M, component_spds, obj_vals, res = component_optimizer(component_data = spds, wl = wl,\
                                                                 Yxy_target = Yxyt, cieobs = cieobs,\
                                                                 obj_fcn = obj_fcn, obj_fcn_pars = obj_fcn_pars, obj_fcn_weights = obj_fcn_weights,\
                                                                 obj_tar_vals = obj_tar_vals, decimals = decimals, \
@@ -1482,13 +1624,16 @@ def spd_optimizer(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs = _CIEO
             
             
         else: # optimize spectrum model parameters
-            pass
-            
-        
-        
-        
-#        raise Exception("spd_optimizer(): optimizer_type = 'mixer' not yet implemented. Use '3mixer'. ")
+             spd_opt, M, component_spds, obj_vals, res = component_optimizer(component_data = N_components, wl = wl,\
+                                                                Yxy_target = Yxyt, cieobs = cieobs,\
+                                                                obj_fcn = obj_fcn, obj_fcn_pars = obj_fcn_pars, obj_fcn_weights = obj_fcn_weights,\
+                                                                obj_tar_vals = obj_tar_vals, decimals = decimals, \
+                                                                minimize_method = minimize_method, F_rss = F_rss,\
+                                                                minimize_opts = minimize_opts,\
+                                                                verbosity = verbosity)
 
+             spds = np.squeeze(component_spds.T, axis = 2)
+             spds = np.vstack((spd_opt[0],spds)) # store component spectra in spds with first axis components, second axis wavelengths
         
     elif optimizer_type == 'search': # Optimize fluxes and component model parameters (chromaticity is part of obj_fcn list)
         raise Exception("spd_optimizer(): optimizer_type = 'search' not yet implemented. Use '3mixer'. ")
@@ -1601,20 +1746,24 @@ if __name__ == '__main__':
     #    print('2: spd_optimizer():')
     target = 4000 # 4000 K target cct
     tar_type = 'cct'
-    peakwl = [450,530,560,610]
-    fwhm = [30,30,30,30] 
+    peakwl = [450,530,560,590,610]
+    fwhm = [30,30,30,30,30] 
+    
+#    peakwl = [4.22e+02, 4.63e+02, 5.17e+02, 5.76e+02, 6.32e+02]
+#    fwhm = [1.11e+01, 1.11e+01, 1.11e+01, 1.11e+01, 1.11e+01]
     obj_fcn1 = spd_to_iesrf
     obj_fcn2 = spd_to_iesrg
     obj_fcn = [obj_fcn1, obj_fcn2]
     obj_tar_vals = [90,110]
     obj_fcn_weights = [1,1]
     decimals = [5,5]
-    N_components = None #if not None, spd model parameters (peakwl, fwhm, ...) are optimized
+    N_components = 5 #if not None, spd model parameters (peakwl, fwhm, ...) are optimized
+    optimizer_type = '3mixer'
     S3, _ = spd_optimizer(target, tar_type = tar_type, cspace_bwtf = {'cieobs' : cieobs, 'mode' : 'search'},\
-                          optimizer_type = 'mixer', N_components = N_components,\
+                          optimizer_type = optimizer_type, N_components = N_components,\
                           peakwl = peakwl, fwhm = fwhm, obj_fcn = obj_fcn, obj_tar_vals = obj_tar_vals,\
                           obj_fcn_weights = obj_fcn_weights, decimals = decimals,\
-                          verbosity = 0)
+                          verbosity = 1)
     
     # Check output agrees with target:
     xyz = spd_to_xyz(S3, relative = False, cieobs = cieobs)
