@@ -30,7 +30,9 @@ Created on Wed Apr 25 09:07:04 2018
 
 @author: kevin.smet
 """
-from luxpy import np, plt, warnings, minimize, math, _WL3, _CIEOBS,  np2d, getwlr, SPD, plotSL, spd_to_xyz, xyz_to_Yxy, colortf, xyz_to_cct
+from luxpy import (np, plt, warnings, minimize, math, _WL3, _CIEOBS,  np2d, 
+                   getwlr, SPD, plotSL, spd_to_xyz, xyz_to_Yxy, Yxy_to_xyz,
+                   colortf, xyz_to_cct)
 from luxpy.cri import spd_to_iesrf, spd_to_iesrg
 import itertools
 
@@ -206,12 +208,12 @@ def phophor_led_spd(peakwl = 450, fwhm = 20, wl = _WL3, with_wl = True, strength
         peakwl = np.atleast_1d(peakwl)
         if ('component_spds' in out.split(',')):
             fp = component_spds.copy()
-            for i in range(fp.shape[-1]):
+            for i in np.arange(fp.shape[-1]):
                 fp[:,np.where(wl >= peakwl[i]),i] = 1
                 component_spds[...,i] = component_spds[...,i]*fp[...,i] # multiplication with piecewise function f'
         if ('spd' in out.split(',')):
             fp = mono_led.copy()
-            for i in range(fp.shape[0]):
+            for i in np.arange(fp.shape[0]):
                 fp[i,np.where(wl >= peakwl[i])] = 1
                 spd[i] = spd[i]*fp[i] # multiplication with piecewise function f'
     
@@ -223,7 +225,7 @@ def phophor_led_spd(peakwl = 450, fwhm = 20, wl = _WL3, with_wl = True, strength
         mono_led_str = 'Mono_led_1'
         ph1_str = 'Phosphor_1'
         ph2_str = 'Phosphor_2'
-        for i in range(spd.shape[0]):
+        for i in np.arange(spd.shape[0]):
             plt.figure()
             if ph1 is not None:
                 plt.plot(wl,mono_led[i].T,'b--', label = mono_led_str)
@@ -250,13 +252,13 @@ def phophor_led_spd(peakwl = 450, fwhm = 20, wl = _WL3, with_wl = True, strength
 
 
 #------------------------------------------------------------------------------
-def spd_builder(flux = None, peakwl = 450, fwhm = 20, ratios = None, wl = _WL3, with_wl = True, strength_shoulder = 2,\
+def spd_builder(flux = None, peakwl = 450, fwhm = 20, pair_strengths = None, wl = _WL3, with_wl = True, strength_shoulder = 2,\
                     strength_ph = 0, peakwl_ph1 = 530, fwhm_ph1 = 80, strength_ph1 = 1,\
                     peakwl_ph2 = 560, fwhm_ph2 = 80, strength_ph2 = None,\
                     target = None, tar_type = 'Yuv', cspace_bwtf = {}, cieobs = _CIEOBS,\
                     use_piecewise_fcn = True, verbosity = 1, out = 'spd'):
     """
-    Build spectrum based on Gaussians, monochromatic and/or phophor LED spectra.
+    Build spectrum based on Gaussians, monochromatic and/or phophor LED-type spectra.
            
     Args:
         :flux: None, optional
@@ -266,9 +268,9 @@ def spd_builder(flux = None, peakwl = 450, fwhm = 20, ratios = None, wl = _WL3, 
             Peak wavelengths of the monochromatic leds.
         :fwhm: int or float or list or numpy.ndarray, optional
             Full-Width-Half-Maximum of gaussians.
-        :ratios: numpy.ndarray with power ratios of mono_led component spectra, optional
+        :pair_strengths: numpy.ndarray with pair_strengths of mono_led component spectra, optional
             If None: will be randomly selected, possibly resulting in 
-            unphysical (out-of-gamut) solution.
+                     unphysical (out-of-gamut) solution.
         :wl: _WL3, optional 
             Wavelength range.
         :with_wl: True, optional
@@ -365,18 +367,18 @@ def spd_builder(flux = None, peakwl = 450, fwhm = 20, ratios = None, wl = _WL3, 
         
         # Calculate fluxes for obtaining target chromaticity:
         if component_spds.shape[0] == 1: # mono_led spectra can have more than 3 componenents
-            if ratios is None:
+            if pair_strengths is None:
                 M3 = np.nan
                 while np.isnan(M3).any():
-                    M3 = colormixer(Yxyt = Yxyt, Yxyi = Yxyi, ratios = ratios)
+                    M3 = colormixer(Yxyt = Yxyt, Yxyi = Yxyi, pair_strengths = pair_strengths)
             else:
-                M3 = colormixer(Yxyt = Yxyt, Yxyi = Yxyi, ratios = ratios)
+                M3 = colormixer(Yxyt = Yxyt, Yxyi = Yxyi, pair_strengths = pair_strengths)
         else:
             M3 = color3mixer(Yxyt,Yxyi[:N,:],Yxyi[N:2*N,:],Yxyi[2*N:3*N,:]) # phosphor type spectra (3 components)
 
         # Calculate spectrum:
         spd = math.dot23(M3,component_spds.T)
-        spd = np.atleast_2d([spd[i,:,i] for i in range(N)])
+        spd = np.atleast_2d([spd[i,:,i] for i in np.arange(N)])
         spd = spd/spd.max(axis = 1, keepdims = True)
         
         # Mark out_of_gamut solution with NaN's:
@@ -391,7 +393,7 @@ def spd_builder(flux = None, peakwl = 450, fwhm = 20, ratios = None, wl = _WL3, 
         component_spds = component_spds.T
 
     if verbosity > 0:
-        for i in range(spd.shape[0]):
+        for i in np.arange(spd.shape[0]):
             plt.figure()
             if M.shape[0] == 3:
                 plt.plot(wl,component_spds[i,:,0],'b--', label = 'Component 1')
@@ -453,10 +455,16 @@ def color3mixer(Yxyt,Yxy1,Yxy2,Yxy3):
     m2 = -y2*((xt-x3)*y1-(yt-y3)*x1+x3*yt-xt*y3)/(yt*((x3-x2)*y1+(x2-x1)*y3+(x1-x3)*y2))
     m3 = y3*((x2-x1)*yt-(y2-y1)*xt+x1*y2-x2*y1)/(yt*((x2-x1)*y3-(y2-y1)*x3+x1*y2-x2*y1))
     M = Yt*np.vstack((m1/Y1,m2/Y2,m3/Y3))
+#    a = (Yxyt[...,2]*((Yxy3[...,1]-Yxy2[...,1])*Yxy1[...,2]+(Yxy2[...,1]-Yxy1[...,1])*Yxy3[...,2]+(Yxy1[...,1]-Yxy3[...,1])*Yxy2[...,2]))
+#    b = (Yxyt[...,2]*((Yxy2[...,1]-Yxy1[...,1])*Yxy3[...,2]-(Yxy2[...,2]-Yxy1[...,2])*Yxy3[...,1]+Yxy1[...,1]*Yxy2[...,2]-Yxy2[...,1]*Yxy1[...,2]))
+#    m1 = Yxy1[...,2]*((Yxyt[...,1]-Yxy3[...,1])*Yxy2[...,2]-(Yxyt[...,2]-Yxy3[...,2])*Yxy2[...,1]+Yxy3[...,1]*Yxyt[...,2]-Yxyt[...,1]*Yxy3[...,2])/a
+#    m2 = -Yxy2[...,2]*((Yxyt[...,1]-Yxy3[...,1])*Yxy1[...,2]-(Yxyt[...,2]-Yxy3[...,2])*Yxy1[...,1]+Yxy3[...,1]*Yxyt[...,2]-Yxyt[...,1]*Yxy3[...,2])/a
+#    m3 = Yxy3[...,2]*((Yxy2[...,1]-Yxy1[...,1])*Yxyt[...,2]-(Yxy2[...,2]-Yxy1[...,2])*Yxyt[...,1]+Yxy1[...,1]*Yxy2[...,2]-Yxy2[...,1]*Yxy1[...,2])/b
+#    M = Yxyt[...,0]*np.vstack((m1/Yxy1[...,0],m2/Yxy2[...,0],m3/Yxy3[...,0]))
     return M.T
 
 
-def colormixer(Yxyt = None, Yxyi = None, n = 4, ratios = None, source_order = None):
+def colormixer(Yxyt = None, Yxyi = None, n = 4, pair_strengths = None, source_order = None):
     """
     Calculate fluxes required to obtain a target chromaticity 
     when (additively) mixing N light sources.
@@ -467,14 +475,24 @@ def colormixer(Yxyt = None, Yxyi = None, n = 4, ratios = None, source_order = No
         :Yxyi: numpy.ndarray with Yxy chromaticities of light sources i = 1 to n.
         :n: 4 or int, optional
             Number of source components to randomly generate when Yxyi is None.
-        :ratios: numpy.ndarray with light source ratio specifications.  
+        :pair_strengths: numpy.ndarray with light source pair strengths.  
         :source_order: numpy.ndarray with order of source components.
             If None: use np.arange(n)
     Returns:
         :M: numpy.ndarray with fluxes.
-        
+    
     Note:
-        Yxyt, Yxyi, ... can contain multiple rows, each refering to single mixture.
+        Algorithm:
+            1. Loop over all source components and create intermediate sources
+                from all (even,odd)-pairs using the relative strengths of the pair
+                (specified in pair_strengths). 
+            2. Collect any remaining sources.
+            3. Combine with new intermediate source components
+            4. Repeat 1-3 until there are only 3 source components left. 
+            5. Use color3mixer to calculate the required fluxes of the 3 final
+                intermediate components to obtain the target chromaticity. 
+            6. Backward calculate the fluxes of all original source components
+                from the 3 final intermediate fluxes.
     """
     
     if Yxyt is None:
@@ -483,36 +501,46 @@ def colormixer(Yxyt = None, Yxyi = None, n = 4, ratios = None, source_order = No
         Yxyi = np.hstack((np.ones((n,1))*100,np.random.rand(n,2)))
     else:
         n = Yxyi.shape[0]
-    if ratios is None:
-        ratios = np.random.rand(n-3)
+    if pair_strengths is None:
+        pair_strengths = np.random.rand(n-3)
     if source_order is None:
         source_order = np.arange(n)
+        #np.random.shuffle(source_order)
 
     if n > 3:
-        m_so = source_order.copy() # all sources
-        m_ro = ratios.copy()
+        ps = pair_strengths.copy() # relative pair_strengths of paired sources
+        so = source_order.copy() # all sources
+        N_sources = so.shape[0]
         
-        m_s_ = []
-        m_su_ = []
-        m_m_ = []
-        N_sources = m_so.shape[0]
-        
-        mlut = np.hstack((np.arange(n)[:,None], Yxyi.copy(),\
+        # Pre-initialize:
+        mlut = np.nan*np.ones((2*n-3,8))
+        mlut[:n,:] = np.hstack((np.arange(n)[:,None], Yxyi.copy(),\
                            np.arange(n)[:,None],np.nan*np.ones((n,1)),\
                            np.ones((n,1)),np.nan*np.ones((n,1))))
+        sn_k = -np.ones(np.int(n/2), dtype = int)
+        su_k = -np.ones((np.int(n/2),2),dtype = int)  
         
-        ml_su = (np.diagflat(np.arange(n)) - 1) + np.diagflat(np.ones((1,n)))
-        ml_m = 2*np.diagflat(np.ones((1,n))) - 1 
-        
-        k = 0
-        kk = 0
+        k = 0   # current state counter: 
+                # (states are loops runnning over all (even,odd) source component pairs.
+                # After all pair intermediate sources have been made, any remaining source
+                # components are collected and the state is reset running over 
+                # that new list of source components. Once there are only 3 
+                # source components left, color3mixer is used to calculate the
+                # required fluxes to obtain the target chromaticity. The fluxes 
+                # of all components are there calculate backward from the 3 fluxes.
+        kk = 0 # overall counter 
         while (N_sources > 3) or (kk>n-3):
                 
             # Combine two sources:
-            ratioAB = m_ro[kk]
-            pA = np.int(m_so[2*k])
-            pB = np.int(m_so[2*k+1])
+            pair_strength_AB = ps[kk]
+            pA = np.int(so[2*k])
+            pB = np.int(so[2*k+1])
+            pAB = np.hstack((pA,pB))
             
+#            xyzAB = Yxy_to_xyz(mlut[pAB,1:4])
+#            YxyM = xyz_to_Yxy(pair_strength_AB * xyzAB[0,:] + (1 - pair_strength_AB) * xyzAB[1,:])[0]
+        
+            # About 20% faster than implementation above:
             YxyA = mlut[pA,1:4].copy()
             YxyB = mlut[pB,1:4].copy()
     
@@ -529,48 +557,38 @@ def colormixer(Yxyt = None, Yxyi = None, n = 4, ratios = None, source_order = No
             ZA = (1 - xA - yA) * YA / yA
             ZB = (1 - xB - yB) * YB / yB
 
-            XM = (ratioAB * XA + (1 - ratioAB) * XB)
-            ZM = (ratioAB * ZA + (1 - ratioAB) * ZB)
-            YM = (ratioAB * YA + (1 - ratioAB) * YB)
+            XM = (pair_strength_AB * XA + (1 - pair_strength_AB) * XB)
+            ZM = (pair_strength_AB * ZA + (1 - pair_strength_AB) * ZB)
+            YM = (pair_strength_AB * YA + (1 - pair_strength_AB) * YB)
             xM = XM / (XM + YM + ZM)
             yM = YM / (XM + YM + ZM)
-            YxyM = np.hstack((YM, xM, yM))
+            YxyM = np.hstack((YM, xM, yM))        
         
             #plt.plot(YxyM[1],YxyM[2],'kd')
         
             #calculate the contributions of source 1 and source 2 needed to get the M of the temporary source
-            MA = ratioAB #* YM/YA# * YA / YM
-            MB = (1 - ratioAB) #* YM/YB# * YB / YM
-            
-            # Do bookkeeping of components:
-            pAB = np.hstack((pA,pB))
+            MA = pair_strength_AB 
+            MB = (1 - pair_strength_AB)       
             mAB = np.hstack((MA,MB))
-            if k == 0:
-                m_s_k = n + kk
-                m_su_k = pAB
-            else:
-                m_s_k = np.hstack((m_s_k,n + kk))
-                m_su_k = np.vstack((m_su_k, pAB))
+                        
+            # Do bookkeeping of components:
+            sn_k[k] = n + kk
+            su_k[k,:] = pAB
             
-            if kk == 0:
-                m_s = n + kk
-                m_m = np.hstack((MA,MB))
-                m_su = pAB
-            else:
-                m_s = np.hstack((m_s,n + kk))
-                m_m = np.vstack((m_m,mAB))
-                m_su = np.vstack((m_su,pAB))
-            
-            # Store in lut:
-            mlut = np.vstack((mlut,np.hstack((kk+n,YxyM,pAB,mAB))))
+            # Store results in lut:
+            mlut[n + kk,:] = np.hstack((n + kk, YxyM, pAB, mAB))
 
             # Get remaining components:
-            r_so = np.hstack((np.setdiff1d(m_so[:], np.unique(m_su_k)),m_s_k))
-            N_sources = r_so.shape[0]
+            rem_so = np.hstack((np.setdiff1d(so, su_k),sn_k))
+            rem_so = rem_so[rem_so>=0]
+            N_sources = rem_so.shape[0]
             
-            # Reset source list when all pairs have been calculated for current state:
-            if (k == np.int(m_so.shape[0]/2)-1):
-                m_so = r_so.copy()
+            # Reset source list 'so' when all pairs have been calculated for current state:
+            nn = np.int(so.shape[0]/2)
+            if (k == nn - 1): # update to new state
+                sn_k = -np.ones(nn, dtype = int)
+                su_k = -np.ones((nn,2),dtype = int)
+                so = rem_so.copy()
                 k = 0
             else:
                 # add +1 to k:
@@ -578,7 +596,7 @@ def colormixer(Yxyt = None, Yxyi = None, n = 4, ratios = None, source_order = No
             kk += 1
         
         # Calculate M3 using last 3 intermediate component sources:
-        M3 = color3mixer(Yxyt,mlut[r_so[0],1:4],mlut[r_so[1],1:4],mlut[r_so[2],1:4])
+        M3 = color3mixer(Yxyt,mlut[rem_so[0],1:4],mlut[rem_so[1],1:4],mlut[rem_so[2],1:4])
         M3[M3<0] = np.nan
         
         # Calculate fluxes backward from M3:
@@ -605,11 +623,11 @@ def colormixer(Yxyt = None, Yxyi = None, n = 4, ratios = None, source_order = No
             M = mlut[:n,6]
         else:
             M = np.nan*M
-        
+
     else: # Use fast color3mixer
         
         M = color3mixer(Yxyt,Yxyi[0,:],Yxyi[1,:],Yxyi[2,:])
-                
+
     return np.atleast_2d(M)
 
 
@@ -677,7 +695,7 @@ def fitnessfcn(x, spd_constructor, spd_constructor_pars = None, F_rss = True, de
     F = np.nan*np.ones((N))
     output_str = 'c{:1.0f}: F = {:1.' + '{:1.0f}'.format(decimals.max()) + 'f}' + ' : '
     obj_vals = F.copy()
-    for i in range(N):
+    for i in np.arange(N):
         if obj_fcn[i] is not None:
             obj_vals[i] = obj_fcn[i](spdi, **obj_fcn_pars[i])
             
@@ -768,7 +786,7 @@ def component_triangle_optimizer(component_spds, Yxyi = None, Yxy_target = np2d(
 
     # Generate all possible 3-channel combinations (component triangles):
     N = component_spds.shape[0]-1
-    combos = np.array(list(itertools.combinations(range(N), 3)))   
+    combos = np.array(list(itertools.combinations(np.arange(N), 3)))   
 
     # calculate fluxes to obtain target Yxyt:
     M3 = color3mixer(Yxy_target,Yxyi[combos[:,0],:],Yxyi[combos[:,1],:],Yxyi[combos[:,2],:])
@@ -781,7 +799,7 @@ def component_triangle_optimizer(component_spds, Yxyi = None, Yxy_target = np2d(
     
     # Calculate 3-channel SPDs from individual channels:
     spds_rgb = np.empty((Nc,component_spds.shape[-1]))
-    for i in range(Nc):
+    for i in np.arange(Nc):
         spds_rgb[i] = np.dot(M3[i,:],component_spds[combos[i,:]+1])
     spds_rgb = np.vstack((component_spds[:1],spds_rgb))
     
@@ -803,7 +821,7 @@ def component_triangle_optimizer(component_spds, Yxyi = None, Yxy_target = np2d(
         gamma = 0.01
         X0 = np.diagflat(np.ones((1,combos.shape[0])))
         Fs = np.ones((combos.shape[0],1))
-        for i in range(combos.shape[0]):
+        for i in np.arange(combos.shape[0]):
             Fs[i] = fit_fcn(X0[i], 'F', obj_fcn, obj_fcn_pars, obj_fcn_weights, obj_tar_vals, F_rss, decimals, verbosity)
         x0 = X0[Fs.argmin(),:] + gamma*np.ones((1,combos.shape[0]))
             
@@ -820,12 +838,138 @@ def component_triangle_optimizer(component_spds, Yxyi = None, Yxy_target = np2d(
     # Calulate fluxes of all components from M3 and x_final:
     M_final = x_final[:,None]*M3
     M = np.empty((N))
-    for i in range(N):
+    for i in np.arange(N):
         M[i] = M_final[np.where(combos == i)].sum()
     
     # Calculate optimized SPD and get obj_vals:
     spd_opt, obj_vals = fit_fcn(x_final, 'spdi,obj_vals', obj_fcn, obj_fcn_pars, obj_fcn_weights, obj_tar_vals, F_rss, decimals, verbosity)
     return M, spd_opt, obj_vals
+
+#------------------------------------------------------------------------------
+def spd_optimizer2(target, tar_type = 'Yxy', cieobs = _CIEOBS,\
+                  optimizer_type = '3mixer', cspace = 'Yuv', cspace_bwtf = {}, cspace_fwtf = {},\
+                  component_spds = None, N_components = None,\
+                  obj_fcn = [None], obj_fcn_pars = [{}], obj_fcn_weights = [1],\
+                  obj_tar_vals = [0], decimals = [5], \
+                  minimize_method = 'nelder-mead', minimize_opts = None, F_rss = True,\
+                  peakwl = [450,530,600], fwhm = [20,30,10], wl = _WL3, with_wl = True, strength_shoulder = 2,\
+                  strength_ph = 0, peakwl_ph1 = 530, fwhm_ph1 = 80, strength_ph1 = 1,\
+                  peakwl_ph2 = 560, fwhm_ph2 = 80, strength_ph2 = None,\
+                  verbosity = 0):
+    """
+    Generate a spectrum with specified white point and optimized for certain objective functions 
+    from a set of component spectra or component spectrum model parameters.
+    
+    Args:
+        :target: np2d([100,1/3,1/3]), optional
+            Numpy.ndarray with Yxy chromaticity of target.
+        :tar_type:  'Yxy' or str, optional
+            Specifies the input type in :target: (e.g. 'Yxy' or 'cct')
+        :cieobs: _CIEOBS, optional
+            CIE CMF set used to calculate chromaticity values if not provided in :Yxyi:.
+        :optimizer_type: '3mixer',  optional
+            Specifies type of chromaticity optimization ('3mixer' or 'mixer' or 'search')
+        :cspace: 'Yuv', optional
+            Color space for 'search'-type optimization. 
+        :cspace_bwtf: {}, optional
+            Backward (..._to_xyz) transform parameters (see colortf()) to go from :tar_type: to 'Yxy'.
+        :cspace_fwtf = {}, optional
+            Forward (xyz_to_...) transform parameters (see colortf()) to go from xyz to :cspace:.
+        :component_spds: numpy.ndarray of component spectra.
+            If None: they are built from input args.
+        :F_rss: True, optional
+             Take Root-Sum-of-Squares of 'closeness' values between target and objective function values.
+        :decimals: 5, optional
+            Rounding decimals of objective function values.
+        :obj_fcn: [None] or list of function handles to objective functions, optional
+        :obj_fcn_weights: [1] or list of weigths for each objective function, optional.
+        :obj_fcn_pars: [None] or list of parameter dicts for each objective functions, optional
+        :obj_tar_vals: [0] or list of target values for each objective functions, optional
+        :minimize_method: 'nelder-mead', optional
+            Optimization method used by minimize function.
+        :minimize_opts: None, optional
+             Dict with minimization options. 
+             None defaults to: {'xtol': 1e-5, 'disp': True, 'maxiter' : 1000*Nc, 'maxfev' : 1000*Nc,'fatol': 0.01}
+        :verbosity: 0, optional
+            If > 0: print intermediate results.
+         
+         :peakwl:, :fwhm:, ... : see ?spd_builder for more info.   
+            
+    Returns:
+        :returns: spds, M
+            - 'spds': optimized spectrum.
+            - 'M': numpy.ndarray with fluxes for each component spectrum.
+
+    """
+    # Get component spd:
+    if component_spds is None:
+        if N_components is None: # Generate component spds from input args:
+            spds = spd_builder(flux = None, peakwl = peakwl, fwhm = fwhm,\
+                               strength_ph = strength_ph,\
+                               peakwl_ph1 = peakwl_ph1, fwhm_ph1 = fwhm_ph1, strength_ph1 = strength_ph1,\
+                               peakwl_ph2 = peakwl_ph2, fwhm_ph2 = fwhm_ph2, strength_ph2 = strength_ph2,\
+                               verbosity = 0)
+            N_components = spds.shape[0]
+        else:
+            spds = None # optimize spd model parameters, such as peakwl, fwhm, ...
+            if optimizer_type == '3mixer':
+                raise Exception("spd_optimizer(): optimizer_type = '3mixer' not supported for component parameter optimization. Use 'search' or 'mixer' instead.")
+                
+    else:
+        spds = component_spds 
+        N_components = spds.shape[0]
+    
+    # Check if there are at least 3 spds:
+    if spds is not None:
+        if (spds.shape[0]-1 < 3):
+            raise Exception('spd_optimizer(): At least 3 component spds are required.')
+                
+        # Calculate xyz of components:
+        xyzi = spd_to_xyz(spds, relative = False, cieobs = cieobs)
+    else:
+        if N_components < 3:
+            raise Exception('spd_optimizer(): At least 3 component spds are required.')
+    
+    # Optimize spectrum:
+    if optimizer_type == '3mixer': # Optimize fluxes for predefined set of component spectra
+        
+        # Calculate Yxy:
+        Yxyt = colortf(target, tf = tar_type+'>Yxy', bwtf = cspace_bwtf)
+        Yxyi = xyz_to_Yxy(xyzi) #input for color3mixer is Yxy
+        
+        if xyzi.shape[0] == 3: # Only 1 solution
+            M = color3mixer(Yxyt,Yxyi[0:1,:],Yxyi[1:2,:],Yxyi[2:3,:])
+            if (M<0).any():
+                warnings.warn('spd_optimizer(): target outside of gamut')
+        else:
+            # Use triangle optimization:
+            M, spd_opt, obj_vals = component_triangle_optimizer(spds, Yxyi = Yxyi, Yxy_target = Yxyt, cieobs = cieobs,\
+                                                                      obj_fcn = obj_fcn, obj_fcn_pars = obj_fcn_pars, obj_fcn_weights = obj_fcn_weights,\
+                                                                      obj_tar_vals = obj_tar_vals, decimals = decimals, \
+                                                                      minimize_method = minimize_method, F_rss = F_rss,\
+                                                                      minimize_opts = minimize_opts,\
+                                                                      verbosity = verbosity)
+            
+    elif optimizer_type == 'mixer': # Optimize fluxes and component model parameters 
+        
+        # Calculate Yxy:
+        Yxyt = colortf(target, tf = tar_type+'>Yxy', bwtf = cspace_bwtf)
+                
+        # Use Nmixer for optimization:
+        
+        
+        raise Exception("spd_optimizer(): optimizer_type = 'mixer' not yet implemented. Use '3mixer'. ")
+
+        
+    elif optimizer_type == 'search': # Optimize fluxes and component model parameters (chromaticity is part of obj_fcn list)
+        raise Exception("spd_optimizer(): optimizer_type = 'search' not yet implemented. Use '3mixer'. ")
+
+    # Calculate combined spd from components and their fluxes:
+    spds = (np.atleast_2d(M)*spds[1:].T).T.sum(axis = 0)
+    
+    if with_wl == True:
+        spds = np.vstack((getwlr(wl), spds))
+    return spds, M       
 
 #------------------------------------------------------------------------------
 def spd_optimizer(target, tar_type = 'Yxy', cieobs = _CIEOBS,\
@@ -952,7 +1096,6 @@ def spd_optimizer(target, tar_type = 'Yxy', cieobs = _CIEOBS,\
     if with_wl == True:
         spds = np.vstack((getwlr(wl), spds))
     return spds, M       
-
 
 
 #------------------------------------------------------------------------------
