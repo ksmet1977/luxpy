@@ -128,7 +128,8 @@ import colorsys
 
 __all__ = ['plt','Axes3D','np','pd','os','warnings','interpolate','minimize','odict']
 
-
+# Setup output format of print:
+np.set_printoptions(formatter={'float': lambda x: "{0:0.4e}".format(x)}) 
 
 #--------------------------------------------------------------------------------------------------
 # os related:

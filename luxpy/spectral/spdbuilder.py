@@ -32,8 +32,7 @@
 # spd_optimizer_2_3(): Optimizes the weights (fluxes) of a set of component spectra by combining 
                         pairs (2) or trio's (3) of components to intermediate sources until only 3
                         remain. Color3mixer can then be called to calculate required fluxes to
-                        obtain target chromaticity and fluxes are then back-calculated.             
-                        
+                        obtain target chromaticity and fluxes are then back-calculated.                                   
                         
 # default_optim_dict(): Setup dict with optimization parameters.
                         
@@ -56,20 +55,7 @@ from luxpy import (np, plt, warnings, minimize, math, _WL3, _CIEOBS,  np2d,
 from luxpy.cri import spd_to_iesrf, spd_to_iesrg
 import itertools
 
-np.set_printoptions(formatter={'float': lambda x: "{0:0.2e}".format(x)})
-
-
-import traceback
-import warnings
-import sys
-
-#def warn_with_traceback(message, category, filename, lineno, file=None, line=None):
-#
-#    log = file if hasattr(file,'write') else sys.stderr
-#    traceback.print_stack(file=log)
-#    log.write(warnings.formatwarning(message, category, filename, lineno, line))
-#
-#warnings.showwarning = warn_with_traceback
+#np.set_printoptions(formatter={'float': lambda x: "{0:0.2e}".format(x)})
 
 
 #------------------------------------------------------------------------------
@@ -1536,9 +1522,7 @@ if __name__ == '__main__':
     tar_type = 'cct'
     peakwl = [450,530,560,590,610]
     fwhm = [30,30,30,30,30] 
-    
-#    peakwl = [4.22e+02, 4.63e+02, 5.17e+02, 5.76e+02, 6.32e+02]
-#    fwhm = [1.11e+01, 1.11e+01, 1.11e+01, 1.11e+01, 1.11e+01]
+
     obj_fcn1 = spd_to_iesrf
     obj_fcn2 = spd_to_iesrg
     obj_fcn = [obj_fcn1, obj_fcn2]
