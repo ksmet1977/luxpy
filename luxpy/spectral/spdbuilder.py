@@ -427,7 +427,7 @@ def spd_builder(flux = None, component_spds = None, peakwl = 450, fwhm = 20, \
             component_spds_plot = component_spds.copy()
         for i in np.arange(spd.shape[0]):
             plt.figure()
-            if M.shape[0] == 3:
+            if component_spds_plot.shape[0] == 3:
                 plt.plot(wl,component_spds_plot[i,:,0],'b--', label = 'Component 1')
                 if (strength_ph is not None) & (strength_ph is not 0):
                     plt.plot(wl,component_spds_plot[i,:,1],'g:', label = 'Component 2')
@@ -1485,57 +1485,23 @@ if __name__ == '__main__':
 #    SPD(S2).plot()
     
     #--------------------------------------------------------------------------
-##    print('2: spd_optimizer():')
-#    target = 4000 # 4000 K target cct
-#    tar_type = 'cct'
-#    peakwl = [450,530,560,610]
-#    fwhm = [30,35,30,15] 
-#    obj_fcn1 = spd_to_iesrf
-#    obj_fcn2 = spd_to_iesrg
-#    obj_fcn = [obj_fcn1, obj_fcn2]
-#    obj_tar_vals = [90,110]
-#    obj_fcn_weights = [1,1]
-#    decimals = [5,5]
-#    N_components = None #if not None, spd model parameters (peakwl, fwhm, ...) are optimized
-#    S3, _ = spd_optimizer(target, tar_type = tar_type, cspace_bwtf = {'cieobs' : cieobs, 'mode' : 'search'},\
-#                          optimizer_type = '3mixer', N_components = N_components,\
-#                          peakwl = peakwl, fwhm = fwhm, obj_fcn = obj_fcn, obj_tar_vals = obj_tar_vals,\
-#                          obj_fcn_weights = obj_fcn_weights, decimals = decimals,\
-#                          verbosity = 0)
-#    
-#    # Check output agrees with target:
-#    xyz = spd_to_xyz(S3, relative = False, cieobs = cieobs)
-#    cct = xyz_to_cct(xyz, cieobs = cieobs, mode = 'lut')
-#    Rf = obj_fcn1(S3)
-#    Rg = obj_fcn2(S3)
-#    print('\nS3: Optimization results:')
-#    print("S3: Optim / target cct: {:1.1f} K / {:1.1f} K".format(cct[0,0], target))
-#    print("S3: Optim / target Rf: {:1.3f} / {:1.3f}".format(Rf[0,0], obj_tar_vals[0]))
-#    print("S3: Optim / target Rg: {:1.3f} / {:1.3f}".format(Rg[0,0], obj_tar_vals[1]))
-#    
-#    #plot spd:
-#    plt.figure()
-#    SPD(S3).plot()
-    
-    #    print('2: spd_optimizer():')
+    print('2: spd_optimizer():')
     target = 4000 # 4000 K target cct
     tar_type = 'cct'
-    peakwl = [450,530,560,590,610]
-    fwhm = [30,30,30,30,30] 
-
+    peakwl = [450,530,560,610]
+    fwhm = [30,35,30,15] 
     obj_fcn1 = spd_to_iesrf
     obj_fcn2 = spd_to_iesrg
     obj_fcn = [obj_fcn1, obj_fcn2]
     obj_tar_vals = [90,110]
     obj_fcn_weights = [1,1]
     decimals = [5,5]
-    N_components = 5 #if not None, spd model parameters (peakwl, fwhm, ...) are optimized
-    optimizer_type = '3mixer'
+    N_components = None #if not None, spd model parameters (peakwl, fwhm, ...) are optimized
     S3, _ = spd_optimizer(target, tar_type = tar_type, cspace_bwtf = {'cieobs' : cieobs, 'mode' : 'search'},\
-                          optimizer_type = optimizer_type, N_components = N_components,\
+                          optimizer_type = '2mixer', N_components = N_components,\
                           peakwl = peakwl, fwhm = fwhm, obj_fcn = obj_fcn, obj_tar_vals = obj_tar_vals,\
                           obj_fcn_weights = obj_fcn_weights, decimals = decimals,\
-                          verbosity = 1)
+                          verbosity = 0)
     
     # Check output agrees with target:
     xyz = spd_to_xyz(S3, relative = False, cieobs = cieobs)
@@ -1550,3 +1516,4 @@ if __name__ == '__main__':
     #plot spd:
     plt.figure()
     SPD(S3).plot()
+    
