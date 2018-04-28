@@ -4,7 +4,7 @@
 # Module for color difference calculations
 ###############################################################################
 
-# process_DEi(): Process color difference input DEi for output (helper function).
+# process_DEi(): Process color difference input DEi for output (helper fnc).
 
 # DE_camucs(): Calculate color appearance difference DE using camucs type model.
 
@@ -27,15 +27,18 @@ def process_DEi(DEi, DEtype = 'jab', avg = None, avg_axis = 0, out = 'DEi'):
     Process color difference input DEi for output (helper function).
     
     Args:
-        :DEi: tuple(J numpy.ndarray, ab numpy.ndarray).
+        :DEi: tuple(J ndarray, ab ndarray).
         :DEtype: 'jab' or str, optional
             Options: 
-                - 'jab': calculates full color difference over all 3 dimensions.
-                - 'ab': calculates chromaticity difference.
-                - 'j': calculates lightness or brightness difference (depending on :outin:).
-                - 'j,ab': calculates both 'j' and 'ab' options and returns them as a tuple.
+                - 'jab' : calculates full color difference over all 3 dimensions.
+                - 'ab'  : calculates chromaticity difference.
+                - 'j'   : calculates lightness or brightness difference 
+                         (depending on :outin:).
+                - 'j,ab': calculates both 'j' and 'ab' options 
+                          and returns them as a tuple.
         :avg: None, optional
-            None: don't calculate average DE, otherwise use function handle in :avg:.
+            None: don't calculate average DE, 
+                  otherwise use function handle in :avg:.
         :avg_axis: axis to calculate average over, optional
         :out: 'DEi' or str, optional
             Requested output.
@@ -43,7 +46,7 @@ def process_DEi(DEi, DEtype = 'jab', avg = None, avg_axis = 0, out = 'DEi'):
         For the other input arguments, see specific color space used.
         
     Returns:
-        :returns: numpy.ndarray with DEi [, DEa] or other as specified by :out:
+        :returns: ndarray with DEi [, DEa] or other as specified by :out:
     """
 
     if (DEi[0].shape[-1] == 1) & (DEi[0].ndim==3):
@@ -84,29 +87,35 @@ def DE_camucs(xyzt, xyzr, DEtype = 'jab', avg = None, avg_axis = 0, out = 'DEi',
     Calculate color appearance difference DE using camucs type model.
     
     Args:
-        :xyzt: numpy.ndarray with tristimulus values of test data.
-        :xyzr: numpy.ndarray with tristimulus values of reference data.
+        :xyzt: ndarray with tristimulus values of test data.
+        :xyzr: ndarray with tristimulus values of reference data.
         :DEtype: 'jab' or str, optional
             Options: 
-                - 'jab': calculates full color difference over all 3 dimensions.
-                - 'ab': calculates chromaticity difference.
-                - 'j': calculates lightness or brightness difference (depending on :outin:).
-                - 'j,ab': calculates both 'j' and 'ab' options and returns them as a tuple.
+                - 'jab' : calculates full color difference over all 3 dimensions.
+                - 'ab'  : calculates chromaticity difference.
+                - 'j'   : calculates lightness or brightness difference 
+                         (depending on :outin:).
+                - 'j,ab': calculates both 'j' and 'ab' options 
+                          and returns them as a tuple..
         :avg: None, optional
-            None: don't calculate average DE, otherwise use function handle in :avg:.
+            None: don't calculate average DE, 
+                  otherwise use function handle in :avg:.
         :avg_axis: axis to calculate average over, optional
         :out: 'DEi' or str, optional
             Requested output.
         :camtype: luxpy.cam._CAM_02_X_DEFAULT_TYPE, optional
-            Str specifier for CAM type to use, options are 'ciecam02' or 'cam16'.
+            Str specifier for CAM type to use, options: 'ciecam02' or 'cam16'.
         :ucstype: 'ucs' or 'lcd' or 'scd', optional
-            Str specifier for which type of color attribute compression parameters to use.
-             ('ucs': uniform color space, 'lcd', large color differences, 'scd': small color differences)
+            Str specifier for which type of color attribute compression 
+            parameters to use:
+             -'ucs': uniform color space, 
+             -'lcd', large color differences, 
+             -'scd': small color differences
 
         For the other input arguments, see ?luxpy.cam.camucs_structure.
         
     Returns:
-        :returns: numpy.ndarray with DEi [, DEa] or other as specified by :out:
+        :returns: ndarray with DEi [, DEa] or other as specified by :out:
     """
     
     
@@ -137,25 +146,30 @@ def DE2000(xyzt, xyzr, dtype = 'xyz', DEtype = 'jab', avg = None, avg_axis = 0, 
     Calculate DE2000 color difference.
     
     Args:
-        :xyzt: numpy.ndarray with tristimulus values of test data.
-        :xyzr: numpy.ndarray with tristimulus values of reference data.
+        :xyzt: ndarray with tristimulus values of test data.
+        :xyzr: ndarray with tristimulus values of reference data.
         :dtype: 'xyz' or 'lab', optional
             Specifies data type in :xyzt: and :xyzr:.
-        :xyzwt: None or numpy.ndarray with white point tristimulus values of test data, optional
-            None defaults to the one set in lx.xyz_to_lab()
-        :xyzwr: None or numpy.ndarray with whitepoint tristimulus values of reference data, optional
-            None defaults to the one set in lx.xyz_to_lab()
+        :xyzwt: None or ndarray, optional
+                White point tristimulus values of test data
+                None defaults to the one set in lx.xyz_to_lab()
+        :xyzwr: None or ndarray, optional
+                Whitepoint tristimulus values of reference data
+                None defaults to the one set in lx.xyz_to_lab()
         :DEtype: 'jab' or str, optional
             Options: 
-                - 'jab': calculates full color difference over all 3 dimensions.
-                - 'ab': calculates chromaticity difference.
-                - 'j': calculates lightness or brightness difference (depending on :outin:).
-                - 'j,ab': calculates both 'j' and 'ab' options and returns them as a tuple.
+                - 'jab' : calculates full color difference over all 3 dimensions.
+                - 'ab'  : calculates chromaticity difference.
+                - 'j'   : calculates lightness or brightness difference 
+                         (depending on :outin:).
+                - 'j,ab': calculates both 'j' and 'ab' options 
+                          and returns them as a tuple.
         :KLCH: None, optional
             Weigths for L, C, H 
             None: default to [1,1,1] 
         :avg: None, optional
-            None: don't calculate average DE, otherwise use function handle in :avg:.
+            None: don't calculate average DE, 
+                  otherwise use function handle in :avg:.
         :avg_axis: axis to calculate average over, optional
         :out: 'DEi' or str, optional
             Requested output.
@@ -163,7 +177,7 @@ def DE2000(xyzt, xyzr, dtype = 'xyz', DEtype = 'jab', avg = None, avg_axis = 0, 
         For the other input arguments, see specific color space used.
         
     Returns:
-        :returns: numpy.ndarray with DEi [, DEa] or other as specified by :out:
+        :returns: ndarray with DEi [, DEa] or other as specified by :out:
             
     References:
         Sharma, G., Wu, W., & Dalal, E. N. (2005). 
@@ -257,45 +271,57 @@ def DE_cspace(xyzt, xyzr, dtype = 'xyz', tf = _CSPACE, DEtype = 'jab', avg = Non
     Calculate color difference DE in specific color space.
     
     Args:
-        :xyzt: numpy.ndarray with tristimulus values of test data.
-        :xyzr: numpy.ndarray with tristimulus values of reference data.
+        :xyzt: ndarray with tristimulus values of test data.
+        :xyzr: ndarray with tristimulus values of reference data.
         :dtype: 'xyz' or 'jab', optional
             Specifies data type in :xyzt: and :xyzr:.
-        :xyzwt: None or numpy.ndarray with white point tristimulus values of test data, optional
-            None defaults to the one set in :fwtft: or else to default of cspace
-        :xyzwr: None or numpy.ndarray with whitepoint tristimulus values of reference data, optional
-            None defaults to the one set in non-empty :fwtfr: or else to default of cspace
+        :xyzwt: None or ndarray, optional
+                White point tristimulus values of test data
+                None defaults to the one set in :fwtft: 
+                    or else to the default of cspace.
+        :xyzwr: None or ndarray, optional
+                Whitepoint tristimulus values of reference data
+                None defaults to the one set in non-empty :fwtfr: 
+                    or else to default of cspace.
         :fwtft: {}, optional
-            Dict with parameters for forward transform from xyz to cspace for test data.
+            Dict with parameters for forward transform 
+            from xyz to cspace for test data.
         :fwtfr: {}, optional 
-            Dict with parameters for forward transform from xyz to cspace for reference data.
+            Dict with parameters for forward transform 
+            from xyz to cspace for reference data.
         :KLCH: None, optional
             Weigths for L, C, H 
             None: default to [1,1,1] 
             KLCH is not used when tf == 'camucs'.
         :DEtype: 'jab' or str, optional
             Options: 
-                - 'jab': calculates full color difference over all 3 dimensions.
-                - 'ab': calculates chromaticity difference.
-                - 'j': calculates lightness or brightness difference (depending on :outin:).
-                - 'j,ab': calculates both 'j' and 'ab' options and returns them as a tuple.
+                - 'jab' : calculates full color difference over all 3 dimensions.
+                - 'ab'  : calculates chromaticity difference.
+                - 'j'   : calculates lightness or brightness difference 
+                          (depending on :outin:).
+                - 'j,ab': calculates both 'j' and 'ab' options 
+                          and returns them as a tuple.
         :avg: None, optional
-            None: don't calculate average DE, otherwise use function handle in :avg:.
+            None: don't calculate average DE, 
+                  otherwise use function handle in :avg:.
         :avg_axis: axis to calculate average over, optional
         :out: 'DEi' or str, optional
             Requested output.
         :camtype: luxpy.cam._CAM_02_X_DEFAULT_TYPE, optional
-            Str specifier for CAM type to use, options are 'ciecam02' or 'cam16'.
+            Str specifier for CAM type to use, options: 'ciecam02' or 'cam16'.
             Only when DEtype == 'camucs'.
         :ucstype: 'ucs' or 'lcd' or 'scd', optional
-            Str specifier for which type of color attribute compression parameters to use.
-             ('ucs': uniform color space, 'lcd', large color differences, 'scd': small color differences)
+            Str specifier for which type of color attribute compression 
+            parameters to use:
+                 -'ucs': uniform color space,
+                 -'lcd', large color differences,
+                 -'scd': small color differences
             Only when DEtype == 'camucs'.
         
         For the other input arguments, see specific color space used.
         
     Returns:
-        :returns: numpy.ndarray with DEi [, DEa] or other as specified by :out:
+        :returns: ndarray with DEi [, DEa] or other as specified by :out:
     """
     
     # Get xyzw from dict if xyzw is None & dict is Not None

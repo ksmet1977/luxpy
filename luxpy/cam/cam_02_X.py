@@ -16,58 +16,87 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #########################################################################
 """
-###################################################################################################
+###############################################################################
 # Module with CIECAM02-type color appearance models
-###################################################################################################
-#
-# _CAM_02_X_UNIQUE_HUE_DATA: database of unique hues with corresponding Hue quadratures and eccentricity factors
-#                   (ciecam02, cam16, ciecam97s, cam15u)
-#
-# _CAM_02_X_SURROUND_PARAMETERS: database of surround parameters c, Nc, F and FLL for ciecam02, cam16, ciecam97s and cam15u.
-#
-# _CAM_02_X_NAKA_RUSHTON_PARAMETERS: database with parameters (n, sig, scaling and noise) for the Naka-Rushton function: scaling * ((data**n) / ((data**n) + (sig**n))) + noise
-#
-# _CAM_02_X_UCS_PARAMETERS: database with parameters specifying the conversion from ciecam02/cam16 to cam[x]ucs (uniform color space), cam[x]lcd (large color diff.), cam[x]scd (small color diff).
-#
+###############################################################################
+
+# _CAM_02_X_UNIQUE_HUE_DATA: database of unique hues with corresponding 
+        Hue quadratures and eccentricity factors 
+        for ciecam02, cam16, ciecam97s, cam15u)
+
+# _CAM_02_X_SURROUND_PARAMETERS: database of surround param. c, Nc, F and FLL 
+        for ciecam02, cam16, ciecam97s and cam15u.
+
+# _CAM_02_X_NAKA_RUSHTON_PARAMETERS: database with parameters 
+            (n, sig, scaling and noise) for the Naka-Rushton function: 
+                scaling * ((data**n) / ((data**n) + (sig**n))) + noise
+
+# _CAM_02_X_UCS_PARAMETERS: database with parameters specifying the conversion 
+                            from ciecam02/cam16 to:
+                                cam[x]ucs (uniform color space), 
+                                cam[x]lcd (large color diff.), 
+                                cam[x]scd (small color diff).
+
 # _CAM_02_X_DEFAULT_WHITE_POINT: Default internal reference white point (xyz)
-#
+
 # _CAM_02_X_DEFAULT_TYPE: Default CAM type str specifier.
-#
+
 # _CAM_02_X_DEFAULT_MCAT: Default MCAT specifier.
-#
-# _CAM_02_X_DEFAULT_CONDITIONS: Default CAM model parameters for model in cam._CAM_02_X_DEFAULT_TYPE
-#
-# _CAM_02_X_AXES: dict with list[str,str,str] containing axis labels of defined cspaces.
-#
+
+# _CAM_02_X_DEFAULT_CONDITIONS: Default CAM model parameters for model 
+                                    in cam._CAM_02_X_DEFAULT_TYPE
+
+# _CAM_02_X_AXES: dict with list[str,str,str] containing axis labels 
+                of defined cspaces.
+
 # naka_rushton(): applies a Naka-Rushton function to the input
-# 
+ 
 # hue_angle(): calculates a positive hue angle
-#
+
 # hue_quadrature(): calculates the Hue quadrature from the hue.
-#
-# cam_structure_ciecam02_cam16(): basic structure of both the ciecam02 and cam16 models. Has 'forward' (xyz --> color attributes) and 'inverse' (color attributes --> xyz) modes.
-#
-# ciecam02(): calculates ciecam02 output (wrapper for cam_structure_ciecam02_cam16 with specifics of ciecam02):  N. Moroney, M. D. Fairchild, R. W. G. Hunt, C. Li, M. R. Luo, and T. Newman, “The CIECAM02 color appearance model,” IS&T/SID Tenth Color Imaging Conference. p. 23, 2002.
-#
-# cam16(): calculates cam16 output (wrapper for cam_structure_ciecam02_cam16 with specifics of cam16):  C. Li, Z. Li, Z. Wang, Y. Xu, M. R. Luo, G. Cui, M. Melgosa, M. H. Brill, and M. Pointer, “Comprehensive color solutions: CAM16, CAT16, and CAM16-UCS,” Color Res. Appl., p. n/a–n/a.
-# 
-# camucs_structure(): basic structure to go to ucs, lcd and scd color spaces (forward + inverse available)
-#
-# cam02ucs(): calculates ucs (or lcd, scd) output based on ciecam02 (forward + inverse available): M. R. Luo, G. Cui, and C. Li, “Uniform colour spaces based on CIECAM02 colour appearance model,” Color Res. Appl., vol. 31, no. 4, pp. 320–330, 2006.
-#
-# cam16ucs(): calculates ucs (or lcd, scd) output based on cam16 (forward + inverse available):  C. Li, Z. Li, Z. Wang, Y. Xu, M. R. Luo, G. Cui, M. Melgosa, M. H. Brill, and M. Pointer, “Comprehensive color solutions: CAM16, CAT16, and CAM16-UCS,” Color Res. Appl., p. n/a–n/a.
-#
+
+# cam_structure_ciecam02_cam16(): basic structure of ciecam02 and cam16 models.
+                 Has 'forward' (xyz --> color attributes) 
+                 and 'inverse' (color attributes --> xyz) modes.
+
+# ciecam02(): calculates ciecam02 output 
+        (wrapper for cam_structure_ciecam02_cam16 with specifics of ciecam02): 
+            N. Moroney, M. D. Fairchild, R. W. G. Hunt, C. Li, M. R. Luo, and T. Newman, 
+            “The CIECAM02 color appearance model,” 
+            IS&T/SID Tenth Color Imaging Conference. p. 23, 2002.
+
+# cam16(): calculates cam16 output 
+        (wrapper for cam_structure_ciecam02_cam16 with specifics of cam16):  
+            C. Li, Z. Li, Z. Wang, Y. Xu, M. R. Luo, G. Cui, M. Melgosa, M. H. Brill, and M. Pointer, 
+            “Comprehensive color solutions: CAM16, CAT16, and CAM16-UCS,” 
+            Color Res. Appl., p. n/a–n/a.
+
+# camucs_structure(): basic structure to go to ucs, lcd and scd color spaces 
+                (forward + inverse available)
+
+# cam02ucs(): calculates ucs (or lcd, scd) output based on ciecam02 
+                (forward + inverse available)
+                M. R. Luo, G. Cui, and C. Li, 
+                “Uniform colour spaces based on CIECAM02 colour appearance model,” 
+                Color Res. Appl., vol. 31, no. 4, pp. 320–330, 2006.
+
+# cam16ucs(): calculates ucs (or lcd, scd) output based on cam16 
+                (forward + inverse available)
+                C. Li, Z. Li, Z. Wang, Y. Xu, M. R. Luo, G. Cui, M. Melgosa, M. H. Brill, and M. Pointer, 
+                “Comprehensive color solutions: CAM16, CAT16, and CAM16-UCS,” 
+                Color Res. Appl., p. n/a–n/a.
+
 # specific wrappers in the xyz_to_...() and ..._to_xyz() format:
-# 'xyz_to_jabM_ciecam02', 'jabM_ciecam02_to_xyz',
-# 'xyz_to_jabC_ciecam02', 'jabC_ciecam02_to_xyz',
-# 'xyz_to_jabM_cam16', 'jabM_cam16_to_xyz',
-# 'xyz_to_jabC_cam16', 'jabC_cam16_to_xyz',
-# 'xyz_to_jab_cam02ucs', 'jab_cam02ucs_to_xyz', 
-# 'xyz_to_jab_cam02lcd', 'jab_cam02lcd_to_xyz',
-# 'xyz_to_jab_cam02scd', 'jab_cam02scd_to_xyz', 
-# 'xyz_to_jab_cam16ucs', 'jab_cam16ucs_to_xyz',
-# 'xyz_to_jab_cam16lcd', 'jab_cam16lcd_to_xyz',
-# 'xyz_to_jab_cam16scd', 'jab_cam16scd_to_xyz', 
+ 'xyz_to_jabM_ciecam02', 'jabM_ciecam02_to_xyz',
+ 'xyz_to_jabC_ciecam02', 'jabC_ciecam02_to_xyz',
+ 'xyz_to_jabM_cam16', 'jabM_cam16_to_xyz',
+ 'xyz_to_jabC_cam16', 'jabC_cam16_to_xyz',
+ 'xyz_to_jab_cam02ucs', 'jab_cam02ucs_to_xyz', 
+ 'xyz_to_jab_cam02lcd', 'jab_cam02lcd_to_xyz',
+ 'xyz_to_jab_cam02scd', 'jab_cam02scd_to_xyz', 
+ 'xyz_to_jab_cam16ucs', 'jab_cam16ucs_to_xyz',
+ 'xyz_to_jab_cam16lcd', 'jab_cam16lcd_to_xyz',
+ 'xyz_to_jab_cam16scd', 'jab_cam16scd_to_xyz'
 #------------------------------------------------------------------------------
 
 Created on Sun Jun 25 09:55:05 2017
@@ -134,12 +163,12 @@ _CAM_02_X_DEFAULT_MCAT = 'cat02'
 
 def naka_rushton(data, sig = 2.0, n = 0.73, scaling = 1.0, noise = 0.0, cam = None, direction = 'forward'):
     """
-    Apply a Naka-Rushton response compression (n) + adaptive shift (sig) to data.
+    Apply a Naka-Rushton response compression (n) and an adaptive shift (sig).
     
     NK(x) = scaling * ((x**n) / ((x**n) + (sig**n))) + noise
     
     Args:
-        :data: float or numpy.ndarray
+        :data: float or ndarray
         :sig: 2.0, optional
             Semi-saturation constant. Value for which NK(:data:) is 1/2
         :n: 0.73, optional
@@ -149,13 +178,13 @@ def naka_rushton(data, sig = 2.0, n = 0.73, scaling = 1.0, noise = 0.0, cam = No
         :noise: 0.0, optional
             Cone excitation noise.
         :cam: None or str, optional
-            Use NK parameters values specific to the color appearance model in :cam:.
-            See luxpy.cam._NAKA_RUSHTON_PARAMETERS['models'] for supported types.
+            Use NK parameters values specific to the color appearance model.
+            See .cam._NAKA_RUSHTON_PARAMETERS['models'] for supported types.
         :direction: 'forward' or 'inverse', optional
             Perform either NK(x) or NK(x)**(-1).
     
     Returns:
-        :returns: float or numpy.ndarray with NK-(de)compressed input :x:        
+        :returns: float or ndarray with NK-(de)compressed input :x:        
     """
     if cam is not None: #override input
         n = _NAKA_RUSHTON_PARAMETERS[cam]['n']
@@ -177,16 +206,17 @@ def naka_rushton(data, sig = 2.0, n = 0.73, scaling = 1.0, noise = 0.0, cam = No
 
 def hue_angle(a,b, htype = 'deg'):
     """
-    Calculate positive hue angle (0°-360° or 0 - 2*pi rad.) from opponent signals a and b.
+    Calculate positive hue angle (0°-360° or 0 - 2*pi rad.) 
+    from opponent signals a and b.
     
     Args:
-        :a: numpy.ndarray of a-coordinates
-        :b: numpy.ndarray of b-coordinates
+        :a: ndarray of a-coordinates
+        :b: ndarray of b-coordinates
         :htype: 'deg' or 'rad', optional
             'deg': hue angle between 0° and 360°
             'rad': hue angle between 0 and 2pi radians
     Returns:
-        :returns: numpy.ndarray of positive hue angles.
+        :returns: ndarray of positive hue angles.
     """
     return math.positive_arctan(a,b, htype = htype)
 
@@ -195,15 +225,16 @@ def hue_quadrature(h, unique_hue_data = None):
     Get hue quadrature H from h.
     
     Args:
-        :h: float or list[float] or numpy.ndarray with hue data in degrees (!).
+        :h: float or list[float] or ndarray with hue data in degrees (!).
         :unique_hue data: None or str or dict, optional
             - None: H = h.
-            - str: CAM specifier that gets parameters from luxpy.cam._UNIQUE_HUE_DATA
-                (For supported models, see luxpy.cam._UNIQUE_HUE_DATA['models'])
-            - dict: user specified unique hue data (see luxpy.cam._UNIQUE_HUE_DATA for expected structure)
+            - str: CAM specifier that gets parameters from .cam._UNIQUE_HUE_DATA
+                (For supported models, see .cam._UNIQUE_HUE_DATA['models'])
+            - dict: user specified unique hue data 
+                (see luxpy.cam._UNIQUE_HUE_DATA for expected structure)
     
     Returns:
-        :H: float or list[float] or numpy.ndarray of Hue quadrature value(s).
+        :H: float or list[float] or ndarray of Hue quadrature value(s).
     """
     if unique_hue_data is None:
         return h
@@ -233,42 +264,63 @@ def hue_quadrature(h, unique_hue_data = None):
 
 def cam_structure_ciecam02_cam16(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, camtype = _CAM_02_X_DEFAULT_TYPE, mcat = None, Yw = np2d(100), conditions = _CAM_02_X_DEFAULT_CONDITIONS, direction = 'forward', outin = 'J,aM,bM', yellowbluepurplecorrect = False):
     """
-    Convert between XYZ tristsimulus values and ciecam02 /cam16 color appearance correlates.
+    Convert between XYZ tristsimulus values and 
+    ciecam02 /cam16 color appearance correlates.
     
     Args:
-        :data: numpy.ndarray with input tristimulus values or input color appearance correlates
-            Can be of shape: (N [, xM], x 3), N specifies samples, M specifies light sources.
-        :xyzw: _CAM_02_X_DEFAULT_WHITE_POINT or numpy.ndarray with tristimulus values of white point(s), optional
-            Can be multiple by specifying a Mx3 numpy.ndarray, instead of 1x3.
+        :data: 
+            ndarray with input tristimulus values or 
+            input color appearance correlates
+            Can be of shape: (N [, xM], x 3), whereby 
+                N refers to samples, M to light sources.
+        :xyzw: _CAM_02_X_DEFAULT_WHITE_POINT or ndarray with tristimulus values
+                of white point(s), optional
+            Can be multiple by specifying a Mx3 ndarray, instead of 1x3.
         :Yw: luxpy.np2d(100), optional
             Luminance factor of white point.
-            Is normally 100 for perfect white diffuser, < 100 for e.g. paper as white point.         
+            Is normally 100 for perfect white diffuser, 
+                is < 100 for e.g. paper as white point.         
         :camtype: luxpy.cam._CAM_02_X_DEFAULT_TYPE, optional
-            Str specifier for CAM type to use, options are 'ciecam02' or 'cam16'.
-        :mcat: None or str or numpy.ndarray, optional
+            Str specifier for CAM type to use, options: 'ciecam02' or 'cam16'.
+        :mcat: None or str or ndarray, optional
             Specifies CAT sensor space.
-            - None defaults to the one native to the camtype (others e.g. 'cat02-bs', 'cat02-jiang', all trying to correct gamut problems of original cat02 matrix)
-            - str: see see luxpy.cat._MCATS.keys() for options (details on type, ?luxpy.cat)
-            - numpy.ndarray: matrix with sensor primaries
+            - None defaults to the one native to the camtype 
+                (others e.g. 'cat02-bs', 'cat02-jiang',
+                all trying to correct gamut problems of original cat02 matrix)
+            - str: see see luxpy.cat._MCATS.keys() for options 
+                (details on type, ?luxpy.cat)
+            - ndarray: matrix with sensor primaries
         :condition: luxpy.cam._CAM_02_X_DEFAULT_CONDITIONS, optional
-            Dict specifying condition parameters, D, La, surround ([c,Nc,F]), Yb
+            Dict with condition parameters, D, La, surround ([c,Nc,F]), Yb
             Can be user defined, but dict must have same structure.
         :direction: 'forward' or 'inverse', optional
             -'forward': xyz -> ciecam02 / cam16
             -'inverse': ciecam02 / cam16 -> xyz 
-                (input data must be (J or Q, aM, bM) or (J or Q, aC,bC) or (J or Q, aS, bS) !!)
+                (input data must be:
+                    (J or Q, aM, bM) or 
+                    (J or Q, aC,bC) or 
+                    (J or Q, aS, bS) !!)
         :outin: 'J,aM,bM' or str, optional
-            Str specifying the type of input (:direction: == 'inverse') and output (:direction: == 'forward')
+            Str specifying the type of 
+            input (:direction: == 'inverse') and 
+            output (:direction: == 'forward')
         :yellowbluepurplecorrect: True or False, optional
             Correct for yellow-blue and purple problems in ciecam02 
             (Is not used in cam16 because cat16 solves issues)
     
     Returns:
-        :returns: numpy.ndarray with color appearance correlates (:direction: == 'forward') or XYZ tristimulus values (:direction: == 'inverse')
+        :returns: 
+            ndarray with color appearance correlates (:direction: == 'forward')
+            or 
+            XYZ tristimulus values (:direction: == 'inverse')
     
     References:
-        ..[1] N. Moroney, M. D. Fairchild, R. W. G. Hunt, C. Li, M. R. Luo, and T. Newman, “The CIECAM02 color appearance model,” IS&T/SID Tenth Color Imaging Conference. p. 23, 2002.
-        ..[2] C. Li, Z. Li, Z. Wang, Y. Xu, M. R. Luo, G. Cui, M. Melgosa, M. H. Brill, and M. Pointer, “Comprehensive color solutions: CAM16, CAT16, and CAM16-UCS,” Color Res. Appl., p. n/a–n/a.
+        ..[1] N. Moroney, M. D. Fairchild, R. W. G. Hunt, C. Li, M. R. Luo, and T. Newman, 
+            “The CIECAM02 color appearance model,” 
+            IS&T/SID Tenth Color Imaging Conference. p. 23, 2002.
+        ..[2] C. Li, Z. Li, Z. Wang, Y. Xu, M. R. Luo, G. Cui, M. Melgosa, M. H. Brill, and M. Pointer, 
+            “Comprehensive color solutions: CAM16, CAT16, and CAM16-UCS,” 
+            Color Res. Appl., p. n/a–n/a.
     """
     outin = outin.split(',')
       
@@ -570,35 +622,53 @@ def ciecam02(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, mcat = 'cat02', Yw = np
     Wrapper for luxpy.cam.cam_structure_ciecam02_cam16() designed specifically for camtype = 'ciecam02.
     
     Args:
-        :data: numpy.ndarray with input tristimulus values or input color appearance correlates
-            Can be of shape: (N [, xM], x 3), N specifies samples, M specifies light sources.
-        :xyzw: _CAM_02_X_DEFAULT_WHITE_POINT or numpy.ndarray with tristimulus values of white point(s), optional
-            Can be multiple by specifying a Mx3 numpy.ndarray, instead of 1x3.
+        :data: 
+            ndarray with input tristimulus values or 
+            input color appearance correlates
+            Can be of shape: (N [, xM], x 3), whereby 
+                N refers to samples, M to light sources.
+        :xyzw: _CAM_02_X_DEFAULT_WHITE_POINT or ndarray with tristimulus values
+                of white point(s), optional
+            Can be multiple by specifying a Mx3 ndarray, instead of 1x3.
         :Yw: luxpy.np2d(100), optional
             Luminance factor of white point.
-            Is normally 100 for perfect white diffuser, < 100 for e.g. paper as white point.         
-        :mcat: 'cat02' or str or numpy.ndarray, optional
+            Is normally 100 for perfect white diffuser, 
+                is < 100 for e.g. paper as white point.                 
+        :mcat: None or str or ndarray, optional
             Specifies CAT sensor space.
-            - None defaults to 'cat02' (others e.g. 'cat02-bs', 'cat02-jiang', all trying to correct gamut problems of original cat02 matrix)
-            - str: see see luxpy.cat._MCATS.keys() for options (details on type, ?luxpy.cat)
-            - numpy.ndarray: matrix with sensor primaries
+            - None defaults to the one native to the camtype 
+                (others e.g. 'cat02-bs', 'cat02-jiang',
+                all trying to correct gamut problems of original cat02 matrix)
+            - str: see see luxpy.cat._MCATS.keys() for options 
+                (details on type, ?luxpy.cat)
+            - ndarray: matrix with sensor primaries
         :condition: luxpy.cam._CAM_02_X_DEFAULT_CONDITIONS, optional
-            Dict specifying condition parameters, D, La, surround ([c,Nc,F]), Yb
+            Dict with condition parameters, D, La, surround ([c,Nc,F]), Yb
             Can be user defined, but dict must have same structure.
         :direction: 'forward' or 'inverse', optional
             -'forward': xyz -> ciecam02 
             -'inverse': ciecam02 -> xyz 
-                (input data must be (J or Q, aM, bM) or (J or Q, aC,bC) or (J or Q, aS, bS) !!)
+                (input data must be:
+                    (J or Q, aM, bM) or 
+                    (J or Q, aC,bC) or 
+                    (J or Q, aS, bS) !!)
         :outin: 'J,aM,bM' or str, optional
-            Str specifying the type of input (:direction: == 'inverse') and output (:direction: == 'forward')
+            Str specifying the type of 
+                input (:direction: == 'inverse') and 
+                output (:direction: == 'forward')
         :yellowbluepurplecorrect: False or True, optional
             Correct for yellow-blue and purple problems in ciecam02 
     
     Returns:
-        :returns: numpy.ndarray with color appearance correlates (:direction: == 'forward') or XYZ tristimulus values (:direction: == 'inverse')
+        :returns: 
+            ndarray with color appearance correlates (:direction: == 'forward') 
+            or 
+            XYZ tristimulus values (:direction: == 'inverse')
     
     References:
-        ..[1] N. Moroney, M. D. Fairchild, R. W. G. Hunt, C. Li, M. R. Luo, and T. Newman, “The CIECAM02 color appearance model,” IS&T/SID Tenth Color Imaging Conference. p. 23, 2002.
+        ..[1] N. Moroney, M. D. Fairchild, R. W. G. Hunt, C. Li, M. R. Luo, and T. Newman, 
+            “The CIECAM02 color appearance model,” 
+            IS&T/SID Tenth Color Imaging Conference. p. 23, 2002.
     
     """
     return cam_structure_ciecam02_cam16(data, xyzw, camtype = 'ciecam02', mcat = mcat, Yw = Yw, conditions = conditions, direction = direction, outin = outin, yellowbluepurplecorrect = yellowbluepurplecorrect)
@@ -612,33 +682,51 @@ def cam16(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, mcat = 'cat16', Yw = np2d(
     Wrapper for luxpy.cam.cam_structure_ciecam02_cam16() designed specifically for camtype = 'cam16'.
     
     Args:
-        :data: numpy.ndarray with input tristimulus values or input color appearance correlates
-            Can be of shape: (N [, xM], x 3), N specifies samples, M specifies light sources.
-        :xyzw: _CAM_02_X_DEFAULT_WHITE_POINT or numpy.ndarray with tristimulus values of white point(s), optional
-            Can be multiple by specifying a Mx3 numpy.ndarray, instead of 1x3.
+        :data: 
+            ndarray with input tristimulus values or 
+            input color appearance correlates
+            Can be of shape: (N [, xM], x 3), whereby 
+                N refers to samples, M to light sources.
+        :xyzw: _CAM_02_X_DEFAULT_WHITE_POINT or ndarray with tristimulus values
+                of white point(s), optional
+            Can be multiple by specifying a Mx3 ndarray, instead of 1x3.
         :Yw: luxpy.np2d(100), optional
             Luminance factor of white point.
-            Is normally 100 for perfect white diffuser, < 100 for e.g. paper as white point.         
-        :mcat: 'cat16' or str or numpy.ndarray, optional
+            Is normally 100 for perfect white diffuser, 
+                is < 100 for e.g. paper as white point.           
+        :mcat: 'cat16' or str or ndarray, optional
             Specifies CAT sensor space.
-            - None defaults to back 'cat02' ! (others e.g. 'cat02-bs', 'cat02-jiang', all trying to correct gamut problems of original cat02 matrix)
-            - str: see see luxpy.cat._MCATS.keys() for options (details on type, ?luxpy.cat)
-            - numpy.ndarray: matrix with sensor primaries
+            - None defaults to back 'cat02' ! 
+                (others e.g. 'cat02-bs', 'cat02-jiang', all trying to correct 
+                gamut problems of original cat02 matrix)
+            - str: see see luxpy.cat._MCATS.keys() for options 
+                (details on type, ?luxpy.cat)
+            - ndarray: matrix with sensor primaries
         :condition: luxpy.cam._CAM_02_X_DEFAULT_CONDITIONS, optional
-            Dict specifying condition parameters, D, La, surround ([c,Nc,F]), Yb
+            Dict with condition parameters, D, La, surround ([c,Nc,F]), Yb
             Can be user defined, but dict must have same structure.
         :direction: 'forward' or 'inverse', optional
             -'forward': xyz -> cam16 
             -'inverse': cam16 -> xyz 
-                (input data must be (J or Q, aM, bM) or (J or Q, aC,bC) or (J or Q, aS, bS) !!)
+                (input data must be 
+                 (J or Q, aM, bM) or 
+                 (J or Q, aC,bC) or 
+                 (J or Q, aS, bS) !!)
         :outin: 'J,aM,bM' or str, optional
-            Str specifying the type of input (:direction: == 'inverse') and output (:direction: == 'forward')
+            Str specifying the type of 
+                input (:direction: == 'inverse') and 
+                output (:direction: == 'forward')
     
     Returns:
-        :returns: numpy.ndarray with color appearance correlates (:direction: == 'forward') or XYZ tristimulus values (:direction: == 'inverse')
+        :returns: 
+            ndarray with color appearance correlates (:direction: == 'forward') 
+            or 
+            XYZ tristimulus values (:direction: == 'inverse')
     
     References:
-        ..[1] C. Li, Z. Li, Z. Wang, Y. Xu, M. R. Luo, G. Cui, M. Melgosa, M. H. Brill, and M. Pointer, “Comprehensive color solutions: CAM16, CAT16, and CAM16-UCS,” Color Res. Appl., p. n/a–n/a.
+        ..[1] C. Li, Z. Li, Z. Wang, Y. Xu, M. R. Luo, G. Cui, M. Melgosa, M. H. Brill, and M. Pointer, 
+            “Comprehensive color solutions: CAM16, CAT16, and CAM16-UCS,” 
+            Color Res. Appl., p. n/a–n/a.
  
     """    
     return cam_structure_ciecam02_cam16(data, xyzw, camtype = 'cam16', mcat = mcat, Yw = Yw, conditions = conditions, direction = direction, outin = outin, yellowbluepurplecorrect = False)
@@ -646,9 +734,11 @@ def cam16(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, mcat = 'cat16', Yw = np2d(
 #---------------------------------------------------------------------------------------------------------------------
 def camucs_structure(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, camtype = 'ciecam02', mcat = None, Yw = np2d(100.0), conditions = _CAM_02_X_DEFAULT_CONDITIONS, direction = 'forward', outin = 'J,aM,bM', ucstype = 'ucs', yellowbluepurplecorrect = False):
     """
-    Convert between XYZ tristsimulus values and camucs type color appearance correlates.
+    Convert between XYZ tristsimulus values 
+    and camucs type color appearance correlates.
     
-    Wrapper for luxpy.cam.cam_structure_ciecam02_cam16() with additional compression of color attributes
+    Wrapper for luxpy.cam.cam_structure_ciecam02_cam16() with additional 
+    compression of color attributes
     for the following case:
         - 'none': original cam space
         - 'ucs': for uniform color space
@@ -656,39 +746,58 @@ def camucs_structure(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, camtype = 'ciec
         - 'scd': for small color differences
     
     Args:
-        :data: numpy.ndarray with input tristimulus values or input color appearance correlates
-            Can be of shape: (N [, xM], x 3), N specifies samples, M specifies light sources.
-        :xyzw: _CAM_02_X_DEFAULT_WHITE_POINT or numpy.ndarray with tristimulus values of white point(s), optional
-            Can be multiple by specifying a Mx3 numpy.ndarray, instead of 1x3.
+        :data: 
+            ndarray with input tristimulus values or 
+            input color appearance correlates
+            Can be of shape: (N [, xM], x 3), whereby 
+                N refers to samples, M to light sources.
+        :xyzw: _CAM_02_X_DEFAULT_WHITE_POINT or ndarray with tristimulus values
+                of white point(s), optional
+            Can be multiple by specifying a Mx3 ndarray, instead of 1x3.
         :Yw: luxpy.np2d(100), optional
             Luminance factor of white point.
-            Is normally 100 for perfect white diffuser, < 100 for e.g. paper as white point.         
+            Is normally 100 for perfect white diffuser, 
+                is < 100 for e.g. paper as white point.          
         :camtype: luxpy.cam._CAM_02_X_DEFAULT_TYPE, optional
-            Str specifier for CAM type to use, options are 'ciecam02' or 'cam16'.
-        :mcat: None or str or numpy.ndarray, optional
+            Str specifier for CAM type to use, options: 'ciecam02' or 'cam16'.
+        :mcat: None or str or ndarray, optional
             Specifies CAT sensor space.
-            - None defaults to 'cat02' (others e.g. 'cat02-bs', 'cat02-jiang', all trying to correct gamut problems of original cat02 matrix)
-            - str: see see luxpy.cat._MCATS.keys() for options (details on type, ?luxpy.cat)
-            - numpy.ndarray: matrix with sensor primaries
+            - None defaults to the one native to the camtype 
+                (others e.g. 'cat02-bs', 'cat02-jiang',
+                all trying to correct gamut problems of original cat02 matrix)
+            - str: see see luxpy.cat._MCATS.keys() for options 
+                (details on type, ?luxpy.cat)
+            - ndarray: matrix with sensor primaries
         :condition: luxpy.cam._CAM_02_X_DEFAULT_CONDITIONS, optional
-            Dict specifying condition parameters, D, La, surround ([c,Nc,F]), Yb
+            Dict with condition parameters, D, La, surround ([c,Nc,F]), Yb
             Can be user defined, but dict must have same structure.
         :direction: 'forward' or 'inverse', optional
             -'forward': xyz -> camucs
             -'inverse': camucs -> xyz 
-                (input data must be (J or Q, aM, bM) or (J or Q, aC,bC) or (J or Q, aS, bS) !!)
+                (input data must be 
+                     (J or Q, aM, bM) or 
+                     (J or Q, aC,bC) or 
+                     (J or Q, aS, bS) !!)
         :yellowbluepurplecorrect: True or False, optional
             Correct for yellow-blue and purple problems in ciecam02 
             (Is not used in cam16 because cat16 solves issues)
         :ucstype: 'ucs' or 'lcd' or 'scd', optional
-            Str specifier for which type of color attribute compression parameters to use.
-             ('ucs': uniform color space, 'lcd', large color differences, 'scd': small color differences)
+            Str specifier for which type of color attribute compression 
+            parameters to use:
+              -'ucs': uniform color space, 
+              -'lcd', large color differences, 
+              -'scd': small color differences
              
     Returns:
-        :returns: numpy.ndarray with color appearance correlates (:direction: == 'forward') or XYZ tristimulus values (:direction: == 'inverse')
+        :returns: 
+            ndarray with color appearance correlates (:direction: == 'forward') 
+            or 
+            XYZ tristimulus values (:direction: == 'inverse')
     
     References:
-        ..[1] M. R. Luo, G. Cui, and C. Li, “Uniform colour spaces based on CIECAM02 colour appearance model,” Color Res. Appl., vol. 31, no. 4, pp. 320–330, 2006.
+        ..[1] M. R. Luo, G. Cui, and C. Li, 
+            “Uniform colour spaces based on CIECAM02 colour appearance model,” 
+            Color Res. Appl., vol. 31, no. 4, pp. 320–330, 2006.
     
     """
     if mcat == None:
@@ -744,42 +853,63 @@ def camucs_structure(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, camtype = 'ciec
 #---------------------------------------------------------------------------------------------------------------------
 def cam02ucs(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = np2d(100.0), conditions = _CAM_02_X_DEFAULT_CONDITIONS, direction = 'forward', ucstype = 'ucs', yellowbluepurplecorrect = False, mcat = 'cat02'):
     """
-    Convert between XYZ tristsimulus values and cam02ucs type color appearance correlates.
+    Convert between XYZ tristsimulus values 
+    and cam02ucs type color appearance correlates.
     
-    Wrapper for luxpy.cam.camucs_structure() specifically designed for 'ciecam02' + 'ucs'
+    Wrapper for luxpy.cam.camucs_structure() specifically 
+    designed for 'ciecam02' + 'ucs'
     
     Args:
-        :data: numpy.ndarray with input tristimulus values or input color appearance correlates
-            Can be of shape: (N [, xM], x 3), N specifies samples, M specifies light sources.
-        :xyzw: _CAM_02_X_DEFAULT_WHITE_POINT or numpy.ndarray with tristimulus values of white point(s), optional
-            Can be multiple by specifying a Mx3 numpy.ndarray, instead of 1x3.
+        :data: 
+            ndarray with input tristimulus values or 
+            input color appearance correlates
+            Can be of shape: (N [, xM], x 3), whereby 
+                N refers to samples, M to light sources.
+        :xyzw: _CAM_02_X_DEFAULT_WHITE_POINT or ndarray with tristimulus values
+                of white point(s), optional
+            Can be multiple by specifying a Mx3 ndarray, instead of 1x3.
         :Yw: luxpy.np2d(100), optional
             Luminance factor of white point.
-            Is normally 100 for perfect white diffuser, < 100 for e.g. paper as white point.         
-        :mcat: 'cat02' or None or str or numpy.ndarray, optional
+            Is normally 100 for perfect white diffuser, 
+                is < 100 for e.g. paper as white point.          
+        :mcat: 'cat02' or None or str or ndarray, optional
             Specifies CAT sensor space.
-            - None defaults to 'cat02' (others e.g. 'cat02-bs', 'cat02-jiang', all trying to correct gamut problems of original cat02 matrix)
-            - str: see see luxpy.cat._MCATS.keys() for options (details on type, ?luxpy.cat)
-            - numpy.ndarray: matrix with sensor primaries
+            - None defaults to 'cat02' 
+                (others e.g. 'cat02-bs', 'cat02-jiang', 
+                all trying to correct gamut problems of original cat02 matrix)
+            - str: see see luxpy.cat._MCATS.keys() for options 
+                (details on type, ?luxpy.cat)
+            - ndarray: matrix with sensor primaries
         :condition: luxpy.cam._CAM_02_X_DEFAULT_CONDITIONS, optional
-            Dict specifying condition parameters, D, La, surround ([c,Nc,F]), Yb
+            Dict with condition parameters, D, La, surround ([c,Nc,F]), Yb
             Can be user defined, but dict must have same structure.
         :direction: 'forward' or 'inverse', optional
             -'forward': xyz -> cam02ucs
             -'inverse': cam02ucs -> xyz 
-                (input data must be (J or Q, aM, bM) or (J or Q, aC,bC) or (J or Q, aS, bS) !!)
-        :yellowbluepurplecorrect: True or False, optional
+                (input data must be 
+                 (J or Q, aM, bM) or 
+                 (J or Q, aC,bC) or 
+                 (J or Q, aS, bS) !!)
+        :yellowbluepurplecorrect: False, optional
             Correct for yellow-blue and purple problems in ciecam02 
             (Is not used in cam16 because cat16 solves issues)
         :ucstype: 'ucs' or 'lcd' or 'scd', optional
-            Str specifier for which type of color attribute compression parameters to use.
-             ('ucs': uniform color space, 'lcd', large color differences, 'scd': small color differences)
+            Str specifier for which type of color attribute compression 
+            parameters to use:
+             -'ucs': uniform color space, 
+             -'lcd', large color differences, 
+             -'scd': small color differences
              
     Returns:
-        :returns: numpy.ndarray with color appearance correlates (:direction: == 'forward') or XYZ tristimulus values (:direction: == 'inverse')
+        :returns: 
+            ndarray with color appearance correlates (:direction: == 'forward') 
+            or 
+            XYZ tristimulus values (:direction: == 'inverse')
     
     References:
-        ..[1] M. R. Luo, G. Cui, and C. Li, “Uniform colour spaces based on CIECAM02 colour appearance model,” Color Res. Appl., vol. 31, no. 4, pp. 320–330, 2006.
+        ..[1] M. R. Luo, G. Cui, and C. Li, 
+            “Uniform colour spaces based on CIECAM02 colour appearance model,” 
+            Color Res. Appl., vol. 31, no. 4, pp. 320–330, 2006.
     
     """
     return camucs_structure(data, xyzw = xyzw, camtype = 'ciecam02', mcat = mcat, Yw = Yw, conditions = conditions, direction = direction, ucstype = ucstype, yellowbluepurplecorrect = yellowbluepurplecorrect)
@@ -792,38 +922,56 @@ def cam16ucs(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = np2d(100.0), condi
     Wrapper for luxpy.cam.camucs_structure() specifically designed for 'cam16' + 'ucs'
     
     Args:
-        :data: numpy.ndarray with input tristimulus values or input color appearance correlates
-            Can be of shape: (N [, xM], x 3), N specifies samples, M specifies light sources.
-        :xyzw: numpy.ndarray with tristimulus values of white point(s)
-            Can be multiple by specifying a Mx3 numpy.ndarray, instead of 1x3.
+        :data: 
+            ndarray with input tristimulus values or 
+            input color appearance correlates
+            Can be of shape: (N [, xM], x 3), whereby 
+                N refers to samples, M to light sources.
+        :xyzw: _CAM_02_X_DEFAULT_WHITE_POINT or ndarray with tristimulus values
+                of white point(s), optional
+            Can be multiple by specifying a Mx3 ndarray, instead of 1x3.
         :Yw: luxpy.np2d(100), optional
             Luminance factor of white point.
-            Is normally 100 for perfect white diffuser, < 100 for e.g. paper as white point.         
-        :mcat: 'cat16' or None or str or numpy.ndarray, optional
+            Is normally 100 for perfect white diffuser, 
+                is < 100 for e.g. paper as white point.          
+        :mcat: 'cat16' or None or str or ndarray, optional
             Specifies CAT sensor space.
-            - None defaults to 'cat02' (others e.g. 'cat02-bs', 'cat02-jiang', all trying to correct gamut problems of original cat02 matrix)
-            - str: see see luxpy.cat._MCATS.keys() for options (details on type, ?luxpy.cat)
-            - numpy.ndarray: matrix with sensor primaries
+            - None defaults to 'cat02' !
+                (others e.g. 'cat02-bs', 'cat02-jiang', 
+                all trying to correct gamut problems of original cat02 matrix)
+            - str: see see luxpy.cat._MCATS.keys() for options 
+                (details on type, ?luxpy.cat)
+            - ndarray: matrix with sensor primaries
         :condition: luxpy.cam._CAM_02_X_DEFAULT_CONDITIONS, optional
-            Dict specifying condition parameters, D, La, surround ([c,Nc,F]), Yb
+            Dict with condition parameters, D, La, surround ([c,Nc,F]), Yb
             Can be user defined, but dict must have same structure.
         :direction: 'forward' or 'inverse', optional
-            -'forward': xyz -> ciecam02 / cam16
-            -'inverse': ciecam02 / cam16 -> xyz 
-                (input data must be (J or Q, aM, bM) or (J or Q, aC,bC) or (J or Q, aS, bS) !!)
-        :yellowbluepurplecorrect: True or False, optional
-            Correct for yellow-blue and purple problems in ciecam02 
-            (Is not used in cam16 because cat16 solves issues)
+            -'forward': xyz -> cam16
+            -'inverse': cam16 -> xyz 
+                (input data must be 
+                 (J or Q, aM, bM) or 
+                 (J or Q, aC,bC) or 
+                 (J or Q, aS, bS) !!)
         :ucstype: 'ucs' or 'lcd' or 'scd', optional
-            Str specifier for which type of color attribute compression parameters to use.
-             ('ucs': uniform color space, 'lcd', large color differences, 'scd': small color differences)
+            Str specifier for which type of color attribute compression 
+            parameters to use.:
+                -'ucs': uniform color space, 
+                -'lcd', large color differences, 
+                -'scd': small color differences
              
     Returns:
-        :returns: numpy.ndarray with color appearance correlates (:direction: == 'forward') or XYZ tristimulus values (:direction: == 'inverse')
+        :returns: 
+            ndarray with color appearance correlates (:direction: == 'forward') 
+            or 
+            XYZ tristimulus values (:direction: == 'inverse')
     
     References:
-        ..[1] M. R. Luo, G. Cui, and C. Li, “Uniform colour spaces based on CIECAM02 colour appearance model,” Color Res. Appl., vol. 31, no. 4, pp. 320–330, 2006.
-        ..[2] C. Li, Z. Li, Z. Wang, Y. Xu, M. R. Luo, G. Cui, M. Melgosa, M. H. Brill, and M. Pointer, “Comprehensive color solutions: CAM16, CAT16, and CAM16-UCS,” Color Res. Appl., p. n/a–n/a.
+        ..[1] M. R. Luo, G. Cui, and C. Li, 
+            “Uniform colour spaces based on CIECAM02 colour appearance model,” 
+            Color Res. Appl., vol. 31, no. 4, pp. 320–330, 2006.
+        ..[2] C. Li, Z. Li, Z. Wang, Y. Xu, M. R. Luo, G. Cui, M. Melgosa, M. H. Brill, and M. Pointer, 
+            “Comprehensive color solutions: CAM16, CAT16, and CAM16-UCS,” 
+            Color Res. Appl., p. n/a–n/a.
 
     """
     return camucs_structure(data, xyzw = xyzw, camtype = 'cam16', mcat = mcat, Yw = Yw, conditions = conditions, direction = direction, ucstype = ucstype, yellowbluepurplecorrect = False)

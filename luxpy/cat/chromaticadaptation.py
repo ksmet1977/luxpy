@@ -21,43 +21,49 @@
 ###################################################################################################
 
 # _WHITE_POINT: default adopted white point
+
 # _LA:  default luminance of the adaptation field
-#
+
 # _MCATS: default chromatic adaptation sensor spaces
-#        - 'hpe': Hunt-Pointer-Estevez: R. W. G. Hunt, The Reproduction of Colour: Sixth Edition, 6th ed. Chichester, UK: John Wiley & Sons Ltd, 2004.
-#        - 'cat02': from ciecam02: CIE159-2004, “A Colour Apperance Model for Color Management System: CIECAM02,” CIE, Vienna, 2004.
-#        - 'cat02-bs':  cat02 adjusted to solve yellow-blue problem (last line = [0 0 1]): #Brill MH, Süsstrunk S. Repairing gamut problems in CIECAM02: A progress report. Color Res Appl 2008;33(5), 424–426.
-#        - 'cat02-jiang': cat02 modified to solve yb-probem + purple problem: Jun Jiang, Zhifeng Wang,M. Ronnier Luo,Manuel Melgosa,Michael H. Brill,Changjun Li, Optimum solution of the CIECAM02 yellow–blue and purple problems, Color Res Appl 2015: 40(5), 491-503 
-#        - 'kries'
-#        - 'judd-1945': from CIE16-2004, Eq.4, a23 modified from 0.1 to 0.1020 for increased accuracy
-#        - 'bfd': bradford transform :  G. D. Finlayson and S. Susstrunk, “Spectral sharpening and the Bradford transform,” 2000, vol. Proceeding, pp. 236–242.
-#        - sharp': sharp transform:  S. Süsstrunk, J. Holm, and G. D. Finlayson, “Chromatic adaptation performance of different RGB sensors,” IS&T/SPIE Electronic Imaging 2001: Color Imaging, vol. 4300. San Jose, CA, January, pp. 172–183, 2001.
-#        - 'cmc':  C. Li, M. R. Luo, B. Rigg, and R. W. G. Hunt, “CMC 2000 chromatic adaptation transform: CMCCAT2000,” Color Res. Appl., vol. 27, no. 1, pp. 49–58, 2002.
-#        - 'ipt':  F. Ebner and M. D. Fairchild, “Development and testing of a color space (IPT) with improved hue uniformity,” in IS&T 6th Color Imaging Conference, 1998, pp. 8–13.
-#        - 'lms':
-#        - bianco':  S. Bianco and R. Schettini, “Two new von Kries based chromatic adaptation transforms found by numerical optimization,” Color Res. Appl., vol. 35, no. 3, pp. 184–192, 2010.
-#        - bianco-pc':  S. Bianco and R. Schettini, “Two new von Kries based chromatic adaptation transforms found by numerical optimization,” Color Res. Appl., vol. 35, no. 3, pp. 184–192, 2010.
-#        -'cat16': C. Li, Z. Li, Z. Wang, Y. Xu, M. R. Luo, G. Cui, M. Melgosa, M. H. Brill, and M. Pointer, “Comprehensive color solutions: CAM16, CAT16, and CAM16-UCS,” Color Res. Appl., p. n/a–n/a.
-#
+        - 'hpe': Hunt-Pointer-Estevez: R. W. G. Hunt, The Reproduction of Colour: Sixth Edition, 6th ed. Chichester, UK: John Wiley & Sons Ltd, 2004.
+        - 'cat02': from ciecam02: CIE159-2004, “A Colour Apperance Model for Color Management System: CIECAM02,” CIE, Vienna, 2004.
+        - 'cat02-bs':  cat02 adjusted to solve yellow-blue problem (last line = [0 0 1]): #Brill MH, Süsstrunk S. Repairing gamut problems in CIECAM02: A progress report. Color Res Appl 2008;33(5), 424–426.
+        - 'cat02-jiang': cat02 modified to solve yb-probem + purple problem: Jun Jiang, Zhifeng Wang,M. Ronnier Luo,Manuel Melgosa,Michael H. Brill,Changjun Li, Optimum solution of the CIECAM02 yellow–blue and purple problems, Color Res Appl 2015: 40(5), 491-503 
+        - 'kries'
+        - 'judd-1945': from CIE16-2004, Eq.4, a23 modified from 0.1 to 0.1020 for increased accuracy
+        - 'bfd': bradford transform :  G. D. Finlayson and S. Susstrunk, “Spectral sharpening and the Bradford transform,” 2000, vol. Proceeding, pp. 236–242.
+        - sharp': sharp transform:  S. Süsstrunk, J. Holm, and G. D. Finlayson, “Chromatic adaptation performance of different RGB sensors,” IS&T/SPIE Electronic Imaging 2001: Color Imaging, vol. 4300. San Jose, CA, January, pp. 172–183, 2001.
+        - 'cmc':  C. Li, M. R. Luo, B. Rigg, and R. W. G. Hunt, “CMC 2000 chromatic adaptation transform: CMCCAT2000,” Color Res. Appl., vol. 27, no. 1, pp. 49–58, 2002.
+        - 'ipt':  F. Ebner and M. D. Fairchild, “Development and testing of a color space (IPT) with improved hue uniformity,” in IS&T 6th Color Imaging Conference, 1998, pp. 8–13.
+        - 'lms':
+        - bianco':  S. Bianco and R. Schettini, “Two new von Kries based chromatic adaptation transforms found by numerical optimization,” Color Res. Appl., vol. 35, no. 3, pp. 184–192, 2010.
+        - bianco-pc':  S. Bianco and R. Schettini, “Two new von Kries based chromatic adaptation transforms found by numerical optimization,” Color Res. Appl., vol. 35, no. 3, pp. 184–192, 2010.
+        -'cat16': C. Li, Z. Li, Z. Wang, Y. Xu, M. R. Luo, G. Cui, M. Melgosa, M. H. Brill, and M. Pointer, “Comprehensive color solutions: CAM16, CAT16, and CAM16-UCS,” Color Res. Appl., p. n/a–n/a.
+
 # check_dimensions():  Check if dimensions of data and xyzw match. 
-#
-# get_transfer_function():  Calculate the chromatic adaptation diagonal matrix transfer function Dt.  
-#                           Default = 'vonkries' (others: 'rlab', see Fairchild 1990)
-#
+
+# get_transfer_function():  Calculate the chromatic adaptation diagonal matrix 
+                            transfer function Dt.  
+                           Default = 'vonkries' (others: 'rlab', see Fairchild 1990)
+
 # smet2017_D(): Calculate the degree of adaptation based on chromaticity. 
-#               See: Smet, K.A.G.*, Zhai, Q., Luo, M.R., Hanselaer, P., (2017),
-#               Study of chromatic adaptation using memory color matches, Part II: colored illuminants, 
-#               Opt. Express, 25(7), pp. 8350-8365
-#
+               See: Smet, K.A.G.*, Zhai, Q., Luo, M.R., Hanselaer, P., (2017),
+               Study of chromatic adaptation using memory color matches, 
+               Part II: colored illuminants.
+               Opt. Express, 25(7), pp. 8350-8365
+
 # get_degree_of_adaptation(): Calculates the degree of adaptation. 
-#                             D passes either right through or D is calculated following some 
-#                             D-function (Dtype) published in literature (cat02, cat16, cmccat, smet2017, manual).
-#
-# parse_x1x2_parameters(): local helper function that parses input parameters and makes them the target_shape for easy calculation 
-#
-# apply(): Calculate corresponding colors by applying a von Kries chromatic adaptation
-            transform (CAT), i.e. independent rescaling of 'sensor sensitivity' to data
-            to adapt from current adaptation conditions (1) to the new conditions (2). 
+                         D passes either right through or D is calculated 
+                         following some D-function (Dtype) published in 
+                         literature (cat02, cat16, cmccat, smet2017, manual).
+
+# parse_x1x2_parameters(): local helper function that parses input parameters 
+                        and makes them the target_shape for easy calculation 
+
+# apply(): Calculate corresponding colors by applying a von Kries chromatic 
+            adaptation transform (CAT), i.e. independent rescaling of 
+            'sensor sensitivity' to data to adapt from current adaptation 
+            conditions (1) to the new conditions (2). 
 #------------------------------------------------------------------------------
 
 Created on Wed Jun 25 12:12:28 2017
@@ -95,12 +101,13 @@ def check_dimensions(data,xyzw, caller = 'cat.apply()'):
     
     Does not thing when they do, but raises error if dimensions don't match.
     Args:
-        :data: numpy.ndarray with color data.
-        :xyzw: numpy.ndarray with white point tristimulus values.
+        :data: ndarray with color data.
+        :xyzw: ndarray with white point tristimulus values.
         :caller: str with caller function for error handling, optional
         
     Returns:
-        :returns: numpy.ndarray with input color data, but raises error if dimensions don't match.
+        :returns: ndarray with input color data, 
+            but raises error if dimensions don't match.
     """
     xyzw = np2d(xyzw)
     data = np2d(data)
@@ -116,9 +123,12 @@ def get_transfer_function(cattype = 'vonkries', catmode = '1>0>2', lmsw1 = None,
     Args:
         :cattype: 'vonkries' (others: 'rlab', see Farchild 1990), optional
         :catmode: '1>0>2, optional
-            -'1>0>2': Two-step CAT from illuminant 1 to baseline illuminant 0 to illuminant 2.
-            -'1>0': One-step CAT from illuminant 1 to baseline illuminant 0.
-            -'0>2': One-step CAT from baseline illuminant 0 to illuminant 2. 
+            -'1>0>2': Two-step CAT 
+                    from illuminant 1 to baseline illuminant 0 to illuminant 2.
+            -'1>0': One-step CAT 
+                    from illuminant 1 to baseline illuminant 0.
+            -'0>2': One-step CAT 
+                    from baseline illuminant 0 to illuminant 2. 
         :lmsw1: None, depending on :catmode: optional
         :lmsw2: None, depending on :catmode: optional
         :lmsw0:  _WHITE_POINT, optional
@@ -134,7 +144,7 @@ def get_transfer_function(cattype = 'vonkries', catmode = '1>0>2', lmsw1 = None,
             Adapting luminance under baseline ill. 0
             
     Returns:
-        :Dt: numpy.ndarray (diagonal matrix)
+        :Dt: ndarray (diagonal matrix)
     """
 
     if (catmode is None) & (cattype == 'vonkries'):
@@ -172,10 +182,11 @@ def get_transfer_function(cattype = 'vonkries', catmode = '1>0>2', lmsw1 = None,
 #------------------------------------------------------------------------------
 def smet2017_D(xyzw, Dmax = None, cieobs = '1964_10'):
     """
-    Calculate the degree of adaptation based on chromaticity following Smet et al. (2017) 
+    Calculate the degree of adaptation based on chromaticity following 
+    Smet et al. (2017) 
     
     Args:
-        :xyzw: numpy.ndarray with white point data
+        :xyzw: ndarray with white point data
         :Dmax: None or float, optional
             Defaults to 0.6539 (max D obtained under experimental conditions, 
             but probably too low due to dark surround leading to incomplete 
@@ -185,11 +196,12 @@ def smet2017_D(xyzw, Dmax = None, cieobs = '1964_10'):
             CMF set used in deriving model in cited paper.
             
     Returns:
-        :D: numpy.ndarray with degrees of adaptation
+        :D: ndarray with degrees of adaptation
     
     References: 
         Smet, K.A.G.*, Zhai, Q., Luo, M.R., Hanselaer, P., (2017),
-        Study of chromatic adaptation using memory color matches, Part II: colored illuminants, 
+        Study of chromatic adaptation using memory color matches, 
+        Part II: colored illuminants.
         Opt. Express, 25(7), pp. 8350-8365
     """
     
@@ -206,30 +218,35 @@ def smet2017_D(xyzw, Dmax = None, cieobs = '1964_10'):
 #------------------------------------------------------------------------------
 def get_degree_of_adaptation(Dtype = None, **kwargs):
     """
-    Calculates the degree of adaptation according to some function published in literature. 
+    Calculates the degree of adaptation according to some function 
+    published in literature. 
     
     Args:
         :Dtype: None, optional
             If None: **kwargs should contain 'D' with value.
             If 'manual: **kwargs should contain 'D' with value.
-            If 'cat02' or 'cat16': **kwargs should contain 'F' and 'La' with values.
+            If 'cat02' or 'cat16': **kwargs should contain keys 'F' and 'La'.
                 Calculate D according to CAT02 or CAT16 model:
                     D = F*(1-(1/3.6)*numpy.exp((-La-42)/92))
-            If 'cmc': **kwargs should contain 'La', 'La0'(or 'La2')  and 'order' with values.  
+            If 'cmc': **kwargs should contain 'La', 'La0'(or 'La2') and 'order'  
                 for 'order' = '1>0': 'La' is set La1 and 'La0' to La0.
                 for 'order' = '0>2': 'La' is set La0 and 'La0' to La1.
                 for 'order' = '1>2': 'La' is set La1 and 'La2' to La0.
                 D is calculated as follows:
                     D = 0.08*numpy.log10(La1+La0)+0.76-0.45*(La1-La0)/(La1+La0)
-            If 'smet2017': **kwargs should contain 'xyzw' and 'Dmax'(see Smet2017_D for more details).
-            If "? user defined", then D is calculated by D = numpy.array(eval(:Dtype:))  
+            If 'smet2017': **kwargs should contain 'xyzw' and 'Dmax'
+                (see Smet2017_D for more details).
+            If "? user defined", then D is calculated by:
+                    D = ndarray(eval(:Dtype:))  
     
     Returns:
     
     Note:
-        * D passes either right through or D is calculated following some D-function (Dtype) published in literature.
+        * D passes either right through or D is calculated following some 
+            D-function (Dtype) published in literature.
         * D is limited to values between zero and one
-        * If **kwargs do not contain the required parameters, an exception is raised.
+        * If **kwargs do not contain the required parameters, 
+            an exception is raised.
     """
     try:
         if Dtype is None:
@@ -294,23 +311,27 @@ def parse_x1x2_parameters(x,target_shape, catmode, expand_2d_to_3d = None, defau
    """
    Parse input parameters x and make them the target_shape for easy calculation. 
    
-   Input in main function can now be a single value valid for all xyzw or an array 
-   with a different value for each xyzw.
+   Input in main function can now be a single value valid for all xyzw or 
+   an array with a different value for each xyzw.
    
    Args:
-        :x: list[float, float] or numpy.array
+        :x: list[float, float] or ndarray
         :target_shape: tuple with shape information
         :catmode: 
-            -'1>0>2': Two-step CAT from illuminant 1 to baseline illuminant 0 to illuminant 2.
-            -'1>0': One-step CAT from illuminant 1 to baseline illuminant 0.
-            -'0>2': One-step CAT from baseline illuminant 0 to illuminant 2. 
-        :expand_2d_to_3d: None, optional [will be removed in future, serves no purpose]
+            -'1>0>2': Two-step CAT 
+                    from illuminant 1 to baseline illuminant 0 to illuminant 2.
+            -'1>0': One-step CAT 
+                    from illuminant 1 to baseline illuminant 0.
+            -'0>2': One-step CAT 
+                    from baseline illuminant 0 to illuminant 2. 
+        :expand_2d_to_3d: None, optional 
+            [will be removed in future, serves no purpose]
             Expand :x: from 2 to 3 dimensions.
         :default: [1.0,1.0], optional
             Default values for :x:
     
    Returns:
-       :returns: (numpy.ndarray, numpy.ndarray) for x10 and x20
+       :returns: (ndarray, ndarray) for x10 and x20
 
    """
    if x is None:
@@ -342,11 +363,14 @@ def apply(data, catmode = '1>0>2', cattype = 'vonkries', xyzw1 = None, xyzw2 = N
     to adapt from current adaptation conditions (1) to the new conditions (2).
     
     Args:
-        :data: numpy.ndarray of tristimulus values (can be NxMx3)
+        :data: ndarray of tristimulus values (can be NxMx3)
          :catmode: 
-            -'1>0>2': Two-step CAT from illuminant 1 to baseline illuminant 0 to illuminant 2.
-            -'1>0': One-step CAT from illuminant 1 to baseline illuminant 0.
-            -'0>2': One-step CAT from baseline illuminant 0 to illuminant 2. 
+            -'1>0>2': Two-step CAT 
+                    from illuminant 1 to baseline illuminant 0 to illuminant 2.
+            -'1>0': One-step CAT 
+                    from illuminant 1 to baseline illuminant 0.
+            -'0>2': One-step CAT 
+                    from baseline illuminant 0 to illuminant 2. 
         :cattype: 'vonkries' (others: 'rlab', see Farchild 1990), optional
         :xyzw1: None, depending on :catmode: optional (can be Mx3)
         :xyzw2: None, depending on :catmode: optional (can be Mx3)
@@ -358,20 +382,23 @@ def apply(data, catmode = '1>0>2', cattype = 'vonkries', xyzw1 = None, xyzw2 = N
             If None: xyz values are absolute or relative.
             If not None: xyz are relative. 
         :F: None, optional
-            Surround parameter(s) for CAT02/CAT16 calculations (:Dtype: == 'cat02' or 'cat16')
+            Surround parameter(s) for CAT02/CAT16 calculations 
+            (:Dtype: == 'cat02' or 'cat16')
             Defaults to [1.0, 1.0]. 
         :Dtype: None, optional
             Type of degree of adaptation function from literature
             See luxpy.cat.get_degree_of_adaptation()
         :mcat: ['cat02'], optional
-            List[str] or List[numpy.ndarray] of sensor space matrices for each condition pair. If len(:mcat:) == 1, the same matrix is used for all.
+            List[str] or List[ndarray] of sensor space matrices for each 
+            condition pair. If len(:mcat:) == 1, the same matrix is used.
         :normxyz0: None, optional
             Set of xyz tristimulus values to normalize the sensor space matrix to.
         :outtype: 'xyz' or 'lms', optional
             - 'xyz': return corresponding tristimulus values 
-            - 'lms': return corresponding sensor space excitation values (e.g. for further calculations) 
+            - 'lms': return corresponding sensor space excitation values 
+                    (e.g. for further calculations) 
       Returns:
-          :returns: numpy.ndarray with corresponding colors
+          :returns: ndarray with corresponding colors
       """
         
     if (xyzw1 is None) & (xyzw2 is None):

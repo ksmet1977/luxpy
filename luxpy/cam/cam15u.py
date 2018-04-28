@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
-
+"""
+###############################################################################
+# Module with CAM15u color appearance model
+###############################################################################
+"""
 from .. import np, np2d, spd_to_xyz, asplit, ajoin
 from .colorappearancemodels import hue_angle, hue_quadrature
 
@@ -18,35 +22,46 @@ __all__ = ['cam15u','_CAM15U_AXES','_CAM15U_UNIQUE_HUE_DATA', '_CAM15U_PARAMETER
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------            
 def cam15u(data, fov = 10.0, inputtype = 'xyz', direction = 'forward', outin = 'Q,aW,bW', parameters = None):
     """
-    Convert between CIE 2006 10°  XYZ tristimulus values (or spectral data) and CAM15u color appearance correlates.
+    Convert between CIE 2006 10°  XYZ tristimulus values (or spectral data) 
+    and CAM15u color appearance correlates.
     
     Args:
-        :data: numpy.ndarray of CIE 2006 10°  XYZ tristimulus values or spectral data or color appearance attributes
+        :data: ndarray of CIE 2006 10°  XYZ tristimulus values or spectral data
+                or color appearance attributes
         :fov: 10.0, optional
-            Field-of-view of stimulus (to take size effect on brightness into account)
+            Field-of-view of stimulus (for size effect on brightness)
         :inputtpe: 'xyz' or 'spd', optional
-            Specifies the type of input: tristimulus values or spectral data for the forward mode.
+            Specifies the type of input: 
+                tristimulus values or spectral data for the forward mode.
         :direction: 'forward' or 'inverse', optional
             -'forward': xyz -> cam15u
             -'inverse': cam15u -> xyz 
         :outin: 'Q,aW,bW' or str, optional
-            'Q,aW,bW' (brightness and opponent signals for amount-of-neutral/white)
+            'Q,aW,bW' (brightness and opponent signals for amount-of-neutral)
             other options: 'Q,aM,bM' (colorfulness) and 'Q,aS,bS' (saturation)
-            Str specifying the type of input (:direction: == 'inverse') and output (:direction: == 'forward')
+            Str specifying the type of 
+                input (:direction: == 'inverse') and 
+                output (:direction: == 'forward')
         :parameters: None or dict, optional
             Set of model parameters.
-            - None: defaults to luxpy.cam._CAM15U_PARAMETERS (see references below)
+            - None: defaults to luxpy.cam._CAM15U_PARAMETERS 
+                (see references below)
     
     Returns:
-        :returns: numpy.ndarray with color appearance correlates (:direction: == 'forward') or XYZ tristimulus values (:direction: == 'inverse')
+        :returns: 
+            ndarray with color appearance correlates (:direction: == 'forward')
+            or 
+            XYZ tristimulus values (:direction: == 'inverse')
 
     
     References: 
         ..[1] Withouck M., Smet K.A.G, Ryckaert WR, Hanselaer P. (2015). 
-                Experimental driven modelling of the color appearance of unrelated self-luminous stimuli: CAM15u. 
+                Experimental driven modelling of the color appearance of 
+                unrelated self-luminous stimuli: CAM15u. 
                 Optics Express,  23 (9), 12045-12064. 
         ..[2] Withouck, M., Smet, K., Hanselaer, P. (2015). 
-                Brightness prediction of different sized unrelated self-luminous stimuli. 
+                Brightness prediction of different sized unrelated 
+                self-luminous stimuli. 
                 Optics Express, 23 (10), 13455-13466    
      """
     

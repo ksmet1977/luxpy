@@ -297,6 +297,8 @@ References:
 
 ## 2. ctf/ colortransforms.py
 Module with basic colorimetric functions (xyz_to_chromaticity, chromaticity_to_xyz conversions):
+Note that colorimetric data is always located in the last axis of the data arrays.
+(see also xyz specification in __doc__ string of luxpy.spd_to_xyz())
 
 ### xyz_to_Yxy(), Yxy_to_xyz(): 
 CIE xyz <--> CIE Yxy 
@@ -329,19 +331,52 @@ CIE xyz <--> IPT ()
 ###  xyz_to_Ydlep(), Ydlep_to_xyz(): 
 CIE xyz <--> Y, dominant / complementary wavelength (dl, compl. wl: specified by < 0) and excitation purity (ep)
 
+References:
+   1. CIE15-2004 (2004). Colorimetry (Vienna, Austria: CIE)
+   2. Ebner F, and Fairchild MD (1998). 
+        Development and testing of a color space (IPT) with improved hue uniformity. 
+        In IS&T 6th Color Imaging Conference, (Scottsdale, Arizona, USA), pp. 8–13.
+   3. MacLeod DI, and Boynton RM (1979). 
+        Chromaticity diagram showing cone excitation by stimuli of equal luminance. 
+        J. Opt. Soc. Am. 69, 1183–1186.
+
 For more info:
 
     ?luxpy.colortransforms
     ?luxpy.xyz_to_Yuv()
     etc.
     
-## 3a. cct/ cct.py
+## 2. ctf/ colortf.py
+
+### _COLORTF_DEFAULT_WHITE_POINT: 
+XYZ values (numpy.ndarray) of default white point (equi-energy white) 
+for color transformations using colortf if none is supplied.
+
+### colortf():
+Calculates conversion between any two color spaces for which functions xyz_to_...() and ..._to_xyz() are defined.
+
+For more info:
+
+    ?luxpy.colortf
+    etc.    
+
+## 3. cct/ cct.py
 
 ### _CCT_LUT_PATH:
 Path to Look-Up-Tables (LUT) for correlated color temperature calculation followings [Ohno's method](http://www.tandfonline.com/doi/abs/10.1080/15502724.2014.839020).
 
 ### _CCT_LUT:
 Dict with LUTs for cct calculations.
+
+### calculate_lut(): 
+Function that calculates LUT for the ccts stored in ./data/cctluts/cct_lut_cctlist.dat 
+or given as input argument. Calculation is performed for CMF set specified in cieobs. 
+Adds a new (temprorary) field to the _CCT_LUT dict.
+
+### calculate_luts(): 
+Function that recalculates (and overwrites) LUTs in ./data/cctluts/ for the ccts 
+stored in ./data/cctluts/cct_lut_cctlist.dat or given as input argument. 
+Calculation is performed for all CMF sets listed in _CMF['types'].
 
 ### xyz_to_cct(): 
 Calculates CCT,Duv from XYZ, wrapper for ..._ohno() & ..._search()
@@ -376,7 +411,7 @@ For more info:
     ?luxpy.xyz_to_cct()
     etc.
 
-## 4a. cat/ chromaticadaptation.py (cat)
+## 4. cat/ chromaticadaptation.py (.cat)
 
 ### cat._WHITE_POINT:   
 Default adopted white point
@@ -432,7 +467,7 @@ For more info:
     ?luxpy.cat.apply()
     etc.
 
-## 5a. cam/ colorappearancemodels.py (cam)
+## 5. cam/ colorappearancemodels.py (cam)
 
 ### cam._UNIQUE_HUE_DATA: 
 Database of unique hues with corresponding Hue quadratures and eccentricity factors
@@ -445,8 +480,11 @@ Database of surround parameters c, Nc, F and FLL for ciecam02, cam16, ciecam97s 
 Database with parameters (n, sig, scaling and noise) for the Naka-Rushton function: 
 scaling * ((data^n) / ((data^n) + (sig^n))) + noise
 
-### cam._CAMUCS_PARAMETERS: 
-Database with parameters specifying the conversion from ciecam02/cam16 to cam[x]ucs (uniform color space), cam[x]lcd (large color diff.), cam[x]scd (small color diff).
+### cam._CAM_02_X_UCS_PARAMETERS: 
+Database with parameters specifying the conversion from ciecam02/cam16 to
+ cam[x]ucs (uniform color space), 
+ cam[x]lcd (large color diff.), 
+ cam[x]scd (small color diff).
 
 ### cam._CAM15U_PARAMETERS: 
 Database with CAM15u model parameters.
@@ -455,7 +493,7 @@ Database with CAM15u model parameters.
 Database with cam_sww_2016 parameters (model by Smet, Webster and Whitehead published in JOSA A in 2016)
 
 ### cam._CAM_DEFAULT_TYPE: 
-Default CAM type ('ciecam02')
+Default CAM type str specifier.
 
 ### cam._CAM_DEFAULT_WHITE_POINT: 
 Default internal reference white point (xyz)
@@ -506,51 +544,50 @@ Calculates the output for the CAM15u model for self-luminous unrelated stimuli.
 * [M. Withouck, K. A. G. Smet, W. R. Ryckaert, and P. Hanselaer, (2015), “Experimental driven modelling of the color appearance of unrelated self-luminous stimuli: CAM15u,”  Opt. Express, vol. 23, no. 9, pp. 12045–12064.](https://www.osapublishing.org/oe/abstract.cfm?uri=oe-23-9-12045&origin=search)
 * [M. Withouck, K. A. G. Smet, and P. Hanselaer, (2015), “Brightness prediction of different sized unrelated self-luminous stimuli,” Opt. Express, vol. 23, no. 10, pp. 13455–13466.](https://www.osapublishing.org/oe/abstract.cfm?uri=oe-23-10-13455&origin=search)
 
-### cam_sww_2016(): 
+### cam_sww16(): 
 A simple principled color appearance model based on a mapping of the Munsell color system.
 This function implements the JOSA A (parameters = 'JOSA') published model. 
 * [Smet, K. A. G., Webster, M. A., & Whitehead, L. A. (2016). A simple principled approach for modeling and understanding uniform color metrics. Journal of the Optical Society of America A, 33(3), A319–A331.](https://www.osapublishing.org/josaa/abstract.cfm?URI=josaa-33-3-a319)
 
 
 ### specific wrappers in the xyz_to_...() and ..._to_xyz() format:
-* 'xyz_to_jabM_ciecam02', 'jabM_ciecam02_to_xyz',
-* 'xyz_to_jabC_ciecam02', 'jabC_ciecam02_to_xyz',
-* 'xyz_to_jabM_cam16', 'jabM_cam16_to_xyz',
-* 'xyz_to_jabC_cam16', 'jabC_cam16_to_xyz',
-* 'xyz_to_jab_cam02ucs', 'jab_cam02ucs_to_xyz', 
-* 'xyz_to_jab_cam02lcd', 'jab_cam02lcd_to_xyz',
-* 'xyz_to_jab_cam02scd', 'jab_cam02scd_to_xyz', 
-* 'xyz_to_jab_cam16ucs', 'jab_cam16ucs_to_xyz',
-* 'xyz_to_jab_cam16lcd', 'jab_cam16lcd_to_xyz',
-* 'xyz_to_jab_cam16scd', 'jab_cam16scd_to_xyz', 
-* 'xyz_to_qabW_cam15u', 'qabW_cam15u_to_xyz'
-* 'xyz_to_lab_cam_sww_2016', 'lab_cam_sww_2016_to_xyz'
+ * 'xyz_to_jabM_ciecam02', 'jabM_ciecam02_to_xyz',
+ * 'xyz_to_jabC_ciecam02', 'jabC_ciecam02_to_xyz',
+ * 'xyz_to_jabM_cam16', 'jabM_cam16_to_xyz',
+ * 'xyz_to_jabC_cam16', 'jabC_cam16_to_xyz',
+ * 'xyz_to_jab_cam02ucs', 'jab_cam02ucs_to_xyz', 
+ * 'xyz_to_jab_cam02lcd', 'jab_cam02lcd_to_xyz',
+ * 'xyz_to_jab_cam02scd', 'jab_cam02scd_to_xyz', 
+ * 'xyz_to_jab_cam16ucs', 'jab_cam16ucs_to_xyz',
+ * 'xyz_to_jab_cam16lcd', 'jab_cam16lcd_to_xyz',
+ * 'xyz_to_jab_cam16scd', 'jab_cam16scd_to_xyz', 
+ * 'xyz_to_qabW_cam15u', 'qabW_cam15u_to_xyz'
+ * 'xyz_to_lAb_cam_sww16', 'lab_cam_sww16_to_xyz'
 
-These functions are imported directly into the luxpy namespace. 
+These wrapper functions are imported directly into the luxpy namespace. 
 
 For more info:
 
     ?luxpy.cam
-    ?luxpy.cam.xyz_to_cam16()
+    ?luxpy.cam.cam_sww16()
     etc.
 
+## 6. deltaE/ colordifference.py (.deltaE)
 
-## 2b. ctf/ colortf.py
+# process_DEi(): 
+Process color difference input DEi for output (helper fnc).
 
-### _COLORTF_DEFAULT_WHITE_POINT: 
-XYZ values (numpy.ndarray) of default white point (equi-energy white) 
-for color transformations using colortf if none is supplied.
+# DE_camucs(): 
+Calculate color appearance difference DE using camucs type model.
 
-### colortf():
-Calculates conversion between any two color spaces for which functions xyz_to_...() and ..._to_xyz() are defined.
+# DE_2000(): 
+Calculate DE2000 color difference.
 
-For more info:
-
-    ?luxpy.colortf
-    etc.
+# DE_cspace():  
+Calculate color difference DE in specific color space.
 
 
-## 6a. cri/ colorrendition.py (cri)
+## 7. cri/ colorrendition.py (.cri)
 
 
 ### cri._CRI_TYPE_DEFAULT:

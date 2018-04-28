@@ -20,39 +20,57 @@
 ###############################################################################
 # Module with functions related to correlated color temperature calculations
 ###############################################################################
-#
-# _CCT_LUT_PATH: Folder with Look-Up-Tables (LUT) for correlated color temperature calculation followings Ohno's method.
-#
+
+# _CCT_LUT_PATH: Folder with Look-Up-Tables (LUT) for correlated color 
+                temperature calculation followings Ohno's method.
+
 # _CCT_LUT: Dict with LUT.
-#
+
 # calculate_lut(): Function that calculates LUT for the ccts stored in 
-                    ./data/cctluts/cct_lut_cctlist.dat or given as input argument.
-                    Calculation is performed for CMF set specified in cieobs. 
-                    Adds a new (temprorary) field to the _CCT_LUT dict.
+                    ./data/cctluts/cct_lut_cctlist.dat or given as input 
+                    argument. Calculation is performed for CMF set specified in
+                    cieobs. Adds a new (temprorary) field to the _CCT_LUT dict.
+
+# calculate_luts(): Function that recalculates (and overwrites) LUTs in 
+                    ./data/cctluts/ for the ccts stored in 
+                    ./data/cctluts/cct_lut_cctlist.dat or given as input 
+                    argument. Calculation is performed for all CMF sets listed 
+                    in _CMF['types'].
+
+# xyz_to_cct(): Calculates CCT, Duv from XYZ
+                 wrapper for ..._ohno() & ..._search()
 #
-# calculate_luts(): Function that recalculates (and overwrites) LUTs in ./data/cctluts/ 
-#                    for the ccts stored in ./data/cctluts/cct_lut_cctlist.dat or given as input argument.
-#                    Calculation is performed for all CMF sets listed in _CMF['types'].
-#
-# xyz_to_cct(): Calculates CCT,Duv from XYZ, wrapper for ..._ohno() & ..._search()
-#
-# xyz_to_duv(): Calculates Duv, (CCT) from XYZ, wrapper for ..._ohno() & ..._search()
+# xyz_to_duv(): Calculates Duv, (CCT) from XYZ
+                 wrapper for ..._ohno() & ..._search()
 #
 # cct_to_xyz(): Calculates xyz from CCT, Duv [100 K < CCT < 10**20]
 #
 # xyz_to_cct_mcamy(): Calculates CCT from XYZ using Mcamy model:
-#                   *[McCamy, Calvin S. (April 1992). "Correlated color temperature as an explicit function of chromaticity coordinates". Color Research & Application. 17 (2): 142–144.](http://onlinelibrary.wiley.com/doi/10.1002/col.5080170211/abstract)
-#
+        McCamy, Calvin S. (April 1992). 
+        "Correlated color temperature as an explicit function of chromaticity coordinates". 
+        Color Research & Application. 
+        17 (2): 142–144.
+        (http://onlinelibrary.wiley.com/doi/10.1002/col.5080170211/abstract)
+
 # xyz_to_cct_HA(): Calculate CCT from XYZ using Hernández-Andrés et al. model .
-#                  * [Hernández-Andrés, Javier; Lee, RL; Romero, J (September 20, 1999). Calculating Correlated Color Temperatures Across the Entire Gamut of Daylight and Skylight Chromaticities. Applied Optics. 38 (27): 5703–5709. PMID 18324081. doi:10.1364/AO.38.005703](https://www.osapublishing.org/ao/abstract.cfm?uri=ao-38-27-5703)
-#
+        Hernández-Andrés, Javier; Lee, RL; Romero, J (September 20, 1999). 
+        Calculating Correlated Color Temperatures Across the Entire Gamut of 
+        Daylight and Skylight Chromaticities. 
+        Applied Optics. 38 (27): 5703–5709. PMID 18324081. 
+        doi:10.1364/AO.38.005703
+        (https://www.osapublishing.org/ao/abstract.cfm?uri=ao-38-27-5703)
+
 # xyz_to_cct_ohno(): Calculates CCT, Duv from XYZ using LUT following:
-#                   * [Ohno Y. Practical use and calculation of CCT and Duv. Leukos. 2014 Jan 2;10(1):47-55.](http://www.tandfonline.com/doi/abs/10.1080/15502724.2014.839020)
-#
-# xyz_to_cct_search(): Calculates CCT, Duv from XYZ using brute-force search algorithm (between 1e2 K - 1e20 K on a log scale)
-#
+        Ohno Y. (2014)
+        Practical use and calculation of CCT and Duv. 
+        Leukos. 2014 Jan 2;10(1):47-55.
+        (http://www.tandfonline.com/doi/abs/10.1080/15502724.2014.839020)
+
+# xyz_to_cct_search(): Calculates CCT, Duv from XYZ using brute-force search 
+                        algorithm (between 1e2 K - 1e20 K on a log scale)
+
 # cct_to_mired(): Converts from CCT to Mired scale (or back)
-#
+
 #------------------------------------------------------------------------------
 
 Created on Wed Jun 28 22:52:28 2017
@@ -102,8 +120,9 @@ def calculate_lut(ccts = None, cieobs = None, add_to_lut = True):
 def calculate_luts(ccts = None):
     """
     Function that recalculates (and overwrites) LUTs in ./data/cctluts/ 
-    for the ccts stored in ./data/cctluts/cct_lut_cctlist.dat or given as input argument.
-    Calculation is performed for all CMF sets listed in _CMF['types'].
+    for the ccts stored in ./data/cctluts/cct_lut_cctlist.dat or given as 
+    input argument. Calculation is performed for all CMF sets listed 
+    in _CMF['types'].
     
     Args:
         :ccts: numpy.ndarray or str, optional
@@ -130,7 +149,8 @@ except:
 
 def xyz_to_cct_mcamy(xyzw):
     """
-    Convert XYZ tristimulus values to correlated color temperature (CCT) using the mccamy approximation.
+    Convert XYZ tristimulus values to correlated color temperature (CCT) using 
+    the mccamy approximation.
     
     Only valid for approx. 3000 < T < 9000, if < 6500, error < 2 K.
     
@@ -141,7 +161,11 @@ def xyz_to_cct_mcamy(xyzw):
         :cct: numpy.ndarray of correlated color temperatures estimates
             
     References:
-        *[McCamy, Calvin S. (April 1992). "Correlated color temperature as an explicit function of chromaticity coordinates". Color Research & Application. 17 (2): 142–144.](http://onlinelibrary.wiley.com/doi/10.1002/col.5080170211/abstract)
+        .. McCamy, Calvin S. (April 1992). 
+            "Correlated color temperature as an explicit function of 
+            chromaticity coordinates".
+            Color Research & Application. 17 (2): 142–144.
+            (http://onlinelibrary.wiley.com/doi/10.1002/col.5080170211/abstract)
 	 """
     Yxy = xyz_to_Yxy(xyzw)
     axis_of_v3 = len(xyzw.shape)-1
@@ -160,13 +184,17 @@ def xyz_to_cct_HA(xyzw):
         :cct: numpy.ndarray of correlated color temperatures estimates
     
     References:
-        * Hernández-Andrés, Javier; Lee, RL; Romero, J (September 20, 1999). 
-            Calculating Correlated Color Temperatures Across the Entire Gamut of Daylight and Skylight Chromaticities.
-            Applied Optics. 38 (27): 5703–5709. PMID 18324081. doi:10.1364/AO.38.005703.
+        .. Hernández-Andrés, Javier; Lee, RL; Romero, J (September 20, 1999). 
+            Calculating Correlated Color Temperatures Across the Entire Gamut 
+            of Daylight and Skylight Chromaticities.
+            Applied Optics. 38 (27): 5703–5709. P
+            MID 18324081. 
+            doi:10.1364/AO.38.005703.
             
     Notes: 
-        According to paper small error from 3000 - 800 000 K, but a test with Planckians showed
-        errors up to 20% around 500 000 K; e>0.05: T>200 000, e>0.1: e>300 000, ...
+        According to paper small error from 3000 - 800 000 K, but a test with 
+        Planckians showed errors up to 20% around 500 000 K; e>0.05: T>200 000,
+        e>0.1: e>300 000, ...
     """
     if len(xyzw.shape)>2:
         raise Exception('xyz_to_cct_HA(): Input xyzw.ndim must be <= 2 !')
@@ -201,7 +229,9 @@ def xyz_to_cct_HA(xyzw):
 
 def xyz_to_cct_search(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None, accuracy = 0.1, upper_cct_max = 10.0**20, approx_cct_temp = True):
     """
-	 Convert XYZ tristimulus values to correlated color temperature (CCT) and Duv (distance above (>0) or below (<0) the Planckian locus) by a brute-force search. 
+	 Convert XYZ tristimulus values to correlated color temperature (CCT) and 
+    Duv (distance above (>0) or below (<0) the Planckian locus) 
+    by a brute-force search. 
     
     The algorithm uses an approximate cct_temp (HA approx., see xyz_to_cct_HA) 
     as starting point or uses the middle of the allowed cct-range 
@@ -223,7 +253,8 @@ def xyz_to_cct_search(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None, accuracy = 
         :upper_cct_max: 10.0**20, optional
             Limit brute-force search to this cct.
         :approx_cct_temp: True, optional
-            If True: use xyz_to_cct_HA() to get a first estimate of cct to speed up search.
+            If True: use xyz_to_cct_HA() to get a first estimate of cct to 
+                speed up search.
 
     Returns:
         :returns: numpy.ndarray with:
@@ -234,7 +265,8 @@ def xyz_to_cct_search(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None, accuracy = 
     
     Notes:
         This program is more accurate, but slower than xyz_to_cct_ohno!
-        Note that cct must be between 1e3 K - 1e20 K (very large cct take a long time!!!)
+        Note that cct must be between 1e3 K - 1e20 K 
+        (very large cct take a long time!!!)
     """
 
     xyzw = np2d(xyzw)   
@@ -388,10 +420,13 @@ def xyz_to_cct_search(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None, accuracy = 
 
 def xyz_to_cct_ohno(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, accuracy = 0.1, force_out_of_lut = True, upper_cct_max = 10.0**20, approx_cct_temp = True):
     """
-	 Convert XYZ tristimulus values to correlated color temperature (CCT) and Duv (distance above (>0) or below (<0) the Planckian locus) using Ohno's method. 
+	 Convert XYZ tristimulus values to correlated color temperature (CCT) and 
+    Duv (distance above (>0) or below (<0) the Planckian locus) 
+    using Ohno's method. 
     
-    The algorithm uses the Look-Up-Table (LUT) (see ./data/cctluts/) method of Ohno:
-        Ohno Y. Practical use and calculation of CCT and Duv. Leukos. 2014 Jan 2;10(1):47-55.
+    The algorithm uses the Look-Up-Table (LUT) method of Ohno:
+        Ohno Y. Practical use and calculation of CCT and Duv. 
+        Leukos. 2014 Jan 2;10(1):47-55.
     
     Args:
         :xyzw: numpy.ndarray of tristimulus values
@@ -417,6 +452,9 @@ def xyz_to_cct_ohno(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, accuracy = 0
             duv: out == 'duv' (or -1)
             cct, duv: out == 'cct,duv' (or 2)
             [cct,duv]: out == "[cct,duv]" (or -2) 
+            
+    Note:
+        LUTs are stored in ./data/cctluts/
     """
 
     xyzw = np2d(xyzw)  
@@ -529,22 +567,30 @@ def xyz_to_cct_ohno(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, accuracy = 0
 #---------------------------------------------------------------------------------------------------
 def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut', out = None, accuracy = 0.1, force_out_of_lut = True, upper_cct_max = 10.0*20, approx_cct_temp = True):
     """
-	 Convert correlated color temperature (CCT) and Duv (distance above (>0) or below (<0) the Planckian locus) to XYZ tristimulus values.
+	 Convert correlated color temperature (CCT) and Duv (distance above (>0) or 
+     below (<0) the Planckian locus) to XYZ tristimulus values.
     
     Finds xyzw_estimated by minimization of:
-        F = numpy.sqrt(((100.0*(cct_min - cct)/(cct))**2.0) + (((duv_min - duv)/(duv))**2.0))
-    with cct,duv the input values and cct_min, duv_min calculated using luxpy.xyz_to_cct(xyzw_estimated,...).
+        
+        F = numpy.sqrt(((100.0*(cct_min - cct)/(cct))**2.0) 
+            + (((duv_min - duv)/(duv))**2.0))
+        
+    with cct,duv the input values and cct_min, duv_min calculated using 
+    luxpy.xyz_to_cct(xyzw_estimated,...).
     
     Args:
         :ccts: numpy.ndarray of cct values
         :duv: None or numpy.ndarray of duv values, optional
-            Note that duv can be supplied together with cct values in :ccts: as numpy.ndarray with shape (N,2)
+            Note that duv can be supplied together with cct values in :ccts: 
+                as numpy.ndarray with shape (N,2)
         :cieobs: luxpy._CIEOBS, optional
             CMF set used to calculated xyzw.
         :mode: 'lut' or 'search', optional
             Determines what method to use.
         :out: None (or 1), optional
-            If not None or 1: output a numpy.ndarray that contains estimated xyz and minimization results (cct_min, duv_min, F_min (objective fcn value))
+            If not None or 1: output a numpy.ndarray that contains estimated 
+                xyz and minimization results: 
+                    (cct_min, duv_min, F_min (objective fcn value))
         :wl: None, optional
             Wavelengths used when calculating Planckian radiators.
         :accuracy: float, optional
@@ -552,15 +598,18 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut', out 
         :upper_cct_max: 10.0**20, optional
             Limit brute-force search to this cct.
         :approx_cct_temp: True, optional
-            If True: use xyz_to_cct_HA() to get a first estimate of cct to speed up search.
+            If True: use xyz_to_cct_HA() to get a first estimate of cct to 
+                speed up search.
         :force_out_of_lut: True, optional
-            If True and cct is out of range of the LUT, then switch to brute-force search method, else return numpy.nan values.
+            If True and cct is out of range of the LUT, then switch to 
+                brute-force search method, else return numpy.nan values.
         
     Returns:
         :returns: numpy.ndarray with estimated XYZ tristimulus values
     
     Note:
-        If duv is not supplied (:ccts:.shape is (N,1) and :duv: is None), source is assumed to be on the Planckian locus.
+        If duv is not supplied (:ccts:.shape is (N,1) and :duv: is None), 
+            source is assumed to be on the Planckian locus.
 	 """
     # make ccts a min. 2d np.array:
     if isinstance(ccts,list):
@@ -656,14 +705,19 @@ def xyz_to_cct(xyzw, cieobs = _CIEOBS, out = 'cct',mode = 'lut', wl = None,accur
         :upper_cct_max: 10.0**20, optional
             Limit brute-force search to this cct.
         :approx_cct_temp: True, optional
-            If True: use xyz_to_cct_HA() to get a first estimate of cct to speed up search.
+            If True: use xyz_to_cct_HA() to get a first estimate of cct to 
+                speed up search.
         :force_out_of_lut: True, optional
-            If True and cct is out of range of the LUT, then switch to brute-force search method, else return numpy.nan values.
+            If True and cct is out of range of the LUT, then switch to 
+                brute-force search method, else return numpy.nan values.
         
     Returns:
         :returns: numpy.ndarray with:
             cct: out == 'cct' (or 1)
-            Optional: [ duv: out == 'duv' (or -1), cct, duv: out == 'cct,duv' (or 2), [cct,duv]: out == "[cct,duv]" (or -2) ]
+            Optional: 
+                 duv: out == 'duv' (or -1), 
+                 cct, duv: out == 'cct,duv' (or 2), 
+                 [cct,duv]: out == "[cct,duv]" (or -2)
     """
     if (mode == 'lut') | (mode == 'ohno'):
         return xyz_to_cct_ohno(xyzw = xyzw, cieobs = cieobs, out = out, accuracy = accuracy, force_out_of_lut = force_out_of_lut)
@@ -673,8 +727,8 @@ def xyz_to_cct(xyzw, cieobs = _CIEOBS, out = 'cct',mode = 'lut', wl = None,accur
 
 def xyz_to_duv(xyzw, cieobs = _CIEOBS, out = 'duv', mode = 'lut', wl = None,accuracy = 0.1, force_out_of_lut = True, upper_cct_max = 10.0**20,approx_cct_temp = True): 
     """
-	 Convert XYZ tristimulus values to Duv (distance above (>0) or below (<0) the Planckian locus)
-     and correlated color temperature (CCT) values
+	 Convert XYZ tristimulus values to Duv (distance above (>0) or below (<0) 
+     the Planckian locus) and correlated color temperature (CCT) values
      using either the brute-force search method or Ohno's method. 
     
     Wrapper function for use with luxpy.colortf().
@@ -695,14 +749,19 @@ def xyz_to_duv(xyzw, cieobs = _CIEOBS, out = 'duv', mode = 'lut', wl = None,accu
         :upper_cct_max: 10.0**20, optional
             Limit brute-force search to this cct.
         :approx_cct_temp: True, optional
-            If True: use xyz_to_cct_HA() to get a first estimate of cct to speed up search.
+            If True: use xyz_to_cct_HA() to get a first estimate of cct 
+                to speed up search.
         :force_out_of_lut: True, optional
-            If True and cct is out of range of the LUT, then switch to brute-force search method, else return numpy.nan values.
+            If True and cct is out of range of the LUT, then switch to 
+                brute-force search method, else return numpy.nan values.
         
     Returns:
         :returns: numpy.ndarray with:
             duv: out == 'duv' (or -1)
-            Optional: [ cct: out == 'cct' (or 1), cct, duv: out == 'cct,duv' (or 2), [cct,duv]: out == "[cct,duv]" (or -2) ]
+            Optional: 
+                 duv: out == 'duv' (or -1), 
+                 cct, duv: out == 'cct,duv' (or 2), 
+                 [cct,duv]: out == "[cct,duv]" (or -2)
     """
     if (mode == 'lut') | (mode == 'ohno'):
         return xyz_to_cct_ohno(xyzw = xyzw, cieobs = cieobs, out = out, accuracy = accuracy, force_out_of_lut = force_out_of_lut)

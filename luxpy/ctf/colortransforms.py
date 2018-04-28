@@ -17,15 +17,17 @@
 #########################################################################
 """
 
-###################################################################################################
+###############################################################################
 # Module with functions related to basic colorimetry
-###################################################################################################
-#
-# Note that colorimetric data is always located in the last axis of the data arrays.
-# (see also xyz specification in docstring of luxpy.spd_to_xyz())
-#
-# _CSPACE_AXES: dict with list[str,str,str] containing axis labels of defined cspaces
-#
+###############################################################################
+
+ Note that colorimetric data is always located in the last axis 
+ of the data arrays. (see also xyz specification in __doc__ string 
+ of luxpy.spd_to_xyz())
+
+# _CSPACE_AXES: dict with list[str,str,str] containing axis labels 
+                of defined cspaces
+
 #------------------------------------------------------------------------------
 # COLORIMETRIC functions:
 # Chromaticity / colorspace functions:
@@ -98,10 +100,11 @@ def xyz_to_Yxy(xyz, **kwargs):
 	 Convert XYZ tristimulus values CIE Yxy chromaticity values.
      
     Args:
-        :xyz: numpy.array with tristimulus values
+        :xyz: ndarray with tristimulus values
         
     Returns:
-        :Yxy: numpy.array with Yxy chromaticity values (Y value refers to luminance or luminance factor)
+        :Yxy: ndarray with Yxy chromaticity values 
+            (Y value refers to luminance or luminance factor)
 	 """
     xyz = np2d(xyz)
     X,Y,Z = asplit(xyz) 
@@ -116,10 +119,11 @@ def Yxy_to_xyz(Yxy, **kwargs):
 	 Convert CIE Yxy chromaticity values to XYZ tristimulus values.
      
     Args:
-        :Yxy: numpy.array with Yxy chromaticity values (Y value refers to luminance or luminance factor)
+        :Yxy: ndarray with Yxy chromaticity values 
+            (Y value refers to luminance or luminance factor)
         
     Returns:
-        :xyz: numpy.array with tristimulus values
+        :xyz: ndarray with tristimulus values
 	 """
     Yxy = np2d(Yxy)
     
@@ -133,10 +137,11 @@ def xyz_to_Yuv(xyz,**kwargs):
 	 Convert XYZ tristimulus values CIE 1976 Yu'v' chromaticity values.
      
     Args:
-        :xyz: numpy.array with tristimulus values
+        :xyz: ndarray with tristimulus values
         
     Returns:
-        :Yuv: numpy.array with CIE 1976 Yu'v' chromaticity values (Y value refers to luminance or luminance factor)
+        :Yuv: ndarray with CIE 1976 Yu'v' chromaticity values 
+            (Y value refers to luminance or luminance factor)
 	 """
     xyz = np2d(xyz)
     
@@ -152,10 +157,11 @@ def Yuv_to_xyz(Yuv, **kwargs):
 	 Convert CIE 1976 Yu'v' chromaticity values to XYZ tristimulus values.
      
     Args:
-        :Yuv: numpy.array with CIE 1976 Yu'v' chromaticity values (Y value refers to luminance or luminance factor)
+        :Yuv: ndarray with CIE 1976 Yu'v' chromaticity values 
+            (Y value refers to luminance or luminance factor)
         
     Returns:
-        :xyz: numpy.array with tristimulus values
+        :xyz: ndarray with tristimulus values
 	 """
     Yuv = np2d(Yuv)
     
@@ -170,12 +176,12 @@ def xyz_to_wuv(xyz, xyzw = _COLORTF_DEFAULT_WHITE_POINT, **kwargs):
 	 Convert XYZ tristimulus values CIE 1964 U*V*W* color space.
      
     Args:
-        :xyz: numpy.array with tristimulus values
-        :xyzw: numpy.array with tristimulus values of white point, optional
+        :xyz: ndarray with tristimulus values
+        :xyzw: ndarray with tristimulus values of white point, optional
             Defaults to luxpy._COLORTF_DEFAULT_WHITE_POINT
         
     Returns:
-        :wuv: numpy.array with W*U*V* values 
+        :wuv: ndarray with W*U*V* values 
 	 """
     xyz = np2d(xyz)
     xyzw = np2d(xyzw)
@@ -195,12 +201,12 @@ def wuv_to_xyz(wuv,xyzw = _COLORTF_DEFAULT_WHITE_POINT, **kwargs):
 	 Convert CIE 1964 U*V*W* color space coordinates to XYZ tristimulus values.
      
     Args:
-        :wuv: numpy.array with W*U*V* values 
-        :xyzw: numpy.array with tristimulus values of white point, optional
+        :wuv: ndarray with W*U*V* values 
+        :xyzw: ndarray with tristimulus values of white point, optional
             Defaults to luxpy._COLORTF_DEFAULT_WHITE_POINT
         
     Returns:
-        :xyz: numpy.array with tristimulus values
+        :xyz: ndarray with tristimulus values
 	 """
     wuv = np2d(wuv)
     xyzw = np2d(xyzw)
@@ -223,10 +229,10 @@ def xyz_to_xyz(xyz, **kwargs):
     Dummy function for use with luxpy.colortf().
      
     Args:
-        :xyz: numpy.array with tristimulus values
+        :xyz: ndarray with tristimulus values
         
     Returns:
-        :xyz: numpy.array with tristimulus values	
+        :xyz: ndarray with tristimulus values	
     """
     return np2d(xyz)
 
@@ -236,14 +242,14 @@ def xyz_to_lms(xyz, cieobs = _CIEOBS, M = None, **kwargs):
 	 Convert XYZ tristimulus values to LMS cone fundamental responses.
          
     Args:
-        :xyz: numpy.array with tristimulus values
+        :xyz: ndarray with tristimulus values
         :cieobs: _CIEOBS or str, optional
         :M: None, optional
             Conversion matrix for xyz to lms
             If None: use the one defined by :cieobs:
         
     Returns:
-        :lms: numpy.array with LMS cone fundamental responses	
+        :lms: ndarray with LMS cone fundamental responses	
     """
     xyz = np2d(xyz)
     
@@ -263,14 +269,14 @@ def lms_to_xyz(lms, cieobs = _CIEOBS, M = None, **kwargs):
 	 Convert LMS cone fundamental responses to XYZ tristimulus values.
          
     Args:
-        :lms: numpy.array with LMS cone fundamental responses	
+        :lms: ndarray with LMS cone fundamental responses	
         :cieobs: _CIEOBS or str, optional
         :M: None, optional
             Conversion matrix for xyz to lms
             If None: use the one defined by :cieobs:
         
     Returns:
-        :xyz: numpy.array with tristimulus values
+        :xyz: ndarray with tristimulus values
     """
     lms = np2d(lms)
     
@@ -288,17 +294,17 @@ def lms_to_xyz(lms, cieobs = _CIEOBS, M = None, **kwargs):
 
 def xyz_to_lab(xyz, xyzw = None, cieobs = _CIEOBS, **kwargs):
     """ 
-	 Convert XYZ tristimulus values to CIE 1976 L*a*b* (CIELAB) color coordinates.
+	 Convert XYZ tristimulus values to CIE 1976 L*a*b* (CIELAB) coordinates.
      
     Args:
-        :xyz: numpy.array with tristimulus values
-        :xyzw: None or numpy.array with tristimulus values of white point, optional
+        :xyz: ndarray with tristimulus values
+        :xyzw: None or ndarray with tristimulus values of white point, optional
             None defaults to xyz of CIE D65 using the :cieobs: observer.
         :cieobs: luxpy._CIEOBS, optional
             CMF set to use when calculating xyzw.
         
     Returns:
-        :lab: numpy.array with CIE 1976 L*a*b* (CIELAB) color coordinates
+        :lab: ndarray with CIE 1976 L*a*b* (CIELAB) color coordinates
     """
     xyz = np2d(xyz)
        
@@ -330,14 +336,14 @@ def lab_to_xyz(lab, xyzw = None, cieobs = _CIEOBS, **kwargs):
 	 Convert CIE 1976 L*a*b* (CIELAB) color coordinates to XYZ tristimulus values.
      
     Args:
-        :lab: numpy.array with CIE 1976 L*a*b* (CIELAB) color coordinates
-        :xyzw: None or numpy.array with tristimulus values of white point, optional
+        :lab: ndarray with CIE 1976 L*a*b* (CIELAB) color coordinates
+        :xyzw: None or ndarray with tristimulus values of white point, optional
             None defaults to xyz of CIE D65 using the :cieobs: observer.
         :cieobs: luxpy._CIEOBS, optional
             CMF set to use when calculating xyzw.
         
     Returns:
-        :xyz: numpy.array with tristimulus values
+        :xyz: ndarray with tristimulus values
     """
     lab = np2d(lab)
          
@@ -371,17 +377,17 @@ def lab_to_xyz(lab, xyzw = None, cieobs = _CIEOBS, **kwargs):
 
 def xyz_to_luv(xyz, xyzw = None, cieobs = _CIEOBS, **kwargs):
     """ 
-	 Convert XYZ tristimulus values to CIE 1976 L*u*v* (CIELUV) color coordinates.
+	 Convert XYZ tristimulus values to CIE 1976 L*u*v* (CIELUV) coordinates.
      
     Args:
-        :xyz: numpy.array with tristimulus values
-        :xyzw: None or numpy.array with tristimulus values of white point, optional
+        :xyz: ndarray with tristimulus values
+        :xyzw: None or ndarray with tristimulus values of white point, optional
             None defaults to xyz of CIE D65 using the :cieobs: observer.
         :cieobs: luxpy._CIEOBS, optional
             CMF set to use when calculating xyzw.
         
     Returns:
-        :luv: numpy.array with CIE 1976 L*u*v* (CIELUV) color coordinates
+        :luv: ndarray with CIE 1976 L*u*v* (CIELUV) color coordinates
     """
     xyz = np2d(xyz)
     
@@ -408,17 +414,17 @@ def xyz_to_luv(xyz, xyzw = None, cieobs = _CIEOBS, **kwargs):
 
 def luv_to_xyz(luv, xyzw = None, cieobs = _CIEOBS, **kwargs):
     """ 
-	 Convert CIE 1976 L*u*v* (CIELUVB) color coordinates to XYZ tristimulus values.
+	 Convert CIE 1976 L*u*v* (CIELUVB) coordinates to XYZ tristimulus values.
      
     Args:
-        :luv: numpy.array with CIE 1976 L*u*v* (CIELUV) color coordinates
-        :xyzw: None or numpy.array with tristimulus values of white point, optional
+        :luv: ndarray with CIE 1976 L*u*v* (CIELUV) color coordinates
+        :xyzw: None or ndarray with tristimulus values of white point, optional
             None defaults to xyz of CIE D65 using the :cieobs: observer.
         :cieobs: luxpy._CIEOBS, optional
             CMF set to use when calculating xyzw.
         
     Returns:
-        :xyz: numpy.array with tristimulus values
+        :xyz: ndarray with tristimulus values
     """
     luv = np2d(luv)
     
@@ -455,20 +461,22 @@ def xyz_to_Vrb_mb(xyz, cieobs = _CIEOBS, scaling = [1,1], M = None, **kwargs):
     Note that R,G,B ~ L,M,S
      
     Args:
-        :xyz: numpy.array with tristimulus values
+        :xyz: ndarray with tristimulus values
         :cieobs: luxpy._CIEOBS, optional
-            CMF set to use when getting the default M, the xyz to lms conversion matrix.
+            CMF set to use when getting the default M, which is
+            the xyz to lms conversion matrix.
         :scaling: list of scaling factors for r and b dimensions.
         :M: None, optional
             Conversion matrix for going from XYZ to RGB (LMS) 
             If None, :cieobs: determines the M (function does inversion)
             
     Returns:
-        :Vrb: numpy.array with V,r,b (Macleod-Boynton) color coordinates
+        :Vrb: ndarray with V,r,b (Macleod-Boynton) color coordinates
     
     Reference:
         1. MacLeod DI, and Boynton RM (1979). 
-            Chromaticity diagram showing cone excitation by stimuli of equal luminance. 
+            Chromaticity diagram showing cone excitation by stimuli 
+            of equal luminance. 
             J. Opt. Soc. Am. 69, 1183–1186.
     """
     xyz = np2d(xyz)
@@ -491,9 +499,10 @@ def Vrb_mb_to_xyz(Vrb,cieobs = _CIEOBS, scaling = [1,1], M = None, Minverted = F
     Note that R,G,B ~ L,M,S
      
     Args:
-        :Vrb: numpy.array with V,r,b (Macleod-Boynton) color coordinates
+        :Vrb: ndarray with V,r,b (Macleod-Boynton) color coordinates
         :cieobs: luxpy._CIEOBS, optional
-            CMF set to use when getting the default M, the xyz to lms conversion matrix.
+            CMF set to use when getting the default M, which is 
+            the xyz to lms conversion matrix.
         :scaling: list of scaling factors for r and b dimensions.
         :M: None, optional
             Conversion matrix for going from XYZ to RGB (LMS) 
@@ -502,11 +511,12 @@ def Vrb_mb_to_xyz(Vrb,cieobs = _CIEOBS, scaling = [1,1], M = None, Minverted = F
             Bool that determines whether M should be inverted.
             
     Returns:
-        :xyz: numpy.array with tristimulus values
+        :xyz: ndarray with tristimulus values
         
     Reference:
         1. MacLeod DI, and Boynton RM (1979). 
-            Chromaticity diagram showing cone excitation by stimuli of equal luminance. 
+            Chromaticity diagram showing cone excitation by stimuli 
+            of equal luminance. 
             J. Opt. Soc. Am. 69, 1183–1186.
     """
     Vrb = np2d(Vrb)
@@ -530,16 +540,17 @@ def xyz_to_ipt(xyz, cieobs = _CIEOBS, xyzw = None, M = None, **kwargs):
     I: Lightness axis, P, red-green axis, T: yellow-blue axis.
      
     Args:
-        :xyz: numpy.array with tristimulus values
-        :xyzw: None or numpy.array with tristimulus values of white point, optional
+        :xyz: ndarray with tristimulus values
+        :xyzw: None or ndarray with tristimulus values of white point, optional
             None defaults to xyz of CIE D65 using the :cieobs: observer.
         :cieobs: luxpy._CIEOBS, optional
-            CMF set to use when calculating xyzw for rescaling M (only when not None).
+            CMF set to use when calculating xyzw for rescaling M 
+                (only when not None).
         :M: None, optional
             None defaults to xyz to lms conversion matrix determined by :cieobs:
         
     Returns:
-        :ipt: numpy.array with IPT color coordinates
+        :ipt: ndarray with IPT color coordinates
         
     Note: 
         :xyz: is assumed to be under D65 viewing conditions!! 
@@ -547,8 +558,9 @@ def xyz_to_ipt(xyz, cieobs = _CIEOBS, xyzw = None, M = None, **kwargs):
         
     Reference:
         1. Ebner F, and Fairchild MD (1998). 
-            Development and testing of a color space (IPT) with improved hue uniformity. 
-            In IS&T 6th Color Imaging Conference, (Scottsdale, Arizona, USA), pp. 8–13.
+            Development and testing of a color space (IPT) with 
+            improved hue uniformity. 
+            In IS&T Color Imaging Conference 6, (Scottsdale, AZ, USA), pp. 8–13.
     """
     xyz = np2d(xyz)
     
@@ -591,16 +603,17 @@ def ipt_to_xyz(ipt, cieobs = _CIEOBS, xyzw = None, M = None, **kwargs):
     I: Lightness axis, P, red-green axis, T: yellow-blue axis.
      
     Args:
-        :ipt: numpy.array with IPT color coordinates
-        :xyzw: None or numpy.array with tristimulus values of white point, optional
+        :ipt: ndarray with IPT color coordinates
+        :xyzw: None or ndarray with tristimulus values of white point, optional
             None defaults to xyz of CIE D65 using the :cieobs: observer.
         :cieobs: luxpy._CIEOBS, optional
-            CMF set to use when calculating xyzw for rescaling Mxyz2lms (only when not None).
+            CMF set to use when calculating xyzw for rescaling Mxyz2lms 
+                (only when not None).
         :M: None, optional
-            None defaults to xyz to lms conversion matrix determined by :cieobs:
+            None defaults to xyz to lms conversion matrix determined by:cieobs:
         
     Returns:
-        :xyz: numpy.array with tristimulus values
+        :xyz: ndarray with tristimulus values
         
     Note: 
         :xyz: is assumed to be under D65 viewing conditions!! 
@@ -608,8 +621,9 @@ def ipt_to_xyz(ipt, cieobs = _CIEOBS, xyzw = None, M = None, **kwargs):
     
     Reference:
         1. Ebner F, and Fairchild MD (1998). 
-            Development and testing of a color space (IPT) with improved hue uniformity. 
-            In IS&T 6th Color Imaging Conference, (Scottsdale, Arizona, USA), pp. 8–13.
+            Development and testing of a color space (IPT) with 
+            improved hue uniformity. 
+            In IS&T Color Imaging Conference 6, (Scottsdale, AZ, USA), pp. 8–13.
     """
     ipt = np2d(ipt)
     
@@ -647,17 +661,19 @@ def ipt_to_xyz(ipt, cieobs = _CIEOBS, xyzw = None, M = None, **kwargs):
 #------------------------------------------------------------------------------
 def xyz_to_Ydlep(xyz, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT, **kwargs):
     """ 
-	 Convert XYZ tristimulus values to Y, dominant (complementary) wavelength and excitation purity.
+	 Convert XYZ tristimulus values to Y, dominant (complementary) wavelength 
+     and excitation purity.
      
     Args:
-        :xyz: numpy.array with tristimulus values
-        :xyzw: None or numpy.array with tristimulus values of white point, optional
+        :xyz: ndarray with tristimulus values
+        :xyzw: None or ndarray with tristimulus values of white point, optional
             None defaults to xyz of CIE D65 using the :cieobs: observer.
         :cieobs: luxpy._CIEOBS, optional
             CMF set to use when calculating spectrum locus coordinates.
         
     Returns:
-        :Ydlep: numpy.array with Y, dominant (complementary) wavelength and excitation purity
+        :Ydlep: ndarray with Y, dominant (complementary) wavelength 
+                and excitation purity
     """
     
     xyz3 = np3d(xyz).copy()
@@ -754,14 +770,15 @@ def Ydlep_to_xyz(Ydlep, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT, *
 	 Convert Y, dominant (complementary) wavelength and excitation purity to XYZ tristimulus values.
      
     Args:
-        :Ydlep: numpy.array with Y, dominant (complementary) wavelength and excitation purity
-        :xyzw: None or numpy.array with tristimulus values of white point, optional
+        :Ydlep: ndarray with Y, dominant (complementary) wavelength 
+            and excitation purity
+        :xyzw: None or narray with tristimulus values of white point, optional
             None defaults to xyz of CIE D65 using the :cieobs: observer.
         :cieobs: luxpy._CIEOBS, optional
             CMF set to use when calculating spectrum locus coordinates.
         
     Returns:
-        :xyz: numpy.array with tristimulus values
+        :xyz: ndarray with tristimulus values
     """
     
     
