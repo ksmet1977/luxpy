@@ -11,23 +11,53 @@
 
 
 -------------------------------------------------------------------------------
-## Module overview (in order as loaded in \__init__()):
+## Module overview:
     
     0.1.  helpers/ helpers.py (imported directly into luxpy namespace, details see end of this file)
-    0.2.  math/ math.py (imported as math into the luxpy namespace, details see end of this file)
+    0.2a.  math/ math.py (imported as math into the luxpy namespace, details see end of this file)
+    0.2b.  math/ optimizers.py (imported into math namespace)
     
-    1a.  spectral/ cmf.py
-    1b.  spectral/ spectral.py
-    1c.  spectral/ spectral_databases
-    2a.  ctf/ colortransforms.py (imported directly into luxpy namespace)
-    3a.  cct/ cct.py (imported directly into luxpy namespace)
-    4a.  cat/ chromaticadaptation.py (imported in luxpy namespace as .cat)
-    5a.  cam/ colorappearancemodels.py (imported in luxpy namespace as .cam)
-    2b.  ctf/ colortf.py (imported directly into luxpy namespace)
-    6a.  cri/ colorrendition_indices.py (imported in luxpy namespace as .cri)
-    7a. graphics/ plotters.py (imported directly into luxpy namespace)
-    8a. classes/ SPD (imported directly into luxpy namespace)
-    8b. classes/ CDATA, XYZ, LAB (imported directly into luxpy namespace)
+    1a.     spectral/ cmf.py
+    1b.     spectral/ spectral.py
+    1c.     spectral/ spectral_databases
+    1d.     spectral/ individual_observer_cmf_model.py (imports into indvcmf namespace)
+    1d.     spectral/ spdbuilder.py (imports into spdbuild namespace)
+    
+    2a.     ctf/ colortransforms.py (imported directly into luxpy namespace)
+    2b.     ctf/ colortf.py (imported directly into luxpy namespace)
+    
+    3a.     cct/ cct.py (imported directly into luxpy namespace)
+    
+    4a.     cat/ chromaticadaptation.py (imported in luxpy namespace as .cat)
+    
+    5a.     cam/ colorappearancemodels.py (imported in luxpy namespace as .cam)
+    5a.i    cam/ cam_02_X.py
+    5a.ii   cam/ cam15u.py
+    5a.iii  cam/ sww2016.py
+    
+    6a.     deltaE/ colordifferences.py (imported in luxpy namespace as deltaE)
+    
+    7a.     cri/ colorrendition.py (imported in luxpy namespace as .cri)
+                    DE_scalers.py
+                    helpers.py
+                    init_cri_defaults_database.py
+                    indices.py
+                        cie_wrappers.py
+                        ies_wrappers.py
+                        cri2012.py
+                        mcri.py
+                        cqs.py
+                    graphics.py
+                    ies_tm30_metrics.py
+                    ies_tm30_graphics.py
+                    VF_PX_models.py (imported in .cri as .VFPX)
+                        vectorshiftmodel.py
+                        pixelshiftmodel.py
+    
+    8a.     graphics/ plotters.py (imported directly into luxpy namespace)
+    
+    8a.     classes/ SPD (imported directly into luxpy namespace)
+    8b.     classes/ CDATA, XYZ, LAB (imported directly into luxpy namespace)
     
  
 -------------------------------------------------------------------------------
