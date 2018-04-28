@@ -179,13 +179,13 @@ def minimizebnd(fun, x0, args=(), method = 'nelder-mead', use_bnd = True, \
             x = xtransform(x0u,params)
               
             # final reshape
-            x = reshape(x,xsize)
+            x = x.reshape(xsize)
               
             # stuff fval with the final value
             fval = params['fun'](x, *params['args'])
               
             # minimize was not called
-            output['success'] = False
+            output = {'success': False}
               
             output['x'] = x
             output['iterations'] = 0

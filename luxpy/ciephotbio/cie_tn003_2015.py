@@ -55,7 +55,7 @@ the s-cone or ssc(λ) spectral efficiency function.
 
 Created on Tue Apr 17 12:25:29 2018
 
-@author: kevin.smet
+@author: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
 from .. import np, _PKG_PATH, _SEP, _CIEOBS, _CMF, _BB, np2d, spd, getdata, getwld, vlbar,spd_to_power, spd_normalize

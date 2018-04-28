@@ -42,7 +42,7 @@
                         fluxes to obtain target chromaticity and fluxes are 
                         then back-calculated.                                   
                         
-# get_spd_pars_optim_dict(): Setup dict with optimization parameters.
+# get_optim_pars_dict(): Setup dict with optimization parameters.
                         
 # initialize_spd_model_pars(): Initialize spd_model_pars (for spd_constructor)
                                 based on type of component_data.
@@ -58,9 +58,9 @@
 #------------------------------------------------------------------------------
 Created on Wed Apr 25 09:07:04 2018
 
-@author: kevin.smet
+@author: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
-from luxpy import (np, plt, warnings, minimize, math, _WL3, _CIEOBS,  np2d, 
+from luxpy import (np, plt, warnings, minimize, math, _WL3, _CIEOBS, _EPS, np2d, 
                    vec_to_dict, getwlr, SPD, plotSL, 
                    spd_to_xyz, xyz_to_Yxy, Yxy_to_xyz, colortf, xyz_to_cct)
 from luxpy.cri import spd_to_iesrf, spd_to_iesrg
@@ -70,8 +70,8 @@ import itertools
 
 __all__ = ['gaussian_spd','mono_led_spd','phosphor_led_spd','spd_builder',
          'get_w_summed_spd','fitnessfcn','spd_constructor_2',
-         'spd_constructor_3','spd_optimizer_2_3','get_default_optim_dict',
-         'initialize_spd_constructor_pars','vec_to_dict','spd_optimizer']
+         'spd_constructor_3','spd_optimizer_2_3','get_optim_pars_dict',
+         'initialize_spd_model_pars','initialize_spd_optim_pars','spd_optimizer']
 
 #------------------------------------------------------------------------------
 def gaussian_spd(peakwl = 530, fwhm = 20, wl = _WL3, with_wl = True):
@@ -131,10 +131,10 @@ def mono_led_spd(peakwl = 530, fwhm = 20, wl = _WL3, with_wl = True, strength_sh
     return spd
 
 #------------------------------------------------------------------------------
-def phophor_led_spd(peakwl = 450, fwhm = 20, wl = _WL3, with_wl = True, strength_shoulder = 2,\
+def phosphor_led_spd(peakwl = 450, fwhm = 20, wl = _WL3, with_wl = True, strength_shoulder = 2,\
                     strength_ph = 0, peakwl_ph1 = 530, fwhm_ph1 = 80, strength_ph1 = 1,\
                     peakwl_ph2 = 560, fwhm_ph2 = 80, strength_ph2 = None,\
-                    use_piecewise_fcn = True,\
+                    use_piecewise_fcn = False,\
                     verbosity = 0, out = 'spd'):
     """
     Generate phosphor LED spectrum with up to 2 phosphors based on Smet (Opt. Expr. 2011).
@@ -187,6 +187,10 @@ def phophor_led_spd(peakwl = 450, fwhm = 20, wl = _WL3, with_wl = True, strength
             If > 0: plots spectrum components (mono_led, ph1, ph2, ...)
         :out: 'spd', optional
             Specifies output.
+        :use_piecewise_fcn: False, optional
+            True: uses piece-wise function as in Smet et al. 2011. Can give 
+                 non_smooth spectra optimized from components to which it is
+                 applied. 
             
     Returns:
         :returns: spd, component_spds
@@ -204,7 +208,6 @@ def phophor_led_spd(peakwl = 450, fwhm = 20, wl = _WL3, with_wl = True, strength
             Opt. Express 19, 6903–6912.
     """
         
-    
     mono_led = mono_led_spd(peakwl = peakwl, fwhm = fwhm, wl = wl, with_wl = False, strength_shoulder = strength_shoulder)
     wl = getwlr(wl)
     if strength_ph is not None:
@@ -219,11 +222,12 @@ def phophor_led_spd(peakwl = 450, fwhm = 20, wl = _WL3, with_wl = True, strength
                 strength_ph2 = np.atleast_2d(strength_ph2)
                 if ((ph1 is not None) & (ph2 is not None)):
                     if (strength_ph2[0,0] is not None):
-                        phosphors = (strength_ph1*ph1.T + strength_ph2*ph2.T).T/(strength_ph1 + strength_ph1)
+                        phosphors = (strength_ph1*ph1.T + strength_ph2*ph2.T).T/(strength_ph1 + strength_ph2 + _EPS).T + _EPS
                     else:
-                        phosphors = (strength_ph1*ph1.T + (1-strength_ph1)*ph2.T).T
+                        phosphors = (strength_ph1*ph1.T + (1-strength_ph1)*ph2.T).T + _EPS
                     strength_ph = np.atleast_1d(strength_ph)
                     phosphors = phosphors/phosphors.max(axis = 1, keepdims = True)
+                    
                     spd = mono_led + (strength_ph*phosphors.T).T
                 else:
                     phosphors = None
@@ -242,21 +246,21 @@ def phophor_led_spd(peakwl = 450, fwhm = 20, wl = _WL3, with_wl = True, strength
         phosphors = None
         spd = mono_led.copy()
         component_spds = mono_led[:,:,None].T.copy()
-        
-    
+
+
     if (use_piecewise_fcn == True):
         peakwl = np.atleast_1d(peakwl)
         if ('component_spds' in out.split(',')):
             fp = component_spds.copy()
-            for i in np.arange(fp.shape[-1]):
-                fp[:,np.where(wl >= peakwl[i]),i] = 1
+            for i in np.arange(fp.shape[0]):
+                fp[i,np.where(wl >= peakwl[i]),:] = 1
                 component_spds[...,i] = component_spds[...,i]*fp[...,i] # multiplication with piecewise function f'
         if ('spd' in out.split(',')):
             fp = mono_led.copy()
             for i in np.arange(fp.shape[0]):
                 fp[i,np.where(wl >= peakwl[i])] = 1
                 spd[i] = spd[i]*fp[i] # multiplication with piecewise function f'
-    
+
     # Normalize to max = 1:
     spd = spd/spd.max(axis = 1, keepdims = True)
     component_spds = component_spds/component_spds.max(axis=1,keepdims=True)
@@ -297,7 +301,7 @@ def spd_builder(flux = None, component_spds = None, peakwl = 450, fwhm = 20, \
                 strength_ph = 0, peakwl_ph1 = 530, fwhm_ph1 = 80, strength_ph1 = 1,\
                 peakwl_ph2 = 560, fwhm_ph2 = 80, strength_ph2 = None,\
                 target = None, tar_type = 'Yuv', cspace_bwtf = {}, cieobs = _CIEOBS,\
-                use_piecewise_fcn = True, verbosity = 1, out = 'spd',**kwargs):
+                use_piecewise_fcn = False, verbosity = 0, out = 'spd',**kwargs):
     """
     Build spectrum based on Gaussian, monochromatic and/or phophor type spectra.
            
@@ -375,14 +379,15 @@ def spd_builder(flux = None, component_spds = None, peakwl = 450, fwhm = 20, \
             Optimal colour quality of LED clusters based on memory colours. 
             Opt. Express 19, 6903–6912.
     """
-    
+
     if component_spds is None:
-        spd, component_spds = phophor_led_spd(peakwl = peakwl, fwhm = fwhm, wl = wl, with_wl = False, strength_shoulder = strength_shoulder,\
+        spd, component_spds = phosphor_led_spd(peakwl = peakwl, fwhm = fwhm, wl = wl, with_wl = False, strength_shoulder = strength_shoulder,\
                                            strength_ph = strength_ph, peakwl_ph1 = peakwl_ph1, fwhm_ph1 = fwhm_ph1, strength_ph1 = strength_ph1,\
                                            peakwl_ph2 = peakwl_ph2, fwhm_ph2 = fwhm_ph2, strength_ph2 = strength_ph2,\
                                            use_piecewise_fcn = use_piecewise_fcn, verbosity = 0, out = 'spd,component_spds')
         
         wl = getwlr(wl)
+        
     else:
         wl = component_spds[0]
         spd = component_spds[1:]
@@ -409,12 +414,13 @@ def spd_builder(flux = None, component_spds = None, peakwl = 450, fwhm = 20, \
         
 #        if verbosity > 0:
 #            plt.figure()
-#            plt.plot(Yxyt[0,1],Yxyt[0,2],'ko')
-#            plt.plot(Yxyi[:N,1],Yxyi[:N,2],'bo')
-#            plt.plot(Yxyi[N:2*N,1],Yxyi[N:2*N,2],'go')
-#            plt.plot(Yxyi[2*N:3*N,1],Yxyi[2*N:3*N,2],'ro')
+#            plt.plot(Yxyt[0,1],Yxyt[0,2],'k+')
+#            plt.plot(Yxyi[:N,1],Yxyi[:N,2],'bd')
+#            plt.plot(Yxyi[N:2*N,1],Yxyi[N:2*N,2],'gs')
+#            plt.plot(Yxyi[2*N:3*N,1],Yxyi[2*N:3*N,2],'rp')
 #            plt.plot(Yxyi[3*N:4*N,1],Yxyi[3*N:4*N,2],'mo')
 #            plotSL(cspace ='Yxy')
+
         
         # Calculate fluxes for obtaining target chromaticity:
         if component_spds.shape[0] == 1: # mono_led spectra can have more than 3 componenents
@@ -1119,7 +1125,7 @@ def get_optim_pars_dict(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs =
               obj_tar_vals = [0], decimals = [5], \
               minimize_method = 'nelder-mead', minimize_opts = None, F_rss = True,\
               peakwl = [450,530,610], fwhm = [20,20,20], wl = _WL3, with_wl = True, strength_shoulder = 2,\
-              strength_ph = [0], use_piecewise_fcn = True,\
+              strength_ph = [0], use_piecewise_fcn = False,\
               peakwl_ph1 = [530], fwhm_ph1 = [80], strength_ph1 = [1],\
               peakwl_ph2 = [560], fwhm_ph2 = [80], strength_ph2 = None,\
               verbosity = 0,\
@@ -1406,7 +1412,7 @@ def spd_optimizer(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs = _CIEO
                   obj_tar_vals = [0], decimals = [5], \
                   minimize_method = 'nelder-mead', minimize_opts = None, F_rss = True,\
                   peakwl = [450,530,610], fwhm = [20,20,20], wl = _WL3, with_wl = True, strength_shoulder = 2,\
-                  strength_ph = [0], use_piecewise_fcn = True,\
+                  strength_ph = [0], use_piecewise_fcn = False,\
                   peakwl_ph1 = [530], fwhm_ph1 = [80], strength_ph1 = [1],\
                   peakwl_ph2 = [560], fwhm_ph2 = [80], strength_ph2 = None,\
                   verbosity = 0,\
@@ -1429,6 +1435,7 @@ def spd_optimizer(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs = _CIEO
         :optimizer_type: '2mixer',  optional
             Specifies type of chromaticity optimization 
             ('3mixer' or '2mixer' or 'search')
+            For help on '2mixer' and '3mixer' algorithms, see notes below.
         :spd_constructor: None, optional
             Function handle to user defined spd_constructor function.
                 Input: fcn(x, constructor_pars = {}, **kwargs)
@@ -1488,6 +1495,23 @@ def spd_optimizer(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs = _CIEO
             - 'spds': optimized spectrum.
             - 'M': numpy.ndarray with fluxes for each component spectrum.
 
+    Notes:
+        Optimization algorithms:
+            
+        -'2mixer':
+            Pairs (odd,even) of components are selected and combined using 
+            'pair_strength'. This process is continued until only 3 (combined)
+            intermediate sources remain. Color3mixer is then used to calculate 
+            the fluxes for the remaining 3 sources, after which the fluxes of 
+            all components are back-calculated.
+            
+        -'3mixer':
+            The triangle/trio method creates for all possible combinations of 
+            3 primary component spectra a spectrum that results in the target 
+            chromaticity using color3mixer() and then optimizes the weights of
+            each of the latter spectra such that adding them (additive mixing) 
+            results in obj_vals as close as possible to the target values.
+
     """
             
     # Calculate Yxyt (target):
@@ -1546,7 +1570,7 @@ if __name__ == '__main__':
     plt.close('all')
     cieobs = '1931_2'
     
-    #--------------------------------------------------------------------------
+##    #--------------------------------------------------------------------------
 #    print('1: spd_builder():')
 #    # Set up two basis LED spectra:
 #    target = 3500
@@ -1603,9 +1627,48 @@ if __name__ == '__main__':
 #    #plot component spds:
 #    plt.figure()
 #    SPD(S2).plot()
+ 
     
-    #--------------------------------------------------------------------------
-#    print('2: spd_optimizer():')
+    # Set peak wavelengths of monochromatic leds:
+    peakwl = [450,470,610]
+    
+    # Set Full-Width-Half-Maxima of monochromatic leds:
+    fwhm = [30,35,15] 
+    
+    # Set phosphor strengths:
+    strength_ph = [1.5, 0.4, 0]
+    
+    # Set phoshpor 1 parameters:
+    strength_ph1 = [1, 1, 0]
+    peakwl_ph1 = [530, 540, 1]
+    fwhm_ph1 = [60, 60, 60]
+    
+    # Set phoshpor 2 parameters:
+    strength_ph2 = [2, 1, 0]
+    peakwl_ph2 = [590, 590, 590]
+    fwhm_ph2 = [70, 70, 70]
+    
+    S = lx.spdbuild.spd_builder(peakwl = peakwl, fwhm = fwhm,\
+                            strength_ph = strength_ph, \
+                            strength_ph1 = strength_ph1,\
+                            peakwl_ph1 = peakwl_ph1,\
+                            fwhm_ph1 = fwhm_ph1,\
+                            strength_ph2 = strength_ph2,\
+                            peakwl_ph2 = peakwl_ph2,\
+                            fwhm_ph2 = fwhm_ph2,\
+                           target = 3500, tar_type = 'cct')
+    
+    # Plot component spds:
+    lx.SPD(S).plot()
+    
+    # Check output agrees with target:
+    S = S[(1*np.isnan(S)).sum(axis=1)==0,:] # get rid op nan spectra
+    xyz = spd_to_xyz(S, relative = False, cieobs = cieobs)
+    cct = xyz_to_cct(xyz, cieobs = cieobs, mode = 'lut')
+    print(cct)
+    
+#    #--------------------------------------------------------------------------
+##    print('2: spd_optimizer():')
     target = 4000 # 4000 K target cct
     tar_type = 'cct'
     peakwl = [450,530,560,610]

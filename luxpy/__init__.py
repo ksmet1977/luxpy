@@ -41,11 +41,13 @@ Loads the following luxpy sub-packages, modules and classes:
     0.2.  math/ 
             math.py (imported as math into the luxpy namespace, details see end of this file)
             optimizers.py (imported in math name space)
+            
     1.  spectral/ 
             cmf.py
             spectral.py
             spectral_databases.py
             individual_observer_cmf_model.py (imports into indvcmf namespace)
+            spdbuilder.py (imports into spdbuild namespace)
             
     2.  ctf/ 
             colortransforms.py (imported directly into luxpy namespace)
@@ -240,3 +242,7 @@ from .classes.CDATA import CDATA, XYZ, LAB
 # load cie_photobio sub_package:
 from .ciephotbio import cie_tn003_2015 as ciephotbio
 __all__ += ['ciephotbio']
+
+# Load spd builder sub_package
+from .spdbuild import spdbuilder as spdbuild
+__all__ += ['spdbuild'] 

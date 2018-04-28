@@ -33,4 +33,3 @@ for i, cmf_type in enumerate(_CMF['types']): # store all in single nested dict
 # load spd and rfl data in /spd/:
 from .spectral_databases import _R_PATH, _S_PATH, _CIE_ILLUMINANTS, _IESTM30, _CRI_RFL, _MUNSELL
 __all__ += ['_R_PATH', '_S_PATH', '_CRI_RFL', '_CIE_ILLUMINANTS', '_IESTM30','_MUNSELL'] 
-
