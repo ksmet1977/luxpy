@@ -58,6 +58,9 @@
 # angle_v1v2():  Calculates angle between two vectors.
 #
 # histogram() : Histogram function that can take as bins either the center (cfr. matlab hist) or bin-edges.
+#
+# minimizebnd(): Optimizer function that allows for the use of bounds 
+                in scipy.minimize()'s methods that normally do not support it.
 #------------------------------------------------------------------------------
 
 Created on Tue Jun 27 11:50:32 2017
