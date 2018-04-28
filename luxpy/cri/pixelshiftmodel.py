@@ -16,14 +16,16 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #########################################################################
 """
-#################################################################################
+###############################################################################
 # Module with functions related to color rendering Pixel models
-#################################################################################
-# 
-# get_pixel_coordinates(): Get pixel coordinates corresponding to color coordinates in jab.
-# 
-# PX_colorshift_model(): Pixelates the color space and calculates the color shifts in each pixel.
-#
+###############################################################################
+
+# get_pixel_coordinates(): Get pixel coordinates corresponding to array of 
+                            jab color coordinates.
+
+# PX_colorshift_model(): Pixelates the color space 
+                         and calculates the color shifts in each pixel.
+
 #------------------------------------------------------------------------------
 Created on Wed Mar 28 18:57:50 2018
 
@@ -39,28 +41,32 @@ __all__ = ['get_pixel_coordinates','PX_colorshift_model']
 
 def get_pixel_coordinates(jab, jab_ranges = None, jab_deltas = None, limit_grid_radius = 0):
     """
-    Get pixel coordinates corresponding to color coordinates in jab.
+    Get pixel coordinates corresponding to array of jab color coordinates.
     
     Args:
-        :jab: numpy.ndarray of color coordinates
-        :jab_ranges: None or numpy.ndarray (.shape =(3,3), first axis: J,a,b, second axis: min, max, delta), optional
+        :jab: ndarray of color coordinates
+        :jab_ranges: None or ndarray, optional
             Specifies the pixelization of color space.
-        :jab_deltas: float or numpy.ndarray, optional
+                (ndarray.shape = (3,3), with  first axis: J,a,b, and second 
+                axis: min, max, delta)
+        :jab_deltas: float or ndarray, optional
             Specifies the sampling range. 
             A float uses jab_deltas as the maximum Euclidean distance to select
-            samples around each pixel center. A numpy.ndarray of 3 deltas, uses
+            samples around each pixel center. A ndarray of 3 deltas, uses
             a city block sampling around each pixel center.
         :limit_grid_radius: 0, optional
-            A value of zeros keeps grid as specified  by axr,bxr.
-            A value > 0 only keeps (a,b) coordinates within a radius of :limit_grid_radius:.
+            A value of zeros keeps grid as specified by axr,bxr.
+            A value > 0 only keeps (a,b) coordinates within :limit_grid_radius: 
     
     Returns:
         :returns: gridp, idxp, jabp, samplenrs, samplesIDs
-            - :gridp: numpy.ndarray with coordinates of all pixel centers.
+            - :gridp: ndarray with coordinates of all pixel centers.
             - :idxp: list[int] with pixel index for each non-empty pixel
-            - :jabp: numpy.ndarray with center color coordinates of non-empty pixels
-            - :samplenrs: list[list[int]] with sample numbers belong to each non-empty pixel
-            - :sampleIDs: summarizing list, with column order: 'idxp, jabp, samplenrs'
+            - :jabp: ndarray with center color coordinates of non-empty pixels
+            - :samplenrs: list[list[int]] with sample numbers belong to each 
+                          non-empty pixel
+            - :sampleIDs: summarizing list, 
+                           with column order: 'idxp, jabp, samplenrs'
     """
     if jab_deltas is None:
         jab_deltas = np.array([_VF_DELTAR,_VF_DELTAR,_VF_DELTAR])
@@ -100,42 +106,56 @@ def PX_colorshift_model(Jabt,Jabr, jab_ranges = None, jab_deltas = None,limit_gr
     Pixelates the color space and calculates the color shifts in each pixel.
     
     Args:
-        :Jabt: numpy.ndarray with color coordinates under the (single) test SPD.
-        :Jabr: numpy.ndarray with color coordinates under the (single) reference SPD.  
-        :jab_ranges: None or numpy.ndarray (.shape =(3,3), first axis: J,a,b, second axis: min, max, delta), optional
+        :Jabt: ndarray with color coordinates under the (single) test SPD.
+        :Jabr: ndarray with color coordinates under the (single) reference SPD.  
+        :jab_ranges: None or ndarray, optional
             Specifies the pixelization of color space.
-        :jab_deltas: float or numpy.ndarray, optional
+                (ndarray.shape = (3,3), with  first axis: J,a,b, and second 
+                axis: min, max, delta)
+        :jab_deltas: float or ndarray, optional
             Specifies the sampling range. 
             A float uses jab_deltas as the maximum Euclidean distance to select
-            samples around each pixel center. A numpy.ndarray of 3 deltas, uses
+            samples around each pixel center. A ndarray of 3 deltas, uses
             a city block sampling around each pixel center.
         :limit_grid_radius: 0, optional
-            A value of zeros keeps grid as specified  by axr,bxr.
-            A value > 0 only keeps (a,b) coordinates within a radius of :limit_grid_radius:.
+            A value of zeros keeps grid as specified by axr,bxr.
+            A value > 0 only keeps (a,b) coordinates within :limit_grid_radius:
             
     Returns:
         :returns: dict with the following keys:
-            - 'Jab': dict with with numpy.ndarrays for Jabt, Jabr and DEi, DEi_ab (only ab-coordinates), DEa (mean) and DEa_ab
-            - 'vshifts': dict with
-                    * 'vectorshift': numpy.ndarray with vector shifts between average Jabt and Jabr for each pixel
-                    * 'vectorshift_ab': numpy.ndarray with vector shifts averaged over J for each pixel
-                    * 'vectorshift_ab_J0': numpy.ndarray with vector shifts averaged over J for each pixel of J=0 plane.
-                    * 'vectorshift_len': length of 'vectorshift'
-                    * 'vectorshift_ab_len': length of 'vectorshift_ab'
-                    * 'vectorshift_ab_J0_len': length of 'vectorshift_ab_J0'
-                    * 'vectorshift_len_DEnormed': length of 'vectorshift' normalized to 'DEa'
-                    * 'vectorshift_ab_len_DEnormed': length of 'vectorshift_ab' to 'DEa_ab'
-                    * 'vectorshift_ab_J0_len_DEnormed': length of 'vectorshift_ab_J0' to 'DEa_ab'
+            - 'Jab': dict with with ndarrays for:
+                    Jabt, Jabr, DEi, DEi_ab (only ab-coordinates), DEa (mean) 
+                    and DEa_ab
+            - 'vshifts': dict with:
+                * 'vectorshift': ndarray with vector shifts between average
+                                 Jabt and Jabr for each pixel
+                * 'vectorshift_ab': ndarray with vector shifts averaged 
+                                    over J for each pixel
+                * 'vectorshift_ab_J0': ndarray with vector shifts averaged 
+                                        over J for each pixel of J=0 plane.
+                * 'vectorshift_len': length of 'vectorshift'
+                * 'vectorshift_ab_len': length of 'vectorshift_ab'
+                * 'vectorshift_ab_J0_len': length of 'vectorshift_ab_J0'
+                * 'vectorshift_len_DEnormed': length of 'vectorshift' 
+                                                normalized to 'DEa'
+                * 'vectorshift_ab_len_DEnormed': length of 'vectorshift_ab' 
+                                                normalized to 'DEa_ab'
+                * 'vectorshift_ab_J0_len_DEnormed': length of 'vectorshift_ab_J0' 
+                                                normalized to 'DEa_ab'
             - 'pixeldata': dict with pixel info:
-                    * 'grid' numpy.ndarray with coordinates of all pixel centers.
-                    * 'idx': list[int] with pixel index for each non-empty pixel
-                    * 'Jab': numpy.ndarray with center color coordinates of non-empty pixels
-                    * 'samplenrs': list[list[int]] with sample numbers belong to each non-empty pixel
-                    * 'IDs: summarizing list, with column order: 'idxp, jabp, samplenrs'
-            'fielddata' : dict with dicts containing data on the calculated vector-field and circle-fields 
-                    * 'vectorfield': dict with numpy.ndarrays for the ab color coordinates 
-                        under the reference (axr, bxr) and test illuminant (axt, bxt) centered at 
-                        the pixel centers corresponding to the ab coordinates of the reference illuminant.
+                * 'grid' ndarray with coordinates of all pixel centers.
+                * 'idx': list[int] with pixel index for each non-empty pixel
+                * 'Jab': ndarray with center coordinates of non-empty pixels
+                * 'samplenrs': list[list[int]] with sample numbers belong to 
+                                each non-empty pixel
+                * 'IDs: summarizing list, 
+                        with column order: 'idxp, jabp, samplenrs'
+            'fielddata' : dict with dicts containing data on the calculated 
+                          vector-field and circle-fields 
+                * 'vectorfield': dict with ndarrays for the ab-coordinates 
+                    under the ref. (axr, bxr) and test (axt, bxt) illuminants,
+                    centered at the pixel centers corresponding to the 
+                    ab-coordinates of the reference illuminant.
      """
     
     

@@ -16,63 +16,72 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #########################################################################
 """
-#################################################################################
-# Module with functions related to color rendering Vector Field and Pixel models
-#################################################################################
-#--VECTOR FIELD MODEL-------------------------------------------------------------
-#
+###############################################################################
+# Module with functions related to CRI Vector Field and Pixel models
+###############################################################################
+#--VECTOR FIELD MODEL----------------------------------------------------------
+
 # _VF_CRI_DEFAULT: default cri_type parameters for VF model
-#
+
 # _VF_CSPACE: default dict with color space parameters.
-#
+
 # _VF_MAXR: maximum C to use in calculations and plotting of vector fields
-#
+
 # _VF_DELTAR:  grid spacing, pixel size
-#
+
 # _VF_MODEL_TYPE: type of polynomial model for base color shifts
-#
-# _DETERMINE_HUE_ANGLES: Bool, determines whether to calculate hue_angles for 5 or 6 'informative' model parameters
-#
+
+# _DETERMINE_HUE_ANGLES: Bool, determines whether to calculate hue_angles 
+                        for 5 or 6 'informative' model parameters
+
 # _VF_PCOLORSHIFT: Default dict with hue_angle parameters for VF model
-#
-# _VF_SIG = 0.3 #  Determines smoothness of the transition between hue-bin-boundaries (no hard cutoff at boundary).
-# 
-# get_poly_model(): Setup base color shift model (delta_a, delta_b), determine model parameters and accuracy.
-#
-# apply_poly_model_at_x(): Applies base color shift model at cartesian coordinates axr, bxr.
-#
-# generate_vector_field(): Generates a field of vectors using the base color shift model.
-#
-# VF_colorshift_model(): Applies full vector field model calculations to spectral data.
-#
+
+# _VF_SIG = 0.3 #  Determines smoothness of the transition between 
+                    hue-bin-boundaries (no hard cutoff at boundary).
+ 
+# get_poly_model(): Setup base color shift model (delta_a, delta_b), 
+                    determine model parameters and accuracy.
+
+# apply_poly_model_at_x(): Applies base color shift model 
+                            at cartesian coordinates axr, bxr.
+
+# generate_vector_field(): Generates a field of vectors 
+                            using the base color shift model.
+
+# VF_colorshift_model(): Applies full vector field model calculations 
+                          to spectral data.
+
 # generate_grid():  Generate a grid of color coordinates.
-#
+
 # calculate_shiftvectors(): Calculate color shift vectors.
-#
+
 # plot_shift_data(): Plots vector or circle fields.
-#
+
 # plotcircle(): Plot one or more concentric circles.
-#
-# initialize_VF_hue_angles(): Initialize the hue angles that will be used to 'summarize' the VF model fitting parameters.
-#
-#
-#--PIXEL MODEL-------------------------------------------------------------------
-# 
-# get_pixel_coordinates(): Get pixel coordinates corresponding to color coordinates in jab.
-# 
-# PX_colorshift_model(): Pixelates the color space and calculates the color shifts in each pixel.
-#
-#
-#--VECTOR FIELD & PIXEL MODEL----------------------------------------------------
-#
-# calculate_VF_PX_models(): Calculate Vector Field and Pixel color shift models.
-#
-# subsample_RFL_set(): Sub samples a set of spectral reflectance functions by pixelization of color space.
-#
+
+# initialize_VF_hue_angles(): Initialize the hue angles that will be used to 
+                               'summarize' the VF model fitting parameters.
+
+
+#--PIXEL MODEL-----------------------------------------------------------------
+
+# get_pixel_coordinates(): Get pixel coordinates corresponding to array of 
+                            jab color coordinates.
+
+# PX_colorshift_model(): Pixelates the color space 
+                         and calculates the color shifts in each pixel.
+                         
+#--VECTOR FIELD & PIXEL MODEL--------------------------------------------------
+
+# calculate_VF_PX_models(): Calculate Vector Field and Pixel color shift models
+
+# subsample_RFL_set(): Sub samples a set of spectral reflectance functions 
+                        by pixelization of color space.
+
 # plot_VF_PX_models(): Plot the VF and PX model color shift vectors.
-#
-#
-#--------------------------------------------------------------------------------
+
+
+#------------------------------------------------------------------------------
 
 Created on Wed Mar 28 18:30:30 2018
 
@@ -107,16 +116,24 @@ def calculate_VF_PX_models(S, cri_type = _VF_CRI_DEFAULT, sampleset = None, pool
     Args:
         :cri_type: _VF_CRI_DEFAULT or str or dict, optional
             Specifies type of color fidelity model to use. 
-            Controls choice of reference illuminant, sample set, averaging, scaling, etc.
+            Controls choice of ref. ill., sample set, averaging, scaling, etc.
             See luxpy.cri.spd_to_cri for more info.
-        :sampleset:  None or str or numpy.ndarray, optional
+        :sampleset:  None or str or ndarray, optional
             Sampleset to be used when calculating vector field model.
         :pool: False, optional
-            If :S: contains multiple spectra, True pools all jab data before modeling the vector field, False models a different field for each spectrum.
-        :pcolorshift:  {'href': np.arange(np.pi/10,2*np.pi,2*np.pi/10),'Cref' : _VF_MAXR, 'sig' : _VF_SIG} or user defined dict, optional
-            Dict containing the specifications input for apply_poly_model_at_hue_x().
-            The polynomial models of degree 5 and 6 can be fully specified or summarized 
-            by the model parameters themselved OR by calculating the dCoverC and dH at resp. 5 and 6 hues.
+            If :S: contains multiple spectra, True pools all jab data before 
+            modeling the vector field, while False models a different field 
+            for each spectrum.
+        :pcolorshift:  default dict (see below) or user defined dict, optional
+            Dict containing the specification input 
+            for apply_poly_model_at_hue_x().
+            Default dict = {'href': np.arange(np.pi/10,2*np.pi,2*np.pi/10),
+                            'Cref' : _VF_MAXR, 
+                            'sig' : _VF_SIG, 
+                            'labels' : '#'} 
+            The polynomial models of degree 5 and 6 can be fully specified or 
+            summarized by the model parameters themselved OR by calculating the
+            dCoverC and dH at resp. 5 and 6 hues.
         :vfcolor: 'k', optional
             For plotting the vector fields.
         :verbosity:= 0, optional
@@ -124,7 +141,10 @@ def calculate_VF_PX_models(S, cri_type = _VF_CRI_DEFAULT, sampleset = None, pool
     
     Returns:
         :dataVF:, :dataPX: dicts 
-            For more info see output description of resp. luxpy.cri.VF_colorshift_model() and luxpy.cri.PX_colorshift_model()
+            For more info, see output description of resp.: 
+            luxpy.cri.VF_colorshift_model() 
+            and 
+            luxpy.cri.PX_colorshift_model()
     """
     # calculate VectorField cri_color_shift model:
     dataVF = VF_colorshift_model(S, cri_type = cri_type, sampleset = sampleset, vfcolor = vfcolor, pcolorshift = pcolorshift, pool = pool, verbosity = verbosity)
@@ -170,41 +190,49 @@ def subsample_RFL_set(rfl, rflpath = '', samplefcn = 'rand', S = _CIE_ILLUMINANT
                       bx = np.arange(-_VF_MAXR,_VF_MAXR+_VF_DELTAR,_VF_DELTAR), \
                       jx = None, limit_grid_radius = 0):
     """
-    Sub samples a set of spectral reflectance functions by pixelization of color space.
+    Sub-samples a spectral reflectance set by pixelization of color space.
     
     Args:
-        :rfl: numpy.ndarray or str
-            Array with of str refering to a set of spectral reflectance functions to be subsampled.
-            If str to file: file must contain data as columns, with first column the wavelengths.
+        :rfl: ndarray or str
+            Array with of str referring to a set of spectral reflectance 
+            functions to be subsampled.
+            If str to file: file must contain data as columns, with first 
+            column the wavelengths.
         :rflpath: '' or str, optional
             Path to folder with rfl-set specified in a str :rfl: filename.
         :samplefcn: 'rand' or 'mean', optional
-            'rand' selects a random sample from the samples present in each pixel,
-            while 'mean' returns the mean spectral reflectance in each pixel.
+            -'rand': selects a random sample from the samples within each pixel
+            -'mean': returns the mean spectral reflectance in each pixel.
         :S: _CIE_ILLUMINANTS['E'], optional
-            Illuminant used to calculate the color coordinates of the spectral reflectance samples.
-        :jab_ranges: None or numpy.ndarray (.shape =(3,3), first axis: J,a,b, second axis: min, max, delta), optional
+            Illuminant used to calculate the color coordinates of the spectral 
+            reflectance samples.
+        :jab_ranges: None or ndarray, optional
             Specifies the pixelization of color space.
-        :jab_deltas: float or numpy.ndarray, optional
+                (ndarray.shape = (3,3), with  first axis: J,a,b, and second 
+                axis: min, max, delta)
+        :jab_deltas: float or ndarray, optional
             Specifies the sampling range. 
             A float uses jab_deltas as the maximum Euclidean distance to select
-            samples around each pixel center. A numpy.ndarray of 3 deltas, uses
+            samples around each pixel center. A ndarray of 3 deltas, uses
             a city block sampling around each pixel center.
         :cspace: _VF_CSPACE or dict, optional
             Specifies color space. See _VF_CSPACE_EXAMPLE for example structure.
         :cieobs: _VF_CIEOBS or str, optional
             Specifies CMF set used to calculate color coordinates.
-                :ax: np.arange(-_VF_MAXR,_VF_MAXR+_VF_DELTAR,_VF_DELTAR) or numpy.ndarray, optional
-        :ax: np.arange(-_VF_MAXR,_VF_MAXR+_VF_DELTAR,_VF_DELTAR) or numpy.ndarray, optional
+        :ax: default ndarray or user defined ndarray, optional
+            default = np.arange(-_VF_MAXR,_VF_MAXR+_VF_DELTAR,_VF_DELTAR) 
+        :bx: default ndarray or user defined ndarray, optional
+            default = np.arange(-_VF_MAXR,_VF_MAXR+_VF_DELTAR,_VF_DELTAR) 
         :jx: None, optional
-            Note that a not-None :jab_ranges: overrides :ax:, :bx: and :jx input.
+            Note that not-None :jab_ranges: override :ax:, :bx: and :jx input.
         :limit_grid_radius: 0, optional
             A value of zeros keeps grid as specified  by axr,bxr.
-            A value > 0 only keeps (a,b) coordinates within a radius of :limit_grid_radius:.
+            A value > 0 only keeps (a,b) coordinates within :limit_grid_radius:
    
     Returns:
         :returns: rflsampled, jabp
-            numpy.ndarrays with resp. the subsampled set of spectral reflectance functions and the pixel coordinate centers
+            ndarrays with resp. the subsampled set of spectral reflectance 
+            functions and the pixel coordinate centers.
     """
     # Testing effects of sample set, pixel size and gamut size:
     if type(rfl) == str:
@@ -244,10 +272,10 @@ def plot_VF_PX_models(dataVF = None, dataPX = None, plot_VF = True, plot_PX = Tr
     Plot the VF and PX model color shift vectors.
     
     Args:
-        :dataVF: None or list[dict] with data obtained with VF_colorshift_model(), optional
+        :dataVF: None or list[dict] with VF_colorshift_model() output, optional
             None plots nothing related to VF model.
             Each list element refers to a different test SPD.
-        :dataPX: None or list[dict] with data obtained with PX_colorshift_model(), optional
+        :dataPX: None or list[dict] with PX_colorshift_model() output, optional
             None plots nothing related to PX model.
             Each list element refers to a different test SPD.
         :plot_VF: True, optional
@@ -261,32 +289,41 @@ def plot_VF_PX_models(dataVF = None, dataPX = None, plot_VF = True, plot_PX = Tr
             - 'same': continue plot on same axes.
             - axes handle: plot on specified axes. 
         :plot_circle_field: True or False, optional
-            Plot lines showing how a series of circles of color coordinates is distorted by the test SPD.
-            The width (wider means more) and color (red means more) of the lines specify the intensity of the hue part of the color shift.
+            Plot lines showing how a series of circles of color coordinates is 
+            distorted by the test SPD.
+            The width (wider means more) and color (red means more) of the 
+            lines specify the intensity of the hue part of the color shift.
         :plot_sample_shifts: False or True, optional
-            Plots the shifts of the individual samples of the rfl-set used to calculated the VF model.
+            Plots the shifts of the individual samples of the rfl-set used to 
+            calculated the VF model.
         :plot_samples_shifts_at_pixel_center: False, optional
-            Offers the possibility of shifting the vector shifts of subsampled sets from the reference illuminant positions to the pixel centers.
+            Offers the possibility of shifting the vector shifts of subsampled 
+            sets from the reference illuminant positions to the pixel centers.
             Note that the pixel centers must be supplied in :jabp_sampled:.
-        :jabp_sampled: None, numpy.ndarray, optional
+        :jabp_sampled: None, ndarray, optional
             Corresponding pixel center for each sample in a subsampled set.
         :plot_VF_colors: ['g'] or list[str], optional
             Specifies the plot color the color shift vectors of the VF model. 
-            If len(:plot_VF_colors:) == 1: same color for each list element of :dataVF:.
+            If len(:plot_VF_colors:) == 1: same color for each list element 
+            of :dataVF:.
         :plot_VF_colors: ['g'] or list[str], optional
             Specifies the plot color the color shift vectors of the VF model. 
-            If len(:plot_VF_colors:) == 1: same color for each list element of :dataVF:.
+            If len(:plot_VF_colors:) == 1: same color for each list element 
+            of :dataVF:.
         :hbin_cmap: None or colormap, optional
-            Color map with RGB entries for each of the hue bins specified by the hues in _VF_PCOLORSHIFT.
-            If None: will be obtained on first run by luxpy.cri.plot_shift_data() and returned as :cmap: for use in other functions.
+            Color map with RGB entries for each of the hue bins specified by 
+            the hues in _VF_PCOLORSHIFT.
+            If None: cmap will be obtained on first run by 
+            luxpy.cri.plot_shift_data() and returned for use in other functions
         :plot_bin_colors: True, optional
             Colorize hue-bins.
         :bin_labels: None or list[str] or '#', optional
             Plots labels at the bin center hues.
             - None: don't plot.
-            - list[str]: list with str for each bin. (len(:bin_labels:) = :nhbins:)
+            - list[str]: list with str for each bin. 
+                         (len(:bin_labels:) = :nhbins:)
             - '#': plots number.
-            - '_VF_PCOLORSHIFT': uses labels in _VF_PCOLORSHIFT['labels']
+            - '_VF_PCOLORSHIFT': uses the labels in _VF_PCOLORSHIFT['labels']
             - 'pcolorshift': uses the labels in dataVF['modeldata']['pcolorshift']['labels']
         :force_CVG_layout: False or True, optional
             True: Force plot of basis of CVG.

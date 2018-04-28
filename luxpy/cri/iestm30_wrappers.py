@@ -4,34 +4,36 @@
 # Module with IES (TM30) color fidelity and gamut area indices.
 ###############################################################################
     
-..[1] IES. (2015). IES-TM-30-15: Method for Evaluating Light Source Color Rendition. 
+..[1] IES. (2015). 
+        IES-TM-30-15: Method for Evaluating Light Source Color Rendition. 
         New York, NY: The Illuminating Engineering Society of North America.
                 
 ..[2] David, A., Fini, P. T., Houser, K. W., Ohno, Y., Royer, M. P., 
       Smet, K. A. G., … Whitehead, L. (2015). 
-        Development of the IES method for evaluating the color rendition of light sources. 
+        Development of the IES method for evaluating the color rendition 
+        of light sources. 
         Optics Express, 23(12), 15888–15906. 
         https://doi.org/10.1364/OE.23.015888
    
 ###############################################################################
  
-# spd_to_iesrf(): the 'iesrf' color rendition (fidelity) metric (latest version)    
+# spd_to_iesrf(): the 'iesrf' color fidelity index (latest version)    
 
-# spd_to_iesrg(): the 'iesrg' color rendition (gamut area) metric (latest version)    
+# spd_to_iesrg(): the 'iesrg' color gamut area index (latest version)    
     
-# spd_to_iesrf_tm30(): the 'iesrf' color rendition (fidelity) metric (latest version)    
+# spd_to_iesrf_tm30(): the 'iesrf' color fidelity index (latest version)    
 
-# spd_to_iesrg_tm30(): the 'iesrg' color rendition (gamut area) metric (latest version)    
+# spd_to_iesrg_tm30(): the 'iesrg' color gamut area index (latest version)    
 
     
-# spd_to_iesrf_tm30_15(): the 'iesrf' color rendition (fidelity) metric (TM30-15) 
+# spd_to_iesrf_tm30_15(): the 'iesrf' color fidelity index (TM30-15) 
         
-# spd_to_iesrg_tm30_15(): the 'iesrg' color rendition (gamut area) metric (TM30-15)    
+# spd_to_iesrg_tm30_15(): the 'iesrg' color gamut area index (TM30-15)    
         
+        
+# spd_to_iesrf_tm30_18(): the 'iesrf' color fidelity index (TM30-18)    
 
-# spd_to_iesrf_tm30_18(): the 'iesrf' color rendition (fidelity) metric (TM30-18)    
-
-# spd_to_iesrg_tm30_18(): the 'iesrg' color rendition (gamut area) metric (TM30-18)    
+# spd_to_iesrg_tm30_18(): the 'iesrg' color gamut area index (TM30-18)    
                
                
 #------------------------------------------------------------------------------  
@@ -50,25 +52,29 @@ __all__ = ['spd_to_iesrf','spd_to_iesrg',
 #------------------------------------------------------------------------------
 def spd_to_iesrf_tm30_15(SPD, out = 'Rf', wl = None, cri_type = 'iesrf_tm30_15'):
     """
-    Wrapper function the 'iesrf' color rendition (fidelity) metric (IES TM30-15). 
+    Wrapper function for the 'iesrf' color fidelity index (IES TM30-15). 
     
     Args:
-        :SPD: numpy.ndarray with spectral data (can be multiple SPDs, first axis are the wavelengths)
+        :SPD: ndarray with spectral data (can be multiple SPDs, 
+             first axis are the wavelengths)
         :wl: None, optional
-            Wavelengths (or [start, end, spacing]) to interpolate the SPD's in :SPD:. 
+            Wavelengths (or [start, end, spacing]) to interpolate the SPDs to. 
             None: default to no interpolation
         :out:  'Rf' or str, optional
             Specifies requested output (e.g. 'Rf,Rfi,cct,duv') 
     
     Returns:
-        :returns: float or numpy.ndarray with IES TM30_15 Rf for :out: 'Rf'
+        :returns: float or ndarray with IES TM30_15 Rf for :out: 'Rf'
             Other output is also possible by changing the :out: str value.
     
     References:
-        ..[1] IES. (2015). IES-TM-30-15: Method for Evaluating Light Source Color Rendition. 
-                New York, NY: The Illuminating Engineering Society of North America.
-        ..[2] David, A., Fini, P. T., Houser, K. W., Ohno, Y., Royer, M. P., Smet, K. A. G., … Whitehead, L. (2015). 
-                Development of the IES method for evaluating the color rendition of light sources. 
+        ..[1] IES. (2015). 
+                IES-TM30-15: Method for Evaluating Light Source Color Rendition 
+                New York, NY: The Illuminating Eng. Soc. of North America.
+        ..[2] David, A., Fini, P. T., Houser, K. W., Ohno, Y., Royer, M. P., 
+              Smet, K. A. G., … Whitehead, L. (2015). 
+                Development of the IES method for evaluating the color 
+                rendition of light sources. 
                 Optics Express, 23(12), 15888–15906. 
                 https://doi.org/10.1364/OE.23.015888
     
@@ -78,25 +84,29 @@ def spd_to_iesrf_tm30_15(SPD, out = 'Rf', wl = None, cri_type = 'iesrf_tm30_15')
 #------------------------------------------------------------------------------
 def spd_to_iesrg_tm30_15(SPD, out = 'Rg', wl = None, cri_type ='iesrf-tm30-15'):
     """
-    Wrapper function the 'spd_to_rg' color rendition gamut area metric (IES TM30-15). 
+    Wrapper function for the 'spd_to_rg' color gamut area index (IES TM30-15). 
     
     Args:
-        :SPD: numpy.ndarray with spectral data (can be multiple SPDs, first axis are the wavelengths)
+        :SPD: ndarray with spectral data (can be multiple SPDs, first axis are 
+              the wavelengths)
         :wl: None, optional
-            Wavelengths (or [start, end, spacing]) to interpolate the SPD's in :SPD:. 
+            Wavelengths (or [start, end, spacing]) to interpolate the SPDs to. 
             None: default to no interpolation
         :out:  'Rg' or str, optional
             Specifies requested output (e.g. 'Rg,Rf,Rfi,cct,duv') 
     
     Returns:
-        :returns: float or numpy.ndarray with IES TM30_15 Rg for :out: 'Rg'
+        :returns: float or ndarray with IES TM30_15 Rg for :out: 'Rg'
             Other output is also possible by changing the :out: str value.
     
     References:
-        ..[1] IES. (2015). IES-TM-30-15: Method for Evaluating Light Source Color Rendition. 
-                New York, NY: The Illuminating Engineering Society of North America.
-        ..[2] David, A., Fini, P. T., Houser, K. W., Ohno, Y., Royer, M. P., Smet, K. A. G., … Whitehead, L. (2015). 
-                Development of the IES method for evaluating the color rendition of light sources. 
+        ..[1] IES. (2015). 
+                IES-TM30-15: Method for Evaluating Light Source Color Rendition
+                New York, NY: The Illuminating Eng. Soc. of North America.
+        ..[2] David, A., Fini, P. T., Houser, K. W., Ohno, Y., Royer, M. P., 
+              Smet, K. A. G., … Whitehead, L. (2015). 
+                Development of the IES method for evaluating the color 
+                rendition of light sources. 
                 Optics Express, 23(12), 15888–15906. 
                 https://doi.org/10.1364/OE.23.015888
     
@@ -106,25 +116,29 @@ def spd_to_iesrg_tm30_15(SPD, out = 'Rg', wl = None, cri_type ='iesrf-tm30-15'):
 #------------------------------------------------------------------------------
 def spd_to_iesrf_tm30_18(SPD, out = 'Rf', wl = None, cri_type = 'iesrf-tm30-18'):
     """
-    Wrapper function the 'iesrf' color rendition (fidelity) metric (IES TM30-18). 
+    Wrapper function for the 'iesrf' color fidelity index (IES TM30-18). 
     
     Args:
-        :SPD: numpy.ndarray with spectral data (can be multiple SPDs, first axis are the wavelengths)
+        :SPD: ndarray with spectral data (can be multiple SPDs, 
+              first axis are the wavelengths)
         :wl: None, optional
-            Wavelengths (or [start, end, spacing]) to interpolate the SPD's in :SPD:. 
+            Wavelengths (or [start, end, spacing]) to interpolate the SPDs to. 
             None: default to no interpolation
         :out:  'Rf' or str, optional
             Specifies requested output (e.g. 'Rf,Rfi,cct,duv') 
     
     Returns:
-        :returns: float or numpy.ndarray with IES TM30_18 Rf for :out: 'Rf'
+        :returns: float or ndarray with IES TM30_18 Rf for :out: 'Rf'
             Other output is also possible by changing the :out: str value.
     
     References:
-        ..[1] IES. (2018). IES-TM-30-18: Method for Evaluating Light Source Color Rendition. 
-                New York, NY: The Illuminating Engineering Society of North America.
-        ..[2] David, A., Fini, P. T., Houser, K. W., Ohno, Y., Royer, M. P., Smet, K. A. G., … Whitehead, L. (2015). 
-                Development of the IES method for evaluating the color rendition of light sources. 
+        ..[1] IES. (2015). 
+                IES-TM30-15: Method for Evaluating Light Source Color Rendition
+                New York, NY: The Illuminating Eng. Soc. of North America.
+        ..[2] David, A., Fini, P. T., Houser, K. W., Ohno, Y., Royer, M. P., 
+              Smet, K. A. G., … Whitehead, L. (2015). 
+                Development of the IES method for evaluating the color 
+                rendition of light sources. 
                 Optics Express, 23(12), 15888–15906. 
                 https://doi.org/10.1364/OE.23.015888
     
@@ -134,25 +148,29 @@ def spd_to_iesrf_tm30_18(SPD, out = 'Rf', wl = None, cri_type = 'iesrf-tm30-18')
 #------------------------------------------------------------------------------
 def spd_to_iesrg_tm30_18(SPD, out = 'Rg', wl = None, cri_type ='iesrf-tm30-18'):
     """
-    Wrapper function the 'spd_to_rg' color rendition gamut area metric (IES TM30-18). 
+    Wrapper function for the 'spd_to_rg' color gamut area index (IES TM30-18). 
     
     Args:
-        :SPD: numpy.ndarray with spectral data (can be multiple SPDs, first axis are the wavelengths)
+        :SPD: ndarray with spectral data (can be multiple SPDs, first axis are 
+              the wavelengths)
         :wl: None, optional
-            Wavelengths (or [start, end, spacing]) to interpolate the SPD's in :SPD:. 
+            Wavelengths (or [start, end, spacing]) to interpolate the SPDs to. 
             None: default to no interpolation
         :out:  'Rg' or str, optional
             Specifies requested output (e.g. 'Rg,Rf,Rfi,cct,duv') 
     
     Returns:
-        :returns: float or numpy.ndarray with IES TM30_18 Rg for :out: 'Rg'
+        :returns: float or ndarray with IES TM30_18 Rg for :out: 'Rg'
             Other output is also possible by changing the :out: str value.
     
     References:
-        ..[1] IES. (2018). IES-TM-30-18: Method for Evaluating Light Source Color Rendition. 
-                New York, NY: The Illuminating Engineering Society of North America.
-        ..[2] David, A., Fini, P. T., Houser, K. W., Ohno, Y., Royer, M. P., Smet, K. A. G., … Whitehead, L. (2015). 
-                Development of the IES method for evaluating the color rendition of light sources. 
+        ..[1] IES. (2015). 
+                IES-TM30-15: Method for Evaluating Light Source Color Rendition 
+                New York, NY: The Illuminating Eng. Soc. of North America.
+        ..[2] David, A., Fini, P. T., Houser, K. W., Ohno, Y., Royer, M. P., 
+              Smet, K. A. G., … Whitehead, L. (2015). 
+                Development of the IES method for evaluating the color 
+                rendition of light sources. 
                 Optics Express, 23(12), 15888–15906. 
                 https://doi.org/10.1364/OE.23.015888
     

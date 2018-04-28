@@ -53,7 +53,8 @@ def plot_hue_bins(hbins = 16, start_hue = 0.0, scalef = 100, plot_axis_labels = 
         :bin_labels: None or list[str] or '#', optional
             Plots labels at the bin center hues.
             - None: don't plot.
-            - list[str]: list with str for each bin. (len(:bin_labels:) = :nhbins:)
+            - list[str]: list with str for each bin. 
+                (len(:bin_labels:) = :nhbins:)
             - '#': plots number.
         :plot_edge_lines: True or False, optional
             Plot grey bin edge lines with '--'.
@@ -71,7 +72,8 @@ def plot_hue_bins(hbins = 16, start_hue = 0.0, scalef = 100, plot_axis_labels = 
             True: Force plot of basis of CVG on first encounter.
             
     Returns:
-        :returns: gcf(), gca(), list with rgb colors for hue bins (for use in other plotting fcns)
+        :returns: gcf(), gca(), list with rgb colors for hue bins (for use in 
+                                 other plotting fcns)
         
     """
     
@@ -214,7 +216,8 @@ def plot_ColorVectorGraphic(jabt, jabr, hbins = 16, start_hue = 0.0, scalef = 10
         :bin_labels: None or list[str] or '#', optional
             Plots labels at the bin center hues.
             - None: don't plot.
-            - list[str]: list with str for each bin. (len(:bin_labels:) = :nhbins:)
+            - list[str]: list with str for each bin. 
+                (len(:bin_labels:) = :nhbins:)
             - '#': plots number.
         :plot_edge_lines: True or False, optional
             Plot grey bin edge lines with '--'.
@@ -232,7 +235,8 @@ def plot_ColorVectorGraphic(jabt, jabr, hbins = 16, start_hue = 0.0, scalef = 10
             True: Force plot of basis of CVG.
             
     Returns:
-        :returns: gcf(), gca(), list with rgb colors for hue bins (for use in other plotting fcns)
+        :returns: gcf(), gca(), list with rgb colors for hue bins (for use in 
+                                 other plotting fcns)
         
     """
     

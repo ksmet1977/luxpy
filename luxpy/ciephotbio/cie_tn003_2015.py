@@ -87,8 +87,8 @@ Km_correction_factor = 1/(1 - (1 - 0.9998567)*(lambdad - 555)) # correction fact
 def spd_to_aopicE(sid, Ee = None, E = None, Q = None, cieobs = _CIEOBS, sid_units = 'W/m2', out = 'Eeas,Eas'):
     """
     Calculate alpha-opic irradiance (Ee,α) and equivalent luminance (Eα) values
-    for the l-cone, m-cone, s-cone, rod and iprgc (α) photoreceptor cells following 
-    CIE technical note TN 003:2015.
+    for the l-cone, m-cone, s-cone, rod and iprgc (α) photoreceptor cells 
+    following CIE technical note TN 003:2015.
     
     Args:
         :sid: numpy.ndarray with retinal spectral irradiance in :sid_units: 
@@ -109,7 +109,9 @@ def spd_to_aopicE(sid, Ee = None, E = None, Q = None, cieobs = _CIEOBS, sid_unit
     Returns:
         :returns: (Eeas, Eas) with Eeas and Eas resp. numpy.ndarrays with the 
          α-opic irradiance and equivalent illuminance values 
-         of all spectra in :sid: in SI-units. (other choice can be set using :out:)
+         of all spectra in :sid: in SI-units. 
+         
+         (other choice can be set using :out:)
     """
     outlist = out.split(',')
     

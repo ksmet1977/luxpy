@@ -15,8 +15,9 @@
             rg_pars [dict], 
             cri_specific_pars [dict])
 
-# spd_to_mcri(): Calculates the memory color rendition index, 
-    Rm:  K. A. G. Smet, W. R. Ryckaert, M. R. Pointer, G. Deconinck, and P. Hanselaer, (2012) 
+# spd_to_mcri(): Calculates the memory color rendition index, Rm:
+    
+    K.A.G. Smet, W.R. Ryckaert, M.R. Pointer, G. Deconinck, P. Hanselaer,(2012)
     “A memory colour quality metric for white light sources,” 
     Energy Build., vol. 49, no. C, pp. 216–225.
 
@@ -53,30 +54,33 @@ def spd_to_mcri(SPD, D = 0.9, E = None, Yb = 20.0, out = 'Rm', wl = None):
     Calculates the MCRI or Memory Color Rendition Index, Rm
     
     Args: 
-        :SPD: numpy.ndarray with spectral data (can be multiple SPDs, first axis are the wavelengths)
+        :SPD: ndarray with spectral data (can be multiple SPDs, 
+              first axis are the wavelengths)
         :D: 0.9, optional
             Degree of adaptation.
         :E: None, optional
-            Illuminance in lux (used to calculate La = (Yb/100)*(E/pi) to calculate D following the 'cat02' model). 
+            Illuminance in lux 
+            (used to calculate La = (Yb/100)*(E/pi) to then calculate D 
+            following the 'cat02' model). 
              If None: the degree is determined by :D:
-             If (:E: is not None) & (:Yb: is None):  :E: is assumed to contain the adapting field luminance La.
+             If (:E: is not None) & (:Yb: is None):  :E: is assumed to contain 
+             the adapting field luminance La.
         :Yb: 20.0, optional
-            Luminance factor of background. (used in the calculation of La from E)
+            Luminance factor of background. (used when calculating La from E)
         :out:  'Rm' or str, optional
             Specifies requested output (e.g. 'Rm,Rmi,cct,duv') 
         :wl: None, optional
-            Wavelengths (or [start, end, spacing]) to interpolate the SPD's in :data:. 
+            Wavelengths (or [start, end, spacing]) to interpolate the SPDs to. 
             None: default to no interpolation   
     
     Returns:
-        :returns: float or numpy.ndarray with MCRI Rm for :out: 'Rm'
+        :returns: float or ndarray with MCRI Rm for :out: 'Rm'
             Other output is also possible by changing the :out: str value.        
           
     References:
-        ..[1] Smet, K. A. G., Ryckaert, W. R., Pointer, M. R., Deconinck, G., & Hanselaer, P. (2012)
-                A memory colour quality metric for white light sources. 
-                Energy and Buildings, 49(C), 216–225. 
-                https://doi.org/10.1016/j.enbuild.2012.02.008
+        [1] KAG Smet, WR Ryckaert, MR Pointer, G Deconinck, P Hanselaer,(2012)
+            “A memory colour quality metric for white light sources,” 
+            Energy Build., vol. 49, no. C, pp. 216–225.
     """
     SPD = np2d(SPD)
     

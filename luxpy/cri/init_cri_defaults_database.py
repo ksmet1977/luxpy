@@ -18,7 +18,8 @@
             rg_pars [dict], 
             cri_specific_pars [dict])
             
-# process_cri_type_input(): load a cri_type dict but overwrites any keys that have a non-None input in calling function
+# process_cri_type_input(): load a cri_type dict but overwrites any keys that 
+                            have a non-None input in calling function
 
 #------------------------------------------------------------------------------      
 
@@ -137,7 +138,8 @@ def process_cri_type_input(cri_type, args, callerfunction = ''):
     """
     Processes cri_type input in a function (helper function).
     
-    This function replaces the values of keys in the cri_type dict with the corresponding not-None values in args.
+    This function replaces the values of keys in the cri_type dict with the 
+    corresponding not-None values in args.
     
     Args:
         :cri_type: str or dict

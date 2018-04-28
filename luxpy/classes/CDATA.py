@@ -16,7 +16,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #########################################################################
 """
-CDATA, XYZ, LAB: Class functionality for colorimetric data.
+###############################################################################
+# Module supporting class functionality for colorimetric data: 
+#  classes CDATA, XYZ, LAB
+###############################################################################
+
 
 Created on Fri Apr  6 13:51:37 2018
 
@@ -110,7 +114,8 @@ class CDATA():
     
     def get_S(self, idx = 0):
         """
-        Get spectral data related to light sources (cfr. axis = 1 in xyz numpy.ndarrays).
+        Get spectral data related to light sources. 
+        (cfr. axis = 1 in xyz ndarrays).
         
         Args:
             :idx: 0, optional
@@ -128,7 +133,8 @@ class CDATA():
     
     def get_R(self, idx = 0):
         """
-        Get spectral data related to reflectance samples (cfr. axis = 0 in xyz numpy.ndarrays).
+        Get spectral data related to reflectance samples.
+        (cfr. axis = 0 in xyz ndarrays).
         
         Args:
             :idx: 0, optional
@@ -143,8 +149,8 @@ class CDATA():
     
     def get_subset(self, idx_R = None, idx_S = None):
         """
-        Get spectral data related to specific light sources and reflectance data
-        (cfr. axis = 1 and axis = 0 in xyz numpy.ndarrays).
+        Get spectral data related to specific light source and reflectance data
+        (cfr. axis = 1 and axis = 0 in xyz ndarrays).
         
         Args:
             :idx_S: None, optional
@@ -186,11 +192,13 @@ class XYZ(CDATA):
         Args:
             :dtype: _CSPACE or str, optional
                 Convert to this color space.
-            :**kwargs: additional input arguments required for color space transformation.
-                See specific luxpy function for more info (e.g. ?luxpy.xyz_to_lab)
+            :**kwargs: additional input arguments required for 
+                        color space transformation.
+                        See specific luxpy function for more info 
+                        (e.g. ?luxpy.xyz_to_lab)
         
         Returns:
-            :returns: luxpy.LAB with .value field that is a numpy.array 
+            :returns: luxpy.LAB with .value field that is a ndarray 
                     with color space coordinates 
 
         """
@@ -207,7 +215,8 @@ class XYZ(CDATA):
                 None: create new figure axes, else use :ax: for plotting.
             :title: None or str, optional
                 Give plot a title.
-            :**kwargs: additional arguments for use with matplotlib.pyplot.scatter
+            :**kwargs: additional arguments for use with 
+                        matplotlib.pyplot.scatter
                 
         Returns:
             :gca: handle to current axes.
@@ -240,8 +249,9 @@ class XYZ(CDATA):
         Convert XYZ tristimulus values CIE Yxy chromaticity values.
             
         Returns:
-            :Yxy: luxpy.LAB with .value field that is a numpy.array 
-                    with Yxy chromaticity values (Y value refers to luminance or luminance factor)
+            :Yxy: luxpy.LAB with .value field that is a ndarray 
+                  with Yxy chromaticity values. 
+                  (Y value refers to luminance or luminance factor)
         """
         return LAB(value = xyz_to_Yxy(self.value), relative = self.relative, cieobs = self.cieobs, dtype = 'Yxy')
  
@@ -253,8 +263,9 @@ class XYZ(CDATA):
 
             
         Returns:
-            :Yuv: luxpy.LAB with .value field that is a numpy.array 
-                with CIE 1976 Yu'v' chromaticity values (Y value refers to luminance or luminance factor)
+            :Yuv: luxpy.LAB with .value field that is a ndarray 
+                  with CIE 1976 Yu'v' chromaticity values.
+                  (Y value refers to luminance or luminance factor)
     	  """
         return LAB(value = xyz_to_Yuv(self.value), relative = self.relative, cieobs = self.cieobs, dtype = 'Yuv')
     
@@ -265,11 +276,12 @@ class XYZ(CDATA):
         Convert XYZ tristimulus values CIE 1964 U*V*W* color space.
          
         Args:
-            :xyzw: numpy.array with tristimulus values of white point, optional
+            :xyzw: ndarray with tristimulus values of white point, optional
                 Defaults to luxpy._COLORTF_DEFAULT_WHITE_POINT
             
         Returns:
-            :wuv: luxpy.LAB with .value field that is a numpy.array with W*U*V* values 
+            :wuv: luxpy.LAB with .value field that is a ndarray 
+                  with W*U*V* values.
     	  """
         return LAB(value = xyz_to_wuv(self.value, xyzw = xyzw), relative = self.relative, cieobs = self.cieobs, dtype = 'wuv', xyzw = xyzw)
 
@@ -280,7 +292,8 @@ class XYZ(CDATA):
           to LMS cone fundamental responses.
             
         Returns:
-            :lms: luxpy.XYZ with .value field that is a numpy.array with LMS cone fundamental responses	
+            :lms: luxpy.XYZ with .value field that is a ndarray 
+                  with LMS cone fundamental responses.	
         """
         if self.dtype == 'lms':
             return self
@@ -294,7 +307,8 @@ class XYZ(CDATA):
           to XYZ tristimulus values.
             
         Returns:
-            :xyz: luxpy.XYZ with .value field that is a numpy.array with tristimulus values	
+            :xyz: luxpy.XYZ with .value field that is a ndarray 
+                  with XYZ tristimulus values.	
         """
         if self.dtype == 'xyz':
             return self
@@ -305,16 +319,16 @@ class XYZ(CDATA):
     
     def to_lab(self, xyzw = None, cieobs = _CIEOBS):
         """ 
-        Convert XYZ tristimulus values to CIE 1976 L*a*b* (CIELAB) color coordinates.
+        Convert XYZ tristimulus values to CIE 1976 L*a*b* (CIELAB) coordinates.
          
         Args:
-            :xyzw: None or numpy.array with tristimulus values of white point, optional
+            :xyzw: None or ndarray with xyz values of white point, optional
                 None defaults to xyz of CIE D65 using the :cieobs: observer.
             :cieobs: luxpy._CIEOBS, optional
                 CMF set to use when calculating xyzw.
             
         Returns:
-            :lab: luxpy.LAB with .value field that is a numpy.array 
+            :lab: luxpy.LAB with .value field that is a ndarray 
                     with CIE 1976 L*a*b* (CIELAB) color coordinates
         """
         return LAB(value = xyz_to_lab(self.value, xyzw = xyzw, cieobs = cieobs), relative = self.relative, dtype = 'lab', xyzw = xyzw, cieobs = cieobs)
@@ -323,16 +337,16 @@ class XYZ(CDATA):
             
     def to_luv(self, xyzw = None, cieobs = _CIEOBS):
         """ 
-        vert XYZ tristimulus values to CIE 1976 L*u*v* (CIELUV) color coordinates.
+        vert XYZ tristimulus values to CIE 1976 L*u*v* (CIELUV) coordinates.
          
         Args:
-            :xyzw: None or numpy.array with tristimulus values of white point, optional
+            :xyzw: None or ndarray with xyz values of white point, optional
                 None defaults to xyz of CIE D65 using the :cieobs: observer.
             :cieobs: luxpy._CIEOBS, optional
                 CMF set to use when calculating xyzw.
             
         Returns:
-            :luv: luxpy.LAB with .value field that is a numpy.array 
+            :luv: luxpy.LAB with .value field that is a ndarray 
                     with CIE 1976 L*u*v* (CIELUV) color coordinates
         """
         return LAB(value = xyz_to_luv(self.value, xyzw = xyzw, cieobs = cieobs), relative = self.relative, dtype = 'luv', xyzw = xyzw, cieobs = cieobs)
@@ -341,7 +355,7 @@ class XYZ(CDATA):
     
     def to_Vrb_mb(self, cieobs = _CIEOBS, scaling = [1,1], M = None):
         """ 
-    	  Convert XYZ tristimulus values to V,r,b (Macleod-Boynton) color coordinates.
+    	  Convert XYZ tristimulus values to V,r,b (Macleod-Boynton) coordinates.
         
         Macleod Boynton: V = R+G, r = R/V, b = B/V 
         Note that R,G,B ~ L,M,S
@@ -355,8 +369,8 @@ class XYZ(CDATA):
                 If None, :cieobs: determines the M (function does inversion)
                 
         Returns:
-            :Vrb: luxpy.LAB with .value field that is a numpy.array
-                    numpy.array with V,r,b (Macleod-Boynton) color coordinates
+            :Vrb: luxpy.LAB with .value field that is a ndarray
+                    ndarray with V,r,b (Macleod-Boynton) color coordinates
         """
         return LAB(value = xyz_to_Vrb_mb(self.value, cieobs = cieobs, scaling = scaling, M = M), relative = self.relative, dtype = 'Vrb_mb', cieobs = cieobs, scaling = scaling, M = M)
     
@@ -369,15 +383,16 @@ class XYZ(CDATA):
         I: Lightness axis, P, red-green axis, T: yellow-blue axis.
          
         Args:
-            :xyzw: None or numpy.array with tristimulus values of white point, optional
+            :xyzw: None or ndarray with xyz values of white point, optional
                 None defaults to xyz of CIE D65 using the :cieobs: observer.
             :cieobs: luxpy._CIEOBS, optional
-                CMF set to use when calculating xyz0 for rescaling Mxyz2lms (only when not None).
+                CMF set to use when calculating xyzw for rescaling Mxyz2lms 
+                (only when not None).
             :M: None, optional
-                None defaults to xyz2lms conversion matrix determined by :cieobs:
+                None defaults to conversion matrix determined by :cieobs:
             
         Returns:
-            :ipt: luxpy.LAB with .value field that is a numpy.array
+            :ipt: luxpy.LAB with .value field that is a ndarray
                     with IPT color coordinates
             
         Note: 
@@ -390,16 +405,18 @@ class XYZ(CDATA):
 
     def to_Ydlep(self, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT):
         """ 
-    	  Convert XYZ tristimulus values to Y, dominant (complementary) wavelength and excitation purity.
+    	  Convert XYZ values to Y, dominant (complementary) wavelength 
+        and excitation purity.
          
         Args:
-            :xyzw: None or numpy.array with tristimulus values of white point, optional
+            :xyzw: None or ndarray with xyz values of white point, optional
                 None defaults to xyz of CIE D65 using the :cieobs: observer.
             :cieobs: luxpy._CIEOBS, optional
                 CMF set to use when calculating spectrum locus coordinates.
             
         Returns:
-            :Ydlep: numpy.array with Y, dominant (complementary) wavelength and excitation purity
+            :Ydlep: ndarray with Y, dominant (complementary) wavelength 
+            and excitation purity
         """
         return LAB(value = xyz_to_Ydlep(self.value, cieobs = cieobs, xyzw = xyzw), relative = self.relative, dtype = 'Ydlep', cieobs = cieobs, xyzw = xyzw)
   
@@ -553,11 +570,13 @@ class LAB(CDATA):
         Args:
             :dtype: 'xyz'
                 Convert to this color space.
-            :**kwargs: additional input arguments required for color space transformation.
-                See specific luxpy function for more info (e.g. ?luxpy.xyz_to_lab)
+            :**kwargs: additional input arguments required for 
+                       color space transformation.
+                       See specific luxpy function for more info 
+                       (e.g. ?luxpy.xyz_to_lab)
         
         Returns:
-            :returns: luxpy.XYZ with .value field that is a numpy.array 
+            :returns: luxpy.XYZ with .value field that is a ndarray 
                     with tristimulus values 
         """
         db = put_args_in_db(self.cspace_par,locals().copy()) 
@@ -570,13 +589,14 @@ class LAB(CDATA):
         
         Args:
             :plt_type: '3d' or 3 or '2d or 2, optional
-                '3d' or 3: plot all 3 dimensions (lightness/luminance and chromaticity)
+                '3d' or 3: plot all 3 dimensions (lightness and chromaticity)
                 '2d' or 2: plot only chromaticity dimensions.
             :ax: None or axes handles, optional
                 None: create new figure axes, else use :ax: for plotting.
             :title: None or str, optional
                 Give plot a title.
-            :**kwargs: additional arguments for use with matplotlib.pyplot.scatter
+            :**kwargs: additional arguments for use with 
+                        matplotlib.pyplot.scatter
                 
         Returns:
             :gca: handle to current axes.

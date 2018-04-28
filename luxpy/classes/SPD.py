@@ -16,7 +16,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #########################################################################
 """
-SPD: Class functionality for spectral data
+###############################################################################
+# Module for class functionality for spectral data: class SPD
+###############################################################################
 
 
 Created on Fri Apr  6 15:50:05 2018
@@ -39,32 +41,38 @@ class SPD:
         Initialize instance of SPD.
         
         Args:
-            :spd: None or numpy.ndarray or str, optional
+            :spd: None or ndarray or str, optional
              If None: self.value is initialized with zeros.
              If str: spd contains filename.
-             If numpy.ndarray: ((wavelength, spectra)) or (spectra). If latter, :wl: should contain the wavelengths.
-            :wl: None or numpy.ndarray, optional
+             If ndarray: ((wavelength, spectra)) or (spectra). 
+                         If latter, :wl: should contain the wavelengths.
+            :wl: None or ndarray, optional
                 Wavelengths.
                 Either specified as a 3-vector ([start, stop, spacing]) 
                 or as full wavelength array.
             :a0iswl: True, optional
                 Signals that first axis of :spd: contains wavelengths.
             :dtype: 'S', optional
-                Type of spectral object (e.g. 'S' for source spectrum, 'R' for reflectance spectra, etc.)
-                See SPD._INTERP_TYPES for more options. This is used to automatically determine the correct kind of
+                Type of spectral object (e.g. 'S' for source spectrum, 'R' for
+                reflectance spectra, etc.)
+                See SPD._INTERP_TYPES for more options. 
+                This is used to automatically determine the correct kind of
                 interpolation method according to CIE15-2004.
-            :wl_new: None or numpy.ndarray with 3-vector or full wavelength range, optional
+            :wl_new: None or ndarray with wavelength range, optional
                 If None: don't interpolate, else perform interpolation.
             :interp_method: 'auto', optional
                 If 'auto': method is determined based on :dtype:
             :negative-values_allowed: False, optional (for cie_interp())
-                Spectral data can not be negative. Values < 0 are therefore clipped when False.
+                Spectral data can not be negative. Values < 0 are therefore 
+                clipped when set to False.
             :norm_type: None or str, optional
                 - 'lambda': make lambda in norm_f equal to 1
                 - 'area': area-normalization times norm_f
                 - 'max': max-normalization times norm_f
             :norm_f: 1, optional
-                Normalization factor: determines size of normalization for 'max' and 'area' or which wavelength is normalized to 1 for 'lambda' option.
+                Normalization factor determines size of normalization 
+                for 'max' and 'area' 
+                or which wavelength is normalized to 1 for 'lambda' option.
                 
         """
         if spd is not None:
@@ -115,10 +123,11 @@ class SPD:
             :sep: ',', optional
                 Column separator.
         Returns:
-            :returns: numpy.ndarray with spectral data (first row are wavelengths)
+            :returns: ndarray with spectral data (first row are wavelengths)
             
         Note:
-            Spectral data in file should be organized in columns with first column the wavelengths.
+            Spectral data in file should be organized in columns with the first
+            column containing  the wavelengths.
         """
         return pd.read_csv(file, names = None, index_col = None, header = header, sep = sep).values.T
 
@@ -215,7 +224,7 @@ class SPD:
                    
         Returns:
             :returns: float:  for equal wavelength spacings
-                      numpy.ndarray (.shape = (n,)): for unequal wavelength spacings
+                      ndarray (.shape = (n,)): for unequal wavelength spacings
         """
         return getwld(self.wl)
 
@@ -234,9 +243,11 @@ class SPD:
                 - 'pu': to :norm_f: photometric units 
                 - 'qu': to :norm_f: quantal energy units
             :norm_f: 1, optional
-                Determines size of normalization for 'max' and 'area' or which wavelength is normalized to 1 for 'lambda' option.
+                Determines size of normalization for 'max' and 'area' 
+                or which wavelength is normalized to 1 for 'lambda' option.
             :cieobs: _CIEOBS or str, optional
-                Type of cmf set to use for normalization using photometric units (norm_type == 'pu')
+                Type of cmf set to use for normalization using photometric 
+                units (norm_type == 'pu')
 
         
         """
@@ -248,23 +259,24 @@ class SPD:
         """
         Interpolate / extrapolate spectral data following standard CIE15-2004.
         
-        The kind of interpolation depends on the spectrum type defined in :kind:. 
+        The interpolation type depends on the spectrum type defined in :kind:. 
         Extrapolation is always done by replicate the closest known values.
         
         Args:
-            :wl_new: numpy.ndarray with new wavelengths
+            :wl_new: ndarray with new wavelengths
             :kind: 'auto', optional
                 If :kind: is None, return original data.
                 If :kind: is a spectrum type (see _INTERP_TYPES), the correct 
                     interpolation type if automatically chosen.
                 If kind = 'auto': use self.dtype
-                Or :kind: can be any interpolation type supported by scipy.interpolate.interp1d
+                Or :kind: can be any interpolation type supported 
+                by scipy.interpolate.interp1d
             :negative_values_allowed: False, optional
                 If False: negative values are clipped to zero
         
         Returns:
-            :returns: numpy.ndarray of interpolated spectral data.
-                (.shape = (number of spectra + 1, number of wavelength in wl_new))
+            :returns: ndarray of interpolated spectral data.
+               (.shape = (number of spectra+1, number of wavelength in wl_new))
         """
         if (kind == 'auto') & (self.dtype is not None):
             kind = self.dtype
@@ -277,36 +289,47 @@ class SPD:
 
     def to_xyz(self,  relative = True, rfl = None, cieobs = _CIEOBS, out = None):
         """
-        Calculates xyz tristimulus values from spectral data and return as instance of XYZ.
+        Calculates xyz tristimulus values from spectral data 
+        and return as instance of XYZ.
            
         Args: 
             :relative: True or False, optional
-                Calculate relative XYZ (Yw = 100) or absolute XYZ (Y = Luminance)
-            :rfl: numpy.ndarray with spectral reflectance functions.
-                Will be interpolated if wavelengths do not match those of :data:
+                Calculate relative XYZ (Yw = 100) 
+                or absolute XYZ (Y = Luminance)
+            :rfl: ndarray with spectral reflectance functions.
+                Will be interpolated if wavelengths don't match those of :data:
             :cieobs: luxpy._CIEOBS, optional
-                Determines the color matching functions to be used in the calculation of XYZ.
+                Determines the color matching functions to be used in the 
+                calculation of XYZ.
             :out: None or 1 or 2, optional
                 Determines number and shape of output. (see :returns:)
         
         Returns:
-            :returns: luxpy.XYZ instance with numpy.ndarray .value field:
+            :returns: luxpy.XYZ instance with ndarray .value field:
                 If rfl is None:
-                    If out is None: numpy.ndarray of xyz values (.shape = (data.shape[0],3))
-                    If out == 1: numpy.ndarray of xyz values (.shape = (data.shape[0],3))
-                    If out == 2: (numpy.ndarray of xyz values, numpy.ndarray of xyzw values)
-                        Note that xyz == xyzw, with (.shape = (data.shape[0],3))
+                    If out is None: ndarray of xyz values 
+                                    (.shape = (data.shape[0],3))
+                    If out == 1: ndarray of xyz values 
+                                    (.shape = (data.shape[0],3))
+                    If out == 2: (ndarray of xyz , ndarray of xyzw) values
+                        Note that xyz == xyzw, with (.shape=(data.shape[0],3))
                 If rfl is not None:
-                    If out is None: numpy.ndarray of xyz values (.shape = (rfl.shape[0],data.shape[0],3))
-                    If out == 1: numpy.ndarray of xyz values (.shape = (rfl.shape[0]+1,data.shape[0],3))
-                        The xyzw values of the light source spd are the first set of values of the first dimension. 
-                        The following values along this dimension are the sample (rfl) xyz values.
-                    If out == 2: (numpy.ndarray of xyz values, numpy.ndarray of xyzw values)
+                    If out is None: ndarray of xyz values 
+                                    (.shape = (rfl.shape[0],data.shape[0],3))
+                    If out == 1: ndarray of xyz values 
+                                (.shape = (rfl.shape[0]+1,data.shape[0],3))
+                        The xyzw values of the light source spd are the first 
+                        set of values of the first dimension. 
+                        The following values along this dimension are the 
+                        sample (rfl) xyz values.
+                    If out == 2: (ndarray of xyz, ndarray of xyzw) values
                         with xyz.shape = (rfl.shape[0],data.shape[0],3)
                         and with xyzw.shape = (data.shape[0],3)
                  
         References:
-            ..[CIE15:2004](http://www.cie.co.at/index.php/index.php?i_ca_id=304)
+            ..[] CIE15:2004, 
+                “Colorimetry,” CIE, Vienna, Austria, 2004.
+                (http://www.cie.co.at/index.php/index.php?i_ca_id=304)
         """
         if (out == 2):
             xyz, xyzw = spd_to_xyz(self.get_(),  relative = relative, rfl = rfl, cieobs = cieobs, out = out)

@@ -36,22 +36,27 @@ __all__ = ['spd_to_ciera', 'spd_to_cierf',
 #------------------------------------------------------------------------------
 def spd_to_ciera(SPD, out = 'Rf', wl = None):
     """
-    Wrapper function the 'ciera' color rendition (fidelity) metric (CIE 13.3-1995). 
+    Wrapper function the 'ciera' color rendition (fidelity) metric 
+    (CIE 13.3-1995). 
     
     Args:
-        :SPD: numpy.ndarray with spectral data (can be multiple SPDs, first axis are the wavelengths)
+        :SPD: ndarray with spectral data 
+            (can be multiple SPDs, first axis are the wavelengths)
         :wl: None, optional
-            Wavelengths (or [start, end, spacing]) to interpolate the SPD's in :SPD:. 
+            Wavelengths (or [start, end, spacing]) to interpolate :SPD: to. 
             None: default to no interpolation
         :out:  'Rf' or str, optional
             Specifies requested output (e.g. 'Rf,Rfi,cct,duv') 
     
     Returns:
-        :returns: float or numpy.ndarray with CIE13.3 Ra for :out: 'Rf'
+        :returns: float or ndarray with CIE13.3 Ra for :out: 'Rf'
             Other output is also possible by changing the :out: str value.
     
     References:
-        ..[1] CIE13.3-1995. (1995). Method of Measuring and Specifying Colour Rendering Properties of Light Sources (Vol. CIE13.3-19). Vienna, Austria: CIE.
+        ..[1] CIE13.3-1995. (1995). 
+            Method of Measuring and Specifying Colour Rendering 
+            Properties of Light Sources 
+            (Vol. CIE13.3-19). Vienna, Austria: CIE.
 
     """
     return spd_to_cri(SPD, cri_type = 'ciera', out = out, wl = wl)
@@ -59,21 +64,25 @@ def spd_to_ciera(SPD, out = 'Rf', wl = None):
 #------------------------------------------------------------------------------
 def spd_to_cierf(SPD, out = 'Rf', wl = None):
     """
-    Wrapper function the 'cierf' color rendition (fidelity) metric (CIE224-2017). 
+    Wrapper function the 'cierf' color rendition (fidelity) metric 
+    (CIE224-2017). 
     
     Args:
-        :SPD: numpy.ndarray with spectral data (can be multiple SPDs, first axis are the wavelengths)
+        :SPD: ndarray with spectral data (can be multiple SPDs, 
+            first axis are the wavelengths)
         :wl: None, optional
-            Wavelengths (or [start, end, spacing]) to interpolate the SPD's in :SPD:. 
+            Wavelengths (or [start, end, spacing]) to interpolate :SPD: to.
             None: default to no interpolation
         :out:  'Rf' or str, optional
             Specifies requested output (e.g. 'Rf,Rfi,cct,duv') 
     
     Returns:
-        :returns: float or numpy.ndarray with CIE224-2017 Rf for :out: 'Rf'
+        :returns: float or ndarray with CIE224-2017 Rf for :out: 'Rf'
             Other output is also possible by changing the :out: str value.
     References:
-        ..[1] CIE224:2017. (2017). CIE 2017 Colour Fidelity Index for accurate scientific use. Vienna, Austria.
+        ..[1] CIE224:2017. (2017). 
+            CIE 2017 Colour Fidelity Index for accurate scientific use. 
+            Vienna, Austria.
     
     """
     return spd_to_cri(SPD, cri_type = 'cierf', out = out, wl = wl)

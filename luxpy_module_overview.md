@@ -574,31 +574,50 @@ For more info:
 
 ## 6. deltaE/ colordifference.py (.deltaE)
 
-# process_DEi(): 
+### process_DEi(): 
 Process color difference input DEi for output (helper fnc).
 
-# DE_camucs(): 
+### DE_camucs(): 
 Calculate color appearance difference DE using camucs type model.
 
-# DE_2000(): 
+### DE_2000(): 
 Calculate DE2000 color difference.
 
-# DE_cspace():  
+### DE_cspace():  
 Calculate color difference DE in specific color space.
 
 
 ## 7. cri/ colorrendition.py (.cri)
 
+### _CRI_TYPE_DEFAULT: 
+Default cri_type.
 
-### cri._CRI_TYPE_DEFAULT:
-Default cri_type str.
+### _CRI_DEFAULTS: 
+Default parameters for color fidelity and gamut area metrics 
+        
+    (major dict has 9 keys: 
+            sampleset [str/dict], 
+            ref_type [str], 
+            cieobs [str], 
+            avg [fcn handle], 
+            scale [dict], 
+            cspace [dict], 
+            catf [dict], 
+            rg_pars [dict], 
+            cri_specific_pars [dict])
+     
+     Supported cri-types:
+    * 'ciera','ciera-8','ciera-14','cierf',
+    * 'iesrf','iesrf-tm30-15','iesrf-tm30-18',
+    * 'cri2012','cri2012-hl17','cri2012-hl1000','cri2012-real210',
+    * 'mcri',
+    * 'cqs-v7.5','cqs-v9.0'
 
-### cri._CRI_DEFAULTS: 
-Default settings for different color rendition indices: (major dict has 9 keys (04-Jul-2017): 
-* sampleset [str/dict],  ref_type [str], cieobs [str], avg [fcn handle], scale [dict], cspace [dict], catf [dict], rg_pars [dict], cri_specific_pars [dict]
+            
+### process_cri_type_input(): 
+load a cri_type dict but overwrites any keys that have a non-None input in calling function.
 
-Supported cri-types:
-* 'ciera','ciera-8','ciera-14','cierf','iesrf','iesrf-tm30-15','iesrf-tm30-18','cri2012','cri2012-hl17','cri2012-hl1000','cri2012-real210','mcri','cqs-v7.5','cqs-v9.0'
+
 
 ### cri.linear_scale():  
 Linear color rendering index scale from [CIE13.3-1974/1995](http://www.cie.co.at/index.php/index.php?i_ca_id=303):   Ri,a = 100 - c1*DEi,a. (c1 = 4.6)
@@ -609,49 +628,57 @@ Log-based color rendering index scale from [Davis & Ohno (2010)](http://spie.org
 ### cri.psy_scale():
 Psychometric based color rendering index scale from CRI2012 ([Smet et al. 2013, LRT](http://journals.sagepub.com/doi/abs/10.1177/1477153513481375)):  Ri,a = 100 * (2 / (exp(c1*abs(DEi,a)**(c2) + 1))) ** c3
 
-### cri.process_cri_type_input(): 
-Load a cri_type dict but overwrites any keys that have a non-None input in calling function
 
-### cri.gamut_slicer(): 
+
+### gamut_slicer(): 
 Slices the gamut in nhbins slices and provides normalization of test gamut to reference gamut.
 
-### cri.jab_to_rg(): 
-Calculates gamut area index, Rg based on hue-ordered jabt and jabr input (first element must also be last)
+### jab_to_rg(): 
+Calculates gamut area index, Rg.
 
 ### jab_to_rhi(): 
-Calculate hue bin measures: Rfhi (local (hue bin) color fidelity), Rcshi (local chroma shift) and Rhshi (local hue shift).
+Calculate hue bin measures: 
 
-### cri.spd_to_jab_t_r(): 
+     *Rfhi (local (hue bin) color fidelity)
+     *Rcshi (local chroma shift) 
+     *Rhshi (local hue shift)
+
+### spd_to_jab_t_r(): 
 Calculates jab color values for a sample set illuminated with test source and its reference illuminant.
-(inputs are subset of spd_o_cri()) 
                   
-### cri.spd_to_rg(): 
-Calculates the color gamut index of data (= np.array([[wl,spds]]) (data_axis = 0) for a sample set illuminated with test source (data) with respect to some reference illuminant.
-(inputs are subset of spd_o_cri())
-                                          
-### cri.spd_to_DEi(): 
-Calculates color difference (~fidelity) of data (= np.array([[wl,spds]]) (data_axis = 0) between sample set illuminated with test source (data) and some reference illuminant.
-(inputs are subset of spd_o_cri())
-                             
-### cri.optimize_scale_factor():
-Optimize scale_factor of cri-model in cri_type such that average Ra for a set of light sources is the same as that of a target-cri (default: 'ciera').
+### spd_to_rg(): 
+Calculates the color gamut index of spectral data for a sample set illuminated with test source (data) with respect to some reference illuminant.
+
+### spd_to_DEi(): 
+Calculates color difference (~fidelity) of spectral data between sample set illuminated with test source (data) and some reference illuminant.
+
+### optimize_scale_factor(): 
+Optimize scale_factor of cri-model in cri_type such that average Rf for a set of light sources is the same as that of a target-cri (default: 'ciera')
 
 ### spd_to_cri(): 
-Calculates the color rendering fidelity index (CIE Ra, CIE Rf, IES Rf, CRI2012 Rf) of spectral data. 
+Calculates the color rendering fidelity index (CIE Ra, CIE Rf, IES Rf, CRI2012 Rf) of spectral data. Can also output Rg, Rfhi, Rcshi, Rhshi, cct, duv, ...
 
 ### wrapper functions for fidelity type metrics:
-* cri.spd_to_ciera()
+* cri.spd_to_ciera(), spd_to_ciera_133_1995():
     * [CIE13.3-1995, “Method of Measuring and Specifying Colour Rendering Properties of Light Sources,” CIE, Vienna, Austria, 1995.,ISBN 978 3 900734 57 2](http://www.cie.co.at/index.php/index.php?i_ca_id=303)
-* cri.spd_to_cierf()
+* cri.spd_to_cierf(): [latest version]
+* spd_to_cierf_224_2017():
     * [cie224:2017, CIE 2017 Colour Fidelity Index for accurate scientific use. (2017), ISBN 978-3-902842-61-9](http://www.cie.co.at/index.php?i_ca_id=1027)
-* cri.spd_to_iesrf()
+* cri.spd_to_iesrf() [latest version]
+* spd_to_iesrf_tm30_15():[TM30-15, 2015 version]
+    * [IES TM30 (99, 4880 sepctrally uniform samples)](https://www.ies.org/store/technical-memoranda/ies-method-for-evaluating-light-source-color-rendition/)
     * [A. David, P. T. Fini, K. W. Houser, Y. Ohno, M. P. Royer, K. A. G. Smet, M. Wei, and L. Whitehead, “Development of the IES method for evaluating the color rendition of light sources,” Opt. Express, vol. 23, no. 12, pp. 15888–15906, 2015.](https://www.osapublishing.org/oe/abstract.cfm?uri=oe-23-12-15888)
     * [K. A. G. Smet, A. David, and L. Whitehead, “Why color space uniformity and sample set spectral uniformity are essential for color rendering measures,” LEUKOS, vol. 12, no. 1–2, pp. 39–50, 2016](http://www.tandfonline.com/doi/abs/10.1080/15502724.2015.1091356)
+* spd_to_iesrf_tm30_18():[TM30-18, 2018 version]
 * cri.spd_to_cri2012(), cri.spd_to_cri2012_hl17(), cri.spd_to_cri2012_hl1000(), cri.spd_to_cri2012_real210
     * [K. Smet, J. Schanda, L. Whitehead, and R. Luo, “CRI2012: A proposal for updating the CIE colour rendering index,” Light. Res. Technol., vol. 45, pp. 689–709, 2013](http://journals.sagepub.com/doi/abs/10.1177/1477153513481375)
 
 ### wrapper functions for gamut area type metrics:
- * cri.spd_to_iesrg()
+* cri.spd_to_iesrg() [latest version]
+* spd_to_iesrg_tm30(): [latest version]
+* spd_to_iesrg_tm30_15(): [TM30-15, 2015 version]
+    * [IES TM30 (99, 4880 sepctrally uniform samples)](https://www.ies.org/store/technical-memoranda/ies-method-for-evaluating-light-source-color-rendition/)
+* spd_to_iesrg_tm30_18(): [TM30-18, 2018 version]
 
 ### cri.spd_to_mcri(): 
 Calculates the memory color rendition index, Rm:  
@@ -669,7 +696,7 @@ Makes basis plot for Color Vector Graphic (CVG).
 Plots Color Vector Graphic (see IES TM30).
 
 
-### colorrendition_VF_PX_models module
+### colorrendition_VF_PX_models module (.cri.VFPX)
 * VF: Implements a Vector Field model to calculate the base color shift generated by a light source.
 and to calculate a Metameric uncertainty index
 * PX: Implements a Color Space Pixelation method to assess light source induced color shifts across color space.
@@ -679,7 +706,7 @@ For more info:
     ?luxpy.cri.VFPX
 
 ### spd_to_ies_tm30_metrics(): 
-Calculates IES TM30 metrics from spectral data
+Calculates IES TM30 metrics from spectral data.
 
 ### plot_cri_graphics(): 
 Plot_cri_graphics(): Plots graphical information on color rendition properties based on spectral data input or dict with pre-calculated measures.
@@ -691,7 +718,7 @@ For more info on .cri module:
     ?luxpy.cri.spd_to_cri()
     etc.
 
-## 7a. raphics/ plotters.py
+## 8. graphics/ plotters.py
 
 ### plot_color_data():
 Plot color data (local helper function)
@@ -719,6 +746,12 @@ For more info:
     ?luxpy.plotters
     ?luxpy.plotDL()
     etc.
+
+
+## 9. classes/ SPD.py and CDATA.py (classes SPD, CDATA, XYZ, LAB)
+
+### class SPD
+Class with the following methods:
 
 
 -------------------------------------------------------------------------------

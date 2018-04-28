@@ -46,15 +46,17 @@ def spd_to_ies_tm30_metrics(SPD, cri_type = None, hbins = 16, start_hue = 0.0, s
         :data: numpy.ndarray with spectral data 
         :cri_type: None, optional
             If None: defaults to cri_type = 'iesrf'.
-            Not none values of :hbins:, :start_hue: and :scalef: overwrite input in cri_type['rg_pars'] 
+            Not none values of :hbins:, :start_hue: and :scalef: overwrite 
+            input in cri_type['rg_pars'] 
         :hbins: None or numpy.ndarray with sorted hue bin centers (°), optional
         :start_hue: None, optional
         :scalef: None, optional
             Scale factor for reference circle.
         :vf_pcolorshift: _VF_PCOLORSHIFT or user defined dict, optional
-            The polynomial models of degree 5 and 6 can be fully specified or summarized 
-            by the model parameters themselved OR by calculating the dCoverC and dH at resp. 5 and 6 hues.
-            :VF_pcolorshift: specifies these hues and chroma level.
+            The polynomial models of degree 5 and 6 can be fully specified or 
+            summarized by the model parameters themselved OR by calculating the
+            dCoverC and dH at resp. 5 and 6 hues. :VF_pcolorshift: specifies 
+            these hues and chroma level.
         :scale_vf_chroma_to_sample_chroma: False, optional
            Scale chroma of reference and test vf fields such that average of 
            binned reference chroma equals that of the binned sample chroma
@@ -64,24 +66,26 @@ def spd_to_ies_tm30_metrics(SPD, cri_type = None, hbins = 16, start_hue = 0.0, s
         :returns: data dict with keys:
      
             :data: dict with color rendering data
-                - key: 'SPD' : numpy.ndarray test SPDs
-                - key: 'bjabt': numpy.ndarray with binned jab data under test SPDs
-                - key: 'bjabr': numpy.ndarray with binned jab data under reference SPDs
-                - key: 'cct' : numpy.ndarray with correlated color temperatures of test SPD
-                - key: 'duv' : numpy.ndarray with distance to blackbody locus of test SPD
-                - key: 'Rf'  : numpy.ndarray with general color fidelity indices
-                - key: 'Rg'  : numpy.ndarray with gamut area indices
-                - key: 'Rfi'  : numpy.ndarray with specific color fidelity indices
-                - key: 'Rfhi'  : numpy.ndarray with local (hue binned) color fidelity indices
-                - key: 'Rcshi'  : numpy.ndarray with local chroma shifts indices
-                - key: 'Rhshi'  : numpy.ndarray with local hue shifts indices
-                - key: 'Rfm' : numpy.ndarray with general metameric uncertainty index Rfm
-                - key: 'Rfmi' : numpy.ndarray with specific metameric uncertainty indices Rfmi
-                - key: 'Rfhi_vf'  : numpy.ndarray with local (hue binned) color fidelity indices 
-                                    obtained from VF model predictions at color space pixel coordinates
-                - key: 'Rcshi_vf'  : numpy.ndarray with local chroma shifts indices (same as above)
-                - key: 'Rhshi_vf'  : numpy.ndarray with local hue shifts indices (same as above)
-
+                - 'SPD'  : ndarray test SPDs
+                - 'bjabt': ndarray with binned jab data under test SPDs
+                - 'bjabr': ndarray with binned jab data under reference SPDs
+                - 'cct'  : ndarray with CCT of test SPD
+                - 'duv'  : ndarray with distance to blackbody locus of test SPD
+                - 'Rf'   : ndarray with general color fidelity indices
+                - 'Rg'   : ndarray with gamut area indices
+                - 'Rfi'  : ndarray with specific color fidelity indices
+                - 'Rfhi' : ndarray with local (hue binned) fidelity indices
+                - 'Rcshi': ndarray with local chroma shifts indices
+                - 'Rhshi': ndarray with local hue shifts indices
+                - 'Rt'  : ndarray with general metameric uncertainty index Rt
+                - 'Rti' : ndarray with specific metameric uncertainty indices Rti
+                - 'Rfhi_vf' : ndarray with local (hue binned) fidelity indices 
+                              obtained from VF model predictions at color space
+                              pixel coordinates
+                - 'Rcshi_vf': ndarray with local chroma shifts indices 
+                              (same as above)
+                - 'Rhshi_vf': ndarray with local hue shifts indices 
+                              (same as above)
     """
     if cri_type is None:
         cri_type = 'iesrf'
@@ -103,8 +107,8 @@ def spd_to_ies_tm30_metrics(SPD, cri_type = None, hbins = 16, start_hue = 0.0, s
     #Calculate Metameric uncertainty and base color shifts:
     dataVF = VF_colorshift_model(SPD, cri_type = cri_type, model_type = vf_model_type, cspace = cri_type['cspace'], sampleset = eval(cri_type['sampleset']), pool = False, pcolorshift = vf_pcolorshift, vfcolor = 0)
     Rf_ = np.array([dataVF[i]['metrics']['Rf'] for i in range(len(dataVF))]).T
-    Rfm = np.array([dataVF[i]['metrics']['Rfm'] for i in range(len(dataVF))]).T
-    Rfmi = np.array([dataVF[i]['metrics']['Rfmi'] for i in range(len(dataVF))][0])
+    Rt = np.array([dataVF[i]['metrics']['Rt'] for i in range(len(dataVF))]).T
+    Rti = np.array([dataVF[i]['metrics']['Rti'] for i in range(len(dataVF))][0])
     
     # Get normalized and sliced sample data for plotting:
     rg_pars = cri_type['rg_pars']
@@ -156,6 +160,6 @@ def spd_to_ies_tm30_metrics(SPD, cri_type = None, hbins = 16, start_hue = 0.0, s
     # Create dict with CRI info:
     data = {'SPD' : SPD, 'cct' : cct, 'duv' : duv, 'bjabt' : bjabt, 'bjabr' : bjabr,\
            'Rf' : Rf, 'Rg' : Rg, 'Rfi': Rfi, 'Rfhi' : Rfhi, 'Rchhi' : Rcshi, 'Rhshi' : Rhshi, \
-           'Rfm' : Rfm, 'Rfmi' : Rfmi,  'Rfhi_vf' : Rfhi_vf, 'Rfcshi_vf' : Rcshi_vf, 'Rfhshi_vf' : Rhshi_vf, \
+           'Rt' : Rt, 'Rti' : Rti,  'Rfhi_vf' : Rfhi_vf, 'Rfcshi_vf' : Rcshi_vf, 'Rfhshi_vf' : Rhshi_vf, \
            'dataVF' : dataVF,'cri_type' : cri_type}
     return data

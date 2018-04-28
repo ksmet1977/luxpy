@@ -40,13 +40,16 @@
 
             
 # --- DE_scalers.py ------------ ----------------------------------------------
-# linear_scale(): Linear color rendering index scale from CIE13.3-1974/1995:  
+# linear_scale(): Linear color rendering index scale 
+                    from CIE13.3-1974/1995:  
                      Rfi,a = 100 - c1*DEi,a. (c1 = 4.6)
 
-# log_scale(): Log-based color rendering index scale from Davis & Ohno (2009):  
+# log_scale(): Log-based color rendering index scale 
+                    from Davis & Ohno (2009):  
                     Rfi,a = 10 * ln(exp((100 - c1*DEi,a)/10) + 1)
 
-# psy_scale(): Psychometric based color rendering index scale from Smet et al. (2013):  
+# psy_scale(): Psychometric based color rendering index scale 
+                    from Smet et al. (2013):  
                     Rfi,a = 100 * (2 / (exp(c1*abs(DEi,a)**(c2) + 1))) ** c3
 
 
@@ -106,10 +109,18 @@
 
 
 # --- mcri.py ----------------------------------------------------------------  
-# spd_to_mcri(): Calculates the memory color rendition index, Rm:  K. A. G. Smet, W. R. Ryckaert, M. R. Pointer, G. Deconinck, and P. Hanselaer, (2012) “A memory colour quality metric for white light sources,” Energy Build., vol. 49, no. C, pp. 216–225.
+# spd_to_mcri(): Calculates the memory color rendition index, Rm: 
+      
+    K.A.G. Smet, W.R. Ryckaert, M.R. Pointer, G. Deconinck, P. Hanselaer,(2012)
+    “A memory colour quality metric for white light sources,” 
+    Energy Build., vol. 49, no. C, pp. 216–225.
 
 # --- cqs.py ------------------------------------------------------------------  
-# spd_to_cqs(): versions 7.5 and 9.0 are supported.  W. Davis and Y. Ohno, “Color quality scale,” (2010), Opt. Eng., vol. 49, no. 3, pp. 33602–33616.   
+# spd_to_cqs(): versions 7.5 and 9.0 are supported. 
+    
+    W. Davis and Y. Ohno, (2010)
+    “Color quality scale,”  
+    Opt. Eng., vol. 49, no. 3, pp. 33602–33616.   
 
 
 #------------------------------------------------------------------------------

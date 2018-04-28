@@ -20,10 +20,12 @@
 ###############################################################################
 # Module for color rendition graphical output, 2
 ###############################################################################
-#
-# plot_cri_graphics(): Plots graphical information on color rendition properties based on spectral data input or dict with pre-calculated measures.
-#
-#
+
+# plot_cri_graphics(): Plots graphical information on color rendition 
+                        properties based on spectral data input or dict with 
+                        pre-calculated measures.
+
+
 
 Created on Tue Apr  3 20:34:09 2018
 
@@ -54,12 +56,12 @@ def plot_cri_graphics(data, cri_type = None, hbins = 16, start_hue = 0.0, scalef
     Plot graphical information on color rendition properties.
     
     Args:
-        :data: numpy.ndarray with spectral data or dict with pre-computed metrics.
+        :data: ndarray with spectral data or dict with pre-computed metrics.
         :cri_type: None, optional
             If None: defaults to cri_type = 'iesrf'.
-            :hbins:, :start_hue: and :scalef: are ignored when cri_type is not None 
+            :hbins:, :start_hue: and :scalef: are ignored if cri_type not None 
             and values are replaced by those in cri_type['rg_pars']
-        :hbins: 16 or numpy.ndarray with sorted hue bin centers (°), optional
+        :hbins: 16 or ndarray with sorted hue bin centers (°), optional
         :start_hue: 0.0, optional
         :scalef: 100, optional
             Scale factor for graphic.
@@ -68,7 +70,8 @@ def plot_cri_graphics(data, cri_type = None, hbins = 16, start_hue = 0.0, scalef
         :bin_labels: None or list[str] or '#', optional
             Plots labels at the bin center hues.
             - None: don't plot.
-            - list[str]: list with str for each bin. (len(:bin_labels:) = :nhbins:)
+            - list[str]: list with str for each bin. 
+                            (len(:bin_labels:) = :nhbins:)
             - '#': plots number.
         :plot_edge_lines: True or False, optional
             Plot grey bin edge lines with '--'.
@@ -88,9 +91,10 @@ def plot_cri_graphics(data, cri_type = None, hbins = 16, start_hue = 0.0, scalef
             Type of polynomial vector field model to use for the calculation of
             base color shift and metameric uncertainty.
         :vf_pcolorshift: _VF_PCOLORSHIFT or user defined dict, optional
-            The polynomial models of degree 5 and 6 can be fully specified or summarized 
-            by the model parameters themselved OR by calculating the dCoverC and dH at resp. 5 and 6 hues.
-            :VF_pcolorshift: specifies these hues and chroma level.
+            The polynomial models of degree 5 and 6 can be fully specified or 
+            summarized by the model parameters themselved OR by calculating the
+            dCoverC and dH at resp. 5 and 6 hues. :VF_pcolorshift: specifies 
+            these hues and chroma level.
         :vf_color: 'k', optional
             For plotting the vector fields.
         :vf_plot_bin_colors: True, optional
@@ -109,34 +113,44 @@ def plot_cri_graphics(data, cri_type = None, hbins = 16, start_hue = 0.0, scalef
             Plot sample shifts.   
             
     Returns:
-        :returns: data, [plt.gcf(),ax_spd, ax_CVG, ax_locC, ax_locH, ax_VF], cmap 
+        :returns: 
+            (data, 
+            [plt.gcf(),ax_spd, ax_CVG, ax_locC, ax_locH, ax_VF], 
+            cmap )
         
             :data: dict with color rendering data
-                - key: 'SPD' : numpy.ndarray test SPDs
-                - key: 'bjabt': numpy.ndarray with binned jab data under test SPDs
-                - key: 'bjabr': numpy.ndarray with binned jab data under reference SPDs
-                - key: 'cct' : numpy.ndarray with correlated color temperatures of test SPD
-                - key: 'duv' : numpy.ndarray with distance to blackbody locus of test SPD
-                - key: 'Rf'  : numpy.ndarray with general color fidelity indices
-                - key: 'Rg'  : numpy.ndarray with gamut area indices
-                - key: 'Rfi'  : numpy.ndarray with specific color fidelity indices
-                - key: 'Rfhi'  : numpy.ndarray with local (hue binned) color fidelity indices
-                - key: 'Rcshi'  : numpy.ndarray with local chroma shifts indices
-                - key: 'Rhshi'  : numpy.ndarray with local hue shifts indices
-                - key: 'Rfm' : numpy.ndarray with general metameric uncertainty index Rfm
-                - key: 'Rfmi' : numpy.ndarray with specific metameric uncertainty indices Rfmi
-                - key: 'Rfhi_vf'  : numpy.ndarray with local (hue binned) color fidelity indices 
-                                    obtained from VF model predictions at color space pixel coordinates
-                - key: 'Rcshi_vf'  : numpy.ndarray with local chroma shifts indices (same as above)
-                - key: 'Rhshi_vf'  : numpy.ndarray with local hue shifts indices (same as above)
+                Keys:
+                - 'SPD'  : ndarray test SPDs
+                - 'bjabt': ndarray with binned jab data under test SPDs
+                - 'bjabr': ndarray with binned jab data under reference SPDs
+                - 'cct'  : ndarray with CCT of test SPD
+                - 'duv'  : ndarray with distance to blackbody locus of test SPD
+                - 'Rf'   : ndarray with general color fidelity indices
+                - 'Rg'   : ndarray with gamut area indices
+                - 'Rfi'  : ndarray with specific color fidelity indices
+                - 'Rfhi' : ndarray with local (hue binned) fidelity indices
+                - 'Rcshi': ndarray with local chroma shifts indices
+                - 'Rhshi': ndarray with local hue shifts indices
+                - 'Rt'  : ndarray with general metameric uncertainty index Rt
+                - 'Rti' : ndarray with specific metameric uncertainty indices Rti
+                - 'Rfhi_vf' : ndarray with local (hue binned) fidelity indices 
+                              obtained from VF model predictions at color space
+                              pixel coordinates
+                - 'Rcshi_vf': ndarray with local chroma shifts indices 
+                              (same as above)
+                - 'Rhshi_vf': ndarray with local hue shifts indices 
+                              (same as above)
+                
             :[...]: list with handles to current figure and 5 axes.
-            :cmap: list with rgb colors for hue bins (for use in other plotting fcns)
+            
+            :cmap: list with rgb colors for hue bins 
+                    (for use in other plotting fcns)
         
     """
     if not isinstance(data,dict):
         data = spd_to_ies_tm30_metrics(data, cri_type = cri_type, hbins = hbins, start_hue = start_hue, scalef = scalef, vf_model_type = vf_model_type, vf_pcolorshift = vf_pcolorshift, scale_vf_chroma_to_sample_chroma = scale_vf_chroma_to_sample_chroma)
 
-    Rcshi, Rf, Rfchhi_vf, Rfhi, Rfhi_vf, Rfhshi_vf, Rfi, Rfm, Rfmi, Rg, Rhshi, SPD, bjabr, bjabt, cct, cri_type, dataVF, duv = [data[x] for x in sorted(data.keys())]
+    Rcshi, Rf, Rfchhi_vf, Rfhi, Rfhi_vf, Rfhshi_vf, Rfi, Rt, Rti, Rg, Rhshi, SPD, bjabr, bjabt, cct, cri_type, dataVF, duv = [data[x] for x in sorted(data.keys())]
     hbins = cri_type['rg_pars']['nhbins']
     start_hue = cri_type['rg_pars']['start_hue']
     scalef = cri_type['rg_pars']['normalized_chroma_ref']
@@ -174,7 +188,7 @@ def plot_cri_graphics(data, cri_type = None, hbins = 16, start_hue = 0.0, scalef
         ax_spd.text(730,0.8,'Duv = {:1.4f}'.format(duv[i][0]),fontsize = 9, horizontalalignment='left',verticalalignment='center',rotation = 0, color = np.array([1,1,1])*0.3)
         ax_spd.text(730,0.7,'IES Rf = {:1.0f}'.format(Rf[:,i][0]),fontsize = 9, horizontalalignment='left',verticalalignment='center',rotation = 0, color = np.array([1,1,1])*0.3)
         ax_spd.text(730,0.6,'IES Rg = {:1.0f}'.format(Rg[:,i][0]),fontsize = 9, horizontalalignment='left',verticalalignment='center',rotation = 0, color = np.array([1,1,1])*0.3)
-        ax_spd.text(730,0.5,'Rmu = {:1.0f}'.format(Rfm[:,i][0]),fontsize = 9, horizontalalignment='left',verticalalignment='center',rotation = 0, color = np.array([1,1,1])*0.3)
+        ax_spd.text(730,0.5,'Rmu = {:1.0f}'.format(Rt[:,i][0]),fontsize = 9, horizontalalignment='left',verticalalignment='center',rotation = 0, color = np.array([1,1,1])*0.3)
         ax_spd.set_xlabel('Wavelength (nm)', fontsize = 9)
         ax_spd.set_ylabel('Rel. spectral intensity', fontsize = 9)
         ax_spd.set_xlim([360,830])

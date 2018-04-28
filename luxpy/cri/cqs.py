@@ -55,16 +55,17 @@ def  spd_to_cqs(SPD, version = 'v9.0', out = 'Qa',wl = None):
     Calculates CQS Qa (Qai) or Qf (Qfi) or Qp (Qpi) for versions v9.0 or v7.5.
     
     Args:
-        :SPD: numpy.ndarray with spectral data (can be multiple SPDs, first axis are the wavelengths)
+        :SPD: ndarray with spectral data (can be multiple SPDs, 
+                first axis are the wavelengths)
         :version: 'v9.0' or 'v7.5', optional
         :out:  'Qa' or str, optional
             Specifies requested output (e.g. 'Qa,Qai,Qf,cct,duv') 
         :wl: None, optional
-            Wavelengths (or [start, end, spacing]) to interpolate the SPD's in :data:. 
+            Wavelengths (or [start, end, spacing]) to interpolate the SPDs to. 
             None: default to no interpolation   
     
     Returns:
-        :returns: float or numpy.ndarray with CQS Qa for :out: 'Qa'
+        :returns: float or ndarray with CQS Qa for :out: 'Qa'
             Other output is also possible by changing the :out: str value. 
     
     References:
