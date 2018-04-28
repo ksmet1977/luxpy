@@ -16,42 +16,52 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #########################################################################
 """
-luxpy module loading sets of XYZ color matching functions (and Vlambda curves = Ybar)
+luxpy module loading sets of XYZ color matching functions (CMF) and Vlambda 
+    curves (= Ybar).
 
  * luxpy._CMF: Dict with keys 'types' and x
                  x are dicts with keys 'bar', 'K', 'M'
  
-     + luxpy._CMF['types'] = ['1931_2','1964_10','2006_2','2006_10','1931_2_judd1951','1931_2_juddvos1978','1951_20_scotopic']
-     + luxpy._CMF[x]['bar'] = numpy array with CMFs for type x between 360 to 830 nm
-                              has shape: (4,471)
+     + luxpy._CMF['types'] = ['1931_2','1964_10','2006_2','2006_10',
+                             '1931_2_judd1951','1931_2_juddvos1978',
+                             '1951_20_scotopic']
+     + luxpy._CMF[x]['bar'] = numpy array with CMFs for type x 
+                             between 360 nm and 830 nm (has shape: (4,471))
      + luxpy._CMF[x]['K'] = Constant converting Watt to lumen for CMF type x.
      + luxpy._CMF[x]['M'] = XYZ to LMS conversion matrix for CMF type x.
                             Matrix is numpy arrays with shape: (3,3)
                             
      Notes:
-        1. All functions have been expanded (when necessary) using zeros 
-            to a full 360-830 range. This way those wavelengths do not contribute 
-            in the calculation, AND are not extrapolated using the closest known
-            value as per CIE recommendation.
+        1. All functions have been expanded (when necessary) using zeros to a 
+            full 360-830 range. This way those wavelengths do not contribute 
+            in the calculation, AND are not extrapolated using the closest 
+            known value, as per CIE recommendation.
 
-        2. There are no XYZ to LMS conversion matrices defined for 
-            the 1964 10°, 1931 2° Judd corrected (1951) and 1931 2° Judd-Vos corrected (1978) cmf sets, 
-            The Hunt-Pointer-Estevez conversion matrix of the 1931 2° is therefore
-            used as an approximation!
+        2. There are no XYZ to LMS conversion matrices defined for the 
+            1964 10°, 1931 2° Judd corrected (1951) 
+            and 1931 2° Judd-Vos corrected (1978) cmf sets.
+            The Hunt-Pointer-Estevez conversion matrix of the 1931 2° is 
+            therefore used as an approximation!
             
-        3. The K lm to Watt conversion factors for the Judd and Judd-Vos cmf sets
-            have been set to 683.002 lm/W (same as for standard 1931 2°)
+        3. The K lm to Watt conversion factors for the Judd and Judd-Vos cmf 
+            sets have been set to 683.002 lm/W (same as for standard 1931 2°).
             
-        4. The 1951 scoptopic V' function has been replicated in the 3 xbar, ybar, zbar columns 
-            to obtain a data format similar to the photopic color matching functions. 
-            This way V' can be called in exactly the same way as other V functions 
-            can be called from the X,Y,Z cmf sets. 
-            The K value has been set to 1700.06 lm/W and the conversion matrix to eye().
+        4. The 1951 scoptopic V' function has been replicated in the 3 
+            xbar, ybar, zbar columns to obtain a data format similar to the 
+            photopic color matching functions. 
+            This way V' can be called in exactly the same way as other V 
+            functions can be called from the X,Y,Z cmf sets. 
+            The K value has been set to 1700.06 lm/W and the conversion matrix 
+            to np.eye().
 
     
      References:
-         1. CIE15-2004 (2004). Colorimetry (Vienna, Austria: CIE).
-         2. CIE, and CIE (2006). Fundamental Chromaticity Diagram with Physiological Axes - Part I (Vienna: CIE).
+         1. CIE15-2004 (2004). 
+             Colorimetry 
+             (Vienna, Austria: CIE).
+         2. CIE, and CIE (2006). 
+             Fundamental Chromaticity Diagram with Physiological Axes - Part I 
+             (Vienna: CIE).
                         
                             
 Created on Sat Jun 17 10:43:24 2017
