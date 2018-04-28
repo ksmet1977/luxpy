@@ -79,12 +79,13 @@
  
 -------------------------------------------------------------------------------
 ## \__init__.py
- Loads above modules and sets some default global (specified with '_') variables/constants:
- * _PKG_PATH (absolute path to luxpy package)
- * _SEP (operating system operator)
- * _EPS = 7./3 - 4./3 -1 (machine epsilon)
- * _CIEOBS = '1931_2' (default CIE observer color matching function)
- * _CSPACE = 'Yuv' (default color space / chromaticity diagram)
+     
+     Loads above modules and sets some default global (specified with '_') variables/constants:
+     * _PKG_PATH (absolute path to luxpy package)
+     * _SEP (operating system operator)
+     * _EPS = 7./3 - 4./3 -1 (machine epsilon)
+     * _CIEOBS = '1931_2' (default CIE observer color matching function)
+     * _CSPACE = 'Yuv' (default color space / chromaticity diagram)
  
 More info:
 
@@ -129,7 +130,6 @@ More info:
             functions can be called from the X,Y,Z cmf sets. 
             The K value has been set to 1700.06 lm/W and the conversion matrix 
             to np.eye().
-
     
      References:
          1. CIE15-2004 (2004). 
