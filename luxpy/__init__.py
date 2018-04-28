@@ -47,7 +47,6 @@ Loads the following luxpy sub-packages, modules and classes:
             spectral.py
             spectral_databases.py
             individual_observer_cmf_model.py (imports into indvcmf namespace)
-            spdbuilder.py (imports into spdbuild namespace)
             
     2.  ctf/ 
             colortransforms.py (imported directly into luxpy namespace)
@@ -92,6 +91,12 @@ Loads the following luxpy sub-packages, modules and classes:
     9. classes/ 
             SPD (imported directly into luxpy namespace)
             CDATA, XYZ, LAB (imported directly into luxpy namespace)
+            
+    10. ciephotbio/
+            cie_tn003_2015.py (imported into luxpy namespace as .ciephotbio)
+            
+    11. spdbuild/
+            spd_builder.py (imported into luxpy namespace as .spdbuild)
 
 #------------------------------------------------------------------------------ 
 Loads the following global default constants:
