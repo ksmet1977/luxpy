@@ -42,13 +42,14 @@
                         fluxes to obtain target chromaticity and fluxes are 
                         then back-calculated.                                   
                         
-# get_default_optim_dict(): Setup dict with optimization parameters.
+# get_spd_pars_optim_dict(): Setup dict with optimization parameters.
                         
-# initialize_spd_constructor_pars(): Initialize spd_constructor_pars 
-                                    (for spd_constructor) based on type of 
-                                    component_data.
-                        
-# vec_to_dict(): Convert dict to vec and vice versa.
+# initialize_spd_model_pars(): Initialize spd_model_pars (for spd_constructor)
+                                based on type of component_data.
+
+# initialize_spd_optim_pars(): Initialize spd_optim_pars (x0, lb, ub for use
+                                with math.minimizebnd) based on type 
+                                of component_data.
                 
 # spd_optimizer(): Generate a spectrum with specified white point and optimized
                     for certain objective functions from a set of component 
