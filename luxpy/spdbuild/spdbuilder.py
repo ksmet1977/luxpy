@@ -1679,12 +1679,12 @@ if __name__ == '__main__':
     obj_tar_vals = [90,110]
     obj_fcn_weights = [1,1]
     decimals = [5,5]
-    N_components = None #if not None, spd model parameters (peakwl, fwhm, ...) are optimized
+    N_components = 5 #if not None, spd model parameters (peakwl, fwhm, ...) are optimized
     S3, _ = spd_optimizer(target, tar_type = tar_type, cspace_bwtf = {'cieobs' : cieobs, 'mode' : 'search'},\
-                          optimizer_type = '3mixer', N_components = N_components,\
+                          optimizer_type = '2mixer', N_components = N_components,\
                           peakwl = peakwl, fwhm = fwhm, obj_fcn = obj_fcn, obj_tar_vals = obj_tar_vals,\
                           obj_fcn_weights = obj_fcn_weights, decimals = decimals,\
-                          verbosity = 1)
+                          use_piecewise_fcn=False, verbosity = 1)
     
     # Check output agrees with target:
     xyz = spd_to_xyz(S3, relative = False, cieobs = cieobs)
