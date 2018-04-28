@@ -1,16 +1,19 @@
 # -*- coding: utf-8 -*-
 """
 ###############################################################################
-# Module for building SPDs
+# Module for building and optimizing SPDs.
 ###############################################################################
 
 # gaussian_spd(): Generate Gaussian spectrum.
 
-# mono_led_spd(): Generate monochromatic LED spectrum based on Ohno (Opt. Eng. 2005).
+# mono_led_spd(): Generate monochromatic LED spectrum based on Ohno 
+                    (Opt. Eng. 2005).
 
-# phosphor_led_spd(): Generate phosphor LED spectrum with up to 2 phosphors based on Smet (Opt. Expr. 2011).
+# phosphor_led_spd(): Generate phosphor LED spectrum with up to 2 phosphors 
+                      based on Smet (Opt. Expr. 2011).
 
-# spd_builder(): Build spectrum based on Gaussians, monochromatic and/or phophor LED spectra.
+# spd_builder(): Build spectrum based on Gaussians, monochromatic 
+                 and/or phophor LED spectra.
 
 # color3mixer(): Calculate fluxes required to obtain a target chromaticity 
                     when (additively) mixing 3 light sources.
@@ -18,31 +21,38 @@
 # colormixer(): Calculate fluxes required to obtain a target chromaticity 
                     when (additively) mixing N light sources.
 
-# spd_builder(): Build spectrum based on Gaussians, monochromatic and/or phophor LED-type spectra.
+# spd_builder(): Build spectrum based on Gaussians, monochromatic 
+                 and/or phophor LED-type spectra.
                    
 # get_w_summed_spd(): Calculate weighted sum of spds.
  
 # fitnessfcn(): Fitness function that calculates closeness of solution x to 
                 target values for specified objective functions.
          
-# spd_constructor_2(): Construct spd from spectral model parameters using pairs of intermediate sources.
+# spd_constructor_2(): Construct spd from spectral model parameters 
+                        using pairs of intermediate sources.
                 
-# spd_constructor_3(): Construct spd from spectral model parameters using trio's of intermediate sources.
+# spd_constructor_3(): Construct spd from spectral model parameters 
+                        using trio's of intermediate sources.
      
-# spd_optimizer_2_3(): Optimizes the weights (fluxes) of a set of component spectra by combining 
-                        pairs (2) or trio's (3) of components to intermediate sources until only 3
-                        remain. Color3mixer can then be called to calculate required fluxes to
-                        obtain target chromaticity and fluxes are then back-calculated.                                   
+# spd_optimizer_2_3(): Optimizes the weights (fluxes) of a set of component 
+                        spectra by combining pairs (2) or trio's (3) of 
+                        components to intermediate sources until only 3 remain.
+                        Color3mixer can then be called to calculate required 
+                        fluxes to obtain target chromaticity and fluxes are 
+                        then back-calculated.                                   
                         
-# default_optim_dict(): Setup dict with optimization parameters.
+# get_default_optim_dict(): Setup dict with optimization parameters.
                         
-# initialize_component_pars(): Initialize component_pars (used by spd_constructor) based on type of component_data.
+# initialize_spd_constructor_pars(): Initialize spd_constructor_pars 
+                                    (for spd_constructor) based on type of 
+                                    component_data.
                         
 # vec_to_dict(): Convert dict to vec and vice versa.
- 
                 
-# spd_optimizer(): Generate a spectrum with specified white point and optimized for certain objective functions 
-                    from a set of component spectra or component spectrum model parameters.
+# spd_optimizer(): Generate a spectrum with specified white point and optimized
+                    for certain objective functions from a set of component 
+                    spectra or component spectrum model parameters.
                     
 #------------------------------------------------------------------------------
 Created on Wed Apr 25 09:07:04 2018
@@ -50,13 +60,17 @@ Created on Wed Apr 25 09:07:04 2018
 @author: kevin.smet
 """
 from luxpy import (np, plt, warnings, minimize, math, _WL3, _CIEOBS,  np2d, 
-                   getwlr, SPD, plotSL, spd_to_xyz, xyz_to_Yxy, Yxy_to_xyz,
-                   colortf, xyz_to_cct)
+                   vec_to_dict, getwlr, SPD, plotSL, 
+                   spd_to_xyz, xyz_to_Yxy, Yxy_to_xyz, colortf, xyz_to_cct)
 from luxpy.cri import spd_to_iesrf, spd_to_iesrg
 import itertools
 
 #np.set_printoptions(formatter={'float': lambda x: "{0:0.2e}".format(x)})
 
+__all__ = ['gaussian_spd','mono_led_spd','phosphor_led_spd','spd_builder',
+         'get_w_summed_spd','fitnessfcn','spd_constructor_2',
+         'spd_constructor_3','spd_optimizer_2_3','get_default_optim_dict',
+         'initialize_spd_constructor_pars','vec_to_dict','spd_optimizer']
 
 #------------------------------------------------------------------------------
 def gaussian_spd(peakwl = 530, fwhm = 20, wl = _WL3, with_wl = True):
@@ -99,13 +113,15 @@ def mono_led_spd(peakwl = 530, fwhm = 20, wl = _WL3, with_wl = True, strength_sh
         :with_wl: True, optional
             True outputs a numpy.ndarray with first row wavelengths.
         :strength_shoulder: 2, optional
-            Determines the strength of the spectrum shoulders of the monochromatic led.
+            Determines the strength of the spectrum shoulders of the mono led.
     
     Returns:
         :returns: numpy.ndarray with spectra.   
     
     Reference:
-        Ohno Y (2005). Spectral design considerations for white LED color rendering. Opt. Eng. 44, 111302.
+        1. Ohno Y (2005). 
+            Spectral design considerations for white LED color rendering. 
+            Opt. Eng. 44, 111302.
     """
     g = gaussian_spd(peakwl = peakwl, fwhm = fwhm, wl = wl, with_wl = False)
     spd = (g + np.atleast_2d(strength_shoulder)*g**5)/(1+np.atleast_2d(strength_shoulder))
@@ -147,7 +163,7 @@ def phophor_led_spd(peakwl = 450, fwhm = 20, wl = _WL3, with_wl = True, strength
         :with_wl: True, optional
             True outputs a numpy.ndarray with first row wavelengths.
         :strength_shoulder: 2, optional
-            Determines the strength of the spectrum shoulders of the monochromatic led.
+            Determines the strength of the spectrum shoulders of the mono led.
         :strength_ph: 0, optional
             Total contribution of phosphors in mixture.
         :peakwl_ph1: int or float or list or numpy.ndarray, optional
@@ -173,11 +189,14 @@ def phophor_led_spd(peakwl = 450, fwhm = 20, wl = _WL3, with_wl = True, strength
             
     Returns:
         :returns: spd, component_spds
-            numpy.ndarrays with spectra (and component spds used to build the final spectra) 
+            numpy.ndarrays with spectra (and component spds used to build the 
+            final spectra) 
         
         
     References:
-        1. Ohno Y (2005). Spectral design considerations for white LED color rendering. Opt. Eng. 44, 111302.
+        1. Ohno Y (2005). 
+            Spectral design considerations for white LED color rendering. 
+            Opt. Eng. 44, 111302.
 
         2. Smet K, Ryckaert WR, Pointer MR, Deconinck G, and Hanselaer P (2011). 
             Optimal colour quality of LED clusters based on memory colours. 
@@ -279,7 +298,7 @@ def spd_builder(flux = None, component_spds = None, peakwl = 450, fwhm = 20, \
                 target = None, tar_type = 'Yuv', cspace_bwtf = {}, cieobs = _CIEOBS,\
                 use_piecewise_fcn = True, verbosity = 1, out = 'spd',**kwargs):
     """
-    Build spectrum based on Gaussians, monochromatic and/or phophor LED-type spectra.
+    Build spectrum based on Gaussian, monochromatic and/or phophor type spectra.
            
     Args:
         :flux: None, optional
@@ -291,7 +310,7 @@ def spd_builder(flux = None, component_spds = None, peakwl = 450, fwhm = 20, \
             Peak wavelengths of the monochromatic leds.
         :fwhm: int or float or list or numpy.ndarray, optional
             Full-Width-Half-Maximum of gaussians.
-        :pair_strengths: numpy.ndarray with pair_strengths of mono_led component spectra, optional
+        :pair_strengths: ndarray with pair_strengths of mono_led spds, optional
             If None: will be randomly selected, possibly resulting in 
                      unphysical (out-of-gamut) solution.
         :wl: _WL3, optional 
@@ -299,39 +318,40 @@ def spd_builder(flux = None, component_spds = None, peakwl = 450, fwhm = 20, \
         :with_wl: True, optional
             True outputs a numpy.ndarray with first row wavelengths.
         :strength_shoulder: 2, optional
-            Determines the strength of the spectrum shoulders of the monochromatic leds.
+            Determines the strength of the spectrum shoulders of the mono leds.
         :strength_ph: 0, optional
             Total contribution of phosphors in mixtures. 
             Phosphor type mixtures have only 3 components (pump + 2 phosphors).
-            If None or 0: pure monochromatic led components (can have more than 3).
+            If None or 0: pure monochromatic led components (N can be > 3).
         :peakwl_ph1: int or float or list or numpy.ndarray, optional
             Peak wavelength of the first phosphors.
         :fwhm_ph1: int or float or list or numpy.ndarray, optional
-            Full-Width-Half-Maximum of gaussian used to simulate first phosphors.
+            Full-Width-Half-Maximum of Gaussian used to simulate 1st phosphor
         :strength_ph1: 1, optional
             Strength of first phosphor in phosphor mixtures. 
             If :strength_ph2: is None: value should be in the [0,1] range.
         :peakwl_ph2: int or float or list or numpy.ndarray, optional
             Peak wavelength of the second phosphors.
         :fwhm_ph2: int or float or list or numpy.ndarray, optional
-            Full-Width-Half-Maximum of gaussian used to simulate second phosphors.
+            Full-Width-Half-Maximum of Gaussian used to simulate 2nd phosphor
         :strength_ph2: None, optional
             Strength of second phosphor in phosphor mixtures. 
             If None: strength is calculated as (1-:strength_ph1:)
         
         :target: None, optional
             Numpy.ndarray with Yxy chromaticity of target.
-            If None: don't override phosphor strengths, else calculate strength to obtain :target:
-                using color3mixer().
-            If not None AND strength_ph is None or 0: components are monochromatic and colormixer
-                is used to optimize fluxes to obtain target chromaticity (colormixer can take more
-                than 3 components)
+            If None: don't override phosphor strengths, else calculate strength
+                    to obtain :target: using color3mixer().
+            If not None AND strength_ph is None or 0: components are 
+                monochromatic and colormixer is used to optimize fluxes to 
+                obtain target chromaticity (N can be > 3 components)
         :tar_type:  'Yxy' or str, optional
             Specifies the input type in :target: (e.g. 'Yxy' or 'cct')
         :cieobs: _CIEOBS, optional
             CIE CMF set used to calculate chromaticity values.
         :cspace_bwtf: {}, optional
-            Backward (..._to_xyz) transform parameters (see colortf()) to go from :tar_type: to 'Yxy'.
+            Backward (..._to_xyz) transform parameters 
+            (see colortf()) to go from :tar_type: to 'Yxy')
 
         :verbosity: 0, optional
             If > 0: plots spectrum components (mono_led, ph1, ph2, ...)
@@ -346,7 +366,9 @@ def spd_builder(flux = None, component_spds = None, peakwl = 450, fwhm = 20, \
             (blue pump, ph1 and ph2) spanning a sufficiently large gamut. 
         
     Reference:
-        1. Ohno Y (2005). Spectral design considerations for white LED color rendering. Opt. Eng. 44, 111302.
+        1. Ohno Y (2005). 
+            Spectral design considerations for white LED color rendering. 
+            Opt. Eng. 44, 111302.
 
         2. Smet K, Ryckaert WR, Pointer MR, Deconinck G, and Hanselaer P (2011). 
             Optimal colour quality of LED clusters based on memory colours. 
@@ -486,7 +508,7 @@ def color3mixer(Yxyt,Yxy1,Yxy2,Yxy3):
         :M: numpy.ndarray with fluxes.
         
     Note:
-        Yxyt, Yxy1, ... can contain multiple rows, each refering to single mixture.
+        Yxyt, Yxy1, ... can contain multiple rows, referring to single mixture.
     """
     Y1 = Yxy1[...,0]
     x1 = Yxy1[...,1]
@@ -521,7 +543,7 @@ def colormixer(Yxyt = None, Yxyi = None, n = 4, pair_strengths = None, source_or
     Args:
         :Yxyt: numpy.ndarray with target Yxy chromaticities.
             Defaults to equi-energy white.
-        :Yxyi: numpy.ndarray with Yxy chromaticities of light sources i = 1 to n.
+        :Yxyi: ndarray with Yxy chromaticities of light sources i = 1 to n.
         :n: 4 or int, optional
             Number of source components to randomly generate when Yxyi is None.
         :pair_strengths: numpy.ndarray with light source pair strengths.  
@@ -533,8 +555,8 @@ def colormixer(Yxyt = None, Yxyi = None, n = 4, pair_strengths = None, source_or
     Note:
         Algorithm:
             1. Loop over all source components and create intermediate sources
-                from all (even,odd)-pairs using the relative strengths of the pair
-                (specified in pair_strengths). 
+                from all (even,odd)-pairs using the relative strengths 
+                of the pair (specified in pair_strengths). 
             2. Collect any remaining sources.
             3. Combine with new intermediate source components
             4. Repeat 1-3 until there are only 3 source components left. 
@@ -703,17 +725,23 @@ def fitnessfcn(x, spd_constructor, spd_constructor_pars = None, F_rss = True, de
     
     Args:
         :x: numpy.ndarray with parameter values
-        :spd_constructor: function handle to a function that constructs the spd from parameter values in :x:.
+        :spd_constructor: function handle to a function that constructs the spd
+            from parameter values in :x:.
         :spd_constructor_pars: None, optional,
             Parameters required by :spd_constructor:
         :F_rss: True, optional
-             Take Root-Sum-of-Squares of 'closeness' values between target and objective function values.
+             Take Root-Sum-of-Squares of 'closeness' values between target and 
+             objective function values.
         :decimals: 3, optional
             Rounding decimals of objective function values.
-        :obj_fcn: [None] or list of function handles to objective functions, optional
-        :obj_fcn_weights: [1] or list of weigths for each objective function, optional.
-        :obj_fcn_pars: [None] or list of parameter dicts for each objective functions, optional
-        :obj_tar_vals: [0] or list of target values for each objective functions, optional
+        :obj_fcn: [None] or list, optional
+            Function handles to objective function.
+        :obj_fcn_weights: [1] or list, optional.
+            Weigths for each obj. fcn
+        :obj_fcn_pars: [None] or list, optional
+            Parameter dicts for each obj. fcn.
+        :obj_tar_vals: [0] or list, optional
+            Target values for each objective function.
         :verbosity: 0, optional
             If > 0: print intermediate results.
         :out: 'F', optional
@@ -803,23 +831,25 @@ def fitnessfcn(x, spd_constructor, spd_constructor_pars = None, F_rss = True, de
 
 def spd_constructor_2(x, constructor_pars = {}, **kwargs):
     """
-    Construct spd from spectral model parameters using pairs of intermediate sources.
+    Construct spd from model parameters using pairs of intermediate sources.
     
-    Pairs (odd,even) of components are selected and combined using 'pair_strength'. 
-    This process is continued until only 3 intermediate (combined) sources remain.
-    Color3mixer is then used to calculate the fluxes for the remaining 3 sources, 
-    after which the fluxes of all components are back-calculated.
+    Pairs (odd,even) of components are selected and combined using 
+    'pair_strength'. This process is continued until only 3 intermediate 
+    (combined) sources remain. Color3mixer is then used to calculate the 
+    fluxes for the remaining 3 sources, after which the fluxes of all 
+    components are back-calculated.
     
     Args:
         :x: vector of optimization parameters.
         :constructor_pars: dict with model parameters. 
-        Key 'opt_list' determines which parameters are in :x: and key 'opt_len'
+        Key 'list' determines which parameters are in :x: and key 'len'
         specifies the number of variables representing each parameter.
         
     Returns:
         :returns: spd, M, spds
-            Numpy.ndarrays with spectrum corresponding to x, M the fluxes of the
-            spectral components of spd and spds the spectral components themselves.
+            Numpy.ndarrays with spectrum corresponding to x, M the fluxes of 
+            the spectral components of spd and spds the spectral components 
+            themselves.
     
     """
     cp = constructor_pars.copy()
@@ -827,7 +857,7 @@ def spd_constructor_2(x, constructor_pars = {}, **kwargs):
     # replace / init cp with values from x (parameters to optimize)
     # (opt_list and opt_len refer resp. to the key in cp and the length
     # of that parameter in x)
-    cp, xisize = vec_to_dict(vec_= x, dict_ = cp, xisize = cp['opt_len'], keys = cp['opt_list'])
+    cp, vsize = vec_to_dict(vec_= x, dict_ = cp, vsize = cp['len'], keys = cp['list'])
 
     spd,M,component_spds = spd_builder(peakwl = cp['peakwl'], fwhm = cp['fwhm'],\
                                       pair_strengths = cp['pair_strengths'],\
@@ -853,7 +883,7 @@ def spd_constructor_2(x, constructor_pars = {}, **kwargs):
 
 def spd_constructor_3(x, constructor_pars = {}, **kwargs):
     """
-    Construct spd from spectral model parameters using trio's of intermediate sources.
+    Construct spd from model parameters using trio's of intermediate sources.
     
     
     The triangle/trio method creates for all possible combinations of 3 primary
@@ -865,13 +895,14 @@ def spd_constructor_3(x, constructor_pars = {}, **kwargs):
     Args:
         :x: vector of optimization parameters.
         :constructor_pars: dict with model parameters. 
-        Key 'opt_list' determines which parameters are in :x: and key 'opt_len'
+        Key 'list' determines which parameters are in :x: and key 'len'
         specifies the number of variables representing each parameter.
         
     Returns:
         :returns: spd, M, spds
-            Numpy.ndarrays with spectrum corresponding to x, M the fluxes of the
-            spectral components of spd and spds the spectral components themselves.
+            Numpy.ndarrays with spectrum corresponding to x, M the fluxes of 
+            the spectral components of spd and spds the spectral components 
+            themselves.
     
     """
     cp = constructor_pars.copy()
@@ -879,7 +910,7 @@ def spd_constructor_3(x, constructor_pars = {}, **kwargs):
     # replace / init cp with values from x (parameters to optimize)
     # (opt_list and opt_len refer resp. to the key in cp and the length
     # of that parameter in x)
-    cp, xisize = vec_to_dict(vec_= x, dict_ = cp, xisize = cp['opt_len'], keys = cp['opt_list'])
+    cp, vsize = vec_to_dict(vec_= x, dict_ = cp, vsize = cp['len'], keys = cp['list'])
 
     target = None #only calculate component spectra
     Yxy_target = cp['target']
@@ -933,7 +964,9 @@ def spd_constructor_3(x, constructor_pars = {}, **kwargs):
     return spd,M,spds
 
 #------------------------------------------------------------------------------
-def spd_optimizer_2_3(optimizer_type = '2mixer', component_data = 4, N_components = None, wl = _WL3,\
+def spd_optimizer_2_3(optimizer_type = '2mixer', \
+                    spd_constructor = None, spd_model_pars = None,\
+                    component_data = 4, N_components = None, wl = _WL3,\
                     Yxy_target = np2d([100,1/3,1/3]), cieobs = _CIEOBS,\
                     obj_fcn = [None], obj_fcn_pars = [{}], obj_fcn_weights = [1],\
                     obj_tar_vals = [0], decimals = [5], \
@@ -946,9 +979,21 @@ def spd_optimizer_2_3(optimizer_type = '2mixer', component_data = 4, N_component
     obtain target chromaticity and fluxes are then back-calculated.
          
     Args:
-        :optimizer_type: '2mixer' or '3mixer', optional
-            Specifies whether to optimize spectral model parameters by combining
-            pairs or trio's of comonponents.
+        :optimizer_type: '2mixer' or '3mixer' or 'user', optional
+            Specifies whether to optimize spectral model parameters by 
+            combining pairs or trio's of comonponents.
+        :spd_constructor: None, optional
+            Function handle to user defined spd_constructor function.
+                Input: fcn(x, constructor_pars = {}, **kwargs)
+                Output: spd,M,spds
+                    nd array with:
+                        - spd: spectrum resulting from x
+                        - M: fluxes of all component spds
+                        - spds: component spds (in [N+1,wl] format)
+            (See e.g. spd_constructor_2 or spd_constructor_3)
+        :spd_model_pars: dict with model parameters required by spd_constructor
+            and with optimization parameters required by minimize (x0, lb, ub).                .
+            Only used when :optimizer_type: == 'user'.
         :component_data: 4, optional
             Component spectra data: 
             If int: specifies number of components used in optimization 
@@ -958,29 +1003,37 @@ def spd_optimizer_2_3(optimizer_type = '2mixer', component_data = 4, N_component
                     (keys with None values will be optimized)
             If ndarray: optimize pair_strengths of component spectra.
         :N_components: None, optional
-            Specifies number of components used in optimization. (only used when 
-            :component_data: is dict and user wants to override dict value. Note that
-            shape of parameters arrays must match N_components).
+            Specifies number of components used in optimization. (only used 
+            when :component_data: is dict and user wants to override dict. 
+            Note that shape of parameters arrays must match N_components).
         :wl: _WL3, optional
-            Wavelengths used in optimization when :component_data: is not ndarray with spectral data.
+            Wavelengths used in optimization when :component_data: is not 
+            ndarray with spectral data.
 
         :Yxy_target: np2d([100,1/3,1/3]), optional
             Numpy.ndarray with Yxy chromaticity of target.
         :cieobs: _CIEOBS, optional
-            CIE CMF set used to calculate chromaticity values if not provided in :Yxyi:.
+            CIE CMF set used to calculate chromaticity values if not provided 
+            in :Yxyi:.
         :F_rss: True, optional
-             Take Root-Sum-of-Squares of 'closeness' values between target and objective function values.
+             Take Root-Sum-of-Squares of 'closeness' values between target and 
+             objective function values.
         :decimals: 5, optional
             Rounding decimals of objective function values.
-        :obj_fcn: [None] or list of function handles to objective functions, optional
-        :obj_fcn_weights: [1] or list of weigths for each objective function, optional.
-        :obj_fcn_pars: [None] or list of parameter dicts for each objective functions, optional
-        :obj_tar_vals: [0] or list of target values for each objective functions, optional
+        :obj_fcn: [None] or list, optional
+            Function handles to objective function.
+        :obj_fcn_weights: [1] or list, optional.
+            Weigths for each obj. fcn
+        :obj_fcn_pars: [None] or list, optional
+            Parameter dicts for each obj. fcn.
+        :obj_tar_vals: [0] or list, optional
+            Target values for each objective function.
         :minimize_method: 'nelder-mead', optional
             Optimization method used by minimize function.
         :minimize_opts: None, optional
              Dict with minimization options. 
-             None defaults to: {'xtol': 1e-5, 'disp': True, 'maxiter' : 1000*Nc, 'maxfev' : 1000*Nc,'fatol': 0.01}
+             None defaults to: {'xtol': 1e-5, 'disp': True, 'maxiter': 1000*Nc,
+                                'maxfev' : 1000*Nc,'fatol': 0.01}
         :verbosity: 0, optional
             If > 0: print intermediate results.
             
@@ -988,7 +1041,7 @@ def spd_optimizer_2_3(optimizer_type = '2mixer', component_data = 4, N_component
         :returns: M, spd_opt, obj_vals
             - 'M': numpy.ndarray with fluxes for each component spectrum.
             - 'spd_opt': optimized spectrum.
-            - 'obj_vals': values of the objective functions for the optimized spectrum.
+            - 'obj_vals': values of the obj. fcns for the optimized spectrum.
     """
 
     # Set spd_constructor function:
@@ -998,43 +1051,54 @@ def spd_optimizer_2_3(optimizer_type = '2mixer', component_data = 4, N_component
         spd_constructor = spd_constructor_3
     elif optimizer_type == 'search': # Optimize fluxes and component model parameters (chromaticity is part of obj_fcn list)
         raise Exception("spd_optimizer_2_3(): optimizer_type = 'search' not yet implemented. Use '2mixer' or '3mixer'. ")
-
+    elif optimizer_type == 'user':
+        if spd_constructor is None:
+            raise Exception('spd_to_optimizer_2_3(): No user defined spd_constructor found.')
     
-    # Initialize component_parameters:
-    component_pars = initialize_component_pars(component_data, optimizer_type = optimizer_type, wl = wl)        
+    # Initialize  spd_model_pars and spd_optim_pars:
+    if optimizer_type != 'user':
+        spd_optim_pars, spd_model_pars = initialize_spd_optim_pars(component_data, optimizer_type = optimizer_type, wl = wl)        
+        spd_model_pars = {**spd_model_pars, **spd_optim_pars} # merge two dicts
+    else:
+        if 'x0' not in spd_model_pars:
+            spd_optim_pars['x0'] = None
+        if 'LB' not in spd_model_pars:
+            spd_optim_pars['LB'] = None
+        if 'UB' not in spd_model_pars:
+            spd_optim_pars['UB'] = None
+            
+    # Also store the following args in spd_constructor_pars (needed by spd_constructor):
+    spd_model_pars['target'] = Yxy_target
+    spd_model_pars['tar_type'] = 'Yxy'
+    spd_model_pars['cspace_bwtf'] = {}
+    spd_model_pars['cieobs'] = cieobs
     
-    # Also store the following args in component_pars (needed by spd_constructor):
-    component_pars['target'] = Yxy_target
-    component_pars['tar_type'] = 'Yxy'
-    component_pars['cspace_bwtf'] = {}
-    component_pars['cieobs'] = cieobs
+    # Get starting value, lower and upper bounds:
+    x0 = spd_optim_pars['x0']
+    bounds = (spd_optim_pars['LB'], spd_optim_pars['UB'])
 
     # Setup optimization:
     global optcounter
     optcounter = 1     
-    
-    x0 = component_pars['x0']
-    lb = component_pars['LB']
-    ub = component_pars['UB'] 
-    bounds = (lb,ub)
+
     if minimize_opts is None:
         minimize_opts = {'xtol': 1e-5, 'disp': True, 'maxiter' : 1000*len(x0), 'maxfev' : 1000*len(x0),'fatol': 0.01}
-    input_par = ('F', spd_constructor, component_pars, obj_fcn, obj_fcn_pars, obj_fcn_weights, obj_tar_vals, F_rss, decimals, verbosity)
+    input_par = ('F', spd_constructor, spd_model_pars, obj_fcn, obj_fcn_pars, obj_fcn_weights, obj_tar_vals, F_rss, decimals, verbosity)
       
-    def fit_fcn(x, out, spd_constructor, component_pars,  obj_fcn, obj_fcn_pars, obj_fcn_weights, obj_tar_vals, F_rss, decimals, verbosity):
-        F = fitnessfcn(x, spd_constructor, spd_constructor_pars = component_pars,\
+    # Create positional argument only function for scipy.minimize():
+    def fit_fcn(x, out, spd_constructor, spd_model_pars,  obj_fcn, obj_fcn_pars, obj_fcn_weights, obj_tar_vals, F_rss, decimals, verbosity):
+        F = fitnessfcn(x, spd_constructor, spd_constructor_pars = spd_model_pars,\
                   F_rss = F_rss, decimals = decimals,\
                   obj_fcn = obj_fcn, obj_fcn_pars = obj_fcn_pars, obj_fcn_weights = obj_fcn_weights,\
                   obj_tar_vals = obj_tar_vals, verbosity = verbosity, out = out)
         return F
 
     # Perform optimzation:
-    #res = minimize(fit_fcn, x0, args = input_par, method = minimize_method, options = minimize_opts)
     res = math.minimizebnd(fit_fcn, x0, args = input_par, method = minimize_method, use_bnd = True, bounds = bounds , options = minimize_opts)
     x_final = np.abs(res['x'])
    
     # Calculate optimized SPD and get obj_vals and fluxes:
-    spd_opt, obj_vals, M, component_spds = fit_fcn(x_final, 'spdi,obj_vals,args_out,component_spds', spd_constructor, component_pars, obj_fcn, obj_fcn_pars, obj_fcn_weights, obj_tar_vals, F_rss, decimals, verbosity)
+    spd_opt, obj_vals, M, component_spds = fit_fcn(x_final, 'spdi,obj_vals,args_out,component_spds', spd_constructor, spd_model_pars, obj_fcn, obj_fcn_pars, obj_fcn_weights, obj_tar_vals, F_rss, decimals, verbosity)
     
     res['obj_vals'] = obj_vals
     res['x_final'] = x_final
@@ -1046,8 +1110,9 @@ def spd_optimizer_2_3(optimizer_type = '2mixer', component_data = 4, N_component
         
 
 #------------------------------------------------------------------------------
-def default_optim_dict(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs = _CIEOBS,\
-              optimizer_type = '2mixer', cspace = 'Yuv', cspace_bwtf = {}, cspace_fwtf = {},\
+def get_optim_pars_dict(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs = _CIEOBS,\
+              optimizer_type = '2mixer', spd_constructor = None, spd_model_pars = None,\
+              cspace = 'Yuv', cspace_bwtf = {}, cspace_fwtf = {},\
               component_spds = None, N_components = None,\
               obj_fcn = [None], obj_fcn_pars = [{}], obj_fcn_weights = [1],\
               obj_tar_vals = [0], decimals = [5], \
@@ -1068,9 +1133,11 @@ def default_optim_dict(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs = 
         See  ?spd_optimizer for more info. 
         
     Returns:
-        :opts: dict with keys and values the function keywords and argument values.
+        :opts: dict with keys and values of the function's keywords and values.
     """
     opts = locals()
+    spd_models_pars = opts.pop('spd_model_pars')
+    
     
     # Set number of component sources:
     if component_spds is not None:
@@ -1109,8 +1176,8 @@ def default_optim_dict(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs = 
         fwhm = [min([fwhm_max[i],fwhm[i]]) for i in np.arange(N_components)] #ensure values are within bounds
     
     #store in dict:
-    opts['opt_list'] = []
-    opts['opt_len'] = []
+    opts['list'] = []
+    opts['len'] = []
     opts['peakwl'] = peakwl
     opts['peakwl_min'] = peakwl_min
     opts['peakwl_max'] = peakwl_max
@@ -1134,9 +1201,10 @@ def default_optim_dict(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs = 
     return opts
 
 
-def initialize_component_pars(component_data, N_components = None, optimizer_type = '2mixer', wl = _WL3):
+def initialize_spd_model_pars(component_data, N_components = None, optimizer_type = '2mixer', wl = _WL3):
     """
-    Initialize component_pars (used by spd_constructor) based on type of component_data.
+    Initialize spd_model_pars dict (for spd_constructor) based on type 
+    of component_data.
     
     Args:
         :component_data: None, optional
@@ -1148,166 +1216,190 @@ def initialize_component_pars(component_data, N_components = None, optimizer_typ
                     (keys with None values will be optimized)
             If ndarray: optimize pair_strengths of component spectra.
         :N_components: None, optional
-            Specifies number of components used in optimization. (only used when 
-            :component_data: is dict and user wants to override dict value. Note that
-            shape of parameters arrays must match N_components).
+            Specifies number of components used in optimization. (only used 
+            when :component_data: is dict and user wants to override dict. 
+            Note that shape of parameters arrays must match N_components).
         :optimizer_type: '2mixer', optional
-            Type of spectral optimization routine (other options: '3mixer', 'search')
+            Type of spectral optimization routine.
+            (other options: '3mixer', 'search')
         :wl: _WL3, optional
-            Wavelengths used in optimization when :component_data: is not ndarray with spectral data.
+            Wavelengths used in optimization when :component_data: is not an
+            ndarray with spectral data.
         
     Returns:
-        :component_pars: dict with spectrum model parameters, optimization parameters, ... 
-        
+        :spd_model_pars: dict with spectrum-model parameters
+
     """
     # Initialize parameter dict:
     if isinstance(component_data,int):
         # input is Number of components
         N = component_data
-        component_pars = default_optim_dict(N_components = N)
-        component_pars['N_components'] = N
-        component_pars['component_spds'] = None
+        spd_model_pars = get_optim_pars_dict(N_components = N)
+        spd_model_pars['N_components'] = N
+        spd_model_pars['component_spds'] = None
         
-        component_pars['fluxes'] = np.ones(N)
-        component_pars['peakwl'] = np.linspace(min(component_pars['peakwl_min']),max(component_pars['peakwl_max']),N)
-        component_pars['fwhm'] = (wl[-1]-wl[0])/(N-1)*np.ones(N)
-        if component_pars['fwhm'][0] < min(component_pars['fwhm_min']):
-            component_pars['fwhm'] = min(component_pars['fwhm_min'])*np.ones(N)
+        spd_model_pars['fluxes'] = np.ones(N)
+        spd_model_pars['peakwl'] = np.linspace(min(spd_model_pars['peakwl_min']),max(spd_model_pars['peakwl_max']),N)
+        spd_model_pars['fwhm'] = (wl[-1]-wl[0])/(N-1)*np.ones(N)
+        if spd_model_pars['fwhm'][0] < min(spd_model_pars['fwhm_min']):
+            spd_model_pars['fwhm'] = min(spd_model_pars['fwhm_min'])*np.ones(N)
           
         # Generate list with optimization parameters:    
-        component_pars['opt_list'] = ['peakwl','fwhm']
-        component_pars['opt_len'] = [N, N]
-        
-        # Generate LB, UB, x0 (keys in opt_list):
-        component_pars['LB'] = np.hstack((component_pars['peakwl_min'], component_pars['fwhm_min']))
-        component_pars['UB'] = np.hstack((component_pars['peakwl_max'], component_pars['fwhm_max']))
-        component_pars['x0'] = np.hstack((component_pars['peakwl'], component_pars['fwhm']))
-
-        if optimizer_type == '2mixer':
-            component_pars['opt_list'].append('pair_strengths')
-            component_pars['opt_len'].append(N-3)
-            component_pars['LB'] = np.hstack((component_pars['LB'],np.zeros(N-3)))
-            component_pars['UB'] = np.hstack((component_pars['UB'],np.ones(N-3)))
-            print(component_pars['x0'])
-            print(component_pars['pair_strengths'])
-            print()
-            component_pars['x0'] = np.hstack((component_pars['x0'],component_pars['pair_strengths']))
-
-        elif optimizer_type == '3mixer':
-            component_pars['opt_list'].append('triangle_strengths')
-            component_pars['opt_len'].append(component_pars['triangle_strengths'].shape[0])
-            component_pars['LB'] = np.hstack((component_pars['LB'],np.zeros(component_pars['triangle_strengths'].shape[0])))
-            component_pars['UB'] = np.hstack((component_pars['UB'],np.ones(component_pars['triangle_strengths'].shape[0])))
-            component_pars['x0'] = np.hstack((component_pars['x0'],component_pars['triangle_strengths']))
-        
+        spd_model_pars['list'] = ['peakwl','fwhm']
+        spd_model_pars['len'] = [N, N]
+                    
         # Overwrite with input args:
-        component_pars['wl'] = wl
+        spd_model_pars['wl'] = wl
         
     elif isinstance(component_data,dict):
         # input is dict with component parameters:
-        component_pars = component_data.copy()
+        spd_model_pars = component_data.copy()
         
         if N_components is not None:
             N = N_components
         else:
-            N = component_pars['N_components']
+            N = spd_model_pars['N_components']
         
-        component_pars['N_components'] = N
-        component_pars['component_spds'] = None
-        component_pars['opt_list'] = []
-        component_pars['opt_len'] = []
-        component_pars['LB'] = []
-        component_pars['UB'] = []
-        component_pars['x0'] = []
+        spd_model_pars['N_components'] = N
+        spd_model_pars['component_spds'] = None
+        spd_model_pars['list'] = []
+        spd_model_pars['len'] = []
         
         if component_data['peakwl'] is None:
-            component_pars['opt_list'].append('peakwl')
-            component_pars['opt_len'].append(N)
-            component_pars['LB'].append(component_pars['peakwl_min'])
-            component_pars['UB'].append(component_pars['peakwl_max'])
-            component_pars['x0'].append(list(np.linspace(min(component_pars['peakwl_min']),max(component_pars['peakwl_max']),N)))
-        
+            spd_model_pars['list'].append('peakwl')
+            spd_model_pars['len'].append(N)
+         
         if component_data['fwhm'] is None:
-            component_pars['opt_list'].append('fwhm')    
-            component_pars['opt_len'].append(N)
-            component_pars['LB'].append(component_pars['fwhm_min'])
-            component_pars['UB'].append(component_pars['fwhm_max'])
-            fwhm_ = (wl[-1]-wl[0])/(N-1)*np.ones(N)
-            if fwhm_[0] < min(component_pars['fwhm_min']):
-                fwhm_ = min(component_pars['fwhm_min'])*np.ones(N)
-            component_pars['x0'].append(list(fwhm_))
-        
-        # Generate LB, UB, x0 (keys in opt_list):
-        component_pars['LB'].append(list(np.zeros(N)))
-        component_pars['UB'].append(list(np.ones(N)))
-        
-        if optimizer_type == '2mixer':
-            component_pars['opt_list'].append('pair_strengths')
-            component_pars['opt_len'].append(N-3)
-            component_pars['LB'].append(list(np.zeros(N-3)))
-            component_pars['UB'] .append(list(np.ones(N-3)))
-            component_pars['x0'].append(component_pars['pair_strengths'])
-        elif optimizer_type == '3mixer':
-            component_pars['opt_list'].append('triangle_strengths')
-            component_pars['opt_len'].append(component_pars['triangle_strengths'].shape[0])
-            component_pars['LB'].append(list(np.zeros(component_pars['triangle_strengths'].shape[0])))
-            component_pars['UB'].append(list(np.ones(component_pars['triangle_strengths'].shape[0])))
-            component_pars['x0'].append(component_pars['triangle_strengths'])
+            spd_model_pars['list'].append('fwhm')    
+            spd_model_pars['len'].append(N)
          
         # Overwrite with input args:
-        component_pars['wl'] = wl
+        spd_model_pars['wl'] = wl
  
     
     else:
         # input is ndarray with component spectra
-        component_pars = default_optim_dict(component_spds = component_data)
+        spd_model_pars = get_optim_pars_dict(component_spds = component_data)
         N = component_data.shape[0] - 1
-        component_pars['N_components'] = N_components
-        component_pars['component_spds'] = component_data
-                
-        if optimizer_type == '2mixer':
-            component_pars['opt_list'].append('pair_strengths')
-            component_pars['opt_len'].append(N-3)
-            component_pars['LB'] =  np.zeros(N-3)
-            component_pars['UB'] =  np.ones(N-3)
-            component_pars['x0'] =  component_pars['pair_strengths'].copy()
-        elif optimizer_type =='3mixer':
-            component_pars['opt_list'].append('triangle_strengths')
-            component_pars['opt_len'].append(component_pars['triangle_strengths'].shape[0])
-            component_pars['LB'] =  np.zeros(component_pars['triangle_strengths'].shape[0])
-            component_pars['UB'] =  np.ones(component_pars['triangle_strengths'].shape[0])
-            component_pars['x0'] =  component_pars['triangle_strengths'].copy()
+        spd_model_pars['N_components'] = N
+        spd_model_pars['component_spds'] = component_data        
         
         # store input args:
-        component_pars['wl'] = component_data[0]
-        
+        spd_model_pars['wl'] = component_data[0]
+     
+    
+    # Append pair ot triangle_strengths to opt_list and opt_len:      
+    if optimizer_type == '2mixer':
+        spd_model_pars['list'].append('pair_strengths')
+        spd_model_pars['len'].append(N-3)
+    
+    elif optimizer_type =='3mixer':
+        spd_model_pars['list'].append('triangle_strengths')
+        spd_model_pars['len'].append(spd_model_pars['triangle_strengths'].shape[0])
            
-    return component_pars
+    return spd_model_pars
 
-#------------------------------------------------------------------------------   
-def vec_to_dict(vec_= None, dict_ = {}, xisize = None, keys = None):
+def initialize_spd_optim_pars(component_data, N_components = None, optimizer_type = '2mixer', wl = _WL3):
     """
-    Convert dict to vec and vice versa.
+    Initialize spd_optim_pars dict based on type of component_data.
+    
+    Args:
+        :component_data: None, optional
+            Component spectra data: 
+            If int: specifies number of components used in optimization 
+                    (peakwl, fwhm and pair_strengths will be optimized).
+            If dict: generate components based on parameters (peakwl, fwhm, 
+                     pair_strengths, etc.) in dict. 
+                    (keys with None values will be optimized)
+            If ndarray: optimize pair_strengths of component spectra.
+        :N_components: None, optional
+            Specifies number of components used in optimization. (only used 
+            when :component_data: is dict and user wants to override dict. 
+            Note that shape of parameters arrays must match N_components).
+        :optimizer_type: '2mixer', optional
+            Type of spectral optimization routine.
+            (other options: '3mixer', 'search')
+        :wl: _WL3, optional
+            Wavelengths used in optimization when :component_data: is not an
+            ndarray with spectral data.
+        
+    Returns:
+        :spd_optim_pars: dict with optimization parameters (x0, ub, lb)
+
     """
-    if vec_ is not None:
-        # Put values in vec_ in dict_:
-        n = 0 # keeps track of length already read from x
-        for i,v in enumerate(keys):
-            dict_[v] = vec_[n + np.arange(xisize[i])]
-            n += dict_[v].shape[0] 
-        return dict_, xisize
+    spd_optim_pars = {}
+    spd_model_pars = initialize_spd_model_pars(component_data, N_components = N_components, optimizer_type = optimizer_type, wl = wl)
+    N = spd_model_pars['N_components']
+
+    # Initialize parameter dict:
+    if isinstance(component_data,int):      
+        # Generate LB, UB, x0 (keys in opt_list):
+        spd_optim_pars['LB'] = np.hstack((spd_model_pars['peakwl_min'], spd_model_pars['fwhm_min']))
+        spd_optim_pars['UB'] = np.hstack((spd_model_pars['peakwl_max'], spd_model_pars['fwhm_max']))
+        spd_optim_pars['x0'] = np.hstack((spd_model_pars['peakwl'], spd_model_pars['fwhm']))
+
+        if optimizer_type == '2mixer':
+            spd_optim_pars['LB'] = np.hstack((spd_optim_pars['LB'],np.zeros(N-3)))
+            spd_optim_pars['UB'] = np.hstack((spd_optim_pars['UB'],np.ones(N-3)))
+            spd_optim_pars['x0'] = np.hstack((spd_optim_pars['x0'],spd_model_pars['pair_strengths']))
+
+        elif optimizer_type == '3mixer':
+            spd_optim_pars['LB'] = np.hstack((spd_optim_pars['LB'],np.zeros(spd_model_pars['triangle_strengths'].shape[0])))
+            spd_optim_pars['UB'] = np.hstack((spd_optim_pars['UB'],np.ones(spd_model_pars['triangle_strengths'].shape[0])))
+            spd_optim_pars['x0'] = np.hstack((spd_optim_pars['x0'],spd_model_pars['triangle_strengths']))
+        
+    elif isinstance(component_data,dict):
+        # input is dict with component parameters:
+        spd_optim_pars['LB'] = []
+        spd_optim_pars['UB'] = []
+        spd_optim_pars['x0'] = []
+        
+        if component_data['peakwl'] is None:
+            spd_optim_pars['LB'].append(spd_model_pars['peakwl_min'])
+            spd_optim_pars['UB'].append(spd_model_pars['peakwl_max'])
+            spd_optim_pars['x0'].append(list(np.linspace(min(spd_model_pars['peakwl_min']),max(spd_model_pars['peakwl_max']),N)))
+        
+        if component_data['fwhm'] is None:
+            spd_optim_pars['LB'].append(spd_model_pars['fwhm_min'])
+            spd_optim_pars['UB'].append(spd_model_pars['fwhm_max'])
+            fwhm_ = (wl[-1]-wl[0])/(N-1)*np.ones(N)
+            if fwhm_[0] < min(spd_model_pars['fwhm_min']):
+                fwhm_ = min(spd_model_pars['fwhm_min'])*np.ones(N)
+            spd_optim_pars['x0'].append(list(fwhm_))
+        
+        # Generate LB, UB, x0 (keys in opt_list):
+        spd_optim_pars['LB'].append(list(np.zeros(N)))
+        spd_optim_pars['UB'].append(list(np.ones(N)))
+        
+        if optimizer_type == '2mixer':
+            spd_optim_pars['LB'].append(list(np.zeros(N-3)))
+            spd_optim_pars['UB'] .append(list(np.ones(N-3)))
+            spd_optim_pars['x0'].append(spd_model_pars['pair_strengths'])
+        
+        elif optimizer_type == '3mixer':
+            spd_optim_pars['LB'].append(list(np.zeros(spd_model_pars['triangle_strengths'].shape[0])))
+            spd_optim_pars['UB'].append(list(np.ones(spd_model_pars['triangle_strengths'].shape[0])))
+            spd_optim_pars['x0'].append(spd_model_pars['triangle_strengths'])
+
     else:
-        # Put values of keys in dict_ in vec_:
-        vec_ = []
-        xisize = []
-        for i,v in enumerate(keys):
-            vec_ = np.hstack((vec_, dict_[v]))
-            xisize.append(dict_[v].shape[0])
-        return vec_, xisize
+        # input is ndarray with component spectra
+        if optimizer_type == '2mixer':
+            spd_optim_pars['LB'] =  np.zeros(N-3)
+            spd_optim_pars['UB'] =  np.ones(N-3)
+            spd_optim_pars['x0'] =  spd_model_pars['pair_strengths'].copy()
+        
+        elif optimizer_type =='3mixer':
+            spd_optim_pars['LB'] =  np.zeros(spd_model_pars['triangle_strengths'].shape[0])
+            spd_optim_pars['UB'] =  np.ones(spd_model_pars['triangle_strengths'].shape[0])
+            spd_optim_pars['x0'] =  spd_model_pars['triangle_strengths'].copy()
+           
+    return spd_optim_pars, spd_model_pars
+
             
 #------------------------------------------------------------------------------
 def spd_optimizer(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs = _CIEOBS,\
-                  optimizer_type = '2mixer', cspace = 'Yuv', cspace_bwtf = {}, cspace_fwtf = {},\
+                  optimizer_type = '2mixer', spd_constructor = None, spd_model_pars = None,\
+                  cspace = 'Yuv', cspace_bwtf = {}, cspace_fwtf = {},\
                   component_spds = None, N_components = None,\
                   obj_fcn = [None], obj_fcn_pars = [{}], obj_fcn_weights = [1],\
                   obj_tar_vals = [0], decimals = [5], \
@@ -1321,8 +1413,9 @@ def spd_optimizer(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs = _CIEO
                   peakwl_min = [400], peakwl_max = [700],\
                   fwhm_min = [5], fwhm_max = [300]):
     """
-    Generate a spectrum with specified white point and optimized for certain objective functions 
-    from a set of component spectra or component spectrum model parameters.
+    Generate a spectrum with specified white point and optimized for certain 
+    objective functions from a set of component spectra or component spectrum 
+    model parameters.
     
     Args:
         :target: np2d([100,1/3,1/3]), optional
@@ -1330,37 +1423,60 @@ def spd_optimizer(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs = _CIEO
         :tar_type:  'Yxy' or str, optional
             Specifies the input type in :target: (e.g. 'Yxy' or 'cct')
         :cieobs: _CIEOBS, optional
-            CIE CMF set used to calculate chromaticity values if not provided in :Yxyi:.
+            CIE CMF set used to calculate chromaticity values, if not provided 
+            in :Yxyi:.
         :optimizer_type: '2mixer',  optional
-            Specifies type of chromaticity optimization ('3mixer' or '2mixer' or 'search')
+            Specifies type of chromaticity optimization 
+            ('3mixer' or '2mixer' or 'search')
+        :spd_constructor: None, optional
+            Function handle to user defined spd_constructor function.
+                Input: fcn(x, constructor_pars = {}, **kwargs)
+                Output: spd,M,spds
+                    nd array with:
+                        - spd: spectrum resulting from x
+                        - M: fluxes of all component spds
+                        - spds: component spds (in [N+1,wl] format)
+            (See e.g. spd_constructor_2 or spd_constructor_3)
+        :spd_model_pars: dict with model parameters required by spd_constructor
+            and with optimization parameters required by minimize (x0, lb, ub).                .
+            Only used when :optimizer_type: == 'user'.
         :cspace: 'Yuv', optional
             Color space for 'search'-type optimization. 
         :cspace_bwtf: {}, optional
-            Backward (..._to_xyz) transform parameters (see colortf()) to go from :tar_type: to 'Yxy'.
+            Backward (..._to_xyz) transform parameters 
+            (see colortf()) to go from :tar_type: to 'Yxy').
         :cspace_fwtf = {}, optional
-            Forward (xyz_to_...) transform parameters (see colortf()) to go from xyz to :cspace:.
+            Forward (xyz_to_...) transform parameters 
+            (see colortf()) to go from xyz to :cspace:).
         :component_spds: numpy.ndarray of component spectra.
             If None: they are built from input args.
         :N_components: None, optional
-            Specifies number of components used in optimization. (only used when 
-            :component_data: is dict and user wants to override dict value. Note that
-            shape of parameters arrays must match N_components).
+            Specifies number of components used in optimization. (only used 
+            when :component_data: is dict and user wants to override dict value
+            Note that shape of parameters arrays must match N_components).
         :wl: _WL3, optional
-            Wavelengths used in optimization when :component_data: is not ndarray with spectral data.
+            Wavelengths used in optimization when :component_data: is not an
+            ndarray with spectral data.
 
         :F_rss: True, optional
-             Take Root-Sum-of-Squares of 'closeness' values between target and objective function values.
+             Take Root-Sum-of-Squares of 'closeness' values between target and 
+             objective function values.
         :decimals: 5, optional
             Rounding decimals of objective function values.
-        :obj_fcn: [None] or list of function handles to objective functions, optional
-        :obj_fcn_weights: [1] or list of weigths for each objective function, optional.
-        :obj_fcn_pars: [None] or list of parameter dicts for each objective functions, optional
-        :obj_tar_vals: [0] or list of target values for each objective functions, optional
+        :obj_fcn: [None] or list, optional
+            Function handles to objective function.
+        :obj_fcn_weights: [1] or list, optional.
+            Weigths for each obj. fcn
+        :obj_fcn_pars: [None] or list, optional
+            Parameter dicts for each obj. fcn.
+        :obj_tar_vals: [0] or list, optional
+            Target values for each objective function.
         :minimize_method: 'nelder-mead', optional
             Optimization method used by minimize function.
         :minimize_opts: None, optional
              Dict with minimization options. 
-             None defaults to: {'xtol': 1e-5, 'disp': True, 'maxiter' : 1000*Nc, 'maxfev' : 1000*Nc,'fatol': 0.01}
+             None defaults to: {'xtol': 1e-5, 'disp': True, 'maxiter': 1000*Nc,
+                                'maxfev' : 1000*Nc,'fatol': 0.01}
         :verbosity: 0, optional
             If > 0: print intermediate results.
          
@@ -1401,7 +1517,10 @@ def spd_optimizer(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs = _CIEO
         raise Exception('spd_optimizer(): At least 3 component spds are required.')
 
     # optimize spectrum fluxes, model parameters, ... using optimizer_type method 
-    spd_opt, M, component_spds, obj_vals, res = spd_optimizer_2_3(component_data = spds, optimizer_type = optimizer_type, wl = wl,\
+    spd_opt, M, component_spds, obj_vals, res = spd_optimizer_2_3(component_data = spds, wl = wl,\
+                                                    optimizer_type = optimizer_type, 
+                                                    spd_constructor = spd_constructor,\
+                                                    spd_model_pars = spd_model_pars,\
                                                     Yxy_target = Yxyt, cieobs = cieobs,\
                                                     obj_fcn = obj_fcn, obj_fcn_pars = obj_fcn_pars, obj_fcn_weights = obj_fcn_weights,\
                                                     obj_tar_vals = obj_tar_vals, decimals = decimals, \
@@ -1485,7 +1604,7 @@ if __name__ == '__main__':
 #    SPD(S2).plot()
     
     #--------------------------------------------------------------------------
-    print('2: spd_optimizer():')
+#    print('2: spd_optimizer():')
     target = 4000 # 4000 K target cct
     tar_type = 'cct'
     peakwl = [450,530,560,610]
@@ -1498,10 +1617,10 @@ if __name__ == '__main__':
     decimals = [5,5]
     N_components = None #if not None, spd model parameters (peakwl, fwhm, ...) are optimized
     S3, _ = spd_optimizer(target, tar_type = tar_type, cspace_bwtf = {'cieobs' : cieobs, 'mode' : 'search'},\
-                          optimizer_type = '2mixer', N_components = N_components,\
+                          optimizer_type = '3mixer', N_components = N_components,\
                           peakwl = peakwl, fwhm = fwhm, obj_fcn = obj_fcn, obj_tar_vals = obj_tar_vals,\
                           obj_fcn_weights = obj_fcn_weights, decimals = decimals,\
-                          verbosity = 0)
+                          verbosity = 1)
     
     # Check output agrees with target:
     xyz = spd_to_xyz(S3, relative = False, cieobs = cieobs)

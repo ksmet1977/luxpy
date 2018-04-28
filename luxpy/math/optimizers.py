@@ -5,7 +5,10 @@
 # but applied to SciPy's minimize fcn.
 ###############################################################################
 
-# minimizebnd(): scipy.minimize() that allows contrained parameters onn otherwise unconstrained methods. 
+# minimizebnd(): scipy.minimize() that allows contrained parameters on 
+                 unconstrained methods(port of Matlab's fminsearchbnd). 
+                 Starting, lower and upper bounds values can also be provided 
+                 as a dict.
 
 #------------------------------------------------------------------------------
 Created on Fri Apr 27 12:36:03 2018
@@ -14,34 +17,61 @@ Created on Fri Apr 27 12:36:03 2018
 
 """
 
-from .. import np, minimize
+from .. import np, minimize, vec_to_dict
 
 __all__ = ['minimizebnd']
 
-def minimizebnd(fun, x0, args=(), method = 'nelder-mead', use_bnd = True, bounds = (None,None) , options = None, **kwargs):
+def minimizebnd(fun, x0, args=(), method = 'nelder-mead', use_bnd = True, \
+                bounds = (None,None) , options = None, \
+                x0_vsize = None, x0_keys = None, **kwargs):
     """
-    Minimization functions that allows for bounds on any type of method in SciPy's minimize function
-    by transforming the parameters values (see Matlab's fminsearchbnd).
+    Minimization function that allows for bounds on any type of method in 
+    SciPy's minimize function by transforming the parameters values 
+    (see Matlab's fminsearchbnd). 
+    Starting values, and lower and upper bounds can also be provided as a dict.
     
     Args:
+        :x0: parameter starting values
+            If x0_keys is None then :x0: is vector else, :x0: is dict and
+            x0_size should be provided with length/size of values for each of 
+            the keys in :x0: to convert it to a vector.                
         :use_bnd: True, optional
-            False: omits bounds in :bounds: and defaults to regular minimize function.
+            False: omits bounds and defaults to regular minimize function.
         :bounds: (lower, upper), optional
-            Tupple with lists of lower and upper bounds for each of the parameters values.
+            Tuple of lists or dicts (x0_keys is None) of lower and upper bounds 
+            for each of the parameters values.
         :**kwargs: allows input for other type of arguments (e.g. in OutputFcn)
          For other input arguments, see ?scipy.minimize()
          
     Returns:
-        :res: dict with minimize() output. Additionally function value of optimized solution is also a key.
+        :res: dict with minimize() output. 
+            Additionally, function value, fval, of solution is also in :res:,
+            as well as a vector or dict (if x0 was dict) 
+            with final solutions (res['x'])
         
         
     """
+    # Convert dict to vec:
+    if isinstance(x0, dict):
+        x0 = vec_to_dict(dict_ = x0, vsize = x0_vsize, keys = x0_keys)
     
     if use_bnd == False:
-        return minimize(fun, x0, options = options, **kwargs)
+        res = minimize(fun, x0, args = args, options = options, **kwargs)
+        res['fval'] = fun(res['x'], *args)
+        if x0_keys is None:
+            res['x_final'] = res['x']
+        else:
+            res['x_final'] = vec_to_dict(vec_ = res['x'], vsize = x0_vsize, keys = x0_keys)
+        return res
     else:
         
         LB, UB = bounds
+        
+        # Convert dict to vec:
+        if isinstance(LB, dict):
+            LB = vec_to_dict(dict_ = LB, vsize = x0_vsize, keys = x0_keys)
+        if isinstance(LB, dict):
+            UB = vec_to_dict(dict_ = UB, vsize = x0_vsize, keys = x0_keys)
         
         #size checks
         xsize = x0.shape
@@ -201,7 +231,11 @@ def minimizebnd(fun, x0, args=(), method = 'nelder-mead', use_bnd = True, bounds
     
     res['fval'] = fval
     res['x'] = x #overwrite x in res to unconstrained format
-    
+    if x0_keys is None:
+        res['x_final'] = res['x']
+    else:
+        res['x_final'] = vec_to_dict(vec_ = res['x'], vsize = x0_vsize, keys = x0_keys)
+
     return res
 
 
