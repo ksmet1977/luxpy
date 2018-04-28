@@ -13,8 +13,8 @@
                     on observer variability in color matching and 
                     in physiological parameters.
 
-# getMonteCarloParam(): Get dict with normally-distributed physiological factors 
-                            for a population of observers.
+# getMonteCarloParam(): Get dict with normally-distributed physiological 
+                        factors for a population of observers.
                             
 # getUSCensusAgeDist(): Get US Census Age Distribution
 
@@ -24,9 +24,10 @@
 
 # getCatObs(): Generate cone fundamentals for categorical observers.
 
-# get_lms_to_xyz_matrix(): Calculate lms to xyz conversion matrix for specific fieldsize.
+# get_lms_to_xyz_matrix(): Calculate lms to xyz conversion matrix for a 
+                            specific field size.
                             
-# lmsb_to_xyzb(): Convert from LMS cone fundamentals to XYZ color matching functions.
+# lmsb_to_xyzb(): Convert from LMS cone fundamentals to XYZ CMF.
 
 # add_to_cmf_dict(): Add set of cmfs to _CMF dict.
 
@@ -150,17 +151,21 @@ def cie2006cmfsEx(age = 32,fieldsize = 10, wl = None,\
         :out: 'LMS' or , optional
             Determines output.
         :allow_negative_values: False, optional
-            Cone fundamentals or color matching functions should not have negative values.
+            Cone fundamentals or color matching functions 
+            should not have negative values.
                 If False: X[X<0] = 0.
             
     Returns:
         :returns: 
-            - 'LMS' : numpy.ndarray with individual observer area-normalized cone fundamentals.
-                Wavelength have been added.
+            - 'LMS' : ndarray with individual observer area-normalized 
+                cone fundamentals. Wavelength have been added.
                 
-            [- 'trans_lens': numpy.ndarray with lens transmission (no wavelengths added, no interpolation)
-             - 'trans_macula': numpy.ndarray with macula transmission (no wavelengths added, no interpolation)
-             - 'sens_photopig' : numpy.ndarray with photopigment sens. (no wavelengths added, no interpolation)]
+            [- 'trans_lens': ndarray with lens transmission 
+                 (no wavelengths added, no interpolation)
+             - 'trans_macula': ndarray with macula transmission 
+                 (no wavelengths added, no interpolation)
+             - 'sens_photopig' : ndarray with photopigment sens. 
+                 (no wavelengths added, no interpolation)]
             
     References:
         1. Asano Y, Fairchild MD, and Blondé L (2016). 
@@ -169,7 +174,8 @@ def cie2006cmfsEx(age = 32,fieldsize = 10, wl = None,\
         2. Asano Y, Fairchild MD, Blondé L, and Morvan P (2016). 
             Color matching experiment for highlighting interobserver variability. 
             Color Res. Appl. 41, 530–539.
-        3. CIE, and CIE (2006). Fundamental Chromaticity Diagram with Physiological Axes - Part I 
+        3. CIE, and CIE (2006). 
+            Fundamental Chromaticity Diagram with Physiological Axes - Part I 
             (Vienna: CIE).
     """
     fs = fieldsize
@@ -264,14 +270,17 @@ def cie2006cmfsEx(age = 32,fieldsize = 10, wl = None,\
 
 def getMonteCarloParam(n_obs = 1, stdDevAllParam = _INDVCMF_STD_DEV_ALL_PARAM.copy()):
     """
-    Get dict with normally-distributed physiological factors for a population of observers.
+    Get dict with normally-distributed physiological factors 
+    for a population of observers.
     
     Args:
         :n_obs: 1, optional
             Number of individual observers in population.
         :stdDevAllParam: _INDVCMF_STD_DEV_ALL_PARAM, optional
             Dict with parameters for:
-                ['od_lens', 'od_macula', 'od_L', 'od_M', 'od_S', 'shft_L', 'shft_M', 'shft_S']
+                ['od_lens', 'od_macula', 
+                'od_L', 'od_M', 'od_S', 
+                'shft_L', 'shft_M', 'shft_S']
     
     Returns:
         :returns: dict with n_obs randomly drawn parameters.
@@ -316,7 +325,8 @@ def genMonteCarloObs(n_obs = 1, fieldsize = 10, list_Age = [32], out = 'LMS', wl
             Number of observer CMFs to generate.
         :list_Age: list of observer ages or str, optional
             Defaults to 32 (cfr. CIE2006 CMFs)
-            If 'us_census': use US population census of 2010 to generate list_Age.
+            If 'us_census': use US population census of 2010 
+                to generate list_Age.
         :fieldsize: fieldsize in degrees (between 2° and 10°), optional
             Defaults to 10°.
         :out: 'LMS' or str, optional
@@ -325,7 +335,8 @@ def genMonteCarloObs(n_obs = 1, fieldsize = 10, list_Age = [32], out = 'LMS', wl
             Interpolation/extraplation of :LMS: output to specified wavelengths.
             None: output original _WL = np.array([390,780,5])
         :allow_negative_values: False, optional
-            Cone fundamentals or color matching functions should not have negative values.
+            Cone fundamentals or color matching functions 
+            should not have negative values.
                 If False: X[X<0] = 0.
     
     Returns:
@@ -341,7 +352,8 @@ def genMonteCarloObs(n_obs = 1, fieldsize = 10, list_Age = [32], out = 'LMS', wl
         2. Asano Y, Fairchild MD, Blondé L, and Morvan P (2016). 
             Color matching experiment for highlighting interobserver variability. 
             Color Res. Appl. 41, 530–539.
-        3. CIE, and CIE (2006). Fundamental Chromaticity Diagram with Physiological Axes - Part I 
+        3. CIE, and CIE (2006). 
+            Fundamental Chromaticity Diagram with Physiological Axes - Part I 
             (Vienna: CIE).
     """
 
@@ -422,7 +434,8 @@ def getCatObs(n_cat = 10, fieldsize = 2, out = 'LMS', wl = None, allow_negative_
             Interpolation/extraplation of :LMS: output to specified wavelengths.
             None: output original _WL = np.array([390,780,5])
         :allow_negative_values: False, optional
-            Cone fundamentals or color matching functions should not have negative values.
+            Cone fundamentals or color matching functions 
+            should not have negative values.
                 If False: X[X<0] = 0.
     
     Returns:
@@ -439,19 +452,19 @@ def getCatObs(n_cat = 10, fieldsize = 2, out = 'LMS', wl = None, allow_negative_
         Categorical observers were derived in two steps. 
         At the first step, 10000 observer functions were generated from the 
         individual colorimetric observer model using Monte Carlo simulation. 
-        At the second step, the cluster analysis, a modified k-medoids algorithm,
-        was applied to the 10000 observers minimizing the squared Euclidean 
-        distance in cone fundamentals space, and categorical observers were 
-        derived iteratively. Since the proposed categorical observers are 
-        defined by their physiological parameters and ages, their CMFs can be 
-        derived for any target field size.
+        At the second step, the cluster analysis, a modified k-medoids 
+        algorithm, was applied to the 10000 observers minimizing the squared 
+        Euclidean distance in cone fundamentals space, and categorical 
+        observers were derived iteratively. Since the proposed categorical 
+        observers are defined by their physiological parameters and ages, their
+        CMFs can be derived for any target field size.
 
         Categorical observers were ordered by the importance; 
         the first categorical observer vas the average observer equivalent to 
         CIEPO06 with 38 year-old for a given field size, followed by the second
         most important categorical observer, the third, and so on.
         
-        (see: https://www.rit.edu/cos/colorscience/re_AsanoObserverFunctions.php)
+        see: https://www.rit.edu/cos/colorscience/re_AsanoObserverFunctions.php
     """
     # Use Iteratively Derived Cat.Obs.:
     var_age = _INDVCMF_CATOBSPFCTR['age'].copy()
@@ -509,7 +522,7 @@ def get_lms_to_xyz_matrix(fieldsize = 10):
         :M: numpy array with conversion matrix.
     
     Note: 
-        For intermediate field sizes (2° < field size < 10°) the conversion matrix
+        For intermediate field sizes (2°<fieldsize<10°) the conversion matrix
         is calculated by linear interpolation between 
         the _INDVCMF_M_2d and _INDVCMF_M_10d matrices.
     """
@@ -538,7 +551,7 @@ def lmsb_to_xyzb(lms, fieldsize = 10, out = 'XYZ', allow_negative_values = False
             - LMS: numpy.ndarray with population XYZ color matching functions.    
     
     Note: 
-        For intermediate field sizes (2° < field size < 10°) a conversion matrix
+        For intermediate field sizes (2° < fieldsize < 10°) a conversion matrix
         is calculated by linear interpolation between 
         the _INDVCMF_M_2d and _INDVCMF_M_10d matrices.
     """

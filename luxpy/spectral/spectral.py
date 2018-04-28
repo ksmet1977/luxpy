@@ -21,50 +21,83 @@
 ###################################################################################################
 # functions related to spectral data
 ###################################################################################################
-# _WL3: Default wavelength specification in vector-3 format: numpy.array([start, end, spacing])
-#
-# _BB: Dict with constants for blackbody radiator calculation (c1, c2, n): [CIE15:2004, “Colorimetry,” CIE, Vienna, Austria, 2004.](http://www.cie.co.at/index.php/index.php?i_ca_id=304)
-#
-# _S012_DAYLIGHTPHASE: numpy.ndarray with CIE S0,S1, S2 curves for daylight phase calculation.: [CIE15:2004, “Colorimetry,” CIE, Vienna, Austria, 2004.](http://www.cie.co.at/index.php/index.php?i_ca_id=304)
-#
-# _INTERP_TYPES: Dict with interpolation types associated with various types of spectral data according to CIE recommendation:  [CIE15:2004, “Colorimetry,” CIE, Vienna, Austria, 2004.](http://www.cie.co.at/index.php/index.php?i_ca_id=304)
-#
+# _WL3: Default wavelength specification in vector-3 format: 
+        numpy.array([start, end, spacing])
+
+# _BB: Dict with constants for blackbody radiator calculation 
+        constant are (c1, c2, n, na, c, h, k). 
+        [CIE15:2004, “Colorimetry,” CIE, Vienna, Austria, 2004.]
+        (http://www.cie.co.at/index.php/index.php?i_ca_id=304)
+
+# _S012_DAYLIGHTPHASE: numpy.ndarray with CIE S0,S1, S2 curves for daylight 
+        phase calculation.
+        [CIE15:2004, “Colorimetry,” CIE, Vienna, Austria, 2004.]
+        (http://www.cie.co.at/index.php/index.php?i_ca_id=304)
+
+# _INTERP_TYPES: Dict with interpolation types associated with various types of
+         spectral data according to CIE recommendation:  
+         [CIE15:2004, “Colorimetry,” CIE, Vienna, Austria, 2004.]
+         (http://www.cie.co.at/index.php/index.php?i_ca_id=304)
+
 # _S_INTERP_TYPE: Interpolation type for light source spectral data
-#
+
 # _R_INTERP_TYPE: Interpolation type for reflective/transmissive spectral data
-#
-# _CRI_REF_TYPE: Dict with blackbody to daylight transition (mixing) ranges for various types of reference illuminants used in color rendering index calculations.
-#
-# getwlr(): Get/construct a wavelength range from a 3-vector (start, stop, spacing).
-#
+
+# _CRI_REF_TYPE: Dict with blackbody to daylight transition (mixing) ranges for
+         various types of reference illuminants used in color rendering index 
+         calculations.
+
+# getwlr(): Get/construct a wavelength range from a (start, stop, spacing) 
+            3-vector.
+
 # getwld(): Get wavelength spacing of numpy.ndarray with wavelengths.
-#
-# spd_normalize(): Spectrum normalization (supports: area, max and lambda)
-#
-# cie_interp(): Interpolate / extrapolate spectral data following standard [CIE15:2004](http://www.cie.co.at/index.php/index.php?i_ca_id=304).
-#
+
+# spd_normalize(): Spectrum normalization (supports: area, max, lambda, 
+            radiometric, photometric and quantal energy units).
+
+# cie_interp(): Interpolate / extrapolate spectral data following standard 
+        [CIE15:2004, “Colorimetry,” CIE, Vienna, Austria, 2004.]
+         (http://www.cie.co.at/index.php/index.php?i_ca_id=304)
+
 # spd(): All-in-one function that can:
-#        1. Read spectral data from data file or take input directly as pandas.dataframe or numpy.array.
-#        2. Convert spd-like data from numpy.array to pandas.dataframe and back.
-#        3. Interpolate spectral data.
-#        4. Normalize spectral data.
-#
+        1. Read spectral data from data file or take input directly as 
+            pandas.dataframe or numpy.array.
+        2. Convert spd-like data from numpy.array to pandas.dataframe and back.
+        3. Interpolate spectral data.
+        4. Normalize spectral data.
+
 # xyzbar(): Get color matching functions.
+        
+# vlbar(): Get Vlambda function.
+
+# spd_to_xyz(): Calculates xyz tristimulus values from spectral data. 
+            [CIE15:2004, “Colorimetry,” CIE, Vienna, Austria, 2004.]
+            (http://www.cie.co.at/index.php/index.php?i_ca_id=304)
+            
+# spd_to_ler():  Calculates Luminous efficacy of radiation (LER) 
+                 from spectral data.
+
+# spd_to_power(): Calculate power of spectral data in radiometric, photometric
+                  or quantal energy units.
+#          
+# blackbody(): Calculate blackbody radiator spectrum .
+        [CIE15:2004, “Colorimetry,” CIE, Vienna, Austria, 2004.]
+         (http://www.cie.co.at/index.php/index.php?i_ca_id=304)
+             
+# daylightlocus(): Calculates daylight chromaticity from cct. 
+        [CIE15:2004, “Colorimetry,” CIE, Vienna, Austria, 2004.]
+         (http://www.cie.co.at/index.php/index.php?i_ca_id=304)
 #
-# spd_to_xyz(): Calculates xyz tristimulus values from spectral data. [CIE15:2004](http://www.cie.co.at/index.php/index.php?i_ca_id=304).
-# 
-# spd_to_ler():  Calculates Luminous efficacy of radiation (LER) from spectral data.
-# 
-# spd_to_power(): Calculate power of spectral data in radiometric, photometric or quantal energy units.
-#           
-# blackbody(): Calculate blackbody radiator spectrum for correlated color temperature (cct). ([CIE15:2004](http://www.cie.co.at/index.php/index.php?i_ca_id=304))
-#              
-# daylightlocus(): Calculates daylight chromaticity for cct. ([CIE15:2004](http://www.cie.co.at/index.php/index.php?i_ca_id=304)).
-#
-# daylightphase(): Calculate daylight phase spectrum for correlated color temperature (cct). [CIE15:2004](http://www.cie.co.at/index.php/index.php?i_ca_id=304)
-#
-# cri_ref(): Calculates a reference illuminant spectrum for color rendering index calculations based on cct.
-#
+# daylightphase(): Calculate daylight phase spectrum         
+        [CIE15:2004, “Colorimetry,” CIE, Vienna, Austria, 2004.]
+         (http://www.cie.co.at/index.php/index.php?i_ca_id=304)
+         
+# cri_ref(): Calculates a reference illuminant spectrum based on cct for color 
+            rendering index calculations.
+            ([CIE15:2004](http://www.cie.co.at/index.php/index.php?i_ca_id=304), 
+             [cie224:2017, CIE 2017 Colour Fidelity Index for accurate scientific use. (2017), ISBN 978-3-902842-61-9](http://www.cie.co.at/index.php?i_ca_id=1027),
+             [IES-TM-30-15: Method for Evaluating Light Source Color Rendition. New York, NY: The Illuminating Engineering Society of North America.](https://www.ies.org/store/technical-memoranda/ies-method-for-evaluating-light-source-color-rendition/)
+
 #------------------------------------------------------------------------------
 
 Created on Sat Jun 24 21:12:30 2017
@@ -120,8 +153,8 @@ def getwlr(wl3 = None):
         :wl3: list[start, stop, spacing], optional (defaults to luxpy._WL3)
 
     Returns:
-        :returns: numpy.ndarray (.shape = (n,)) with n wavelengths 
-                    ranging from start to stop with wavelength interval equal to spacing
+        :returns: numpy.ndarray (.shape = (n,)) with n wavelengths ranging from
+                    start to stop, with wavelength interval equal to spacing.
     """
     if wl3 is None:
         wl3 = _WL3
@@ -143,8 +176,9 @@ def getwld(wl):
         :wl: numpy.ndarray with wavelengths
         
     Returns:
-        :returns: float:  for equal wavelength spacings
-                  numpy.ndarray (.shape = (n,)): for unequal wavelength spacings
+        :returns: 
+            - float:  for equal wavelength spacings
+            - numpy.ndarray (.shape = (n,)): for unequal wavelength spacings
     """
     d=np.diff(wl)
     dl=(np.hstack((d[0],d[0:-1]/2.0,d[-1]))+np.hstack((0.0,d[1:]/2.0,0.0)))
@@ -167,11 +201,14 @@ def spd_normalize(data, norm_type = None, norm_f = 1, wl = True, cieobs = _CIEOB
             - 'pu': to :norm_f: photometric units 
             - 'qu': to :norm_f: quantal energy units
         :norm_f: 1, optional
-            Normalization factor: determines size of normalization for 'max' and 'area' or which wavelength is normalized to 1 for 'lambda' option.
+            Normalization factor: determines size of normalization 
+            for 'max' and 'area' 
+            or which wavelength is normalized to 1 for 'lambda' option.
         :wl: True or False, optional 
             If True, the first column of data contains wavelengths.
         :cieobs: _CIEOBS or str, optional
-            Type of cmf set to use for normalization using photometric units (norm_type == 'pu')
+            Type of cmf set to use for normalization using photometric units 
+            (norm_type == 'pu')
     
     Returns:
         :returns: numpy.ndarray with normalized data.
@@ -245,7 +282,8 @@ def cie_interp(data,wl_new, kind = None, negative_values_allowed = False):
             If :kind: is None, return original data.
             If :kind: is a spectrum type (see _INTERP_TYPES), the correct 
                 interpolation type if automatically chosen.
-            Or :kind: can be any interpolation type supported by scipy.interpolate.interp1d
+            Or :kind: can be any interpolation type supported by 
+                scipy.interpolate.interp1d
         :negative_values_allowed: False, optional
             If False: negative values are clipped to zero
     
@@ -295,7 +333,8 @@ def cie_interp(data,wl_new, kind = None, negative_values_allowed = False):
 def spd(data = None, interpolation = None, wl = None, columns = None, kind = 'np', sep = ',',header = None,datatype = 'S', norm_type = None, norm_f = None):
     """
     All-in-one function that can:
-        1. Read spectral data from data file or take input directly as pandas.dataframe or numpy.array.
+        1. Read spectral data from data file or take input directly 
+            as pandas.dataframe or numpy.array.
         2. Convert spd-like data from numpy.array to pandas.dataframe and back.
         3. Interpolate spectral data.
         4. Normalize spectral data.
@@ -306,27 +345,36 @@ def spd(data = None, interpolation = None, wl = None, columns = None, kind = 'np
             - numpy.ndarray with spectral data
             - pandas.dataframe with spectral data
             (.shape = (number of spectra + 1, number of original wavelengths))
-        :interpolation: None (don't interpolate) or str with interpolation type or spectrum type, optional
+        :interpolation: None, optional
+            - None: don't interpolate
+            - str with interpolation type or spectrum type
         :kind: str ['np','df'], optional 
             Determines type(:returns:), np: numpy.ndarray, df: pandas.dataframe
         :wl: None, optional
-            New wavelength range for interpolation. Defaults to wavelengths specified by luxpy._WL3.
+            New wavelength range for interpolation. 
+            Defaults to wavelengths specified by luxpy._WL3.
 
         :columns: None or list[str] of column names for dataframe, optional
-        :header: None (no header in data file) or 'infer' (infer headers from file), optional
+        :header: None or 'infer', optional
+            - None: no header in file
+            - 'infer': infer headers from file
         :sep: ',' or '\t' or other char, optional
             Column separator in case :data: specifies a data file. 
-        :datatype': 'S' (light source spectrum) or 'R' (reflectance spectrum) or other, optional
-            Specifies a type of data. Is used when creating column headers when :column: is None.
+        :datatype': 'S' (light source) or 'R' (reflectance) or other, optional
+            Specifies a type of spectral data. 
+            Is used when creating column headers when :column: is None.
         :norm_type: None, optional 
             - 'lambda': make lambda in norm_f equal to 1
             - 'area': area-normalization times norm_f
             - 'max': max-normalization times norm_f
         :norm_f: 1, optional
-            Normalization factor: determines size of normalization for 'max' and 'area' or which wavelength is normalized to 1 for 'lambda' option.
+            Normalization factor: determines size of normalization 
+                for 'max' and 'area' 
+                or which wavelength is normalized to 1 for 'lambda' option.
     
     Returns:
-        :returns: pandas.dataframe or numpy.ndarray with interpolated and/or normalized spectral data
+        :returns: pandas.dataframe or numpy.ndarray 
+                    with interpolated and/or normalized spectral data.
     """
     if isinstance(data,str):
         transpose = True #when spd comes from file -> transpose (columns in files should be different spectra)
@@ -374,15 +422,19 @@ def xyzbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, norm_type = None, norm
         :cieobs: luxpy._CIEOBS, optional
             Sets the type of color matching functions to load.
         :scr: 'dict' or 'file', optional
-            Determines whether to load cmfs from file (./data/cmfs/) or from dict defined in .cmf.py
+            Determines whether to load cmfs from file (./data/cmfs/) 
+            or from dict defined in .cmf.py
         :wl: None, optional
-             New wavelength range for interpolation. Defaults to wavelengths specified by luxpy._WL3.
+             New wavelength range for interpolation. 
+             Defaults to wavelengths specified by luxpy._WL3.
         :norm_type: None, optional 
             - 'lambda': make lambda in norm_f equal to 1
             - 'area': area-normalization times norm_f
             - 'max': max-normalization times norm_f
         :norm_f: 1, optional
-            Normalization factor: determines size of normalization for 'max' and 'area' or which wavelength is normalized to 1 for 'lambda' option.
+            Normalization factor: determines size of normalization 
+            for 'max' and 'area' 
+            or which wavelength is normalized to 1 for 'lambda' option.
         :kind: str ['np','df'], optional 
             Determines type(:returns:), np: numpy.ndarray, df: pandas.dataframe
 
@@ -410,17 +462,23 @@ def vlbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, norm_type = None, norm_
     Args:
         :cieobs: str, optional
             Sets the type of Vlambda function to obtain.
-        :scr: 'dict' (get from ybar from _CMF) or 'array' (numpy.ndarray in cieobs), optional
-            Determines whether to load cmfs from file (./data/cmfs/) or from dict defined in .cmf.py
+        :scr: 'dict' or array, optional
+            - 'dict': get from ybar from _CMF
+            - 'array': numpy.ndarray in :cieobs:
+            Determines whether to load cmfs from file (./data/cmfs/) 
+            or from dict defined in .cmf.py
             Vlambda is obtained by collecting Ybar.
         :wl: None, optional
-             New wavelength range for interpolation. Defaults to wavelengths specified by luxpy._WL3.
+             New wavelength range for interpolation. 
+             Defaults to wavelengths specified by luxpy._WL3.
         :norm_type: None, optional 
             - 'lambda': make lambda in norm_f equal to 1
             - 'area': area-normalization times norm_f
             - 'max': max-normalization times norm_f
         :norm_f: 1, optional
-            Normalization factor: determines size of normalization for 'max' and 'area' or which wavelength is normalized to 1 for 'lambda' option.
+            Normalization factor: determines size of normalization 
+            for 'max' and 'area' 
+            or which wavelength is normalized to 1 for 'lambda' option.
         :kind: str ['np','df'], optional 
             Determines type(:returns:), np: numpy.ndarray, df: pandas.dataframe
         :out: 1 or 2, optional
@@ -428,7 +486,7 @@ def vlbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, norm_type = None, norm_
             2: returns (Vlambda, Km)
     
     Returns:
-        :returns: pandas.dataframe or numpy.ndarray with Vlambda of type :cieobs: 
+        :returns: dataframe or ndarray with Vlambda of type :cieobs: 
         
             
     References:
@@ -456,16 +514,19 @@ def spd_to_xyz(data,  relative = True, rfl = None, cieobs = _CIEOBS, K = None, o
     Args: 
         :data: numpy.ndarray or pandas.dataframe with spectral data
             (.shape = (number of spectra + 1, number of wavelengths))
-            Note that :data: is never interpolated, only CMFs and RFLs. This way
-            interpolation errors due to peaky spectra are avoided. Conform CIE15-2004.
+            Note that :data: is never interpolated, only CMFs and RFLs. 
+            This way interpolation errors due to peaky spectra are avoided. 
+            Conform CIE15-2004.
         :relative: True or False, optional
             Calculate relative XYZ (Yw = 100) or absolute XYZ (Y = Luminance)
         :rfl: numpy.ndarray with spectral reflectance functions.
             Will be interpolated if wavelengths do not match those of :data:
         :cieobs: luxpy._CIEOBS or str, optional
-            Determines the color matching functions to be used in the calculation of XYZ.
+            Determines the color matching functions to be used in the 
+            calculation of XYZ.
         :K: None, optional
-            (e.g. K for '1931_2' is 683 lm/W (relative = False) or 100/sum(spd*dl))
+            e.g.  K  = 683 lm/W for '1931_2' (relative == False) 
+               or K = 100/sum(spd*dl)        (relative == True)
         :out: None or 1 or 2, optional
             Determines number and shape of output. (see :returns:)
         :cie_std_dev_obs: None or str, optional
@@ -475,16 +536,21 @@ def spd_to_xyz(data,  relative = True, rfl = None, cieobs = _CIEOBS, K = None, o
     Returns:
         :returns:
             If rfl is None:
-                If out is None: numpy.ndarray of xyz values (.shape = (data.shape[0],3))
-                If out == 1: numpy.ndarray of xyz values (.shape = (data.shape[0],3))
-                If out == 2: (numpy.ndarray of xyz values, numpy.ndarray of xyzw values)
+                If out is None: numpy.ndarray of xyz values 
+                    (.shape = (data.shape[0],3))
+                If out == 1: numpy.ndarray of xyz values 
+                    (.shape = (data.shape[0],3))
+                If out == 2: (ndarray of xyz, ndarray of xyzw) values
                     Note that xyz == xyzw, with (.shape = (data.shape[0],3))
             If rfl is not None:
-                If out is None: numpy.ndarray of xyz values (.shape = (rfl.shape[0],data.shape[0],3))
-                If out == 1: numpy.ndarray of xyz values (.shape = (rfl.shape[0]+1,data.shape[0],3))
-                    The xyzw values of the light source spd are the first set of values of the first dimension. 
-                    The following values along this dimension are the sample (rfl) xyz values.
-                If out == 2: (numpy.ndarray of xyz values, numpy.ndarray of xyzw values)
+                If out is None: numpy.ndarray of xyz values 
+                    (.shape = (rfl.shape[0],data.shape[0],3))
+                If out == 1: numpy.ndarray of xyz values 
+                    (.shape = (rfl.shape[0]+1,data.shape[0],3))
+                    The xyzw values of the light source spd are the first set 
+                    of values of the first dimension. The following values 
+                    along this dimension are the sample (rfl) xyz values.
+                If out == 2: (ndarray of xyz, ndarray of xyzw) values
                     with xyz.shape = (rfl.shape[0],data.shape[0],3)
                     and with xyzw.shape = (data.shape[0],3)
              
@@ -563,15 +629,16 @@ def spd_to_ler(data, cieobs = _CIEOBS, K = None):
     Args: 
         :data: numpy.ndarray or pandas.dataframe with spectral data
             (.shape = (number of spectra + 1, number of wavelengths))
-            Note that :data: is never interpolated, only CMFs and RFLs. This way
-            interpolation errors due to peaky spectra are avoided. Conform CIE15-2004.
+            Note that :data: is never interpolated, only CMFs and RFLs. 
+            This way interpolation errors due to peaky spectra are avoided. 
+            Conform CIE15-2004.
         :cieobs: luxpy._CIEOBS, optional
             Determines the color matching function set used in the 
             calculation of LER. For cieobs = '1931_2' the ybar CMF curve equals
             the CIE 1924 Vlambda curve.
         :K: None, optional
-            K-factor (e.g. K for '1931_2' is 683 lm/W (relative = False) or 100/sum(spd*dl))
-       
+             e.g.  K  = 683 lm/W for '1931_2'
+      
     Returns:
         :ler: numpy.ndarray of LER values. 
              
@@ -594,7 +661,8 @@ def spd_to_ler(data, cieobs = _CIEOBS, K = None):
 
 def spd_to_power(data, ptype = 'ru', cieobs = _CIEOBS):
     """
-    Calculate power of spectral data in radiometric, photometric or quantal energy units.
+    Calculate power of spectral data in radiometric, photometric 
+    or quantal energy units.
     
     Args:
         :data: numpy.ndarray with spectral data
@@ -646,15 +714,19 @@ def blackbody(cct, wl3 = None, norm_type = None, norm_f = None):
     Calculate blackbody radiator spectrum for correlated color temperature (cct).
     
     Args:
-        :cct: int or float (for list of cct values, use cri_ref() with ref_type = 'BB')
+        :cct: int or float 
+            (for list of cct values, use cri_ref() with ref_type = 'BB')
         :wl3: None, optional
-             New wavelength range for interpolation. Defaults to wavelengths specified by luxpy._WL3.
+             New wavelength range for interpolation. 
+             Defaults to wavelengths specified by luxpy._WL3.
         :norm_type: None, optional 
             - 'lambda': make lambda in norm_f equal to 1
             - 'area': area-normalization times norm_f
             - 'max': max-normalization times norm_f
         :norm_f: 1, optional
-            Normalization factor: determines size of normalization for 'max' and 'area' or which wavelength is normalized to 1 for 'lambda' option.
+            Normalization factor determines size of normalization 
+            for 'max' and 'area' 
+            or which wavelength is normalized to 1 for 'lambda' option.
 
     Returns:
         :returns: numpy.ndarray with blackbody radiator spectrum
@@ -680,11 +752,12 @@ def daylightlocus(cct, force_daylight_below4000K = False):
     Args:
         :cct: int or float or list of int/floats or numpy.ndarray
         :force_daylight_below4000K: False or True, optional
-            Daylight locus approximation is not defined below 4000 K, but by setting this to True,
-            the calculation can be forced to calculate it anyway.
+            Daylight locus approximation is not defined below 4000 K, 
+            but by setting this to True, the calculation can be forced to 
+            calculate it anyway.
     
     Returns:
-        :returns: (numpy.ndarray of x-coordinates, numpy.ndarray of y-coordinates)
+        :returns: (ndarray of x-coordinates, ndarray of y-coordinates)
         
     References:
         ..[CIE15:2004](http://www.cie.co.at/index.php/index.php?i_ca_id=304)
@@ -708,18 +781,23 @@ def daylightphase(cct, wl3 = None, norm_type = None, norm_f = None, force_daylig
     Calculate daylight phase spectrum for correlated color temperature (cct).
         
     Args:
-        :cct: int or float (for list of cct values, use cri_ref() with ref_type = 'DL')
+        :cct: int or float 
+            (for list of cct values, use cri_ref() with ref_type = 'DL')
         :wl3: None, optional
-             New wavelength range for interpolation. Defaults to wavelengths specified by luxpy._WL3.
+             New wavelength range for interpolation. 
+             Defaults to wavelengths specified by luxpy._WL3.
         :norm_type: None, optional 
             - 'lambda': make lambda in norm_f equal to 1
             - 'area': area-normalization times norm_f
             - 'max': max-normalization times norm_f
         :norm_f: 1, optional
-            Normalization factor: determines size of normalization for 'max' and 'area' or which wavelength is normalized to 1 for 'lambda' option.
+            Normalization factor determines size of normalization 
+            for 'max' and 'area' 
+            or which wavelength is normalized to 1 for 'lambda' option.
         :force_daylight_below4000K: False or True, optional
-            Daylight locus approximation is not defined below 4000 K, but by setting this to True,
-            the calculation can be forced to calculate it anyway.
+            Daylight locus approximation is not defined below 4000 K, 
+            but by setting this to True, the calculation can be forced to 
+            calculate it anyway.
         :verbosity: None, optional
             If None: do not print warning when CCT < 4000 K.
             
@@ -763,45 +841,56 @@ def daylightphase(cct, wl3 = None, norm_type = None, norm_f = None, force_daylig
 #------------------------------------------------------------------------------
 def cri_ref(ccts, wl3 = None, ref_type = _CRI_REF_TYPE, mix_range = None, cieobs=_CIEOBS, norm_type = None, norm_f = None, force_daylight_below4000K = False):
     """
-    Calculates a reference illuminant spectrum for color rendering index calculations based on cct.
+    Calculates a reference illuminant spectrum based on cct 
+    for color rendering index calculations .
     
     Args:
         :ccts: list of int/floats or numpy.ndarray with ccts.
         :wl3: None, optional
-             New wavelength range for interpolation. Defaults to wavelengths specified by luxpy._WL3.
+             New wavelength range for interpolation. 
+             Defaults to wavelengths specified by luxpy._WL3.
         :ref_type: str or list[str], optional
             Specifies the type of reference spectrum to be calculated.
-            Defaults to luxpy._CRI_REF_TYPE. If :ref_type: is list of strings, 
-            then for each cct in :ccts: a different reference illuminant can be specified. 
-            If :ref_type: == 'spd', then :ccts: is assumed to be an numpy.array of reference illuminant spectra.
+            Defaults to luxpy._CRI_REF_TYPE. 
+            If :ref_type: is list of strings, then for each cct in :ccts: 
+                a different reference illuminant can be specified. 
+            If :ref_type: == 'spd', then :ccts: is assumed to be an numpy.array
+                of reference illuminant spectra.
         :mix_range: None or numpy.ndarray, optional
-            Determines the cct range between which the reference illuminant is a weigthed
-            mean of a Planckian and Daylight Phase spectrum. 
+            Determines the cct range between which the reference illuminant is
+            a weigthed mean of a Planckian and Daylight Phase spectrum. 
             Weighthing is done as described in IES TM30:
-                SPDreference = (Te-cct)/(Te-Tb)*SPDplanckian + (cct-Tb)/(Te-Tb)*SPDdaylight
-                with Tb and Te are resp. the starting and end CCTs of the mixing range 
-                and whereby the Planckian and Daylight SPDs have been normalized for equal luminous flux.
+                SPDreference = (Te-T)/(Te-Tb)*Planckian+(T-Tb)/(Te-Tb)*daylight
+                with Tb and Te are resp. the starting and end CCTs of the 
+                mixing range and whereby the Planckian and Daylight SPDs 
+                have been normalized for equal luminous flux.
             If None: use the default specified for :ref_type:.
-            Can be a numpy.ndarray with shape[0] > 1, in which different mixing ranges will be used for cct in :ccts:.
+            Can be a numpy.ndarray with shape[0] > 1, in which different mixing
+            ranges will be used for cct in :ccts:.
         :cieobs: luxpy._CIEOBS, optional
-            Required for the normalization of the Planckian and Daylight SPDs when calculating a 'mixed' reference illuminant.
+            Required for the normalization of the Planckian and Daylight SPDs 
+            when calculating a 'mixed' reference illuminant.
         :norm_type: None, optional 
             - 'lambda': make lambda in norm_f equal to 1
             - 'area': area-normalization times norm_f
             - 'max': max-normalization times norm_f
         :norm_f: 1, optional
-            Normalization factor: determines size of normalization for 'max' and 'area' or which wavelength is normalized to 1 for 'lambda' option.
+            Normalization factor determines size of normalization 
+            for 'max' and 'area' 
+            or which wavelength is normalized to 1 for 'lambda' option.
         :force_daylight_below4000K: False or True, optional
-            Daylight locus approximation is not defined below 4000 K, but by setting this to True,
-            the calculation can be forced to calculate it anyway.
+            Daylight locus approximation is not defined below 4000 K, 
+            but by setting this to True, the calculation can be forced to 
+            calculate it anyway.
     
     Returns:
         :returns: numpy.ndarray with reference illuminant spectra.
             (:returns:[0] contains wavelengths)
 
     Note: 
-        Future versions will have the ability to take a dict as input for ref_type. 
-          This way other reference illuminants can be specified than the ones in _CRI_REF_TYPES. 
+        Future versions will have the ability to take a dict as input 
+        for ref_type. This way other reference illuminants can be specified 
+        than the ones in _CRI_REF_TYPES. 
     """
     if ref_type == 'spd':
         

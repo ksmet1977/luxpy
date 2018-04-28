@@ -92,7 +92,7 @@ More info:
     ?luxpy
  
 -------------------------------------------------------------------------------
-## 1a. spectral/ cmf.py
+## 1. spectral/ cmf.py
 
 ### _CMF:
     
@@ -142,15 +142,14 @@ For more info:
 
     ?luxpy._CMF
 
-## 1b. spectral/ spectral.py
+## 1. spectral/ spectral.py
 
 ### _WL3:
 Default wavelength specification in vector-3 format: [start, end, spacing]
 
 ### _BB:
-Dict with constants for blackbody radiator calculation (c1, c2, n) 
+Dict with constants for blackbody radiator calculation (c1, c2, n, n_air, c, h and k) 
 * [CIE15:2004, “Colorimetry,” CIE, Vienna, Austria, 2004.](http://www.cie.co.at/index.php/index.php?i_ca_id=304)
-
 
 ### _S012_DAYLIGHTPHASE: 
 CIE S0,S1, S2 curves for daylight phase calculation. 
@@ -176,7 +175,7 @@ Get/construct a wavelength range from a 3-vector (start, stop, spacing).
 Get wavelength spacing of np.array input.
 
 ### normalize_spd():
-Spectrum normalization (supports: area, max and lambda)
+Spectrum normalization (supports: area, max, lambda, radiometric, photometric and quantal energy units)
 
 ### cie_interp():
 Interpolate / extrapolate spectral data following standard [CIE15:2004](http://www.cie.co.at/index.php/index.php?i_ca_id=304).
@@ -191,8 +190,17 @@ All-in-one function that can:
 ### xyzbar():
 Get color matching functions.
 
+### vlbar():
+Get Vlambda function.
+
 ### spd_to_xyz():
 Calculates xyz from spectral data. ([CIE15:2004](http://www.cie.co.at/index.php/index.php?i_ca_id=304)).
+
+### spd_to_ler():
+Calculates Luminous efficacy of radiation (LER) from spectral data.([CIE15:2004](http://www.cie.co.at/index.php/index.php?i_ca_id=304)).
+
+# spd_to_power(): 
+Calculate power of spectral data in radiometric, photometric or quantal energy units.([CIE15:2004](http://www.cie.co.at/index.php/index.php?i_ca_id=304)).
 
 ### blackbody():
 Calculate blackbody radiator spectrum for correlated color temperature (cct). ([CIE15:2004](http://www.cie.co.at/index.php/index.php?i_ca_id=304))
@@ -204,10 +212,11 @@ Calculates daylight chromaticity from cct. ([CIE15:2004](http://www.cie.co.at/in
 Calculate daylight phase spectrum for correlated color temperature (cct). ([CIE15:2004](http://www.cie.co.at/index.php/index.php?i_ca_id=304)) 
 
 ### cri_ref():
-Calculates a reference illuminant spectrum for color rendering index calculations based on cct.
+Calculates a reference illuminant spectrum based on cct for color rendering index calculations.
 ([CIE15:2004](http://www.cie.co.at/index.php/index.php?i_ca_id=304), 
 [cie224:2017, CIE 2017 Colour Fidelity Index for accurate scientific use. (2017), ISBN 978-3-902842-61-9](http://www.cie.co.at/index.php?i_ca_id=1027),
-IESTM-30) 
+[IES-TM-30-15: Method for Evaluating Light Source Color Rendition. New York, NY: The Illuminating Engineering Society of North America.](https://www.ies.org/store/technical-memoranda/ies-method-for-evaluating-light-source-color-rendition/)
+) 
 
 For more info:
 
@@ -215,7 +224,7 @@ For more info:
     ?luxpy.spd_to_xyz()
     etc.
 
-## 1c. spectral/ spectral_databases.py
+## 1. spectral/ spectral_databases.py
 
 ### _S_PATH:
 Path to light source spectra data.
@@ -240,14 +249,53 @@ Database with spectral reflectance functions for various color rendition calcula
 * 'cqs': [CQS (v7.5 and v9.0 sets)](http://spie.org/Publications/Journal/10.1117/1.3360335)
 
 ### _MUNSELL:
-Database with 1269 Munsell spectral reflectance functions + Value (V), Chroma (C), hue (h) and (ab) specifications.
+Database with 1269 Munsell spectral reflectance functions and Value (V), Chroma (C), hue (h) and (ab) specifications.
 
 For more info:
 
     ?luxpy.spectral_databases
 
 
-## 2a. ctf/ colortransforms.py
+## 1. spectral/ individual_observer_cmf_model.py (.indvcmf)
+
+### cie2006cmfsEx(): 
+Generate Individual Observer CMFs (cone fundamentals) based on CIE2006 cone 
+fundamentals and published literature on observer variability in color matching
+and in physiological parameters.
+
+### getMonteCarloParam(): 
+Get dict with normally-distributed physiological factors for a population of observers.
+                            
+### getUSCensusAgeDist(): 
+Get US Census Age Distribution.
+
+### genMonteCarloObs(): 
+Monte-Carlo generation of individual observer color matching functions (cone fundamentals) for a certain age and field size.
+
+### getCatObs(): 
+Generate cone fundamentals for categorical observers.
+
+### get_lms_to_xyz_matrix(): 
+Calculate lms to xyz conversion matrix for a specific field size.
+                            
+### lmsb_to_xyzb(): 
+Convert from LMS cone fundamentals to XYZ CMF.
+
+### add_to_cmf_dict(): 
+Add set of cmfs to _CMF dict.
+
+References:
+    1. Asano Y, Fairchild MD, and Blondé L (2016). 
+        Individual Colorimetric Observer Model. 
+        PLoS One 11, 1–19.
+    2. Asano Y, Fairchild MD, Blondé L, and Morvan P (2016). 
+        Color matching experiment for highlighting interobserver variability. 
+        Color Res. Appl. 41, 530–539.
+    3. CIE, and CIE (2006). Fundamental Chromaticity Diagram with Physiological Axes - Part I 
+        (Vienna: CIE).
+    4. [Asano's Individual Colorimetric Observer Model](https://www.rit.edu/cos/colorscience/re_AsanoObserverFunctions.php)
+
+## 2. ctf/ colortransforms.py
 Module with basic colorimetric functions (xyz_to_chromaticity, chromaticity_to_xyz conversions):
 
 ### xyz_to_Yxy(), Yxy_to_xyz(): 
