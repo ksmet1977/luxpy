@@ -27,8 +27,11 @@ setup(
                           'luxpy/data/spds/*.txt',
                           'luxpy/data/rfls/*.dat',
                           'luxpy/data/rfls/*.txt',
-                          'luxpy/data/ciephotbio/*.dat',
-                          'luxpy/data/ciephotbio/*.txt',]},
+                          'luxpy/toolboxes/ciephotbio/data/*.dat',
+                          'luxpy/toolboxes/ciephotbio/data/*.txt',
+                          'luxpy/toolboxes/indvcmf/data/*.dat',
+                          'luxpy/toolboxes/indvcmf/data/*.txt',
+                          ]},
   include_package_data = True,
   classifiers=[
     'Development Status :: 3 - Alpha',
