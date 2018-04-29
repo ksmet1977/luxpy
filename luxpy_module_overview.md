@@ -1033,6 +1033,9 @@ Generate a spectrum with specified white point and optimized for certain
 objective functions from a set of component spectra or component spectrum 
 model parameters.
 
+References: 
+ * [Ohno Y (2005). Spectral design considerations for white LED color rendering. Opt. Eng. 44, 111302.](https://ws680.nist.gov/publication/get_pdf.cfm?pub_id=841839)
+ * [Smet K, Ryckaert WR, Pointer MR, Deconinck G, and Hanselaer P (2011). Optimal colour quality of LED clusters based on memory colours. Opt. Express 19, 6903–6912.](https://www.osapublishing.org/vjbo/fulltext.cfm?uri=oe-19-7-6903&id=211315)
 
 -------------------------------------------------------------------------------
 ## 0.1.  helpers/ helpers.py 

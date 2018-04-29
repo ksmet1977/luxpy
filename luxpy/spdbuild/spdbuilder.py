@@ -202,10 +202,12 @@ def phosphor_led_spd(peakwl = 450, fwhm = 20, wl = _WL3, with_wl = True, strengt
         1. Ohno Y (2005). 
             Spectral design considerations for white LED color rendering. 
             Opt. Eng. 44, 111302.
+            (https://ws680.nist.gov/publication/get_pdf.cfm?pub_id=841839)
 
         2. Smet K, Ryckaert WR, Pointer MR, Deconinck G, and Hanselaer P (2011). 
             Optimal colour quality of LED clusters based on memory colours. 
             Opt. Express 19, 6903–6912.
+            (https://www.osapublishing.org/vjbo/fulltext.cfm?uri=oe-19-7-6903&id=211315)
     """
         
     mono_led = mono_led_spd(peakwl = peakwl, fwhm = fwhm, wl = wl, with_wl = False, strength_shoulder = strength_shoulder)
