@@ -21,7 +21,113 @@
 #  classes CDATA, XYZ, LAB
 ###############################################################################
 
+ --- CDATA fields -------------------------------------------------------------
 
+# self.relative: relative (True) or absolute (False) colorimetric data.  
+    
+# self.value: values of spectral data
+    
+# self.dtype: colorimetric data type ('xyz', 'Yuv', 'lab', ...)
+    
+# self.shape: self.value.shape
+
+# self.cieobs: CMF set used to determine colorimetric data from spectral data.
+   
+ 
+ --- CDATA methods ------------------------------------------------------------
+
+# self.get_values_(): Get values from data and return ndarray. 
+
+# self.split_(): Split .value along last axis and return list of ndarrays.
+
+# self.join(): Join data along last axis and return instance.
+ 
+# self.take_(): Applies numpy.take on .value field.
+ 
+# self.getax_(): Get elements in .value field along specific axis
+ 
+# self.dot(): Take dot product with instance.
+ 
+# self.add(): Add data to instance value field.
+ 
+# self.sub(): Subtract data from instance value field.
+ 
+# self.mul(): Multiply data with instance value field.
+ 
+# self.div(): Divide instance value field by data.
+ 
+# self.pow(): Raise instance value field to power.
+ 
+# self.broadcast(): Broadcast instance value field to shape of data.
+ 
+# self.get_S(): Get spectral data related to light sources. 
+          (cfr. axis = 1 in xyz ndarrays).
+          
+# self.get_R():  Get spectral data related to reflectance samples.
+            (cfr. axis = 0 in xyz ndarrays).
+            
+# self.get_subset(): Get spectral data related to specific light source and reflectance data
+         (cfr. axis = 1 and axis = 0 in xyz ndarrays).
+
+
+
+ --- XYZ fields ---------------------------------------------------------------
+
+Same as CDATA, XYZ inherits from CDATA 
+
+
+
+ --- XYZ methods --------------------------------------------------------------
+
+# self.ctf(): Convert XYZ tristimulus values to color space coordinates.
+ 
+# self.plot(): Plot tristimulus or cone fundamental values.
+
+# self.to_...(): Convert XYZ tristimulus values to ...
+                 (Method wrappers for all xyz_to_... functions)
+  
+
+          
+ --- LAB fields ---------------------------------------------------------------
+
+  Same as CDATA, LAB inherits from CDATA 
+
+  AND, additionally the following dict field with keys 
+  related to color space parameters:
+    
+    self.cspace_par = {}
+    self.cspace_par['cieobs'] = self.cieobs
+    
+    
+  # specific to some chromaticity / color space transforms:   
+  
+    self.cspace_par['xyzw'] = xyzw
+    self.cspace_par['M'] = M
+    self.cspace_par['scaling'] = scaling
+    
+  # specific to some CAM transforms:
+  
+    self.cspace_par['Lw'] = Lw
+    self.cspace_par['Yw'] = Yw
+    self.cspace_par['Yb'] = Yb
+    self.cspace_par['conditions'] = conditions
+    self.cspace_par['yellowbluepurplecorrect'] = yellowbluepurplecorrect
+    self.cspace_par['mcat'] = mcat
+    self.cspace_par['ucstype'] = ucstype
+    self.cspace_par['fov'] = fov
+    self.cspace_par['parameters'] = parameters
+
+
+ --- LAB methods --------------------------------------------------------------
+
+# self.ctf(): Convert color space coordinates to XYZ tristimulus values.
+ 
+# self.to_xyz(): Convert color space coordinates to XYZ tristimulus values. 
+ 
+# self.plot(): Plot color coordinates.
+ 
+#------------------------------------------------------------------------------
+ 
 Created on Fri Apr  6 13:51:37 2018
 
 @author: Kevin A.G. Smet (ksmet1977 at gmail.com)
@@ -53,14 +159,23 @@ class CDATA():
         self.shape = self.value.shape
     
     def getvalues_(self,data):
+        """
+        Get values from data and return ndarray.
+        """
         if isinstance(data, XYZ):
             data = data.value
         return data
     
     def split_(self):
+        """
+        Split .value along last axis and return list of ndarrays.
+        """
         return [self.value[...,i] for i in range(self.value.shape[-1])]
      
     def join(self,data):
+        """
+        Join data along last axis and return instance.
+        """
         if data[0].ndim == 2: #faster implementation
             self.value = np.transpose(np.concatenate(data,axis=0).reshape((np.hstack((len(data),data[0].shape)))),(1,2,0))
         elif data[0].ndim == 1:
@@ -70,9 +185,15 @@ class CDATA():
         return self
     
     def take_(self, indices, axis=None, out=None, mode='raise'):
+        """
+        Applies numpy.take on .value field.
+        """
         return np.take(self.value, indices=indices, axis=axis, out=out, mode=mode)  
     
     def getax_(self, indices = 0, axis = None):
+        """
+        Get elements in .value field along specific axis
+        """
         if (axis is None):
             return self.value[...,indices]
         elif axis == 0:
@@ -83,31 +204,52 @@ class CDATA():
             return self.value[...,indices]
    
     def dot(self, M):
+        """
+        Take dot product with instance.
+        """
         self.value = np.dot(M, self.value.T).T
         self.shape = self.value.shape
         return self
     
     def add(self, data):
+        """
+        Add data to instance value field.
+        """
         self.value += self.getvalues_(data)
         return self
        
     def sub(self, data):
+        """
+        Subtract data from instance value field.
+        """
         self.value -= self.getvalues_(data)
         return self
            
     def mul(self, data):
+        """
+        Multiply data with instance value field.
+        """
         self.value *= self.getvalues_(data)
         return self
               
     def div(self, data):
+        """
+        Divide instance value field by data.
+        """
         self.value /= self.getvalues_(data)
         return self
     
     def pow(self, n):
+        """
+        Raise instance value field to power.
+        """
         self.value **= n
         return self
     
     def broadcast(self,data, add_axis = 1, equal_shape = False):
+        """
+        Broadcast instance value field to shape of data.
+        """
         self.value = todim(self.value,data, add_axis = add_axis, equal_shape = equal_shape)
         self.shape = self.value.shape
         return self
@@ -585,7 +727,7 @@ class LAB(CDATA):
     
     def plot(self, plt_type = '3d', ax = None, title = None, **kwargs):
         """
-        Plot tristimulus or cone fundamental values.
+        Plot color coordinates.
         
         Args:
             :plt_type: '3d' or 3 or '2d or 2, optional
