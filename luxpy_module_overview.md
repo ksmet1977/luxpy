@@ -134,9 +134,7 @@ More info:
 References:
  1. [CIE15:2004, “Colorimetry,” CIE, Vienna, Austria, 2004.](http://www.cie.co.at/index.php/index.php?i_ca_id=304)
 
- 2. CIE, and CIE (2006). 
-     Fundamental Chromaticity Diagram with Physiological Axes - Part I 
-     (Vienna: CIE).
+ 2. [CIE, and CIE (2006). Fundamental Chromaticity Diagram with Physiological Axes - Part I (Vienna: CIE).](http://www.cie.co.at/publications/fundamental-chromaticity-diagram-physiological-axes-part-1)
      
 For more info:
 
@@ -213,10 +211,9 @@ Calculate daylight phase spectrum for correlated color temperature (cct). ([CIE1
 
 ### cri_ref():
 Calculates a reference illuminant spectrum based on cct for color rendering index calculations.
-([CIE15:2004](http://www.cie.co.at/index.php/index.php?i_ca_id=304), 
-[cie224:2017, CIE 2017 Colour Fidelity Index for accurate scientific use. (2017), ISBN 978-3-902842-61-9](http://www.cie.co.at/index.php?i_ca_id=1027),
-[IES-TM-30-15: Method for Evaluating Light Source Color Rendition. New York, NY: The Illuminating Engineering Society of North America.](https://www.ies.org/store/technical-memoranda/ies-method-for-evaluating-light-source-color-rendition/)
-) 
+ * [CIE15:2004](http://www.cie.co.at/index.php/index.php?i_ca_id=304) 
+ * [cie224:2017, CIE 2017 Colour Fidelity Index for accurate scientific use. (2017), ISBN 978-3-902842-61-9](http://www.cie.co.at/index.php?i_ca_id=1027)
+ * [IES-TM-30-15: Method for Evaluating Light Source Color Rendition. New York, NY: The Illuminating Engineering Society of North America.](https://www.ies.org/store/technical-memoranda/ies-method-for-evaluating-light-source-color-rendition/)
 
 For more info:
 
@@ -244,7 +241,8 @@ Database with spectral reflectance functions for various color rendition calcula
 * 'cie-13.3-1995': [CIE 13.3-1995 (8, 14 munsell samples)](http://www.cie.co.at/index.php/index.php?i_ca_id=303), 
 * 'cie-224-2017': [CIE 224:2015 (99 set)](http://www.cie.co.at/index.php?i_ca_id=1027)
 * 'cri2012': [CRI2012 (HL17 & HL1000 spetcrally uniform and 210 real samples)](http://journals.sagepub.com/doi/abs/10.1177/1477153513481375))
-* 'ies-tm30-15': [IES TM30 (99, 4880 sepctrally uniform samples)](https://www.ies.org/store/technical-memoranda/ies-method-for-evaluating-light-source-color-rendition/)
+* 'ies-tm30-15': [IES TM30-15 (99, 4880 spectrally uniform samples)](https://www.ies.org/store/technical-memoranda/ies-method-for-evaluating-light-source-color-rendition/)
+* 'ies-tm30-18': [IES TM30-18 (99, 4880 spectrally uniform samples)](https://www.ies.org/store/technical-memoranda/ies-method-for-evaluating-light-source-color-rendition/)
 * 'mcri': [MCRI (10 familiar object set)](http://www.sciencedirect.com/science/article/pii/S0378778812000837)
 * 'cqs': [CQS (v7.5 and v9.0 sets)](http://spie.org/Publications/Journal/10.1117/1.3360335)
 
@@ -286,14 +284,9 @@ Add set of cmfs to _CMF dict.
 
 References:
 
- 1. Asano Y, Fairchild MD, and Blondé L (2016). 
-    Individual Colorimetric Observer Model. 
-    PLoS One 11, 1–19.
- 2. Asano Y, Fairchild MD, Blondé L, and Morvan P (2016). 
-    Color matching experiment for highlighting interobserver variability. 
-    Color Res. Appl. 41, 530–539.
- 3. CIE, and CIE (2006). Fundamental Chromaticity Diagram with Physiological Axes - Part I 
-    (Vienna: CIE).
+ 1. [Asano Y, Fairchild MD, and Blondé L (2016). Individual Colorimetric Observer Model. PLoS One 11, 1–19.](http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0145671)
+ 2. [Asano Y, Fairchild MD, Blondé L, and Morvan P (2016). Color matching experiment for highlighting interobserver variability. Color Res. Appl. 41, 530–539.](https://onlinelibrary.wiley.com/doi/abs/10.1002/col.21975)
+ 3. [CIE, and CIE (2006). Fundamental Chromaticity Diagram with Physiological Axes - Part I (Vienna: CIE).](http://www.cie.co.at/publications/fundamental-chromaticity-diagram-physiological-axes-part-1) 
  4. [Asano's Individual Colorimetric Observer Model](https://www.rit.edu/cos/colorscience/re_AsanoObserverFunctions.php)
 
 ## 2. ctf/ colortransforms.py
@@ -334,13 +327,10 @@ CIE xyz <--> Y, dominant / complementary wavelength (dl, compl. wl: specified by
 
 References:
 
- 1. CIE15-2004 (2004). Colorimetry (Vienna, Austria: CIE)
- 2. Ebner F, and Fairchild MD (1998). 
-    Development and testing of a color space (IPT) with improved hue uniformity. 
-    In IS&T 6th Color Imaging Conference, (Scottsdale, Arizona, USA), pp. 8–13.
- 3. MacLeod DI, and Boynton RM (1979). 
-    Chromaticity diagram showing cone excitation by stimuli of equal luminance. 
-    J. Opt. Soc. Am. 69, 1183–1186.
+ 1. [CIE15:2004, Colorimetry, Vienna, Austria](http://www.cie.co.at/index.php/index.php?i_ca_id=304)).
+ 2. [F. Ebner and M. D. Fairchild, “Development and testing of a color space (IPT) with improved hue uniformity,” in IS&T 6th Color Imaging Conference, 1998, pp. 8–13.](http://www.ingentaconnect.com/content/ist/cic/1998/00001998/00000001/art00003?crawler=true)
+ 3. [MacLeod DI, and Boynton RM (1979). Chromaticity diagram showing cone excitation by stimuli of equal luminance. J. Opt. Soc. Am. 69, 1183–1186.](https://www.osapublishing.org/josa/abstract.cfm?uri=josa-69-8-1183)
+
 
 For more info:
 
