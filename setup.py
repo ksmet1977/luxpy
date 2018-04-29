@@ -18,6 +18,7 @@ setup(
 		  'matplotlib',
 		  'pandas',
         'itertools',
+        'opencv-python',
       ],
   package_data={'luxpy': ['luxpy/data/cmfs/*.dat',
                           'luxpy/data/cmfs/*.txt',
@@ -31,6 +32,7 @@ setup(
                           'luxpy/toolboxes/ciephotbio/data/*.txt',
                           'luxpy/toolboxes/indvcmf/data/*.dat',
                           'luxpy/toolboxes/indvcmf/data/*.txt',
+                          'luxpy/toolboxes/hypspcim/data/*.*'
                           ]},
   include_package_data = True,
   classifiers=[

@@ -87,18 +87,23 @@ def plot_color_data(x,y,z=None, axh=None, show = True, cieobs =_CIEOBS, cspace =
             or 
             handle to current axes (:show: == False)
     """
-
+    x = np.atleast_1d(x)
+    y = np.atleast_1d(y)
     if 'grid' in kwargs.keys():
         plt.grid(kwargs['grid']);kwargs.pop('grid')
     if z is not None:
-        plt.plot(x,y,z,formatstr, linewidth = 2)
+        z = np.atleast_1d(z)
+        if axh is None:
+            fig = plt.figure()
+            axh = plt.axes(projection='3d')
+        axh.plot3D(x,y,z,formatstr, linewidth = 2,**kwargs)
         plt.xlabel(_CSPACE_AXES[cspace][0], kwargs)
     else:
-        plt.plot(x,y,formatstr,linewidth = 2)
+        plt.plot(x,y,formatstr,linewidth = 2,**kwargs)
         
     plt.xlabel(_CSPACE_AXES[cspace][1], kwargs)
     plt.ylabel(_CSPACE_AXES[cspace][2], kwargs)
-
+    plt.legend()
     if show == True:
         plt.show()
     else:

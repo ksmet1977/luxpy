@@ -1,21 +1,18 @@
 # -*- coding: utf-8 -*-
 """
-########################################################################################
-# Package for color science, colorimetric and color appearance attribute calculations. #
-########################################################################################
-
-    For an overview of constants, functions, classes and modules of the luxpy package,
-    see: "http://github.com/ksmet1977/luxpy/blob/master/luxpy_module_overview.md"
+###############################################################################
+# LuxPy: a package for lighting and color science
+###############################################################################
 
     * Author: K. A.G. Smet (ksmet1977 at gmail.com)
     * Version: 1.3.00
-    * Date: April 15, 2018
+    * Date: April 29, 2018
     * License: GPLv3
 
-########################################################################################
+###############################################################################
 
 
-########################################################################
+###############################################################################
 # <LUXPY: a Python package for lighting and color science.>
 # Copyright (C) <2017>  <Kevin A.G. Smet> (ksmet1977 at gmail.com)
 #
@@ -142,15 +139,17 @@ import numpy as np
 import pandas as pd
 from scipy import interpolate
 from scipy.optimize import minimize
+from scipy.spatial import cKDTree
 import warnings
 import os
 from collections import OrderedDict as odict
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import colorsys
+import cv2
 
-__all__ = ['plt','Axes3D','np','pd','os','warnings','interpolate','minimize','odict']
-
+__all__ = ['plt','Axes3D','np','pd','os','warnings','interpolate','minimize',
+           'cKDTree','odict','colorsys','cv2']
 
 
 #==============================================================================
@@ -272,6 +271,8 @@ from .toolboxes.indvcmf import individual_observer_cmf_model as indvcmf
 #   Load spdbuild sub_package:
 from .toolboxes.spdbuild import spdbuilder as spdbuild
 
+#   Load hypspcim sub_package:
+from .toolboxes.hypspcim import hyperspectral_img_simulator as hypspcim
 
 # Setup __all__:
 __all__ = [x for x in dir() if x[:2]!='__']
