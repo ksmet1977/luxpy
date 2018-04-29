@@ -199,7 +199,7 @@ Calculates xyz from spectral data. ([CIE15:2004](http://www.cie.co.at/index.php/
 ### spd_to_ler():
 Calculates Luminous efficacy of radiation (LER) from spectral data.([CIE15:2004](http://www.cie.co.at/index.php/index.php?i_ca_id=304)).
 
-# spd_to_power(): 
+### spd_to_power(): 
 Calculate power of spectral data in radiometric, photometric or quantal energy units.([CIE15:2004](http://www.cie.co.at/index.php/index.php?i_ca_id=304)).
 
 ### blackbody():
@@ -285,15 +285,16 @@ Convert from LMS cone fundamentals to XYZ CMF.
 Add set of cmfs to _CMF dict.
 
 References:
-    1. Asano Y, Fairchild MD, and Blondé L (2016). 
-        Individual Colorimetric Observer Model. 
-        PLoS One 11, 1–19.
-    2. Asano Y, Fairchild MD, Blondé L, and Morvan P (2016). 
-        Color matching experiment for highlighting interobserver variability. 
-        Color Res. Appl. 41, 530–539.
-    3. CIE, and CIE (2006). Fundamental Chromaticity Diagram with Physiological Axes - Part I 
-        (Vienna: CIE).
-    4. [Asano's Individual Colorimetric Observer Model](https://www.rit.edu/cos/colorscience/re_AsanoObserverFunctions.php)
+
+ 1. Asano Y, Fairchild MD, and Blondé L (2016). 
+    Individual Colorimetric Observer Model. 
+    PLoS One 11, 1–19.
+ 2. Asano Y, Fairchild MD, Blondé L, and Morvan P (2016). 
+    Color matching experiment for highlighting interobserver variability. 
+    Color Res. Appl. 41, 530–539.
+ 3. CIE, and CIE (2006). Fundamental Chromaticity Diagram with Physiological Axes - Part I 
+    (Vienna: CIE).
+ 4. [Asano's Individual Colorimetric Observer Model](https://www.rit.edu/cos/colorscience/re_AsanoObserverFunctions.php)
 
 ## 2. ctf/ colortransforms.py
 Module with basic colorimetric functions (xyz_to_chromaticity, chromaticity_to_xyz conversions):
@@ -332,13 +333,13 @@ CIE xyz <--> IPT ()
 CIE xyz <--> Y, dominant / complementary wavelength (dl, compl. wl: specified by < 0) and excitation purity (ep)
 
 References:
-   1. CIE15-2004 (2004). Colorimetry (Vienna, Austria: CIE)
-   2. Ebner F, and Fairchild MD (1998). 
-        Development and testing of a color space (IPT) with improved hue uniformity. 
-        In IS&T 6th Color Imaging Conference, (Scottsdale, Arizona, USA), pp. 8–13.
-   3. MacLeod DI, and Boynton RM (1979). 
-        Chromaticity diagram showing cone excitation by stimuli of equal luminance. 
-        J. Opt. Soc. Am. 69, 1183–1186.
+ 1. CIE15-2004 (2004). Colorimetry (Vienna, Austria: CIE)
+ 2. Ebner F, and Fairchild MD (1998). 
+    Development and testing of a color space (IPT) with improved hue uniformity. 
+    In IS&T 6th Color Imaging Conference, (Scottsdale, Arizona, USA), pp. 8–13.
+ 3. MacLeod DI, and Boynton RM (1979). 
+    Chromaticity diagram showing cone excitation by stimuli of equal luminance. 
+    J. Opt. Soc. Am. 69, 1183–1186.
 
 For more info:
 
