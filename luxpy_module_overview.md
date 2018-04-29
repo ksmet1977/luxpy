@@ -778,8 +778,7 @@ For more info:
             
         
     --- SPD methods ------------------------------------------------------------------
-        
-        
+                
         # self.read_csv_(): Reads spectral data from file.
         
         # self.plot(): Make a plot of the spectral data in SPD instance.
@@ -922,6 +921,58 @@ For more info:
          
         # self.plot(): Plot color coordinates.
     
+
+## 10. ciephotbio/ cie_tn003_2015.py (.ciephotbio)
+
+    +---------------------------------------------------------------------------------------------------+
+    |Photoreceptor|  Photopigment  | Spectral efficiency |      Quantity       | Q-symbol | Unit symbol |
+    |             |   (label, α)   |        sα(λ)        | (α-opic irradiance) |  (Ee,α)  |             |
+    +---------------------------------------------------------------------------------------------------+
+    |   s-cone    | photopsin (sc) |       cyanolabe     |      cyanopic       |   Ee,sc  |    W⋅m−2    |
+    |   m-cone    | photopsin (mc) |       chlorolabe    |      chloropic      |   Ee,mc  |    W⋅m−2    |
+    |   l-cone    | photopsin (lc) |       erythrolabe   |      erythropic     |   Ee,lc  |    W⋅m−2    |
+    |   ipRGC     | melanopsin (z) |       melanopic     |      melanopic      |   Ee,z   |    W⋅m−2    |
+    |    rod      | rhodopsin (r)  |        rhodopic     |      rhodopic       |   Ee,r   |    W⋅m−2    |
+    +---------------------------------------------------------------------------------------------------+
+    
+    CIE recommends that the α-opic irradiance is determined by convolving the spectral
+    irradiance, Ee,λ(λ) (W⋅m−2), for each wavelength, with the action spectrum, sα(λ), 
+    where sα(λ) is normalized to one at its peak:
+    
+        Ee,α = ∫ Ee,λ(λ) sα(λ) dλ 
+    
+    where the corresponding units are W⋅m−2 in each case. 
+    
+    The equivalent luminance is calculated as:
+        
+        E,α = Km ⋅ ∫ Ee,λ(λ) sα(λ) dλ ⋅ ∫ V(λ) dλ / ∫ sα(λ) dλ
+    
+    To avoid ambiguity, the weighting function used must be stated, so, for example, 
+    cyanopic refers to the cyanopic irradiance weighted using 
+    the s-cone or ssc(λ) spectral efficiency function.
+    ----------------------------------------------------------------------------------------------------
+    
+     # _PHOTORECEPTORS = ['l-cone', 'm-cone','s-cone', 'rod', 'iprgc']
+     # _Ee_SYMBOLS =  ['Ee,lc','Ee,mc', 'Ee,sc','Ee,r',  'Ee,z']
+     # _E_SYMBOLS =  ['E,lc','E,mc', 'E,sc','E,r',  'E,z']
+     # _Q_SYMBOLS =  ['Q,lc','Q,mc', 'Q,sc','Q,r',  'Q,z']
+     # _Ee_UNITS = ['W⋅m−2'] * 5
+     # _E_UNITS = ['lux'] * 5
+     # _Q_UNITS = ['photons/m2/s'] * 5 
+     # _QUANTITIES:  list with actinic types of irradiance, illuminance
+                     ['erythropic', 
+                      'chloropic',
+                      'cyanopic',
+                      'rhodopic',
+                      'melanopic'] 
+     
+     # _ACTIONSPECTRA: ndarray with alpha-actinic action spectra. (stored in file:
+                         './data/cie_tn003_2015_SI_action_spectra.dat')
+     
+     # spd_to_aopicE(): Calculate alpha-opic irradiance (Ee,α) and equivalent 
+                        luminance (Eα) values for the l-cone, m-cone, s-cone, 
+                        rod and iprgc (α) photoreceptor cells following 
+                        CIE technical note TN 003:2015.
     
 -------------------------------------------------------------------------------
 ## 0.1.  helpers/ helpers.py 

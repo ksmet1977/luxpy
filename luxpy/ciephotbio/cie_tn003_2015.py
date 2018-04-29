@@ -50,7 +50,28 @@ cyanopic refers to the cyanopic irradiance weighted using
 the s-cone or ssc(λ) spectral efficiency function.
 ----------------------------------------------------------------------------------------------------
 
-
+ # _PHOTORECEPTORS = ['l-cone', 'm-cone','s-cone', 'rod', 'iprgc']
+ # _Ee_SYMBOLS =  ['Ee,lc','Ee,mc', 'Ee,sc','Ee,r',  'Ee,z']
+ # _E_SYMBOLS =  ['E,lc','E,mc', 'E,sc','E,r',  'E,z']
+ # _Q_SYMBOLS =  ['Q,lc','Q,mc', 'Q,sc','Q,r',  'Q,z']
+ # _Ee_UNITS = ['W⋅m−2'] * 5
+ # _E_UNITS = ['lux'] * 5
+ # _Q_UNITS = ['photons/m2/s'] * 5 
+ # _QUANTITIES:  list with actinic types of irradiance, illuminance
+                 ['erythropic', 
+                  'chloropic',
+                  'cyanopic',
+                  'rhodopic',
+                  'melanopic'] 
+ 
+ # _ACTIONSPECTRA: ndarray with alpha-actinic action spectra. (stored in file:
+                     './data/cie_tn003_2015_SI_action_spectra.dat')
+ 
+ # spd_to_aopicE(): Calculate alpha-opic irradiance (Ee,α) and equivalent 
+                    luminance (Eα) values for the l-cone, m-cone, s-cone, 
+                    rod and iprgc (α) photoreceptor cells following 
+                    CIE technical note TN 003:2015.
+                    
 ----------------------------------------------------------------------------------------------------
 
 Created on Tue Apr 17 12:25:29 2018
