@@ -751,7 +751,71 @@ For more info:
 ## 9. classes/ SPD.py and CDATA.py (classes SPD, CDATA, XYZ, LAB)
 
 ### class SPD
-Class with the following methods:
+
+
+#### self.wl: (field)
+wavelengths of spectral data 
+    
+#### self.value: (field)
+values of spectral data
+    
+#### self.dtype: (field)
+spectral data type ('S' light source, or 'R', reflectance, ...), used to determine interpolation method following CIE15-2004.
+    
+#### self.shape: (field)
+self.value.shape
+
+#### self.N:  (field)
+self.shape[0] (number of spectra in instance)
+    
+
+#### self.read_csv_(): 
+Reads spectral data from file.
+
+#### self.plot(): 
+Make a plot of the spectral data in SPD instance.
+
+#### self.mean(): 
+Take mean of all spectra in SPD instance
+
+#### self.sum(): 
+Sum all spectra in SPD instance.
+
+#### self.dot(): 
+Take dot product with instance of SPD.
+
+#### self.add(): 
+Add instance of SPD.
+
+#### self.sub(): 
+Subtract instance of SPD.
+
+#### self.mul(): 
+Multiply instance of SPD.
+
+#### self.div(): 
+Divide by instance of SPD.
+
+#### self.pow(): 
+Raise SPD instance to power n.
+
+#### self.get_(): 
+Get spd as ndarray in instance of SPD.
+
+#### self.setwlv(): 
+Store spd ndarray in fields wl and values of instance of SPD.
+
+#### self.getwld_(): 
+Get wavelength spacing of SPD instance. 
+
+#### self.normalize(): 
+Normalize spectral power distributions in SPD instance.
+
+#### self.cie_interp(): 
+Interpolate / extrapolate spectral data following CIE15-2004.
+
+#### self.to_xyz(): 
+Calculates xyz tristimulus values from spectral data and return as instance of class XYZ.
 
 
 -------------------------------------------------------------------------------

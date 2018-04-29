@@ -20,7 +20,56 @@
 # Module for class functionality for spectral data: class SPD
 ###############################################################################
 
+ --- Class SPD fields ---
 
+# self.wl: wavelengths of spectral data
+    
+# self.value: values of spectral data
+    
+# self.dtype: spectral data type ('S' light source, or 'R', reflectance, ...),
+              used to determine interpolation method following CIE15-2004.
+    
+# self.shape: self.value.shape
+
+# self.N = self.shape[0] (number of spectra in instance)
+    
+
+--- Class SPD methods ---
+
+# self.read_csv_(): Reads spectral data from file.
+
+# self.plot(): Make a plot of the spectral data in SPD instance.
+
+# self.mean(): Take mean of all spectra in SPD instance
+
+# self.sum(): Sum all spectra in SPD instance.
+
+# self.dot(): Take dot product with instance of SPD.
+
+# self.add(): Add instance of SPD.
+
+# self.sub(): Subtract instance of SPD.
+
+# self.mul(): Multiply instance of SPD.
+
+# self.div(): Divide by instance of SPD.
+
+# self.pow(): Raise SPD instance to power n.
+
+# self.get_(): Get spd as ndarray in instance of SPD.
+
+# self.setwlv(): Store spd ndarray in fields wl and values of instance of SPD.
+
+# self.getwld_(): Get wavelength spacing of SPD instance. 
+
+# self.normalize(): Normalize spectral power distributions in SPD instance.
+
+# self.cie_interp(): Interpolate / extrapolate spectral data following CIE15-2004.
+
+# self.to_xyz(): Calculates xyz tristimulus values from spectral data 
+            and return as instance of class XYZ.
+
+#------------------------------------------------------------------------------
 Created on Fri Apr  6 15:50:05 2018
 
 @author: Kevin A.G. Smet (ksmet1977 at gmail.com)
@@ -175,7 +224,7 @@ class SPD:
             
     def add(self, S):
         """
-        Add by instance of SPD.
+        Add instance of SPD.
         """
         self.value += S.value 
         return self
@@ -209,9 +258,15 @@ class SPD:
         return self
     
     def get_(self):
+        """
+        Get spd as ndarray in instance of SPD.
+        """
         return np.vstack((self.wl, self.value))
     
     def setwlv(self,spd):
+        """
+        Store spd ndarray in fields wl and values of instance of SPD.
+        """
         self.wl = spd[0]
         self.value = spd[1:]
         return self
