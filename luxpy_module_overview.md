@@ -13,69 +13,83 @@
 -------------------------------------------------------------------------------
 ## Module overview:
     
-    0.1.  helpers/ 
-            helpers.py (imported directly into luxpy namespace, details see end of this file)
-    
-    0.2.  math/ 
-            math.py (imported as math into the luxpy namespace, details see end of this file)
-            optimizers.py (imported in math name space)
-            
-    1.  spectral/ 
-            cmf.py
-            spectral.py
-            spectral_databases.py
-            individual_observer_cmf_model.py (imports into indvcmf namespace)
-            
-    2.  ctf/ 
-            colortransforms.py (imported directly into luxpy namespace)
-            colortf.py (imported directly into luxpy namespace)
-            
-    3.  cct/ 
-            cct.py (imported directly into luxpy namespace)
-            
-    4.  cat/ 
-            chromaticadaptation.py (imported in luxpy namespace as .cat)
-            
-    5.  cam/ 
-            colorappearancemodels.py (imported in luxpy namespace as .cam)
-              cam_02_X.py
-              cam15u.py
-              sww2016.py
+   /utils
+		/helpers                         (imported directly into luxpy namespace)
+         helpers.py
+		/.math                           (imported into luxpy namespace as .math)
+			math.py
+			optimizers.py
+	
+	/spectrum                           (imported directly into luxpy namespace)
+		cmf.py
+		spectral.py
+		spectral_databases.py
+		/.cri                             (imported into luxpy namespace as .cri)
+		colorrendition.py
+			/utils
+				DE_scalers.py
+				helpers.py
+				init_cri_defaults_database.py
+				graphics.py
+			/indices
+				indices.py
+					cie_wrappers.py
+					ies_wrappers.py
+					cri2012.py
+					mcri.py
+					cqs.py
+			/ies_tm30
+				ies_tm30_metrics.py
+				ies_tm30_graphics.py
+				
+			/.VFPX                    (imported into luxpy namespace as .cri.VFPX)
+				VF_PX_models.py                         (imported in .cri as .VFPX)
+					vectorshiftmodel.py
+					pixelshiftmodel.py
+	
+	/color
+		colortransformations.py          (imported directly into luxpy namespace)
+		cct.py                           (imported directly into luxpy namespace)
+		/.cat                             (imported into luxpy namespace as .cat)
+			chromaticadaptation.py	
+		/.cam                             (imported into luxpy namespace as .cam)
+			colorappearancemodels.py
+				cam_02_X.py
+				cam15u.py
+				sww16.py
+		colortf.py                       (imported directly into luxpy namespace)
+		
+		/.deltaE                       (imported into luxpy namespace as .deltaE)
+			colordifferences.py
+		
+		/utils
+			plotters.py                   (imported directly into luxpy namespace)
+		
+		
+	/classes
+		SPD.py                 (class SPD imported directly into luxpy namespace)
+		CDATA.py               (classes CDATA, XYZ and LAB imported directly into
+                        		 luxpy namespace)
+		
+	/data
+		/cmfs
+		/spds
+		/rfls
+		/cctluts
 
-    6.  deltaE/ 
-            colordifferences.py (imported in luxpy namespace as .deltaE)
-            
-    7.  cri/ 
-            colorrendition.py (imported in luxpy namespace as .cri)
-                DE_scalers.py
-                helpers.py
-                init_cri_defaults_database.py
-                indices.py
-                    cie_wrappers.py
-                    ies_wrappers.py
-                    cri2012.py
-                    mcri.py
-                    cqs.py
-                graphics.py
-                ies_tm30_metrics.py
-                ies_tm30_graphics.py
-                VF_PX_models.py (imported in .cri as .VFPX)
-                    vectorshiftmodel.py
-                    pixelshiftmodel.py
-            
-    8. graphics/ 
-            plotters.py (imported directly into luxpy namespace)
-            
-    9. classes/ 
-            SPD (imported directly into luxpy namespace)
-            CDATA, XYZ, LAB (imported directly into luxpy namespace)
-            
-    10. ciephotbio/
-            cie_tn003_2015.py (imported into luxpy namespace as .ciephotbio)
-            
-    11. spdbuild/
-            spd_builder.py (imported into luxpy namespace as .spdbuild)
-    
+		
+	/toolboxes
+		
+		/.ciephotbio               (imported into luxpy namespace as .ciephotbio)
+			cie_tn003_2015.py
+			/data
+			
+		/.indvcmf                     (imported into luxpy namespace as .indvcmf)
+			individual_observer_cmf_model.py
+			/data
+		
+		/.spdbuild                   (imported into luxpy namespace as .spdbuild)
+			spd_builder.py    
  
 -------------------------------------------------------------------------------
 ## \__init__.py
@@ -92,7 +106,7 @@ More info:
     ?luxpy
  
 -------------------------------------------------------------------------------
-## 1. spectral/ cmf.py
+## spectrum/ cmf.py
 
 ### _CMF:
     
@@ -140,7 +154,7 @@ For more info:
 
     ?luxpy._CMF
 
-## 1. spectral/ spectral.py
+## spectrum/ spectral.py
 
 ### _WL3:
 Default wavelength specification in vector-3 format: [start, end, spacing]
@@ -221,7 +235,7 @@ For more info:
     ?luxpy.spd_to_xyz()
     etc.
 
-## 1. spectral/ spectral_databases.py
+## spectrum/ spectral_databases.py
 
 ### _S_PATH:
 Path to light source spectra data.
@@ -253,43 +267,144 @@ For more info:
 
     ?luxpy.spectral_databases
 
+## spectrum/cri/ colorrendition.py (.cri)
 
-## 1. spectral/ individual_observer_cmf_model.py (.indvcmf)
+### cri._CRI_TYPE_DEFAULT: 
+Default cri_type.
 
-### cie2006cmfsEx(): 
-Generate Individual Observer CMFs (cone fundamentals) based on CIE2006 cone 
-fundamentals and published literature on observer variability in color matching
-and in physiological parameters.
+### cri._CRI_DEFAULTS: 
+Default parameters for color fidelity and gamut area metrics 
+        
+    (major dict has 9 keys: 
+            sampleset [str/dict], 
+            ref_type [str], 
+            cieobs [str], 
+            avg [fcn handle], 
+            scale [dict], 
+            cspace [dict], 
+            catf [dict], 
+            rg_pars [dict], 
+            cri_specific_pars [dict])
+     
+     Supported cri-types:
+    * 'ciera','ciera-8','ciera-14','cierf',
+    * 'iesrf','iesrf-tm30-15','iesrf-tm30-18',
+    * 'cri2012','cri2012-hl17','cri2012-hl1000','cri2012-real210',
+    * 'mcri',
+    * 'cqs-v7.5','cqs-v9.0'
 
-### getMonteCarloParam(): 
-Get dict with normally-distributed physiological factors for a population of observers.
-                            
-### getUSCensusAgeDist(): 
-Get US Census Age Distribution.
+            
+### cri.process_cri_type_input(): 
+load a cri_type dict but overwrites any keys that have a non-None input in calling function.
 
-### genMonteCarloObs(): 
-Monte-Carlo generation of individual observer color matching functions (cone fundamentals) for a certain age and field size.
 
-### getCatObs(): 
-Generate cone fundamentals for categorical observers.
 
-### get_lms_to_xyz_matrix(): 
-Calculate lms to xyz conversion matrix for a specific field size.
-                            
-### lmsb_to_xyzb(): 
-Convert from LMS cone fundamentals to XYZ CMF.
+### cri.linear_scale():  
+Linear color rendering index scale from [CIE13.3-1974/1995](http://www.cie.co.at/index.php/index.php?i_ca_id=303):   
 
-### add_to_cmf_dict(): 
-Add set of cmfs to _CMF dict.
+    Ri,a = 100 - c1*DEi,a. (c1 = 4.6)
 
-References:
+### cri.log_scale(): 
+Log-based color rendering index scale from [Davis & Ohno (2010)](http://spie.org/Publications/Journal/10.1117/1.3360335):  
 
- 1. [Asano Y, Fairchild MD, and Blondé L (2016). Individual Colorimetric Observer Model. PLoS One 11, 1–19.](http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0145671)
- 2. [Asano Y, Fairchild MD, Blondé L, and Morvan P (2016). Color matching experiment for highlighting interobserver variability. Color Res. Appl. 41, 530–539.](https://onlinelibrary.wiley.com/doi/abs/10.1002/col.21975)
- 3. [CIE, and CIE (2006). Fundamental Chromaticity Diagram with Physiological Axes - Part I (Vienna: CIE).](http://www.cie.co.at/publications/fundamental-chromaticity-diagram-physiological-axes-part-1) 
- 4. [Asano's Individual Colorimetric Observer Model](https://www.rit.edu/cos/colorscience/re_AsanoObserverFunctions.php)
+    Ri,a = 10 * ln(exp((100 - c1*DEi,a)/10) + 1)
 
-## 2. ctf/ colortransforms.py
+### cri.psy_scale():
+Psychometric based color rendering index scale from CRI2012 ([Smet et al. 2013, LRT](http://journals.sagepub.com/doi/abs/10.1177/1477153513481375)):  
+
+    Ri,a = 100 * (2 / (exp(c1*abs(DEi,a)**(c2) + 1))) ** c3
+
+
+
+### cri.gamut_slicer(): 
+Slices the gamut in nhbins slices and provides normalization of test gamut to reference gamut.
+
+### cri.jab_to_rg(): 
+Calculates gamut area index, Rg.
+
+### cri.jab_to_rhi(): 
+Calculate hue bin measures: 
+
+ * Rfhi (local (hue bin) color fidelity)
+ * Rcshi (local chroma shift) 
+ * Rhshi (local hue shift)
+
+### cri.spd_to_jab_t_r(): 
+Calculates jab color values for a sample set illuminated with test source and its reference illuminant.
+                  
+### cri.spd_to_rg(): 
+Calculates the color gamut index of spectral data for a sample set illuminated with test source (data) with respect to some reference illuminant.
+
+### cri.spd_to_DEi(): 
+Calculates color difference (~fidelity) of spectral data between sample set illuminated with test source (data) and some reference illuminant.
+
+### cri.optimize_scale_factor(): 
+Optimize scale_factor of cri-model in cri_type such that average Rf for a set of light sources is the same as that of a target-cri (default: 'ciera')
+
+### cri.spd_to_cri(): 
+Calculates the color rendering fidelity index (CIE Ra, CIE Rf, IES Rf, CRI2012 Rf) of spectral data. Can also output Rg, Rfhi, Rcshi, Rhshi, cct, duv, ...
+
+### wrapper functions for fidelity type metrics:
+* cri.spd_to_ciera(), cri.spd_to_ciera_133_1995():
+    * [CIE13.3-1995, “Method of Measuring and Specifying Colour Rendering Properties of Light Sources,” CIE, Vienna, Austria, 1995.,ISBN 978 3 900734 57 2](http://www.cie.co.at/index.php/index.php?i_ca_id=303)
+* cri.spd_to_cierf(): [latest version]
+* cri.spd_to_cierf_224_2017():
+    * [cie224:2017, CIE 2017 Colour Fidelity Index for accurate scientific use. (2017), ISBN 978-3-902842-61-9](http://www.cie.co.at/index.php?i_ca_id=1027)
+* cri.spd_to_iesrf() [latest version]
+* cri.spd_to_iesrf_tm30_15():[TM30-15, 2015 version]
+    * [IES TM30 (99, 4880 sepctrally uniform samples)](https://www.ies.org/store/technical-memoranda/ies-method-for-evaluating-light-source-color-rendition/)
+    * [A. David, P. T. Fini, K. W. Houser, Y. Ohno, M. P. Royer, K. A. G. Smet, M. Wei, and L. Whitehead, “Development of the IES method for evaluating the color rendition of light sources,” Opt. Express, vol. 23, no. 12, pp. 15888–15906, 2015.](https://www.osapublishing.org/oe/abstract.cfm?uri=oe-23-12-15888)
+    * [K. A. G. Smet, A. David, and L. Whitehead, “Why color space uniformity and sample set spectral uniformity are essential for color rendering measures,” LEUKOS, vol. 12, no. 1–2, pp. 39–50, 2016](http://www.tandfonline.com/doi/abs/10.1080/15502724.2015.1091356)
+* cri.spd_to_iesrf_tm30_18():[TM30-18, 2018 version]
+* cri.spd_to_cri2012(), cri.spd_to_cri2012_hl17(), cri.spd_to_cri2012_hl1000(), cri.spd_to_cri2012_real210
+    * [K. Smet, J. Schanda, L. Whitehead, and R. Luo, “CRI2012: A proposal for updating the CIE colour rendering index,” Light. Res. Technol., vol. 45, pp. 689–709, 2013](http://journals.sagepub.com/doi/abs/10.1177/1477153513481375)
+
+### wrapper functions for gamut area type metrics:
+* cri.spd_to_iesrg() [latest version]
+* cri.spd_to_iesrg_tm30(): [latest version]
+* cri.spd_to_iesrg_tm30_15(): [TM30-15, 2015 version]
+    * [IES TM30 (99, 4880 sepctrally uniform samples)](https://www.ies.org/store/technical-memoranda/ies-method-for-evaluating-light-source-color-rendition/)
+* cri.spd_to_iesrg_tm30_18(): [TM30-18, 2018 version]
+
+### cri.spd_to_mcri(): 
+Calculates the memory color rendition index, Rm:  
+* [K. A. G. Smet, W. R. Ryckaert, M. R. Pointer, G. Deconinck, and P. Hanselaer, (2012) “A memory colour quality metric for white light sources,” Energy Build., vol. 49, no. C, pp. 216–225.](http://www.sciencedirect.com/science/article/pii/S0378778812000837)
+
+### cri.spd_to_cqs(): 
+Versions 7.5 and 9.0 are supported.  
+* [W. Davis and Y. Ohno, “Color quality scale,” (2010), Opt. Eng., vol. 49, no. 3, pp. 33602–33616.](http://spie.org/Publications/Journal/10.1117/1.3360335)
+
+
+### cri.plot_hue_bins(): 
+Makes basis plot for Color Vector Graphic (CVG).
+
+### cri.plot_ColorVectorGraphic():
+Plots Color Vector Graphic (see IES TM30).
+
+
+### colorrendition_VF_PX_models module (.cri.VFPX)
+ * VF: Implements a Vector Field model to calculate the base color shift generated by a light source.
+and to calculate a Metameric uncertainty index
+ * PX: Implements a Color Space Pixelation method to assess light source induced color shifts across color space.
+
+For more info:
+
+    ?luxpy.cri.VFPX
+
+### cri.spd_to_ies_tm30_metrics(): 
+Calculates IES TM30 metrics from spectral data.
+
+### cri.plot_cri_graphics(): 
+Plot_cri_graphics(): Plots graphical information on color rendition properties based on spectral data input or dict with pre-calculated measures.
+
+
+For more info on .cri module:
+
+    ?luxpy.cri
+    ?luxpy.cri.spd_to_cri()
+    etc.
+
+## color/ctf/ colortransforms.py
 Module with basic colorimetric functions (xyz_to_chromaticity, chromaticity_to_xyz conversions):
 Note that colorimetric data is always located in the last axis of the data arrays.
 (see also xyz specification in __doc__ string of luxpy.spd_to_xyz())
@@ -338,7 +453,7 @@ For more info:
     ?luxpy.xyz_to_Yuv()
     etc.
     
-## 2. ctf/ colortf.py
+## color/ctf/ colortf.py
 
 ### _COLORTF_DEFAULT_WHITE_POINT: 
 XYZ values (numpy.ndarray) of default white point (equi-energy white) 
@@ -352,7 +467,7 @@ For more info:
     ?luxpy.colortf
     etc.    
 
-## 3. cct/ cct.py
+## color/cct/ cct.py
 
 ### _CCT_LUT_PATH:
 Path to Look-Up-Tables (LUT) for correlated color temperature calculation followings [Ohno's method](http://www.tandfonline.com/doi/abs/10.1080/15502724.2014.839020).
@@ -403,7 +518,7 @@ For more info:
     ?luxpy.xyz_to_cct()
     etc.
 
-## 4. cat/ chromaticadaptation.py (.cat)
+## color/cat/ chromaticadaptation.py (.cat)
 
 ### cat._WHITE_POINT:   
 Default adopted white point
@@ -459,7 +574,7 @@ For more info:
     ?luxpy.cat.apply()
     etc.
 
-## 5. cam/ colorappearancemodels.py (cam)
+## color/cam/ colorappearancemodels.py (cam)
 
 ### cam._UNIQUE_HUE_DATA: 
 Database of unique hues with corresponding Hue quadratures and eccentricity factors
@@ -538,7 +653,7 @@ Calculates the output for the CAM15u model for self-luminous unrelated stimuli.
 * [M. Withouck, K. A. G. Smet, W. R. Ryckaert, and P. Hanselaer, (2015), “Experimental driven modelling of the color appearance of unrelated self-luminous stimuli: CAM15u,”  Opt. Express, vol. 23, no. 9, pp. 12045–12064.](https://www.osapublishing.org/oe/abstract.cfm?uri=oe-23-9-12045&origin=search)
 * [M. Withouck, K. A. G. Smet, and P. Hanselaer, (2015), “Brightness prediction of different sized unrelated self-luminous stimuli,” Opt. Express, vol. 23, no. 10, pp. 13455–13466.](https://www.osapublishing.org/oe/abstract.cfm?uri=oe-23-10-13455&origin=search)
 
-### cam_sww16(): 
+### cam.cam_sww16(): 
 A simple principled color appearance model based on a mapping of the Munsell color system.
 This function implements the JOSA A (parameters = 'JOSA') published model. 
 * [Smet, K. A. G., Webster, M. A., & Whitehead, L. A. (2016). A simple principled approach for modeling and understanding uniform color metrics. Journal of the Optical Society of America A, 33(3), A319–A331.](https://www.osapublishing.org/josaa/abstract.cfm?URI=josaa-33-3-a319)
@@ -566,159 +681,23 @@ For more info:
     ?luxpy.cam.cam_sww16()
     etc.
 
-## 6. deltaE/ colordifference.py (.deltaE)
+## color/deltaE/ colordifference.py (.deltaE)
 
-### process_DEi(): 
+### deltaE.process_DEi(): 
 Process color difference input DEi for output (helper fnc).
 
-### DE_camucs(): 
+### deltaE.DE_camucs(): 
 Calculate color appearance difference DE using camucs type model.
 
-### DE_2000(): 
+### deltaE.DE_2000(): 
 Calculate DE2000 color difference.
 
-### DE_cspace():  
+### deltaE.DE_cspace():  
 Calculate color difference DE in specific color space.
 
 
-## 7. cri/ colorrendition.py (.cri)
 
-### _CRI_TYPE_DEFAULT: 
-Default cri_type.
-
-### _CRI_DEFAULTS: 
-Default parameters for color fidelity and gamut area metrics 
-        
-    (major dict has 9 keys: 
-            sampleset [str/dict], 
-            ref_type [str], 
-            cieobs [str], 
-            avg [fcn handle], 
-            scale [dict], 
-            cspace [dict], 
-            catf [dict], 
-            rg_pars [dict], 
-            cri_specific_pars [dict])
-     
-     Supported cri-types:
-    * 'ciera','ciera-8','ciera-14','cierf',
-    * 'iesrf','iesrf-tm30-15','iesrf-tm30-18',
-    * 'cri2012','cri2012-hl17','cri2012-hl1000','cri2012-real210',
-    * 'mcri',
-    * 'cqs-v7.5','cqs-v9.0'
-
-            
-### process_cri_type_input(): 
-load a cri_type dict but overwrites any keys that have a non-None input in calling function.
-
-
-
-### cri.linear_scale():  
-Linear color rendering index scale from [CIE13.3-1974/1995](http://www.cie.co.at/index.php/index.php?i_ca_id=303):   
-
-    Ri,a = 100 - c1*DEi,a. (c1 = 4.6)
-
-### cri.log_scale(): 
-Log-based color rendering index scale from [Davis & Ohno (2010)](http://spie.org/Publications/Journal/10.1117/1.3360335):  
-
-    Ri,a = 10 * ln(exp((100 - c1*DEi,a)/10) + 1)
-
-### cri.psy_scale():
-Psychometric based color rendering index scale from CRI2012 ([Smet et al. 2013, LRT](http://journals.sagepub.com/doi/abs/10.1177/1477153513481375)):  
-
-    Ri,a = 100 * (2 / (exp(c1*abs(DEi,a)**(c2) + 1))) ** c3
-
-
-
-### gamut_slicer(): 
-Slices the gamut in nhbins slices and provides normalization of test gamut to reference gamut.
-
-### jab_to_rg(): 
-Calculates gamut area index, Rg.
-
-### jab_to_rhi(): 
-Calculate hue bin measures: 
-
- * Rfhi (local (hue bin) color fidelity)
- * Rcshi (local chroma shift) 
- * Rhshi (local hue shift)
-
-### spd_to_jab_t_r(): 
-Calculates jab color values for a sample set illuminated with test source and its reference illuminant.
-                  
-### spd_to_rg(): 
-Calculates the color gamut index of spectral data for a sample set illuminated with test source (data) with respect to some reference illuminant.
-
-### spd_to_DEi(): 
-Calculates color difference (~fidelity) of spectral data between sample set illuminated with test source (data) and some reference illuminant.
-
-### optimize_scale_factor(): 
-Optimize scale_factor of cri-model in cri_type such that average Rf for a set of light sources is the same as that of a target-cri (default: 'ciera')
-
-### spd_to_cri(): 
-Calculates the color rendering fidelity index (CIE Ra, CIE Rf, IES Rf, CRI2012 Rf) of spectral data. Can also output Rg, Rfhi, Rcshi, Rhshi, cct, duv, ...
-
-### wrapper functions for fidelity type metrics:
-* cri.spd_to_ciera(), spd_to_ciera_133_1995():
-    * [CIE13.3-1995, “Method of Measuring and Specifying Colour Rendering Properties of Light Sources,” CIE, Vienna, Austria, 1995.,ISBN 978 3 900734 57 2](http://www.cie.co.at/index.php/index.php?i_ca_id=303)
-* cri.spd_to_cierf(): [latest version]
-* spd_to_cierf_224_2017():
-    * [cie224:2017, CIE 2017 Colour Fidelity Index for accurate scientific use. (2017), ISBN 978-3-902842-61-9](http://www.cie.co.at/index.php?i_ca_id=1027)
-* cri.spd_to_iesrf() [latest version]
-* spd_to_iesrf_tm30_15():[TM30-15, 2015 version]
-    * [IES TM30 (99, 4880 sepctrally uniform samples)](https://www.ies.org/store/technical-memoranda/ies-method-for-evaluating-light-source-color-rendition/)
-    * [A. David, P. T. Fini, K. W. Houser, Y. Ohno, M. P. Royer, K. A. G. Smet, M. Wei, and L. Whitehead, “Development of the IES method for evaluating the color rendition of light sources,” Opt. Express, vol. 23, no. 12, pp. 15888–15906, 2015.](https://www.osapublishing.org/oe/abstract.cfm?uri=oe-23-12-15888)
-    * [K. A. G. Smet, A. David, and L. Whitehead, “Why color space uniformity and sample set spectral uniformity are essential for color rendering measures,” LEUKOS, vol. 12, no. 1–2, pp. 39–50, 2016](http://www.tandfonline.com/doi/abs/10.1080/15502724.2015.1091356)
-* spd_to_iesrf_tm30_18():[TM30-18, 2018 version]
-* cri.spd_to_cri2012(), cri.spd_to_cri2012_hl17(), cri.spd_to_cri2012_hl1000(), cri.spd_to_cri2012_real210
-    * [K. Smet, J. Schanda, L. Whitehead, and R. Luo, “CRI2012: A proposal for updating the CIE colour rendering index,” Light. Res. Technol., vol. 45, pp. 689–709, 2013](http://journals.sagepub.com/doi/abs/10.1177/1477153513481375)
-
-### wrapper functions for gamut area type metrics:
-* cri.spd_to_iesrg() [latest version]
-* spd_to_iesrg_tm30(): [latest version]
-* spd_to_iesrg_tm30_15(): [TM30-15, 2015 version]
-    * [IES TM30 (99, 4880 sepctrally uniform samples)](https://www.ies.org/store/technical-memoranda/ies-method-for-evaluating-light-source-color-rendition/)
-* spd_to_iesrg_tm30_18(): [TM30-18, 2018 version]
-
-### cri.spd_to_mcri(): 
-Calculates the memory color rendition index, Rm:  
-* [K. A. G. Smet, W. R. Ryckaert, M. R. Pointer, G. Deconinck, and P. Hanselaer, (2012) “A memory colour quality metric for white light sources,” Energy Build., vol. 49, no. C, pp. 216–225.](http://www.sciencedirect.com/science/article/pii/S0378778812000837)
-
-### cri.spd_to_cqs(): 
-Versions 7.5 and 9.0 are supported.  
-* [W. Davis and Y. Ohno, “Color quality scale,” (2010), Opt. Eng., vol. 49, no. 3, pp. 33602–33616.](http://spie.org/Publications/Journal/10.1117/1.3360335)
-
-
-### plot_hue_bins(): 
-Makes basis plot for Color Vector Graphic (CVG).
-
-### plot_ColorVectorGraphic():
-Plots Color Vector Graphic (see IES TM30).
-
-
-### colorrendition_VF_PX_models module (.cri.VFPX)
- * VF: Implements a Vector Field model to calculate the base color shift generated by a light source.
-and to calculate a Metameric uncertainty index
- * PX: Implements a Color Space Pixelation method to assess light source induced color shifts across color space.
-
-For more info:
-
-    ?luxpy.cri.VFPX
-
-### spd_to_ies_tm30_metrics(): 
-Calculates IES TM30 metrics from spectral data.
-
-### plot_cri_graphics(): 
-Plot_cri_graphics(): Plots graphical information on color rendition properties based on spectral data input or dict with pre-calculated measures.
-
-
-For more info on .cri module:
-
-    ?luxpy.cri
-    ?luxpy.cri.spd_to_cri()
-    etc.
-
-## 8. graphics/ plotters.py
+## color/utils/ plotters.py
 
 ### plot_color_data():
 Plot color data (local helper function)
@@ -748,7 +727,7 @@ For more info:
     etc.
 
 
-## 9. classes/ SPD.py and CDATA.py (classes SPD, CDATA, XYZ, LAB)
+## classes/ SPD.py and CDATA.py (classes SPD, CDATA, XYZ, LAB)
 
 ### Spectral data: class SPD:
 
@@ -910,9 +889,45 @@ For more info:
         # self.to_xyz(): Convert color space coordinates to XYZ tristimulus values. 
          
         # self.plot(): Plot color coordinates.
+ 
+ 
+## toolboxes/indvcmf/ individual_observer_cmf_model.py (.indvcmf)
+
+### indvcmf.cie2006cmfsEx(): 
+Generate Individual Observer CMFs (cone fundamentals) based on CIE2006 cone 
+fundamentals and published literature on observer variability in color matching
+and in physiological parameters.
+
+### indvcmf.getMonteCarloParam(): 
+Get dict with normally-distributed physiological factors for a population of observers.
+                            
+### indvcmf.getUSCensusAgeDist(): 
+Get US Census Age Distribution.
+
+### indvcmf.genMonteCarloObs(): 
+Monte-Carlo generation of individual observer color matching functions (cone fundamentals) for a certain age and field size.
+
+### indvcmf.getCatObs(): 
+Generate cone fundamentals for categorical observers.
+
+### indvcmf.get_lms_to_xyz_matrix(): 
+Calculate lms to xyz conversion matrix for a specific field size.
+                            
+### indvcmf.lmsb_to_xyzb(): 
+Convert from LMS cone fundamentals to XYZ CMF.
+
+### indvcmf.add_to_cmf_dict(): 
+Add set of cmfs to _CMF dict.
+
+References:
+
+ 1. [Asano Y, Fairchild MD, and Blondé L (2016). Individual Colorimetric Observer Model. PLoS One 11, 1–19.](http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0145671)
+ 2. [Asano Y, Fairchild MD, Blondé L, and Morvan P (2016). Color matching experiment for highlighting interobserver variability. Color Res. Appl. 41, 530–539.](https://onlinelibrary.wiley.com/doi/abs/10.1002/col.21975)
+ 3. [CIE, and CIE (2006). Fundamental Chromaticity Diagram with Physiological Axes - Part I (Vienna: CIE).](http://www.cie.co.at/publications/fundamental-chromaticity-diagram-physiological-axes-part-1) 
+ 4. [Asano's Individual Colorimetric Observer Model](https://www.rit.edu/cos/colorscience/re_AsanoObserverFunctions.php)
     
 
-## 10. ciephotbio/ cie_tn003_2015.py (.ciephotbio)
+## toolboxes/ciephotbio/ cie_tn003_2015.py (.ciephotbio)
 
     +---------------------------------------------------------------------------------------------------+
     |Photoreceptor|  Photopigment  | Spectral efficiency |      Quantity       | Q-symbol | Unit symbol |
@@ -967,58 +982,56 @@ References:
  * [CIE-TN003:2015 (2015). Report on the first international workshop on circadian and neurophysiological photometry, 2013 (Vienna, Austria).](http://www.cie.co.at/publications/report-first-international-workshop-circadian-and-neurophysiological-photometry-2013)  [[PDF](http://files.cie.co.at/785_CIE_TN_003-2015.pdf)]
 
 
-## 10. spdbuild/ spd_builder.py (.spdbuild)
+## toolboxes/spdbuild/ spd_builder.py (.spdbuild)
 
-### gaussian_spd(): 
+### spdbuild.gaussian_spd(): 
 Generate Gaussian spectrum.
 
-### mono_led_spd(): 
+### spdbuild.mono_led_spd(): 
 Generate monochromatic LED spectrum based on Ohno (Opt. Eng. 2005).
 
-### phosphor_led_spd():
+### spdbuild.phosphor_led_spd():
 Generate phosphor LED spectrum with up to 2 phosphors based on Smet (Opt. Expr. 2011).
 
-### spd_builder(): 
+### spdbuild.spd_builder(): 
 Build spectrum based on Gaussians, monochromatic and/or phophor LED spectra.
 
-### color3mixer(): 
+### spdbuild.color3mixer(): 
 Calculate fluxes required to obtain a target chromaticity when (additively) mixing 3 light sources.
 
-### colormixer(): 
+### spdbuild.colormixer(): 
 Calculate fluxes required to obtain a target chromaticity when (additively) mixing N light sources.
 
-### spd_builder(): 
-Build spectrum based on Gaussians, monochromatic and/or phophor LED-type spectra.
                    
-### get_w_summed_spd(): 
+### spdbuild.get_w_summed_spd(): 
 Calculate weighted sum of spds.
  
-### fitnessfcn(): 
+### spdbuild.fitnessfcn(): 
 Fitness function that calculates closeness of solution x to target values for specified objective functions.
          
-### spd_constructor_2(): 
+### spdbuild.spd_constructor_2(): 
 Construct spd from spectral model parameters using pairs of intermediate sources.
                 
-### spd_constructor_3(): 
+### spdbuild.spd_constructor_3(): 
 Construct spd from spectral model parameters using trio's of intermediate sources.
      
-### spd_optimizer_2_3(): 
+### spdbuild.spd_optimizer_2_3(): 
 Optimizes the weights (fluxes) of a set of component spectra by combining 
 pairs (2) or trio's (3) of components to intermediate sources until only 3 remain. 
 Color3mixer can then be called to calculate required fluxes to obtain target 
 chromaticity and fluxes are then back-calculated.                                   
                         
-### get_optim_pars_dict(): 
+### spdbuild.get_optim_pars_dict(): 
 Setup dict with optimization parameters.
                         
-### initialize_spd_model_pars(): 
+### spdbuild.initialize_spd_model_pars(): 
 Initialize spd_model_pars (for spd_constructor) based on type of component_data.
 
-### initialize_spd_optim_pars(): 
+### spdbuild.initialize_spd_optim_pars(): 
 Initialize spd_optim_pars (x0, lb, ub for use with math.minimizebnd) based on 
 type of component_data.
                 
-### spd_optimizer(): 
+### spdbuild.spd_optimizer(): 
 Generate a spectrum with specified white point and optimized for certain 
 objective functions from a set of component spectra or component spectrum 
 model parameters.
@@ -1027,8 +1040,12 @@ References:
  * [Ohno Y (2005). Spectral design considerations for white LED color rendering. Opt. Eng. 44, 111302.](https://ws680.nist.gov/publication/get_pdf.cfm?pub_id=841839)
  * [Smet K, Ryckaert WR, Pointer MR, Deconinck G, and Hanselaer P (2011). Optimal colour quality of LED clusters based on memory colours. Opt. Express 19, 6903–6912.](https://www.osapublishing.org/vjbo/fulltext.cfm?uri=oe-19-7-6903&id=211315)
 
+
+
+
+
 -------------------------------------------------------------------------------
-## 0.1.  helpers/ helpers.py 
+## utils/ helpers.py 
 
 ### np2d():
 Make a tuple, list or numpy array at least 2d array.
@@ -1079,9 +1096,9 @@ For more info:
     etc.
 
 
-## 0.2.  math/ math.py (math)
+## utils/ math.py (.math)
 
-### normalize_3x3_matrix():  
+### math.normalize_3x3_matrix():  
 Normalize 3x3 matrix M to xyz0 -- > [1,1,1]
 
 ### math.line_intersect():
@@ -1123,19 +1140,19 @@ Calculates area of polygon. (First coordinate should also be last)
 ### math.erf(), math.erfinv(): 
 erf-function (and inverse), direct import from scipy.special
 
-### cart2pol(): 
+### math.cart2pol(): 
 Converts Cartesian to polar coordinates.
 
-### pol2cart(): 
+### math.pol2cart(): 
 Converts polar to Cartesian coordinates.
 
-### magnitude_v():  
+### math.magnitude_v():  
 Calculates magnitude of vector.
 
-### angle_v1v2():  
+### math.angle_v1v2():  
 Calculates angle between two vectors.
 
-### minimizebnd(): 
+### math.minimizebnd(): 
 Scipy.minimize() wrapper that allows contrained parameters on unconstrained methods (port of Matlab's fminsearchbnd). 
 Starting, lower and upper bounds values can also be provided as a dict.
 
@@ -1144,3 +1161,4 @@ For more info:
     ?luxpy.math
     ?luxpy.math.bvgpdf()
     etc.
+    

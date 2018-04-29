@@ -76,9 +76,9 @@ Created on Fri Apr  6 15:50:05 2018
 @author: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
-from .. import _CIEOBS, _WL3, _BB, _S012_DAYLIGHTPHASE, _INTERP_TYPES, _S_INTERP_TYPE, _R_INTERP_TYPE, _CRI_REF_TYPE, _CRI_REF_TYPES
-from .. import spd_to_xyz, cie_interp, getwlr, getwld, spd_normalize
-from .. import np, pd, plt, interpolate
+from luxpy import _CIEOBS, _WL3, _BB, _S012_DAYLIGHTPHASE, _INTERP_TYPES, _S_INTERP_TYPE, _R_INTERP_TYPE, _CRI_REF_TYPE, _CRI_REF_TYPES
+from luxpy import spd_to_xyz, cie_interp, getwlr, getwld, spd_normalize
+from luxpy import np, pd, plt, interpolate
 from .CDATA import XYZ, LAB
 
 class SPD:

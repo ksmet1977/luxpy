@@ -100,68 +100,83 @@ either using e.g. "conda install scipy" or "pip install scipy", and try and rein
 -------------------------------------------------------------------------------
 ## Module overview
     
-    0.1.  helpers/ 
-            helpers.py (imported directly into luxpy namespace, details see end of this file)
-    
-    0.2.  math/ 
-            math.py (imported as math into the luxpy namespace, details see end of this file)
-            optimizers.py (imported in math name space)
-            
-    1.  spectral/ 
-            cmf.py
-            spectral.py
-            spectral_databases.py
-            individual_observer_cmf_model.py (imports into indvcmf namespace)
-            
-    2.  ctf/ 
-            colortransforms.py (imported directly into luxpy namespace)
-            colortf.py (imported directly into luxpy namespace)
-            
-    3.  cct/ 
-            cct.py (imported directly into luxpy namespace)
-            
-    4.  cat/ 
-            chromaticadaptation.py (imported in luxpy namespace as .cat)
-            
-    5.  cam/ 
-            colorappearancemodels.py (imported in luxpy namespace as .cam)
-              cam_02_X.py
-              cam15u.py
-              sww2016.py
+   /utils
+		/helpers                         (imported directly into luxpy namespace)
+         helpers.py
+		/.math                           (imported into luxpy namespace as .math)
+			math.py
+			optimizers.py
+	
+	/spectrum                           (imported directly into luxpy namespace)
+		cmf.py
+		spectral.py
+		spectral_databases.py
+		/.cri                             (imported into luxpy namespace as .cri)
+		colorrendition.py
+			/utils
+				DE_scalers.py
+				helpers.py
+				init_cri_defaults_database.py
+				graphics.py
+			/indices
+				indices.py
+					cie_wrappers.py
+					ies_wrappers.py
+					cri2012.py
+					mcri.py
+					cqs.py
+			/ies_tm30
+				ies_tm30_metrics.py
+				ies_tm30_graphics.py
+				
+			/.VFPX                    (imported into luxpy namespace as .cri.VFPX)
+				VF_PX_models.py                         (imported in .cri as .VFPX)
+					vectorshiftmodel.py
+					pixelshiftmodel.py
+	
+	/color
+		colortransformations.py          (imported directly into luxpy namespace)
+		cct.py                           (imported directly into luxpy namespace)
+		/.cat                             (imported into luxpy namespace as .cat)
+			chromaticadaptation.py	
+		/.cam                             (imported into luxpy namespace as .cam)
+			colorappearancemodels.py
+				cam_02_X.py
+				cam15u.py
+				sww16.py
+		colortf.py                       (imported directly into luxpy namespace)
+		
+		/.deltaE                       (imported into luxpy namespace as .deltaE)
+			colordifferences.py
+		
+		/utils
+			plotters.py                   (imported directly into luxpy namespace)
+		
+		
+	/classes
+		SPD.py                 (class SPD imported directly into luxpy namespace)
+		CDATA.py               (classes CDATA, XYZ and LAB imported directly into
+                        		 luxpy namespace)
+		
+	/data
+		/cmfs
+		/spds
+		/rfls
+		/cctluts
 
-    6.  deltaE/ 
-            colordifferences.py (imported in luxpy namespace as .deltaE)
-            
-    7.  cri/ 
-            colorrendition.py (imported in luxpy namespace as .cri)
-                DE_scalers.py
-                helpers.py
-                init_cri_defaults_database.py
-                indices.py
-                    cie_wrappers.py
-                    ies_wrappers.py
-                    cri2012.py
-                    mcri.py
-                    cqs.py
-                graphics.py
-                ies_tm30_metrics.py
-                ies_tm30_graphics.py
-                VF_PX_models.py (imported in .cri as .VFPX)
-                    vectorshiftmodel.py
-                    pixelshiftmodel.py
-            
-    8. graphics/ 
-            plotters.py (imported directly into luxpy namespace)
-            
-    9. classes/ 
-            SPD (imported directly into luxpy namespace)
-            CDATA, XYZ, LAB (imported directly into luxpy namespace)
-            
-    10. ciephotbio/
-            cie_tn003_2015.py (imported into luxpy namespace as .ciephotbio)
-            
-    11. spdbuild/
-            spd_builder.py (imported into luxpy namespace as .spdbuild)
+		
+	/toolboxes
+		
+		/.ciephotbio               (imported into luxpy namespace as .ciephotbio)
+			cie_tn003_2015.py
+			/data
+			
+		/.indvcmf                     (imported into luxpy namespace as .indvcmf)
+			individual_observer_cmf_model.py
+			/data
+		
+		/.spdbuild                   (imported into luxpy namespace as .spdbuild)
+			spd_builder.py
     
     
 For more details see [luxpy_module_overview.md](https://github.com/ksmet1977/luxpy/blob/master/luxpy_module_overview.md) 
