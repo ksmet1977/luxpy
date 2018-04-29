@@ -50,6 +50,8 @@
 #   ipt_to_xyz():       "
 #   xyz_to_Ydlep(): convert xyz to Y, dominant wavelength (dl) and excitation purity (ep)
 #   Ydlep_to_xyz(): convert Y, dominant wavelength (dl) and excitation purity (ep) to xyz
+#   xyz_to_srgb(): Convert xyz to sRGB (IEC:61966 sRGB)
+#   srgb_to_xyz(): Convert sRGB (IEC:61966 sRGB) to xyz
 #
 # References:
 #       1. CIE15-2004 (2004). Colorimetry (Vienna, Austria: CIE)
@@ -71,7 +73,7 @@ from luxpy import np, _CMF, _CIE_ILLUMINANTS, _CIEOBS, _CSPACE, math, spd_to_xyz
 
 __all__ = ['_CSPACE_AXES', '_IPT_M','xyz_to_Yxy','Yxy_to_xyz','xyz_to_Yuv','Yuv_to_xyz',
            'xyz_to_wuv','wuv_to_xyz','xyz_to_xyz','xyz_to_lms', 'lms_to_xyz','xyz_to_lab','lab_to_xyz','xyz_to_luv','luv_to_xyz',
-           'xyz_to_Vrb_mb','Vrb_mb_to_xyz','xyz_to_ipt','ipt_to_xyz','xyz_to_Ydlep','Ydlep_to_xyz']
+           'xyz_to_Vrb_mb','Vrb_mb_to_xyz','xyz_to_ipt','ipt_to_xyz','xyz_to_Ydlep','Ydlep_to_xyz','xyz_to_srgb','srgb_to_xyz']
 
 #------------------------------------------------------------------------------
 # Database with cspace-axis strings (for plotting):
@@ -863,3 +865,89 @@ def Ydlep_to_xyz(Ydlep, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT, *
         Yxy = Yxy.transpose((0,1,2))
     return Yxy_to_xyz(Yxy).reshape(Ydlep.shape)
 
+
+def xyz_to_srgb(xyz):
+    """
+    Calculates IEC:61966 sRGB values from xyz.
+    
+    Args:
+        :xyz: ndarray with relative tristimulus values.
+        
+    Returns:
+        :rgb: ndarray with R,G,B values.
+    """
+    
+    xyz = np2d(xyz)
+    
+    # define 3x3 matrix
+    M = np.array([[3.2404542, -1.5371385, -0.4985314],
+                  [-0.9692660,  1.8760108,  0.0415560],
+                  [0.0556434, -0.2040259,  1.0572252]])
+    
+    if len(xyz.shape) == 3:
+        srgb = np.einsum('ij,klj->kli', M, xyz/100)
+    else:
+        srgb = np.einsum('ij,lj->li', M, xyz/100)
+    
+    # perform clipping:
+    srgb[np.where(srgb>1)] = 1
+    srgb[np.where(srgb<0)] = 0
+    
+    # test for the dark colours in the non-linear part of the function:
+    dark = np.where(srgb <=  0.0031308)
+    
+    # apply gamma function:
+    g = 1/2.4
+
+    # and scale to range 0-255:
+    rgb = srgb.copy()
+    rgb = (1.055*rgb**g - 0.055) * 255
+
+    # non-linear bit for dark colours
+    rgb[dark]  = (srgb[dark].copy() * 12.92) * 255 
+
+    
+    # clip to range:
+    rgb[rgb>255] = 255
+    rgb[rgb<0] = 0
+    
+    return rgb
+    
+
+def srgb_to_xyz(rgb):
+    """
+    Calculates xyz from IEC:61966 sRGB values.
+    
+    Args:
+        :rgb: ndarray with srgb values.
+        
+    Returns:
+        :xyz: ndarray with relative tristimulus values.
+
+    """
+    rgb = np2d(rgb)
+    # define 3x3 matrix
+    M = np.array([[0.4124564,  0.3575761,  0.1804375],
+                  [0.2126729,  0.7151522,  0.0721750],
+                  [0.0193339,  0.1191920,  0.9503041]])
+
+    
+    # scale device coordinates:
+    sRGB = rgb/255
+    
+    # test for non-linear part of conversion
+    nonlin = np.where(sRGB <  0.03928)
+        
+    # apply gamma function to convert to sRGB
+    srgb = sRGB.copy()
+    srgb = ((srgb + 0.055)/1.055)**2.4
+    
+    srgb[nonlin] = sRGB[nonlin]/12.92
+
+    
+    if len(srgb.shape) == 3:
+        xyz = np.einsum('ij,klj->kli', M, srgb)*100
+    else:
+        xyz = np.einsum('ij,lj->li', M, srgb)*100 
+    return xyz
+    

@@ -301,6 +301,10 @@ CIE xyz <--> IPT ()
 ###  xyz_to_Ydlep(), Ydlep_to_xyz(): 
 CIE xyz <--> Y, dominant / complementary wavelength (dl, compl. wl: specified by < 0) and excitation purity (ep)
 
+### xyz_to_srgb(), rgb_to_xyz():
+CIE xyz <--> sRGB (IEC:61966 sRGB)
+
+
 References:
 
  1. [CIE15:2004, Colorimetry, Vienna, Austria](http://www.cie.co.at/index.php/index.php?i_ca_id=304)).
