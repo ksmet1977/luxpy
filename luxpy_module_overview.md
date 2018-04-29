@@ -975,7 +975,7 @@ For more info:
                         CIE technical note TN 003:2015.
 References:
  * [CIE-TN003:2015 (2015). Report on the first international workshop on circadian and neurophysiological photometry, 2013 (Vienna, Austria).](http://www.cie.co.at/publications/report-first-international-workshop-circadian-and-neurophysiological-photometry-2013)[PDF](http://files.cie.co.at/785_CIE_TN_003-2015.pdf)
-http://www.cie.co.at/publications/report-first-international-workshop-circadian-and-neurophysiological-photometry-2013
+
 -------------------------------------------------------------------------------
 ## 0.1.  helpers/ helpers.py 
 
