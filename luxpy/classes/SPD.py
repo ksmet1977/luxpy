@@ -20,7 +20,7 @@
 # Module for class functionality for spectral data: class SPD
 ###############################################################################
 
- --- Class SPD fields ---
+ --- SPD fields ---------------------------------------------------------------
 
 # self.wl: wavelengths of spectral data
     
@@ -34,7 +34,8 @@
 # self.N = self.shape[0] (number of spectra in instance)
     
 
---- Class SPD methods ---
+ --- SPD methods --------------------------------------------------------------
+
 
 # self.read_csv_(): Reads spectral data from file.
 
