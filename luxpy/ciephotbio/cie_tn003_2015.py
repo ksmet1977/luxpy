@@ -72,6 +72,13 @@ the s-cone or ssc(λ) spectral efficiency function.
                     rod and iprgc (α) photoreceptor cells following 
                     CIE technical note TN 003:2015.
                     
+                    
+  References:
+      ..[] CIE-TN003:2015 (2015). 
+            Report on the first international workshop on 
+            circadian and neurophysiological photometry, 2013 
+            (Vienna, Austria).
+            (http://files.cie.co.at/785_CIE_TN_003-2015.pdf)
 ----------------------------------------------------------------------------------------------------
 
 Created on Tue Apr 17 12:25:29 2018
