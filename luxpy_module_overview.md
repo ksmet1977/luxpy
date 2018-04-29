@@ -649,9 +649,9 @@ Calculates gamut area index, Rg.
 ### jab_to_rhi(): 
 Calculate hue bin measures: 
 
-     *Rfhi (local (hue bin) color fidelity)
-     *Rcshi (local chroma shift) 
-     *Rhshi (local hue shift)
+ * Rfhi (local (hue bin) color fidelity)
+ * Rcshi (local chroma shift) 
+ * Rhshi (local hue shift)
 
 ### spd_to_jab_t_r(): 
 Calculates jab color values for a sample set illuminated with test source and its reference illuminant.
