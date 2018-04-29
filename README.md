@@ -111,8 +111,22 @@ either using e.g. "conda install scipy" or "pip install scipy", and try and rein
 		cmf.py
 		spectral.py
 		spectral_databases.py
+	
+	/color
+		colortransformations.py          (imported directly into luxpy namespace)
+		cct.py                           (imported directly into luxpy namespace)	
+		/.cat                             (imported into luxpy namespace as .cat)
+			chromaticadaptation.py	
+		/.cam                             (imported into luxpy namespace as .cam)
+			colorappearancemodels.py
+				cam_02_X.py
+				cam15u.py
+				sww16.py
+		colortf.py                       (imported directly into luxpy namespace)	
+		/.deltaE                       (imported into luxpy namespace as .deltaE)
+			colordifferences.py	
 		/.cri                             (imported into luxpy namespace as .cri)
-		colorrendition.py
+    		colorrendition.py
 			/utils
 				DE_scalers.py
 				helpers.py
@@ -127,31 +141,14 @@ either using e.g. "conda install scipy" or "pip install scipy", and try and rein
 					cqs.py
 			/ies_tm30
 				ies_tm30_metrics.py
-				ies_tm30_graphics.py
-				
+				ies_tm30_graphics.py		
 			/.VFPX                    (imported into luxpy namespace as .cri.VFPX)
 				VF_PX_models.py                         (imported in .cri as .VFPX)
 					vectorshiftmodel.py
 					pixelshiftmodel.py
-	
-	/color
-		colortransformations.py          (imported directly into luxpy namespace)
-		cct.py                           (imported directly into luxpy namespace)
-		/.cat                             (imported into luxpy namespace as .cat)
-			chromaticadaptation.py	
-		/.cam                             (imported into luxpy namespace as .cam)
-			colorappearancemodels.py
-				cam_02_X.py
-				cam15u.py
-				sww16.py
-		colortf.py                       (imported directly into luxpy namespace)
-		
-		/.deltaE                       (imported into luxpy namespace as .deltaE)
-			colordifferences.py
-		
 		/utils
 			plotters.py                   (imported directly into luxpy namespace)
-		
+				
 		
 	/classes
 		SPD.py                 (class SPD imported directly into luxpy namespace)

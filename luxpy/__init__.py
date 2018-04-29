@@ -44,10 +44,24 @@ Loads the following luxpy sub-packages, modules and classes:
 	
 	/spectrum
 		cmf.py
-		spd.py
-		databases.py
-		/.cri
-		colorrendition.py
+		spectral.py
+		spectral_databases.py
+	
+	/color
+		colortransformations.py
+		cct.py
+		/.cat
+			chromaticadaptation.py	
+		/.cam
+			colorappearancemodels.py
+				cam_02_X.py
+				cam15u.py
+				sww16.py
+		colortf.py
+		/.deltaE
+			colordifferences.py
+      /.cri
+    		colorrendition.py
 			/utils
 				DE_scalers.py
 				helpers.py
@@ -63,27 +77,10 @@ Loads the following luxpy sub-packages, modules and classes:
 			/ies_tm30
 				ies_tm30_metrics.py
 				ies_tm30_graphics.py
-				
 			/.VFPX
 				VF_PX_models.py (imported in .cri as .VFPX)
 					vectorshiftmodel.py
 					pixelshiftmodel.py
-	
-	/color
-		colortransformations.py
-		cct.py
-		/.cat
-			chromaticadaptation.py	
-		/.cam
-			colorappearancemodels.py
-				cam_02_X.py
-				cam15u.py
-				sww16.py
-		colortf.py
-		
-		/.deltaE
-			colordifferences.py
-		
 		/utils
 			plotters.py
 		
@@ -253,11 +250,8 @@ from .color.deltaE import colordifferences as deltaE
 #   Load some basic graphics functions:
 from .color.utils.plotters import *
 
-#----------------------------------------
-# From /spectrum:
-#----------------------------------------
 #   Load color rendition sub-package:
-from .spectrum.cri import colorrendition as cri
+from .color.cri import colorrendition as cri
 
 #----------------------------------------
 # From /classes:

@@ -24,8 +24,22 @@
 		cmf.py
 		spectral.py
 		spectral_databases.py
+	
+	/color
+		colortransformations.py          (imported directly into luxpy namespace)
+		cct.py                           (imported directly into luxpy namespace)	
+		/.cat                             (imported into luxpy namespace as .cat)
+			chromaticadaptation.py	
+		/.cam                             (imported into luxpy namespace as .cam)
+			colorappearancemodels.py
+				cam_02_X.py
+				cam15u.py
+				sww16.py
+		colortf.py                       (imported directly into luxpy namespace)	
+		/.deltaE                       (imported into luxpy namespace as .deltaE)
+			colordifferences.py	
 		/.cri                             (imported into luxpy namespace as .cri)
-		colorrendition.py
+    		colorrendition.py
 			/utils
 				DE_scalers.py
 				helpers.py
@@ -40,28 +54,11 @@
 					cqs.py
 			/ies_tm30
 				ies_tm30_metrics.py
-				ies_tm30_graphics.py
-				
+				ies_tm30_graphics.py		
 			/.VFPX                    (imported into luxpy namespace as .cri.VFPX)
 				VF_PX_models.py                         (imported in .cri as .VFPX)
 					vectorshiftmodel.py
 					pixelshiftmodel.py
-	
-	/color
-		colortransformations.py          (imported directly into luxpy namespace)
-		cct.py                           (imported directly into luxpy namespace)
-		/.cat                             (imported into luxpy namespace as .cat)
-			chromaticadaptation.py	
-		/.cam                             (imported into luxpy namespace as .cam)
-			colorappearancemodels.py
-				cam_02_X.py
-				cam15u.py
-				sww16.py
-		colortf.py                       (imported directly into luxpy namespace)
-		
-		/.deltaE                       (imported into luxpy namespace as .deltaE)
-			colordifferences.py
-		
 		/utils
 			plotters.py                   (imported directly into luxpy namespace)
 		
@@ -267,142 +264,6 @@ For more info:
 
     ?luxpy.spectral_databases
 
-## spectrum/cri/ colorrendition.py (.cri)
-
-### cri._CRI_TYPE_DEFAULT: 
-Default cri_type.
-
-### cri._CRI_DEFAULTS: 
-Default parameters for color fidelity and gamut area metrics 
-        
-    (major dict has 9 keys: 
-            sampleset [str/dict], 
-            ref_type [str], 
-            cieobs [str], 
-            avg [fcn handle], 
-            scale [dict], 
-            cspace [dict], 
-            catf [dict], 
-            rg_pars [dict], 
-            cri_specific_pars [dict])
-     
-     Supported cri-types:
-    * 'ciera','ciera-8','ciera-14','cierf',
-    * 'iesrf','iesrf-tm30-15','iesrf-tm30-18',
-    * 'cri2012','cri2012-hl17','cri2012-hl1000','cri2012-real210',
-    * 'mcri',
-    * 'cqs-v7.5','cqs-v9.0'
-
-            
-### cri.process_cri_type_input(): 
-load a cri_type dict but overwrites any keys that have a non-None input in calling function.
-
-
-
-### cri.linear_scale():  
-Linear color rendering index scale from [CIE13.3-1974/1995](http://www.cie.co.at/index.php/index.php?i_ca_id=303):   
-
-    Ri,a = 100 - c1*DEi,a. (c1 = 4.6)
-
-### cri.log_scale(): 
-Log-based color rendering index scale from [Davis & Ohno (2010)](http://spie.org/Publications/Journal/10.1117/1.3360335):  
-
-    Ri,a = 10 * ln(exp((100 - c1*DEi,a)/10) + 1)
-
-### cri.psy_scale():
-Psychometric based color rendering index scale from CRI2012 ([Smet et al. 2013, LRT](http://journals.sagepub.com/doi/abs/10.1177/1477153513481375)):  
-
-    Ri,a = 100 * (2 / (exp(c1*abs(DEi,a)**(c2) + 1))) ** c3
-
-
-
-### cri.gamut_slicer(): 
-Slices the gamut in nhbins slices and provides normalization of test gamut to reference gamut.
-
-### cri.jab_to_rg(): 
-Calculates gamut area index, Rg.
-
-### cri.jab_to_rhi(): 
-Calculate hue bin measures: 
-
- * Rfhi (local (hue bin) color fidelity)
- * Rcshi (local chroma shift) 
- * Rhshi (local hue shift)
-
-### cri.spd_to_jab_t_r(): 
-Calculates jab color values for a sample set illuminated with test source and its reference illuminant.
-                  
-### cri.spd_to_rg(): 
-Calculates the color gamut index of spectral data for a sample set illuminated with test source (data) with respect to some reference illuminant.
-
-### cri.spd_to_DEi(): 
-Calculates color difference (~fidelity) of spectral data between sample set illuminated with test source (data) and some reference illuminant.
-
-### cri.optimize_scale_factor(): 
-Optimize scale_factor of cri-model in cri_type such that average Rf for a set of light sources is the same as that of a target-cri (default: 'ciera')
-
-### cri.spd_to_cri(): 
-Calculates the color rendering fidelity index (CIE Ra, CIE Rf, IES Rf, CRI2012 Rf) of spectral data. Can also output Rg, Rfhi, Rcshi, Rhshi, cct, duv, ...
-
-### wrapper functions for fidelity type metrics:
-* cri.spd_to_ciera(), cri.spd_to_ciera_133_1995():
-    * [CIE13.3-1995, “Method of Measuring and Specifying Colour Rendering Properties of Light Sources,” CIE, Vienna, Austria, 1995.,ISBN 978 3 900734 57 2](http://www.cie.co.at/index.php/index.php?i_ca_id=303)
-* cri.spd_to_cierf(): [latest version]
-* cri.spd_to_cierf_224_2017():
-    * [cie224:2017, CIE 2017 Colour Fidelity Index for accurate scientific use. (2017), ISBN 978-3-902842-61-9](http://www.cie.co.at/index.php?i_ca_id=1027)
-* cri.spd_to_iesrf() [latest version]
-* cri.spd_to_iesrf_tm30_15():[TM30-15, 2015 version]
-    * [IES TM30 (99, 4880 sepctrally uniform samples)](https://www.ies.org/store/technical-memoranda/ies-method-for-evaluating-light-source-color-rendition/)
-    * [A. David, P. T. Fini, K. W. Houser, Y. Ohno, M. P. Royer, K. A. G. Smet, M. Wei, and L. Whitehead, “Development of the IES method for evaluating the color rendition of light sources,” Opt. Express, vol. 23, no. 12, pp. 15888–15906, 2015.](https://www.osapublishing.org/oe/abstract.cfm?uri=oe-23-12-15888)
-    * [K. A. G. Smet, A. David, and L. Whitehead, “Why color space uniformity and sample set spectral uniformity are essential for color rendering measures,” LEUKOS, vol. 12, no. 1–2, pp. 39–50, 2016](http://www.tandfonline.com/doi/abs/10.1080/15502724.2015.1091356)
-* cri.spd_to_iesrf_tm30_18():[TM30-18, 2018 version]
-* cri.spd_to_cri2012(), cri.spd_to_cri2012_hl17(), cri.spd_to_cri2012_hl1000(), cri.spd_to_cri2012_real210
-    * [K. Smet, J. Schanda, L. Whitehead, and R. Luo, “CRI2012: A proposal for updating the CIE colour rendering index,” Light. Res. Technol., vol. 45, pp. 689–709, 2013](http://journals.sagepub.com/doi/abs/10.1177/1477153513481375)
-
-### wrapper functions for gamut area type metrics:
-* cri.spd_to_iesrg() [latest version]
-* cri.spd_to_iesrg_tm30(): [latest version]
-* cri.spd_to_iesrg_tm30_15(): [TM30-15, 2015 version]
-    * [IES TM30 (99, 4880 sepctrally uniform samples)](https://www.ies.org/store/technical-memoranda/ies-method-for-evaluating-light-source-color-rendition/)
-* cri.spd_to_iesrg_tm30_18(): [TM30-18, 2018 version]
-
-### cri.spd_to_mcri(): 
-Calculates the memory color rendition index, Rm:  
-* [K. A. G. Smet, W. R. Ryckaert, M. R. Pointer, G. Deconinck, and P. Hanselaer, (2012) “A memory colour quality metric for white light sources,” Energy Build., vol. 49, no. C, pp. 216–225.](http://www.sciencedirect.com/science/article/pii/S0378778812000837)
-
-### cri.spd_to_cqs(): 
-Versions 7.5 and 9.0 are supported.  
-* [W. Davis and Y. Ohno, “Color quality scale,” (2010), Opt. Eng., vol. 49, no. 3, pp. 33602–33616.](http://spie.org/Publications/Journal/10.1117/1.3360335)
-
-
-### cri.plot_hue_bins(): 
-Makes basis plot for Color Vector Graphic (CVG).
-
-### cri.plot_ColorVectorGraphic():
-Plots Color Vector Graphic (see IES TM30).
-
-
-### colorrendition_VF_PX_models module (.cri.VFPX)
- * VF: Implements a Vector Field model to calculate the base color shift generated by a light source.
-and to calculate a Metameric uncertainty index
- * PX: Implements a Color Space Pixelation method to assess light source induced color shifts across color space.
-
-For more info:
-
-    ?luxpy.cri.VFPX
-
-### cri.spd_to_ies_tm30_metrics(): 
-Calculates IES TM30 metrics from spectral data.
-
-### cri.plot_cri_graphics(): 
-Plot_cri_graphics(): Plots graphical information on color rendition properties based on spectral data input or dict with pre-calculated measures.
-
-
-For more info on .cri module:
-
-    ?luxpy.cri
-    ?luxpy.cri.spd_to_cri()
-    etc.
 
 ## color/ctf/ colortransforms.py
 Module with basic colorimetric functions (xyz_to_chromaticity, chromaticity_to_xyz conversions):
@@ -695,6 +556,142 @@ Calculate DE2000 color difference.
 ### deltaE.DE_cspace():  
 Calculate color difference DE in specific color space.
 
+## color/cri/ colorrendition.py (.cri)
+
+### cri._CRI_TYPE_DEFAULT: 
+Default cri_type.
+
+### cri._CRI_DEFAULTS: 
+Default parameters for color fidelity and gamut area metrics 
+        
+    (major dict has 9 keys: 
+            sampleset [str/dict], 
+            ref_type [str], 
+            cieobs [str], 
+            avg [fcn handle], 
+            scale [dict], 
+            cspace [dict], 
+            catf [dict], 
+            rg_pars [dict], 
+            cri_specific_pars [dict])
+     
+     Supported cri-types:
+    * 'ciera','ciera-8','ciera-14','cierf',
+    * 'iesrf','iesrf-tm30-15','iesrf-tm30-18',
+    * 'cri2012','cri2012-hl17','cri2012-hl1000','cri2012-real210',
+    * 'mcri',
+    * 'cqs-v7.5','cqs-v9.0'
+
+            
+### cri.process_cri_type_input(): 
+load a cri_type dict but overwrites any keys that have a non-None input in calling function.
+
+
+
+### cri.linear_scale():  
+Linear color rendering index scale from [CIE13.3-1974/1995](http://www.cie.co.at/index.php/index.php?i_ca_id=303):   
+
+    Ri,a = 100 - c1*DEi,a. (c1 = 4.6)
+
+### cri.log_scale(): 
+Log-based color rendering index scale from [Davis & Ohno (2010)](http://spie.org/Publications/Journal/10.1117/1.3360335):  
+
+    Ri,a = 10 * ln(exp((100 - c1*DEi,a)/10) + 1)
+
+### cri.psy_scale():
+Psychometric based color rendering index scale from CRI2012 ([Smet et al. 2013, LRT](http://journals.sagepub.com/doi/abs/10.1177/1477153513481375)):  
+
+    Ri,a = 100 * (2 / (exp(c1*abs(DEi,a)**(c2) + 1))) ** c3
+
+
+
+### cri.gamut_slicer(): 
+Slices the gamut in nhbins slices and provides normalization of test gamut to reference gamut.
+
+### cri.jab_to_rg(): 
+Calculates gamut area index, Rg.
+
+### cri.jab_to_rhi(): 
+Calculate hue bin measures: 
+
+ * Rfhi (local (hue bin) color fidelity)
+ * Rcshi (local chroma shift) 
+ * Rhshi (local hue shift)
+
+### cri.spd_to_jab_t_r(): 
+Calculates jab color values for a sample set illuminated with test source and its reference illuminant.
+                  
+### cri.spd_to_rg(): 
+Calculates the color gamut index of spectral data for a sample set illuminated with test source (data) with respect to some reference illuminant.
+
+### cri.spd_to_DEi(): 
+Calculates color difference (~fidelity) of spectral data between sample set illuminated with test source (data) and some reference illuminant.
+
+### cri.optimize_scale_factor(): 
+Optimize scale_factor of cri-model in cri_type such that average Rf for a set of light sources is the same as that of a target-cri (default: 'ciera')
+
+### cri.spd_to_cri(): 
+Calculates the color rendering fidelity index (CIE Ra, CIE Rf, IES Rf, CRI2012 Rf) of spectral data. Can also output Rg, Rfhi, Rcshi, Rhshi, cct, duv, ...
+
+### wrapper functions for fidelity type metrics:
+* cri.spd_to_ciera(), cri.spd_to_ciera_133_1995():
+    * [CIE13.3-1995, “Method of Measuring and Specifying Colour Rendering Properties of Light Sources,” CIE, Vienna, Austria, 1995.,ISBN 978 3 900734 57 2](http://www.cie.co.at/index.php/index.php?i_ca_id=303)
+* cri.spd_to_cierf(): [latest version]
+* cri.spd_to_cierf_224_2017():
+    * [cie224:2017, CIE 2017 Colour Fidelity Index for accurate scientific use. (2017), ISBN 978-3-902842-61-9](http://www.cie.co.at/index.php?i_ca_id=1027)
+* cri.spd_to_iesrf() [latest version]
+* cri.spd_to_iesrf_tm30_15():[TM30-15, 2015 version]
+    * [IES TM30 (99, 4880 sepctrally uniform samples)](https://www.ies.org/store/technical-memoranda/ies-method-for-evaluating-light-source-color-rendition/)
+    * [A. David, P. T. Fini, K. W. Houser, Y. Ohno, M. P. Royer, K. A. G. Smet, M. Wei, and L. Whitehead, “Development of the IES method for evaluating the color rendition of light sources,” Opt. Express, vol. 23, no. 12, pp. 15888–15906, 2015.](https://www.osapublishing.org/oe/abstract.cfm?uri=oe-23-12-15888)
+    * [K. A. G. Smet, A. David, and L. Whitehead, “Why color space uniformity and sample set spectral uniformity are essential for color rendering measures,” LEUKOS, vol. 12, no. 1–2, pp. 39–50, 2016](http://www.tandfonline.com/doi/abs/10.1080/15502724.2015.1091356)
+* cri.spd_to_iesrf_tm30_18():[TM30-18, 2018 version]
+* cri.spd_to_cri2012(), cri.spd_to_cri2012_hl17(), cri.spd_to_cri2012_hl1000(), cri.spd_to_cri2012_real210
+    * [K. Smet, J. Schanda, L. Whitehead, and R. Luo, “CRI2012: A proposal for updating the CIE colour rendering index,” Light. Res. Technol., vol. 45, pp. 689–709, 2013](http://journals.sagepub.com/doi/abs/10.1177/1477153513481375)
+
+### wrapper functions for gamut area type metrics:
+* cri.spd_to_iesrg() [latest version]
+* cri.spd_to_iesrg_tm30(): [latest version]
+* cri.spd_to_iesrg_tm30_15(): [TM30-15, 2015 version]
+    * [IES TM30 (99, 4880 sepctrally uniform samples)](https://www.ies.org/store/technical-memoranda/ies-method-for-evaluating-light-source-color-rendition/)
+* cri.spd_to_iesrg_tm30_18(): [TM30-18, 2018 version]
+
+### cri.spd_to_mcri(): 
+Calculates the memory color rendition index, Rm:  
+* [K. A. G. Smet, W. R. Ryckaert, M. R. Pointer, G. Deconinck, and P. Hanselaer, (2012) “A memory colour quality metric for white light sources,” Energy Build., vol. 49, no. C, pp. 216–225.](http://www.sciencedirect.com/science/article/pii/S0378778812000837)
+
+### cri.spd_to_cqs(): 
+Versions 7.5 and 9.0 are supported.  
+* [W. Davis and Y. Ohno, “Color quality scale,” (2010), Opt. Eng., vol. 49, no. 3, pp. 33602–33616.](http://spie.org/Publications/Journal/10.1117/1.3360335)
+
+
+### cri.plot_hue_bins(): 
+Makes basis plot for Color Vector Graphic (CVG).
+
+### cri.plot_ColorVectorGraphic():
+Plots Color Vector Graphic (see IES TM30).
+
+
+### colorrendition_VF_PX_models module (.cri.VFPX)
+ * VF: Implements a Vector Field model to calculate the base color shift generated by a light source.
+and to calculate a Metameric uncertainty index
+ * PX: Implements a Color Space Pixelation method to assess light source induced color shifts across color space.
+
+For more info:
+
+    ?luxpy.cri.VFPX
+
+### cri.spd_to_ies_tm30_metrics(): 
+Calculates IES TM30 metrics from spectral data.
+
+### cri.plot_cri_graphics(): 
+Plot_cri_graphics(): Plots graphical information on color rendition properties based on spectral data input or dict with pre-calculated measures.
+
+
+For more info on .cri module:
+
+    ?luxpy.cri
+    ?luxpy.cri.spd_to_cri()
+    etc.
 
 
 ## color/utils/ plotters.py
