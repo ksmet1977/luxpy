@@ -324,7 +324,7 @@ CIE xyz <--> CIELUV
 
 ###  xyz_to_Vrb_mb(), Vrb_mb_to_xyz():  
 CIE xyz <--> Macleod-Boyton type coordinates (V,r,b) = (V,l,s) with V = L + M, l=L/V, m = M/V (related to luminance)
-
+* [MacLeod DI, and Boynton RM (1979). Chromaticity diagram showing cone excitation by stimuli of equal luminance. J. Opt. Soc. Am. 69, 1183–1186.](https://www.osapublishing.org/josa/abstract.cfm?uri=josa-69-8-1183)
 ###   xyz_to_ipt(), ipt_to_xyz():   
 CIE xyz <--> IPT ()
 * [F. Ebner and M. D. Fairchild, “Development and testing of a color space (IPT) with improved hue uniformity,” in IS&T 6th Color Imaging Conference, 1998, pp. 8–13.](http://www.ingentaconnect.com/content/ist/cic/1998/00001998/00000001/art00003?crawler=true)
@@ -333,6 +333,7 @@ CIE xyz <--> IPT ()
 CIE xyz <--> Y, dominant / complementary wavelength (dl, compl. wl: specified by < 0) and excitation purity (ep)
 
 References:
+
  1. CIE15-2004 (2004). Colorimetry (Vienna, Austria: CIE)
  2. Ebner F, and Fairchild MD (1998). 
     Development and testing of a color space (IPT) with improved hue uniformity. 
@@ -479,7 +480,9 @@ Database of surround parameters c, Nc, F and FLL for ciecam02, cam16, ciecam97s 
 
 ### cam._NAKA_RUSHTON_PARAMETERS: 
 Database with parameters (n, sig, scaling and noise) for the Naka-Rushton function: 
-scaling * ((data^n) / ((data^n) + (sig^n))) + noise
+
+    scaling * ((data^n) / ((data^n) + (sig^n))) + noise
+
 
 ### cam._CAM_02_X_UCS_PARAMETERS: 
 Database with parameters specifying the conversion from ciecam02/cam16 to
@@ -621,13 +624,19 @@ load a cri_type dict but overwrites any keys that have a non-None input in calli
 
 
 ### cri.linear_scale():  
-Linear color rendering index scale from [CIE13.3-1974/1995](http://www.cie.co.at/index.php/index.php?i_ca_id=303):   Ri,a = 100 - c1*DEi,a. (c1 = 4.6)
+Linear color rendering index scale from [CIE13.3-1974/1995](http://www.cie.co.at/index.php/index.php?i_ca_id=303):   
+
+    Ri,a = 100 - c1*DEi,a. (c1 = 4.6)
 
 ### cri.log_scale(): 
-Log-based color rendering index scale from [Davis & Ohno (2010)](http://spie.org/Publications/Journal/10.1117/1.3360335):  Ri,a = 10 * ln(exp((100 - c1*DEi,a)/10) + 1)
+Log-based color rendering index scale from [Davis & Ohno (2010)](http://spie.org/Publications/Journal/10.1117/1.3360335):  
+
+    Ri,a = 10 * ln(exp((100 - c1*DEi,a)/10) + 1)
 
 ### cri.psy_scale():
-Psychometric based color rendering index scale from CRI2012 ([Smet et al. 2013, LRT](http://journals.sagepub.com/doi/abs/10.1177/1477153513481375)):  Ri,a = 100 * (2 / (exp(c1*abs(DEi,a)**(c2) + 1))) ** c3
+Psychometric based color rendering index scale from CRI2012 ([Smet et al. 2013, LRT](http://journals.sagepub.com/doi/abs/10.1177/1477153513481375)):  
+
+    Ri,a = 100 * (2 / (exp(c1*abs(DEi,a)**(c2) + 1))) ** c3
 
 
 
