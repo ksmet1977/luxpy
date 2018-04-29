@@ -78,6 +78,7 @@ the s-cone or ssc(λ) spectral efficiency function.
             Report on the first international workshop on 
             circadian and neurophysiological photometry, 2013 
             (Vienna, Austria).
+            (http://www.cie.co.at/publications/report-first-international-workshop-circadian-and-neurophysiological-photometry-2013)
             (http://files.cie.co.at/785_CIE_TN_003-2015.pdf)
 ----------------------------------------------------------------------------------------------------
 
