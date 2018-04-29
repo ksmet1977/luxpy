@@ -5,7 +5,7 @@
 # but applied to SciPy's minimize fcn.
 ###############################################################################
 
-# minimizebnd(): scipy.minimize() that allows contrained parameters on 
+# minimizebnd(): scipy.minimize() wrapper that allows contrained parameters on 
                  unconstrained methods(port of Matlab's fminsearchbnd). 
                  Starting, lower and upper bounds values can also be provided 
                  as a dict.

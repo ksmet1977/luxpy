@@ -976,6 +976,64 @@ For more info:
 References:
  * [CIE-TN003:2015 (2015). Report on the first international workshop on circadian and neurophysiological photometry, 2013 (Vienna, Austria).](http://www.cie.co.at/publications/report-first-international-workshop-circadian-and-neurophysiological-photometry-2013)  [[PDF](http://files.cie.co.at/785_CIE_TN_003-2015.pdf)]
 
+
+## 10. spdbuild/ spd_builder.py (.spdbuild)
+
+### gaussian_spd(): 
+Generate Gaussian spectrum.
+
+### mono_led_spd(): 
+Generate monochromatic LED spectrum based on Ohno (Opt. Eng. 2005).
+
+### phosphor_led_spd():
+Generate phosphor LED spectrum with up to 2 phosphors based on Smet (Opt. Expr. 2011).
+
+### spd_builder(): 
+Build spectrum based on Gaussians, monochromatic and/or phophor LED spectra.
+
+### color3mixer(): 
+Calculate fluxes required to obtain a target chromaticity when (additively) mixing 3 light sources.
+
+### colormixer(): 
+Calculate fluxes required to obtain a target chromaticity when (additively) mixing N light sources.
+
+### spd_builder(): 
+Build spectrum based on Gaussians, monochromatic and/or phophor LED-type spectra.
+                   
+### get_w_summed_spd(): 
+Calculate weighted sum of spds.
+ 
+### fitnessfcn(): 
+Fitness function that calculates closeness of solution x to target values for specified objective functions.
+         
+### spd_constructor_2(): 
+Construct spd from spectral model parameters using pairs of intermediate sources.
+                
+### spd_constructor_3(): 
+Construct spd from spectral model parameters using trio's of intermediate sources.
+     
+### spd_optimizer_2_3(): 
+Optimizes the weights (fluxes) of a set of component spectra by combining 
+pairs (2) or trio's (3) of components to intermediate sources until only 3 remain. 
+Color3mixer can then be called to calculate required fluxes to obtain target 
+chromaticity and fluxes are then back-calculated.                                   
+                        
+### get_optim_pars_dict(): 
+Setup dict with optimization parameters.
+                        
+### initialize_spd_model_pars(): 
+Initialize spd_model_pars (for spd_constructor) based on type of component_data.
+
+### initialize_spd_optim_pars(): 
+Initialize spd_optim_pars (x0, lb, ub for use with math.minimizebnd) based on 
+type of component_data.
+                
+### spd_optimizer(): 
+Generate a spectrum with specified white point and optimized for certain 
+objective functions from a set of component spectra or component spectrum 
+model parameters.
+
+
 -------------------------------------------------------------------------------
 ## 0.1.  helpers/ helpers.py 
 
@@ -995,6 +1053,8 @@ Make a tuple, list or numpy array at least 3d array and tranpose (swap) first tw
 Takes the **args with not-None input values of a function fcn and overwrites the values of the corresponding keys in Dict db.
 See put_args_in_db? for more info.
 
+### vec_to_dict(): Convert dict to vec and vice versa.
+
 ### getdata():
 Get data from csv-file or convert between pandas dataframe (kind = 'df') and numpy 2d-array (kind = 'np').
 
@@ -1005,7 +1065,7 @@ Easy input of of keys and values into dict (both should be iterable lists).
 Provides a nice way to create OrderedDict "literals".
 
 ### meshblock():
-Create a meshed block (similar to meshgrid, but axis = 0 is retained) to enable fast blockwise calculation.
+Create a meshed block (similar to meshgrid, but axis = 0 is retained). To enable fast blockwise calculation.
 
 ### aplit():
 Split np.array data on (default = last) axis.
@@ -1070,17 +1130,21 @@ Calculates area of polygon. (First coordinate should also be last)
 ### math.erf(), math.erfinv(): 
 erf-function (and inverse), direct import from scipy.special
 
-# cart2pol(): 
+### cart2pol(): 
 Converts Cartesian to polar coordinates.
 
-# pol2cart(): 
+### pol2cart(): 
 Converts polar to Cartesian coordinates.
 
-# magnitude_v():  
+### magnitude_v():  
 Calculates magnitude of vector.
 
-# angle_v1v2():  
+### angle_v1v2():  
 Calculates angle between two vectors.
+
+### minimizebnd(): 
+Scipy.minimize() wrapper that allows contrained parameters on unconstrained methods (port of Matlab's fminsearchbnd). 
+Starting, lower and upper bounds values can also be provided as a dict.
 
 For more info:
 

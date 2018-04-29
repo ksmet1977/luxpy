@@ -79,17 +79,17 @@ def gaussian_spd(peakwl = 530, fwhm = 20, wl = _WL3, with_wl = True):
     Generate Gaussian spectrum.
     
     Args:
-        :peakw: int or float or list or numpy.ndarray, optional
+        :peakw: int or float or list or ndarray, optional
             Peak wavelength
-        :fwhm: int or float or list or numpy.ndarray, optional
+        :fwhm: int or float or list or ndarray, optional
             Full-Width-Half-Maximum of gaussian.
         :wl: _WL3, optional 
             Wavelength range.
         :with_wl: True, optional
-            True outputs a numpy.ndarray with first row wavelengths.
+            True outputs a ndarray with first row wavelengths.
     
     Returns:
-        :returns: numpy.ndarray with spectra.        
+        :returns: ndarray with spectra.        
     """
     wl = np.atleast_2d(getwlr(wl)).T # create wavelength range
     spd = np.exp(-0.5*((wl-np.atleast_2d(peakwl))/np.atleast_2d(fwhm))**2)
@@ -105,19 +105,19 @@ def mono_led_spd(peakwl = 530, fwhm = 20, wl = _WL3, with_wl = True, strength_sh
     mono_led_spd = (gaussian() + strength_shoulder*gaussian()**5)/(1+strength_shoulder)
     
     Args:
-        :peakw: int or float or list or numpy.ndarray, optional
+        :peakw: int or float or list or ndarray, optional
             Peak wavelength
-        :fwhm: int or float or list or numpy.ndarray, optional
+        :fwhm: int or float or list or ndarray, optional
             Full-Width-Half-Maximum of gaussian used to simulate led.
         :wl: _WL3, optional 
             Wavelength range.
         :with_wl: True, optional
-            True outputs a numpy.ndarray with first row wavelengths.
+            True outputs a ndarray with first row wavelengths.
         :strength_shoulder: 2, optional
             Determines the strength of the spectrum shoulders of the mono led.
     
     Returns:
-        :returns: numpy.ndarray with spectra.   
+        :returns: ndarray with spectra.   
     
     Reference:
         1. Ohno Y (2005). 
@@ -155,34 +155,34 @@ def phosphor_led_spd(peakwl = 450, fwhm = 20, wl = _WL3, with_wl = True, strengt
         4) phosphor_led_spd = S*piecewise_fcn 
             
     Args:
-        :peakw: int or float or list or numpy.ndarray, optional
+        :peakw: int or float or list or ndarray, optional
             Peak wavelengths of the monochromatic led.
-        :fwhm: int or float or list or numpy.ndarray, optional
+        :fwhm: int or float or list or ndarray, optional
             Full-Width-Half-Maximum of gaussian.
         :wl: _WL3, optional 
             Wavelength range.
         :with_wl: True, optional
-            True outputs a numpy.ndarray with first row wavelengths.
+            True outputs a ndarray with first row wavelengths.
         :strength_shoulder: 2, optional
             Determines the strength of the spectrum shoulders of the mono led.
         :strength_ph: 0, optional
             Total contribution of phosphors in mixture.
-        :peakwl_ph1: int or float or list or numpy.ndarray, optional
+        :peakwl_ph1: int or float or list or ndarray, optional
             Peak wavelength of the first phosphor.
-        :fwhm_ph1: int or float or list or numpy.ndarray, optional
+        :fwhm_ph1: int or float or list or ndarray, optional
             Full-Width-Half-Maximum of gaussian used to simulate first phosphor.
         :strength_ph1: 1, optional
             Strength of first phosphor in phosphor mixture. 
             If :strength_ph2: is None: value should be in the [0,1] range.
-        :peakwl_ph2: int or float or list or numpy.ndarray, optional
+        :peakwl_ph2: int or float or list or ndarray, optional
             Peak wavelength of the second phosphor.
-        :fwhm_ph2: int or float or list or numpy.ndarray, optional
+        :fwhm_ph2: int or float or list or ndarray, optional
             Full-Width-Half-Maximum of gaussian used to simulate second phosphor.
         :strength_ph2: None, optional
             Strength of second phosphor in phosphor mixture. 
             If None: strength is calculated as (1-:strength_ph1:)
                 :target: np2d([100,1/3,1/3]), optional
-            Numpy.ndarray with Yxy chromaticity of target.
+            ndarray with Yxy chromaticity of target.
         :verbosity: 0, optional
             If > 0: plots spectrum components (mono_led, ph1, ph2, ...)
         :out: 'spd', optional
@@ -194,7 +194,7 @@ def phosphor_led_spd(peakwl = 450, fwhm = 20, wl = _WL3, with_wl = True, strengt
             
     Returns:
         :returns: spd, component_spds
-            numpy.ndarrays with spectra (and component spds used to build the 
+            ndarrays with spectra (and component spds used to build the 
             final spectra) 
         
         
@@ -309,11 +309,11 @@ def spd_builder(flux = None, component_spds = None, peakwl = 450, fwhm = 20, \
         :flux: None, optional
             Fluxes of each of the component spectra.
             None outputs the individual component spectra.
-        :component_spds: None or numpy.ndarray, optional
+        :component_spds: None or ndarray, optional
             If None: calculate component spds from input args.
-        :peakw: int or float or list or numpy.ndarray, optional
+        :peakw: int or float or list or ndarray, optional
             Peak wavelengths of the monochromatic leds.
-        :fwhm: int or float or list or numpy.ndarray, optional
+        :fwhm: int or float or list or ndarray, optional
             Full-Width-Half-Maximum of gaussians.
         :pair_strengths: ndarray with pair_strengths of mono_led spds, optional
             If None: will be randomly selected, possibly resulting in 
@@ -321,30 +321,30 @@ def spd_builder(flux = None, component_spds = None, peakwl = 450, fwhm = 20, \
         :wl: _WL3, optional 
             Wavelength range.
         :with_wl: True, optional
-            True outputs a numpy.ndarray with first row wavelengths.
+            True outputs a ndarray with first row wavelengths.
         :strength_shoulder: 2, optional
             Determines the strength of the spectrum shoulders of the mono leds.
         :strength_ph: 0, optional
             Total contribution of phosphors in mixtures. 
             Phosphor type mixtures have only 3 components (pump + 2 phosphors).
             If None or 0: pure monochromatic led components (N can be > 3).
-        :peakwl_ph1: int or float or list or numpy.ndarray, optional
+        :peakwl_ph1: int or float or list or ndarray, optional
             Peak wavelength of the first phosphors.
-        :fwhm_ph1: int or float or list or numpy.ndarray, optional
+        :fwhm_ph1: int or float or list or ndarray, optional
             Full-Width-Half-Maximum of Gaussian used to simulate 1st phosphor
         :strength_ph1: 1, optional
             Strength of first phosphor in phosphor mixtures. 
             If :strength_ph2: is None: value should be in the [0,1] range.
-        :peakwl_ph2: int or float or list or numpy.ndarray, optional
+        :peakwl_ph2: int or float or list or ndarray, optional
             Peak wavelength of the second phosphors.
-        :fwhm_ph2: int or float or list or numpy.ndarray, optional
+        :fwhm_ph2: int or float or list or ndarray, optional
             Full-Width-Half-Maximum of Gaussian used to simulate 2nd phosphor
         :strength_ph2: None, optional
             Strength of second phosphor in phosphor mixtures. 
             If None: strength is calculated as (1-:strength_ph1:)
         
         :target: None, optional
-            Numpy.ndarray with Yxy chromaticity of target.
+            ndarray with Yxy chromaticity of target.
             If None: don't override phosphor strengths, else calculate strength
                     to obtain :target: using color3mixer().
             If not None AND strength_ph is None or 0: components are 
@@ -364,7 +364,7 @@ def spd_builder(flux = None, component_spds = None, peakwl = 450, fwhm = 20, \
             Specifies output.
             
     Returns:
-        :returns: numpy.ndarray with spectra.  
+        :returns: ndarray with spectra.  
     
     Note:
         1. Target-optimization is only for phophor_leds with three components 
@@ -506,13 +506,13 @@ def color3mixer(Yxyt,Yxy1,Yxy2,Yxy3):
     when (additively) mixing 3 light sources.
     
     Args:
-        :Yxyt: numpy.ndarray with target Yxy chromaticities.
-        :Yxy1: numpy.ndarray with Yxy chromaticities of light sources 1.
-        :Yxy2: numpy.ndarray with Yxy chromaticities of light sources 2.
-        :Yxy3: numpy.ndarray with Yxy chromaticities of light sources 3.
+        :Yxyt: ndarray with target Yxy chromaticities.
+        :Yxy1: ndarray with Yxy chromaticities of light sources 1.
+        :Yxy2: ndarray with Yxy chromaticities of light sources 2.
+        :Yxy3: ndarray with Yxy chromaticities of light sources 3.
         
     Returns:
-        :M: numpy.ndarray with fluxes.
+        :M: ndarray with fluxes.
         
     Note:
         Yxyt, Yxy1, ... can contain multiple rows, referring to single mixture.
@@ -548,16 +548,16 @@ def colormixer(Yxyt = None, Yxyi = None, n = 4, pair_strengths = None, source_or
     when (additively) mixing N light sources.
     
     Args:
-        :Yxyt: numpy.ndarray with target Yxy chromaticities.
+        :Yxyt: ndarray with target Yxy chromaticities.
             Defaults to equi-energy white.
         :Yxyi: ndarray with Yxy chromaticities of light sources i = 1 to n.
         :n: 4 or int, optional
             Number of source components to randomly generate when Yxyi is None.
-        :pair_strengths: numpy.ndarray with light source pair strengths.  
-        :source_order: numpy.ndarray with order of source components.
+        :pair_strengths: ndarray with light source pair strengths.  
+        :source_order: ndarray with order of source components.
             If None: use np.arange(n)
     Returns:
-        :M: numpy.ndarray with fluxes.
+        :M: ndarray with fluxes.
     
     Note:
         Algorithm:
@@ -715,11 +715,11 @@ def get_w_summed_spd(w,spds):
     Calculate weighted sum of spds.
     
     Args:
-        :w: numpy.ndarray with weigths (e.g. fluxes)
-        :spds: numpy.ndarray with component spds.
+        :w: ndarray with weigths (e.g. fluxes)
+        :spds: ndarray with component spds.
         
     Returns:
-        :returns: numpy.ndarray with weighted sum.
+        :returns: ndarray with weighted sum.
     """
     return np.vstack((spds[0],np.dot(np.abs(w),spds[1:])))
 
@@ -731,7 +731,7 @@ def fitnessfcn(x, spd_constructor, spd_constructor_pars = None, F_rss = True, de
     for specified objective functions.
     
     Args:
-        :x: numpy.ndarray with parameter values
+        :x: ndarray with parameter values
         :spd_constructor: function handle to a function that constructs the spd
             from parameter values in :x:.
         :spd_constructor_pars: None, optional,
@@ -755,7 +755,7 @@ def fitnessfcn(x, spd_constructor, spd_constructor_pars = None, F_rss = True, de
             Determines output.
             
     Returns:
-        :F: float or numpy.ndarray with fitness value for current solution :x:.
+        :F: float or ndarray with fitness value for current solution :x:.
     """
     
     # Keep track of solutions tried:
@@ -854,7 +854,7 @@ def spd_constructor_2(x, constructor_pars = {}, **kwargs):
         
     Returns:
         :returns: spd, M, spds
-            Numpy.ndarrays with spectrum corresponding to x, M the fluxes of 
+            ndarrays with spectrum corresponding to x, M the fluxes of 
             the spectral components of spd and spds the spectral components 
             themselves.
     
@@ -907,7 +907,7 @@ def spd_constructor_3(x, constructor_pars = {}, **kwargs):
         
     Returns:
         :returns: spd, M, spds
-            Numpy.ndarrays with spectrum corresponding to x, M the fluxes of 
+            ndarrays with spectrum corresponding to x, M the fluxes of 
             the spectral components of spd and spds the spectral components 
             themselves.
     
@@ -1018,7 +1018,7 @@ def spd_optimizer_2_3(optimizer_type = '2mixer', \
             ndarray with spectral data.
 
         :Yxy_target: np2d([100,1/3,1/3]), optional
-            Numpy.ndarray with Yxy chromaticity of target.
+            ndarray with Yxy chromaticity of target.
         :cieobs: _CIEOBS, optional
             CIE CMF set used to calculate chromaticity values if not provided 
             in :Yxyi:.
@@ -1046,7 +1046,7 @@ def spd_optimizer_2_3(optimizer_type = '2mixer', \
             
     Returns:
         :returns: M, spd_opt, obj_vals
-            - 'M': numpy.ndarray with fluxes for each component spectrum.
+            - 'M': ndarray with fluxes for each component spectrum.
             - 'spd_opt': optimized spectrum.
             - 'obj_vals': values of the obj. fcns for the optimized spectrum.
     """
@@ -1426,7 +1426,7 @@ def spd_optimizer(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs = _CIEO
     
     Args:
         :target: np2d([100,1/3,1/3]), optional
-            Numpy.ndarray with Yxy chromaticity of target.
+            ndarray with Yxy chromaticity of target.
         :tar_type:  'Yxy' or str, optional
             Specifies the input type in :target: (e.g. 'Yxy' or 'cct')
         :cieobs: _CIEOBS, optional
@@ -1456,7 +1456,7 @@ def spd_optimizer(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs = _CIEO
         :cspace_fwtf = {}, optional
             Forward (xyz_to_...) transform parameters 
             (see colortf()) to go from xyz to :cspace:).
-        :component_spds: numpy.ndarray of component spectra.
+        :component_spds: ndarray of component spectra.
             If None: they are built from input args.
         :N_components: None, optional
             Specifies number of components used in optimization. (only used 
@@ -1493,7 +1493,7 @@ def spd_optimizer(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs = _CIEO
     Returns:
         :returns: spds, M
             - 'spds': optimized spectrum.
-            - 'M': numpy.ndarray with fluxes for each component spectrum.
+            - 'M': ndarray with fluxes for each component spectrum.
 
     Notes:
         Optimization algorithms:
