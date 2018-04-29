@@ -64,7 +64,7 @@ _INDVCMF_DATA['rmd'] = getdata(_INDVCMF_DATA_PATH  + 'cie2006_RelativeMacularDen
 _INDVCMF_DATA['LMSa'] = getdata(_INDVCMF_DATA_PATH  + 'cie2006_Alms.dat', header = None).T 
 _INDVCMF_DATA['docul'] = getdata(_INDVCMF_DATA_PATH  + 'cie2006_docul.dat', header = None).T 
 _INDVCMF_DATA['USCensus2010population'] = getdata(_INDVCMF_DATA_PATH  + 'USCensus2010Population.dat', header = 'infer',verbosity = 0).T 
-_INDVCMF_DATA['CatObsPfctr'] = getdata(_INDVCMF_DATA_PATH  + 'CatObsPfctr.csv', header = None).T 
+_INDVCMF_DATA['CatObsPfctr'] = getdata(_INDVCMF_DATA_PATH  + 'CatObsPfctr.dat', header = None).T 
 
 # Store var of. physiological parameters in dict:
 _INDVCMF_STD_DEV_ALL_PARAM = {}
@@ -89,7 +89,7 @@ _INDVCMF_STD_DEV_ALL_PARAM['shft_S'] = 2.5
 #_INDVCMF_STD_DEV_ALL_PARAM_GE['shft_S'] = 1.3
 
 # Define dict with Iteratively Derived Cat.Obs.:
-t_data = getdata(_INDVCMF_DATA_PATH  + 'CatObsPfctr.csv', header = None).T
+t_data = getdata(_INDVCMF_DATA_PATH  + 'CatObsPfctr.dat', header = None).T
 dict_values = [t_data[:,i+1] for i in range(t_data.shape[1]-1)]
 dict_keys = list(_INDVCMF_STD_DEV_ALL_PARAM.keys())
 _INDVCMF_CATOBSPFCTR = dict(zip(dict_keys, dict_values))
