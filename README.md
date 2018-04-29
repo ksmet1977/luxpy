@@ -5,7 +5,7 @@
 
 * Author: K. A.G. Smet (ksmet1977 at gmail.com)
 * Version: 1.2.06
-* Date: April 12, 2018
+* Date: April 29, 2018
 * License: [GPLv3](https://github.com/ksmet1977/luxpy/blob/master/LICENSE.md)
 
 **Luxpy** is an open source package under a GPLv3 license that supports several common
@@ -19,6 +19,8 @@
 * chromatic adaptation transforms 
 * color appearance models 
 * color rendition indices 
+* calculation of CIE photobiological quantities
+* Multi-component spectrum creation and optimization
 * ...
 
 -------------------------------------------------------------------------------
@@ -98,21 +100,69 @@ either using e.g. "conda install scipy" or "pip install scipy", and try and rein
 -------------------------------------------------------------------------------
 ## Module overview
     
-    0.1.  helpers/ helpers.py (imported directly into luxpy namespace, details see end of this file)
-    0.2.  math/ math.py (imported as .math into the luxpy namespace, details see end of this file)
+    0.1.  helpers/ 
+            helpers.py (imported directly into luxpy namespace, details see end of this file)
     
-    1a.  spectral/ cmf.py
-    1b.  spectral/ spectral.py
-    1c.  spectral/ spectral_databases.py
-    2a.  ctf/ colortransforms.py (imported directly into luxpy namespace)
-    3a.  cct/ cct.py (imported directly into luxpy namespace)
-    4a.  cat/ chromaticadaptation.py (imported in luxpy namespace as .cat)
-    5a.  cam/ colorappearancemodels.py (imported in luxpy namespace as .cam)
-    2b.  ctf/ colortf.py (imported directly into luxpy namespace)
-    6a.  cri/ colorrendition_indices.py (imported in luxpy namespace as .cri)
-    7a. graphics/ plotters.py (imported directly into luxpy namespace)
-    8a. classes/ SPD (imported directly into luxpy namespace)
-    8b. classes/ CDATA, XYZ, LAB (imported directly into luxpy namespace)
+    0.2.  math/ 
+            math.py (imported as math into the luxpy namespace, details see end of this file)
+            optimizers.py (imported in math name space)
+            
+    1.  spectral/ 
+            cmf.py
+            spectral.py
+            spectral_databases.py
+            individual_observer_cmf_model.py (imports into indvcmf namespace)
+            
+    2.  ctf/ 
+            colortransforms.py (imported directly into luxpy namespace)
+            colortf.py (imported directly into luxpy namespace)
+            
+    3.  cct/ 
+            cct.py (imported directly into luxpy namespace)
+            
+    4.  cat/ 
+            chromaticadaptation.py (imported in luxpy namespace as .cat)
+            
+    5.  cam/ 
+            colorappearancemodels.py (imported in luxpy namespace as .cam)
+              cam_02_X.py
+              cam15u.py
+              sww2016.py
+
+    6.  deltaE/ 
+            colordifferences.py (imported in luxpy namespace as .deltaE)
+            
+    7.  cri/ 
+            colorrendition.py (imported in luxpy namespace as .cri)
+                DE_scalers.py
+                helpers.py
+                init_cri_defaults_database.py
+                indices.py
+                    cie_wrappers.py
+                    ies_wrappers.py
+                    cri2012.py
+                    mcri.py
+                    cqs.py
+                graphics.py
+                ies_tm30_metrics.py
+                ies_tm30_graphics.py
+                VF_PX_models.py (imported in .cri as .VFPX)
+                    vectorshiftmodel.py
+                    pixelshiftmodel.py
+            
+    8. graphics/ 
+            plotters.py (imported directly into luxpy namespace)
+            
+    9. classes/ 
+            SPD (imported directly into luxpy namespace)
+            CDATA, XYZ, LAB (imported directly into luxpy namespace)
+            
+    10. ciephotbio/
+            cie_tn003_2015.py (imported into luxpy namespace as .ciephotbio)
+            
+    11. spdbuild/
+            spd_builder.py (imported into luxpy namespace as .spdbuild)
+    
     
 For more details see [luxpy_module_overview.md](https://github.com/ksmet1977/luxpy/blob/master/luxpy_module_overview.md) 
 or \__doc__string of each function. To get help on, for example the **spd_to_xyz()** function, type:
