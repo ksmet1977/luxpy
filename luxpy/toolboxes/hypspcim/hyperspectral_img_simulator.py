@@ -240,7 +240,7 @@ def render_image(img = None, spd = None, rfl = None, out = 'hyp_img', \
 
     # Setup output:
     if out == 'hyp_img':
-        return himg
+        return hyp_img
     elif out == 'ren_img':
         return ren_img
     else:
