@@ -174,6 +174,9 @@ either using e.g. "conda install scipy" or "pip install scipy", and try and rein
 		
 		/.spdbuild                   (imported into luxpy namespace as .spdbuild)
 			spd_builder.py
+			
+		/.hypspcsim                  (imported into luxpy namespace as .hypspcim)
+			hyperspectral_img_simulator.py
     
     
 For more details see [luxpy_module_overview.md](https://github.com/ksmet1977/luxpy/blob/master/luxpy_module_overview.md) 

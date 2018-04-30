@@ -106,8 +106,8 @@ Loads the following luxpy sub-packages, modules and classes:
 		/.spdbuild
 			spd_builder.py
 			
-		/.hypspecsim
-			hyperspectralsimulator.py
+		/.hypspcsim
+			hyperspectral_img_simulator.py
 
 #------------------------------------------------------------------------------ 
 Loads the following global default constants:

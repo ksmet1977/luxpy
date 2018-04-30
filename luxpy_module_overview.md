@@ -87,6 +87,9 @@
 		
 		/.spdbuild                   (imported into luxpy namespace as .spdbuild)
 			spd_builder.py    
+			
+		/.hypspcsim                  (imported into luxpy namespace as .hypspcim)
+			hyperspectral_img_simulator.py
  
 -------------------------------------------------------------------------------
 ## \__init__.py
@@ -1042,6 +1045,16 @@ References:
  * [Smet K, Ryckaert WR, Pointer MR, Deconinck G, and Hanselaer P (2011). Optimal colour quality of LED clusters based on memory colours. Opt. Express 19, 6903–6912.](https://www.osapublishing.org/vjbo/fulltext.cfm?uri=oe-19-7-6903&id=211315)
 
 
+## toolboxes/hypspcim/ hyperspectral_img_simulator.py (.hypspcim)
+
+### _HYPSPCIM_PATH: 
+path to module
+
+### _HYPSPCIM_DEFAULT_IMAGE: 
+path + filename to default image
+
+### render_image(): 
+Render image under specified light source spd.
 
 
 

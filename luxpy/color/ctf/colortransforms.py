@@ -866,7 +866,7 @@ def Ydlep_to_xyz(Ydlep, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT, *
     return Yxy_to_xyz(Yxy).reshape(Ydlep.shape)
 
 
-def xyz_to_srgb(xyz):
+def xyz_to_srgb(xyz, **kwargs):
     """
     Calculates IEC:61966 sRGB values from xyz.
     
@@ -914,7 +914,7 @@ def xyz_to_srgb(xyz):
     return rgb
     
 
-def srgb_to_xyz(rgb):
+def srgb_to_xyz(rgb, **kwargs):
     """
     Calculates xyz from IEC:61966 sRGB values.
     
@@ -934,9 +934,9 @@ def srgb_to_xyz(rgb):
     
     # scale device coordinates:
     sRGB = rgb/255
-    
+
     # test for non-linear part of conversion
-    nonlin = np.where(sRGB <  0.03928)
+    nonlin = np.where(sRGB <  0.0031308)#0.03928)
         
     # apply gamma function to convert to sRGB
     srgb = sRGB.copy()

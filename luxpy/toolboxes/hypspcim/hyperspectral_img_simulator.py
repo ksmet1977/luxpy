@@ -22,13 +22,16 @@ from luxpy.toolboxes.spdbuild import spdbuilder as spb
 __all__ =['_HYPSPCIM_PATH','_HYPSPCIM_DEFAULT_IMAGE','render_image']             
 
 _HYPSPCIM_PATH = _PKG_PATH + _SEP + 'hypspcim' + _SEP
-_HYPSPCIM_DEFAULT_IMAGE = _PKG_PATH + _SEP + 'toolboxes' + _SEP + 'hypspcim' +  _SEP + 'data' + _SEP + 'default_image_.jpg'
+_HYPSPCIM_DEFAULT_IMAGE = _PKG_PATH + _SEP + 'toolboxes' + _SEP + 'hypspcim' +  _SEP + 'data' + _SEP + 'testimage1.jpg'
 
-def render_image(img = None, spd = None, rfl = None, out = 'ren_img', \
+def render_image(img = None, spd = None, rfl = None, out = 'hyp_img', \
                  refspd = None, D = None, cieobs = _CIEOBS, \
                  cspace = 'ipt', cspace_tf = {},\
                  k_neighbours = 4, show = (True,True),
-                 verbosity = 0, show_ref_img = True):
+                 verbosity = 0, show_ref_img = True,\
+                 stack_test_ref = 12,\
+                 write_to_file = None,
+                 use_plt_show = False):
     """
     Render image under specified light source spd.
     
@@ -54,15 +57,25 @@ def render_image(img = None, spd = None, rfl = None, out = 'ren_img', \
         :k_neighbours: 4 or int, optional
             Number of nearest neighbours for reflectance spectrum interpolation.
             Neighbours are found using scipy.cKDTree
-        :show: (True,True), optional
-             Tuple with boolean determing whether to show 
-             original and rendered images or not. If not a tuple, :show:
-             determines both.
+        :show: True, optional
+             Show images.
         :verbosity: 0, optional
             If > 0: make a plot of the color coordinates of original and 
             rendered image pixels.
-            
-        
+        :show_ref_img: True, optional
+             True: shows rendered image under reference spd. False: shows
+             original image.
+        :write_to_file: None, optional
+            None: do nothing, else: write to filename(+path) in :write_to_file:
+        :stack_test_ref: 12, optional
+            - 12: left (test), right (ref) format for show and imwrite
+            - 21: top (test), bottom (ref)
+            - 1: only show/write test
+            - 2: only show/write ref
+            - 0: show both, write test
+        :use_plt_show: False, optional
+            True: Use matplotlib.pyplot.imshow 
+            False: use open-cv imshow() 
     Returns:
         :returns: hyp_img, ren_img, 
             ndarrays with hyperspectral image and rendered images 
@@ -162,6 +175,8 @@ def render_image(img = None, spd = None, rfl = None, out = 'ren_img', \
     ren_img = rgb_rs[rgb_indices]
     ren_img.shape = img.shape # reshape back to 3D size of original
      
+    
+    # For output:
     if show_ref_img == True:
         cspace_tf_copy['xyzw'] = xyz_wr
         rgb_rr = colortf(xyz_rr_idw, tf = 'srgb', fwtf = {})/255
@@ -173,20 +188,50 @@ def render_image(img = None, spd = None, rfl = None, out = 'ren_img', \
         img_str = 'Original'
         img = img/255
     
-    if isinstance(show,tuple):
-        if show[0] == True:
-            # Convert from BGR to RGB float32 image and show original image:
-            cv2.imshow(img_str, cv2.cvtColor(img.astype(np.float32), cv2.COLOR_RGB2BGR))
-        if show[1] == True:
-            # Convert from BGR to RGB float32 image and show rendered image:    
-            cv2.imshow('Rendered (under test spd)',cv2.cvtColor(ren_img.astype(np.float32), cv2.COLOR_RGB2BGR))
-    else:
-        if show == True:
-            oriren_img = np.vstack((img,np.ones((4,img.shape[1],3)),ren_img))
-            # Convert from BGR to RGB float32 image and show rendered image:    
-            cv2.imshow( img_str + ' | rendered (under test spd)',cv2.cvtColor(oriren_img.astype(np.float32), cv2.COLOR_RGB2BGR))
-
-    
+    if (stack_test_ref > 0) | show == True:
+        if stack_test_ref == 21:
+            oriren_img = np.vstack((ren_img,np.ones((4,img.shape[1],3)),img))
+            oriren_img_str = 'Rendered (under test spd) | ' + img_str 
+        elif stack_test_ref == 12:
+            oriren_img = np.hstack((ren_img,np.ones((img.shape[0],4,3)),img))
+            oriren_img_str = 'Rendered (under test spd) | ' + img_str 
+        elif stack_test_ref == 1:
+            oriren_img = ren_img
+            oriren_img_str = 'Rendered (under test spd)' 
+        elif stack_test_ref == 2:
+            oriren_img = img
+            oriren_img_str = img_str
+        elif stack_test_ref == 0:
+            oriren_img = ren_img
+            oriren_img_str =  'Rendered (under test spd)' 
+            
+    if write_to_file is not None:
+        # Convert from RGB to BGR formatand write:
+        #print('Writing rendering results to image file: {}'.format(write_to_file))
+        cv2.imwrite(write_to_file, cv2.cvtColor((255*oriren_img).astype(np.float32), cv2.COLOR_RGB2BGR))
+        
+    if show == True:
+        if use_plt_show == False:
+            #show rendered image using cv2:    
+            cv2.imshow(oriren_img_str ,cv2.cvtColor(oriren_img.astype(np.float32), cv2.COLOR_RGB2BGR))
+        
+            if stack_test_ref == 0: # show both in sep. figures
+                cv2.imshow(img_str ,cv2.cvtColor(img.astype(np.float32), cv2.COLOR_RGB2BGR))
+        else:
+            # show images using pyplot.show():
+            plt.figure()
+            plt.imshow(oriren_img)
+            plt.title(oriren_img_str)
+            plt.gca().get_xaxis().set_ticklabels([])
+            plt.gca().get_yaxis().set_ticklabels([])
+            
+            if stack_test_ref == 0:
+                plt.figure()
+                plt.imshow(img_str)
+                plt.title(img_str)
+                plt.gca().get_xaxis().set_ticklabels([])
+                plt.gca().get_yaxis().set_ticklabels([])
+      
     if 'hyp_img' in out.split(','):
         # Create hyper_spectral image:
         rfl_image_2D = rfl_idw[rgb_indices+1,:] # create array with all rfls required for each pixel
@@ -206,9 +251,14 @@ def render_image(img = None, spd = None, rfl = None, out = 'ren_img', \
 if __name__ == '__main__':
     plt.close('all')
     S = _CIE_ILLUMINANTS['F4']
-    S = spb.spd_builder(peakwl = [450,525,590],fwhm=[20,40,10],target=4500, tar_type = 'cct') 
+    S = spb.spd_builder(peakwl = [460,525,590],fwhm=[20,40,20],target=4000, tar_type = 'cct') 
     img = _HYPSPCIM_DEFAULT_IMAGE
-    render_image(img = img, cspace = 'ipt',spd = S, D=1,show = True, show_ref_img = True)    
+    hyp_im,ren_img = render_image(img = img, cspace = 'ipt',spd = S, 
+                                 D=1,
+                                 show = True, show_ref_img = True,
+                                 use_plt_show = True, stack_test_ref = 21,
+                                 out='hyp_img,ren_img',
+                                 write_to_file = None)    
     
         
 
