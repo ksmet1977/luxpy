@@ -235,7 +235,7 @@ def render_image(img = None, spd = None, rfl = None, out = 'hyp_img', \
     if 'hyp_img' in out.split(','):
         # Create hyper_spectral image:
         rfl_image_2D = rfl_idw[rgb_indices+1,:] # create array with all rfls required for each pixel
-        hyp_img = rfl_image_2D.reshape(img.shape[0]*img.shape[1],rfl_image_2D.shape[1])
+        hyp_img = rfl_image_2D.reshape(img.shape[0],img.shape[1],rfl_image_2D.shape[1])
     
 
     # Setup output:
@@ -253,7 +253,7 @@ if __name__ == '__main__':
     S = _CIE_ILLUMINANTS['F4']
     S = spb.spd_builder(peakwl = [460,525,590],fwhm=[20,40,20],target=4000, tar_type = 'cct') 
     img = _HYPSPCIM_DEFAULT_IMAGE
-    hyp_im,ren_img = render_image(img = img, cspace = 'ipt',spd = S, 
+    hyp_img,ren_img = render_image(img = img, cspace = 'ipt',spd = S, 
                                  D=1,
                                  show = True, show_ref_img = True,
                                  use_plt_show = True, stack_test_ref = 21,
