@@ -6,7 +6,7 @@ setup(
   packages = find_packages(), 
   version = '1.3.00',
   license = 'GPLv3',
-  description = 'Python lib for lighting and color science',
+  description = 'Python package for lighting and color science',
   author = 'Kevin A.G. Smet',
   author_email = 'ksmet1977@gmail.com',
   url = 'https://github.com/ksmet1977/luxpy',
