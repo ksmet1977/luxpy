@@ -22,8 +22,10 @@
 
 # gaussian_spd(): Generate Gaussian spectrum.
 
-# mono_led_spd(): Generate monochromatic LED spectrum based on Ohno 
-                    (Opt. Eng. 2005).
+# butterworth_spd(): Generate Butterworth based spectrum.
+
+# mono_led_spd(): Generate monochromatic LED spectrum based on a Gaussian 
+                or butterworth profile or according to Ohno (Opt. Eng. 2005).
 
 # phosphor_led_spd(): Generate phosphor LED spectrum with up to 2 phosphors 
                       based on Smet (Opt. Expr. 2011).

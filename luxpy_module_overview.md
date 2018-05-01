@@ -6,7 +6,7 @@
 
 * Author: K. A.G. Smet (ksmet1977 at gmail.com)
 * Version: 1.2.06
-* Date: April 29, 2018
+* Date: May 1, 2018
 * License: [GPLv3](https://github.com/ksmet1977/luxpy/blob/master/LICENSE.md)
 
 

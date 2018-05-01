@@ -5,7 +5,7 @@
 
 * Author: K. A.G. Smet (ksmet1977 at gmail.com)
 * Version: 1.2.06
-* Date: April 29, 2018
+* Date: May 1, 2018
 * License: [GPLv3](https://github.com/ksmet1977/luxpy/blob/master/LICENSE.md)
 
 **Luxpy** is an open source package under a GPLv3 license that supports several common
@@ -21,6 +21,7 @@
 * color rendition indices 
 * calculation of CIE photobiological quantities
 * Multi-component spectrum creation and optimization
+* Hyper-spectral image simulation and rendering
 * ...
 
 -------------------------------------------------------------------------------
