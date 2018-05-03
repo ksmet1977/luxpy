@@ -111,6 +111,7 @@ Imported 3e party packages
 --------------------------
 | import numpy as np
 | import pandas as pd
+| import scipy as sp
 | from scipy import interpolate
 | from scipy.optimize import minimize
 | from scipy.spatial import cKDTree
@@ -121,7 +122,6 @@ Imported 3e party packages
 | from mpl_toolkits.mplot3d import Axes3D
 | import colorsys
 | import cv2
-| import itertools
 
 Global constants
 ----------------
@@ -149,6 +149,7 @@ DO NOT CHANGE THESE CONSTANTS!
 
 import numpy as np
 import pandas as pd
+import scipy as sp
 from scipy import interpolate
 from scipy.optimize import minimize
 from scipy.spatial import cKDTree
@@ -159,10 +160,9 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import colorsys
 import cv2
-import itertools
 
-__all__ = ['plt','Axes3D','np','pd','os','warnings','interpolate','minimize',
-           'cKDTree','odict','colorsys','cv2','itertools']
+__all__ = ['plt','Axes3D','np','sp','pd','os','warnings','interpolate','minimize',
+           'cKDTree','odict','colorsys','cv2']
 
 
 #==============================================================================
@@ -191,6 +191,9 @@ _CIEOBS = '1931_2' #(CMF selection)
 _CSPACE = 'Yuv'
 __all__+=['_CIEOBS','_CSPACE']
 
+
+# store __all__ in _all_:
+#_all_ = __all__
 
 
 #==============================================================================
@@ -276,6 +279,7 @@ _CSPACE_AXES = {**_CSPACE_AXES, **_CAM_AXES}
 
 
 #   Extend color transform module:
+#__all__ = [x for x in dir() if x[:2]!='__'] # to give color.ctf.colortf access to globals()
 from .color.ctf.colortf import *
 __all__ += color.ctf.colortf.__all__
 

@@ -64,7 +64,7 @@ cam/
 	* cam15u
 	* sww2016.py
 	
- :namespace: luxpy.cat
+ :namespace: luxpy.cam
 
 .. automodule:: luxpy.color.cam
    :members:
@@ -77,7 +77,7 @@ deltaE/
 	* __init__.py
 	* colordifferences.py
 	
- :namespace: luxpy.cat
+ :namespace: luxpy.deltaE
 
 .. automodule:: luxpy.color.deltaE
    :members:

@@ -109,7 +109,8 @@ def plot_color_data(x,y,z=None, axh=None, show = True, cieobs =_CIEOBS, \
         
     plt.xlabel(_CSPACE_AXES[cspace][1], kwargs)
     plt.ylabel(_CSPACE_AXES[cspace][2], kwargs)
-    plt.legend()
+    if 'label' in kwargs.keys():
+        plt.legend()
     if show == True:
         plt.show()
     else:
@@ -305,12 +306,17 @@ def plotSL(cieobs =_CIEOBS, cspace = _CSPACE,  DL = True, BBL = True, D65 = Fals
     if np.any([DL,BBL,D65,EEW]):
         show = False
 
-        
+
     axh_ = plot_color_data(x,y,axh = axh, cieobs = cieobs, cspace = cspace, show = show, formatstr=formatstr,  **kwargs)
-    
+
+
     if DL == True:
+        if 'label' in kwargs.keys(): # avoid label also being used for DL
+            kwargs.pop('label')
         plotDL(ccts = None, cieobs = cieobs, cspace = cspace, axh = axh, show = show, cspace_pars = cspace_pars, formatstr = 'k:',  **kwargs)
     if BBL == True:
+        if 'label' in kwargs.keys(): # avoid label also being used for BB
+            kwargs.pop('label')
         plotBB(ccts = None, cieobs = cieobs, cspace = cspace, axh = axh, show = show, cspace_pars = cspace_pars, cctlabels = cctlabels, formatstr = 'k-.',  **kwargs)
     
     if D65 == True:
