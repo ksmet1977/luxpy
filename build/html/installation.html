@@ -163,66 +163,99 @@
 <div class="section" id="install-luxpy">
 <h2>Install luxpy<a class="headerlink" href="#install-luxpy" title="Permalink to this headline">¶</a></h2>
 <blockquote>
-<div><ol class="arabic simple">
-<li>Install miniconda (download installer from: <a class="reference external" href="https://conda.io/miniconda.html">https://conda.io/miniconda.html</a> / <a class="reference external" href="https://repo.continuum.io/miniconda/">https://repo.continuum.io/miniconda/</a>)
-e.g. <a class="reference external" href="https://repo.continuum.io/miniconda/Miniconda3-latest-Windows-x86_64.exe">https://repo.continuum.io/miniconda/Miniconda3-latest-Windows-x86_64.exe</a>
-(make sure ‘conda.exe’ can be found on the windows system path, if necessary do a manual add)</li>
+<div><ol class="arabic">
 <li><dl class="first docutils">
-<dt>Create a virtual environment with full anaconda distribution:</dt>
-<dd>Type the following at a windows commandline.
-&gt;&gt; conda create –name py36 python=3.6 anaconda</dd>
+<dt>Install miniconda</dt>
+<dd><ul class="first last simple">
+<li>download the installer from: <a class="reference external" href="https://conda.io/miniconda.html">https://conda.io/miniconda.html</a>
+or <a class="reference external" href="https://repo.continuum.io/miniconda/">https://repo.continuum.io/miniconda/</a>)</li>
+<li>e.g. <a class="reference external" href="https://repo.continuum.io/miniconda/Miniconda3-latest-Windows-x86_64.exe">https://repo.continuum.io/miniconda/Miniconda3-latest-Windows-x86_64.exe</a></li>
+<li>Make sure ‘conda.exe’ can be found on the windows system path, if necessary do a manual add.</li>
+</ul>
+</dd>
 </dl>
 </li>
-<li>Activate virtual environment:
-&gt;&gt; activate py36</li>
-<li><dl class="first docutils">
-<dt>Install pip to virtual environment</dt>
-<dd>(just to ensure any packages to be installed with pip to this virt. env. will be installed here and not globally):
-&gt;&gt; conda install -n py36 pip</dd>
-</dl>
+<li><p class="first">Create a virtual environment with full anaconda distribution by typing the following at the commandline:</p>
+<blockquote>
+<div><p><code class="docutils literal"><span class="pre">&gt;&gt;</span> <span class="pre">conda</span> <span class="pre">create</span> <span class="pre">--name</span> <span class="pre">py36</span> <span class="pre">python=3.6</span> <span class="pre">anaconda</span></code></p>
+</div></blockquote>
+</li>
+<li><p class="first">Activate the virtual environment:</p>
+<blockquote>
+<div><p><code class="docutils literal"><span class="pre">&gt;&gt;</span> <span class="pre">activate</span> <span class="pre">py36</span></code></p>
+</div></blockquote>
 </li>
 <li><dl class="first docutils">
-<dt>Install luxpy package from pypi:</dt>
-<dd>&gt;&gt; pip install luxpy</dd>
+<dt>Install pip to virtual environment (just to ensure any packages to be</dt>
+<dd><p class="first">installed with pip to this virt. env. will be installed here and not globally):</p>
+<p class="last"><code class="docutils literal"><span class="pre">&gt;&gt;</span> <span class="pre">conda</span> <span class="pre">install</span> <span class="pre">-n</span> <span class="pre">py36</span> <span class="pre">pip</span></code></p>
+</dd>
 </dl>
+</li>
+<li><p class="first">Install luxpy package from pypi:</p>
+<blockquote>
+<div><p><code class="docutils literal"><span class="pre">&gt;&gt;</span> <span class="pre">pip</span> <span class="pre">install</span> <span class="pre">luxpy</span></code></p>
+</div></blockquote>
 </li>
 </ol>
+</div></blockquote>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Note:</th><td class="field-body">If any errors show up, try and do a manual install of the dependencies: scipy, numpy, pandas, matplotlib and setuptools,
-either using e.g. “&gt;&gt; conda install scipy” or “&gt;&gt; pip install scipy”,
-and try and reinstall luxpy using pip)</td>
+<tr class="field-odd field"><th class="field-name">Note:</th><td class="field-body">If any errors show up, try and do a manual install of the dependencies:
+scipy, numpy, pandas, matplotlib and setuptools,
+either using e.g.
+<code class="docutils literal"><span class="pre">&gt;&gt;</span> <span class="pre">conda</span> <span class="pre">install</span> <span class="pre">scipy</span></code>
+or
+<code class="docutils literal"><span class="pre">&gt;&gt;</span> <span class="pre">pip</span> <span class="pre">install</span> <span class="pre">scipy</span></code>,
+and try and reinstall luxpy using pip.</td>
 </tr>
 </tbody>
 </table>
-</div></blockquote>
 </div>
 <div class="section" id="use-of-luxpy-package-in-spyder-ide">
 <h2>Use of LuxPy package in Spyder IDE<a class="headerlink" href="#use-of-luxpy-package-in-spyder-ide" title="Permalink to this headline">¶</a></h2>
 <blockquote>
-<div><ol class="arabic simple" start="6">
-<li>Install spyder in py36 environment:
-&gt;&gt; conda install -n py36 spyder</li>
-<li>Run spyder
-&gt;&gt; spyder</li>
-<li>To import the luxpy package, on spyder’s commandline for the IPython kernel (or in script) type:
-import luxpy as lx</li>
+<div><ol class="arabic" start="6">
+<li><p class="first">Install spyder in py36 environment:</p>
+<blockquote>
+<div><p><code class="docutils literal"><span class="pre">&gt;&gt;</span> <span class="pre">conda</span> <span class="pre">install</span> <span class="pre">-n</span> <span class="pre">py36</span> <span class="pre">spyder</span></code></p>
+</div></blockquote>
+</li>
+<li><p class="first">Run spyder</p>
+<blockquote>
+<div><p><code class="docutils literal"><span class="pre">&gt;&gt;</span> <span class="pre">spyder</span></code></p>
+</div></blockquote>
+</li>
+<li><p class="first">To import the luxpy package, on Spyder’s commandline for the IPython kernel (or in script) type:</p>
+<blockquote>
+<div><p><code class="docutils literal"><span class="pre">import</span> <span class="pre">luxpy</span> <span class="pre">as</span> <span class="pre">lx</span></code></p>
+</div></blockquote>
+</li>
 </ol>
 </div></blockquote>
 </div>
 <div class="section" id="use-of-luxpy-package-in-jupyter-notebook">
 <h2>Use of LuxPy package in Jupyter notebook<a class="headerlink" href="#use-of-luxpy-package-in-jupyter-notebook" title="Permalink to this headline">¶</a></h2>
 <blockquote>
-<div><ol class="arabic simple" start="6">
-<li>Start jupyter notebook:
-&gt;&gt; jupyter notebook</li>
-<li>Open an existing or new notebook:
-e.g. open “LuxPy example code 1.ipynb” for an overview of how to use the LuxPy package
-(or see LuxPy_module_overview.md on www.github.com/ksmet1977/LuxPy)</li>
-<li>To import LuxPy package type:
-import LuxPy as lx</li>
+<div><ol class="arabic" start="6">
+<li><p class="first">Start jupyter notebook:</p>
+<blockquote>
+<div><p><code class="docutils literal"><span class="pre">&gt;&gt;</span> <span class="pre">jupyter</span> <span class="pre">notebook</span></code></p>
+</div></blockquote>
+</li>
+<li><dl class="first docutils">
+<dt>Open an existing or new notebook:</dt>
+<dd><p class="first last">e.g. open “luxpy_basic_usage.ipynb” for an overview of how to use the LuxPy package.</p>
+</dd>
+</dl>
+</li>
+<li><p class="first">To import LuxPy package type:</p>
+<blockquote>
+<div><p><code class="docutils literal"><span class="pre">import</span> <span class="pre">luxpy</span> <span class="pre">as</span> <span class="pre">lx</span></code></p>
+</div></blockquote>
+</li>
 </ol>
 </div></blockquote>
 </div>
