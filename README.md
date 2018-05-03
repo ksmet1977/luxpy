@@ -32,13 +32,13 @@ For more details on installation, structure, functionality, etc.:
  1. see [**luxpy.readthedocs.io**](http://luxpy.readthedocs.io/en/latest/) 
  2. or see the \__doc__string of each function. 
         
-        To get help on, for example the **spd_to_xyz()** function, type:
+    To get help on, for example the **spd_to_xyz()** function, type:
 
 
             import luxpy as lx
             ?lx.spd_to_xyz
     
-        To get a list of functions/modules, type:
+    To get a list of functions/modules, type:
 
 
             dir(lx)
