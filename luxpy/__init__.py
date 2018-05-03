@@ -4,7 +4,7 @@ LuxPy: a package for lighting and color science
 ===============================================
 
     * Author: K. A.G. Smet (ksmet1977 at gmail.com)
-    * Version: 1.3.02
+    * Version: 1.3.03
     * Date: May 3, 2018
     * License: GPLv3
 
@@ -115,13 +115,15 @@ Imported 3e party packages
 | from scipy import interpolate
 | from scipy.optimize import minimize
 | from scipy.spatial import cKDTree
+| import cv2
+
 | import warnings
 | import os
 | from collections import OrderedDict as odict
 | import matplotlib.pyplot as plt
 | from mpl_toolkits.mplot3d import Axes3D
 | import colorsys
-| import cv2
+
 
 Global constants
 ----------------
