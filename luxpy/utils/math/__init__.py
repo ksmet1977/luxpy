@@ -16,4 +16,73 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #########################################################################
 
+"""
+Module with useful math functions
+=======================================
+
+ :normalize_3x3_matrix(): Normalize 3x3 matrix M to xyz0 -- > [1,1,1]
+
+ :line_intersect(): | Line intersections of series of two line segments a and b. 
+                    | https://stackoverflow.com/questions/3252194/numpy-and-line-intersections
+
+ :positive_arctan(): Calculates the positive angle (0°-360° or 0 - 2*pi rad.) 
+                     from x and y.
+
+ :dot23(): Dot product of a 2-d ndarray 
+           with a (N x K x L) 3-d ndarray using einsum().
+
+ :check_symmetric(): Checks if A is symmetric.
+
+ :check_posdef(): Checks positive definiteness of a matrix via Cholesky.
+
+ :symmM_to_posdefM(): | Converts a symmetric matrix to a positive definite one. 
+                      | Two methods are supported:
+                      |    * 'make': A Python/Numpy port of Muhammad Asim Mubeen's
+                      |              matlab function Spd_Mat.m 
+                      |       (https://nl.mathworks.com/matlabcentral/fileexchange/45873-positive-definite-matrix)
+                      |    * 'nearest': A Python/Numpy port of John D'Errico's 
+                      |                'nearestSPD' MATLAB code. 
+                      |        (https://stackoverflow.com/questions/43238173/python-convert-matrix-to-positive-semi-definite)
+
+ :bvgpdf(): Evaluate bivariate Gaussian probability density function (BVGPDF) 
+            at (x,y) with center mu and inverse covariance matric, sigmainv.
+
+ :mahalanobis2(): Evaluate the squared mahalanobis distance with center mu and 
+                  shape and orientation determined by sigmainv. 
+
+ :rms(): Calculates root-mean-square along axis.
+
+ :geomean(): Calculates geometric mean along axis.
+
+ :polyarea(): | Calculates area of polygon. 
+              | (First coordinate should also be last)
+
+ :erf(): erf-function, direct import from scipy.special
+
+ :cart2pol(): Converts Cartesian to polar coordinates.
+
+ :pol2cart(): Converts polar to Cartesian coordinates.
+
+ :magnitude_v():  Calculates magnitude of vector.
+
+ :angle_v1v2():  Calculates angle between two vectors.
+
+ :histogram(): | Histogram function that can take as bins either the center
+               | (cfr. matlab hist) or bin-edges.
+
+ :minimizebnd(): scipy.minimize() that allows contrained parameters on 
+                 unconstrained methods(port of Matlab's fminsearchbnd). 
+                 Starting, lower and upper bounds values can also be provided 
+                 as a dict.
+                 
+===============================================================================
+"""
+from .basics import *
+__all__ = basics.__all__
+
+from .optimizers import minimizebnd
+__all__ += ['minimizebnd','__all__']
+
+
+
 

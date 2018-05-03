@@ -17,19 +17,14 @@
 #########################################################################
 
 """
-###############################################################################
-# Module for color rendition graphical output, 2
-###############################################################################
+Module for IES color rendition graphical output
+===============================================
 
-# plot_cri_graphics(): Plots graphical information on color rendition 
-                        properties based on spectral data input or dict with 
-                        pre-calculated measures.
+ :plot_cri_graphics(): Plots graphical information on color rendition 
+                       properties based on spectral data input or dict with 
+                       pre-calculated measures.
 
-
-
-Created on Tue Apr  3 20:34:09 2018
-
-@author: Kevin A.G. Smet (ksmet1977 at gmail.com)
+.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
 from luxpy import np, plt, colorsys, _CRI_RFL
@@ -48,102 +43,126 @@ __all__ = ['plot_cri_graphics']
 
 def plot_cri_graphics(data, cri_type = None, hbins = 16, start_hue = 0.0, scalef = 100, \
                       plot_axis_labels = False, bin_labels = None, plot_edge_lines = True, \
-                      plot_center_lines = False, plot_bin_colors = True, axtype = 'polar', ax = None, force_CVG_layout = True,
+                      plot_center_lines = False, plot_bin_colors = True, \
+                      axtype = 'polar', ax = None, force_CVG_layout = True,
                       vf_model_type = _VF_MODEL_TYPE, vf_pcolorshift = _VF_PCOLORSHIFT, vf_color = 'k', \
-                      vf_bin_labels = _VF_PCOLORSHIFT['labels'], vf_plot_bin_colors = True, scale_vf_chroma_to_sample_chroma = False,\
+                      vf_bin_labels = _VF_PCOLORSHIFT['labels'], vf_plot_bin_colors = True, \
+                      scale_vf_chroma_to_sample_chroma = False,\
                       plot_VF = True, plot_CF = False, plot_SF = False):
     """
     Plot graphical information on color rendition properties.
     
     Args:
-        :data: ndarray with spectral data or dict with pre-computed metrics.
-        :cri_type: None, optional
-            If None: defaults to cri_type = 'iesrf'.
-            :hbins:, :start_hue: and :scalef: are ignored if cri_type not None 
-            and values are replaced by those in cri_type['rg_pars']
-        :hbins: 16 or ndarray with sorted hue bin centers (°), optional
-        :start_hue: 0.0, optional
-        :scalef: 100, optional
-            Scale factor for graphic.
-        :plot_axis_labels: False, optional
-            Turns axis ticks on/off (True/False).
-        :bin_labels: None or list[str] or '#', optional
-            Plots labels at the bin center hues.
-            - None: don't plot.
-            - list[str]: list with str for each bin. 
-                            (len(:bin_labels:) = :nhbins:)
-            - '#': plots number.
-        :plot_edge_lines: True or False, optional
-            Plot grey bin edge lines with '--'.
-        :plot_center_lines: False or True, optional
-            Plot colored lines at 'center' of hue bin.
-        :plot_bin_colors: True, optional
-            Colorize hue bins.
-        :axtype: 'polar' or 'cart', optional
-            Make polar or Cartesian plot.
-        :ax: None or 'new' or 'same', optional
-            - None or 'new' creates new plot
-            - 'same': continue plot on same axes.
-            - axes handle: plot on specified axes.
-        :force_CVG_layout: False or True, optional
-            True: Force plot of basis of CVG.
-                :vf_model_type: _VF_MODEL_TYPE or 'M6' or 'M5', optional
-            Type of polynomial vector field model to use for the calculation of
-            base color shift and metameric uncertainty.
-        :vf_pcolorshift: _VF_PCOLORSHIFT or user defined dict, optional
-            The polynomial models of degree 5 and 6 can be fully specified or 
-            summarized by the model parameters themselved OR by calculating the
-            dCoverC and dH at resp. 5 and 6 hues. :VF_pcolorshift: specifies 
-            these hues and chroma level.
-        :vf_color: 'k', optional
-            For plotting the vector fields.
-        :vf_plot_bin_colors: True, optional
-            Colorize hue bins of VF graph.
-        :scale_vf_chroma_to_sample_chroma: False, optional
-           Scale chroma of reference and test vf fields such that average of 
-           binned reference chroma equals that of the binned sample chroma
-           before calculating hue bin metrics.
-        :vf_bin_labels: see :bin_labels:
-            Set VF model hue-bin labels.
-        :plot_CF: False, optional
-            Plot circle fields.
-        :plot_VF: True, optional
-            Plot vector fields.
-        :plot_SF: True, optional
-            Plot sample shifts.   
+        :data: 
+            | ndarray with spectral data or dict with pre-computed metrics.
+        :cri_type:
+            | None, optional
+            | If None: defaults to cri_type = 'iesrf'.
+            | :hbins:, :start_hue: and :scalef: are ignored if cri_type not None 
+            | and values are replaced by those in cri_type['rg_pars']
+        :hbins:
+            | 16 or ndarray with sorted hue bin centers (°), optional
+        :start_hue: 
+            | 0.0, optional
+        :scalef:
+            | 100, optional
+            | Scale factor for graphic.
+        :plot_axis_labels:
+            | False, optional
+            | Turns axis ticks on/off (True/False).
+        :bin_labels: 
+            | None or list[str] or '#', optional
+            | Plots labels at the bin center hues.
+            |   - None: don't plot.
+            |   - list[str]: list with str for each bin. 
+            |                (len(:bin_labels:) = :nhbins:)
+            |   - '#': plots number.
+        :plot_edge_lines:
+            | True or False, optional
+            | Plot grey bin edge lines with '--'.
+        :plot_center_lines:
+            | False or True, optional
+            | Plot colored lines at 'center' of hue bin.
+        :plot_bin_colors: 
+            | True, optional
+            | Colorize hue bins.
+        :axtype: 
+            | 'polar' or 'cart', optional
+            | Make polar or Cartesian plot.
+        :ax: 
+            | None or 'new' or 'same', optional
+            |   - None or 'new' creates new plot
+            |   - 'same': continue plot on same axes.
+            |   - axes handle: plot on specified axes.
+        :force_CVG_layout: 
+            | False or True, optional
+            | True: Force plot of basis of CVG.
+        :vf_model_type: 
+            | _VF_MODEL_TYPE or 'M6' or 'M5', optional
+            | Type of polynomial vector field model to use for the calculation of
+              base color shift and metameric uncertainty.
+        :vf_pcolorshift:
+            | _VF_PCOLORSHIFT or user defined dict, optional
+            | The polynomial models of degree 5 and 6 can be fully specified or 
+              summarized by the model parameters themselved OR by calculating the
+              dCoverC and dH at resp. 5 and 6 hues. :VF_pcolorshift: specifies 
+              these hues and chroma level.
+        :vf_color:
+            | 'k', optional
+            | For plotting the vector fields.
+        :vf_plot_bin_colors: 
+            | True, optional
+            | Colorize hue bins of VF graph.
+        :scale_vf_chroma_to_sample_chroma:
+            | False, optional
+            | Scale chroma of reference and test vf fields such that average of 
+              binned reference chroma equals that of the binned sample chroma
+              before calculating hue bin metrics.
+        :vf_bin_labels:
+            | see :bin_labels:
+            | Set VF model hue-bin labels.
+        :plot_CF:
+            | False, optional
+            | Plot circle fields.
+        :plot_VF:
+            | True, optional
+            | Plot vector fields.
+        :plot_SF:
+            | True, optional
+            | Plot sample shifts.   
             
     Returns:
         :returns: 
-            (data, 
-            [plt.gcf(),ax_spd, ax_CVG, ax_locC, ax_locH, ax_VF], 
-            cmap )
-        
-            :data: dict with color rendering data
-                Keys:
-                - 'SPD'  : ndarray test SPDs
-                - 'bjabt': ndarray with binned jab data under test SPDs
-                - 'bjabr': ndarray with binned jab data under reference SPDs
-                - 'cct'  : ndarray with CCT of test SPD
-                - 'duv'  : ndarray with distance to blackbody locus of test SPD
-                - 'Rf'   : ndarray with general color fidelity indices
-                - 'Rg'   : ndarray with gamut area indices
-                - 'Rfi'  : ndarray with specific color fidelity indices
-                - 'Rfhi' : ndarray with local (hue binned) fidelity indices
-                - 'Rcshi': ndarray with local chroma shifts indices
-                - 'Rhshi': ndarray with local hue shifts indices
-                - 'Rt'  : ndarray with general metameric uncertainty index Rt
-                - 'Rti' : ndarray with specific metameric uncertainty indices Rti
-                - 'Rfhi_vf' : ndarray with local (hue binned) fidelity indices 
-                              obtained from VF model predictions at color space
-                              pixel coordinates
-                - 'Rcshi_vf': ndarray with local chroma shifts indices 
-                              (same as above)
-                - 'Rhshi_vf': ndarray with local hue shifts indices 
-                              (same as above)
-                
-            :[...]: list with handles to current figure and 5 axes.
-            
-            :cmap: list with rgb colors for hue bins 
+            | (data, 
+            | [plt.gcf(),ax_spd, ax_CVG, ax_locC, ax_locH, ax_VF], 
+            | cmap )
+            | 
+            | :data: dict with color rendering data
+            | with keys:
+            | - 'SPD'  : ndarray test SPDs
+            | - 'bjabt': ndarray with binned jab data under test SPDs
+            | - 'bjabr': ndarray with binned jab data under reference SPDs
+            | - 'cct'  : ndarray with CCT of test SPD
+            | - 'duv'  : ndarray with distance to blackbody locus of test SPD
+            | - 'Rf'   : ndarray with general color fidelity indices
+            | - 'Rg'   : ndarray with gamut area indices
+            | - 'Rfi'  : ndarray with specific color fidelity indices
+            | - 'Rfhi' : ndarray with local (hue binned) fidelity indices
+            | - 'Rcshi': ndarray with local chroma shifts indices
+            | - 'Rhshi': ndarray with local hue shifts indices
+            | - 'Rt'  : ndarray with general metameric uncertainty index Rt
+            | - 'Rti' : ndarray with specific metameric uncertainty indices Rti
+            | - 'Rfhi_vf' : ndarray with local (hue binned) fidelity indices 
+            |               obtained from VF model predictions at color space
+            |               pixel coordinates
+            | - 'Rcshi_vf': ndarray with local chroma shifts indices 
+            |               (same as above)
+            | - 'Rhshi_vf': ndarray with local hue shifts indices 
+            |               (same as above)
+            |    
+            | :[...]: list with handles to current figure and 5 axes.
+            |
+            | :cmap: list with rgb colors for hue bins 
                     (for use in other plotting fcns)
         
     """

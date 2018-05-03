@@ -16,56 +16,52 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #########################################################################
 """
-###############################################################################
-# Module with functions related to color rendering Vector Field model
-###############################################################################
+Module with functions related to color rendering Vector Field model
+===================================================================
 
-# _VF_CRI_DEFAULT: default cri_type parameters for VF model
+ :_VF_CRI_DEFAULT: default cri_type parameters for VF model
 
-# _VF_CSPACE: default dict with color space parameters.
+ :_VF_CSPACE: default dict with color space parameters.
 
-# _VF_MAXR: maximum C to use in calculations and plotting of vector fields
+ :_VF_MAXR: maximum C to use in calculations and plotting of vector fields
 
-# _VF_DELTAR:  grid spacing, pixel size
+ :_VF_DELTAR:  grid spacing, pixel size
 
-# _VF_MODEL_TYPE: type of polynomial model for base color shifts
+ :_VF_MODEL_TYPE: type of polynomial model for base color shifts
 
-# _DETERMINE_HUE_ANGLES: Bool, determines whether to calculate hue_angles 
-                        for 5 or 6 'informative' model parameters
+ :_DETERMINE_HUE_ANGLES: Bool, determines whether to calculate hue_angles 
+                         for 5 or 6 'informative' model parameters
 
-# _VF_PCOLORSHIFT: Default dict with hue_angle parameters for VF model
+ :_VF_PCOLORSHIFT: Default dict with hue_angle parameters for VF model
 
-# _VF_SIG = 0.3 #  Determines smoothness of the transition between 
-                    hue-bin-boundaries (no hard cutoff at boundary).
+ :_VF_SIG:  0.3,  Determines smoothness of the transition between 
+            hue-bin-boundaries (no hard cutoff at boundary).
  
-# get_poly_model(): Setup base color shift model (delta_a, delta_b), 
+ :get_poly_model(): Setup base color shift model (delta_a, delta_b), 
                     determine model parameters and accuracy.
 
-# apply_poly_model_at_x(): Applies base color shift model 
-                            at cartesian coordinates axr, bxr.
+ :apply_poly_model_at_x(): Applies base color shift model 
+                           at cartesian coordinates axr, bxr.
 
-# generate_vector_field(): Generates a field of vectors 
-                            using the base color shift model.
+ :generate_vector_field(): Generates a field of vectors 
+                           using the base color shift model.
 
-# VF_colorshift_model(): Applies full vector field model calculations 
-                          to spectral data.
+ :VF_colorshift_model(): Applies full vector field model calculations 
+                         to spectral data.
 
-# generate_grid():  Generate a grid of color coordinates.
+ :generate_grid(): Generate a grid of color coordinates.
 
-# calculate_shiftvectors(): Calculate color shift vectors.
+ :calculate_shiftvectors(): Calculate color shift vectors.
 
-# plot_shift_data(): Plots vector or circle fields.
+ :plot_shift_data(): Plots vector or circle fields.
 
-# plotcircle(): Plot one or more concentric circles.
+ :plotcircle(): Plot one or more concentric circles.
 
-# initialize_VF_hue_angles(): Initialize the hue angles that will be used to 
-                               'summarize' the VF model fitting parameters.
+ :initialize_VF_hue_angles(): Initialize the hue angles that will be used to 
+                              'summarize' the VF model fitting parameters.
 
-#------------------------------------------------------------------------------
 
-Created on Wed Mar 28 18:59:16 2018
-
-@author: Kevin A.G. Smet (ksmet1977 at gmail.com)
+.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
 
@@ -102,44 +98,48 @@ def get_poly_model(jabt, jabr, modeltype = _VF_MODEL_TYPE):
     Setup base color shift model (delta_a, delta_b), 
     determine model parameters and accuracy.
     
-    Calculates a base color shift (delta) from the ref. chromaticity ar, br.
+    | Calculates a base color shift (delta) from the ref. chromaticity ar, br.
     
     Args:
-        :jabt: ndarray with jab color coordinates under the test SPD.
-        :jabr: ndarray with jab color coordinates under the reference SPD.
-        :modeltype: _VF_MODEL_TYPE or 'M6' or 'M5', optional
-            Specifies degree 5 or degree 6 polynomial model in ab-coordinates.
-            (see notes below)
+        :jabt: 
+            | ndarray with jab color coordinates under the test SPD.
+        :jabr: 
+            | ndarray with jab color coordinates under the reference SPD.
+        :modeltype:
+            | _VF_MODEL_TYPE or 'M6' or 'M5', optional
+            | Specifies degree 5 or degree 6 polynomial model in ab-coordinates.
+              (see notes below)
             
     Returns:
-        :returns: (poly_model, 
-                   pmodel, 
-                   dab_model, 
-                   dab_res, 
-                   dCHoverC_res, 
-                   dab_std, 
-                   dCHoverC_std)
-        
-            :poly_model: function handle to model
-            :pmodel: ndarray with model parameters
-            :dab_model: ndarray with ab model predictions from ar, br.
-            :dab_res: ndarray with residuals between 'da,db' of samples and 
-                        'da,db' predicted by the model.
-            :dCHoverC_res: ndarray with residuals between 'dCoverC,dH' 
-                            of samples and 'dCoverC,dH' predicted by the model.
-                Note: dCoverC = (Ct - Cr)/Cr and dH = ht - hr 
-                    (predicted from model, see notes below)
-            :dab_std: ndarray with std of :dab_res:
-            :dCHoverC_std: ndarray with std of :dCHoverC_res: 
+        :returns: 
+            | (poly_model, 
+            |       pmodel, 
+            |       dab_model, 
+            |        dab_res, 
+            |        dCHoverC_res, 
+            |        dab_std, 
+            |        dCHoverC_std)
+            |
+            | :poly_model: function handle to model
+            | :pmodel: ndarray with model parameters
+            | :dab_model: ndarray with ab model predictions from ar, br.
+            | :dab_res: ndarray with residuals between 'da,db' of samples and 
+            |            'da,db' predicted by the model.
+            | :dCHoverC_res: ndarray with residuals between 'dCoverC,dH' 
+            |                 of samples and 'dCoverC,dH' predicted by the model.
+            |     Note: dCoverC = (Ct - Cr)/Cr and dH = ht - hr 
+            |         (predicted from model, see notes below)
+            | :dab_std: ndarray with std of :dab_res:
+            | :dCHoverC_std: ndarray with std of :dCHoverC_res: 
 
     Notes: 
-        Model types:
-            poly5_model = lambda a,b,p:         p[0]*a + p[1]*b + p[2]*(a**2) + p[3]*a*b + p[4]*(b**2)
-            poly6_model = lambda a,b,p:  p[0] + p[1]*a + p[2]*b + p[3]*(a**2) + p[4]*a*b + p[5]*(b**2)
+        1. Model types:
+            | poly5_model = lambda a,b,p:         p[0]*a + p[1]*b + p[2]*(a**2) + p[3]*a*b + p[4]*(b**2)
+            | poly6_model = lambda a,b,p:  p[0] + p[1]*a + p[2]*b + p[3]*(a**2) + p[4]*a*b + p[5]*(b**2)
         
-        Calculation of dCoverC and dH
-            dCoverC = (np.cos(hr)*da + np.sin(hr)*db)/Cr
-            dHoverC = (np.cos(hr)*db - np.sin(hr)*da)/Cr    
+        2. Calculation of dCoverC and dH:
+            | dCoverC = (np.cos(hr)*da + np.sin(hr)*db)/Cr
+            | dHoverC = (np.cos(hr)*db - np.sin(hr)*da)/Cr    
     """
     at = jabt[...,1]
     bt = jabt[...,2]
@@ -222,17 +222,22 @@ def apply_poly_model_at_x(poly_model, pmodel,axr,bxr):
     Applies base color shift model at cartesian coordinates axr, bxr.
     
     Args:
-        :poly_model: function handle to model
-        :pmodel: ndarray with model parameters.
-        :axr: ndarray with a-coordinates under the reference conditions
-        :bxr: ndarray with b-coordinates under the reference conditions
+        :poly_model: 
+            | function handle to model
+        :pmodel:
+            | ndarray with model parameters.
+        :axr: 
+            | ndarray with a-coordinates under the reference conditions
+        :bxr:
+            | ndarray with b-coordinates under the reference conditions
         
     Returns:
-        :returns: (axt,bxt,Cxt,hxt,
-                   axr,bxr,Cxr,hxr)
-        
-            ndarrays with ab-coordinates, chroma and hue 
-            predicted by the model (xt), under the reference (xr).
+        :returns:
+            | (axt,bxt,Cxt,hxt,
+            |  axr,bxr,Cxr,hxr)
+            | 
+            | ndarrays with ab-coordinates, chroma and hue 
+              predicted by the model (xt), under the reference (xr).
     """
 
     # Calculate hxr and Cxr:
@@ -255,29 +260,36 @@ def apply_poly_model_at_x(poly_model, pmodel,axr,bxr):
     return axt,bxt,Cxt,hxt,axr,bxr,Cxr,hxr
 
 
-def apply_poly_model_at_hue_x(poly_model, pmodel, dCHoverC_res, hx = None, Cxr = 40, sig = _VF_SIG):
+def apply_poly_model_at_hue_x(poly_model, pmodel, dCHoverC_res, \
+                              hx = None, Cxr = 40, sig = _VF_SIG):
     """
     Applies base color shift model at (hue,chroma) coordinates
     
     Args:
-        :poly_model: function handle to model
-        :pmodel: ndarray with model parameters.
-        :dCHoverC_res: ndarray with residuals between 'dCoverC,dH' of samples 
-                       and 'dCoverC,dH' predicted by the model.
-            Note: dCoverC = (Ct - Cr)/Cr and dH = ht - hr 
-                (predicted from model, see notes luxpy.cri.get_poly_model())
-        :hx: None or ndarray, optional
-            None defaults to np.arange(np.pi/10.0,2*np.pi,2*np.pi/10.0)
-        :Cxr: 40, optional
-        :sig: _VF_SIG or float, optional
-            Determines smooth transition between hue-bin-boundaries (no hard 
-            cutoff at hue bin boundary).
-        
+        :poly_model: 
+            | function handle to model
+        :pmodel:
+            | ndarray with model parameters.
+        :dCHoverC_res:
+            | ndarray with residuals between 'dCoverC,dH' of samples 
+            | and 'dCoverC,dH' predicted by the model.
+            | Note: dCoverC = (Ct - Cr)/Cr and dH = ht - hr 
+            |      (predicted from model, see notes luxpy.cri.get_poly_model())
+        :hx:
+            | None or ndarray, optional
+            | None defaults to np.arange(np.pi/10.0,2*np.pi,2*np.pi/10.0)
+        :Cxr:
+            | 40, optional
+        :sig: 
+            | _VF_SIG or float, optional
+            | Determines smooth transition between hue-bin-boundaries (no hard 
+              cutoff at hue bin boundary).
         
     Returns:
-        :returns: ndarrays with dCoverC_x, dCoverC_x_sig, dH_x, dH_x_sig
-            Note '_sig' denotes the uncertainty: 
-                e.g.  dH_x_sig is the uncertainty of dH at input (hue/chroma).
+        :returns: 
+            | ndarrays with dCoverC_x, dCoverC_x_sig, dH_x, dH_x_sig
+            | Note '_sig' denotes the uncertainty: 
+            |     e.g.  dH_x_sig is the uncertainty of dH at input (hue/chroma).
     """
      
     if hx is None:
@@ -310,33 +322,42 @@ def apply_poly_model_at_hue_x(poly_model, pmodel, dCHoverC_res, hx = None, Cxr =
     return dCoverC_x, dCoverC_x_sig, dH_x, dH_x_sig
 
 
-def generate_vector_field(poly_model, pmodel, axr = np.arange(-_VF_MAXR,_VF_MAXR+_VF_DELTAR,_VF_DELTAR), bxr = np.arange(-_VF_MAXR,_VF_MAXR+_VF_DELTAR,_VF_DELTAR), make_grid = True, limit_grid_radius = 0,color = 'k'):
+def generate_vector_field(poly_model, pmodel, \
+                          axr = np.arange(-_VF_MAXR,_VF_MAXR+_VF_DELTAR,_VF_DELTAR), \
+                          bxr = np.arange(-_VF_MAXR,_VF_MAXR+_VF_DELTAR,_VF_DELTAR), \
+                          make_grid = True, limit_grid_radius = 0,color = 'k'):
     """
     Generates a field of vectors using the base color shift model.
     
-    Has the option to plot vector field.
+    | Has the option to plot vector field.
     
     Args:
-        :poly_model: function handle to model
-        :pmodel: ndarray with model parameters.
-        :axr: np.arange(-_VF_MAXR,_VF_MAXR+_VF_DELTAR,_VF_DELTAR), optional
-            Ndarray specifying the a-coordinates at which to apply the model.
-        :bxr: np.arange(-_VF_MAXR,_VF_MAXR+_VF_DELTAR,_VF_DELTAR), optional
-            Ndarray specifying the b-coordinates at which to apply the model.
-        :make_grid: True, optional
-            True: generate a 2d-grid from :axr:, :bxr:.
-        :limit_grid_radius: 0, optional
-            A value of zeros keeps grid as specified  by axr,bxr.
-            A value > 0 only keeps (a,b) coordinates within :limit_grid_radius:
-        :color: 'k', optional
-            For plotting the vector field.
-            If :color: == 0, no plot will be generated.
+        :poly_model: 
+            | function handle to model
+        :pmodel:
+            | ndarray with model parameters.
+        :axr: 
+            | np.arange(-_VF_MAXR,_VF_MAXR+_VF_DELTAR,_VF_DELTAR), optional
+            | Ndarray specifying the a-coordinates at which to apply the model.
+        :bxr:
+            | np.arange(-_VF_MAXR,_VF_MAXR+_VF_DELTAR,_VF_DELTAR), optional
+            | Ndarray specifying the b-coordinates at which to apply the model.
+        :make_grid:
+            | True, optional
+            | True: generate a 2d-grid from :axr:, :bxr:.
+        :limit_grid_radius:
+            | 0, optional
+            |   A value of zeros keeps grid as specified  by axr,bxr.
+            |   A value > 0 only keeps (a,b) coordinates within :limit_grid_radius:
+        :color:
+            | 'k', optional
+            | For plotting the vector field.
+            | If :color: == 0, no plot will be generated.
     
     Returns:
         :returns: 
-            If :color: == 0: ndarray of axt,bxt,axr,bxr
-            Else: handle to axes used for plotting.
-            
+            | If :color: == 0: ndarray of axt,bxt,axr,bxr
+            | Else: handle to axes used for plotting.
     """
     
     
@@ -358,80 +379,93 @@ def generate_vector_field(poly_model, pmodel, axr = np.arange(-_VF_MAXR,_VF_MAXR
         return axt,bxt,axr,bxr
 
 
-def VF_colorshift_model(S, cri_type = _VF_CRI_DEFAULT, model_type = _VF_MODEL_TYPE, cspace = _VF_CSPACE, sampleset = None, pool = False, pcolorshift = {'href': np.arange(np.pi/10,2*np.pi,2*np.pi/10),'Cref' : _VF_MAXR, 'sig' : _VF_SIG}, vfcolor = 'k',verbosity = 0):
+def VF_colorshift_model(S, cri_type = _VF_CRI_DEFAULT, model_type = _VF_MODEL_TYPE, \
+                        cspace = _VF_CSPACE, sampleset = None, pool = False, \
+                        pcolorshift = {'href': np.arange(np.pi/10,2*np.pi,2*np.pi/10),'Cref' : _VF_MAXR, 'sig' : _VF_SIG}, \
+                        vfcolor = 'k',verbosity = 0):
     """
     Applies full vector field model calculations to spectral data.
     
     Args:
-        :S: nump.ndarray with spectral data.
-        :cri_type: _VF_CRI_DEFAULT or str or dict, optional
-            Specifies type of color fidelity model to use. 
-            Controls choice of ref. ill., sample set, averaging, scaling, etc.
-            See luxpy.cri.spd_to_cri for more info.
-        :modeltype: _VF_MODEL_TYPE or 'M6' or 'M5', optional
-            Specifies degree 5 or degree 6 polynomial model in ab-coordinates.
-        :cspace: _VF_CSPACE or dict, optional
-            Specifies color space. See _VF_CSPACE_EXAMPLE for example structure.
-        :sampleset:  None or str or ndarray, optional
-            Sampleset to be used when calculating vector field model.
-        :pool: False, optional
-            If :S: contains multiple spectra, True pools all jab data before 
-            modeling the vector field, while False models a different field 
-            for each spectrum.
-        :pcolorshift:  default dict (see below) or user defined dict, optional
-            Dict containing the specification input 
-            for apply_poly_model_at_hue_x().
-            Default dict = {'href': np.arange(np.pi/10,2*np.pi,2*np.pi/10),
-                            'Cref' : _VF_MAXR, 
-                            'sig' : _VF_SIG, 
-                            'labels' : '#'} 
-            The polynomial models of degree 5 and 6 can be fully specified or 
-            summarized by the model parameters themselved OR by calculating the
-            dCoverC and dH at resp. 5 and 6 hues.
-        :vfcolor: 'k', optional
-            For plotting the vector fields.
-        :verbosity:= 0, optional
-            Report warnings or not.
+        :S: 
+            | nump.ndarray with spectral data.
+        :cri_type:
+            | _VF_CRI_DEFAULT or str or dict, optional
+            | Specifies type of color fidelity model to use. 
+            | Controls choice of ref. ill., sample set, averaging, scaling, etc.
+            | See luxpy.cri.spd_to_cri for more info.
+        :modeltype:
+            | _VF_MODEL_TYPE or 'M6' or 'M5', optional
+            | Specifies degree 5 or degree 6 polynomial model in ab-coordinates.
+        :cspace:
+            | _VF_CSPACE or dict, optional
+            | Specifies color space. See _VF_CSPACE_EXAMPLE for example structure.
+        :sampleset:
+            | None or str or ndarray, optional
+            | Sampleset to be used when calculating vector field model.
+        :pool: 
+            | False, optional
+            | If :S: contains multiple spectra, True pools all jab data before 
+              modeling the vector field, while False models a different field 
+              for each spectrum.
+        :pcolorshift: 
+            | default dict (see below) or user defined dict, optional
+            | Dict containing the specification input 
+              for apply_poly_model_at_hue_x().
+            | Default dict = {'href': np.arange(np.pi/10,2*np.pi,2*np.pi/10),
+            |                 'Cref' : _VF_MAXR, 
+            |                 'sig' : _VF_SIG, 
+            |                 'labels' : '#'} 
+            | The polynomial models of degree 5 and 6 can be fully specified or 
+              summarized by the model parameters themselved OR by calculating the
+              dCoverC and dH at resp. 5 and 6 hues.
+        :vfcolor:
+            | 'k', optional
+            | For plotting the vector fields.
+        :verbosity: 
+            | 0, optional
+            | Report warnings or not.
             
     Returns:
-        :returns: list[dict] (each list element refers to a different test SPD)
-            with the following keys:
-            - 'Source': dict with ndarrays of the S, cct and duv of source spd.
-            - 'metrics': dict with ndarrays for:
-                    * Rf (color fidelity: base + metameric shift)
-                    * Rt (metameric uncertainty index) 
-                    * Rfi (specific color fidelity indices)
-                    * Rti (specific metameric uncertainty indices)
-                    * cri_type (str with cri_type)
-            - 'Jab': dict with with ndarrays for Jabt, Jabr, DEi
-            - 'dC/C_dH_x_sig' : 
-                    np.vstack((dCoverC_x,dCoverC_x_sig,dH_x,dH_x_sig)).T
-                    See get_poly_model() for more info.
-            - 'fielddata' dict with dicts containing data on the calculated 
-                          vector-field and circle-fields: 
-                    * 'vectorfield' : {'axt': vfaxt, 'bxt' : vfbxt, 
-                                       'axr' : vfaxr, 'bxr' : vfbxr},
-                    * 'circlefield' : {'axt': cfaxt, 'bxt' : cfbxt, 
-                                       'axr' : cfaxr, 'bxr' : cfbxr}},
-            - 'modeldata' : dict with model info:
-                            {'pmodel': pmodel, 
-                            'pcolorshift' : pcolorshift, 
-                              'dab_model' : dab_model, 
-                              'dab_res' : dab_res,
-                              'dab_std' : dab_std,
-                              'modeltype' : modeltype, 
-                              'fmodel' : poly_model,
-                              'Jabtm' : Jabtm, 
-                              'Jabrm' : Jabrm, 
-                              'DEim' : DEim},
-            - 'vshifts' :dict with various vector shifts:
-                    * 'Jabshiftvector_r_to_t' : ndarray with difference vectors
-                                                between jabt and jabr.
-                    * 'vshift_ab_s' : vshift_ab_s: ab-shift vectors of samples 
-                    * 'vshift_ab_s_vf' : vshift_ab_s_vf: ab-shift vectors of 
-                                         VF model predictions of samples.
-                    * 'vshift_ab_vf' : vshift_ab_vf: ab-shift vectors of VF 
-                                        model predictions of vector field grid.
+        :returns: 
+            | list[dict] (each list element refers to a different test SPD)
+            | with the following keys:
+            |   - 'Source': dict with ndarrays of the S, cct and duv of source spd.
+            |   - 'metrics': dict with ndarrays for:
+            |         * Rf (color fidelity: base + metameric shift)
+            |         * Rt (metameric uncertainty index) 
+            |         * Rfi (specific color fidelity indices)
+            |         * Rti (specific metameric uncertainty indices)
+            |         * cri_type (str with cri_type)
+            |   - 'Jab': dict with with ndarrays for Jabt, Jabr, DEi
+            |   - 'dC/C_dH_x_sig' : 
+            |           np.vstack((dCoverC_x,dCoverC_x_sig,dH_x,dH_x_sig)).T
+            |           See get_poly_model() for more info.
+            |   - 'fielddata': dict with dicts containing data on the calculated 
+            |      vector-field and circle-fields: 
+            |        * 'vectorfield' : {'axt': vfaxt, 'bxt' : vfbxt, 
+            |                           'axr' : vfaxr, 'bxr' : vfbxr},
+            |        * 'circlefield' : {'axt': cfaxt, 'bxt' : cfbxt, 
+            |                           'axr' : cfaxr, 'bxr' : cfbxr}},
+            |   - 'modeldata' : dict with model info:
+            |                {'pmodel': pmodel, 
+            |                'pcolorshift' : pcolorshift, 
+            |                  'dab_model' : dab_model, 
+            |                  'dab_res' : dab_res,
+            |                  'dab_std' : dab_std,
+            |                  'modeltype' : modeltype, 
+            |                  'fmodel' : poly_model,
+            |                  'Jabtm' : Jabtm, 
+            |                  'Jabrm' : Jabrm, 
+            |                  'DEim' : DEim},
+            |   - 'vshifts' :dict with various vector shifts:
+            |        * 'Jabshiftvector_r_to_t' : ndarray with difference vectors
+            |                                    between jabt and jabr.
+            |        * 'vshift_ab_s' : vshift_ab_s: ab-shift vectors of samples 
+            |        * 'vshift_ab_s_vf' : vshift_ab_s_vf: ab-shift vectors of 
+            |                             VF model predictions of samples.
+            |        * 'vshift_ab_vf' : vshift_ab_vf: ab-shift vectors of VF 
+            |                            model predictions of vector field grid.
     """
     
     if type(cri_type) == str:
@@ -539,32 +573,42 @@ def VF_colorshift_model(S, cri_type = _VF_CRI_DEFAULT, model_type = _VF_MODEL_TY
 
 
 
-def generate_grid(jab_ranges = None, out = 'grid', ax = np.arange(-_VF_MAXR,_VF_MAXR+_VF_DELTAR,_VF_DELTAR), bx = np.arange(-_VF_MAXR,_VF_MAXR+_VF_DELTAR,_VF_DELTAR), jx = None, limit_grid_radius = 0):
+def generate_grid(jab_ranges = None, out = 'grid', \
+                  ax = np.arange(-_VF_MAXR,_VF_MAXR+_VF_DELTAR,_VF_DELTAR),\
+                  bx = np.arange(-_VF_MAXR,_VF_MAXR+_VF_DELTAR,_VF_DELTAR), \
+                  jx = None, limit_grid_radius = 0):
     """
     Generate a grid of color coordinates.
     
     Args:
-        :out: 'grid' or 'vectors', optional
-            'grid' outputs a single 2d numpy.nd-vector with the grid coordinates
-            'vector': outputs each dimension seperately.
-         :jab_ranges: None or ndarray, optional
-            Specifies the pixelization of color space.
-                (ndarray.shape = (3,3), with  first axis: J,a,b, and second 
-                axis: min, max, delta)
-        :ax: default ndarray or user defined ndarray, optional
-            default = np.arange(-_VF_MAXR,_VF_MAXR+_VF_DELTAR,_VF_DELTAR) 
-        :bx: default ndarray or user defined ndarray, optional
-            default = np.arange(-_VF_MAXR,_VF_MAXR+_VF_DELTAR,_VF_DELTAR) 
-        :jx: None, optional
-            Note that not-None :jab_ranges: override :ax:, :bx: and :jx input.
-        :limit_grid_radius: 0, optional
-            A value of zeros keeps grid as specified  by axr,bxr.
-            A value > 0 only keeps (a,b) coordinates within :limit_grid_radius:
+        :out:
+            | 'grid' or 'vectors', optional
+            |   - 'grid': outputs a single 2d numpy.nd-vector with the grid coordinates
+            |   - 'vector': outputs each dimension seperately.
+        :jab_ranges:
+            | None or ndarray, optional
+            | Specifies the pixelization of color space.
+              (ndarray.shape = (3,3), with  first axis: J,a,b, and second 
+              axis: min, max, delta)
+        :ax:
+            | default ndarray or user defined ndarray, optional
+            | default = np.arange(-_VF_MAXR,_VF_MAXR+_VF_DELTAR,_VF_DELTAR) 
+        :bx:
+            | default ndarray or user defined ndarray, optional
+            | default = np.arange(-_VF_MAXR,_VF_MAXR+_VF_DELTAR,_VF_DELTAR) 
+        :jx:
+            | None, optional
+            | Note that not-None :jab_ranges: override :ax:, :bx: and :jx input.
+        :limit_grid_radius:
+            | 0, optional
+            | A value of zeros keeps grid as specified  by axr,bxr.
+            | A value > 0 only keeps (a,b) coordinates within :limit_grid_radius:
             
     Returns:
-        :returns: single ndarray with ax,bx [,jx] 
-                    or
-                  seperate ndarrays for each dimension specified.
+        :returns: 
+            | single ndarray with ax,bx [,jx] 
+            |  or
+            | seperate ndarrays for each dimension specified.
     """
     # generate grid from jab_ranges array input, otherwise use ax, bx, jx input:
     if jab_ranges is not None:
@@ -623,15 +667,20 @@ def calculate_shiftvectors(jabt,jabr, average = True, vtype = 'ab'):
     Calculate color shift vectors.
     
     Args:
-        :jabt: ndarray with jab coordinates under the test SPD
-        :jabr: ndarray with jab coordinates under the reference SPD
-        :average: True, optional
-            If True, take mean of difference vectors along axis = 0.
-        :vtype: 'ab' or 'jab', optional
-            Reduce output ndarray to only a,b coordinates of shift vector(s).
+        :jabt: 
+            | ndarray with jab coordinates under the test SPD
+        :jabr:
+            | ndarray with jab coordinates under the reference SPD
+        :average:
+            | True, optional
+            | If True, take mean of difference vectors along axis = 0.
+        :vtype:
+            | 'ab' or 'jab', optional
+            | Reduce output ndarray to only a,b coordinates of shift vector(s).
             
     Returns:
-        :returns: ndarray of (mean) shift vector(s).
+        :returns:
+            | ndarray of (mean) shift vector(s).
             
     """    
     v =  jabt - jabr
@@ -643,54 +692,69 @@ def calculate_shiftvectors(jabt,jabr, average = True, vtype = 'ab'):
     
 
 #------------------------------------------------------------------------------
-def plot_shift_data(data, fieldtype = 'vectorfield', scalef = _VF_MAXR, color = 'k', axtype = 'polar', ax = None, \
+def plot_shift_data(data, fieldtype = 'vectorfield', scalef = _VF_MAXR, color = 'k', \
+                    axtype = 'polar', ax = None, \
                     hbins = 10,  start_hue = 0.0, bin_labels = '#', plot_center_lines = True,  \
-                    plot_axis_labels = False, plot_edge_lines = False, plot_bin_colors = True, force_CVG_layout = True):
+                    plot_axis_labels = False, plot_edge_lines = False, plot_bin_colors = True, \
+                    force_CVG_layout = True):
      
     """
     Plots vector or circle fields generated by VFcolorshiftmodel() 
     or PXcolorshiftmodel().
      
     Args:
-        :data: dict generated by VFcolorshiftmodel() or PXcolorshiftmodel()
-             Must contain 'fielddata'- key, which is a dict with possible keys:
-                 - key: 'vectorfield': ndarray with vector field data
-                 - key: 'circlefield': ndarray with circle field data
-        :color: 'k', optional
-            Color for plotting the vector-fields.
-        :axtype: 'polar' or 'cart', optional
-            Make polar or Cartesian plot.
-        :ax: None or 'new' or 'same', optional
-            - None or 'new' creates new plot
-            - 'same': continue plot on same axes.
-            - axes handle: plot on specified axes.
-        :hbins: 16 or ndarray with sorted hue bin centers (°), optional
-        :start_hue: _VF_MAXR, optional
-            Scale factor for graphic.
-        :plot_axis_labels: False, optional
-            Turns axis ticks on/off (True/False).
-        :bin_labels: None or list[str] or '#', optional
-            Plots labels at the bin center hues.
-            - None: don't plot.
-            - list[str]: list with str for each bin. 
-                            (len(:bin_labels:) = :nhbins:)
-            - '#': plots number.
-        :plot_edge_lines: True or False, optional
-            Plot grey bin edge lines with '--'.
-        :plot_center_lines: False or True, optional
-            Plot colored lines at 'center' of hue bin.
-        :plot_bin_colors: True, optional
-            Colorize hue-bins.
-        :force_CVG_layout: False or True, optional
-            True: Force plot of basis of CVG.
+        :data: 
+            | dict generated by VFcolorshiftmodel() or PXcolorshiftmodel()
+            | Must contain 'fielddata'- key, which is a dict with possible keys:
+            |     - key: 'vectorfield': ndarray with vector field data
+            |     - key: 'circlefield': ndarray with circle field data
+        :color: 
+            | 'k', optional
+            | Color for plotting the vector-fields.
+        :axtype:
+            | 'polar' or 'cart', optional
+            | Make polar or Cartesian plot.
+        :ax: 
+            | None or 'new' or 'same', optional
+            |   - None or 'new' creates new plot
+            |   - 'same': continue plot on same axes.
+            |   - axes handle: plot on specified axes.
+        :hbins:
+            | 16 or ndarray with sorted hue bin centers (°), optional
+        :start_hue:
+            | _VF_MAXR, optional
+            | Scale factor for graphic.
+        :plot_axis_labels:
+            | False, optional
+            | Turns axis ticks on/off (True/False).
+        :bin_labels:
+            | None or list[str] or '#', optional
+            | Plots labels at the bin center hues.
+            |   - None: don't plot.
+            |   - list[str]: list with str for each bin. 
+            |                (len(:bin_labels:) = :nhbins:)
+            |   - '#': plots number.
+        :plot_edge_lines:
+            | True or False, optional
+            | Plot grey bin edge lines with '--'.
+        :plot_center_lines:
+            | False or True, optional
+            | Plot colored lines at 'center' of hue bin.
+        :plot_bin_colors:
+            | True, optional
+            | Colorize hue-bins.
+        :force_CVG_layout: 
+            | False or True, optional
+            | True: Force plot of basis of CVG.
     
     Returns:
-        :returns: figCVG, hax, cmap
+        :returns:
+            | figCVG, hax, cmap
         
-            :figCVG: handle to CVG figure
-            :hax: handle to CVG axes
-            :cmap: list with rgb colors for hue bins 
-                    (for use in other plotting fcns)
+            |   :figCVG: handle to CVG figure
+            |   :hax: handle to CVG axes
+            |   :cmap: list with rgb colors for hue bins 
+            |          (for use in other plotting fcns)
    
     """
        
@@ -724,20 +788,29 @@ def plot_shift_data(data, fieldtype = 'vectorfield', scalef = _VF_MAXR, color = 
     return figCVG, hax, cmap
 
 #------------------------------------------------------------------------------
-def plotcircle(center = np.array([0.,0.]),radii = np.arange(0,60,10), angles = np.arange(0,350,10),color = 'k',linestyle = '--', out = None):
+def plotcircle(center = np.array([0.,0.]),\
+               radii = np.arange(0,60,10), \
+               angles = np.arange(0,350,10),\
+               color = 'k',linestyle = '--', out = None):
     """
     Plot one or more concentric circles.
     
     Args:
-        :center: np.array([0.,0.]) or ndarray with center coordinates, optional
-        :radii: np.arange(0,60,10) or ndarray with radii of circle(s), optional
-        :angles: np.arange(0,350,10) or ndarray with angles (°), optional
-        :color: 'k', optional
-            Color for plotting.
-        :linestyle: '--', optional
-            Linestyle of circles.
-        :out: None, optional
-            If None: plot circles, return (x,y) otherwise.
+        :center: 
+            | np.array([0.,0.]) or ndarray with center coordinates, optional
+        :radii:
+            | np.arange(0,60,10) or ndarray with radii of circle(s), optional
+        :angles:
+            | np.arange(0,350,10) or ndarray with angles (°), optional
+        :color: 
+            | 'k', optional
+            | Color for plotting.
+        :linestyle:
+            | '--', optional
+            | Linestyle of circles.
+        :out: 
+            | None, optional
+            | If None: plot circles, return (x,y) otherwise.
     """
     xs = np.array([0])
     ys = xs.copy()
@@ -756,28 +829,37 @@ def plotcircle(center = np.array([0.,0.]),radii = np.arange(0,60,10), angles = n
 
 ##############################################################################
 
-def initialize_VF_hue_angles(hx = None, Cxr = _VF_MAXR, cri_type = _VF_CRI_DEFAULT, modeltype = _VF_MODEL_TYPE,determine_hue_angles = _DETERMINE_HUE_ANGLES):
+def initialize_VF_hue_angles(hx = None, Cxr = _VF_MAXR, \
+                             cri_type = _VF_CRI_DEFAULT, \
+                             modeltype = _VF_MODEL_TYPE,\
+                             determine_hue_angles = _DETERMINE_HUE_ANGLES):
     """
     Initialize the hue angles that will be used to 'summarize' 
     the VF model fitting parameters.
     
     Args:       
-        :hx: None or ndarray, optional
-            None defaults to Munsell H5 hues.
-        :Cxr:  _VF_MAXR, optional
-        :cri_type: _VF_CRI_DEFAULT or str or dict, optional,
-            Cri_type parameters for cri and VF model.
-        :modeltype: _VF_MODEL_TYPE or 'M5' or 'M6', optional
-            Determines the type of polynomial model.
-        :determine_hue_angles: _DETERMINE_HUE_ANGLES or True or False, optional
-            True: determines the 10 primary / secondary Munsell hues ('5..').
-            Note that for 'M6', an additional 
+        :hx: 
+            | None or ndarray, optional
+            | None defaults to Munsell H5 hues.
+        :Cxr: 
+            | _VF_MAXR, optional
+        :cri_type: 
+            | _VF_CRI_DEFAULT or str or dict, optional,
+            | Cri_type parameters for cri and VF model.
+        :modeltype:
+            | _VF_MODEL_TYPE or 'M5' or 'M6', optional
+            | Determines the type of polynomial model.
+        :determine_hue_angles:
+            | _DETERMINE_HUE_ANGLES or True or False, optional
+            | True: determines the 10 primary / secondary Munsell hues ('5..').
+            | Note that for 'M6', an additional 
             
     Returns:
-        :pcolorshift: {'href': href,
-                       'Cref' : _VF_MAXR, 
-                       'sig' : _VF_SIG, 
-                       'labels' : list[str]}
+        :pcolorshift: 
+            | {'href': href,
+            |           'Cref' : _VF_MAXR, 
+            |           'sig' : _VF_SIG, 
+            |           'labels' : list[str]}
     """
     
     ###########################################

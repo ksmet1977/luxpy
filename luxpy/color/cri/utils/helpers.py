@@ -16,42 +16,39 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #########################################################################
 """
-###############################################################################
-# Module with color rendition, fidelity and gamut area helper functions
-###############################################################################
-# gamut_slicer(): Slices the gamut in nhbins slices and provides normalization 
-                    of test gamut to reference gamut.
+Module with color rendition, fidelity and gamut area helper functions
+=====================================================================
 
-# jab_to_rg(): Calculates gamut area index, Rg.
+:gamut_slicer(): Slices the gamut in nhbins slices and provides normalization 
+                  of test gamut to reference gamut.
 
-# jab_to_rhi(): Calculate hue bin measures: 
-                    Rfhi (local (hue bin) color fidelity)
-                    Rcshi (local chroma shift) 
-                    Rhshi (local hue shift)
+ :jab_to_rg(): Calculates gamut area index, Rg.
 
-# spd_to_jab_t_r(): Calculates jab color values for a sample set illuminated 
+ :jab_to_rhi(): | Calculate hue bin measures: 
+                |   Rfhi (local (hue bin) color fidelity)
+                |   Rcshi (local chroma shift) 
+                |   Rhshi (local hue shift)
+
+ :spd_to_jab_t_r(): Calculates jab color values for a sample set illuminated
                     with test source and its reference illuminant.
-                  
-# spd_to_rg(): Calculates the color gamut index of spectral data 
-                for a sample set illuminated with test source (data) 
-                with respect to some reference illuminant.
 
-# spd_to_DEi(): Calculates color difference (~fidelity) of spectral data 
+ :spd_to_rg(): Calculates the color gamut index of spectral data 
+               for a sample set illuminated with test source (data) 
+               with respect to some reference illuminant.
+
+ :spd_to_DEi(): Calculates color difference (~fidelity) of spectral data 
                 between sample set illuminated with test source (data) 
                 and some reference illuminant.
 
-# optimize_scale_factor(): Optimize scale_factor of cri-model in cri_type 
-                            such that average Rf for a set of light sources is 
-                            the same as that of a target-cri (default: 'ciera')
+ :optimize_scale_factor(): Optimize scale_factor of cri-model in cri_type 
+                           such that average Rf for a set of light sources is 
+                           the same as that of a target-cri (default: 'ciera')
 
-# spd_to_cri(): Calculates the color rendering fidelity index 
+ :spd_to_cri(): Calculates the color rendering fidelity index 
                 (CIE Ra, CIE Rf, IES Rf, CRI2012 Rf) of spectral data. 
                 Can also output Rg, Rfhi, Rcshi, Rhshi, cct, duv, ...
-#------------------------------------------------------------------------------
 
-Created on Fri Jun 30 00:10:59 2017
-
-@author: Kevin A.G. Smet (ksmet1977 at gmail.com)
+.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
 from luxpy import (np, _S_INTERP_TYPE, _CRI_RFL, _IESTM30, math, cam, cat,
@@ -66,38 +63,49 @@ __all__ = ['gamut_slicer','jab_to_rg', 'jab_to_rhi', 'jab_to_DEi',
            'spd_to_DEi', 'spd_to_rg', 'spd_to_cri']
 
 #------------------------------------------------------------------------------
-def gamut_slicer(jab_test,jab_ref, out = 'jabt,jabr', nhbins = None, start_hue = 0.0, normalize_gamut = True, normalized_chroma_ref = 100, close_gamut = False):
+def gamut_slicer(jab_test,jab_ref, out = 'jabt,jabr', nhbins = None, \
+                 start_hue = 0.0, normalize_gamut = True, \
+                 normalized_chroma_ref = 100, close_gamut = False):
     """
     Slices the gamut in hue bins.
     
     Args:
-        :jab_test: ndarray with Cartesian color coordinates (e.g. Jab) 
-                    of the samples under the test SPD
-        :jab_ref:  ndarray with Cartesian color coordinates (e.g. Jab) 
-                    of the samples under the reference SPD
-        :out: 'jabt,jabr' or str, optional
-            Specifies which variables to output as ndarray
-        :nhbins: None or int, optional
-            - None: defaults to using the sample hues themselves as 'bins'. 
-                    In other words, the number of bins will be equal to the 
-                    number of samples.
-            - float: number of bins to slice the sample gamut in.
-        :start_hue: 0.0 or float, optional
-            Hue angle to start bin slicing
-        :normalize_gamut: True or False, optional
-            True normalizes the gamut of test to that of ref.
-                (perfect agreement results in circle).
-        :normalized_chroma_ref: 100.0 or float, optional
-            Controls the size (chroma/radius) of the normalization circle/gamut.
-        :close_gamut: False or True, optional
-            True appends the first jab coordinates to the end of the output 
-            (for plotting closed gamuts)
+        :jab_test: 
+            | ndarray with Cartesian color coordinates (e.g. Jab) 
+              of the samples under the test SPD
+        :jab_ref:
+            | ndarray with Cartesian color coordinates (e.g. Jab) 
+              of the samples under the reference SPD
+        :out: 
+            | 'jabt,jabr' or str, optional
+            | Specifies which variables to output as ndarray
+        :nhbins:
+            | None or int, optional
+            |   - None: defaults to using the sample hues themselves as 'bins'. 
+            |           In other words, the number of bins will be equal to the 
+            |           number of samples.
+            |   - float: number of bins to slice the sample gamut in.
+        :start_hue:
+            | 0.0 or float, optional
+            | Hue angle to start bin slicing
+        :normalize_gamut:
+            | True or False, optional
+            | True normalizes the gamut of test to that of ref.
+              (perfect agreement results in circle).
+        :normalized_chroma_ref:
+            | 100.0 or float, optional
+            | Controls the size (chroma/radius) of the normalization circle/gamut.
+        :close_gamut:
+            | False or True, optional
+            | True appends the first jab coordinates to the end of the output 
+              (for plotting closed gamuts)
     
     Returns:
-        :returns: ndarray with average jabt,jabr of each hue bin. 
-            (.shape = (number of hue bins, 3))
-            
-            (or outputs whatever is specified in :out:) 
+        :returns:
+            | ndarray with average jabt,jabr of each hue bin. 
+            |  (.shape = (number of hue bins, 3))
+            | 
+            |  (or outputs whatever is specified in :out:) 
     """
 
     # make 3d for easy looping:
@@ -191,38 +199,50 @@ def gamut_slicer(jab_test,jab_ref, out = 'jabt,jabr', nhbins = None, start_hue =
         return eval(out)        
  
 #------------------------------------------------------------------------------
-def jab_to_rg(jabt,jabr, max_scale = 100, ordered_and_sliced = False, nhbins = None, start_hue = 0.0, normalize_gamut = True, normalized_chroma_ref = 100, out = 'Rg,jabt,jabr'):
+def jab_to_rg(jabt,jabr, max_scale = 100, ordered_and_sliced = False, \
+              nhbins = None, start_hue = 0.0, normalize_gamut = True, \
+              normalized_chroma_ref = 100, out = 'Rg,jabt,jabr'):
     """
     Calculates gamut area index, Rg.
     
     Args:
-        :jabt: ndarray with Cartesian color coordinates (e.g. Jab) 
-                of the samples under the test SPD
-        :jabr:  ndarray with Cartesian color coordinates (e.g. Jab) 
-                of the samples under the reference SPD
-        :max_scale: 100.0, optional
-           Value of Rg when Rf = max_scale (i.e. DEavg = 0)
-        :ordered_and_sliced: False or True, optional
-           False: Hue ordering will be done with lux.cri.gamut_slicer().
-           True: user is responsible for hue-ordering and closing gamut 
-               (i.e. first element in :jab: equals the last).
-        :nhbins: None or int, optional
-            - None: defaults to using the sample hues themselves as 'bins'. 
-                    In other words, the number of bins will be equal to the 
-                    number of samples.
-            - float: number of bins to slice the sample gamut in.
-        :start_hue: 0.0 or float, optional
-            Hue angle to start bin slicing
-        :normalize_gamut: True or False, optional
-            True normalizes the gamut of test to that of ref.
-            (perfect agreement results in circle).
-        :normalized_chroma_ref: 100.0 or float, optional
-            Controls the size (chroma/radius) of the normalization circle/gamut
-        :out: 'Rg,jabt,jabr' or str, optional
-            Specifies which variables to output as ndarray
+        :jabt:  
+            | ndarray with Cartesian color coordinates (e.g. Jab) 
+              of the samples under the test SPD
+        :jabr:
+            | ndarray with Cartesian color coordinates (e.g. Jab) 
+              of the samples under the reference SPD
+        :max_scale:
+            | 100.0, optional
+            | Value of Rg when Rf = max_scale (i.e. DEavg = 0)
+        :ordered_and_sliced: 
+            | False or True, optional
+            |   - False: Hue ordering will be done with lux.cri.gamut_slicer().
+            |   - True: user is responsible for hue-ordering and closing gamut 
+                  (i.e. first element in :jab: equals the last).
+        :nhbins: 
+            | None or int, optional
+            |   - None: defaults to using the sample hues themselves as 'bins'. 
+            |           In other words, the number of bins will be equal to the 
+            |           number of samples.
+            |   - float: number of bins to slice the sample gamut in.
+        :start_hue:
+            | 0.0 or float, optional
+            | Hue angle to start bin slicing
+        :normalize_gamut:
+            | True or False, optional
+            | True normalizes the gamut of test to that of ref.
+              (perfect agreement results in circle).
+        :normalized_chroma_ref:
+            | 100.0 or float, optional
+            | Controls the size (chroma/radius) of the normalization circle/gamut
+        :out: 
+            | 'Rg,jabt,jabr' or str, optional
+            | Specifies which variables to output as ndarray
 
     Returns: 
-        :Rg: float or ndarray with gamut area indices Rg.
+        :Rg: 
+            | float or ndarray with gamut area indices Rg.
     """    
     # slice, order and normalize jabt and jabr:
     if ordered_and_sliced == False: 
@@ -251,42 +271,52 @@ def jab_to_rg(jabt,jabr, max_scale = 100, ordered_and_sliced = False, nhbins = N
 
 
 #------------------------------------------------------------------------------
-def jab_to_rhi(jabt, jabr, DEi, cri_type = _CRI_TYPE_DEFAULT, start_hue = None, nhbins = None, scale_factor = None, scale_fcn = None, use_bin_avg_DEi = True):
+def jab_to_rhi(jabt, jabr, DEi, cri_type = _CRI_TYPE_DEFAULT, start_hue = None,\
+               nhbins = None, scale_factor = None, scale_fcn = None, \
+               use_bin_avg_DEi = True):
     """
     Calculate hue bin measures: Rfhi, Rcshi and Rhshi.
     
-    Rfhi: local (hue bin) color fidelity  
-    Rcshi: local chroma shift
-    Rhshi: local hue shift
-
-    (See IES TM30)
+    |   Rfhi: local (hue bin) color fidelity  
+    |   Rcshi: local chroma shift
+    |   Rhshi: local hue shift
+    |
+    |   (See IES TM30)
     
     Args:
-        :jabt: ndarray with jab coordinates under test SPD
-        :jabr: ndarray with jab coordinates under reference SPD
-        :DEi: ndarray with DEi (from gamut_slicer()).
-        :use_bin_avg_DEi: True, optional
-            Note that following IES-TM30 DEi from gamut_slicer() is obtained by
-            averaging the DEi per hue bin (True), and NOT by averaging the 
-            jabt and jabr per hue  bin and then calculating the DEi (False).
-        :nhbins: int, number of hue bins to slice gamut 
-            (None use the one specified in :cri_type: dict).
-        :start_hue: float (°), hue at which to start slicing
-        :scale_fcn: function handle to type of cri scale, 
-            e.g. 
-            * linear()_scale --> (100 - scale_factor*DEi), 
-            * log_scale --> (cfr. Ohno's CQS), 
-            * psy_scale (Smet et al.'s cri2012,See: LRT 2013)
-        :scale_factor: factors used in scaling function
+        :jabt: 
+            | ndarray with jab coordinates under test SPD
+        :jabr: 
+            | ndarray with jab coordinates under reference SPD
+        :DEi: 
+            | ndarray with DEi (from gamut_slicer()).
+        :use_bin_avg_DEi: 
+            | True, optional
+            | Note that following IES-TM30 DEi from gamut_slicer() is obtained by
+              averaging the DEi per hue bin (True), and NOT by averaging the 
+              jabt and jabr per hue  bin and then calculating the DEi (False).
+        :nhbins:
+            | int, number of hue bins to slice gamut 
+              (None use the one specified in :cri_type: dict).
+        :start_hue: 
+            | float (°), hue at which to start slicing
+        :scale_fcn:
+            | function handle to type of cri scale, 
+            | e.g. 
+            |   * linear()_scale --> (100 - scale_factor*DEi), 
+            |   * log_scale --> (cfr. Ohno's CQS), 
+            |   * psy_scale (Smet et al.'s cri2012,See: LRT 2013)
+        :scale_factor:
+            | factors used in scaling function
         
     Returns:
-        :returns: ndarrays of Rfhi, Rcshi and Rhshi
+        :returns: 
+            | ndarrays of Rfhi, Rcshi and Rhshi
         
     References:
-        ..[1] IES. (2015). IES-TM-30-15: 
-            Method for Evaluating Light Source Color Rendition. 
-            New York, NY: The Illuminating Engineering Society of North America.
-
+        1. `IES TM30, Method for Evaluating Light Source Color Rendition. 
+        New York, NY: The Illuminating Engineering Society of North America.
+        <https://www.ies.org/store/technical-memoranda/ies-method-for-evaluating-light-source-color-rendition/>`_
     """
     if isinstance(cri_type, str): 
         args = locals().copy() # get dict with keyword input arguments to function (used to overwrite non-None input arguments present in cri_type dict)
@@ -340,18 +370,23 @@ def jab_to_DEi(jabt, jabr, out = 'DEi', avg = None):
     Calculates color differences (~fidelity), DEi, of Jab input.
     
     Args:
-        :jabt: ndarray with Cartesian color coordinates (e.g. Jab) 
-                of the samples under the test SPD
-        :jabr:  ndarray with Cartesian color coordinates (e.g. Jab) 
-                of the samples under the reference SPD
-        :avg: None, optional
-            If None: don't calculate average, else: avg must be function handle
-        :out:  'DEi' or str, optional
-            Specifies requested output (e.g. 'DEi,DEa') 
+        :jabt: 
+            | ndarray with Cartesian color coordinates (e.g. Jab) 
+              of the samples under the test SPD
+        :jabr:
+            | ndarray with Cartesian color coordinates (e.g. Jab) 
+              of the samples under the reference SPD
+        :avg: 
+            | None, optional
+            | If None: don't calculate average, else: avg must be function handle
+        :out: 
+            | 'DEi' or str, optional
+            | Specifies requested output (e.g. 'DEi,DEa') 
 
     Returns:
-        :returns: float or ndarray with DEi for :out: 'DEi'
-            Other output is also possible by changing the :out: str value.
+        :returns:
+            | float or ndarray with DEi for :out: 'DEi'
+            | Other output is also possible by changing the :out: str value.
     """
       
     # E. calculate DEi
@@ -370,82 +405,98 @@ def jab_to_DEi(jabt, jabr, out = 'DEi', avg = None):
 
 
 #------------------------------------------------------------------------------
-def spd_to_jab_t_r(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'jabt,jabr', wl = None, sampleset = None, ref_type = None, cieobs  = None, cspace = None, catf = None, cri_specific_pars = None):
+def spd_to_jab_t_r(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'jabt,jabr', wl = None,\
+                   sampleset = None, ref_type = None, cieobs  = None, cspace = None,\
+                   catf = None, cri_specific_pars = None):
     """
-    Calculates jab color values for a sample set illuminated with test source SPD and its reference illuminant.
+    Calculates jab color values for a sample set illuminated with test source 
+    SPD and its reference illuminant.
         
     Args:
-        :SPD: ndarray with spectral data 
-                (can be multiple SPDs, first axis are the wavelengths)
-        :out:  'jabt,jabr' or str, optional
-            Specifies requested output (e.g.'jabt,jabr' or 'jabt,jabr,cct,duv') 
-        :wl: None, optional
-            Wavelengths (or [start, end, spacing]) to interpolate the SPDs to. 
-            None: default to no interpolation
-        :cri_type: _CRI_TYPE_DEFAULT or str or dict, optional
-            -'str: specifies dict with default cri model parameters 
-                (for supported types, see luxpy.cri._CRI_DEFAULTS['cri_types'])
-            - dict: user defined model parameters 
-                (see e.g. luxpy.cri._CRI_DEFAULTS['cierf'] 
-                for required structure)
-            Note that any non-None input arguments to the function will 
-            override default values in cri_type dict.
+        :SPD: 
+            | ndarray with spectral data 
+              (can be multiple SPDs, first axis are the wavelengths)
+        :out: 
+            | 'jabt,jabr' or str, optional
+            | Specifies requested output (e.g.'jabt,jabr' or 'jabt,jabr,cct,duv') 
+        :wl: 
+            | None, optional
+            | Wavelengths (or [start, end, spacing]) to interpolate the SPDs to. 
+            | None: default to no interpolation
+        :cri_type:
+            | _CRI_TYPE_DEFAULT or str or dict, optional
+            |   -'str: specifies dict with default cri model parameters 
+            |     (for supported types, see luxpy.cri._CRI_DEFAULTS['cri_types'])
+            |   - dict: user defined model parameters 
+            |     (see e.g. luxpy.cri._CRI_DEFAULTS['cierf'] 
+            |     for required structure)
+            | Note that any non-None input arguments to the function will 
+              override default values in cri_type dict.
             
-        :sampleset: None or ndarray or str, optional
-            Specifies set of spectral reflectance samples for cri calculations.
-                - None defaults to standard set for metric in cri_type.
-                - ndarray: user defined set of spectral reflectance functions 
-                    (.shape = (N+1, number of wavelengths); 
-                     first axis are wavelengths)
-        :ref_type: None or str or ndarray, optional
-            Specifies type of reference illuminant type.
-                - None: defaults to metric_specific reference illuminant in 
-                        accordance with cri_type.
-                - str: 'BB' : Blackbody radiatiors, 'DL': daylightphase, 
-                        'ciera': used in CIE CRI-13.3-1995, 
-                        'cierf': used in CIE 224-2017, 
-                        'iesrf': used in TM30-15, ...
-                - ndarray: user defined reference SPD
-        :cieobs: None or dict, optional
-            Specifies which CMF sets to use for the calculation of the sample 
-            XYZs and the CCT (for reference illuminant calculation).
-            None defaults to the one specified in :cri_type: dict.    
-                - key: 'xyz': str specifying CMF set for calculating xyz 
-                              of samples and white 
-                - key: 'cct': str specifying CMF set for calculating cct
-        :cspace:  None or dict, optional
-            Specifies which color space to use.
-            None defaults to the one specified in  :cri_type: dict.  
-                - key: 'type': str specifying color space used to calculate 
-                               color differences in.
-                - key: 'xyzw': None or ndarray with white point of color space
-                     If None: use xyzw of test / reference (after chromatic 
-                              adaptation, if specified)
-                - other keys specify other possible parameters needed for color
-                  space calculation, 
-                    see lx.cri._CRI_DEFAULTS['iesrf']['cspace'] for details. 
-        :catf: None or dict, optional
-            Perform explicit CAT before converting to color space coordinates.
-                - None: don't apply a cat (other than perhaps the one built 
-                        into the colorspace) 
-                - dict: with CAT parameters:
-                    - key: 'D': ndarray with degree of adaptation
-                    - key: 'mcat': ndarray with sensor matrix specification
-                    - key: 'xyzw': None or ndarray with white point
-                        None: use xyzw of reference otherwise transform both 
-                              test and ref to xyzw
-        :cri_specific_pars: None or dict, optional
-            Specifies other parameters specific to type of cri 
-            (e.g. maxC for CQS calculations)
-                - None: default to the one specified in  :cri_type: dict. 
-                - dict: user specified parameters. 
-                    For its use, see for example:
-                        luxpy.cri._CRI_DEFAULTS['mcri']['cri_specific_pars']
+        :sampleset:
+            | None or ndarray or str, optional
+            | Specifies set of spectral reflectance samples for cri calculations.
+            |     - None defaults to standard set for metric in cri_type.
+            |     - ndarray: user defined set of spectral reflectance functions 
+            |       (.shape = (N+1, number of wavelengths); 
+            |        first axis are wavelengths)
+        :ref_type:
+            | None or str or ndarray, optional
+            | Specifies type of reference illuminant type.
+            |     - None: defaults to metric_specific reference illuminant in 
+            |             accordance with cri_type.
+            |     - str: 'BB' : Blackbody radiatiors, 
+            |            'DL': daylightphase, 
+            |            'ciera': used in CIE CRI-13.3-1995, 
+            |            'cierf': used in CIE 224-2017, 
+            |            'iesrf': used in TM30-15, ...
+            |     - ndarray: user defined reference SPD
+        :cieobs:
+            | None or dict, optional
+            | Specifies which CMF sets to use for the calculation of the sample 
+            | XYZs and the CCT (for reference illuminant calculation).
+            | None defaults to the one specified in :cri_type: dict.    
+            |     - key: 'xyz': str specifying CMF set for calculating xyz 
+            |                   of samples and white 
+            |     - key: 'cct': str specifying CMF set for calculating cct
+        :cspace:
+            | None or dict, optional
+            | Specifies which color space to use.
+            | None defaults to the one specified in  :cri_type: dict.  
+            |     - key: 'type': str specifying color space used to calculate 
+            |                    color differences in.
+            |     - key: 'xyzw': None or ndarray with white point of color space
+            |            If None: use xyzw of test / reference (after chromatic 
+            |                     adaptation, if specified)
+            |     - other keys specify other possible parameters needed for color
+            |       space calculation, 
+            |       see lx.cri._CRI_DEFAULTS['iesrf']['cspace'] for details. 
+        :catf:
+            | None or dict, optional
+            | Perform explicit CAT before converting to color space coordinates.
+            |    - None: don't apply a cat (other than perhaps the one built 
+            |            into the colorspace) 
+            |    - dict: with CAT parameters:
+            |        - key: 'D': ndarray with degree of adaptation
+            |        - key: 'mcat': ndarray with sensor matrix specification
+            |        - key: 'xyzw': None or ndarray with white point
+            |              None: use xyzw of reference otherwise transform both 
+            |                    test and ref to xyzw
+        :cri_specific_pars:
+            | None or dict, optional
+            | Specifies other parameters specific to type of cri 
+            | (e.g. maxC for CQS calculations)
+            |     - None: default to the one specified in  :cri_type: dict. 
+            |     - dict: user specified parameters. 
+            |         For its use, see for example:
+            |             luxpy.cri._CRI_DEFAULTS['mcri']['cri_specific_pars']
+    
     Returns:
-        :returns: (ndarray, ndarray) 
-            with jabt and jabr data for :out: 'jabt,jabr'
-            
-            Other output is also possible by changing the :out: str value.
+        :returns: 
+            | (ndarray, ndarray) 
+            | with jabt and jabr data for :out: 'jabt,jabr'
+            | 
+            | Other output is also possible by changing the :out: str value.
     """
    
     #Override input parameters with data specified in cri_type:
@@ -525,80 +576,96 @@ def spd_to_jab_t_r(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'jabt,jabr', wl = No
 
 
 #------------------------------------------------------------------------------
-def spd_to_DEi(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'DEi', wl = None, sampleset = None, ref_type = None, cieobs = None, avg = None, cspace = None, catf = None, cri_specific_pars = None):
+def spd_to_DEi(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'DEi', wl = None, \
+               sampleset = None, ref_type = None, cieobs = None, avg = None, \
+               cspace = None, catf = None, cri_specific_pars = None):
     """
     Calculates color differences (~fidelity), DEi, of spectral data.
     
     Args:
-        :SPD: ndarray with spectral data (can be multiple SPDs, 
-              first axis are the wavelengths)
-        :out:  'DEi' or str, optional
-            Specifies requested output (e.g. 'DEi,DEa,cct,duv') 
-        :wl: None, optional
-            Wavelengths (or [start, end, spacing]) to interpolate the SPDs to. 
-            None: default to no interpolation
-        :cri_type: _CRI_TYPE_DEFAULT or str or dict, optional
-            -'str: specifies dict with default cri model parameters (for 
-                   supported types, see luxpy.cri._CRI_DEFAULTS['cri_types'])
-            - dict: user defined model parameters 
-                    (see e.g. luxpy.cri._CRI_DEFAULTS['cierf'] for required 
-                    structure)
-            Note that any non-None input arguments to the function will 
-            override default values in cri_type dict.
-        :sampleset: None or ndarray or str, optional
-            Specifies set of spectral reflectance samples for cri calculations.
-                - None defaults to standard set for metric in cri_type.
-                - ndarray: user defined set of spectral reflectance functions 
-                        (.shape = (N+1, number of wavelengths); first axis are 
-                        wavelengths)
-        :ref_type: None or str or ndarray, optional
-            Specifies type of reference illuminant type.
-                - None: defaults to metric_specific reference illuminant in 
-                        accordance with cri_type.
-                - str: 'BB' : Blackbody radiatiors, 'DL': daylightphase, 
-                        'ciera': used in CIE CRI-13.3-1995, 
-                        'cierf': used in CIE 224-2017, 
-                        'iesrf': used in TM30-15, ...
-                - ndarray: user defined reference SPD
-        :cieobs: None or dict, optional
-            Specifies which CMF sets to use for the calculation of the sample 
-            XYZs and the CCT (for reference illuminant calculation).
-            None defaults to the one specified in :cri_type: dict.    
-                - key: 'xyz': str specifying CMF set for calculating xyz 
-                              of samples and white 
-                - key: 'cct': str specifying CMF set for calculating cct
-        :cspace:  None or dict, optional
-            Specifies which color space to use.
-            None defaults to the one specified in  :cri_type: dict.  
-                - key: 'type': str specifying color space used to calculate 
-                               color differences in.
-                - key: 'xyzw': None or ndarray with white point of color space.
-                     If None: use xyzw of test / reference (after chromatic 
-                              adaptation, if specified)
-                - other keys specify other possible parameters needed for color
-                   space calculation, 
-                    see lx.cri._CRI_DEFAULTS['iesrf']['cspace'] for details. 
-        :catf: None or dict, optional
-            Perform explicit CAT before converting to color space coordinates.
-                - None: don't apply a cat (other than perhaps the one built 
-                        into the colorspace) 
-                - dict: with CAT parameters:
-                    - key: 'D': ndarray with degree of adaptation
-                    - key: 'mcat': ndarray with sensor matrix specification
-                    - key: 'xyzw': None or ndarray with white point
-                        None: use xyzw of reference otherwise transform both 
-                              test and ref to xyzw
-        :cri_specific_pars: None or dict, optional
-            Specifies other parameters specific to type of cri (e.g. maxC for 
-            CQS calculations)
-                - None: default to the one specified in  :cri_type: dict. 
-                - dict: user specified parameters. 
-                    For its use, see for example:
-                        luxpy.cri._CRI_DEFAULTS['mcri']['cri_specific_pars']
-
+        :SPD: 
+            | ndarray with spectral data 
+              (can be multiple SPDs, first axis are the wavelengths)
+        :out: 
+            | 'DEi' or str, optional
+            | Specifies requested output (e.g. 'DEi,DEa,cct,duv') 
+        :wl: 
+            | None, optional
+            | Wavelengths (or [start, end, spacing]) to interpolate the SPDs to. 
+            | None: default to no interpolation
+        :cri_type:
+            | _CRI_TYPE_DEFAULT or str or dict, optional
+            |   -'str: specifies dict with default cri model parameters 
+            |     (for supported types, see luxpy.cri._CRI_DEFAULTS['cri_types'])
+            |   - dict: user defined model parameters 
+            |     (see e.g. luxpy.cri._CRI_DEFAULTS['cierf'] 
+            |     for required structure)
+            | Note that any non-None input arguments to the function will 
+              override default values in cri_type dict.
+        :sampleset:
+            | None or ndarray or str, optional
+            | Specifies set of spectral reflectance samples for cri calculations.
+            |     - None defaults to standard set for metric in cri_type.
+            |     - ndarray: user defined set of spectral reflectance functions 
+            |       (.shape = (N+1, number of wavelengths); 
+            |        first axis are wavelengths)
+        :ref_type:
+            | None or str or ndarray, optional
+            | Specifies type of reference illuminant type.
+            |     - None: defaults to metric_specific reference illuminant in 
+            |             accordance with cri_type.
+            |     - str: 'BB' : Blackbody radiatiors, 
+            |            'DL': daylightphase, 
+            |            'ciera': used in CIE CRI-13.3-1995, 
+            |            'cierf': used in CIE 224-2017, 
+            |            'iesrf': used in TM30-15, ...
+            |     - ndarray: user defined reference SPD
+        :cieobs:
+            | None or dict, optional
+            | Specifies which CMF sets to use for the calculation of the sample 
+            | XYZs and the CCT (for reference illuminant calculation).
+            | None defaults to the one specified in :cri_type: dict.    
+            |     - key: 'xyz': str specifying CMF set for calculating xyz 
+            |                   of samples and white 
+            |     - key: 'cct': str specifying CMF set for calculating cct
+        :cspace:
+            | None or dict, optional
+            | Specifies which color space to use.
+            | None defaults to the one specified in  :cri_type: dict.  
+            |     - key: 'type': str specifying color space used to calculate 
+            |                    color differences in.
+            |     - key: 'xyzw': None or ndarray with white point of color space
+            |            If None: use xyzw of test / reference (after chromatic 
+            |                     adaptation, if specified)
+            |     - other keys specify other possible parameters needed for color
+            |       space calculation, 
+            |       see lx.cri._CRI_DEFAULTS['iesrf']['cspace'] for details. 
+        :catf:
+            | None or dict, optional
+            | Perform explicit CAT before converting to color space coordinates.
+            |    - None: don't apply a cat (other than perhaps the one built 
+            |            into the colorspace) 
+            |    - dict: with CAT parameters:
+            |        - key: 'D': ndarray with degree of adaptation
+            |        - key: 'mcat': ndarray with sensor matrix specification
+            |        - key: 'xyzw': None or ndarray with white point
+            |              None: use xyzw of reference otherwise transform both 
+            |                    test and ref to xyzw
+        :cri_specific_pars:
+            | None or dict, optional
+            | Specifies other parameters specific to type of cri 
+            | (e.g. maxC for CQS calculations)
+            |     - None: default to the one specified in  :cri_type: dict. 
+            |     - dict: user specified parameters. 
+            |         For its use, see for example:
+            |             luxpy.cri._CRI_DEFAULTS['mcri']['cri_specific_pars']
+    
     Returns:
-        :returns: float or ndarray with DEi for :out: 'DEi'
-            Other output is also possible by changing the :out: str value.
+        :returns: 
+            | float or ndarray with DEi for :out: 'DEi'
+            | 
+            | Other output is also possible by changing the :out: str value.
+
     """
     #Override input parameters with data specified in cri_type:
     args = locals().copy() # get dict with keyword input arguments to function (used to overwrite non-None input arguments present in cri_type dict)
@@ -625,27 +692,32 @@ def optimize_scale_factor(cri_type, opt_scale_factor, scale_fcn, avg) :
     of a target-cri (default: 'ciera').
     
     Args:
-        :cri_type: str or dict
-            -'str: specifies dict with default cri model parameters 
-                (for supported types, see luxpy.cri._CRI_DEFAULTS['cri_types'])
-            - dict: user defined model parameters 
-                    (see e.g. luxpy.cri._CRI_DEFAULTS['cierf'] 
-                    for required structure)
-        :opt_scale: True or False
-            True: optimize scaling-factor, else do nothing and use value of 
-            scaling-factor in :scale: dict.   
-        :scale_fcn: function handle to type of cri scale
-            e.g. 
-            * linear()_scale --> (100 - scale_factor*DEi), 
-            * log_scale --> (cfr. Ohno's CQS), 
-            * psy_scale (Smet et al.'s cri2012,See: LRT 2013)
-        :avg: None or fcn handle
-            Averaging function (handle) for color differences, DEi 
-            (e.g. numpy.mean, .math.rms, .math.geomean)
-            None use the one specified in :cri_type: dict.
+        :cri_type: 
+            | str or dict
+            |   -'str: specifies dict with default cri model parameters 
+            |       (for supported types, see luxpy.cri._CRI_DEFAULTS['cri_types'])
+            |   - dict: user defined model parameters 
+            |       (see e.g. luxpy.cri._CRI_DEFAULTS['cierf'] 
+            |       for required structure)
+        :opt_scale:
+            | True or False
+            | True: optimize scaling-factor, else do nothing and use value of 
+              scaling-factor in :scale: dict.   
+        :scale_fcn:
+            | function handle to type of cri scale, 
+            | e.g. 
+            |   * linear()_scale --> (100 - scale_factor*DEi), 
+            |   * log_scale --> (cfr. Ohno's CQS), 
+            |   * psy_scale (Smet et al.'s cri2012,See: LRT 2013)
+        :avg: 
+            | None or fcn handle
+            | Averaging function (handle) for color differences, DEi 
+            | (e.g. numpy.mean, .math.rms, .math.geomean)
+            | None use the one specified in :cri_type: dict.
 
     Returns:
-        :scaling_factor: ndarray
+        :scaling_factor: 
+            | ndarray
 
     """
     if  np.any(opt_scale_factor):
@@ -696,132 +768,151 @@ def optimize_scale_factor(cri_type, opt_scale_factor, scale_fcn, avg) :
 
 
 #------------------------------------------------------------------------------
-def spd_to_rg(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'Rg', wl = None, sampleset = None, ref_type = None, cieobs  = None, avg = None, cspace = None, catf = None, cri_specific_pars = None, rg_pars = None):
+def spd_to_rg(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'Rg', wl = None, \
+              sampleset = None, ref_type = None, cieobs  = None, avg = None, \
+              cspace = None, catf = None, cri_specific_pars = None, rg_pars = None):
     """
     Calculates the color gamut index, Rg, of spectral data. 
     
     Args:
-        :SPD: ndarray with spectral data (can be multiple SPDs, first axis are 
-              the wavelengths)
-        :out:  'Rg' or str, optional
-            Specifies requested output (e.g. 'Rg,cct,duv') 
-        :wl: None, optional
-            Wavelengths (or [start, end, spacing]) to interpolate the SPDs to. 
-            None: default to no interpolation
-        :cri_type: _CRI_TYPE_DEFAULT or str or dict, optional
-            -'str: specifies dict with default cri model parameters 
-                (for supported types, see luxpy.cri._CRI_DEFAULTS['cri_types'])
-            - dict: user defined model parameters 
-                    (see e.g. luxpy.cri._CRI_DEFAULTS['cierf'] 
-                    for required structure)
-            Note that any non-None input arguments to the function will 
-            override default values in cri_type dict.
-        :sampleset: None or ndarray or str, optional
-            Specifies set of spectral reflectance samples for cri calculations.
-                - None defaults to standard set for metric in cri_type.
-                - ndarray: user defined set of spectral reflectance functions 
-                            (.shape = (N+1, number of wavelengths); 
-                            first axis are wavelengths)
-        :ref_type: None or str or ndarray, optional
-            Specifies type of reference illuminant type.
-                - None: defaults to metric_specific reference illuminant in 
-                        accordance with cri_type.
-                - str: 'BB' : Blackbody radiatiors, 'DL': daylightphase, 
-                        'ciera': used in CIE CRI-13.3-1995, 
-                        'cierf': used in CIE 224-2017, 
-                        'iesrf': used in TM30-15, ...
-                - ndarray: user defined reference SPD
-        :cieobs: None or dict, optional
-            Specifies which CMF sets to use for the calculation of the sample 
-            XYZs and the CCT (for reference illuminant calculation).
-            None defaults to the one specified in :cri_type: dict.    
-                - key: 'xyz': str specifying CMF set for calculating xyz of 
-                              samples and white.
-                - key: 'cct': str specifying CMF set for calculating cct.
-        :cspace:  None or dict, optional
-            Specifies which color space to use.
-            None defaults to the one specified in  :cri_type: dict.  
-                - key: 'type': str specifying color space used to calculate 
-                                color differences in.
-                - key: 'xyzw': None or ndarray with white point of color space.
-                     If None: use xyzw of test / reference (after chromatic 
-                     adaptation, if specified)
-                - other keys specify other possible parameters needed for color
-                  space calculation, 
-                    see lx.cri._CRI_DEFAULTS['iesrf']['cspace'] for details. 
-        :catf: None or dict, optional
-            Perform explicit CAT before converting to color space coordinates.
-                - None: don't apply a cat (other than perhaps the one built 
-                        into the colorspace) 
-                - dict: with CAT parameters:
-                    - key: 'D': ndarray with degree of adaptation
-                    - key: 'mcat': ndarray with sensor matrix specification
-                    - key: 'xyzw': None or ndarray with white point
-                        None: use xyzw of reference otherwise transform both 
-                              test and ref to xyzw
-        :cri_specific_pars: None or dict, optional
-            Specifies other parameters specific to type of cri (e.g. maxC for 
-            CQS calculations)
-                - None: default to the one specified in  :cri_type: dict. 
-                - dict: user specified parameters. 
-                    For its use, sSee for example:
-                        luxpy.cri._CRI_DEFAULTS['mcri']['cri_specific_pars']
-        :rg_pars: None or dict, optional
-            Dict containing specifying parameters for slicing the gamut.
-            Dict structure: 
-                {'nhbins' : None, 'start_hue' : 0, 'normalize_gamut' : True}
-                - key: 'nhbins': int, number of hue bins to slice gamut 
-                            (None use the one specified in :cri_type: dict).
-                - key: 'start_hue': float (°), hue at which to start slicing
-                - key: 'normalize_gamut': True or False: 
-                            normalize gamut or not before calculating a gamut 
-                            area index Rg. 
-                - key: 'normalized_chroma_ref': 100.0 or float, optional
-                            Controls the size (chroma/radius) 
-                            of the normalization circle/gamut.
-        :avg: None or fcn handle, optional
-            Averaging function (handle) for color differences, DEi 
-            (e.g. numpy.mean, .math.rms, .math.geomean)
-            None use the one specified in :cri_type: dict.
-        :scale: None or dict, optional
-            Specifies scaling of color differences to obtain CRI.
-                - None use the one specified in :cri_type: dict.
-                - dict: user specified dict with scaling parameters.
-                    - key: 'fcn': function handle to type of cri scale, 
-                            e.g. 
-                            * linear()_scale --> (100 - scale_factor*DEi), 
-                            * log_scale --> (cfr. Ohno's CQS), 
-                            * psy_scale (Smet et al.'s cri2012,See: LRT 2013)
-                    - key: 'cfactor': factors used in scaling function, 
-                          If None: 
-                              Scaling factor value(s) will be optimized to 
-                              minimize the rms between the Rf's of the 
-                              requested metric and some target metric specified
-                              in:
-                              - key: 'opt_cri_type':  str 
-                                  * str: one of the preset _CRI_DEFAULTS
-                                  * dict: user speciied 
-                                  (dict must contain all keys as normal)
-                                 Note that if key not in :scale: dict, 
-                                 then 'opt_cri_type' is added with default 
-                                 setting = 'ciera'.
-                             - key: 'opt_spd_set': ndarray with set of light 
-                                 source spds used to optimize cfactor. 
-                                 Note that if key not in :scale: dict, 
-                                 then default = 'F1-F12'.
+        :SPD: 
+            | ndarray with spectral data 
+              (can be multiple SPDs, first axis are the wavelengths)
+        :out: 
+            | 'Rg' or str, optional
+            | Specifies requested output (e.g. 'Rg,cct,duv') 
+        :wl: 
+            | None, optional
+            | Wavelengths (or [start, end, spacing]) to interpolate the SPDs to. 
+            | None: default to no interpolation
+        :cri_type:
+            | _CRI_TYPE_DEFAULT or str or dict, optional
+            |   -'str: specifies dict with default cri model parameters 
+            |     (for supported types, see luxpy.cri._CRI_DEFAULTS['cri_types'])
+            |   - dict: user defined model parameters 
+            |     (see e.g. luxpy.cri._CRI_DEFAULTS['cierf'] 
+            |     for required structure)
+            | Note that any non-None input arguments to the function will 
+              override default values in cri_type dict.
+        :sampleset:
+            | None or ndarray or str, optional
+            | Specifies set of spectral reflectance samples for cri calculations.
+            |     - None defaults to standard set for metric in cri_type.
+            |     - ndarray: user defined set of spectral reflectance functions 
+            |       (.shape = (N+1, number of wavelengths); 
+            |        first axis are wavelengths)
+        :ref_type:
+            | None or str or ndarray, optional
+            | Specifies type of reference illuminant type.
+            |     - None: defaults to metric_specific reference illuminant in 
+            |             accordance with cri_type.
+            |     - str: 'BB' : Blackbody radiatiors, 
+            |            'DL': daylightphase, 
+            |            'ciera': used in CIE CRI-13.3-1995, 
+            |            'cierf': used in CIE 224-2017, 
+            |            'iesrf': used in TM30-15, ...
+            |     - ndarray: user defined reference SPD
+        :cieobs:
+            | None or dict, optional
+            | Specifies which CMF sets to use for the calculation of the sample 
+            | XYZs and the CCT (for reference illuminant calculation).
+            | None defaults to the one specified in :cri_type: dict.    
+            |     - key: 'xyz': str specifying CMF set for calculating xyz 
+            |                   of samples and white 
+            |     - key: 'cct': str specifying CMF set for calculating cct
+        :cspace:
+            | None or dict, optional
+            | Specifies which color space to use.
+            | None defaults to the one specified in  :cri_type: dict.  
+            |     - key: 'type': str specifying color space used to calculate 
+            |                    color differences in.
+            |     - key: 'xyzw': None or ndarray with white point of color space
+            |            If None: use xyzw of test / reference (after chromatic 
+            |                     adaptation, if specified)
+            |     - other keys specify other possible parameters needed for color
+            |       space calculation, 
+            |       see lx.cri._CRI_DEFAULTS['iesrf']['cspace'] for details. 
+        :catf:
+            | None or dict, optional
+            | Perform explicit CAT before converting to color space coordinates.
+            |    - None: don't apply a cat (other than perhaps the one built 
+            |            into the colorspace) 
+            |    - dict: with CAT parameters:
+            |        - key: 'D': ndarray with degree of adaptation
+            |        - key: 'mcat': ndarray with sensor matrix specification
+            |        - key: 'xyzw': None or ndarray with white point
+            |              None: use xyzw of reference otherwise transform both 
+            |                    test and ref to xyzw
+        :cri_specific_pars:
+            | None or dict, optional
+            | Specifies other parameters specific to type of cri 
+            | (e.g. maxC for CQS calculations)
+            |     - None: default to the one specified in  :cri_type: dict. 
+            |     - dict: user specified parameters. 
+            |         For its use, see for example:
+            |             luxpy.cri._CRI_DEFAULTS['mcri']['cri_specific_pars']
+        :rg_pars: 
+            | None or dict, optional
+            | Dict containing specifying parameters for slicing the gamut.
+            | Dict structure: 
+            |     {'nhbins' : None, 'start_hue' : 0, 'normalize_gamut' : True}
+            |    - key: 'nhbins': int, number of hue bins to slice gamut 
+            |                 (None use the one specified in :cri_type: dict).
+            |    - key: 'start_hue': float (°), hue at which to start slicing
+            |    - key: 'normalize_gamut': True or False: 
+            |                normalize gamut or not before calculating a gamut 
+            |                area index Rg. 
+            |    - key: 'normalized_chroma_ref': 100.0 or float, optional
+            |                Controls the size (chroma/radius) 
+            |                of the normalization circle/gamut.
+        :avg: 
+            | None or fcn handle, optional
+            | Averaging function (handle) for color differences, DEi 
+            | (e.g. numpy.mean, .math.rms, .math.geomean)
+            | None use the one specified in :cri_type: dict.
+        :scale:
+            | None or dict, optional
+            | Specifies scaling of color differences to obtain CRI.
+            |     - None use the one specified in :cri_type: dict.
+            |     - dict: user specified dict with scaling parameters.
+            |         - key: 'fcn': function handle to type of cri scale, 
+            |                 e.g. 
+            |                 * linear()_scale --> (100 - scale_factor*DEi), 
+            |                 * log_scale --> (cfr. Ohno's CQS), 
+            |                 * psy_scale (Smet et al.'s cri2012,See: LRT 2013)
+            |        - key: 'cfactor': factors used in scaling function, 
+            |              If None: 
+            |                     Scaling factor value(s) will be optimized to 
+            |                     minimize the rms between the Rf's of the 
+            |                     requested metric and the target metric specified
+            |                     in:
+            |
+            |                  - key: 'opt_cri_type':  str 
+            |                      * str: one of the preset _CRI_DEFAULTS
+            |                      * dict: user speciied 
+            |                      (dict must contain all keys as normal)
+            |                     Note that if key not in :scale: dict, 
+            |                     then 'opt_cri_type' is added with default 
+            |                     setting = 'ciera'.
+            |                 - key: 'opt_spd_set': ndarray with set of light 
+            |                     source spds used to optimize cfactor. 
+            |                     Note that if key not in :scale: dict, 
+            |                     then default = 'F1-F12'.
 
     Returns:
-        :returns: float or ndarray with Rg for :out: 'Rg'
-            Other output is also possible by changing the :out: str value.
+        :returns:
+            | float or ndarray with Rg for :out: 'Rg'
+            | Other output is also possible by changing the :out: str value.
             
     References:
-        ..[1] IES. (2015). 
-              IES-TM-30-15: Method for Evaluating Light Source Color Rendition. 
-              New York, NY: The Illuminating Engineering Society of North America.
-        ..[2] David, A., Fini, P. T., Houser, K. W., Ohno, Y., Royer, M. P., Smet, K. A. G., … Whitehead, L. (2015). 
-              Development of the IES method for evaluating the color rendition of light sources. 
-              Optics Express, 23(12), 15888–15906. 
-              https://doi.org/10.1364/OE.23.015888
+        1. `IES TM30, Method for Evaluating Light Source Color Rendition. 
+        New York, NY: The Illuminating Engineering Society of North America.
+        <https://www.ies.org/store/technical-memoranda/ies-method-for-evaluating-light-source-color-rendition/>`_
+        
+        2. `A. David, P. T. Fini, K. W. Houser, Y. Ohno, M. P. Royer, K. A. G. Smet, M. Wei, and L. Whitehead, 
+        “Development of the IES method for evaluating the color rendition of light sources,” 
+        Opt. Express, vol. 23, no. 12, pp. 15888–15906, 2015. 
+        <https://www.osapublishing.org/oe/abstract.cfm?uri=oe-23-12-15888>`_
     """
     #Override input parameters with data specified in cri_type:
     args = locals().copy() # get dict with keyword input arguments to function (used to overwrite non-None input arguments present in cri_type dict)
@@ -855,145 +946,172 @@ def spd_to_rg(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'Rg', wl = None, samplese
 
 
 #------------------------------------------------------------------------------
-def spd_to_cri(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'Rf', wl = None, sampleset = None, ref_type = None, cieobs = None, avg = None, scale = None, opt_scale_factor = False, cspace = None, catf = None, cri_specific_pars = None, rg_pars = None):
+def spd_to_cri(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'Rf', wl = None, \
+               sampleset = None, ref_type = None, cieobs = None, avg = None, \
+               scale = None, opt_scale_factor = False, cspace = None, catf = None,\
+               cri_specific_pars = None, rg_pars = None):
     """
     Calculates the color rendering fidelity index, Rf, of spectral data. 
     
     Args:
-        :SPD: ndarray with spectral data (can be multiple SPDs, first axis are 
-              the wavelengths)
-        :out:  'Rf' or str, optional
-            Specifies requested output (e.g. 'Rf,Rfi,cct,duv') 
-        :wl: None, optional
-            Wavelengths (or [start, end, spacing]) to interpolate the SPDs to. 
-            None: default to no interpolation
-        :cri_type: _CRI_TYPE_DEFAULT or str or dict, optional
-            -'str: specifies dict with default cri model parameters 
-                (for supported types, see luxpy.cri._CRI_DEFAULTS['cri_types'])
-            - dict: user defined model parameters 
-                (see e.g. luxpy.cri._CRI_DEFAULTS['cierf'] 
-                for required structure)
-            Note that any non-None input arguments to the function will 
-            override default values in cri_type dict.
-        :sampleset: None or ndarray or str, optional
-            Specifies set of spectral reflectance samples for cri calculations.
-                - None defaults to standard set for metric in cri_type.
-                - ndarray: user defined set of spectral reflectance functions 
-                            (.shape = (N+1, number of wavelengths); 
-                            first axis are wavelengths)
-        :ref_type: None or str or ndarray, optional
-            Specifies type of reference illuminant type.
-                - None: defaults to metric_specific reference illuminant in 
-                        accordance with cri_type.
-                - str: 'BB' : Blackbody radiatiors, 'DL': daylightphase, 
-                        'ciera': used in CIE CRI-13.3-1995, 
-                        'cierf': used in CIE 224-2017, 
-                        'iesrf': used in TM30-15, ...
-                - ndarray: user defined reference SPD
-        :cieobs: None or dict, optional
-            Specifies which CMF sets to use for the calculation of the sample 
-            XYZs and the CCT (for reference illuminant calculation).
-            None defaults to the one specified in :cri_type: dict.    
-                - key: 'xyz': str specifying CMF set for calculating xyz of 
-                              samples and white.
-                - key: 'cct': str specifying CMF set for calculating cct.
-        :cspace:  None or dict, optional
-            Specifies which color space to use.
-            None defaults to the one specified in  :cri_type: dict.  
-                - key: 'type': str specifying color space used to calculate 
-                                color differences in.
-                - key: 'xyzw': None or ndarray with white point of color space
-                     If None: use xyzw of test / reference (after chromatic 
-                              adaptation, if specified)
-                - other keys specify other possible parameters needed for color
-                  space calculation, 
-                    see lx.cri._CRI_DEFAULTS['iesrf']['cspace'] for details. 
-        :catf: None or dict, optional
-            Perform explicit CAT before converting to color space coordinates.
-                - None: don't apply a cat (other than perhaps the one built 
-                into the colorspace) 
-                - dict: with CAT parameters:
-                    - key: 'D': ndarray with degree of adaptation
-                    - key: 'mcat': ndarray with sensor matrix specification
-                    - key: 'xyzw': None or ndarray with white point
-                        None: use xyzw of reference otherwise transform both 
-                              test and ref to xyzw
-        :cri_specific_pars: None or dict, optional
-            Specifies other parameters specific to type of cri (e.g. maxC for 
-            CQS calculations)
-                - None: default to the one specified in  :cri_type: dict. 
-                - dict: user specified parameters. 
-                    For its use, see for example:
-                        luxpy.cri._CRI_DEFAULTS['mcri']['cri_specific_pars']
-        :rg_pars: dict, optional
-             Dict structure: 
-                {'nhbins' : None, 'start_hue' : 0, 'normalize_gamut' : True}
-                - key: 'nhbins': int, number of hue bins to slice gamut 
-                            (None use the one specified in :cri_type: dict).
-                - key: 'start_hue': float (°), hue at which to start slicing
-                - key: 'normalize_gamut': True or False: 
-                            normalize gamut or not before calculating a gamut 
-                            area index Rg. 
-                - key: 'normalized_chroma_ref': 100.0 or float, optional
-                            Controls the size (chroma/radius) 
-                            of the normalization circle/gamut.
-        :avg: None or fcn handle, optional
-            Averaging function (handle) for color differences, DEi 
-            (e.g. numpy.mean, .math.rms, .math.geomean)
-            None use the one specified in :cri_type: dict.
-        :scale: None or dict, optional
-            Specifies scaling of color differences to obtain CRI.
-                - None use the one specified in :cri_type: dict.
-                - dict: user specified dict with scaling parameters.
-                    - key: 'fcn': function handle to type of cri scale, 
-                            e.g. 
-                            * linear()_scale --> (100 - scale_factor*DEi), 
-                            * log_scale --> (cfr. Ohno's CQS), 
-                            * psy_scale (Smet et al.'s cri2012,See: LRT 2013)
-                    - key: 'cfactor': factors used in scaling function, 
-                          If None: 
-                              Scaling factor value(s) will be optimized to 
-                              minimize the rms between the Rf's of the 
-                              requested metric and some target metric specified
-                              in:
-                              - key: 'opt_cri_type':  str 
-                                  * str: one of the preset _CRI_DEFAULTS
-                                  * dict: user speciied 
-                                  (dict must contain all keys as normal)
-                                 Note that if key not in :scale: dict, 
-                                 then 'opt_cri_type' is added with default 
-                                 setting = 'ciera'.
-                             - key: 'opt_spd_set': ndarray with set of light 
-                                 source spds used to optimize cfactor. 
-                                 Note that if key not in :scale: dict, 
-                                 then default = 'F1-F12'.
-        :opt_scale: True or False, optional
-            True: optimize scaling-factor, else do nothing and use value of 
-            scaling-factor in :scale: dict.   
+        :SPD: 
+            | ndarray with spectral data 
+              (can be multiple SPDs, first axis are the wavelengths)
+        :out: 
+            | 'Rf' or str, optional
+            | Specifies requested output (e.g. 'Rf,cct,duv') 
+        :wl: 
+            | None, optional
+            | Wavelengths (or [start, end, spacing]) to interpolate the SPDs to. 
+            | None: default to no interpolation
+        :cri_type:
+            | _CRI_TYPE_DEFAULT or str or dict, optional
+            |   -'str: specifies dict with default cri model parameters 
+            |     (for supported types, see luxpy.cri._CRI_DEFAULTS['cri_types'])
+            |   - dict: user defined model parameters 
+            |     (see e.g. luxpy.cri._CRI_DEFAULTS['cierf'] 
+            |     for required structure)
+            | Note that any non-None input arguments to the function will 
+              override default values in cri_type dict.
+        :sampleset:
+            | None or ndarray or str, optional
+            | Specifies set of spectral reflectance samples for cri calculations.
+            |     - None defaults to standard set for metric in cri_type.
+            |     - ndarray: user defined set of spectral reflectance functions 
+            |       (.shape = (N+1, number of wavelengths); 
+            |        first axis are wavelengths)
+        :ref_type:
+            | None or str or ndarray, optional
+            | Specifies type of reference illuminant type.
+            |     - None: defaults to metric_specific reference illuminant in 
+            |             accordance with cri_type.
+            |     - str: 'BB' : Blackbody radiatiors, 
+            |            'DL': daylightphase, 
+            |            'ciera': used in CIE CRI-13.3-1995, 
+            |            'cierf': used in CIE 224-2017, 
+            |            'iesrf': used in TM30-15, ...
+            |     - ndarray: user defined reference SPD
+        :cieobs:
+            | None or dict, optional
+            | Specifies which CMF sets to use for the calculation of the sample 
+            | XYZs and the CCT (for reference illuminant calculation).
+            | None defaults to the one specified in :cri_type: dict.    
+            |     - key: 'xyz': str specifying CMF set for calculating xyz 
+            |                   of samples and white 
+            |     - key: 'cct': str specifying CMF set for calculating cct
+        :cspace:
+            | None or dict, optional
+            | Specifies which color space to use.
+            | None defaults to the one specified in  :cri_type: dict.  
+            |     - key: 'type': str specifying color space used to calculate 
+            |                    color differences in.
+            |     - key: 'xyzw': None or ndarray with white point of color space
+            |            If None: use xyzw of test / reference (after chromatic 
+            |                     adaptation, if specified)
+            |     - other keys specify other possible parameters needed for color
+            |       space calculation, 
+            |       see lx.cri._CRI_DEFAULTS['iesrf']['cspace'] for details. 
+        :catf:
+            | None or dict, optional
+            | Perform explicit CAT before converting to color space coordinates.
+            |    - None: don't apply a cat (other than perhaps the one built 
+            |            into the colorspace) 
+            |    - dict: with CAT parameters:
+            |        - key: 'D': ndarray with degree of adaptation
+            |        - key: 'mcat': ndarray with sensor matrix specification
+            |        - key: 'xyzw': None or ndarray with white point
+            |              None: use xyzw of reference otherwise transform both 
+            |                    test and ref to xyzw
+        :cri_specific_pars:
+            | None or dict, optional
+            | Specifies other parameters specific to type of cri 
+            | (e.g. maxC for CQS calculations)
+            |     - None: default to the one specified in  :cri_type: dict. 
+            |     - dict: user specified parameters. 
+            |         For its use, see for example:
+            |             luxpy.cri._CRI_DEFAULTS['mcri']['cri_specific_pars']
+        :rg_pars: 
+            | None or dict, optional
+            | Dict containing specifying parameters for slicing the gamut.
+            | Dict structure: 
+            |     {'nhbins' : None, 'start_hue' : 0, 'normalize_gamut' : True}
+            |    - key: 'nhbins': int, number of hue bins to slice gamut 
+            |                 (None use the one specified in :cri_type: dict).
+            |    - key: 'start_hue': float (°), hue at which to start slicing
+            |    - key: 'normalize_gamut': True or False: 
+            |                normalize gamut or not before calculating a gamut 
+            |                area index Rg. 
+            |    - key: 'normalized_chroma_ref': 100.0 or float, optional
+            |                Controls the size (chroma/radius) 
+            |                of the normalization circle/gamut.
+        :avg: 
+            | None or fcn handle, optional
+            | Averaging function (handle) for color differences, DEi 
+            | (e.g. numpy.mean, .math.rms, .math.geomean)
+            | None use the one specified in :cri_type: dict.
+        :scale:
+            | None or dict, optional
+            | Specifies scaling of color differences to obtain CRI.
+            |     - None use the one specified in :cri_type: dict.
+            |     - dict: user specified dict with scaling parameters.
+            |         - key: 'fcn': function handle to type of cri scale, 
+            |                 e.g. 
+            |                 * linear()_scale --> (100 - scale_factor*DEi), 
+            |                 * log_scale --> (cfr. Ohno's CQS), 
+            |                 * psy_scale (Smet et al.'s cri2012,See: LRT 2013)
+            |        - key: 'cfactor': factors used in scaling function, 
+            |              If None: 
+            |                     Scaling factor value(s) will be optimized to 
+            |                     minimize the rms between the Rf's of the 
+            |                     requested metric and the target metric specified
+            |                     in:
+            |
+            |                  - key: 'opt_cri_type':  str 
+            |                      * str: one of the preset _CRI_DEFAULTS
+            |                      * dict: user speciied 
+            |                      (dict must contain all keys as normal)
+            |                     Note that if key not in :scale: dict, 
+            |                     then 'opt_cri_type' is added with default 
+            |                     setting = 'ciera'.
+            |                 - key: 'opt_spd_set': ndarray with set of light 
+            |                     source spds used to optimize cfactor. 
+            |                     Note that if key not in :scale: dict, 
+            |                     then default = 'F1-F12'.
+        :opt_scale: 
+            | True or False, optional
+            | True: optimize scaling-factor, else do nothing and use value of 
+              scaling-factor in :scale: dict.   
     
     Returns:
-        :returns: float or ndarray with Rf for :out: 'Rf'
-            Other output is also possible by changing the :out: str value.
+        :returns: 
+            | float or ndarray with Rf for :out: 'Rf'
+            | Other output is also possible by changing the :out: str value.
             
     References:
-        ..[1] IES. (2015). 
-              IES-TM-30-15: Method for Evaluating Light Source Color Rendition. 
-              New York, NY: The Illuminating Engineering Society of North America.
-        ..[2] David, A., Fini, P. T., Houser, K. W., Ohno, Y., Royer, M. P., Smet, K. A. G., … Whitehead, L. (2015). 
-              Development of the IES method for evaluating the color rendition of light sources. 
-              Optics Express, 23(12), 15888–15906. 
-              https://doi.org/10.1364/OE.23.015888
-        ..[3] CIE224:2017. (2017). 
-              CIE 2017 Colour Fidelity Index for accurate scientific use. 
-              Vienna, Austria.
-        ..[4] Smet, K., Schanda, J., Whitehead, L., & Luo, R. (2013). 
-              CRI2012: A proposal for updating the CIE colour rendering index. 
-              Lighting Research and Technology, 45, 689–709. 
-              Retrieved from http://lrt.sagepub.com/content/45/6/689    
-        ..[5] CIE13.3-1995. (1995). 
-              Method of Measuring and Specifying Colour Rendering Properties 
-              of Light Sources (Vol. CIE13.3-19). 
-              Vienna, Austria: CIE.
+        1. `IES TM30, Method for Evaluating Light Source Color Rendition. 
+        New York, NY: The Illuminating Engineering Society of North America.
+        <https://www.ies.org/store/technical-memoranda/ies-method-for-evaluating-light-source-color-rendition/>`_
+        
+        2. `A. David, P. T. Fini, K. W. Houser, Y. Ohno, M. P. Royer, K. A. G. Smet, M. Wei, and L. Whitehead, 
+        “Development of the IES method for evaluating the color rendition of light sources,” 
+        Opt. Express, vol. 23, no. 12, pp. 15888–15906, 2015. 
+        <https://www.osapublishing.org/oe/abstract.cfm?uri=oe-23-12-15888>`_
+        
+        3. `CIE224:2017. CIE 2017 Colour Fidelity Index for accurate scientific use. 
+        Vienna, Austria: CIE. (2017).
+        <http://www.cie.co.at/index.php?i_ca_id=1027>`_
+        
+        4. `Smet, K., Schanda, J., Whitehead, L., & Luo, R. (2013). 
+        CRI2012: A proposal for updating the CIE colour rendering index. 
+        Lighting Research and Technology, 45, 689–709. 
+        <http://lrt.sagepub.com/content/45/6/689>`_
+        
+        5. `CIE13.3-1995. Method of Measuring and Specifying 
+        Colour Rendering Properties of Light Sources 
+        (Vol. CIE13.3-19). Vienna, Austria: CIE. (1995).
+        <http://www.cie.co.at/index.php/index.php?i_ca_id=303>`_
+                    
+
     """
     outlist = out.split(',')
     

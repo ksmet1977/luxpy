@@ -16,21 +16,25 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #########################################################################
 """
-###############################################################################
-# _COLORTF_DEFAULT_WHITE_POINT: ndarray with XYZ values of default white point 
+###################################################
+ Extension of basic colorimetry module
+###################################################
+ 
+Global internal variables:
+    
+ :_COLORTF_DEFAULT_WHITE_POINT: ndarray with XYZ values of default white point 
                                 (equi-energy white) for color transformation 
                                 if none is supplied.
 
-# colortf(): Calculates conversion between any two color spaces 
-             for which functions xyz_to_...() and ..._to_xyz() are defined.
-###############################################################################
+Functions:
 
-Created on Fri Jun 30 18:34:34 2017
+ :colortf(): Calculates conversion between any two color spaces ('cspace')
+              for which functions xyz_to_cspace() and cspace_to_xyz() are defined.
 
-@author: Kevin A.G. Smet (ksmet1977 at gmail.com)
+===============================================================================
 """
-
 from luxpy import *
+
 __all__ = ['_COLORTF_DEFAULT_WHITE_POINT','colortf']
 
 
@@ -42,21 +46,26 @@ def colortf(data, tf = _CSPACE, fwtf = {}, bwtf = {}, **kwargs):
     Wrapper function to perform various color transformations.
     
     Args:
-        :data: ndarray
-        :tf: _CSPACE or str specifying transform type, optional
-            E.g. tf = 'spd>xyz' or 'spd>Yuv' or 'Yuv>cct' 
-                or 'Yuv' or 'Yxy' or ...
-            If tf is for example 'Yuv', it is assumed to be a transformation 
-                of type: 'xyz>Yuv'
-        :fwtf: dict with parameters (keys) and values required 
-                by some color transformations for the forward transform: 
-                i.e. 'xyz>...'
-        :bwtf: dict with parameters (keys) and values required 
-                by some color transformations for the backward transform: 
-                i.e. '...>xyz'
+        :data: 
+            | ndarray
+        :tf: 
+            | _CSPACE or str specifying transform type, optional
+            |     E.g. tf = 'spd>xyz' or 'spd>Yuv' or 'Yuv>cct' 
+            |      or 'Yuv' or 'Yxy' or ...
+            |  If tf is for example 'Yuv', it is assumed to be a transformation 
+               of type: 'xyz>Yuv'
+        :fwtf: 
+            | dict with parameters (keys) and values required 
+              by some color transformations for the forward transform: 
+            | i.e. 'xyz>...'
+        :bwtf:
+            | dict with parameters (keys) and values required 
+              by some color transformations for the backward transform: 
+            | i.e. '...>xyz'
 
     Returns:
-        :returns: ndarray with data transformed to new color space
+        :returns: 
+            | ndarray with data transformed to new color space
         
     Note:
         For the forward transform ('xyz>...'), one can input the keyword 

@@ -18,43 +18,38 @@
 #########################################################################
 
 """
+Module for loading light source (spd) and reflectance (rfl) spectra databases
+=============================================================================
 
-########################################################################################
-# Module for loading light source spectra (spd) and spectral reflectance (rfl) databases
-########################################################################################
+ :_S_PATH: Path to light source spectra data.
 
-# _S_PATH: Path to light source spectra data.
+ :_R_PATH: Path to with spectral reflectance data
 
-# _R_PATH: Path to with spectral reflectance data
+ :_IESTM30: Database with spectral reflectances related to and light source 
+            spectra contained excel calculator of IES TM30-15 publication.
 
-# _IESTM30: Database with spectral reflectances related to and light source 
-    spectra contained excel calculator of [IES TM30-15]
-    (https://www.ies.org/store/technical-memoranda/ies-method-for-evaluating-light-source-color-rendition/) publication.
+ :_IESTM30_S: Database with only light source spectra contained in the 
+              IES TM30-15 excel calculator.
 
-# _IESTM30_S: Database with only light source spectra contained in the 
-            IES TM30-15 excel calculator.
-#
-# _CIE_ILLUMINANTS: Database with CIE illuminants: 
-            'E','D65','A','C',
-            'F1','F2','F3','F4','F5','F6','F7','F8','F9','F10','F11','F12'
+ :_CIE_ILLUMINANTS: | Database with CIE illuminants: 
+                    | * 'E', 'D65', 'A', 'C',
+                    | * 'F1', 'F2', 'F3', 'F4', 'F5', 'F6',
+                      'F7', 'F8', 'F9', 'F10', 'F11', 'F12'
 
-# _CRI_RFL: Database with spectral reflectance functions for various color rendition calculators
-           * [CIE 13.3-1995 (8, 14 munsell samples)](http://www.cie.co.at/index.php/index.php?i_ca_id=303), 
-           * [CIE 224:2015 (99 set)](http://www.cie.co.at/index.php?i_ca_id=1027)
-           * [CRI2012 (HL17 & HL1000 spetcrally uniform and 210 real samples)](http://journals.sagepub.com/doi/abs/10.1177/1477153513481375))
-           * [IES TM30 (99, 4880 sepctrally uniform samples)](https://www.ies.org/store/technical-memoranda/ies-method-for-evaluating-light-source-color-rendition/)
-           * [MCRI (10 familiar object set)](http://www.sciencedirect.com/science/article/pii/S0378778812000837)
-           * [CQS (v7.5 and v9.0 sets)](http://spie.org/Publications/Journal/10.1117/1.3360335)
+ :_CRI_RFL: | Database with spectral reflectance functions for various 
+              color rendition calculators:
+            | * `CIE 13.3-1995 (8, 14 munsell samples) <http://www.cie.co.at/index.php/index.php?i_ca_id=303>`_
+            | * `CIE 224:2015 (99 set) <http://www.cie.co.at/index.php?i_ca_id=1027>`_
+            | * `CRI2012 (HL17 & HL1000 spectrally uniform and 210 real samples) <http://journals.sagepub.com/doi/abs/10.1177/1477153513481375>`_
+            | * `IES TM30 (99, 4880 sepctrally uniform samples) <https://www.ies.org/store/technical-memoranda/ies-method-for-evaluating-light-source-color-rendition>`_
+            | * `MCRI (10 familiar object set) <http://www.sciencedirect.com/science/article/pii/S0378778812000837>`_
+            | * `CQS (v7.5 and v9.0 sets) <http://spie.org/Publications/Journal/10.1117/1.3360335>`_
 
-# _MUNSELL: Database (dict) with 1269 Munsell spectral reflectance functions 
+ :_MUNSELL: Database (dict) with 1269 Munsell spectral reflectance functions 
             and Value (V), Chroma (C), hue (h) and (ab) specifications.
-
-
-#------------------------------------------------------------------------------
-
-Created on Wed Jun 28 20:25:52 2017
-
-@author: Kevin A.G. Smet (ksmet1977 at gmail.com)
+            
+            
+.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 from luxpy import np, pd, _PKG_PATH, _SEP, _EPS, getdata 
 __all__ = ['_R_PATH','_S_PATH', '_IESTM30','_IESTM30_S','_CRI_RFL','_CIE_ILLUMINANTS','_MUNSELL']

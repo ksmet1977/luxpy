@@ -15,4 +15,15 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #########################################################################
-
+"""
+Module for IES TM30 color rendition output
+===============================================
+                       
+ :spd_to_ies_tm30_metrics(): Calculates IES TM30 metrics from spectral data
+ 
+ :plot_cri_graphics(): Plots graphical information on color rendition 
+                       properties based on spectral data input or dict with 
+                       pre-calculated measures.
+ 
+.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
+"""

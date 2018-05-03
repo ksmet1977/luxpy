@@ -1,0 +1,511 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>luxpy.color.cri.utils.graphics &mdash; LuxPy 1.3.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+
+  
+  <script src="../../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../../index.html" class="icon icon-home"> LuxPy
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../license.html">License: GPLv3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../required_packages.html">Imported (required) 3e party packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../luxpy_structure.html">Luxpy package structure</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">LuxPy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>luxpy.color.cri.utils.graphics</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for luxpy.color.cri.utils.graphics</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1">########################################################################</span>
+<span class="c1"># &lt;LUXPY: a Python package for lighting and color science.&gt;</span>
+<span class="c1"># Copyright (C) &lt;2017&gt;  &lt;Kevin A.G. Smet&gt; (ksmet1977 at gmail.com)</span>
+<span class="c1">#</span>
+<span class="c1"># This program is free software: you can redistribute it and/or modify</span>
+<span class="c1"># it under the terms of the GNU General Public License as published by</span>
+<span class="c1"># the Free Software Foundation, either version 3 of the License.</span>
+<span class="c1">#</span>
+<span class="c1"># This program is distributed in the hope that it will be useful,</span>
+<span class="c1"># but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="c1"># MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="c1"># GNU General Public License for more details.</span>
+<span class="c1">#</span>
+<span class="c1"># You should have received a copy of the GNU General Public License</span>
+<span class="c1"># along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<span class="c1">#########################################################################</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module for basic color rendition graphical output</span>
+<span class="sd">=================================================</span>
+
+<span class="sd"> :plot_hue_bins(): Makes basis plot for Color Vector Graphic (CVG).</span>
+
+<span class="sd"> :plot_ColorVectorGraphic(): Plots Color Vector Graphic (see IES TM30).</span>
+
+<span class="sd">.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">plt</span><span class="p">,</span> <span class="n">colorsys</span><span class="p">,</span><span class="n">math</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span> <span class="s1">&#39;plot_hue_bins&#39;</span><span class="p">,</span><span class="s1">&#39;plot_ColorVectorGraphic&#39;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="plot_hue_bins"><a class="viewcode-back" href="../../../../../color.html#luxpy.color.cri.plot_hue_bins">[docs]</a><span class="k">def</span> <span class="nf">plot_hue_bins</span><span class="p">(</span><span class="n">hbins</span> <span class="o">=</span> <span class="mi">16</span><span class="p">,</span> <span class="n">start_hue</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">scalef</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> \
+        <span class="n">plot_axis_labels</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">bin_labels</span> <span class="o">=</span> <span class="s1">&#39;#&#39;</span><span class="p">,</span> <span class="n">plot_edge_lines</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> \
+        <span class="n">plot_center_lines</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">plot_bin_colors</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> \
+        <span class="n">axtype</span> <span class="o">=</span> <span class="s1">&#39;polar&#39;</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">force_CVG_layout</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Makes basis plot for Color Vector Graphic (CVG).</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :hbins:</span>
+<span class="sd">            | 16 or ndarray with sorted hue bin centers (°), optional</span>
+<span class="sd">        :start_hue:</span>
+<span class="sd">            | 0.0, optional</span>
+<span class="sd">        :scalef:</span>
+<span class="sd">            | 100, optional</span>
+<span class="sd">            | Scale factor for graphic.</span>
+<span class="sd">        :plot_axis_labels:</span>
+<span class="sd">            | False, optional</span>
+<span class="sd">            | Turns axis ticks on/off (True/False).</span>
+<span class="sd">        :bin_labels:</span>
+<span class="sd">            | None or list[str] or &#39;#&#39;, optional</span>
+<span class="sd">            | Plots labels at the bin center hues.</span>
+<span class="sd">            |   - None: don&#39;t plot.</span>
+<span class="sd">            |   - list[str]: list with str for each bin. </span>
+<span class="sd">            |                (len(:bin_labels:) = :nhbins:)</span>
+<span class="sd">            |   - &#39;#&#39;: plots number.</span>
+<span class="sd">        :plot_edge_lines:</span>
+<span class="sd">            | True or False, optional</span>
+<span class="sd">            | Plot grey bin edge lines with &#39;--&#39;.</span>
+<span class="sd">        :plot_center_lines:</span>
+<span class="sd">            | False or True, optional</span>
+<span class="sd">            | Plot colored lines at &#39;center&#39; of hue bin.</span>
+<span class="sd">        :plot_bin_colors:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | Colorize hue bins.</span>
+<span class="sd">        :axtype: </span>
+<span class="sd">            | &#39;polar&#39; or &#39;cart&#39;, optional</span>
+<span class="sd">            | Make polar or Cartesian plot.</span>
+<span class="sd">        :ax: </span>
+<span class="sd">            | None or &#39;new&#39; or &#39;same&#39;, optional</span>
+<span class="sd">            |   - None or &#39;new&#39; creates new plot</span>
+<span class="sd">            |   - &#39;same&#39;: continue plot on same axes.</span>
+<span class="sd">            |   - axes handle: plot on specified axes.</span>
+<span class="sd">        :force_CVG_layout:</span>
+<span class="sd">            | False or True, optional</span>
+<span class="sd">            | True: Force plot of basis of CVG on first encounter.</span>
+<span class="sd">            </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :returns: </span>
+<span class="sd">            | gcf(), gca(), list with rgb colors for hue bins (for use in </span>
+<span class="sd">              other plotting fcns)</span>
+<span class="sd">        </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c1"># Setup hbincenters and hsv_hues:</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">hbins</span><span class="p">,</span><span class="nb">float</span><span class="p">)</span> <span class="o">|</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">hbins</span><span class="p">,</span><span class="nb">int</span><span class="p">):</span>
+        <span class="n">nhbins</span> <span class="o">=</span> <span class="n">hbins</span>
+        <span class="n">dhbins</span> <span class="o">=</span> <span class="mi">360</span><span class="o">/</span><span class="p">(</span><span class="n">nhbins</span><span class="p">)</span> <span class="c1"># hue bin width</span>
+        <span class="n">hbincenters</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">start_hue</span> <span class="o">+</span> <span class="n">dhbins</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="mi">360</span><span class="p">,</span> <span class="n">dhbins</span><span class="p">)</span>
+        <span class="n">hbincenters</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">hbincenters</span><span class="p">)</span>
+        
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">hbincenters</span> <span class="o">=</span> <span class="n">hbins</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">hbincenters</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">bin_labels</span><span class="p">,</span><span class="nb">list</span><span class="p">)</span> <span class="o">|</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">bin_labels</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="n">bin_labels</span> <span class="o">=</span> <span class="n">bin_labels</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="n">hbincenters</span> <span class="o">=</span> <span class="n">hbincenters</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="n">nhbins</span> <span class="o">=</span> <span class="n">hbincenters</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">hbincenters</span> <span class="o">=</span> <span class="n">hbincenters</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">180</span>
+    
+    <span class="c1"># Setup hbin labels:</span>
+    <span class="k">if</span> <span class="n">bin_labels</span> <span class="ow">is</span> <span class="s1">&#39;#&#39;</span><span class="p">:</span>
+        <span class="n">bin_labels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;#</span><span class="si">{:1.0f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nhbins</span><span class="p">)]</span>
+      
+    <span class="c1"># initializing the figure</span>
+    <span class="n">cmap</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">ax</span> <span class="o">==</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">ax</span> <span class="o">==</span> <span class="s1">&#39;new&#39;</span><span class="p">):</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">newfig</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">newfig</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">rect</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">]</span> <span class="c1"># setting the axis limits in [left, bottom, width, height]</span>
+
+    <span class="k">if</span> <span class="n">axtype</span> <span class="o">==</span> <span class="s1">&#39;polar&#39;</span><span class="p">:</span>
+        <span class="c1"># the polar axis:</span>
+        <span class="k">if</span> <span class="n">newfig</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_axes</span><span class="p">(</span><span class="n">rect</span><span class="p">,</span> <span class="n">polar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">frameon</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1">#cartesian axis:</span>
+        <span class="k">if</span> <span class="n">newfig</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_axes</span><span class="p">(</span><span class="n">rect</span><span class="p">)</span>
+
+    
+    <span class="k">if</span> <span class="p">(</span><span class="n">newfig</span> <span class="o">==</span> <span class="kc">True</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">force_CVG_layout</span> <span class="o">==</span> <span class="kc">True</span><span class="p">):</span>
+        
+        <span class="c1"># Calculate hue-bin boundaries:</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">hbincenters</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span><span class="n">scalef</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">hbincenters</span><span class="o">.</span><span class="n">shape</span><span class="p">)))</span>
+        <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">hbincenters</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span><span class="n">hbincenters</span><span class="p">))</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">hbincenters</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">dU</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">roll</span><span class="p">(</span><span class="n">hbincenters</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">dL</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">roll</span><span class="p">(</span><span class="n">hbincenters</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">dtU</span> <span class="o">=</span> <span class="n">dU</span><span class="o">-</span><span class="n">hbincenters</span>
+        <span class="n">dtL</span> <span class="o">=</span> <span class="n">hbincenters</span> <span class="o">-</span><span class="n">dL</span>
+        <span class="n">dtU</span><span class="p">[</span><span class="n">dtU</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">dtU</span><span class="p">[</span><span class="n">dtU</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+        <span class="n">dtL</span><span class="p">[</span><span class="n">dtL</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">dtL</span><span class="p">[</span><span class="n">dtL</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+        <span class="n">dL</span> <span class="o">=</span> <span class="n">hbincenters</span> <span class="o">-</span> <span class="n">dtL</span><span class="o">/</span><span class="mi">2</span>
+        <span class="n">dU</span> <span class="o">=</span> <span class="n">hbincenters</span> <span class="o">+</span> <span class="n">dtU</span><span class="o">/</span><span class="mi">2</span>
+        <span class="n">dt</span> <span class="o">=</span> <span class="p">(</span><span class="n">dU</span><span class="o">-</span><span class="n">dL</span><span class="p">)</span>
+        <span class="n">dM</span> <span class="o">=</span> <span class="n">dL</span> <span class="o">+</span> <span class="n">dt</span><span class="o">/</span><span class="mi">2</span>
+        
+        <span class="c1"># Setup color for plotting hue bins:</span>
+        <span class="n">hsv_hues</span> <span class="o">=</span> <span class="n">hbincenters</span> <span class="o">-</span> <span class="mi">30</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">180</span>
+        <span class="n">hsv_hues</span> <span class="o">=</span> <span class="n">hsv_hues</span><span class="o">/</span><span class="n">hsv_hues</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+
+        <span class="n">edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">hbincenters</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span><span class="n">dL</span><span class="p">))</span> <span class="c1"># setup hue bin edges array</span>
+        
+        <span class="k">if</span> <span class="n">axtype</span> <span class="o">==</span> <span class="s1">&#39;cart&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">plot_center_lines</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">hx</span> <span class="o">=</span> <span class="n">r</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+                <span class="n">hy</span> <span class="o">=</span> <span class="n">r</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">bin_labels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">hxv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">hbincenters</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span><span class="mf">1.3</span><span class="o">*</span><span class="n">scalef</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">hbincenters</span><span class="p">)))</span>
+                <span class="n">hyv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">hbincenters</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span><span class="mf">1.3</span><span class="o">*</span><span class="n">scalef</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">hbincenters</span><span class="p">)))</span>
+            <span class="k">if</span> <span class="n">plot_edge_lines</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">hxe</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">hbincenters</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span><span class="mf">1.2</span><span class="o">*</span><span class="n">scalef</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">dL</span><span class="p">)))</span>
+                <span class="n">hye</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">hbincenters</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span><span class="mf">1.2</span><span class="o">*</span><span class="n">scalef</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">dL</span><span class="p">)))</span>
+            
+        <span class="c1"># Plot hue-bins:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nhbins</span><span class="p">):</span>
+            
+            <span class="c1"># Create color from hue angle:</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">colorsys</span><span class="o">.</span><span class="n">hsv_to_rgb</span><span class="p">(</span><span class="n">hsv_hues</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="mf">0.84</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">)))</span>
+            <span class="c1">#c = [abs(c[0]),abs(c[1]),abs(c[2])] # ensure all positive elements</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">cmap</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">cmap</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+   
+            
+            <span class="k">if</span> <span class="n">axtype</span> <span class="o">==</span> <span class="s1">&#39;polar&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">plot_edge_lines</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">edges</span><span class="p">[:,</span><span class="n">i</span><span class="p">],</span><span class="n">r</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="mf">1.2</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;grey&#39;</span><span class="p">,</span><span class="n">marker</span> <span class="o">=</span> <span class="s1">&#39;None&#39;</span><span class="p">,</span><span class="n">linestyle</span> <span class="o">=</span> <span class="s1">&#39;:&#39;</span><span class="p">,</span><span class="n">linewidth</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">markersize</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">plot_center_lines</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">mod</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">theta</span><span class="p">[:,</span><span class="n">i</span><span class="p">],</span><span class="n">r</span><span class="p">[:,</span><span class="n">i</span><span class="p">],</span><span class="n">color</span> <span class="o">=</span> <span class="n">c</span><span class="p">,</span><span class="n">marker</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span><span class="n">linestyle</span> <span class="o">=</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span><span class="n">linewidth</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">theta</span><span class="p">[:,</span><span class="n">i</span><span class="p">],</span><span class="n">r</span><span class="p">[:,</span><span class="n">i</span><span class="p">],</span><span class="n">color</span> <span class="o">=</span> <span class="n">c</span><span class="p">,</span><span class="n">marker</span> <span class="o">=</span> <span class="s1">&#39;o&#39;</span><span class="p">,</span><span class="n">linestyle</span> <span class="o">=</span> <span class="s1">&#39;-&#39;</span><span class="p">,</span><span class="n">linewidth</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span><span class="n">markersize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">plot_bin_colors</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                    <span class="n">bar</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">dM</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">i</span><span class="p">],</span> <span class="n">width</span> <span class="o">=</span> <span class="n">dt</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">color</span> <span class="o">=</span> <span class="n">c</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.15</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">bin_labels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">hbincenters</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="mf">1.3</span><span class="o">*</span><span class="n">scalef</span><span class="p">,</span><span class="n">bin_labels</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">fontsize</span> <span class="o">=</span> <span class="mi">12</span><span class="p">,</span> <span class="n">horizontalalignment</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span><span class="n">verticalalignment</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span><span class="o">*</span><span class="mf">0.3</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">plot_axis_labels</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">([])</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">([])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">plot_edge_lines</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hxe</span><span class="p">[:,</span><span class="n">i</span><span class="p">],</span><span class="n">hye</span><span class="p">[:,</span><span class="n">i</span><span class="p">],</span><span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;grey&#39;</span><span class="p">,</span><span class="n">marker</span> <span class="o">=</span> <span class="s1">&#39;None&#39;</span><span class="p">,</span><span class="n">linestyle</span> <span class="o">=</span> <span class="s1">&#39;:&#39;</span><span class="p">,</span><span class="n">linewidth</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">markersize</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">plot_center_lines</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">mod</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hx</span><span class="p">[:,</span><span class="n">i</span><span class="p">],</span><span class="n">hy</span><span class="p">[:,</span><span class="n">i</span><span class="p">],</span><span class="n">color</span> <span class="o">=</span> <span class="n">c</span><span class="p">,</span><span class="n">marker</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span><span class="n">linestyle</span> <span class="o">=</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span><span class="n">linewidth</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hx</span><span class="p">[:,</span><span class="n">i</span><span class="p">],</span><span class="n">hy</span><span class="p">[:,</span><span class="n">i</span><span class="p">],</span><span class="n">color</span> <span class="o">=</span> <span class="n">c</span><span class="p">,</span><span class="n">marker</span> <span class="o">=</span> <span class="s1">&#39;o&#39;</span><span class="p">,</span><span class="n">linestyle</span> <span class="o">=</span> <span class="s1">&#39;-&#39;</span><span class="p">,</span><span class="n">linewidth</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span><span class="n">markersize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">bin_labels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">hxv</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">i</span><span class="p">],</span><span class="n">hyv</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">i</span><span class="p">],</span><span class="n">bin_labels</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">fontsize</span> <span class="o">=</span> <span class="mi">12</span><span class="p">,</span><span class="n">horizontalalignment</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span><span class="n">verticalalignment</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span><span class="o">*</span><span class="mf">0.3</span><span class="p">)</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="mf">1.1</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">hxv</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span><span class="n">hxv</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span><span class="n">hyv</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span><span class="n">hyv</span><span class="o">.</span><span class="n">max</span><span class="p">()]))</span>
+                <span class="k">if</span> <span class="n">plot_axis_labels</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">([])</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">([])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;a&#39;&quot;</span><span class="p">)</span>
+                    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;b&#39;&quot;</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span><span class="p">,</span><span class="n">marker</span> <span class="o">=</span> <span class="s1">&#39;o&#39;</span><span class="p">,</span><span class="n">linestyle</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">(),</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">(),</span> <span class="n">cmap</span></div>
+
+<div class="viewcode-block" id="plot_ColorVectorGraphic"><a class="viewcode-back" href="../../../../../color.html#luxpy.color.cri.plot_ColorVectorGraphic">[docs]</a><span class="k">def</span> <span class="nf">plot_ColorVectorGraphic</span><span class="p">(</span><span class="n">jabt</span><span class="p">,</span> <span class="n">jabr</span><span class="p">,</span> <span class="n">hbins</span> <span class="o">=</span> <span class="mi">16</span><span class="p">,</span> <span class="n">start_hue</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">scalef</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> \
+                            <span class="n">plot_axis_labels</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">bin_labels</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> \
+                            <span class="n">plot_edge_lines</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">plot_center_lines</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> \
+                            <span class="n">plot_bin_colors</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">axtype</span> <span class="o">=</span> <span class="s1">&#39;polar&#39;</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>\
+                            <span class="n">force_CVG_layout</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot Color Vector Graphic (CVG).</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :jabt: </span>
+<span class="sd">            | ndarray with jab data under test SPD</span>
+<span class="sd">        :jabr: </span>
+<span class="sd">            | ndarray with jab data under reference SPD</span>
+<span class="sd">        :hbins: </span>
+<span class="sd">            | 16 or ndarray with sorted hue bin centers (°), optional</span>
+<span class="sd">        :start_hue:</span>
+<span class="sd">            | 0.0, optional</span>
+<span class="sd">        :scalef: </span>
+<span class="sd">            | 100, optional</span>
+<span class="sd">            | Scale factor for graphic.</span>
+<span class="sd">        :plot_axis_labels:</span>
+<span class="sd">            | False, optional</span>
+<span class="sd">            | Turns axis ticks on/off (True/False).</span>
+<span class="sd">        :bin_labels:</span>
+<span class="sd">            | None or list[str] or &#39;#&#39;, optional</span>
+<span class="sd">            | Plots labels at the bin center hues.</span>
+<span class="sd">            |   - None: don&#39;t plot.</span>
+<span class="sd">            |   - list[str]: list with str for each bin. </span>
+<span class="sd">            |                (len(:bin_labels:) = :nhbins:)</span>
+<span class="sd">            |   - &#39;#&#39;: plots number.</span>
+<span class="sd">        :plot_edge_lines:</span>
+<span class="sd">            | True or False, optional</span>
+<span class="sd">            | Plot grey bin edge lines with &#39;--&#39;.</span>
+<span class="sd">        :plot_center_lines:</span>
+<span class="sd">            | False or True, optional</span>
+<span class="sd">            | Plot colored lines at &#39;center&#39; of hue bin.</span>
+<span class="sd">        :plot_bin_colors:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | Colorize hue-bins.</span>
+<span class="sd">        :axtype:</span>
+<span class="sd">            | &#39;polar&#39; or &#39;cart&#39;, optional</span>
+<span class="sd">            | Make polar or Cartesian plot.</span>
+<span class="sd">        :ax: </span>
+<span class="sd">            | None or &#39;new&#39; or &#39;same&#39;, optional</span>
+<span class="sd">            |   - None or &#39;new&#39; creates new plot</span>
+<span class="sd">            |   - &#39;same&#39;: continue plot on same axes.</span>
+<span class="sd">            |   - axes handle: plot on specified axes.</span>
+<span class="sd">        :force_CVG_layout:</span>
+<span class="sd">            | False or True, optional</span>
+<span class="sd">            | True: Force plot of basis of CVG.</span>
+<span class="sd">            </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :returns: </span>
+<span class="sd">            | gcf(), gca(), list with rgb colors for hue bins (for use in </span>
+<span class="sd">              other plotting fcns)</span>
+<span class="sd">        </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c1"># Plot basis of CVG:</span>
+    <span class="n">figCVG</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">cmap</span> <span class="o">=</span> <span class="n">plot_hue_bins</span><span class="p">(</span><span class="n">hbins</span> <span class="o">=</span> <span class="n">hbins</span><span class="p">,</span> <span class="n">start_hue</span> <span class="o">=</span> <span class="n">start_hue</span><span class="p">,</span> <span class="n">scalef</span> <span class="o">=</span> <span class="n">scalef</span><span class="p">,</span> <span class="n">axtype</span> <span class="o">=</span> <span class="n">axtype</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">ax</span><span class="p">,</span> <span class="n">plot_center_lines</span> <span class="o">=</span> <span class="n">plot_center_lines</span><span class="p">,</span> <span class="n">plot_edge_lines</span> <span class="o">=</span> <span class="n">plot_edge_lines</span><span class="p">,</span> <span class="n">force_CVG_layout</span> <span class="o">=</span> <span class="n">force_CVG_layout</span><span class="p">,</span> <span class="n">bin_labels</span> <span class="o">=</span> <span class="n">bin_labels</span><span class="p">,</span> <span class="n">plot_bin_colors</span> <span class="o">=</span> <span class="n">plot_bin_colors</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">cmap</span> <span class="o">==</span> <span class="p">[]:</span>
+        <span class="n">cmap</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;k&#39;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">hbins</span><span class="p">)]</span>
+        
+    <span class="k">if</span> <span class="n">axtype</span> <span class="o">==</span> <span class="s1">&#39;polar&#39;</span><span class="p">:</span>
+       
+        <span class="n">jabr_theta</span><span class="p">,</span> <span class="n">jabr_r</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">cart2pol</span><span class="p">(</span><span class="n">jabr</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">],</span> <span class="n">htype</span> <span class="o">=</span> <span class="s1">&#39;rad&#39;</span><span class="p">)</span> 
+        <span class="n">jabt_theta</span><span class="p">,</span> <span class="n">jabt_r</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">cart2pol</span><span class="p">(</span><span class="n">jabt</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">],</span> <span class="n">htype</span> <span class="o">=</span> <span class="s1">&#39;rad&#39;</span><span class="p">)</span> 
+        
+        <span class="c1">#ax.quiver(jabrtheta,jabr_r,jabt[...,1]-jabr[...,1], jabt[...,2]-jabr_binned[...,2], color = &#39;k&#39;, headlength=3, angles=&#39;uv&#39;, scale_units=&#39;y&#39;, scale = 2,linewidth = 0.5)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">jabt_theta</span><span class="p">,</span><span class="n">jabt_r</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;grey&#39;</span><span class="p">,</span><span class="n">linewidth</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">hbins</span><span class="p">):</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">cmap</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">quiver</span><span class="p">(</span><span class="n">jabr_theta</span><span class="p">[</span><span class="n">j</span><span class="p">],</span><span class="n">jabr_r</span><span class="p">[</span><span class="n">j</span><span class="p">],</span><span class="n">jabt</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">jabr</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">jabt</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span><span class="o">-</span><span class="n">jabr</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="n">edgecolor</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span><span class="p">,</span><span class="n">facecolor</span> <span class="o">=</span> <span class="n">c</span><span class="p">,</span> <span class="n">headlength</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">angles</span><span class="o">=</span><span class="s1">&#39;uv&#39;</span><span class="p">,</span> <span class="n">scale_units</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span><span class="n">linewidth</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1">#ax.quiver(jabr[...,1],jabr[...,2],jabt[...,1]-jabr[...,1], jabt[...,2]-jabr[...,2], color = &#39;k&#39;, headlength=3, angles=&#39;uv&#39;, scale_units=&#39;xy&#39;, scale = 1,linewidth = 0.5)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">jabt</span><span class="p">,</span><span class="n">jabt</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;grey&#39;</span><span class="p">,</span><span class="n">linewidth</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">hbins</span><span class="p">):</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">quiver</span><span class="p">(</span><span class="n">jabr</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="n">jabr</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="n">jabt</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">jabr</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">jabt</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span><span class="o">-</span><span class="n">jabr</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="n">color</span> <span class="o">=</span> <span class="n">cmap</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">headlength</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">angles</span><span class="o">=</span><span class="s1">&#39;uv&#39;</span><span class="p">,</span> <span class="n">scale_units</span><span class="o">=</span><span class="s1">&#39;xy&#39;</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span><span class="n">linewidth</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">axtype</span> <span class="o">==</span> <span class="s1">&#39;cart&#39;</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;a&#39;&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;b&#39;&quot;</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">(),</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">(),</span> <span class="n">cmap</span></div>
+
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Kevin A.G. Smet.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../../',
+            VERSION:'1.3.0',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          
+          SphinxRtdTheme.Navigation.enableSticky();
+          
+      });
+  </script> 
+
+</body>
+</html>

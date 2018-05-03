@@ -15,8 +15,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #########################################################################
-from .basics import *
-from .optimizers import minimizebnd
 
-# Setup __all__:
-__all__ = [x for x in dir() if x[:2]!='__']
+#from .basics import *
+#__all__ = basics.basics.__all__#__all__[:-1]
+#
+#from .optimizers import minimizebnd
+#__all__ += ['minimizebnd','__all__']
+
+

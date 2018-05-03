@@ -16,56 +16,49 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #########################################################################
 """
-###############################################################################
-# Module with helper functions 
-###############################################################################
-#
-# np2d(): Make a tuple, list or array at least a 2D numpy array.
-#
-# np2dT(): Make a tuple, list or array at least a 2D numpy array and tranpose.
-#
-# np3d(): Make a tuple, list or array at least a 3D numpy array.
-#
-# np3dT(): Make a tuple, list or array at least a 3D numpy array 
-#          and tranpose (swap) first two axes.
-#
-# normalize_3x3_matrix(): Normalize 3x3 matrix M to xyz0 -- > [1,1,1]
-#
-# put_args_in_db():  Takes the **args with not-None input values of a function 
-#                    and overwrites the values of the corresponding keys 
-#                    in dict db.
-#                    See put_args_in_db? for more info.
-#
-# vec_to_dict(): Convert dict to vec and vice versa.
-#
-# getdata(): Get data from csv-file or convert between pandas dataframe
-#            and numpy 2d-array.
-#
-# dictkv(): Easy input of of keys and values into dict 
-#           (both should be iterable lists).
-#
-# OD(): Provides a nice way to create OrderedDict "literals".
-#
-# meshblock(): Create a meshed block.
-#              (Similar to meshgrid, but axis = 0 is retained) 
-#               To enable fast blockwise calculation.
-#
-# aplit(): Split numpy.array data on (default = last) axis.
-#
-# ajoin(): Join tuple of numpy.array data on (default = last) axis.
-#
-# broadcast_shape(): Broadcasts shapes of data to a target_shape. 
-#                    Useful for block/vector calculations when numpy fails 
-#                    to broadcast correctly.
-#
-# todim(): Expand x to dimensions that are broadcast-compatable 
-#          with shape of another array.
-#
-#------------------------------------------------------------------------------
+Module with helper functions 
+============================
 
-Created on Sun Jun 18 21:12:30 2017
+ :np2d(): Make a tuple, list or array at least a 2D numpy array.
 
-@author: Kevin A.G. Smet (ksmet1977 at gmail.com)
+ :np2dT(): Make a tuple, list or array at least a 2D numpy array and tranpose.
+
+ :np3d(): Make a tuple, list or array at least a 3D numpy array.
+
+ :np3dT(): Make a tuple, list or array at least a 3D numpy array 
+           and tranpose (swap) first two axes.
+
+ :put_args_in_db():  | Takes the args with not-None input values of a function 
+                       and overwrites the values of the corresponding keys 
+                       in dict db.
+                     | See put_args_in_db? for more info.
+
+ :vec_to_dict(): Convert dict to vec and vice versa.
+
+  getdata(): Get data from csv-file or convert between pandas dataframe
+             and numpy 2d-array.
+
+ :dictkv(): Easy input of of keys and values into dict 
+            (both should be iterable lists).
+
+ :OD(): Provides a nice way to create OrderedDict "literals".
+
+ :meshblock(): | Create a meshed block.
+               | (Similar to meshgrid, but axis = 0 is retained) 
+               | To enable fast blockwise calculation.
+
+ :aplit(): Split ndarray data on (default = last) axis.
+
+ :ajoin(): Join tuple of ndarray data on (default = last) axis.
+
+ :broadcast_shape(): | Broadcasts shapes of data to a target_shape. 
+                     | Useful for block/vector calculations when numpy fails 
+                       to broadcast correctly.
+
+ :todim(): Expand x to dimensions that are broadcast-compatable 
+           with shape of another array.
+
+===============================================================================
 """
 
 from luxpy import np, pd, odict, warnings
@@ -79,10 +72,12 @@ def np2d(data):
     Make a tuple, list or numpy array at least a 2D numpy array.
     
     Args:
-        :data: tuple, list, numpy.ndarray
+        :data: 
+            | tuple, list, ndarray
         
     Returns:
-        :returns: numpy.ndarray with .ndim >= 2
+        :returns:
+            | ndarray with .ndim >= 2
     """
     if isinstance(data, np.ndarray):# assume already atleast_2d when nd.array (user has to ensure input is an array)
         if (len(data.shape)>=2):
@@ -98,10 +93,12 @@ def np2dT(data):
     Make a tuple, list or numpy array at least a 2D numpy array and transpose.
     
     Args:
-        :data: tuple, list, numpy.ndarray
+        :data: 
+            | tuple, list, ndarray
         
     Returns:
-        :returns: numpy.ndarray with .ndim >= 2 and with transposed axes.
+        :returns: 
+            | ndarray with .ndim >= 2 and with transposed axes.
     """
     if isinstance(data, np.ndarray):# assume already atleast_2d when nd.array (user has to ensure input is an array)
         if (len(data.shape)>=2):
@@ -116,10 +113,12 @@ def np3d(data):
     Make a tuple, list or numpy array at least a 3d numpy array.
     
     Args:
-        :data: tuple, list, numpy.ndarray
+        :data: 
+            | tuple, list, ndarray
         
     Returns:
-        :returns: numpy.ndarray with .ndim >= 3
+        :returns: 
+            | ndarray with .ndim >= 3
     """
     if isinstance(data, np.ndarray):# assume already atleast_3d when nd.array (user has to ensure input is an array)
         if (len(data.shape)>=3):
@@ -135,11 +134,13 @@ def np3dT(data): # keep last axis the same
     first 2 axes.
     
     Args:
-        :data: tuple, list, numpy.ndarray
+        :data: 
+            | tuple, list, ndarray
         
     Returns:
-        :returns: numpy.ndarray with .ndim >= 3 and with first two axes 
-        transposed (axis=3 is kept the same).
+        :returns: 
+            | ndarray with .ndim >= 3 and with first two axes 
+              transposed (axis=3 is kept the same).
     """
     if isinstance(data,np.ndarray):# assume already atleast_3d when nd.array (user has to ensure input is an array)
         if (len(data.shape)>=3):
@@ -150,59 +151,44 @@ def np3dT(data): # keep last axis the same
         return np.expand_dims(np.atleast_2d(np.aray(data)),axis=0).transpose((1,0,2))
 
 
-#------------------------------------------------------------------------------
-def normalize_3x3_matrix(M, xyz0 = np.array([[1.0,1.0,1.0]])):
-    """
-    Normalize 3x3 matrix M to xyz0 -- > [1,1,1]
-    If M.shape == (1,9): M is reshaped to (3,3)
-    
-    Args:
-        :M: numpy.array((3,3) or numpy.array((1,9))
-        :xyz0: np.2darray, optional 
-        
-    Returns:
-        :returns: normalized matrix such that M*xyz0 = [1,1,1]
-    """
-    M = np2d(M)
-    if M.shape[-1]==9:
-        M = M.reshape(3,3)
-    return np.dot(np.diagflat(1/(np.dot(M,xyz0.T))),M)
 
 #------------------------------------------------------------------------------
 def put_args_in_db(db, args):
     """
-    Takes the **args with not-None input values of a function and overwrites 
+    Takes the args with not-None input values of a function and overwrites 
     the values of the corresponding keys in dict db.
-    (**args are collected with the built-in function locals(), 
-    See example usage below)
+    | (args are collected with the built-in function locals(), 
+    | See example usage below)
     
     Args:
-        :db: dict
+        :db: 
+            | dict
     
     Returns:
-        :returns: dict with the values of specific keys overwritten by the 
-                  not-None values of corresponding **args of a function fcn.
+        :returns: 
+            | dict with the values of specific keys overwritten by the 
+            |      not-None values of corresponding args of a function fcn.
     
     Example usage:
-        _db = {'c' : 'c1', 'd' : 10, 'e' : {'e1':'hello', 'e2':1000}}
-
-        def test_put_args_in_db(a, b, db = None, c = None,d = None,e = None):
-    
-            args = locals().copy()  # get dict with keyword input arguments to 
-                                    # function 'test_put_args_in_db'
-            
-            db = put_args_in_db(db,args) # overwrite non-None args in db copy.
-            
-            if db is not None: # unpack db for further use
-                c,d,e = [db[x] for x in sorted(db.keys())]
-            
-            print(' a : {}'.format(a))
-            print(' b : {}'.format(b))
-            print(' db: {}'.format(db))
-            print(' c : {}'.format(c))
-            print(' d : {}'.format(d))
-            print(' e : {}'.format(e))
-            print('_db: {}'.format(_db))
+        | _db = {'c' : 'c1', 'd' : 10, 'e' : {'e1':'hello', 'e2':1000}}
+        |
+        | def test_put_args_in_db(a, b, db = None, c = None,d = None,e = None):
+        | 
+        |    args = locals().copy()  # get dict with keyword input arguments to 
+        |                             # function 'test_put_args_in_db'
+        |     
+        |     db = put_args_in_db(db,args) # overwrite non-None args in db copy.
+        |     
+        |    if db is not None: # unpack db for further use
+        |        c,d,e = [db[x] for x in sorted(db.keys())]
+        |     
+        |     print(' a : {}'.format(a))
+        |     print(' b : {}'.format(b))
+        |     print(' db: {}'.format(db))
+        |     print(' c : {}'.format(c))
+        |     print(' d : {}'.format(d))
+        |     print(' e : {}'.format(e))
+        |     print('_db: {}'.format(_db))
  
     """
     # overwrite not-'None' input arguments in db:
@@ -218,36 +204,41 @@ def put_args_in_db(db, args):
         return db
 
 #------------------------------------------------------------------------------   
-def vec_to_dict(vec_= None, dict_ = {}, vsize = None, keys = None):
+def vec_to_dict(vec= None, dic = {}, vsize = None, keys = None):
     """
     Convert dict to vec and vice versa.
     
     Args:
-        :vec_: list or vector array, optional
-        :dict_: dict, optional
-        :vsize: list or vector array with size of values of dict, optional
-        :keys: list or vector array with keys in dict (must be provided).
+        :vec: 
+            | list or vector array, optional
+        :dic: 
+            | dict, optional
+        :vsize:
+            | list or vector array with size of values of dict, optional
+        :keys:
+            | list or vector array with keys in dict (must be provided).
         
     Returns:
-        :returns: x, vsize
-            x is an array, if vec_ is None
-            x is a dict, if vec_ is not None
+        :returns:
+            | x, vsize
+            |   x is an array, if vec is None
+            |   x is a dict, if vec is not None
     """
-    if vec_ is not None:
-        # Put values in vec_ in dict_:
+    if vec is not None:
+        # Put values in vec in dic:
         n = 0 # keeps track of length already read from x
         for i,v in enumerate(keys):
-            dict_[v] = vec_[n + np.arange(vsize[i])]
-            n += dict_[v].shape[0] 
-        return dict_, vsize
+            dic[v] = vec[n + np.arange(vsize[i])]
+            n += dic[v].shape[0] 
+        return dic, vsize
     else:
-        # Put values of keys in dict_ in vec_:
-        vec_ = []
+        # Put values of keys in dic in vec:
+        vec = []
         vsize = []
         for i,v in enumerate(keys):
-            vec_ = np.hstack((vec_, dict_[v]))
-            vsize.append(dict_[v].shape[0])
-        return vec_, vsize
+            vec = np.hstack((vec, dic[v]))
+            vsize.append(dic[v].shape[0])
+        return vec, vsize
 
 #--------------------------------------------------------------------------------------------------
 def getdata(data, kind = 'np', columns = None, header = None, sep = ',', datatype = 'S', verbosity = True):
@@ -257,29 +248,35 @@ def getdata(data, kind = 'np', columns = None, header = None, sep = ',', datatyp
     
     Args:
         :data: 
-            - str with path to file containing data
-            - numpy.ndarray with data
-            - pandas.dataframe with data
-        :kind: str ['np','df'], optional 
-            Determines type(:returns:), np: numpy.ndarray, df: pandas.dataframe
-        :columns: None or list[str] of column names for dataframe, optional
-        :header: None, optional
-            - None: no header in file
-            - 'infer': infer headers from file
-        :sep: ',' or '\t' or other char, optional
-            Column separator in data file
-        :datatype': 'S',optional 
-            Specifies a type of data. 
-            Is used when creating column headers (:column: is None).
-            -'S': light source spectrum
-            -'R': reflectance spectrum
-            or other. 
-            
-        :verbosity: True, False, optional
-            Print warning when inferring headers from file.
+            | - str with path to file containing data
+            | - ndarray with data
+            | - pandas.dataframe with data
+        :kind: 
+            | str ['np','df'], optional 
+            | Determines type(:returns:), np: ndarray, df: pandas.dataframe
+        :columns:
+            | None or list[str] of column names for dataframe, optional
+        :header:
+            | None, optional
+            |   - None: no header in file
+            |   - 'infer': infer headers from file
+        :sep:
+            | ',' or '\t' or other char, optional
+            | Column separator in data file
+        :datatype':
+            | 'S',optional 
+            | Specifies a type of data. 
+            | Is used when creating column headers (:column: is None).
+            |   -'S': light source spectrum
+            |   -'R': reflectance spectrum
+            |   or other.      
+        :verbosity:
+            | True, False, optional
+            | Print warning when inferring headers from file.
     
     Returns:
-        :returns: data as numpy.ndarray or pandas.dataframe
+        :returns:
+            | data as ndarray or pandas.dataframe
       
     """
     if isinstance(data,str):
@@ -311,12 +308,16 @@ def dictkv(keys=None,values=None, ordered = True):
     Easy input of of keys and values into dict.
     
     Args:
-        :keys: iterable list[str,...] of keys
-        :values: iterable list[...,..., ] of values
-        :ordered: True, False, optional
-            True: creates an ordered dict using 'collections.OrderedDict()'
+        :keys: 
+            | iterable list[str,...] of keys
+        :values:
+            | iterable list[...,..., ] of values
+        :ordered:
+            | True, False, optional
+            | True: creates an ordered dict using 'collections.OrderedDict()'
     Returns:
-        :returns: (ordered) dict
+        :returns:
+            | (ordered) dict
     """
     if ordered is True:
         return odict(zip(keys,values))
@@ -340,17 +341,20 @@ def meshblock(x,y):
     """
     Create a meshed block from x and y.
     
-    (Similar to meshgrid, but axis = 0 is retained).
-    To enable fast blockwise calculation.
+    | (Similar to meshgrid, but axis = 0 is retained).
+    | To enable fast blockwise calculation.
     
     Args: 
-        :x: numpy.ndarray with ndim == 2
-        :y: numpy.ndarray with ndim == 2
+        :x: 
+            | ndarray with ndim == 2
+        :y: 
+            | ndarray with ndim == 2
         
     Returns:
-        :X,Y: 2 numpy.ndarrays with ndim == 3 
-            X.shape = (x.shape[0],y.shape[0],x.shape[1])
-            Y.shape = (x.shape[0],y.shape[0],y.shape[1])
+        :X,Y: 
+            | 2 ndarrays with ndim == 3 
+            |   X.shape = (x.shape[0],y.shape[0],x.shape[1])
+            |   Y.shape = (x.shape[0],y.shape[0],y.shape[1])
     """
     Y = np.transpose(np.repeat(y,x.shape[0],axis=0).reshape((y.shape[0],x.shape[0],y.shape[1])),axes = [1,0,2])
     X = np.repeat(x,y.shape[0],axis=0).reshape((x.shape[0],y.shape[0],x.shape[1]))
@@ -362,11 +366,13 @@ def asplit(data):
     Split data on last axis
     
     Args:
-        :data: numpy.ndarray
+        :data: 
+            | ndarray
         
     Returns:
-        :returns: numpy.ndarray, numpy.ndarray, ... 
-        (number of returns is equal data.shape[-1])
+        :returns: 
+            | ndarray, ndarray, ... 
+            |   (number of returns is equal data.shape[-1])
     """
     #return np.array([data.take([x],axis = len(data.shape)-1) for x in range(data.shape[-1])])
     return [data[...,x] for x in range(data.shape[-1])]
@@ -377,10 +383,12 @@ def ajoin(data):
     Join data on last axis.
     
     Args:
-        :data: tuple (numpy.ndarray, numpy.array, ...)
+        :data:
+            | tuple (ndarray, ndarray, ...)
         
     Returns:
-        :returns: numpy.array (shape[-1] is equal to tuple length)
+        :returns:
+            | ndarray (shape[-1] is equal to tuple length)
     """
     if data[0].ndim == 2: #faster implementation
         return np.transpose(np.concatenate(data,axis=0).reshape((np.hstack((len(data),data[0].shape)))),(1,2,0))
@@ -395,21 +403,27 @@ def broadcast_shape(data,target_shape = None, expand_2d_to_3d = None, axis0_repe
     """
     Broadcasts shapes of data to a target_shape.
     
-    Useful for block/vector calc. when numpy fails to broadcast correctly.
+    | Useful for block/vector calc. when numpy fails to broadcast correctly.
     
     Args:
-        :data: np.ndarray 
-        :target_shape: None or tuple with requested shape, optional
-            - None: returns unchanged :data:
-        :expand_2d_to_3d: None (do nothing) or ..., optional 
-             If ndim == 2, expand from 2 to 3 dimensions
-        :axis0_repeats: None or number of times to repeat axis=0, optional
-            - None: keep axis=0 same size
-        :axis1_repeats: None or number of times to repeat axis=1, optional
-            - None: keep axis=1 same size
+        :data: 
+            | ndarray 
+        :target_shape: 
+            | None or tuple with requested shape, optional
+            |   - None: returns unchanged :data:
+        :expand_2d_to_3d:
+            | None (do nothing) or ..., optional 
+            | If ndim == 2, expand from 2 to 3 dimensions
+        :axis0_repeats:
+            | None or number of times to repeat axis=0, optional
+            |   - None: keep axis=0 same size
+        :axis1_repeats:
+            | None or number of times to repeat axis=1, optional
+            |   - None: keep axis=1 same size
 
     Returns:
-        :returns: reshaped numpy.ndarray
+        :returns: 
+            | reshaped ndarray
     """
     data = np2d(data)
     
@@ -439,50 +453,55 @@ def broadcast_shape(data,target_shape = None, expand_2d_to_3d = None, axis0_repe
     return data
 
 
-def todim(x,shape_, add_axis = 1, equal_shape = False): 
+def todim(x,tshape, add_axis = 1, equal_shape = False): 
     """
     Expand x to dims that are broadcast-compatable with shape of another array.
     
     Args:
-        :x: numpy.ndarray
-        :shape_: tuple with target shape
-        :add_axis: 1, optional
-            Determines where in x.shape an axis should be added
-        :equal_shape: False or True, optional
-            True: expand :x: to identical dimensions (speficied by :shape_:)
+        :x: 
+            | ndarray
+        :tshape: 
+            | tuple with target shape
+        :add_axis:
+            | 1, optional
+            | Determines where in x.shape an axis should be added
+        :equal_shape:
+            | False or True, optional
+            | True: expand :x: to identical dimensions (speficied by :tshape:)
             
     Returns:
-        :returns: numpy.ndarray broadcast-compatable with shape_.
+        :returns:
+            | ndarray broadcast-compatable with tshape.
     """
     if x is None:
-        return np.broadcast_arrays(x,np.ones(shape_))[0]
+        return np.broadcast_arrays(x,np.ones(tshape))[0]
     else:
         x = np2d(x)
         sx = x.shape
         lsx = len(sx)
-        lshape_ = len(shape_)
-        if (sx == shape_):
+        ltshape = len(tshape)
+        if (sx == tshape):
             pass
         else:
             
-            if ((lsx == 1) | (sx == (1,shape_[-1])) | (sx == (shape_[-1],1))): 
-                if (sx == (shape_[-1],1)):
+            if ((lsx == 1) | (sx == (1,tshape[-1])) | (sx == (tshape[-1],1))): 
+                if (sx == (tshape[-1],1)):
                     x = x.T
-                if lsx != lshape_:
+                if lsx != ltshape:
                     x = np.expand_dims(x,0)
             elif (lsx == 2):
-                if (lshape_ == 3):
-                    sd = np.setdiff1d(shape_, sx,assume_unique=True)
+                if (ltshape == 3):
+                    sd = np.setdiff1d(tshape, sx,assume_unique=True)
                     if len(sd) == 0:
                         ax = add_axis
                     else:
-                        ax = np.where(shape_==sd)[0][0]
+                        ax = np.where(tshape==sd)[0][0]
                     x = np.expand_dims(x,ax)
                 else:
-                    raise Exception("todim(x,shape_): dimensions do not match for 2d arrays.")  
+                    raise Exception("todim(x,tshape): dimensions do not match for 2d arrays.")  
             else:
-                raise Exception("todim(x,shape_): no matching dimensions between 3d x and shape_.")
+                raise Exception("todim(x,tshape): no matching dimensions between 3d x and tshape.")
         if equal_shape == False:
             return x
         else:
-            return np.ones(shape_)*x #make dims of x equal to those of a (shape_)
+            return np.ones(tshape)*x #make dims of x equal to those of a (tshape)

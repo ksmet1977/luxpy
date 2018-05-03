@@ -1,52 +1,76 @@
 # -*- coding: utf-8 -*-
 """
-###############################################################################
-# Module for Individual Observer lms-CMFs (Asano, 2016)
-###############################################################################
- Port of Matlab code from:
-     https://www.rit.edu/cos/colorscience/re_AsanoObserverFunctions.php
-     (Accessed April 20, 2018)
-#------------------------------------------------------------------------------
+Module for Individual Observer lms-CMFs (Asano, 2016)
+=====================================================
+    
+ :_INDVCMF_DATA_PATH: path to data files
+ 
+ :_INDVCMF_DATA: Dict with required data
+ 
+ :_INDVCMF_STD_DEV_ALL_PARAM: Dict with std. dev. model parameters
+ 
+ :_INDVCMF_CATOBSPFCTR: Categorical observer parameters.
+ 
+ :_INDVCMF_M_10d: xyz to 10° lms conversion matrix.
+ 
+ :_WL_CRIT: critical wavelength above which interpolation of S-cone data fails.
+ 
+ :_WL: wavelengths of spectral data.
 
-# cie2006cmfsEx(): Generate Individual Observer CMFs (cone fundamentals) 
-                    based on CIE2006 cone fundamentals and published literature 
-                    on observer variability in color matching and 
-                    in physiological parameters.
+    
+ :cie2006cmfsEx(): Generate Individual Observer CMFs (cone fundamentals) 
+                   based on CIE2006 cone fundamentals and published literature 
+                   on observer variability in color matching and 
+                   in physiological parameters.
 
-# getMonteCarloParam(): Get dict with normally-distributed physiological 
+ :getMonteCarloParam(): Get dict with normally-distributed physiological 
                         factors for a population of observers.
                             
-# getUSCensusAgeDist(): Get US Census Age Distribution
+ :getUSCensusAgeDist(): Get US Census Age Distribution
 
-# genMonteCarloObs(): Monte-Carlo generation of individual observer 
-                            color matching functions (cone fundamentals) for a
-                            certain age and field size.
+ :genMonteCarloObs(): Monte-Carlo generation of individual observer 
+                      color matching functions (cone fundamentals) for a
+                      certain age and field size.
 
-# getCatObs(): Generate cone fundamentals for categorical observers.
+ :getCatObs(): Generate cone fundamentals for categorical observers.
 
-# get_lms_to_xyz_matrix(): Calculate lms to xyz conversion matrix for a 
-                            specific field size.
+ :get_lms_to_xyz_matrix(): Calculate lms to xyz conversion matrix for a 
+                           specific field size.
                             
-# lmsb_to_xyzb(): Convert from LMS cone fundamentals to XYZ CMF.
+ :lmsb_to_xyzb(): Convert from LMS cone fundamentals to XYZ CMF.
 
-# add_to_cmf_dict(): Add set of cmfs to _CMF dict.
+ :add_to_cmf_dict(): Add set of cmfs to _CMF dict.
+ 
 
-#------------------------------------------------------------------------------
 
-    References:
-        1. Asano Y, Fairchild MD, and Blondé L (2016). 
-            Individual Colorimetric Observer Model. 
-            PLoS One 11, 1–19.
-        2. Asano Y, Fairchild MD, Blondé L, and Morvan P (2016). 
-            Color matching experiment for highlighting interobserver variability. 
-            Color Res. Appl. 41, 530–539.
-        3. CIE, and CIE (2006). Fundamental Chromaticity Diagram with Physiological Axes - Part I 
-            (Vienna: CIE).
-            
-#------------------------------------------------------------------------------
-Created on Thu Apr 19 13:29:15 2018
+References
+----------
+ 1. `Asano Y, Fairchild MD, and Blondé L (2016). 
+ Individual Colorimetric Observer Model. 
+ PLoS One 11, 1–19. 
+ <http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0145671>`_
+ 
+ 2. `Asano Y, Fairchild MD, Blondé L, and Morvan P (2016). 
+ Color matching experiment for highlighting interobserver variability. 
+ Color Res. Appl. 41, 530–539. 
+ <https://onlinelibrary.wiley.com/doi/abs/10.1002/col.21975>`_
+ 
+ 3. `CIE, and CIE (2006). 
+ Fundamental Chromaticity Diagram with Physiological Axes - Part I 
+ (Vienna: CIE). 
+ <http://www.cie.co.at/publications/fundamental-chromaticity-diagram-physiological-axes-part-1>`_ 
+ 
+ 4. `Asano's Individual Colorimetric Observer Model 
+ <https://www.rit.edu/cos/colorscience/re_AsanoObserverFunctions.php>`_
 
-@author: kevin.smet
+ 
+Note
+----
+Port of Matlab code from:
+https://www.rit.edu/cos/colorscience/re_AsanoObserverFunctions.php
+(Accessed April 20, 2018)           
+
+.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 from luxpy import np, pd, interpolate, math, _PKG_PATH, _SEP, _CMF, dictkv,  xyzbar, spd, getdata, getwlr
 
@@ -125,58 +149,79 @@ def cie2006cmfsEx(age = 32,fieldsize = 10, wl = None,\
     on observer variability in color matching and in physiological parameters.
     
     Args:
-        :age: 32 or float or int, optional
-            Observer age
-        :fieldsize: 10, optional
-            Field size of stimulus in degrees (between 2° and 10°).
-        :wl: None, optional
-            Interpolation/extraplation of :LMS: output to specified wavelengths.
-            None: output original _WL = np.array([390,780,5])
-        :var_od_lens: 0, optional
-            Std Dev. in peak optical density [%] of lens.
-        :var_od_macula: 0, optional
-            Std Dev. in peak optical density [%] of macula.
-        :var_od_L: 0, optional
-            Std Dev. in peak optical density [%] of L-cone.
-        :var_od_M: 0, optional
-            Std Dev. in peak optical density [%] of M-cone.
-        :var_od_S: 0, optional
-            Std Dev. in peak optical density [%] of S-cone.
-        :var_shft_L: 0, optional
-            Std Dev. in peak wavelength shift [nm] of L-cone. 
-        :var_shft_L: 0, optional
-            Std Dev. in peak wavelength shift [nm] of M-cone.  
-        :var_shft_S: 0, optional
-            Std Dev. in peak wavelength shift [nm] of S-cone. 
-        :out: 'LMS' or , optional
-            Determines output.
-        :allow_negative_values: False, optional
-            Cone fundamentals or color matching functions 
-            should not have negative values.
-                If False: X[X<0] = 0.
+        :age: 
+            | 32 or float or int, optional
+            | Observer age
+        :fieldsize:
+            | 10, optional
+            | Field size of stimulus in degrees (between 2° and 10°).
+        :wl: 
+            | None, optional
+            | Interpolation/extraplation of :LMS: output to specified wavelengths.
+            | None: output original _WL = np.array([390,780,5])
+        :var_od_lens:
+            | 0, optional
+            | Std Dev. in peak optical density [%] of lens.
+        :var_od_macula:
+            | 0, optional
+            | Std Dev. in peak optical density [%] of macula.
+        :var_od_L:
+            | 0, optional
+            | Std Dev. in peak optical density [%] of L-cone.
+        :var_od_M:
+            | 0, optional
+            | Std Dev. in peak optical density [%] of M-cone.
+        :var_od_S:
+            | 0, optional
+            | Std Dev. in peak optical density [%] of S-cone.
+        :var_shft_L:
+            | 0, optional
+            | Std Dev. in peak wavelength shift [nm] of L-cone. 
+        :var_shft_L:
+            | 0, optional
+            | Std Dev. in peak wavelength shift [nm] of M-cone.  
+        :var_shft_S:
+            | 0, optional
+            | Std Dev. in peak wavelength shift [nm] of S-cone. 
+        :out: 
+            | 'LMS' or , optional
+            | Determines output.
+        :allow_negative_values:
+            | False, optional
+            | Cone fundamentals or color matching functions 
+              should not have negative values.
+            |     If False: X[X<0] = 0.
             
     Returns:
         :returns: 
-            - 'LMS' : ndarray with individual observer area-normalized 
-                cone fundamentals. Wavelength have been added.
+            | - 'LMS' : ndarray with individual observer area-normalized 
+            |           cone fundamentals. Wavelength have been added.
                 
-            [- 'trans_lens': ndarray with lens transmission 
-                 (no wavelengths added, no interpolation)
-             - 'trans_macula': ndarray with macula transmission 
-                 (no wavelengths added, no interpolation)
-             - 'sens_photopig' : ndarray with photopigment sens. 
-                 (no wavelengths added, no interpolation)]
+            | [- 'trans_lens': ndarray with lens transmission 
+            |      (no wavelengths added, no interpolation)
+            |  - 'trans_macula': ndarray with macula transmission 
+            |      (no wavelengths added, no interpolation)
+            |  - 'sens_photopig' : ndarray with photopigment sens. 
+            |      (no wavelengths added, no interpolation)]
             
     References:
-        1. Asano Y, Fairchild MD, and Blondé L (2016). 
-            Individual Colorimetric Observer Model. 
-            PLoS One 11, 1–19.
-        2. Asano Y, Fairchild MD, Blondé L, and Morvan P (2016). 
-            Color matching experiment for highlighting interobserver variability. 
-            Color Res. Appl. 41, 530–539.
-        3. CIE, and CIE (2006). 
-            Fundamental Chromaticity Diagram with Physiological Axes - Part I 
-            (Vienna: CIE).
+         1. `Asano Y, Fairchild MD, and Blondé L (2016). 
+         Individual Colorimetric Observer Model. 
+         PLoS One 11, 1–19. 
+         <http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0145671>`_
+        
+         2. `Asano Y, Fairchild MD, Blondé L, and Morvan P (2016). 
+         Color matching experiment for highlighting interobserver variability. 
+         Color Res. Appl. 41, 530–539. 
+         <https://onlinelibrary.wiley.com/doi/abs/10.1002/col.21975>`_
+         
+         3. `CIE, and CIE (2006). 
+         Fundamental Chromaticity Diagram with Physiological Axes - Part I 
+         (Vienna: CIE). 
+         <http://www.cie.co.at/publications/fundamental-chromaticity-diagram-physiological-axes-part-1>`_ 
+         
+         4. `Asano's Individual Colorimetric Observer Model 
+         <https://www.rit.edu/cos/colorscience/re_AsanoObserverFunctions.php>`_
     """
     fs = fieldsize
     rmd = _INDVCMF_DATA['rmd'].copy() 
@@ -274,16 +319,19 @@ def getMonteCarloParam(n_obs = 1, stdDevAllParam = _INDVCMF_STD_DEV_ALL_PARAM.co
     for a population of observers.
     
     Args:
-        :n_obs: 1, optional
-            Number of individual observers in population.
-        :stdDevAllParam: _INDVCMF_STD_DEV_ALL_PARAM, optional
-            Dict with parameters for:
-                ['od_lens', 'od_macula', 
-                'od_L', 'od_M', 'od_S', 
-                'shft_L', 'shft_M', 'shft_S']
+        :n_obs: 
+            | 1, optional
+            | Number of individual observers in population.
+        :stdDevAllParam:
+            | _INDVCMF_STD_DEV_ALL_PARAM, optional
+            | Dict with parameters for:
+            |     ['od_lens', 'od_macula', 
+            |      'od_L', 'od_M', 'od_S', 
+            |      'shft_L', 'shft_M', 'shft_S']
     
     Returns:
-        :returns: dict with n_obs randomly drawn parameters.
+        :returns: 
+            | dict with n_obs randomly drawn parameters.
     """
 
     varParam = {}
@@ -321,40 +369,55 @@ def genMonteCarloObs(n_obs = 1, fieldsize = 10, list_Age = [32], out = 'LMS', wl
     Monte-Carlo generation of individual observer cone fundamentals.
     
     Args: 
-        :n_obs: 1, optional
-            Number of observer CMFs to generate.
-        :list_Age: list of observer ages or str, optional
-            Defaults to 32 (cfr. CIE2006 CMFs)
-            If 'us_census': use US population census of 2010 
-                to generate list_Age.
-        :fieldsize: fieldsize in degrees (between 2° and 10°), optional
-            Defaults to 10°.
-        :out: 'LMS' or str, optional
-            Determines output.
-        :wl: None, optional
-            Interpolation/extraplation of :LMS: output to specified wavelengths.
-            None: output original _WL = np.array([390,780,5])
-        :allow_negative_values: False, optional
-            Cone fundamentals or color matching functions 
-            should not have negative values.
-                If False: X[X<0] = 0.
+        :n_obs: 
+            | 1, optional
+            | Number of observer CMFs to generate.
+        :list_Age:
+            | list of observer ages or str, optional
+            | Defaults to 32 (cfr. CIE2006 CMFs)
+            | If 'us_census': use US population census of 2010 
+              to generate list_Age.
+        :fieldsize: 
+            | fieldsize in degrees (between 2° and 10°), optional
+            | Defaults to 10°.
+        :out: 
+            | 'LMS' or str, optional
+            | Determines output.
+        :wl: 
+            | None, optional
+            | Interpolation/extraplation of :LMS: output to specified wavelengths.
+            | None: output original _WL = np.array([390,780,5])
+        :allow_negative_values: 
+            | False, optional
+            | Cone fundamentals or color matching functions 
+            |   should not have negative values.
+            |     If False: X[X<0] = 0.
     
     Returns:
-        :returns: LMS [,var_age, vAll] 
-            - LMS: numpy.ndarray with population LMS functions.
-            - var_age: numpy.ndarray with population observer ages.
-            - vAll: dict with population physiological factors (see .keys()) 
+        :returns: 
+            | LMS [,var_age, vAll] 
+            |   - LMS: ndarray with population LMS functions.
+            |   - var_age: ndarray with population observer ages.
+            |   - vAll: dict with population physiological factors (see .keys()) 
             
     References:
-        1. Asano Y, Fairchild MD, and Blondé L (2016). 
-            Individual Colorimetric Observer Model. 
-            PLoS One 11, 1–19.
-        2. Asano Y, Fairchild MD, Blondé L, and Morvan P (2016). 
-            Color matching experiment for highlighting interobserver variability. 
-            Color Res. Appl. 41, 530–539.
-        3. CIE, and CIE (2006). 
-            Fundamental Chromaticity Diagram with Physiological Axes - Part I 
-            (Vienna: CIE).
+         1. `Asano Y, Fairchild MD, and Blondé L (2016). 
+         Individual Colorimetric Observer Model. 
+         PLoS One 11, 1–19. 
+         <http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0145671>`_
+         
+         2. `Asano Y, Fairchild MD, Blondé L, and Morvan P (2016). 
+         Color matching experiment for highlighting interobserver variability. 
+         Color Res. Appl. 41, 530–539. 
+         <https://onlinelibrary.wiley.com/doi/abs/10.1002/col.21975>`_
+         
+         3. `CIE, and CIE (2006). 
+         Fundamental Chromaticity Diagram with Physiological Axes - Part I 
+         (Vienna: CIE). 
+         <http://www.cie.co.at/publications/fundamental-chromaticity-diagram-physiological-axes-part-1>`_ 
+         
+         4. `Asano's Individual Colorimetric Observer Model 
+         <https://www.rit.edu/cos/colorscience/re_AsanoObserverFunctions.php>`_
     """
 
     # Scale down StdDev by scalars optimized using Asano's 75 observers 
@@ -424,27 +487,34 @@ def getCatObs(n_cat = 10, fieldsize = 2, out = 'LMS', wl = None, allow_negative_
     Generate cone fundamentals for categorical observers.
     
     Args: 
-        :n_cat: 10, optional
-            Number of observer CMFs to generate.
-        :fieldsize: fieldsize in degrees (between 2° and 10°), optional
-            Defaults to 10°.
-        :out: 'LMS' or str, optional
-            Determines output.
-        :wl: None, optional
-            Interpolation/extraplation of :LMS: output to specified wavelengths.
-            None: output original _WL = np.array([390,780,5])
-        :allow_negative_values: False, optional
-            Cone fundamentals or color matching functions 
-            should not have negative values.
-                If False: X[X<0] = 0.
+        :n_cat: 
+            | 10, optional
+            | Number of observer CMFs to generate.
+        :fieldsize:
+            | fieldsize in degrees (between 2° and 10°), optional
+            | Defaults to 10°.
+        :out: 
+            | 'LMS' or str, optional
+            | Determines output.
+        :wl: 
+            | None, optional
+            | Interpolation/extraplation of :LMS: output to specified wavelengths.
+            |  None: output original _WL = np.array([390,780,5])
+        :allow_negative_values:
+            | False, optional
+            | Cone fundamentals or color matching functions 
+            |  should not have negative values.
+            |     If False: X[X<0] = 0.
     
     Returns:
-        :returns: LMS [,var_age, vAll] 
-            - LMS: numpy.ndarray with population LMS functions.
-            - var_age: numpy.ndarray with population observer ages.
-            - vAll: dict with population physiological factors (see .keys()) 
+        :returns:
+            | LMS [,var_age, vAll] 
+            |   - LMS: ndarray with population LMS functions.
+            |   - var_age: ndarray with population observer ages.
+            |   - vAll: dict with population physiological factors (see .keys()) 
+    
     Notes:
-        Categorical observers are observer functions that would represent 
+        1. Categorical observers are observer functions that would represent 
         color-normal populations. They are finite and discrete as opposed to 
         observer functions generated from the individual colorimetric observer 
         model. Thus, they would offer more convenient and practical approaches
@@ -459,12 +529,12 @@ def getCatObs(n_cat = 10, fieldsize = 2, out = 'LMS', wl = None, allow_negative_
         observers are defined by their physiological parameters and ages, their
         CMFs can be derived for any target field size.
 
-        Categorical observers were ordered by the importance; 
+        2. Categorical observers were ordered by the importance; 
         the first categorical observer vas the average observer equivalent to 
         CIEPO06 with 38 year-old for a given field size, followed by the second
         most important categorical observer, the third, and so on.
         
-        see: https://www.rit.edu/cos/colorscience/re_AsanoObserverFunctions.php
+        3. see: https://www.rit.edu/cos/colorscience/re_AsanoObserverFunctions.php
     """
     # Use Iteratively Derived Cat.Obs.:
     var_age = _INDVCMF_CATOBSPFCTR['age'].copy()
@@ -515,11 +585,13 @@ def get_lms_to_xyz_matrix(fieldsize = 10):
     Get the lms to xyz conversion matrix for specific fieldsize.
     
     Args:
-        :fieldsize: fieldsize in degrees (between 2° and 10°), optional
-            Defaults to 10°.
+        :fieldsize: 
+            | fieldsize in degrees (between 2° and 10°), optional
+            | Defaults to 10°.
             
     Returns:
-        :M: numpy array with conversion matrix.
+        :M: 
+            | ndarray with conversion matrix.
     
     Note: 
         For intermediate field sizes (2°<fieldsize<10°) the conversion matrix
@@ -538,17 +610,22 @@ def lmsb_to_xyzb(lms, fieldsize = 10, out = 'XYZ', allow_negative_values = False
     Convert from LMS cone fundamentals to XYZ color matching functions.
     
     Args:
-        :lms: numpy.ndarray with lms cone fundamentals, optional
-        :fieldsize: fieldsize in degrees, optional
-            Defaults to 10°.
-        :out: 'xyz' or str, optional
-            Determines output.
-        :allow_negative_values: False, optional
-            XYZ color matching functions should not have negative values.
-                If False: xyz[xyz<0] = 0.
+        :lms: 
+            | ndarray with lms cone fundamentals, optional
+        :fieldsize: 
+            | fieldsize in degrees, optional
+            | Defaults to 10°.
+        :out: 
+            | 'xyz' or str, optional
+            | Determines output.
+        :allow_negative_values:
+            | False, optional
+            | XYZ color matching functions should not have negative values.
+            |     If False: xyz[xyz<0] = 0.
     Returns:
-        :returns: LMS 
-            - LMS: numpy.ndarray with population XYZ color matching functions.    
+        :returns:
+            | LMS 
+            |   - LMS: ndarray with population XYZ color matching functions.    
     
     Note: 
         For intermediate field sizes (2° < fieldsize < 10°) a conversion matrix
@@ -570,14 +647,18 @@ def add_to_cmf_dict(bar = None, cieobs = 'indv', K = 683, M = np.eye(3)):
     Add set of cmfs to _CMF dict.
     
     Args:
-        :bar: None, optional
-            Set of CMFs. None: initializes to empty ndarray.
-        :cieobs: 'indv' or str, optional
-            Name of CMF set.
-        :K: 683 (lm/W), optional
-            Conversion factor from radiometric to photometric quantity.
-        :M: np.eye, optional
-            Matrix for lms to xyz conversion.
+        :bar: 
+            | None, optional
+            | Set of CMFs. None: initializes to empty ndarray.
+        :cieobs:
+            | 'indv' or str, optional
+            | Name of CMF set.
+        :K: 
+            | 683 (lm/W), optional
+            | Conversion factor from radiometric to photometric quantity.
+        :M: 
+            | np.eye, optional
+            | Matrix for lms to xyz conversion.
 
     """
     if bar is None:

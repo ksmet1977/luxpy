@@ -18,7 +18,7 @@
 """
 Created on Sun Apr  1 10:55:02 2018
 
-@author: kevin.smet
+.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
 import luxpy as lx

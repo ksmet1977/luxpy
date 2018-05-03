@@ -3,23 +3,25 @@
 # Module for the memory color rendition index (MCRI), Rm
 ###############################################################################
 
-# _MCRI_DEFAULTS: default settings for MCRI 
-        (major dict has 9 keys (04-Jul-2017): 
-            sampleset [str/dict], 
-            ref_type [str], 
-            cieobs [str], 
-            avg [fcn handle], 
-            scale [dict], 
-            cspace [dict], 
-            catf [dict], 
-            rg_pars [dict], 
-            cri_specific_pars [dict])
+ :_MCRI_DEFAULTS: default settings for MCRI 
+                  (major dict has 9 keys (04-Jul-2017): 
+                  sampleset [str/dict], 
+                  ref_type [str], 
+                  cieobs [str], 
+                  avg [fcn handle], 
+                  scale [dict], 
+                  cspace [dict], 
+                  catf [dict], 
+                  rg_pars [dict], 
+                  cri_specific_pars [dict])
 
-# spd_to_mcri(): Calculates the memory color rendition index, Rm:
+ :spd_to_mcri(): Calculates the memory color rendition index, Rm:
     
-    K.A.G. Smet, W.R. Ryckaert, M.R. Pointer, G. Deconinck, P. Hanselaer,(2012)
+Reference
+    1. `K.A.G. Smet, W.R. Ryckaert, M.R. Pointer, G. Deconinck, P. Hanselaer,(2012)
     “A memory colour quality metric for white light sources,” 
     Energy Build., vol. 49, no. C, pp. 216–225.
+    <http://www.sciencedirect.com/science/article/pii/S0378778812000837>`_
 
 """
 from luxpy import np, cat, math, _CRI_RFL, _S_INTERP_TYPE, spd, np2d, asplit, spd_to_xyz, xyz_to_ipt
@@ -54,33 +56,41 @@ def spd_to_mcri(SPD, D = 0.9, E = None, Yb = 20.0, out = 'Rm', wl = None):
     Calculates the MCRI or Memory Color Rendition Index, Rm
     
     Args: 
-        :SPD: ndarray with spectral data (can be multiple SPDs, 
+        :SPD: 
+            | ndarray with spectral data (can be multiple SPDs, 
               first axis are the wavelengths)
-        :D: 0.9, optional
-            Degree of adaptation.
-        :E: None, optional
-            Illuminance in lux 
-            (used to calculate La = (Yb/100)*(E/pi) to then calculate D 
-            following the 'cat02' model). 
-             If None: the degree is determined by :D:
-             If (:E: is not None) & (:Yb: is None):  :E: is assumed to contain 
-             the adapting field luminance La.
-        :Yb: 20.0, optional
-            Luminance factor of background. (used when calculating La from E)
-        :out:  'Rm' or str, optional
-            Specifies requested output (e.g. 'Rm,Rmi,cct,duv') 
-        :wl: None, optional
-            Wavelengths (or [start, end, spacing]) to interpolate the SPDs to. 
-            None: default to no interpolation   
+        :D: 
+            | 0.9, optional
+            | Degree of adaptation.
+        :E: 
+            | None, optional
+            | Illuminance in lux 
+            |  (used to calculate La = (Yb/100)*(E/pi) to then calculate D 
+            |  following the 'cat02' model). 
+            | If None: the degree is determined by :D:
+            |  If (:E: is not None) & (:Yb: is None):  :E: is assumed to contain 
+               the adapting field luminance La.
+        :Yb: 
+            | 20.0, optional
+            | Luminance factor of background. (used when calculating La from E)
+        :out: 
+            | 'Rm' or str, optional
+            | Specifies requested output (e.g. 'Rm,Rmi,cct,duv') 
+        :wl: 
+            | None, optional
+            | Wavelengths (or [start, end, spacing]) to interpolate the SPDs to. 
+            | None: default to no interpolation   
     
     Returns:
-        :returns: float or ndarray with MCRI Rm for :out: 'Rm'
-            Other output is also possible by changing the :out: str value.        
+        :returns: 
+            | float or ndarray with MCRI Rm for :out: 'Rm'
+            | Other output is also possible by changing the :out: str value.        
           
     References:
-        [1] KAG Smet, WR Ryckaert, MR Pointer, G Deconinck, P Hanselaer,(2012)
-            “A memory colour quality metric for white light sources,” 
-            Energy Build., vol. 49, no. C, pp. 216–225.
+        1. `K.A.G. Smet, W.R. Ryckaert, M.R. Pointer, G. Deconinck, P. Hanselaer,(2012)
+        “A memory colour quality metric for white light sources,” 
+        Energy Build., vol. 49, no. C, pp. 216–225.
+        <http://www.sciencedirect.com/science/article/pii/S0378778812000837>`_
     """
     SPD = np2d(SPD)
     

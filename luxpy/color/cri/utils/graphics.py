@@ -16,20 +16,14 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #########################################################################
 """
-###############################################################################
-# Module for color rendition graphical output, 1
-###############################################################################
-#
-# plot_hue_bins(): Makes basis plot for Color Vector Graphic (CVG).
-#
-# plot_ColorVectorGraphic(): Plots Color Vector Graphic (see IES TM30).
-#
-#------------------------------------------------------------------------------
+Module for basic color rendition graphical output
+=================================================
 
+ :plot_hue_bins(): Makes basis plot for Color Vector Graphic (CVG).
 
-Created on Mon Apr  2 02:00:50 2018
+ :plot_ColorVectorGraphic(): Plots Color Vector Graphic (see IES TM30).
 
-@author: Kevin A.G. Smet (ksmet1977 at gmail.com)
+.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
 from luxpy import np, plt, colorsys,math
@@ -37,41 +31,56 @@ from luxpy import np, plt, colorsys,math
 __all__ = [ 'plot_hue_bins','plot_ColorVectorGraphic']
 
 
-def plot_hue_bins(hbins = 16, start_hue = 0.0, scalef = 100, plot_axis_labels = False, bin_labels = '#', plot_edge_lines = True, plot_center_lines = False, plot_bin_colors = True, axtype = 'polar', ax = None, force_CVG_layout = False):
+def plot_hue_bins(hbins = 16, start_hue = 0.0, scalef = 100, \
+        plot_axis_labels = False, bin_labels = '#', plot_edge_lines = True, \
+        plot_center_lines = False, plot_bin_colors = True, \
+        axtype = 'polar', ax = None, force_CVG_layout = False):
     """
     Makes basis plot for Color Vector Graphic (CVG).
     
     Args:
-        :hbins: 16 or numpy.ndarray with sorted hue bin centers (°), optional
-        :start_hue: 0.0, optional
-        :scalef: 100, optional
-            Scale factor for graphic.
-        :plot_axis_labels: False, optional
-            Turns axis ticks on/off (True/False).
-        :bin_labels: None or list[str] or '#', optional
-            Plots labels at the bin center hues.
-            - None: don't plot.
-            - list[str]: list with str for each bin. 
-                (len(:bin_labels:) = :nhbins:)
-            - '#': plots number.
-        :plot_edge_lines: True or False, optional
-            Plot grey bin edge lines with '--'.
-        :plot_center_lines: False or True, optional
-            Plot colored lines at 'center' of hue bin.
-        :plot_bin_colors: True, optional
-            Colorize hue bins.
-        :axtype: 'polar' or 'cart', optional
-            Make polar or Cartesian plot.
-        :ax: None or 'new' or 'same', optional
-            - None or 'new' creates new plot
-            - 'same': continue plot on same axes.
-            - axes handle: plot on specified axes.
-        :force_CVG_layout: False or True, optional
-            True: Force plot of basis of CVG on first encounter.
+        :hbins:
+            | 16 or ndarray with sorted hue bin centers (°), optional
+        :start_hue:
+            | 0.0, optional
+        :scalef:
+            | 100, optional
+            | Scale factor for graphic.
+        :plot_axis_labels:
+            | False, optional
+            | Turns axis ticks on/off (True/False).
+        :bin_labels:
+            | None or list[str] or '#', optional
+            | Plots labels at the bin center hues.
+            |   - None: don't plot.
+            |   - list[str]: list with str for each bin. 
+            |                (len(:bin_labels:) = :nhbins:)
+            |   - '#': plots number.
+        :plot_edge_lines:
+            | True or False, optional
+            | Plot grey bin edge lines with '--'.
+        :plot_center_lines:
+            | False or True, optional
+            | Plot colored lines at 'center' of hue bin.
+        :plot_bin_colors:
+            | True, optional
+            | Colorize hue bins.
+        :axtype: 
+            | 'polar' or 'cart', optional
+            | Make polar or Cartesian plot.
+        :ax: 
+            | None or 'new' or 'same', optional
+            |   - None or 'new' creates new plot
+            |   - 'same': continue plot on same axes.
+            |   - axes handle: plot on specified axes.
+        :force_CVG_layout:
+            | False or True, optional
+            | True: Force plot of basis of CVG on first encounter.
             
     Returns:
-        :returns: gcf(), gca(), list with rgb colors for hue bins (for use in 
-                                 other plotting fcns)
+        :returns: 
+            | gcf(), gca(), list with rgb colors for hue bins (for use in 
+              other plotting fcns)
         
     """
     
@@ -198,43 +207,61 @@ def plot_hue_bins(hbins = 16, start_hue = 0.0, scalef = 100, plot_axis_labels = 
 
     return plt.gcf(), plt.gca(), cmap
 
-def plot_ColorVectorGraphic(jabt, jabr, hbins = 16, start_hue = 0.0, scalef = 100, plot_axis_labels = False, bin_labels = None, plot_edge_lines = True, plot_center_lines = False, plot_bin_colors = True, axtype = 'polar', ax = None, force_CVG_layout = False):
+def plot_ColorVectorGraphic(jabt, jabr, hbins = 16, start_hue = 0.0, scalef = 100, \
+                            plot_axis_labels = False, bin_labels = None, \
+                            plot_edge_lines = True, plot_center_lines = False, \
+                            plot_bin_colors = True, axtype = 'polar', ax = None,\
+                            force_CVG_layout = False):
     """
     Plot Color Vector Graphic (CVG).
     
     Args:
-        :jabt: numpy.ndarray with jab data under test SPD
-        :jabr: numpy.ndarray with jab data under reference SPD
-        :hbins: 16 or numpy.ndarray with sorted hue bin centers (°), optional
-        :start_hue: 0.0, optional
-        :scalef: 100, optional
-            Scale factor for graphic.
-        :plot_axis_labels: False, optional
-            Turns axis ticks on/off (True/False).
-        :bin_labels: None or list[str] or '#', optional
-            Plots labels at the bin center hues.
-            - None: don't plot.
-            - list[str]: list with str for each bin. 
-                (len(:bin_labels:) = :nhbins:)
-            - '#': plots number.
-        :plot_edge_lines: True or False, optional
-            Plot grey bin edge lines with '--'.
-        :plot_center_lines: False or True, optional
-            Plot colored lines at 'center' of hue bin.
-        :plot_bin_colors: True, optional
-            Colorize hue-bins.
-        :axtype: 'polar' or 'cart', optional
-            Make polar or Cartesian plot.
-        :ax: None or 'new' or 'same', optional
-            - None or 'new' creates new plot
-            - 'same': continue plot on same axes.
-            - axes handle: plot on specified axes.
-        :force_CVG_layout: False or True, optional
-            True: Force plot of basis of CVG.
+        :jabt: 
+            | ndarray with jab data under test SPD
+        :jabr: 
+            | ndarray with jab data under reference SPD
+        :hbins: 
+            | 16 or ndarray with sorted hue bin centers (°), optional
+        :start_hue:
+            | 0.0, optional
+        :scalef: 
+            | 100, optional
+            | Scale factor for graphic.
+        :plot_axis_labels:
+            | False, optional
+            | Turns axis ticks on/off (True/False).
+        :bin_labels:
+            | None or list[str] or '#', optional
+            | Plots labels at the bin center hues.
+            |   - None: don't plot.
+            |   - list[str]: list with str for each bin. 
+            |                (len(:bin_labels:) = :nhbins:)
+            |   - '#': plots number.
+        :plot_edge_lines:
+            | True or False, optional
+            | Plot grey bin edge lines with '--'.
+        :plot_center_lines:
+            | False or True, optional
+            | Plot colored lines at 'center' of hue bin.
+        :plot_bin_colors:
+            | True, optional
+            | Colorize hue-bins.
+        :axtype:
+            | 'polar' or 'cart', optional
+            | Make polar or Cartesian plot.
+        :ax: 
+            | None or 'new' or 'same', optional
+            |   - None or 'new' creates new plot
+            |   - 'same': continue plot on same axes.
+            |   - axes handle: plot on specified axes.
+        :force_CVG_layout:
+            | False or True, optional
+            | True: Force plot of basis of CVG.
             
     Returns:
-        :returns: gcf(), gca(), list with rgb colors for hue bins (for use in 
-                                 other plotting fcns)
+        :returns: 
+            | gcf(), gca(), list with rgb colors for hue bins (for use in 
+              other plotting fcns)
         
     """
     

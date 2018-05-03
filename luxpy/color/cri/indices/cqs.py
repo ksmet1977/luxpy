@@ -1,24 +1,28 @@
 """
-###############################################################################
-# Module for color quality scale, CQS
-###############################################################################
+Module for color quality scale, CQS
+===================================
 
-# _CQS_DEFAULTS: default settings for CQS 
-        (major dict has 9 keys (04-Jul-2017): 
-            sampleset [str/dict], 
-            ref_type [str], 
-            cieobs [str], 
-            avg [fcn handle], 
-            scale [dict], 
-            cspace [dict], 
-            catf [dict], 
-            rg_pars [dict], 
-            cri_specific_pars [dict])
+ :_CQS_DEFAULTS: default settings for CQS 
+                 (major dict has 9 keys (04-Jul-2017): 
+                 sampleset [str/dict], 
+                 ref_type [str], 
+                 cieobs [str], 
+                 avg [fcn handle], 
+                 scale [dict], 
+                 cspace [dict], 
+                 catf [dict], 
+                 rg_pars [dict], 
+                 cri_specific_pars [dict])
             
-# spd_to_cqs(): versions 7.5 and 9.0 are supported. 
-            W. Davis and Y. Ohno, 
-            “Color quality scale,” (2010), 
-            Opt. Eng., vol. 49, no. 3, pp. 33602–33616.   
+ :spd_to_cqs(): | Color Quality Scale
+                | versions 7.5 and 9.0 are supported. 
+
+Reference
+    1. `W. Davis and Y. Ohno, 
+    “Color quality scale,” (2010), 
+    Opt. Eng., vol. 49, no. 3, pp. 33602–33616.
+    <http://spie.org/Publications/Journal/10.1117/1.3360335>`_
+
 
 """
 
@@ -55,22 +59,29 @@ def  spd_to_cqs(SPD, version = 'v9.0', out = 'Qa',wl = None):
     Calculates CQS Qa (Qai) or Qf (Qfi) or Qp (Qpi) for versions v9.0 or v7.5.
     
     Args:
-        :SPD: ndarray with spectral data (can be multiple SPDs, 
-                first axis are the wavelengths)
-        :version: 'v9.0' or 'v7.5', optional
-        :out:  'Qa' or str, optional
-            Specifies requested output (e.g. 'Qa,Qai,Qf,cct,duv') 
-        :wl: None, optional
-            Wavelengths (or [start, end, spacing]) to interpolate the SPDs to. 
-            None: default to no interpolation   
+        :SPD: 
+            | ndarray with spectral data (can be multiple SPDs, 
+              first axis are the wavelengths)
+        :version: 
+            | 'v9.0' or 'v7.5', optional
+        :out: 
+            | 'Qa' or str, optional
+            | Specifies requested output (e.g. 'Qa,Qai,Qf,cct,duv') 
+        :wl: 
+            | None, optional
+            | Wavelengths (or [start, end, spacing]) to interpolate the SPDs to. 
+            | None: default to no interpolation   
     
     Returns:
-        :returns: float or ndarray with CQS Qa for :out: 'Qa'
-            Other output is also possible by changing the :out: str value. 
+        :returns:
+            | float or ndarray with CQS Qa for :out: 'Qa'
+            | Other output is also possible by changing the :out: str value. 
     
     References:
-        ..[1] Davis, W., & Ohno, Y. (2010). Color quality scale. 
-                Optical Engineering, 49(3), 33602–33616.
+        1. `W. Davis and Y. Ohno, 
+        “Color quality scale,” (2010), 
+        Opt. Eng., vol. 49, no. 3, pp. 33602–33616.
+        <http://spie.org/Publications/Journal/10.1117/1.3360335>`_
     
     """  
     outlist = out.split()    

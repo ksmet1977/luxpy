@@ -16,17 +16,14 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #########################################################################
 """
-###############################################################################
-# Extension module for IES TM30 metric calculation 
-# with additional Vector Field support
-###############################################################################
 
-# spd_to_ies_tm30_metrics(): Calculates IES TM30 metrics from spectral data
+Extension module for IES TM30 metric calculation with additional Vector Field support
+=====================================================================================
+
+ :spd_to_ies_tm30_metrics(): Calculates IES TM30 metrics from spectral data
 
 
-Created on Tue Apr  3 22:16:08 2018
-
-@author: Kevin A.G. Smet (ksmet1977 at gmail.com)
+.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 from luxpy import np, _CRI_RFL
 
@@ -38,54 +35,65 @@ from ..VFPX.VF_PX_models import plot_VF_PX_models
 
 __all__ = ['spd_to_ies_tm30_metrics']
 
-def spd_to_ies_tm30_metrics(SPD, cri_type = None, hbins = 16, start_hue = 0.0, scalef = 100, vf_model_type = _VF_MODEL_TYPE, vf_pcolorshift = _VF_PCOLORSHIFT,scale_vf_chroma_to_sample_chroma = False):
+def spd_to_ies_tm30_metrics(SPD, cri_type = None, \
+                            hbins = 16, start_hue = 0.0,\
+                            scalef = 100, \
+                            vf_model_type = _VF_MODEL_TYPE, \
+                            vf_pcolorshift = _VF_PCOLORSHIFT,\
+                            scale_vf_chroma_to_sample_chroma = False):
     """
     Calculates IES TM30 metrics from spectral data.      
       
       Args:
-        :data: numpy.ndarray with spectral data 
-        :cri_type: None, optional
-            If None: defaults to cri_type = 'iesrf'.
-            Not none values of :hbins:, :start_hue: and :scalef: overwrite 
-            input in cri_type['rg_pars'] 
-        :hbins: None or numpy.ndarray with sorted hue bin centers (°), optional
-        :start_hue: None, optional
-        :scalef: None, optional
-            Scale factor for reference circle.
-        :vf_pcolorshift: _VF_PCOLORSHIFT or user defined dict, optional
-            The polynomial models of degree 5 and 6 can be fully specified or 
-            summarized by the model parameters themselved OR by calculating the
-            dCoverC and dH at resp. 5 and 6 hues. :VF_pcolorshift: specifies 
-            these hues and chroma level.
-        :scale_vf_chroma_to_sample_chroma: False, optional
-           Scale chroma of reference and test vf fields such that average of 
-           binned reference chroma equals that of the binned sample chroma
-           before calculating hue bin metrics.
+        :data:
+            | numpy.ndarray with spectral data 
+        :cri_type:
+            | None, optional
+            | If None: defaults to cri_type = 'iesrf'.
+            | Not none values of :hbins:, :start_hue: and :scalef: overwrite 
+              input in cri_type['rg_pars'] 
+        :hbins:
+            | None or numpy.ndarray with sorted hue bin centers (°), optional
+        :start_hue: 
+            | None, optional
+        :scalef:
+            | None, optional
+            | Scale factor for reference circle.
+        :vf_pcolorshift:
+            | _VF_PCOLORSHIFT or user defined dict, optional
+            | The polynomial models of degree 5 and 6 can be fully specified or 
+              summarized by the model parameters themselved OR by calculating the
+              dCoverC and dH at resp. 5 and 6 hues. :VF_pcolorshift: specifies 
+              these hues and chroma level.
+        :scale_vf_chroma_to_sample_chroma: 
+            | False, optional
+            | Scale chroma of reference and test vf fields such that average of 
+              binned reference chroma equals that of the binned sample chroma
+              before calculating hue bin metrics.
             
     Returns:
-        :returns: data dict with keys:
-     
-            :data: dict with color rendering data
-                - 'SPD'  : ndarray test SPDs
-                - 'bjabt': ndarray with binned jab data under test SPDs
-                - 'bjabr': ndarray with binned jab data under reference SPDs
-                - 'cct'  : ndarray with CCT of test SPD
-                - 'duv'  : ndarray with distance to blackbody locus of test SPD
-                - 'Rf'   : ndarray with general color fidelity indices
-                - 'Rg'   : ndarray with gamut area indices
-                - 'Rfi'  : ndarray with specific color fidelity indices
-                - 'Rfhi' : ndarray with local (hue binned) fidelity indices
-                - 'Rcshi': ndarray with local chroma shifts indices
-                - 'Rhshi': ndarray with local hue shifts indices
-                - 'Rt'  : ndarray with general metameric uncertainty index Rt
-                - 'Rti' : ndarray with specific metameric uncertainty indices Rti
-                - 'Rfhi_vf' : ndarray with local (hue binned) fidelity indices 
-                              obtained from VF model predictions at color space
-                              pixel coordinates
-                - 'Rcshi_vf': ndarray with local chroma shifts indices 
-                              (same as above)
-                - 'Rhshi_vf': ndarray with local hue shifts indices 
-                              (same as above)
+        :data: 
+            | dict with color rendering data:
+            | - 'SPD'  : ndarray test SPDs
+            | - 'bjabt': ndarray with binned jab data under test SPDs
+            | - 'bjabr': ndarray with binned jab data under reference SPDs
+            | - 'cct'  : ndarray with CCT of test SPD
+            | - 'duv'  : ndarray with distance to blackbody locus of test SPD
+            | - 'Rf'   : ndarray with general color fidelity indices
+            | - 'Rg'   : ndarray with gamut area indices
+            | - 'Rfi'  : ndarray with specific color fidelity indices
+            | - 'Rfhi' : ndarray with local (hue binned) fidelity indices
+            | - 'Rcshi': ndarray with local chroma shifts indices
+            | - 'Rhshi': ndarray with local hue shifts indices
+            | - 'Rt'  : ndarray with general metameric uncertainty index Rt
+            | - 'Rti' : ndarray with specific metameric uncertainty indices Rti
+            | - 'Rfhi_vf' : ndarray with local (hue binned) fidelity indices 
+            |               obtained from VF model predictions at color space
+            |               pixel coordinates
+            | - 'Rcshi_vf': ndarray with local chroma shifts indices 
+            |               (same as above)
+            | - 'Rhshi_vf': ndarray with local hue shifts indices 
+            |               (same as above)
     """
     if cri_type is None:
         cri_type = 'iesrf'

@@ -17,8 +17,13 @@ setup(
 		  'scipy',
 		  'matplotlib',
 		  'pandas',
-        'itertools',
-        'opencv-python',
+          'itertools',
+          'opencv-python',
+		  'colorsys',
+		  'mpl_toolkits',
+		  'warnings',
+		  'collections',
+		  'os'
       ],
   package_data={'luxpy': ['luxpy/data/cmfs/*.dat',
                           'luxpy/data/cmfs/*.txt',
@@ -28,8 +33,8 @@ setup(
                           'luxpy/data/spds/*.txt',
                           'luxpy/data/rfls/*.dat',
                           'luxpy/data/rfls/*.txt',
-                          'luxpy/toolboxes/ciephotbio/data/*.dat',
-                          'luxpy/toolboxes/ciephotbio/data/*.txt',
+                          'luxpy/toolboxes/photbiochem/data/*.dat',
+                          'luxpy/toolboxes/photbiochem/data/*.txt',
                           'luxpy/toolboxes/indvcmf/data/*.dat',
                           'luxpy/toolboxes/indvcmf/data/*.txt',
                           'luxpy/toolboxes/hypspcim/data/*.*'
@@ -37,7 +42,7 @@ setup(
   include_package_data = True,
   classifiers=[
     'Development Status :: 3 - Alpha',
-    'Programming Language :: Python :: 3.5',
+    'Programming Language :: Python :: 3.6',
     ],  
-  python_requires='>=3.5',
+  python_requires='>=3.6',
 )

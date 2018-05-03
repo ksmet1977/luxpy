@@ -1,0 +1,559 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>luxpy.toolboxes.hypspcim.hyperspectral_img_simulator &mdash; LuxPy 1.3.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> LuxPy
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../license.html">License: GPLv3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../required_packages.html">Imported (required) 3e party packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../luxpy_structure.html">Luxpy package structure</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">LuxPy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>luxpy.toolboxes.hypspcim.hyperspectral_img_simulator</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for luxpy.toolboxes.hypspcim.hyperspectral_img_simulator</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module for hyper spectral image simulation</span>
+<span class="sd">==========================================</span>
+
+<span class="sd"> :_HYPSPCIM_PATH: path to module</span>
+
+<span class="sd"> :_HYPSPCIM_DEFAULT_IMAGE: path + filename to default image</span>
+
+<span class="sd"> :xyz_to_rfl(): approximate spectral reflectance of xyz based on k nearest </span>
+<span class="sd">                neighbour interpolation of samples from a standard reflectance </span>
+<span class="sd">                set.</span>
+
+<span class="sd"> :render_image(): Render image under specified light source spd.</span>
+
+
+<span class="sd">.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="p">(</span><span class="n">np</span><span class="p">,</span> <span class="n">plt</span><span class="p">,</span> <span class="n">cv2</span><span class="p">,</span> <span class="n">cKDTree</span><span class="p">,</span> <span class="n">cat</span><span class="p">,</span> <span class="n">colortf</span><span class="p">,</span> <span class="n">_PKG_PATH</span><span class="p">,</span> <span class="n">_SEP</span><span class="p">,</span> <span class="n">_CIEOBS</span><span class="p">,</span> 
+                   <span class="n">_CIE_ILLUMINANTS</span><span class="p">,</span> <span class="n">_CRI_RFL</span><span class="p">,</span> <span class="n">_EPS</span><span class="p">,</span> <span class="n">spd_to_xyz</span><span class="p">,</span><span class="n">plot_color_data</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">luxpy.toolboxes.spdbuild</span> <span class="k">import</span> <span class="n">spdbuilder</span> <span class="k">as</span> <span class="n">spb</span>
+   
+<span class="n">__all__</span> <span class="o">=</span><span class="p">[</span><span class="s1">&#39;_HYPSPCIM_PATH&#39;</span><span class="p">,</span><span class="s1">&#39;_HYPSPCIM_DEFAULT_IMAGE&#39;</span><span class="p">,</span><span class="s1">&#39;render_image&#39;</span><span class="p">]</span>             
+
+<span class="n">_HYPSPCIM_PATH</span> <span class="o">=</span> <span class="n">_PKG_PATH</span> <span class="o">+</span> <span class="n">_SEP</span> <span class="o">+</span> <span class="s1">&#39;hypspcim&#39;</span> <span class="o">+</span> <span class="n">_SEP</span>
+<span class="n">_HYPSPCIM_DEFAULT_IMAGE</span> <span class="o">=</span> <span class="n">_PKG_PATH</span> <span class="o">+</span> <span class="n">_SEP</span> <span class="o">+</span> <span class="s1">&#39;toolboxes&#39;</span> <span class="o">+</span> <span class="n">_SEP</span> <span class="o">+</span> <span class="s1">&#39;hypspcim&#39;</span> <span class="o">+</span>  <span class="n">_SEP</span> <span class="o">+</span> <span class="s1">&#39;data&#39;</span> <span class="o">+</span> <span class="n">_SEP</span> <span class="o">+</span> <span class="s1">&#39;testimage1.jpg&#39;</span>
+
+
+<span class="k">def</span> <span class="nf">xyz_to_rfl</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">rfl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;rfl_est&#39;</span><span class="p">,</span> \
+                 <span class="n">refspd</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> \
+                 <span class="n">cspace</span> <span class="o">=</span> <span class="s1">&#39;ipt&#39;</span><span class="p">,</span> <span class="n">cspace_tf</span> <span class="o">=</span> <span class="p">{},</span>\
+                 <span class="n">k_neighbours</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Approximate spectral reflectance of xyz based on k nearest neighbour </span>
+<span class="sd">    interpolation of samples from a standard reflectance set.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :xyz: </span>
+<span class="sd">            | ndarray with tristimulus values of target points.</span>
+<span class="sd">        :rfl: </span>
+<span class="sd">            | ndarray, optional</span>
+<span class="sd">            | Reflectance set for color coordinate to rfl mapping.</span>
+<span class="sd">        :out: </span>
+<span class="sd">            | &#39;rfl_est&#39; or str, optional</span>
+<span class="sd">        :refspd: </span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | Refer ence spectrum for color coordinate to rfl mapping.</span>
+<span class="sd">            | None defaults to D65.</span>
+<span class="sd">        :cieobs:</span>
+<span class="sd">            | _CIEOBS, optional</span>
+<span class="sd">            | CMF set used for calculation of xyz from spectral data.</span>
+<span class="sd">        :cspace:</span>
+<span class="sd">            | &#39;ipt&#39;,  optional</span>
+<span class="sd">            | Color space for color coordinate to rfl mapping.</span>
+<span class="sd">        :cspace_tf:</span>
+<span class="sd">            | {}, optional</span>
+<span class="sd">            | Dict with parameters for xyz_to_... and ..._to_xyz transform.</span>
+<span class="sd">        :k_neighbours:</span>
+<span class="sd">            | 4 or int, optional</span>
+<span class="sd">            | Number of nearest neighbours for reflectance spectrum interpolation.</span>
+<span class="sd">            | Neighbours are found using scipy.cKDTree</span>
+<span class="sd">        :verbosity:</span>
+<span class="sd">            | 0, optional</span>
+<span class="sd">            | If &gt; 0: make a plot of the color coordinates of original and </span>
+<span class="sd">              rendered image pixels.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :returns: </span>
+<span class="sd">            | :rfl_est:</span>
+<span class="sd">            | ndarrays with estimated reflectance spectra.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># get rfl set:</span>
+    <span class="k">if</span> <span class="n">rfl</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="c1"># use IESTM30[&#39;4880&#39;] set </span>
+        <span class="n">rfl</span> <span class="o">=</span> <span class="n">_CRI_RFL</span><span class="p">[</span><span class="s1">&#39;ies-tm30&#39;</span><span class="p">][</span><span class="s1">&#39;4880&#39;</span><span class="p">][</span><span class="s1">&#39;5nm&#39;</span><span class="p">]</span>
+        
+    <span class="c1"># get Ref spd:</span>
+    <span class="k">if</span> <span class="n">refspd</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">refspd</span> <span class="o">=</span> <span class="n">_CIE_ILLUMINANTS</span><span class="p">[</span><span class="s1">&#39;D65&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        
+    <span class="c1"># Calculate lab-type coordinates of standard rfl set under refspd:</span>
+    <span class="n">xyz_rr</span><span class="p">,</span> <span class="n">xyz_wr</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">refspd</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">rfl</span> <span class="o">=</span> <span class="n">rfl</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">cspace_tf_copy</span> <span class="o">=</span> <span class="n">cspace_tf</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">cspace_tf_copy</span><span class="p">[</span><span class="s1">&#39;xyzw&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">xyz_wr</span> <span class="c1"># put correct white point in param. dict</span>
+    <span class="n">lab_rr</span> <span class="o">=</span> <span class="n">colortf</span><span class="p">(</span><span class="n">xyz_rr</span><span class="p">,</span> <span class="n">tf</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">,</span> <span class="n">fwtf</span> <span class="o">=</span> <span class="n">cspace_tf_copy</span><span class="p">,</span> <span class="n">bwtf</span> <span class="o">=</span> <span class="n">cspace_tf_copy</span><span class="p">)[:,</span><span class="mi">0</span><span class="p">,:]</span>
+    
+    <span class="c1"># Convert xyz to lab-type values under refspd:</span>
+    <span class="n">lab</span> <span class="o">=</span> <span class="n">colortf</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">tf</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">,</span> <span class="n">fwtf</span> <span class="o">=</span> <span class="n">cspace_tf_copy</span><span class="p">,</span> <span class="n">bwtf</span> <span class="o">=</span> <span class="n">cspace_tf_copy</span><span class="p">)</span>
+    
+    <span class="c1"># Find rfl (cfr. lab_rr) from rfl set that results in &#39;near&#39; metameric </span>
+    <span class="c1"># color coordinates for each value in lab_ur (i.e. smallest DE):</span>
+    <span class="c1"># Construct cKDTree:</span>
+    <span class="n">tree</span> <span class="o">=</span> <span class="n">cKDTree</span><span class="p">(</span><span class="n">lab_rr</span><span class="p">,</span> <span class="n">copy_data</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    
+    <span class="c1"># Interpolate rfls using k nearest neightbours and inverse distance weigthing:</span>
+    <span class="n">d</span><span class="p">,</span> <span class="n">inds</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">lab</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="n">k_neighbours</span> <span class="p">)</span>
+    <span class="k">if</span> <span class="n">k_neighbours</span>  <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">d</span><span class="o">**</span><span class="mi">2</span><span class="p">)[:,:,</span><span class="kc">None</span><span class="p">]</span> <span class="c1"># inverse distance weigthing</span>
+        <span class="n">rfl_est</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">w</span> <span class="o">*</span> <span class="n">rfl</span><span class="p">[</span><span class="n">inds</span><span class="o">+</span><span class="mi">1</span><span class="p">,:],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">rfl_est</span> <span class="o">=</span> <span class="n">rfl</span><span class="p">[</span><span class="n">inds</span><span class="o">+</span><span class="mi">1</span><span class="p">,:]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">rfl_est</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">rfl</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">rfl_est</span><span class="p">))</span>
+        
+    <span class="k">if</span> <span class="p">(</span><span class="n">verbosity</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="s1">&#39;xyz_est&#39;</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">))</span> <span class="o">|</span> <span class="p">(</span><span class="s1">&#39;lab_est&#39;</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">))</span> <span class="o">|</span> <span class="p">(</span><span class="s1">&#39;DEi_ab&#39;</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">))</span> <span class="o">|</span> <span class="p">(</span><span class="s1">&#39;DEa_ab&#39;</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)):</span>
+        <span class="n">xyz_est</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">refspd</span><span class="p">,</span> <span class="n">rfl</span> <span class="o">=</span> <span class="n">rfl_est</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">cspace_tf_copy</span> <span class="o">=</span> <span class="n">cspace_tf</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">cspace_tf_copy</span><span class="p">[</span><span class="s1">&#39;xyzw&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">xyz_wr</span> <span class="c1"># put correct white point in param. dict</span>
+        <span class="n">lab_est</span> <span class="o">=</span> <span class="n">colortf</span><span class="p">(</span><span class="n">xyz_est</span><span class="p">,</span> <span class="n">tf</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">,</span> <span class="n">fwtf</span> <span class="o">=</span> <span class="n">cspace_tf_copy</span><span class="p">)[:,</span><span class="mi">0</span><span class="p">,:]</span>
+        <span class="n">DEi_ab</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(((</span><span class="n">lab_est</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span><span class="o">-</span><span class="n">lab</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">DEa_ab</span> <span class="o">=</span> <span class="n">DEi_ab</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">plot_color_data</span><span class="p">(</span><span class="n">lab</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">lab</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="n">z</span> <span class="o">=</span> <span class="n">lab</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> \
+                        <span class="n">show</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">cspace</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">,</span> \
+                        <span class="n">formatstr</span> <span class="o">=</span> <span class="s1">&#39;ro&#39;</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;Original&#39;</span><span class="p">)</span>
+        <span class="n">plot_color_data</span><span class="p">(</span><span class="n">lab_est</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">lab_est</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="n">z</span> <span class="o">=</span> <span class="n">lab_est</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> \
+                        <span class="n">show</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">axh</span> <span class="o">=</span> <span class="n">ax</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">cspace</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">,</span> \
+                        <span class="n">formatstr</span> <span class="o">=</span> <span class="s1">&#39;bd&#39;</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;Rendered&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;rfl_est&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">rfl_est</span>
+    <span class="k">elif</span> <span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;rfl_est,xyz_est&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">rfl_est</span><span class="p">,</span> <span class="n">xyz_est</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">eval</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+
+<div class="viewcode-block" id="render_image"><a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.hypspcim.render_image">[docs]</a><span class="k">def</span> <span class="nf">render_image</span><span class="p">(</span><span class="n">img</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">spd</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">rfl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;img_hyp&#39;</span><span class="p">,</span> \
+                 <span class="n">refspd</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> \
+                 <span class="n">cspace</span> <span class="o">=</span> <span class="s1">&#39;ipt&#39;</span><span class="p">,</span> <span class="n">cspace_tf</span> <span class="o">=</span> <span class="p">{},</span>\
+                 <span class="n">k_neighbours</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="n">show</span> <span class="o">=</span> <span class="p">(</span><span class="kc">True</span><span class="p">,</span><span class="kc">True</span><span class="p">),</span>
+                 <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">show_ref_img</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>\
+                 <span class="n">stack_test_ref</span> <span class="o">=</span> <span class="mi">12</span><span class="p">,</span>\
+                 <span class="n">write_to_file</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">use_plt_show</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Render image under specified light source spd.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :img: </span>
+<span class="sd">            | None or str or ndarray with uint8 rgb image.</span>
+<span class="sd">            | None load a default image.</span>
+<span class="sd">        :spd: </span>
+<span class="sd">            | ndarray, optional</span>
+<span class="sd">            | Light source spectrum for rendering</span>
+<span class="sd">        :rfl: </span>
+<span class="sd">            | ndarray, optional</span>
+<span class="sd">            | Reflectance set for color coordinate to rfl mapping.</span>
+<span class="sd">        :out: </span>
+<span class="sd">            | &#39;img_hyp&#39; or str, optional</span>
+<span class="sd">            |  (other option: &#39;img_ren&#39;: rendered image under :spd:)</span>
+<span class="sd">        :refspd:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | Reference spectrum for color coordinate to rfl mapping.</span>
+<span class="sd">            | None defaults to D65 (srgb has a D65 white point)</span>
+<span class="sd">        :D: </span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | Degree of (von Kries) adaptation from spd to refspd. </span>
+<span class="sd">        :cieobs:</span>
+<span class="sd">            | _CIEOBS, optional</span>
+<span class="sd">            | CMF set for calculation of xyz from spectral data.</span>
+<span class="sd">        :cspace:</span>
+<span class="sd">            | &#39;ipt&#39;,  optional</span>
+<span class="sd">            | Color space for color coordinate to rfl mapping.</span>
+<span class="sd">        :cspace_tf:</span>
+<span class="sd">            | {}, optional</span>
+<span class="sd">            | Dict with parameters for xyz_to_cspace and cspace_to_xyz transform.</span>
+<span class="sd">        :k_neighbours:</span>
+<span class="sd">            | 4 or int, optional</span>
+<span class="sd">            | Number of nearest neighbours for reflectance spectrum interpolation.</span>
+<span class="sd">            | Neighbours are found using scipy.cKDTree</span>
+<span class="sd">        :show: </span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            |  Show images.</span>
+<span class="sd">        :verbosity:</span>
+<span class="sd">            | 0, optional</span>
+<span class="sd">            | If &gt; 0: make a plot of the color coordinates of original and </span>
+<span class="sd">              rendered image pixels.</span>
+<span class="sd">        :show_ref_img:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | True: shows rendered image under reference spd. False: shows</span>
+<span class="sd">              original image.</span>
+<span class="sd">        :write_to_file:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | None: do nothing, else: write to filename(+path) in :write_to_file:</span>
+<span class="sd">        :stack_test_ref: </span>
+<span class="sd">            | 12, optional</span>
+<span class="sd">            |   - 12: left (test), right (ref) format for show and imwrite</span>
+<span class="sd">            |   - 21: top (test), bottom (ref)</span>
+<span class="sd">            |   - 1: only show/write test</span>
+<span class="sd">            |   - 2: only show/write ref</span>
+<span class="sd">            |   - 0: show both, write test</span>
+<span class="sd">        :use_plt_show:</span>
+<span class="sd">            | False, optional</span>
+<span class="sd">            |  - True: Use matplotlib.pyplot.imshow </span>
+<span class="sd">            |  - False: use open-cv imshow() </span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :returns: </span>
+<span class="sd">            | img_hyp, img_ren, </span>
+<span class="sd">            | ndarrays with hyperspectral image and rendered images </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c1"># Get image:</span>
+    <span class="k">if</span> <span class="n">img</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">img</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
+            <span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">img</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2RGB</span><span class="p">)</span> <span class="c1"># convert from BGR of opencv to RGB format</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">_HYPSPCIM_DEFAULT_IMAGE</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2RGB</span><span class="p">)</span> <span class="c1"># convert from BGR of opencv to RGB format</span>
+    
+    
+    <span class="c1"># Convert to 2D format:</span>
+    <span class="n">rgb</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="mi">3</span><span class="p">)</span><span class="o">*</span><span class="mf">1.0</span> <span class="c1"># *1.0: make float</span>
+    <span class="n">rgb</span><span class="p">[</span><span class="n">rgb</span><span class="o">==</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">_EPS</span> <span class="c1"># avoid division by zero for pure blacks.</span>
+
+    
+    <span class="c1"># Get unique rgb values and positions:</span>
+    <span class="n">rgb_u</span><span class="p">,</span> <span class="n">rgb_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">rgb</span><span class="p">,</span> <span class="n">return_inverse</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+
+        
+    <span class="c1"># get Ref spd:</span>
+    <span class="k">if</span> <span class="n">refspd</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">refspd</span> <span class="o">=</span> <span class="n">_CIE_ILLUMINANTS</span><span class="p">[</span><span class="s1">&#39;D65&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="c1"># Convert rgb_u to xyz and lab-type values under assumed refspd:</span>
+    <span class="n">xyz_wr</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">refspd</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">xyz_ur</span> <span class="o">=</span> <span class="n">colortf</span><span class="p">(</span><span class="n">rgb_u</span><span class="p">,</span> <span class="n">tf</span> <span class="o">=</span> <span class="s1">&#39;srgb&gt;xyz&#39;</span><span class="p">)</span>
+    
+    <span class="c1"># Estimate rfl&#39;s for xyz_ur:</span>
+    <span class="n">rfl_est</span><span class="p">,</span> <span class="n">xyzri</span> <span class="o">=</span> <span class="n">xyz_to_rfl</span><span class="p">(</span><span class="n">xyz_ur</span><span class="p">,</span> <span class="n">rfl</span> <span class="o">=</span> <span class="n">rfl</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;rfl_est,xyz_est&#39;</span><span class="p">,</span> \
+                 <span class="n">refspd</span> <span class="o">=</span> <span class="n">refspd</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="n">D</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> \
+                 <span class="n">cspace</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">,</span> <span class="n">cspace_tf</span> <span class="o">=</span> <span class="n">cspace_tf</span><span class="p">,</span>\
+                 <span class="n">k_neighbours</span> <span class="o">=</span> <span class="n">k_neighbours</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="n">verbosity</span><span class="p">)</span>
+    
+    
+    
+    <span class="c1"># Get default test spd if none supplied:</span>
+    <span class="k">if</span> <span class="n">spd</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">spd</span> <span class="o">=</span> <span class="n">_CIE_ILLUMINANTS</span><span class="p">[</span><span class="s1">&#39;F4&#39;</span><span class="p">]</span>
+        
+    <span class="c1"># calculate xyz values under test spd:</span>
+    <span class="n">xyzti</span><span class="p">,</span> <span class="n">xyztw</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">rfl</span> <span class="o">=</span> <span class="n">rfl_est</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+    
+    <span class="c1"># Chromatic adaptation from test spd to refspd:</span>
+    <span class="k">if</span> <span class="n">D</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">xyzti</span> <span class="o">=</span> <span class="n">cat</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">xyzti</span><span class="p">,</span> <span class="n">xyzw1</span> <span class="o">=</span> <span class="n">xyztw</span><span class="p">,</span> <span class="n">xyzw2</span> <span class="o">=</span> <span class="n">xyz_wr</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="n">D</span><span class="p">)</span>
+    
+    <span class="c1"># Convert xyzti under test spd to srgb:</span>
+    <span class="n">rgbti</span> <span class="o">=</span> <span class="n">colortf</span><span class="p">(</span><span class="n">xyzti</span><span class="p">,</span> <span class="n">tf</span> <span class="o">=</span> <span class="s1">&#39;srgb&#39;</span><span class="p">)</span><span class="o">/</span><span class="mi">255</span>
+    
+    <span class="c1"># Reconstruct original locations for rendered image rgbs:</span>
+    <span class="n">img_ren</span> <span class="o">=</span> <span class="n">rgbti</span><span class="p">[</span><span class="n">rgb_indices</span><span class="p">]</span>
+    <span class="n">img_ren</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">shape</span> <span class="c1"># reshape back to 3D size of original</span>
+     
+    
+    <span class="c1"># For output:</span>
+    <span class="k">if</span> <span class="n">show_ref_img</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">rgb_ref</span> <span class="o">=</span> <span class="n">colortf</span><span class="p">(</span><span class="n">xyzri</span><span class="p">,</span> <span class="n">tf</span> <span class="o">=</span> <span class="s1">&#39;srgb&#39;</span><span class="p">)</span><span class="o">/</span><span class="mi">255</span>
+        <span class="n">img_ref</span> <span class="o">=</span> <span class="n">rgb_ref</span><span class="p">[</span><span class="n">rgb_indices</span><span class="p">]</span>
+        <span class="n">img_ref</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">shape</span> <span class="c1"># reshape back to 3D size of original</span>
+        <span class="n">img_str</span> <span class="o">=</span> <span class="s1">&#39;Rendered (under ref. spd)&#39;</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">img_ref</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">img_str</span> <span class="o">=</span> <span class="s1">&#39;Original&#39;</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">img</span><span class="o">/</span><span class="mi">255</span>
+    
+    <span class="k">if</span> <span class="p">(</span><span class="n">stack_test_ref</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">|</span> <span class="n">show</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">stack_test_ref</span> <span class="o">==</span> <span class="mi">21</span><span class="p">:</span>
+            <span class="n">img_original_rendered</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">img_ren</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span><span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="mi">3</span><span class="p">)),</span><span class="n">img</span><span class="p">))</span>
+            <span class="n">img_original_rendered_str</span> <span class="o">=</span> <span class="s1">&#39;Rendered (under test spd) | &#39;</span> <span class="o">+</span> <span class="n">img_str</span> 
+        <span class="k">elif</span> <span class="n">stack_test_ref</span> <span class="o">==</span> <span class="mi">12</span><span class="p">:</span>
+            <span class="n">img_original_rendered</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">img_ren</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">4</span><span class="p">,</span><span class="mi">3</span><span class="p">)),</span><span class="n">img</span><span class="p">))</span>
+            <span class="n">img_original_rendered_str</span> <span class="o">=</span> <span class="s1">&#39;Rendered (under test spd) | &#39;</span> <span class="o">+</span> <span class="n">img_str</span> 
+        <span class="k">elif</span> <span class="n">stack_test_ref</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">img_original_rendered</span> <span class="o">=</span> <span class="n">img_ren</span>
+            <span class="n">img_original_rendered_str</span> <span class="o">=</span> <span class="s1">&#39;Rendered (under test spd)&#39;</span> 
+        <span class="k">elif</span> <span class="n">stack_test_ref</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">img_original_rendered</span> <span class="o">=</span> <span class="n">img</span>
+            <span class="n">img_original_rendered_str</span> <span class="o">=</span> <span class="n">img_str</span>
+        <span class="k">elif</span> <span class="n">stack_test_ref</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">img_original_rendered</span> <span class="o">=</span> <span class="n">img_ren</span>
+            <span class="n">img_original_rendered_str</span> <span class="o">=</span>  <span class="s1">&#39;Rendered (under test spd)&#39;</span> 
+            
+    <span class="k">if</span> <span class="n">write_to_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Convert from RGB to BGR formatand write:</span>
+        <span class="c1">#print(&#39;Writing rendering results to image file: {}&#39;.format(write_to_file))</span>
+        <span class="n">cv2</span><span class="o">.</span><span class="n">imwrite</span><span class="p">(</span><span class="n">write_to_file</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">((</span><span class="mi">255</span><span class="o">*</span><span class="n">img_original_rendered</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_RGB2BGR</span><span class="p">))</span>
+        
+    <span class="k">if</span> <span class="n">show</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">use_plt_show</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="c1">#show rendered image using cv2:    </span>
+            <span class="n">cv2</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img_original_rendered_str</span> <span class="p">,</span><span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">img_original_rendered</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_RGB2BGR</span><span class="p">))</span>
+        
+            <span class="k">if</span> <span class="n">stack_test_ref</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="c1"># show both in sep. figures</span>
+                <span class="n">cv2</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img_str</span> <span class="p">,</span><span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_RGB2BGR</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># show images using pyplot.show():</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img_original_rendered</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">img_original_rendered_str</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">get_xaxis</span><span class="p">()</span><span class="o">.</span><span class="n">set_ticklabels</span><span class="p">([])</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">get_yaxis</span><span class="p">()</span><span class="o">.</span><span class="n">set_ticklabels</span><span class="p">([])</span>
+            
+            <span class="k">if</span> <span class="n">stack_test_ref</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img_str</span><span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">img_str</span><span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">get_xaxis</span><span class="p">()</span><span class="o">.</span><span class="n">set_ticklabels</span><span class="p">([])</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">get_yaxis</span><span class="p">()</span><span class="o">.</span><span class="n">set_ticklabels</span><span class="p">([])</span>
+      
+    <span class="k">if</span> <span class="s1">&#39;img_hyp&#39;</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">):</span>
+        <span class="c1"># Create hyper_spectral image:</span>
+        <span class="n">rfl_image_2D</span> <span class="o">=</span> <span class="n">rfl_est</span><span class="p">[</span><span class="n">rgb_indices</span><span class="o">+</span><span class="mi">1</span><span class="p">,:]</span> <span class="c1"># create array with all rfls required for each pixel</span>
+        <span class="n">img_hyp</span> <span class="o">=</span> <span class="n">rfl_image_2D</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">rfl_image_2D</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+
+    <span class="c1"># Setup output:</span>
+    <span class="k">if</span> <span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;img_hyp&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">img_hyp</span>
+    <span class="k">elif</span> <span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;img_ren&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">img_ren</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">eval</span><span class="p">(</span><span class="n">out</span><span class="p">)</span></div>
+        
+    
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
+    <span class="n">S</span> <span class="o">=</span> <span class="n">spb</span><span class="o">.</span><span class="n">spd_builder</span><span class="p">(</span><span class="n">peakwl</span> <span class="o">=</span> <span class="p">[</span><span class="mi">460</span><span class="p">,</span><span class="mi">525</span><span class="p">,</span><span class="mi">590</span><span class="p">],</span><span class="n">fwhm</span><span class="o">=</span><span class="p">[</span><span class="mi">20</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">20</span><span class="p">],</span><span class="n">target</span><span class="o">=</span><span class="mi">4000</span><span class="p">,</span> <span class="n">tar_type</span> <span class="o">=</span> <span class="s1">&#39;cct&#39;</span><span class="p">)</span> 
+    <span class="n">img</span> <span class="o">=</span> <span class="n">_HYPSPCIM_DEFAULT_IMAGE</span>
+    <span class="n">img_hyp</span><span class="p">,</span><span class="n">img_ren</span> <span class="o">=</span> <span class="n">render_image</span><span class="p">(</span><span class="n">img</span> <span class="o">=</span> <span class="n">img</span><span class="p">,</span> <span class="n">cspace</span> <span class="o">=</span> <span class="s1">&#39;ipt&#39;</span><span class="p">,</span><span class="n">spd</span> <span class="o">=</span> <span class="n">S</span><span class="p">,</span> 
+                                 <span class="n">D</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                 <span class="n">show</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">show_ref_img</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                                 <span class="n">use_plt_show</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">stack_test_ref</span> <span class="o">=</span> <span class="mi">21</span><span class="p">,</span>
+                                 <span class="n">out</span><span class="o">=</span><span class="s1">&#39;img_hyp,img_ren&#39;</span><span class="p">,</span>
+                                 <span class="n">write_to_file</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>    
+    
+        
+
+
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Kevin A.G. Smet.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'1.3.0',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          
+          SphinxRtdTheme.Navigation.enableSticky();
+          
+      });
+  </script> 
+
+</body>
+</html>

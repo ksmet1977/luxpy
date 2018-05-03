@@ -1,20 +1,15 @@
 # -*- coding: utf-8 -*-
 """
-###############################################################################
-# Module with optimizers : Port from Matlab fminsearchbnd, 
-# but applied to SciPy's minimize fcn.
-###############################################################################
+Module with port from Matlab fminsearchbnd, but applied to SciPy's minimize fcn
+===============================================================================
 
-# minimizebnd(): scipy.minimize() wrapper that allows contrained parameters on 
+
+ :minimizebnd(): scipy.minimize() wrapper that allows contrained parameters on 
                  unconstrained methods(port of Matlab's fminsearchbnd). 
                  Starting, lower and upper bounds values can also be provided 
                  as a dict.
 
-#------------------------------------------------------------------------------
-Created on Fri Apr 27 12:36:03 2018
-
-@author: kevin.smet
-
+===============================================================================
 """
 
 from luxpy import np, minimize, vec_to_dict
@@ -27,33 +22,40 @@ def minimizebnd(fun, x0, args=(), method = 'nelder-mead', use_bnd = True, \
     """
     Minimization function that allows for bounds on any type of method in 
     SciPy's minimize function by transforming the parameters values 
-    (see Matlab's fminsearchbnd). 
-    Starting values, and lower and upper bounds can also be provided as a dict.
+    | (see Matlab's fminsearchbnd). 
+    | Starting values, and lower and upper bounds can also be provided as a dict.
     
     Args:
-        :x0: parameter starting values
-            If x0_keys is None then :x0: is vector else, :x0: is dict and
-            x0_size should be provided with length/size of values for each of 
-            the keys in :x0: to convert it to a vector.                
-        :use_bnd: True, optional
-            False: omits bounds and defaults to regular minimize function.
-        :bounds: (lower, upper), optional
-            Tuple of lists or dicts (x0_keys is None) of lower and upper bounds 
-            for each of the parameters values.
-        :**kwargs: allows input for other type of arguments (e.g. in OutputFcn)
-         For other input arguments, see ?scipy.minimize()
+        :x0: 
+            | parameter starting values
+            | If x0_keys is None then :x0: is vector else, :x0: is dict and
+            | x0_size should be provided with length/size of values for each of 
+              the keys in :x0: to convert it to a vector.                
+        :use_bnd:
+            | True, optional
+            | False: omits bounds and defaults to regular minimize function.
+        :bounds:
+            | (lower, upper), optional
+            | Tuple of lists or dicts (x0_keys is None) of lower and upper bounds 
+              for each of the parameters values.
+        :kwargs: 
+            | allows input for other type of arguments (e.g. in OutputFcn)
+         
+    Note:
+        For other input arguments, see ?scipy.minimize()
          
     Returns:
-        :res: dict with minimize() output. 
-            Additionally, function value, fval, of solution is also in :res:,
-            as well as a vector or dict (if x0 was dict) 
-            with final solutions (res['x'])
+        :res: 
+            | dict with minimize() output. 
+            | Additionally, function value, fval, of solution is also in :res:,
+              as well as a vector or dict (if x0 was dict) 
+              with final solutions (res['x'])
         
         
     """
     # Convert dict to vec:
     if isinstance(x0, dict):
-        x0 = vec_to_dict(dict_ = x0, vsize = x0_vsize, keys = x0_keys)
+        x0 = vec_to_dict(dic = x0, vsize = x0_vsize, keys = x0_keys)
     
     if use_bnd == False:
         res = minimize(fun, x0, args = args, options = options, **kwargs)
@@ -61,7 +63,7 @@ def minimizebnd(fun, x0, args=(), method = 'nelder-mead', use_bnd = True, \
         if x0_keys is None:
             res['x_final'] = res['x']
         else:
-            res['x_final'] = vec_to_dict(vec_ = res['x'], vsize = x0_vsize, keys = x0_keys)
+            res['x_final'] = vec_to_dict(vec = res['x'], vsize = x0_vsize, keys = x0_keys)
         return res
     else:
         
@@ -69,9 +71,9 @@ def minimizebnd(fun, x0, args=(), method = 'nelder-mead', use_bnd = True, \
         
         # Convert dict to vec:
         if isinstance(LB, dict):
-            LB = vec_to_dict(dict_ = LB, vsize = x0_vsize, keys = x0_keys)
+            LB = vec_to_dict(dic = LB, vsize = x0_vsize, keys = x0_keys)
         if isinstance(LB, dict):
-            UB = vec_to_dict(dict_ = UB, vsize = x0_vsize, keys = x0_keys)
+            UB = vec_to_dict(dic = UB, vsize = x0_vsize, keys = x0_keys)
         
         #size checks
         xsize = x0.shape
@@ -234,7 +236,7 @@ def minimizebnd(fun, x0, args=(), method = 'nelder-mead', use_bnd = True, \
     if x0_keys is None:
         res['x_final'] = res['x']
     else:
-        res['x_final'] = vec_to_dict(vec_ = res['x'], vsize = x0_vsize, keys = x0_keys)
+        res['x_final'] = vec_to_dict(vec = res['x'], vsize = x0_vsize, keys = x0_keys)
 
     return res
 

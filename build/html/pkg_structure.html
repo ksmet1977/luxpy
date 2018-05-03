@@ -1,0 +1,366 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>LuxPy package structure &mdash; LuxPy 1.3.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> LuxPy
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License: GPLv3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="required_packages.html">Imported 3e party packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="luxpy_structure.html">Luxpy package structure</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">LuxPy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>LuxPy package structure</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/pkg_structure.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="luxpy-package-structure">
+<h1>LuxPy package structure<a class="headerlink" href="#luxpy-package-structure" title="Permalink to this headline">¶</a></h1>
+<div class="line-block">
+<div class="line">/utils</div>
+<div class="line-block">
+<div class="line-block">
+<div class="line">/ helpers</div>
+</div>
+<div class="line">helpers.py</div>
+<div class="line-block">
+<div class="line">/.math</div>
+<div class="line-block">
+<div class="line">math.py</div>
+<div class="line">optimizers.py</div>
+<div class="line"><br /></div>
+</div>
+</div>
+</div>
+<div class="line">/spectrum</div>
+<div class="line-block">
+<div class="line">cmf.py</div>
+<div class="line">spectral.py</div>
+<div class="line">spectral_databases.py</div>
+<div class="line"><br /></div>
+</div>
+<div class="line">/color</div>
+<div class="line-block">
+<div class="line">colortransformations.py</div>
+<div class="line">cct.py</div>
+<div class="line">/.cat</div>
+<div class="line-block">
+<div class="line">chromaticadaptation.py</div>
+</div>
+<div class="line">/.cam</div>
+<div class="line-block">
+<div class="line">colorappearancemodels.py</div>
+<div class="line-block">
+<div class="line">cam_02_X.py</div>
+<div class="line">cam15u.py</div>
+<div class="line">sww16.py</div>
+</div>
+</div>
+<div class="line">colortf.py</div>
+<div class="line">/.deltaE</div>
+<div class="line-block">
+<div class="line">colordifferences.py</div>
+</div>
+<div class="line">/.cri</div>
+<div class="line-block">
+<div class="line">colorrendition.py</div>
+<div class="line">/utils</div>
+<div class="line-block">
+<div class="line">DE_scalers.py</div>
+<div class="line">helpers.py</div>
+<div class="line">init_cri_defaults_database.py</div>
+<div class="line">graphics.py</div>
+</div>
+<div class="line">/indices</div>
+<div class="line-block">
+<div class="line">indices.py</div>
+<div class="line-block">
+<div class="line">cie_wrappers.py</div>
+<div class="line">ies_wrappers.py</div>
+<div class="line">cri2012.py</div>
+<div class="line">mcri.py</div>
+<div class="line">cqs.py</div>
+</div>
+</div>
+<div class="line">/ies_tm30</div>
+<div class="line-block">
+<div class="line">ies_tm30_metrics.py</div>
+<div class="line">ies_tm30_graphics.py</div>
+</div>
+<div class="line">/.VFPX</div>
+<div class="line-block">
+<div class="line">VF_PX_models.py (imported in .cri as .VFPX)</div>
+<div class="line-block">
+<div class="line">vectorshiftmodel.py</div>
+<div class="line">pixelshiftmodel.py</div>
+</div>
+</div>
+</div>
+<div class="line">/utils</div>
+<div class="line-block">
+<div class="line">plotters.py</div>
+<div class="line"><br /></div>
+<div class="line"><br /></div>
+</div>
+</div>
+<div class="line">/classes</div>
+<div class="line-block">
+<div class="line">SPD.py</div>
+<div class="line">CDATA.py</div>
+<div class="line"><br /></div>
+</div>
+<div class="line">/data</div>
+<div class="line-block">
+<div class="line">/cmfs</div>
+<div class="line">/spds</div>
+<div class="line">/rfls</div>
+<div class="line">/cctluts</div>
+<div class="line"><br /></div>
+<div class="line"><br /></div>
+</div>
+<div class="line">/toolboxes</div>
+<div class="line"><br /></div>
+<div class="line-block">
+<div class="line">/.photbiochem</div>
+<div class="line-block">
+<div class="line">cie_tn003_2015.py</div>
+<div class="line">/data</div>
+<div class="line"><br /></div>
+</div>
+<div class="line">/.indvcmf</div>
+<div class="line-block">
+<div class="line">individual_observer_cmf_model.py</div>
+<div class="line">/data</div>
+<div class="line"><br /></div>
+</div>
+<div class="line">/.spdbuild</div>
+<div class="line-block">
+<div class="line">spd_builder.py</div>
+<div class="line"><br /></div>
+</div>
+<div class="line">/.hypspcsim</div>
+<div class="line-block">
+<div class="line">hyperspectral_img_simulator.py</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="global-constants">
+<h1>Global constants<a class="headerlink" href="#global-constants" title="Permalink to this headline">¶</a></h1>
+<p>The package and sub-packages use several global constants that set the default state/behaviour
+of the calculations. LuxPy ‘global constants’ start with ‘_’ and are in an
+all _CAPITAL format.</p>
+<dl class="docutils">
+<dt>E.g.:</dt>
+<dd><ul class="first last simple">
+<li>_PKG_PATH (absolute path to luxpy package)</li>
+<li>_SEP (operating system operator)</li>
+<li>_EPS = 7./3 - 4./3 -1 (machine epsilon)</li>
+<li>_CIEOBS = ‘1931_2’ (default CIE observer color matching function)</li>
+<li>_CSPACE = ‘Yuv’ (default color space / chromaticity diagram)</li>
+</ul>
+</dd>
+</dl>
+<p>DO NOT CHANGE THESE CONSTANTS!</p>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Kevin A.G. Smet.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.3.0',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          
+          SphinxRtdTheme.Navigation.enableSticky();
+          
+      });
+  </script> 
+
+</body>
+</html>

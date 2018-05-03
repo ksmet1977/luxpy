@@ -1,8 +1,35 @@
 # -*- coding: utf-8 -*-
 """
-###############################################################################
-# Module with CAM15u color appearance model
-###############################################################################
+Module with CAM15u color appearance model
+=========================================
+
+ :_CAM_15U_AXES: dict with list[str,str,str] containing axis labels 
+                  of defined cspaces.
+                  
+ :_CAM15U_PARAMETERS: database with CAM15u model parameters.
+ 
+ :_CAM15U_UNIQUE_HUE_DATA: database of unique hues with corresponding 
+                           Hue quadratures and eccentricity factors 
+                           for ciecam02, cam16, ciecam97s, cam15u)
+
+ :_CAM15U_SURROUND_PARAMETERS: database of surround param. c, Nc, F and FLL 
+                               for cam15u.
+
+ :_CAM15U_NAKA_RUSHTON_PARAMETERS: | database with parameters 
+                                     (n, sig, scaling and noise) 
+                                     for the Naka-Rushton function: 
+                                   | scaling * ((data**n) / ((data**n) + (sig**n))) + noise
+                                   
+ :cam15u(): | calculates the output for the CAM15u model for self-luminous unrelated stimuli. 
+            | `M. Withouck, K. A. G. Smet, W. R. Ryckaert, and P. Hanselaer, 
+              “Experimental driven modelling of the color appearance of 
+              unrelated self-luminous stimuli: CAM15u,” 
+              Opt. Express, vol. 23, no. 9, pp. 12045–12064, 2015.
+              <https://www.osapublishing.org/oe/abstract.cfm?uri=oe-23-9-12045&origin=search>`_
+            | `M. Withouck, K. A. G. Smet, and P. Hanselaer, (2015), 
+            “Brightness prediction of different sized unrelated self-luminous stimuli,” 
+            Opt. Express, vol. 23, no. 10, pp. 13455–13466. 
+            <https://www.osapublishing.org/oe/abstract.cfm?uri=oe-23-10-13455&origin=search>`_
 """
 from luxpy import np, np2d, spd_to_xyz, asplit, ajoin
 from .colorappearancemodels import hue_angle, hue_quadrature
@@ -26,43 +53,49 @@ def cam15u(data, fov = 10.0, inputtype = 'xyz', direction = 'forward', outin = '
     and CAM15u color appearance correlates.
     
     Args:
-        :data: ndarray of CIE 2006 10°  XYZ tristimulus values or spectral data
-                or color appearance attributes
-        :fov: 10.0, optional
-            Field-of-view of stimulus (for size effect on brightness)
-        :inputtpe: 'xyz' or 'spd', optional
-            Specifies the type of input: 
-                tristimulus values or spectral data for the forward mode.
-        :direction: 'forward' or 'inverse', optional
-            -'forward': xyz -> cam15u
-            -'inverse': cam15u -> xyz 
-        :outin: 'Q,aW,bW' or str, optional
-            'Q,aW,bW' (brightness and opponent signals for amount-of-neutral)
-            other options: 'Q,aM,bM' (colorfulness) and 'Q,aS,bS' (saturation)
-            Str specifying the type of 
-                input (:direction: == 'inverse') and 
-                output (:direction: == 'forward')
-        :parameters: None or dict, optional
-            Set of model parameters.
-            - None: defaults to luxpy.cam._CAM15U_PARAMETERS 
-                (see references below)
+        :data: 
+            | ndarray of CIE 2006 10°  XYZ tristimulus values or spectral data
+              or color appearance attributes
+        :fov: 
+            | 10.0, optional
+            | Field-of-view of stimulus (for size effect on brightness)
+        :inputtpe:
+            | 'xyz' or 'spd', optional
+            | Specifies the type of input: 
+            |     tristimulus values or spectral data for the forward mode.
+        :direction:
+            | 'forward' or 'inverse', optional
+            |   -'forward': xyz -> cam15u
+            |   -'inverse': cam15u -> xyz 
+        :outin:
+            | 'Q,aW,bW' or str, optional
+            | 'Q,aW,bW' (brightness and opponent signals for amount-of-neutral)
+            |  other options: 'Q,aM,bM' (colorfulness) and 'Q,aS,bS' (saturation)
+            | Str specifying the type of 
+            |     input (:direction: == 'inverse') and 
+            |     output (:direction: == 'forward')
+        :parameters:
+            | None or dict, optional
+            | Set of model parameters.
+            |   - None: defaults to luxpy.cam._CAM15U_PARAMETERS 
+            |    (see references below)
     
     Returns:
         :returns: 
-            ndarray with color appearance correlates (:direction: == 'forward')
-            or 
-            XYZ tristimulus values (:direction: == 'inverse')
+            | ndarray with color appearance correlates (:direction: == 'forward')
+            |  or 
+            | XYZ tristimulus values (:direction: == 'inverse')
 
-    
     References: 
-        ..[1] Withouck M., Smet K.A.G, Ryckaert WR, Hanselaer P. (2015). 
-                Experimental driven modelling of the color appearance of 
-                unrelated self-luminous stimuli: CAM15u. 
-                Optics Express,  23 (9), 12045-12064. 
-        ..[2] Withouck, M., Smet, K., Hanselaer, P. (2015). 
-                Brightness prediction of different sized unrelated 
-                self-luminous stimuli. 
-                Optics Express, 23 (10), 13455-13466    
+        1. `M. Withouck, K. A. G. Smet, W. R. Ryckaert, and P. Hanselaer, 
+        “Experimental driven modelling of the color appearance of 
+        unrelated self-luminous stimuli: CAM15u,” 
+        Opt. Express, vol. 23, no. 9, pp. 12045–12064, 2015.
+        <https://www.osapublishing.org/oe/abstract.cfm?uri=oe-23-9-12045&origin=search>`_
+        2. `M. Withouck, K. A. G. Smet, and P. Hanselaer, (2015), 
+        “Brightness prediction of different sized unrelated self-luminous stimuli,” 
+        Opt. Express, vol. 23, no. 10, pp. 13455–13466. 
+        <https://www.osapublishing.org/oe/abstract.cfm?uri=oe-23-10-13455&origin=search>`_  
      """
     
     if parameters is None:
@@ -216,7 +249,7 @@ def xyz_to_qabW_cam15u(data, fov = 10.0, parameters = None, **kwargs):
     """
     Wrapper function for cam15u forward mode with 'Q,aW,bW' output.
     
-    For help on parameter details: ?luxpy.cam.cam15u
+    | For help on parameter details: ?luxpy.cam.cam15u
     """
     return cam15u(data, fov = fov, direction = 'forward', outin = 'Q,aW,bW', parameters = parameters)
                 
@@ -224,6 +257,6 @@ def qabW_cam15u_to_xyz(data, fov = 10.0, parameters = None, **kwargs):
     """
     Wrapper function for cam15u inverse mode with 'Q,aW,bW' input.
     
-    For help on parameter details: ?luxpy.cam.cam15u
+    | For help on parameter details: ?luxpy.cam.cam15u
     """
     return cam15u(data, fov = fov, direction = 'inverse', outin = 'Q,aW,bW', parameters = parameters)

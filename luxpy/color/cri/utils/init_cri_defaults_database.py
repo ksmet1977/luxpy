@@ -1,31 +1,27 @@
 # -*- coding: utf-8 -*-
 """
-###############################################################################
-# Module with color fidelity and color gamut area parameter dicts
-###############################################################################
+Module with color fidelity and color gamut area parameter dicts
+===============================================================
 
-# _CRI_TYPE_DEFAULT: Default cri_type.
+ :_CRI_TYPE_DEFAULT: Default cri_type.
 
-# _CRI_DEFAULTS: default parameters for color fidelity and gamut area metrics 
-        (major dict has 9 keys (04-Jul-2017): 
-            sampleset [str/dict], 
-            ref_type [str], 
-            cieobs [str], 
-            avg [fcn handle], 
-            scale [dict], 
-            cspace [dict], 
-            catf [dict], 
-            rg_pars [dict], 
-            cri_specific_pars [dict])
+ :CRI_DEFAULTS: default parameters for color fidelity and gamut area metrics 
+                (major dict has 9 keys (04-Jul-2017): 
+                sampleset [str/dict], 
+                ref_type [str], 
+                cieobs [str], 
+                avg [fcn handle], 
+                scale [dict], 
+                cspace [dict], 
+                catf [dict], 
+                rg_pars [dict], 
+                cri_specific_pars [dict])
             
-# process_cri_type_input(): load a cri_type dict but overwrites any keys that 
+ :process_cri_type_input(): load a cri_type dict but overwrites any keys that 
                             have a non-None input in calling function
 
-#------------------------------------------------------------------------------      
 
-Created on Sun Apr 15 10:47:35 2018
-
-@author: kevin.smet
+.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 from luxpy import np, math,put_args_in_db
 from .DE_scalers import linear_scale, log_scale, psy_scale
@@ -138,17 +134,21 @@ def process_cri_type_input(cri_type, args, callerfunction = ''):
     """
     Processes cri_type input in a function (helper function).
     
-    This function replaces the values of keys in the cri_type dict with the 
-    corresponding not-None values in args.
+    | This function replaces the values of keys in the cri_type dict with the 
+      corresponding not-None values in args.
     
     Args:
-        :cri_type: str or dict
-            Database with CRI model parameters.
-        :args: arguments from a caller function
-        :callerfunction: str with function the args originated from
+        :cri_type:
+            | str or dict
+            | Database with CRI model parameters.
+        :args:
+            | arguments from a caller function
+        :callerfunction:
+            | str with function the args originated from
         
     Returns:
-        :cri_type: dict with database of CRI model parameters.
+        :cri_type: 
+            | dict with database of CRI model parameters.
     """
     if isinstance(cri_type,str):
         if (cri_type in _CRI_DEFAULTS['cri_types']):

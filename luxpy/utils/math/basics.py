@@ -16,69 +16,66 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #########################################################################
 """
-###############################################################################
-# Module with useful basic math functions
-###############################################################################
+Module with useful basic math functions
+=======================================
 
-# normalize_3x3_matrix(): Normalize 3x3 matrix M to xyz0 -- > [1,1,1]
+ :normalize_3x3_matrix(): Normalize 3x3 matrix M to xyz0 -- > [1,1,1]
 
-# line_intersect(): Line intersections of series of two line segments a and b. 
-                   (https://stackoverflow.com/questions/3252194/numpy-and-line-intersections)
+ :line_intersect(): | Line intersections of series of two line segments a and b. 
+                    | https://stackoverflow.com/questions/3252194/numpy-and-line-intersections
 
-# positive_arctan(): Calculates the positive angle (0°-360° or 0 - 2*pi rad.) 
-                    from x and y.
+ :positive_arctan(): Calculates the positive angle (0°-360° or 0 - 2*pi rad.) 
+                     from x and y.
 
-# dot23(): Dot product of a 2-d ndarray 
-            with a (N x K x L) 3-d ndarray using einsum().
+ :dot23(): Dot product of a 2-d ndarray 
+           with a (N x K x L) 3-d ndarray using einsum().
 
-# check_symmetric(): Checks if A is symmetric.
+ :check_symmetric(): Checks if A is symmetric.
 
-# check_posdef(): Checks positive definiteness of a matrix via Cholesky.
+ :check_posdef(): Checks positive definiteness of a matrix via Cholesky.
 
-# symmM_to_posdefM(): Converts a symmetric matrix to a positive definite one. 
-                    Two methods are supported:
-                    * 'make': A Python/Numpy port of Muhammad Asim Mubeen's
-                             matlab function Spd_Mat.m 
-                             (https://nl.mathworks.com/matlabcentral/fileexchange/45873-positive-definite-matrix)
-                    * 'nearest': A Python/Numpy port of John D'Errico's 
-                            `nearestSPD` MATLAB code. 
-                            (https://stackoverflow.com/questions/43238173/python-convert-matrix-to-positive-semi-definite)
+ :symmM_to_posdefM(): | Converts a symmetric matrix to a positive definite one. 
+                      | Two methods are supported:
+                      |    * 'make': A Python/Numpy port of Muhammad Asim Mubeen's
+                      |              matlab function Spd_Mat.m 
+                      |       (https://nl.mathworks.com/matlabcentral/fileexchange/45873-positive-definite-matrix)
+                      |    * 'nearest': A Python/Numpy port of John D'Errico's 
+                      |                'nearestSPD' MATLAB code. 
+                      |        (https://stackoverflow.com/questions/43238173/python-convert-matrix-to-positive-semi-definite)
 
-# bvgpdf(): Evaluate bivariate Gaussian probability density function (BVGPDF) 
+ :bvgpdf(): Evaluate bivariate Gaussian probability density function (BVGPDF) 
             at (x,y) with center mu and inverse covariance matric, sigmainv.
 
-# mahalanobis2(): Evaluate the squared mahalanobis distance with center mu and 
+ :mahalanobis2(): Evaluate the squared mahalanobis distance with center mu and 
                   shape and orientation determined by sigmainv. 
 
-# rms(): Calculates root-mean-square along axis.
+ :rms(): Calculates root-mean-square along axis.
 
-# geomean(): Calculates geometric mean along axis.
+ :geomean(): Calculates geometric mean along axis.
 
-# polyarea(): Calculates area of polygon. 
-                (First coordinate should also be last)
+ :polyarea(): | Calculates area of polygon. 
+              | (First coordinate should also be last)
 
-# erf(): erf-function, direct import from scipy.special
+ :erf(): erf-function, direct import from scipy.special
 
-# cart2pol(): Converts Cartesian to polar coordinates.
+ :cart2pol(): Converts Cartesian to polar coordinates.
 
-# pol2cart(): Converts polar to Cartesian coordinates.
+ :pol2cart(): Converts polar to Cartesian coordinates.
 
-# magnitude_v():  Calculates magnitude of vector.
+ :magnitude_v():  Calculates magnitude of vector.
 
-# angle_v1v2():  Calculates angle between two vectors.
+ :angle_v1v2():  Calculates angle between two vectors.
 
-# histogram() : Histogram function that can take as bins either the center
-                 (cfr. matlab hist) or bin-edges.
+ :histogram(): | Histogram function that can take as bins either the center
+               | (cfr. matlab hist) or bin-edges.
 
-# minimizebnd(): scipy.minimize() that allows contrained parameters on 
+ :minimizebnd(): scipy.minimize() that allows contrained parameters on 
                  unconstrained methods(port of Matlab's fminsearchbnd). 
                  Starting, lower and upper bounds values can also be provided 
                  as a dict.
-#------------------------------------------------------------------------------
 
-Created on Tue Jun 27 11:50:32 2017
-
-@author: Kevin A.G. Smet (ksmet1977 at gmail.com)
+.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
+===============================================================================
 """
 
 from luxpy import np, np2d
@@ -89,6 +86,7 @@ __all__  = ['normalize_3x3_matrix','symmM_to_posdefM','check_symmetric',
 __all__ += ['bvgpdf','mahalanobis2','dot23', 'rms','geomean','polyarea']
 __all__ += ['magnitude_v','angle_v1v2']
 
+
 #------------------------------------------------------------------------------
 def normalize_3x3_matrix(M, xyz0 = np.array([[1.0,1.0,1.0]])):
     """
@@ -96,11 +94,14 @@ def normalize_3x3_matrix(M, xyz0 = np.array([[1.0,1.0,1.0]])):
     If M.shape == (1,9): M is reshaped to (3,3)
     
     Args:
-        :M: ndarray((3,3) or ndarray((1,9))
-        :xyz0: np.2darray, optional 
+        :M: 
+            | ndarray((3,3) or ndarray((1,9))
+        :xyz0: 
+            | 2darray, optional 
         
     Returns:
-        :returns: normalized matrix such that M*xyz0 = [1,1,1]
+        :returns: 
+            | normalized matrix such that M*xyz0 = [1,1,1]
     """
     M = np2d(M)
     if M.shape[-1]==9:
@@ -113,18 +114,24 @@ def line_intersect(a1, a2, b1, b2):
     Line intersections of series of two line segments a and b. 
         
     Args:
-        :a1: ndarray (.shape  = (N,2)) specifying end-point 1 of line a
-        :a2: ndarray (.shape  = (N,2)) specifying end-point 2 of line a
-        :b1: ndarray (.shape  = (N,2)) specifying end-point 1 of line b
-        :b2: ndarray (.shape  = (N,2)) specifying end-point 2 of line b
+        :a1: 
+            | ndarray (.shape  = (N,2)) specifying end-point 1 of line a
+        :a2: 
+            | ndarray (.shape  = (N,2)) specifying end-point 2 of line a
+        :b1: 
+            | ndarray (.shape  = (N,2)) specifying end-point 1 of line b
+        :b2: 
+            | ndarray (.shape  = (N,2)) specifying end-point 2 of line b
     
-        Note: N is the number of line segments a and b.
+    Note: 
+        N is the number of line segments a and b.
     
     Returns:
-        :returns: ndarray with line-intersections (.shape = (N,2))
+        :returns: 
+            | ndarray with line-intersections (.shape = (N,2))
     
     References:
-        ..[] https://stackoverflow.com/questions/3252194/numpy-and-line-intersections
+        1. https://stackoverflow.com/questions/3252194/numpy-and-line-intersections
     """
     T = np.array([[0.0, -1.0], [1.0, 0.0]])
     da = np.atleast_2d(a2 - a1)
@@ -141,13 +148,18 @@ def positive_arctan(x,y, htype = 'deg'):
     Calculate positive angle (0°-360° or 0 - 2*pi rad.) from x and y.
     
     Args:
-        :x: ndarray of x-coordinates
-        :y: ndarray of y-coordinates
-        :htype: 'deg' or 'rad', optional
-            'deg': hue angle between 0° and 360°
-            'rad': hue angle between 0 and 2pi radians
+        :x: 
+            | ndarray of x-coordinates
+        :y: 
+            | ndarray of y-coordinates
+        :htype:
+            | 'deg' or 'rad', optional
+            |   - 'deg': hue angle between 0° and 360°
+            |   - 'rad': hue angle between 0 and 2pi radians
+    
     Returns:
-        :returns: ndarray of positive angles.
+        :returns:
+            | ndarray of positive angles.
     """
     if htype == 'deg':
         r2d = 180.0/np.pi
@@ -167,11 +179,14 @@ def dot23(A,B, keepdims = False):
     using einsum().
     
     Args:
-        :A: ndarray (.shape = (M,N))
-        :B: ndarray (.shape = (N,K,L))
+        :A: 
+            | ndarray (.shape = (M,N))
+        :B: 
+            | ndarray (.shape = (N,K,L))
         
     Returns:
-        :returns: ndarray (.shape = (M,K,L))
+        :returns: 
+            | ndarray (.shape = (M,K,L))
     """
     if (len(A.shape)==2) & (len(B.shape)==3):
         dotAB = np.einsum('ij,jkl->ikl',A,B)
@@ -190,15 +205,19 @@ def check_symmetric(A, atol = 1.0e-9, rtol = 1.0e-9):
     Check if A is symmetric.
     
     Args:
-        :A: ndarray
-        :atol: float, optional
-            The absolute tolerance parameter (see Notes of numpy.allclose())
-        :rtol: float, optional
-            The relative tolerance parameter (see Notes of numpy.allclose())
+        :A: 
+            | ndarray
+        :atol:
+            | float, optional
+            | The absolute tolerance parameter (see Notes of numpy.allclose())
+        :rtol:
+            | float, optional
+            | The relative tolerance parameter (see Notes of numpy.allclose())
     
     Returns:
-        :returns: Bool
-            True: the array is symmetric within the given tolerance
+        :returns:
+            | Bool
+            | True: the array is symmetric within the given tolerance
     """
     return np.allclose(A, A.T, atol = atol, rtol = rtol)
 
@@ -208,15 +227,19 @@ def check_posdef(A, atol = 1.0e-9, rtol = 1.0e-9):
     Checks positive definiteness of a matrix via Cholesky.
     
     Args:
-        :A: ndarray
-        :atol: float, optional
-            The absolute tolerance parameter (see Notes of numpy.allclose())
-        :rtol: float, optional
-            The relative tolerance parameter (see Notes of numpy.allclose())
+        :A: 
+            | ndarray
+        :atol:
+            | float, optional
+            | The absolute tolerance parameter (see Notes of numpy.allclose())
+        :rtol:
+            | float, optional
+            | The relative tolerance parameter (see Notes of numpy.allclose())
     
     Returns:
-        :returns: Bool
-            True: the array is positive-definite within the given tolerance
+        :returns:
+            | Bool
+            | True: the array is positive-definite within the given tolerance
 
     """
     try:
@@ -234,26 +257,32 @@ def symmM_to_posdefM(A = None, atol = 1.0e-9, rtol = 1.0e-9, method = 'make', fo
     Convert a symmetric matrix to a positive definite one. 
     
     Args:
-        :A: ndarray
-        :atol: float, optional
-            The absolute tolerance parameter (see Notes of numpy.allclose())
-        :rtol: float, optional
-            The relative tolerance parameter (see Notes of numpy.allclose())
-        :method: 'make' or 'nearest', optional (see notes for more info)
-        :forcesymm: True or False, optional
-            If A is not symmetric, force symmetry using: 
-                A = numpy.triu(A) + numpy.triu(A).T - numpy.diag(numpy.diag(A))
+        :A: 
+            | ndarray
+        :atol:
+            | float, optional
+            | The absolute tolerance parameter (see Notes of numpy.allclose())
+        :rtol:
+            | float, optional
+            | The relative tolerance parameter (see Notes of numpy.allclose())
+        :method: 
+            | 'make' or 'nearest', optional (see notes for more info)
+        :forcesymm: 
+            | True or False, optional
+            | If A is not symmetric, force symmetry using: 
+            |    A = numpy.triu(A) + numpy.triu(A).T - numpy.diag(numpy.diag(A))
     
     Returns:
-        :returns: ndarray with positive-definite matrix.
+        :returns:
+            | ndarray with positive-definite matrix.
         
     Notes on supported methods:
-        -'make': A Python/Numpy port of Muhammad Asim Mubeen's matlab function 
-                Spd_Mat.m 
-                (https://nl.mathworks.com/matlabcentral/fileexchange/45873-positive-definite-matrix)
-        -'nearest': A Python/Numpy port of John D'Errico's `nearestSPD` 
-                MATLAB code. 
-                (https://stackoverflow.com/questions/43238173/python-convert-matrix-to-positive-semi-definite)
+        1. `'make': A Python/Numpy port of Muhammad Asim Mubeen's matlab function 
+        Spd_Mat.m 
+        <https://nl.mathworks.com/matlabcentral/fileexchange/45873-positive-definite-matrix>`_
+        2. `'nearest': A Python/Numpy port of John D'Errico's `nearestSPD` 
+        MATLAB code. 
+        <https://stackoverflow.com/questions/43238173/python-convert-matrix-to-positive-semi-definite>`_
     """
     if A is not None:
         A = np2d(A)
@@ -328,19 +357,25 @@ def bvgpdf(x, y = None, mu = None, sigmainv = None):
     with center mu and inverse covariance matric, sigmainv.
     
     Args:
-        :x: scalar or list or ndarray (.ndim = 1 or 2) with 
-            x(y)-coordinates at which to evaluate bivariate Gaussian PD.
-        :y: None or scalar or list or ndarray (.ndim = 1) with 
-            y-coordinates at which to evaluate bivariate Gaussian PD, optional.
-            If :y: is None, :x: should be a 2d array.
-        :mu: None or ndarray (.ndim = 2) with center coordinates of 
-             bivariate Gaussian PD, optional. 
-            None defaults to ndarray([0,0]).
-        :sigmainv: None or ndarray with 'inverse covariance matrix', optional 
-            Determines the shape and orientation of the PD.
-            None default to numpy.eye(2).
-     Returns:
-         :returns: ndarray with magnitude of BVGPDF(x,y)   
+        :x: 
+            | scalar or list or ndarray (.ndim = 1 or 2) with 
+            | x(y)-coordinates at which to evaluate bivariate Gaussian PD.
+        :y: 
+            | None or scalar or list or ndarray (.ndim = 1) with 
+            | y-coordinates at which to evaluate bivariate Gaussian PD, optional.
+            | If :y: is None, :x: should be a 2d array.
+        :mu: 
+            | None or ndarray (.ndim = 2) with center coordinates of 
+            | bivariate Gaussian PD, optional. 
+            | None defaults to ndarray([0,0]).
+        :sigmainv:
+            | None or ndarray with 'inverse covariance matrix', optional 
+            | Determines the shape and orientation of the PD.
+            | None default to numpy.eye(2).
+     
+    Returns:
+         :returns:
+             | ndarray with magnitude of BVGPDF(x,y)   
     
     """
     return np.exp(-0.5*mahalanobis2(x,y = y, mu = mu, sigmainv= sigmainv))
@@ -351,22 +386,26 @@ def mahalanobis2(x, y = None, mu = None,sigmainv = None):
     Evaluate the squared mahalanobis distance with center mu and shape 
     and orientation determined by sigmainv. 
     
-    Args:
-        :x: scalar or list or ndarray (.ndim = 1 or 2) with x(y)-coordinates 
-            at which to evaluate the mahalanobis distance squared.
-        :y: None or scalar or list or ndarray (.ndim = 1) with y-coordinates 
-            at which to evaluate the mahalanobis distance squared, optional.
-            If :y: is None, :x: should be a 2d array.
-        :mu: None or ndarray (.ndim = 2) with center coordinates of the 
-            mahalanobis ellipse, optional. 
-            None defaults to ndarray([0,0]).
-        :sigmainv: None or ndarray with 'inverse covariance matrix', optional 
-            Determines the shape and orientation of the PD.
-            None default to numpy.eye(2).
-     Returns:
-         :returns: ndarray with magnitude of mahalanobis2(x,y)   
+    Args: 
+        :x: 
+            | scalar or list or ndarray (.ndim = 1 or 2) with x(y)-coordinates 
+              at which to evaluate the mahalanobis distance squared.
+        :y: 
+            | None or scalar or list or ndarray (.ndim = 1) with y-coordinates 
+              at which to evaluate the mahalanobis distance squared, optional.
+            | If :y: is None, :x: should be a 2d array.
+        :mu: 
+            | None or ndarray (.ndim = 2) with center coordinates of the 
+              mahalanobis ellipse, optional. 
+            | None defaults to ndarray([0,0]).
+        :sigmainv:
+            | None or ndarray with 'inverse covariance matrix', optional 
+            | Determines the shape and orientation of the PD.
+            | None default to np.eye(2).
+    Returns:
+         :returns: 
+             | ndarray with magnitude of mahalanobis2(x,y)
 
-    
     """
     if mu is None:
         mu = np.zeros(2)
@@ -391,14 +430,18 @@ def rms(data,axis = 0, keepdims = False):
     Calculate root-mean-square along axis.
     
     Args:
-        :data: list of values or ndarray
-        :axis: 0, optional
-            Axis along which to calculate rms.
-        :keepdims: False or True, optional
-            Keep original dimensions of array.
+        :data: 
+            | list of values or ndarray
+        :axis:
+            | 0, optional
+            | Axis along which to calculate rms.
+        :keepdims:
+            | False or True, optional
+            | Keep original dimensions of array.
     
     Returns:
-        :returns: ndarray with rms values.
+        :returns:
+            | ndarray with rms values.
     """
     data = np2d(data)
     return np.sqrt(np.power(data,2).mean(axis=axis, keepdims = keepdims))
@@ -409,14 +452,18 @@ def geomean(data, axis = 0, keepdims = False):
     Calculate geometric mean along axis.
     
     Args:
-        :data: list of values or ndarray
-        :axis: 0, optional
-            Axis along which to calculate geomean.
-        :keepdims: False or True, optional
-            Keep original dimensions of array.
+        :data:
+            | list of values or ndarray
+        :axis:
+            | 0, optional
+            | Axis along which to calculate geomean.
+        :keepdims:
+            | False or True, optional
+            | Keep original dimensions of array.
     
     Returns:
-        :returns: ndarray with geomean values. 
+        :returns:
+            | ndarray with geomean values. 
     """
     data = np2d(data)
     return np.power(data.prod(axis=axis, keepdims = keepdims),1/data.shape[axis])
@@ -426,14 +473,17 @@ def polyarea(x,y):
     """
     Calculates area of polygon. 
     
-    First coordinate should also be last.
+    | First coordinate should also be last.
     
     Args:
-        :x: ndarray of x-coordinates of polygon vertices.
-        :y: ndarray of x-coordinates of polygon vertices.     
+        :x: 
+            | ndarray of x-coordinates of polygon vertices.
+        :y: 
+            | ndarray of x-coordinates of polygon vertices.     
     
     Returns:
-        :returns: float (area or polygon)
+        :returns:
+            | float (area or polygon)
     
     """
     return 0.5*np.abs(np.dot(x,np.roll(y,1).T)-np.dot(y,np.roll(x,1).T))
@@ -444,14 +494,18 @@ def cart2pol(x,y = None, htype = 'deg'):
     Convert Cartesion to polar coordinates.
     
     Args:
-        :x: float or ndarray with x-coordinates
-        :y: None or float or ndarray with x-coordinates, optional
-            If None, y-coordinates are assumed to be in :x:.
-        :htype: 'deg' or 'rad, optional
-            Output type of theta.
+        :x: 
+            | float or ndarray with x-coordinates
+        :y: 
+            | None or float or ndarray with x-coordinates, optional
+            | If None, y-coordinates are assumed to be in :x:.
+        :htype:
+            | 'deg' or 'rad, optional
+            | Output type of theta.
     
     Returns:
-        :returns: (float or ndarray of theta, float or ndarray of r) values
+        :returns: 
+            | (float or ndarray of theta, float or ndarray of r) values
     """
     if y is None:
         y = x[...,1].copy()
@@ -463,14 +517,18 @@ def pol2cart(theta, r = None, htype = 'deg'):
     Convert Cartesion to polar coordinates.
     
     Args:
-        :theta: float or ndarray with theta-coordinates
-        :r: None or float or ndarray with r-coordinates, optional
-            If None, r-coordinates are assumed to be in :theta:.
-        :htype: 'deg' or 'rad, optional
-            Intput type of :theta:.
+        :theta: 
+            | float or ndarray with theta-coordinates
+        :r: 
+            | None or float or ndarray with r-coordinates, optional
+            | If None, r-coordinates are assumed to be in :theta:.
+        :htype:
+            | 'deg' or 'rad, optional
+            | Intput type of :theta:.
     
     Returns:
-        :returns: (float or ndarray of x, float or ndarray of y) coordinates 
+        :returns:
+            | (float or ndarray of x, float or ndarray of y) coordinates 
     """
     if htype == 'deg':
         d2r = np.pi/180.0
@@ -489,10 +547,12 @@ def magnitude_v(v):
     Calculates magnitude of vector.
     
     Args:
-        :v: ndarray with vector
+        :v: 
+            | ndarray with vector
  
     Returns:
-        :magnitude: ndarray 
+        :magnitude:
+            | ndarray 
     """
     magnitude = np.sqrt(v[:,0]**2 + v[:,1]**2)
     return magnitude
@@ -504,13 +564,17 @@ def angle_v1v2(v1,v2,htype = 'deg'):
     Calculates angle between two vectors.
     
     Args:
-        :v1: ndarray with vector 1
-        :v2: ndarray with vector 2
-        :htype: 'deg' or 'rad', optional
-            Requested angle type.
+        :v1: 
+            | ndarray with vector 1
+        :v2: 
+            | ndarray with vector 2
+        :htype:
+            | 'deg' or 'rad', optional
+            | Requested angle type.
     
     Returns:
-        :ang: ndarray 
+        :ang: 
+            | ndarray 
     """
     denom = magnitude_v(v1)*magnitude_v(v2)
     denom[denom==0.] = np.nan
@@ -526,15 +590,21 @@ def histogram(a, bins=10, bin_center = False, range=None, normed=False, weights=
     the center (cfr. matlab hist) or bin-edges.
     
     Args: 
-        :bin_center: False, optional
-            False: if :bins: int, str or sequence of scalars:
-                    default to numpy.histogram (uses bin edges).
-            True: if :bins: is a sequence of scalars:
-                    bins (containing centers) are transformed to edges
-                    and nump.histogram is run. 
-                    Mimicks matlab hist (uses bin centers).
+        :bin_center:
+            | False, optional
+            | False: if :bins: int, str or sequence of scalars:
+            |       default to numpy.histogram (uses bin edges).
+            | True: if :bins: is a sequence of scalars:
+            |         bins (containing centers) are transformed to edges
+            |         and nump.histogram is run. 
+            |         Mimicks matlab hist (uses bin centers).
         
-    Note for other armuments and output, see ?numpy.histogram
+    Note:
+        For other armuments and output, see ?numpy.histogram
+        
+    Returns:
+        :returns:
+            | ndarray with histogram
     """
     if (isinstance(bins, list) |  isinstance(bins, np.ndarray)) & (bin_center == True):
         if len(bins) == 1:

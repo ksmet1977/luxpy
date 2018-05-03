@@ -1,0 +1,1377 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>luxpy.color.cri.utils.helpers &mdash; LuxPy 1.3.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+
+  
+  <script src="../../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../../index.html" class="icon icon-home"> LuxPy
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../license.html">License: GPLv3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../required_packages.html">Imported (required) 3e party packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../luxpy_structure.html">Luxpy package structure</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">LuxPy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>luxpy.color.cri.utils.helpers</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for luxpy.color.cri.utils.helpers</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1">########################################################################</span>
+<span class="c1"># &lt;LUXPY: a Python package for lighting and color science.&gt;</span>
+<span class="c1"># Copyright (C) &lt;2017&gt;  &lt;Kevin A.G. Smet&gt; (ksmet1977 at gmail.com)</span>
+<span class="c1">#</span>
+<span class="c1"># This program is free software: you can redistribute it and/or modify</span>
+<span class="c1"># it under the terms of the GNU General Public License as published by</span>
+<span class="c1"># the Free Software Foundation, either version 3 of the License.</span>
+<span class="c1">#</span>
+<span class="c1"># This program is distributed in the hope that it will be useful,</span>
+<span class="c1"># but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="c1"># MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="c1"># GNU General Public License for more details.</span>
+<span class="c1">#</span>
+<span class="c1"># You should have received a copy of the GNU General Public License</span>
+<span class="c1"># along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<span class="c1">#########################################################################</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module with color rendition, fidelity and gamut area helper functions</span>
+<span class="sd">=====================================================================</span>
+
+<span class="sd">:gamut_slicer(): Slices the gamut in nhbins slices and provides normalization </span>
+<span class="sd">                  of test gamut to reference gamut.</span>
+
+<span class="sd"> :jab_to_rg(): Calculates gamut area index, Rg.</span>
+
+<span class="sd"> :jab_to_rhi(): | Calculate hue bin measures: </span>
+<span class="sd">                |   Rfhi (local (hue bin) color fidelity)</span>
+<span class="sd">                |   Rcshi (local chroma shift) </span>
+<span class="sd">                |   Rhshi (local hue shift)</span>
+
+<span class="sd"> :spd_to_jab_t_r(): Calculates jab color values for a sample set illuminated</span>
+<span class="sd">                    with test source and its reference illuminant.</span>
+
+<span class="sd"> :spd_to_rg(): Calculates the color gamut index of spectral data </span>
+<span class="sd">               for a sample set illuminated with test source (data) </span>
+<span class="sd">               with respect to some reference illuminant.</span>
+
+<span class="sd"> :spd_to_DEi(): Calculates color difference (~fidelity) of spectral data </span>
+<span class="sd">                between sample set illuminated with test source (data) </span>
+<span class="sd">                and some reference illuminant.</span>
+
+<span class="sd"> :optimize_scale_factor(): Optimize scale_factor of cri-model in cri_type </span>
+<span class="sd">                           such that average Rf for a set of light sources is </span>
+<span class="sd">                           the same as that of a target-cri (default: &#39;ciera&#39;)</span>
+
+<span class="sd"> :spd_to_cri(): Calculates the color rendering fidelity index </span>
+<span class="sd">                (CIE Ra, CIE Rf, IES Rf, CRI2012 Rf) of spectral data. </span>
+<span class="sd">                Can also output Rg, Rfhi, Rcshi, Rhshi, cct, duv, ...</span>
+
+<span class="sd">.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="p">(</span><span class="n">np</span><span class="p">,</span> <span class="n">_S_INTERP_TYPE</span><span class="p">,</span> <span class="n">_CRI_RFL</span><span class="p">,</span> <span class="n">_IESTM30</span><span class="p">,</span> <span class="n">math</span><span class="p">,</span> <span class="n">cam</span><span class="p">,</span> <span class="n">cat</span><span class="p">,</span>
+                <span class="n">minimize</span><span class="p">,</span> <span class="n">asplit</span><span class="p">,</span> <span class="n">np2d</span><span class="p">,</span> <span class="n">spd</span><span class="p">,</span> <span class="n">put_args_in_db</span><span class="p">,</span> 
+                <span class="n">colortf</span><span class="p">,</span> <span class="n">spd_to_xyz</span><span class="p">,</span> <span class="n">cri_ref</span><span class="p">,</span> <span class="n">xyz_to_cct</span><span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">.DE_scalers</span> <span class="k">import</span> <span class="n">linear_scale</span><span class="p">,</span> <span class="n">log_scale</span><span class="p">,</span> <span class="n">psy_scale</span>
+
+<span class="kn">from</span> <span class="nn">.init_cri_defaults_database</span> <span class="k">import</span> <span class="n">_CRI_TYPE_DEFAULT</span><span class="p">,</span> <span class="n">_CRI_DEFAULTS</span><span class="p">,</span> <span class="n">process_cri_type_input</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;gamut_slicer&#39;</span><span class="p">,</span><span class="s1">&#39;jab_to_rg&#39;</span><span class="p">,</span> <span class="s1">&#39;jab_to_rhi&#39;</span><span class="p">,</span> <span class="s1">&#39;jab_to_DEi&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;spd_to_DEi&#39;</span><span class="p">,</span> <span class="s1">&#39;spd_to_rg&#39;</span><span class="p">,</span> <span class="s1">&#39;spd_to_cri&#39;</span><span class="p">]</span>
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="gamut_slicer"><a class="viewcode-back" href="../../../../../color.html#luxpy.color.cri.gamut_slicer">[docs]</a><span class="k">def</span> <span class="nf">gamut_slicer</span><span class="p">(</span><span class="n">jab_test</span><span class="p">,</span><span class="n">jab_ref</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;jabt,jabr&#39;</span><span class="p">,</span> <span class="n">nhbins</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> \
+                 <span class="n">start_hue</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">normalize_gamut</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> \
+                 <span class="n">normalized_chroma_ref</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="n">close_gamut</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Slices the gamut in hue bins.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :jab_test: </span>
+<span class="sd">            | ndarray with Cartesian color coordinates (e.g. Jab) </span>
+<span class="sd">              of the samples under the test SPD</span>
+<span class="sd">        :jab_ref:</span>
+<span class="sd">            | ndarray with Cartesian color coordinates (e.g. Jab) </span>
+<span class="sd">              of the samples under the reference SPD</span>
+<span class="sd">        :out: </span>
+<span class="sd">            | &#39;jabt,jabr&#39; or str, optional</span>
+<span class="sd">            | Specifies which variables to output as ndarray</span>
+<span class="sd">        :nhbins:</span>
+<span class="sd">            | None or int, optional</span>
+<span class="sd">            |   - None: defaults to using the sample hues themselves as &#39;bins&#39;. </span>
+<span class="sd">            |           In other words, the number of bins will be equal to the </span>
+<span class="sd">            |           number of samples.</span>
+<span class="sd">            |   - float: number of bins to slice the sample gamut in.</span>
+<span class="sd">        :start_hue:</span>
+<span class="sd">            | 0.0 or float, optional</span>
+<span class="sd">            | Hue angle to start bin slicing</span>
+<span class="sd">        :normalize_gamut:</span>
+<span class="sd">            | True or False, optional</span>
+<span class="sd">            | True normalizes the gamut of test to that of ref.</span>
+<span class="sd">              (perfect agreement results in circle).</span>
+<span class="sd">        :normalized_chroma_ref:</span>
+<span class="sd">            | 100.0 or float, optional</span>
+<span class="sd">            | Controls the size (chroma/radius) of the normalization circle/gamut.</span>
+<span class="sd">        :close_gamut:</span>
+<span class="sd">            | False or True, optional</span>
+<span class="sd">            | True appends the first jab coordinates to the end of the output </span>
+<span class="sd">              (for plotting closed gamuts)</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :returns:</span>
+<span class="sd">            | ndarray with average jabt,jabr of each hue bin. </span>
+<span class="sd">            |  (.shape = (number of hue bins, 3))</span>
+<span class="sd">            | </span>
+<span class="sd">            |  (or outputs whatever is specified in :out:) </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># make 3d for easy looping:</span>
+    <span class="n">test_original_shape</span> <span class="o">=</span> <span class="n">jab_test</span><span class="o">.</span><span class="n">shape</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">test_original_shape</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">3</span><span class="p">:</span>
+        <span class="n">jab_test</span> <span class="o">=</span> <span class="n">jab_test</span><span class="p">[:,</span><span class="kc">None</span><span class="p">]</span>
+        <span class="n">jab_ref</span> <span class="o">=</span> <span class="n">jab_ref</span><span class="p">[:,</span><span class="kc">None</span><span class="p">]</span>
+    
+    <span class="c1">#initialize Jabt, Jabr, binnr, DEi;</span>
+    <span class="n">test_shape</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">jab_test</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">nhbins</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">nhbins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">(</span><span class="n">nhbins</span><span class="p">)</span>
+        <span class="n">test_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">nhbins</span> <span class="o">+</span> <span class="n">close_gamut</span><span class="o">*</span><span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">test_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">test_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">close_gamut</span><span class="o">*</span><span class="mi">1</span>
+    <span class="n">jabt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">test_shape</span><span class="p">)</span>
+    <span class="n">jabr</span> <span class="o">=</span> <span class="n">jabt</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">binnr</span> <span class="o">=</span> <span class="n">jab_test</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">DEi</span> <span class="o">=</span> <span class="n">jabt</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    
+    <span class="c1"># Loop over axis 1:</span>
+    <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">jab_test</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+          
+        <span class="c1"># calculate hue angles:</span>
+        <span class="n">ht</span> <span class="o">=</span> <span class="n">cam</span><span class="o">.</span><span class="n">hue_angle</span><span class="p">(</span><span class="n">jab_test</span><span class="p">[:,</span><span class="n">ii</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="n">jab_test</span><span class="p">[:,</span><span class="n">ii</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="n">htype</span><span class="o">=</span><span class="s1">&#39;rad&#39;</span><span class="p">)</span>
+        <span class="n">hr</span> <span class="o">=</span> <span class="n">cam</span><span class="o">.</span><span class="n">hue_angle</span><span class="p">(</span><span class="n">jab_ref</span><span class="p">[:,</span><span class="n">ii</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="n">jab_ref</span><span class="p">[:,</span><span class="n">ii</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="n">htype</span><span class="o">=</span><span class="s1">&#39;rad&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">nhbins</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">Ir</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">hr</span><span class="p">)</span>
+            <span class="n">jabtii</span> <span class="o">=</span> <span class="n">jab_test</span><span class="p">[</span><span class="n">Ir</span><span class="p">,</span><span class="n">ii</span><span class="p">,:]</span>
+            <span class="n">jabrii</span> <span class="o">=</span> <span class="n">jab_ref</span><span class="p">[</span><span class="n">Ir</span><span class="p">,</span><span class="n">ii</span><span class="p">,:]</span>
+            <span class="n">nhbins</span> <span class="o">=</span> <span class="p">(</span><span class="n">jabtii</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">DEi</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">((</span><span class="n">jabtii</span> <span class="o">-</span> <span class="n">jabtii</span><span class="p">),</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span> <span class="o">=</span> <span class="n">jabtii</span><span class="o">.</span><span class="n">ndim</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            
+            <span class="c1">#divide huecircle/data in n hue slices:</span>
+            <span class="n">hbins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(((</span><span class="n">hr</span> <span class="o">-</span> <span class="n">start_hue</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">180</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">*</span> <span class="n">nhbins</span><span class="p">)</span> <span class="c1"># because of start_hue bin range can be different from 0 : n-1</span>
+            <span class="n">hbins</span><span class="p">[</span><span class="n">hbins</span><span class="o">&gt;=</span><span class="n">nhbins</span><span class="p">]</span> <span class="o">=</span> <span class="n">hbins</span><span class="p">[</span><span class="n">hbins</span><span class="o">&gt;=</span><span class="n">nhbins</span><span class="p">]</span> <span class="o">-</span> <span class="n">nhbins</span> <span class="c1"># reset binnumbers to 0 : n-1 range</span>
+            <span class="n">hbins</span><span class="p">[</span><span class="n">hbins</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">nhbins</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="n">hbins</span><span class="p">[</span><span class="n">hbins</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="c1"># reset binnumbers to 0 : n-1 range</span>
+
+            <span class="n">jabtii</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nhbins</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+            <span class="n">jabrii</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nhbins</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nhbins</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">hbins</span><span class="p">:</span>
+                    <span class="n">jabtii</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">jab_test</span><span class="p">[</span><span class="n">hbins</span><span class="o">==</span><span class="n">i</span><span class="p">,</span><span class="n">ii</span><span class="p">,:]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+                    <span class="n">jabrii</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">jab_ref</span><span class="p">[</span><span class="n">hbins</span><span class="o">==</span><span class="n">i</span><span class="p">,</span><span class="n">ii</span><span class="p">,:]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+                    <span class="n">DEi</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">((</span><span class="n">jab_test</span><span class="p">[</span><span class="n">hbins</span><span class="o">==</span><span class="n">i</span><span class="p">,</span><span class="n">ii</span><span class="p">,:]</span> <span class="o">-</span> <span class="n">jab_ref</span><span class="p">[</span><span class="n">hbins</span><span class="o">==</span><span class="n">i</span><span class="p">,</span><span class="n">ii</span><span class="p">,:]),</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span> <span class="o">=</span> <span class="n">jab_test</span><span class="p">[</span><span class="n">hbins</span><span class="o">==</span><span class="n">i</span><span class="p">,</span><span class="n">ii</span><span class="p">,:]</span><span class="o">.</span><span class="n">ndim</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">normalize_gamut</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="c1">#renormalize jabtii using jabrii:</span>
+            <span class="n">Ct</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">jabtii</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">jabtii</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">Cr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">jabrii</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">jabrii</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">ht</span> <span class="o">=</span> <span class="n">cam</span><span class="o">.</span><span class="n">hue_angle</span><span class="p">(</span><span class="n">jabtii</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span><span class="n">jabtii</span><span class="p">[:,</span><span class="mi">2</span><span class="p">],</span> <span class="n">htype</span> <span class="o">=</span> <span class="s1">&#39;rad&#39;</span><span class="p">)</span>
+            <span class="n">hr</span> <span class="o">=</span> <span class="n">cam</span><span class="o">.</span><span class="n">hue_angle</span><span class="p">(</span><span class="n">jabrii</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span><span class="n">jabrii</span><span class="p">[:,</span><span class="mi">2</span><span class="p">],</span> <span class="n">htype</span> <span class="o">=</span> <span class="s1">&#39;rad&#39;</span><span class="p">)</span>
+        
+            <span class="c1"># calculate rescaled chroma of test:</span>
+            <span class="n">C</span> <span class="o">=</span> <span class="n">normalized_chroma_ref</span><span class="o">*</span><span class="p">(</span><span class="n">Ct</span><span class="o">/</span><span class="n">Cr</span><span class="p">)</span> 
+        
+            <span class="c1"># calculate normalized cart. co.: </span>
+            <span class="n">jabtii</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">C</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">ht</span><span class="p">)</span>
+            <span class="n">jabtii</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">C</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">ht</span><span class="p">)</span>
+            <span class="n">jabrii</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">normalized_chroma_ref</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">hr</span><span class="p">)</span>
+            <span class="n">jabrii</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">normalized_chroma_ref</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">hr</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">close_gamut</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">jabtii</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">jabtii</span><span class="p">,</span><span class="n">jabtii</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]))</span> <span class="c1"># to create closed curve when plotting</span>
+            <span class="n">jabrii</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">jabrii</span><span class="p">,</span><span class="n">jabrii</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]))</span> <span class="c1"># to create closed curve when plotting</span>
+
+        <span class="n">jabt</span><span class="p">[:,</span><span class="n">ii</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">jabtii</span>
+        <span class="n">jabr</span><span class="p">[:,</span><span class="n">ii</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">jabrii</span>
+        <span class="n">binnr</span><span class="p">[:,</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">hbins</span>
+
+    <span class="c1"># circle coordinates for plotting:</span>
+    <span class="n">hc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">360.0</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.0</span>
+    <span class="n">jabc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">hc</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">3</span><span class="p">))</span><span class="o">*</span><span class="mi">100</span>
+    <span class="n">jabc</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">normalized_chroma_ref</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">hc</span><span class="p">)</span>
+    <span class="n">jabc</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">normalized_chroma_ref</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">hc</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">test_original_shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">jabt</span> <span class="o">=</span> <span class="n">jabt</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">jabr</span> <span class="o">=</span> <span class="n">jabr</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;jabt,jabr&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">jabt</span><span class="p">,</span> <span class="n">jabr</span>
+    <span class="k">elif</span> <span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;jabt,jabr,DEi&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">jabt</span><span class="p">,</span> <span class="n">jabr</span><span class="p">,</span> <span class="n">DEi</span>
+    <span class="k">elif</span> <span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;jabt,jabr,DEi,binnr&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">jabt</span><span class="p">,</span> <span class="n">jabr</span><span class="p">,</span> <span class="n">DEi</span><span class="p">,</span> <span class="n">binnr</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">eval</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>        </div>
+ 
+<span class="c1">#------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="jab_to_rg"><a class="viewcode-back" href="../../../../../color.html#luxpy.color.cri.jab_to_rg">[docs]</a><span class="k">def</span> <span class="nf">jab_to_rg</span><span class="p">(</span><span class="n">jabt</span><span class="p">,</span><span class="n">jabr</span><span class="p">,</span> <span class="n">max_scale</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="n">ordered_and_sliced</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> \
+              <span class="n">nhbins</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">start_hue</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">normalize_gamut</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> \
+              <span class="n">normalized_chroma_ref</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;Rg,jabt,jabr&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculates gamut area index, Rg.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :jabt:  </span>
+<span class="sd">            | ndarray with Cartesian color coordinates (e.g. Jab) </span>
+<span class="sd">              of the samples under the test SPD</span>
+<span class="sd">        :jabr:</span>
+<span class="sd">            | ndarray with Cartesian color coordinates (e.g. Jab) </span>
+<span class="sd">              of the samples under the reference SPD</span>
+<span class="sd">        :max_scale:</span>
+<span class="sd">            | 100.0, optional</span>
+<span class="sd">            | Value of Rg when Rf = max_scale (i.e. DEavg = 0)</span>
+<span class="sd">        :ordered_and_sliced: </span>
+<span class="sd">            | False or True, optional</span>
+<span class="sd">            |   - False: Hue ordering will be done with lux.cri.gamut_slicer().</span>
+<span class="sd">            |   - True: user is responsible for hue-ordering and closing gamut </span>
+<span class="sd">                  (i.e. first element in :jab: equals the last).</span>
+<span class="sd">        :nhbins: </span>
+<span class="sd">            | None or int, optional</span>
+<span class="sd">            |   - None: defaults to using the sample hues themselves as &#39;bins&#39;. </span>
+<span class="sd">            |           In other words, the number of bins will be equal to the </span>
+<span class="sd">            |           number of samples.</span>
+<span class="sd">            |   - float: number of bins to slice the sample gamut in.</span>
+<span class="sd">        :start_hue:</span>
+<span class="sd">            | 0.0 or float, optional</span>
+<span class="sd">            | Hue angle to start bin slicing</span>
+<span class="sd">        :normalize_gamut:</span>
+<span class="sd">            | True or False, optional</span>
+<span class="sd">            | True normalizes the gamut of test to that of ref.</span>
+<span class="sd">              (perfect agreement results in circle).</span>
+<span class="sd">        :normalized_chroma_ref:</span>
+<span class="sd">            | 100.0 or float, optional</span>
+<span class="sd">            | Controls the size (chroma/radius) of the normalization circle/gamut</span>
+<span class="sd">        :out: </span>
+<span class="sd">            | &#39;Rg,jabt,jabr&#39; or str, optional</span>
+<span class="sd">            | Specifies which variables to output as ndarray</span>
+
+<span class="sd">    Returns: </span>
+<span class="sd">        :Rg: </span>
+<span class="sd">            | float or ndarray with gamut area indices Rg.</span>
+<span class="sd">    &quot;&quot;&quot;</span>    
+    <span class="c1"># slice, order and normalize jabt and jabr:</span>
+    <span class="k">if</span> <span class="n">ordered_and_sliced</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span> 
+        <span class="n">jabt</span><span class="p">,</span> <span class="n">jabr</span><span class="p">,</span> <span class="n">DEi</span> <span class="o">=</span> <span class="n">gamut_slicer</span><span class="p">(</span><span class="n">jabt</span><span class="p">,</span><span class="n">jabr</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;jabt,jabr,DEi&#39;</span><span class="p">,</span> <span class="n">nhbins</span> <span class="o">=</span> <span class="n">nhbins</span><span class="p">,</span> <span class="n">start_hue</span> <span class="o">=</span> <span class="n">start_hue</span><span class="p">,</span> <span class="n">normalize_gamut</span> <span class="o">=</span> <span class="n">normalize_gamut</span><span class="p">,</span> <span class="n">normalized_chroma_ref</span> <span class="o">=</span> <span class="n">normalized_chroma_ref</span><span class="p">,</span> <span class="n">close_gamut</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+ 
+    <span class="c1"># make 3d:</span>
+    <span class="n">test_original_shape</span> <span class="o">=</span> <span class="n">jabt</span><span class="o">.</span><span class="n">shape</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">test_original_shape</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">3</span><span class="p">:</span>
+        <span class="n">jabt</span> <span class="o">=</span> <span class="n">jabt</span><span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="c1"># expand 2-array to 3-array by adding &#39;0&#39;-axis</span>
+        <span class="n">jabr</span> <span class="o">=</span> <span class="n">jabt</span><span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="c1"># expand 2-array to 3-array by adding &#39;0&#39;-axis</span>
+    
+    <span class="c1"># calculate Rg for each spd:</span>
+    <span class="n">Rg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span><span class="n">jabt</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+
+    <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">jabt</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+        <span class="n">Rg</span><span class="p">[:,</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">max_scale</span><span class="o">*</span><span class="n">math</span><span class="o">.</span><span class="n">polyarea</span><span class="p">(</span><span class="n">jabt</span><span class="p">[:,</span><span class="n">ii</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="n">jabt</span><span class="p">[:,</span><span class="n">ii</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span><span class="o">/</span><span class="n">math</span><span class="o">.</span><span class="n">polyarea</span><span class="p">(</span><span class="n">jabr</span><span class="p">[:,</span><span class="n">ii</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="n">jabr</span><span class="p">[:,</span><span class="n">ii</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span> <span class="c1"># calculate Rg =  gamut area ratio of test and ref</span>
+    
+    <span class="k">if</span> <span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;Rg&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Rg</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;Rg,jabt,jabr&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Rg</span><span class="p">,</span> <span class="n">jabt</span><span class="p">,</span> <span class="n">jabr</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;Rg,jabt,jabr,DEi&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Rg</span><span class="p">,</span> <span class="n">jabt</span><span class="p">,</span> <span class="n">jabr</span><span class="p">,</span> <span class="n">DEi</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">eval</span><span class="p">(</span><span class="n">out</span><span class="p">)</span></div>
+
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="jab_to_rhi"><a class="viewcode-back" href="../../../../../color.html#luxpy.color.cri.jab_to_rhi">[docs]</a><span class="k">def</span> <span class="nf">jab_to_rhi</span><span class="p">(</span><span class="n">jabt</span><span class="p">,</span> <span class="n">jabr</span><span class="p">,</span> <span class="n">DEi</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">_CRI_TYPE_DEFAULT</span><span class="p">,</span> <span class="n">start_hue</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>\
+               <span class="n">nhbins</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">scale_factor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">scale_fcn</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> \
+               <span class="n">use_bin_avg_DEi</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate hue bin measures: Rfhi, Rcshi and Rhshi.</span>
+<span class="sd">    </span>
+<span class="sd">    |   Rfhi: local (hue bin) color fidelity  </span>
+<span class="sd">    |   Rcshi: local chroma shift</span>
+<span class="sd">    |   Rhshi: local hue shift</span>
+<span class="sd">    |</span>
+<span class="sd">    |   (See IES TM30)</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :jabt: </span>
+<span class="sd">            | ndarray with jab coordinates under test SPD</span>
+<span class="sd">        :jabr: </span>
+<span class="sd">            | ndarray with jab coordinates under reference SPD</span>
+<span class="sd">        :DEi: </span>
+<span class="sd">            | ndarray with DEi (from gamut_slicer()).</span>
+<span class="sd">        :use_bin_avg_DEi: </span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | Note that following IES-TM30 DEi from gamut_slicer() is obtained by</span>
+<span class="sd">              averaging the DEi per hue bin (True), and NOT by averaging the </span>
+<span class="sd">              jabt and jabr per hue  bin and then calculating the DEi (False).</span>
+<span class="sd">        :nhbins:</span>
+<span class="sd">            | int, number of hue bins to slice gamut </span>
+<span class="sd">              (None use the one specified in :cri_type: dict).</span>
+<span class="sd">        :start_hue: </span>
+<span class="sd">            | float (°), hue at which to start slicing</span>
+<span class="sd">        :scale_fcn:</span>
+<span class="sd">            | function handle to type of cri scale, </span>
+<span class="sd">            | e.g. </span>
+<span class="sd">            |   * linear()_scale --&gt; (100 - scale_factor*DEi), </span>
+<span class="sd">            |   * log_scale --&gt; (cfr. Ohno&#39;s CQS), </span>
+<span class="sd">            |   * psy_scale (Smet et al.&#39;s cri2012,See: LRT 2013)</span>
+<span class="sd">        :scale_factor:</span>
+<span class="sd">            | factors used in scaling function</span>
+<span class="sd">        </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :returns: </span>
+<span class="sd">            | ndarrays of Rfhi, Rcshi and Rhshi</span>
+<span class="sd">        </span>
+<span class="sd">    References:</span>
+<span class="sd">        1. `IES TM30, Method for Evaluating Light Source Color Rendition. </span>
+<span class="sd">        New York, NY: The Illuminating Engineering Society of North America.</span>
+<span class="sd">        &lt;https://www.ies.org/store/technical-memoranda/ies-method-for-evaluating-light-source-color-rendition/&gt;`_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cri_type</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span> 
+        <span class="n">args</span> <span class="o">=</span> <span class="nb">locals</span><span class="p">()</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="c1"># get dict with keyword input arguments to function (used to overwrite non-None input arguments present in cri_type dict)</span>
+        <span class="n">cri_type</span> <span class="o">=</span> <span class="n">process_cri_type_input</span><span class="p">(</span><span class="n">cri_type</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">callerfunction</span> <span class="o">=</span> <span class="s1">&#39;cri.jab_to_rhi&#39;</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">jabt</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">jabt</span> <span class="o">=</span> <span class="n">jabt</span><span class="p">[:,</span><span class="kc">None</span><span class="p">,:]</span>
+    <span class="k">if</span> <span class="n">jabr</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">jabr</span> <span class="o">=</span> <span class="n">jabr</span><span class="p">[:,</span><span class="kc">None</span><span class="p">,:]</span>
+
+    <span class="c1"># Get scale factor and function:</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">scale_factor</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="n">scale_factor</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;scale&#39;</span><span class="p">][</span><span class="s1">&#39;cfactor&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">scale_fcn</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="n">scale_fcn</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;scale&#39;</span><span class="p">][</span><span class="s1">&#39;fcn&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">start_hue</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="n">start_hue</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;rg_pars&#39;</span><span class="p">][</span><span class="s1">&#39;start_hue&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">nhbins</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="n">nhbins</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;rg_pars&#39;</span><span class="p">][</span><span class="s1">&#39;nhbins&#39;</span><span class="p">]</span>
+     
+    <span class="c1"># A. Local Color Fidelity, Rfhi:</span>
+    <span class="k">if</span> <span class="n">use_bin_avg_DEi</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="n">DEi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">((</span><span class="n">jabt</span> <span class="o">-</span> <span class="n">bjabr</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">jabt</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">keepdims</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
+    <span class="n">Rfhi</span> <span class="o">=</span> <span class="n">scale_fcn</span><span class="p">(</span><span class="n">DEi</span><span class="p">,</span><span class="n">scale_factor</span><span class="p">)</span>
+    
+    <span class="c1"># B.Local chroma shift and hue shift, [Rcshi, Rhshi]:</span>
+    <span class="c1"># B.1 relative paths:</span>
+    <span class="n">Cr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">jabr</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span> <span class="o">=</span> <span class="n">jabr</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">ndim</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">da</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">((</span><span class="n">jabt</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">jabr</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="n">Cr</span><span class="p">)</span>
+    <span class="n">db</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">((</span><span class="n">jabt</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">jabr</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span><span class="o">/</span><span class="n">Cr</span><span class="p">)</span>
+
+    <span class="c1"># B.2 Reference unit circle:</span>
+    <span class="n">dhbins</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="n">nhbins</span>
+    
+    <span class="n">hbincenters</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">start_hue</span> <span class="o">+</span> <span class="n">dhbins</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">dhbins</span><span class="p">)[</span><span class="o">...</span><span class="p">,</span><span class="kc">None</span><span class="p">]</span>
+    <span class="n">arc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">hbincenters</span><span class="p">)</span>
+    <span class="n">brc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">hbincenters</span><span class="p">)</span>
+
+    <span class="c1"># B.3 calculate local chroma shift, Rcshi:</span>
+    <span class="n">Rcshi</span> <span class="o">=</span> <span class="n">da</span> <span class="o">*</span> <span class="n">arc</span> <span class="o">+</span> <span class="n">db</span> <span class="o">*</span> <span class="n">brc</span>
+    
+    <span class="c1"># B.4 calculate local hue shift, Rcshi:</span>
+    <span class="n">Rhshi</span> <span class="o">=</span> <span class="n">db</span> <span class="o">*</span> <span class="n">arc</span> <span class="o">-</span> <span class="n">da</span> <span class="o">*</span> <span class="n">brc</span>
+    
+    <span class="k">return</span> <span class="n">Rfhi</span><span class="p">,</span> <span class="n">Rcshi</span><span class="p">,</span> <span class="n">Rhshi</span> </div>
+
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="jab_to_DEi"><a class="viewcode-back" href="../../../../../color.html#luxpy.color.cri.jab_to_DEi">[docs]</a><span class="k">def</span> <span class="nf">jab_to_DEi</span><span class="p">(</span><span class="n">jabt</span><span class="p">,</span> <span class="n">jabr</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;DEi&#39;</span><span class="p">,</span> <span class="n">avg</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculates color differences (~fidelity), DEi, of Jab input.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :jabt: </span>
+<span class="sd">            | ndarray with Cartesian color coordinates (e.g. Jab) </span>
+<span class="sd">              of the samples under the test SPD</span>
+<span class="sd">        :jabr:</span>
+<span class="sd">            | ndarray with Cartesian color coordinates (e.g. Jab) </span>
+<span class="sd">              of the samples under the reference SPD</span>
+<span class="sd">        :avg: </span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | If None: don&#39;t calculate average, else: avg must be function handle</span>
+<span class="sd">        :out: </span>
+<span class="sd">            | &#39;DEi&#39; or str, optional</span>
+<span class="sd">            | Specifies requested output (e.g. &#39;DEi,DEa&#39;) </span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :returns:</span>
+<span class="sd">            | float or ndarray with DEi for :out: &#39;DEi&#39;</span>
+<span class="sd">            | Other output is also possible by changing the :out: str value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+      
+    <span class="c1"># E. calculate DEi</span>
+    <span class="n">DEi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">((</span><span class="n">jabt</span> <span class="o">-</span> <span class="n">jabr</span><span class="p">),</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">jabt</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">keepdims</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
+    <span class="k">if</span> <span class="n">avg</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">DEa</span> <span class="o">=</span> <span class="n">avg</span><span class="p">(</span><span class="n">DEi</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> 
+        <span class="n">DEa</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">(</span><span class="n">DEa</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;DEi&#39;</span> <span class="c1">#override any requested output if avg is not supplied and DEa has not been calculated.</span>
+  
+     <span class="c1"># output:</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;DEi,DEa&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">DEi</span><span class="p">,</span> <span class="n">DEa</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span>  <span class="n">DEi</span></div>
+
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+<span class="k">def</span> <span class="nf">spd_to_jab_t_r</span><span class="p">(</span><span class="n">SPD</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">_CRI_TYPE_DEFAULT</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;jabt,jabr&#39;</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>\
+                   <span class="n">sampleset</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ref_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span>  <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cspace</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>\
+                   <span class="n">catf</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cri_specific_pars</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculates jab color values for a sample set illuminated with test source </span>
+<span class="sd">    SPD and its reference illuminant.</span>
+<span class="sd">        </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :SPD: </span>
+<span class="sd">            | ndarray with spectral data </span>
+<span class="sd">              (can be multiple SPDs, first axis are the wavelengths)</span>
+<span class="sd">        :out: </span>
+<span class="sd">            | &#39;jabt,jabr&#39; or str, optional</span>
+<span class="sd">            | Specifies requested output (e.g.&#39;jabt,jabr&#39; or &#39;jabt,jabr,cct,duv&#39;) </span>
+<span class="sd">        :wl: </span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | Wavelengths (or [start, end, spacing]) to interpolate the SPDs to. </span>
+<span class="sd">            | None: default to no interpolation</span>
+<span class="sd">        :cri_type:</span>
+<span class="sd">            | _CRI_TYPE_DEFAULT or str or dict, optional</span>
+<span class="sd">            |   -&#39;str: specifies dict with default cri model parameters </span>
+<span class="sd">            |     (for supported types, see luxpy.cri._CRI_DEFAULTS[&#39;cri_types&#39;])</span>
+<span class="sd">            |   - dict: user defined model parameters </span>
+<span class="sd">            |     (see e.g. luxpy.cri._CRI_DEFAULTS[&#39;cierf&#39;] </span>
+<span class="sd">            |     for required structure)</span>
+<span class="sd">            | Note that any non-None input arguments to the function will </span>
+<span class="sd">              override default values in cri_type dict.</span>
+<span class="sd">            </span>
+<span class="sd">        :sampleset:</span>
+<span class="sd">            | None or ndarray or str, optional</span>
+<span class="sd">            | Specifies set of spectral reflectance samples for cri calculations.</span>
+<span class="sd">            |     - None defaults to standard set for metric in cri_type.</span>
+<span class="sd">            |     - ndarray: user defined set of spectral reflectance functions </span>
+<span class="sd">            |       (.shape = (N+1, number of wavelengths); </span>
+<span class="sd">            |        first axis are wavelengths)</span>
+<span class="sd">        :ref_type:</span>
+<span class="sd">            | None or str or ndarray, optional</span>
+<span class="sd">            | Specifies type of reference illuminant type.</span>
+<span class="sd">            |     - None: defaults to metric_specific reference illuminant in </span>
+<span class="sd">            |             accordance with cri_type.</span>
+<span class="sd">            |     - str: &#39;BB&#39; : Blackbody radiatiors, </span>
+<span class="sd">            |            &#39;DL&#39;: daylightphase, </span>
+<span class="sd">            |            &#39;ciera&#39;: used in CIE CRI-13.3-1995, </span>
+<span class="sd">            |            &#39;cierf&#39;: used in CIE 224-2017, </span>
+<span class="sd">            |            &#39;iesrf&#39;: used in TM30-15, ...</span>
+<span class="sd">            |     - ndarray: user defined reference SPD</span>
+<span class="sd">        :cieobs:</span>
+<span class="sd">            | None or dict, optional</span>
+<span class="sd">            | Specifies which CMF sets to use for the calculation of the sample </span>
+<span class="sd">            | XYZs and the CCT (for reference illuminant calculation).</span>
+<span class="sd">            | None defaults to the one specified in :cri_type: dict.    </span>
+<span class="sd">            |     - key: &#39;xyz&#39;: str specifying CMF set for calculating xyz </span>
+<span class="sd">            |                   of samples and white </span>
+<span class="sd">            |     - key: &#39;cct&#39;: str specifying CMF set for calculating cct</span>
+<span class="sd">        :cspace:</span>
+<span class="sd">            | None or dict, optional</span>
+<span class="sd">            | Specifies which color space to use.</span>
+<span class="sd">            | None defaults to the one specified in  :cri_type: dict.  </span>
+<span class="sd">            |     - key: &#39;type&#39;: str specifying color space used to calculate </span>
+<span class="sd">            |                    color differences in.</span>
+<span class="sd">            |     - key: &#39;xyzw&#39;: None or ndarray with white point of color space</span>
+<span class="sd">            |            If None: use xyzw of test / reference (after chromatic </span>
+<span class="sd">            |                     adaptation, if specified)</span>
+<span class="sd">            |     - other keys specify other possible parameters needed for color</span>
+<span class="sd">            |       space calculation, </span>
+<span class="sd">            |       see lx.cri._CRI_DEFAULTS[&#39;iesrf&#39;][&#39;cspace&#39;] for details. </span>
+<span class="sd">        :catf:</span>
+<span class="sd">            | None or dict, optional</span>
+<span class="sd">            | Perform explicit CAT before converting to color space coordinates.</span>
+<span class="sd">            |    - None: don&#39;t apply a cat (other than perhaps the one built </span>
+<span class="sd">            |            into the colorspace) </span>
+<span class="sd">            |    - dict: with CAT parameters:</span>
+<span class="sd">            |        - key: &#39;D&#39;: ndarray with degree of adaptation</span>
+<span class="sd">            |        - key: &#39;mcat&#39;: ndarray with sensor matrix specification</span>
+<span class="sd">            |        - key: &#39;xyzw&#39;: None or ndarray with white point</span>
+<span class="sd">            |              None: use xyzw of reference otherwise transform both </span>
+<span class="sd">            |                    test and ref to xyzw</span>
+<span class="sd">        :cri_specific_pars:</span>
+<span class="sd">            | None or dict, optional</span>
+<span class="sd">            | Specifies other parameters specific to type of cri </span>
+<span class="sd">            | (e.g. maxC for CQS calculations)</span>
+<span class="sd">            |     - None: default to the one specified in  :cri_type: dict. </span>
+<span class="sd">            |     - dict: user specified parameters. </span>
+<span class="sd">            |         For its use, see for example:</span>
+<span class="sd">            |             luxpy.cri._CRI_DEFAULTS[&#39;mcri&#39;][&#39;cri_specific_pars&#39;]</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :returns: </span>
+<span class="sd">            | (ndarray, ndarray) </span>
+<span class="sd">            | with jabt and jabr data for :out: &#39;jabt,jabr&#39;</span>
+<span class="sd">            | </span>
+<span class="sd">            | Other output is also possible by changing the :out: str value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+   
+    <span class="c1">#Override input parameters with data specified in cri_type:</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="nb">locals</span><span class="p">()</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="c1"># get dict with keyword input arguments to function (used to overwrite non-None input arguments present in cri_type dict)</span>
+    <span class="n">cri_type</span> <span class="o">=</span> <span class="n">process_cri_type_input</span><span class="p">(</span><span class="n">cri_type</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">callerfunction</span> <span class="o">=</span> <span class="s1">&#39;cri.spd_to_jab_t_r&#39;</span><span class="p">)</span>
+    <span class="n">avg</span><span class="p">,</span> <span class="n">catf</span><span class="p">,</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">cri_specific_pars</span><span class="p">,</span> <span class="n">cspace</span><span class="p">,</span> <span class="n">ref_type</span><span class="p">,</span> <span class="n">rg_pars</span><span class="p">,</span> <span class="n">sampleset</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="p">[</span><span class="n">cri_type</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">cri_type</span><span class="o">.</span><span class="n">keys</span><span class="p">())]</span> 
+   
+    <span class="c1"># make SPD atleast_2d:</span>
+    <span class="n">SPD</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">(</span><span class="n">SPD</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">wl</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> 
+        <span class="n">SPD</span> <span class="o">=</span> <span class="n">spd</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="n">SPD</span><span class="p">,</span> <span class="n">interpolation</span> <span class="o">=</span> <span class="n">_S_INTERP_TYPE</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;np&#39;</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="n">wl</span><span class="p">)</span>
+      
+    <span class="c1"># obtain sampleset:</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sampleset</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
+        <span class="n">sampleset</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">sampleset</span><span class="p">)</span>
+    
+    <span class="c1"># A. calculate reference illuminant:</span>
+    <span class="c1"># A.a. get xyzw:</span>
+    <span class="n">xyztw</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">SPD</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">[</span><span class="s1">&#39;cct&#39;</span><span class="p">],</span> <span class="n">rfl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># A.b. get cct:</span>
+    <span class="n">cct</span><span class="p">,</span> <span class="n">duv</span> <span class="o">=</span> <span class="n">xyz_to_cct</span><span class="p">(</span><span class="n">xyztw</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">[</span><span class="s1">&#39;cct&#39;</span><span class="p">],</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;cct,duv&#39;</span><span class="p">,</span><span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;lut&#39;</span><span class="p">)</span>
+    
+    <span class="c1"># A.c. get reference ill.:</span>
+    <span class="n">Sr</span> <span class="o">=</span> <span class="n">cri_ref</span><span class="p">(</span><span class="n">cct</span><span class="p">,</span> <span class="n">ref_type</span> <span class="o">=</span> <span class="n">ref_type</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">[</span><span class="s1">&#39;xyz&#39;</span><span class="p">],</span> <span class="n">wl3</span> <span class="o">=</span> <span class="n">SPD</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    
+    <span class="c1"># B. calculate xyz and xyzw of data (spds) and Sr:</span>
+    <span class="n">xyzti</span><span class="p">,</span> <span class="n">xyztw</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">SPD</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">[</span><span class="s1">&#39;xyz&#39;</span><span class="p">],</span> <span class="n">rfl</span> <span class="o">=</span> <span class="n">sampleset</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">xyzri</span><span class="p">,</span> <span class="n">xyzrw</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">Sr</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">[</span><span class="s1">&#39;xyz&#39;</span><span class="p">],</span> <span class="n">rfl</span> <span class="o">=</span> <span class="n">sampleset</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="c1"># C. apply chromatic adaptation for non-cam/lab cspaces:</span>
+    <span class="k">if</span> <span class="n">catf</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">D_cat</span><span class="p">,</span> <span class="n">Dtype_cat</span><span class="p">,</span> <span class="n">La_cat</span><span class="p">,</span> <span class="n">catmode_cat</span><span class="p">,</span> <span class="n">cattype_cat</span><span class="p">,</span> <span class="n">mcat_cat</span><span class="p">,</span> <span class="n">xyzw_cat</span> <span class="o">=</span> <span class="p">[</span><span class="n">catf</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">catf</span><span class="o">.</span><span class="n">keys</span><span class="p">())]</span>
+        
+        <span class="c1">#if not isinstance(D_cat,list): D_cat = [D_cat]</span>
+        <span class="k">if</span> <span class="n">xyzw_cat</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="c1">#transform from xyzwt --&gt; xyzwr</span>
+            <span class="n">xyzti</span> <span class="o">=</span> <span class="n">cat</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">xyzti</span><span class="p">,</span> <span class="n">cattype</span> <span class="o">=</span> <span class="n">cattype_cat</span><span class="p">,</span> <span class="n">catmode</span> <span class="o">=</span> <span class="n">catmode_cat</span><span class="p">,</span> <span class="n">xyzw1</span> <span class="o">=</span> <span class="n">xyztw</span><span class="p">,</span> <span class="n">xyzw0</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">xyzw2</span> <span class="o">=</span> <span class="n">xyzrw</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="n">D_cat</span><span class="p">,</span> <span class="n">La</span> <span class="o">=</span> <span class="n">La_cat</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="p">[</span><span class="n">mcat_cat</span><span class="p">],</span> <span class="n">Dtype</span> <span class="o">=</span> <span class="n">Dtype_cat</span><span class="p">)</span>
+            <span class="n">xyztw</span> <span class="o">=</span> <span class="n">cat</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">xyztw</span><span class="p">,</span> <span class="n">cattype</span> <span class="o">=</span> <span class="n">cattype_cat</span><span class="p">,</span> <span class="n">catmode</span> <span class="o">=</span> <span class="n">catmode_cat</span><span class="p">,</span> <span class="n">xyzw1</span> <span class="o">=</span> <span class="n">xyztw</span><span class="p">,</span> <span class="n">xyzw0</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">xyzw2</span> <span class="o">=</span> <span class="n">xyzrw</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="n">D_cat</span><span class="p">,</span> <span class="n">La</span> <span class="o">=</span> <span class="n">La_cat</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="p">[</span><span class="n">mcat_cat</span><span class="p">],</span> <span class="n">Dtype</span> <span class="o">=</span> <span class="n">Dtype_cat</span><span class="p">)</span>
+            <span class="n">xyzri</span> <span class="o">=</span> <span class="n">cat</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">xyzri</span><span class="p">,</span> <span class="n">cattype</span> <span class="o">=</span> <span class="n">cattype_cat</span><span class="p">,</span> <span class="n">catmode</span> <span class="o">=</span> <span class="n">catmode_cat</span><span class="p">,</span> <span class="n">xyzw1</span> <span class="o">=</span> <span class="n">xyzrw</span><span class="p">,</span> <span class="n">xyzw0</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">xyzw2</span> <span class="o">=</span> <span class="n">xyzrw</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="n">D_cat</span><span class="p">,</span> <span class="n">La</span> <span class="o">=</span> <span class="n">La_cat</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="p">[</span><span class="n">mcat_cat</span><span class="p">],</span> <span class="n">Dtype</span> <span class="o">=</span> <span class="n">Dtype_cat</span><span class="p">)</span>
+            <span class="n">xyzrw</span> <span class="o">=</span> <span class="n">cat</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">xyzrw</span><span class="p">,</span> <span class="n">cattype</span> <span class="o">=</span> <span class="n">cattype_cat</span><span class="p">,</span> <span class="n">catmode</span> <span class="o">=</span> <span class="n">catmode_cat</span><span class="p">,</span> <span class="n">xyzw1</span> <span class="o">=</span> <span class="n">xyzrw</span><span class="p">,</span> <span class="n">xyzw0</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">xyzw2</span> <span class="o">=</span> <span class="n">xyzrw</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="n">D_cat</span><span class="p">,</span> <span class="n">La</span> <span class="o">=</span> <span class="n">La_cat</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="p">[</span><span class="n">mcat_cat</span><span class="p">],</span> <span class="n">Dtype</span> <span class="o">=</span> <span class="n">Dtype_cat</span><span class="p">)</span>
+        
+        <span class="k">else</span><span class="p">:</span> <span class="c1"># transform both xyzwr and xyzwt to xyzw_cat</span>
+            <span class="n">xyzti</span> <span class="o">=</span> <span class="n">cat</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">xyzti</span><span class="p">,</span> <span class="n">cattype</span> <span class="o">=</span> <span class="n">cattype_cat</span><span class="p">,</span> <span class="n">catmode</span> <span class="o">=</span> <span class="n">catmode_cat</span><span class="p">,</span> <span class="n">xyzw1</span> <span class="o">=</span> <span class="n">xyztw</span><span class="p">,</span> <span class="n">xyzw0</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">xyzw2</span> <span class="o">=</span> <span class="n">xyzw_cat</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="n">D_cat</span><span class="p">,</span> <span class="n">La</span> <span class="o">=</span> <span class="n">La_cat</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="p">[</span><span class="n">mcat_cat</span><span class="p">],</span> <span class="n">Dtype</span> <span class="o">=</span> <span class="n">Dtype_cat</span><span class="p">)</span>
+            <span class="n">xyztw</span> <span class="o">=</span> <span class="n">cat</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">xyztw</span><span class="p">,</span> <span class="n">cattype</span> <span class="o">=</span> <span class="n">cattype_cat</span><span class="p">,</span> <span class="n">catmode</span> <span class="o">=</span> <span class="n">catmode_cat</span><span class="p">,</span> <span class="n">xyzw1</span> <span class="o">=</span> <span class="n">xyztw</span><span class="p">,</span> <span class="n">xyzw0</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">xyzw2</span> <span class="o">=</span> <span class="n">xyzw_cat</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="n">D_cat</span><span class="p">,</span> <span class="n">La</span> <span class="o">=</span> <span class="n">La_cat</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="p">[</span><span class="n">mcat_cat</span><span class="p">],</span> <span class="n">Dtype</span> <span class="o">=</span> <span class="n">Dtype_cat</span><span class="p">)</span>
+            <span class="n">xyzri</span> <span class="o">=</span> <span class="n">cat</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">xyzri</span><span class="p">,</span> <span class="n">cattype</span> <span class="o">=</span> <span class="n">cattype_cat</span><span class="p">,</span> <span class="n">catmode</span> <span class="o">=</span> <span class="n">catmode_cat</span><span class="p">,</span> <span class="n">xyzw1</span> <span class="o">=</span> <span class="n">xyzrw</span><span class="p">,</span> <span class="n">xyzw0</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">xyzw2</span> <span class="o">=</span> <span class="n">xyzw_cat</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="n">D_cat</span><span class="p">,</span> <span class="n">La</span> <span class="o">=</span> <span class="n">La_cat</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="p">[</span><span class="n">mcat_cat</span><span class="p">],</span> <span class="n">Dtype</span> <span class="o">=</span> <span class="n">Dtype_cat</span><span class="p">)</span>
+            <span class="n">xyzrw</span> <span class="o">=</span> <span class="n">cat</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">xyzrw</span><span class="p">,</span> <span class="n">cattype</span> <span class="o">=</span> <span class="n">cattype_cat</span><span class="p">,</span> <span class="n">catmode</span> <span class="o">=</span> <span class="n">catmode_cat</span><span class="p">,</span> <span class="n">xyzw1</span> <span class="o">=</span> <span class="n">xyzrw</span><span class="p">,</span> <span class="n">xyzw0</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">xyzw2</span> <span class="o">=</span> <span class="n">xyzw_cat</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="n">D_cat</span><span class="p">,</span> <span class="n">La</span> <span class="o">=</span> <span class="n">La_cat</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="p">[</span><span class="n">mcat_cat</span><span class="p">],</span> <span class="n">Dtype</span> <span class="o">=</span> <span class="n">Dtype_cat</span><span class="p">)</span>
+
+    <span class="c1"># D. convert xyz to colorspace, cam or chromaticity co. lab (i.e. lab, ipt, Yuv, jab, wuv,..):</span>
+    <span class="c1"># D.a. broadcast xyzw to shape of xyzi:</span>
+    <span class="n">xyztw</span> <span class="o">=</span> <span class="n">xyztw</span><span class="p">[</span><span class="kc">None</span><span class="p">]</span> 
+    <span class="n">xyzrw</span> <span class="o">=</span> <span class="n">xyzrw</span><span class="p">[</span><span class="kc">None</span><span class="p">]</span> 
+
+    <span class="n">cspace_pars</span> <span class="o">=</span> <span class="n">cspace</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">cspace_pars</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s1">&#39;xyzw&#39;</span> <span class="ow">in</span> <span class="n">cspace_pars</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span> 
+        <span class="k">if</span> <span class="n">cspace_pars</span><span class="p">[</span><span class="s1">&#39;xyzw&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> 
+            <span class="n">cspace_pars</span><span class="p">[</span><span class="s1">&#39;xyzw&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">xyztw</span> <span class="c1"># enter test whitepoint</span>
+    <span class="n">jabt</span> <span class="o">=</span> <span class="n">colortf</span><span class="p">(</span><span class="n">xyzti</span><span class="p">,</span> <span class="n">tf</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">],</span> <span class="n">fwtf</span> <span class="o">=</span> <span class="n">cspace_pars</span><span class="p">)</span>
+    
+    <span class="n">cspace_pars</span> <span class="o">=</span> <span class="n">cspace</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">cspace_pars</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s1">&#39;xyzw&#39;</span> <span class="ow">in</span> <span class="n">cspace_pars</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span> 
+        <span class="k">if</span> <span class="n">cspace_pars</span><span class="p">[</span><span class="s1">&#39;xyzw&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> 
+            <span class="n">cspace_pars</span><span class="p">[</span><span class="s1">&#39;xyzw&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">xyzrw</span> <span class="c1"># enter ref. whitepoint</span>
+    <span class="n">jabr</span> <span class="o">=</span> <span class="n">colortf</span><span class="p">(</span><span class="n">xyzri</span><span class="p">,</span> <span class="n">tf</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">],</span> <span class="n">fwtf</span> <span class="o">=</span> <span class="n">cspace_pars</span><span class="p">)</span>    
+    <span class="k">del</span> <span class="n">cspace_pars</span>
+
+
+    <span class="c1"># E. Regulate output:</span>
+    <span class="k">if</span> <span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;jabt,jabr&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">jabt</span><span class="p">,</span> <span class="n">jabr</span>
+    <span class="k">elif</span> <span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;jabt,jabr,cct,duv&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">jabt</span><span class="p">,</span><span class="n">jabr</span><span class="p">,</span><span class="n">cct</span><span class="p">,</span><span class="n">duv</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">eval</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="spd_to_DEi"><a class="viewcode-back" href="../../../../../color.html#luxpy.color.cri.spd_to_DEi">[docs]</a><span class="k">def</span> <span class="nf">spd_to_DEi</span><span class="p">(</span><span class="n">SPD</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">_CRI_TYPE_DEFAULT</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;DEi&#39;</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> \
+               <span class="n">sampleset</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ref_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">avg</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> \
+               <span class="n">cspace</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">catf</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cri_specific_pars</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculates color differences (~fidelity), DEi, of spectral data.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :SPD: </span>
+<span class="sd">            | ndarray with spectral data </span>
+<span class="sd">              (can be multiple SPDs, first axis are the wavelengths)</span>
+<span class="sd">        :out: </span>
+<span class="sd">            | &#39;DEi&#39; or str, optional</span>
+<span class="sd">            | Specifies requested output (e.g. &#39;DEi,DEa,cct,duv&#39;) </span>
+<span class="sd">        :wl: </span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | Wavelengths (or [start, end, spacing]) to interpolate the SPDs to. </span>
+<span class="sd">            | None: default to no interpolation</span>
+<span class="sd">        :cri_type:</span>
+<span class="sd">            | _CRI_TYPE_DEFAULT or str or dict, optional</span>
+<span class="sd">            |   -&#39;str: specifies dict with default cri model parameters </span>
+<span class="sd">            |     (for supported types, see luxpy.cri._CRI_DEFAULTS[&#39;cri_types&#39;])</span>
+<span class="sd">            |   - dict: user defined model parameters </span>
+<span class="sd">            |     (see e.g. luxpy.cri._CRI_DEFAULTS[&#39;cierf&#39;] </span>
+<span class="sd">            |     for required structure)</span>
+<span class="sd">            | Note that any non-None input arguments to the function will </span>
+<span class="sd">              override default values in cri_type dict.</span>
+<span class="sd">        :sampleset:</span>
+<span class="sd">            | None or ndarray or str, optional</span>
+<span class="sd">            | Specifies set of spectral reflectance samples for cri calculations.</span>
+<span class="sd">            |     - None defaults to standard set for metric in cri_type.</span>
+<span class="sd">            |     - ndarray: user defined set of spectral reflectance functions </span>
+<span class="sd">            |       (.shape = (N+1, number of wavelengths); </span>
+<span class="sd">            |        first axis are wavelengths)</span>
+<span class="sd">        :ref_type:</span>
+<span class="sd">            | None or str or ndarray, optional</span>
+<span class="sd">            | Specifies type of reference illuminant type.</span>
+<span class="sd">            |     - None: defaults to metric_specific reference illuminant in </span>
+<span class="sd">            |             accordance with cri_type.</span>
+<span class="sd">            |     - str: &#39;BB&#39; : Blackbody radiatiors, </span>
+<span class="sd">            |            &#39;DL&#39;: daylightphase, </span>
+<span class="sd">            |            &#39;ciera&#39;: used in CIE CRI-13.3-1995, </span>
+<span class="sd">            |            &#39;cierf&#39;: used in CIE 224-2017, </span>
+<span class="sd">            |            &#39;iesrf&#39;: used in TM30-15, ...</span>
+<span class="sd">            |     - ndarray: user defined reference SPD</span>
+<span class="sd">        :cieobs:</span>
+<span class="sd">            | None or dict, optional</span>
+<span class="sd">            | Specifies which CMF sets to use for the calculation of the sample </span>
+<span class="sd">            | XYZs and the CCT (for reference illuminant calculation).</span>
+<span class="sd">            | None defaults to the one specified in :cri_type: dict.    </span>
+<span class="sd">            |     - key: &#39;xyz&#39;: str specifying CMF set for calculating xyz </span>
+<span class="sd">            |                   of samples and white </span>
+<span class="sd">            |     - key: &#39;cct&#39;: str specifying CMF set for calculating cct</span>
+<span class="sd">        :cspace:</span>
+<span class="sd">            | None or dict, optional</span>
+<span class="sd">            | Specifies which color space to use.</span>
+<span class="sd">            | None defaults to the one specified in  :cri_type: dict.  </span>
+<span class="sd">            |     - key: &#39;type&#39;: str specifying color space used to calculate </span>
+<span class="sd">            |                    color differences in.</span>
+<span class="sd">            |     - key: &#39;xyzw&#39;: None or ndarray with white point of color space</span>
+<span class="sd">            |            If None: use xyzw of test / reference (after chromatic </span>
+<span class="sd">            |                     adaptation, if specified)</span>
+<span class="sd">            |     - other keys specify other possible parameters needed for color</span>
+<span class="sd">            |       space calculation, </span>
+<span class="sd">            |       see lx.cri._CRI_DEFAULTS[&#39;iesrf&#39;][&#39;cspace&#39;] for details. </span>
+<span class="sd">        :catf:</span>
+<span class="sd">            | None or dict, optional</span>
+<span class="sd">            | Perform explicit CAT before converting to color space coordinates.</span>
+<span class="sd">            |    - None: don&#39;t apply a cat (other than perhaps the one built </span>
+<span class="sd">            |            into the colorspace) </span>
+<span class="sd">            |    - dict: with CAT parameters:</span>
+<span class="sd">            |        - key: &#39;D&#39;: ndarray with degree of adaptation</span>
+<span class="sd">            |        - key: &#39;mcat&#39;: ndarray with sensor matrix specification</span>
+<span class="sd">            |        - key: &#39;xyzw&#39;: None or ndarray with white point</span>
+<span class="sd">            |              None: use xyzw of reference otherwise transform both </span>
+<span class="sd">            |                    test and ref to xyzw</span>
+<span class="sd">        :cri_specific_pars:</span>
+<span class="sd">            | None or dict, optional</span>
+<span class="sd">            | Specifies other parameters specific to type of cri </span>
+<span class="sd">            | (e.g. maxC for CQS calculations)</span>
+<span class="sd">            |     - None: default to the one specified in  :cri_type: dict. </span>
+<span class="sd">            |     - dict: user specified parameters. </span>
+<span class="sd">            |         For its use, see for example:</span>
+<span class="sd">            |             luxpy.cri._CRI_DEFAULTS[&#39;mcri&#39;][&#39;cri_specific_pars&#39;]</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :returns: </span>
+<span class="sd">            | float or ndarray with DEi for :out: &#39;DEi&#39;</span>
+<span class="sd">            | </span>
+<span class="sd">            | Other output is also possible by changing the :out: str value.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1">#Override input parameters with data specified in cri_type:</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="nb">locals</span><span class="p">()</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="c1"># get dict with keyword input arguments to function (used to overwrite non-None input arguments present in cri_type dict)</span>
+    <span class="n">cri_type</span> <span class="o">=</span> <span class="n">process_cri_type_input</span><span class="p">(</span><span class="n">cri_type</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">callerfunction</span> <span class="o">=</span> <span class="s1">&#39;cri.spd_to_DEi&#39;</span><span class="p">)</span>
+
+    <span class="c1"># calculate Jabt of test and Jabr of the reference illuminant corresponding to test: </span>
+    <span class="n">jabt</span><span class="p">,</span> <span class="n">jabr</span><span class="p">,</span> <span class="n">cct</span><span class="p">,</span> <span class="n">duv</span> <span class="o">=</span> <span class="n">spd_to_jab_t_r</span><span class="p">(</span><span class="n">SPD</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;jabt,jabr,cct,duv&#39;</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="n">wl</span><span class="p">)</span>
+      
+    <span class="c1"># E. calculate DEi, DEa:</span>
+    <span class="n">DEi</span><span class="p">,</span> <span class="n">DEa</span> <span class="o">=</span> <span class="n">jab_to_DEi</span><span class="p">(</span><span class="n">jabt</span><span class="p">,</span><span class="n">jabr</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;DEi,DEa&#39;</span><span class="p">,</span> <span class="n">avg</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;avg&#39;</span><span class="p">])</span>
+  
+     <span class="c1"># output:</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">out</span> <span class="o">!=</span> <span class="s1">&#39;DEi&#39;</span><span class="p">):</span>
+        <span class="k">return</span>  <span class="nb">eval</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">DEi</span></div>
+
+      
+<span class="c1">#------------------------------------------------------------------------------</span>
+<span class="k">def</span> <span class="nf">optimize_scale_factor</span><span class="p">(</span><span class="n">cri_type</span><span class="p">,</span> <span class="n">opt_scale_factor</span><span class="p">,</span> <span class="n">scale_fcn</span><span class="p">,</span> <span class="n">avg</span><span class="p">)</span> <span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Optimize scale_factor of cri-model in cri_type </span>
+<span class="sd">    such that average Rf for a set of light sources is the same as that </span>
+<span class="sd">    of a target-cri (default: &#39;ciera&#39;).</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :cri_type: </span>
+<span class="sd">            | str or dict</span>
+<span class="sd">            |   -&#39;str: specifies dict with default cri model parameters </span>
+<span class="sd">            |       (for supported types, see luxpy.cri._CRI_DEFAULTS[&#39;cri_types&#39;])</span>
+<span class="sd">            |   - dict: user defined model parameters </span>
+<span class="sd">            |       (see e.g. luxpy.cri._CRI_DEFAULTS[&#39;cierf&#39;] </span>
+<span class="sd">            |       for required structure)</span>
+<span class="sd">        :opt_scale:</span>
+<span class="sd">            | True or False</span>
+<span class="sd">            | True: optimize scaling-factor, else do nothing and use value of </span>
+<span class="sd">              scaling-factor in :scale: dict.   </span>
+<span class="sd">        :scale_fcn:</span>
+<span class="sd">            | function handle to type of cri scale, </span>
+<span class="sd">            | e.g. </span>
+<span class="sd">            |   * linear()_scale --&gt; (100 - scale_factor*DEi), </span>
+<span class="sd">            |   * log_scale --&gt; (cfr. Ohno&#39;s CQS), </span>
+<span class="sd">            |   * psy_scale (Smet et al.&#39;s cri2012,See: LRT 2013)</span>
+<span class="sd">        :avg: </span>
+<span class="sd">            | None or fcn handle</span>
+<span class="sd">            | Averaging function (handle) for color differences, DEi </span>
+<span class="sd">            | (e.g. numpy.mean, .math.rms, .math.geomean)</span>
+<span class="sd">            | None use the one specified in :cri_type: dict.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :scaling_factor: </span>
+<span class="sd">            | ndarray</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span>  <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">opt_scale_factor</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s1">&#39;opt_cri_type&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;scale&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span> 
+            <span class="n">opt_cri_type</span> <span class="o">=</span> <span class="n">_CRI_DEFAULTS</span><span class="p">[</span><span class="s1">&#39;ciera&#39;</span><span class="p">]</span> <span class="c1"># use CIE Ra-13.3-1995 as target</span>
+        <span class="k">if</span> <span class="s1">&#39;opt_spd_set&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;scale&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span> 
+            <span class="n">opt_spd_set</span> <span class="o">=</span> <span class="n">_IESTM30</span><span class="p">[</span><span class="s1">&#39;S&#39;</span><span class="p">][</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="mi">13</span><span class="p">]</span> <span class="c1"># use CIE F1-F12</span>
+        <span class="n">scale_fcn_opt</span> <span class="o">=</span> <span class="n">opt_cri_type</span> <span class="p">[</span><span class="s1">&#39;scale&#39;</span><span class="p">][</span><span class="s1">&#39;fcn&#39;</span><span class="p">]</span>
+        <span class="n">scale_factor_opt</span> <span class="o">=</span> <span class="n">opt_cri_type</span> <span class="p">[</span><span class="s1">&#39;scale&#39;</span><span class="p">][</span><span class="s1">&#39;cfactor&#39;</span><span class="p">]</span>
+        <span class="n">avg_opt</span> <span class="o">=</span> <span class="n">opt_cri_type</span> <span class="p">[</span><span class="s1">&#39;avg&#39;</span><span class="p">]</span>
+        <span class="n">DEa_opt</span> <span class="o">=</span> <span class="n">spd_to_DEi</span><span class="p">(</span><span class="n">opt_spd_set</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span><span class="s1">&#39;DEa&#39;</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">opt_cri_type</span><span class="p">)</span> <span class="c1"># DEa using target cri</span>
+        <span class="n">Rf_opt</span> <span class="o">=</span> <span class="n">avg</span><span class="p">(</span><span class="n">scale_fcn_opt</span><span class="p">(</span><span class="n">DEa_opt</span><span class="p">,</span><span class="n">scale_factor_opt</span><span class="p">))</span>
+        
+        <span class="n">DEa</span> <span class="o">=</span> <span class="n">spd_to_DEi</span><span class="p">(</span><span class="n">opt_spd_set</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span><span class="s1">&#39;DEa&#39;</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">)</span> <span class="c1"># DEa using current cri</span>
+
+        
+        <span class="c1"># optimize scale_factor to minimize rms difference:</span>
+        <span class="n">sf</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;scale&#39;</span><span class="p">][</span><span class="s1">&#39;cfactor&#39;</span><span class="p">]</span> <span class="c1"># get scale_factor of cri_type to determine len and non-optimized factors</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">sf</span><span class="p">,</span><span class="nb">float</span><span class="p">)):</span> <span class="c1">#(isinstance(1.0*sf,float))</span>
+            <span class="n">sf</span> <span class="o">=</span> <span class="p">[</span><span class="n">sf</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">opt_scale_factor</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+            <span class="n">opt_scale_factor</span> <span class="o">=</span> <span class="p">[</span><span class="n">opt_scale_factor</span><span class="p">]</span> 
+        <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">opt_scale_factor</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sf</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">x0</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">optfcn</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="n">math</span><span class="o">.</span><span class="n">rms</span><span class="p">(</span><span class="n">avg</span><span class="p">(</span><span class="n">scale_fcn</span><span class="p">(</span><span class="n">DEa</span><span class="p">,</span><span class="n">x</span><span class="p">))</span> <span class="o">-</span> <span class="n">Rf_opt</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># optimize the only cfactor</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">opt_scale_factor</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sf</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">):</span>     
+            <span class="n">x0</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">optfcn</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="n">math</span><span class="o">.</span><span class="n">rms</span><span class="p">(</span><span class="n">avg</span><span class="p">(</span><span class="n">scale_fcn</span><span class="p">(</span><span class="n">DEa</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">sf</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span> <span class="p">)))</span> <span class="o">-</span> <span class="n">Rf_opt</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># optimize the first cfactor (for scale_factor input of len = 1)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">opt_scale_factor</span><span class="p">))</span>
+            <span class="n">optfcn</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="n">math</span><span class="o">.</span><span class="n">rms</span><span class="p">(</span><span class="n">avg</span><span class="p">(</span><span class="n">scale_fcn</span><span class="p">(</span><span class="n">DEa</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">sf</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">invert</span><span class="p">(</span><span class="n">opt_scale_factor</span><span class="p">)])</span> <span class="p">)))</span> <span class="o">-</span> <span class="n">Rf_opt</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># optimize first N &#39;True&#39; cfactor (for scale_factor input of len = n&gt;=N)</span>
+        
+        <span class="n">optresult</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span><span class="n">fun</span> <span class="o">=</span> <span class="n">optfcn</span><span class="p">,</span> <span class="n">x0</span> <span class="o">=</span> <span class="n">x0</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(),</span> <span class="n">method</span> <span class="o">=</span> <span class="s1">&#39;Nelder-Mead&#39;</span><span class="p">)</span>
+        <span class="n">scale_factor</span> <span class="o">=</span> <span class="n">optresult</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span>
+        
+        <span class="c1">#Reconstruct &#39;scale_factor&#39; from optimized and fixed parts:</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">opt_scale_factor</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sf</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">pass</span> <span class="c1">#only cfactor</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">opt_scale_factor</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sf</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">):</span>     
+            <span class="n">scale_factor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span> <span class="p">(</span><span class="n">scale_factor</span><span class="p">,</span><span class="n">sf</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span> <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+          <span class="n">scale_factor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span> <span class="p">(</span><span class="n">scale_factor</span><span class="p">,</span><span class="n">sf</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">invert</span><span class="p">(</span><span class="n">opt_scale_factor</span><span class="p">)])</span> <span class="p">)</span> <span class="c1"># optimize first N &#39;True&#39; cfactor (for scale_factor input of len = n&gt;=N)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">scale_factor</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;scale&#39;</span><span class="p">][</span><span class="s1">&#39;cfactor&#39;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">scale_factor</span>
+
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="spd_to_rg"><a class="viewcode-back" href="../../../../../color.html#luxpy.color.cri.spd_to_rg">[docs]</a><span class="k">def</span> <span class="nf">spd_to_rg</span><span class="p">(</span><span class="n">SPD</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">_CRI_TYPE_DEFAULT</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;Rg&#39;</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> \
+              <span class="n">sampleset</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ref_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span>  <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">avg</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> \
+              <span class="n">cspace</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">catf</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cri_specific_pars</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">rg_pars</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculates the color gamut index, Rg, of spectral data. </span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :SPD: </span>
+<span class="sd">            | ndarray with spectral data </span>
+<span class="sd">              (can be multiple SPDs, first axis are the wavelengths)</span>
+<span class="sd">        :out: </span>
+<span class="sd">            | &#39;Rg&#39; or str, optional</span>
+<span class="sd">            | Specifies requested output (e.g. &#39;Rg,cct,duv&#39;) </span>
+<span class="sd">        :wl: </span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | Wavelengths (or [start, end, spacing]) to interpolate the SPDs to. </span>
+<span class="sd">            | None: default to no interpolation</span>
+<span class="sd">        :cri_type:</span>
+<span class="sd">            | _CRI_TYPE_DEFAULT or str or dict, optional</span>
+<span class="sd">            |   -&#39;str: specifies dict with default cri model parameters </span>
+<span class="sd">            |     (for supported types, see luxpy.cri._CRI_DEFAULTS[&#39;cri_types&#39;])</span>
+<span class="sd">            |   - dict: user defined model parameters </span>
+<span class="sd">            |     (see e.g. luxpy.cri._CRI_DEFAULTS[&#39;cierf&#39;] </span>
+<span class="sd">            |     for required structure)</span>
+<span class="sd">            | Note that any non-None input arguments to the function will </span>
+<span class="sd">              override default values in cri_type dict.</span>
+<span class="sd">        :sampleset:</span>
+<span class="sd">            | None or ndarray or str, optional</span>
+<span class="sd">            | Specifies set of spectral reflectance samples for cri calculations.</span>
+<span class="sd">            |     - None defaults to standard set for metric in cri_type.</span>
+<span class="sd">            |     - ndarray: user defined set of spectral reflectance functions </span>
+<span class="sd">            |       (.shape = (N+1, number of wavelengths); </span>
+<span class="sd">            |        first axis are wavelengths)</span>
+<span class="sd">        :ref_type:</span>
+<span class="sd">            | None or str or ndarray, optional</span>
+<span class="sd">            | Specifies type of reference illuminant type.</span>
+<span class="sd">            |     - None: defaults to metric_specific reference illuminant in </span>
+<span class="sd">            |             accordance with cri_type.</span>
+<span class="sd">            |     - str: &#39;BB&#39; : Blackbody radiatiors, </span>
+<span class="sd">            |            &#39;DL&#39;: daylightphase, </span>
+<span class="sd">            |            &#39;ciera&#39;: used in CIE CRI-13.3-1995, </span>
+<span class="sd">            |            &#39;cierf&#39;: used in CIE 224-2017, </span>
+<span class="sd">            |            &#39;iesrf&#39;: used in TM30-15, ...</span>
+<span class="sd">            |     - ndarray: user defined reference SPD</span>
+<span class="sd">        :cieobs:</span>
+<span class="sd">            | None or dict, optional</span>
+<span class="sd">            | Specifies which CMF sets to use for the calculation of the sample </span>
+<span class="sd">            | XYZs and the CCT (for reference illuminant calculation).</span>
+<span class="sd">            | None defaults to the one specified in :cri_type: dict.    </span>
+<span class="sd">            |     - key: &#39;xyz&#39;: str specifying CMF set for calculating xyz </span>
+<span class="sd">            |                   of samples and white </span>
+<span class="sd">            |     - key: &#39;cct&#39;: str specifying CMF set for calculating cct</span>
+<span class="sd">        :cspace:</span>
+<span class="sd">            | None or dict, optional</span>
+<span class="sd">            | Specifies which color space to use.</span>
+<span class="sd">            | None defaults to the one specified in  :cri_type: dict.  </span>
+<span class="sd">            |     - key: &#39;type&#39;: str specifying color space used to calculate </span>
+<span class="sd">            |                    color differences in.</span>
+<span class="sd">            |     - key: &#39;xyzw&#39;: None or ndarray with white point of color space</span>
+<span class="sd">            |            If None: use xyzw of test / reference (after chromatic </span>
+<span class="sd">            |                     adaptation, if specified)</span>
+<span class="sd">            |     - other keys specify other possible parameters needed for color</span>
+<span class="sd">            |       space calculation, </span>
+<span class="sd">            |       see lx.cri._CRI_DEFAULTS[&#39;iesrf&#39;][&#39;cspace&#39;] for details. </span>
+<span class="sd">        :catf:</span>
+<span class="sd">            | None or dict, optional</span>
+<span class="sd">            | Perform explicit CAT before converting to color space coordinates.</span>
+<span class="sd">            |    - None: don&#39;t apply a cat (other than perhaps the one built </span>
+<span class="sd">            |            into the colorspace) </span>
+<span class="sd">            |    - dict: with CAT parameters:</span>
+<span class="sd">            |        - key: &#39;D&#39;: ndarray with degree of adaptation</span>
+<span class="sd">            |        - key: &#39;mcat&#39;: ndarray with sensor matrix specification</span>
+<span class="sd">            |        - key: &#39;xyzw&#39;: None or ndarray with white point</span>
+<span class="sd">            |              None: use xyzw of reference otherwise transform both </span>
+<span class="sd">            |                    test and ref to xyzw</span>
+<span class="sd">        :cri_specific_pars:</span>
+<span class="sd">            | None or dict, optional</span>
+<span class="sd">            | Specifies other parameters specific to type of cri </span>
+<span class="sd">            | (e.g. maxC for CQS calculations)</span>
+<span class="sd">            |     - None: default to the one specified in  :cri_type: dict. </span>
+<span class="sd">            |     - dict: user specified parameters. </span>
+<span class="sd">            |         For its use, see for example:</span>
+<span class="sd">            |             luxpy.cri._CRI_DEFAULTS[&#39;mcri&#39;][&#39;cri_specific_pars&#39;]</span>
+<span class="sd">        :rg_pars: </span>
+<span class="sd">            | None or dict, optional</span>
+<span class="sd">            | Dict containing specifying parameters for slicing the gamut.</span>
+<span class="sd">            | Dict structure: </span>
+<span class="sd">            |     {&#39;nhbins&#39; : None, &#39;start_hue&#39; : 0, &#39;normalize_gamut&#39; : True}</span>
+<span class="sd">            |    - key: &#39;nhbins&#39;: int, number of hue bins to slice gamut </span>
+<span class="sd">            |                 (None use the one specified in :cri_type: dict).</span>
+<span class="sd">            |    - key: &#39;start_hue&#39;: float (°), hue at which to start slicing</span>
+<span class="sd">            |    - key: &#39;normalize_gamut&#39;: True or False: </span>
+<span class="sd">            |                normalize gamut or not before calculating a gamut </span>
+<span class="sd">            |                area index Rg. </span>
+<span class="sd">            |    - key: &#39;normalized_chroma_ref&#39;: 100.0 or float, optional</span>
+<span class="sd">            |                Controls the size (chroma/radius) </span>
+<span class="sd">            |                of the normalization circle/gamut.</span>
+<span class="sd">        :avg: </span>
+<span class="sd">            | None or fcn handle, optional</span>
+<span class="sd">            | Averaging function (handle) for color differences, DEi </span>
+<span class="sd">            | (e.g. numpy.mean, .math.rms, .math.geomean)</span>
+<span class="sd">            | None use the one specified in :cri_type: dict.</span>
+<span class="sd">        :scale:</span>
+<span class="sd">            | None or dict, optional</span>
+<span class="sd">            | Specifies scaling of color differences to obtain CRI.</span>
+<span class="sd">            |     - None use the one specified in :cri_type: dict.</span>
+<span class="sd">            |     - dict: user specified dict with scaling parameters.</span>
+<span class="sd">            |         - key: &#39;fcn&#39;: function handle to type of cri scale, </span>
+<span class="sd">            |                 e.g. </span>
+<span class="sd">            |                 * linear()_scale --&gt; (100 - scale_factor*DEi), </span>
+<span class="sd">            |                 * log_scale --&gt; (cfr. Ohno&#39;s CQS), </span>
+<span class="sd">            |                 * psy_scale (Smet et al.&#39;s cri2012,See: LRT 2013)</span>
+<span class="sd">            |        - key: &#39;cfactor&#39;: factors used in scaling function, </span>
+<span class="sd">            |              If None: </span>
+<span class="sd">            |                     Scaling factor value(s) will be optimized to </span>
+<span class="sd">            |                     minimize the rms between the Rf&#39;s of the </span>
+<span class="sd">            |                     requested metric and the target metric specified</span>
+<span class="sd">            |                     in:</span>
+<span class="sd">            |</span>
+<span class="sd">            |                  - key: &#39;opt_cri_type&#39;:  str </span>
+<span class="sd">            |                      * str: one of the preset _CRI_DEFAULTS</span>
+<span class="sd">            |                      * dict: user speciied </span>
+<span class="sd">            |                      (dict must contain all keys as normal)</span>
+<span class="sd">            |                     Note that if key not in :scale: dict, </span>
+<span class="sd">            |                     then &#39;opt_cri_type&#39; is added with default </span>
+<span class="sd">            |                     setting = &#39;ciera&#39;.</span>
+<span class="sd">            |                 - key: &#39;opt_spd_set&#39;: ndarray with set of light </span>
+<span class="sd">            |                     source spds used to optimize cfactor. </span>
+<span class="sd">            |                     Note that if key not in :scale: dict, </span>
+<span class="sd">            |                     then default = &#39;F1-F12&#39;.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :returns:</span>
+<span class="sd">            | float or ndarray with Rg for :out: &#39;Rg&#39;</span>
+<span class="sd">            | Other output is also possible by changing the :out: str value.</span>
+<span class="sd">            </span>
+<span class="sd">    References:</span>
+<span class="sd">        1. `IES TM30, Method for Evaluating Light Source Color Rendition. </span>
+<span class="sd">        New York, NY: The Illuminating Engineering Society of North America.</span>
+<span class="sd">        &lt;https://www.ies.org/store/technical-memoranda/ies-method-for-evaluating-light-source-color-rendition/&gt;`_</span>
+<span class="sd">        </span>
+<span class="sd">        2. `A. David, P. T. Fini, K. W. Houser, Y. Ohno, M. P. Royer, K. A. G. Smet, M. Wei, and L. Whitehead, </span>
+<span class="sd">        “Development of the IES method for evaluating the color rendition of light sources,” </span>
+<span class="sd">        Opt. Express, vol. 23, no. 12, pp. 15888–15906, 2015. </span>
+<span class="sd">        &lt;https://www.osapublishing.org/oe/abstract.cfm?uri=oe-23-12-15888&gt;`_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1">#Override input parameters with data specified in cri_type:</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="nb">locals</span><span class="p">()</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="c1"># get dict with keyword input arguments to function (used to overwrite non-None input arguments present in cri_type dict)</span>
+    <span class="n">cri_type</span> <span class="o">=</span> <span class="n">process_cri_type_input</span><span class="p">(</span><span class="n">cri_type</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">callerfunction</span> <span class="o">=</span> <span class="s1">&#39;cri.spd_to_rg&#39;</span><span class="p">)</span>
+
+    <span class="c1">#avg, catf, cieobs, cieobs_cct, cri_specific_pars, cspace, cspace_pars, ref_type, rg_pars, sampleset, scale_factor, scale_fcn = [cri_type[x] for x in sorted(cri_type.keys())] </span>
+
+       
+    <span class="c1"># calculate Jabt of test and Jabr of the reference illuminant corresponding to test: </span>
+    <span class="n">jabt</span><span class="p">,</span> <span class="n">jabr</span><span class="p">,</span><span class="n">cct</span><span class="p">,</span><span class="n">duv</span> <span class="o">=</span> <span class="n">spd_to_jab_t_r</span><span class="p">(</span><span class="n">SPD</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;jabt,jabr,cct,duv&#39;</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="n">wl</span><span class="p">)</span> 
+
+    
+    <span class="c1"># calculate gamut area index:</span>
+    <span class="n">rg_pars</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;rg_pars&#39;</span><span class="p">]</span>
+    <span class="c1">#rg_pars = put_args_in_db(cri_type[&#39;rg_pars&#39;],rg_pars)#{&#39;nhbins&#39;:nhbins,&#39;start_hue&#39;:start_hue,&#39;normalize_gamut&#39;:normalize_gamut}) #override with not-None input from function</span>
+    <span class="n">nhbins</span><span class="p">,</span> <span class="n">normalize_gamut</span><span class="p">,</span> <span class="n">normalized_chroma_ref</span><span class="p">,</span> <span class="n">start_hue</span>  <span class="o">=</span> <span class="p">[</span><span class="n">rg_pars</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">rg_pars</span><span class="o">.</span><span class="n">keys</span><span class="p">())]</span>
+    
+    <span class="n">Rg</span><span class="p">,</span> <span class="n">jabt_binned</span><span class="p">,</span> <span class="n">jabr_binned</span><span class="p">,</span> <span class="n">DEi_binned</span> <span class="o">=</span> <span class="n">jab_to_rg</span><span class="p">(</span><span class="n">jabt</span><span class="p">,</span><span class="n">jabr</span><span class="p">,</span> <span class="n">ordered_and_sliced</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">nhbins</span> <span class="o">=</span> <span class="n">nhbins</span><span class="p">,</span> <span class="n">start_hue</span> <span class="o">=</span> <span class="n">start_hue</span><span class="p">,</span> <span class="n">normalize_gamut</span> <span class="o">=</span> <span class="n">normalize_gamut</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;Rg,jabt,jabr,DEi&#39;</span><span class="p">)</span>
+    <span class="n">Rg</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">(</span><span class="n">Rg</span><span class="p">)</span>
+    
+   
+    <span class="k">if</span> <span class="p">(</span><span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;Rg&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Rg</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;Rg,jabt,jabr&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Rg</span><span class="p">,</span> <span class="n">jabt_binned</span><span class="p">,</span><span class="n">jabr_binned</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;Rg,jabt,jabr,DEi&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Rg</span><span class="p">,</span> <span class="n">jabt_binned</span><span class="p">,</span><span class="n">jabr_binned</span><span class="p">,</span><span class="n">DEi_binned</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">eval</span><span class="p">(</span><span class="n">out</span><span class="p">)</span></div>
+
+
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="spd_to_cri"><a class="viewcode-back" href="../../../../../color.html#luxpy.color.cri.spd_to_cri">[docs]</a><span class="k">def</span> <span class="nf">spd_to_cri</span><span class="p">(</span><span class="n">SPD</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">_CRI_TYPE_DEFAULT</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;Rf&#39;</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> \
+               <span class="n">sampleset</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ref_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">avg</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> \
+               <span class="n">scale</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">opt_scale_factor</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">cspace</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">catf</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>\
+               <span class="n">cri_specific_pars</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">rg_pars</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculates the color rendering fidelity index, Rf, of spectral data. </span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :SPD: </span>
+<span class="sd">            | ndarray with spectral data </span>
+<span class="sd">              (can be multiple SPDs, first axis are the wavelengths)</span>
+<span class="sd">        :out: </span>
+<span class="sd">            | &#39;Rf&#39; or str, optional</span>
+<span class="sd">            | Specifies requested output (e.g. &#39;Rf,cct,duv&#39;) </span>
+<span class="sd">        :wl: </span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | Wavelengths (or [start, end, spacing]) to interpolate the SPDs to. </span>
+<span class="sd">            | None: default to no interpolation</span>
+<span class="sd">        :cri_type:</span>
+<span class="sd">            | _CRI_TYPE_DEFAULT or str or dict, optional</span>
+<span class="sd">            |   -&#39;str: specifies dict with default cri model parameters </span>
+<span class="sd">            |     (for supported types, see luxpy.cri._CRI_DEFAULTS[&#39;cri_types&#39;])</span>
+<span class="sd">            |   - dict: user defined model parameters </span>
+<span class="sd">            |     (see e.g. luxpy.cri._CRI_DEFAULTS[&#39;cierf&#39;] </span>
+<span class="sd">            |     for required structure)</span>
+<span class="sd">            | Note that any non-None input arguments to the function will </span>
+<span class="sd">              override default values in cri_type dict.</span>
+<span class="sd">        :sampleset:</span>
+<span class="sd">            | None or ndarray or str, optional</span>
+<span class="sd">            | Specifies set of spectral reflectance samples for cri calculations.</span>
+<span class="sd">            |     - None defaults to standard set for metric in cri_type.</span>
+<span class="sd">            |     - ndarray: user defined set of spectral reflectance functions </span>
+<span class="sd">            |       (.shape = (N+1, number of wavelengths); </span>
+<span class="sd">            |        first axis are wavelengths)</span>
+<span class="sd">        :ref_type:</span>
+<span class="sd">            | None or str or ndarray, optional</span>
+<span class="sd">            | Specifies type of reference illuminant type.</span>
+<span class="sd">            |     - None: defaults to metric_specific reference illuminant in </span>
+<span class="sd">            |             accordance with cri_type.</span>
+<span class="sd">            |     - str: &#39;BB&#39; : Blackbody radiatiors, </span>
+<span class="sd">            |            &#39;DL&#39;: daylightphase, </span>
+<span class="sd">            |            &#39;ciera&#39;: used in CIE CRI-13.3-1995, </span>
+<span class="sd">            |            &#39;cierf&#39;: used in CIE 224-2017, </span>
+<span class="sd">            |            &#39;iesrf&#39;: used in TM30-15, ...</span>
+<span class="sd">            |     - ndarray: user defined reference SPD</span>
+<span class="sd">        :cieobs:</span>
+<span class="sd">            | None or dict, optional</span>
+<span class="sd">            | Specifies which CMF sets to use for the calculation of the sample </span>
+<span class="sd">            | XYZs and the CCT (for reference illuminant calculation).</span>
+<span class="sd">            | None defaults to the one specified in :cri_type: dict.    </span>
+<span class="sd">            |     - key: &#39;xyz&#39;: str specifying CMF set for calculating xyz </span>
+<span class="sd">            |                   of samples and white </span>
+<span class="sd">            |     - key: &#39;cct&#39;: str specifying CMF set for calculating cct</span>
+<span class="sd">        :cspace:</span>
+<span class="sd">            | None or dict, optional</span>
+<span class="sd">            | Specifies which color space to use.</span>
+<span class="sd">            | None defaults to the one specified in  :cri_type: dict.  </span>
+<span class="sd">            |     - key: &#39;type&#39;: str specifying color space used to calculate </span>
+<span class="sd">            |                    color differences in.</span>
+<span class="sd">            |     - key: &#39;xyzw&#39;: None or ndarray with white point of color space</span>
+<span class="sd">            |            If None: use xyzw of test / reference (after chromatic </span>
+<span class="sd">            |                     adaptation, if specified)</span>
+<span class="sd">            |     - other keys specify other possible parameters needed for color</span>
+<span class="sd">            |       space calculation, </span>
+<span class="sd">            |       see lx.cri._CRI_DEFAULTS[&#39;iesrf&#39;][&#39;cspace&#39;] for details. </span>
+<span class="sd">        :catf:</span>
+<span class="sd">            | None or dict, optional</span>
+<span class="sd">            | Perform explicit CAT before converting to color space coordinates.</span>
+<span class="sd">            |    - None: don&#39;t apply a cat (other than perhaps the one built </span>
+<span class="sd">            |            into the colorspace) </span>
+<span class="sd">            |    - dict: with CAT parameters:</span>
+<span class="sd">            |        - key: &#39;D&#39;: ndarray with degree of adaptation</span>
+<span class="sd">            |        - key: &#39;mcat&#39;: ndarray with sensor matrix specification</span>
+<span class="sd">            |        - key: &#39;xyzw&#39;: None or ndarray with white point</span>
+<span class="sd">            |              None: use xyzw of reference otherwise transform both </span>
+<span class="sd">            |                    test and ref to xyzw</span>
+<span class="sd">        :cri_specific_pars:</span>
+<span class="sd">            | None or dict, optional</span>
+<span class="sd">            | Specifies other parameters specific to type of cri </span>
+<span class="sd">            | (e.g. maxC for CQS calculations)</span>
+<span class="sd">            |     - None: default to the one specified in  :cri_type: dict. </span>
+<span class="sd">            |     - dict: user specified parameters. </span>
+<span class="sd">            |         For its use, see for example:</span>
+<span class="sd">            |             luxpy.cri._CRI_DEFAULTS[&#39;mcri&#39;][&#39;cri_specific_pars&#39;]</span>
+<span class="sd">        :rg_pars: </span>
+<span class="sd">            | None or dict, optional</span>
+<span class="sd">            | Dict containing specifying parameters for slicing the gamut.</span>
+<span class="sd">            | Dict structure: </span>
+<span class="sd">            |     {&#39;nhbins&#39; : None, &#39;start_hue&#39; : 0, &#39;normalize_gamut&#39; : True}</span>
+<span class="sd">            |    - key: &#39;nhbins&#39;: int, number of hue bins to slice gamut </span>
+<span class="sd">            |                 (None use the one specified in :cri_type: dict).</span>
+<span class="sd">            |    - key: &#39;start_hue&#39;: float (°), hue at which to start slicing</span>
+<span class="sd">            |    - key: &#39;normalize_gamut&#39;: True or False: </span>
+<span class="sd">            |                normalize gamut or not before calculating a gamut </span>
+<span class="sd">            |                area index Rg. </span>
+<span class="sd">            |    - key: &#39;normalized_chroma_ref&#39;: 100.0 or float, optional</span>
+<span class="sd">            |                Controls the size (chroma/radius) </span>
+<span class="sd">            |                of the normalization circle/gamut.</span>
+<span class="sd">        :avg: </span>
+<span class="sd">            | None or fcn handle, optional</span>
+<span class="sd">            | Averaging function (handle) for color differences, DEi </span>
+<span class="sd">            | (e.g. numpy.mean, .math.rms, .math.geomean)</span>
+<span class="sd">            | None use the one specified in :cri_type: dict.</span>
+<span class="sd">        :scale:</span>
+<span class="sd">            | None or dict, optional</span>
+<span class="sd">            | Specifies scaling of color differences to obtain CRI.</span>
+<span class="sd">            |     - None use the one specified in :cri_type: dict.</span>
+<span class="sd">            |     - dict: user specified dict with scaling parameters.</span>
+<span class="sd">            |         - key: &#39;fcn&#39;: function handle to type of cri scale, </span>
+<span class="sd">            |                 e.g. </span>
+<span class="sd">            |                 * linear()_scale --&gt; (100 - scale_factor*DEi), </span>
+<span class="sd">            |                 * log_scale --&gt; (cfr. Ohno&#39;s CQS), </span>
+<span class="sd">            |                 * psy_scale (Smet et al.&#39;s cri2012,See: LRT 2013)</span>
+<span class="sd">            |        - key: &#39;cfactor&#39;: factors used in scaling function, </span>
+<span class="sd">            |              If None: </span>
+<span class="sd">            |                     Scaling factor value(s) will be optimized to </span>
+<span class="sd">            |                     minimize the rms between the Rf&#39;s of the </span>
+<span class="sd">            |                     requested metric and the target metric specified</span>
+<span class="sd">            |                     in:</span>
+<span class="sd">            |</span>
+<span class="sd">            |                  - key: &#39;opt_cri_type&#39;:  str </span>
+<span class="sd">            |                      * str: one of the preset _CRI_DEFAULTS</span>
+<span class="sd">            |                      * dict: user speciied </span>
+<span class="sd">            |                      (dict must contain all keys as normal)</span>
+<span class="sd">            |                     Note that if key not in :scale: dict, </span>
+<span class="sd">            |                     then &#39;opt_cri_type&#39; is added with default </span>
+<span class="sd">            |                     setting = &#39;ciera&#39;.</span>
+<span class="sd">            |                 - key: &#39;opt_spd_set&#39;: ndarray with set of light </span>
+<span class="sd">            |                     source spds used to optimize cfactor. </span>
+<span class="sd">            |                     Note that if key not in :scale: dict, </span>
+<span class="sd">            |                     then default = &#39;F1-F12&#39;.</span>
+<span class="sd">        :opt_scale: </span>
+<span class="sd">            | True or False, optional</span>
+<span class="sd">            | True: optimize scaling-factor, else do nothing and use value of </span>
+<span class="sd">              scaling-factor in :scale: dict.   </span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :returns: </span>
+<span class="sd">            | float or ndarray with Rf for :out: &#39;Rf&#39;</span>
+<span class="sd">            | Other output is also possible by changing the :out: str value.</span>
+<span class="sd">            </span>
+<span class="sd">    References:</span>
+<span class="sd">        1. `IES TM30, Method for Evaluating Light Source Color Rendition. </span>
+<span class="sd">        New York, NY: The Illuminating Engineering Society of North America.</span>
+<span class="sd">        &lt;https://www.ies.org/store/technical-memoranda/ies-method-for-evaluating-light-source-color-rendition/&gt;`_</span>
+<span class="sd">        </span>
+<span class="sd">        2. `A. David, P. T. Fini, K. W. Houser, Y. Ohno, M. P. Royer, K. A. G. Smet, M. Wei, and L. Whitehead, </span>
+<span class="sd">        “Development of the IES method for evaluating the color rendition of light sources,” </span>
+<span class="sd">        Opt. Express, vol. 23, no. 12, pp. 15888–15906, 2015. </span>
+<span class="sd">        &lt;https://www.osapublishing.org/oe/abstract.cfm?uri=oe-23-12-15888&gt;`_</span>
+<span class="sd">        </span>
+<span class="sd">        3. `CIE224:2017. CIE 2017 Colour Fidelity Index for accurate scientific use. </span>
+<span class="sd">        Vienna, Austria: CIE. (2017).</span>
+<span class="sd">        &lt;http://www.cie.co.at/index.php?i_ca_id=1027&gt;`_</span>
+<span class="sd">        </span>
+<span class="sd">        4. `Smet, K., Schanda, J., Whitehead, L., &amp; Luo, R. (2013). </span>
+<span class="sd">        CRI2012: A proposal for updating the CIE colour rendering index. </span>
+<span class="sd">        Lighting Research and Technology, 45, 689–709. </span>
+<span class="sd">        &lt;http://lrt.sagepub.com/content/45/6/689&gt;`_</span>
+<span class="sd">        </span>
+<span class="sd">        5. `CIE13.3-1995. Method of Measuring and Specifying </span>
+<span class="sd">        Colour Rendering Properties of Light Sources </span>
+<span class="sd">        (Vol. CIE13.3-19). Vienna, Austria: CIE. (1995).</span>
+<span class="sd">        &lt;http://www.cie.co.at/index.php/index.php?i_ca_id=303&gt;`_</span>
+<span class="sd">                    </span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">outlist</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+    
+    <span class="c1">#Override input parameters with data specified in cri_type:</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="nb">locals</span><span class="p">()</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="c1"># get dict with keyword input arguments to function (used to overwrite non-None input arguments present in cri_type dict)</span>
+    <span class="n">cri_type</span> <span class="o">=</span> <span class="n">process_cri_type_input</span><span class="p">(</span><span class="n">cri_type</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">callerfunction</span> <span class="o">=</span> <span class="s1">&#39;cri.spd_to_cri&#39;</span><span class="p">)</span>
+    
+    <span class="c1"># unpack some keys:</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">opt_scale_factor</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">opt_scale_factor</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="n">scale_factor</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;scale&#39;</span><span class="p">][</span><span class="s1">&#39;cfactor&#39;</span><span class="p">]</span>
+    <span class="n">scale_fcn</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;scale&#39;</span><span class="p">][</span><span class="s1">&#39;fcn&#39;</span><span class="p">]</span>
+    <span class="n">avg</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;avg&#39;</span><span class="p">]</span>  
+    
+    <span class="c1"># Input parsing: optimize scale_factor for input based on F1-F12 (default) if scale_factor is NaN or None:</span>
+    <span class="n">scale_factor</span> <span class="o">=</span> <span class="n">optimize_scale_factor</span><span class="p">(</span><span class="n">cri_type</span><span class="p">,</span><span class="n">opt_scale_factor</span><span class="p">,</span> <span class="n">scale_fcn</span><span class="p">,</span> <span class="n">avg</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">scale_factor</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">Exception</span> <span class="p">(</span><span class="s1">&#39;Unable to optimize scale_factor.&#39;</span><span class="p">)</span>
+
+    <span class="c1"># A. get DEi of for ciera and of requested cri metric for spds in or specified by scale_factor_optimization_spds&#39;:</span>
+    <span class="n">DEi</span><span class="p">,</span> <span class="n">jabt</span><span class="p">,</span> <span class="n">jabr</span><span class="p">,</span> <span class="n">cct</span><span class="p">,</span> <span class="n">duv</span> <span class="o">=</span> <span class="n">spd_to_DEi</span><span class="p">(</span><span class="n">SPD</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;DEi,jabt,jabr,cct,duv&#39;</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">)</span>
+    
+    <span class="c1"># B. convert DEi to color rendering index:</span>
+    <span class="n">Rfi</span> <span class="o">=</span> <span class="n">scale_fcn</span><span class="p">(</span><span class="n">DEi</span><span class="p">,</span><span class="n">scale_factor</span><span class="p">)</span>
+    <span class="n">Rf</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">(</span><span class="n">scale_fcn</span><span class="p">(</span><span class="n">avg</span><span class="p">(</span><span class="n">DEi</span><span class="p">,</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">),</span><span class="n">scale_factor</span><span class="p">))</span>
+    
+    <span class="c1"># C. get binned jabt jabr and DEi:</span>
+    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;Rg&#39;</span> <span class="ow">in</span> <span class="n">outlist</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="s1">&#39;Rfhi&#39;</span> <span class="ow">in</span> <span class="n">outlist</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="s1">&#39;Rhshi&#39;</span> <span class="ow">in</span> <span class="n">outlist</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="s1">&#39;Rcshi&#39;</span> <span class="ow">in</span> <span class="n">outlist</span><span class="p">):</span>
+        <span class="c1"># calculate gamut area index:</span>
+        <span class="n">rg_pars</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;rg_pars&#39;</span><span class="p">]</span> 
+        <span class="n">nhbins</span><span class="p">,</span> <span class="n">normalize_gamut</span><span class="p">,</span> <span class="n">normalized_chroma_ref</span><span class="p">,</span> <span class="n">start_hue</span> <span class="o">=</span> <span class="p">[</span><span class="n">rg_pars</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">rg_pars</span><span class="o">.</span><span class="n">keys</span><span class="p">())]</span>
+        <span class="n">Rg</span><span class="p">,</span> <span class="n">jabt_binned</span><span class="p">,</span> <span class="n">jabr_binned</span><span class="p">,</span> <span class="n">DEi_binned</span> <span class="o">=</span> <span class="n">jab_to_rg</span><span class="p">(</span><span class="n">jabt</span><span class="p">,</span><span class="n">jabr</span><span class="p">,</span> <span class="n">ordered_and_sliced</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">nhbins</span> <span class="o">=</span> <span class="n">nhbins</span><span class="p">,</span> <span class="n">start_hue</span> <span class="o">=</span> <span class="n">start_hue</span><span class="p">,</span> <span class="n">normalize_gamut</span> <span class="o">=</span> <span class="n">normalize_gamut</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;Rg,jabt,jabr,DEi&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">jabt_binned</span><span class="p">,</span> <span class="n">jabr_binned</span><span class="p">,</span> <span class="n">DEi_binned</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+
+    <span class="c1"># D. Calculate Rfhi, Rhshi and Rcshi:</span>
+    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;Rfhi&#39;</span> <span class="ow">in</span> <span class="n">outlist</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="s1">&#39;Rhshi&#39;</span> <span class="ow">in</span> <span class="n">outlist</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="s1">&#39;Rcshi&#39;</span> <span class="ow">in</span> <span class="n">outlist</span><span class="p">):</span>
+        <span class="n">Rfhi</span><span class="p">,</span> <span class="n">Rcshi</span><span class="p">,</span> <span class="n">Rhshi</span> <span class="o">=</span> <span class="n">jab_to_rhi</span><span class="p">(</span><span class="n">jabt</span> <span class="o">=</span> <span class="n">jabt_binned</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">...</span><span class="p">],</span> <span class="n">jabr</span> <span class="o">=</span> <span class="n">jabr_binned</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">...</span><span class="p">],</span> <span class="n">DEi</span> <span class="o">=</span> <span class="n">DEi_binned</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">...</span><span class="p">],</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">,</span> <span class="n">scale_factor</span> <span class="o">=</span> <span class="n">scale_factor</span><span class="p">,</span> <span class="n">scale_fcn</span> <span class="o">=</span> <span class="n">scale_fcn</span><span class="p">,</span> <span class="n">use_bin_avg_DEi</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="c1"># [:-1,...] removes last row from jab as this was added to close the gamut. </span>
+
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;Rf&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Rf</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;Rg&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Rg</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">eval</span><span class="p">(</span><span class="n">out</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Kevin A.G. Smet.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../../',
+            VERSION:'1.3.0',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          
+          SphinxRtdTheme.Navigation.enableSticky();
+          
+      });
+  </script> 
+
+</body>
+</html>

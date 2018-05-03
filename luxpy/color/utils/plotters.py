@@ -16,40 +16,36 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #########################################################################
 """
-###############################################################################
-# Module with functions related to plotting of color data
-###############################################################################
+Module with functions related to plotting of color data
+=======================================================
 
-# plot_color_data(): Plot color data (local helper function)
+ :plot_color_data(): Plot color data (local helper function)
 
-# plotDL(): Plot daylight locus. 
+ :plotDL(): Plot daylight locus. 
 
-# plotBB(): Plot blackbody locus. 
+ :plotBB(): Plot blackbody locus. 
 
-# plotSL(): Plot spectrum locus.  
-            (plotBB() and plotDL() are also called, but can be turned off).
+ :plotSL(): | Plot spectrum locus.  
+            | (plotBB() and plotDL() are also called, but can be turned off).
 
-# plotcerulean(): Plot cerulean (yellow (577 nm) - blue (472 nm)) line 
-                (Kuehni, CRA, 2014: Table II: spectral lights)
-                * Kuehni, R. G. (2014). 
-                Unique hues and their stimuli—state of the art. 
-                Color Research & Application, 39(3), 279–287
-                (https://doi.org/10.1002/col.21793)
+ :plotcerulean(): | Plot cerulean (yellow (577 nm) - blue (472 nm)) line 
+                  | (Kuehni, CRA, 2014: Table II: spectral lights)
+                  | `Kuehni, R. G. (2014). 
+                    Unique hues and their stimuli—state of the art. 
+                    Color Research & Application, 39(3), 279–287.
+                    <https://doi.org/10.1002/col.21793>`_
 
-# plotUH(): Plot unique hue lines from color space center point xyz0. 
-                (Kuehni, CRA, 2014: uY,uB,uG: Table II: spectral lights; 
-                uR: Table IV: Xiao data) 
-                * Kuehni, R. G. (2014). 
-                Unique hues and their stimuli—state of the art. 
-                Color Research & Application, 39(3), 279–287
-                (https://doi.org/10.1002/col.21793)
+ :plotUH(): | Plot unique hue lines from color space center point xyz0. 
+            | (Kuehni, CRA, 2014: uY,uB,uG: Table II: spectral lights; 
+            | uR: Table IV: Xiao data) 
+            | `Kuehni, R. G. (2014). 
+              Unique hues and their stimuli—state of the art. 
+              Color Research & Application, 39(3), 279–287.
+              <https://doi.org/10.1002/col.21793>`_
     
-# plotcircle(): Plot one or more concentric circles.
-#--------------------------------------------------------------------------------------------------
+ :plotcircle(): Plot one or more concentric circles.
 
-Created on Tue Jul  4 14:44:45 2017
-
-@author: Kevin A.G. Smet (ksmet1977 at gmail.com)
+.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
 from luxpy import np, plt, _CIEOBS, _CSPACE, _CSPACE_AXES, _CIE_ILLUMINANTS, _CMF, daylightlocus, colortf, Yxy_to_xyz, asplit, spd_to_xyz, cri_ref
@@ -58,34 +54,44 @@ __all__ = ['plotSL','plotDL','plotBB','plot_color_data','plotceruleanline','plot
 
 
 
-def plot_color_data(x,y,z=None, axh=None, show = True, cieobs =_CIEOBS, cspace = _CSPACE,  formatstr = 'k-', **kwargs):
+def plot_color_data(x,y,z=None, axh=None, show = True, cieobs =_CIEOBS, \
+                    cspace = _CSPACE,  formatstr = 'k-', **kwargs):
     """
     Plot color data from x,y [,z].
     
     Args: 
-        :x: float or ndarray with x-coordinate data
-        :y: float or ndarray with y-coordinate data
-        :z: None or float or ndarray with Z-coordinate data, optional
-            If None: make 2d plot.
-        :axh: None or axes handle, optional
-            Determines axes to plot data in.
-            None: make new figure.
-        :show: True or False, optional
-            Invoke matplotlib.pyplot.show() right after plotting
-        :cieobs: luxpy._CIEOBS or str, optional
-            Determines CMF set to calculate spectrum locus or other.
-        :cspace: luxpy._CSPACE or str, optional
-            Determines color space / chromaticity diagram to plot data in.
-            Note that data is expected to be in specified :cspace:
-        :formatstr: 'k-' or str, optional
-            Format str for plotting (see ?matplotlib.pyplot.plot)
-        :**kwargs: additional keyword arguments for use with matplotlib.pyplot.
+        :x: 
+            | float or ndarray with x-coordinate data
+        :y: 
+            | float or ndarray with y-coordinate data
+        :z: 
+            | None or float or ndarray with Z-coordinate data, optional
+            | If None: make 2d plot.
+        :axh: 
+            | None or axes handle, optional
+            | Determines axes to plot data in.
+            | None: make new figure.
+        :show: 
+            | True or False, optional
+            | Invoke matplotlib.pyplot.show() right after plotting
+        :cieobs: 
+            | luxpy._CIEOBS or str, optional
+            | Determines CMF set to calculate spectrum locus or other.
+        :cspace:
+            | luxpy._CSPACE or str, optional
+            | Determines color space / chromaticity diagram to plot data in.
+            | Note that data is expected to be in specified :cspace:
+        :formatstr: 
+            | 'k-' or str, optional
+            | Format str for plotting (see ?matplotlib.pyplot.plot)
+        :kwargs:
+            | additional keyword arguments for use with matplotlib.pyplot.
     
     Returns:
         :returns: 
-            None (:show: == True) 
-            or 
-            handle to current axes (:show: == False)
+            | None (:show: == True) 
+            |  or 
+            | handle to current axes (:show: == False)
     """
     x = np.atleast_1d(x)
     y = np.atleast_1d(y)
@@ -111,38 +117,49 @@ def plot_color_data(x,y,z=None, axh=None, show = True, cieobs =_CIEOBS, cspace =
 
 
 
-def plotDL(ccts = None, cieobs =_CIEOBS, cspace = _CSPACE, axh = None, show = True, force_daylight_below4000K = False, cspace_pars = {}, formatstr = 'k-',  **kwargs):
+def plotDL(ccts = None, cieobs =_CIEOBS, cspace = _CSPACE, axh = None, \
+           show = True, force_daylight_below4000K = False, cspace_pars = {}, \
+           formatstr = 'k-',  **kwargs):
     """
     Plot daylight locus.
     
     Args: 
-        :ccts: None or list[float], optional
-            None defaults to [4000 K to 1e19 K] in 100 steps on a log10 scale.
-        :force_daylight_below4000K: False or True, optional
-            CIE daylight phases are not defined below 4000 K. 
-            If True plot anyway.
-        :axh: None or axes handle, optional
-            Determines axes to plot data in.
-            None: make new figure.
-        :show: True or False, optional
-            Invoke matplotlib.pyplot.show() right after plotting
-        :cieobs: luxpy._CIEOBS or str, optional
-            Determines CMF set to calculate spectrum locus or other.
-        :cspace: luxpy._CSPACE or str, optional
-            Determines color space / chromaticity diagram to plot data in.
-            Note that data is expected to be in specified :cspace:
-        :formatstr: 'k-' or str, optional
-            Format str for plotting (see ?matplotlib.pyplot.plot)
-        :cspace_pars: {} or dict, optional
-            Dict with parameters required by color space specified in :cspace: 
-                (for use with luxpy.colortf())
-        :**kwargs: additional keyword arguments for use with matplotlib.pyplot.
+        :ccts: 
+            | None or list[float], optional
+            | None defaults to [4000 K to 1e19 K] in 100 steps on a log10 scale.
+        :force_daylight_below4000K: 
+            | False or True, optional
+            | CIE daylight phases are not defined below 4000 K. 
+            | If True plot anyway.
+        :axh: 
+            | None or axes handle, optional
+            | Determines axes to plot data in.
+            | None: make new figure.
+        :show: 
+            | True or False, optional
+            | Invoke matplotlib.pyplot.show() right after plotting
+        :cieobs:
+            | luxpy._CIEOBS or str, optional
+            | Determines CMF set to calculate spectrum locus or other.
+        :cspace:
+            | luxpy._CSPACE or str, optional
+            | Determines color space / chromaticity diagram to plot data in.
+            | Note that data is expected to be in specified :cspace:
+        :formatstr:
+            | 'k-' or str, optional
+            | Format str for plotting (see ?matplotlib.pyplot.plot)
+        :cspace_pars:
+            | {} or dict, optional
+            | Dict with parameters required by color space specified in :cspace: 
+              (for use with luxpy.colortf())
+        :kwargs: 
+            | additional keyword arguments for use with matplotlib.pyplot.
     
     Returns:
         :returns: 
-            None (:show: == True) 
-            or 
-            handle to current axes (:show: == False)
+            | None (:show: == True) 
+            |  or 
+            | handle to current axes (:show: == False)
     """
     
     if ccts is None:
@@ -164,35 +181,44 @@ def plotBB(ccts = None, cieobs =_CIEOBS, cspace = _CSPACE, axh = None, cctlabels
     Plot blackbody locus.
         
     Args: 
-        :ccts: None or list[float], optional
-            None defaults to [1000 to 1e19 K].
-            Range: 
-                [1000,1500,2000,2500,3000,3500,4000,5000,6000,8000,10000] 
-                + [15000 K to 1e19 K] in 100 steps on a log10 scale
-        :cctlabels: True or False, optional
-            Add cct text labels at various points along the blackbody locus.
-        :axh: None or axes handle, optional
-            Determines axes to plot data in.
-            None: make new figure.
-        :show: True or False, optional
-            Invoke matplotlib.pyplot.show() right after plotting
-        :cieobs: luxpy._CIEOBS or str, optional
-            Determines CMF set to calculate spectrum locus or other.
-        :cspace: luxpy._CSPACE or str, optional
-            Determines color space / chromaticity diagram to plot data in.
-            Note that data is expected to be in specified :cspace:
-        :formatstr: 'k-' or str, optional
-            Format str for plotting (see ?matplotlib.pyplot.plot)
-        :cspace_pars: {} or dict, optional
-            Dict with parameters required by color space specified in :cspace: 
-                (for use with luxpy.colortf())
-        :**kwargs: additional keyword arguments for use with matplotlib.pyplot.
+        :ccts: 
+            | None or list[float], optional
+            | None defaults to [1000 to 1e19 K].
+            | Range: 
+            |     [1000,1500,2000,2500,3000,3500,4000,5000,6000,8000,10000] 
+            |    + [15000 K to 1e19 K] in 100 steps on a log10 scale
+        :cctlabels:
+            | True or False, optional
+            | Add cct text labels at various points along the blackbody locus.
+        :axh: 
+            | None or axes handle, optional
+            | Determines axes to plot data in.
+            | None: make new figure.
+        :show:
+            | True or False, optional
+            | Invoke matplotlib.pyplot.show() right after plotting
+        :cieobs:
+            | luxpy._CIEOBS or str, optional
+            | Determines CMF set to calculate spectrum locus or other.
+        :cspace:
+            | luxpy._CSPACE or str, optional
+            | Determines color space / chromaticity diagram to plot data in.
+            | Note that data is expected to be in specified :cspace:
+        :formatstr:
+            | 'k-' or str, optional
+            | Format str for plotting (see ?matplotlib.pyplot.plot)
+        :cspace_pars:
+            | {} or dict, optional
+            | Dict with parameters required by color space specified in :cspace: 
+              (for use with luxpy.colortf())
+        :kwargs: 
+            | additional keyword arguments for use with matplotlib.pyplot.
     
     Returns:
         :returns: 
-            None (:show: == True) 
-            or 
-            handle to current axes (:show: == False)
+            | None (:show: == True) 
+            |  or 
+            | handle to current axes (:show: == False)
     """
     if ccts is None:
         ccts1 = np.array([1000.0,1500.0,2000.0,2500.0,3000.0,3500.0,4000.0,5000.0,6000.0,8000.0,10000.0])
@@ -224,38 +250,50 @@ def plotSL(cieobs =_CIEOBS, cspace = _CSPACE,  DL = True, BBL = True, D65 = Fals
     Plot spectrum locus for cieobs in cspace.
     
     Args: 
-        :DL: True or False, optional
-            True plots Daylight Locus as well.
-        :BBL: True or False, optional
-            True plots BlackBody Locus as well. 
-        :D65: False or True, optional
-            True plots D65 chromaticity as well. 
-        :EEW: False or True, optional
-            True plots Equi-Energy-White chromaticity as well. 
-        :cctlabels: False or True, optional
-            Add cct text labels at various points along the blackbody locus.
-        :axh: None or axes handle, optional
-            Determines axes to plot data in.
-            None: make new figure.
-        :show: True or False, optional
-            Invoke matplotlib.pyplot.show() right after plotting
-        :cieobs: luxpy._CIEOBS or str, optional
-            Determines CMF set to calculate spectrum locus or other.
-        :cspace: luxpy._CSPACE or str, optional
-            Determines color space / chromaticity diagram to plot data in.
-            Note that data is expected to be in specified :cspace:
-        :formatstr: 'k-' or str, optional
-            Format str for plotting (see ?matplotlib.pyplot.plot)
-        :cspace_pars: {} or dict, optional
-            Dict with parameters required by color space specified in :cspace: 
-                (for use with luxpy.colortf())
-        :**kwargs: additional keyword arguments for use with matplotlib.pyplot.
+        :DL: 
+            | True or False, optional
+            | True plots Daylight Locus as well.
+        :BBL: 
+            | True or False, optional
+            | True plots BlackBody Locus as well. 
+        :D65: 
+            | False or True, optional
+            | True plots D65 chromaticity as well. 
+        :EEW: 
+            | False or True, optional
+            | True plots Equi-Energy-White chromaticity as well. 
+        :cctlabels:
+            | False or True, optional
+            | Add cct text labels at various points along the blackbody locus.
+        :axh: 
+            | None or axes handle, optional
+            | Determines axes to plot data in.
+            | None: make new figure.
+        :show:
+            | True or False, optional
+            | Invoke matplotlib.pyplot.show() right after plotting
+        :cieobs:
+            | luxpy._CIEOBS or str, optional
+            | Determines CMF set to calculate spectrum locus or other.
+        :cspace:
+            | luxpy._CSPACE or str, optional
+            | Determines color space / chromaticity diagram to plot data in.
+            | Note that data is expected to be in specified :cspace:
+        :formatstr:
+            | 'k-' or str, optional
+            | Format str for plotting (see ?matplotlib.pyplot.plot)
+        :cspace_pars:
+            | {} or dict, optional
+            | Dict with parameters required by color space specified in :cspace: 
+            | (for use with luxpy.colortf())
+        :kwargs: 
+            | additional keyword arguments for use with matplotlib.pyplot.
     
     Returns:
         :returns: 
-            None (:show: == True) 
-            or 
-            handle to current axes (:show: == False)
+            | None (:show: == True) 
+            |  or 
+            | handle to current axes (:show: == False)
     """
     SL = _CMF[cieobs]['bar'][1:4].T
     SL = np.vstack((SL,SL[0]))
@@ -292,34 +330,41 @@ def plotceruleanline(cieobs = _CIEOBS, cspace = _CSPACE, axh = None,formatstr = 
     """
     Plot cerulean (yellow (577 nm) - blue (472 nm)) line 
     
-    Kuehni, CRA, 2014: 
-        Table II: spectral lights.
+    | Kuehni, CRA, 2014: 
+    |   Table II: spectral lights.
     
     Args: 
-        :axh: None or axes handle, optional
-            Determines axes to plot data in.
-            None: make new figure.
-        :cieobs: luxpy._CIEOBS or str, optional
-            Determines CMF set to calculate spectrum locus or other.
-        :cspace: luxpy._CSPACE or str, optional
-            Determines color space / chromaticity diagram to plot data in.
-            Note that data is expected to be in specified :cspace:
-        :formatstr: 'k-' or str, optional
-            Format str for plotting (see ?matplotlib.pyplot.plot)
-        :cspace_pars: {} or dict, optional
-            Dict with parameters required by color space specified in :cspace: 
-                (for use with luxpy.colortf())
-        :**kwargs: additional keyword arguments for use with matplotlib.pyplot.
+        :axh: 
+            | None or axes handle, optional
+            | Determines axes to plot data in.
+            | None: make new figure.
+        :cieobs:
+            | luxpy._CIEOBS or str, optional
+            | Determines CMF set to calculate spectrum locus or other.
+        :cspace:
+            | luxpy._CSPACE or str, optional
+            | Determines color space / chromaticity diagram to plot data in.
+            | Note that data is expected to be in specified :cspace:
+        :formatstr:
+            | 'k-' or str, optional
+            | Format str for plotting (see ?matplotlib.pyplot.plot)
+        :cspace_pars:
+            | {} or dict, optional
+            | Dict with parameters required by color space specified in :cspace: 
+            | (for use with luxpy.colortf())
+        :kwargs:
+            | additional keyword arguments for use with matplotlib.pyplot.
     
     Returns:
-        :returns: handle to cerulean line
+        :returns:
+            | handle to cerulean line
         
     References:
-        ..[1] Kuehni, R. G. (2014). 
-                Unique hues and their stimuli—state of the art. 
-                Color Research & Application, 39(3), 279–287. 
-                https://doi.org/10.1002/col.21793
-                (see Table II, IV)
+        1. `Kuehni, R. G. (2014). 
+        Unique hues and their stimuli—state of the art. 
+        Color Research & Application, 39(3), 279–287. 
+        <https://doi.org/10.1002/col.21793>`_
+        (see Table II, IV)
     """
     cmf = _CMF[cieobs]['bar']
     p_y = cmf[0] == 577.0 #Kuehni, CRA 2013 (mean, table IV)
@@ -337,42 +382,51 @@ def plotUH(xyz0 = None, uhues = [0,1,2,3], cieobs = _CIEOBS, cspace = _CSPACE, a
     """ 
     Plot unique hue lines from color space center point xyz0.
     
-    Kuehni, CRA, 2014: 
-        uY,uB,uG: Table II: spectral lights; 
-        uR: Table IV: Xiao data.
+    | Kuehni, CRA, 2014: 
+    |     uY,uB,uG: Table II: spectral lights; 
+    |     uR: Table IV: Xiao data.
     
     Args: 
-        :xyz0: None, optional
-            Center of color space (unique hue lines are expected to cross here)
-            None defaults to equi-energy-white.
-        :uhues: [0,1,2,3], optional
-            Unique hue lines to plot [0:'yellow',1:'blue',2:'red',3:'green']
-        :axh: None or axes handle, optional
-            Determines axes to plot data in.
-            None: make new figure.
-        :cieobs: luxpy._CIEOBS or str, optional
-            Determines CMF set to calculate spectrum locus or other.
-        :cspace: luxpy._CSPACE or str, optional
-            Determines color space / chromaticity diagram to plot data in.
-            Note that data is expected to be in specified :cspace:
-        :formatstr: ['yo-.','bo-.','ro-.','go-.'] or list[str], optional
-            Format str for plotting the different unique lines 
-                (see also ?matplotlib.pyplot.plot)
-        :excludefromlegend: '' or str, optional
-            To exclude certain hues from axes legend.
-        :cspace_pars: {} or dict, optional
-            Dict with parameters required by color space specified in :cspace: 
-                (for use with luxpy.colortf())
+        :xyz0:
+            | None, optional
+            | Center of color space (unique hue lines are expected to cross here)
+            | None defaults to equi-energy-white.
+        :uhues:
+            | [0,1,2,3], optional
+            | Unique hue lines to plot [0:'yellow',1:'blue',2:'red',3:'green']
+        :axh: 
+            | None or axes handle, optional
+            | Determines axes to plot data in.
+            | None: make new figure.
+        :cieobs:
+            | luxpy._CIEOBS or str, optional
+            | Determines CMF set to calculate spectrum locus or other.
+        :cspace:
+            | luxpy._CSPACE or str, optional
+            | Determines color space / chromaticity diagram to plot data in.
+            | Note that data is expected to be in specified :cspace:
+        :formatstr:
+            | ['yo-.','bo-.','ro-.','go-.'] or list[str], optional
+            | Format str for plotting the different unique lines 
+            | (see also ?matplotlib.pyplot.plot)
+        :excludefromlegend:
+            | '' or str, optional
+            | To exclude certain hues from axes legend.
+        :cspace_pars:
+            | {} or dict, optional
+            | Dict with parameters required by color space specified in :cspace: 
+            | (for use with luxpy.colortf())
           
     Returns:
-        :returns: list[handles] to unique hue lines
+        :returns: 
+            | list[handles] to unique hue lines
         
     References:
-        ..[1] Kuehni, R. G. (2014). 
-                Unique hues and their stimuli—state of the art. 
-                Color Research & Application, 39(3), 279–287. 
-                https://doi.org/10.1002/col.21793
-                (see Table II, IV)
+        1. `Kuehni, R. G. (2014). 
+        Unique hues and their stimuli—state of the art. 
+        Color Research & Application, 39(3), 279–287. 
+        <https://doi.org/10.1002/col.21793>`_
+        (see Table II, IV)
     """
     hues = ['yellow','blue','red','green']
     cmf = _CMF[cieobs]['bar']
@@ -402,15 +456,21 @@ def plotcircle(center = np.array([0.,0.]),radii = np.arange(0,60,10), angles = n
     Plot one or more concentric circles.
     
     Args:
-        :center: np.array([0.,0.]) or ndarray with center coordinates, optional
-        :radii: np.arange(0,60,10) or ndarray with radii of circle(s), optional
-        :angles: np.arange(0,350,10) or ndarray with angles (°), optional
-        :color: 'k', optional
-            Color for plotting.
-        :linestyle: '--', optional
-            Linestyle of circles.
-        :out: None, optional
-            If None: plot circles, return (x,y) otherwise.
+        :center: 
+            | np.array([0.,0.]) or ndarray with center coordinates, optional
+        :radii:
+            | np.arange(0,60,10) or ndarray with radii of circle(s), optional
+        :angles:
+            | np.arange(0,350,10) or ndarray with angles (°), optional
+        :color:
+            | 'k', optional
+            | Color for plotting.
+        :linestyle:
+            | '--', optional
+            | Linestyle of circles.
+        :out: 
+            | None, optional
+            | If None: plot circles, return (x,y) otherwise.
     """
     xs = np.array([0])
     ys = xs.copy()

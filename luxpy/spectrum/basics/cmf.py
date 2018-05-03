@@ -16,22 +16,26 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #########################################################################
 """
-luxpy module loading sets of XYZ color matching functions (CMF) and Vlambda 
-    curves (= Ybar).
+Module for Color Matching Functions (CMF) and Vlambda (=Ybar)
+=============================================================
 
- * luxpy._CMF: Dict with keys 'types' and x
-                 x are dicts with keys 'bar', 'K', 'M'
+cmf.py
+------
+
+  :luxpy._CMF: | Dict with keys 'types' and x
+               | x are dicts with keys 'bar', 'K', 'M'
  
-     + luxpy._CMF['types'] = ['1931_2','1964_10','2006_2','2006_10',
-                             '1931_2_judd1951','1931_2_juddvos1978',
-                             '1951_20_scotopic']
-     + luxpy._CMF[x]['bar'] = numpy array with CMFs for type x 
-                             between 360 nm and 830 nm (has shape: (4,471))
-     + luxpy._CMF[x]['K'] = Constant converting Watt to lumen for CMF type x.
-     + luxpy._CMF[x]['M'] = XYZ to LMS conversion matrix for CMF type x.
-                            Matrix is numpy arrays with shape: (3,3)
+     | * luxpy._CMF['types']  = ['1931_2','1964_10','2006_2','2006_10',
+                                 '1931_2_judd1951','1931_2_juddvos1978',
+                                 '1951_20_scotopic']
+     | * luxpy._CMF[x]['bar'] = numpy array with CMFs for type x 
+                                between 360 nm and 830 nm (has shape: (4,471))
+     | * luxpy._CMF[x]['K']   = Constant converting Watt to lumen for CMF type x.
+     | * luxpy._CMF[x]['M']   = XYZ to LMS conversion matrix for CMF type x.
+                                Matrix is numpy arrays with shape: (3,3)
                             
      Notes:
+         
         1. All functions have been expanded (when necessary) using zeros to a 
             full 360-830 range. This way those wavelengths do not contribute 
             in the calculation, AND are not extrapolated using the closest 
@@ -55,20 +59,19 @@ luxpy module loading sets of XYZ color matching functions (CMF) and Vlambda
             to np.eye().
 
     
-     References:
-         1. CIE15-2004 (2004). 
-             Colorimetry 
-             (Vienna, Austria: CIE).
-             (http://www.cie.co.at/index.php/index.php?i_ca_id=304)
+References
+----------
 
-         2. CIE, and CIE (2006). 
-             Fundamental Chromaticity Diagram with Physiological Axes - Part I 
-             (Vienna: CIE).
-                        
-                            
-Created on Sat Jun 17 10:43:24 2017
+    1. `CIE15-2004 (2004). 
+    Colorimetry 
+    (Vienna, Austria: CIE) 
+    <http://www.cie.co.at/index.php/index.php?i_ca_id=304>`_
 
-@author: Kevin A.G. Smet (ksmet1977 at gmail.com)
+    2. `CIE, and CIE (2006). 
+    Fundamental Chromaticity Diagram with Physiological Axes - Part I.(Vienna: CIE).
+    <http://www.cie.co.at/publications/fundamental-chromaticity-diagram-physiological-axes-part-1>`_
+
+.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
 

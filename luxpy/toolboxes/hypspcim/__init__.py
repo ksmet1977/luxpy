@@ -16,22 +16,21 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #########################################################################
 """
-###############################################################################
-# Module for hyper spectral image simulation
-###############################################################################
-# _HYPSPCIM_PATH: path to module
+Module for hyper spectral image simulation
+==========================================
 
-# _HYPSPCIM_DEFAULT_IMAGE: path + filename to default image
+ :_HYPSPCIM_PATH: path to module
 
-# xyz_to_rfl(): approximate spectral reflectance of xyz based on k nearest 
+ :_HYPSPCIM_DEFAULT_IMAGE: path + filename to default image
+
+ :xyz_to_rfl(): approximate spectral reflectance of xyz based on k nearest 
                 neighbour interpolation of samples from a standard reflectance 
                 set.
 
-# render_image(): Render image under specified light source spd.
+ :render_image(): Render image under specified light source spd.
 
-#------------------------------------------------------------------------------
-Created on Sun Apr 29 16:30:05 2018
 
-@author: kevin.smet
+.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 from .hyperspectral_img_simulator import *
+__all__ = hyperspectral_img_simulator.__all__

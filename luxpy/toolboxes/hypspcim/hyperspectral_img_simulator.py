@@ -1,22 +1,20 @@
 # -*- coding: utf-8 -*-
 """
-###############################################################################
-# Module for hyper spectral image simulation
-###############################################################################
-# _HYPSPCIM_PATH: path to module
+Module for hyper spectral image simulation
+==========================================
 
-# _HYPSPCIM_DEFAULT_IMAGE: path + filename to default image
+ :_HYPSPCIM_PATH: path to module
 
-# xyz_to_rfl(): approximate spectral reflectance of xyz based on k nearest 
+ :_HYPSPCIM_DEFAULT_IMAGE: path + filename to default image
+
+ :xyz_to_rfl(): approximate spectral reflectance of xyz based on k nearest 
                 neighbour interpolation of samples from a standard reflectance 
                 set.
 
-# render_image(): Render image under specified light source spd.
+ :render_image(): Render image under specified light source spd.
 
-#------------------------------------------------------------------------------
-Created on Sun Apr 29 16:30:05 2018
 
-@author: kevin.smet
+.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
 from luxpy import (np, plt, cv2, cKDTree, cat, colortf, _PKG_PATH, _SEP, _CIEOBS, 
@@ -38,29 +36,39 @@ def xyz_to_rfl(xyz, rfl = None, out = 'rfl_est', \
     interpolation of samples from a standard reflectance set.
     
     Args:
-        :xyz: ndarray with tristimulus values of target points.
-        :rfl: ndarray, optional
-            Reflectance set for color coordinate to rfl mapping.
-        :out: 'rfl_est' or str, optional
-        :refspd: None, optional
-            Reference spectrum for color coordinate to rfl mapping.
-            None defaults to D65.
-        :cieobs: _CIEOBS, optional
-            CMF set used for calculation of xyz from spectral data.
-        :cspace: 'ipt',  optional
-            Color space for color coordinate to rfl mapping.
-        :cspace_tf: {}, optional
-            Dict with parameters for xyz_to_... and ..._to_xyz transform.
-        :k_neighbours: 4 or int, optional
-            Number of nearest neighbours for reflectance spectrum interpolation.
-            Neighbours are found using scipy.cKDTree
-        :verbosity: 0, optional
-            If > 0: make a plot of the color coordinates of original and 
-            rendered image pixels.
+        :xyz: 
+            | ndarray with tristimulus values of target points.
+        :rfl: 
+            | ndarray, optional
+            | Reflectance set for color coordinate to rfl mapping.
+        :out: 
+            | 'rfl_est' or str, optional
+        :refspd: 
+            | None, optional
+            | Refer ence spectrum for color coordinate to rfl mapping.
+            | None defaults to D65.
+        :cieobs:
+            | _CIEOBS, optional
+            | CMF set used for calculation of xyz from spectral data.
+        :cspace:
+            | 'ipt',  optional
+            | Color space for color coordinate to rfl mapping.
+        :cspace_tf:
+            | {}, optional
+            | Dict with parameters for xyz_to_... and ..._to_xyz transform.
+        :k_neighbours:
+            | 4 or int, optional
+            | Number of nearest neighbours for reflectance spectrum interpolation.
+            | Neighbours are found using scipy.cKDTree
+        :verbosity:
+            | 0, optional
+            | If > 0: make a plot of the color coordinates of original and 
+              rendered image pixels.
 
     Returns:
-        :returns: rfl_est
-            ndarrays with estimated reflectance spectra.
+        :returns: 
+            | :rfl_est:
+            | ndarrays with estimated reflectance spectra.
     """
 
     # get rfl set:
@@ -130,50 +138,68 @@ def render_image(img = None, spd = None, rfl = None, out = 'img_hyp', \
     Render image under specified light source spd.
     
     Args:
-        :img: None or str or ndarray with uint8 rgb image.
-            None load a default image.
-        :spd: ndarray, optional
-            Light source spectrum for rendering
-        :rfl: ndarray, optional
-            Reflectance set for color coordinate to rfl mapping.
-        :out: 'img_hyp' or str, optional
-            (other option: 'img_ren': rendered image under :spd:)
-        :refspd: None, optional
-            Reference spectrum for color coordinate to rfl mapping.
-            None defaults to D65 (srgb has a D65 white point)
-        :D: None, optional
-            Degree of (von Kries) adaptation from spd to refspd. 
-        :cieobs: _CIEOBS, optional
-            CMF set for calculation of xyz from spectral data.
-        :cspace: 'ipt',  optional
-            Color space for color coordinate to rfl mapping.
-        :cspace_tf: {}, optional
-            Dict with parameters for xyz_to_... and ..._to_xyz transform.
-        :k_neighbours: 4 or int, optional
-            Number of nearest neighbours for reflectance spectrum interpolation.
-            Neighbours are found using scipy.cKDTree
-        :show: True, optional
-             Show images.
-        :verbosity: 0, optional
-            If > 0: make a plot of the color coordinates of original and 
-            rendered image pixels.
-        :show_ref_img: True, optional
-             True: shows rendered image under reference spd. False: shows
-             original image.
-        :write_to_file: None, optional
-            None: do nothing, else: write to filename(+path) in :write_to_file:
-        :stack_test_ref: 12, optional
-            - 12: left (test), right (ref) format for show and imwrite
-            - 21: top (test), bottom (ref)
-            - 1: only show/write test
-            - 2: only show/write ref
-            - 0: show both, write test
-        :use_plt_show: False, optional
-            True: Use matplotlib.pyplot.imshow 
-            False: use open-cv imshow() 
+        :img: 
+            | None or str or ndarray with uint8 rgb image.
+            | None load a default image.
+        :spd: 
+            | ndarray, optional
+            | Light source spectrum for rendering
+        :rfl: 
+            | ndarray, optional
+            | Reflectance set for color coordinate to rfl mapping.
+        :out: 
+            | 'img_hyp' or str, optional
+            |  (other option: 'img_ren': rendered image under :spd:)
+        :refspd:
+            | None, optional
+            | Reference spectrum for color coordinate to rfl mapping.
+            | None defaults to D65 (srgb has a D65 white point)
+        :D: 
+            | None, optional
+            | Degree of (von Kries) adaptation from spd to refspd. 
+        :cieobs:
+            | _CIEOBS, optional
+            | CMF set for calculation of xyz from spectral data.
+        :cspace:
+            | 'ipt',  optional
+            | Color space for color coordinate to rfl mapping.
+        :cspace_tf:
+            | {}, optional
+            | Dict with parameters for xyz_to_cspace and cspace_to_xyz transform.
+        :k_neighbours:
+            | 4 or int, optional
+            | Number of nearest neighbours for reflectance spectrum interpolation.
+            | Neighbours are found using scipy.cKDTree
+        :show: 
+            | True, optional
+            |  Show images.
+        :verbosity:
+            | 0, optional
+            | If > 0: make a plot of the color coordinates of original and 
+              rendered image pixels.
+        :show_ref_img:
+            | True, optional
+            | True: shows rendered image under reference spd. False: shows
+              original image.
+        :write_to_file:
+            | None, optional
+            | None: do nothing, else: write to filename(+path) in :write_to_file:
+        :stack_test_ref: 
+            | 12, optional
+            |   - 12: left (test), right (ref) format for show and imwrite
+            |   - 21: top (test), bottom (ref)
+            |   - 1: only show/write test
+            |   - 2: only show/write ref
+            |   - 0: show both, write test
+        :use_plt_show:
+            | False, optional
+            |  - True: Use matplotlib.pyplot.imshow 
+            |  - False: use open-cv imshow() 
+    
     Returns:
-        :returns: img_hyp, img_ren, 
-            ndarrays with hyperspectral image and rendered images 
+        :returns: 
+            | img_hyp, img_ren, 
+            | ndarrays with hyperspectral image and rendered images 
     """
     
     # Get image:

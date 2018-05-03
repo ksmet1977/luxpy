@@ -1,17 +1,21 @@
 # -*- coding: utf-8 -*-
 """
-###################################################################################################
-# Module with Smet, Webster and Whitehead 2016 CAM.
-###################################################################################################
+Module with Smet, Webster and Whitehead 2016 CAM.
+=================================================
 
-# cam_sww16(): A simple principled color appearance model based on a mapping 
-                of the Munsell color system.
+ :_CAM_SWW16_AXES: dict with list[str,str,str] containing axis labels 
+                   of defined cspaces.
+                   
+ :_CAM_SWW16_PARAMETERS: cam_sww16 model parameters.
+ 
+ :cam_sww16(): A simple principled color appearance model based on a mapping 
+               of the Munsell color system.
 
 References:
-    ..[1] Smet, K. A. G., Webster, M. A., & Whitehead, L. A. (2016). 
-        A simple principled approach for modeling and understanding uniform color metrics. 
-        Journal of the Optical Society of America A, 33(3), A319–A331. 
-        https://doi.org/10.1364/JOSAA.33.00A319
+    1. `Smet, K. A. G., Webster, M. A., & Whitehead, L. A. (2016). 
+    A simple principled approach for modeling and understanding uniform color metrics. 
+    Journal of the Optical Society of America A, 33(3), A319–A331. 
+    <https://doi.org/10.1364/JOSAA.33.00A319>`_
     .. 
 """
 from luxpy import np, math, _CIE_ILLUMINANTS, np2d, put_args_in_db, spd_to_xyz, asplit, ajoin
@@ -25,71 +29,81 @@ _CAM_SWW16_PARAMETERS['best-fit-all-Munsell'] = {'cLMS': [1.0,1.0,1.0], 'lms0': 
 __all__ = ['_CAM_SWW16_AXES','_CAM_SWW16_PARAMETERS','cam_sww16','xyz_to_lab_cam_sww16','lab_cam_sww16_to_xyz']
 
 #------------------------------------------------------------------------------
-def cam_sww16(data, dataw = None, Yb = 20.0, Lw = 400.0, relative = True, parameters = None, inputtype = 'xyz', direction = 'forward', cieobs = '2006_10'):
+def cam_sww16(data, dataw = None, Yb = 20.0, Lw = 400.0, relative = True, \
+              parameters = None, inputtype = 'xyz', direction = 'forward', \
+              cieobs = '2006_10'):
     """
     A simple principled color appearance model based on a mapping 
     of the Munsell color system.
     
-    This function implements the JOSA A (parameters = 'JOSA') published model. 
+    | This function implements the JOSA A (parameters = 'JOSA') published model. 
     
     Args:
         :data: 
-            ndarray with input tristimulus values 
-            or spectral data 
-            or input color appearance correlates
-                Can be of shape: (N [, xM], x 3), whereby: 
-                    N refers to samples and M refers to light sources.
-                Note that for spectral input shape is (N x (M+1) x wl) 
-        :dataw: None or ndarray, optional
-            Input tristimulus values or spectral data of white point.
-            None defaults to the use of CIE illuminant C.
-        :Yb: 20.0, optional
-            Luminance factor of background (perfect white diffuser, Yw = 100)
-        :Lw: 400.0, optional
-            Luminance (cd/m²) of white point.
-        :relative: True or False, optional
-            True: xyz tristimulus values are relative (Yw = 100)
-        :parameters: None or str or dict, optional
-            Dict with model parameters.
-                - None: defaults to luxpy.cam._CAM_SWW_2016_PARAMETERS['JOSA']
-                - str: 'best-fit-JOSA' or 'best-fit-all-Munsell'
-                - dict: user defined model parameters 
-                    (dict should have same structure)
-        :inputtpe: 'xyz' or 'spd', optional
-            Specifies the type of input: 
-                tristimulus values or spectral data for the forward mode.
-        :direction: 'forward' or 'inverse', optional
-            -'forward': xyz -> cam_sww_2016
-            -'inverse': cam_sww_2016 -> xyz 
-        :cieobs: '2006_10', optional
-            CMF set to use to perform calculations where spectral data 
-            is involved (inputtype == 'spd'; dataw = None)
-            Other options: see luxpy._CMF['types']
+            | ndarray with input tristimulus values 
+            | or spectral data 
+            | or input color appearance correlates
+            | Can be of shape: (N [, xM], x 3), whereby: 
+            | N refers to samples and M refers to light sources.
+            | Note that for spectral input shape is (N x (M+1) x wl) 
+        :dataw: 
+            | None or ndarray, optional
+            | Input tristimulus values or spectral data of white point.
+            | None defaults to the use of CIE illuminant C.
+        :Yb: 
+            | 20.0, optional
+            | Luminance factor of background (perfect white diffuser, Yw = 100)
+        :Lw:
+            | 400.0, optional
+            | Luminance (cd/m²) of white point.
+        :relative:
+            | True or False, optional
+            | True: xyz tristimulus values are relative (Yw = 100)
+        :parameters:
+            | None or str or dict, optional
+            | Dict with model parameters.
+            |    - None: defaults to luxpy.cam._CAM_SWW_2016_PARAMETERS['JOSA']
+            |    - str: 'best-fit-JOSA' or 'best-fit-all-Munsell'
+            |    - dict: user defined model parameters 
+            |            (dict should have same structure)
+        :inputtpe:
+            | 'xyz' or 'spd', optional
+            | Specifies the type of input: 
+            |     tristimulus values or spectral data for the forward mode.
+        :direction:
+            | 'forward' or 'inverse', optional
+            |   -'forward': xyz -> cam_sww_2016
+            |   -'inverse': cam_sww_2016 -> xyz 
+        :cieobs:
+            | '2006_10', optional
+            | CMF set to use to perform calculations where spectral data 
+              is involved (inputtype == 'spd'; dataw = None)
+            | Other options: see luxpy._CMF['types']
     
     Returns:
         :returns: 
-            ndarray with color appearance correlates (:direction: == 'forward')
-            or 
-            XYZ tristimulus values (:direction: == 'inverse')
+            | ndarray with color appearance correlates (:direction: == 'forward')
+            |  or 
+            | XYZ tristimulus values (:direction: == 'inverse')
     
     Notes:
-        This function implements the JOSA A (parameters = 'JOSA') 
-        published model. 
-        With:
-            1. A correction for the parameter 
-                in Eq.4 of Fig. 11: 0.952 --> -0.952 
-                
-            2. The delta_ac and delta_bc white-balance shifts in Eq. 5e & 5f 
-                should be: -0.028 & 0.821 
-         
-            (cfr. Ccwb = 0.66 in: 
-                ab_test_out = ab_test_int - Ccwb*ab_gray_adaptation_field_int))
+        | This function implements the JOSA A (parameters = 'JOSA') 
+          published model. 
+        | With:
+        |    1. A correction for the parameter 
+        |         in Eq.4 of Fig. 11: 0.952 --> -0.952 
+        |         
+        |     2. The delta_ac and delta_bc white-balance shifts in Eq. 5e & 5f 
+        |         should be: -0.028 & 0.821 
+        |  
+        |     (cfr. Ccwb = 0.66 in: 
+        |         ab_test_out = ab_test_int - Ccwb*ab_gray_adaptation_field_int))
              
     References:
-        ..[1] Smet, K. A. G., Webster, M. A., & Whitehead, L. A. (2016). 
-            A simple principled approach for modeling and understanding uniform color metrics. 
-            Journal of the Optical Society of America A, 33(3), A319–A331. 
-            https://doi.org/10.1364/JOSAA.33.00A319
+        1. `Smet, K. A. G., Webster, M. A., & Whitehead, L. A. (2016). 
+        A simple principled approach for modeling and understanding uniform color metrics. 
+        Journal of the Optical Society of America A, 33(3), A319–A331. 
+        <https://doi.org/10.1364/JOSAA.33.00A319>`_
 
     """
     # get model parameters
@@ -263,18 +277,20 @@ def cam_sww16(data, dataw = None, Yb = 20.0, Lw = 400.0, relative = True, parame
 
 
 #------------------------------------------------------------------------------
-def xyz_to_lab_cam_sww16(data, dataw = None, Yb = 20.0, Lw = 400.0, relative = True, parameters = None, inputtype = 'xyz', cieobs = '2006_10', **kwargs):
+def xyz_to_lab_cam_sww16(data, dataw = None, Yb = 20.0, Lw = 400.0, relative = True,\
+                         parameters = None, inputtype = 'xyz', cieobs = '2006_10', **kwargs):
     """
     Wrapper function for cam_sww16 forward mode with 'xyz' input.
     
-    For help on parameter details: ?luxpy.cam.cam_sww16
+    | For help on parameter details: ?luxpy.cam.cam_sww16
     """
     return cam_sww16(data, dataw = dataw, Yb = Yb, Lw = Lw, relative = relative, parameters = parameters, inputtype = 'xyz', direction = 'forward', cieobs = cieobs)
                 
-def lab_cam_sww16_to_xyz(data, dataw = None, Yb = 20.0, Lw = 400.0, relative = True, parameters = None, inputtype = 'xyz', cieobs = '2006_10', **kwargs):
+def lab_cam_sww16_to_xyz(data, dataw = None, Yb = 20.0, Lw = 400.0, relative = True, \
+                         parameters = None, inputtype = 'xyz', cieobs = '2006_10', **kwargs):
     """
     Wrapper function for cam_sww16 inverse mode with 'xyz' input.
     
-    For help on parameter details: ?luxpy.cam.cam_sww16
+    | For help on parameter details: ?luxpy.cam.cam_sww16
     """
     return cam_sww16(data, dataw = dataw, Yb = Yb, Lw = Lw, relative = relative, parameters = parameters, inputtype = 'xyz', direction = 'inverse', cieobs = cieobs)

@@ -148,7 +148,7 @@ More info:
 References:
  1. [CIE15:2004, “Colorimetry,” CIE, Vienna, Austria, 2004.](http://www.cie.co.at/index.php/index.php?i_ca_id=304)
 
- 2. [CIE, and CIE (2006). Fundamental Chromaticity Diagram with Physiological Axes - Part I (Vienna: CIE).](http://www.cie.co.at/publications/fundamental-chromaticity-diagram-physiological-axes-part-1)
+ 2. [CIE (2006). Fundamental Chromaticity Diagram with Physiological Axes - Part I (Vienna: CIE).](http://www.cie.co.at/publications/fundamental-chromaticity-diagram-physiological-axes-part-1)
      
 For more info:
 
@@ -648,7 +648,7 @@ Calculates the color rendering fidelity index (CIE Ra, CIE Rf, IES Rf, CRI2012 R
     * [cie224:2017, CIE 2017 Colour Fidelity Index for accurate scientific use. (2017), ISBN 978-3-902842-61-9](http://www.cie.co.at/index.php?i_ca_id=1027)
 * cri.spd_to_iesrf() [latest version]
 * cri.spd_to_iesrf_tm30_15():[TM30-15, 2015 version]
-    * [IES TM30 (99, 4880 sepctrally uniform samples)](https://www.ies.org/store/technical-memoranda/ies-method-for-evaluating-light-source-color-rendition/)
+    * [IES TM30 (99, 4880 spectrally uniform samples)](https://www.ies.org/store/technical-memoranda/ies-method-for-evaluating-light-source-color-rendition/)
     * [A. David, P. T. Fini, K. W. Houser, Y. Ohno, M. P. Royer, K. A. G. Smet, M. Wei, and L. Whitehead, “Development of the IES method for evaluating the color rendition of light sources,” Opt. Express, vol. 23, no. 12, pp. 15888–15906, 2015.](https://www.osapublishing.org/oe/abstract.cfm?uri=oe-23-12-15888)
     * [K. A. G. Smet, A. David, and L. Whitehead, “Why color space uniformity and sample set spectral uniformity are essential for color rendering measures,” LEUKOS, vol. 12, no. 1–2, pp. 39–50, 2016](http://www.tandfonline.com/doi/abs/10.1080/15502724.2015.1091356)
 * cri.spd_to_iesrf_tm30_18():[TM30-18, 2018 version]
@@ -896,6 +896,27 @@ For more info:
  
  
 ## toolboxes/indvcmf/ individual_observer_cmf_model.py (.indvcmf)
+
+### _INDVCMF_DATA_PATH: 
+Path to data files
+ 
+### _INDVCMF_DATA: 
+Dict with required data
+ 
+### _INDVCMF_STD_DEV_ALL_PARAM: 
+Dict with std. dev. model parameters
+ 
+### _INDVCMF_CATOBSPFCTR: 
+Categorical observer parameters.
+ 
+### _INDVCMF_M_10d: 
+xyz to 10° lms conversion matrix.
+ 
+### _WL_CRIT: 
+Critical wavelength above which interpolation of S-cone data fails.
+ 
+### _WL: 
+Wavelengths of spectral data.
 
 ### indvcmf.cie2006cmfsEx(): 
 Generate Individual Observer CMFs (cone fundamentals) based on CIE2006 cone 

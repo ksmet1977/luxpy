@@ -1,63 +1,69 @@
 # -*- coding: utf-8 -*-
 """
-###############################################################################
-# Module for building and optimizing SPDs.
-###############################################################################
+Module for building and optimizing SPDs
+=======================================
 
-# gaussian_spd(): Generate Gaussian spectrum.
+Functions
+---------
 
-# butterworth_spd(): Generate Butterworth based spectrum.
+ :gaussian_spd(): Generate Gaussian spectrum.
 
-# mono_led_spd(): Generate monochromatic LED spectrum based on a Gaussian 
-                or butterworth profile or according to Ohno (Opt. Eng. 2005).
+ :butterworth_spd(): Generate Butterworth based spectrum.
 
-# spd_builder(): Build spectrum based on Gaussians, monochromatic 
+ :mono_led_spd(): Generate monochromatic LED spectrum based on a Gaussian 
+                  or butterworth profile or according to Ohno (Opt. Eng. 2005).
+
+ :spd_builder(): Build spectrum based on Gaussians, monochromatic 
                  and/or phophor LED spectra.
 
-# color3mixer(): Calculate fluxes required to obtain a target chromaticity 
-                    when (additively) mixing 3 light sources.
+ :color3mixer(): Calculate fluxes required to obtain a target chromaticity 
+                 when (additively) mixing 3 light sources.
 
-# colormixer(): Calculate fluxes required to obtain a target chromaticity 
-                    when (additively) mixing N light sources.
+ :colormixer(): Calculate fluxes required to obtain a target chromaticity 
+                when (additively) mixing N light sources.
 
-# spd_builder(): Build spectrum based on Gaussians, monochromatic 
+ :spd_builder(): Build spectrum based on Gaussians, monochromatic 
                  and/or phophor LED-type spectra.
                    
-# get_w_summed_spd(): Calculate weighted sum of spds.
+ :get_w_summed_spd(): Calculate weighted sum of spds.
  
-# fitnessfcn(): Fitness function that calculates closeness of solution x to 
+ :fitnessfcn(): Fitness function that calculates closeness of solution x to 
                 target values for specified objective functions.
          
-# spd_constructor_2(): Construct spd from spectral model parameters 
-                        using pairs of intermediate sources.
+ :spd_constructor_2(): Construct spd from spectral model parameters 
+                       using pairs of intermediate sources.
                 
-# spd_constructor_3(): Construct spd from spectral model parameters 
-                        using trio's of intermediate sources.
+ :spd_constructor_3(): Construct spd from spectral model parameters 
+                       using trio's of intermediate sources.
      
-# spd_optimizer_2_3(): Optimizes the weights (fluxes) of a set of component 
-                        spectra by combining pairs (2) or trio's (3) of 
-                        components to intermediate sources until only 3 remain.
-                        Color3mixer can then be called to calculate required 
-                        fluxes to obtain target chromaticity and fluxes are 
-                        then back-calculated.                                   
+ :spd_optimizer_2_3(): Optimizes the weights (fluxes) of a set of component 
+                       spectra by combining pairs (2) or trio's (3) of 
+                       components to intermediate sources until only 3 remain.
+                       Color3mixer can then be called to calculate required 
+                       fluxes to obtain target chromaticity and fluxes are 
+                       then back-calculated.                                   
                         
-# get_optim_pars_dict(): Setup dict with optimization parameters.
+ :get_optim_pars_dict(): Setup dict with optimization parameters.
                         
-# initialize_spd_model_pars(): Initialize spd_model_pars (for spd_constructor)
-                                based on type of component_data.
+ :initialize_spd_model_pars(): Initialize spd_model_pars (for spd_constructor)
+                               based on type of component_data.
 
-# initialize_spd_optim_pars(): Initialize spd_optim_pars (x0, lb, ub for use
-                                with math.minimizebnd) based on type 
-                                of component_data.
+ :initialize_spd_optim_pars(): Initialize spd_optim_pars (x0, lb, ub for use
+                               with math.minimizebnd) based on type 
+                               of component_data.
                 
-# spd_optimizer(): Generate a spectrum with specified white point and optimized
-                    for certain objective functions from a set of component 
-                    spectra or component spectrum model parameters.
-                    
-#------------------------------------------------------------------------------
-Created on Wed Apr 25 09:07:04 2018
+ :spd_optimizer(): Generate a spectrum with specified white point and optimized
+                   for certain objective functions from a set of component 
+                   spectra or component spectrum model parameters.
+                
+References
+----------
+    1. `Ohno Y (2005). 
+    Spectral design considerations for white LED color rendering. 
+    Opt. Eng. 44, 111302. 
+    <https://ws680.nist.gov/publication/get_pdf.cfm?pub_id=841839>`_
 
-@author: Kevin A.G. Smet (ksmet1977 at gmail.com)
+.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 from luxpy import (np, plt, warnings, minimize, math, _WL3, _CIEOBS, _EPS, np2d, 
                    vec_to_dict, getwlr, SPD, plotSL, 
@@ -78,17 +84,22 @@ def gaussian_spd(peakwl = 530, fwhm = 20, wl = _WL3, with_wl = True):
     Generate Gaussian spectrum.
     
     Args:
-        :peakw: int or float or list or ndarray, optional
-            Peak wavelength
-        :fwhm: int or float or list or ndarray, optional
-            Full-Width-Half-Maximum of gaussian.
-        :wl: _WL3, optional 
-            Wavelength range.
-        :with_wl: True, optional
-            True outputs a ndarray with first row wavelengths.
+        :peakw: 
+            | int or float or list or ndarray, optional
+            | Peak wavelength
+        :fwhm:
+            | int or float or list or ndarray, optional
+            | Full-Width-Half-Maximum of gaussian.
+        :wl: 
+            | _WL3, optional 
+            | Wavelength range.
+        :with_wl:
+            | True, optional
+            | True outputs a ndarray with first row wavelengths.
     
     Returns:
-        :returns: ndarray with spectra.        
+        :returns:
+            | ndarray with spectra.        
     """
     wl = np.atleast_2d(getwlr(wl)).T # create wavelength range
     spd = np.exp(-0.5*((wl-np.atleast_2d(peakwl))/np.atleast_2d(fwhm))**2)
@@ -103,19 +114,25 @@ def butterworth_spd(peakwl = 530, fwhm = 20, bw_order = 1, wl = _WL3, with_wl = 
     Generate Butterworth based spectrum.
     
     Args:
-        :peakw: int or float or list or ndarray, optional
-            Peak wavelength
-        :fwhm: int or float or list or ndarray, optional
-            Full-Width-Half-Maximum of gaussian.
-        :bw_order: 1, optional
-            Order of the butterworth function.
-        :wl: _WL3, optional 
-            Wavelength range.
-        :with_wl: True, optional
-            True outputs a ndarray with first row wavelengths.
+        :peakw: 
+            | int or float or list or ndarray, optional
+            | Peak wavelength
+        :fwhm:
+            | int or float or list or ndarray, optional
+            | Full-Width-Half-Maximum of gaussian.
+        :bw_order: 
+            | 1, optional
+            | Order of the butterworth function.
+        :wl:
+            | _WL3, optional 
+            | Wavelength range.
+        :with_wl:
+            | True, optional
+            | True outputs a ndarray with first row wavelengths.
     
     Returns:
-        :returns: ndarray with spectra.        
+        :returns:
+            | ndarray with spectra.        
     """
     wl = np.atleast_2d(getwlr(wl)).T # create wavelength range
     spd = 2 / (1 + np.abs((wl-np.atleast_2d(peakwl))/np.atleast_2d(fwhm))**(2*np.atleast_2d(bw_order)))
@@ -130,41 +147,50 @@ def mono_led_spd(peakwl = 530, fwhm = 20, wl = _WL3, with_wl = True, strength_sh
     profile or according to Ohno (Opt. Eng. 2005).
         
     Args:
-        :peakw: int or float or list or ndarray, optional
-            Peak wavelength
-        :fwhm: int or float or list or ndarray, optional
-            Full-Width-Half-Maximum of gaussian used to simulate led.
-        :wl: _WL3, optional 
-            Wavelength range.
-        :with_wl: True, optional
-            True outputs a ndarray with first row wavelengths.
-        :strength_shoulder: 2, optional
-            Determines the strength of the spectrum shoulders of the mono led.
-            A value of 1 reduces to a Gaussian model (if bw_order == 0).
-        :bw_order: -1, optional
-            Order of Butterworth function.
-            If -1: spd profile is Gaussian.
-            If (bw_order == 0): spd profile is Gaussian, else Butterworth.
+        :peakw:
+            | int or float or list or ndarray, optional
+            | Peak wavelength
+        :fwhm:
+            | int or float or list or ndarray, optional
+            | Full-Width-Half-Maximum of gaussian used to simulate led.
+        :wl: 
+            | _WL3, optional 
+            |  Wavelength range.
+        :with_wl:
+            | True, optional
+            | True outputs a ndarray with first row wavelengths.
+        :strength_shoulder:
+            | 2, optional
+            | Determines the strength of the spectrum shoulders of the mono led.
+            | A value of 1 reduces to a Gaussian model (if bw_order == 0).
+        :bw_order:
+            | -1, optional
+            | Order of Butterworth function.
+            | If -1: spd profile is Gaussian.
+            | If (bw_order == 0): spd profile is Gaussian, else Butterworth.
     
     Returns:
-        :returns: ndarray with spectra.   
+        :returns:
+            | ndarray with spectra.   
     
     Note:
-        Gaussian:
-            g = exp(-0.5*((wl - peakwl)/fwhm)**2)
-        
-        Butterworth :
-            bw = 2 / (1 + (((wl - peakwl)/fwhm)**2))
-        
-        Ohno's model:
-            ohno = (g + strength_shoulder*g**5)/(1+strength_shoulder)
-            
-        mono_led_spd = ohno*(bw_order == 0) + bw*(bw_order > 0)
+        | Gaussian:
+        |    g = exp(-0.5*((wl - peakwl)/fwhm)**2)
+        | 
+        | Butterworth :
+        |    bw = 2 / (1 + (((wl - peakwl)/fwhm)**2))
+        | 
+        | Ohno's model:
+        |    ohno = (g + strength_shoulder*g**5)/(1+strength_shoulder)
+        |     
+        |    mono_led_spd = ohno*(bw_order == 0) + bw*(bw_order > 0)
     
     Reference:
-        1. Ohno Y (2005). 
-            Spectral design considerations for white LED color rendering. 
-            Opt. Eng. 44, 111302.
+        1. `Ohno Y (2005). 
+        Spectral design considerations for white LED color rendering. 
+        Opt. Eng. 44, 111302. 
+        <https://ws680.nist.gov/publication/get_pdf.cfm?pub_id=841839>`_
+
     """
     g = gaussian_spd(peakwl = peakwl, fwhm = fwhm, wl = wl, with_wl = False)
     ohno = (g + np.atleast_2d(strength_shoulder)*g**5)/(1+np.atleast_2d(strength_shoulder))
@@ -187,81 +213,97 @@ def phosphor_led_spd(peakwl = 450, fwhm = 20, wl = _WL3, bw_order = -1, with_wl 
     """
     Generate phosphor LED spectrum with up to 2 phosphors based on Smet (Opt. Expr. 2011).
     
-    Model:
-        1) If strength_ph2 is not None:
-              phosphor_spd = (strength_ph1*mono_led_spd(peakwl_ph1, ..., strength_shoulder = 1) 
-                           + strength_ph2)*mono_led_spd(peakwl_ph2, ..., strength_shoulder = 1)) 
-                            / (strength_ph1 + strength_ph2)
-          else:
-              phosphor_spd = (strength_ph1*mono_led_spd(peakwl_ph1, ..., strength_shoulder = 1) 
-                           + (1-strength_ph1)*mono_led_spd(peakwl_ph2, ..., strength_shoulder = 1)) 
-
-        2) S = (mono_led_spd() + strength_ph*(phosphor_spd/phosphor_spd.max()))/(1 + strength_ph)
-        
-        3) piecewise_fcn = S for wl < peakwl and 1 for wl >= peakwl
-        
-        4) phosphor_led_spd = S*piecewise_fcn 
+    | Model:
+    |    1) If strength_ph2 is not None:
+    |          phosphor_spd = (strength_ph1*mono_led_spd(peakwl_ph1, ..., strength_shoulder = 1) 
+    |                       + strength_ph2)*mono_led_spd(peakwl_ph2, ..., strength_shoulder = 1)) 
+    |                        / (strength_ph1 + strength_ph2)
+    |      else:
+    |          phosphor_spd = (strength_ph1*mono_led_spd(peakwl_ph1, ..., strength_shoulder = 1) 
+    |                       + (1-strength_ph1)*mono_led_spd(peakwl_ph2, ..., strength_shoulder = 1)) 
+    |
+    |    2) S = (mono_led_spd() + strength_ph*(phosphor_spd/phosphor_spd.max()))/(1 + strength_ph)
+    |    
+    |    3) piecewise_fcn = S for wl < peakwl and 1 for wl >= peakwl
+    |    
+    |    4) phosphor_led_spd = S*piecewise_fcn 
             
     Args:
-        :peakw: int or float or list or ndarray, optional
-            Peak wavelengths of the monochromatic led.
-        :fwhm: int or float or list or ndarray, optional
-            Full-Width-Half-Maximum of gaussian.
-        :wl: _WL3, optional 
-            Wavelength range.
-        :bw_order: -1, optional
-            Order of Butterworth function.
-            If -1: mono_led spd profile is Gaussian.
-            else: (bw_order == 0): spd profile is Gaussian, else Butterworth.
-            Note that this only applies to the monochromatic led  spds and not 
-            the phosphors spds (these are always gaussian based).
-        :with_wl: True, optional
-            True outputs a ndarray with first row wavelengths.
-        :strength_shoulder: 2, optional
-            Determines the strength of the spectrum shoulders of the mono led.
-        :strength_ph: 0, optional
-            Total contribution of phosphors in mixture.
-        :peakwl_ph1: int or float or list or ndarray, optional
-            Peak wavelength of the first phosphor.
-        :fwhm_ph1: int or float or list or ndarray, optional
-            Full-Width-Half-Maximum of gaussian used to simulate first phosphor.
-        :strength_ph1: 1, optional
-            Strength of first phosphor in phosphor mixture. 
-            If :strength_ph2: is None: value should be in the [0,1] range.
-        :peakwl_ph2: int or float or list or ndarray, optional
-            Peak wavelength of the second phosphor.
-        :fwhm_ph2: int or float or list or ndarray, optional
-            Full-Width-Half-Maximum of gaussian used to simulate second phosphor.
-        :strength_ph2: None, optional
-            Strength of second phosphor in phosphor mixture. 
-            If None: strength is calculated as (1-:strength_ph1:)
-                :target: np2d([100,1/3,1/3]), optional
-            ndarray with Yxy chromaticity of target.
-        :verbosity: 0, optional
-            If > 0: plots spectrum components (mono_led, ph1, ph2, ...)
-        :out: 'spd', optional
-            Specifies output.
-        :use_piecewise_fcn: False, optional
-            True: uses piece-wise function as in Smet et al. 2011. Can give 
-                 non_smooth spectra optimized from components to which it is
-                 applied. 
+        :peakw:
+            | int or float or list or ndarray, optional
+            | Peak wavelengths of the monochromatic led.
+        :fwhm:
+            | int or float or list or ndarray, optional
+            | Full-Width-Half-Maximum of gaussian.
+        :wl: | _WL3, optional 
+            | Wavelength range.
+        :bw_order:
+            | -1, optional
+            | Order of Butterworth function.
+            | If -1: mono_led spd profile is Gaussian.
+            | else: (bw_order == 0): spd profile is Gaussian, else Butterworth.
+            | Note that this only applies to the monochromatic led  spds and not 
+            | the phosphors spds (these are always gaussian based).
+        :with_wl:
+            | True, optional
+            | True outputs a ndarray with first row wavelengths.
+        :strength_shoulder: 
+            | 2, optiona l
+            | Determines the strength of the spectrum shoulders of the mono led.
+        :strength_ph:
+            | 0, optional
+            | Total contribution of phosphors in mixture.
+        :peakwl_ph1:
+            | int or float or list or ndarray, optional
+            | Peak wavelength of the first phosphor.
+        :fwhm_ph1:
+            | int or float or list or ndarray, optional
+            | Full-Width-Half-Maximum of gaussian used to simulate first phosphor.
+        :strength_ph1:
+            | 1, optional
+            | Strength of first phosphor in phosphor mixture. 
+            | If :strength_ph2: is None: value should be in the [0,1] range.
+        :peakwl_ph2:
+            | int or float or list or ndarray, optional
+            | Peak wavelength of the second phosphor.
+        :fwhm_ph2: 
+            | int or float or list or ndarray, optional
+            | Full-Width-Half-Maximum of gaussian used to simulate second phosphor.
+        :strength_ph2:
+            | None, optional
+            | Strength of second phosphor in phosphor mixture. 
+            | If None: strength is calculated as (1-:strength_ph1:)
+            |     :target: np2d([100,1/3,1/3]), optional
+            |  ndarray with Yxy chromaticity of target.
+        :verbosity:
+            | 0, optional
+            | If > 0: plots spectrum components (mono_led, ph1, ph2, ...)
+        :out: 
+            | 'spd', optional
+            | Specifies output.
+        :use_piecewise_fcn:
+            | False, optional
+            | True: uses piece-wise function as in Smet et al. 2011. Can give 
+              non_smooth spectra optimized from components to which it is
+              applied. 
             
     Returns:
-        :returns: spd, component_spds
-            ndarrays with spectra (and component spds used to build the 
-            final spectra) 
+        :returns: 
+            | spd, component_spds
+            | ndarrays with spectra (and component spds used to build the 
+              final spectra) 
         
         
     References:
-        1. Ohno Y (2005). 
-            Spectral design considerations for white LED color rendering. 
-            Opt. Eng. 44, 111302.
-            (https://ws680.nist.gov/publication/get_pdf.cfm?pub_id=841839)
+        1. `Ohno Y (2005). 
+        Spectral design considerations for white LED color rendering. 
+        Opt. Eng. 44, 111302. 
+        <https://ws680.nist.gov/publication/get_pdf.cfm?pub_id=841839>`_
 
-        2. Smet K, Ryckaert WR, Pointer MR, Deconinck G, and Hanselaer P (2011). 
-            Optimal colour quality of LED clusters based on memory colours. 
-            Opt. Express 19, 6903–6912.
-            (https://www.osapublishing.org/vjbo/fulltext.cfm?uri=oe-19-7-6903&id=211315)
+        2. `Smet K, Ryckaert WR, Pointer MR, Deconinck G, and Hanselaer P (2011). 
+        Optimal colour quality of LED clusters based on memory colours. 
+        Opt. Express 19, 6903–6912.
+        <https://www.osapublishing.org/vjbo/fulltext.cfm?uri=oe-19-7-6903&id=211315>`_
     """
         
     mono_led = mono_led_spd(peakwl = peakwl, fwhm = fwhm, wl = wl, bw_order = bw_order, with_wl = False, strength_shoulder = strength_shoulder)
@@ -362,84 +404,112 @@ def spd_builder(flux = None, component_spds = None, peakwl = 450, fwhm = 20, bw_
     Build spectrum based on Gaussian, monochromatic and/or phophor type spectra.
            
     Args:
-        :flux: None, optional
-            Fluxes of each of the component spectra.
-            None outputs the individual component spectra.
-        :component_spds: None or ndarray, optional
-            If None: calculate component spds from input args.
-        :peakw: int or float or list or ndarray, optional
-            Peak wavelengths of the monochromatic leds.
-        :fwhm: int or float or list or ndarray, optional
-            Full-Width-Half-Maximum of gaussians.
-        :bw_order: -1, optional
-            Order of Butterworth function.
-            If -1: mono_led spd profile is Gaussian.
-            else: (bw_order == 0): spd profile is Gaussian, else Butterworth.
-            Note that this only applies to the monochromatic led  spds and not 
-            the phosphors spds (these are always gaussian based).
-        :pair_strengths: ndarray with pair_strengths of mono_led spds, optional
-            If None: will be randomly selected, possibly resulting in 
-                     unphysical (out-of-gamut) solution.
-        :wl: _WL3, optional 
-            Wavelength range.
-        :with_wl: True, optional
-            True outputs a ndarray with first row wavelengths.
-        :strength_shoulder: 2, optional
-            Determines the strength of the spectrum shoulders of the mono leds.
-        :strength_ph: 0, optional
-            Total contribution of phosphors in mixtures. 
-            Phosphor type mixtures have only 3 components (pump + 2 phosphors).
-            If None or 0: pure monochromatic led components (N can be > 3).
-        :peakwl_ph1: int or float or list or ndarray, optional
-            Peak wavelength of the first phosphors.
-        :fwhm_ph1: int or float or list or ndarray, optional
-            Full-Width-Half-Maximum of Gaussian used to simulate 1st phosphor
-        :strength_ph1: 1, optional
-            Strength of first phosphor in phosphor mixtures. 
-            If :strength_ph2: is None: value should be in the [0,1] range.
-        :peakwl_ph2: int or float or list or ndarray, optional
-            Peak wavelength of the second phosphors.
-        :fwhm_ph2: int or float or list or ndarray, optional
-            Full-Width-Half-Maximum of Gaussian used to simulate 2nd phosphor
-        :strength_ph2: None, optional
-            Strength of second phosphor in phosphor mixtures. 
-            If None: strength is calculated as (1-:strength_ph1:)
-        
-        :target: None, optional
-            ndarray with Yxy chromaticity of target.
-            If None: don't override phosphor strengths, else calculate strength
-                    to obtain :target: using color3mixer().
-            If not None AND strength_ph is None or 0: components are 
-                monochromatic and colormixer is used to optimize fluxes to 
-                obtain target chromaticity (N can be > 3 components)
-        :tar_type:  'Yxy' or str, optional
-            Specifies the input type in :target: (e.g. 'Yxy' or 'cct')
-        :cieobs: _CIEOBS, optional
-            CIE CMF set used to calculate chromaticity values.
-        :cspace_bwtf: {}, optional
-            Backward (..._to_xyz) transform parameters 
-            (see colortf()) to go from :tar_type: to 'Yxy')
-
-        :verbosity: 0, optional
-            If > 0: plots spectrum components (mono_led, ph1, ph2, ...)
-        :out: 'spd', optional
-            Specifies output.
+        :flux: 
+            | None, optional
+            | Fluxes of each of the component spectra.
+            | None outputs the individual component spectra.
+        :component_spds:
+            | None or ndarray, optional
+            | If None: calculate component spds from input args.
+        :peakw:
+            | int or float or list or ndarray, optional
+            | Peak wavelengths of the monochromatic led.
+        :fwhm:
+            | int or float or list or ndarray, optional
+            | Full-Width-Half-Maximum of gaussian.
+        :wl:
+            | _WL3, optional
+            | Wavelength range.
+        :bw_order:
+            | -1, optional
+            | Order of Butterworth function.
+            | If -1: mono_led spd profile is Gaussian.
+            | else: (bw_order == 0): spd profile is Gaussian, else Butterworth.
+            | Note that this only applies to the monochromatic led  spds and not 
+            | the phosphors spds (these are always gaussian based).
+        :pair_strengths:
+            | ndarray with pair_strengths of mono_led spds, optional
+            | If None: will be randomly selected, possibly resulting in 
+              unphysical (out-of-gamut) solution.
+        :with_wl:
+            | True, optional
+            | True outputs a ndarray with first row wavelengths.
+        :strength_shoulder: 
+            | 2, optiona l
+            | Determines the strength of the spectrum shoulders of the mono led.
+        :strength_ph:
+            | 0, optional
+            | Total contribution of phosphors in mixture.
+        :peakwl_ph1:
+            | int or float or list or ndarray, optional
+            | Peak wavelength of the first phosphor.
+        :fwhm_ph1:
+            | int or float or list or ndarray, optional
+            | Full-Width-Half-Maximum of gaussian used to simulate first phosphor.
+        :strength_ph1:
+            | 1, optional
+            | Strength of first phosphor in phosphor mixture. 
+            | If :strength_ph2: is None: value should be in the [0,1] range.
+        :peakwl_ph2:
+            | int or float or list or ndarray, optional
+            | Peak wavelength of the second phosphor.
+        :fwhm_ph2: 
+            | int or float or list or ndarray, optional
+            | Full-Width-Half-Maximum of gaussian used to simulate second phosphor.
+        :strength_ph2:
+            | None, optional
+            | Strength of second phosphor in phosphor mixture. 
+            | If None: strength is calculated as (1-:strength_ph1:)
+            |     :target: np2d([100,1/3,1/3]), optional
+            |  ndarray with Yxy chromaticity of target.
+        :verbosity:
+            | 0, optional
+            | If > 0: plots spectrum components (mono_led, ph1, ph2, ...)
+        :out: 
+            | 'spd', optional
+            | Specifies output.
+        :use_piecewise_fcn:
+            | False, optional
+            | True: uses piece-wise function as in Smet et al. 2011. Can give 
+              non_smooth spectra optimized from components to which it is
+              applied. 
+        :target: 
+            | None, optional
+            | ndarray with Yxy chromaticity of target.
+            |  If None: don't override phosphor strengths, else calculate strength
+            |           to obtain :target: using color3mixer().
+            | If not None AND strength_ph is None or 0: components are 
+              monochromatic and colormixer is used to optimize fluxes to 
+              obtain target chromaticity (N can be > 3 components)
+        :tar_type:
+            | 'Yxy' or str, optional
+            | Specifies the input type in :target: (e.g. 'Yxy' or 'cct')
+        :cieobs:
+            | _CIEOBS, optional
+            | CIE CMF set used to calculate chromaticity values.
+        :cspace_bwtf:
+            | {}, optional
+            | Backward (..._to_xyz) transform parameters 
+            | (see colortf()) to go from :tar_type: to 'Yxy')
             
     Returns:
-        :returns: ndarray with spectra.  
+        :returns: 
+            | ndarray with spectra.  
     
     Note:
         1. Target-optimization is only for phophor_leds with three components 
-            (blue pump, ph1 and ph2) spanning a sufficiently large gamut. 
+        (blue pump, ph1 and ph2) spanning a sufficiently large gamut. 
         
-    Reference:
-        1. Ohno Y (2005). 
-            Spectral design considerations for white LED color rendering. 
-            Opt. Eng. 44, 111302.
+    References:
+        1. `Ohno Y (2005). 
+        Spectral design considerations for white LED color rendering. 
+        Opt. Eng. 44, 111302. 
+        <https://ws680.nist.gov/publication/get_pdf.cfm?pub_id=841839>`_
 
-        2. Smet K, Ryckaert WR, Pointer MR, Deconinck G, and Hanselaer P (2011). 
-            Optimal colour quality of LED clusters based on memory colours. 
-            Opt. Express 19, 6903–6912.
+        2. `Smet K, Ryckaert WR, Pointer MR, Deconinck G, and Hanselaer P (2011). 
+        Optimal colour quality of LED clusters based on memory colours. 
+        Opt. Express 19, 6903–6912.
+        <https://www.osapublishing.org/vjbo/fulltext.cfm?uri=oe-19-7-6903&id=211315>`_
     """
 
     if component_spds is None:
@@ -567,13 +637,18 @@ def color3mixer(Yxyt,Yxy1,Yxy2,Yxy3):
     when (additively) mixing 3 light sources.
     
     Args:
-        :Yxyt: ndarray with target Yxy chromaticities.
-        :Yxy1: ndarray with Yxy chromaticities of light sources 1.
-        :Yxy2: ndarray with Yxy chromaticities of light sources 2.
-        :Yxy3: ndarray with Yxy chromaticities of light sources 3.
+        :Yxyt: 
+            | ndarray with target Yxy chromaticities.
+        :Yxy1: 
+            | ndarray with Yxy chromaticities of light sources 1.
+        :Yxy2:
+            | ndarray with Yxy chromaticities of light sources 2.
+        :Yxy3:
+            | ndarray with Yxy chromaticities of light sources 3.
         
     Returns:
-        :M: ndarray with fluxes.
+        :M: 
+            | ndarray with fluxes.
         
     Note:
         Yxyt, Yxy1, ... can contain multiple rows, referring to single mixture.
@@ -609,29 +684,36 @@ def colormixer(Yxyt = None, Yxyi = None, n = 4, pair_strengths = None, source_or
     when (additively) mixing N light sources.
     
     Args:
-        :Yxyt: ndarray with target Yxy chromaticities.
-            Defaults to equi-energy white.
-        :Yxyi: ndarray with Yxy chromaticities of light sources i = 1 to n.
-        :n: 4 or int, optional
-            Number of source components to randomly generate when Yxyi is None.
-        :pair_strengths: ndarray with light source pair strengths.  
-        :source_order: ndarray with order of source components.
-            If None: use np.arange(n)
+        :Yxyt: 
+            | ndarray with target Yxy chromaticities.
+            | Defaults to equi-energy white.
+        :Yxyi:
+            | ndarray with Yxy chromaticities of light sources i = 1 to n.
+        :n: 
+            | 4 or int, optional
+            | Number of source components to randomly generate when Yxyi is None.
+        :pair_strengths:
+            | ndarray with light source pair strengths.  
+        :source_order:
+            | ndarray with order of source components.
+            | If None: use np.arange(n)
+    
     Returns:
-        :M: ndarray with fluxes.
+        :M: 
+            | ndarray with fluxes.
     
     Note:
-        Algorithm:
-            1. Loop over all source components and create intermediate sources
-                from all (even,odd)-pairs using the relative strengths 
-                of the pair (specified in pair_strengths). 
-            2. Collect any remaining sources.
-            3. Combine with new intermediate source components
-            4. Repeat 1-3 until there are only 3 source components left. 
-            5. Use color3mixer to calculate the required fluxes of the 3 final
-                intermediate components to obtain the target chromaticity. 
-            6. Backward calculate the fluxes of all original source components
-                from the 3 final intermediate fluxes.
+        :Algorithm:
+            | 1. Loop over all source components and create intermediate sources
+            |    from all (even,odd)-pairs using the relative strengths 
+            |     of the pair (specified in pair_strengths). 
+            | 2. Collect any remaining sources.
+            | 3. Combine with new intermediate source components
+            | 4. Repeat 1-3 until there are only 3 source components left. 
+            | 5. Use color3mixer to calculate the required fluxes of the 3 final
+            |     intermediate components to obtain the target chromaticity. 
+            | 6. Backward calculate the fluxes of all original source components
+            |     from the 3 final intermediate fluxes.
     """
     
     if Yxyt is None:
@@ -776,11 +858,14 @@ def get_w_summed_spd(w,spds):
     Calculate weighted sum of spds.
     
     Args:
-        :w: ndarray with weigths (e.g. fluxes)
-        :spds: ndarray with component spds.
+        :w: 
+            | ndarray with weigths (e.g. fluxes)
+        :spds: 
+            | ndarray with component spds.
         
     Returns:
-        :returns: ndarray with weighted sum.
+        :returns: 
+            | ndarray with weighted sum.
     """
     return np.vstack((spds[0],np.dot(np.abs(w),spds[1:])))
 
@@ -792,31 +877,43 @@ def fitnessfcn(x, spd_constructor, spd_constructor_pars = None, F_rss = True, de
     for specified objective functions.
     
     Args:
-        :x: ndarray with parameter values
-        :spd_constructor: function handle to a function that constructs the spd
-            from parameter values in :x:.
-        :spd_constructor_pars: None, optional,
-            Parameters required by :spd_constructor:
-        :F_rss: True, optional
-             Take Root-Sum-of-Squares of 'closeness' values between target and 
-             objective function values.
-        :decimals: 3, optional
-            Rounding decimals of objective function values.
-        :obj_fcn: [None] or list, optional
-            Function handles to objective function.
-        :obj_fcn_weights: [1] or list, optional.
-            Weigths for each obj. fcn
-        :obj_fcn_pars: [None] or list, optional
-            Parameter dicts for each obj. fcn.
-        :obj_tar_vals: [0] or list, optional
-            Target values for each objective function.
-        :verbosity: 0, optional
-            If > 0: print intermediate results.
-        :out: 'F', optional
-            Determines output.
+        :x: 
+            | ndarray with parameter values
+        :spd_constructor:
+            | function handle to a function that constructs the spd
+              from parameter values in :x:.
+        :spd_constructor_pars:
+            | None, optional,
+            | Parameters required by :spd_constructor:
+        :F_rss:
+            | True, optional
+            | Take Root-Sum-of-Squares of 'closeness' values between target and 
+              objective function values.
+        :decimals:
+            | 3, optional
+            | Rounding decimals of objective function values.
+        :obj_fcn: 
+            | [None] or list, optional
+            | Function handles to objective function.
+        :obj_fcn_weights:
+            | [1] or list, optional.
+            | Weigths for each obj. fcn
+        :obj_fcn_pars:
+            | [None] or list, optional
+            | Parameter dicts for each obj. fcn.
+        :obj_tar_vals:
+            | [0] or list, optional
+            | Target values for each objective function.
+        :verbosity:
+            | 0, optional
+            | If > 0: print intermediate results.
+        :out: 
+            | 'F', optional
+            | Determines output.
             
     Returns:
-        :F: float or ndarray with fitness value for current solution :x:.
+        :F:
+            | float or ndarray with fitness value for current solution :x:.
     """
     
     # Keep track of solutions tried:
@@ -901,23 +998,26 @@ def spd_constructor_2(x, constructor_pars = {}, **kwargs):
     """
     Construct spd from model parameters using pairs of intermediate sources.
     
-    Pairs (odd,even) of components are selected and combined using 
-    'pair_strength'. This process is continued until only 3 intermediate 
-    (combined) sources remain. Color3mixer is then used to calculate the 
-    fluxes for the remaining 3 sources, after which the fluxes of all 
-    components are back-calculated.
+    | Pairs (odd,even) of components are selected and combined using 
+      'pair_strength'. This process is continued until only 3 intermediate 
+      (combined) sources remain. Color3mixer is then used to calculate the 
+      fluxes for the remaining 3 sources, after which the fluxes of all 
+      components are back-calculated.
     
     Args:
-        :x: vector of optimization parameters.
-        :constructor_pars: dict with model parameters. 
-        Key 'list' determines which parameters are in :x: and key 'len'
-        specifies the number of variables representing each parameter.
+        :x: 
+            | vector of optimization parameters.
+        :constructor_pars: 
+            | dict with model parameters. 
+            | Key 'list' determines which parameters are in :x: and key 'len'
+              (Specifies the number of variables representing each parameter).
         
     Returns:
-        :returns: spd, M, spds
-            ndarrays with spectrum corresponding to x, M the fluxes of 
-            the spectral components of spd and spds the spectral components 
-            themselves.
+        :returns: 
+            | spd, M, spds
+            | ndarrays with spectrum corresponding to x, M the fluxes of 
+              the spectral components of spd and spds the spectral components 
+              themselves.
     
     """
     cp = constructor_pars.copy()
@@ -925,7 +1025,7 @@ def spd_constructor_2(x, constructor_pars = {}, **kwargs):
     # replace / init cp with values from x (parameters to optimize)
     # (opt_list and opt_len refer resp. to the key in cp and the length
     # of that parameter in x)
-    cp, vsize = vec_to_dict(vec_= x, dict_ = cp, vsize = cp['len'], keys = cp['list'])
+    cp, vsize = vec_to_dict(vec= x, dic = cp, vsize = cp['len'], keys = cp['list'])
 
     spd,M,component_spds = spd_builder(peakwl = cp['peakwl'], fwhm = cp['fwhm'],\
                                       bw_order = cp['bw_order'],\
@@ -955,23 +1055,26 @@ def spd_constructor_3(x, constructor_pars = {}, **kwargs):
     Construct spd from model parameters using trio's of intermediate sources.
     
     
-    The triangle/trio method creates for all possible combinations of 3 primary
-    component spectra a spectrum that results in the target chromaticity 
-    using color3mixer() and then optimizes the weights of each of the latter 
-    spectra such that adding them (additive mixing) results in obj_vals as 
-    close as possible to the target values.
+    | The triangle/trio method creates for all possible combinations of 3 primary
+      component spectra a spectrum that results in the target chromaticity 
+      using color3mixer() and then optimizes the weights of each of the latter 
+      spectra such that adding them (additive mixing) results in obj_vals as 
+      close as possible to the target values.
     
     Args:
-        :x: vector of optimization parameters.
-        :constructor_pars: dict with model parameters. 
-        Key 'list' determines which parameters are in :x: and key 'len'
-        specifies the number of variables representing each parameter.
+        :x:
+            | vector of optimization parameters.
+        :constructor_pars:
+            | dict with model parameters. 
+            | Key 'list' determines which parameters are in :x: and key 'len'
+              (specifies the number of variables representing each parameter).
         
     Returns:
-        :returns: spd, M, spds
-            ndarrays with spectrum corresponding to x, M the fluxes of 
-            the spectral components of spd and spds the spectral components 
-            themselves.
+        :returns: 
+            | spd, M, spds
+            | ndarrays with spectrum corresponding to x, M the fluxes of 
+              the spectral components of spd and spds the spectral components 
+              themselves.
     
     """
     cp = constructor_pars.copy()
@@ -979,7 +1082,7 @@ def spd_constructor_3(x, constructor_pars = {}, **kwargs):
     # replace / init cp with values from x (parameters to optimize)
     # (opt_list and opt_len refer resp. to the key in cp and the length
     # of that parameter in x)
-    cp, vsize = vec_to_dict(vec_= x, dict_ = cp, vsize = cp['len'], keys = cp['list'])
+    cp, vsize = vec_to_dict(vec= x, dic = cp, vsize = cp['len'], keys = cp['list'])
 
     target = None #only calculate component spectra
     Yxy_target = cp['target']
@@ -1050,71 +1153,90 @@ def spd_optimizer_2_3(optimizer_type = '2mixer', \
     obtain target chromaticity and fluxes are then back-calculated.
          
     Args:
-        :optimizer_type: '2mixer' or '3mixer' or 'user', optional
-            Specifies whether to optimize spectral model parameters by 
-            combining pairs or trio's of comonponents.
-        :spd_constructor: None, optional
-            Function handle to user defined spd_constructor function.
-                Input: fcn(x, constructor_pars = {}, **kwargs)
-                Output: spd,M,spds
-                    nd array with:
-                        - spd: spectrum resulting from x
-                        - M: fluxes of all component spds
-                        - spds: component spds (in [N+1,wl] format)
-            (See e.g. spd_constructor_2 or spd_constructor_3)
-        :spd_model_pars: dict with model parameters required by spd_constructor
-            and with optimization parameters required by minimize (x0, lb, ub).                .
-            Only used when :optimizer_type: == 'user'.
-        :component_data: 4, optional
-            Component spectra data: 
-            If int: specifies number of components used in optimization 
-                    (peakwl, fwhm and pair_strengths will be optimized).
-            If dict: generate components based on parameters (peakwl, fwhm, 
-                     pair_strengths, etc.) in dict. 
-                    (keys with None values will be optimized)
-            If ndarray: optimize pair_strengths of component spectra.
-        :N_components: None, optional
-            Specifies number of components used in optimization. (only used 
-            when :component_data: is dict and user wants to override dict. 
-            Note that shape of parameters arrays must match N_components).
-        :allow_butterworth_mono_spds: False, optional
-            False: use pure Gaussian based monochrom. spds.
-        :wl: _WL3, optional
-            Wavelengths used in optimization when :component_data: is not 
-            ndarray with spectral data.
+        :optimizer_type: 
+            | '2mixer' or '3mixer' or 'user', optional
+            | Specifies whether to optimize spectral model parameters by 
+              combining pairs or trio's of comonponents.
+        :spd_constructor: 
+            | None, optional
+            | Function handle to user defined spd_constructor function.
+            |     Input: fcn(x, constructor_pars = {}, kwargs)
+            |     Output: spd,M,spds
+            |         nd array with:
+            |             - spd: spectrum resulting from x
+            |            - M: fluxes of all component spds
+            |             - spds: component spds (in [N+1,wl] format)
+            | (See e.g. spd_constructor_2 or spd_constructor_3)
+        :spd_model_pars: 
+            | dict with model parameters required by spd_constructor
+              and with optimization parameters required by minimize (x0, lb, ub).                .
+            | Only used when :optimizer_type: == 'user'.
+        :component_data:
+            | 4, optional
+            | Component spectra data: 
+            | If int: specifies number of components used in optimization 
+            |         (peakwl, fwhm and pair_strengths will be optimized).
+            | If dict: generate components based on parameters (peakwl, fwhm, 
+            |          pair_strengths, etc.) in dict. 
+            |         (keys with None values will be optimized)
+            | If ndarray: optimize pair_strengths of component spectra.
+        :N_components:
+            | None, optional
+            | Specifies number of components used in optimization. (only used 
+              when :component_data: is dict and user wants to override dict. 
+            | Note that shape of parameters arrays must match N_components).
+        :allow_butterworth_mono_spds: 
+            | False, optional
+            | False: use pure Gaussian based monochrom. spds.
+        :wl:
+            | _WL3, optional
+            | Wavelengths used in optimization when :component_data: is not 
+            | ndarray with spectral data.
 
-        :Yxy_target: np2d([100,1/3,1/3]), optional
-            ndarray with Yxy chromaticity of target.
-        :cieobs: _CIEOBS, optional
-            CIE CMF set used to calculate chromaticity values if not provided 
-            in :Yxyi:.
-        :F_rss: True, optional
-             Take Root-Sum-of-Squares of 'closeness' values between target and 
-             objective function values.
-        :decimals: 5, optional
-            Rounding decimals of objective function values.
-        :obj_fcn: [None] or list, optional
-            Function handles to objective function.
-        :obj_fcn_weights: [1] or list, optional.
-            Weigths for each obj. fcn
-        :obj_fcn_pars: [None] or list, optional
-            Parameter dicts for each obj. fcn.
-        :obj_tar_vals: [0] or list, optional
-            Target values for each objective function.
-        :minimize_method: 'nelder-mead', optional
-            Optimization method used by minimize function.
-        :minimize_opts: None, optional
-             Dict with minimization options. 
-             None defaults to: {'xtol': 1e-5, 'disp': True, 'maxiter': 1000*Nc,
-                                'maxfev' : 1000*Nc,'fatol': 0.01}
-        :verbosity: 0, optional
-            If > 0: print intermediate results.
+        :Yxy_target:
+            | np2d([100,1/3,1/3]), optional
+            | ndarray with Yxy chromaticity of target.
+        :cieobs:
+            | _CIEOBS, optional
+            | CIE CMF set used to calculate chromaticity values if not provided 
+              in :Yxyi:.
+        :F_rss: 
+            | True, optional
+            | Take Root-Sum-of-Squares of 'closeness' values between target and 
+              objective function values.
+        :decimals:
+            | 5, optional
+            | Rounding decimals of objective function values.
+        :obj_fcn: 
+            | [None] or list, optional
+            | Function handles to objective function.
+        :obj_fcn_weights:
+            | [1] or list, optional.
+            | Weigths for each obj. fcn
+        :obj_fcn_pars:
+            | [None] or list, optional
+            | Parameter dicts for each obj. fcn.
+        :obj_tar_vals:
+            | [0] or list, optional
+            | Target values for each objective function.
+        :minimize_method:
+            | 'nelder-mead', optional
+            | Optimization method used by minimize function.
+        :minimize_opts: 
+            | None, optional
+            | Dict with minimization options. 
+            | None defaults to: {'xtol': 1e-5, 'disp': True, 'maxiter': 1000*Nc,
+            |                     'maxfev' : 1000*Nc,'fatol': 0.01}
+        :verbosity:
+            | 0, optional
+            | If > 0: print intermediate results.
             
     Returns:
-        :returns: M, spd_opt, obj_vals
-            - 'M': ndarray with fluxes for each component spectrum.
-            - 'spd_opt': optimized spectrum.
-            - 'obj_vals': values of the obj. fcns for the optimized spectrum.
+        :returns:
+            | M, spd_opt, obj_vals
+            |   - 'M': ndarray with fluxes for each component spectrum.
+            |   - 'spd_opt': optimized spectrum.
+            |   - 'obj_vals': values of the obj. fcns for the optimized spectrum.
     """
 
     # Set spd_constructor function:
@@ -1212,7 +1334,8 @@ def get_optim_pars_dict(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs =
         See  ?spd_optimizer for more info. 
         
     Returns:
-        :opts: dict with keys and values of the function's keywords and values.
+        :opts: 
+            | dict with keys and values of the function's keywords and values.
     """
     opts = locals()
     spd_models_pars = opts.pop('spd_model_pars')
@@ -1308,30 +1431,36 @@ def initialize_spd_model_pars(component_data, N_components = None, allow_butterw
     of component_data.
     
     Args:
-        :component_data: None, optional
-            Component spectra data: 
-            If int: specifies number of components used in optimization 
-                    (peakwl, fwhm and pair_strengths will be optimized).
-            If dict: generate components based on parameters (peakwl, fwhm, 
-                     pair_strengths, etc.) in dict. 
-                    (keys with None values will be optimized)
-            If ndarray: optimize pair_strengths of component spectra.
-        :N_components: None, optional
-            Specifies number of components used in optimization. (only used 
-            when :component_data: is dict and user wants to override dict. 
-            Note that shape of parameters arrays must match N_components).
-        :allow_butterworth_mono_spds: False, optional
-            False: use pure Gaussian based monochrom. spds.
-            True: also allow butterworth type monochrom. spds while optimizing.
-        :optimizer_type: '2mixer', optional
-            Type of spectral optimization routine.
-            (other options: '3mixer', 'search')
-        :wl: _WL3, optional
-            Wavelengths used in optimization when :component_data: is not an
-            ndarray with spectral data.
+        :component_data: 
+            | None, optional
+            | Component spectra data: 
+            | If int: specifies number of components used in optimization 
+            |         (peakwl, fwhm and pair_strengths will be optimized).
+            | If dict: generate components based on parameters (peakwl, fwhm, 
+            |          pair_strengths, etc.) in dict. 
+            |         (keys with None values will be optimized)
+            | If ndarray: optimize pair_strengths of component spectra.
+        :N_components: 
+            | None, optional
+            | Specifies number of components used in optimization. (only used 
+            | when :component_data: is dict and user wants to override dict. 
+            | Note that shape of parameters arrays must match N_components).
+        :allow_butterworth_mono_spds:
+            | False, optional
+            |  - False: use pure Gaussian based monochrom. spds.
+            |  - True: also allow butterworth type monochrom. spds while optimizing.
+        :optimizer_type:
+            | '2mixer', optional
+            | Type of spectral optimization routine.
+            | (other options: '3mixer', 'search')
+        :wl: 
+            | _WL3, optional
+            | Wavelengths used in optimization when :component_data: is not an
+              ndarray with spectral data.
         
     Returns:
-        :spd_model_pars: dict with spectrum-model parameters
+        :spd_model_pars: 
+            | dict with spectrum-model parameters
 
     """
     # Initialize parameter dict:
@@ -1422,29 +1551,35 @@ def initialize_spd_optim_pars(component_data, N_components = None,\
     Initialize spd_optim_pars dict based on type of component_data.
     
     Args:
-        :component_data: None, optional
-            Component spectra data: 
-            If int: specifies number of components used in optimization 
-                    (peakwl, fwhm and pair_strengths will be optimized).
-            If dict: generate components based on parameters (peakwl, fwhm, 
-                     pair_strengths, etc.) in dict. 
-                    (keys with None values will be optimized)
-            If ndarray: optimize pair_strengths of component spectra.
-        :N_components: None, optional
-            Specifies number of components used in optimization. (only used 
-            when :component_data: is dict and user wants to override dict. 
-            Note that shape of parameters arrays must match N_components).
-        :allow_butterworth_mono_spds: False, optional
-            False: use pure Gaussian based monochrom. spds.
-        :optimizer_type: '2mixer', optional
-            Type of spectral optimization routine.
-            (other options: '3mixer', 'search')
-        :wl: _WL3, optional
-            Wavelengths used in optimization when :component_data: is not an
-            ndarray with spectral data.
+        :component_data: 
+            | None, optional
+            | Component spectra data: 
+            | If int: specifies number of components used in optimization 
+            |         (peakwl, fwhm and pair_strengths will be optimized).
+            | If dict: generate components based on parameters (peakwl, fwhm, 
+            |          pair_strengths, etc.) in dict. 
+            |         (keys with None values will be optimized)
+            | If ndarray: optimize pair_strengths of component spectra.
+        :N_components:
+            | None, optional
+            | Specifies number of components used in optimization. (only used 
+              when :component_data: is dict and user wants to override dict. 
+            | Note that shape of parameters arrays must match N_components).
+        :allow_butterworth_mono_spds: 
+            | False, optional
+            | False: use pure Gaussian based monochrom. spds.
+        :optimizer_type: 
+            | '2mixer', optional
+            | Type of spectral optimization routine.
+              (other options: '3mixer', 'search')
+        :wl:
+            | _WL3, optional
+            | Wavelengths used in optimization when :component_data: is not an
+              ndarray with spectral data.
         
     Returns:
-        :spd_optim_pars: dict with optimization parameters (x0, ub, lb)
+        :spd_optim_pars:
+            | dict with optimization parameters (x0, ub, lb)
 
     """
     spd_optim_pars = {}
@@ -1552,94 +1687,117 @@ def spd_optimizer(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs = _CIEO
     model parameters.
     
     Args:
-        :target: np2d([100,1/3,1/3]), optional
-            ndarray with Yxy chromaticity of target.
-        :tar_type:  'Yxy' or str, optional
-            Specifies the input type in :target: (e.g. 'Yxy' or 'cct')
-        :cieobs: _CIEOBS, optional
-            CIE CMF set used to calculate chromaticity values, if not provided 
-            in :Yxyi:.
-        :optimizer_type: '2mixer',  optional
-            Specifies type of chromaticity optimization 
-            ('3mixer' or '2mixer' or 'search')
-            For help on '2mixer' and '3mixer' algorithms, see notes below.
-        :spd_constructor: None, optional
-            Function handle to user defined spd_constructor function.
-                Input: fcn(x, constructor_pars = {}, **kwargs)
-                Output: spd,M,spds
-                    nd array with:
-                        - spd: spectrum resulting from x
-                        - M: fluxes of all component spds
-                        - spds: component spds (in [N+1,wl] format)
-            (See e.g. spd_constructor_2 or spd_constructor_3)
-        :spd_model_pars: dict with model parameters required by spd_constructor
-            and with optimization parameters required by minimize (x0, lb, ub).                .
-            Only used when :optimizer_type: == 'user'.
-        :cspace: 'Yuv', optional
-            Color space for 'search'-type optimization. 
-        :cspace_bwtf: {}, optional
-            Backward (..._to_xyz) transform parameters 
-            (see colortf()) to go from :tar_type: to 'Yxy').
-        :cspace_fwtf = {}, optional
-            Forward (xyz_to_...) transform parameters 
-            (see colortf()) to go from xyz to :cspace:).
-        :component_spds: ndarray of component spectra.
-            If None: they are built from input args.
-        :N_components: None, optional
-            Specifies number of components used in optimization. (only used 
-            when :component_data: is dict and user wants to override dict value
-            Note that shape of parameters arrays must match N_components).
-        :allow_butterworth_mono_spds: False, optional
-            False: use pure Gaussian based monochrom. spds.
-        :wl: _WL3, optional
-            Wavelengths used in optimization when :component_data: is not an
-            ndarray with spectral data.
-
-        :F_rss: True, optional
-             Take Root-Sum-of-Squares of 'closeness' values between target and 
-             objective function values.
-        :decimals: 5, optional
-            Rounding decimals of objective function values.
-        :obj_fcn: [None] or list, optional
-            Function handles to objective function.
-        :obj_fcn_weights: [1] or list, optional.
-            Weigths for each obj. fcn
-        :obj_fcn_pars: [None] or list, optional
-            Parameter dicts for each obj. fcn.
-        :obj_tar_vals: [0] or list, optional
-            Target values for each objective function.
-        :minimize_method: 'nelder-mead', optional
-            Optimization method used by minimize function.
-        :minimize_opts: None, optional
-             Dict with minimization options. 
-             None defaults to: {'xtol': 1e-5, 'disp': True, 'maxiter': 1000*Nc,
-                                'maxfev' : 1000*Nc,'fatol': 0.01}
-        :verbosity: 0, optional
-            If > 0: print intermediate results.
+        :target: 
+            | np2d([100,1/3,1/3]), optional
+            | ndarray with Yxy chromaticity of target.
+        :tar_type:
+            | 'Yxy' or str, optional
+            | Specifies the input type in :target: (e.g. 'Yxy' or 'cct')
+        :cieobs:
+            | _CIEOBS, optional
+            | CIE CMF set used to calculate chromaticity values, if not provided 
+              in :Yxyi:.
+        :optimizer_type:
+            | '2mixer',  optional
+            | Specifies type of chromaticity optimization 
+            | ('3mixer' or '2mixer' or 'search')
+            | For help on '2mixer' and '3mixer' algorithms, see notes below.
+        :spd_constructor:
+            | None, optional
+            | Function handle to user defined spd_constructor function.
+            |     Input: fcn(x, constructor_pars = {}, kwargs)
+            |     Output: spd,M,spds
+            |         nd array with:
+            |             - spd: spectrum resulting from x
+            |             - M: fluxes of all component spds
+            |             - spds: component spds (in [N+1,wl] format)
+            | (See e.g. spd_constructor_2 or spd_constructor_3)
+        :spd_model_pars:
+            | dict with model parameters required by spd_constructor
+              and with optimization parameters required by minimize (x0, lb, ub).                .
+            | Only used when :optimizer_type: == 'user'.
+        :cspace:
+            | 'Yuv', optional
+            | Color space for 'search'-type optimization. 
+        :cspace_bwtf:
+            | {}, optional
+            | Backward (cspace_to_xyz) transform parameters 
+            | (see colortf()) to go from :tar_type: to 'Yxy').
+        :cspace_fwtf:
+            | {}, optional
+            | Forward (xyz_to_cspace) transform parameters 
+            | (see colortf()) to go from xyz to :cspace:).
+        :component_spds:
+            | ndarray of component spectra.
+            | If None: they are built from input args.
+        :N_components:
+            | None, optional
+            | Specifies number of components used in optimization. (only used 
+              when :component_data: is dict and user wants to override dict value
+            | Note that shape of parameters arrays must match N_components).
+        :allow_butterworth_mono_spds:
+            | False, optional
+            | False: use pure Gaussian based monochrom. spds.
+        :wl: 
+            | _WL3, optional
+            | Wavelengths used in optimization when :component_data: is not an
+              ndarray with spectral data.
+        :F_rss: 
+            | True, optional
+            | Take Root-Sum-of-Squares of 'closeness' values between target and 
+              objective function values.
+        :decimals:
+            | 5, optional
+            | Rounding decimals of objective function values.
+        :obj_fcn: 
+            | [None] or list, optional
+            | Function handles to objective function.
+        :obj_fcn_weights:
+            | [1] or list, optional.
+            | Weigths for each obj. fcn
+        :obj_fcn_pars:
+            | [None] or list, optional
+            | Parameter dicts for each obj. fcn.
+        :obj_tar_vals:
+            | [0] or list, optional
+            | Target values for each objective function.
+        :minimize_method:
+            | 'nelder-mead', optional
+            | Optimization method used by minimize function.
+        :minimize_opts:
+            | None, optional
+            | Dict with minimization options. 
+            |  None defaults to: {'xtol': 1e-5, 'disp': True, 'maxiter': 1000*Nc,
+            |                     'maxfev' : 1000*Nc,'fatol': 0.01}
+        :verbosity:
+            | 0, optional
+            | If > 0: print intermediate results.
          
-        :peakwl:, :fwhm:, ... : see ?spd_builder for more info.   
+    Note:
+        peakwl:, :fwhm:, ... : see ?spd_builder for more info.   
             
     Returns:
-        :returns: spds, M
-            - 'spds': optimized spectrum.
-            - 'M': ndarray with fluxes for each component spectrum.
+        :returns: 
+            | spds, M
+            |   - 'spds': optimized spectrum.
+            |   - 'M': ndarray with fluxes for each component spectrum.
 
     Notes:
-        Optimization algorithms:
+        :Optimization algorithms:
             
-        -'2mixer':
-            Pairs (odd,even) of components are selected and combined using 
-            'pair_strength'. This process is continued until only 3 (combined)
-            intermediate sources remain. Color3mixer is then used to calculate 
-            the fluxes for the remaining 3 sources, after which the fluxes of 
-            all components are back-calculated.
+        1. '2mixer':
+        Pairs (odd,even) of components are selected and combined using 
+        'pair_strength'. This process is continued until only 3 (combined)
+        intermediate sources remain. Color3mixer is then used to calculate 
+        the fluxes for the remaining 3 sources, after which the fluxes of 
+        all components are back-calculated.
             
-        -'3mixer':
-            The triangle/trio method creates for all possible combinations of 
-            3 primary component spectra a spectrum that results in the target 
-            chromaticity using color3mixer() and then optimizes the weights of
-            each of the latter spectra such that adding them (additive mixing) 
-            results in obj_vals as close as possible to the target values.
+       2. '3mixer':
+       The triangle/trio method creates for all possible combinations of 
+       3 primary component spectra a spectrum that results in the target 
+       chromaticity using color3mixer() and then optimizes the weights of
+       each of the latter spectra such that adding them (additive mixing) 
+       results in obj_vals as close as possible to the target values.
 
     """
             
