@@ -235,10 +235,10 @@ def spd_to_CS_CLa_lrc(El = None, E = None, \
     if E is not None:
 
         # Calculate current E value of El:
-        E_cv = 683 * integral(cs_cl_lrs['Vphotl']*Elv*dl)
+        E_cv = np.atleast_2d(683 * integral(cs_cl_lrs['Vphotl']*Elv*dl))
 
         # Rescale El to supplied E:
-        Elv = Elv*(E/E_cv)
+        Elv = (E/E_cv).T*Elv
             
                 
     # Sum all sources in array if requested:
@@ -258,6 +258,7 @@ if __name__ == '__main__':
      
     E = 100
     El = _CIE_ILLUMINANTS['D65']
+    S = lx._IESTM30['S']['data'][:4]
     CS, CLa = spd_to_CS_CLa_lrc(El = El, E = E, \
                                     sum_sources = False, interpolate_sources = False)
     print('out')
