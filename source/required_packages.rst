@@ -2,6 +2,7 @@ Imported (required) 3e party packages
 =====================================
 | import numpy as np
 | import pandas as pd
+| import scipy
 | from scipy import interpolate
 | from scipy.optimize import minimize
 | from scipy.spatial import cKDTree

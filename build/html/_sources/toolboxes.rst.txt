@@ -6,6 +6,8 @@ photbiochem/
  :py:
 	* __init__.py
 	* cie_tn003_2015.py 
+	* ASNZS_1680_2_5_1997_COI.py
+	* circadian_CS_CLa_lrc.py
 
 	
  :namespace: luxpy.photbiochem

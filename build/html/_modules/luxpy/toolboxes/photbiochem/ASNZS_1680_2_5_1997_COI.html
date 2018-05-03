@@ -200,7 +200,7 @@
 
 <div class="viewcode-block" id="spd_to_COI_ASNZS1680"><a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.photbiochem.spd_to_COI_ASNZS1680">[docs]</a><span class="k">def</span> <span class="nf">spd_to_COI_ASNZS1680</span><span class="p">(</span><span class="n">S</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tf</span> <span class="o">=</span> <span class="n">_COI_CSPACE</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_COI_CIEOBS</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;COI,cct&#39;</span><span class="p">,</span> <span class="n">extrapolate_rfl</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Calculate the Cyanosis Observartion Index (COI) [ASNZS 1680.2.5-1995].</span>
+<span class="sd">    Calculate the Cyanosis Observation Index (COI) [ASNZS 1680.2.5-1995].</span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        :S:</span>
@@ -216,6 +216,11 @@
 <span class="sd">        :out: </span>
 <span class="sd">            | &#39;COI,cct&#39; or str, optional</span>
 <span class="sd">            | Determines output.</span>
+<span class="sd">        :extrapolate_rfl:</span>
+<span class="sd">            | False, optional</span>
+<span class="sd">            | If False: </span>
+<span class="sd">            |  limit the wavelength range of the source to that of the standard</span>
+<span class="sd">            |  reflectance spectra for the 50% and 100% oxygenated blood.</span>
 <span class="sd">            </span>
 <span class="sd">    Returns:</span>
 <span class="sd">        :COI:</span>

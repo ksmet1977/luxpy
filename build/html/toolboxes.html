@@ -192,6 +192,8 @@
 <tr class="field-odd field"><th class="field-name">py:</th><td class="field-body"><ul class="first simple">
 <li>__init__.py</li>
 <li>cie_tn003_2015.py</li>
+<li>ASNZS_1680_2_5_1997_COI.py</li>
+<li>circadian_CS_CLa_lrc.py</li>
 </ul>
 </td>
 </tr>
@@ -444,7 +446,7 @@ of all spectra in :sid: in SI-units. </div>
 <dl class="function">
 <dt id="luxpy.toolboxes.photbiochem.spd_to_COI_ASNZS1680">
 <code class="descclassname">luxpy.toolboxes.photbiochem.</code><code class="descname">spd_to_COI_ASNZS1680</code><span class="sig-paren">(</span><em>S=None</em>, <em>tf='lab'</em>, <em>cieobs='1931_2'</em>, <em>out='COI</em>, <em>cct'</em>, <em>extrapolate_rfl=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/photbiochem/ASNZS_1680_2_5_1997_COI.html#spd_to_COI_ASNZS1680"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.photbiochem.spd_to_COI_ASNZS1680" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate the Cyanosis Observartion Index (COI) [ASNZS 1680.2.5-1995].</p>
+<dd><p>Calculate the Cyanosis Observation Index (COI) [ASNZS 1680.2.5-1995].</p>
 <dl class="docutils">
 <dt>Args:</dt>
 <dd><table class="first last docutils field-list" frame="void" rules="none">
@@ -473,6 +475,17 @@ of all spectra in :sid: in SI-units. </div>
 <tr class="field-even field"><th class="field-name">out:</th><td class="field-body"><div class="first last line-block">
 <div class="line">‘COI,cct’ or str, optional</div>
 <div class="line">Determines output.</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">extrapolate_rfl:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><div class="first last line-block">
+<div class="line">False, optional</div>
+<div class="line">If False: </div>
+<div class="line-block">
+<div class="line">limit the wavelength range of the source to that of the standard</div>
+<div class="line">reflectance spectra for the 50% and 100% oxygenated blood.</div>
+</div>
 </div>
 </td>
 </tr>
@@ -510,6 +523,116 @@ suitable to the detection of cyanosis should be provided:</p>
 </div></blockquote>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="luxpy.toolboxes.photbiochem.spd_to_CS_CLa_lrc">
+<code class="descclassname">luxpy.toolboxes.photbiochem.</code><code class="descname">spd_to_CS_CLa_lrc</code><span class="sig-paren">(</span><em>El=None</em>, <em>E=None</em>, <em>sum_sources=False</em>, <em>interpolate_sources=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/photbiochem/circadian_CS_CLa_lrc.html#spd_to_CS_CLa_lrc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.photbiochem.spd_to_CS_CLa_lrc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate Circadian Stimulus (CS) and Circadian Light [LRC: Rea et al 2012].</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">El:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray, optional</div>
+<div class="line">Defaults to D65</div>
+<div class="line">light source spectral irradiance distribution</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">E:</th><td class="field-body"><div class="first last line-block">
+<div class="line">None, float or ndarray, optional</div>
+<div class="line">Illuminance of light sources.</div>
+<div class="line">If None: El is used as is, otherwise El is renormalized to have
+an illuminance equal to E.</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">sum_sources:</th><td class="field-body"><div class="first last line-block">
+<div class="line">False, optional</div>
+<div class="line-block">
+<div class="line">- False: calculate CS and CLa for all sources in El array.</div>
+<div class="line">- True: sum sources in El to a single source and perform calc.</div>
+</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">interpolate_sources:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><div class="first last line-block">
+<div class="line">True, optional</div>
+<div class="line-block">
+<div class="line">- True: El is interpolated to wavelength range of efficiency </div>
+<div class="line-block">
+<div class="line">functions (as in LRC calculator). </div>
+</div>
+<div class="line">- False: interpolate efficiency functions to source range. </div>
+<div class="line-block">
+<div class="line">Source interpolation is not recommended due to possible</div>
+<div class="line">errors for peaky spectra. </div>
+<div class="line">(see CIE15-2004, “Colorimetry”).</div>
+</div>
+</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">CS:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray with Circadian stimulus values</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">CLa:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray with Circadian Light values</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Notes:</dt>
+<dd><p class="first">1. The original 2012 (E.q. 1) had set the peak wavelength of the 
+melanopsin at 480 nm. Rea et al. later published a corrigendum with 
+updated model parameters for k, a_{b-y} and a_rod. The comparison table
+between showing values calculated for a number of sources with the old
+and updated parameters were very close (~1 unit voor CLa).</p>
+<p>2. In that corrrection paper they did not mention a change in the
+factor (1622) that multiplies the (sum of) the integral(s) in Eq. 1. 
+HOWEVER, the excel calculator released in 2017 and the online 
+calculator show that factor to have a value of 1547.9. The change in
+values due to the new factor is much larger than their the updated 
+mentioned in note 1!</p>
+<p>3. For reasons of consistency the calculator uses the latest model 
+parameters, as could be read from the excel calculator. They values 
+adopted are: multiplier 1547.9, k = 0.2616, a_{b-y} = 0.7 and 
+a_rod = 3.3.</p>
+<p class="last">4. The parameter values to convert CLa to CS were also taken from the 
+2017 excel calculator.</p>
+</dd>
+</dl>
+<p>References:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><a class="reference external" href="http://www.lrc.rpi.edu/cscalculator/">LRC Online Circadian stimulus calculator</a></li>
+<li><a class="reference external" href="http://www.lrc.rpi.edu/resources/CSCalculator_2017_10_03_Mac.xlsm">LRC Excel based Circadian stimulus calculator.</a></li>
+</ol>
+<p>3. <a class="reference external" href="http://journals.sagepub.com/doi/full/10.1177/1477153512467607">Rea MS, Figueiro MG, Bierman A, and Hamner R (2012). 
+Modelling the spectral sensitivity of the human circadian system. 
+Light. Res. Technol. 44, 386–396.</a></p>
+<p>4. <a class="reference external" href="http://journals.sagepub.com/doi/10.1177/1477153512467607">Rea MS, Figueiro MG, Bierman A, and Hamner R (2012). 
+Erratum: Modeling the spectral sensitivity of the human circadian system 
+(Lighting Research and Technology (2012) 44:4 (386-396) 
+DOI: 10.1177/1477153511430474)). 
+Light. Res. Technol. 44, 516.</a></p>
+</div></blockquote>
 </dd></dl>
 
 </div>

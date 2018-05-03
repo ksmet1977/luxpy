@@ -19,7 +19,7 @@
 * chromatic adaptation transforms 
 * color appearance models 
 * color rendition indices 
-* calculation of CIE photobiological quantities
+* calculation of photobiological quantities
 * Multi-component spectrum creation and optimization
 * Hyper-spectral image simulation and rendering
 * ...
