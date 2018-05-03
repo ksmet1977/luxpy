@@ -22,11 +22,11 @@ Install luxpy
 	5.  Install luxpy package from pypi:
 		>> pip install luxpy
 		
-Note
-----
-	If any errors show up, try and do a manual install of the dependencies: scipy, numpy, pandas, matplotlib and setuptools,
-	either using e.g. ">> conda install scipy" or ">> pip install scipy",
-	and try and reinstall luxpy using pip) 
+
+	:Note:
+		If any errors show up, try and do a manual install of the dependencies: scipy, numpy, pandas, matplotlib and setuptools,
+		either using e.g. ">> conda install scipy" or ">> pip install scipy",
+		and try and reinstall luxpy using pip) 
 
 Use of LuxPy package in Spyder IDE
 ---------------------------------- 
