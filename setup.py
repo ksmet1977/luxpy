@@ -13,7 +13,7 @@ setup(
   download_url = 'https://github.com/ksmet1977/luxpy/archive/1.3.03.tar.gz',
   keywords = ['color', 'color appearance', 'colorimetry','photometry','CIE','color perception','lighting','color rendering','IES'], 
   install_requires=[
-          'numpy',
+          'numpy>=1.11.1',
 		  'scipy',
 		  'matplotlib',
 		  'pandas',
