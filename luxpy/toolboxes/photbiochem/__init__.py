@@ -82,20 +82,67 @@ References:
       (Vienna, Austria).
       <http://www.cie.co.at/publications/report-first-international-workshop-circadian-and-neurophysiological-photometry-2013>`_
       (http://files.cie.co.at/785_CIE_TN_003-2015.pdf)
+
+-------------------------------------------------------------------------------
       
 
 Module for calculation of cyanosis index (AS/NZS 1680.2.5:1997)
 ===============================================================
  
  :_COI_OBS: Default CMF set for calculations
+ 
  :_COI_CSPACE: Default color space (CIELAB)
+ 
  :_COI_RFL_BLOOD: ndarray with reflectance spectra of 100% and 50% 
-                   oxygenated blood
- :spd_to_COI_ASNZS1680: Calculate the Cyanosis Observartion Index (COI) 
-                        [ASNZS 1680.2.5-1995] 
+                  oxygenated blood
+ 
+    :spd_to_COI_ASNZS1680: Calculate the Cyanosis Observartion Index (COI) 
+                           [ASNZS 1680.2.5-1995] 
 
 Reference:
     AS/NZS1680.2.5 (1997). INTERIOR LIGHTING PART 2.5: HOSPITAL AND MEDICAL TASKS.
+
+
+-------------------------------------------------------------------------------
+
+Module for Circadian Light (CLa) and Stimulus (CS) calculations (LRC)
+=====================================================================
+
+# _LRC_CLA_CS_CONST: dict with model parameters and spectral data.
+
+# spd_to_CS_CLa_lrc(): Calculate Circadian Stimulus (CS) and Circadian Light 
+                       [LRC: Rea et al 2012]
+
+
+Definitions:
+    1. **Circadian Stimulus (CS)** is the calculated effectiveness of the 
+    spectrally weighted irradiance at the cornea from threshold (CS = 0.1) 
+    to saturation (CS = 0.7), assuming a fixed duration of exposure of 1 hour.
+    
+    2. **Circadian Light (CLA)** is the irradiance at the cornea weighted to reflect 
+    the spectral sensitivity of the human circadian system as measured by acute 
+    melatonin suppression after a 1-hour exposure.
+
+
+References:
+    1. `LRC Online Circadian stimulus calculator <http://www.lrc.rpi.edu/cscalculator/>`_
+    
+    2. `LRC Excel based Circadian stimulus calculator. <http://www.lrc.rpi.edu/resources/CSCalculator_2017_10_03_Mac.xlsm>`_
+    
+    3. `Rea MS, Figueiro MG, Bierman A, and Hamner R (2012). 
+    Modelling the spectral sensitivity of the human circadian system. 
+    Light. Res. Technol. 44, 386–396.  
+    <http://journals.sagepub.com/doi/full/10.1177/1477153512467607>`_
+    
+    4. `Rea MS, Figueiro MG, Bierman A, and Hamner R (2012). 
+    Erratum: Modeling the spectral sensitivity of the human circadian system 
+    (Lighting Research and Technology (2012) 44:4 (386-396) 
+    DOI: 10.1177/1477153511430474)). 
+    Light. Res. Technol. 44, 516.
+    <http://journals.sagepub.com/doi/10.1177/1477153512467607>`_
+
+
+Also see notes in doc_string of spd_to_CS_CLa_lrc()
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """

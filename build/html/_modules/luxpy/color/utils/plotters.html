@@ -261,7 +261,8 @@
         
     <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="n">_CSPACE_AXES</span><span class="p">[</span><span class="n">cspace</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">kwargs</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="n">_CSPACE_AXES</span><span class="p">[</span><span class="n">cspace</span><span class="p">][</span><span class="mi">2</span><span class="p">],</span> <span class="n">kwargs</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="k">if</span> <span class="s1">&#39;label&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">show</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
@@ -457,12 +458,17 @@
     <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">([</span><span class="n">DL</span><span class="p">,</span><span class="n">BBL</span><span class="p">,</span><span class="n">D65</span><span class="p">,</span><span class="n">EEW</span><span class="p">]):</span>
         <span class="n">show</span> <span class="o">=</span> <span class="kc">False</span>
 
-        
+
     <span class="n">axh_</span> <span class="o">=</span> <span class="n">plot_color_data</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">axh</span> <span class="o">=</span> <span class="n">axh</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">cspace</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">,</span> <span class="n">show</span> <span class="o">=</span> <span class="n">show</span><span class="p">,</span> <span class="n">formatstr</span><span class="o">=</span><span class="n">formatstr</span><span class="p">,</span>  <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-    
+
+
     <span class="k">if</span> <span class="n">DL</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s1">&#39;label&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span> <span class="c1"># avoid label also being used for DL</span>
+            <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;label&#39;</span><span class="p">)</span>
         <span class="n">plotDL</span><span class="p">(</span><span class="n">ccts</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">cspace</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">,</span> <span class="n">axh</span> <span class="o">=</span> <span class="n">axh</span><span class="p">,</span> <span class="n">show</span> <span class="o">=</span> <span class="n">show</span><span class="p">,</span> <span class="n">cspace_pars</span> <span class="o">=</span> <span class="n">cspace_pars</span><span class="p">,</span> <span class="n">formatstr</span> <span class="o">=</span> <span class="s1">&#39;k:&#39;</span><span class="p">,</span>  <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">BBL</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s1">&#39;label&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span> <span class="c1"># avoid label also being used for BB</span>
+            <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;label&#39;</span><span class="p">)</span>
         <span class="n">plotBB</span><span class="p">(</span><span class="n">ccts</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">cspace</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">,</span> <span class="n">axh</span> <span class="o">=</span> <span class="n">axh</span><span class="p">,</span> <span class="n">show</span> <span class="o">=</span> <span class="n">show</span><span class="p">,</span> <span class="n">cspace_pars</span> <span class="o">=</span> <span class="n">cspace_pars</span><span class="p">,</span> <span class="n">cctlabels</span> <span class="o">=</span> <span class="n">cctlabels</span><span class="p">,</span> <span class="n">formatstr</span> <span class="o">=</span> <span class="s1">&#39;k-.&#39;</span><span class="p">,</span>  <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     
     <span class="k">if</span> <span class="n">D65</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>

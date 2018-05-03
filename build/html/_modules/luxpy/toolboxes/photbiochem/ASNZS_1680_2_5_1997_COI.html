@@ -1,0 +1,342 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>luxpy.toolboxes.photbiochem.ASNZS_1680_2_5_1997_COI &mdash; LuxPy 1.3.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> LuxPy
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../license.html">License: GPLv3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../required_packages.html">Imported (required) 3e party packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../luxpy_structure.html">Luxpy package structure</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">LuxPy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>luxpy.toolboxes.photbiochem.ASNZS_1680_2_5_1997_COI</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for luxpy.toolboxes.photbiochem.ASNZS_1680_2_5_1997_COI</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1">########################################################################</span>
+<span class="c1"># &lt;LUXPY: a Python package for lighting and color science.&gt;</span>
+<span class="c1"># Copyright (C) &lt;2017&gt;  &lt;Kevin A.G. Smet&gt; (ksmet1977 at gmail.com)</span>
+<span class="c1">#</span>
+<span class="c1"># This program is free software: you can redistribute it and/or modify</span>
+<span class="c1"># it under the terms of the GNU General Public License as published by</span>
+<span class="c1"># the Free Software Foundation, either version 3 of the License.</span>
+<span class="c1">#</span>
+<span class="c1"># This program is distributed in the hope that it will be useful,</span>
+<span class="c1"># but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="c1"># MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="c1"># GNU General Public License for more details.</span>
+<span class="c1">#</span>
+<span class="c1"># You should have received a copy of the GNU General Public License</span>
+<span class="c1"># along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<span class="c1">#########################################################################</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module for calculation of cyanosis index (AS/NZS 1680.2.5:1997)</span>
+<span class="sd">===============================================================</span>
+<span class="sd"> </span>
+<span class="sd"> :_COI_OBS: Default CMF set for calculations</span>
+<span class="sd"> :_COI_CSPACE: Default color space (CIELAB)</span>
+<span class="sd"> :_COI_RFL_BLOOD: ndarray with reflectance spectra of 100% and 50% </span>
+<span class="sd">                   oxygenated blood</span>
+<span class="sd"> :spd_to_COI_ASNZS1680: Calculate the Cyanosis Observartion Index (COI) </span>
+<span class="sd">                        [ASNZS 1680.2.5-1995] </span>
+
+<span class="sd">Reference:</span>
+<span class="sd">    AS/NZS1680.2.5 (1997). INTERIOR LIGHTING PART 2.5: HOSPITAL AND MEDICAL TASKS.</span>
+
+<span class="sd">.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">math</span><span class="p">,</span> <span class="n">deltaE</span><span class="p">,</span> <span class="n">_PKG_PATH</span><span class="p">,</span> <span class="n">_SEP</span><span class="p">,</span> <span class="n">_CIE_ILLUMINANTS</span><span class="p">,</span> <span class="n">getdata</span><span class="p">,</span> <span class="n">spd_to_xyz</span><span class="p">,</span> <span class="n">blackbody</span><span class="p">,</span> <span class="n">xyz_to_cct</span>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;_COI_RFL_BLOOD&#39;</span><span class="p">,</span><span class="s1">&#39;_COI_CIEOBS&#39;</span><span class="p">,</span><span class="s1">&#39;_COI_CSPACE&#39;</span><span class="p">,</span><span class="s1">&#39;spd_to_COI_ASNZS1680&#39;</span><span class="p">]</span>
+
+
+<span class="c1"># Reflectance spectra of 100% and 50% oxygenated blood</span>
+<span class="n">_COI_RFL_BLOOD</span> <span class="o">=</span> <span class="n">getdata</span><span class="p">(</span><span class="n">_PKG_PATH</span> <span class="o">+</span> <span class="n">_SEP</span> <span class="o">+</span> <span class="s1">&#39;toolboxes&#39;</span> <span class="o">+</span> <span class="n">_SEP</span> <span class="o">+</span> <span class="s1">&#39;photbiochem&#39;</span> <span class="o">+</span> <span class="n">_SEP</span>  <span class="o">+</span> <span class="s1">&#39;data&#39;</span> <span class="o">+</span> <span class="n">_SEP</span> <span class="o">+</span> <span class="s1">&#39;ASNZS_1680.2.5_1997_cyanosisindex_100_50.dat&#39;</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span><span class="s1">&#39;np&#39;</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+
+<span class="n">_COI_CIEOBS</span> <span class="o">=</span> <span class="s1">&#39;1931_2&#39;</span> <span class="c1"># default CMF set</span>
+
+<span class="n">_COI_CSPACE</span> <span class="o">=</span> <span class="s1">&#39;lab&#39;</span>
+
+<span class="n">_COI_REF</span> <span class="o">=</span> <span class="n">blackbody</span><span class="p">(</span><span class="mi">4000</span><span class="p">,</span> <span class="p">)</span>
+
+<div class="viewcode-block" id="spd_to_COI_ASNZS1680"><a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.photbiochem.spd_to_COI_ASNZS1680">[docs]</a><span class="k">def</span> <span class="nf">spd_to_COI_ASNZS1680</span><span class="p">(</span><span class="n">S</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tf</span> <span class="o">=</span> <span class="n">_COI_CSPACE</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_COI_CIEOBS</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;COI,cct&#39;</span><span class="p">,</span> <span class="n">extrapolate_rfl</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the Cyanosis Observartion Index (COI) [ASNZS 1680.2.5-1995].</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :S:</span>
+<span class="sd">            | ndarray with light source spectrum (first column are wavelengths).</span>
+<span class="sd">        :tf:</span>
+<span class="sd">            | _COI_CSPACE, optional</span>
+<span class="sd">            | Color space in which to calculate the COI.</span>
+<span class="sd">            | Default is CIELAB.</span>
+<span class="sd">        :cieobs: </span>
+<span class="sd">            | _COI_CIEOBS, optional</span>
+<span class="sd">            | CMF set to use. </span>
+<span class="sd">            | Default is &#39;1931_2&#39;.</span>
+<span class="sd">        :out: </span>
+<span class="sd">            | &#39;COI,cct&#39; or str, optional</span>
+<span class="sd">            | Determines output.</span>
+<span class="sd">            </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :COI:</span>
+<span class="sd">            | ndarray with cyanosis indices for input sources.</span>
+<span class="sd">        :cct:</span>
+<span class="sd">            | ndarray with correlated color temperatures.</span>
+<span class="sd">            </span>
+<span class="sd">    Note:</span>
+<span class="sd">        Clause 7.2 of the ASNZS 1680.2.5-1995. standard mentions the properties</span>
+<span class="sd">        demanded of the light source used in region where visual conditions </span>
+<span class="sd">        suitable to the detection of cyanosis should be provided:</span>
+<span class="sd">        </span>
+<span class="sd">            1. The correlated color temperature (CCT) of the source should be from </span>
+<span class="sd">            3300 to 5300 K.</span>
+<span class="sd">                </span>
+<span class="sd">            2. The cyanosis observation index should not exceed 3.3</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">if</span> <span class="n">S</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="c1">#use default</span>
+        <span class="n">S</span> <span class="o">=</span> <span class="n">_CIE_ILLUMINANTS</span><span class="p">[</span><span class="s1">&#39;F4&#39;</span><span class="p">]</span>
+    
+    <span class="k">if</span> <span class="n">extrapolate_rfl</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span> <span class="c1"># _COI_RFL do not cover the full 360-830nm range.</span>
+        <span class="n">wl_min</span> <span class="o">=</span> <span class="n">_COI_RFL_BLOOD</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+        <span class="n">wl_max</span> <span class="o">=</span> <span class="n">_COI_RFL_BLOOD</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="n">S</span> <span class="o">=</span> <span class="n">S</span><span class="p">[:,</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">S</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">wl_min</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">S</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">wl_max</span><span class="p">))[</span><span class="mi">0</span><span class="p">]]</span>
+
+    <span class="c1"># Calculate reference spd:</span>
+    <span class="n">Sr</span> <span class="o">=</span> <span class="n">blackbody</span><span class="p">(</span><span class="mi">4000</span><span class="p">,</span> <span class="n">wl3</span> <span class="o">=</span> <span class="n">S</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="c1"># same wavelength range</span>
+
+    <span class="c1"># Calculate xyz of blood under test source and ref. source:</span>
+    <span class="n">xyzt</span><span class="p">,</span><span class="n">xyzwt</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">rfl</span> <span class="o">=</span> <span class="n">_COI_RFL_BLOOD</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">xyzr</span><span class="p">,</span><span class="n">xyzwr</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">Sr</span><span class="p">,</span> <span class="n">rfl</span> <span class="o">=</span> <span class="n">_COI_RFL_BLOOD</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="c1"># Calculate color difference between blood under test and ref.</span>
+    <span class="n">DEi</span> <span class="o">=</span> <span class="n">deltaE</span><span class="o">.</span><span class="n">DE_cspace</span><span class="p">(</span><span class="n">xyzt</span><span class="p">,</span><span class="n">xyzr</span><span class="p">,</span> <span class="n">xyzwt</span> <span class="o">=</span> <span class="n">xyzwt</span><span class="p">,</span> <span class="n">xyzwr</span> <span class="o">=</span> <span class="n">xyzwr</span><span class="p">,</span> <span class="n">tf</span> <span class="o">=</span> <span class="n">tf</span><span class="p">)</span>
+    
+    <span class="c1"># Calculate Cyanosis Observation Index:</span>
+    <span class="n">COI</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">DEi</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)[:,</span><span class="kc">None</span><span class="p">]</span>
+    
+    
+    <span class="c1"># Calculate cct, if requested:</span>
+    <span class="k">if</span> <span class="s1">&#39;cct&#39;</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">):</span>
+        <span class="n">cct</span><span class="p">,</span> <span class="n">duv</span> <span class="o">=</span> <span class="n">xyz_to_cct</span><span class="p">(</span><span class="n">xyzwt</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="c1"># manage output:</span>
+    <span class="k">if</span> <span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;COI&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">COI</span>
+    <span class="k">elif</span> <span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;COI,cct&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">COI</span><span class="p">,</span> <span class="n">cct</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">eval</span><span class="p">(</span><span class="n">out</span><span class="p">)</span></div>
+
+    
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="c1"># test</span>
+    <span class="n">S</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">_CIE_ILLUMINANTS</span><span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">],</span><span class="n">_CIE_ILLUMINANTS</span><span class="p">[</span><span class="s1">&#39;F4&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">:],</span><span class="n">_CIE_ILLUMINANTS</span><span class="p">[</span><span class="s1">&#39;F5&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">:]))</span>
+    <span class="n">coi</span><span class="p">,</span> <span class="n">cct</span> <span class="o">=</span> <span class="n">spd_to_COI_ASNZS1680</span><span class="p">(</span><span class="n">S</span><span class="p">,</span><span class="n">extrapolate_rfl</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    
+    
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Kevin A.G. Smet.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'1.3.0',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          
+          SphinxRtdTheme.Navigation.enableSticky();
+          
+      });
+  </script> 
+
+</body>
+</html>

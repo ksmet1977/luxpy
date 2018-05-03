@@ -95,6 +95,7 @@
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Toolboxes</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#photbiochem">photbiochem/</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#module-for-calculating-cie-tn003-2015-photobiological-quantities">Module for calculating CIE (TN003:2015) photobiological quantities</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-for-calculation-of-cyanosis-index-as-nzs-1680-2-5-1997">Module for calculation of cyanosis index (AS/NZS 1680.2.5:1997)</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#indvcmf">indvcmf/</a><ul>
@@ -336,6 +337,32 @@ circadian and neurophysiological photometry, 2013
 (Vienna, Austria).</a>
 (<a class="reference external" href="http://files.cie.co.at/785_CIE_TN_003-2015.pdf">http://files.cie.co.at/785_CIE_TN_003-2015.pdf</a>)</dd>
 </dl>
+</div>
+<div class="section" id="module-for-calculation-of-cyanosis-index-as-nzs-1680-2-5-1997">
+<h3>Module for calculation of cyanosis index (AS/NZS 1680.2.5:1997)<a class="headerlink" href="#module-for-calculation-of-cyanosis-index-as-nzs-1680-2-5-1997" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">_COI_OBS:</th><td class="field-body">Default CMF set for calculations</td>
+</tr>
+<tr class="field-even field"><th class="field-name">_COI_CSPACE:</th><td class="field-body">Default color space (CIELAB)</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">_COI_RFL_BLOOD:</th><td class="field-body">ndarray with reflectance spectra of 100% and 50% 
+oxygenated blood</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">spd_to_COI_ASNZS1680:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body">Calculate the Cyanosis Observartion Index (COI) 
+[ASNZS 1680.2.5-1995]</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<dl class="docutils">
+<dt>Reference:</dt>
+<dd>AS/NZS1680.2.5 (1997). INTERIOR LIGHTING PART 2.5: HOSPITAL AND MEDICAL TASKS.</dd>
+</dl>
 <dl class="function">
 <dt id="luxpy.toolboxes.photbiochem.spd_to_aopicE">
 <code class="descclassname">luxpy.toolboxes.photbiochem.</code><code class="descname">spd_to_aopicE</code><span class="sig-paren">(</span><em>sid</em>, <em>Ee=None</em>, <em>E=None</em>, <em>Q=None</em>, <em>cieobs='1931_2'</em>, <em>sid_units='W/m2'</em>, <em>out='Eeas</em>, <em>Eas'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/photbiochem/cie_tn003_2015.html#spd_to_aopicE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.photbiochem.spd_to_aopicE" title="Permalink to this definition">¶</a></dt>
@@ -410,6 +437,77 @@ of all spectra in :sid: in SI-units. </div>
 </tr>
 </tbody>
 </table>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="luxpy.toolboxes.photbiochem.spd_to_COI_ASNZS1680">
+<code class="descclassname">luxpy.toolboxes.photbiochem.</code><code class="descname">spd_to_COI_ASNZS1680</code><span class="sig-paren">(</span><em>S=None</em>, <em>tf='lab'</em>, <em>cieobs='1931_2'</em>, <em>out='COI</em>, <em>cct'</em>, <em>extrapolate_rfl=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/photbiochem/ASNZS_1680_2_5_1997_COI.html#spd_to_COI_ASNZS1680"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.photbiochem.spd_to_COI_ASNZS1680" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the Cyanosis Observartion Index (COI) [ASNZS 1680.2.5-1995].</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">S:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray with light source spectrum (first column are wavelengths).</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">tf:</th><td class="field-body"><div class="first last line-block">
+<div class="line">_COI_CSPACE, optional</div>
+<div class="line">Color space in which to calculate the COI.</div>
+<div class="line">Default is CIELAB.</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">cieobs:</th><td class="field-body"><div class="first last line-block">
+<div class="line">_COI_CIEOBS, optional</div>
+<div class="line">CMF set to use. </div>
+<div class="line">Default is ‘1931_2’.</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">out:</th><td class="field-body"><div class="first last line-block">
+<div class="line">‘COI,cct’ or str, optional</div>
+<div class="line">Determines output.</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">COI:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray with cyanosis indices for input sources.</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">cct:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray with correlated color temperatures.</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Note:</dt>
+<dd><p class="first">Clause 7.2 of the ASNZS 1680.2.5-1995. standard mentions the properties
+demanded of the light source used in region where visual conditions 
+suitable to the detection of cyanosis should be provided:</p>
+<blockquote class="last">
+<div><p>1. The correlated color temperature (CCT) of the source should be from 
+3300 to 5300 K.</p>
+<ol class="arabic simple" start="2">
+<li>The cyanosis observation index should not exceed 3.3</li>
+</ol>
+</div></blockquote>
 </dd>
 </dl>
 </dd></dl>

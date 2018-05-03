@@ -57,11 +57,13 @@ def spd_to_COI_ASNZS1680(S = None, tf = _COI_CSPACE, cieobs = _COI_CIEOBS, out =
             | _COI_CSPACE, optional
             | Color space in which to calculate the COI.
             | Default is CIELAB.
-        :cieobs: _COI_CIEOBS, optional
+        :cieobs: 
+            | _COI_CIEOBS, optional
             | CMF set to use. 
             | Default is '1931_2'.
-        :out: 'COI,cct' or str, optional
-            Determines output.
+        :out: 
+            | 'COI,cct' or str, optional
+            | Determines output.
             
     Returns:
         :COI:
@@ -73,12 +75,11 @@ def spd_to_COI_ASNZS1680(S = None, tf = _COI_CSPACE, cieobs = _COI_CIEOBS, out =
         Clause 7.2 of the ASNZS 1680.2.5-1995. standard mentions the properties
         demanded of the light source used in region where visual conditions 
         suitable to the detection of cyanosis should be provided:
-        1.The correlated color temperature (CCT) of the source should be from 
+        | 1. The correlated color temperature (CCT) of the source should be from 
           3300 to 5300 K.
-        2. The cyanosis observation index should not exceed 3.3
-        
-    Reference:
-        
+
+        | 2. The cyanosis observation index should not exceed 3.3
+
     """
     
     if S is None: #use default

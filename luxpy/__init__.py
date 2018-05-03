@@ -111,6 +111,7 @@ Imported 3e party packages
 --------------------------
 | import numpy as np
 | import pandas as pd
+| import scipy as sp
 | from scipy import interpolate
 | from scipy.optimize import minimize
 | from scipy.spatial import cKDTree
@@ -149,6 +150,7 @@ DO NOT CHANGE THESE CONSTANTS!
 
 import numpy as np
 import pandas as pd
+import scipy as sp
 from scipy import interpolate
 from scipy.optimize import minimize
 from scipy.spatial import cKDTree
@@ -161,7 +163,7 @@ import colorsys
 import cv2
 import itertools
 
-__all__ = ['plt','Axes3D','np','pd','os','warnings','interpolate','minimize',
+__all__ = ['plt','Axes3D','np','sp', 'pd','os','warnings','interpolate','minimize',
            'cKDTree','odict','colorsys','cv2','itertools']
 
 
