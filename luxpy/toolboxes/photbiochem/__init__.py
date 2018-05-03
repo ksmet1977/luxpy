@@ -21,7 +21,6 @@ Module for calculating CIE (TN003:2015) photobiological quantities
 ==================================================================
 (Eesc, Eemc, Eelc, Eez, Eer and Esc, Emc, Elc, Ez, Er)
 
-
 +---------------+----------------+---------------------+---------------------+----------+-------------+
 | Photoreceptor |  Photopigment  | Spectral efficiency | Quantity            | Q-symbol | Unit symbol |
 |               |  (label, α)    | sα(λ)               | (α-opic irradiance) | (Ee,α)   |             |
@@ -36,9 +35,6 @@ Module for calculating CIE (TN003:2015) photobiological quantities
 +---------------+----------------+---------------------+---------------------+----------+-------------+
 |    rod        | rhodopsin (r)  |       rhodopic      |      rhodopic       |   Ee,r   |    W.m−2    |
 +---------------+----------------+---------------------+---------------------+----------+-------------+
-
-
-
 
 
 | CIE recommends that the α-opic irradiance is determined by convolving the spectral
@@ -87,7 +83,25 @@ References:
       <http://www.cie.co.at/publications/report-first-international-workshop-circadian-and-neurophysiological-photometry-2013>`_
       (http://files.cie.co.at/785_CIE_TN_003-2015.pdf)
       
+
+Module for calculation of cyanosis index (AS/NZS 1680.2.5:1997)
+===============================================================
+ 
+ :_COI_OBS: Default CMF set for calculations
+ :_COI_CSPACE: Default color space (CIELAB)
+ :_COI_RFL_BLOOD: ndarray with reflectance spectra of 100% and 50% 
+                   oxygenated blood
+ :spd_to_COI_ASNZS1680: Calculate the Cyanosis Observartion Index (COI) 
+                        [ASNZS 1680.2.5-1995] 
+
+Reference:
+    AS/NZS1680.2.5 (1997). INTERIOR LIGHTING PART 2.5: HOSPITAL AND MEDICAL TASKS.
+
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 from .cie_tn003_2015 import *
 __all__ = cie_tn003_2015.__all__
+
+from .ASNZS_1680_2_5_1997_COI import *
+__all__ += ASNZS_1680_2_5_1997_COI.__all__
+

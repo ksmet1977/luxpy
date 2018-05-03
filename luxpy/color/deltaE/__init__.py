@@ -26,6 +26,8 @@ Module for color difference calculations
  :DE_2000(): Calculate DE2000 color difference.
 
  :DE_cspace():  Calculate color difference DE in specific color space.
+ 
+.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 from .colordifferences import *
 __all__ = colordifferences.__all__

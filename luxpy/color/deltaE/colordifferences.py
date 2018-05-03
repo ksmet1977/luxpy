@@ -11,13 +11,12 @@ Module for color difference calculations
 
  :DE_cspace():  Calculate color difference DE in specific color space.
 
-
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 from luxpy import np, np2d, cam, _COLORTF_DEFAULT_WHITE_POINT, _CSPACE, colortf, xyz_to_lab
 
 
-__all__ = ['DE_camucs', 'DE2000','DE_cspace']
+__all__ = ['DE_camucs', 'DE2000','DE_cspace', 'deltaE']
 
 def process_DEi(DEi, DEtype = 'jab', avg = None, avg_axis = 0, out = 'DEi'):
     """
@@ -314,6 +313,9 @@ def DE_cspace(xyzt, xyzr, dtype = 'xyz', tf = _CSPACE, DEtype = 'jab', avg = Non
             |   Whitepoint tristimulus values of reference data
             |    None defaults to the one set in non-empty :fwtfr: 
                  or else to default of cspace.
+        :tf:
+            | _CSPACE, optional
+            | Color space to use for color difference calculation.
         :fwtft:
             | {}, optional
             | Dict with parameters for forward transform 
@@ -441,4 +443,5 @@ def DE_cspace(xyzt, xyzr, dtype = 'xyz', tf = _CSPACE, DEtype = 'jab', avg = Non
             DEi = ((dJ/KLCH[0])**2, (dC/KLCH[1])**2 + (dH/KLCH[2])**2)
     
     return process_DEi(DEi, DEtype = DEtype, avg = avg, avg_axis = avg_axis, out = out)
+
 
