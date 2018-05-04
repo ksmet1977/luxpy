@@ -3,4 +3,3 @@ numpy>=1.14.0
 opencv-python>=3.4.0.12
 pandas>=0.22.0
 scipy>=1.0.0
-opencv-python
