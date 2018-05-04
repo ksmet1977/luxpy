@@ -86,7 +86,7 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="license.html">License: GPLv3</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="required_packages.html">Imported (required) 3e party packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="required_packages.html">Imported (required) packages</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="luxpy_structure.html">Luxpy package structure</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="utils.html">Utils sub-package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="spectrum.html">Spectrum sub-package</a></li>
@@ -2624,7 +2624,7 @@ set.</td>
 </div></blockquote>
 <dl class="function">
 <dt id="luxpy.toolboxes.hypspcim.render_image">
-<code class="descclassname">luxpy.toolboxes.hypspcim.</code><code class="descname">render_image</code><span class="sig-paren">(</span><em>img=None</em>, <em>spd=None</em>, <em>rfl=None</em>, <em>out='img_hyp'</em>, <em>refspd=None</em>, <em>D=None</em>, <em>cieobs='1931_2'</em>, <em>cspace='ipt'</em>, <em>cspace_tf={}</em>, <em>k_neighbours=4</em>, <em>show=(True</em>, <em>True)</em>, <em>verbosity=0</em>, <em>show_ref_img=True</em>, <em>stack_test_ref=12</em>, <em>write_to_file=None</em>, <em>use_plt_show=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/hypspcim/hyperspectral_img_simulator.html#render_image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.hypspcim.render_image" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">luxpy.toolboxes.hypspcim.</code><code class="descname">render_image</code><span class="sig-paren">(</span><em>img=None</em>, <em>spd=None</em>, <em>rfl=None</em>, <em>out='img_hyp'</em>, <em>refspd=None</em>, <em>D=None</em>, <em>cieobs='1931_2'</em>, <em>cspace='ipt'</em>, <em>cspace_tf={}</em>, <em>k_neighbours=4</em>, <em>show=True</em>, <em>verbosity=0</em>, <em>show_ref_img=True</em>, <em>stack_test_ref=12</em>, <em>write_to_file=None</em>, <em>use_plt_show=True</em>, <em>use_plt_read=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/hypspcim/hyperspectral_img_simulator.html#render_image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.hypspcim.render_image" title="Permalink to this definition">¶</a></dt>
 <dd><p>Render image under specified light source spd.</p>
 <dl class="docutils">
 <dt>Args:</dt>
@@ -2737,10 +2737,19 @@ original image.</div>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">use_plt_show:</th><td class="field-body"><div class="first last line-block">
-<div class="line">False, optional</div>
+<div class="line">True, optional</div>
 <div class="line-block">
 <div class="line">- True: Use matplotlib.pyplot.imshow </div>
 <div class="line">- False: use open-cv imshow() </div>
+</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">use_plt_read:</th><td class="field-body"><div class="first last line-block">
+<div class="line">True, optional</div>
+<div class="line-block">
+<div class="line">- False: use cv2 (openCV)</div>
+<div class="line">- True: try matplotlib.imread()</div>
 </div>
 </div>
 </td>

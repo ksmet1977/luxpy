@@ -148,24 +148,26 @@ DO NOT CHANGE THESE CONSTANTS!
 #==============================================================================
 # Import required modules
 #==============================================================================
+# Core:
+import os
+import warnings
+from collections import OrderedDict as odict
+from mpl_toolkits.mplot3d import Axes3D
+import colorsys
+import itertools
+__all__ = ['os','warnings','odict','Axes3D','colorsys','itertools']
 
+# 3e party:
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 import scipy as sp
 from scipy import interpolate
 from scipy.optimize import minimize
 from scipy.spatial import cKDTree
 import cv2
+__all__ += ['np','pd','plt','sp','interpolate','minimize','cKDTree','cv2']
 
-import warnings
-import os
-from collections import OrderedDict as odict
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
-import colorsys
-
-__all__ = ['plt','Axes3D','np','sp','pd','os','warnings','interpolate','minimize',
-           'cKDTree','odict','colorsys','cv2']
 
 
 #==============================================================================
