@@ -28,9 +28,10 @@
 ## How to use (basics)?
 An overview of the basic usage is given in the [**luxpy basic usage.ipynb**](https://github.com/ksmet1977/luxpy/blob/master/luxpy_basic_usage.ipynb) jupyter notebook 
 
-For more details on installation, structure, functionality, etc.: 
- 1. see [**luxpy.readthedocs.io**](http://luxpy.readthedocs.io/en/latest/) 
- 2. or see the \__doc__string of each function. 
+For more details on installation, structure, functionality, etc., see: 
+ 1. the github pages on: [**ksmet1977.github.io/luxpy/**](http://ksmet1977.github.io/luxpy/) 
+ 2. the [**LuxPy_Documentation**](https://github.com/ksmet1977/luxpy/blob/master/LuxPy_Documentation.pdf)) pdf
+ 2. or, the **\__doc__string** of each function. 
         
     To get help on, for example the **spd_to_xyz()** function, type:
 
