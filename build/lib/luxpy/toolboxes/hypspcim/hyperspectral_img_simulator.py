@@ -334,7 +334,7 @@ if __name__ == '__main__':
     img_hyp,img_ren = render_image(img = img, cspace = 'ipt',spd = S, 
                                  D=1,
                                  show = True, show_ref_img = True,
-                                 use_plt_show = True, stack_test_ref = 21,
+                                 use_plt_show = False, stack_test_ref = 21,
                                  out='img_hyp,img_ren',
                                  write_to_file = None)    
     
