@@ -1,0 +1,8 @@
+#File containing a version number
+# Update when building for pypi!
+
+/setup.py
+/README.md
+/luxpy/__init__.py
+/docs/index.py
+/docs/conf.py
