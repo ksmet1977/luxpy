@@ -317,8 +317,6 @@ def render_image(img = None, spd = None, rfl = None, out = 'img_hyp', \
                 plt.imshow(img_str)
                 plt.title(img_str)
                 plt.axis('off')
-#                plt.gca().get_xaxis().set_ticklabels([])
-#                plt.gca().get_yaxis().set_ticklabels([])
       
     if 'img_hyp' in out.split(','):
         # Create hyper_spectral image:

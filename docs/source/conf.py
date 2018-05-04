@@ -48,6 +48,8 @@ extensions = ['sphinx.ext.autodoc',
     'sphinx.ext.ifconfig',
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages']
+#	'rst2pdf.pdfbuilder']
+
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -179,6 +181,18 @@ man_pages = [
 ]
 
 
+
+# -- Options for manual pdf page output ---------------------------------------
+
+#pdf_documents = [(master_doc, 'LuxPy', 'LuxPy Documentation', 'Kevin A.G. Smet'),]
+   
+# index - master document
+# rst2pdf - name of the generated pdf
+# Sample rst2pdf doc - title of the pdf
+# Your Name - author name in the pdf
+
+
+
 # -- Options for Texinfo output -------------------------------------------
 
 # Grouping the document tree into Texinfo files. List of tuples
@@ -214,4 +228,4 @@ epub_exclude_files = ['search.html']
 
 
 autodoc_member_order = 'bysource'
-autodoc_mock_imports = ["python-opencv, numpy, scipy, matplotlib, pandas, pd, np"]
+#autodoc_mock_imports = ["python-opencv, numpy, scipy, matplotlib, pandas, pd, np"]
