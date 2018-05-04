@@ -87,7 +87,7 @@ License: GPLv3
 
 
 \chapter{License: GPLv3}
-\label{\detokenize{license::doc}}\label{\detokenize{license:license-gplv3}}\label{\detokenize{license:luxpy-a-package-for-lighting-and-color-science}}
+\label{\detokenize{license:license-gplv3}}\label{\detokenize{license::doc}}\label{\detokenize{license:luxpy-a-package-for-lighting-and-color-science}}
 Copyright (C) \textless{}2017\textgreater{}\textless{}Kevin A.G. Smet\textgreater{} (ksmet1977 at gmail.com)
 
 This program is free software: you can redistribute it and/or modify
@@ -224,32 +224,62 @@ To import LuxPy package type:
 \label{\detokenize{required_packages::doc}}\label{\detokenize{required_packages:imported-required-packages}}
 
 \section{Core}
-\label{\detokenize{required_packages:core}}
+\label{\detokenize{required_packages:core}}\begin{itemize}
+\item {} 
 import os
+
+\item {} 
 import warnings
+
+\item {} 
 from collections import OrderedDict as odict
+
+\item {} 
 from mpl\_toolkits.mplot3d import Axes3D
+
+\item {} 
 import colorsys
+
+\item {} 
 import itertools
+
+\end{itemize}
 
 
 \section{3e party}
-\label{\detokenize{required_packages:e-party}}
+\label{\detokenize{required_packages:e-party}}\begin{itemize}
+\item {} 
 import numpy as np
+
+\item {} 
 import pandas as pd
+
+\item {} 
 import matplotlib.pyplot as plt
+
+\item {} 
 import scipy as sp
+
+\item {} 
 from scipy import interpolate
+
+\item {} 
 from scipy.optimize import minimize
+
+\item {} 
 from scipy.spatial import cKDTree
+
+\item {} 
 import cv2
+
+\end{itemize}
 
 
 \chapter{Luxpy package structure}
-\label{\detokenize{luxpy_structure::doc}}\label{\detokenize{luxpy_structure:luxpy-package-structure}}
+\label{\detokenize{luxpy_structure:luxpy-package-structure}}\label{\detokenize{luxpy_structure::doc}}
 
 \section{Utils sub-package}
-\label{\detokenize{utils::doc}}\label{\detokenize{utils:utils-sub-package}}
+\label{\detokenize{utils:utils-sub-package}}\label{\detokenize{utils::doc}}
 
 \subsection{helpers/}
 \label{\detokenize{utils:helpers}}\begin{quote}
@@ -1757,7 +1787,7 @@ with final solutions (res{[}‘x’{]})
 
 
 \section{Spectrum sub-package}
-\label{\detokenize{spectrum::doc}}\label{\detokenize{spectrum:spectrum-sub-package}}
+\label{\detokenize{spectrum:spectrum-sub-package}}\label{\detokenize{spectrum::doc}}
 
 \subsection{basics/}
 \label{\detokenize{spectrum:basics}}\begin{quote}
@@ -2954,7 +2984,7 @@ than the ones in \_CRI\_REF\_TYPES.
 
 
 \section{Color sub-package}
-\label{\detokenize{color:color-sub-package}}\label{\detokenize{color::doc}}
+\label{\detokenize{color::doc}}\label{\detokenize{color:color-sub-package}}
 
 \subsection{utils/}
 \label{\detokenize{color:utils}}\begin{quote}
@@ -11983,7 +12013,7 @@ luxpy.cri.plot\_shift\_data() and returned for use in other functions
 
 
 \section{Classes}
-\label{\detokenize{classes::doc}}\label{\detokenize{classes:classes}}\begin{quote}
+\label{\detokenize{classes:classes}}\label{\detokenize{classes::doc}}\begin{quote}
 \begin{quote}\begin{description}
 \item[{py}] \leavevmode\begin{itemize}
 \item {} 
@@ -12021,7 +12051,7 @@ alias of {\hyperref[\detokenize{classes:luxpy.classes.CDATA}]{\sphinxcrossref{\s
 
 
 \section{Toolboxes}
-\label{\detokenize{toolboxes::doc}}\label{\detokenize{toolboxes:toolboxes}}
+\label{\detokenize{toolboxes:toolboxes}}\label{\detokenize{toolboxes::doc}}
 
 \subsection{photbiochem/}
 \label{\detokenize{toolboxes:photbiochem}}\begin{quote}

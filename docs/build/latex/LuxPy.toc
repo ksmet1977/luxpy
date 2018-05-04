@@ -1,0 +1,68 @@
+\babel@toc {english}{}
+\contentsline {chapter}{\numberline {1}License: GPLv3}{3}{chapter.1}
+\contentsline {chapter}{\numberline {2}Installation}{5}{chapter.2}
+\contentsline {section}{\numberline {2.1}Install luxpy}{5}{section.2.1}
+\contentsline {section}{\numberline {2.2}Use of LuxPy package in Spyder IDE}{5}{section.2.2}
+\contentsline {section}{\numberline {2.3}Use of LuxPy package in Jupyter notebook}{6}{section.2.3}
+\contentsline {chapter}{\numberline {3}Imported (required) packages}{7}{chapter.3}
+\contentsline {section}{\numberline {3.1}Core}{7}{section.3.1}
+\contentsline {section}{\numberline {3.2}3e party}{7}{section.3.2}
+\contentsline {chapter}{\numberline {4}Luxpy package structure}{9}{chapter.4}
+\contentsline {section}{\numberline {4.1}Utils sub-package}{9}{section.4.1}
+\contentsline {subsection}{\numberline {4.1.1}helpers/}{9}{subsection.4.1.1}
+\contentsline {subsubsection}{Module with helper functions}{9}{subsubsection*.4}
+\contentsline {subsection}{\numberline {4.1.2}math/}{15}{subsection.4.1.2}
+\contentsline {subsubsection}{Module with useful math functions}{15}{subsubsection*.19}
+\contentsline {section}{\numberline {4.2}Spectrum sub-package}{23}{section.4.2}
+\contentsline {subsection}{\numberline {4.2.1}basics/}{23}{subsection.4.2.1}
+\contentsline {subsubsection}{spectrum: sub-package supporting basic spectral calculations}{24}{subsubsection*.40}
+\contentsline {paragraph}{spectrum/cmf.py}{24}{paragraph*.41}
+\contentsline {paragraph}{spectrum/spectral.py}{24}{paragraph*.42}
+\contentsline {paragraph}{spectrum/spectral\_databases.py}{25}{paragraph*.43}
+\contentsline {paragraph}{References}{26}{paragraph*.44}
+\contentsline {section}{\numberline {4.3}Color sub-package}{36}{section.4.3}
+\contentsline {subsection}{\numberline {4.3.1}utils/}{36}{subsection.4.3.1}
+\contentsline {subsubsection}{Module with functions related to plotting of color data}{36}{subsubsection*.60}
+\contentsline {subsection}{\numberline {4.3.2}ctf/}{43}{subsection.4.3.2}
+\contentsline {subsubsection}{Module with functions related to basic colorimetry}{43}{subsubsection*.69}
+\contentsline {paragraph}{Note}{43}{paragraph*.70}
+\contentsline {paragraph}{colortransforms.py}{43}{paragraph*.71}
+\contentsline {subparagraph}{Chromaticity / colorspace functions}{44}{subparagraph*.72}
+\contentsline {paragraph}{References}{44}{paragraph*.73}
+\contentsline {subsubsection}{Extension of basic colorimetry module}{51}{subsubsection*.96}
+\contentsline {subsection}{\numberline {4.3.3}cct/}{52}{subsection.4.3.3}
+\contentsline {subsubsection}{cct: Module with functions related to correlated color temperature calculations}{52}{subsubsection*.99}
+\contentsline {subsection}{\numberline {4.3.4}cat/}{59}{subsection.4.3.4}
+\contentsline {subsubsection}{cat: Module supporting chromatic adaptation transforms (corresponding colors)}{59}{subsubsection*.110}
+\contentsline {subsection}{\numberline {4.3.5}cam/}{65}{subsection.4.3.5}
+\contentsline {subsubsection}{cam: sub-package with color appearance models}{65}{subsubsection*.118}
+\contentsline {subsection}{\numberline {4.3.6}deltaE/}{81}{subsection.4.3.6}
+\contentsline {subsubsection}{Module for color difference calculations}{81}{subsubsection*.153}
+\contentsline {subsection}{\numberline {4.3.7}cri/}{85}{subsection.4.3.7}
+\contentsline {subsubsection}{cri: sub-package suppporting color rendition calculations (colorrendition.py)}{86}{subsubsection*.158}
+\contentsline {paragraph}{utils/init\_cri\_defaults\_database.py}{86}{paragraph*.159}
+\contentsline {paragraph}{utils/DE\_scalers.py}{86}{paragraph*.160}
+\contentsline {paragraph}{utils/helpers.py}{87}{paragraph*.161}
+\contentsline {paragraph}{utils/graphics.py}{87}{paragraph*.162}
+\contentsline {paragraph}{indices/indices.py}{87}{paragraph*.163}
+\contentsline {paragraph}{indices/mcri.py}{88}{paragraph*.164}
+\contentsline {paragraph}{indices/cqs.py}{88}{paragraph*.165}
+\contentsline {paragraph}{iestm30/iestm30\_metrics.py}{88}{paragraph*.166}
+\contentsline {paragraph}{iestm30/iestm30\_graphics.py}{88}{paragraph*.167}
+\contentsline {paragraph}{VFPX}{88}{paragraph*.168}
+\contentsline {subsection}{\numberline {4.3.8}cri/VFPX/}{115}{subsection.4.3.8}
+\contentsline {section}{\numberline {4.4}Classes}{129}{section.4.4}
+\contentsline {section}{\numberline {4.5}Toolboxes}{130}{section.4.5}
+\contentsline {subsection}{\numberline {4.5.1}photbiochem/}{130}{subsection.4.5.1}
+\contentsline {subsubsection}{Module for calculating CIE (TN003:2015) photobiological quantities}{130}{subsubsection*.215}
+\contentsline {subsubsection}{Module for calculation of cyanosis index (AS/NZS 1680.2.5:1997)}{131}{subsubsection*.216}
+\contentsline {subsection}{\numberline {4.5.2}indvcmf/}{134}{subsection.4.5.2}
+\contentsline {subsubsection}{Module for Individual Observer lms-CMFs (Asano, 2016)}{134}{subsubsection*.221}
+\contentsline {paragraph}{References}{135}{paragraph*.222}
+\contentsline {paragraph}{Note}{135}{paragraph*.223}
+\contentsline {subsection}{\numberline {4.5.3}spdbuild/}{139}{subsection.4.5.3}
+\contentsline {subsubsection}{Module for building and optimizing SPDs}{139}{subsubsection*.229}
+\contentsline {subsection}{\numberline {4.5.4}hypspcim/}{154}{subsection.4.5.4}
+\contentsline {subsubsection}{Module for hyper spectral image simulation}{154}{subsubsection*.244}
+\contentsline {chapter}{\numberline {5}Indices and tables}{157}{chapter.5}
+\contentsline {chapter}{Python Module Index}{159}{section*.246}
