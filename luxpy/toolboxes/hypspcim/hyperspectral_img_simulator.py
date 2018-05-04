@@ -300,9 +300,10 @@ def render_image(img = None, spd = None, rfl = None, out = 'img_hyp', \
         if use_plt_show == False:
             #show rendered image using cv2:    
             cv2.imshow(img_original_rendered_str ,cv2.cvtColor(img_original_rendered.astype(np.float32), cv2.COLOR_RGB2BGR))
-        
+            cv2.waitKey(0)
             if stack_test_ref == 0: # show both in sep. figures
                 cv2.imshow(img_str ,cv2.cvtColor(img.astype(np.float32), cv2.COLOR_RGB2BGR))
+                cv2.waitKey(0)
         else:
             # show images using pyplot.show():
             plt.figure()
@@ -315,8 +316,9 @@ def render_image(img = None, spd = None, rfl = None, out = 'img_hyp', \
                 plt.figure()
                 plt.imshow(img_str)
                 plt.title(img_str)
-                plt.gca().get_xaxis().set_ticklabels([])
-                plt.gca().get_yaxis().set_ticklabels([])
+                plt.axis('off')
+#                plt.gca().get_xaxis().set_ticklabels([])
+#                plt.gca().get_yaxis().set_ticklabels([])
       
     if 'img_hyp' in out.split(','):
         # Create hyper_spectral image:
