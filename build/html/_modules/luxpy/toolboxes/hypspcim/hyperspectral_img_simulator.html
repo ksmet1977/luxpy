@@ -281,11 +281,12 @@
 <div class="viewcode-block" id="render_image"><a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.hypspcim.render_image">[docs]</a><span class="k">def</span> <span class="nf">render_image</span><span class="p">(</span><span class="n">img</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">spd</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">rfl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;img_hyp&#39;</span><span class="p">,</span> \
                  <span class="n">refspd</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> \
                  <span class="n">cspace</span> <span class="o">=</span> <span class="s1">&#39;ipt&#39;</span><span class="p">,</span> <span class="n">cspace_tf</span> <span class="o">=</span> <span class="p">{},</span>\
-                 <span class="n">k_neighbours</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="n">show</span> <span class="o">=</span> <span class="p">(</span><span class="kc">True</span><span class="p">,</span><span class="kc">True</span><span class="p">),</span>
+                 <span class="n">k_neighbours</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="n">show</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
                  <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">show_ref_img</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>\
                  <span class="n">stack_test_ref</span> <span class="o">=</span> <span class="mi">12</span><span class="p">,</span>\
                  <span class="n">write_to_file</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                 <span class="n">use_plt_show</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+                 <span class="n">use_plt_show</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>\
+                 <span class="n">use_plt_read</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Render image under specified light source spd.</span>
 <span class="sd">    </span>
@@ -344,10 +345,13 @@
 <span class="sd">            |   - 2: only show/write ref</span>
 <span class="sd">            |   - 0: show both, write test</span>
 <span class="sd">        :use_plt_show:</span>
-<span class="sd">            | False, optional</span>
+<span class="sd">            | True, optional</span>
 <span class="sd">            |  - True: Use matplotlib.pyplot.imshow </span>
 <span class="sd">            |  - False: use open-cv imshow() </span>
-<span class="sd">    </span>
+<span class="sd">        :use_plt_read:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            |  - False: use cv2 (openCV)</span>
+<span class="sd">            |  - True: try matplotlib.imread()</span>
 <span class="sd">    Returns:</span>
 <span class="sd">        :returns: </span>
 <span class="sd">            | img_hyp, img_ren, </span>
@@ -355,13 +359,16 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     
     <span class="c1"># Get image:</span>
+    <span class="k">if</span> <span class="n">use_plt_read</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">imread</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">imread</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2RGB</span><span class="p">)</span> <span class="c1"># convert from BGR of opencv to RGB format</span>
+   
     <span class="k">if</span> <span class="n">img</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">img</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
-            <span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">img</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
-            <span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2RGB</span><span class="p">)</span> <span class="c1"># convert from BGR of opencv to RGB format</span>
+            <span class="n">img</span> <span class="o">=</span> <span class="n">imread</span><span class="p">(</span><span class="n">img</span><span class="p">)</span> 
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">_HYPSPCIM_DEFAULT_IMAGE</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2RGB</span><span class="p">)</span> <span class="c1"># convert from BGR of opencv to RGB format</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">imread</span><span class="p">(</span><span class="n">_HYPSPCIM_DEFAULT_IMAGE</span><span class="p">)</span>
     
     
     <span class="c1"># Convert to 2D format:</span>
@@ -445,9 +452,10 @@
         <span class="k">if</span> <span class="n">use_plt_show</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
             <span class="c1">#show rendered image using cv2:    </span>
             <span class="n">cv2</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img_original_rendered_str</span> <span class="p">,</span><span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">img_original_rendered</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_RGB2BGR</span><span class="p">))</span>
-        
+            <span class="n">cv2</span><span class="o">.</span><span class="n">waitKey</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">stack_test_ref</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="c1"># show both in sep. figures</span>
                 <span class="n">cv2</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img_str</span> <span class="p">,</span><span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_RGB2BGR</span><span class="p">))</span>
+                <span class="n">cv2</span><span class="o">.</span><span class="n">waitKey</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># show images using pyplot.show():</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
@@ -460,8 +468,9 @@
                 <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
                 <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img_str</span><span class="p">)</span>
                 <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">img_str</span><span class="p">)</span>
-                <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">get_xaxis</span><span class="p">()</span><span class="o">.</span><span class="n">set_ticklabels</span><span class="p">([])</span>
-                <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">get_yaxis</span><span class="p">()</span><span class="o">.</span><span class="n">set_ticklabels</span><span class="p">([])</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="c1">#                plt.gca().get_xaxis().set_ticklabels([])</span>
+<span class="c1">#                plt.gca().get_yaxis().set_ticklabels([])</span>
       
     <span class="k">if</span> <span class="s1">&#39;img_hyp&#39;</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">):</span>
         <span class="c1"># Create hyper_spectral image:</span>
@@ -484,11 +493,12 @@
     <span class="n">S</span> <span class="o">=</span> <span class="n">spb</span><span class="o">.</span><span class="n">spd_builder</span><span class="p">(</span><span class="n">peakwl</span> <span class="o">=</span> <span class="p">[</span><span class="mi">460</span><span class="p">,</span><span class="mi">525</span><span class="p">,</span><span class="mi">590</span><span class="p">],</span><span class="n">fwhm</span><span class="o">=</span><span class="p">[</span><span class="mi">20</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">20</span><span class="p">],</span><span class="n">target</span><span class="o">=</span><span class="mi">4000</span><span class="p">,</span> <span class="n">tar_type</span> <span class="o">=</span> <span class="s1">&#39;cct&#39;</span><span class="p">)</span> 
     <span class="n">img</span> <span class="o">=</span> <span class="n">_HYPSPCIM_DEFAULT_IMAGE</span>
     <span class="n">img_hyp</span><span class="p">,</span><span class="n">img_ren</span> <span class="o">=</span> <span class="n">render_image</span><span class="p">(</span><span class="n">img</span> <span class="o">=</span> <span class="n">img</span><span class="p">,</span> <span class="n">cspace</span> <span class="o">=</span> <span class="s1">&#39;ipt&#39;</span><span class="p">,</span><span class="n">spd</span> <span class="o">=</span> <span class="n">S</span><span class="p">,</span> 
-                                 <span class="n">D</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-                                 <span class="n">show</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">show_ref_img</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-                                 <span class="n">use_plt_show</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">stack_test_ref</span> <span class="o">=</span> <span class="mi">21</span><span class="p">,</span>
+                                 <span class="n">D</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">show_ref_img</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                                 <span class="n">stack_test_ref</span> <span class="o">=</span> <span class="mi">21</span><span class="p">,</span>
                                  <span class="n">out</span><span class="o">=</span><span class="s1">&#39;img_hyp,img_ren&#39;</span><span class="p">,</span>
-                                 <span class="n">write_to_file</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>    
+                                 <span class="n">write_to_file</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                 <span class="n">use_plt_show</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                                 <span class="n">use_plt_read</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>    
     
         
 

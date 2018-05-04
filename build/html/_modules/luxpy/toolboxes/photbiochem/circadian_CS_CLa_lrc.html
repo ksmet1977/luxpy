@@ -408,10 +408,10 @@
         
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
      
-    <span class="n">E</span> <span class="o">=</span> <span class="p">[</span><span class="mi">100</span><span class="p">,</span><span class="mi">200</span><span class="p">,</span><span class="mi">50</span><span class="p">]</span>
+    <span class="n">E</span> <span class="o">=</span> <span class="mi">100</span>
     <span class="n">El</span> <span class="o">=</span> <span class="n">_CIE_ILLUMINANTS</span><span class="p">[</span><span class="s1">&#39;D65&#39;</span><span class="p">]</span>
     <span class="n">S</span> <span class="o">=</span> <span class="n">lx</span><span class="o">.</span><span class="n">_IESTM30</span><span class="p">[</span><span class="s1">&#39;S&#39;</span><span class="p">][</span><span class="s1">&#39;data&#39;</span><span class="p">][:</span><span class="mi">4</span><span class="p">]</span>
-    <span class="n">CS</span><span class="p">,</span> <span class="n">CLa</span> <span class="o">=</span> <span class="n">spd_to_CS_CLa_lrc</span><span class="p">(</span><span class="n">El</span> <span class="o">=</span> <span class="n">S</span><span class="p">,</span> <span class="n">E</span> <span class="o">=</span> <span class="n">E</span><span class="p">,</span> \
+    <span class="n">CS</span><span class="p">,</span> <span class="n">CLa</span> <span class="o">=</span> <span class="n">spd_to_CS_CLa_lrc</span><span class="p">(</span><span class="n">El</span> <span class="o">=</span> <span class="n">El</span><span class="p">,</span> <span class="n">E</span> <span class="o">=</span> <span class="n">E</span><span class="p">,</span> \
                                     <span class="n">sum_sources</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">interpolate_sources</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;out&#39;</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">CS</span><span class="p">)</span>
