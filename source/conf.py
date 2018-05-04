@@ -214,4 +214,4 @@ epub_exclude_files = ['search.html']
 
 
 autodoc_member_order = 'bysource'
-autodoc_mock_imports = ["python-opencv, numpy, scipy, matplotlib"]
+autodoc_mock_imports = ["python-opencv, numpy, scipy, matplotlib, pandas, pd, np"]
