@@ -129,11 +129,12 @@ def xyz_to_rfl(xyz, rfl = None, out = 'rfl_est', \
 def render_image(img = None, spd = None, rfl = None, out = 'img_hyp', \
                  refspd = None, D = None, cieobs = _CIEOBS, \
                  cspace = 'ipt', cspace_tf = {},\
-                 k_neighbours = 4, show = (True,True),
+                 k_neighbours = 4, show = True,
                  verbosity = 0, show_ref_img = True,\
                  stack_test_ref = 12,\
                  write_to_file = None,
-                 use_plt_show = False):
+                 use_plt_show = True,\
+                 use_plt_read = True):
     """
     Render image under specified light source spd.
     
@@ -192,10 +193,13 @@ def render_image(img = None, spd = None, rfl = None, out = 'img_hyp', \
             |   - 2: only show/write ref
             |   - 0: show both, write test
         :use_plt_show:
-            | False, optional
+            | True, optional
             |  - True: Use matplotlib.pyplot.imshow 
             |  - False: use open-cv imshow() 
-    
+        :use_plt_read:
+            | True, optional
+            |  - False: use cv2 (openCV)
+            |  - True: try matplotlib.imread()
     Returns:
         :returns: 
             | img_hyp, img_ren, 
@@ -203,13 +207,16 @@ def render_image(img = None, spd = None, rfl = None, out = 'img_hyp', \
     """
     
     # Get image:
+    if use_plt_read == True:
+        imread = lambda x: plt.imread(x)
+    else:
+        imread = lambda x: cv2.cvtColor(cv2.imread(x, 1), cv2.COLOR_BGR2RGB) # convert from BGR of opencv to RGB format
+   
     if img is not None:
         if isinstance(img,str):
-            img = cv2.imread(img,1)
-            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB) # convert from BGR of opencv to RGB format
+            img = imread(img) 
     else:
-        img = cv2.imread(_HYPSPCIM_DEFAULT_IMAGE,1)
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB) # convert from BGR of opencv to RGB format
+        img = imread(_HYPSPCIM_DEFAULT_IMAGE)
     
     
     # Convert to 2D format:
@@ -332,11 +339,12 @@ if __name__ == '__main__':
     S = spb.spd_builder(peakwl = [460,525,590],fwhm=[20,40,20],target=4000, tar_type = 'cct') 
     img = _HYPSPCIM_DEFAULT_IMAGE
     img_hyp,img_ren = render_image(img = img, cspace = 'ipt',spd = S, 
-                                 D=1,
-                                 show = True, show_ref_img = True,
-                                 use_plt_show = False, stack_test_ref = 21,
+                                 D=1, show_ref_img = True,
+                                 stack_test_ref = 21,
                                  out='img_hyp,img_ren',
-                                 write_to_file = None)    
+                                 write_to_file = None,
+                                 use_plt_show = True,
+                                 use_plt_read = True)    
     
         
 
