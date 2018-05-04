@@ -19,12 +19,17 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../..'))
+sys.path.append(os.path.join(os.path.abspath(os.pardir)))
+#sys.path.insert(0, os.path.abspath('../..'))
 
-# import mock
-# MOCK_MODULES = ['matplotlib.externals']
-# for mod_name in MOCK_MODULES:
-	# sys.modules[mod_name] = mock.Mock()
+# Get the project root dir, which is the parent dir of this
+cwd = os.getcwd()
+project_root = os.path.dirname(cwd)
+
+# Insert the project root dir as the first element in the PYTHONPATH.
+# This lets us ensure that the source package is imported, and that its
+# version is used.
+sys.path.insert(0, project_root)
 
 # -- General configuration ------------------------------------------------
 
