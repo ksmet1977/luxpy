@@ -14,6 +14,7 @@ photbiochem/
 
 .. automodule:: luxpy.toolboxes.photbiochem
    :members:
+   :undoc-members:
    :private-members:
    
 
@@ -28,6 +29,7 @@ indvcmf/
 
 .. automodule:: luxpy.toolboxes.indvcmf
    :members:
+   :undoc-members:
    :private-members:
    
 spdbuild/ 
@@ -41,6 +43,7 @@ spdbuild/
 
 .. automodule:: luxpy.toolboxes.spdbuild
    :members:
+   :undoc-members:
    :private-members:  
    
    
@@ -55,4 +58,5 @@ hypspcim/
 
 .. automodule:: luxpy.toolboxes.hypspcim
    :members:
+   :undoc-members:
    :private-members:

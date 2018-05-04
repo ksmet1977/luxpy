@@ -13,4 +13,6 @@ basics/
 
 .. automodule:: luxpy.spectrum
    :members:
+   :undoc-members:
    :private-members:
+   

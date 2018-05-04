@@ -11,6 +11,7 @@ utils/
 
 .. automodule:: luxpy.color.utils
    :members:
+   :undoc-members:
    :private-members:
    
 ctf/ 
@@ -24,10 +25,12 @@ ctf/
 
 .. automodule:: luxpy.color.ctf.colortransforms
    :members:
+   :undoc-members:
    :private-members:
    
 .. automodule:: luxpy.color.ctf.colortf
    :members:
+   :undoc-members:
    :private-members:
    
    
@@ -41,6 +44,7 @@ cct/
 
 .. automodule:: luxpy.color.cct
    :members:
+   :undoc-members:
    :private-members:
    
 cat/ 
@@ -53,6 +57,7 @@ cat/
 
 .. automodule:: luxpy.color.cat
    :members:
+   :undoc-members:
    :private-members:
    
 cam/ 
@@ -68,6 +73,7 @@ cam/
 
 .. automodule:: luxpy.color.cam
    :members:
+   :undoc-members:
    :private-members:
    
    
@@ -81,6 +87,7 @@ deltaE/
 
 .. automodule:: luxpy.color.deltaE
    :members:
+   :undoc-members:
    :private-members:
    
    
@@ -117,6 +124,7 @@ cri/
 
 .. automodule:: luxpy.color.cri
    :members:
+   :undoc-members:
    :private-members:
    
 cri/VFPX/
@@ -131,4 +139,5 @@ cri/VFPX/
 
 .. automodule:: luxpy.color.cri.VFPX
    :members:
+   :undoc-members:
    :private-members:

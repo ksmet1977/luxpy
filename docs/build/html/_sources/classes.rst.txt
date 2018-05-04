@@ -11,10 +11,12 @@ Classes
 
 .. autoclass:: luxpy.classes.SPD
    :members:
+   :undoc-members:
    :private-members:
    
 .. autoclass:: luxpy.classes.CDATA
    :members:
+   :undoc-members:
    :private-members:
    
    

@@ -11,6 +11,7 @@ helpers/
 
 .. automodule:: luxpy.utils.helpers
    :members:
+   :undoc-members:
    :private-members:
 
 math/
@@ -23,4 +24,5 @@ math/
 
 .. automodule:: luxpy.utils.math
    :members:
+   :undoc-members:
    :private-members:
