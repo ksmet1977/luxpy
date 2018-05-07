@@ -16,7 +16,7 @@ Module for color difference calculations
 from luxpy import np, np2d, cam, _COLORTF_DEFAULT_WHITE_POINT, _CSPACE, colortf, xyz_to_lab
 
 
-__all__ = ['DE_camucs', 'DE2000','DE_cspace', 'deltaE']
+__all__ = ['DE_camucs', 'DE2000','DE_cspace']
 
 def process_DEi(DEi, DEtype = 'jab', avg = None, avg_axis = 0, out = 'DEi'):
     """

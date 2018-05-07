@@ -18,7 +18,7 @@ References:
     <https://doi.org/10.1364/JOSAA.33.00A319>`_
     .. 
 """
-from luxpy import np, math, _CIE_ILLUMINANTS, np2d, put_args_in_db, spd_to_xyz, asplit, ajoin
+from luxpy import np, math, _CIE_ILLUMINANTS, _MUNSELL, _CMF, np2d, put_args_in_db, spd_to_xyz, cie_interp,asplit, ajoin
 
 _CAM_SWW16_AXES = {'lab_cam_sww16' : ["L (lab_cam_sww16)", "a (lab_cam_sww16)", "b (lab_cam_sww16)"]}
 
@@ -106,6 +106,7 @@ def cam_sww16(data, dataw = None, Yb = 20.0, Lw = 400.0, relative = True, \
         <https://doi.org/10.1364/JOSAA.33.00A319>`_
 
     """
+
     # get model parameters
     args = locals().copy() 
     if parameters is None:
@@ -138,16 +139,26 @@ def cam_sww16(data, dataw = None, Yb = 20.0, Lw = 400.0, relative = True, \
     #initialize data and camout:
     data = np2d(data).copy() # stimulus data (can be upto NxMx3 for xyz, or [N x (M+1) x wl] for spd))
     dataw = np2d(dataw).copy() # white point (can be upto Nx3 for xyz, or [(N+1) x wl] for spd)
+        
+    if inputtype == 'xyz':  #make dataw have same dimensions as data      
+        if dataw.shape[0] == 1: #make dataw have same lights source dimension size as data
+            if data.ndim == 3: # data array contains rfl data under several light sources
+                dataw = np.repeat(dataw,data.shape[1],axis=0)
+#            else: # data array contains only either ligthsource or rfl data
+#                dataw = np.repeat(dataw,data.shape[0],axis=0)
+    else:
+        dataw = np.vstack((dataw[0],np.repeat(dataw[1:], data.shape[0]-1, axis = 0)))
+    
+    if data.ndim == 2: # avoid looping if not necessary
+        data = np.expand_dims(data, axis = 1)  #add light source axis
 
-    if len(data.shape)==2: # avoid looping if not necessary
-        data = np.expand_dims(data, axis = 0) 
 
-    if dataw.shape[0] == 1: #make dataw have same lights source dimension size as data
-        if data.ndim == 3: # data array contains rfl data under several light sources
-            dataw = np.repeat(dataw,data.shape[1],axis=0)
-        else: # data array contains only either ligthsource or rfl data
-            dataw = np.repeat(dataw,data.shape[0],axis=0)
-            
+    if (data.shape[0] > data.shape[1]): # loop over shortest dim.
+        flipaxis0and1 = True
+        data = np.transpose(data, axes = (1,0,2))
+    else:
+        flipaxis0and1 = False
+  
     dshape = list(data.shape)
     dshape[-1] = 3 # requested number of correlates: l_int, a_int, b_int
     camout = np.nan*np.ones(dshape)
@@ -159,6 +170,7 @@ def cam_sww16(data, dataw = None, Yb = 20.0, Lw = 400.0, relative = True, \
         if (inputtype != 'xyz') :
             if relative == True:
                 dataw[i+1] = Lw*dataw[i+1]/100.0 # make absolute
+            #print(dataw)
             xyzw = spd_to_xyz(np.vstack((dataw[0],dataw[i+1])), cieobs = cieobs, relative = False)/_CMF[cieobs]['K']
             lmsf = (Yb/100.0)*683.0*np.dot(Mxyz2lms,xyzw.T).T # calculate adaptation field and convert to l,m,s
 
@@ -175,20 +187,18 @@ def cam_sww16(data, dataw = None, Yb = 20.0, Lw = 400.0, relative = True, \
                 dataw[i] = Lw*dataw[i]/100.0 # make absolute
             lmsw = 683.0* np.dot(Mxyz2lms, dataw[i].T).T /_CMF[cieobs]['K']  # convert to lms
             lmsf = (Yb/100.0)*lmsw
-
             if (direction == 'forward'):
                 if relative == True:
                     data[i] = Lw*data[i]/100.0 # make absolute
                 lmst = 683.0* np.dot(Mxyz2lms, data[i].T).T /_CMF[cieobs]['K'] # convert to lms
             else:
                  lmst = lmsf # put lmsf in lmst for inverse-mode
-                 
-             
+
         # stage 2: calculate cone outputs of stimulus lmstp
         lmstp = math.erf(Cc*(np.log(lmst/lms0) + Cf*np.log(lmsf/lms0)))
         lmsfp = math.erf(Cc*(np.log(lmsf/lms0) + Cf*np.log(lmsf/lms0)))
         lmstp = np.vstack((lmsfp,lmstp)) # add adaptation field lms temporarily to lmsp for quick calculation
-
+        
         # stage 3: calculate optic nerve signals, lam*, alphp, betp:
         lstar,alph, bet = asplit(np.dot(MAab, lmstp.T).T)
         alphp = cga1[0]*alph
@@ -206,6 +216,7 @@ def cam_sww16(data, dataw = None, Yb = 20.0, Lw = 400.0, relative = True, \
         bet_int = cab_int[0]*(np.sin(cab_int[1]*np.pi/180.0)*alphpp + np.cos(cab_int[1]*np.pi/180.0)*betpp)
         lstar_out = lstar_int
         
+        
         if direction == 'forward':
             if Ccwb is None:
                 alph_out = alph_int - cab_out[0]
@@ -217,7 +228,6 @@ def cam_sww16(data, dataw = None, Yb = 20.0, Lw = 400.0, relative = True, \
                 bet_out = bet_int -  Ccwb[1]*bet_int[0]
                 
             camout[i] = np.vstack((lstar_out[1:],alph_out[1:],bet_out[1:])).T # stack together and remove adaptation field from vertical stack
-        
         elif direction == 'inverse':
             labf_int = np.hstack((lstar_int[0],alph_int[0],bet_int[0]))
             
@@ -270,6 +280,9 @@ def cam_sww16(data, dataw = None, Yb = 20.0, Lw = 400.0, relative = True, \
             
             camout[i] = xyzt
     
+    if flipaxis0and1 == True: # loop over shortest dim.
+        camout = np.transpose(camout, axes = (1,0,2))
+
     if camout.shape[0] == 1:
         camout = np.squeeze(camout,axis = 0)
         
@@ -277,20 +290,44 @@ def cam_sww16(data, dataw = None, Yb = 20.0, Lw = 400.0, relative = True, \
 
 
 #------------------------------------------------------------------------------
-def xyz_to_lab_cam_sww16(data, dataw = None, Yb = 20.0, Lw = 400.0, relative = True,\
+def xyz_to_lab_cam_sww16(xyz, xyzw = None, Yb = 20.0, Lw = 400.0, relative = True,\
                          parameters = None, inputtype = 'xyz', cieobs = '2006_10', **kwargs):
     """
     Wrapper function for cam_sww16 forward mode with 'xyz' input.
     
     | For help on parameter details: ?luxpy.cam.cam_sww16
     """
-    return cam_sww16(data, dataw = dataw, Yb = Yb, Lw = Lw, relative = relative, parameters = parameters, inputtype = 'xyz', direction = 'forward', cieobs = cieobs)
+    return cam_sww16(xyz, dataw = xyzw, Yb = Yb, Lw = Lw, relative = relative, parameters = parameters, inputtype = 'xyz', direction = 'forward', cieobs = cieobs)
                 
-def lab_cam_sww16_to_xyz(data, dataw = None, Yb = 20.0, Lw = 400.0, relative = True, \
+def lab_cam_sww16_to_xyz(lab, xyzw = None, Yb = 20.0, Lw = 400.0, relative = True, \
                          parameters = None, inputtype = 'xyz', cieobs = '2006_10', **kwargs):
     """
     Wrapper function for cam_sww16 inverse mode with 'xyz' input.
     
     | For help on parameter details: ?luxpy.cam.cam_sww16
     """
-    return cam_sww16(data, dataw = dataw, Yb = Yb, Lw = Lw, relative = relative, parameters = parameters, inputtype = 'xyz', direction = 'inverse', cieobs = cieobs)
+    return cam_sww16(lab, dataw = xyzw, Yb = Yb, Lw = Lw, relative = relative, parameters = parameters, inputtype = 'xyz', direction = 'inverse', cieobs = cieobs)
+
+
+#------------------------------------------------------------------------------
+if __name__ == '__main__':
+    C = _CIE_ILLUMINANTS['C'].copy()
+    #C = np.vstack((C,cie_interp(_CIE_ILLUMINANTS['D65'],C[0],kind='spd')[1:]))
+    M = _MUNSELL.copy()
+    rflM = M['R']
+    cieobs = '2006_10'
+    xyz, xyzw = spd_to_xyz(C, cieobs = cieobs, relative = True, rfl = rflM, out = 2)
+    Lw = 400
+    Yb = 20
+    lab = cam_sww16(xyz, dataw = xyzw, Yb = Yb, Lw = Lw, relative = True, \
+              parameters = None, inputtype = 'xyz', direction = 'forward', \
+              cieobs = cieobs)
+    xyz_ = cam_sww16(lab, dataw = xyzw, Yb = Yb, Lw = Lw, relative = True, \
+              parameters = None, inputtype = 'xyz', direction = 'inverse', \
+              cieobs = cieobs)
+    print(xyz-xyz_)
+
+
+    
+    
+    

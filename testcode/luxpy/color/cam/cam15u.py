@@ -31,8 +31,8 @@ Module with CAM15u color appearance model
             Opt. Express, vol. 23, no. 10, pp. 13455–13466. 
             <https://www.osapublishing.org/oe/abstract.cfm?uri=oe-23-10-13455&origin=search>`_
 """
-from luxpy import np, np2d, spd_to_xyz, asplit, ajoin
-from .colorappearancemodels import hue_angle, hue_quadrature
+from luxpy import np, _CIE_ILLUMINANTS, _MUNSELL, np2d, spd_to_xyz, asplit, ajoin
+from luxpy.color.cam.colorappearancemodels import hue_angle, hue_quadrature
 
 _CAM15U_AXES = {'qabW_cam15u' : ["Q (cam15u)", "aW (cam15u)", "bW (cam15u)"]} 
 
@@ -116,6 +116,15 @@ def cam15u(data, fov = 10.0, inputtype = 'xyz', direction = 'forward', outin = '
     data = np2d(data)
     if len(data.shape)==2:
         data = np.expand_dims(data, axis = 0) # avoid looping if not necessary
+    
+    if (data.shape[0] > data.shape[1]): # loop over shortest dim.
+        flipaxis0and1 = True
+        data = np.transpose(data, axes = (1,0,2))
+    else:
+        flipaxis0and1 = False
+
+    
+    
     dshape = list(data.shape)
     dshape[-1] = len(outin) # requested number of correlates
     camout = np.nan*np.ones(dshape)
@@ -130,37 +139,40 @@ def cam15u(data, fov = 10.0, inputtype = 'xyz', direction = 'forward', outin = '
             rgb = np.dot(Mxyz2rgb,data[i].T).T
        
         if direction == 'forward':
-
+            
             # apply cube-root compression:
             rgbc = rgb**(cp)
-        
+            
             # calculate achromatic and color difference signals, A, a, b:
             Aab = np.dot(MAab, rgbc.T).T
             A,a,b = asplit(Aab)
+            A = cA*A
+            a = ca*a
+            b = cb*b
 
             # calculate colorfullness like signal M:
             M = cM*((a**2.0 + b**2.0)**0.5)
-            
+
             # calculate brightness Q:
             Q = A + cHK[0]*M**cHK[1] # last term is contribution of Helmholtz-Kohlrausch effect on brightness
-            
-            
+                      
             # calculate saturation, s:
             s = M / Q
             
             # calculate amount of white, W:
             W = 100.0 / (1.0 + cW[0]*(s**cW[1]))
-            
+
             #  adjust Q for size (fov) of stimulus (matter of debate whether to do this before or after calculation of s or W, there was no data on s, M or W for different sized stimuli: after)
             Q = Q*(fov/10.0)**cfov
             
             # calculate hue, h and Hue quadrature, H:
             h = hue_angle(a,b, htype = 'deg')
+
             if 'H' in outin:
                 H = hue_quadrature(h, unique_hue_data = unique_hue_data)
             else:
                 H = None
-            
+
             # calculate cart. co.:
             if 'aM' in outin:
                 aM = M*np.cos(h*np.pi/180.0)
@@ -216,6 +228,7 @@ def cam15u(data, fov = 10.0, inputtype = 'xyz', direction = 'forward', outin = '
             
             # calculate achromatic signal, A from Q and M:
             A = Q - cHK[0]*M**cHK[1]
+            A = A/cA
             
             # calculate hue angle:
             h = hue_angle(a,b, htype = 'rad')
@@ -223,6 +236,8 @@ def cam15u(data, fov = 10.0, inputtype = 'xyz', direction = 'forward', outin = '
             # calculate a,b from M and h:
             a = (M/cM)*np.cos(h)
             b = (M/cM)*np.sin(h)
+            a = a/ca
+            b = b/cb
 
             # create Aab:
             Aab = ajoin((A,a,b))    
@@ -239,24 +254,39 @@ def cam15u(data, fov = 10.0, inputtype = 'xyz', direction = 'forward', outin = '
             
             camout[i] = xyz
     
+    if flipaxis0and1 == True: # loop over shortest dim.
+        camout = np.transpose(camout, axes = (1,0,2))
+    
     if camout.shape[0] == 1:
         camout = np.squeeze(camout,axis = 0)
     
     return camout
  
 #------------------------------------------------------------------------------
-def xyz_to_qabW_cam15u(data, fov = 10.0, parameters = None, **kwargs):
+def xyz_to_qabW_cam15u(xyz, fov = 10.0, parameters = None, **kwargs):
     """
     Wrapper function for cam15u forward mode with 'Q,aW,bW' output.
     
     | For help on parameter details: ?luxpy.cam.cam15u
     """
-    return cam15u(data, fov = fov, direction = 'forward', outin = 'Q,aW,bW', parameters = parameters)
+    return cam15u(xyz, fov = fov, direction = 'forward', inputtype = 'xyz', outin = 'Q,aW,bW', parameters = parameters)
                 
-def qabW_cam15u_to_xyz(data, fov = 10.0, parameters = None, **kwargs):
+def qabW_cam15u_to_xyz(qab, fov = 10.0, parameters = None, **kwargs):
     """
     Wrapper function for cam15u inverse mode with 'Q,aW,bW' input.
     
     | For help on parameter details: ?luxpy.cam.cam15u
     """
-    return cam15u(data, fov = fov, direction = 'inverse', outin = 'Q,aW,bW', parameters = parameters)
+    return cam15u(qab, fov = fov, direction = 'inverse', inputtype = 'xyz', outin = 'Q,aW,bW', parameters = parameters)
+
+
+#------------------------------------------------------------------------------
+if __name__ == '__main__':
+    C = _CIE_ILLUMINANTS['C'].copy()
+    M = _MUNSELL.copy()
+    rflM = M['R']
+    cieobs = '2006_10'
+    xyz, xyzw = spd_to_xyz(C, cieobs = cieobs, relative = True, rfl = rflM, out = 2)
+    qab = xyz_to_qabW_cam15u(xyzw, fov = 10.0)
+    xyz_ = qabW_cam15u_to_xyz(qab, fov = 10.0)
+    print(xyzw-xyz_)

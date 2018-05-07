@@ -313,11 +313,12 @@ def lms_to_xyz(lms, cieobs = _CIEOBS, M = None, **kwargs):
         M = _CMF[cieobs]['M']
 
     # convert from lms to xyz:
-    if len(ipt.shape) == 3:
+    if len(lms.shape) == 3:
         xyz = np.einsum('ij,klj->kli', np.linalg.inv(M), lms)
     else:
         xyz = np.einsum('ij,lj->li', np.linalg.inv(M), lms)
-
+    
+    return xyz
 
 
 
