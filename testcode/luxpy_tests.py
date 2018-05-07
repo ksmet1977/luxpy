@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #########################################################################
 """
-Module for testing LuxPy toolbox
+Module for testing LuxPy toolbox (v1.3.06)
 ==================================================================
 
 
@@ -108,8 +108,7 @@ print(lab.shape)
 print(xyzw-xyzw_)
 print(xyz-xyz_)
 
-# cams:
-print(xyzw)
+# cam_sww6:
 xyz, xyzw = lx.spd_to_xyz(spds, rfl = rfls, cieobs = '2006_10', out = 2)
 jabw = lx.xyz_to_lab_cam_sww16(xyzw, xyzw=xyzw.copy())
 jab = lx.xyz_to_lab_cam_sww16(xyz, xyzw=xyzw)
@@ -117,5 +116,15 @@ xyzw_ = lx.lab_cam_sww16_to_xyz(jabw, xyzw=xyzw)
 xyz_ = lx.lab_cam_sww16_to_xyz(jab, xyzw=xyzw)
 print(jabw.shape)
 print(jab.shape)
+print(xyzw-xyzw_)
+print(xyz-xyz_)
+
+# cam15u:
+qabw = lx.xyz_to_qabW_cam15u(xyzw, fov=10)
+qab = lx.xyz_to_qabW_cam15u(xyz, fov=10)
+xyzw_ = lx.qabW_cam15u_to_xyz(qabw, fov=10)
+xyz_ = lx.qabW_cam15u_to_xyz(qab, fov=10)
+print(qabw.shape)
+print(qab.shape)
 print(xyzw-xyzw_)
 print(xyz-xyz_)
