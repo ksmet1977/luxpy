@@ -124,11 +124,12 @@ def cam15u(data, fov = 10.0, inputtype = 'xyz', direction = 'forward', outin = '
         flipaxis0and1 = False
 
     
-    
     dshape = list(data.shape)
     dshape[-1] = len(outin) # requested number of correlates
+    if (inputtype != 'xyz') & (direction == 'forward'):
+        dshape[-2] = dshape[-2] - 1 # wavelength row doesn't count & only with forward can the input data be spectral
     camout = np.nan*np.ones(dshape)
-   
+
     for i in range(data.shape[0]):
         
         if (inputtype != 'xyz') & (direction == 'forward'):
@@ -256,6 +257,7 @@ def cam15u(data, fov = 10.0, inputtype = 'xyz', direction = 'forward', outin = '
     
     if flipaxis0and1 == True: # loop over shortest dim.
         camout = np.transpose(camout, axes = (1,0,2))
+
     
     if camout.shape[0] == 1:
         camout = np.squeeze(camout,axis = 0)
@@ -283,10 +285,23 @@ def qabW_cam15u_to_xyz(qab, fov = 10.0, parameters = None, **kwargs):
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
     C = _CIE_ILLUMINANTS['C'].copy()
+    C = np.vstack((C,cie_interp(_CIE_ILLUMINANTS['D65'],C[0],kind='spd')[1:]))
     M = _MUNSELL.copy()
     rflM = M['R']
     cieobs = '2006_10'
+    
+    # Normalize to Lw:
+    Lw = 100
+    xyzw2 = spd_to_xyz(C, cieobs = cieobs, relative = False)
+    for i in np.arange(C.shape[0]-1):
+        C[i+1] = Lw*C[i+1]/xyzw2[i,1]
+
+    
     xyz, xyzw = spd_to_xyz(C, cieobs = cieobs, relative = True, rfl = rflM, out = 2)
     qab = xyz_to_qabW_cam15u(xyzw, fov = 10.0)
+    qab2 = cam15u(C, fov = 10.0, direction = 'forward', inputtype = 'spd', outin = 'Q,aW,bW', parameters = None)
+           
     xyz_ = qabW_cam15u_to_xyz(qab, fov = 10.0)
+    print(qab)
+    print(qab2)
     print(xyzw-xyz_)

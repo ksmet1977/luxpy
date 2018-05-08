@@ -29,7 +29,7 @@ _CAM_SWW16_PARAMETERS['best-fit-all-Munsell'] = {'cLMS': [1.0,1.0,1.0], 'lms0': 
 __all__ = ['_CAM_SWW16_AXES','_CAM_SWW16_PARAMETERS','cam_sww16','xyz_to_lab_cam_sww16','lab_cam_sww16_to_xyz']
 
 #------------------------------------------------------------------------------
-def cam_sww16(data, dataw = None, Yb = 20.0, Lw = 400.0, relative = True, \
+def cam_sww16(data, dataw = None, Yb = 20.0, Lw = 400.0, Ccwb = None, relative = True, \
               parameters = None, inputtype = 'xyz', direction = 'forward', \
               cieobs = '2006_10'):
     """
@@ -56,6 +56,10 @@ def cam_sww16(data, dataw = None, Yb = 20.0, Lw = 400.0, relative = True, \
         :Lw:
             | 400.0, optional
             | Luminance (cd/m²) of white point.
+        :Ccwb:
+            | None,  optional
+            | Degree of cognitive adaptation (white point balancing)
+            | If None: use [..,..] from parameters dict.
         :relative:
             | True or False, optional
             | True: xyz tristimulus values are relative (Yw = 100)
@@ -114,10 +118,9 @@ def cam_sww16(data, dataw = None, Yb = 20.0, Lw = 400.0, relative = True, \
     if isinstance(parameters,str):
         parameters = _CAM_SWW16_PARAMETERS[parameters]
     parameters = put_args_in_db(parameters,args)  #overwrite parameters with other (not-None) args input 
-   
+      
     #unpack model parameters:
     Cc, Ccwb, Cf, Mxyz2lms, cLMS, cab_int, cab_out, calpha, cbeta,cga1, cga2, cgb1, cgb2, cl_int, clambda, lms0  = [parameters[x] for x in sorted(parameters.keys())]
-
     
     # setup default adaptation field:   
     if (dataw is None):
@@ -139,49 +142,49 @@ def cam_sww16(data, dataw = None, Yb = 20.0, Lw = 400.0, relative = True, \
     #initialize data and camout:
     data = np2d(data).copy() # stimulus data (can be upto NxMx3 for xyz, or [N x (M+1) x wl] for spd))
     dataw = np2d(dataw).copy() # white point (can be upto Nx3 for xyz, or [(N+1) x wl] for spd)
-        
-    if inputtype == 'xyz':  #make dataw have same dimensions as data      
+
+    #make first axis of dataw have 'same' dimensions as data:         
+    if (data.ndim == 2): 
+        data = np.expand_dims(data, axis = 1)  #add light source axis 1     
+
+    if inputtype == 'xyz': 
         if dataw.shape[0] == 1: #make dataw have same lights source dimension size as data
-            if data.ndim == 3: # data array contains rfl data under several light sources
-                dataw = np.repeat(dataw,data.shape[1],axis=0)
-#            else: # data array contains only either ligthsource or rfl data
-#                dataw = np.repeat(dataw,data.shape[0],axis=0)
+            dataw = np.repeat(dataw,data.shape[1],axis=0)                
     else:
-        dataw = np.vstack((dataw[0],np.repeat(dataw[1:], data.shape[0]-1, axis = 0)))
+        if dataw.shape[0] == 2:
+            dataw = np.vstack((dataw[0],np.repeat(dataw[1:], data.shape[0]-1*(direction == 'forward'), axis = 0)))
+
+
     
-    if data.ndim == 2: # avoid looping if not necessary
-        data = np.expand_dims(data, axis = 1)  #add light source axis
-
-
-    if (data.shape[0] > data.shape[1]): # loop over shortest dim.
-        flipaxis0and1 = True
-        data = np.transpose(data, axes = (1,0,2))
-    else:
-        flipaxis0and1 = False
+    # Flip light source dim to axis 0:
+    data = np.transpose(data, axes = (1,0,2))
   
+    # Initialize output array:
     dshape = list(data.shape)
     dshape[-1] = 3 # requested number of correlates: l_int, a_int, b_int
+    if (inputtype != 'xyz') & (direction == 'forward'):
+        dshape[-2] = dshape[-2] - 1 # wavelength row doesn't count & only with forward can the input data be spectral
     camout = np.nan*np.ones(dshape)
 
     # apply forward/inverse model for each row in data:
     for i in range(data.shape[0]):
-        
-        # stage 1: calculate photon rates of stimulus and adapting field, lmst & lmsf:
-        if (inputtype != 'xyz') :
-            if relative == True:
-                dataw[i+1] = Lw*dataw[i+1]/100.0 # make absolute
-            #print(dataw)
-            xyzw = spd_to_xyz(np.vstack((dataw[0],dataw[i+1])), cieobs = cieobs, relative = False)/_CMF[cieobs]['K']
-            lmsf = (Yb/100.0)*683.0*np.dot(Mxyz2lms,xyzw.T).T # calculate adaptation field and convert to l,m,s
 
+        # stage 1: calculate photon rates of stimulus and adapting field, lmst & lmsf:
+        if (inputtype != 'xyz'):            
+            xyzw_abs = spd_to_xyz(np.vstack((dataw[0],dataw[i+1])), cieobs = cieobs, relative = False)
+            if relative == True:
+                dataw[i+1] = Lw*dataw[i+1]/xyzw_abs[0,1] # make absolute
+            xyzw = spd_to_xyz(np.vstack((dataw[0],dataw[i+1])), cieobs = cieobs, relative = False)
+            lmsw = 683.0*np.dot(Mxyz2lms,xyzw.T).T/_CMF[cieobs]['K']
+            lmsf = (Yb/100.0)*lmsw # calculate adaptation field and convert to l,m,s
             if (direction == 'forward'):
                 if relative == True:
-                    data[i] = Lw*data[i]/100.0 # make absolute
+                    data[i,1:,:] = Lw*data[i,1:,:]/xyzw_abs[0,1] # make absolute
                 xyzt = spd_to_xyz(data[i], cieobs = cieobs, relative = False)/_CMF[cieobs]['K'] 
                 lmst = 683.0*np.dot(Mxyz2lms,xyzt.T).T # convert to l,m,s
             else:
                 lmst = lmsf # put lmsf in lmst for inverse-mode
-                
+
         elif (inputtype == 'xyz'):
             if relative == True: 
                 dataw[i] = Lw*dataw[i]/100.0 # make absolute
@@ -222,11 +225,12 @@ def cam_sww16(data, dataw = None, Yb = 20.0, Lw = 400.0, relative = True, \
                 alph_out = alph_int - cab_out[0]
                 bet_out = bet_int -  cab_out[1]
             else:
+                Ccwb = Ccwb*np.ones((2))
                 Ccwb[Ccwb<0.0] = 0.0
                 Ccwb[Ccwb>1.0] = 1.0
                 alph_out = alph_int - Ccwb[0]*alph_int[0] # white balance shift using adaptation gray background (Yb=20%), with Ccw: degree of adaptation
                 bet_out = bet_int -  Ccwb[1]*bet_int[0]
-                
+  
             camout[i] = np.vstack((lstar_out[1:],alph_out[1:],bet_out[1:])).T # stack together and remove adaptation field from vertical stack
         elif direction == 'inverse':
             labf_int = np.hstack((lstar_int[0],alph_int[0],bet_int[0]))
@@ -240,11 +244,12 @@ def cam_sww16(data, dataw = None, Yb = 20.0, Lw = 400.0, relative = True, \
                 alph_int = alph_out + cab_out[0]
                 bet_int = bet_out +  cab_out[1]
             else:
+                Ccwb = Ccwb*np.ones((2))
                 Ccwb[Ccwb<0.0] = 0.0
                 Ccwb[Ccwb>1.0] = 1.0
-                alph_int = alph_int + Ccwb[0]*alph_out[0] #  inverse white balance shift using adaptation gray background (Yb=20%), with Ccw: degree of adaptation
-                bet_int = bet_int +  Ccwb[1]*bet_out[0]
-            
+                alph_int = alph_out + Ccwb[0]*alph_int[0] #  inverse white balance shift using adaptation gray background (Yb=20%), with Ccw: degree of adaptation
+                bet_int = bet_out +  Ccwb[1]*bet_int[0]
+
             lstar_int = lstar_out
             alphpp = (1.0 / cab_int[0]) * (np.cos(-cab_int[1]*np.pi/180.0)*alph_int - np.sin(-cab_int[1]*np.pi/180.0)*bet_int)
             betpp = (1.0 / cab_int[0]) * (np.sin(-cab_int[1]*np.pi/180.0)*alph_int + np.cos(-cab_int[1]*np.pi/180.0)*bet_int)
@@ -280,8 +285,11 @@ def cam_sww16(data, dataw = None, Yb = 20.0, Lw = 400.0, relative = True, \
             
             camout[i] = xyzt
     
-    if flipaxis0and1 == True: # loop over shortest dim.
-        camout = np.transpose(camout, axes = (1,0,2))
+#    if flipaxis0and1 == True: # loop over shortest dim.
+#        camout = np.transpose(camout, axes = (1,0,2))
+    
+    # Flip light source dim back to axis 1:
+    camout = np.transpose(camout, axes = (1,0,2))
 
     if camout.shape[0] == 1:
         camout = np.squeeze(camout,axis = 0)
@@ -290,7 +298,7 @@ def cam_sww16(data, dataw = None, Yb = 20.0, Lw = 400.0, relative = True, \
 
 
 #------------------------------------------------------------------------------
-def xyz_to_lab_cam_sww16(xyz, xyzw = None, Yb = 20.0, Lw = 400.0, relative = True,\
+def xyz_to_lab_cam_sww16(xyz, xyzw = None, Yb = 20.0, Lw = 400.0, Ccwb = None, relative = True,\
                          parameters = None, inputtype = 'xyz', cieobs = '2006_10', **kwargs):
     """
     Wrapper function for cam_sww16 forward mode with 'xyz' input.
@@ -299,7 +307,7 @@ def xyz_to_lab_cam_sww16(xyz, xyzw = None, Yb = 20.0, Lw = 400.0, relative = Tru
     """
     return cam_sww16(xyz, dataw = xyzw, Yb = Yb, Lw = Lw, relative = relative, parameters = parameters, inputtype = 'xyz', direction = 'forward', cieobs = cieobs)
                 
-def lab_cam_sww16_to_xyz(lab, xyzw = None, Yb = 20.0, Lw = 400.0, relative = True, \
+def lab_cam_sww16_to_xyz(lab, xyzw = None, Yb = 20.0, Lw = 400.0, Ccwb = None, relative = True, \
                          parameters = None, inputtype = 'xyz', cieobs = '2006_10', **kwargs):
     """
     Wrapper function for cam_sww16 inverse mode with 'xyz' input.
@@ -312,20 +320,36 @@ def lab_cam_sww16_to_xyz(lab, xyzw = None, Yb = 20.0, Lw = 400.0, relative = Tru
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
     C = _CIE_ILLUMINANTS['C'].copy()
-    #C = np.vstack((C,cie_interp(_CIE_ILLUMINANTS['D65'],C[0],kind='spd')[1:]))
+    C = np.vstack((C,cie_interp(_CIE_ILLUMINANTS['D65'],C[0],kind='spd')[1:]))
     M = _MUNSELL.copy()
     rflM = M['R']
     cieobs = '2006_10'
-    xyz, xyzw = spd_to_xyz(C, cieobs = cieobs, relative = True, rfl = rflM, out = 2)
     Lw = 400
     Yb = 20
-    lab = cam_sww16(xyz, dataw = xyzw, Yb = Yb, Lw = Lw, relative = True, \
+    
+    # Normalize to Lw:
+    xyzw2 = spd_to_xyz(C, cieobs = cieobs, relative = False)
+    for i in np.arange(C.shape[0]-1):
+        C[i+1] = Lw*C[i+1]/xyzw2[i,1]
+    xyz, xyzw = spd_to_xyz(C, cieobs = cieobs, relative = True, rfl = rflM, out = 2)
+
+#    print('xyz')
+    lab = cam_sww16(xyzw, dataw = xyzw, Yb = Yb, Lw = Lw, Ccwb = 1, relative = True, \
               parameters = None, inputtype = 'xyz', direction = 'forward', \
               cieobs = cieobs)
-    xyz_ = cam_sww16(lab, dataw = xyzw, Yb = Yb, Lw = Lw, relative = True, \
+#    print('spd')
+    lab2 = cam_sww16(C, dataw = C, Yb = Yb, Lw = Lw, Ccwb = 1, relative = True, \
+              parameters = None, inputtype = 'spd', direction = 'forward', \
+              cieobs = cieobs)
+#    print('inverse xyz')
+    xyz_ = cam_sww16(lab, dataw = xyzw, Yb = Yb, Lw = Lw, Ccwb = 1, relative = True, \
               parameters = None, inputtype = 'xyz', direction = 'inverse', \
               cieobs = cieobs)
-    print(xyz-xyz_)
+#    print('inverse spd')
+    xyz_2 = cam_sww16(lab2, dataw = C, Yb = Yb, Lw = Lw, Ccwb = 1, relative = True, \
+              parameters = None, inputtype = 'spd', direction = 'inverse', \
+              cieobs = cieobs)
+#    print(xyz-xyz_)
 
 
     
