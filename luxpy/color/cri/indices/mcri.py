@@ -35,7 +35,7 @@ _MCRI_DEFAULTS = {'sampleset': "_CRI_RFL['mcri']",
                   'avg': math.geomean, 
                   'scale' : {'fcn': psy_scale, 'cfactor': [21.7016,   4.2106,   2.4154]}, 
                   'cspace': {'type': 'ipt', 'Mxyz2lms': [[ 0.400070,	0.707270,	-0.080674],[-0.228111, 1.150561,	0.061230],[0.0, 0.0,	0.931757]]}, 
-                  'catf': {'xyzw': [94.81,  100.00,  107.32], 'mcat': 'cat02', 'cattype': 'vonkries', 'F':1, 'Yb': 20.0,'Dtype':None, 'catmode' : '1>2'}, 
+                  'catf': {'xyzw': [94.81,  100.00,  107.32], 'mcat': 'cat02', 'cattype': 'vonkries', 'F':1, 'Yb': 20.0,'Dtype':'cat02', 'catmode' : '1>2'}, 
                   'rg_pars' : {'nhbins': None, 'start_hue':0.0, 'normalize_gamut': False, 'normalized_chroma_ref' : 100}, 
                   'cri_specific_pars' : {'similarity_ai' : np.array([[-0.09651, 0.41354, 40.64, 16.55, -0.17],
                                                                      [0.16548, 0.38877, 58.27,	20.37,	-0.59],
@@ -69,10 +69,11 @@ def spd_to_mcri(SPD, D = 0.9, E = None, Yb = 20.0, out = 'Rm', wl = None):
             |  following the 'cat02' model). 
             | If None: the degree is determined by :D:
             |  If (:E: is not None) & (:Yb: is None):  :E: is assumed to contain 
-               the adapting field luminance La.
+               the adapting field luminance La (cd/m²).
         :Yb: 
             | 20.0, optional
             | Luminance factor of background. (used when calculating La from E)
+            | If None, E contains La (cd/m²).
         :out: 
             | 'Rm' or str, optional
             | Specifies requested output (e.g. 'Rm,Rmi,cct,duv') 
@@ -106,7 +107,6 @@ def spd_to_mcri(SPD, D = 0.9, E = None, Yb = 20.0, out = 'Rm', wl = None):
     scale_factor = scale['cfactor']
     sampleset = eval(sampleset)
     
-    
     # A. calculate xyz:
     xyzti, xyztw = spd_to_xyz(SPD, cieobs = cieobs['xyz'],  rfl = sampleset, out = 2)
     if 'cct' in out.split(','):
@@ -114,7 +114,7 @@ def spd_to_mcri(SPD, D = 0.9, E = None, Yb = 20.0, out = 'Rm', wl = None):
         
     # B. perform chromatic adaptation to adopted whitepoint of ipt color space, i.e. D65:
     if catf is not None:
-        Dtype_cat, F, Yb, catmode_cat, cattype_cat, mcat_cat, xyzw_cat = [catf[x] for x in sorted(catf.keys())]
+        Dtype_cat, F, Yb_cat, catmode_cat, cattype_cat, mcat_cat, xyzw_cat = [catf[x] for x in sorted(catf.keys())]
         
         # calculate degree of adaptationn D:
         if E is not None:
@@ -123,11 +123,14 @@ def spd_to_mcri(SPD, D = 0.9, E = None, Yb = 20.0, out = 'Rm', wl = None):
             else:
                 La = E
             D = cat.get_degree_of_adaptation(Dtype = Dtype_cat, F = F, La = La)
+        else:
+            Dtype_cat = None # direct input of D
+
         if (E is None) and (D is None):
             D = 1.0 # set degree of adaptation to 1 !
         if D > 1.0: D = 1.0
         if D < 0.6: D = 0.6 # put a limit on the lowest D
-        
+
         # apply cat:
         xyzti = cat.apply(xyzti, cattype = cattype_cat, catmode = catmode_cat, xyzw1 = xyztw,xyzw0 = None, xyzw2 = xyzw_cat, D = D, mcat = [mcat_cat], Dtype = Dtype_cat)
         xyztw = cat.apply(xyztw, cattype = cattype_cat, catmode = catmode_cat, xyzw1 = xyztw,xyzw0 = None, xyzw2 = xyzw_cat, D = D, mcat = [mcat_cat], Dtype = Dtype_cat)

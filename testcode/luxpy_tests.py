@@ -128,3 +128,16 @@ print(qabw.shape)
 print(qab.shape)
 print(xyzw-xyzw_)
 print(xyz-xyz_)
+
+#test IES Rf, CIE Rf, CRI2012, MCRI, CQS:
+S = lx._CIE_ILLUMINANTS['F4']
+rf = lx.cri.spd_to_iesrf_tm30_15(S)
+print(rf)
+rf = lx.cri.spd_to_cierf_224_2017(S)
+print(rf)
+rf = lx.cri.spd_to_cri2012(S)
+print(rf)
+rm = lx.cri.spd_to_mcri(spds, D=0.65)
+print(rm)
+qa = lx.cri.spd_to_cqs(S,version='v7.5', out='Qp')
+print(qa)

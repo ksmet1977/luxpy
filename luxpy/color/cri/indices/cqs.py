@@ -110,7 +110,7 @@ def  spd_to_cqs(SPD, version = 'v9.0', out = 'Qa',wl = None):
         labri = labri[:,None] 
         DEi = DEi[:,None] 
         cct = cct[:,None] 
-  
+
     # calculate Rg for each spd:
     Qf = np.zeros((1,labti.shape[1]))
     Qfi = np.zeros((labti.shape[0],labti.shape[1]))
@@ -141,23 +141,23 @@ def  spd_to_cqs(SPD, version = 'v9.0', out = 'Qa',wl = None):
             
             # calculate deltaC:
             deltaC = np.sqrt(np.power(labti[:,ii,1:3],2).sum(axis = 1,keepdims=True)) - np.sqrt(np.power(labri[:,ii,1:3],2).sum(axis = 1,keepdims=True)) 
-            
             # limit chroma increase:
             DEi_Climited = DEi[:,ii,None].copy()
+            deltaC_Climited = deltaC.copy()
             if maxC is None:
                 maxC = 10000.0
-            limitC = np.where(deltaC >= maxC)
-            DEi_Climited[limitC] = maxC
-            p_deltaC_pos = np.where(deltaC>0.0)
-            DEi_Climited[p_deltaC_pos] = np.sqrt(DEi[:,ii,None][p_deltaC_pos]**2.0 - deltaC[p_deltaC_pos]**2.0) # increase in chroma is not penalized!
+            limitC = np.where(deltaC >= maxC)[0]
+            deltaC_Climited[limitC] = maxC
+            p_deltaC_pos = np.where(deltaC>0.0)[0]
+            DEi_Climited[p_deltaC_pos] = np.sqrt(DEi_Climited[p_deltaC_pos]**2.0 - deltaC_Climited[p_deltaC_pos]**2.0) # increase in chroma is not penalized!
 
             if ('Qa' in outlist) | ('Qai' in outlist):
                 Qai[:,ii,None] = GA[ii]*scale_fcn(DEi_Climited,[scale_factor[1]])
                 Qa[:,ii] = GA[ii]*scale_fcn(avg(DEi_Climited,axis = 0),[scale_factor[1]])
                 
             if ('Qp' in outlist) | ('Qpi' in outlist):
-                deltaC_pos = deltaC * (deltaC >= 0.0)
-                deltaCmu = np.mean(deltaC * (deltaC >= 0.0))
+                deltaC_pos = deltaC_Climited * (deltaC_Climited >= 0.0)
+                deltaCmu = np.mean(deltaC_Climited * (deltaC_Climited >= 0.0))
                 Qpi[:,ii,None] = GA[ii]*scale_fcn((DEi_Climited - deltaC_pos),[scale_factor[2]]) # or ?? np.sqrt(DEi_Climited**2 - deltaC_pos**2) ??
                 Qp[:,ii] = GA[ii]*scale_fcn((avg(DEi_Climited, axis = 0) - deltaCmu),[scale_factor[2]])
 

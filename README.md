@@ -4,8 +4,8 @@
 [logo]: https://github.com/ksmet1977/luxpy/blob/master/docs/images/LUXPY__logo.jpg
 
 * Author: K. A.G. Smet (ksmet1977 at gmail.com)
-* Version: 1.3.05
-* Date: May 3, 2018
+* Version: 1.3.06
+* Date: May 9, 2018
 * License: [GPLv3](https://github.com/ksmet1977/luxpy/blob/master/LICENSE.md)
 
 **Luxpy** is an open source package under a GPLv3 license that supports several common

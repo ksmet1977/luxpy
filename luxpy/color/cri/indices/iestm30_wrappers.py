@@ -48,7 +48,7 @@ __all__ = ['spd_to_iesrf','spd_to_iesrg',
            'spd_to_iesrf_tm30_18','spd_to_iesrg_tm30_18']
 
 #------------------------------------------------------------------------------
-def spd_to_iesrf_tm30_15(SPD, out = 'Rf', wl = None, cri_type = 'iesrf_tm30_15'):
+def spd_to_iesrf_tm30_15(SPD, out = 'Rf', wl = None, cri_type = 'iesrf-tm30-15'):
     """
     Wrapper function for the 'iesrf' color fidelity index (IES TM30-15). 
     
