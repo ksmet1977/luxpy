@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (MiKTeX 2.9.6630 64-bit) (preloaded format=pdflatex 2018.5.4)  4 MAY 2018 17:40
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (MiKTeX 2.9.6630 64-bit) (preloaded format=pdflatex 2018.5.4)  9 MAY 2018 15:08
 entering extended mode
 **./LuxPy.tex
 (LuxPy.tex
@@ -1065,7 +1065,7 @@ Package: hypcap 2016/05/16 v1.12 Adjusting the anchors of captions (HO)
 
 
 Writing index file LuxPy.idx
-(LuxPy.aux)
+No file LuxPy.aux.
 \openout1 = `LuxPy.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 65.
@@ -1178,7 +1178,6 @@ Package: gettitlestring 2016/05/16 v1.5 Cleanup title references (HO)
 LaTeX Info: Redefining \ref on input line 65.
 LaTeX Info: Redefining \pageref on input line 65.
 LaTeX Info: Redefining \nameref on input line 65.
- (LuxPy.out) (LuxPy.out)
 \@outlinefile=\write5
 \openout5 = `LuxPy.out'.
 
@@ -1225,10 +1224,6 @@ LaTeX Font Info:    Font shape `T1/phv/bx/n' in size <12> not available
 ]
 LaTeX Font Info:    Font shape `T1/phv/bx/n' in size <14.4> not available
 (Font)              Font shape `T1/phv/b/n' tried instead on input line 68.
- (LuxPy.toc
-LaTeX Font Info:    Font shape `T1/ptm/bx/n' in size <10> not available
-(Font)              Font shape `T1/ptm/b/n' tried instead on input line 2.
-)
 \tf@toc=\write6
 \openout6 = `LuxPy.toc'.
 
@@ -1243,7 +1238,7 @@ LaTeX Font Info:    Try loading font information for TS1+ptm on input line 72.
 .fd"
 File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
 )
-<LUXPY__logo.jpg, id=183, 1171.37625pt x 251.94125pt>
+<LUXPY__logo.jpg, id=26, 1171.37625pt x 251.94125pt>
 LaTeX Font Info:    Try loading font information for T1+pcr on input line 86.
 
 ("C:\Users\kevin.smet\AppData\Local\Programs\MiKTeX 2.9\tex\latex\psnfss\t1pcr.
@@ -1262,6 +1257,8 @@ Chapter 1.
 
 ]
 Chapter 2.
+LaTeX Font Info:    Font shape `T1/ptm/bx/n' in size <10> not available
+(Font)              Font shape `T1/ptm/b/n' tried instead on input line 112.
 
 Underfull \hbox (badness 6658) in paragraph at lines 114--116
 []\T1/ptm/m/n/10 download the in-staller from: [][]$https : / / conda . io / mi
@@ -1559,304 +1556,299 @@ T1/ptm/m/n/10 , \T1/ptm/m/it/10 1.0000e+02\T1/ptm/m/n/10 , \T1/ptm/m/it/10 1.00
 00e+02]])\T1/ptm/m/n/10 ,
  []
 
-[73] [74] [75] [76]
-Underfull \hbox (badness 10000) in paragraph at lines 6996--6996
+[73] [74]
+Underfull \hbox (badness 10000) in paragraph at lines 6851--6851
+[]\T1/ptm/m/it/10 data\T1/ptm/m/n/10 , \T1/ptm/m/it/10 dataw=None\T1/ptm/m/n/10
+ , \T1/ptm/m/it/10 Yb=20.0\T1/ptm/m/n/10 , \T1/ptm/m/it/10 Lw=400.0\T1/ptm/m/n/
+10 , \T1/ptm/m/it/10 Ccwb=None\T1/ptm/m/n/10 , \T1/ptm/m/it/10 rel-a-
+ []
+
+[75] [76]
+Underfull \hbox (badness 10000) in paragraph at lines 7003--7003
 []\T1/ptm/m/it/10 data\T1/ptm/m/n/10 , \T1/ptm/m/it/10 xyzw=array([[1.0000e+02\
 T1/ptm/m/n/10 , \T1/ptm/m/it/10 1.0000e+02\T1/ptm/m/n/10 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 6996--6996
+Underfull \hbox (badness 10000) in paragraph at lines 7003--7003
 \T1/ptm/m/it/10 1.0000e+02]])\T1/ptm/m/n/10 , \T1/ptm/m/it/10 Yw=100.0\T1/ptm/m
 /n/10 , \T1/ptm/m/it/10 con-di-tions={'D': 1.0\T1/ptm/m/n/10 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7008--7008
+Underfull \hbox (badness 10000) in paragraph at lines 7015--7015
 []\T1/ptm/m/it/10 data\T1/ptm/m/n/10 , \T1/ptm/m/it/10 xyzw=array([[1.0000e+02\
 T1/ptm/m/n/10 , \T1/ptm/m/it/10 1.0000e+02\T1/ptm/m/n/10 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7008--7008
+Underfull \hbox (badness 10000) in paragraph at lines 7015--7015
 \T1/ptm/m/it/10 1.0000e+02]])\T1/ptm/m/n/10 , \T1/ptm/m/it/10 Yw=100.0\T1/ptm/m
 /n/10 , \T1/ptm/m/it/10 con-di-tions={'D': 1.0\T1/ptm/m/n/10 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7020--7020
+Underfull \hbox (badness 10000) in paragraph at lines 7027--7027
 []\T1/ptm/m/it/10 data\T1/ptm/m/n/10 , \T1/ptm/m/it/10 xyzw=array([[1.0000e+02\
 T1/ptm/m/n/10 , \T1/ptm/m/it/10 1.0000e+02\T1/ptm/m/n/10 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7020--7020
+Underfull \hbox (badness 10000) in paragraph at lines 7027--7027
 \T1/ptm/m/it/10 1.0000e+02]])\T1/ptm/m/n/10 , \T1/ptm/m/it/10 Yw=100.0\T1/ptm/m
 /n/10 , \T1/ptm/m/it/10 con-di-tions={'D': 1.0\T1/ptm/m/n/10 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7032--7032
+Underfull \hbox (badness 10000) in paragraph at lines 7039--7039
 []\T1/ptm/m/it/10 data\T1/ptm/m/n/10 , \T1/ptm/m/it/10 xyzw=array([[1.0000e+02\
 T1/ptm/m/n/10 , \T1/ptm/m/it/10 1.0000e+02\T1/ptm/m/n/10 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7032--7032
+Underfull \hbox (badness 10000) in paragraph at lines 7039--7039
 \T1/ptm/m/it/10 1.0000e+02]])\T1/ptm/m/n/10 , \T1/ptm/m/it/10 Yw=100.0\T1/ptm/m
 /n/10 , \T1/ptm/m/it/10 con-di-tions={'D': 1.0\T1/ptm/m/n/10 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7044--7044
+Underfull \hbox (badness 10000) in paragraph at lines 7051--7051
 []\T1/ptm/m/it/10 data\T1/ptm/m/n/10 , \T1/ptm/m/it/10 xyzw=array([[1.0000e+02\
 T1/ptm/m/n/10 , \T1/ptm/m/it/10 1.0000e+02\T1/ptm/m/n/10 ,
  []
 
 [77]
-Underfull \hbox (badness 10000) in paragraph at lines 7056--7056
+Underfull \hbox (badness 10000) in paragraph at lines 7063--7063
 []\T1/ptm/m/it/10 data\T1/ptm/m/n/10 , \T1/ptm/m/it/10 xyzw=array([[1.0000e+02\
 T1/ptm/m/n/10 , \T1/ptm/m/it/10 1.0000e+02\T1/ptm/m/n/10 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7068--7068
+Underfull \hbox (badness 10000) in paragraph at lines 7075--7075
 []\T1/ptm/m/it/10 data\T1/ptm/m/n/10 , \T1/ptm/m/it/10 xyzw=array([[1.0000e+02\
 T1/ptm/m/n/10 , \T1/ptm/m/it/10 1.0000e+02\T1/ptm/m/n/10 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7080--7080
+Underfull \hbox (badness 10000) in paragraph at lines 7087--7087
 []\T1/ptm/m/it/10 data\T1/ptm/m/n/10 , \T1/ptm/m/it/10 xyzw=array([[1.0000e+02\
 T1/ptm/m/n/10 , \T1/ptm/m/it/10 1.0000e+02\T1/ptm/m/n/10 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7092--7092
+Underfull \hbox (badness 10000) in paragraph at lines 7099--7099
 []\T1/ptm/m/it/10 data\T1/ptm/m/n/10 , \T1/ptm/m/it/10 xyzw=array([[1.0000e+02\
 T1/ptm/m/n/10 , \T1/ptm/m/it/10 1.0000e+02\T1/ptm/m/n/10 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7092--7092
+Underfull \hbox (badness 10000) in paragraph at lines 7099--7099
 \T1/ptm/m/it/10 1.0000e+02]])\T1/ptm/m/n/10 , \T1/ptm/m/it/10 Yw=100.0\T1/ptm/m
 /n/10 , \T1/ptm/m/it/10 con-di-tions={'D': 1.0\T1/ptm/m/n/10 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7104--7104
+Underfull \hbox (badness 10000) in paragraph at lines 7111--7111
 []\T1/ptm/m/it/10 data\T1/ptm/m/n/10 , \T1/ptm/m/it/10 xyzw=array([[1.0000e+02\
 T1/ptm/m/n/10 , \T1/ptm/m/it/10 1.0000e+02\T1/ptm/m/n/10 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7104--7104
-\T1/ptm/m/it/10 1.0000e+02]])\T1/ptm/m/n/10 , \T1/ptm/m/it/10 Yw=100.0\T1/ptm/m
-/n/10 , \T1/ptm/m/it/10 con-di-tions={'D': 1.0\T1/ptm/m/n/10 ,
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 7116--7116
-[]\T1/ptm/m/it/10 data\T1/ptm/m/n/10 , \T1/ptm/m/it/10 xyzw=array([[1.0000e+02\
-T1/ptm/m/n/10 , \T1/ptm/m/it/10 1.0000e+02\T1/ptm/m/n/10 ,
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 7116--7116
+Underfull \hbox (badness 10000) in paragraph at lines 7111--7111
 \T1/ptm/m/it/10 1.0000e+02]])\T1/ptm/m/n/10 , \T1/ptm/m/it/10 Yw=100.0\T1/ptm/m
 /n/10 , \T1/ptm/m/it/10 con-di-tions={'D': 1.0\T1/ptm/m/n/10 ,
  []
 
 [78]
-Underfull \hbox (badness 10000) in paragraph at lines 7128--7128
+Underfull \hbox (badness 10000) in paragraph at lines 7123--7123
 []\T1/ptm/m/it/10 data\T1/ptm/m/n/10 , \T1/ptm/m/it/10 xyzw=array([[1.0000e+02\
 T1/ptm/m/n/10 , \T1/ptm/m/it/10 1.0000e+02\T1/ptm/m/n/10 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7128--7128
+Underfull \hbox (badness 10000) in paragraph at lines 7123--7123
 \T1/ptm/m/it/10 1.0000e+02]])\T1/ptm/m/n/10 , \T1/ptm/m/it/10 Yw=100.0\T1/ptm/m
 /n/10 , \T1/ptm/m/it/10 con-di-tions={'D': 1.0\T1/ptm/m/n/10 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7140--7140
+Underfull \hbox (badness 10000) in paragraph at lines 7135--7135
 []\T1/ptm/m/it/10 data\T1/ptm/m/n/10 , \T1/ptm/m/it/10 xyzw=array([[1.0000e+02\
 T1/ptm/m/n/10 , \T1/ptm/m/it/10 1.0000e+02\T1/ptm/m/n/10 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7140--7140
+Underfull \hbox (badness 10000) in paragraph at lines 7135--7135
 \T1/ptm/m/it/10 1.0000e+02]])\T1/ptm/m/n/10 , \T1/ptm/m/it/10 Yw=100.0\T1/ptm/m
 /n/10 , \T1/ptm/m/it/10 con-di-tions={'D': 1.0\T1/ptm/m/n/10 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7152--7152
+Underfull \hbox (badness 10000) in paragraph at lines 7147--7147
 []\T1/ptm/m/it/10 data\T1/ptm/m/n/10 , \T1/ptm/m/it/10 xyzw=array([[1.0000e+02\
 T1/ptm/m/n/10 , \T1/ptm/m/it/10 1.0000e+02\T1/ptm/m/n/10 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7152--7152
+Underfull \hbox (badness 10000) in paragraph at lines 7147--7147
 \T1/ptm/m/it/10 1.0000e+02]])\T1/ptm/m/n/10 , \T1/ptm/m/it/10 Yw=100.0\T1/ptm/m
 /n/10 , \T1/ptm/m/it/10 con-di-tions={'D': 1.0\T1/ptm/m/n/10 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7164--7164
+Underfull \hbox (badness 10000) in paragraph at lines 7159--7159
 []\T1/ptm/m/it/10 data\T1/ptm/m/n/10 , \T1/ptm/m/it/10 xyzw=array([[1.0000e+02\
 T1/ptm/m/n/10 , \T1/ptm/m/it/10 1.0000e+02\T1/ptm/m/n/10 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7164--7164
+Underfull \hbox (badness 10000) in paragraph at lines 7159--7159
 \T1/ptm/m/it/10 1.0000e+02]])\T1/ptm/m/n/10 , \T1/ptm/m/it/10 Yw=100.0\T1/ptm/m
 /n/10 , \T1/ptm/m/it/10 con-di-tions={'D': 1.0\T1/ptm/m/n/10 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7176--7176
+Underfull \hbox (badness 10000) in paragraph at lines 7171--7171
 []\T1/ptm/m/it/10 data\T1/ptm/m/n/10 , \T1/ptm/m/it/10 xyzw=array([[1.0000e+02\
 T1/ptm/m/n/10 , \T1/ptm/m/it/10 1.0000e+02\T1/ptm/m/n/10 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7176--7176
+Underfull \hbox (badness 10000) in paragraph at lines 7171--7171
 \T1/ptm/m/it/10 1.0000e+02]])\T1/ptm/m/n/10 , \T1/ptm/m/it/10 Yw=100.0\T1/ptm/m
 /n/10 , \T1/ptm/m/it/10 con-di-tions={'D': 1.0\T1/ptm/m/n/10 ,
  []
 
 [79]
-Underfull \hbox (badness 10000) in paragraph at lines 7188--7188
+Underfull \hbox (badness 10000) in paragraph at lines 7183--7183
 []\T1/ptm/m/it/10 data\T1/ptm/m/n/10 , \T1/ptm/m/it/10 xyzw=array([[1.0000e+02\
 T1/ptm/m/n/10 , \T1/ptm/m/it/10 1.0000e+02\T1/ptm/m/n/10 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7188--7188
+Underfull \hbox (badness 10000) in paragraph at lines 7183--7183
 \T1/ptm/m/it/10 1.0000e+02]])\T1/ptm/m/n/10 , \T1/ptm/m/it/10 Yw=100.0\T1/ptm/m
 /n/10 , \T1/ptm/m/it/10 con-di-tions={'D': 1.0\T1/ptm/m/n/10 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7200--7200
+Underfull \hbox (badness 10000) in paragraph at lines 7195--7195
 []\T1/ptm/m/it/10 data\T1/ptm/m/n/10 , \T1/ptm/m/it/10 xyzw=array([[1.0000e+02\
 T1/ptm/m/n/10 , \T1/ptm/m/it/10 1.0000e+02\T1/ptm/m/n/10 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7200--7200
+Underfull \hbox (badness 10000) in paragraph at lines 7195--7195
 \T1/ptm/m/it/10 1.0000e+02]])\T1/ptm/m/n/10 , \T1/ptm/m/it/10 Yw=100.0\T1/ptm/m
 /n/10 , \T1/ptm/m/it/10 con-di-tions={'D': 1.0\T1/ptm/m/n/10 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7212--7212
+Underfull \hbox (badness 10000) in paragraph at lines 7207--7207
 []\T1/ptm/m/it/10 data\T1/ptm/m/n/10 , \T1/ptm/m/it/10 xyzw=array([[1.0000e+02\
 T1/ptm/m/n/10 , \T1/ptm/m/it/10 1.0000e+02\T1/ptm/m/n/10 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7212--7212
+Underfull \hbox (badness 10000) in paragraph at lines 7207--7207
 \T1/ptm/m/it/10 1.0000e+02]])\T1/ptm/m/n/10 , \T1/ptm/m/it/10 Yw=100.0\T1/ptm/m
 /n/10 , \T1/ptm/m/it/10 con-di-tions={'D': 1.0\T1/ptm/m/n/10 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7224--7224
+Underfull \hbox (badness 10000) in paragraph at lines 7219--7219
 []\T1/ptm/m/it/10 data\T1/ptm/m/n/10 , \T1/ptm/m/it/10 xyzw=array([[1.0000e+02\
 T1/ptm/m/n/10 , \T1/ptm/m/it/10 1.0000e+02\T1/ptm/m/n/10 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7224--7224
+Underfull \hbox (badness 10000) in paragraph at lines 7219--7219
+\T1/ptm/m/it/10 1.0000e+02]])\T1/ptm/m/n/10 , \T1/ptm/m/it/10 Yw=100.0\T1/ptm/m
+/n/10 , \T1/ptm/m/it/10 con-di-tions={'D': 1.0\T1/ptm/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 7231--7231
+[]\T1/ptm/m/it/10 data\T1/ptm/m/n/10 , \T1/ptm/m/it/10 xyzw=array([[1.0000e+02\
+T1/ptm/m/n/10 , \T1/ptm/m/it/10 1.0000e+02\T1/ptm/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 7231--7231
 \T1/ptm/m/it/10 1.0000e+02]])\T1/ptm/m/n/10 , \T1/ptm/m/it/10 Yw=100.0\T1/ptm/m
 /n/10 , \T1/ptm/m/it/10 con-di-tions={'D': 1.0\T1/ptm/m/n/10 ,
  []
 
 [80]
-Underfull \hbox (badness 10000) in paragraph at lines 7322--7322
+Underfull \hbox (badness 10000) in paragraph at lines 7267--7267
+\T1/ptm/m/it/10 rel-a-tive=True\T1/ptm/m/n/10 , \T1/ptm/m/it/10 pa-ram-e-ters=N
+one\T1/ptm/m/n/10 , \T1/ptm/m/it/10 in-put-type='xyz'\T1/ptm/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 7279--7279
+\T1/ptm/m/it/10 rel-a-tive=True\T1/ptm/m/n/10 , \T1/ptm/m/it/10 pa-ram-e-ters=N
+one\T1/ptm/m/n/10 , \T1/ptm/m/it/10 in-put-type='xyz'\T1/ptm/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 7329--7329
 \T1/ptm/m/it/10 xyzwt=array([[1.0000e+02\T1/ptm/m/n/10 , \T1/ptm/m/it/10 1.0000
 e+02\T1/ptm/m/n/10 , \T1/ptm/m/it/10 1.0000e+02]])\T1/ptm/m/n/10 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7322--7322
+Underfull \hbox (badness 10000) in paragraph at lines 7329--7329
 \T1/ptm/m/it/10 xyzwr=array([[1.0000e+02\T1/ptm/m/n/10 , \T1/ptm/m/it/10 1.0000
 e+02\T1/ptm/m/n/10 , \T1/ptm/m/it/10 1.0000e+02]])\T1/ptm/m/n/10 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7322--7322
+Underfull \hbox (badness 10000) in paragraph at lines 7329--7329
 \T1/ptm/m/it/10 Ywt=array([[1.0000e+02]])\T1/ptm/m/n/10 , \T1/ptm/m/it/10 con-d
 i-tionst={'D': 1.0\T1/ptm/m/n/10 , \T1/ptm/m/it/10 'Dtype':
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7322--7322
+Underfull \hbox (badness 10000) in paragraph at lines 7329--7329
 \T1/ptm/m/it/10 None\T1/ptm/m/n/10 , \T1/ptm/m/it/10 'La': 100.0\T1/ptm/m/n/10 
 , \T1/ptm/m/it/10 'Yb': 20.0\T1/ptm/m/n/10 , \T1/ptm/m/it/10 'sur-round': 'avg'
 }\T1/ptm/m/n/10 ,
  []
 
 
-Underfull \hbox (badness 7869) in paragraph at lines 7322--7322
+Underfull \hbox (badness 7869) in paragraph at lines 7329--7329
 \T1/ptm/m/it/10 Ywr=array([[1.0000e+02]])\T1/ptm/m/n/10 , \T1/ptm/m/it/10 con-d
 i-tionsr={'D': 1.0\T1/ptm/m/n/10 , \T1/ptm/m/it/10 'Dtype':
  []
 
 
-Underfull \hbox (badness 5696) in paragraph at lines 7322--7322
+Underfull \hbox (badness 5696) in paragraph at lines 7329--7329
 \T1/ptm/m/it/10 type='ciecam02'\T1/ptm/m/n/10 , \T1/ptm/m/it/10 uc-stype='ucs'\
 T1/ptm/m/n/10 , \T1/ptm/m/it/10 mcat=None\T1/ptm/m/n/10 , \T1/ptm/m/it/10 outin
 ='J\T1/ptm/m/n/10 , \T1/ptm/m/it/10 aM\T1/ptm/m/n/10 ,
  []
 
-[81]
-Underfull \hbox (badness 5388) in paragraph at lines 7414--7414
+[81] [82]
+Underfull \hbox (badness 5388) in paragraph at lines 7421--7421
 []\T1/ptm/m/it/10 xyzt\T1/ptm/m/n/10 , \T1/ptm/m/it/10 xyzr\T1/ptm/m/n/10 , \T1
 /ptm/m/it/10 dtype='xyz'\T1/ptm/m/n/10 , \T1/ptm/m/it/10 DE-type='jab'\T1/ptm/m
 /n/10 , \T1/ptm/m/it/10 avg=None\T1/ptm/m/n/10 , \T1/ptm/m/it/10 avg_axis=0\T1/
 ptm/m/n/10 ,
  []
 
-[82] [83] [84] [85] [86] [87] [88]
-Underfull \hbox (badness 10000) in paragraph at lines 8112--8112
+[83] [84] [85] [86] [87] [88] [89]
+Underfull \hbox (badness 10000) in paragraph at lines 8125--8125
 []\T1/ptm/m/it/10 data, scale_factor=[0.01818181818181818, 1.5, 2.0],
  []
 
-[89]
-Underfull \hbox (badness 10000) in paragraph at lines 8160--8160
+
+Underfull \hbox (badness 10000) in paragraph at lines 8173--8173
 \T1/ptm/m/it/10 nor-mal-ize_gamut=True\T1/ptm/m/n/10 , \T1/ptm/m/it/10 nor-mal-
 ized_chroma_ref=100\T1/ptm/m/n/10 ,
  []
 
-[90] [91] [92] [93] [94] [95] [96]
-
-! LaTeX Error: Too deeply nested.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.8917 \begin{DUlineblock}{\DUlineblockindent}
-                                              
-You're in trouble here.  Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
-
-
-! LaTeX Error: Too deeply nested.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.8919 \begin{DUlineblock}{\DUlineblockindent}
-                                              
-You're in trouble here.  Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
-
+[90] [91] [92] [93] [94] [95] [96] [97]
 
 ! LaTeX Error: Too deeply nested.
 
@@ -1869,41 +1861,65 @@ l.8930 \begin{DUlineblock}{\DUlineblockindent}
 You're in trouble here.  Try typing  <return>  to proceed.
 If that doesn't work, type  X <return>  to quit.
 
-[97]
-Underfull \hbox (badness 10000) in paragraph at lines 8979--8979
+
+! LaTeX Error: Too deeply nested.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.8932 \begin{DUlineblock}{\DUlineblockindent}
+                                              
+You're in trouble here.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Too deeply nested.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.8943 \begin{DUlineblock}{\DUlineblockindent}
+                                              
+You're in trouble here.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 8992--8992
 []\T1/ptm/m/it/10 SPD\T1/ptm/m/n/10 , \T1/ptm/m/it/10 cri_type='ies-tm30'\T1/pt
 m/m/n/10 , \T1/ptm/m/it/10 out='Rf'\T1/ptm/m/n/10 , \T1/ptm/m/it/10 wl=None\T1/
 ptm/m/n/10 , \T1/ptm/m/it/10 sam-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 8979--8979
+Underfull \hbox (badness 10000) in paragraph at lines 8992--8992
 \T1/ptm/m/it/10 ple-set=None\T1/ptm/m/n/10 , \T1/ptm/m/it/10 ref_type=None\T1/p
 tm/m/n/10 , \T1/ptm/m/it/10 cieobs=None\T1/ptm/m/n/10 , \T1/ptm/m/it/10 avg=Non
 e\T1/ptm/m/n/10 ,
  []
 
 
-Underfull \hbox (badness 7256) in paragraph at lines 8979--8979
+Underfull \hbox (badness 7256) in paragraph at lines 8992--8992
 \T1/ptm/m/it/10 scale=None\T1/ptm/m/n/10 , \T1/ptm/m/it/10 opt_scale_factor=Fal
 se\T1/ptm/m/n/10 , \T1/ptm/m/it/10 cspace=None\T1/ptm/m/n/10 , \T1/ptm/m/it/10 
 catf=None\T1/ptm/m/n/10 ,
  []
 
 [98] [99] [100] [101] [102] [103] [104] [105] [106] [107] [108]
-Underfull \hbox (badness 10000) in paragraph at lines 10204--10204
+Underfull \hbox (badness 10000) in paragraph at lines 10218--10218
 \T1/ptm/m/it/10 plot_bin_colors=True\T1/ptm/m/n/10 , \T1/ptm/m/it/10 ax-type='p
 olar'\T1/ptm/m/n/10 , \T1/ptm/m/it/10 ax=None\T1/ptm/m/n/10 ,
  []
 
 [109]
-Underfull \hbox (badness 10000) in paragraph at lines 10305--10305
+Underfull \hbox (badness 10000) in paragraph at lines 10319--10319
 \T1/ptm/m/it/10 plot_axis_labels=False\T1/ptm/m/n/10 , \T1/ptm/m/it/10 bin_labe
 ls=None\T1/ptm/m/n/10 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 10305--10305
+Underfull \hbox (badness 10000) in paragraph at lines 10319--10319
 \T1/ptm/m/it/10 plot_edge_lines=True\T1/ptm/m/n/10 , \T1/ptm/m/it/10 plot_cente
 r_lines=False\T1/ptm/m/n/10 ,
  []
@@ -1918,1388 +1934,1388 @@ File: ts1pcr.fd 2001/06/04 font definitions for TS1/pcr.
 LaTeX Font Info:    Font shape `TS1/pcr/bx/n' in size <10> not available
 (Font)              Font shape `TS1/pcr/b/n' tried instead on input line 1.
  [111] [112] [113] [114] [115] [116] [117] [118]
-Underfull \hbox (badness 10000) in paragraph at lines 11137--11137
+Underfull \hbox (badness 10000) in paragraph at lines 11151--11151
 []\T1/ptm/m/it/10 hx=None\T1/ptm/m/n/10 , \T1/ptm/m/it/10 Cxr=40\T1/ptm/m/n/10 
 , \T1/ptm/m/it/10 cri_type='iesrf'\T1/ptm/m/n/10 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11137--11137
+Underfull \hbox (badness 10000) in paragraph at lines 11151--11151
 \T1/ptm/m/it/10 mod-el-type='M6'\T1/ptm/m/n/10 , \T1/ptm/m/it/10 de-ter-
  []
 
-[119]
-Underfull \hbox (badness 5022) in paragraph at lines 11307--11307
+[119] [120]
+Underfull \hbox (badness 5022) in paragraph at lines 11321--11321
 \T1/ptm/m/it/10 type='polar'\T1/ptm/m/n/10 , \T1/ptm/m/it/10 ax=None\T1/ptm/m/n
 /10 , \T1/ptm/m/it/10 hbins=10\T1/ptm/m/n/10 , \T1/ptm/m/it/10 start_hue=0.0\T1
 /ptm/m/n/10 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11307--11307
+Underfull \hbox (badness 10000) in paragraph at lines 11321--11321
 \T1/ptm/m/it/10 bin_labels='#'\T1/ptm/m/n/10 , \T1/ptm/m/it/10 plot_center_line
 s=True\T1/ptm/m/n/10 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11307--11307
+Underfull \hbox (badness 10000) in paragraph at lines 11321--11321
 \T1/ptm/m/it/10 plot_axis_labels=False\T1/ptm/m/n/10 , \T1/ptm/m/it/10 plot_edg
 e_lines=False\T1/ptm/m/n/10 ,
  []
 
-[120] [121]
-Underfull \hbox (badness 10000) in paragraph at lines 11476--11476
+[121]
+Underfull \hbox (badness 10000) in paragraph at lines 11490--11490
 []\T1/ptm/m/it/10 jab\T1/ptm/m/n/10 , \T1/ptm/m/it/10 jab_ranges=None\T1/ptm/m/
 n/10 , \T1/ptm/m/it/10 jab_deltas=None\T1/ptm/m/n/10 ,
  []
 
 [122] [123] [124]
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 []\T1/ptm/m/it/10 rfl, rflpath='', sam-ple-fcn='rand',
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 S=array([[3.8000e+02, 3.8100e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 3.8200e+02, 3.8300e+02, 3.8400e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 3.8500e+02, 3.8600e+02, 3.8700e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 3.8800e+02, 3.8900e+02, 3.9000e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 3.9100e+02, 3.9200e+02, 3.9300e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 3.9400e+02, 3.9500e+02, 3.9600e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 3.9700e+02, 3.9800e+02, 3.9900e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 4.0000e+02, 4.0100e+02, 4.0200e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 4.0300e+02, 4.0400e+02, 4.0500e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 4.0600e+02, 4.0700e+02, 4.0800e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 4.0900e+02, 4.1000e+02, 4.1100e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 4.1200e+02, 4.1300e+02, 4.1400e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 4.1500e+02, 4.1600e+02, 4.1700e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 4.1800e+02, 4.1900e+02, 4.2000e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 4.2100e+02, 4.2200e+02, 4.2300e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 4.2400e+02, 4.2500e+02, 4.2600e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 4.2700e+02, 4.2800e+02, 4.2900e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 4.3000e+02, 4.3100e+02, 4.3200e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 4.3300e+02, 4.3400e+02, 4.3500e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 4.3600e+02, 4.3700e+02, 4.3800e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 4.3900e+02, 4.4000e+02, 4.4100e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 4.4200e+02, 4.4300e+02, 4.4400e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 4.4500e+02, 4.4600e+02, 4.4700e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 4.4800e+02, 4.4900e+02, 4.5000e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 4.5100e+02, 4.5200e+02, 4.5300e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 4.5400e+02, 4.5500e+02, 4.5600e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 4.5700e+02, 4.5800e+02, 4.5900e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 4.6000e+02, 4.6100e+02, 4.6200e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 4.6300e+02, 4.6400e+02, 4.6500e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 4.6600e+02, 4.6700e+02, 4.6800e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 4.6900e+02, 4.7000e+02, 4.7100e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 4.7200e+02, 4.7300e+02, 4.7400e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 4.7500e+02, 4.7600e+02, 4.7700e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 4.7800e+02, 4.7900e+02, 4.8000e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 4.8100e+02, 4.8200e+02, 4.8300e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 4.8400e+02, 4.8500e+02, 4.8600e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 4.8700e+02, 4.8800e+02, 4.8900e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 4.9000e+02, 4.9100e+02, 4.9200e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 4.9300e+02, 4.9400e+02, 4.9500e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 4.9600e+02, 4.9700e+02, 4.9800e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 4.9900e+02, 5.0000e+02, 5.0100e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 5.0200e+02, 5.0300e+02, 5.0400e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 5.0500e+02, 5.0600e+02, 5.0700e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 5.0800e+02, 5.0900e+02, 5.1000e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 5.1100e+02, 5.1200e+02, 5.1300e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 5.1400e+02, 5.1500e+02, 5.1600e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 5.1700e+02, 5.1800e+02, 5.1900e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 5.2000e+02, 5.2100e+02, 5.2200e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 5.2300e+02, 5.2400e+02, 5.2500e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 5.2600e+02, 5.2700e+02, 5.2800e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 5.2900e+02, 5.3000e+02, 5.3100e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 5.3200e+02, 5.3300e+02, 5.3400e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 5.3500e+02, 5.3600e+02, 5.3700e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 5.3800e+02, 5.3900e+02, 5.4000e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 5.4100e+02, 5.4200e+02, 5.4300e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 5.4400e+02, 5.4500e+02, 5.4600e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 5.4700e+02, 5.4800e+02, 5.4900e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 5.5000e+02, 5.5100e+02, 5.5200e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 5.5300e+02, 5.5400e+02, 5.5500e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 5.5600e+02, 5.5700e+02, 5.5800e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 5.5900e+02, 5.6000e+02, 5.6100e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 5.6200e+02, 5.6300e+02, 5.6400e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 5.6500e+02, 5.6600e+02, 5.6700e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 5.6800e+02, 5.6900e+02, 5.7000e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 5.7100e+02, 5.7200e+02, 5.7300e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 5.7400e+02, 5.7500e+02, 5.7600e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 5.7700e+02, 5.7800e+02, 5.7900e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 5.8000e+02, 5.8100e+02, 5.8200e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 5.8300e+02, 5.8400e+02, 5.8500e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 5.8600e+02, 5.8700e+02, 5.8800e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 5.8900e+02, 5.9000e+02, 5.9100e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 5.9200e+02, 5.9300e+02, 5.9400e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 5.9500e+02, 5.9600e+02, 5.9700e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 5.9800e+02, 5.9900e+02, 6.0000e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 6.0100e+02, 6.0200e+02, 6.0300e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 6.0400e+02, 6.0500e+02, 6.0600e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 6.0700e+02, 6.0800e+02, 6.0900e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 6.1000e+02, 6.1100e+02, 6.1200e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 6.1300e+02, 6.1400e+02, 6.1500e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 6.1600e+02, 6.1700e+02, 6.1800e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 6.1900e+02, 6.2000e+02, 6.2100e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 6.2200e+02, 6.2300e+02, 6.2400e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 6.2500e+02, 6.2600e+02, 6.2700e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 6.2800e+02, 6.2900e+02, 6.3000e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 6.3100e+02, 6.3200e+02, 6.3300e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 6.3400e+02, 6.3500e+02, 6.3600e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 6.3700e+02, 6.3800e+02, 6.3900e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 6.4000e+02, 6.4100e+02, 6.4200e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 6.4300e+02, 6.4400e+02, 6.4500e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 6.4600e+02, 6.4700e+02, 6.4800e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 6.4900e+02, 6.5000e+02, 6.5100e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 6.5200e+02, 6.5300e+02, 6.5400e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 6.5500e+02, 6.5600e+02, 6.5700e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 6.5800e+02, 6.5900e+02, 6.6000e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 6.6100e+02, 6.6200e+02, 6.6300e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 6.6400e+02, 6.6500e+02, 6.6600e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 6.6700e+02, 6.6800e+02, 6.6900e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 6.7000e+02, 6.7100e+02, 6.7200e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 6.7300e+02, 6.7400e+02, 6.7500e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 6.7600e+02, 6.7700e+02, 6.7800e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 6.7900e+02, 6.8000e+02, 6.8100e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 6.8200e+02, 6.8300e+02, 6.8400e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 6.8500e+02, 6.8600e+02, 6.8700e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 6.8800e+02, 6.8900e+02, 6.9000e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 6.9100e+02, 6.9200e+02, 6.9300e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 6.9400e+02, 6.9500e+02, 6.9600e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 6.9700e+02, 6.9800e+02, 6.9900e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 7.0000e+02, 7.0100e+02, 7.0200e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 7.0300e+02, 7.0400e+02, 7.0500e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 7.0600e+02, 7.0700e+02, 7.0800e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 7.0900e+02, 7.1000e+02, 7.1100e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 7.1200e+02, 7.1300e+02, 7.1400e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 7.1500e+02, 7.1600e+02, 7.1700e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 7.1800e+02, 7.1900e+02, 7.2000e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 7.2100e+02, 7.2200e+02, 7.2300e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 7.2400e+02, 7.2500e+02, 7.2600e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 7.2700e+02, 7.2800e+02, 7.2900e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 7.3000e+02, 7.3100e+02, 7.3200e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 7.3300e+02, 7.3400e+02, 7.3500e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 7.3600e+02, 7.3700e+02, 7.3800e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 7.3900e+02, 7.4000e+02, 7.4100e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 7.4200e+02, 7.4300e+02, 7.4400e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 7.4500e+02, 7.4600e+02, 7.4700e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 7.4800e+02, 7.4900e+02, 7.5000e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 7.5100e+02, 7.5200e+02, 7.5300e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 7.5400e+02, 7.5500e+02, 7.5600e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 7.5700e+02, 7.5800e+02, 7.5900e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 7.6000e+02, 7.6100e+02, 7.6200e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 7.6300e+02, 7.6400e+02, 7.6500e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 7.6600e+02, 7.6700e+02, 7.6800e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 7.6900e+02, 7.7000e+02, 7.7100e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 7.7200e+02, 7.7300e+02, 7.7400e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 7.7500e+02, 7.7600e+02, 7.7700e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 7.7800e+02, 7.7900e+02, 7.8000e+02],
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 [1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00, 1.0000e+00,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 1.0000e+00, 1.0000e+00]]), jab_ranges=None,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11758--11758
+Underfull \hbox (badness 10000) in paragraph at lines 11772--11772
 \T1/ptm/m/it/10 jab_deltas=None, cieobs='1964_10',
  []
 
@@ -3308,44 +3324,51 @@ Overfull \vbox (2680.61497pt too high) has occurred while \output is active []
 
 
 [126] [127]
-Underfull \hbox (badness 10000) in paragraph at lines 11867--11867
+Underfull \hbox (badness 10000) in paragraph at lines 11881--11881
 []\T1/ptm/m/it/10 dataVF=None, dat-aPX=None, plot_VF=True,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11867--11867
+Underfull \hbox (badness 10000) in paragraph at lines 11881--11881
 \T1/ptm/m/it/10 plot_PX=True, ax-type='polar', ax='new',
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11867--11867
+Underfull \hbox (badness 10000) in paragraph at lines 11881--11881
 \T1/ptm/m/it/10 plot_circle_field=True, plot_sample_shifts=False,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11867--11867
+Underfull \hbox (badness 10000) in paragraph at lines 11881--11881
 \T1/ptm/m/it/10 plot_samples_shifts_at_pixel_center=False,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11867--11867
+Underfull \hbox (badness 10000) in paragraph at lines 11881--11881
 \T1/ptm/m/it/10 jabp_sampled=None, plot_VF_colors=['g'],
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11867--11867
+Underfull \hbox (badness 10000) in paragraph at lines 11881--11881
 \T1/ptm/m/it/10 plot_PX_colors=['r'], hbin_cmap=None,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 11867--11867
+Underfull \hbox (badness 10000) in paragraph at lines 11881--11881
 \T1/ptm/m/it/10 bin_labels=None, plot_bin_colors=True,
  []
 
 [128] [129]
+
+LaTeX Warning: Hyper reference `classes:luxpy.classes.SPD' on page 130 undefine
+d on input line 12053.
+
 LaTeX Font Info:    Font shape `T1/pcr/m/it' in size <10> not available
 (Font)              Font shape `T1/pcr/m/sl' tried instead on input line 1.
 
+LaTeX Warning: Hyper reference `classes:luxpy.classes.CDATA' on page 130 undefi
+ned on input line 12061.
+
 
 ! Package inputenc Error: Unicode char − (U+2212)
 (inputenc)                not set up for use with LaTeX.
@@ -3354,7 +3377,7 @@ See the inputenc package documentation for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.12173 \end{tabulary}
+l.12187 \end{tabulary}
                       
 Your command was ignored.
 Type  I <command> <return>  to replace it with another command,
@@ -3368,7 +3391,7 @@ See the inputenc package documentation for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.12173 \end{tabulary}
+l.12187 \end{tabulary}
                       
 Your command was ignored.
 Type  I <command> <return>  to replace it with another command,
@@ -3382,7 +3405,7 @@ See the inputenc package documentation for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.12173 \end{tabulary}
+l.12187 \end{tabulary}
                       
 Your command was ignored.
 Type  I <command> <return>  to replace it with another command,
@@ -3396,7 +3419,7 @@ See the inputenc package documentation for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.12173 \end{tabulary}
+l.12187 \end{tabulary}
                       
 Your command was ignored.
 Type  I <command> <return>  to replace it with another command,
@@ -3410,24 +3433,24 @@ See the inputenc package documentation for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.12173 \end{tabulary}
+l.12187 \end{tabulary}
                       
 Your command was ignored.
 Type  I <command> <return>  to replace it with another command,
 or  <return>  to continue without it.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 12173--12173
+Underfull \hbox (badness 10000) in paragraph at lines 12187--12187
 []\T1/phv/m/n/10 Pho-tore-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 12173--12173
+Underfull \hbox (badness 10000) in paragraph at lines 12187--12187
 []\T1/phv/m/n/10 Q-symbol
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 12173--12173
+Underfull \hbox (badness 10000) in paragraph at lines 12187--12187
 []\T1/phv/m/n/10 Unit
  []
 
@@ -3439,7 +3462,7 @@ See the inputenc package documentation for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.12173 \end{tabulary}
+l.12187 \end{tabulary}
                       
 Your command was ignored.
 Type  I <command> <return>  to replace it with another command,
@@ -3453,7 +3476,7 @@ See the inputenc package documentation for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.12173 \end{tabulary}
+l.12187 \end{tabulary}
                       
 Your command was ignored.
 Type  I <command> <return>  to replace it with another command,
@@ -3467,7 +3490,7 @@ See the inputenc package documentation for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.12173 \end{tabulary}
+l.12187 \end{tabulary}
                       
 Your command was ignored.
 Type  I <command> <return>  to replace it with another command,
@@ -3481,7 +3504,7 @@ See the inputenc package documentation for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.12173 \end{tabulary}
+l.12187 \end{tabulary}
                       
 Your command was ignored.
 Type  I <command> <return>  to replace it with another command,
@@ -3495,7 +3518,7 @@ See the inputenc package documentation for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.12173 \end{tabulary}
+l.12187 \end{tabulary}
                       
 Your command was ignored.
 Type  I <command> <return>  to replace it with another command,
@@ -3509,7 +3532,7 @@ See the inputenc package documentation for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.12179 ...ance, Ee,\(\lambda\)(\(\lambda\)) (W⋅
+l.12193 ...ance, Ee,\(\lambda\)(\(\lambda\)) (W⋅
                                                   m−2), for each wavelengt...
 
 Your command was ignored.
@@ -3524,7 +3547,7 @@ See the inputenc package documentation for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.12179 ..., Ee,\(\lambda\)(\(\lambda\)) (W⋅m−
+l.12193 ..., Ee,\(\lambda\)(\(\lambda\)) (W⋅m−
                                                   2), for each wavelength, w...
 
 Your command was ignored.
@@ -3539,7 +3562,7 @@ See the inputenc package documentation for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.12184 \item[] Ee,\(\alpha\) = ∫
+l.12198 \item[] Ee,\(\alpha\) = ∫
                                     Ee,\(\lambda\)(\(\lambda\)) s\(\alpha\)(...
 
 Your command was ignored.
@@ -3554,7 +3577,7 @@ See the inputenc package documentation for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.12187 ... where the corresponding units are W⋅
+l.12201 ... where the corresponding units are W⋅
                                                   m−2 in each case.
 Your command was ignored.
 Type  I <command> <return>  to replace it with another command,
@@ -3568,7 +3591,7 @@ See the inputenc package documentation for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.12187 ...re the corresponding units are W⋅m−
+l.12201 ...re the corresponding units are W⋅m−
                                                   2 in each case.
 Your command was ignored.
 Type  I <command> <return>  to replace it with another command,
@@ -3582,7 +3605,7 @@ See the inputenc package documentation for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.12193 \item[] E,\(\alpha\) = Km ⋅
+l.12207 \item[] E,\(\alpha\) = Km ⋅
                                       ∫ Ee,\(\lambda\)(\(\lambda\)) s\(\al...
 
 Your command was ignored.
@@ -3597,7 +3620,7 @@ See the inputenc package documentation for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.12193 \item[] E,\(\alpha\) = Km ⋅ ∫
+l.12207 \item[] E,\(\alpha\) = Km ⋅ ∫
                                           Ee,\(\lambda\)(\(\lambda\)) s\(\al...
 
 Your command was ignored.
@@ -3612,7 +3635,7 @@ See the inputenc package documentation for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.12193 ...(\alpha\)(\(\lambda\)) d\(\lambda\) ⋅
+l.12207 ...(\alpha\)(\(\lambda\)) d\(\lambda\) ⋅
                                                    ∫ V(\(\lambda\)) d\(\la...
 
 Your command was ignored.
@@ -3627,7 +3650,7 @@ See the inputenc package documentation for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.12193 ...pha\)(\(\lambda\)) d\(\lambda\) ⋅ ∫
+l.12207 ...pha\)(\(\lambda\)) d\(\lambda\) ⋅ ∫
                                                    V(\(\lambda\)) d\(\lambda...
 
 Your command was ignored.
@@ -3642,7 +3665,7 @@ See the inputenc package documentation for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.12193 ...� ∫ V(\(\lambda\)) d\(\lambda\) / ∫
+l.12207 ...� ∫ V(\(\lambda\)) d\(\lambda\) / ∫
                                                    s\(\alpha\)(\(\lambda\)) ...
 
 Your command was ignored.
@@ -3658,7 +3681,7 @@ See the inputenc package documentation for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.12215 {[}‘W⋅
+l.12229 {[}‘W⋅
                   m−2’{]} * 5
 Your command was ignored.
 Type  I <command> <return>  to replace it with another command,
@@ -3672,466 +3695,466 @@ See the inputenc package documentation for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.12215 {[}‘W⋅m−
+l.12229 {[}‘W⋅m−
                       2’{]} * 5
 Your command was ignored.
 Type  I <command> <return>  to replace it with another command,
 or  <return>  to continue without it.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 12286--12286
+Underfull \hbox (badness 10000) in paragraph at lines 12300--12300
 []\T1/ptm/m/it/10 sid\T1/ptm/m/n/10 , \T1/ptm/m/it/10 Ee=None\T1/ptm/m/n/10 , \
 T1/ptm/m/it/10 E=None\T1/ptm/m/n/10 , \T1/ptm/m/it/10 Q=None\T1/ptm/m/n/10 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 12286--12286
+Underfull \hbox (badness 10000) in paragraph at lines 12300--12300
 \T1/ptm/m/it/10 cieobs='1931_2'\T1/ptm/m/n/10 , \T1/ptm/m/it/10 sid_units='W/m2
 '\T1/ptm/m/n/10 ,
  []
 
 [131]
-Underfull \hbox (badness 10000) in paragraph at lines 12357--12357
+Underfull \hbox (badness 10000) in paragraph at lines 12371--12371
 \T1/ptm/m/it/10 out='COI\T1/ptm/m/n/10 , \T1/ptm/m/it/10 cct'\T1/ptm/m/n/10 , \
 T1/ptm/m/it/10 ex-trap-o-
  []
 
 [132] [133] [134]
-Underfull \hbox (badness 10000) in paragraph at lines 12654--12654
+Underfull \hbox (badness 10000) in paragraph at lines 12668--12668
 []\T1/ptm/m/it/10 age=32\T1/ptm/m/n/10 , \T1/ptm/m/it/10 field-size=10\T1/ptm/m
 /n/10 , \T1/ptm/m/it/10 wl=None\T1/ptm/m/n/10 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 12654--12654
+Underfull \hbox (badness 10000) in paragraph at lines 12668--12668
 \T1/ptm/m/it/10 var_od_lens=0\T1/ptm/m/n/10 , \T1/ptm/m/it/10 var_od_macula=0\T
 1/ptm/m/n/10 , \T1/ptm/m/it/10 var_od_L=0\T1/ptm/m/n/10 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 12654--12654
+Underfull \hbox (badness 10000) in paragraph at lines 12668--12668
 \T1/ptm/m/it/10 var_od_M=0\T1/ptm/m/n/10 , \T1/ptm/m/it/10 var_od_S=0\T1/ptm/m/
 n/10 , \T1/ptm/m/it/10 var_shft_L=0\T1/ptm/m/n/10 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 12654--12654
+Underfull \hbox (badness 10000) in paragraph at lines 12668--12668
 \T1/ptm/m/it/10 var_shft_M=0\T1/ptm/m/n/10 , \T1/ptm/m/it/10 var_shft_S=0\T1/pt
 m/m/n/10 , \T1/ptm/m/it/10 out='LMS'\T1/ptm/m/n/10 , \T1/ptm/m/it/10 al-
  []
 
 [135]
-Underfull \hbox (badness 10000) in paragraph at lines 12801--12801
+Underfull \hbox (badness 10000) in paragraph at lines 12815--12815
 []\T1/ptm/m/it/10 n_obs=1\T1/ptm/m/n/10 , \T1/ptm/m/it/10 std-De-vAll-Param={'o
 d_L': 17.9\T1/ptm/m/n/10 ,
  []
 
 [136]
-Underfull \hbox (badness 10000) in paragraph at lines 12844--12844
+Underfull \hbox (badness 10000) in paragraph at lines 12858--12858
 []\T1/ptm/m/it/10 n_obs=1, field-size=10, list_Age=[32],
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 12844--12844
+Underfull \hbox (badness 10000) in paragraph at lines 12858--12858
 \T1/ptm/m/it/10 out='LMS', wl=None, al-
  []
 
 [137]
-Underfull \hbox (badness 10000) in paragraph at lines 12933--12933
+Underfull \hbox (badness 10000) in paragraph at lines 12947--12947
 []\T1/ptm/m/it/10 n_cat=10\T1/ptm/m/n/10 , \T1/ptm/m/it/10 field-size=2\T1/ptm/
 m/n/10 , \T1/ptm/m/it/10 out='LMS'\T1/ptm/m/n/10 , \T1/ptm/m/it/10 wl=None\T1/p
 tm/m/n/10 , \T1/ptm/m/it/10 al-
  []
 
 [138]
-Underfull \hbox (badness 10000) in paragraph at lines 13106--13110
+Underfull \hbox (badness 10000) in paragraph at lines 13120--13124
 []\T1/ptm/m/n/10 Initialize spd_optim_pars (x0, lb, ub for use with
  []
 
 [139] [140]
-Underfull \hbox (badness 10000) in paragraph at lines 13258--13258
+Underfull \hbox (badness 10000) in paragraph at lines 13272--13272
 []\T1/ptm/m/it/10 peakwl=450, fwhm=20, wl=[360.0,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 13258--13258
+Underfull \hbox (badness 10000) in paragraph at lines 13272--13272
 \T1/ptm/m/it/10 830.0, 1.0], bw_order=-1, with_wl=True,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 13258--13258
+Underfull \hbox (badness 10000) in paragraph at lines 13272--13272
 \T1/ptm/m/it/10 strength_shoulder=2, strength_ph=0,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 13258--13258
+Underfull \hbox (badness 10000) in paragraph at lines 13272--13272
 \T1/ptm/m/it/10 peakwl_ph1=530, fwhm_ph1=80,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 13258--13258
+Underfull \hbox (badness 10000) in paragraph at lines 13272--13272
 \T1/ptm/m/it/10 strength_ph1=1, peakwl_ph2=560,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 13258--13258
+Underfull \hbox (badness 10000) in paragraph at lines 13272--13272
 \T1/ptm/m/it/10 fwhm_ph2=80, strength_ph2=None,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 13258--13258
+Underfull \hbox (badness 10000) in paragraph at lines 13272--13272
 \T1/ptm/m/it/10 use_piecewise_fcn=False, ver-bosity=0,
  []
 
 [141] [142]
-Underfull \hbox (badness 10000) in paragraph at lines 13440--13440
+Underfull \hbox (badness 10000) in paragraph at lines 13454--13454
 []\T1/ptm/m/it/10 flux=None, com-po-nent_spds=None, peakwl=450,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 13440--13440
+Underfull \hbox (badness 10000) in paragraph at lines 13454--13454
 \T1/ptm/m/it/10 fwhm=20, bw_order=-1, pair_strengths=None,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 13440--13440
+Underfull \hbox (badness 10000) in paragraph at lines 13454--13454
 \T1/ptm/m/it/10 wl=[360.0, 830.0, 1.0], with_wl=True,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 13440--13440
+Underfull \hbox (badness 10000) in paragraph at lines 13454--13454
 \T1/ptm/m/it/10 strength_shoulder=2, strength_ph=0,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 13440--13440
+Underfull \hbox (badness 10000) in paragraph at lines 13454--13454
 \T1/ptm/m/it/10 peakwl_ph1=530, fwhm_ph1=80, strength_ph1=1,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 13440--13440
+Underfull \hbox (badness 10000) in paragraph at lines 13454--13454
 \T1/ptm/m/it/10 tar-get=None, tar_type='Yuv', cspace_bwtf={},
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 13440--13440
+Underfull \hbox (badness 10000) in paragraph at lines 13454--13454
 \T1/ptm/m/it/10 cieobs='1931_2', use_piecewise_fcn=False, ver-
  []
 
 [143] [144]
-Underfull \hbox (badness 10000) in paragraph at lines 13673--13673
+Underfull \hbox (badness 10000) in paragraph at lines 13687--13687
 []\T1/ptm/m/it/10 x, spd_constructor, spd_constructor_pars=None,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 13673--13673
+Underfull \hbox (badness 10000) in paragraph at lines 13687--13687
 \T1/ptm/m/it/10 F_rss=True, dec-i-mals=[3], obj_fcn=[None],
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 13673--13673
+Underfull \hbox (badness 10000) in paragraph at lines 13687--13687
 \T1/ptm/m/it/10 obj_fcn_pars=[{}], obj_fcn_weights=[1],
  []
 
 [145] [146]
-Underfull \hbox (badness 10000) in paragraph at lines 13849--13849
+Underfull \hbox (badness 10000) in paragraph at lines 13863--13863
 []\T1/ptm/m/it/10 optimizer_type='2mixer',
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 13849--13849
+Underfull \hbox (badness 10000) in paragraph at lines 13863--13863
 \T1/ptm/m/it/10 spd_constructor=None,
  []
 
 
-Underfull \hbox (badness 5359) in paragraph at lines 13849--13849
+Underfull \hbox (badness 5359) in paragraph at lines 13863--13863
 \T1/ptm/m/it/10 spd_model_pars=None, com-po-nent_data=4,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 13849--13849
+Underfull \hbox (badness 10000) in paragraph at lines 13863--13863
 \T1/ptm/m/it/10 N_components=None, wl=[360.0, 830.0,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 13849--13849
+Underfull \hbox (badness 10000) in paragraph at lines 13863--13863
 \T1/ptm/m/it/10 1.0], al-low_butterworth_mono_spds=False,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 13849--13849
+Underfull \hbox (badness 10000) in paragraph at lines 13863--13863
 \T1/ptm/m/it/10 Yxy_target=array([[1.0000e+02, 3.3333e-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 13849--13849
+Underfull \hbox (badness 10000) in paragraph at lines 13863--13863
 \T1/ptm/m/it/10 01, 3.3333e-01]]), cieobs='1931_2',
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 13849--13849
+Underfull \hbox (badness 10000) in paragraph at lines 13863--13863
 \T1/ptm/m/it/10 obj_fcn=[None], obj_fcn_pars=[{}],
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 13849--13849
+Underfull \hbox (badness 10000) in paragraph at lines 13863--13863
 \T1/ptm/m/it/10 obj_fcn_weights=[1], obj_tar_vals=[0],
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 13849--13849
+Underfull \hbox (badness 10000) in paragraph at lines 13863--13863
 \T1/ptm/m/it/10 dec-i-mals=[5], minimize_method='nelder-
  []
 
 
-Underfull \hbox (badness 7832) in paragraph at lines 13849--13849
+Underfull \hbox (badness 7832) in paragraph at lines 13863--13863
 \T1/ptm/m/it/10 mead', min-i-mize_opts=None, F_rss=True,
  []
 
 [147] [148]
-Underfull \hbox (badness 10000) in paragraph at lines 14036--14036
+Underfull \hbox (badness 10000) in paragraph at lines 14050--14050
 []\T1/ptm/m/it/10 target=array([[1.0000e+02,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 14036--14036
+Underfull \hbox (badness 10000) in paragraph at lines 14050--14050
 \T1/ptm/m/it/10 3.3333e-01, 3.3333e-01]]),
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 14036--14036
+Underfull \hbox (badness 10000) in paragraph at lines 14050--14050
 \T1/ptm/m/it/10 tar_type='Yxy', cieobs='1931_2',
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 14036--14036
+Underfull \hbox (badness 10000) in paragraph at lines 14050--14050
 \T1/ptm/m/it/10 op-ti-mizer_type='2mixer',
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 14036--14036
+Underfull \hbox (badness 10000) in paragraph at lines 14050--14050
 \T1/ptm/m/it/10 spd_constructor=None,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 14036--14036
+Underfull \hbox (badness 10000) in paragraph at lines 14050--14050
 \T1/ptm/m/it/10 spd_model_pars=None, cspace='Yuv',
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 14036--14036
+Underfull \hbox (badness 10000) in paragraph at lines 14050--14050
 \T1/ptm/m/it/10 nent_spds=None, N_components=None,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 14036--14036
+Underfull \hbox (badness 10000) in paragraph at lines 14050--14050
 \T1/ptm/m/it/10 obj_fcn=[None], obj_fcn_pars=[{}],
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 14036--14036
+Underfull \hbox (badness 10000) in paragraph at lines 14050--14050
 \T1/ptm/m/it/10 obj_fcn_weights=[1], obj_tar_vals=[0],
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 14036--14036
+Underfull \hbox (badness 10000) in paragraph at lines 14050--14050
 \T1/ptm/m/it/10 bw_order=[-1], wl=[360.0,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 14036--14036
+Underfull \hbox (badness 10000) in paragraph at lines 14050--14050
 \T1/ptm/m/it/10 830.0, 1.0], with_wl=True,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 14036--14036
+Underfull \hbox (badness 10000) in paragraph at lines 14050--14050
 \T1/ptm/m/it/10 strength_shoulder=2, strength_ph=[0],
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 14036--14036
+Underfull \hbox (badness 10000) in paragraph at lines 14050--14050
 \T1/ptm/m/it/10 use_piecewise_fcn=False,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 14036--14036
+Underfull \hbox (badness 10000) in paragraph at lines 14050--14050
 \T1/ptm/m/it/10 peakwl_ph1=[530], fwhm_ph1=[80],
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 14036--14036
+Underfull \hbox (badness 10000) in paragraph at lines 14050--14050
 \T1/ptm/m/it/10 strength_ph1=[1], peakwl_ph2=[560],
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 14036--14036
+Underfull \hbox (badness 10000) in paragraph at lines 14050--14050
 \T1/ptm/m/it/10 fwhm_ph2=[80], strength_ph2=None,
  []
 
 
-Underfull \hbox (badness 8094) in paragraph at lines 14036--14036
+Underfull \hbox (badness 8094) in paragraph at lines 14050--14050
 \T1/ptm/m/it/10 gle_strengths=None, peakwl_min=[400],
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 14036--14036
+Underfull \hbox (badness 10000) in paragraph at lines 14050--14050
 \T1/ptm/m/it/10 peakwl_max=[700], fwhm_min=[5],
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 14036--14036
+Underfull \hbox (badness 10000) in paragraph at lines 14050--14050
 \T1/ptm/m/it/10 fwhm_max=[300], bw_order_min=[0],
  []
 
 [149]
-Underfull \hbox (badness 10000) in paragraph at lines 14057--14057
+Underfull \hbox (badness 10000) in paragraph at lines 14071--14071
 []\T1/ptm/m/it/10 component_data,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 14057--14057
+Underfull \hbox (badness 10000) in paragraph at lines 14071--14071
 \T1/ptm/m/it/10 N_components=None, al-
  []
 
 
-Overfull \hbox (8.34367pt too wide) in paragraph at lines 14057--14057
+Overfull \hbox (8.34367pt too wide) in paragraph at lines 14071--14071
 \T1/ptm/m/it/10 low_butterworth_mono_spds=False,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 14057--14057
+Underfull \hbox (badness 10000) in paragraph at lines 14071--14071
 \T1/ptm/m/it/10 op-ti-mizer_type='2mixer',
  []
 
 [150]
-Underfull \hbox (badness 10000) in paragraph at lines 14132--14132
+Underfull \hbox (badness 10000) in paragraph at lines 14146--14146
 []\T1/ptm/m/it/10 component_data,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 14132--14132
+Underfull \hbox (badness 10000) in paragraph at lines 14146--14146
 \T1/ptm/m/it/10 N_components=None, al-
  []
 
 
-Overfull \hbox (8.34367pt too wide) in paragraph at lines 14132--14132
+Overfull \hbox (8.34367pt too wide) in paragraph at lines 14146--14146
 \T1/ptm/m/it/10 low_butterworth_mono_spds=False,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 14132--14132
+Underfull \hbox (badness 10000) in paragraph at lines 14146--14146
 \T1/ptm/m/it/10 op-ti-mizer_type='2mixer',
  []
 
 [151]
-Underfull \hbox (badness 10000) in paragraph at lines 14202--14202
+Underfull \hbox (badness 10000) in paragraph at lines 14216--14216
 \T1/ptm/m/it/10 01]]), tar_type='Yxy', cieobs='1931_2', op-ti-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 14202--14202
+Underfull \hbox (badness 10000) in paragraph at lines 14216--14216
 \T1/ptm/m/it/10 mizer_type='2mixer', spd_constructor=None,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 14202--14202
+Underfull \hbox (badness 10000) in paragraph at lines 14216--14216
 \T1/ptm/m/it/10 spd_model_pars=None, cspace='Yuv',
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 14202--14202
+Underfull \hbox (badness 10000) in paragraph at lines 14216--14216
 \T1/ptm/m/it/10 cspace_bwtf={}, cspace_fwtf={}, com-po-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 14202--14202
+Underfull \hbox (badness 10000) in paragraph at lines 14216--14216
 \T1/ptm/m/it/10 nent_spds=None, N_components=None,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 14202--14202
+Underfull \hbox (badness 10000) in paragraph at lines 14216--14216
 \T1/ptm/m/it/10 obj_fcn=[None], obj_fcn_pars=[{}],
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 14202--14202
+Underfull \hbox (badness 10000) in paragraph at lines 14216--14216
 \T1/ptm/m/it/10 obj_fcn_weights=[1], obj_tar_vals=[0],
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 14202--14202
+Underfull \hbox (badness 10000) in paragraph at lines 14216--14216
 \T1/ptm/m/it/10 dec-i-mals=[5], minimize_method='nelder-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 14202--14202
+Underfull \hbox (badness 10000) in paragraph at lines 14216--14216
 \T1/ptm/m/it/10 mead', min-i-mize_opts=None, F_rss=True,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 14202--14202
+Underfull \hbox (badness 10000) in paragraph at lines 14216--14216
 \T1/ptm/m/it/10 peakwl=[450, 530, 610], fwhm=[20, 20,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 14202--14202
+Underfull \hbox (badness 10000) in paragraph at lines 14216--14216
 \T1/ptm/m/it/10 20], al-low_butterworth_mono_spds=False,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 14202--14202
+Underfull \hbox (badness 10000) in paragraph at lines 14216--14216
 \T1/ptm/m/it/10 bw_order=[-1], wl=[360.0, 830.0, 1.0],
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 14202--14202
+Underfull \hbox (badness 10000) in paragraph at lines 14216--14216
 \T1/ptm/m/it/10 with_wl=True, strength_shoulder=2,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 14202--14202
+Underfull \hbox (badness 10000) in paragraph at lines 14216--14216
 \T1/ptm/m/it/10 strength_ph=[0], use_piecewise_fcn=False,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 14202--14202
+Underfull \hbox (badness 10000) in paragraph at lines 14216--14216
 \T1/ptm/m/it/10 peakwl_ph1=[530], fwhm_ph1=[80],
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 14202--14202
+Underfull \hbox (badness 10000) in paragraph at lines 14216--14216
 \T1/ptm/m/it/10 strength_ph1=[1], peakwl_ph2=[560],
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 14202--14202
+Underfull \hbox (badness 10000) in paragraph at lines 14216--14216
 \T1/ptm/m/it/10 pair_strengths=None, peakwl_min=[400],
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 14202--14202
+Underfull \hbox (badness 10000) in paragraph at lines 14216--14216
 \T1/ptm/m/it/10 peakwl_max=[700], fwhm_min=[5],
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 14202--14202
+Underfull \hbox (badness 10000) in paragraph at lines 14216--14216
 \T1/ptm/m/it/10 fwhm_max=[300], bw_order_min=0,
  []
 
 [152] [153] [154]
-Underfull \hbox (badness 5652) in paragraph at lines 14459--14459
+Underfull \hbox (badness 5652) in paragraph at lines 14473--14473
 \T1/ptm/m/it/10 cspace_tf={}\T1/ptm/m/n/10 , \T1/ptm/m/it/10 k_neighbours=4\T1/
 ptm/m/n/10 , \T1/ptm/m/it/10 show=True\T1/ptm/m/n/10 , \T1/ptm/m/it/10 ver-
  []
 
 
-Underfull \hbox (badness 7047) in paragraph at lines 14459--14459
+Underfull \hbox (badness 7047) in paragraph at lines 14473--14473
 \T1/ptm/m/it/10 bosity=0\T1/ptm/m/n/10 , \T1/ptm/m/it/10 show_ref_img=True\T1/p
 tm/m/n/10 , \T1/ptm/m/it/10 stack_test_ref=12\T1/ptm/m/n/10 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 14459--14459
+Underfull \hbox (badness 10000) in paragraph at lines 14473--14473
 \T1/ptm/m/it/10 write_to_file=None\T1/ptm/m/n/10 , \T1/ptm/m/it/10 use_plt_show
 =True\T1/ptm/m/n/10 ,
  []
@@ -4142,30 +4165,108 @@ Chapter 5.
 
 ] [158
 
-] [159
+]
+
+LaTeX Warning: Reference `color:module-luxpy.color.cam' on page 159 undefined o
+n input line 14639.
+
+
+LaTeX Warning: Reference `color:module-luxpy.color.cat' on page 159 undefined o
+n input line 14640.
+
+
+LaTeX Warning: Reference `color:module-luxpy.color.cct' on page 159 undefined o
+n input line 14641.
+
+
+LaTeX Warning: Reference `color:module-luxpy.color.cri' on page 159 undefined o
+n input line 14642.
+
+
+LaTeX Warning: Reference `color:module-luxpy.color.cri.VFPX' on page 159 undefi
+ned on input line 14643.
+
+
+LaTeX Warning: Reference `color:module-luxpy.color.ctf.colortf' on page 159 und
+efined on input line 14644.
+
+
+LaTeX Warning: Reference `color:module-luxpy.color.ctf.colortransforms' on page
+ 159 undefined on input line 14645.
+
+
+LaTeX Warning: Reference `color:module-luxpy.color.deltaE' on page 159 undefine
+d on input line 14646.
+
+
+LaTeX Warning: Reference `color:module-luxpy.color.utils' on page 159 undefined
+ on input line 14647.
+
+
+LaTeX Warning: Reference `spectrum:module-luxpy.spectrum' on page 159 undefined
+ on input line 14648.
+
+
+LaTeX Warning: Reference `toolboxes:module-luxpy.toolboxes.hypspcim' on page 15
+9 undefined on input line 14649.
+
+
+LaTeX Warning: Reference `toolboxes:module-luxpy.toolboxes.indvcmf' on page 159
+ undefined on input line 14650.
+
+
+LaTeX Warning: Reference `toolboxes:module-luxpy.toolboxes.photbiochem' on page
+ 159 undefined on input line 14651.
+
+
+LaTeX Warning: Reference `toolboxes:module-luxpy.toolboxes.spdbuild' on page 15
+9 undefined on input line 14652.
+
+
+LaTeX Warning: Reference `utils:module-luxpy.utils.helpers' on page 159 undefin
+ed on input line 14653.
+
+
+LaTeX Warning: Reference `utils:module-luxpy.utils.math' on page 159 undefined 
+on input line 14654.
+
+[159
 
 
 ]
 No file LuxPy.ind.
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 14645.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 14645.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 14659.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 14659.
 (LuxPy.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 14645.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 14659.
 
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 14645
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 14659
 .
-Package rerunfilecheck Info: File `LuxPy.out' has not changed.
-(rerunfilecheck)             Checksum: BF4790F05ABBA15F0959CD787E9D5DB8;3768.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 14645.
+
+
+Package rerunfilecheck Warning: File `LuxPy.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+Package rerunfilecheck Info: Checksums for `LuxPy.out':
+(rerunfilecheck)             Before: <no file>
+(rerunfilecheck)             After:  BF4790F05ABBA15F0959CD787E9D5DB8;3768.
+
+LaTeX Warning: There were undefined references.
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 14659.
  ) 
 Here is how much of TeX's memory you used:
- 14374 strings out of 493305
- 208916 string characters out of 3127628
- 422564 words of memory out of 3000000
- 17144 multiletter control sequences out of 15000+200000
+ 14334 strings out of 493305
+ 208163 string characters out of 3127628
+ 407869 words of memory out of 3000000
+ 17112 multiletter control sequences out of 15000+200000
  53524 words of font info for 72 fonts, out of 3000000 for 9000
  1142 hyphenation exceptions out of 8191
- 37i,12n,45p,11729b,869s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 37i,12n,45p,11729b,779s stack positions out of 5000i,500n,10000p,200000b,50000s
 {C:/Users/kevin.smet/AppData/Local/Programs/MiKTeX 2.9/fonts/enc/dvips/base/8
 r.enc}<C:/Users/kevin.smet/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public
 /amsfonts/cm/cmmi10.pfb><C:/Users/kevin.smet/AppData/Local/Programs/MiKTeX 2.9/
@@ -4179,9 +4280,9 @@ etic/uhvr8a.pfb><C:/Users/kevin.smet/AppData/Local/Programs/MiKTeX 2.9/fonts/ty
 pe1/urw/times/utmb8a.pfb><C:/Users/kevin.smet/AppData/Local/Programs/MiKTeX 2.9
 /fonts/type1/urw/times/utmr8a.pfb><C:/Users/kevin.smet/AppData/Local/Programs/M
 iKTeX 2.9/fonts/type1/urw/times/utmri8a.pfb>
-Output written on LuxPy.pdf (163 pages, 761999 bytes).
+Output written on LuxPy.pdf (163 pages, 742087 bytes).
 PDF statistics:
- 1570 PDF objects out of 1728 (max. 8388607)
+ 1425 PDF objects out of 1440 (max. 8388607)
  470 named destinations out of 1000 (max. 500000)
- 274 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 26 words of extra memory for PDF output out of 10000 (max. 10000000)
 

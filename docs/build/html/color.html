@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Color sub-package &mdash; LuxPy 1.3.5 documentation</title>
+  <title>Color sub-package &mdash; LuxPy 1.3.6 documentation</title>
   
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                1.3.5
+                1.3.6
               </div>
             
           
@@ -4321,7 +4321,7 @@ Opt. Express, vol. 23, no. 10, pp. 13455–13466.</a></dd>
 
 <dl class="function">
 <dt id="luxpy.color.cam.cam_sww16">
-<code class="descclassname">luxpy.color.cam.</code><code class="descname">cam_sww16</code><span class="sig-paren">(</span><em>data</em>, <em>dataw=None</em>, <em>Yb=20.0</em>, <em>Lw=400.0</em>, <em>relative=True</em>, <em>parameters=None</em>, <em>inputtype='xyz'</em>, <em>direction='forward'</em>, <em>cieobs='2006_10'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cam/sww2016.html#cam_sww16"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cam.cam_sww16" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">luxpy.color.cam.</code><code class="descname">cam_sww16</code><span class="sig-paren">(</span><em>data</em>, <em>dataw=None</em>, <em>Yb=20.0</em>, <em>Lw=400.0</em>, <em>Ccwb=None</em>, <em>relative=True</em>, <em>parameters=None</em>, <em>inputtype='xyz'</em>, <em>direction='forward'</em>, <em>cieobs='2006_10'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cam/sww2016.html#cam_sww16"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cam.cam_sww16" title="Permalink to this definition">¶</a></dt>
 <dd><p>A simple principled color appearance model based on a mapping 
 of the Munsell color system.</p>
 <div class="line-block">
@@ -4362,13 +4362,20 @@ of the Munsell color system.</p>
 </div>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">relative:</th><td class="field-body"><div class="first last line-block">
+<tr class="field-odd field"><th class="field-name">Ccwb:</th><td class="field-body"><div class="first last line-block">
+<div class="line">None,  optional</div>
+<div class="line">Degree of cognitive adaptation (white point balancing)</div>
+<div class="line">If None: use [..,..] from parameters dict.</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">relative:</th><td class="field-body"><div class="first last line-block">
 <div class="line">True or False, optional</div>
 <div class="line">True: xyz tristimulus values are relative (Yw = 100)</div>
 </div>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">parameters:</th><td class="field-body"><div class="first last line-block">
+<tr class="field-odd field"><th class="field-name">parameters:</th><td class="field-body"><div class="first last line-block">
 <div class="line">None or str or dict, optional</div>
 <div class="line">Dict with model parameters.</div>
 <div class="line-block">
@@ -4382,7 +4389,7 @@ of the Munsell color system.</p>
 </div>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">inputtpe:</th><td class="field-body"><div class="first last line-block">
+<tr class="field-even field"><th class="field-name">inputtpe:</th><td class="field-body"><div class="first last line-block">
 <div class="line">‘xyz’ or ‘spd’, optional</div>
 <div class="line">Specifies the type of input: </div>
 <div class="line-block">
@@ -4391,7 +4398,7 @@ of the Munsell color system.</p>
 </div>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">direction:</th><td class="field-body"><div class="first last line-block">
+<tr class="field-odd field"><th class="field-name">direction:</th><td class="field-body"><div class="first last line-block">
 <div class="line">‘forward’ or ‘inverse’, optional</div>
 <div class="line-block">
 <div class="line">-‘forward’: xyz -&gt; cam_sww_2016</div>
@@ -4400,7 +4407,7 @@ of the Munsell color system.</p>
 </div>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">cieobs:</th><td class="field-body"><div class="first last line-block">
+<tr class="field-even field"><th class="field-name">cieobs:</th><td class="field-body"><div class="first last line-block">
 <div class="line">‘2006_10’, optional</div>
 <div class="line">CMF set to use to perform calculations where spectral data 
 is involved (inputtype == ‘spd’; dataw = None)</div>
@@ -4642,7 +4649,7 @@ Journal of the Optical Society of America A, 33(3), A319–A331.</a></dd>
 
 <dl class="function">
 <dt id="luxpy.color.cam.xyz_to_qabW_cam15u">
-<code class="descclassname">luxpy.color.cam.</code><code class="descname">xyz_to_qabW_cam15u</code><span class="sig-paren">(</span><em>data</em>, <em>fov=10.0</em>, <em>parameters=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cam/cam15u.html#xyz_to_qabW_cam15u"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cam.xyz_to_qabW_cam15u" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">luxpy.color.cam.</code><code class="descname">xyz_to_qabW_cam15u</code><span class="sig-paren">(</span><em>xyz</em>, <em>fov=10.0</em>, <em>parameters=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cam/cam15u.html#xyz_to_qabW_cam15u"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cam.xyz_to_qabW_cam15u" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wrapper function for cam15u forward mode with ‘Q,aW,bW’ output.</p>
 <div class="line-block">
 <div class="line">For help on parameter details: ?luxpy.cam.cam15u</div>
@@ -4651,7 +4658,7 @@ Journal of the Optical Society of America A, 33(3), A319–A331.</a></dd>
 
 <dl class="function">
 <dt id="luxpy.color.cam.qabW_cam15u_to_xyz">
-<code class="descclassname">luxpy.color.cam.</code><code class="descname">qabW_cam15u_to_xyz</code><span class="sig-paren">(</span><em>data</em>, <em>fov=10.0</em>, <em>parameters=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cam/cam15u.html#qabW_cam15u_to_xyz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cam.qabW_cam15u_to_xyz" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">luxpy.color.cam.</code><code class="descname">qabW_cam15u_to_xyz</code><span class="sig-paren">(</span><em>qab</em>, <em>fov=10.0</em>, <em>parameters=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cam/cam15u.html#qabW_cam15u_to_xyz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cam.qabW_cam15u_to_xyz" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wrapper function for cam15u inverse mode with ‘Q,aW,bW’ input.</p>
 <div class="line-block">
 <div class="line">For help on parameter details: ?luxpy.cam.cam15u</div>
@@ -4660,7 +4667,7 @@ Journal of the Optical Society of America A, 33(3), A319–A331.</a></dd>
 
 <dl class="function">
 <dt id="luxpy.color.cam.xyz_to_lab_cam_sww16">
-<code class="descclassname">luxpy.color.cam.</code><code class="descname">xyz_to_lab_cam_sww16</code><span class="sig-paren">(</span><em>data</em>, <em>dataw=None</em>, <em>Yb=20.0</em>, <em>Lw=400.0</em>, <em>relative=True</em>, <em>parameters=None</em>, <em>inputtype='xyz'</em>, <em>cieobs='2006_10'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cam/sww2016.html#xyz_to_lab_cam_sww16"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cam.xyz_to_lab_cam_sww16" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">luxpy.color.cam.</code><code class="descname">xyz_to_lab_cam_sww16</code><span class="sig-paren">(</span><em>xyz</em>, <em>xyzw=None</em>, <em>Yb=20.0</em>, <em>Lw=400.0</em>, <em>Ccwb=None</em>, <em>relative=True</em>, <em>parameters=None</em>, <em>inputtype='xyz'</em>, <em>cieobs='2006_10'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cam/sww2016.html#xyz_to_lab_cam_sww16"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cam.xyz_to_lab_cam_sww16" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wrapper function for cam_sww16 forward mode with ‘xyz’ input.</p>
 <div class="line-block">
 <div class="line">For help on parameter details: ?luxpy.cam.cam_sww16</div>
@@ -4669,7 +4676,7 @@ Journal of the Optical Society of America A, 33(3), A319–A331.</a></dd>
 
 <dl class="function">
 <dt id="luxpy.color.cam.lab_cam_sww16_to_xyz">
-<code class="descclassname">luxpy.color.cam.</code><code class="descname">lab_cam_sww16_to_xyz</code><span class="sig-paren">(</span><em>data</em>, <em>dataw=None</em>, <em>Yb=20.0</em>, <em>Lw=400.0</em>, <em>relative=True</em>, <em>parameters=None</em>, <em>inputtype='xyz'</em>, <em>cieobs='2006_10'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cam/sww2016.html#lab_cam_sww16_to_xyz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cam.lab_cam_sww16_to_xyz" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">luxpy.color.cam.</code><code class="descname">lab_cam_sww16_to_xyz</code><span class="sig-paren">(</span><em>lab</em>, <em>xyzw=None</em>, <em>Yb=20.0</em>, <em>Lw=400.0</em>, <em>Ccwb=None</em>, <em>relative=True</em>, <em>parameters=None</em>, <em>inputtype='xyz'</em>, <em>cieobs='2006_10'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cam/sww2016.html#lab_cam_sww16_to_xyz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cam.lab_cam_sww16_to_xyz" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wrapper function for cam_sww16 inverse mode with ‘xyz’ input.</p>
 <div class="line-block">
 <div class="line">For help on parameter details: ?luxpy.cam.cam_sww16</div>
@@ -4971,21 +4978,27 @@ or else to default of cspace.</div>
 </div>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">fwtft:</th><td class="field-body"><div class="first last line-block">
+<tr class="field-even field"><th class="field-name">tf:</th><td class="field-body"><div class="first last line-block">
+<div class="line">_CSPACE, optional</div>
+<div class="line">Color space to use for color difference calculation.</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">fwtft:</th><td class="field-body"><div class="first last line-block">
 <div class="line">{}, optional</div>
 <div class="line">Dict with parameters for forward transform 
 from xyz to cspace for test data.</div>
 </div>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">fwtfr:</th><td class="field-body"><div class="first last line-block">
+<tr class="field-even field"><th class="field-name">fwtfr:</th><td class="field-body"><div class="first last line-block">
 <div class="line">{}, optional </div>
 <div class="line">Dict with parameters for forward transform 
 from xyz to cspace for reference data.</div>
 </div>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">KLCH:</th><td class="field-body"><div class="first last line-block">
+<tr class="field-odd field"><th class="field-name">KLCH:</th><td class="field-body"><div class="first last line-block">
 <div class="line">None, optional</div>
 <div class="line">Weigths for L, C, H </div>
 <div class="line">None: default to [1,1,1] </div>
@@ -4993,7 +5006,7 @@ from xyz to cspace for reference data.</div>
 </div>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">DEtype:</th><td class="field-body"><div class="first last line-block">
+<tr class="field-even field"><th class="field-name">DEtype:</th><td class="field-body"><div class="first last line-block">
 <div class="line">‘jab’ or str, optional</div>
 <div class="line">Options: </div>
 <div class="line-block">
@@ -5009,7 +5022,7 @@ and returns them as a tuple.</div>
 </div>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">avg:</th><td class="field-body"><div class="first last line-block">
+<tr class="field-odd field"><th class="field-name">avg:</th><td class="field-body"><div class="first last line-block">
 <div class="line">None, optional</div>
 <div class="line">None: don’t calculate average DE, </div>
 <div class="line-block">
@@ -5018,25 +5031,25 @@ and returns them as a tuple.</div>
 </div>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">avg_axis:</th><td class="field-body"><div class="first last line-block">
+<tr class="field-even field"><th class="field-name">avg_axis:</th><td class="field-body"><div class="first last line-block">
 <div class="line">axis to calculate average over, optional</div>
 </div>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">out:</th><td class="field-body"><div class="first last line-block">
+<tr class="field-odd field"><th class="field-name">out:</th><td class="field-body"><div class="first last line-block">
 <div class="line">‘DEi’ or str, optional</div>
 <div class="line">Requested output.</div>
 </div>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">camtype:</th><td class="field-body"><div class="first last line-block">
+<tr class="field-even field"><th class="field-name">camtype:</th><td class="field-body"><div class="first last line-block">
 <div class="line">luxpy.cam._CAM_02_X_DEFAULT_TYPE, optional</div>
 <div class="line">Str specifier for CAM type to use, options: ‘ciecam02’ or ‘cam16’.</div>
 <div class="line">Only when DEtype == ‘camucs’.</div>
 </div>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">ucstype:</th><td class="field-body"><div class="first last line-block">
+<tr class="field-odd field"><th class="field-name">ucstype:</th><td class="field-body"><div class="first last line-block">
 <div class="line">‘ucs’ or ‘lcd’ or ‘scd’, optional</div>
 <div class="line">Str specifier for which type of color attribute compression </div>
 <div class="line">parameters to use:</div>
@@ -7108,7 +7121,7 @@ LEUKOS, vol. 12, no. 1–2, pp. 39–50, 2016</a></p>
 
 <dl class="function">
 <dt id="luxpy.color.cri.spd_to_iesrf_tm30_15">
-<code class="descclassname">luxpy.color.cri.</code><code class="descname">spd_to_iesrf_tm30_15</code><span class="sig-paren">(</span><em>SPD</em>, <em>out='Rf'</em>, <em>wl=None</em>, <em>cri_type='iesrf_tm30_15'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cri/indices/iestm30_wrappers.html#spd_to_iesrf_tm30_15"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cri.spd_to_iesrf_tm30_15" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">luxpy.color.cri.</code><code class="descname">spd_to_iesrf_tm30_15</code><span class="sig-paren">(</span><em>SPD</em>, <em>out='Rf'</em>, <em>wl=None</em>, <em>cri_type='iesrf-tm30-15'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cri/indices/iestm30_wrappers.html#spd_to_iesrf_tm30_15"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cri.spd_to_iesrf_tm30_15" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wrapper function for the ‘iesrf’ color fidelity index (IES TM30-15).</p>
 <dl class="docutils">
 <dt>Args:</dt>
@@ -7554,7 +7567,7 @@ first axis are the wavelengths)</div>
 <div class="line">If None: the degree is determined by :D:</div>
 <div class="line-block">
 <div class="line">If (:E: is not None) &amp; (:Yb: is None):  :E: is assumed to contain 
-the adapting field luminance La.</div>
+the adapting field luminance La (cd/m²).</div>
 </div>
 </div>
 </td>
@@ -7562,6 +7575,7 @@ the adapting field luminance La.</div>
 <tr class="field-even field"><th class="field-name">Yb:</th><td class="field-body"><div class="first last line-block">
 <div class="line">20.0, optional</div>
 <div class="line">Luminance factor of background. (used when calculating La from E)</div>
+<div class="line">If None, E contains La (cd/m²).</div>
 </div>
 </td>
 </tr>
@@ -9628,7 +9642,7 @@ luxpy.cri.plot_shift_data() and returned for use in other functions</div>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'1.3.5',
+            VERSION:'1.3.6',
             LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',

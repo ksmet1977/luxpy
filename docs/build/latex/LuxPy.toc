@@ -41,7 +41,7 @@
 \contentsline {subsection}{\numberline {4.3.7}cri/}{85}{subsection.4.3.7}
 \contentsline {subsubsection}{cri: sub-package suppporting color rendition calculations (colorrendition.py)}{86}{subsubsection*.158}
 \contentsline {paragraph}{utils/init\_cri\_defaults\_database.py}{86}{paragraph*.159}
-\contentsline {paragraph}{utils/DE\_scalers.py}{86}{paragraph*.160}
+\contentsline {paragraph}{utils/DE\_scalers.py}{87}{paragraph*.160}
 \contentsline {paragraph}{utils/helpers.py}{87}{paragraph*.161}
 \contentsline {paragraph}{utils/graphics.py}{87}{paragraph*.162}
 \contentsline {paragraph}{indices/indices.py}{87}{paragraph*.163}
@@ -49,7 +49,7 @@
 \contentsline {paragraph}{indices/cqs.py}{88}{paragraph*.165}
 \contentsline {paragraph}{iestm30/iestm30\_metrics.py}{88}{paragraph*.166}
 \contentsline {paragraph}{iestm30/iestm30\_graphics.py}{88}{paragraph*.167}
-\contentsline {paragraph}{VFPX}{88}{paragraph*.168}
+\contentsline {paragraph}{VFPX}{89}{paragraph*.168}
 \contentsline {subsection}{\numberline {4.3.8}cri/VFPX/}{115}{subsection.4.3.8}
 \contentsline {section}{\numberline {4.4}Classes}{129}{section.4.4}
 \contentsline {section}{\numberline {4.5}Toolboxes}{130}{section.4.5}

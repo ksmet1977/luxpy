@@ -55,8 +55,8 @@
 
 
 \title{LuxPy Documentation}
-\date{May 04, 2018}
-\release{1.3.5}
+\date{May 09, 2018}
+\release{1.3.6}
 \author{Kevin A.G. Smet}
 \newcommand{\sphinxlogo}{\vbox{}}
 \renewcommand{\releasename}{Release}
@@ -73,10 +73,10 @@
 Author: K. A.G. Smet (ksmet1977 at gmail.com)
 
 \item {} 
-Version: 1.3.05
+Version: 1.3.06
 
 \item {} 
-Date: May 3, 2018
+Date: May 9, 2018
 
 \item {} 
 License: GPLv3
@@ -87,7 +87,7 @@ License: GPLv3
 
 
 \chapter{License: GPLv3}
-\label{\detokenize{license:luxpy-a-package-for-lighting-and-color-science}}\label{\detokenize{license:license-gplv3}}\label{\detokenize{license::doc}}
+\label{\detokenize{license:license-gplv3}}\label{\detokenize{license:luxpy-a-package-for-lighting-and-color-science}}\label{\detokenize{license::doc}}
 Copyright (C) \textless{}2017\textgreater{}\textless{}Kevin A.G. Smet\textgreater{} (ksmet1977 at gmail.com)
 
 This program is free software: you can redistribute it and/or modify
@@ -1787,7 +1787,7 @@ with final solutions (res{[}‘x’{]})
 
 
 \section{Spectrum sub-package}
-\label{\detokenize{spectrum::doc}}\label{\detokenize{spectrum:spectrum-sub-package}}
+\label{\detokenize{spectrum:spectrum-sub-package}}\label{\detokenize{spectrum::doc}}
 
 \subsection{basics/}
 \label{\detokenize{spectrum:basics}}\begin{quote}
@@ -6848,7 +6848,7 @@ Opt. Express, vol. 23, no. 10, pp. 13455\textendash{}13466.}
 \index{cam\_sww16() (in module luxpy.color.cam)}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{color:luxpy.color.cam.cam_sww16}}\pysiglinewithargsret{\sphinxcode{luxpy.color.cam.}\sphinxbfcode{cam\_sww16}}{\emph{data}, \emph{dataw=None}, \emph{Yb=20.0}, \emph{Lw=400.0}, \emph{relative=True}, \emph{parameters=None}, \emph{inputtype='xyz'}, \emph{direction='forward'}, \emph{cieobs='2006\_10'}}{}
+\phantomsection\label{\detokenize{color:luxpy.color.cam.cam_sww16}}\pysiglinewithargsret{\sphinxcode{luxpy.color.cam.}\sphinxbfcode{cam\_sww16}}{\emph{data}, \emph{dataw=None}, \emph{Yb=20.0}, \emph{Lw=400.0}, \emph{Ccwb=None}, \emph{relative=True}, \emph{parameters=None}, \emph{inputtype='xyz'}, \emph{direction='forward'}, \emph{cieobs='2006\_10'}}{}
 A simple principled color appearance model based on a mapping 
 of the Munsell color system.
 
@@ -6884,6 +6884,13 @@ of the Munsell color system.
 \begin{DUlineblock}{0em}
 \item[] 400.0, optional
 \item[] Luminance (cd/m\(\sp{\text{2}}\)) of white point.
+\end{DUlineblock}
+
+\item[{Ccwb}] \leavevmode
+\begin{DUlineblock}{0em}
+\item[] None,  optional
+\item[] Degree of cognitive adaptation (white point balancing)
+\item[] If None: use {[}..,..{]} from parameters dict.
 \end{DUlineblock}
 
 \item[{relative}] \leavevmode
@@ -7233,7 +7240,7 @@ Wrapper function for cam16ucs inverse mode with J,aM,bM input  and ucstype = ‘
 \index{xyz\_to\_qabW\_cam15u() (in module luxpy.color.cam)}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{color:luxpy.color.cam.xyz_to_qabW_cam15u}}\pysiglinewithargsret{\sphinxcode{luxpy.color.cam.}\sphinxbfcode{xyz\_to\_qabW\_cam15u}}{\emph{data}, \emph{fov=10.0}, \emph{parameters=None}, \emph{**kwargs}}{}
+\phantomsection\label{\detokenize{color:luxpy.color.cam.xyz_to_qabW_cam15u}}\pysiglinewithargsret{\sphinxcode{luxpy.color.cam.}\sphinxbfcode{xyz\_to\_qabW\_cam15u}}{\emph{xyz}, \emph{fov=10.0}, \emph{parameters=None}, \emph{**kwargs}}{}
 Wrapper function for cam15u forward mode with ‘Q,aW,bW’ output.
 
 \begin{DUlineblock}{0em}
@@ -7245,7 +7252,7 @@ Wrapper function for cam15u forward mode with ‘Q,aW,bW’ output.
 \index{qabW\_cam15u\_to\_xyz() (in module luxpy.color.cam)}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{color:luxpy.color.cam.qabW_cam15u_to_xyz}}\pysiglinewithargsret{\sphinxcode{luxpy.color.cam.}\sphinxbfcode{qabW\_cam15u\_to\_xyz}}{\emph{data}, \emph{fov=10.0}, \emph{parameters=None}, \emph{**kwargs}}{}
+\phantomsection\label{\detokenize{color:luxpy.color.cam.qabW_cam15u_to_xyz}}\pysiglinewithargsret{\sphinxcode{luxpy.color.cam.}\sphinxbfcode{qabW\_cam15u\_to\_xyz}}{\emph{qab}, \emph{fov=10.0}, \emph{parameters=None}, \emph{**kwargs}}{}
 Wrapper function for cam15u inverse mode with ‘Q,aW,bW’ input.
 
 \begin{DUlineblock}{0em}
@@ -7257,7 +7264,7 @@ Wrapper function for cam15u inverse mode with ‘Q,aW,bW’ input.
 \index{xyz\_to\_lab\_cam\_sww16() (in module luxpy.color.cam)}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{color:luxpy.color.cam.xyz_to_lab_cam_sww16}}\pysiglinewithargsret{\sphinxcode{luxpy.color.cam.}\sphinxbfcode{xyz\_to\_lab\_cam\_sww16}}{\emph{data}, \emph{dataw=None}, \emph{Yb=20.0}, \emph{Lw=400.0}, \emph{relative=True}, \emph{parameters=None}, \emph{inputtype='xyz'}, \emph{cieobs='2006\_10'}, \emph{**kwargs}}{}
+\phantomsection\label{\detokenize{color:luxpy.color.cam.xyz_to_lab_cam_sww16}}\pysiglinewithargsret{\sphinxcode{luxpy.color.cam.}\sphinxbfcode{xyz\_to\_lab\_cam\_sww16}}{\emph{xyz}, \emph{xyzw=None}, \emph{Yb=20.0}, \emph{Lw=400.0}, \emph{Ccwb=None}, \emph{relative=True}, \emph{parameters=None}, \emph{inputtype='xyz'}, \emph{cieobs='2006\_10'}, \emph{**kwargs}}{}
 Wrapper function for cam\_sww16 forward mode with ‘xyz’ input.
 
 \begin{DUlineblock}{0em}
@@ -7269,7 +7276,7 @@ Wrapper function for cam\_sww16 forward mode with ‘xyz’ input.
 \index{lab\_cam\_sww16\_to\_xyz() (in module luxpy.color.cam)}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{color:luxpy.color.cam.lab_cam_sww16_to_xyz}}\pysiglinewithargsret{\sphinxcode{luxpy.color.cam.}\sphinxbfcode{lab\_cam\_sww16\_to\_xyz}}{\emph{data}, \emph{dataw=None}, \emph{Yb=20.0}, \emph{Lw=400.0}, \emph{relative=True}, \emph{parameters=None}, \emph{inputtype='xyz'}, \emph{cieobs='2006\_10'}, \emph{**kwargs}}{}
+\phantomsection\label{\detokenize{color:luxpy.color.cam.lab_cam_sww16_to_xyz}}\pysiglinewithargsret{\sphinxcode{luxpy.color.cam.}\sphinxbfcode{lab\_cam\_sww16\_to\_xyz}}{\emph{lab}, \emph{xyzw=None}, \emph{Yb=20.0}, \emph{Lw=400.0}, \emph{Ccwb=None}, \emph{relative=True}, \emph{parameters=None}, \emph{inputtype='xyz'}, \emph{cieobs='2006\_10'}, \emph{**kwargs}}{}
 Wrapper function for cam\_sww16 inverse mode with ‘xyz’ input.
 
 \begin{DUlineblock}{0em}
@@ -7566,6 +7573,12 @@ or else to the default of cspace.
 or else to default of cspace.
 \end{DUlineblock}
 \end{DUlineblock}
+\end{DUlineblock}
+
+\item[{tf}] \leavevmode
+\begin{DUlineblock}{0em}
+\item[] \_CSPACE, optional
+\item[] Color space to use for color difference calculation.
 \end{DUlineblock}
 
 \item[{fwtft}] \leavevmode
@@ -9700,7 +9713,7 @@ LEUKOS, vol. 12, no. 1\textendash{}2, pp. 39\textendash{}50, 2016}
 \index{spd\_to\_iesrf\_tm30\_15() (in module luxpy.color.cri)}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{color:luxpy.color.cri.spd_to_iesrf_tm30_15}}\pysiglinewithargsret{\sphinxcode{luxpy.color.cri.}\sphinxbfcode{spd\_to\_iesrf\_tm30\_15}}{\emph{SPD}, \emph{out='Rf'}, \emph{wl=None}, \emph{cri\_type='iesrf\_tm30\_15'}}{}
+\phantomsection\label{\detokenize{color:luxpy.color.cri.spd_to_iesrf_tm30_15}}\pysiglinewithargsret{\sphinxcode{luxpy.color.cri.}\sphinxbfcode{spd\_to\_iesrf\_tm30\_15}}{\emph{SPD}, \emph{out='Rf'}, \emph{wl=None}, \emph{cri\_type='iesrf-tm30-15'}}{}
 Wrapper function for the ‘iesrf’ color fidelity index (IES TM30-15).
 \begin{description}
 \item[{Args:}] \leavevmode\begin{quote}\begin{description}
@@ -10104,7 +10117,7 @@ first axis are the wavelengths)
 \item[]
 \begin{DUlineblock}{\DUlineblockindent}
 \item[] If (:E: is not None) \& (:Yb: is None):  :E: is assumed to contain 
-the adapting field luminance La.
+the adapting field luminance La (cd/m\(\sp{\text{2}}\)).
 \end{DUlineblock}
 \end{DUlineblock}
 
@@ -10112,6 +10125,7 @@ the adapting field luminance La.
 \begin{DUlineblock}{0em}
 \item[] 20.0, optional
 \item[] Luminance factor of background. (used when calculating La from E)
+\item[] If None, E contains La (cd/m\(\sp{\text{2}}\)).
 \end{DUlineblock}
 
 \item[{out}] \leavevmode
@@ -12051,7 +12065,7 @@ alias of {\hyperref[\detokenize{classes:luxpy.classes.CDATA}]{\sphinxcrossref{\s
 
 
 \section{Toolboxes}
-\label{\detokenize{toolboxes::doc}}\label{\detokenize{toolboxes:toolboxes}}
+\label{\detokenize{toolboxes:toolboxes}}\label{\detokenize{toolboxes::doc}}
 
 \subsection{photbiochem/}
 \label{\detokenize{toolboxes:photbiochem}}\begin{quote}

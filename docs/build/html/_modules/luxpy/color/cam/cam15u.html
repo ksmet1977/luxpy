@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.color.cam.cam15u &mdash; LuxPy 1.3.5 documentation</title>
+  <title>luxpy.color.cam.cam15u &mdash; LuxPy 1.3.6 documentation</title>
   
 
   
@@ -57,7 +57,7 @@
             
             
               <div class="version">
-                1.3.5
+                1.3.6
               </div>
             
           
@@ -183,8 +183,8 @@
 <span class="sd">            Opt. Express, vol. 23, no. 10, pp. 13455–13466. </span>
 <span class="sd">            &lt;https://www.osapublishing.org/oe/abstract.cfm?uri=oe-23-10-13455&amp;origin=search&gt;`_</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">np2d</span><span class="p">,</span> <span class="n">spd_to_xyz</span><span class="p">,</span> <span class="n">asplit</span><span class="p">,</span> <span class="n">ajoin</span>
-<span class="kn">from</span> <span class="nn">.colorappearancemodels</span> <span class="k">import</span> <span class="n">hue_angle</span><span class="p">,</span> <span class="n">hue_quadrature</span>
+<span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">_CIE_ILLUMINANTS</span><span class="p">,</span> <span class="n">_MUNSELL</span><span class="p">,</span> <span class="n">np2d</span><span class="p">,</span> <span class="n">spd_to_xyz</span><span class="p">,</span> <span class="n">asplit</span><span class="p">,</span> <span class="n">ajoin</span>
+<span class="kn">from</span> <span class="nn">luxpy.color.cam.colorappearancemodels</span> <span class="k">import</span> <span class="n">hue_angle</span><span class="p">,</span> <span class="n">hue_quadrature</span>
 
 <span class="n">_CAM15U_AXES</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;qabW_cam15u&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Q (cam15u)&quot;</span><span class="p">,</span> <span class="s2">&quot;aW (cam15u)&quot;</span><span class="p">,</span> <span class="s2">&quot;bW (cam15u)&quot;</span><span class="p">]}</span> 
 
@@ -268,10 +268,20 @@
     <span class="n">data</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">==</span><span class="mi">2</span><span class="p">:</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="c1"># avoid looping if not necessary</span>
+    
+    <span class="k">if</span> <span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span> <span class="c1"># loop over shortest dim.</span>
+        <span class="n">flipaxis0and1</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">flipaxis0and1</span> <span class="o">=</span> <span class="kc">False</span>
+
+    
     <span class="n">dshape</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
     <span class="n">dshape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">outin</span><span class="p">)</span> <span class="c1"># requested number of correlates</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">inputtype</span> <span class="o">!=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">direction</span> <span class="o">==</span> <span class="s1">&#39;forward&#39;</span><span class="p">):</span>
+        <span class="n">dshape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">dshape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span> <span class="c1"># wavelength row doesn&#39;t count &amp; only with forward can the input data be spectral</span>
     <span class="n">camout</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">dshape</span><span class="p">)</span>
-   
+
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
         
         <span class="k">if</span> <span class="p">(</span><span class="n">inputtype</span> <span class="o">!=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">direction</span> <span class="o">==</span> <span class="s1">&#39;forward&#39;</span><span class="p">):</span>
@@ -282,37 +292,40 @@
             <span class="n">rgb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Mxyz2rgb</span><span class="p">,</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
        
         <span class="k">if</span> <span class="n">direction</span> <span class="o">==</span> <span class="s1">&#39;forward&#39;</span><span class="p">:</span>
-
+            
             <span class="c1"># apply cube-root compression:</span>
             <span class="n">rgbc</span> <span class="o">=</span> <span class="n">rgb</span><span class="o">**</span><span class="p">(</span><span class="n">cp</span><span class="p">)</span>
-        
+            
             <span class="c1"># calculate achromatic and color difference signals, A, a, b:</span>
             <span class="n">Aab</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">MAab</span><span class="p">,</span> <span class="n">rgbc</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
             <span class="n">A</span><span class="p">,</span><span class="n">a</span><span class="p">,</span><span class="n">b</span> <span class="o">=</span> <span class="n">asplit</span><span class="p">(</span><span class="n">Aab</span><span class="p">)</span>
+            <span class="n">A</span> <span class="o">=</span> <span class="n">cA</span><span class="o">*</span><span class="n">A</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="n">ca</span><span class="o">*</span><span class="n">a</span>
+            <span class="n">b</span> <span class="o">=</span> <span class="n">cb</span><span class="o">*</span><span class="n">b</span>
 
             <span class="c1"># calculate colorfullness like signal M:</span>
             <span class="n">M</span> <span class="o">=</span> <span class="n">cM</span><span class="o">*</span><span class="p">((</span><span class="n">a</span><span class="o">**</span><span class="mf">2.0</span> <span class="o">+</span> <span class="n">b</span><span class="o">**</span><span class="mf">2.0</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span><span class="p">)</span>
-            
+
             <span class="c1"># calculate brightness Q:</span>
             <span class="n">Q</span> <span class="o">=</span> <span class="n">A</span> <span class="o">+</span> <span class="n">cHK</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">M</span><span class="o">**</span><span class="n">cHK</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># last term is contribution of Helmholtz-Kohlrausch effect on brightness</span>
-            
-            
+                      
             <span class="c1"># calculate saturation, s:</span>
             <span class="n">s</span> <span class="o">=</span> <span class="n">M</span> <span class="o">/</span> <span class="n">Q</span>
             
             <span class="c1"># calculate amount of white, W:</span>
             <span class="n">W</span> <span class="o">=</span> <span class="mf">100.0</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">cW</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">s</span><span class="o">**</span><span class="n">cW</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
-            
+
             <span class="c1">#  adjust Q for size (fov) of stimulus (matter of debate whether to do this before or after calculation of s or W, there was no data on s, M or W for different sized stimuli: after)</span>
             <span class="n">Q</span> <span class="o">=</span> <span class="n">Q</span><span class="o">*</span><span class="p">(</span><span class="n">fov</span><span class="o">/</span><span class="mf">10.0</span><span class="p">)</span><span class="o">**</span><span class="n">cfov</span>
             
             <span class="c1"># calculate hue, h and Hue quadrature, H:</span>
             <span class="n">h</span> <span class="o">=</span> <span class="n">hue_angle</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span> <span class="n">htype</span> <span class="o">=</span> <span class="s1">&#39;deg&#39;</span><span class="p">)</span>
+
             <span class="k">if</span> <span class="s1">&#39;H&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">:</span>
                 <span class="n">H</span> <span class="o">=</span> <span class="n">hue_quadrature</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">unique_hue_data</span> <span class="o">=</span> <span class="n">unique_hue_data</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">H</span> <span class="o">=</span> <span class="kc">None</span>
-            
+
             <span class="c1"># calculate cart. co.:</span>
             <span class="k">if</span> <span class="s1">&#39;aM&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">:</span>
                 <span class="n">aM</span> <span class="o">=</span> <span class="n">M</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">h</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.0</span><span class="p">)</span>
@@ -368,6 +381,7 @@
             
             <span class="c1"># calculate achromatic signal, A from Q and M:</span>
             <span class="n">A</span> <span class="o">=</span> <span class="n">Q</span> <span class="o">-</span> <span class="n">cHK</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">M</span><span class="o">**</span><span class="n">cHK</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">A</span> <span class="o">=</span> <span class="n">A</span><span class="o">/</span><span class="n">cA</span>
             
             <span class="c1"># calculate hue angle:</span>
             <span class="n">h</span> <span class="o">=</span> <span class="n">hue_angle</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span> <span class="n">htype</span> <span class="o">=</span> <span class="s1">&#39;rad&#39;</span><span class="p">)</span>
@@ -375,6 +389,8 @@
             <span class="c1"># calculate a,b from M and h:</span>
             <span class="n">a</span> <span class="o">=</span> <span class="p">(</span><span class="n">M</span><span class="o">/</span><span class="n">cM</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
             <span class="n">b</span> <span class="o">=</span> <span class="p">(</span><span class="n">M</span><span class="o">/</span><span class="n">cM</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="n">a</span><span class="o">/</span><span class="n">ca</span>
+            <span class="n">b</span> <span class="o">=</span> <span class="n">b</span><span class="o">/</span><span class="n">cb</span>
 
             <span class="c1"># create Aab:</span>
             <span class="n">Aab</span> <span class="o">=</span> <span class="n">ajoin</span><span class="p">((</span><span class="n">A</span><span class="p">,</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">))</span>    
@@ -391,27 +407,56 @@
             
             <span class="n">camout</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">xyz</span>
     
+    <span class="k">if</span> <span class="n">flipaxis0and1</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span> <span class="c1"># loop over shortest dim.</span>
+        <span class="n">camout</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">camout</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+
+    
     <span class="k">if</span> <span class="n">camout</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">camout</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">camout</span><span class="p">,</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
     
     <span class="k">return</span> <span class="n">camout</span></div>
  
 <span class="c1">#------------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="xyz_to_qabW_cam15u"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.xyz_to_qabW_cam15u">[docs]</a><span class="k">def</span> <span class="nf">xyz_to_qabW_cam15u</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">fov</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="xyz_to_qabW_cam15u"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.xyz_to_qabW_cam15u">[docs]</a><span class="k">def</span> <span class="nf">xyz_to_qabW_cam15u</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">fov</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Wrapper function for cam15u forward mode with &#39;Q,aW,bW&#39; output.</span>
 <span class="sd">    </span>
 <span class="sd">    | For help on parameter details: ?luxpy.cam.cam15u</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">cam15u</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">fov</span> <span class="o">=</span> <span class="n">fov</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;forward&#39;</span><span class="p">,</span> <span class="n">outin</span> <span class="o">=</span> <span class="s1">&#39;Q,aW,bW&#39;</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">cam15u</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">fov</span> <span class="o">=</span> <span class="n">fov</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;forward&#39;</span><span class="p">,</span> <span class="n">inputtype</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">outin</span> <span class="o">=</span> <span class="s1">&#39;Q,aW,bW&#39;</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">)</span></div>
                 
-<div class="viewcode-block" id="qabW_cam15u_to_xyz"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.qabW_cam15u_to_xyz">[docs]</a><span class="k">def</span> <span class="nf">qabW_cam15u_to_xyz</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">fov</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="qabW_cam15u_to_xyz"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.qabW_cam15u_to_xyz">[docs]</a><span class="k">def</span> <span class="nf">qabW_cam15u_to_xyz</span><span class="p">(</span><span class="n">qab</span><span class="p">,</span> <span class="n">fov</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Wrapper function for cam15u inverse mode with &#39;Q,aW,bW&#39; input.</span>
 <span class="sd">    </span>
 <span class="sd">    | For help on parameter details: ?luxpy.cam.cam15u</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">cam15u</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">fov</span> <span class="o">=</span> <span class="n">fov</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;inverse&#39;</span><span class="p">,</span> <span class="n">outin</span> <span class="o">=</span> <span class="s1">&#39;Q,aW,bW&#39;</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">cam15u</span><span class="p">(</span><span class="n">qab</span><span class="p">,</span> <span class="n">fov</span> <span class="o">=</span> <span class="n">fov</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;inverse&#39;</span><span class="p">,</span> <span class="n">inputtype</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">outin</span> <span class="o">=</span> <span class="s1">&#39;Q,aW,bW&#39;</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">)</span></div>
+
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">C</span> <span class="o">=</span> <span class="n">_CIE_ILLUMINANTS</span><span class="p">[</span><span class="s1">&#39;C&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">C</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">C</span><span class="p">,</span><span class="n">cie_interp</span><span class="p">(</span><span class="n">_CIE_ILLUMINANTS</span><span class="p">[</span><span class="s1">&#39;D65&#39;</span><span class="p">],</span><span class="n">C</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;spd&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]))</span>
+    <span class="n">M</span> <span class="o">=</span> <span class="n">_MUNSELL</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">rflM</span> <span class="o">=</span> <span class="n">M</span><span class="p">[</span><span class="s1">&#39;R&#39;</span><span class="p">]</span>
+    <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;2006_10&#39;</span>
+    
+    <span class="c1"># Normalize to Lw:</span>
+    <span class="n">Lw</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="n">xyzw2</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">C</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">C</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">C</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">Lw</span><span class="o">*</span><span class="n">C</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="n">xyzw2</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+
+    
+    <span class="n">xyz</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">C</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">rfl</span> <span class="o">=</span> <span class="n">rflM</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">qab</span> <span class="o">=</span> <span class="n">xyz_to_qabW_cam15u</span><span class="p">(</span><span class="n">xyzw</span><span class="p">,</span> <span class="n">fov</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">)</span>
+    <span class="n">qab2</span> <span class="o">=</span> <span class="n">cam15u</span><span class="p">(</span><span class="n">C</span><span class="p">,</span> <span class="n">fov</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;forward&#39;</span><span class="p">,</span> <span class="n">inputtype</span> <span class="o">=</span> <span class="s1">&#39;spd&#39;</span><span class="p">,</span> <span class="n">outin</span> <span class="o">=</span> <span class="s1">&#39;Q,aW,bW&#39;</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
+           
+    <span class="n">xyz_</span> <span class="o">=</span> <span class="n">qabW_cam15u_to_xyz</span><span class="p">(</span><span class="n">qab</span><span class="p">,</span> <span class="n">fov</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">qab</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">qab2</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">xyzw</span><span class="o">-</span><span class="n">xyz_</span><span class="p">)</span>
 </pre></div>
 
            </div>
@@ -446,7 +491,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../../../',
-            VERSION:'1.3.5',
+            VERSION:'1.3.6',
             LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
