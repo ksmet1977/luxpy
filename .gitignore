@@ -1,0 +1,22 @@
+# Compiled python modules.
+*.pyc
+
+# Setuptools distribution folder.
+/dist/
+/build/
+
+# Built docs
+/docs/build/
+
+# Python egg metadata, regenerated from source files by setuptools.
+/*.egg-info
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# Mac finder garbage
+.DS_Store
+
+# Spyder project files
+.spyproject/
+.ipynb_checkpoints
