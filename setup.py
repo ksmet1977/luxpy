@@ -17,10 +17,7 @@ setup(
 		  'scipy',
 		  'matplotlib',
 		  'pandas',
-<<<<<<< HEAD
           'scikit-image',
-=======
->>>>>>> b59c06b9735672bd0ba0d81de80c27e608169e58
       ],
   package_data={'luxpy': ['luxpy/data/*.dat',
 						  'luxpy/data/*.txt',
