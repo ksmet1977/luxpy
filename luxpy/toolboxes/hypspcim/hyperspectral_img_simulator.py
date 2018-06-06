@@ -22,7 +22,6 @@ from luxpy import (warnings, np, plt, cKDTree, cat, colortf, _PKG_PATH, _SEP, _C
 from luxpy.toolboxes.spdbuild import spdbuilder as spb
 
 from skimage.io import imsave
-#from skimage import img_as_ubyte
 
 	
 from matplotlib.pyplot import imread
