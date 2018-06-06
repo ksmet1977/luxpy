@@ -22,8 +22,6 @@ from luxpy import (warnings, np, plt, cKDTree, cat, colortf, _PKG_PATH, _SEP, _C
 from luxpy.toolboxes.spdbuild import spdbuilder as spb
 
 from skimage.io import imsave
-
-	
 from matplotlib.pyplot import imread
 
 __all__ =['_HYPSPCIM_PATH','_HYPSPCIM_DEFAULT_IMAGE','render_image']             
