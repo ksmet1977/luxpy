@@ -69,10 +69,6 @@ Module with useful basic math functions
  :histogram(): | Histogram function that can take as bins either the center
                | (cfr. matlab hist) or bin-edges.
 
- :minimizebnd(): scipy.minimize() that allows contrained parameters on 
-                 unconstrained methods(port of Matlab's fminsearchbnd). 
-                 Starting, lower and upper bounds values can also be provided 
-                 as a dict.
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 ===============================================================================

@@ -74,14 +74,18 @@ Module with useful math functions
                  unconstrained methods(port of Matlab's fminsearchbnd). 
                  Starting, lower and upper bounds values can also be provided 
                  as a dict.
+ :DEMO: Module for Differential Evolutionary Multi-objective Optimization  (DEMO).
                  
 ===============================================================================
 """
 from .basics import *
 __all__ = basics.__all__
 
-from .optimizers import minimizebnd
-__all__ += ['minimizebnd','__all__']
+from .minimizebnd import minimizebnd
+__all__ += ['minimizebnd']
+
+from .DEMO import DEMO as DEMO
+__all__ +=['DEMO']
 
 
 
