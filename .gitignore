@@ -9,7 +9,6 @@ __pycache__/
 /build/
 
 # Built docs
-/docs/build/doctrees/
 /docs/build/latex/
 
 # Python egg metadata, regenerated from source files by setuptools.
