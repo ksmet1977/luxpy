@@ -17,9 +17,16 @@ Module for hyper spectral image simulation
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
-from luxpy import (np, plt, cv2, cKDTree, cat, colortf, _PKG_PATH, _SEP, _CIEOBS, 
+import warnings
+import scipy
+from luxpy import (np, plt, cKDTree, cat, colortf, _PKG_PATH, _SEP, _CIEOBS, 
                    _CIE_ILLUMINANTS, _CRI_RFL, _EPS, spd_to_xyz,plot_color_data)
 from luxpy.toolboxes.spdbuild import spdbuilder as spb
+
+try:
+    import cv2
+except ImportError:
+    warnings.warn('OpenCV (cv2) cannot be imported. Plotting with matplotlib instead.', warnings.ImportWarning)
    
 __all__ =['_HYPSPCIM_PATH','_HYPSPCIM_DEFAULT_IMAGE','render_image']             
 
@@ -294,7 +301,8 @@ def render_image(img = None, spd = None, rfl = None, out = 'img_hyp', \
     if write_to_file is not None:
         # Convert from RGB to BGR formatand write:
         #print('Writing rendering results to image file: {}'.format(write_to_file))
-        cv2.imwrite(write_to_file, cv2.cvtColor((255*img_original_rendered).astype(np.float32), cv2.COLOR_RGB2BGR))
+        scipy.misc.imsave(img_original_rendered, write_to_file)
+#       cv2.imwrite(write_to_file, cv2.cvtColor((255*img_original_rendered).astype(np.float32), cv2.COLOR_RGB2BGR))
         
     if show == True:
         if use_plt_show == False:

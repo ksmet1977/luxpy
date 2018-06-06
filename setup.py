@@ -17,7 +17,6 @@ setup(
 		  'scipy',
 		  'matplotlib',
 		  'pandas',
-          'opencv-python',
       ],
   package_data={'luxpy': ['luxpy/data/*.dat',
 						  'luxpy/data/*.txt',
