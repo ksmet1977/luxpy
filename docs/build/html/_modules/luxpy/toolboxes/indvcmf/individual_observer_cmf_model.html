@@ -1,0 +1,947 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>luxpy.toolboxes.indvcmf.individual_observer_cmf_model &mdash; LuxPy 1.3.7 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> LuxPy
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.3.7
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../license.html">License: GPLv3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../required_packages.html">Imported (required) packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../luxpy_structure.html">Luxpy package structure</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">LuxPy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>luxpy.toolboxes.indvcmf.individual_observer_cmf_model</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for luxpy.toolboxes.indvcmf.individual_observer_cmf_model</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module for Individual Observer lms-CMFs (Asano, 2016)</span>
+<span class="sd">=====================================================</span>
+<span class="sd">    </span>
+<span class="sd"> :_INDVCMF_DATA_PATH: path to data files</span>
+<span class="sd"> </span>
+<span class="sd"> :_INDVCMF_DATA: Dict with required data</span>
+<span class="sd"> </span>
+<span class="sd"> :_INDVCMF_STD_DEV_ALL_PARAM: Dict with std. dev. model parameters</span>
+<span class="sd"> </span>
+<span class="sd"> :_INDVCMF_CATOBSPFCTR: Categorical observer parameters.</span>
+<span class="sd"> </span>
+<span class="sd"> :_INDVCMF_M_10d: xyz to 10° lms conversion matrix.</span>
+<span class="sd"> </span>
+<span class="sd"> :_WL_CRIT: critical wavelength above which interpolation of S-cone data fails.</span>
+<span class="sd"> </span>
+<span class="sd"> :_WL: wavelengths of spectral data.</span>
+
+<span class="sd">    </span>
+<span class="sd"> :cie2006cmfsEx(): Generate Individual Observer CMFs (cone fundamentals) </span>
+<span class="sd">                   based on CIE2006 cone fundamentals and published literature </span>
+<span class="sd">                   on observer variability in color matching and </span>
+<span class="sd">                   in physiological parameters.</span>
+
+<span class="sd"> :getMonteCarloParam(): Get dict with normally-distributed physiological </span>
+<span class="sd">                        factors for a population of observers.</span>
+<span class="sd">                            </span>
+<span class="sd"> :getUSCensusAgeDist(): Get US Census Age Distribution</span>
+
+<span class="sd"> :genMonteCarloObs(): Monte-Carlo generation of individual observer </span>
+<span class="sd">                      color matching functions (cone fundamentals) for a</span>
+<span class="sd">                      certain age and field size.</span>
+
+<span class="sd"> :getCatObs(): Generate cone fundamentals for categorical observers.</span>
+
+<span class="sd"> :get_lms_to_xyz_matrix(): Calculate lms to xyz conversion matrix for a </span>
+<span class="sd">                           specific field size.</span>
+<span class="sd">                            </span>
+<span class="sd"> :lmsb_to_xyzb(): Convert from LMS cone fundamentals to XYZ CMF.</span>
+
+<span class="sd"> :add_to_cmf_dict(): Add set of cmfs to _CMF dict.</span>
+<span class="sd"> </span>
+
+
+<span class="sd">References</span>
+<span class="sd">----------</span>
+<span class="sd"> 1. `Asano Y, Fairchild MD, and Blondé L (2016). </span>
+<span class="sd"> Individual Colorimetric Observer Model. </span>
+<span class="sd"> PLoS One 11, 1–19. </span>
+<span class="sd"> &lt;http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0145671&gt;`_</span>
+<span class="sd"> </span>
+<span class="sd"> 2. `Asano Y, Fairchild MD, Blondé L, and Morvan P (2016). </span>
+<span class="sd"> Color matching experiment for highlighting interobserver variability. </span>
+<span class="sd"> Color Res. Appl. 41, 530–539. </span>
+<span class="sd"> &lt;https://onlinelibrary.wiley.com/doi/abs/10.1002/col.21975&gt;`_</span>
+<span class="sd"> </span>
+<span class="sd"> 3. `CIE, and CIE (2006). </span>
+<span class="sd"> Fundamental Chromaticity Diagram with Physiological Axes - Part I </span>
+<span class="sd"> (Vienna: CIE). </span>
+<span class="sd"> &lt;http://www.cie.co.at/publications/fundamental-chromaticity-diagram-physiological-axes-part-1&gt;`_ </span>
+<span class="sd"> </span>
+<span class="sd"> 4. `Asano&#39;s Individual Colorimetric Observer Model </span>
+<span class="sd"> &lt;https://www.rit.edu/cos/colorscience/re_AsanoObserverFunctions.php&gt;`_</span>
+
+<span class="sd"> </span>
+<span class="sd">Note</span>
+<span class="sd">----</span>
+<span class="sd">Port of Matlab code from:</span>
+<span class="sd">https://www.rit.edu/cos/colorscience/re_AsanoObserverFunctions.php</span>
+<span class="sd">(Accessed April 20, 2018)           </span>
+
+<span class="sd">.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">pd</span><span class="p">,</span> <span class="n">interpolate</span><span class="p">,</span> <span class="n">math</span><span class="p">,</span> <span class="n">_PKG_PATH</span><span class="p">,</span> <span class="n">_SEP</span><span class="p">,</span> <span class="n">_CMF</span><span class="p">,</span> <span class="n">dictkv</span><span class="p">,</span>  <span class="n">xyzbar</span><span class="p">,</span> <span class="n">spd</span><span class="p">,</span> <span class="n">getdata</span><span class="p">,</span> <span class="n">getwlr</span>
+
+<span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="n">plt</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;_INDVCMF_DATA_PATH&#39;</span><span class="p">,</span><span class="s1">&#39;_INDVCMF_DATA&#39;</span><span class="p">,</span><span class="s1">&#39;_INDVCMF_STD_DEV_ALL_PARAM&#39;</span><span class="p">,</span><span class="s1">&#39;_INDVCMF_CATOBSPFCTR&#39;</span><span class="p">,</span> <span class="s1">&#39;_INDVCMF_M_2d&#39;</span><span class="p">,</span> <span class="s1">&#39;_INDVCMF_M_10d&#39;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">+=</span><span class="p">[</span><span class="s1">&#39;cie2006cmfsEx&#39;</span><span class="p">,</span><span class="s1">&#39;getMonteCarloParam&#39;</span><span class="p">,</span><span class="s1">&#39;genMonteCarloObs&#39;</span><span class="p">,</span><span class="s1">&#39;getCatObs&#39;</span><span class="p">]</span>
+
+
+<span class="n">_INDVCMF_DATA_PATH</span> <span class="o">=</span> <span class="n">_PKG_PATH</span> <span class="o">+</span> <span class="n">_SEP</span> <span class="o">+</span> <span class="s1">&#39;toolboxes&#39;</span> <span class="o">+</span> <span class="n">_SEP</span> <span class="o">+</span> <span class="s1">&#39;indvcmf&#39;</span> <span class="o">+</span> <span class="n">_SEP</span> <span class="o">+</span> <span class="s1">&#39;data&#39;</span> <span class="o">+</span> <span class="n">_SEP</span>  
+
+<span class="c1"># Load data from files:</span>
+<span class="n">_INDVCMF_DATA</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">_INDVCMF_DATA</span><span class="p">[</span><span class="s1">&#39;rmd&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">getdata</span><span class="p">(</span><span class="n">_INDVCMF_DATA_PATH</span>  <span class="o">+</span> <span class="s1">&#39;cie2006_RelativeMacularDensity.dat&#39;</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">T</span> 
+<span class="n">_INDVCMF_DATA</span><span class="p">[</span><span class="s1">&#39;LMSa&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">getdata</span><span class="p">(</span><span class="n">_INDVCMF_DATA_PATH</span>  <span class="o">+</span> <span class="s1">&#39;cie2006_Alms.dat&#39;</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">T</span> 
+<span class="n">_INDVCMF_DATA</span><span class="p">[</span><span class="s1">&#39;docul&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">getdata</span><span class="p">(</span><span class="n">_INDVCMF_DATA_PATH</span>  <span class="o">+</span> <span class="s1">&#39;cie2006_docul.dat&#39;</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">T</span> 
+<span class="n">_INDVCMF_DATA</span><span class="p">[</span><span class="s1">&#39;USCensus2010population&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">getdata</span><span class="p">(</span><span class="n">_INDVCMF_DATA_PATH</span>  <span class="o">+</span> <span class="s1">&#39;USCensus2010Population.dat&#39;</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="s1">&#39;infer&#39;</span><span class="p">,</span><span class="n">verbosity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">T</span> 
+<span class="n">_INDVCMF_DATA</span><span class="p">[</span><span class="s1">&#39;CatObsPfctr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">getdata</span><span class="p">(</span><span class="n">_INDVCMF_DATA_PATH</span>  <span class="o">+</span> <span class="s1">&#39;CatObsPfctr.dat&#39;</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">T</span> 
+
+<span class="c1"># Store var of. physiological parameters in dict:</span>
+<span class="n">_INDVCMF_STD_DEV_ALL_PARAM</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">_INDVCMF_STD_DEV_ALL_PARAM</span><span class="p">[</span><span class="s1">&#39;od_lens&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">19.1</span> <span class="c1"># from matlab code</span>
+<span class="n">_INDVCMF_STD_DEV_ALL_PARAM</span><span class="p">[</span><span class="s1">&#39;od_macula&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">37.2</span>
+<span class="n">_INDVCMF_STD_DEV_ALL_PARAM</span><span class="p">[</span><span class="s1">&#39;od_L&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">17.9</span>
+<span class="n">_INDVCMF_STD_DEV_ALL_PARAM</span><span class="p">[</span><span class="s1">&#39;od_M&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">17.9</span>
+<span class="n">_INDVCMF_STD_DEV_ALL_PARAM</span><span class="p">[</span><span class="s1">&#39;od_S&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">14.7</span>
+<span class="n">_INDVCMF_STD_DEV_ALL_PARAM</span><span class="p">[</span><span class="s1">&#39;shft_L&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">4.0</span>
+<span class="n">_INDVCMF_STD_DEV_ALL_PARAM</span><span class="p">[</span><span class="s1">&#39;shft_M&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">3.0</span>
+<span class="n">_INDVCMF_STD_DEV_ALL_PARAM</span><span class="p">[</span><span class="s1">&#39;shft_S&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">2.5</span>
+
+<span class="c1">## from website (corrected values from Germany (GE) data):</span>
+<span class="c1">## (corrected in genMonteCarloObs)</span>
+<span class="c1">#_INDVCMF_STD_DEV_ALL_PARAM_GE[&#39;od_lens&#39;] = 18.7 </span>
+<span class="c1">#_INDVCMF_STD_DEV_ALL_PARAM_GE[&#39;od_macula&#39;] = 36.5</span>
+<span class="c1">#_INDVCMF_STD_DEV_ALL_PARAM_GE[&#39;od_L&#39;] = 9.0</span>
+<span class="c1">#_INDVCMF_STD_DEV_ALL_PARAM_GE[&#39;od_M&#39;] = 9.0</span>
+<span class="c1">#_INDVCMF_STD_DEV_ALL_PARAM_GE[&#39;od_S&#39;] = 7.4</span>
+<span class="c1">#_INDVCMF_STD_DEV_ALL_PARAM_GE[&#39;shft_L&#39;] = 2.0</span>
+<span class="c1">#_INDVCMF_STD_DEV_ALL_PARAM_GE[&#39;shft_M&#39;] = 1.5</span>
+<span class="c1">#_INDVCMF_STD_DEV_ALL_PARAM_GE[&#39;shft_S&#39;] = 1.3</span>
+
+<span class="c1"># Define dict with Iteratively Derived Cat.Obs.:</span>
+<span class="n">t_data</span> <span class="o">=</span> <span class="n">getdata</span><span class="p">(</span><span class="n">_INDVCMF_DATA_PATH</span>  <span class="o">+</span> <span class="s1">&#39;CatObsPfctr.dat&#39;</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+<span class="n">dict_values</span> <span class="o">=</span> <span class="p">[</span><span class="n">t_data</span><span class="p">[:,</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">t_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">)]</span>
+<span class="n">dict_keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">_INDVCMF_STD_DEV_ALL_PARAM</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+<span class="n">_INDVCMF_CATOBSPFCTR</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">dict_keys</span><span class="p">,</span> <span class="n">dict_values</span><span class="p">))</span>
+<span class="n">_INDVCMF_CATOBSPFCTR</span><span class="p">[</span><span class="s1">&#39;age&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t_data</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> 
+
+
+<span class="c1"># Matrices for conversion from LMS cone fundamentals to XYZ CMFs:</span>
+<span class="c1"># (https://www.rit.edu/cos/colorscience/re_AsanoObserverFunctions.php)</span>
+<span class="c1"># For 2-degree, the 3x3 matrix is:</span>
+
+<span class="n">_INDVCMF_M_2d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.4151</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.2424</span><span class="p">,</span> <span class="mf">0.0425</span><span class="p">],</span>
+                          <span class="p">[</span><span class="mf">0.1355</span><span class="p">,</span> <span class="mf">0.0833</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0043</span><span class="p">],</span>
+                          <span class="p">[</span><span class="o">-</span><span class="mf">0.0093</span><span class="p">,</span> <span class="mf">0.0125</span><span class="p">,</span> <span class="mf">0.2136</span><span class="p">]])</span>
+
+<span class="c1"># For 10-degree, the 3x3 matrix is:</span>
+<span class="n">_INDVCMF_M_10d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.4499</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.2630</span><span class="p">,</span> <span class="mf">0.0460</span><span class="p">],</span>
+                           <span class="p">[</span><span class="mf">0.1617</span><span class="p">,</span> <span class="mf">0.0726</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0011</span><span class="p">],</span>
+                           <span class="p">[</span><span class="o">-</span><span class="mf">0.0036</span><span class="p">,</span> <span class="mf">0.0054</span><span class="p">,</span> <span class="mf">0.2291</span><span class="p">]])</span>
+
+
+
+<span class="n">_WL_CRIT</span> <span class="o">=</span> <span class="mi">620</span> <span class="c1"># Asano: 620 nm: wavelenght at which interpolation fails for S-cones</span>
+<span class="n">_WL</span> <span class="o">=</span> <span class="n">getwlr</span><span class="p">([</span><span class="mi">390</span><span class="p">,</span><span class="mi">780</span><span class="p">,</span><span class="mi">5</span><span class="p">])</span> <span class="c1"># wavelength range of specrtal data in _INDVCMF_DATA</span>
+
+<div class="viewcode-block" id="cie2006cmfsEx"><a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.indvcmf.cie2006cmfsEx">[docs]</a><span class="k">def</span> <span class="nf">cie2006cmfsEx</span><span class="p">(</span><span class="n">age</span> <span class="o">=</span> <span class="mi">32</span><span class="p">,</span><span class="n">fieldsize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>\
+                  <span class="n">var_od_lens</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">var_od_macula</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> \
+                  <span class="n">var_od_L</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">var_od_M</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">var_od_S</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>\
+                  <span class="n">var_shft_L</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">var_shft_M</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">var_shft_S</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>\
+                  <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;LMS&#39;</span><span class="p">,</span> <span class="n">allow_negative_values</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate Individual Observer CMFs (cone fundamentals) </span>
+<span class="sd">    based on CIE2006 cone fundamentals and published literature </span>
+<span class="sd">    on observer variability in color matching and in physiological parameters.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :age: </span>
+<span class="sd">            | 32 or float or int, optional</span>
+<span class="sd">            | Observer age</span>
+<span class="sd">        :fieldsize:</span>
+<span class="sd">            | 10, optional</span>
+<span class="sd">            | Field size of stimulus in degrees (between 2° and 10°).</span>
+<span class="sd">        :wl: </span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | Interpolation/extraplation of :LMS: output to specified wavelengths.</span>
+<span class="sd">            | None: output original _WL = np.array([390,780,5])</span>
+<span class="sd">        :var_od_lens:</span>
+<span class="sd">            | 0, optional</span>
+<span class="sd">            | Std Dev. in peak optical density [%] of lens.</span>
+<span class="sd">        :var_od_macula:</span>
+<span class="sd">            | 0, optional</span>
+<span class="sd">            | Std Dev. in peak optical density [%] of macula.</span>
+<span class="sd">        :var_od_L:</span>
+<span class="sd">            | 0, optional</span>
+<span class="sd">            | Std Dev. in peak optical density [%] of L-cone.</span>
+<span class="sd">        :var_od_M:</span>
+<span class="sd">            | 0, optional</span>
+<span class="sd">            | Std Dev. in peak optical density [%] of M-cone.</span>
+<span class="sd">        :var_od_S:</span>
+<span class="sd">            | 0, optional</span>
+<span class="sd">            | Std Dev. in peak optical density [%] of S-cone.</span>
+<span class="sd">        :var_shft_L:</span>
+<span class="sd">            | 0, optional</span>
+<span class="sd">            | Std Dev. in peak wavelength shift [nm] of L-cone. </span>
+<span class="sd">        :var_shft_L:</span>
+<span class="sd">            | 0, optional</span>
+<span class="sd">            | Std Dev. in peak wavelength shift [nm] of M-cone.  </span>
+<span class="sd">        :var_shft_S:</span>
+<span class="sd">            | 0, optional</span>
+<span class="sd">            | Std Dev. in peak wavelength shift [nm] of S-cone. </span>
+<span class="sd">        :out: </span>
+<span class="sd">            | &#39;LMS&#39; or , optional</span>
+<span class="sd">            | Determines output.</span>
+<span class="sd">        :allow_negative_values:</span>
+<span class="sd">            | False, optional</span>
+<span class="sd">            | Cone fundamentals or color matching functions </span>
+<span class="sd">              should not have negative values.</span>
+<span class="sd">            |     If False: X[X&lt;0] = 0.</span>
+<span class="sd">            </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :returns: </span>
+<span class="sd">            | - &#39;LMS&#39; : ndarray with individual observer area-normalized </span>
+<span class="sd">            |           cone fundamentals. Wavelength have been added.</span>
+<span class="sd">                </span>
+<span class="sd">            | [- &#39;trans_lens&#39;: ndarray with lens transmission </span>
+<span class="sd">            |      (no wavelengths added, no interpolation)</span>
+<span class="sd">            |  - &#39;trans_macula&#39;: ndarray with macula transmission </span>
+<span class="sd">            |      (no wavelengths added, no interpolation)</span>
+<span class="sd">            |  - &#39;sens_photopig&#39; : ndarray with photopigment sens. </span>
+<span class="sd">            |      (no wavelengths added, no interpolation)]</span>
+<span class="sd">            </span>
+<span class="sd">    References:</span>
+<span class="sd">         1. `Asano Y, Fairchild MD, and Blondé L (2016). </span>
+<span class="sd">         Individual Colorimetric Observer Model. </span>
+<span class="sd">         PLoS One 11, 1–19. </span>
+<span class="sd">         &lt;http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0145671&gt;`_</span>
+<span class="sd">        </span>
+<span class="sd">         2. `Asano Y, Fairchild MD, Blondé L, and Morvan P (2016). </span>
+<span class="sd">         Color matching experiment for highlighting interobserver variability. </span>
+<span class="sd">         Color Res. Appl. 41, 530–539. </span>
+<span class="sd">         &lt;https://onlinelibrary.wiley.com/doi/abs/10.1002/col.21975&gt;`_</span>
+<span class="sd">         </span>
+<span class="sd">         3. `CIE, and CIE (2006). </span>
+<span class="sd">         Fundamental Chromaticity Diagram with Physiological Axes - Part I </span>
+<span class="sd">         (Vienna: CIE). </span>
+<span class="sd">         &lt;http://www.cie.co.at/publications/fundamental-chromaticity-diagram-physiological-axes-part-1&gt;`_ </span>
+<span class="sd">         </span>
+<span class="sd">         4. `Asano&#39;s Individual Colorimetric Observer Model </span>
+<span class="sd">         &lt;https://www.rit.edu/cos/colorscience/re_AsanoObserverFunctions.php&gt;`_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">fs</span> <span class="o">=</span> <span class="n">fieldsize</span>
+    <span class="n">rmd</span> <span class="o">=</span> <span class="n">_INDVCMF_DATA</span><span class="p">[</span><span class="s1">&#39;rmd&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> 
+    <span class="n">LMSa</span> <span class="o">=</span> <span class="n">_INDVCMF_DATA</span><span class="p">[</span><span class="s1">&#39;LMSa&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> 
+    <span class="n">docul</span> <span class="o">=</span> <span class="n">_INDVCMF_DATA</span><span class="p">[</span><span class="s1">&#39;docul&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> 
+    
+    <span class="c1"># field size corrected macular density:</span>
+    <span class="n">pkOd_Macula</span> <span class="o">=</span> <span class="mf">0.485</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">fs</span><span class="o">/</span><span class="mf">6.132</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">var_od_macula</span><span class="o">/</span><span class="mi">100</span><span class="p">)</span> <span class="c1"># varied peak optical density of macula</span>
+    <span class="n">corrected_rmd</span> <span class="o">=</span> <span class="n">rmd</span><span class="o">*</span><span class="n">pkOd_Macula</span>
+    
+    <span class="c1"># age corrected lens/ocular media density: </span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">age</span> <span class="o">&lt;=</span> <span class="mi">60</span><span class="p">):</span>
+        <span class="n">correct_lomd</span> <span class="o">=</span> <span class="n">docul</span><span class="p">[:</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mf">0.02</span><span class="o">*</span><span class="p">(</span><span class="n">age</span><span class="o">-</span><span class="mi">32</span><span class="p">))</span> <span class="o">+</span> <span class="n">docul</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">correct_lomd</span> <span class="o">=</span> <span class="n">docul</span><span class="p">[:</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.56</span> <span class="o">+</span> <span class="mf">0.0667</span><span class="o">*</span><span class="p">(</span><span class="n">age</span><span class="o">-</span><span class="mi">60</span><span class="p">))</span> <span class="o">+</span> <span class="n">docul</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">correct_lomd</span> <span class="o">=</span> <span class="n">correct_lomd</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">var_od_lens</span><span class="o">/</span><span class="mi">100</span><span class="p">)</span> <span class="c1"># varied overall optical density of lens</span>
+    
+    <span class="c1"># Peak Wavelength Shift:</span>
+    <span class="n">wl_shifted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">LMSa</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="n">wl_shifted</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">_WL</span> <span class="o">+</span> <span class="n">var_shft_L</span> 
+    <span class="n">wl_shifted</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">_WL</span> <span class="o">+</span> <span class="n">var_shft_M</span> 
+    <span class="n">wl_shifted</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">_WL</span> <span class="o">+</span> <span class="n">var_shft_S</span> 
+    
+    <span class="n">LMSa_shft</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">LMSa</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;cubic&#39;</span>
+    <span class="n">LMSa_shft</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">wl_shifted</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">LMSa</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">kind</span> <span class="o">=</span> <span class="n">kind</span><span class="p">,</span> <span class="n">bounds_error</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">fill_value</span> <span class="o">=</span> <span class="s2">&quot;extrapolate&quot;</span><span class="p">)(</span><span class="n">_WL</span><span class="p">)</span>
+    <span class="n">LMSa_shft</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">wl_shifted</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">LMSa</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">kind</span> <span class="o">=</span> <span class="n">kind</span><span class="p">,</span> <span class="n">bounds_error</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">fill_value</span> <span class="o">=</span> <span class="s2">&quot;extrapolate&quot;</span><span class="p">)(</span><span class="n">_WL</span><span class="p">)</span>
+    <span class="n">LMSa_shft</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">wl_shifted</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span><span class="n">LMSa</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">kind</span> <span class="o">=</span> <span class="n">kind</span><span class="p">,</span> <span class="n">bounds_error</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">fill_value</span> <span class="o">=</span> <span class="s2">&quot;extrapolate&quot;</span><span class="p">)(</span><span class="n">_WL</span><span class="p">)</span>
+<span class="c1">#    LMSa[2,np.where(_WL &gt;= _WL_CRIT)] = 0 #np.nan # Not defined above 620nm</span>
+<span class="c1">#    LMSa_shft[2,np.where(_WL &gt;= _WL_CRIT)] = 0</span>
+    
+    <span class="n">ssw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">LMSa_shft</span><span class="p">[</span><span class="mi">2</span><span class="p">,:]))))</span> <span class="c1">#detect poor interpolation (sign switch due to instability)</span>
+    <span class="n">LMSa_shft</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">ssw</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">_WL</span> <span class="o">&gt;</span> <span class="mi">560</span><span class="p">))]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    
+    
+    <span class="c1"># corrected LMS (no age correction):</span>
+    <span class="n">pkOd_L</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.38</span> <span class="o">+</span> <span class="mf">0.54</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">fs</span><span class="o">/</span><span class="mf">1.333</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">var_od_L</span><span class="o">/</span><span class="mi">100</span><span class="p">)</span> <span class="c1"># varied peak optical density of L-cone</span>
+    <span class="n">pkOd_M</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.38</span> <span class="o">+</span> <span class="mf">0.54</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">fs</span><span class="o">/</span><span class="mf">1.333</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">var_od_M</span><span class="o">/</span><span class="mi">100</span><span class="p">)</span> <span class="c1"># varied peak optical density of M-cone</span>
+    <span class="n">pkOd_S</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.30</span> <span class="o">+</span> <span class="mf">0.45</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">fs</span><span class="o">/</span><span class="mf">1.333</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">var_od_S</span><span class="o">/</span><span class="mi">100</span><span class="p">)</span> <span class="c1"># varied peak optical density of S-cone</span>
+    
+    <span class="n">alpha_lms</span> <span class="o">=</span> <span class="mf">0.</span> <span class="o">*</span> <span class="n">LMSa_shft</span>
+    <span class="n">alpha_lms</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="n">pkOd_L</span><span class="o">*</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="n">LMSa_shft</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+    <span class="n">alpha_lms</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="n">pkOd_M</span><span class="o">*</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="n">LMSa_shft</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="n">alpha_lms</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="n">pkOd_S</span><span class="o">*</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="n">LMSa_shft</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+    
+    <span class="c1"># this fix is required because the above math fails for alpha_lms[2,:]==0</span>
+    <span class="n">alpha_lms</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">_WL</span> <span class="o">&gt;=</span> <span class="n">_WL_CRIT</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span> 
+    
+    <span class="c1"># Corrected to Corneal Incidence:</span>
+    <span class="n">lms_barq</span> <span class="o">=</span> <span class="n">alpha_lms</span> <span class="o">*</span> <span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="n">corrected_rmd</span> <span class="o">-</span> <span class="n">correct_lomd</span><span class="p">))</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">alpha_lms</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+    <span class="c1"># Corrected to Energy Terms:</span>
+    <span class="n">lms_bar</span> <span class="o">=</span> <span class="n">lms_barq</span> <span class="o">*</span> <span class="n">_WL</span>
+
+    <span class="c1"># Set NaN values to zero:</span>
+    <span class="n">lms_bar</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">lms_bar</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span>
+    
+    <span class="c1"># normalized:</span>
+    <span class="n">LMS</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">lms_bar</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="n">lms_bar</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+
+    
+    <span class="c1"># Output extra:</span>
+    <span class="n">trans_lens</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="n">correct_lomd</span><span class="p">)</span> 
+    <span class="n">trans_macula</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="n">corrected_rmd</span><span class="p">)</span> 
+    <span class="n">sens_photopig</span> <span class="o">=</span> <span class="n">alpha_lms</span> <span class="o">*</span> <span class="n">_WL</span> 
+
+    <span class="c1"># Add wavelengths:</span>
+    <span class="n">LMS</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">_WL</span><span class="p">,</span><span class="n">LMS</span><span class="p">))</span>
+    
+    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;xyz&#39;</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)):</span>
+        <span class="n">LMS</span> <span class="o">=</span> <span class="n">lmsb_to_xyzb</span><span class="p">(</span><span class="n">LMS</span><span class="p">,</span> <span class="n">fieldsize</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">allow_negative_values</span> <span class="o">=</span> <span class="n">allow_negative_values</span><span class="p">)</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;xyz&#39;</span><span class="p">,</span><span class="s1">&#39;LMS&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;XYZ&#39;</span><span class="p">,</span><span class="s1">&#39;LMS&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;lms&#39;</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)):</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;lms&#39;</span><span class="p">,</span><span class="s1">&#39;LMS&#39;</span><span class="p">)</span>
+   
+    <span class="c1"># Interpolate/extrapolate:</span>
+    <span class="k">if</span> <span class="n">wl</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">interpolation</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">interpolation</span> <span class="o">=</span> <span class="s1">&#39;cubic&#39;</span>
+    <span class="n">LMS</span> <span class="o">=</span> <span class="n">spd</span><span class="p">(</span><span class="n">LMS</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="n">wl</span><span class="p">,</span> <span class="n">interpolation</span> <span class="o">=</span> <span class="n">interpolation</span><span class="p">,</span> <span class="n">norm_type</span> <span class="o">=</span> <span class="s1">&#39;area&#39;</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="p">(</span><span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;LMS&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">LMS</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;LMS,trans_lens,trans_macula,sens_photopig&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">LMS</span><span class="p">,</span><span class="n">trans_lens</span><span class="p">,</span> <span class="n">trans_macula</span><span class="p">,</span> <span class="n">sens_photopig</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;LMS,trans_lens,trans_macula,sens_photopig,LMSa&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">LMS</span><span class="p">,</span> <span class="n">trans_lens</span><span class="p">,</span> <span class="n">trans_macula</span><span class="p">,</span> <span class="n">sens_photopig</span><span class="p">,</span> <span class="n">LMSa</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">eval</span><span class="p">(</span><span class="n">out</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="getMonteCarloParam"><a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.indvcmf.getMonteCarloParam">[docs]</a><span class="k">def</span> <span class="nf">getMonteCarloParam</span><span class="p">(</span><span class="n">n_obs</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">stdDevAllParam</span> <span class="o">=</span> <span class="n">_INDVCMF_STD_DEV_ALL_PARAM</span><span class="o">.</span><span class="n">copy</span><span class="p">()):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get dict with normally-distributed physiological factors </span>
+<span class="sd">    for a population of observers.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :n_obs: </span>
+<span class="sd">            | 1, optional</span>
+<span class="sd">            | Number of individual observers in population.</span>
+<span class="sd">        :stdDevAllParam:</span>
+<span class="sd">            | _INDVCMF_STD_DEV_ALL_PARAM, optional</span>
+<span class="sd">            | Dict with parameters for:</span>
+<span class="sd">            |     [&#39;od_lens&#39;, &#39;od_macula&#39;, </span>
+<span class="sd">            |      &#39;od_L&#39;, &#39;od_M&#39;, &#39;od_S&#39;, </span>
+<span class="sd">            |      &#39;shft_L&#39;, &#39;shft_M&#39;, &#39;shft_S&#39;]</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :returns: </span>
+<span class="sd">            | dict with n_obs randomly drawn parameters.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">varParam</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">stdDevAllParam</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+        <span class="n">varParam</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">stdDevAllParam</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">n_obs</span><span class="p">)</span>
+  
+        <span class="c1"># limit varAllParam so that it doesn&#39;t create negative val for </span>
+        <span class="c1"># lens, macula, pkod_LMS:</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">k</span> <span class="o">==</span> <span class="s1">&#39;od_lens&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">k</span> <span class="o">==</span> <span class="s1">&#39;od_macula&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">k</span> <span class="o">==</span> <span class="s1">&#39;od_L&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">k</span> <span class="o">==</span> <span class="s1">&#39;od_M&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">k</span> <span class="o">==</span> <span class="s1">&#39;od_S&#39;</span><span class="p">):</span>
+            <span class="n">varParam</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">varParam</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mi">100</span><span class="p">)]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">100</span>
+        
+    <span class="k">return</span> <span class="n">varParam</span>  </div>
+  
+<span class="k">def</span> <span class="nf">getUSCensusAgeDist</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get US Census Age Distribution</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">t_num</span> <span class="o">=</span> <span class="n">_INDVCMF_DATA</span><span class="p">[</span><span class="s1">&#39;USCensus2010population&#39;</span><span class="p">]</span> 
+    
+    <span class="n">list_AgeCensus</span> <span class="o">=</span> <span class="n">t_num</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> 
+    <span class="n">freq_AgeCensus</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">t_num</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="mi">1000</span><span class="p">)</span> <span class="c1"># Reduce # of populations to manageable number, this doesn&#39;t change probability</span>
+    
+    <span class="c1"># Remove age &lt; 10 and 70 &lt; age:</span>
+    <span class="n">freq_AgeCensus</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">freq_AgeCensus</span><span class="p">[</span><span class="mi">71</span><span class="p">:]</span> <span class="o">=</span> <span class="mi">0</span>
+      
+    <span class="n">list_Age</span> <span class="o">=</span> <span class="p">[]</span> 
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">list_AgeCensus</span><span class="p">)):</span>
+        <span class="n">list_Age</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">list_Age</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">list_AgeCensus</span><span class="p">[</span><span class="n">k</span><span class="p">],</span><span class="n">freq_AgeCensus</span><span class="p">[</span><span class="n">k</span><span class="p">])))</span> 
+
+    <span class="k">return</span> <span class="n">list_Age</span>    
+
+<div class="viewcode-block" id="genMonteCarloObs"><a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.indvcmf.genMonteCarloObs">[docs]</a><span class="k">def</span> <span class="nf">genMonteCarloObs</span><span class="p">(</span><span class="n">n_obs</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">fieldsize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">list_Age</span> <span class="o">=</span> <span class="p">[</span><span class="mi">32</span><span class="p">],</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;LMS&#39;</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">allow_negative_values</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Monte-Carlo generation of individual observer cone fundamentals.</span>
+<span class="sd">    </span>
+<span class="sd">    Args: </span>
+<span class="sd">        :n_obs: </span>
+<span class="sd">            | 1, optional</span>
+<span class="sd">            | Number of observer CMFs to generate.</span>
+<span class="sd">        :list_Age:</span>
+<span class="sd">            | list of observer ages or str, optional</span>
+<span class="sd">            | Defaults to 32 (cfr. CIE2006 CMFs)</span>
+<span class="sd">            | If &#39;us_census&#39;: use US population census of 2010 </span>
+<span class="sd">              to generate list_Age.</span>
+<span class="sd">        :fieldsize: </span>
+<span class="sd">            | fieldsize in degrees (between 2° and 10°), optional</span>
+<span class="sd">            | Defaults to 10°.</span>
+<span class="sd">        :out: </span>
+<span class="sd">            | &#39;LMS&#39; or str, optional</span>
+<span class="sd">            | Determines output.</span>
+<span class="sd">        :wl: </span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | Interpolation/extraplation of :LMS: output to specified wavelengths.</span>
+<span class="sd">            | None: output original _WL = np.array([390,780,5])</span>
+<span class="sd">        :allow_negative_values: </span>
+<span class="sd">            | False, optional</span>
+<span class="sd">            | Cone fundamentals or color matching functions </span>
+<span class="sd">            |   should not have negative values.</span>
+<span class="sd">            |     If False: X[X&lt;0] = 0.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :returns: </span>
+<span class="sd">            | LMS [,var_age, vAll] </span>
+<span class="sd">            |   - LMS: ndarray with population LMS functions.</span>
+<span class="sd">            |   - var_age: ndarray with population observer ages.</span>
+<span class="sd">            |   - vAll: dict with population physiological factors (see .keys()) </span>
+<span class="sd">            </span>
+<span class="sd">    References:</span>
+<span class="sd">         1. `Asano Y, Fairchild MD, and Blondé L (2016). </span>
+<span class="sd">         Individual Colorimetric Observer Model. </span>
+<span class="sd">         PLoS One 11, 1–19. </span>
+<span class="sd">         &lt;http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0145671&gt;`_</span>
+<span class="sd">         </span>
+<span class="sd">         2. `Asano Y, Fairchild MD, Blondé L, and Morvan P (2016). </span>
+<span class="sd">         Color matching experiment for highlighting interobserver variability. </span>
+<span class="sd">         Color Res. Appl. 41, 530–539. </span>
+<span class="sd">         &lt;https://onlinelibrary.wiley.com/doi/abs/10.1002/col.21975&gt;`_</span>
+<span class="sd">         </span>
+<span class="sd">         3. `CIE, and CIE (2006). </span>
+<span class="sd">         Fundamental Chromaticity Diagram with Physiological Axes - Part I </span>
+<span class="sd">         (Vienna: CIE). </span>
+<span class="sd">         &lt;http://www.cie.co.at/publications/fundamental-chromaticity-diagram-physiological-axes-part-1&gt;`_ </span>
+<span class="sd">         </span>
+<span class="sd">         4. `Asano&#39;s Individual Colorimetric Observer Model </span>
+<span class="sd">         &lt;https://www.rit.edu/cos/colorscience/re_AsanoObserverFunctions.php&gt;`_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Scale down StdDev by scalars optimized using Asano&#39;s 75 observers </span>
+    <span class="c1"># collected in Germany:</span>
+    <span class="n">stdDevAllParam</span> <span class="o">=</span> <span class="n">_INDVCMF_STD_DEV_ALL_PARAM</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">scale_factors</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.98</span><span class="p">,</span> <span class="mf">0.98</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]</span>
+    <span class="n">scale_factors</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">stdDevAllParam</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="n">scale_factors</span><span class="p">))</span>
+    <span class="n">stdDevAllParam</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span> <span class="p">:</span> <span class="n">v</span><span class="o">*</span><span class="n">scale_factors</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">stdDevAllParam</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+    <span class="c1"># Get Normally-distributed Physiological Factors:</span>
+    <span class="n">vAll</span> <span class="o">=</span> <span class="n">getMonteCarloParam</span><span class="p">(</span><span class="n">n_obs</span> <span class="o">=</span> <span class="n">n_obs</span><span class="p">)</span> 
+     
+    <span class="k">if</span> <span class="n">list_Age</span> <span class="ow">is</span> <span class="s1">&#39;us_census&#39;</span><span class="p">:</span>
+        <span class="n">list_Age</span> <span class="o">=</span> <span class="n">getUSCensusAgeDist</span><span class="p">()</span>
+    
+    <span class="c1"># Generate Random Ages with the same probability density distribution </span>
+    <span class="c1"># as color matching experiment:</span>
+    <span class="n">sz_interval</span> <span class="o">=</span> <span class="mi">1</span> 
+    <span class="n">list_AgeRound</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">list_Age</span><span class="p">)</span><span class="o">/</span><span class="n">sz_interval</span> <span class="p">)</span> <span class="o">*</span> <span class="n">sz_interval</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">list_AgeRound</span><span class="p">,</span> <span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">list_AgeRound</span><span class="p">),</span> <span class="n">bin_center</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">h</span><span class="o">/</span><span class="n">h</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="c1"># probability density distribution</span>
+
+    <span class="n">var_age</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">list_AgeRound</span><span class="p">),</span> \
+                               <span class="n">size</span> <span class="o">=</span> <span class="n">n_obs</span><span class="p">,</span> <span class="n">replace</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>\
+                               <span class="n">p</span> <span class="o">=</span> <span class="n">p</span><span class="p">)</span>
+    
+    <span class="c1"># Set requested wavelength range:</span>
+    <span class="k">if</span> <span class="n">wl</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">wl</span> <span class="o">=</span> <span class="n">getwlr</span><span class="p">(</span><span class="n">wl3</span> <span class="o">=</span> <span class="n">wl</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">wl</span> <span class="o">=</span> <span class="n">_WL</span>
+        
+    <span class="n">LMS_All</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">wl</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">n_obs</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_obs</span><span class="p">):</span>
+        <span class="n">t_LMS</span><span class="p">,</span> <span class="n">t_trans_lens</span><span class="p">,</span> <span class="n">t_trans_macula</span><span class="p">,</span> <span class="n">t_sens_photopig</span> <span class="o">=</span> <span class="n">cie2006cmfsEx</span><span class="p">(</span><span class="n">age</span> <span class="o">=</span> <span class="n">var_age</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">fieldsize</span> <span class="o">=</span> <span class="n">fieldsize</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="n">wl</span><span class="p">,</span>\
+                                                                          <span class="n">var_od_lens</span> <span class="o">=</span> <span class="n">vAll</span><span class="p">[</span><span class="s1">&#39;od_lens&#39;</span><span class="p">][</span><span class="n">k</span><span class="p">],</span> <span class="n">var_od_macula</span> <span class="o">=</span> <span class="n">vAll</span><span class="p">[</span><span class="s1">&#39;od_macula&#39;</span><span class="p">][</span><span class="n">k</span><span class="p">],</span> \
+                                                                          <span class="n">var_od_L</span> <span class="o">=</span> <span class="n">vAll</span><span class="p">[</span><span class="s1">&#39;od_L&#39;</span><span class="p">][</span><span class="n">k</span><span class="p">],</span> <span class="n">var_od_M</span> <span class="o">=</span> <span class="n">vAll</span><span class="p">[</span><span class="s1">&#39;od_M&#39;</span><span class="p">][</span><span class="n">k</span><span class="p">],</span> <span class="n">var_od_S</span> <span class="o">=</span> <span class="n">vAll</span><span class="p">[</span><span class="s1">&#39;od_S&#39;</span><span class="p">][</span><span class="n">k</span><span class="p">],</span>\
+                                                                          <span class="n">var_shft_L</span> <span class="o">=</span> <span class="n">vAll</span><span class="p">[</span><span class="s1">&#39;shft_L&#39;</span><span class="p">][</span><span class="n">k</span><span class="p">],</span> <span class="n">var_shft_M</span> <span class="o">=</span> <span class="n">vAll</span><span class="p">[</span><span class="s1">&#39;shft_M&#39;</span><span class="p">][</span><span class="n">k</span><span class="p">],</span> <span class="n">var_shft_S</span> <span class="o">=</span> <span class="n">vAll</span><span class="p">[</span><span class="s1">&#39;shft_S&#39;</span><span class="p">][</span><span class="n">k</span><span class="p">],</span>\
+                                                                          <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;LMS,trans_lens,trans_macula,sens_photopig&#39;</span><span class="p">)</span>                                    
+        <span class="n">LMS_All</span><span class="p">[:,:,</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">t_LMS</span>
+        
+<span class="c1">#        listout = out.split(&#39;,&#39;)</span>
+<span class="c1">#        if (&#39;trans_lens&#39; in listout) | (&#39;trans_macula&#39; in listout) | (&#39;trans_photopig&#39; in listout):</span>
+<span class="c1">#            trans_lens[:,k] = t_trans_lens</span>
+<span class="c1">#            trans_macula[:,k] = t_trans_macula </span>
+<span class="c1">#            sens_photopig[:,:,k] = t_sens_photopig </span>
+
+    <span class="k">if</span> <span class="n">n_obs</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">LMS_All</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">LMS_All</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+	
+    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;xyz&#39;</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)):</span>
+        <span class="n">LMS_All</span> <span class="o">=</span> <span class="n">lmsb_to_xyzb</span><span class="p">(</span><span class="n">LMS_All</span><span class="p">,</span> <span class="n">fieldsize</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">allow_negative_values</span> <span class="o">=</span> <span class="n">allow_negative_values</span><span class="p">)</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;xyz&#39;</span><span class="p">,</span><span class="s1">&#39;LMS&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;XYZ&#39;</span><span class="p">,</span><span class="s1">&#39;LMS&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;lms&#39;</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)):</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;lms&#39;</span><span class="p">,</span><span class="s1">&#39;LMS&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;LMS&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">LMS_All</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;LMS,var_age,vAll&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">LMS_All</span><span class="p">,</span> <span class="n">var_age</span><span class="p">,</span> <span class="n">vAll</span> 
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">eval</span><span class="p">(</span><span class="n">out</span><span class="p">)</span></div>
+
+        
+<div class="viewcode-block" id="getCatObs"><a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.indvcmf.getCatObs">[docs]</a><span class="k">def</span> <span class="nf">getCatObs</span><span class="p">(</span><span class="n">n_cat</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">fieldsize</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;LMS&#39;</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">allow_negative_values</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate cone fundamentals for categorical observers.</span>
+<span class="sd">    </span>
+<span class="sd">    Args: </span>
+<span class="sd">        :n_cat: </span>
+<span class="sd">            | 10, optional</span>
+<span class="sd">            | Number of observer CMFs to generate.</span>
+<span class="sd">        :fieldsize:</span>
+<span class="sd">            | fieldsize in degrees (between 2° and 10°), optional</span>
+<span class="sd">            | Defaults to 10°.</span>
+<span class="sd">        :out: </span>
+<span class="sd">            | &#39;LMS&#39; or str, optional</span>
+<span class="sd">            | Determines output.</span>
+<span class="sd">        :wl: </span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | Interpolation/extraplation of :LMS: output to specified wavelengths.</span>
+<span class="sd">            |  None: output original _WL = np.array([390,780,5])</span>
+<span class="sd">        :allow_negative_values:</span>
+<span class="sd">            | False, optional</span>
+<span class="sd">            | Cone fundamentals or color matching functions </span>
+<span class="sd">            |  should not have negative values.</span>
+<span class="sd">            |     If False: X[X&lt;0] = 0.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :returns:</span>
+<span class="sd">            | LMS [,var_age, vAll] </span>
+<span class="sd">            |   - LMS: ndarray with population LMS functions.</span>
+<span class="sd">            |   - var_age: ndarray with population observer ages.</span>
+<span class="sd">            |   - vAll: dict with population physiological factors (see .keys()) </span>
+<span class="sd">    </span>
+<span class="sd">    Notes:</span>
+<span class="sd">        1. Categorical observers are observer functions that would represent </span>
+<span class="sd">        color-normal populations. They are finite and discrete as opposed to </span>
+<span class="sd">        observer functions generated from the individual colorimetric observer </span>
+<span class="sd">        model. Thus, they would offer more convenient and practical approaches</span>
+<span class="sd">        for the personalized color imaging workflow and color matching analyses.</span>
+<span class="sd">        Categorical observers were derived in two steps. </span>
+<span class="sd">        At the first step, 10000 observer functions were generated from the </span>
+<span class="sd">        individual colorimetric observer model using Monte Carlo simulation. </span>
+<span class="sd">        At the second step, the cluster analysis, a modified k-medoids </span>
+<span class="sd">        algorithm, was applied to the 10000 observers minimizing the squared </span>
+<span class="sd">        Euclidean distance in cone fundamentals space, and categorical </span>
+<span class="sd">        observers were derived iteratively. Since the proposed categorical </span>
+<span class="sd">        observers are defined by their physiological parameters and ages, their</span>
+<span class="sd">        CMFs can be derived for any target field size.</span>
+
+<span class="sd">        2. Categorical observers were ordered by the importance; </span>
+<span class="sd">        the first categorical observer vas the average observer equivalent to </span>
+<span class="sd">        CIEPO06 with 38 year-old for a given field size, followed by the second</span>
+<span class="sd">        most important categorical observer, the third, and so on.</span>
+<span class="sd">        </span>
+<span class="sd">        3. see: https://www.rit.edu/cos/colorscience/re_AsanoObserverFunctions.php</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Use Iteratively Derived Cat.Obs.:</span>
+    <span class="n">var_age</span> <span class="o">=</span> <span class="n">_INDVCMF_CATOBSPFCTR</span><span class="p">[</span><span class="s1">&#39;age&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">vAll</span> <span class="o">=</span> <span class="n">_INDVCMF_CATOBSPFCTR</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">vAll</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;age&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Set requested wavelength range:</span>
+    <span class="k">if</span> <span class="n">wl</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">wl</span> <span class="o">=</span> <span class="n">getwlr</span><span class="p">(</span><span class="n">wl3</span> <span class="o">=</span> <span class="n">wl</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">wl</span> <span class="o">=</span> <span class="n">_WL</span>
+
+    <span class="n">LMS_All</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">_WL</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">n_cat</span><span class="p">))</span> 
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_cat</span><span class="p">):</span>
+        <span class="n">t_LMS</span> <span class="o">=</span> <span class="n">cie2006cmfsEx</span><span class="p">(</span><span class="n">age</span> <span class="o">=</span> <span class="n">var_age</span><span class="p">[</span><span class="n">k</span><span class="p">],</span><span class="n">fieldsize</span> <span class="o">=</span> <span class="n">fieldsize</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="n">wl</span><span class="p">,</span>\
+                              <span class="n">var_od_lens</span> <span class="o">=</span> <span class="n">vAll</span><span class="p">[</span><span class="s1">&#39;od_lens&#39;</span><span class="p">][</span><span class="n">k</span><span class="p">],</span>\
+                              <span class="n">var_od_macula</span> <span class="o">=</span> <span class="n">vAll</span><span class="p">[</span><span class="s1">&#39;od_macula&#39;</span><span class="p">][</span><span class="n">k</span><span class="p">],</span>\
+                              <span class="n">var_od_L</span> <span class="o">=</span> <span class="n">vAll</span><span class="p">[</span><span class="s1">&#39;od_L&#39;</span><span class="p">][</span><span class="n">k</span><span class="p">],</span>\
+                              <span class="n">var_od_M</span> <span class="o">=</span> <span class="n">vAll</span><span class="p">[</span><span class="s1">&#39;od_M&#39;</span><span class="p">][</span><span class="n">k</span><span class="p">],</span>\
+                              <span class="n">var_od_S</span> <span class="o">=</span> <span class="n">vAll</span><span class="p">[</span><span class="s1">&#39;od_S&#39;</span><span class="p">][</span><span class="n">k</span><span class="p">],</span>\
+                              <span class="n">var_shft_L</span> <span class="o">=</span> <span class="n">vAll</span><span class="p">[</span><span class="s1">&#39;shft_L&#39;</span><span class="p">][</span><span class="n">k</span><span class="p">],</span>\
+                              <span class="n">var_shft_M</span> <span class="o">=</span> <span class="n">vAll</span><span class="p">[</span><span class="s1">&#39;shft_M&#39;</span><span class="p">][</span><span class="n">k</span><span class="p">],</span>\
+                              <span class="n">var_shft_S</span> <span class="o">=</span> <span class="n">vAll</span><span class="p">[</span><span class="s1">&#39;shft_S&#39;</span><span class="p">][</span><span class="n">k</span><span class="p">],</span>\
+                              <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;LMS&#39;</span><span class="p">)</span>
+        
+        <span class="n">LMS_All</span><span class="p">[:,:,</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">t_LMS</span> 
+    
+    <span class="n">LMS_All</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">LMS_All</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span>
+    
+    <span class="k">if</span> <span class="n">n_cat</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">LMS_All</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">LMS_All</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+	
+    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;xyz&#39;</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)):</span>
+        <span class="n">LMS_All</span> <span class="o">=</span> <span class="n">lmsb_to_xyzb</span><span class="p">(</span><span class="n">LMS_All</span><span class="p">,</span> <span class="n">fieldsize</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">allow_negative_values</span> <span class="o">=</span> <span class="n">allow_negative_values</span><span class="p">)</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;xyz&#39;</span><span class="p">,</span><span class="s1">&#39;LMS&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;XYZ&#39;</span><span class="p">,</span><span class="s1">&#39;LMS&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;lms&#39;</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)):</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;lms&#39;</span><span class="p">,</span><span class="s1">&#39;LMS&#39;</span><span class="p">)</span>
+        
+    <span class="k">if</span> <span class="p">(</span><span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;LMS&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">LMS_All</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;LMS,var_age,vAll&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">LMS_All</span><span class="p">,</span><span class="n">var_age</span><span class="p">,</span><span class="n">vAll</span> 
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">eval</span><span class="p">(</span><span class="n">out</span><span class="p">)</span></div>
+
+<span class="k">def</span> <span class="nf">get_lms_to_xyz_matrix</span><span class="p">(</span><span class="n">fieldsize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the lms to xyz conversion matrix for specific fieldsize.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :fieldsize: </span>
+<span class="sd">            | fieldsize in degrees (between 2° and 10°), optional</span>
+<span class="sd">            | Defaults to 10°.</span>
+<span class="sd">            </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :M: </span>
+<span class="sd">            | ndarray with conversion matrix.</span>
+<span class="sd">    </span>
+<span class="sd">    Note: </span>
+<span class="sd">        For intermediate field sizes (2°&lt;fieldsize&lt;10°) the conversion matrix</span>
+<span class="sd">        is calculated by linear interpolation between </span>
+<span class="sd">        the _INDVCMF_M_2d and _INDVCMF_M_10d matrices.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="p">(</span><span class="mi">10</span><span class="o">-</span><span class="n">fieldsize</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">10</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">a</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="k">elif</span> <span class="n">a</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">:</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="mi">10</span>        
+    <span class="k">return</span> <span class="n">_INDVCMF_M_2d</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">a</span><span class="p">)</span> <span class="o">+</span> <span class="n">a</span><span class="o">*</span><span class="n">_INDVCMF_M_10d</span>
+
+<span class="k">def</span> <span class="nf">lmsb_to_xyzb</span><span class="p">(</span><span class="n">lms</span><span class="p">,</span> <span class="n">fieldsize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;XYZ&#39;</span><span class="p">,</span> <span class="n">allow_negative_values</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert from LMS cone fundamentals to XYZ color matching functions.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :lms: </span>
+<span class="sd">            | ndarray with lms cone fundamentals, optional</span>
+<span class="sd">        :fieldsize: </span>
+<span class="sd">            | fieldsize in degrees, optional</span>
+<span class="sd">            | Defaults to 10°.</span>
+<span class="sd">        :out: </span>
+<span class="sd">            | &#39;xyz&#39; or str, optional</span>
+<span class="sd">            | Determines output.</span>
+<span class="sd">        :allow_negative_values:</span>
+<span class="sd">            | False, optional</span>
+<span class="sd">            | XYZ color matching functions should not have negative values.</span>
+<span class="sd">            |     If False: xyz[xyz&lt;0] = 0.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :returns:</span>
+<span class="sd">            | LMS </span>
+<span class="sd">            |   - LMS: ndarray with population XYZ color matching functions.    </span>
+<span class="sd">    </span>
+<span class="sd">    Note: </span>
+<span class="sd">        For intermediate field sizes (2° &lt; fieldsize &lt; 10°) a conversion matrix</span>
+<span class="sd">        is calculated by linear interpolation between </span>
+<span class="sd">        the _INDVCMF_M_2d and _INDVCMF_M_10d matrices.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">wl</span> <span class="o">=</span> <span class="n">lms</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="c1">#store wavelengths</span>
+    <span class="n">M</span> <span class="o">=</span> <span class="n">get_lms_to_xyz_matrix</span><span class="p">(</span><span class="n">fieldsize</span> <span class="o">=</span> <span class="n">fieldsize</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">lms</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">xyz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">wl</span><span class="p">,</span><span class="n">math</span><span class="o">.</span><span class="n">dot23</span><span class="p">(</span><span class="n">M</span><span class="p">,</span><span class="n">lms</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span><span class="o">...</span><span class="p">],</span> <span class="n">keepdims</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">xyz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">wl</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">M</span><span class="p">,</span><span class="n">lms</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span><span class="o">...</span><span class="p">])))</span>
+    <span class="k">if</span> <span class="n">allow_negative_values</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="n">xyz</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">xyz</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="n">xyz</span>
+
+<span class="k">def</span> <span class="nf">add_to_cmf_dict</span><span class="p">(</span><span class="n">bar</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;indv&#39;</span><span class="p">,</span> <span class="n">K</span> <span class="o">=</span> <span class="mi">683</span><span class="p">,</span> <span class="n">M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Add set of cmfs to _CMF dict.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :bar: </span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | Set of CMFs. None: initializes to empty ndarray.</span>
+<span class="sd">        :cieobs:</span>
+<span class="sd">            | &#39;indv&#39; or str, optional</span>
+<span class="sd">            | Name of CMF set.</span>
+<span class="sd">        :K: </span>
+<span class="sd">            | 683 (lm/W), optional</span>
+<span class="sd">            | Conversion factor from radiometric to photometric quantity.</span>
+<span class="sd">        :M: </span>
+<span class="sd">            | np.eye, optional</span>
+<span class="sd">            | Matrix for lms to xyz conversion.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">bar</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">wl3</span> <span class="o">=</span> <span class="n">getwlr</span><span class="p">(</span><span class="n">_WL3</span><span class="p">)</span>
+        <span class="n">bar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">wl3</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span><span class="n">wl3</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))))</span>
+    <span class="n">_CMF</span><span class="p">[</span><span class="s1">&#39;types&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cieobs</span><span class="p">)</span>
+    <span class="n">_CMF</span><span class="p">[</span><span class="n">cieobs</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;bar&#39;</span> <span class="p">:</span> <span class="n">bar</span><span class="p">}</span>
+    <span class="n">_CMF</span><span class="p">[</span><span class="n">cieobs</span><span class="p">][</span><span class="s1">&#39;K&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">K</span>
+    <span class="n">_CMF</span><span class="p">[</span><span class="n">cieobs</span><span class="p">][</span><span class="s1">&#39;M&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">M</span>
+    <span class="c1">#return _CMF</span>
+    
+    
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    
+    <span class="n">outcmf</span> <span class="o">=</span> <span class="s1">&#39;lms&#39;</span>
+    
+    <span class="n">out</span> <span class="o">=</span> <span class="n">outcmf</span> <span class="o">+</span> <span class="s1">&#39;,trans_lens,trans_macula,sens_photopig,LMSa&#39;</span>
+    <span class="n">LMS</span><span class="p">,</span> <span class="n">trans_lens</span><span class="p">,</span> <span class="n">trans_macula</span><span class="p">,</span> <span class="n">sens_photopig</span><span class="p">,</span> <span class="n">LMSa</span> <span class="o">=</span> <span class="n">cie2006cmfsEx</span><span class="p">(</span><span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="p">)</span>
+    
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">LMS</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">LMS</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">color</span> <span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">LMS</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">LMS</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">color</span> <span class="o">=</span><span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">LMS</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">LMS</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">color</span> <span class="o">=</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;cie2006cmfsEx(...)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="n">out</span> <span class="o">=</span> <span class="n">outcmf</span> <span class="o">+</span> <span class="s1">&#39;,var_age,vAll&#39;</span>
+
+    <span class="n">LMS_All</span><span class="p">,</span> <span class="n">var_age</span><span class="p">,</span> <span class="n">vAll</span> <span class="o">=</span> <span class="n">genMonteCarloObs</span><span class="p">(</span><span class="n">n_obs</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">fieldsize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">list_Age</span> <span class="o">=</span> <span class="p">[</span><span class="mi">32</span><span class="p">],</span> <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">LMS_All</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">LMS_All</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">color</span> <span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">LMS_All</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">LMS_All</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">color</span> <span class="o">=</span><span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">LMS_All</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">LMS_All</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">color</span> <span class="o">=</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;genMonteCarloObs(...)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    
+    <span class="n">LMS_All_US</span><span class="p">,</span> <span class="n">var_age_US</span><span class="p">,</span> <span class="n">vAll_US</span> <span class="o">=</span> <span class="n">genMonteCarloObs</span><span class="p">(</span><span class="n">n_obs</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">fieldsize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="p">,</span> <span class="n">list_Age</span> <span class="o">=</span> <span class="s1">&#39;us_census&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">LMS_All_US</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">LMS_All_US</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">color</span> <span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">LMS_All_US</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">LMS_All_US</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">color</span> <span class="o">=</span><span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">LMS_All_US</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">LMS_All_US</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">color</span> <span class="o">=</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;genMonteCarloObs(..., list_Age = &#39;use_census&#39;)&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    
+    <span class="n">LMS_All_CatObs</span><span class="p">,</span> <span class="n">var_age_CatObs</span><span class="p">,</span> <span class="n">vAll_CatObs</span>  <span class="o">=</span> <span class="n">getCatObs</span><span class="p">(</span><span class="n">n_cat</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">fieldsize</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">LMS_All_CatObs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">LMS_All_CatObs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">color</span> <span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">LMS_All_CatObs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">LMS_All_CatObs</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">color</span> <span class="o">=</span><span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">LMS_All_CatObs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">LMS_All_CatObs</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">color</span> <span class="o">=</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;getCatObs(...)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    
+<span class="c1">#    XYZ_All_CatObs = lmsb_to_xyzb(LMS_All_CatObs, fieldsize = 3)</span>
+<span class="c1">#    plt.figure()</span>
+<span class="c1">#    plt.plot(wl[:,None],XYZ_All_CatObs[0,:,:], color =&#39;r&#39;, linestyle=&#39;-&#39;)</span>
+<span class="c1">#    plt.plot(wl[:,None],XYZ_All_CatObs[1,:,:], color =&#39;g&#39;, linestyle=&#39;-&#39;)</span>
+<span class="c1">#    plt.plot(wl[:,None],XYZ_All_CatObs[2,:,:], color =&#39;b&#39;, linestyle=&#39;-&#39;)</span>
+<span class="c1">#    plt.title(&#39;getCatObs XYZ&#39;)</span>
+<span class="c1">#    plt.show()</span>
+    
+    <span class="c1"># Calculate new set of CMFs and calculate xyzw and cct, duv:</span>
+    <span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="n">spd_to_xyz</span><span class="p">,</span> <span class="n">_CIE_ILLUMINANTS</span><span class="p">,</span> <span class="n">xyz_to_cct_ohno</span>
+    <span class="n">XYZb_All_CatObs</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span>  <span class="o">=</span> <span class="n">getCatObs</span><span class="p">(</span><span class="n">n_cat</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">fieldsize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="p">)</span>
+    <span class="n">add_to_cmf_dict</span><span class="p">(</span><span class="n">bar</span> <span class="o">=</span> <span class="n">XYZb_All_CatObs</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;CatObs1&#39;</span><span class="p">,</span> <span class="n">K</span> <span class="o">=</span> <span class="mi">683</span><span class="p">)</span> 
+    <span class="n">xyz2</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">_CIE_ILLUMINANTS</span><span class="p">[</span><span class="s1">&#39;F4&#39;</span><span class="p">],</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;1931_2&#39;</span><span class="p">)</span>
+    <span class="n">xyz1</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">_CIE_ILLUMINANTS</span><span class="p">[</span><span class="s1">&#39;F4&#39;</span><span class="p">],</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;CatObs1&#39;</span><span class="p">)</span>
+    <span class="n">cct2</span><span class="p">,</span><span class="n">duv2</span> <span class="o">=</span> <span class="n">xyz_to_cct_ohno</span><span class="p">(</span><span class="n">xyz2</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;1931_2&#39;</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;cct,duv&#39;</span><span class="p">)</span>
+    <span class="n">cct1</span><span class="p">,</span><span class="n">duv1</span> <span class="o">=</span> <span class="n">xyz_to_cct_ohno</span><span class="p">(</span><span class="n">xyz1</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;CatObs1&#39;</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;cct,duv&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;cct,duv using 1931_2: </span><span class="si">{:1.0f}</span><span class="s1"> K, </span><span class="si">{:1.4f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cct2</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span><span class="n">duv2</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;cct,duv using CatObs1: </span><span class="si">{:1.0f}</span><span class="s1"> K, </span><span class="si">{:1.4f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cct1</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span><span class="n">duv1</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]))</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Kevin A.G. Smet.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'1.3.7',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          
+          SphinxRtdTheme.Navigation.enableSticky();
+          
+      });
+  </script> 
+
+</body>
+</html>

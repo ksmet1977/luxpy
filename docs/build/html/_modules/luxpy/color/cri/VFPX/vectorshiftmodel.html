@@ -1,0 +1,1110 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>luxpy.color.cri.VFPX.vectorshiftmodel &mdash; LuxPy 1.3.7 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+
+  
+  <script src="../../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../../index.html" class="icon icon-home"> LuxPy
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.3.7
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../license.html">License: GPLv3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../required_packages.html">Imported (required) packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../luxpy_structure.html">Luxpy package structure</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">LuxPy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>luxpy.color.cri.VFPX.vectorshiftmodel</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for luxpy.color.cri.VFPX.vectorshiftmodel</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1">########################################################################</span>
+<span class="c1"># &lt;LUXPY: a Python package for lighting and color science.&gt;</span>
+<span class="c1"># Copyright (C) &lt;2017&gt;  &lt;Kevin A.G. Smet&gt; (ksmet1977 at gmail.com)</span>
+<span class="c1">#</span>
+<span class="c1"># This program is free software: you can redistribute it and/or modify</span>
+<span class="c1"># it under the terms of the GNU General Public License as published by</span>
+<span class="c1"># the Free Software Foundation, either version 3 of the License.</span>
+<span class="c1">#</span>
+<span class="c1"># This program is distributed in the hope that it will be useful,</span>
+<span class="c1"># but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="c1"># MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="c1"># GNU General Public License for more details.</span>
+<span class="c1">#</span>
+<span class="c1"># You should have received a copy of the GNU General Public License</span>
+<span class="c1"># along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<span class="c1">#########################################################################</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module with functions related to color rendering Vector Field model</span>
+<span class="sd">===================================================================</span>
+
+<span class="sd"> :_VF_CRI_DEFAULT: default cri_type parameters for VF model</span>
+
+<span class="sd"> :_VF_CSPACE: default dict with color space parameters.</span>
+
+<span class="sd"> :_VF_MAXR: maximum C to use in calculations and plotting of vector fields</span>
+
+<span class="sd"> :_VF_DELTAR:  grid spacing, pixel size</span>
+
+<span class="sd"> :_VF_MODEL_TYPE: type of polynomial model for base color shifts</span>
+
+<span class="sd"> :_DETERMINE_HUE_ANGLES: Bool, determines whether to calculate hue_angles </span>
+<span class="sd">                         for 5 or 6 &#39;informative&#39; model parameters</span>
+
+<span class="sd"> :_VF_PCOLORSHIFT: Default dict with hue_angle parameters for VF model</span>
+
+<span class="sd"> :_VF_SIG:  0.3,  Determines smoothness of the transition between </span>
+<span class="sd">            hue-bin-boundaries (no hard cutoff at boundary).</span>
+<span class="sd"> </span>
+<span class="sd"> :get_poly_model(): Setup base color shift model (delta_a, delta_b), </span>
+<span class="sd">                    determine model parameters and accuracy.</span>
+
+<span class="sd"> :apply_poly_model_at_x(): Applies base color shift model </span>
+<span class="sd">                           at cartesian coordinates axr, bxr.</span>
+
+<span class="sd"> :generate_vector_field(): Generates a field of vectors </span>
+<span class="sd">                           using the base color shift model.</span>
+
+<span class="sd"> :VF_colorshift_model(): Applies full vector field model calculations </span>
+<span class="sd">                         to spectral data.</span>
+
+<span class="sd"> :generate_grid(): Generate a grid of color coordinates.</span>
+
+<span class="sd"> :calculate_shiftvectors(): Calculate color shift vectors.</span>
+
+<span class="sd"> :plot_shift_data(): Plots vector or circle fields.</span>
+
+<span class="sd"> :plotcircle(): Plot one or more concentric circles.</span>
+
+<span class="sd"> :initialize_VF_hue_angles(): Initialize the hue angles that will be used to </span>
+<span class="sd">                              &#39;summarize&#39; the VF model fitting parameters.</span>
+
+
+<span class="sd">.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">plt</span><span class="p">,</span> <span class="n">math</span><span class="p">,</span> <span class="n">_CIE_ILLUMINANTS</span><span class="p">,</span> <span class="n">_MUNSELL</span><span class="p">,</span><span class="n">_EPS</span>
+<span class="kn">from</span> <span class="nn">..utils.helpers</span> <span class="k">import</span> <span class="n">spd_to_cri</span>
+<span class="kn">from</span> <span class="nn">..utils.init_cri_defaults_database</span> <span class="k">import</span> <span class="n">_CRI_DEFAULTS</span>
+<span class="kn">from</span> <span class="nn">..utils.graphics</span> <span class="k">import</span> <span class="n">plot_hue_bins</span>
+
+<span class="c1">#from munsell import *</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;_VF_CRI_DEFAULT&#39;</span><span class="p">,</span><span class="s1">&#39;_VF_CSPACE&#39;</span><span class="p">,</span><span class="s1">&#39;_VF_CSPACE_EXAMPLE&#39;</span><span class="p">,</span><span class="s1">&#39;_VF_CIEOBS&#39;</span><span class="p">,</span><span class="s1">&#39;_VF_MAXR&#39;</span><span class="p">,</span><span class="s1">&#39;_VF_DELTAR&#39;</span><span class="p">,</span><span class="s1">&#39;_VF_MODEL_TYPE&#39;</span><span class="p">,</span><span class="s1">&#39;_VF_SIG&#39;</span><span class="p">,</span><span class="s1">&#39;_VF_PCOLORSHIFT&#39;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;get_poly_model&#39;</span><span class="p">,</span><span class="s1">&#39;apply_poly_model_at_x&#39;</span><span class="p">,</span><span class="s1">&#39;generate_vector_field&#39;</span><span class="p">,</span><span class="s1">&#39;VF_colorshift_model&#39;</span><span class="p">,</span><span class="s1">&#39;initialize_VF_hue_angles&#39;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;generate_grid&#39;</span><span class="p">,</span><span class="s1">&#39;calculate_shiftvectors&#39;</span><span class="p">,</span><span class="s1">&#39;plot_shift_data&#39;</span><span class="p">,</span><span class="s1">&#39;plotcircle&#39;</span><span class="p">]</span>
+
+<span class="c1"># Default color space for Vector Field model:</span>
+<span class="n">_VF_CRI_DEFAULT</span> <span class="o">=</span> <span class="s1">&#39;iesrf&#39;</span>
+<span class="n">_VF_CSPACE</span> <span class="o">=</span> <span class="n">_CRI_DEFAULTS</span><span class="p">[</span><span class="n">_VF_CRI_DEFAULT</span><span class="p">][</span><span class="s1">&#39;cspace&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">_VF_CSPACE_EXAMPLE</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span> <span class="p">:</span> <span class="s1">&#39;jab_cam02ucs&#39;</span><span class="p">,</span><span class="s1">&#39;xyzw&#39;</span><span class="p">:</span><span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;mcat&#39;</span><span class="p">:</span><span class="s1">&#39;cat02&#39;</span><span class="p">,</span> <span class="s1">&#39;Yw&#39;</span><span class="p">:</span><span class="mf">100.0</span><span class="p">,</span> <span class="s1">&#39;conditions&#39;</span> <span class="p">:{</span><span class="s1">&#39;La&#39;</span><span class="p">:</span><span class="mf">100.0</span><span class="p">,</span><span class="s1">&#39;surround&#39;</span><span class="p">:</span><span class="s1">&#39;avg&#39;</span><span class="p">,</span><span class="s1">&#39;D&#39;</span><span class="p">:</span><span class="mf">1.0</span><span class="p">,</span><span class="s1">&#39;Yb&#39;</span><span class="p">:</span><span class="mf">20.0</span><span class="p">,</span><span class="s1">&#39;Dtype&#39;</span><span class="p">:</span><span class="kc">None</span><span class="p">},</span><span class="s1">&#39;yellowbluepurplecorrect&#39;</span> <span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
+<span class="n">_VF_CIEOBS</span> <span class="o">=</span> <span class="n">_CRI_DEFAULTS</span><span class="p">[</span><span class="n">_VF_CRI_DEFAULT</span><span class="p">][</span><span class="s1">&#39;cieobs&#39;</span><span class="p">][</span><span class="s1">&#39;xyz&#39;</span><span class="p">]</span>
+
+<span class="n">_VF_MAXR</span> <span class="o">=</span> <span class="mi">40</span> <span class="c1">#maximum C to use in calculations and plotting of vector fields</span>
+<span class="n">_VF_DELTAR</span> <span class="o">=</span> <span class="mi">5</span> <span class="c1"># grid spacing, pixel size</span>
+<span class="n">_VF_MODEL_TYPE</span> <span class="o">=</span> <span class="s1">&#39;M6&#39;</span> <span class="c1"># default polynomial model (degree 6)</span>
+<span class="n">_DETERMINE_HUE_ANGLES</span> <span class="o">=</span> <span class="kc">True</span>  
+<span class="n">_VF_SIG</span> <span class="o">=</span> <span class="mf">0.3</span> <span class="c1">#  Determines smoothness of the transition between hue-bin-boundaries (no hard cutoff at boundary).</span>
+<span class="n">_VF_PCOLORSHIFT</span> <span class="o">=</span> <span class="kc">None</span>
+
+
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+<span class="c1"># Define function to get poly_model:</span>
+<div class="viewcode-block" id="get_poly_model"><a class="viewcode-back" href="../../../../../color.html#luxpy.color.cri.VFPX.get_poly_model">[docs]</a><span class="k">def</span> <span class="nf">get_poly_model</span><span class="p">(</span><span class="n">jabt</span><span class="p">,</span> <span class="n">jabr</span><span class="p">,</span> <span class="n">modeltype</span> <span class="o">=</span> <span class="n">_VF_MODEL_TYPE</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Setup base color shift model (delta_a, delta_b), </span>
+<span class="sd">    determine model parameters and accuracy.</span>
+<span class="sd">    </span>
+<span class="sd">    | Calculates a base color shift (delta) from the ref. chromaticity ar, br.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :jabt: </span>
+<span class="sd">            | ndarray with jab color coordinates under the test SPD.</span>
+<span class="sd">        :jabr: </span>
+<span class="sd">            | ndarray with jab color coordinates under the reference SPD.</span>
+<span class="sd">        :modeltype:</span>
+<span class="sd">            | _VF_MODEL_TYPE or &#39;M6&#39; or &#39;M5&#39;, optional</span>
+<span class="sd">            | Specifies degree 5 or degree 6 polynomial model in ab-coordinates.</span>
+<span class="sd">              (see notes below)</span>
+<span class="sd">            </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :returns: </span>
+<span class="sd">            | (poly_model, </span>
+<span class="sd">            |       pmodel, </span>
+<span class="sd">            |       dab_model, </span>
+<span class="sd">            |        dab_res, </span>
+<span class="sd">            |        dCHoverC_res, </span>
+<span class="sd">            |        dab_std, </span>
+<span class="sd">            |        dCHoverC_std)</span>
+<span class="sd">            |</span>
+<span class="sd">            | :poly_model: function handle to model</span>
+<span class="sd">            | :pmodel: ndarray with model parameters</span>
+<span class="sd">            | :dab_model: ndarray with ab model predictions from ar, br.</span>
+<span class="sd">            | :dab_res: ndarray with residuals between &#39;da,db&#39; of samples and </span>
+<span class="sd">            |            &#39;da,db&#39; predicted by the model.</span>
+<span class="sd">            | :dCHoverC_res: ndarray with residuals between &#39;dCoverC,dH&#39; </span>
+<span class="sd">            |                 of samples and &#39;dCoverC,dH&#39; predicted by the model.</span>
+<span class="sd">            |     Note: dCoverC = (Ct - Cr)/Cr and dH = ht - hr </span>
+<span class="sd">            |         (predicted from model, see notes below)</span>
+<span class="sd">            | :dab_std: ndarray with std of :dab_res:</span>
+<span class="sd">            | :dCHoverC_std: ndarray with std of :dCHoverC_res: </span>
+
+<span class="sd">    Notes: </span>
+<span class="sd">        1. Model types:</span>
+<span class="sd">            | poly5_model = lambda a,b,p:         p[0]*a + p[1]*b + p[2]*(a**2) + p[3]*a*b + p[4]*(b**2)</span>
+<span class="sd">            | poly6_model = lambda a,b,p:  p[0] + p[1]*a + p[2]*b + p[3]*(a**2) + p[4]*a*b + p[5]*(b**2)</span>
+<span class="sd">        </span>
+<span class="sd">        2. Calculation of dCoverC and dH:</span>
+<span class="sd">            | dCoverC = (np.cos(hr)*da + np.sin(hr)*db)/Cr</span>
+<span class="sd">            | dHoverC = (np.cos(hr)*db - np.sin(hr)*da)/Cr    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">at</span> <span class="o">=</span> <span class="n">jabt</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">bt</span> <span class="o">=</span> <span class="n">jabt</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">ar</span> <span class="o">=</span> <span class="n">jabr</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">br</span> <span class="o">=</span> <span class="n">jabr</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span>
+    
+    <span class="c1"># A. Calculate da, db:</span>
+    <span class="n">da</span> <span class="o">=</span> <span class="n">at</span> <span class="o">-</span> <span class="n">ar</span>
+    <span class="n">db</span> <span class="o">=</span> <span class="n">bt</span> <span class="o">-</span> <span class="n">br</span>
+    
+    <span class="c1"># B.1 Calculate model matrix:</span>
+    <span class="c1"># 5-parameter model:</span>
+    <span class="n">M5</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">ar</span><span class="o">*</span><span class="n">ar</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">ar</span><span class="o">*</span><span class="n">br</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">ar</span><span class="o">*</span><span class="n">ar</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">ar</span><span class="o">*</span><span class="n">ar</span><span class="o">*</span><span class="n">br</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">ar</span><span class="o">*</span><span class="n">br</span><span class="o">**</span><span class="mi">2</span><span class="p">)],</span>
+            <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">br</span><span class="o">*</span><span class="n">ar</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">br</span><span class="o">*</span><span class="n">br</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">br</span><span class="o">*</span><span class="n">ar</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">br</span><span class="o">*</span><span class="n">ar</span><span class="o">*</span><span class="n">br</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">br</span><span class="o">*</span><span class="n">br</span><span class="o">**</span><span class="mi">2</span><span class="p">)],</span>
+            <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">ar</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">ar</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">ar</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">br</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">ar</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">ar</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">ar</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">ar</span><span class="o">*</span><span class="n">br</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">ar</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">br</span><span class="o">**</span><span class="mi">2</span><span class="p">)],</span>
+            <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">ar</span><span class="o">*</span><span class="n">br</span><span class="o">*</span><span class="n">ar</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">ar</span><span class="o">*</span><span class="n">br</span><span class="o">*</span><span class="n">br</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">ar</span><span class="o">*</span><span class="n">br</span><span class="o">*</span><span class="n">ar</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">ar</span><span class="o">*</span><span class="n">br</span><span class="o">*</span><span class="n">ar</span><span class="o">*</span><span class="n">br</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">ar</span><span class="o">*</span><span class="n">br</span><span class="o">*</span><span class="n">br</span><span class="o">**</span><span class="mi">2</span><span class="p">)],</span>
+            <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">br</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">ar</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">br</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">br</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">br</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">ar</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">br</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">ar</span><span class="o">*</span><span class="n">br</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">br</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">br</span><span class="o">**</span><span class="mi">2</span><span class="p">)]])</span>
+    <span class="c1">#6-parameters model</span>
+    <span class="n">M6</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">ar</span><span class="o">.</span><span class="n">size</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mf">1.0</span><span class="o">*</span><span class="n">ar</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mf">1.0</span><span class="o">*</span><span class="n">br</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mf">1.0</span><span class="o">*</span><span class="n">ar</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mf">1.0</span><span class="o">*</span><span class="n">ar</span><span class="o">*</span><span class="n">br</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mf">1.0</span><span class="o">*</span><span class="n">br</span><span class="o">**</span><span class="mi">2</span><span class="p">)],</span>
+            <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">ar</span><span class="o">*</span><span class="mf">1.0</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">ar</span><span class="o">*</span><span class="n">ar</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">ar</span><span class="o">*</span><span class="n">br</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">ar</span><span class="o">*</span><span class="n">ar</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">ar</span><span class="o">*</span><span class="n">ar</span><span class="o">*</span><span class="n">br</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">ar</span><span class="o">*</span><span class="n">br</span><span class="o">**</span><span class="mi">2</span><span class="p">)],</span>
+            <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">br</span><span class="o">*</span><span class="mf">1.0</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">br</span><span class="o">*</span><span class="n">ar</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">br</span><span class="o">*</span><span class="n">br</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">br</span><span class="o">*</span><span class="n">ar</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">br</span><span class="o">*</span><span class="n">ar</span><span class="o">*</span><span class="n">br</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">br</span><span class="o">*</span><span class="n">br</span><span class="o">**</span><span class="mi">2</span><span class="p">)],</span>
+            <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">ar</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="mf">1.0</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">ar</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">ar</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">ar</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">br</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">ar</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">ar</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">ar</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">ar</span><span class="o">*</span><span class="n">br</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">ar</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">br</span><span class="o">**</span><span class="mi">2</span><span class="p">)],</span>
+            <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">ar</span><span class="o">*</span><span class="n">br</span><span class="o">*</span><span class="mf">1.0</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">ar</span><span class="o">*</span><span class="n">br</span><span class="o">*</span><span class="n">ar</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">ar</span><span class="o">*</span><span class="n">br</span><span class="o">*</span><span class="n">br</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">ar</span><span class="o">*</span><span class="n">br</span><span class="o">*</span><span class="n">ar</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">ar</span><span class="o">*</span><span class="n">br</span><span class="o">*</span><span class="n">ar</span><span class="o">*</span><span class="n">br</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">ar</span><span class="o">*</span><span class="n">br</span><span class="o">*</span><span class="n">br</span><span class="o">**</span><span class="mi">2</span><span class="p">)],</span>
+            <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">br</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="mf">1.0</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">br</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">ar</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">br</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">br</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">br</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">ar</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">br</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">ar</span><span class="o">*</span><span class="n">br</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">br</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">br</span><span class="o">**</span><span class="mi">2</span><span class="p">)]])</span>
+    
+    <span class="c1"># B.2 Define model function:</span>
+    <span class="n">poly5_model</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">p</span><span class="p">:</span> <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">a</span> <span class="o">+</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">b</span> <span class="o">+</span> <span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">a</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">*</span><span class="n">a</span><span class="o">*</span><span class="n">b</span> <span class="o">+</span> <span class="n">p</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">b</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">poly6_model</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">p</span><span class="p">:</span> <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">a</span> <span class="o">+</span> <span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="n">b</span> <span class="o">+</span> <span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">a</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">p</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">*</span><span class="n">a</span><span class="o">*</span><span class="n">b</span> <span class="o">+</span> <span class="n">p</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">b</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">modeltype</span> <span class="o">==</span> <span class="s1">&#39;M5&#39;</span><span class="p">:</span>
+        <span class="n">M</span> <span class="o">=</span> <span class="n">M5</span>
+        <span class="n">poly_model</span> <span class="o">=</span> <span class="n">poly5_model</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">M</span> <span class="o">=</span> <span class="n">M6</span>
+        <span class="n">poly_model</span> <span class="o">=</span> <span class="n">poly6_model</span>
+
+    <span class="n">M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">M</span><span class="p">)</span>
+
+
+    <span class="c1"># C.1 Data a,b analysis output:</span>
+    <span class="k">if</span> <span class="n">modeltype</span> <span class="o">==</span> <span class="s1">&#39;M5&#39;</span><span class="p">:</span>
+        <span class="n">da_model_parameters</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">da</span><span class="o">*</span><span class="n">ar</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">da</span><span class="o">*</span><span class="n">br</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">da</span><span class="o">*</span><span class="n">ar</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">da</span><span class="o">*</span><span class="n">ar</span><span class="o">*</span><span class="n">br</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">da</span><span class="o">*</span><span class="n">br</span><span class="o">**</span><span class="mi">2</span><span class="p">)]))</span>
+        <span class="n">db_model_parameters</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">db</span><span class="o">*</span><span class="n">ar</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">db</span><span class="o">*</span><span class="n">br</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">db</span><span class="o">*</span><span class="n">ar</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">db</span><span class="o">*</span><span class="n">ar</span><span class="o">*</span><span class="n">br</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">db</span><span class="o">*</span><span class="n">br</span><span class="o">**</span><span class="mi">2</span><span class="p">)]))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">da_model_parameters</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">da</span><span class="o">*</span><span class="mf">1.0</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">da</span><span class="o">*</span><span class="n">ar</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">da</span><span class="o">*</span><span class="n">br</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">da</span><span class="o">*</span><span class="n">ar</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">da</span><span class="o">*</span><span class="n">ar</span><span class="o">*</span><span class="n">br</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">da</span><span class="o">*</span><span class="n">br</span><span class="o">**</span><span class="mi">2</span><span class="p">)]))</span>
+        <span class="n">db_model_parameters</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">db</span><span class="o">*</span><span class="mf">1.0</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">db</span><span class="o">*</span><span class="n">ar</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">db</span><span class="o">*</span><span class="n">br</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">db</span><span class="o">*</span><span class="n">ar</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">db</span><span class="o">*</span><span class="n">ar</span><span class="o">*</span><span class="n">br</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">db</span><span class="o">*</span><span class="n">br</span><span class="o">**</span><span class="mi">2</span><span class="p">)]))</span>
+    <span class="n">pmodel</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">da_model_parameters</span><span class="p">,</span><span class="n">db_model_parameters</span><span class="p">))</span>
+
+    <span class="c1"># D.1 Calculate model da, db:</span>
+    <span class="n">da_model</span> <span class="o">=</span> <span class="n">poly_model</span><span class="p">(</span><span class="n">ar</span><span class="p">,</span><span class="n">br</span><span class="p">,</span><span class="n">pmodel</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">db_model</span> <span class="o">=</span> <span class="n">poly_model</span><span class="p">(</span><span class="n">ar</span><span class="p">,</span><span class="n">br</span><span class="p">,</span><span class="n">pmodel</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">dab_model</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">da_model</span><span class="p">,</span><span class="n">db_model</span><span class="p">))</span>
+
+    <span class="c1"># D.2 Calculate residuals for da &amp; db:</span>
+    <span class="n">da_res</span> <span class="o">=</span> <span class="n">da</span> <span class="o">-</span> <span class="n">da_model</span>
+    <span class="n">db_res</span> <span class="o">=</span> <span class="n">db</span> <span class="o">-</span> <span class="n">db_model</span>
+    <span class="n">dab_res</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">da_res</span><span class="p">,</span><span class="n">db_res</span><span class="p">))</span>
+    <span class="n">dab_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">da_res</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">db_res</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)))</span>
+
+    <span class="c1"># E Calculate href, Cref:</span>
+    <span class="n">href</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">br</span><span class="p">,</span><span class="n">ar</span><span class="p">)</span>
+    <span class="n">Cref</span> <span class="o">=</span> <span class="p">(</span><span class="n">ar</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">br</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
+    
+    <span class="c1"># F Calculate dC/C, dH/C for data and model and calculate residuals:</span>
+    <span class="n">dCoverC</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">href</span><span class="p">)</span><span class="o">*</span><span class="n">da</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">href</span><span class="p">)</span><span class="o">*</span><span class="n">db</span><span class="p">)</span><span class="o">/</span><span class="n">Cref</span>
+    <span class="n">dHoverC</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">href</span><span class="p">)</span><span class="o">*</span><span class="n">db</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">href</span><span class="p">)</span><span class="o">*</span><span class="n">da</span><span class="p">)</span><span class="o">/</span><span class="n">Cref</span>
+    <span class="n">dCoverC_model</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">href</span><span class="p">)</span><span class="o">*</span><span class="n">da_model</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">href</span><span class="p">)</span><span class="o">*</span><span class="n">db_model</span><span class="p">)</span><span class="o">/</span><span class="n">Cref</span>
+    <span class="n">dHoverC_model</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">href</span><span class="p">)</span><span class="o">*</span><span class="n">db_model</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">href</span><span class="p">)</span><span class="o">*</span><span class="n">da_model</span><span class="p">)</span><span class="o">/</span><span class="n">Cref</span>
+    <span class="n">dCoverC_res</span> <span class="o">=</span> <span class="n">dCoverC</span> <span class="o">-</span> <span class="n">dCoverC_model</span>
+    <span class="n">dHoverC_res</span> <span class="o">=</span> <span class="n">dHoverC</span> <span class="o">-</span> <span class="n">dHoverC_model</span>
+    <span class="n">dCHoverC_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">dCoverC_res</span><span class="p">,</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">dHoverC_res</span><span class="p">,</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)))</span>
+    
+    <span class="n">dCHoverC_res</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">href</span><span class="p">,</span><span class="n">dCoverC_res</span><span class="p">,</span><span class="n">dHoverC_res</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">poly_model</span><span class="p">,</span> <span class="n">pmodel</span><span class="p">,</span> <span class="n">dab_model</span><span class="p">,</span> <span class="n">dab_res</span><span class="p">,</span> <span class="n">dCHoverC_res</span><span class="p">,</span> <span class="n">dab_std</span><span class="p">,</span> <span class="n">dCHoverC_std</span></div>
+
+
+<div class="viewcode-block" id="apply_poly_model_at_x"><a class="viewcode-back" href="../../../../../color.html#luxpy.color.cri.VFPX.apply_poly_model_at_x">[docs]</a><span class="k">def</span> <span class="nf">apply_poly_model_at_x</span><span class="p">(</span><span class="n">poly_model</span><span class="p">,</span> <span class="n">pmodel</span><span class="p">,</span><span class="n">axr</span><span class="p">,</span><span class="n">bxr</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Applies base color shift model at cartesian coordinates axr, bxr.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :poly_model: </span>
+<span class="sd">            | function handle to model</span>
+<span class="sd">        :pmodel:</span>
+<span class="sd">            | ndarray with model parameters.</span>
+<span class="sd">        :axr: </span>
+<span class="sd">            | ndarray with a-coordinates under the reference conditions</span>
+<span class="sd">        :bxr:</span>
+<span class="sd">            | ndarray with b-coordinates under the reference conditions</span>
+<span class="sd">        </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :returns:</span>
+<span class="sd">            | (axt,bxt,Cxt,hxt,</span>
+<span class="sd">            |  axr,bxr,Cxr,hxr)</span>
+<span class="sd">            | </span>
+<span class="sd">            | ndarrays with ab-coordinates, chroma and hue </span>
+<span class="sd">              predicted by the model (xt), under the reference (xr).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Calculate hxr and Cxr:</span>
+    <span class="n">Cxr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">axr</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">bxr</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">hxr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="n">bxr</span><span class="o">/</span><span class="p">(</span><span class="n">axr</span><span class="o">+</span><span class="n">_EPS</span><span class="p">))</span> <span class="c1">#_eps avoid zero-division</span>
+   
+    <span class="c1"># B Set 2nd order color multipliers (shiftd parameters for a and b: pa &amp; pb):</span>
+    <span class="n">pa</span> <span class="o">=</span> <span class="n">pmodel</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">pb</span> <span class="o">=</span> <span class="n">pmodel</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">isM6</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">6</span>
+    <span class="n">pa</span><span class="p">[</span><span class="mi">0</span> <span class="o">+</span> <span class="n">isM6</span><span class="o">*</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">pa</span><span class="p">[</span><span class="mi">0</span> <span class="o">+</span> <span class="n">isM6</span><span class="o">*</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">pb</span><span class="p">[</span><span class="mi">1</span> <span class="o">+</span> <span class="n">isM6</span><span class="o">*</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">pb</span><span class="p">[</span><span class="mi">1</span> <span class="o">+</span> <span class="n">isM6</span><span class="o">*</span><span class="mi">1</span><span class="p">]</span>
+    
+    <span class="c1"># C Apply model to reference hues using 2nd order multipliers:</span>
+    <span class="n">axt</span> <span class="o">=</span> <span class="n">poly_model</span><span class="p">(</span><span class="n">axr</span><span class="p">,</span><span class="n">bxr</span><span class="p">,</span><span class="n">pa</span><span class="p">)</span>
+    <span class="n">bxt</span> <span class="o">=</span> <span class="n">poly_model</span><span class="p">(</span><span class="n">axr</span><span class="p">,</span><span class="n">bxr</span><span class="p">,</span><span class="n">pb</span><span class="p">)</span>
+    <span class="n">Cxt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">axt</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="n">bxt</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="c1">#test chroma</span>
+    <span class="n">hxt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="n">bxt</span><span class="o">/</span><span class="p">(</span><span class="n">axt</span><span class="o">+</span><span class="n">_EPS</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">axt</span><span class="p">,</span><span class="n">bxt</span><span class="p">,</span><span class="n">Cxt</span><span class="p">,</span><span class="n">hxt</span><span class="p">,</span><span class="n">axr</span><span class="p">,</span><span class="n">bxr</span><span class="p">,</span><span class="n">Cxr</span><span class="p">,</span><span class="n">hxr</span></div>
+
+
+<span class="k">def</span> <span class="nf">apply_poly_model_at_hue_x</span><span class="p">(</span><span class="n">poly_model</span><span class="p">,</span> <span class="n">pmodel</span><span class="p">,</span> <span class="n">dCHoverC_res</span><span class="p">,</span> \
+                              <span class="n">hx</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Cxr</span> <span class="o">=</span> <span class="mi">40</span><span class="p">,</span> <span class="n">sig</span> <span class="o">=</span> <span class="n">_VF_SIG</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Applies base color shift model at (hue,chroma) coordinates</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :poly_model: </span>
+<span class="sd">            | function handle to model</span>
+<span class="sd">        :pmodel:</span>
+<span class="sd">            | ndarray with model parameters.</span>
+<span class="sd">        :dCHoverC_res:</span>
+<span class="sd">            | ndarray with residuals between &#39;dCoverC,dH&#39; of samples </span>
+<span class="sd">            | and &#39;dCoverC,dH&#39; predicted by the model.</span>
+<span class="sd">            | Note: dCoverC = (Ct - Cr)/Cr and dH = ht - hr </span>
+<span class="sd">            |      (predicted from model, see notes luxpy.cri.get_poly_model())</span>
+<span class="sd">        :hx:</span>
+<span class="sd">            | None or ndarray, optional</span>
+<span class="sd">            | None defaults to np.arange(np.pi/10.0,2*np.pi,2*np.pi/10.0)</span>
+<span class="sd">        :Cxr:</span>
+<span class="sd">            | 40, optional</span>
+<span class="sd">        :sig: </span>
+<span class="sd">            | _VF_SIG or float, optional</span>
+<span class="sd">            | Determines smooth transition between hue-bin-boundaries (no hard </span>
+<span class="sd">              cutoff at hue bin boundary).</span>
+<span class="sd">        </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :returns: </span>
+<span class="sd">            | ndarrays with dCoverC_x, dCoverC_x_sig, dH_x, dH_x_sig</span>
+<span class="sd">            | Note &#39;_sig&#39; denotes the uncertainty: </span>
+<span class="sd">            |     e.g.  dH_x_sig is the uncertainty of dH at input (hue/chroma).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+     
+    <span class="k">if</span> <span class="n">hx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">dh</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">10.0</span><span class="p">;</span>
+        <span class="n">hx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">dh</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span><span class="n">dh</span><span class="p">)</span> <span class="c1">#hue angles at which to apply model, i.e. calculate &#39;average&#39; measures</span>
+        
+    <span class="c1"># A calculate reference coordinates:</span>
+    <span class="n">axr</span> <span class="o">=</span> <span class="n">Cxr</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">hx</span><span class="p">)</span>
+    <span class="n">bxr</span> <span class="o">=</span> <span class="n">Cxr</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">hx</span><span class="p">)</span>
+    
+    <span class="c1"># B apply model at reference coordinates to obtain test coordinates:</span>
+    <span class="n">axt</span><span class="p">,</span><span class="n">bxt</span><span class="p">,</span><span class="n">Cxt</span><span class="p">,</span><span class="n">hxt</span><span class="p">,</span><span class="n">axr</span><span class="p">,</span><span class="n">bxr</span><span class="p">,</span><span class="n">Cxr</span><span class="p">,</span><span class="n">hxr</span> <span class="o">=</span> <span class="n">apply_poly_model_at_x</span><span class="p">(</span><span class="n">poly_model</span><span class="p">,</span> <span class="n">pmodel</span><span class="p">,</span><span class="n">axr</span><span class="p">,</span><span class="n">bxr</span><span class="p">)</span>
+    
+    <span class="c1"># C Calculate dC/C, dH for test and ref at fixed hues:</span>
+    <span class="n">dCoverC_x</span> <span class="o">=</span> <span class="p">(</span><span class="n">Cxt</span><span class="o">-</span><span class="n">Cxr</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">Cxr</span><span class="o">+</span><span class="n">Cxt</span><span class="p">))</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+    <span class="n">dH_x</span> <span class="o">=</span> <span class="p">(</span><span class="mi">180</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">hxt</span><span class="o">-</span><span class="n">hxr</span><span class="p">)</span>
+<span class="c1">#    dCoverC_x = np.round(dCoverC_x,decimals = 2)</span>
+<span class="c1">#    dH_x = np.round(dH_x,decimals = 0)</span>
+
+    <span class="c1"># D calculate &#39;average&#39; noise measures using sig-value:</span>
+    <span class="n">href</span> <span class="o">=</span> <span class="n">dCHoverC_res</span><span class="p">[:,</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">dCoverC_res</span> <span class="o">=</span> <span class="n">dCHoverC_res</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">dHoverC_res</span> <span class="o">=</span> <span class="n">dCHoverC_res</span><span class="p">[:,</span><span class="mi">2</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+    <span class="n">dHsigi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">dstack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">hx</span><span class="o">-</span><span class="n">href</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">((</span><span class="n">hx</span><span class="o">-</span><span class="n">href</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)),</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">hx</span><span class="o">-</span><span class="n">href</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)))</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="n">sig</span><span class="p">)</span>
+    <span class="n">dH_x_sig</span> <span class="o">=</span> <span class="p">(</span><span class="mi">180</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">dHsigi</span><span class="o">*</span><span class="p">(</span><span class="n">dHoverC_res</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">/</span><span class="n">dHsigi</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)))</span>
+    <span class="n">dH_x_sig_avg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dH_x_sig</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">hx</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">dCoverC_x_sig</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">dHsigi</span><span class="o">*</span><span class="p">(</span><span class="n">dCoverC_res</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">/</span><span class="n">dHsigi</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)))</span>
+    <span class="n">dCoverC_x_sig_avg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dCoverC_x_sig</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">hx</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">dCoverC_x</span><span class="p">,</span> <span class="n">dCoverC_x_sig</span><span class="p">,</span> <span class="n">dH_x</span><span class="p">,</span> <span class="n">dH_x_sig</span>
+
+
+<div class="viewcode-block" id="generate_vector_field"><a class="viewcode-back" href="../../../../../color.html#luxpy.color.cri.VFPX.generate_vector_field">[docs]</a><span class="k">def</span> <span class="nf">generate_vector_field</span><span class="p">(</span><span class="n">poly_model</span><span class="p">,</span> <span class="n">pmodel</span><span class="p">,</span> \
+                          <span class="n">axr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="n">_VF_MAXR</span><span class="p">,</span><span class="n">_VF_MAXR</span><span class="o">+</span><span class="n">_VF_DELTAR</span><span class="p">,</span><span class="n">_VF_DELTAR</span><span class="p">),</span> \
+                          <span class="n">bxr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="n">_VF_MAXR</span><span class="p">,</span><span class="n">_VF_MAXR</span><span class="o">+</span><span class="n">_VF_DELTAR</span><span class="p">,</span><span class="n">_VF_DELTAR</span><span class="p">),</span> \
+                          <span class="n">make_grid</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">limit_grid_radius</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generates a field of vectors using the base color shift model.</span>
+<span class="sd">    </span>
+<span class="sd">    | Has the option to plot vector field.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :poly_model: </span>
+<span class="sd">            | function handle to model</span>
+<span class="sd">        :pmodel:</span>
+<span class="sd">            | ndarray with model parameters.</span>
+<span class="sd">        :axr: </span>
+<span class="sd">            | np.arange(-_VF_MAXR,_VF_MAXR+_VF_DELTAR,_VF_DELTAR), optional</span>
+<span class="sd">            | Ndarray specifying the a-coordinates at which to apply the model.</span>
+<span class="sd">        :bxr:</span>
+<span class="sd">            | np.arange(-_VF_MAXR,_VF_MAXR+_VF_DELTAR,_VF_DELTAR), optional</span>
+<span class="sd">            | Ndarray specifying the b-coordinates at which to apply the model.</span>
+<span class="sd">        :make_grid:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | True: generate a 2d-grid from :axr:, :bxr:.</span>
+<span class="sd">        :limit_grid_radius:</span>
+<span class="sd">            | 0, optional</span>
+<span class="sd">            |   A value of zeros keeps grid as specified  by axr,bxr.</span>
+<span class="sd">            |   A value &gt; 0 only keeps (a,b) coordinates within :limit_grid_radius:</span>
+<span class="sd">        :color:</span>
+<span class="sd">            | &#39;k&#39;, optional</span>
+<span class="sd">            | For plotting the vector field.</span>
+<span class="sd">            | If :color: == 0, no plot will be generated.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :returns: </span>
+<span class="sd">            | If :color: == 0: ndarray of axt,bxt,axr,bxr</span>
+<span class="sd">            | Else: handle to axes used for plotting.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    
+    <span class="c1"># Generate grid from axr, bxr:</span>
+    <span class="k">if</span> <span class="n">make_grid</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">axr</span><span class="p">,</span> <span class="n">bxr</span> <span class="o">=</span> <span class="n">generate_grid</span><span class="p">(</span><span class="n">ax</span> <span class="o">=</span> <span class="n">axr</span><span class="p">,</span> <span class="n">bx</span> <span class="o">=</span> <span class="n">bxr</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;ax,bx&#39;</span><span class="p">,</span> <span class="n">limit_grid_radius</span> <span class="o">=</span> <span class="n">limit_grid_radius</span><span class="p">)</span>
+
+    <span class="c1"># Apply model at ref. coordinates:</span>
+    <span class="n">axt</span><span class="p">,</span><span class="n">bxt</span><span class="p">,</span><span class="n">Cxt</span><span class="p">,</span><span class="n">hxt</span><span class="p">,</span><span class="n">axr</span><span class="p">,</span><span class="n">bxr</span><span class="p">,</span><span class="n">Cxr</span><span class="p">,</span><span class="n">hxr</span> <span class="o">=</span> <span class="n">apply_poly_model_at_x</span><span class="p">(</span><span class="n">poly_model</span><span class="p">,</span> <span class="n">pmodel</span><span class="p">,</span><span class="n">axr</span><span class="p">,</span><span class="n">bxr</span><span class="p">)</span>
+    
+    <span class="c1"># Plot vectorfield:</span>
+    <span class="k">if</span> <span class="n">color</span> <span class="ow">is</span> <span class="ow">not</span> <span class="mi">0</span><span class="p">:</span> 
+        <span class="c1">#plt.plot(axr, bxr,&#39;ro&#39;,markersize=2)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">quiver</span><span class="p">(</span><span class="n">axr</span><span class="p">,</span> <span class="n">bxr</span><span class="p">,</span> <span class="n">axt</span><span class="o">-</span><span class="n">axr</span><span class="p">,</span> <span class="n">bxt</span><span class="o">-</span><span class="n">bxr</span><span class="p">,</span> <span class="n">headlength</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="n">color</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;a&#39;&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;b&#39;&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="c1">#plt.show(plot1)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">axt</span><span class="p">,</span><span class="n">bxt</span><span class="p">,</span><span class="n">axr</span><span class="p">,</span><span class="n">bxr</span></div>
+
+
+<span class="k">def</span> <span class="nf">VF_colorshift_model</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">_VF_CRI_DEFAULT</span><span class="p">,</span> <span class="n">model_type</span> <span class="o">=</span> <span class="n">_VF_MODEL_TYPE</span><span class="p">,</span> \
+                        <span class="n">cspace</span> <span class="o">=</span> <span class="n">_VF_CSPACE</span><span class="p">,</span> <span class="n">sampleset</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">pool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> \
+                        <span class="n">pcolorshift</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;href&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">10</span><span class="p">,</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">10</span><span class="p">),</span><span class="s1">&#39;Cref&#39;</span> <span class="p">:</span> <span class="n">_VF_MAXR</span><span class="p">,</span> <span class="s1">&#39;sig&#39;</span> <span class="p">:</span> <span class="n">_VF_SIG</span><span class="p">},</span> \
+                        <span class="n">vfcolor</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span><span class="p">,</span><span class="n">verbosity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Applies full vector field model calculations to spectral data.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :S: </span>
+<span class="sd">            | nump.ndarray with spectral data.</span>
+<span class="sd">        :cri_type:</span>
+<span class="sd">            | _VF_CRI_DEFAULT or str or dict, optional</span>
+<span class="sd">            | Specifies type of color fidelity model to use. </span>
+<span class="sd">            | Controls choice of ref. ill., sample set, averaging, scaling, etc.</span>
+<span class="sd">            | See luxpy.cri.spd_to_cri for more info.</span>
+<span class="sd">        :modeltype:</span>
+<span class="sd">            | _VF_MODEL_TYPE or &#39;M6&#39; or &#39;M5&#39;, optional</span>
+<span class="sd">            | Specifies degree 5 or degree 6 polynomial model in ab-coordinates.</span>
+<span class="sd">        :cspace:</span>
+<span class="sd">            | _VF_CSPACE or dict, optional</span>
+<span class="sd">            | Specifies color space. See _VF_CSPACE_EXAMPLE for example structure.</span>
+<span class="sd">        :sampleset:</span>
+<span class="sd">            | None or str or ndarray, optional</span>
+<span class="sd">            | Sampleset to be used when calculating vector field model.</span>
+<span class="sd">        :pool: </span>
+<span class="sd">            | False, optional</span>
+<span class="sd">            | If :S: contains multiple spectra, True pools all jab data before </span>
+<span class="sd">              modeling the vector field, while False models a different field </span>
+<span class="sd">              for each spectrum.</span>
+<span class="sd">        :pcolorshift: </span>
+<span class="sd">            | default dict (see below) or user defined dict, optional</span>
+<span class="sd">            | Dict containing the specification input </span>
+<span class="sd">              for apply_poly_model_at_hue_x().</span>
+<span class="sd">            | Default dict = {&#39;href&#39;: np.arange(np.pi/10,2*np.pi,2*np.pi/10),</span>
+<span class="sd">            |                 &#39;Cref&#39; : _VF_MAXR, </span>
+<span class="sd">            |                 &#39;sig&#39; : _VF_SIG, </span>
+<span class="sd">            |                 &#39;labels&#39; : &#39;#&#39;} </span>
+<span class="sd">            | The polynomial models of degree 5 and 6 can be fully specified or </span>
+<span class="sd">              summarized by the model parameters themselved OR by calculating the</span>
+<span class="sd">              dCoverC and dH at resp. 5 and 6 hues.</span>
+<span class="sd">        :vfcolor:</span>
+<span class="sd">            | &#39;k&#39;, optional</span>
+<span class="sd">            | For plotting the vector fields.</span>
+<span class="sd">        :verbosity: </span>
+<span class="sd">            | 0, optional</span>
+<span class="sd">            | Report warnings or not.</span>
+<span class="sd">            </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :returns: </span>
+<span class="sd">            | list[dict] (each list element refers to a different test SPD)</span>
+<span class="sd">            | with the following keys:</span>
+<span class="sd">            |   - &#39;Source&#39;: dict with ndarrays of the S, cct and duv of source spd.</span>
+<span class="sd">            |   - &#39;metrics&#39;: dict with ndarrays for:</span>
+<span class="sd">            |         * Rf (color fidelity: base + metameric shift)</span>
+<span class="sd">            |         * Rt (metameric uncertainty index) </span>
+<span class="sd">            |         * Rfi (specific color fidelity indices)</span>
+<span class="sd">            |         * Rti (specific metameric uncertainty indices)</span>
+<span class="sd">            |         * cri_type (str with cri_type)</span>
+<span class="sd">            |   - &#39;Jab&#39;: dict with with ndarrays for Jabt, Jabr, DEi</span>
+<span class="sd">            |   - &#39;dC/C_dH_x_sig&#39; : </span>
+<span class="sd">            |           np.vstack((dCoverC_x,dCoverC_x_sig,dH_x,dH_x_sig)).T</span>
+<span class="sd">            |           See get_poly_model() for more info.</span>
+<span class="sd">            |   - &#39;fielddata&#39;: dict with dicts containing data on the calculated </span>
+<span class="sd">            |      vector-field and circle-fields: </span>
+<span class="sd">            |        * &#39;vectorfield&#39; : {&#39;axt&#39;: vfaxt, &#39;bxt&#39; : vfbxt, </span>
+<span class="sd">            |                           &#39;axr&#39; : vfaxr, &#39;bxr&#39; : vfbxr},</span>
+<span class="sd">            |        * &#39;circlefield&#39; : {&#39;axt&#39;: cfaxt, &#39;bxt&#39; : cfbxt, </span>
+<span class="sd">            |                           &#39;axr&#39; : cfaxr, &#39;bxr&#39; : cfbxr}},</span>
+<span class="sd">            |   - &#39;modeldata&#39; : dict with model info:</span>
+<span class="sd">            |                {&#39;pmodel&#39;: pmodel, </span>
+<span class="sd">            |                &#39;pcolorshift&#39; : pcolorshift, </span>
+<span class="sd">            |                  &#39;dab_model&#39; : dab_model, </span>
+<span class="sd">            |                  &#39;dab_res&#39; : dab_res,</span>
+<span class="sd">            |                  &#39;dab_std&#39; : dab_std,</span>
+<span class="sd">            |                  &#39;modeltype&#39; : modeltype, </span>
+<span class="sd">            |                  &#39;fmodel&#39; : poly_model,</span>
+<span class="sd">            |                  &#39;Jabtm&#39; : Jabtm, </span>
+<span class="sd">            |                  &#39;Jabrm&#39; : Jabrm, </span>
+<span class="sd">            |                  &#39;DEim&#39; : DEim},</span>
+<span class="sd">            |   - &#39;vshifts&#39; :dict with various vector shifts:</span>
+<span class="sd">            |        * &#39;Jabshiftvector_r_to_t&#39; : ndarray with difference vectors</span>
+<span class="sd">            |                                    between jabt and jabr.</span>
+<span class="sd">            |        * &#39;vshift_ab_s&#39; : vshift_ab_s: ab-shift vectors of samples </span>
+<span class="sd">            |        * &#39;vshift_ab_s_vf&#39; : vshift_ab_s_vf: ab-shift vectors of </span>
+<span class="sd">            |                             VF model predictions of samples.</span>
+<span class="sd">            |        * &#39;vshift_ab_vf&#39; : vshift_ab_vf: ab-shift vectors of VF </span>
+<span class="sd">            |                            model predictions of vector field grid.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">cri_type</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">cri_type_str</span> <span class="o">=</span> <span class="n">cri_type</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">cri_type_str</span> <span class="o">=</span> <span class="kc">None</span>
+    
+    <span class="c1"># Calculate Rf, Rfi and Jabr, Jabt:</span>
+    <span class="n">Rf</span><span class="p">,</span> <span class="n">Rfi</span><span class="p">,</span> <span class="n">Jabt</span><span class="p">,</span> <span class="n">Jabr</span><span class="p">,</span><span class="n">cct</span><span class="p">,</span><span class="n">duv</span><span class="p">,</span><span class="n">cri_type</span>  <span class="o">=</span> <span class="n">spd_to_cri</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">cri_type</span><span class="o">=</span> <span class="n">cri_type</span><span class="p">,</span><span class="n">out</span><span class="o">=</span><span class="s1">&#39;Rf,Rfi,jabt,jabr,cct,duv,cri_type&#39;</span><span class="p">,</span> <span class="n">sampleset</span><span class="o">=</span><span class="n">sampleset</span><span class="p">)</span>
+    
+    <span class="c1"># In case of multiple source SPDs, pool:</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">Jabr</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Jabr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">pool</span> <span class="o">==</span> <span class="kc">True</span><span class="p">):</span>
+        <span class="n">Nsamples</span> <span class="o">=</span> <span class="n">Jabr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">Jabr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">Jabr</span><span class="p">,(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span> <span class="c1"># set lamps on first dimension</span>
+        <span class="n">Jabt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">Jabt</span><span class="p">,(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+        <span class="n">Jabr</span> <span class="o">=</span> <span class="n">Jabr</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">Jabr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">Jabr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="mi">3</span><span class="p">)</span> <span class="c1"># put all lamp data one after the other</span>
+        <span class="n">Jabt</span> <span class="o">=</span> <span class="n">Jabt</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">Jabt</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">Jabt</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">Jabt</span> <span class="o">=</span> <span class="n">Jabt</span><span class="p">[:,</span><span class="kc">None</span><span class="p">,:]</span> <span class="c1"># add dim = 1</span>
+        <span class="n">Jabr</span> <span class="o">=</span> <span class="n">Jabr</span><span class="p">[:,</span><span class="kc">None</span><span class="p">,:]</span>
+    
+
+    <span class="n">out</span> <span class="o">=</span> <span class="p">[{}</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Jabr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span> <span class="c1">#initialize empty list of dicts</span>
+    <span class="k">if</span> <span class="n">pool</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="n">N</span> <span class="o">=</span> <span class="n">Jabr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">N</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
+        
+        <span class="n">Jabr_i</span> <span class="o">=</span> <span class="n">Jabr</span><span class="p">[:,</span><span class="n">i</span><span class="p">,:]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">Jabr_i</span> <span class="o">=</span> <span class="n">Jabr_i</span><span class="p">[:,</span><span class="kc">None</span><span class="p">,:]</span>
+        <span class="n">Jabt_i</span> <span class="o">=</span> <span class="n">Jabt</span><span class="p">[:,</span><span class="n">i</span><span class="p">,:]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">Jabt_i</span> <span class="o">=</span> <span class="n">Jabt_i</span><span class="p">[:,</span><span class="kc">None</span><span class="p">,:]</span>
+
+        <span class="n">DEi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">Jabr_i</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">Jabt_i</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">Jabr_i</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">Jabt_i</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">Jabr_i</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">Jabt_i</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="c1"># Determine polynomial model:</span>
+        <span class="n">poly_model</span><span class="p">,</span> <span class="n">pmodel</span><span class="p">,</span> <span class="n">dab_model</span><span class="p">,</span> <span class="n">dab_res</span><span class="p">,</span> <span class="n">dCHoverC_res</span><span class="p">,</span> <span class="n">dab_std</span><span class="p">,</span> <span class="n">dCHoverC_std</span> <span class="o">=</span> <span class="n">get_poly_model</span><span class="p">(</span><span class="n">Jabt_i</span><span class="p">,</span> <span class="n">Jabr_i</span><span class="p">,</span> <span class="n">modeltype</span> <span class="o">=</span> <span class="n">_VF_MODEL_TYPE</span><span class="p">)</span>
+        
+        <span class="c1"># Apply model at fixed hues:</span>
+        <span class="n">href</span> <span class="o">=</span> <span class="n">pcolorshift</span><span class="p">[</span><span class="s1">&#39;href&#39;</span><span class="p">]</span>
+        <span class="n">Cref</span> <span class="o">=</span> <span class="n">pcolorshift</span><span class="p">[</span><span class="s1">&#39;Cref&#39;</span><span class="p">]</span>
+        <span class="n">sig</span> <span class="o">=</span> <span class="n">pcolorshift</span><span class="p">[</span><span class="s1">&#39;sig&#39;</span><span class="p">]</span>
+        <span class="n">dCoverC_x</span><span class="p">,</span> <span class="n">dCoverC_x_sig</span><span class="p">,</span> <span class="n">dH_x</span><span class="p">,</span> <span class="n">dH_x_sig</span> <span class="o">=</span> <span class="n">apply_poly_model_at_hue_x</span><span class="p">(</span><span class="n">poly_model</span><span class="p">,</span> <span class="n">pmodel</span><span class="p">,</span> <span class="n">dCHoverC_res</span><span class="p">,</span> <span class="n">hx</span> <span class="o">=</span> <span class="n">href</span><span class="p">,</span> <span class="n">Cxr</span> <span class="o">=</span> <span class="n">Cref</span><span class="p">,</span> <span class="n">sig</span> <span class="o">=</span> <span class="n">sig</span><span class="p">)</span>
+        
+        <span class="c1"># Calculate deshifted a,b values on original samples:</span>
+        <span class="n">Jt</span> <span class="o">=</span> <span class="n">Jabt_i</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">at</span> <span class="o">=</span> <span class="n">Jabt_i</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">bt</span> <span class="o">=</span> <span class="n">Jabt_i</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">Jr</span> <span class="o">=</span> <span class="n">Jabr_i</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">ar</span> <span class="o">=</span> <span class="n">Jabr_i</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">br</span> <span class="o">=</span> <span class="n">Jabr_i</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">ar</span> <span class="o">=</span> <span class="n">ar</span> <span class="o">+</span> <span class="n">dab_model</span><span class="p">[:,</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># deshift reference to model prediction</span>
+        <span class="n">br</span> <span class="o">=</span> <span class="n">br</span> <span class="o">+</span> <span class="n">dab_model</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="c1"># deshift reference to model prediction</span>
+        
+        <span class="n">Jabtm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">Jt</span><span class="p">,</span><span class="n">at</span><span class="p">,</span><span class="n">bt</span><span class="p">))</span>
+        <span class="n">Jabrm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">Jr</span><span class="p">,</span><span class="n">ar</span><span class="p">,</span><span class="n">br</span><span class="p">))</span>
+        
+        <span class="c1"># calculate color differences between test and deshifted ref:</span>
+<span class="c1">#        DEim = np.sqrt((Jr - Jt)**2 + (at - ar)**2 + (bt - br)**2)</span>
+        <span class="n">DEim</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">0</span><span class="o">*</span><span class="p">(</span><span class="n">Jr</span> <span class="o">-</span> <span class="n">Jt</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">at</span> <span class="o">-</span> <span class="n">ar</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">bt</span> <span class="o">-</span> <span class="n">br</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="c1"># J is not used</span>
+
+        <span class="c1"># Apply scaling function to convert DEim to Rti:</span>
+        <span class="n">scale_factor</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;scale&#39;</span><span class="p">][</span><span class="s1">&#39;cfactor&#39;</span><span class="p">]</span>
+        <span class="n">scale_fcn</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;scale&#39;</span><span class="p">][</span><span class="s1">&#39;fcn&#39;</span><span class="p">]</span>
+        <span class="n">avg</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;avg&#39;</span><span class="p">]</span>  
+        <span class="n">Rfi_deshifted</span> <span class="o">=</span> <span class="n">scale_fcn</span><span class="p">(</span><span class="n">DEim</span><span class="p">,</span><span class="n">scale_factor</span><span class="p">)</span>
+        <span class="n">Rf_deshifted</span> <span class="o">=</span> <span class="n">scale_fcn</span><span class="p">(</span><span class="n">avg</span><span class="p">(</span><span class="n">DEim</span><span class="p">,</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">),</span><span class="n">scale_factor</span><span class="p">)</span>
+        
+        <span class="n">rms</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">/</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">Rf_deshifted_rms</span> <span class="o">=</span> <span class="n">scale_fcn</span><span class="p">(</span><span class="n">rms</span><span class="p">(</span><span class="n">DEim</span><span class="p">),</span><span class="n">scale_factor</span><span class="p">)</span>
+    
+        <span class="c1"># Generate vector field:</span>
+        <span class="n">vfaxt</span><span class="p">,</span><span class="n">vfbxt</span><span class="p">,</span><span class="n">vfaxr</span><span class="p">,</span><span class="n">vfbxr</span> <span class="o">=</span> <span class="n">generate_vector_field</span><span class="p">(</span><span class="n">poly_model</span><span class="p">,</span> <span class="n">pmodel</span><span class="p">,</span><span class="n">axr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="n">_VF_MAXR</span><span class="p">,</span><span class="n">_VF_MAXR</span><span class="o">+</span><span class="n">_VF_DELTAR</span><span class="p">,</span><span class="n">_VF_DELTAR</span><span class="p">),</span> <span class="n">bxr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="n">_VF_MAXR</span><span class="p">,</span><span class="n">_VF_MAXR</span><span class="o">+</span><span class="n">_VF_DELTAR</span><span class="p">,</span><span class="n">_VF_DELTAR</span><span class="p">),</span> <span class="n">limit_grid_radius</span> <span class="o">=</span> <span class="n">_VF_MAXR</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">vfaxt</span><span class="p">,</span><span class="n">vfbxt</span><span class="p">,</span><span class="n">vfaxr</span><span class="p">,</span><span class="n">vfbxr</span> <span class="o">=</span> <span class="n">generate_vector_field</span><span class="p">(</span><span class="n">poly_model</span><span class="p">,</span> <span class="n">pmodel</span><span class="p">,</span><span class="n">axr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="n">_VF_MAXR</span><span class="p">,</span><span class="n">_VF_MAXR</span><span class="o">+</span><span class="n">_VF_DELTAR</span><span class="p">,</span><span class="n">_VF_DELTAR</span><span class="p">),</span> <span class="n">bxr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="n">_VF_MAXR</span><span class="p">,</span><span class="n">_VF_MAXR</span><span class="o">+</span><span class="n">_VF_DELTAR</span><span class="p">,</span><span class="n">_VF_DELTAR</span><span class="p">),</span> <span class="n">limit_grid_radius</span> <span class="o">=</span> <span class="n">_VF_MAXR</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># Calculate ab-shift vectors of samples and VF model predictions:</span>
+        <span class="n">vshift_ab_s</span> <span class="o">=</span> <span class="n">calculate_shiftvectors</span><span class="p">(</span><span class="n">Jabt_i</span><span class="p">,</span> <span class="n">Jabr_i</span><span class="p">,</span> <span class="n">average</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">vtype</span> <span class="o">=</span> <span class="s1">&#39;ab&#39;</span><span class="p">)[:,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+        <span class="n">vshift_ab_s_vf</span> <span class="o">=</span> <span class="n">calculate_shiftvectors</span><span class="p">(</span><span class="n">Jabtm</span><span class="p">,</span><span class="n">Jabrm</span><span class="p">,</span> <span class="n">average</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">vtype</span> <span class="o">=</span> <span class="s1">&#39;ab&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Calculate ab-shift vectors using vector field model:</span>
+        <span class="n">Jabt_vf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">vfaxt</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">1</span><span class="p">)),</span> <span class="n">vfaxt</span><span class="p">,</span> <span class="n">vfbxt</span><span class="p">))</span>   
+        <span class="n">Jabr_vf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">vfaxr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">1</span><span class="p">)),</span> <span class="n">vfaxr</span><span class="p">,</span> <span class="n">vfbxr</span><span class="p">))</span>   
+        <span class="n">vshift_ab_vf</span> <span class="o">=</span> <span class="n">calculate_shiftvectors</span><span class="p">(</span><span class="n">Jabt_vf</span><span class="p">,</span><span class="n">Jabr_vf</span><span class="p">,</span> <span class="n">average</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">vtype</span> <span class="o">=</span> <span class="s1">&#39;ab&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Generate circle field:</span>
+        <span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="n">plotcircle</span><span class="p">(</span><span class="n">radii</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">_VF_MAXR</span><span class="o">+</span><span class="n">_VF_DELTAR</span><span class="p">,</span><span class="mi">10</span><span class="p">),</span> <span class="n">angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">359</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;x,y&#39;</span><span class="p">)</span>
+        <span class="n">cfaxt</span><span class="p">,</span><span class="n">cfbxt</span><span class="p">,</span><span class="n">cfaxr</span><span class="p">,</span><span class="n">cfbxr</span> <span class="o">=</span> <span class="n">generate_vector_field</span><span class="p">(</span><span class="n">poly_model</span><span class="p">,</span> <span class="n">pmodel</span><span class="p">,</span><span class="n">make_grid</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span><span class="n">axr</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:,</span><span class="kc">None</span><span class="p">],</span> <span class="n">bxr</span> <span class="o">=</span> <span class="n">y</span><span class="p">[:,</span><span class="kc">None</span><span class="p">],</span> <span class="n">limit_grid_radius</span> <span class="o">=</span> <span class="n">_VF_MAXR</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="n">out</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Source&#39;</span> <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;S&#39;</span> <span class="p">:</span> <span class="n">S</span><span class="p">,</span> <span class="s1">&#39;cct&#39;</span> <span class="p">:</span> <span class="n">cct</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="p">,</span> <span class="s1">&#39;duv&#39;</span><span class="p">:</span> <span class="n">duv</span><span class="p">[</span><span class="n">i</span><span class="p">]},</span>
+               <span class="s1">&#39;metrics&#39;</span> <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;Rf&#39;</span><span class="p">:</span><span class="n">Rf</span><span class="p">[:,</span><span class="n">i</span><span class="p">],</span> <span class="s1">&#39;Rt&#39;</span><span class="p">:</span> <span class="n">Rf_deshifted</span><span class="p">,</span> <span class="s1">&#39;Rt_rms&#39;</span> <span class="p">:</span> <span class="n">Rf_deshifted_rms</span><span class="p">,</span> <span class="s1">&#39;Rfi&#39;</span><span class="p">:</span><span class="n">Rfi</span><span class="p">[:,</span><span class="n">i</span><span class="p">],</span> <span class="s1">&#39;Rti&#39;</span><span class="p">:</span> <span class="n">Rfi_deshifted</span><span class="p">,</span> <span class="s1">&#39;cri_type&#39;</span> <span class="p">:</span> <span class="n">cri_type_str</span><span class="p">},</span>
+               <span class="s1">&#39;Jab&#39;</span> <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;Jabt&#39;</span> <span class="p">:</span> <span class="n">Jabt_i</span><span class="p">,</span> <span class="s1">&#39;Jabr&#39;</span> <span class="p">:</span> <span class="n">Jabr_i</span><span class="p">,</span> <span class="s1">&#39;DEi&#39;</span> <span class="p">:</span> <span class="n">DEi</span><span class="p">},</span>
+               <span class="s1">&#39;dC/C_dH_x_sig&#39;</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">dCoverC_x</span><span class="p">,</span><span class="n">dCoverC_x_sig</span><span class="p">,</span><span class="n">dH_x</span><span class="p">,</span><span class="n">dH_x_sig</span><span class="p">))</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
+               <span class="s1">&#39;fielddata&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;vectorfield&#39;</span> <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;axt&#39;</span><span class="p">:</span> <span class="n">vfaxt</span><span class="p">,</span> <span class="s1">&#39;bxt&#39;</span> <span class="p">:</span> <span class="n">vfbxt</span><span class="p">,</span> <span class="s1">&#39;axr&#39;</span> <span class="p">:</span> <span class="n">vfaxr</span><span class="p">,</span> <span class="s1">&#39;bxr&#39;</span> <span class="p">:</span> <span class="n">vfbxr</span><span class="p">},</span>
+                             <span class="s1">&#39;circlefield&#39;</span> <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;axt&#39;</span><span class="p">:</span> <span class="n">cfaxt</span><span class="p">,</span> <span class="s1">&#39;bxt&#39;</span> <span class="p">:</span> <span class="n">cfbxt</span><span class="p">,</span> <span class="s1">&#39;axr&#39;</span> <span class="p">:</span> <span class="n">cfaxr</span><span class="p">,</span> <span class="s1">&#39;bxr&#39;</span> <span class="p">:</span> <span class="n">cfbxr</span><span class="p">}},</span>
+               <span class="s1">&#39;modeldata&#39;</span> <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;pmodel&#39;</span><span class="p">:</span> <span class="n">pmodel</span><span class="p">,</span> <span class="s1">&#39;pcolorshift&#39;</span> <span class="p">:</span> <span class="n">pcolorshift</span><span class="p">,</span> 
+                              <span class="s1">&#39;dab_model&#39;</span> <span class="p">:</span> <span class="n">dab_model</span><span class="p">,</span> <span class="s1">&#39;dab_res&#39;</span> <span class="p">:</span> <span class="n">dab_res</span><span class="p">,</span><span class="s1">&#39;dab_std&#39;</span> <span class="p">:</span> <span class="n">dab_std</span><span class="p">,</span>
+                              <span class="s1">&#39;model_type&#39;</span> <span class="p">:</span> <span class="n">model_type</span><span class="p">,</span> <span class="s1">&#39;fmodel&#39;</span> <span class="p">:</span> <span class="n">poly_model</span><span class="p">,</span>
+                              <span class="s1">&#39;Jabtm&#39;</span> <span class="p">:</span> <span class="n">Jabtm</span><span class="p">,</span> <span class="s1">&#39;Jabrm&#39;</span> <span class="p">:</span> <span class="n">Jabrm</span><span class="p">,</span> <span class="s1">&#39;DEim&#39;</span> <span class="p">:</span> <span class="n">DEim</span><span class="p">},</span>
+               <span class="s1">&#39;vshifts&#39;</span> <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;Jabshiftvector_r_to_t&#39;</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">Jt</span><span class="o">-</span><span class="n">Jr</span><span class="p">,</span><span class="n">at</span><span class="o">-</span><span class="n">ar</span><span class="p">,</span><span class="n">bt</span><span class="o">-</span><span class="n">br</span><span class="p">)),</span>
+                            <span class="s1">&#39;vshift_ab_s&#39;</span> <span class="p">:</span> <span class="n">vshift_ab_s</span><span class="p">,</span>
+                            <span class="s1">&#39;vshift_ab_s_vf&#39;</span> <span class="p">:</span> <span class="n">vshift_ab_s_vf</span><span class="p">,</span>
+                            <span class="s1">&#39;vshift_ab_vf&#39;</span> <span class="p">:</span> <span class="n">vshift_ab_vf</span><span class="p">}}</span>
+     
+    <span class="k">return</span> <span class="n">out</span>
+
+
+
+<div class="viewcode-block" id="generate_grid"><a class="viewcode-back" href="../../../../../color.html#luxpy.color.cri.VFPX.generate_grid">[docs]</a><span class="k">def</span> <span class="nf">generate_grid</span><span class="p">(</span><span class="n">jab_ranges</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;grid&#39;</span><span class="p">,</span> \
+                  <span class="n">ax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="n">_VF_MAXR</span><span class="p">,</span><span class="n">_VF_MAXR</span><span class="o">+</span><span class="n">_VF_DELTAR</span><span class="p">,</span><span class="n">_VF_DELTAR</span><span class="p">),</span>\
+                  <span class="n">bx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="n">_VF_MAXR</span><span class="p">,</span><span class="n">_VF_MAXR</span><span class="o">+</span><span class="n">_VF_DELTAR</span><span class="p">,</span><span class="n">_VF_DELTAR</span><span class="p">),</span> \
+                  <span class="n">jx</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">limit_grid_radius</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate a grid of color coordinates.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :out:</span>
+<span class="sd">            | &#39;grid&#39; or &#39;vectors&#39;, optional</span>
+<span class="sd">            |   - &#39;grid&#39;: outputs a single 2d numpy.nd-vector with the grid coordinates</span>
+<span class="sd">            |   - &#39;vector&#39;: outputs each dimension seperately.</span>
+<span class="sd">        :jab_ranges:</span>
+<span class="sd">            | None or ndarray, optional</span>
+<span class="sd">            | Specifies the pixelization of color space.</span>
+<span class="sd">              (ndarray.shape = (3,3), with  first axis: J,a,b, and second </span>
+<span class="sd">              axis: min, max, delta)</span>
+<span class="sd">        :ax:</span>
+<span class="sd">            | default ndarray or user defined ndarray, optional</span>
+<span class="sd">            | default = np.arange(-_VF_MAXR,_VF_MAXR+_VF_DELTAR,_VF_DELTAR) </span>
+<span class="sd">        :bx:</span>
+<span class="sd">            | default ndarray or user defined ndarray, optional</span>
+<span class="sd">            | default = np.arange(-_VF_MAXR,_VF_MAXR+_VF_DELTAR,_VF_DELTAR) </span>
+<span class="sd">        :jx:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | Note that not-None :jab_ranges: override :ax:, :bx: and :jx input.</span>
+<span class="sd">        :limit_grid_radius:</span>
+<span class="sd">            | 0, optional</span>
+<span class="sd">            | A value of zeros keeps grid as specified  by axr,bxr.</span>
+<span class="sd">            | A value &gt; 0 only keeps (a,b) coordinates within :limit_grid_radius:</span>
+<span class="sd">            </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :returns: </span>
+<span class="sd">            | single ndarray with ax,bx [,jx] </span>
+<span class="sd">            |  or</span>
+<span class="sd">            | seperate ndarrays for each dimension specified.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># generate grid from jab_ranges array input, otherwise use ax, bx, jx input:</span>
+    <span class="k">if</span> <span class="n">jab_ranges</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">jab_ranges</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">jx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">jab_ranges</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">jab_ranges</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span><span class="n">jab_ranges</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">])</span>
+            <span class="n">ax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">jab_ranges</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">jab_ranges</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span><span class="n">jab_ranges</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">2</span><span class="p">])</span>
+            <span class="n">bx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">jab_ranges</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">jab_ranges</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span><span class="n">jab_ranges</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">2</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">jx</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">ax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">jab_ranges</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">jab_ranges</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span><span class="n">jab_ranges</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">])</span>
+            <span class="n">bx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">jab_ranges</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">jab_ranges</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span><span class="n">jab_ranges</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">2</span><span class="p">])</span>
+   
+    <span class="c1"># Generate grid from (jx), ax, bx:</span>
+    <span class="n">Ax</span><span class="p">,</span><span class="n">Bx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">bx</span><span class="p">)</span>
+    <span class="n">grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dstack</span><span class="p">((</span><span class="n">Ax</span><span class="p">,</span><span class="n">Bx</span><span class="p">))</span>
+    <span class="n">grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">grid</span><span class="p">,(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">prod</span><span class="p">(),</span><span class="n">grid</span><span class="o">.</span><span class="n">ndim</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">jx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">jx</span><span class="p">):</span>
+            <span class="n">gridi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">grid</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">1</span><span class="p">))</span><span class="o">*</span><span class="n">v</span><span class="p">,</span><span class="n">grid</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">gridwithJ</span> <span class="o">=</span> <span class="n">gridi</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">gridwithJ</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">gridwithJ</span><span class="p">,</span><span class="n">gridi</span><span class="p">))</span>
+        <span class="n">grid</span> <span class="o">=</span> <span class="n">gridwithJ</span>
+    
+    <span class="k">if</span> <span class="n">jx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">grid</span><span class="p">[:,</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">bx</span> <span class="o">=</span> <span class="n">grid</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">jx</span> <span class="o">=</span> <span class="n">grid</span><span class="p">[:,</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">grid</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">bx</span> <span class="o">=</span> <span class="n">grid</span><span class="p">[:,</span><span class="mi">2</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> 
+    
+    <span class="k">if</span> <span class="n">limit_grid_radius</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span><span class="c1"># limit radius of grid:</span>
+        <span class="n">Cr</span> <span class="o">=</span> <span class="p">(</span><span class="n">ax</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="n">bx</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">ax</span><span class="p">[</span><span class="n">Cr</span><span class="o">&lt;=</span><span class="n">limit_grid_radius</span><span class="p">,</span><span class="kc">None</span><span class="p">]</span>
+        <span class="n">bx</span> <span class="o">=</span> <span class="n">bx</span><span class="p">[</span><span class="n">Cr</span><span class="o">&lt;=</span><span class="n">limit_grid_radius</span><span class="p">,</span><span class="kc">None</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">jx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">jx</span> <span class="o">=</span> <span class="n">jx</span><span class="p">[</span><span class="n">Cr</span><span class="o">&lt;=</span><span class="n">limit_grid_radius</span><span class="p">,</span><span class="kc">None</span><span class="p">]</span>
+    
+    <span class="c1"># create output:</span>
+    <span class="k">if</span> <span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;grid&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">jx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">ax</span><span class="p">,</span><span class="n">bx</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">jx</span><span class="p">,</span><span class="n">ax</span><span class="p">,</span><span class="n">bx</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">jx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">ax</span><span class="p">,</span> <span class="n">bx</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">jx</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">bx</span></div>
+
+
+<div class="viewcode-block" id="calculate_shiftvectors"><a class="viewcode-back" href="../../../../../color.html#luxpy.color.cri.VFPX.calculate_shiftvectors">[docs]</a><span class="k">def</span> <span class="nf">calculate_shiftvectors</span><span class="p">(</span><span class="n">jabt</span><span class="p">,</span><span class="n">jabr</span><span class="p">,</span> <span class="n">average</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">vtype</span> <span class="o">=</span> <span class="s1">&#39;ab&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate color shift vectors.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :jabt: </span>
+<span class="sd">            | ndarray with jab coordinates under the test SPD</span>
+<span class="sd">        :jabr:</span>
+<span class="sd">            | ndarray with jab coordinates under the reference SPD</span>
+<span class="sd">        :average:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | If True, take mean of difference vectors along axis = 0.</span>
+<span class="sd">        :vtype:</span>
+<span class="sd">            | &#39;ab&#39; or &#39;jab&#39;, optional</span>
+<span class="sd">            | Reduce output ndarray to only a,b coordinates of shift vector(s).</span>
+<span class="sd">            </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :returns:</span>
+<span class="sd">            | ndarray of (mean) shift vector(s).</span>
+<span class="sd">            </span>
+<span class="sd">    &quot;&quot;&quot;</span>    
+    <span class="n">v</span> <span class="o">=</span>  <span class="n">jabt</span> <span class="o">-</span> <span class="n">jabr</span>
+    <span class="k">if</span> <span class="n">average</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">vtype</span> <span class="o">==</span> <span class="s1">&#39;ab&#39;</span><span class="p">:</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">v</span>   </div>
+    
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="plot_shift_data"><a class="viewcode-back" href="../../../../../color.html#luxpy.color.cri.VFPX.plot_shift_data">[docs]</a><span class="k">def</span> <span class="nf">plot_shift_data</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">fieldtype</span> <span class="o">=</span> <span class="s1">&#39;vectorfield&#39;</span><span class="p">,</span> <span class="n">scalef</span> <span class="o">=</span> <span class="n">_VF_MAXR</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span><span class="p">,</span> \
+                    <span class="n">axtype</span> <span class="o">=</span> <span class="s1">&#39;polar&#39;</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> \
+                    <span class="n">hbins</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>  <span class="n">start_hue</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">bin_labels</span> <span class="o">=</span> <span class="s1">&#39;#&#39;</span><span class="p">,</span> <span class="n">plot_center_lines</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>  \
+                    <span class="n">plot_axis_labels</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">plot_edge_lines</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">plot_bin_colors</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> \
+                    <span class="n">force_CVG_layout</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+     
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plots vector or circle fields generated by VFcolorshiftmodel() </span>
+<span class="sd">    or PXcolorshiftmodel().</span>
+<span class="sd">     </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :data: </span>
+<span class="sd">            | dict generated by VFcolorshiftmodel() or PXcolorshiftmodel()</span>
+<span class="sd">            | Must contain &#39;fielddata&#39;- key, which is a dict with possible keys:</span>
+<span class="sd">            |     - key: &#39;vectorfield&#39;: ndarray with vector field data</span>
+<span class="sd">            |     - key: &#39;circlefield&#39;: ndarray with circle field data</span>
+<span class="sd">        :color: </span>
+<span class="sd">            | &#39;k&#39;, optional</span>
+<span class="sd">            | Color for plotting the vector-fields.</span>
+<span class="sd">        :axtype:</span>
+<span class="sd">            | &#39;polar&#39; or &#39;cart&#39;, optional</span>
+<span class="sd">            | Make polar or Cartesian plot.</span>
+<span class="sd">        :ax: </span>
+<span class="sd">            | None or &#39;new&#39; or &#39;same&#39;, optional</span>
+<span class="sd">            |   - None or &#39;new&#39; creates new plot</span>
+<span class="sd">            |   - &#39;same&#39;: continue plot on same axes.</span>
+<span class="sd">            |   - axes handle: plot on specified axes.</span>
+<span class="sd">        :hbins:</span>
+<span class="sd">            | 16 or ndarray with sorted hue bin centers (°), optional</span>
+<span class="sd">        :start_hue:</span>
+<span class="sd">            | _VF_MAXR, optional</span>
+<span class="sd">            | Scale factor for graphic.</span>
+<span class="sd">        :plot_axis_labels:</span>
+<span class="sd">            | False, optional</span>
+<span class="sd">            | Turns axis ticks on/off (True/False).</span>
+<span class="sd">        :bin_labels:</span>
+<span class="sd">            | None or list[str] or &#39;#&#39;, optional</span>
+<span class="sd">            | Plots labels at the bin center hues.</span>
+<span class="sd">            |   - None: don&#39;t plot.</span>
+<span class="sd">            |   - list[str]: list with str for each bin. </span>
+<span class="sd">            |                (len(:bin_labels:) = :nhbins:)</span>
+<span class="sd">            |   - &#39;#&#39;: plots number.</span>
+<span class="sd">        :plot_edge_lines:</span>
+<span class="sd">            | True or False, optional</span>
+<span class="sd">            | Plot grey bin edge lines with &#39;--&#39;.</span>
+<span class="sd">        :plot_center_lines:</span>
+<span class="sd">            | False or True, optional</span>
+<span class="sd">            | Plot colored lines at &#39;center&#39; of hue bin.</span>
+<span class="sd">        :plot_bin_colors:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | Colorize hue-bins.</span>
+<span class="sd">        :force_CVG_layout: </span>
+<span class="sd">            | False or True, optional</span>
+<span class="sd">            | True: Force plot of basis of CVG.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :returns:</span>
+<span class="sd">            | figCVG, hax, cmap</span>
+<span class="sd">        </span>
+<span class="sd">            |   :figCVG: handle to CVG figure</span>
+<span class="sd">            |   :hax: handle to CVG axes</span>
+<span class="sd">            |   :cmap: list with rgb colors for hue bins </span>
+<span class="sd">            |          (for use in other plotting fcns)</span>
+<span class="sd">   </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+       
+    <span class="c1"># Plot basis of CVG:</span>
+    <span class="n">figCVG</span><span class="p">,</span> <span class="n">hax</span><span class="p">,</span> <span class="n">cmap</span> <span class="o">=</span> <span class="n">plot_hue_bins</span><span class="p">(</span><span class="n">hbins</span> <span class="o">=</span> <span class="n">hbins</span><span class="p">,</span> <span class="n">axtype</span> <span class="o">=</span> <span class="n">axtype</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">ax</span><span class="p">,</span> <span class="n">plot_center_lines</span> <span class="o">=</span> <span class="n">plot_center_lines</span><span class="p">,</span> <span class="n">plot_edge_lines</span> <span class="o">=</span> <span class="n">plot_edge_lines</span><span class="p">,</span> <span class="n">plot_bin_colors</span> <span class="o">=</span> <span class="n">plot_bin_colors</span><span class="p">,</span> <span class="n">scalef</span> <span class="o">=</span> <span class="n">scalef</span><span class="p">,</span> <span class="n">force_CVG_layout</span> <span class="o">=</span> <span class="n">force_CVG_layout</span><span class="p">,</span> <span class="n">bin_labels</span> <span class="o">=</span> <span class="n">bin_labels</span><span class="p">)</span>
+    
+    <span class="c1"># plot vector field:</span>
+    <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">fieldtype</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">vf</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;fielddata&#39;</span><span class="p">][</span><span class="n">fieldtype</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">axtype</span> <span class="o">==</span> <span class="s1">&#39;polar&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">fieldtype</span> <span class="o">==</span> <span class="s1">&#39;vectorfield&#39;</span><span class="p">:</span>
+                    <span class="n">vfrtheta</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">positive_arctan</span><span class="p">(</span><span class="n">vf</span><span class="p">[</span><span class="s1">&#39;axr&#39;</span><span class="p">],</span> <span class="n">vf</span><span class="p">[</span><span class="s1">&#39;bxr&#39;</span><span class="p">],</span><span class="n">htype</span> <span class="o">=</span> <span class="s1">&#39;rad&#39;</span><span class="p">)</span>
+                    <span class="n">vfrr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">vf</span><span class="p">[</span><span class="s1">&#39;axr&#39;</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">vf</span><span class="p">[</span><span class="s1">&#39;bxr&#39;</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+                    <span class="n">hax</span><span class="o">.</span><span class="n">quiver</span><span class="p">(</span><span class="n">vfrtheta</span><span class="p">,</span> <span class="n">vfrr</span><span class="p">,</span> <span class="n">vf</span><span class="p">[</span><span class="s1">&#39;axt&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">vf</span><span class="p">[</span><span class="s1">&#39;axr&#39;</span><span class="p">],</span> <span class="n">vf</span><span class="p">[</span><span class="s1">&#39;bxt&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">vf</span><span class="p">[</span><span class="s1">&#39;bxr&#39;</span><span class="p">],</span>  <span class="n">headlength</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="n">color</span><span class="p">,</span><span class="n">angles</span><span class="o">=</span><span class="s1">&#39;uv&#39;</span><span class="p">,</span> <span class="n">scale_units</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span><span class="n">linewidth</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">vfttheta</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">positive_arctan</span><span class="p">(</span><span class="n">vf</span><span class="p">[</span><span class="s1">&#39;axt&#39;</span><span class="p">],</span> <span class="n">vf</span><span class="p">[</span><span class="s1">&#39;bxt&#39;</span><span class="p">],</span><span class="n">htype</span> <span class="o">=</span> <span class="s1">&#39;rad&#39;</span><span class="p">)</span>
+                    <span class="n">vfrtheta</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">positive_arctan</span><span class="p">(</span><span class="n">vf</span><span class="p">[</span><span class="s1">&#39;axr&#39;</span><span class="p">],</span> <span class="n">vf</span><span class="p">[</span><span class="s1">&#39;bxr&#39;</span><span class="p">],</span><span class="n">htype</span> <span class="o">=</span> <span class="s1">&#39;rad&#39;</span><span class="p">)</span>
+                    <span class="n">vftr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">vf</span><span class="p">[</span><span class="s1">&#39;axt&#39;</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">vf</span><span class="p">[</span><span class="s1">&#39;bxt&#39;</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+                    <span class="n">dh</span> <span class="o">=</span> <span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">angle_v1v2</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">vf</span><span class="p">[</span><span class="s1">&#39;axt&#39;</span><span class="p">],</span><span class="n">vf</span><span class="p">[</span><span class="s1">&#39;bxt&#39;</span><span class="p">])),</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">vf</span><span class="p">[</span><span class="s1">&#39;axr&#39;</span><span class="p">],</span><span class="n">vf</span><span class="p">[</span><span class="s1">&#39;bxr&#39;</span><span class="p">])),</span><span class="n">htype</span><span class="o">=</span><span class="s1">&#39;deg&#39;</span><span class="p">)[:,</span><span class="kc">None</span><span class="p">])</span> <span class="c1">#hue shift</span>
+                    <span class="n">dh</span> <span class="o">=</span> <span class="n">dh</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">dh</span><span class="p">)</span>
+                    <span class="n">plt</span><span class="o">.</span><span class="n">set_cmap</span><span class="p">(</span><span class="s1">&#39;jet&#39;</span><span class="p">)</span>
+                    <span class="n">hax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">vfttheta</span><span class="p">,</span> <span class="n">vftr</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="mi">100</span><span class="o">*</span><span class="n">dh</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="n">dh</span><span class="p">,</span> <span class="n">linestyle</span> <span class="o">=</span> <span class="s1">&#39;None&#39;</span><span class="p">,</span> <span class="n">marker</span> <span class="o">=</span> <span class="s1">&#39;o&#39;</span><span class="p">,</span><span class="n">norm</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="n">hax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1.1</span><span class="o">*</span><span class="n">scalef</span><span class="p">])</span>     
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">fieldtype</span> <span class="o">==</span> <span class="s1">&#39;vectorfield&#39;</span><span class="p">:</span>
+                    <span class="n">hax</span><span class="o">.</span><span class="n">quiver</span><span class="p">(</span><span class="n">vf</span><span class="p">[</span><span class="s1">&#39;axr&#39;</span><span class="p">],</span> <span class="n">vf</span><span class="p">[</span><span class="s1">&#39;bxr&#39;</span><span class="p">],</span> <span class="n">vf</span><span class="p">[</span><span class="s1">&#39;axt&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">vf</span><span class="p">[</span><span class="s1">&#39;axr&#39;</span><span class="p">],</span> <span class="n">vf</span><span class="p">[</span><span class="s1">&#39;bxt&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">vf</span><span class="p">[</span><span class="s1">&#39;bxr&#39;</span><span class="p">],</span>  <span class="n">headlength</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="n">color</span><span class="p">,</span><span class="n">angles</span><span class="o">=</span><span class="s1">&#39;uv&#39;</span><span class="p">,</span> <span class="n">scale_units</span><span class="o">=</span><span class="s1">&#39;xy&#39;</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span><span class="n">linewidth</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">hax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">vf</span><span class="p">[</span><span class="s1">&#39;axr&#39;</span><span class="p">],</span> <span class="n">vf</span><span class="p">[</span><span class="s1">&#39;bxr&#39;</span><span class="p">],</span> <span class="n">color</span> <span class="o">=</span> <span class="n">color</span><span class="p">,</span> <span class="n">marker</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span><span class="p">,</span><span class="n">linestyle</span> <span class="o">=</span> <span class="s1">&#39;None&#39;</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">figCVG</span><span class="p">,</span> <span class="n">hax</span><span class="p">,</span> <span class="n">cmap</span></div>
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="plotcircle"><a class="viewcode-back" href="../../../../../color.html#luxpy.color.cri.VFPX.plotcircle">[docs]</a><span class="k">def</span> <span class="nf">plotcircle</span><span class="p">(</span><span class="n">center</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span><span class="mf">0.</span><span class="p">]),</span>\
+               <span class="n">radii</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">60</span><span class="p">,</span><span class="mi">10</span><span class="p">),</span> \
+               <span class="n">angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">350</span><span class="p">,</span><span class="mi">10</span><span class="p">),</span>\
+               <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span><span class="p">,</span><span class="n">linestyle</span> <span class="o">=</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot one or more concentric circles.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :center: </span>
+<span class="sd">            | np.array([0.,0.]) or ndarray with center coordinates, optional</span>
+<span class="sd">        :radii:</span>
+<span class="sd">            | np.arange(0,60,10) or ndarray with radii of circle(s), optional</span>
+<span class="sd">        :angles:</span>
+<span class="sd">            | np.arange(0,350,10) or ndarray with angles (°), optional</span>
+<span class="sd">        :color: </span>
+<span class="sd">            | &#39;k&#39;, optional</span>
+<span class="sd">            | Color for plotting.</span>
+<span class="sd">        :linestyle:</span>
+<span class="sd">            | &#39;--&#39;, optional</span>
+<span class="sd">            | Linestyle of circles.</span>
+<span class="sd">        :out: </span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | If None: plot circles, return (x,y) otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">xs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">ys</span> <span class="o">=</span> <span class="n">xs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">ri</span> <span class="ow">in</span> <span class="n">radii</span><span class="p">:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">ri</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angles</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">180</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">ri</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angles</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">180</span><span class="p">)</span>
+        <span class="n">xs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">xs</span><span class="p">,</span><span class="n">x</span><span class="p">))</span>
+        <span class="n">ys</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">ys</span><span class="p">,</span><span class="n">y</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">out</span> <span class="o">!=</span> <span class="s1">&#39;x,y&#39;</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="n">color</span><span class="p">,</span> <span class="n">linestyle</span> <span class="o">=</span> <span class="n">linestyle</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;x,y&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">xs</span><span class="p">,</span><span class="n">ys</span></div>
+
+
+
+
+<span class="c1">##############################################################################</span>
+
+<div class="viewcode-block" id="initialize_VF_hue_angles"><a class="viewcode-back" href="../../../../../color.html#luxpy.color.cri.VFPX.initialize_VF_hue_angles">[docs]</a><span class="k">def</span> <span class="nf">initialize_VF_hue_angles</span><span class="p">(</span><span class="n">hx</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Cxr</span> <span class="o">=</span> <span class="n">_VF_MAXR</span><span class="p">,</span> \
+                             <span class="n">cri_type</span> <span class="o">=</span> <span class="n">_VF_CRI_DEFAULT</span><span class="p">,</span> \
+                             <span class="n">modeltype</span> <span class="o">=</span> <span class="n">_VF_MODEL_TYPE</span><span class="p">,</span>\
+                             <span class="n">determine_hue_angles</span> <span class="o">=</span> <span class="n">_DETERMINE_HUE_ANGLES</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Initialize the hue angles that will be used to &#39;summarize&#39; </span>
+<span class="sd">    the VF model fitting parameters.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:       </span>
+<span class="sd">        :hx: </span>
+<span class="sd">            | None or ndarray, optional</span>
+<span class="sd">            | None defaults to Munsell H5 hues.</span>
+<span class="sd">        :Cxr: </span>
+<span class="sd">            | _VF_MAXR, optional</span>
+<span class="sd">        :cri_type: </span>
+<span class="sd">            | _VF_CRI_DEFAULT or str or dict, optional,</span>
+<span class="sd">            | Cri_type parameters for cri and VF model.</span>
+<span class="sd">        :modeltype:</span>
+<span class="sd">            | _VF_MODEL_TYPE or &#39;M5&#39; or &#39;M6&#39;, optional</span>
+<span class="sd">            | Determines the type of polynomial model.</span>
+<span class="sd">        :determine_hue_angles:</span>
+<span class="sd">            | _DETERMINE_HUE_ANGLES or True or False, optional</span>
+<span class="sd">            | True: determines the 10 primary / secondary Munsell hues (&#39;5..&#39;).</span>
+<span class="sd">            | Note that for &#39;M6&#39;, an additional </span>
+<span class="sd">            </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :pcolorshift: </span>
+<span class="sd">            | {&#39;href&#39;: href,</span>
+<span class="sd">            |           &#39;Cref&#39; : _VF_MAXR, </span>
+<span class="sd">            |           &#39;sig&#39; : _VF_SIG, </span>
+<span class="sd">            |           &#39;labels&#39; : list[str]}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c1">###########################################</span>
+    <span class="c1"># Get Munsell H5 hues:</span>
+    <span class="c1">###########################################</span>
+
+    <span class="n">rflM</span> <span class="o">=</span> <span class="n">_MUNSELL</span><span class="p">[</span><span class="s1">&#39;R&#39;</span><span class="p">]</span>
+    <span class="n">hn</span> <span class="o">=</span> <span class="n">_MUNSELL</span><span class="p">[</span><span class="s1">&#39;H&#39;</span><span class="p">]</span> <span class="c1"># all Munsell hues</span>
+    <span class="n">rH5</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">([</span><span class="n">_MUNSELL</span><span class="p">[</span><span class="s1">&#39;H&#39;</span><span class="p">][:,</span><span class="mi">0</span><span class="p">][</span><span class="n">x</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;5&#39;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">_MUNSELL</span><span class="p">[</span><span class="s1">&#39;H&#39;</span><span class="p">][:,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])])[</span><span class="mi">0</span><span class="p">]</span> <span class="c1">#all Munsell H5 hues</span>
+    <span class="n">hns5</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">_MUNSELL</span><span class="p">[</span><span class="s1">&#39;H&#39;</span><span class="p">][</span><span class="n">rH5</span><span class="p">])</span> 
+    <span class="c1">#------------------------------------------------------------------------------</span>
+    <span class="c1"># Determine Munsell hue angles in cam02ucs:</span>
+    <span class="n">pool</span> <span class="o">=</span> <span class="kc">False</span>  
+    <span class="n">IllC</span> <span class="o">=</span> <span class="n">_CIE_ILLUMINANTS</span><span class="p">[</span><span class="s1">&#39;C&#39;</span><span class="p">]</span> <span class="c1"># for determining Munsell hue angles in cam02ucs</span>
+    <span class="n">outM</span> <span class="o">=</span> <span class="n">VF_colorshift_model</span><span class="p">(</span><span class="n">IllC</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">,</span> <span class="n">sampleset</span> <span class="o">=</span> <span class="n">rflM</span><span class="p">,</span> <span class="n">vfcolor</span> <span class="o">=</span> <span class="s1">&#39;g&#39;</span><span class="p">,</span><span class="n">pool</span> <span class="o">=</span> <span class="n">pool</span><span class="p">)</span>
+    <span class="c1">#------------------------------------------------------------------------------</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">determine_hue_angles</span> <span class="o">==</span> <span class="kc">True</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">hx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="c1"># find samples at major Munsell hue angles:</span>
+        <span class="n">all_h5_Munsell_cam02ucs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">hns5</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="n">Jabt_IllC</span> <span class="o">=</span> <span class="n">outM</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;Jab&#39;</span><span class="p">][</span><span class="s1">&#39;Jabt&#39;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">hns5</span><span class="p">):</span>
+            <span class="n">hm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">hn</span> <span class="o">==</span> <span class="n">v</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">all_h5_Munsell_cam02ucs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">positive_arctan</span><span class="p">([</span><span class="n">Jabt_IllC</span><span class="p">[</span><span class="n">hm</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()],[</span><span class="n">Jabt_IllC</span><span class="p">[</span><span class="n">hm</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()],</span><span class="n">htype</span> <span class="o">=</span> <span class="s1">&#39;rad&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">hx</span> <span class="o">=</span> <span class="n">all_h5_Munsell_cam02ucs</span>
+        
+
+    <span class="c1">#------------------------------------------------------------------------------</span>
+    <span class="c1"># Setp color shift parameters:</span>
+    <span class="n">pcolorshift</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;href&#39;</span><span class="p">:</span> <span class="n">hx</span><span class="p">,</span><span class="s1">&#39;Cref&#39;</span> <span class="p">:</span> <span class="n">Cxr</span><span class="p">,</span> <span class="s1">&#39;sig&#39;</span> <span class="p">:</span> <span class="n">_VF_SIG</span><span class="p">,</span> <span class="s1">&#39;labels&#39;</span> <span class="p">:</span> <span class="n">hns5</span><span class="p">}</span>
+    <span class="k">return</span> <span class="n">pcolorshift</span></div>
+
+<span class="n">_VF_PCOLORSHIFT</span> <span class="o">=</span> <span class="n">initialize_VF_hue_angles</span><span class="p">(</span><span class="n">determine_hue_angles</span> <span class="o">=</span> <span class="n">_DETERMINE_HUE_ANGLES</span><span class="p">,</span> <span class="n">modeltype</span> <span class="o">=</span> <span class="n">_VF_MODEL_TYPE</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Kevin A.G. Smet.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../../',
+            VERSION:'1.3.7',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          
+          SphinxRtdTheme.Navigation.enableSticky();
+          
+      });
+  </script> 
+
+</body>
+</html>
