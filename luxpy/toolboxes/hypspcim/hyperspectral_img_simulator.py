@@ -290,7 +290,7 @@ def render_image(img = None, spd = None, rfl = None, out = 'img_hyp', \
         #print('Writing rendering results to image file: {}'.format(write_to_file))
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-    			imsave(write_to_file, img_original_rendered)
+            imsave(write_to_file, img_original_rendered)
 
     if show == True:
         # show images using pyplot.show():
