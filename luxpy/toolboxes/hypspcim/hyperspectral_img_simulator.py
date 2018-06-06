@@ -17,7 +17,7 @@ Module for hyper spectral image simulation
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
-from luxpy import (warnings, np, sp, plt, cKDTree, cat, colortf, _PKG_PATH, _SEP, _CIEOBS, 
+from luxpy import (warnings, np, plt, cKDTree, cat, colortf, _PKG_PATH, _SEP, _CIEOBS, 
                    _CIE_ILLUMINANTS, _CRI_RFL, _EPS, spd_to_xyz,plot_color_data)
 from luxpy.toolboxes.spdbuild import spdbuilder as spb
 
