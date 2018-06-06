@@ -4,8 +4,8 @@ LuxPy: a package for lighting and color science
 ===============================================
 
     * Author: K. A.G. Smet (ksmet1977 at gmail.com)
-    * Version: 1.3.05
-    * Date: May 3, 2018
+    * Version: 1.3.07
+    * Date: June 1, 2018
     * License: GPLv3
 
 
@@ -116,12 +116,13 @@ Imported packages
  * import colorsys
  * import itertools
 
- * import warnings
- * import os
- * from collections import OrderedDict as odict
+ * import numpy as np
+ * import pandas as pd
  * import matplotlib.pyplot as plt
- * from mpl_toolkits.mplot3d import Axes3D
- * import colorsys
+ * import scipy as sp
+ * from scipy import interpolate
+ * from scipy.optimize import minimize
+ * from scipy.spatial import cKDTree
 
 
 Global constants
@@ -164,8 +165,7 @@ import scipy as sp
 from scipy import interpolate
 from scipy.optimize import minimize
 from scipy.spatial import cKDTree
-import cv2
-__all__ += ['np','pd','plt','sp','interpolate','minimize','cKDTree','cv2']
+__all__ += ['np','pd','plt','sp','interpolate','minimize','cKDTree']
 
 
 
