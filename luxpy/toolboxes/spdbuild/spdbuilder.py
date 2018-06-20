@@ -1975,7 +1975,7 @@ if __name__ == '__main__':
     decimals = [5,5]
     
     N_components = 5 #if not None, spd model parameters (peakwl, fwhm, ...) are optimized
-    allow_butterworth_mono_spds = True
+    allow_butterworth_mono_spds = False
     S3, _ = spd_optimizer(target, tar_type = tar_type, cspace_bwtf = {'cieobs' : cieobs, 'mode' : 'search'},\
                           optimizer_type = '2mixer', N_components = N_components,\
                           allow_butterworth_mono_spds = allow_butterworth_mono_spds,\
