@@ -57,6 +57,6 @@ For more details on installation, structure, functionality, etc., see:
 ### Matlab versus Python:
  * [scipy.github.io/old-wiki/pages/NumPy_for_Matlab_Users.html](http://scipy.github.io/old-wiki/pages/NumPy_for_Matlab_Users.html)
 ### Udemy.com:
- * [udemy.com](http://www.udemy.com) offers some great courses. Although some of these are payed, they often come at huge discounted prices. 
+ * [Udemy.com](https://www.udemy.com/courses/search/?ref=home&src=ukw&q=python%20numpy) offers some great courses. Although some of these are payed, they often come at huge discounted prices. 
 ### Youtube.com:
  * [www.youtube.com](https://www.youtube.com/results?search_query=python+numpy+tutorial) also has lots of free online tutorials.
