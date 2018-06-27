@@ -48,15 +48,15 @@ For more details on installation, structure, functionality, etc., see:
     
 
 
-## Python tutorials
-### Some basic tutorials can be found at:
+### Python tutorials
+#### Some basic tutorials can be found at:
  * [cs231n.github.io/python-numpy-tutorial/](http://cs231n.github.io/python-numpy-tutorial/) 
  * [docs.python.org/3/tutorial/](https://docs.python.org/3/tutorial/) 
-### A list of basic and more advanced is given at:
+#### A list of basic and more advanced is given at:
  * [wiki.python.org/moin/BeginnersGuide/Programmers](https://wiki.python.org/moin/BeginnersGuide/Programmers)
-### Matlab versus Python:
+#### Matlab versus Python:
  * [scipy.github.io/old-wiki/pages/NumPy_for_Matlab_Users.html](http://scipy.github.io/old-wiki/pages/NumPy_for_Matlab_Users.html)
-### Udemy.com:
+#### Udemy.com:
  * [Udemy.com](https://www.udemy.com/courses/search/?ref=home&src=ukw&q=python%20numpy) offers some great courses. Although some of these are payed, they often come at huge discounted prices. 
-### Youtube.com:
+#### Youtube.com:
  * [www.youtube.com](https://www.youtube.com/results?search_query=python+numpy+tutorial) also has lots of free online tutorials.
