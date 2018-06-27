@@ -8,6 +8,8 @@ LuxPy: a package for lighting and color science
     * Date: June 1, 2018
     * License: GPLv3
 
+    * DOI: https://doi.org/10.5281/zenodo.1298963
+
 
 License
 -------
