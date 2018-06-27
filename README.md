@@ -8,6 +8,8 @@
 * Date: June 1, 2018
 * License: [GPLv3](https://github.com/ksmet1977/luxpy/blob/master/LICENSE.md)
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1298964.svg)](https://doi.org/10.5281/zenodo.1298964)
+
 **Luxpy** is an open source package under a GPLv3 license that supports several common
 **lighting**, **colorimetric**, **color appearance** and other **color science**
  related calculations and models, such as:
