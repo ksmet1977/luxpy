@@ -24,8 +24,7 @@
 
   
 
-  
-    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
@@ -209,6 +208,8 @@
 
 <span class="sd"> :todim(): Expand x to dimensions that are broadcast-compatable </span>
 <span class="sd">           with shape of another array.</span>
+<span class="sd">           </span>
+<span class="sd"> :write_to_excel(): Write a DataFrame to existing an Excel file into specific Sheet.</span>
 
 <span class="sd">===============================================================================</span>
 <span class="sd">&quot;&quot;&quot;</span>
@@ -216,7 +217,7 @@
 <span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">pd</span><span class="p">,</span> <span class="n">odict</span><span class="p">,</span> <span class="n">warnings</span>
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;np2d&#39;</span><span class="p">,</span><span class="s1">&#39;np3d&#39;</span><span class="p">,</span><span class="s1">&#39;np2dT&#39;</span><span class="p">,</span><span class="s1">&#39;np3dT&#39;</span><span class="p">,</span><span class="s1">&#39;put_args_in_db&#39;</span><span class="p">,</span><span class="s1">&#39;vec_to_dict&#39;</span><span class="p">,</span>
            <span class="s1">&#39;getdata&#39;</span><span class="p">,</span><span class="s1">&#39;dictkv&#39;</span><span class="p">,</span><span class="s1">&#39;OD&#39;</span><span class="p">,</span><span class="s1">&#39;meshblock&#39;</span><span class="p">,</span><span class="s1">&#39;asplit&#39;</span><span class="p">,</span><span class="s1">&#39;ajoin&#39;</span><span class="p">,</span>
-           <span class="s1">&#39;broadcast_shape&#39;</span><span class="p">,</span><span class="s1">&#39;todim&#39;</span><span class="p">]</span>
+           <span class="s1">&#39;broadcast_shape&#39;</span><span class="p">,</span><span class="s1">&#39;todim&#39;</span><span class="p">,</span><span class="s1">&#39;write_to_excel&#39;</span><span class="p">]</span>
 
 <span class="c1">#--------------------------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="np2d"><a class="viewcode-back" href="../../../../utils.html#luxpy.utils.helpers.np2d">[docs]</a><span class="k">def</span> <span class="nf">np2d</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
@@ -657,6 +658,81 @@
             <span class="k">return</span> <span class="n">x</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">tshape</span><span class="p">)</span><span class="o">*</span><span class="n">x</span> <span class="c1">#make dims of x equal to those of a (tshape)</span></div>
+        
+<span class="c1">#------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="write_to_excel"><a class="viewcode-back" href="../../../../utils.html#luxpy.utils.helpers.write_to_excel">[docs]</a><span class="k">def</span> <span class="nf">write_to_excel</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s1">&#39;Sheet1&#39;</span><span class="p">,</span> <span class="n">startrow</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                       <span class="n">truncate_sheet</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> 
+                       <span class="o">**</span><span class="n">to_excel_kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Writes a DataFrame to an existing Excel file into a specified sheet.</span>
+<span class="sd">    | If [filename] doesn&#39;t exist, then this function will create it.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      :filename: </span>
+<span class="sd">          | File path or existing ExcelWriter</span>
+<span class="sd">          | (Example: &#39;/path/to/file.xlsx&#39;)</span>
+<span class="sd">      :df: </span>
+<span class="sd">          | dataframe to save to workbook</span>
+<span class="sd">      :sheet_name: </span>
+<span class="sd">          | Name of sheet which will contain DataFrame.</span>
+<span class="sd">          | (default: &#39;Sheet1&#39;)</span>
+<span class="sd">      :startrow: </span>
+<span class="sd">          | upper left cell row to dump data frame.</span>
+<span class="sd">          | Per default (startrow=None) calculate the last row</span>
+<span class="sd">          | in the existing DF and write to the next row...</span>
+<span class="sd">      :truncate_sheet: </span>
+<span class="sd">          | truncate (remove and recreate) [sheet_name]</span>
+<span class="sd">          | before writing DataFrame to Excel file</span>
+<span class="sd">      :to_excel_kwargs: </span>
+<span class="sd">          | arguments which will be passed to `DataFrame.to_excel()`</span>
+<span class="sd">          | [can be dictionary]</span>
+
+<span class="sd">    Returns: None</span>
+<span class="sd">    </span>
+<span class="sd">    Notes:</span>
+<span class="sd">        Copied from https://stackoverflow.com/questions/20219254/how-to-write-to-an-existing-excel-file-without-overwriting-data-using-pandas</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">openpyxl</span> <span class="k">import</span> <span class="n">load_workbook</span>
+
+    <span class="c1"># ignore [engine] parameter if it was passed</span>
+    <span class="k">if</span> <span class="s1">&#39;engine&#39;</span> <span class="ow">in</span> <span class="n">to_excel_kwargs</span><span class="p">:</span>
+        <span class="n">to_excel_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;engine&#39;</span><span class="p">)</span>
+
+    <span class="n">writer</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">ExcelWriter</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="s1">&#39;openpyxl&#39;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># try to open an existing workbook</span>
+        <span class="n">writer</span><span class="o">.</span><span class="n">book</span> <span class="o">=</span> <span class="n">load_workbook</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+
+        <span class="c1"># get the last row in the existing Excel sheet</span>
+        <span class="c1"># if it was not specified explicitly</span>
+        <span class="k">if</span> <span class="n">startrow</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">sheet_name</span> <span class="ow">in</span> <span class="n">writer</span><span class="o">.</span><span class="n">book</span><span class="o">.</span><span class="n">sheetnames</span><span class="p">:</span>
+            <span class="n">startrow</span> <span class="o">=</span> <span class="n">writer</span><span class="o">.</span><span class="n">book</span><span class="p">[</span><span class="n">sheet_name</span><span class="p">]</span><span class="o">.</span><span class="n">max_row</span>
+
+        <span class="c1"># truncate sheet</span>
+        <span class="k">if</span> <span class="n">truncate_sheet</span> <span class="ow">and</span> <span class="n">sheet_name</span> <span class="ow">in</span> <span class="n">writer</span><span class="o">.</span><span class="n">book</span><span class="o">.</span><span class="n">sheetnames</span><span class="p">:</span>
+            <span class="c1"># index of [sheet_name] sheet</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">writer</span><span class="o">.</span><span class="n">book</span><span class="o">.</span><span class="n">sheetnames</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">sheet_name</span><span class="p">)</span>
+            <span class="c1"># remove [sheet_name]</span>
+            <span class="n">writer</span><span class="o">.</span><span class="n">book</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">writer</span><span class="o">.</span><span class="n">book</span><span class="o">.</span><span class="n">worksheets</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+            <span class="c1"># create an empty sheet [sheet_name] using old index</span>
+            <span class="n">writer</span><span class="o">.</span><span class="n">book</span><span class="o">.</span><span class="n">create_sheet</span><span class="p">(</span><span class="n">sheet_name</span><span class="p">,</span> <span class="n">idx</span><span class="p">)</span>
+
+        <span class="c1"># copy existing sheets</span>
+        <span class="n">writer</span><span class="o">.</span><span class="n">sheets</span> <span class="o">=</span> <span class="p">{</span><span class="n">ws</span><span class="o">.</span><span class="n">title</span><span class="p">:</span><span class="n">ws</span> <span class="k">for</span> <span class="n">ws</span> <span class="ow">in</span> <span class="n">writer</span><span class="o">.</span><span class="n">book</span><span class="o">.</span><span class="n">worksheets</span><span class="p">}</span>
+    
+    <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+        <span class="c1"># file does not exist yet, we will create it</span>
+        <span class="k">pass</span>
+
+    <span class="k">if</span> <span class="n">startrow</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">startrow</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1"># write out the new sheet</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">to_excel</span><span class="p">(</span><span class="n">writer</span><span class="p">,</span> <span class="n">sheet_name</span><span class="p">,</span> <span class="n">startrow</span><span class="o">=</span><span class="n">startrow</span><span class="p">,</span> <span class="o">**</span><span class="n">to_excel_kwargs</span><span class="p">)</span>
+
+    <span class="c1"># save the workbook</span>
+    <span class="n">writer</span><span class="o">.</span><span class="n">save</span><span class="p">()</span></div>
 </pre></div>
 
            </div>
@@ -706,16 +782,11 @@
 
   
 
-  
-  
-    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
-  
+  <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
 
   <script type="text/javascript">
       jQuery(function () {
-          
-          SphinxRtdTheme.Navigation.enableSticky();
-          
+          SphinxRtdTheme.Navigation.enable(true);
       });
   </script> 
 

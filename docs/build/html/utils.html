@@ -24,8 +24,7 @@
 
   
 
-  
-    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -894,6 +893,65 @@ or convert between pandas dataframe and numpy 2d-array.</p>
 </tbody>
 </table>
 </dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="luxpy.utils.helpers.write_to_excel">
+<code class="descclassname">luxpy.utils.helpers.</code><code class="descname">write_to_excel</code><span class="sig-paren">(</span><em>filename</em>, <em>df</em>, <em>sheet_name='Sheet1'</em>, <em>startrow=None</em>, <em>truncate_sheet=False</em>, <em>**to_excel_kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/helpers/helpers.html#write_to_excel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.helpers.write_to_excel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes a DataFrame to an existing Excel file into a specified sheet.
+| If [filename] doesn’t exist, then this function will create it.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">filename:</th><td class="field-body"><div class="first last line-block">
+<div class="line">File path or existing ExcelWriter</div>
+<div class="line">(Example: ‘/path/to/file.xlsx’)</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">df:</th><td class="field-body"><div class="first last line-block">
+<div class="line">dataframe to save to workbook</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">sheet_name:</th><td class="field-body"><div class="first last line-block">
+<div class="line">Name of sheet which will contain DataFrame.</div>
+<div class="line">(default: ‘Sheet1’)</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">startrow:</th><td class="field-body"><div class="first last line-block">
+<div class="line">upper left cell row to dump data frame.</div>
+<div class="line">Per default (startrow=None) calculate the last row</div>
+<div class="line">in the existing DF and write to the next row…</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">truncate_sheet:</th><td class="field-body"><div class="first last line-block">
+<div class="line">truncate (remove and recreate) [sheet_name]</div>
+<div class="line">before writing DataFrame to Excel file</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">to_excel_kwargs:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><div class="first last line-block">
+<div class="line">arguments which will be passed to <cite>DataFrame.to_excel()</cite></div>
+<div class="line">[can be dictionary]</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<p>Returns: None</p>
+<dl class="docutils">
+<dt>Notes:</dt>
+<dd>Copied from <a class="reference external" href="https://stackoverflow.com/questions/20219254/how-to-write-to-an-existing-excel-file-without-overwriting-data-using-pandas">https://stackoverflow.com/questions/20219254/how-to-write-to-an-existing-excel-file-without-overwriting-data-using-pandas</a></dd>
 </dl>
 </dd></dl>
 
@@ -1953,16 +2011,11 @@ with final solutions (res[‘x’])</div>
 
   
 
-  
-  
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-  
+  <script type="text/javascript" src="_static/js/theme.js"></script>
 
   <script type="text/javascript">
       jQuery(function () {
-          
-          SphinxRtdTheme.Navigation.enableSticky();
-          
+          SphinxRtdTheme.Navigation.enable(true);
       });
   </script> 
 

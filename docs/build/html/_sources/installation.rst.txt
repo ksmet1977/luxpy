@@ -57,15 +57,20 @@ Use of LuxPy package in Spyder IDE
 Use of LuxPy package in Jupyter notebook
 ----------------------------------------
 	
-	6. Start jupyter notebook:
+	6. Install jupyter in py36 environment:
+		
+		``>> conda install -n py36 jupyter``
+		
+		
+	7. Start jupyter notebook:
 		
 		``>> jupyter notebook``
 			
 			
-	7. Open an existing or new notebook: 
+	8. Open an existing or new notebook: 
 		e.g. open "luxpy_basic_usage.ipynb" for an overview of how to use the LuxPy package.
 		
 			
-	8. To import LuxPy package type:
+	9. To import LuxPy package type:
 	
 		``import luxpy as lx``

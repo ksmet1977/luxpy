@@ -58,7 +58,7 @@ Module with helper functions
  :todim(): Expand x to dimensions that are broadcast-compatable 
            with shape of another array.
            
- :write_to_excel(): | Write a DataFrame to existing an Excel file into specific Sheet.
+ :write_to_excel(): Write a DataFrame to existing an Excel file into specific Sheet.
 
 ===============================================================================
 """
@@ -513,9 +513,8 @@ def write_to_excel(filename, df, sheet_name='Sheet1', startrow=None,
                        truncate_sheet=False, 
                        **to_excel_kwargs):
     """
-    Write a DataFrame [df] to existing Excel file [filename]
-    into [sheet_name] Sheet.
-     | If [filename] doesn't exist, then this function will create it.
+    Writes a DataFrame to an existing Excel file into a specified sheet.
+    | If [filename] doesn't exist, then this function will create it.
 
     Args:
       :filename: 

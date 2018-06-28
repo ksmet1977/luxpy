@@ -24,8 +24,7 @@
 
   
 
-  
-    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -177,24 +176,24 @@ or <a class="reference external" href="https://repo.continuum.io/miniconda/">htt
 </li>
 <li><p class="first">Create a virtual environment with full anaconda distribution by typing the following at the commandline:</p>
 <blockquote>
-<div><p><code class="docutils literal"><span class="pre">&gt;&gt;</span> <span class="pre">conda</span> <span class="pre">create</span> <span class="pre">--name</span> <span class="pre">py36</span> <span class="pre">python=3.6</span> <span class="pre">anaconda</span></code></p>
+<div><p><code class="docutils literal notranslate"><span class="pre">&gt;&gt;</span> <span class="pre">conda</span> <span class="pre">create</span> <span class="pre">--name</span> <span class="pre">py36</span> <span class="pre">python=3.6</span> <span class="pre">anaconda</span></code></p>
 </div></blockquote>
 </li>
 <li><p class="first">Activate the virtual environment:</p>
 <blockquote>
-<div><p><code class="docutils literal"><span class="pre">&gt;&gt;</span> <span class="pre">activate</span> <span class="pre">py36</span></code></p>
+<div><p><code class="docutils literal notranslate"><span class="pre">&gt;&gt;</span> <span class="pre">activate</span> <span class="pre">py36</span></code></p>
 </div></blockquote>
 </li>
 <li><dl class="first docutils">
 <dt>Install pip to virtual environment (just to ensure any packages to be</dt>
 <dd><p class="first">installed with pip to this virt. env. will be installed here and not globally):</p>
-<p class="last"><code class="docutils literal"><span class="pre">&gt;&gt;</span> <span class="pre">conda</span> <span class="pre">install</span> <span class="pre">-n</span> <span class="pre">py36</span> <span class="pre">pip</span></code></p>
+<p class="last"><code class="docutils literal notranslate"><span class="pre">&gt;&gt;</span> <span class="pre">conda</span> <span class="pre">install</span> <span class="pre">-n</span> <span class="pre">py36</span> <span class="pre">pip</span></code></p>
 </dd>
 </dl>
 </li>
 <li><p class="first">Install luxpy package from pypi:</p>
 <blockquote>
-<div><p><code class="docutils literal"><span class="pre">&gt;&gt;</span> <span class="pre">pip</span> <span class="pre">install</span> <span class="pre">luxpy</span></code></p>
+<div><p><code class="docutils literal notranslate"><span class="pre">&gt;&gt;</span> <span class="pre">pip</span> <span class="pre">install</span> <span class="pre">luxpy</span></code></p>
 </div></blockquote>
 </li>
 </ol>
@@ -206,9 +205,9 @@ or <a class="reference external" href="https://repo.continuum.io/miniconda/">htt
 <tr class="field-odd field"><th class="field-name">Note:</th><td class="field-body">If any errors show up, try and do a manual install of the dependencies:
 scipy, numpy, pandas, matplotlib and setuptools,
 either using e.g.
-<code class="docutils literal"><span class="pre">&gt;&gt;</span> <span class="pre">conda</span> <span class="pre">install</span> <span class="pre">scipy</span></code>
+<code class="docutils literal notranslate"><span class="pre">&gt;&gt;</span> <span class="pre">conda</span> <span class="pre">install</span> <span class="pre">scipy</span></code>
 or
-<code class="docutils literal"><span class="pre">&gt;&gt;</span> <span class="pre">pip</span> <span class="pre">install</span> <span class="pre">scipy</span></code>,
+<code class="docutils literal notranslate"><span class="pre">&gt;&gt;</span> <span class="pre">pip</span> <span class="pre">install</span> <span class="pre">scipy</span></code>,
 and try and reinstall luxpy using pip.</td>
 </tr>
 </tbody>
@@ -220,17 +219,17 @@ and try and reinstall luxpy using pip.</td>
 <div><ol class="arabic" start="6">
 <li><p class="first">Install spyder in py36 environment:</p>
 <blockquote>
-<div><p><code class="docutils literal"><span class="pre">&gt;&gt;</span> <span class="pre">conda</span> <span class="pre">install</span> <span class="pre">-n</span> <span class="pre">py36</span> <span class="pre">spyder</span></code></p>
+<div><p><code class="docutils literal notranslate"><span class="pre">&gt;&gt;</span> <span class="pre">conda</span> <span class="pre">install</span> <span class="pre">-n</span> <span class="pre">py36</span> <span class="pre">spyder</span></code></p>
 </div></blockquote>
 </li>
 <li><p class="first">Run spyder</p>
 <blockquote>
-<div><p><code class="docutils literal"><span class="pre">&gt;&gt;</span> <span class="pre">spyder</span></code></p>
+<div><p><code class="docutils literal notranslate"><span class="pre">&gt;&gt;</span> <span class="pre">spyder</span></code></p>
 </div></blockquote>
 </li>
 <li><p class="first">To import the luxpy package, on Spyder’s commandline for the IPython kernel (or in script) type:</p>
 <blockquote>
-<div><p><code class="docutils literal"><span class="pre">import</span> <span class="pre">luxpy</span> <span class="pre">as</span> <span class="pre">lx</span></code></p>
+<div><p><code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">luxpy</span> <span class="pre">as</span> <span class="pre">lx</span></code></p>
 </div></blockquote>
 </li>
 </ol>
@@ -240,9 +239,14 @@ and try and reinstall luxpy using pip.</td>
 <h2>Use of LuxPy package in Jupyter notebook<a class="headerlink" href="#use-of-luxpy-package-in-jupyter-notebook" title="Permalink to this headline">¶</a></h2>
 <blockquote>
 <div><ol class="arabic" start="6">
+<li><p class="first">Install jupyter in py36 environment:</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">&gt;&gt;</span> <span class="pre">conda</span> <span class="pre">install</span> <span class="pre">-n</span> <span class="pre">py36</span> <span class="pre">jupyter</span></code></p>
+</div></blockquote>
+</li>
 <li><p class="first">Start jupyter notebook:</p>
 <blockquote>
-<div><p><code class="docutils literal"><span class="pre">&gt;&gt;</span> <span class="pre">jupyter</span> <span class="pre">notebook</span></code></p>
+<div><p><code class="docutils literal notranslate"><span class="pre">&gt;&gt;</span> <span class="pre">jupyter</span> <span class="pre">notebook</span></code></p>
 </div></blockquote>
 </li>
 <li><dl class="first docutils">
@@ -253,7 +257,7 @@ and try and reinstall luxpy using pip.</td>
 </li>
 <li><p class="first">To import LuxPy package type:</p>
 <blockquote>
-<div><p><code class="docutils literal"><span class="pre">import</span> <span class="pre">luxpy</span> <span class="pre">as</span> <span class="pre">lx</span></code></p>
+<div><p><code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">luxpy</span> <span class="pre">as</span> <span class="pre">lx</span></code></p>
 </div></blockquote>
 </li>
 </ol>
@@ -318,16 +322,11 @@ and try and reinstall luxpy using pip.</td>
 
   
 
-  
-  
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-  
+  <script type="text/javascript" src="_static/js/theme.js"></script>
 
   <script type="text/javascript">
       jQuery(function () {
-          
-          SphinxRtdTheme.Navigation.enableSticky();
-          
+          SphinxRtdTheme.Navigation.enable(true);
       });
   </script> 
 

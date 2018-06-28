@@ -24,8 +24,7 @@
 
   
 
-  
-    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -211,7 +210,7 @@
 
 <span class="sd">    The Dirichlet function is defined as::</span>
 
-<span class="sd">        diric(x) = sin(x * n/2) / (n * sin(x / 2)),</span>
+<span class="sd">        diric(x, n) = sin(x * n/2) / (n * sin(x / 2)),</span>
 
 <span class="sd">    where `n` is a positive integer.</span>
 
@@ -675,7 +674,9 @@
 
 <span class="sd">    &gt;&gt;&gt; from scipy.special import kvp</span>
 <span class="sd">    &gt;&gt;&gt; kvp(5, (1, 2, 3+5j))</span>
-<span class="sd">    array([-1849.0354+0.j    ,   -25.7735+0.j    ,    -0.0307+0.0875j])</span>
+<span class="sd">    array([-1.84903536e+03+0.j        , -2.57735387e+01+0.j        ,</span>
+<span class="sd">           -3.06627741e-02+0.08750845j])</span>
+
 
 <span class="sd">    Calculate for a single value at multiple orders:</span>
 
@@ -988,6 +989,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">orthogonal</span><span class="o">.</span><span class="n">eval_genlaguerre</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+
 
 <span class="n">digamma</span> <span class="o">=</span> <span class="n">psi</span>
 
@@ -1371,13 +1373,44 @@
 
 
 <span class="k">def</span> <span class="nf">euler</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Euler numbers E0..En (inclusive).</span>
+    <span class="sd">&quot;&quot;&quot;Euler numbers E(0), E(1), ..., E(n).</span>
+
+<span class="sd">    The Euler numbers [1]_ are also known as the secant numbers.</span>
+
+<span class="sd">    Because ``euler(n)`` returns floating point values, it does not give</span>
+<span class="sd">    exact values for large `n`.  The first inexact value is E(22).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    n : int</span>
+<span class="sd">        The highest index of the Euler number to be returned.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ndarray</span>
+<span class="sd">        The Euler numbers [E(0), E(1), ..., E(n)].</span>
+<span class="sd">        The odd Euler numbers, which are all zero, are included.</span>
 
 <span class="sd">    References</span>
 <span class="sd">    ----------</span>
-<span class="sd">    .. [1] Zhang, Shanjie and Jin, Jianming. &quot;Computation of Special</span>
+<span class="sd">    .. [1] Sequence A122045, The On-Line Encyclopedia of Integer Sequences,</span>
+<span class="sd">           https://oeis.org/A122045</span>
+<span class="sd">    .. [2] Zhang, Shanjie and Jin, Jianming. &quot;Computation of Special</span>
 <span class="sd">           Functions&quot;, John Wiley and Sons, 1996.</span>
 <span class="sd">           https://people.sc.fsu.edu/~jburkardt/f_src/special_functions/special_functions.html</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from scipy.special import euler</span>
+<span class="sd">    &gt;&gt;&gt; euler(6)</span>
+<span class="sd">    array([  1.,   0.,  -1.,   0.,   5.,   0., -61.])</span>
+
+<span class="sd">    &gt;&gt;&gt; euler(13).astype(np.int64)</span>
+<span class="sd">    array([      1,       0,      -1,       0,       5,       0,     -61,</span>
+<span class="sd">                 0,    1385,       0,  -50521,       0, 2702765,       0])</span>
+
+<span class="sd">    &gt;&gt;&gt; euler(22)[-1]  # Exact value of E(22) is -69348874393137901.</span>
+<span class="sd">    -69348874393137976.0</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">isscalar</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">n</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">):</span>
@@ -2257,6 +2290,11 @@
 <span class="sd">    out : ndarray, optional</span>
 <span class="sd">        Output array for the computed values.</span>
 
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    out : array_like</span>
+<span class="sd">        Values of zeta(x).</span>
+
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
 <span class="sd">    The two-argument version is the Hurwitz zeta function:</span>
@@ -2265,9 +2303,30 @@
 
 <span class="sd">    Riemann zeta function corresponds to ``q = 1``.</span>
 
-<span class="sd">    See also</span>
+<span class="sd">    See Also</span>
 <span class="sd">    --------</span>
 <span class="sd">    zetac</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from scipy.special import zeta, polygamma, factorial</span>
+
+<span class="sd">    Some specific values:</span>
+
+<span class="sd">    &gt;&gt;&gt; zeta(2), np.pi**2/6</span>
+<span class="sd">    (1.6449340668482266, 1.6449340668482264)</span>
+
+<span class="sd">    &gt;&gt;&gt; zeta(4), np.pi**4/90</span>
+<span class="sd">    (1.0823232337111381, 1.082323233711138)</span>
+
+<span class="sd">    Relation to the `polygamma` function:</span>
+
+<span class="sd">    &gt;&gt;&gt; m = 3</span>
+<span class="sd">    &gt;&gt;&gt; x = 1.25</span>
+<span class="sd">    &gt;&gt;&gt; polygamma(m, x)</span>
+<span class="sd">    array(2.782144009188397)</span>
+<span class="sd">    &gt;&gt;&gt; (-1)**(m+1) * factorial(m) * zeta(m+1, x)</span>
+<span class="sd">    2.7821440091883969</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">q</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -2322,16 +2381,11 @@
 
   
 
-  
-  
-    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
-  
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
   <script type="text/javascript">
       jQuery(function () {
-          
-          SphinxRtdTheme.Navigation.enableSticky();
-          
+          SphinxRtdTheme.Navigation.enable(true);
       });
   </script> 
 
