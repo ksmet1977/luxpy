@@ -204,6 +204,8 @@ def spd_normalize(data, norm_type = None, norm_f = 1, wl = True, cieobs = _CIEOB
             |       - 'max': max-normalization times norm_f
             |       - 'ru': to :norm_f: radiometric units 
             |       - 'pu': to :norm_f: photometric units 
+            |       - 'pusa': to :norm_f: photometric units (with Km corrected
+            |                             to standard air, cfr. CIE TN003-2015)
             |       - 'qu': to :norm_f: quantal energy units
         :norm_f:
             | 1, optional
@@ -237,7 +239,7 @@ def spd_normalize(data, norm_type = None, norm_f = 1, wl = True, cieobs = _CIEOB
             wl = True # for 'qu' (quantal) normalization wl MUST be first column
             wlr = data[0]
             
-        if (('area' in norm_type) | ('ru' in norm_type) | ('pu' in norm_type)) & (wl == True):
+        if (('area' in norm_type) | ('ru' in norm_type) | ('pu' in norm_type) | ('pusa' in norm_type)) & (wl == True):
             dl = getwld(data[0])
         else:
             dl = 1 #no wavelengths provided
@@ -267,7 +269,7 @@ def spd_normalize(data, norm_type = None, norm_f = 1, wl = True, cieobs = _CIEOB
                 #wl_index = np.where((np.abs(wlr-norm_f_)==np.min(np.abs(wlr-norm_f_))))[0]
                 wl_index = np.abs(wlr-norm_f_).argmin()
                 data[i+offset]=data[i+offset]/data[i+offset][wl_index]
-            elif (norm_type_ == 'ru') | (norm_type_ == 'pu') | (norm_type_ == 'qu'):
+            elif (norm_type_ == 'ru') | (norm_type_ == 'pu') | (norm_type == 'pusa') | (norm_type_ == 'qu'):
                 rpq_power = spd_to_power(data[[0,i+offset],:], cieobs = cieobs, ptype = norm_type_)
                 data[i+offset] = (norm_f/rpq_power)*data[i+offset]
             else:
@@ -392,6 +394,8 @@ def spd(data = None, interpolation = None, kind = 'np', wl = None,\
             |       - 'max': max-normalization times norm_f
             |       - 'ru': to :norm_f: radiometric units 
             |       - 'pu': to :norm_f: photometric units 
+            |       - 'pusa': to :norm_f: photometric units (with Km corrected
+            |                             to standard air, cfr. CIE TN003-2015)
             |       - 'qu': to :norm_f: quantal energy units
         :norm_f:
             | 1, optional
@@ -465,6 +469,8 @@ def xyzbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, norm_type = None, norm
             |       - 'max': max-normalization times norm_f
             |       - 'ru': to :norm_f: radiometric units 
             |       - 'pu': to :norm_f: photometric units 
+            |       - 'pusa': to :norm_f: photometric units (with Km corrected
+            |                             to standard air, cfr. CIE TN003-2015)
             |       - 'qu': to :norm_f: quantal energy units
         :norm_f:
             | 1, optional
@@ -520,6 +526,8 @@ def vlbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, norm_type = None, norm_
             |       - 'max': max-normalization times norm_f
             |       - 'ru': to :norm_f: radiometric units 
             |       - 'pu': to :norm_f: photometric units 
+            |       - 'pusa': to :norm_f: photometric units (with Km corrected
+            |                             to standard air, cfr. CIE TN003-2015)
             |       - 'qu': to :norm_f: quantal energy units
         :norm_f:
             | 1, optional
@@ -806,6 +814,8 @@ def blackbody(cct, wl3 = None, norm_type = None, norm_f = None):
             |       - 'max': max-normalization times norm_f
             |       - 'ru': to :norm_f: radiometric units 
             |       - 'pu': to :norm_f: photometric units 
+            |       - 'pusa': to :norm_f: photometric units (with Km corrected
+            |                             to standard air, cfr. CIE TN003-2015)
             |       - 'qu': to :norm_f: quantal energy units
         :norm_f:
             | 1, optional
@@ -885,6 +895,8 @@ def daylightphase(cct, wl3 = None, norm_type = None, norm_f = None, force_daylig
             |       - 'max': max-normalization times norm_f
             |       - 'ru': to :norm_f: radiometric units 
             |       - 'pu': to :norm_f: photometric units 
+            |       - 'pusa': to :norm_f: photometric units (with Km corrected
+            |                             to standard air, cfr. CIE TN003-2015)
             |       - 'qu': to :norm_f: quantal energy units
         :norm_f:
             | 1, optional
@@ -982,6 +994,8 @@ def cri_ref(ccts, wl3 = None, ref_type = _CRI_REF_TYPE, mix_range = None, cieobs
             |       - 'max': max-normalization times norm_f
             |       - 'ru': to :norm_f: radiometric units 
             |       - 'pu': to :norm_f: photometric units 
+            |       - 'pusa': to :norm_f: photometric units (with Km corrected
+            |                             to standard air, cfr. CIE TN003-2015)
             |       - 'qu': to :norm_f: quantal energy units
         :norm_f:
             | 1, optional

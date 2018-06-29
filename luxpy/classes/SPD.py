@@ -310,6 +310,8 @@ class SPD:
                 |   - 'max': max-normalization times norm_f
                 |   - 'ru': to :norm_f: radiometric units 
                 |   - 'pu': to :norm_f: photometric units 
+                |   - 'pusa': to :norm_f: photometric units (with Km corrected
+                |                         to standard air, cfr. CIE TN003-2015)
                 |   - 'qu': to :norm_f: quantal energy units
             :norm_f: 
                 | 1, optional

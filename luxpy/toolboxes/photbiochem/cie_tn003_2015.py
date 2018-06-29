@@ -127,6 +127,7 @@ def spd_to_aopicE(sid, Ee = None, E = None, Q = None, cieobs = _CIEOBS, sid_unit
         :E: 
             | None, optional
             | If not None: normalize :sid: to an illuminance of :E:
+            | Note that E is calculate using a Km factor corrected to standard air.
         :Q: 
             | None, optional
             | If not None: nNormalize :sid: to a quantal energy of :Q:
@@ -164,7 +165,7 @@ def spd_to_aopicE(sid, Ee = None, E = None, Q = None, cieobs = _CIEOBS, sid_unit
     if Ee is not None:
         sid = spd_normalize(sid, norm_type = 'ru', norm_f = Ee)  
     elif E is not None:
-        sid = spd_normalize(sid, norm_type = 'pu', norm_f = E) 
+        sid = spd_normalize(sid, norm_type = 'pusa', norm_f = E) 
     elif Q is not None:
         sid = spd_normalize(sid, norm_type = 'qu', norm_f = Q) 
     
