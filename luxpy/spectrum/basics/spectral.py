@@ -735,6 +735,8 @@ def spd_to_power(data, ptype = 'ru', cieobs = _CIEOBS):
             | 'ru' or str, optional
             | str: - 'ru': in radiometric units 
             |      - 'pu': in photometric units 
+            |      - 'pusa': in photometric units with Km corrected 
+            |                to standard air (cfr. CIE TN003-2015)
             |      - 'qu': in quantal energy units
         :cieobs: 
             | _CIEOBS or str, optional
@@ -750,7 +752,7 @@ def spd_to_power(data, ptype = 'ru', cieobs = _CIEOBS):
     if ptype == 'ru': #normalize to radiometric units
         p = np2d(np.dot(data[1:],dl*np.ones(data.shape[1]))).T
 
-    elif ptype == 'pu': # normalize in photometric units
+    elif ptype == 'pusa': # normalize in photometric units with correction of Km to standard air
     
         # Calculate correction factor for Km in standard air:
         na = _BB['na'] # n for standard air
@@ -762,6 +764,14 @@ def spd_to_power(data, ptype = 'ru', cieobs = _CIEOBS):
         Vl, Km = vlbar(cieobs = cieobs, wl_new = data[0], out = 2)
         Km = Km*Km_correction_factor
         p = Km*np2d(np.dot(data[1:],dl*Vl[1])).T
+        
+    elif ptype == 'pu': # normalize in photometric units
+    
+        # Get Vlambda and Km (for E):
+        Vl, Km = vlbar(cieobs = cieobs, wl_new = data[0], out = 2)
+        Km = Km*Km_correction_factor
+        p = Km*np2d(np.dot(data[1:],dl*Vl[1])).T
+
     
     elif ptype == 'qu': # normalize to quantual units
 

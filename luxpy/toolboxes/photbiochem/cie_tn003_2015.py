@@ -175,7 +175,7 @@ def spd_to_aopicE(sid, Ee = None, E = None, Q = None, cieobs = _CIEOBS, sid_unit
     
     # Get sid illuminance (lx):
     if 'E' in outlist:
-        E = spd_to_power(sid, cieobs = cieobs, ptype = 'pu')
+        E = spd_to_power(sid, cieobs = cieobs, ptype = 'pusa') #photometric units (Km corrected to standard air)
     
     # Get sid quantal energy (photons/m²/s):
     if 'Q' in outlist:
