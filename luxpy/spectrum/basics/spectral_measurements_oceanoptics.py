@@ -733,31 +733,36 @@ def plot_spd(ax, spd, int_time, sum_cnts = 0, max_cnts = 0):
 #------------------------------------------------------------------------------
 # Code testing
 if __name__ == '__main__':
-    verbosity = 2
+    verbosity = 2 # 2: show text and graph output
     
-    time.sleep(1) 
+    time.sleep(1) # ensure seabreeze has time to be fully imported.
+    
+    # Initialize spectrometer:
     spec = None
     if ('spec' in locals()) | (spec is None): 
         spec, device = initOOdev(devnr = 0, verbosity = verbosity)
     
-        
-    case = 'dark'
+    # Set type of measurement    
+    case = 'dark' # other options: 'single','cont','list','dark'
     
     if case == 'single': # single measurement
+        int_time = 3 # set integration time in secs.
         
-        int_time = 3
+        # Measure spectrum in cnts/s and correct for dark (when finished auto close spectrometer):
         spd = getOOspd(spec, int_time_sec = int_time, spdtype = 'cnts/s',dark_cnts='dark_model.dat', verbosity = verbosity)
-        #spec.close() 
         
+        # Make a plot of the measured spectrum:
         fig = plt.figure()
         ax  = fig.add_subplot(1, 1, 1)
         plot_spd(ax,spd,int_time, sum_cnts = spd[1].sum(),max_cnts = spd[1].max())
         
     elif case == 'cont': # continuous measurement
-
+        
+        # Create figure and axes for graphic results:
         fig = plt.figure()
         ax  = fig.add_subplot(1, 1, 1)
         
+        # Start continuous loop and stop using ctrl-c (keyboard interrupt)
         try:
             while True:
                 spd = getOOspd(spec,int_time_sec = int_time, verbosity = verbosity, auto_close = False)
@@ -770,19 +775,27 @@ if __name__ == '__main__':
     elif case == 'list': # measure list of integration times
         int_times = np.array([3.2,0.8,1.6,3.2,1.6,0.2,0.2,0.2])/20 # illustrate need for two consecutive measurements to get correct spd (see _getOOcounts())
         int_times = np.array([0.1,0.2,0.3,0.4,0.5])/1 # quick example
+        
+        # Initialize empty arrays:
         sum_cnts = np.empty(int_times.shape)
         max_cnts = np.empty(int_times.shape)
+        
+        # Start measurement of list of integration times:
         for i,int_time in enumerate(int_times):
             
+            # Measure spectrum and store sum and max:
             spd = getOOspd(spec,int_time_sec = int_time, spdtype='cnts', verbosity = verbosity, auto_close = False)
             sum_cnts[i] = spd[1].sum()
             max_cnts[i] = spd[1].mean()
             
+            # Plot spectrum:
             fig = plt.figure()
             ax  = fig.add_subplot(1, 1, 1)
             plot_spd(ax,spd,int_time, sum_cnts = sum_cnts[i],max_cnts = max_cnts[i])
             
         spec.close() # manually close spectrometer
+        
+        # Plot sum and max versus integration times:
         fig2 = plt.figure()
         ax1  = fig2.add_subplot(1, 3, 1)
         ax1.plot(int_times,sum_cnts,'ro-')
@@ -793,7 +806,6 @@ if __name__ == '__main__':
 
     elif case == 'dark': # create dark_model for dark light/current and readout noise correction
         dark_model = create_dark_model(spec, dark_model_int_times = _DARK_MODEL_INT_TIMES, savgol_window = _SAVGOL_WINDOW, correct_dark_counts = _CORRECT_DARK_COUNTS, correct_nonlinearity = _CORRECT_NONLINEARITY, verbosity = verbosity)
-        #spec.close()
         
         # write dark model to file
         pd.DataFrame(dark_model).to_csv('dark_model.dat', index=False, header=False, float_format='%1.4f')
