@@ -542,10 +542,10 @@ def _find_opt_int_time(spec, int_time_sec, \
             ax_opt1 = fig_opt.add_subplot(1,1,1)
             ax_opt1.set_xlabel('Integration time (s)')
             ax_opt1.set_ylabel('Maximum counts')
-            
+        extra_increase_factor_for_low_light_levels = 1    
         while (target_cnts_bool(cnts) & target_it_bool(it)) & (not is_sat_bool(cnts)):
             if (len(max_cnts) < (max_number_of_ratio_increases)):
-                it = it * _IT_RATIO_INCREASE
+                it = it * _IT_RATIO_INCREASE * extra_increase_factor_for_low_light_levels
             else:
                 p_max_cnts_vs_its = np.polyfit(max_cnts[-(max_number_of_ratio_increases-1):],its[-(max_number_of_ratio_increases-1):],1) # try and predict a value close to target cnts
                 it = np.polyval(p_max_cnts_vs_its, max_value*_TARGET_MAX_CNTS_RATIO)
@@ -564,12 +564,16 @@ def _find_opt_int_time(spec, int_time_sec, \
                 its.append(it) # keep track of integration times
                 max_cnts.append(cnts.max())  # keep track of max counts
                 counter = 0
+                extra_increase_factor_for_low_light_levels = 1
             elif (len(max_cnts) > max_number_of_ratio_increases):
                 counter += 1 # if max keeps the same, get out of loop
                 if counter > 3:
                     if verbosity > 0:
                         print('Break while loop using counter.')
                     break
+            else:
+                extra_increase_factor_for_low_light_levels = extra_increase_factor_for_low_light_levels * 1.5
+                print(extra_increase_factor_for_low_light_levels)
 
 #            if verbosity > 0:
 #                print('     List of integration times (s):')
@@ -584,12 +588,12 @@ def _find_opt_int_time(spec, int_time_sec, \
                 plt.pause(0.1)
             
             # When current fitted int_time or max. cnts differ by less than 10%
-            # from previous, break while loop (i.e. sacrifice small gain for
-            # increased efficiency).
+            # from previous or when int_time == max_int_time, break while loop 
+            # (i.e. sacrifice small gain for increased efficiency):
             if (len(max_cnts) > max_number_of_ratio_increases):
-                if ((np.abs(1.0*cnts.max() - max_cnts[-2])/max_cnts[-2]) < 0.1) | ((np.abs(1.0*it - its[-2])/its[-2]) < 0.1): # if max counts changes by less than 1%: break loop
+                if ((np.abs(1.0*cnts.max() - max_cnts[-2])/max_cnts[-2]) < 0.1) | ((np.abs(1.0*it - its[-2])/its[-2]) < 0.1) | (it ==  max_int_time): # if max counts changes by less than 1%: break loop
                     if verbosity > 0:
-                        print('Break while loop using 10% diff between last two max. or int_time values.')
+                        print('Break while loop: less than 10% diff between last two max. or int_time values, or int_time == max_int_time.')
                     break
 
             
