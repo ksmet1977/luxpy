@@ -42,6 +42,7 @@ Default parameters:
  :_CORRECT_NONLINEARITY: bool, automatic non-linearity correction
  :_TARGET_MAX_CNTS_RATIO: float, aim for e.g. 80% (0.8) of max number of counts
  :_IT_RATIO_INCREASE: float, first stage of int_time optimization: increase int_time by this fraction
+ :_MAX_NUMBER_OF_RATIO_INCREASES: int, number of times to apply ration increase before estimating using lin. regr.
  :_DARK_MODEL_INT_TIMES: ndarray, e.g. np.linspace(1e-6, 7.5, 5): array with integration times for dark model
  :_SAVGOL_WINDOW: window for smoothing of dark measurements
  :_SAVGOL_ORDER: order of savgol filter
@@ -94,7 +95,8 @@ _INT_TIME_SEC = 0.5 # default integration time
 _CORRECT_DARK_COUNTS = False # automatic dark count correction supported by some spectrometers
 _CORRECT_NONLINEARITY = False # automatic non-linearity correction
 _TARGET_MAX_CNTS_RATIO = 0.8 # aim for 80% of max number of counts
-_IT_RATIO_INCREASE = 1.1 # first stage: increase int_time by this fraction
+_IT_RATIO_INCREASE = 1.2 # first stage: increase int_time by this fraction
+_MAX_NUMBER_OF_RATIO_INCREASES = 4 # number of times to apply ration increase before estimating using lin. regr.
 _DARK_MODEL_INT_TIMES = np.linspace(1e-6, 7.5, 5) # array with integration times for dark model
 _SAVGOL_WINDOW = 1/20.0 # window for smoothing of dark measurements
 _SAVGOL_ORDER = 3 # order of savgol filter
@@ -523,7 +525,8 @@ def _find_opt_int_time(spec, int_time_sec, \
     
     # Determine integration time for optimum counts:
     getcnts = lambda it: _getOOcounts(spec, it, correct_dark_counts = False, correct_nonlinearity = correct_nonlinearity)
-    is_sat_bool = lambda cnts: (cnts.max() > max_value) # check for saturation
+    is_sat_bool = lambda cnts: (cnts.max() >= max_value) # check for saturation
+    counter = 0
     if max_int_time is not None:
         target_cnts_bool = lambda cnts: (cnts.max() < (max_value*_TARGET_MAX_CNTS_RATIO)) # check for max_counts
         target_it_bool = lambda it: (it <= max_int_time) # check for max_int_time
@@ -532,21 +535,63 @@ def _find_opt_int_time(spec, int_time_sec, \
         cnts = getcnts(it) # get cnts
         its = [it] # store int_time in array
         max_cnts = [cnts.max()] # store max_cnts in array
-        max_number_of_ratio_increases = 3
+        max_number_of_ratio_increases = _MAX_NUMBER_OF_RATIO_INCREASES
+        
+        if verbosity > 1:
+            fig_opt = plt.figure('Integration time optimization')
+            ax_opt1 = fig_opt.add_subplot(1,1,1)
+            ax_opt1.set_xlabel('Integration time (s)')
+            ax_opt1.set_ylabel('Maximum counts')
+            
         while (target_cnts_bool(cnts) & target_it_bool(it)) & (not is_sat_bool(cnts)):
-            if len(max_cnts < max_number_of_ratio_increases):
+            if (len(max_cnts) < (max_number_of_ratio_increases)):
                 it = it * _IT_RATIO_INCREASE
             else:
-                p_max_cnts_vs_its = np.polyfit(max_cnts[-max_number_of_ratio_increases:],its[-max_number_of_ratio_increases:]) # try and predict a value close to target cnts
+                p_max_cnts_vs_its = np.polyfit(max_cnts[-(max_number_of_ratio_increases-1):],its[-(max_number_of_ratio_increases-1):],1) # try and predict a value close to target cnts
                 it = np.polyval(p_max_cnts_vs_its, max_value*_TARGET_MAX_CNTS_RATIO)
                 if not target_it_bool(it):
                     it = max_int_time
             if verbosity > 0:
-                print("Integration time optimization: measuring ... {:1.2f}s".format(it))
-            its.append(it) # keep track of integration times
-            cnts = getcnts(it)
+                print("Integration time optimization: measuring ... {:1.5f}s".format(it))
             
-            max_cnts.append(cnts.max())  # keep track of max counts
+            # get counts:
+            cnts = getcnts(it)
+
+            
+            # Ensure only increasing it-vs-max, 
+            # if not: sign of unstable measurement due to to short integration time
+            if (cnts.max() > max_cnts[-1]):
+                its.append(it) # keep track of integration times
+                max_cnts.append(cnts.max())  # keep track of max counts
+                counter = 0
+            elif (len(max_cnts) > max_number_of_ratio_increases):
+                counter += 1 # if max keeps the same, get out of loop
+                if counter > 3:
+                    if verbosity > 0:
+                        print('Break while loop using counter.')
+                    break
+
+#            if verbosity > 0:
+#                print('     List of integration times (s):')
+#                print(its)
+#                print('     List of max. counts:')
+#                print(max_cnts)
+#                print('\n')
+
+            if verbosity > 1:
+                ax_opt1.plot(its[-1],max_cnts[-1],'o')
+                plt.show()
+                plt.pause(0.1)
+            
+            # When current fitted int_time or max. cnts differ by less than 10%
+            # from previous, break while loop (i.e. sacrifice small gain for
+            # increased efficiency).
+            if (len(max_cnts) > max_number_of_ratio_increases):
+                if ((np.abs(1.0*cnts.max() - max_cnts[-2])/max_cnts[-2]) < 0.1) | ((np.abs(1.0*it - its[-2])/its[-2]) < 0.1): # if max counts changes by less than 1%: break loop
+                    if verbosity > 0:
+                        print('Break while loop using 10% diff between last two max. or int_time values.')
+                    break
+
             
         while is_sat_bool(cnts): # if saturated, start reducing int_time again
             it = it / _IT_RATIO_INCREASE
@@ -557,6 +602,11 @@ def _find_opt_int_time(spec, int_time_sec, \
             
             max_cnts.append(cnts.max())  # keep track of max counts
             
+            if verbosity > 1:
+                ax_opt1.plot(its[-1],max_cnts[-1],'s')
+                plt.show()
+                plt.pause(0.1)
+                
         int_time_sec = it
    
     else:
@@ -746,13 +796,13 @@ if __name__ == '__main__':
         spec, device = initOOdev(devnr = 0, verbosity = verbosity)
     
     # Set type of measurement    
-    case = 'dark' # other options: 'single','cont','list','dark'
+    case = 'single' # other options: 'single','cont','list','dark'
     
     if case == 'single': # single measurement
-        int_time = 3 # set integration time in secs.
+        int_time = -3 # set integration time in secs.
         
         # Measure spectrum in cnts/s and correct for dark (when finished auto close spectrometer):
-        spd = getOOspd(spec, int_time_sec = int_time, spdtype = 'cnts/s',dark_cnts='dark_model.dat', verbosity = verbosity)
+        spd = getOOspd(spec, int_time_sec = int_time, spdtype = 'cnts',dark_cnts='dark_model.dat', verbosity = verbosity)
         
         # Make a plot of the measured spectrum:
         fig = plt.figure()
