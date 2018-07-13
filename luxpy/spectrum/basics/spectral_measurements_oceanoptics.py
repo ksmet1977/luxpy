@@ -98,7 +98,7 @@ _IT_RATIO_INCREASE = 1.1 # first stage: increase int_time by this fraction
 _DARK_MODEL_INT_TIMES = np.linspace(1e-6, 7.5, 5) # array with integration times for dark model
 _SAVGOL_WINDOW = 1/20.0 # window for smoothing of dark measurements
 _SAVGOL_ORDER = 3 # order of savgol filter
-_VERBOSITY = 0 # verbosity (0: nothing, 1: text, 2: text + graphs)
+_VERBOSITY = 1 # verbosity (0: nothing, 1: text, 2: text + graphs)
 
 def initOOdev(devnr = 0, verbosity = _VERBOSITY):
     """
@@ -272,6 +272,9 @@ def create_dark_model(spec, dark_model_int_times = _DARK_MODEL_INT_TIMES, \
             ax2.set_ylabel('Counts')
             ax2.set_title('Dark Measurements (smoothed)')
             ax2.plot(spec.wavelengths(), dark_cnts_s,'.')
+            plt.show()
+            plt.pause(0.1)
+            
 
         
         if i == 0:
