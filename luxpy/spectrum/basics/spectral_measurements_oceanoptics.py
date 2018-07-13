@@ -20,6 +20,7 @@ Module for spectral measurements using OceanOptics spectrometers
 ==================================================================
 
 Installation:
+-------------
     1. Download and install the seabreeze installer from sourceforge:
     https://sourceforge.net/projects/seabreeze/files/SeaBreeze/installers/
     2. Windows: Force the spectrometer to use a libusb driver via Zadig 
@@ -27,14 +28,49 @@ Installation:
     3. Install pyusb ("import usb.core", "usb.core.find()" should work before proceeding)
     4. Ready to go!
     
+Functions:
+----------
+ :initOOdev(): initialize spectrometer
+ :getOOspd(): measure spectrum
+ :create_dark_model(): create a model for dark counts
+ :estimate_dark_from_model(): estimate dark counts for specified integration time based on model
+ 
+Default parameters:
+-------------------
+ :_INT_TIME_SEC: int, default integration time
+ :_CORRECT_DARK_COUNTS: bool, automatic dark count correction supported by some spectrometers
+ :_CORRECT_NONLINEARITY: bool, automatic non-linearity correction
+ :_TARGET_MAX_CNTS_RATIO: float, aim for e.g. 80% (0.8) of max number of counts
+ :_IT_RATIO_INCREASE: float, first stage of int_time optimization: increase int_time by this fraction
+ :_DARK_MODEL_INT_TIMES: ndarray, e.g. np.linspace(1e-6, 7.5, 5): array with integration times for dark model
+ :_SAVGOL_WINDOW: window for smoothing of dark measurements
+ :_SAVGOL_ORDER: order of savgol filter
+ :_VERBOSITY: (0: nothing, 1: text, 2: text + graphs)
     
-Note:
- 1. Changed read_eeprom_slot() in eeprom.py in pyseabreeze because the 
- ubs output used ',' as decimal separator instead of '.' (probably because
- of french keyboard, despite having system set to use '.' as separator):  
- line 20 in eeprom.py: "return data.rstrip('\x00')" was changed to
- "return data.rstrip('\x00').replace(',','.')"
- 2. More info on: https://github.com/ap--/python-seabreeze
+Notes:
+------
+     1. Changed read_eeprom_slot() in eeprom.py in pyseabreeze because the 
+     ubs output used ',' as decimal separator instead of '.' (probably because
+     of french keyboard, despite having system set to use '.' as separator):  
+     line 20 in eeprom.py: "return data.rstrip('\x00')" was changed to
+     "return data.rstrip('\x00').replace(',','.')"
+     2. More info on: https://github.com/ap--/python-seabreeze
+ 
+    3. Due to crappy ocean optics firmware/drivers, most spectrometers do
+    not support an abort mode of the standard 'free running mode', which 
+    causes spectra to be continuously stored in a FIFO array. This 
+    first-in-first-causes a totally illogicaly and very unpractical behavior
+    of the spectrometer, such that, to ensure one gets a spectrum 
+    corresponding to the latest set integration time, one is forced to call
+    the spec.intensities function twice! This means a simple measurements
+    now takes twice as long, resulting in  sub-optimal efficiency. 
+    4. Hopefully, at Ocean Optics, they will finally listen to their customers
+    and implement a simple, logical operation of their devices: one that just
+    reads a spectrum at the desired integration time the momemt the function
+    is called and which puts the spectrometer in idle mode when no spectrum
+    is requested.
+    
+    
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
@@ -54,23 +90,45 @@ import seabreeze.spectrometers as sb
 __all__ = ['initOOdev','getOOspd','create_dark_model','estimate_dark_from_model','plot_spd']
 
 # Init default parameters
-_INT_TIME_SEC = 0.5
-_CORRECT_DARK_COUNTS = False
-_CORRECT_NONLINEARITY = False
+_INT_TIME_SEC = 0.5 # default integration time
+_CORRECT_DARK_COUNTS = False # automatic dark count correction supported by some spectrometers
+_CORRECT_NONLINEARITY = False # automatic non-linearity correction
 _TARGET_MAX_CNTS_RATIO = 0.8 # aim for 80% of max number of counts
 _IT_RATIO_INCREASE = 1.1 # first stage: increase int_time by this fraction
 _DARK_MODEL_INT_TIMES = np.linspace(1e-6, 7.5, 5) # array with integration times for dark model
 _SAVGOL_WINDOW = 1/20.0 # window for smoothing of dark measurements
 _SAVGOL_ORDER = 3 # order of savgol filter
+_VERBOSITY = 0 # verbosity (0: nothing, 1: text, 2: text + graphs)
 
-
-def initOOdev(devnr = 0):
+def initOOdev(devnr = 0, verbosity = _VERBOSITY):
+    """
+    Initialize Ocean Optics spectrometer.
+    
+    Args:
+        :devnr: 
+            | 0 or int, optional
+            | Number of the device to initialize. Default = 0 (first ocean
+            | optics spectrometer of all available)
+        :verbosity:
+            | int, optional
+            |   0: now intermediate output
+            |   1: only text output (print)
+            |   2: text + graphical output (print + pyplot)
+            
+    Returns:
+        :spec: 
+            | handle/struct to initialized spectrometer.
+        :devices: 
+            | handle to ocean optics device.
+    """
     # Get list of connected OO devices:
     devices = []
     while devices == []:
         devices = sb.list_devices()
         time.sleep(0.5)
-    print(devices)
+    if verbosity > 0:
+        print("List of Ocean Optics devices:")
+        print(devices)
     time.sleep(1)
     
     # Initialize device:
@@ -83,16 +141,104 @@ def initOOdev(devnr = 0):
 
     return spec, devices[devnr]
 
-def _getOOcounts(spec, int_time_sec = _INT_TIME_SEC, correct_dark_counts = _CORRECT_DARK_COUNTS, correct_nonlinearity = _CORRECT_NONLINEARITY):
+def _getOOcounts(spec, int_time_sec = _INT_TIME_SEC, \
+                 correct_dark_counts = _CORRECT_DARK_COUNTS, \
+                 correct_nonlinearity = _CORRECT_NONLINEARITY):
+    """
+    Get a measurement in counts for the specified integration time.
+    
+    Args:
+        :spec: 
+            | spectrometer handle
+        :int_time_sec: 
+            | _INT_TIME_SEC, optional
+            | Integration time in seconds.
+        :correct_dark_counts: 
+            | _CORRECT_DARK_COUNTS or boolean, optional
+            | True: Automatic (if supported) dark counts subtraction using 'covered'
+            | pixels on the spectrometer device.
+        :correct_nonlinearity:
+            | _CORRECT_NONLINEARITY or boolean, optional
+            | True: Automatic non-linearity correction.
+    
+    Returns:
+        :cnts:
+            | ndarray of counts per pixel column (wavelength).
+            
+    Notes:
+        1. Due to crappy ocean optics firmware/drivers, most spectrometers do
+        not support an abort mode of the standard 'free running mode', which 
+        causes spectra to be continuously stored in a FIFO array. This 
+        first-in-first-causes a totally illogicaly and very unpractical behavior
+        of the spectrometer, such that, to ensure one gets a spectrum 
+        corresponding to the latest set integration time, one is forced to call
+        the spec.intensities function twice! This means a simple measurements
+        now takes twice as long, resulting in  sub-optimal efficiency. 
+        2. Hopefully, at Ocean Optics, they will finally listen to their customers
+        and implement a simple, logical operation of their devices: one that just
+        reads a spectrum at the desired integration time the momemt the function
+        is called and which puts the spectrometer in idle mode when no spectrum
+        is requested.
+    """
     spec.integration_time_micros(int_time_sec*1e6) # expects micro secs.
     cnts = spec.intensities(correct_dark_counts = correct_dark_counts, correct_nonlinearity = correct_nonlinearity)
     cnts = spec.intensities(correct_dark_counts = correct_dark_counts, correct_nonlinearity = correct_nonlinearity) # double call to avoid ending up with wrong buffer values due to crappy programming of ocean optics api
     return cnts
 
 
-def create_dark_model(spec, dark_model_int_times = _DARK_MODEL_INT_TIMES, savgol_window = _SAVGOL_WINDOW, correct_dark_counts = _CORRECT_DARK_COUNTS, correct_nonlinearity = _CORRECT_NONLINEARITY):
+def create_dark_model(spec, dark_model_int_times = _DARK_MODEL_INT_TIMES, \
+                      savgol_window = _SAVGOL_WINDOW, \
+                      correct_dark_counts = _CORRECT_DARK_COUNTS, \
+                      correct_nonlinearity = _CORRECT_NONLINEARITY, \
+                      verbosity = _VERBOSITY, auto_close = True):
+    """
+    Create a dark model to account for readout noise and dark light.
     
+    Args:
+        :spec: 
+            | spectrometer handle
+        :dark_model_int_times:
+            | _DARK_MODEL_INT_TIMES, optional
+            | ndarray with increasing integration times at which a 
+            | dark measurement is to be performed. 
+            | Ideally (to avoid extrapolation) these should span the expected
+            | integration times of the light measurements which are to be 
+            | corrected.
+        :savgol_window: 
+            | _SAVGOL_WINDOW, optional
+            | int: odd window_length (>0) used in smoothing the measured dark
+            |       spectra used to build the model.
+            | float: ratio (> 0.0) to calculate the odd window_length as a 
+            |       percentage (max. = 1) of the number of wavelengths:
+            |       window_length = 2*round(savgol_window*Nwavelengths) + 1
+        :correct_dark_counts: 
+            | _CORRECT_DARK_COUNTS or boolean, optional
+            | True: Automatic (if supported) dark counts subtraction using 'covered'
+            | pixels on the spectrometer device.
+        :correct_nonlinearity:
+            | _CORRECT_NONLINEARITY or boolean, optional
+            | True: Automatic non-linearity correction.
+        :verbosity:
+            | int, optional
+            |   0: now intermediate output
+            |   1: only text output (print)
+            |   2: text + graphical output (print + pyplot)
+        :auto_close:
+            | True, optional
+            | Close spectrometer after measurement.
+            
+    Returns:
+        :dark_model: 
+            | ndarray with dark model
+            |   first column (from row 1 onwards): integration times (secs)
+            |   second column onwards: dark spectra (cnts, with wavelengths
+            |   on row 0). 
+        
+    """
+    # Ask user response:
     root = tkinter.Tk() #hide tkinter main window for messagebox
+    if verbosity > 0:
+        print("Close shutter and press Ok in messagebox to continue with measurement.")
     messagebox.showinfo("Dark Model Measurements","Close shutter and press Ok to continue with measurement.")
     
     # Determine odd window_length of savgol filter for smoothing (if 0: no smoothing):
@@ -102,25 +248,30 @@ def create_dark_model(spec, dark_model_int_times = _DARK_MODEL_INT_TIMES, savgol
         else:
             savgol_window = np.int(2*np.round(spec.wavelengths().shape[0]*savgol_window)+1) # if not int, 1/.. ratio
     
-    # Measure dark for several integration times
-    dark_fig = plt.figure("Dark Model (savgol_window = {:1.1f})". format(savgol_window))    
-    ax1 = dark_fig.add_subplot(1, 3, 1) 
-    ax2 = dark_fig.add_subplot(1, 3, 2)  
+    # prepare graphic output:
+    if verbosity > 1:
+        dark_fig = plt.figure("Dark Model (savgol_window = {:1.1f})". format(savgol_window))    
+        ax1 = dark_fig.add_subplot(1, 3, 1) 
+        ax2 = dark_fig.add_subplot(1, 3, 2)  
+        
+    # Measure dark for several integration times:    
     for i,it in enumerate(dark_model_int_times):
-        print("Measuring dark counts for integration time {:1.0f}/{:1.0f} ({:1.4f}s)".format(i,len(dark_model_int_times),it))
+        if verbosity > 0:
+            print("Measuring dark counts for integration time {:1.0f}/{:1.0f} ({:1.4f}s)".format(i,len(dark_model_int_times),it))
         dark_int_time, dark_cnts = _find_opt_int_time(spec, it, correct_dark_counts = correct_dark_counts, correct_nonlinearity = correct_nonlinearity)
         dark_cnts_s = savgol_filter(dark_cnts, savgol_window, _SAVGOL_ORDER)
         
-          
-        ax1.set_xlabel('Wavelength (nm)')
-        ax1.set_ylabel('Counts')
-        ax1.set_title('Dark Measurements (raw)')
-        ax1.plot(spec.wavelengths(), dark_cnts,'.')
+         # Graphic output
+        if verbosity > 1:
+            ax1.set_xlabel('Wavelength (nm)')
+            ax1.set_ylabel('Counts')
+            ax1.set_title('Dark Measurements (raw)')
+            ax1.plot(spec.wavelengths(), dark_cnts,'.')
          
-        ax2.set_xlabel('Wavelength (nm)')
-        ax2.set_ylabel('Counts')
-        ax2.set_title('Dark Measurements (smoothed)')
-        ax2.plot(spec.wavelengths(), dark_cnts_s,'.')
+            ax2.set_xlabel('Wavelength (nm)')
+            ax2.set_ylabel('Counts')
+            ax2.set_title('Dark Measurements (smoothed)')
+            ax2.plot(spec.wavelengths(), dark_cnts_s,'.')
 
         
         if i == 0:
@@ -133,16 +284,22 @@ def create_dark_model(spec, dark_model_int_times = _DARK_MODEL_INT_TIMES, savgol
             dark_cnts_s_arr = np.vstack((dark_cnts_s_arr,dark_cnts_s))
             sum_dark_cnts.append(dark_cnts.sum())
             dark_its_arr.append(dark_int_time)
-        
+    
+    # Ask user response:    
+    if verbosity > 0:
+        print("All dark measurements have finished. Press Ok in messagebox to continue with measurement.")
     messagebox.showinfo("Dark Model Measurements","All dark measurements have finished. Press Ok to continue with measurement.")
+    
     dark_its_arr = np.asarray(dark_its_arr)
     sum_dark_cnts = np.asarray(sum_dark_cnts)
     
-    ax3 =  dark_fig.add_subplot(1, 3, 3) 
-    ax3.plot(dark_its_arr,sum_dark_cnts,'bo-')
-    ax3.set_xlabel('Integration time (s)')
-    ax3.set_ylabel('sum(cnts)')
-    ax3.set_title('Integration time vs sum(cnts)')
+    # Graphic output:
+    if verbosity > 1:
+        ax3 =  dark_fig.add_subplot(1, 3, 3) 
+        ax3.plot(dark_its_arr,sum_dark_cnts,'bo-')
+        ax3.set_xlabel('Integration time (s)')
+        ax3.set_ylabel('sum(cnts)')
+        ax3.set_title('Integration time vs sum(cnts)')
     
     root.withdraw() # close tkinter main window
     
@@ -153,9 +310,29 @@ def create_dark_model(spec, dark_model_int_times = _DARK_MODEL_INT_TIMES, savgol
     else: # use non-smoothed dark measurements
         dark_model = np.hstack((np.vstack((np.nan,dark_its_arr[:,None])),\
                             np.vstack((spec.wavelengths(),dark_cnts_arr))))
+        
+    if auto_close == True:
+        spec.close()
+        spec = None
+        
     return dark_model
 
 def _find_two_closest(value, values):
+    """
+    Finds two closest values to value (local helper function).
+    
+    Args:
+        :value: 
+            | value to find two closest elements of :values: for.
+        :values:
+            | list of increasing values.
+            
+    Returns:
+        :p1: 
+            | index to 1st closest value (smallest of the two)
+        :p2:
+            | index to 2nd closest value (largest of the two)
+    """
     # find position of two closes values to value:
     if (value > values.min()) & (value < values.max()):
         d = np.abs(values - value)
@@ -172,17 +349,92 @@ def _find_two_closest(value, values):
     return p1,p2
 
 def estimate_dark_from_model(int_time, dark_model):
-    dark_its_arr = dark_model[1:,0] # integration times
-    dark_cnts_arr = dark_model[1:,1:] # dark counts (first axis of dark_model are wavelengths)
-    p1,p2 = _find_two_closest(int_time, dark_its_arr)
-    dark1 = dark_cnts_arr[p1]
-    dark2 = dark_cnts_arr[p2]
-    it1 = dark_its_arr[p1]
-    it2 = dark_its_arr[p2]
-    dark = dark1 + (int_time-it1)*(dark2-dark1)/(it2-it1)
-    return np.vstack((dark_model[0,1:],dark)) # add wavelengths and return dark cnts
+    """
+    Estimate the dark spectrum for a specified integration time given a dark model.
+    
+    Args:
+        :int_time: 
+            | integration time in seconds
+        :dark_model: 
+            | ndarray with dark model
+            |   first column (from row 1 onwards): integration times (secs)
+            |   second column onwards: dark spectra (cnts, with wavelengths
+            |   on row 0). 
+            
+    Returns:
+        :returns:
+            | dark spectrum (row 0: wavelengths, row 1: counts)
+    """
+    if dark_model.shape[0] > 2: # contains array with dark model
+        dark_its_arr = dark_model[1:,0] # integration times
+        dark_cnts_arr = dark_model[1:,1:] # dark counts (first axis of dark_model are wavelengths)
+        p1,p2 = _find_two_closest(int_time, dark_its_arr)
+        dark1 = dark_cnts_arr[p1]
+        dark2 = dark_cnts_arr[p2]
+        it1 = dark_its_arr[p1]
+        it2 = dark_its_arr[p2]
+        dark = dark1 + (int_time-it1)*(dark2-dark1)/(it2-it1)
+        return np.vstack((dark_model[0,1:],dark)) # add wavelengths and return dark cnts
+    elif dark_model.shape[0] == 2: # contains array with dark spectrum
+        return dark_model 
+    else:
+        raise Exception('dark_model does not contain a dark model (.shape[0] > 2) or spectrum (.shape[0] == 2)!')
 
-def _correct_for_dark(spec, cnts, int_time_sec, method = 'dark_model.dat', savgol_window = _SAVGOL_WINDOW, correct_dark_counts = _CORRECT_DARK_COUNTS, correct_nonlinearity = _CORRECT_NONLINEARITY):
+
+def _correct_for_dark(spec, cnts, int_time_sec, method = 'dark_model.dat', \
+                      savgol_window = _SAVGOL_WINDOW, \
+                      correct_dark_counts = _CORRECT_DARK_COUNTS, \
+                      correct_nonlinearity = _CORRECT_NONLINEARITY,\
+                      verbosity = _VERBOSITY):
+    """
+    Correct a light spectrum (in counts) with a dark spectrum.
+    
+    Args:
+        :spec: 
+            | spectrometer handle
+        :cnts: 
+            | light spectrum in counts
+        :int_time_sec:
+            | integration time of light spectrum measurement
+        :method:
+            | 'dark_model.dat' or str or ndarray, optional
+            | If str: 
+            |   - 'none': don't perform dark correction
+            |   - 'measure': perform a dark measurement with integration time
+            |                specified in :int_time_sec:.
+            |   - 'dark_model.dat' or other filename. Read cvs-file with 
+            |       model or dark counts.
+            | else: method should contain an ndarray with the dark model or dark cnts.
+            |        - ndarray-format for model:
+            |           first column (from row 1 onwards): integration times (secs)
+            |           second column onwards: dark spectra (cnts, with wavelengths
+            |           on row 0). 
+            |        - ndarray-format for dark spectrum
+            |            row 0: wavelengths and row 1: dark spectrum in counts.
+        :savgol_window: 
+            | _SAVGOL_WINDOW, optional
+            | int: odd window_length (>0) used in smoothing the measured dark
+            |       spectra used to build the model.
+            | float: ratio (> 0.0) to calculate the odd window_length as a 
+            |       percentage (max. = 1) of the number of wavelengths:
+            |       window_length = 2*round(savgol_window*Nwavelengths) + 1
+        :correct_dark_counts: 
+            | _CORRECT_DARK_COUNTS or boolean, optional
+            | True: Automatic (if supported) dark counts subtraction using 'covered'
+            | pixels on the spectrometer device.
+        :correct_nonlinearity:
+            | _CORRECT_NONLINEARITY or boolean, optional
+            | True: Automatic non-linearity correction.
+        :verbosity:
+            | int, optional
+            |   0: now intermediate output
+            |   1: only text output (print)
+            |   2: text + graphical output (print + pyplot)
+   
+    Returns:
+        :returns:
+            | ndarray with dark corrected light spectrum in counts.
+    """
     if method == 'none':
         return cnts
     elif method == 'measure':
@@ -193,13 +445,19 @@ def _correct_for_dark(spec, cnts, int_time_sec, method = 'dark_model.dat', savgo
                 else:
                     savgol_window = np.int(2*np.round(spec.wavelengths().shape[0]*savgol_window)+1) # if not int, 1/.. ratio
         
+            # Ask user response:
             root = tkinter.Tk() #hide tkinter main window
+            if verbosity > 0:
+                print("Close shutter and press Ok in messagebox to continue with measurement.")
             messagebox.showinfo("Dark Measurement","Close shutter and press Ok to continue with measurement.")
             
             dark_cnts = _getOOcounts(spec, int_time_sec = int_time_sec, correct_dark_counts = correct_dark_counts, correct_nonlinearity = correct_nonlinearity)
             if savgol_window > 0: # apply smoothing
                 dark_cnts = savgol_filter(dark_cnts, savgol_window, _SAVGOL_ORDER)
             
+            # Ask user response:
+            if verbosity > 0:
+                print("Dark measurement completed. Press Ok in messagebox to continue with measurement.")
             messagebox.showinfo("Dark Measurement","Dark measurement completed. Press Ok to continue with measurement.")
             root.withdraw()
     else:
@@ -208,12 +466,39 @@ def _correct_for_dark(spec, cnts, int_time_sec, method = 'dark_model.dat', savgo
         dark_cnts = estimate_dark_from_model(int_time_sec, dark_model)[1] #take second row (first are wavelengths) 
     return cnts - dark_cnts
 
-def _find_opt_int_time(spec, int_time_sec, correct_dark_counts = _CORRECT_DARK_COUNTS, correct_nonlinearity = _CORRECT_NONLINEARITY):
-    # Find optimum integration time and get measured counts
-    #
-    # int_time_sec == 0: unlimited search for integration time, but < max_int_time
-    # int_time_sec >0: fixed integration time
-    # int_time_sec <0: find optimum, but <= int_time_sec
+def _find_opt_int_time(spec, int_time_sec, \
+                       correct_dark_counts = False, \
+                       correct_nonlinearity = _CORRECT_NONLINEARITY, \
+                       verbosity = _VERBOSITY):
+    """
+    Find optimum integration time and get measured counts.
+    
+    Args:
+        :int_time_sec:
+            | == 0: unlimited search for integration time, but < max_int_time
+            | >0: fixed integration time
+            | <0: find optimum, but <= int_time_sec
+        :correct_dark_counts: 
+            | False, optional
+            | True: Automatic (if supported) dark counts subtraction using 'covered'
+            | pixels on the spectrometer device.
+            | Default is False, to ensure correct check of measurement saturation.
+        :correct_nonlinearity:
+            | _CORRECT_NONLINEARITY or boolean, optional
+            | True: Automatic non-linearity correction. 
+        :verbosity:
+            | int, optional
+            |   0: now intermediate output
+            |   1: only text output (print)
+            |   2: text + graphical output (print + pyplot)
+    
+    Returns:
+        :int_time_sec:
+            | 'optimized' integration time (according to specifications described above)
+        :cnts:
+            | ndarray with final measured ('optimized') spectrum
+            | Note that by default this is a non-dark-count corrected spectrum.
+    """
     
     # Get max pixel value and min. integration time:
     max_value = spec._dev.interface._MAX_PIXEL_VALUE
@@ -253,7 +538,8 @@ def _find_opt_int_time(spec, int_time_sec, correct_dark_counts = _CORRECT_DARK_C
                 it = np.polyval(p_max_cnts_vs_its, max_value*_TARGET_MAX_CNTS_RATIO)
                 if not target_it_bool(it):
                     it = max_int_time
-                
+            if verbosity > 0:
+                print("Integration time optimization: measuring ... {:1.2f}s".format(it))
             its.append(it) # keep track of integration times
             cnts = getcnts(it)
             
@@ -261,7 +547,8 @@ def _find_opt_int_time(spec, int_time_sec, correct_dark_counts = _CORRECT_DARK_C
             
         while is_sat_bool(cnts): # if saturated, start reducing int_time again
             it = it / _IT_RATIO_INCREASE
-            print('Saturated max count value. Reducing integration time to {:1.2f}s'.format(it))
+            if verbosity > 0:
+                print('Saturated max count value. Reducing integration time to {:1.2f}s'.format(it))
             its.append(it) # keep track of integration times
             cnts = getcnts(it)
             
@@ -279,7 +566,8 @@ def _find_opt_int_time(spec, int_time_sec, correct_dark_counts = _CORRECT_DARK_C
         # get counts:
         cnts = getcnts(int_time_sec)
         if is_sat_bool(cnts):
-            print('WARNING: Saturated max count value at integration time of {:1.2f}s'.format(int_time_sec))
+            if verbosity > 0:
+                print('WARNING: Saturated max count value at integration time of {:1.2f}s'.format(int_time_sec))
             
     return int_time_sec, cnts 
 
@@ -287,7 +575,88 @@ def getOOspd(spec = None, devnr = 0, int_time_sec = _INT_TIME_SEC, \
              correct_dark_counts = _CORRECT_DARK_COUNTS, correct_nonlinearity = _CORRECT_NONLINEARITY, \
              tec_temperature_C = None,  \
              dark_cnts = 'dark_model.dat', savgol_window = _SAVGOL_WINDOW,\
-             out = 'spd', spdtype = 'cnts/s'):
+             out = 'spd', spdtype = 'cnts/s', verbosity = _VERBOSITY,
+             auto_close = True):
+    """
+    Measure a light spectrum.
+    
+    Args:
+        :spec: 
+            | spectrometer handle or None, optional
+            | If None: function will try to initialize the spectrometer to 
+            |   obtain a handle.
+        :devnr:
+            | Ocean optics device number in a list of all connected OO-devices.
+        :int_time_sec:
+            | == 0: unlimited search for integration time, but < max_int_time
+            | >0: fixed integration time
+            | <0: find optimum, but <= int_time_sec
+        :correct_dark_counts: 
+            | _CORRECT_DARK_COUNTS or boolean, optional
+            | True: Automatic (if supported) dark counts subtraction using 'covered'
+            | pixels on the spectrometer device.
+        :correct_nonlinearity:
+            | _CORRECT_NONLINEARITY or boolean, optional
+            | True: Automatic non-linearity correction.
+        :tec_temperature_C: None, optional
+            | Set board temperature on TEC supported spectrometers.
+            | NOT YET IMPLEMENTED (13/07/2018)
+        :dark_cnts:
+            | 'dark_model.dat' or str or ndarray, optional
+            | If str: 
+            |   - 'none': don't perform dark correction
+            |   - 'measure': perform a dark measurement with integration time
+            |                specified in :int_time_sec:.
+            |   - 'dark_model.dat' or other filename. Read cvs-file with 
+            |       model or dark counts.
+            | else: method should contain an ndarray with the dark model or dark cnts.
+            |        - ndarray-format for model:
+            |           first column (from row 1 onwards): integration times (secs)
+            |           second column onwards: dark spectra (cnts, with wavelengths
+            |           on row 0). 
+            |        - ndarray-format for dark spectrum
+            |           row 0: wavelengths and row 1: dark spectrum in counts.
+        :savgol_window: 
+            | _SAVGOL_WINDOW, optional
+            | int: odd window_length (>0) used in smoothing the measured dark
+            |       spectra used to build the model.
+            | float: ratio (> 0.0) to calculate the odd window_length as a 
+            |       percentage (max. = 1) of the number of wavelengths:
+            |       window_length = 2*round(savgol_window*Nwavelengths) + 1
+        :out: 
+            | 'spd' or str, optional
+            | Specifies requested output
+        :spdtype:
+            | 'cnts/s' (default) or 'cnts', optional
+            | Output spectrum in counts or in counts/s
+        :verbosity:
+            | int, optional
+            |   0: now intermediate output
+            |   1: only text output (print)
+            |   2: text + graphical output (print + pyplot)
+        :auto_close:
+            | True, optional
+            | Close spectrometer after measurement.
+            
+    Returns:
+        :spd:
+            | ndarray with spectrum. (row 0: wavelengths, row1: cnts(/s))
+            
+    Notes:
+        1. Due to crappy ocean optics firmware/drivers, most spectrometers do
+        not support an abort mode of the standard 'free running mode', which 
+        causes spectra to be continuously stored in a FIFO array. This 
+        first-in-first-causes a totally illogicaly and very unpractical behavior
+        of the spectrometer, such that, to ensure one gets a spectrum 
+        corresponding to the latest set integration time, one is forced to call
+        the spec.intensities function twice! This means a simple measurements
+        now takes twice as long, resulting in  sub-optimal efficiency. 
+        2. Hopefully, at Ocean Optics, they will finally listen to their customers
+        and implement a simple, logical operation of their devices: one that just
+        reads a spectrum at the desired integration time the momemt the function
+        is called and which puts the spectrometer in idle mode when no spectrum
+        is requested.
+    """
     
     # Initialize device:
     if spec is None:
@@ -299,21 +668,22 @@ def getOOspd(spec = None, devnr = 0, int_time_sec = _INT_TIME_SEC, \
             spec.tec_set_enable(True)
             spec.tec_set_temperature_C(set_point_C = tec_temperature_C)
             time.sleep(0.5)
-            print("Device temperature = {:1.1f}°C".format(spec.tec_get_temperature_C()))
+            if verbosity > 0:
+                print("Device temperature = {:1.1f}°C".format(spec.tec_get_temperature_C()))
         except:
             pass
     
     # Find optimum integration time and get counts (0 unlimited, >0 fixed, <0: find upto)
-    int_time_sec, cnts = _find_opt_int_time(spec, int_time_sec)
+    int_time_sec, cnts = _find_opt_int_time(spec, int_time_sec, verbosity = verbosity)
     
     # Get cnts anew when correct_dark_counts == True (is set to False in _find_opt_int_time):
     if correct_dark_counts == True:
         cnts = _getOOcounts(spec, int_time_sec, correct_dark_counts = correct_dark_counts, correct_nonlinearity = correct_nonlinearity)
     
     # Correct for dark_counts if not supported by device:
-    cnts = _correct_for_dark(spec, cnts, int_time_sec, method = dark_cnts, savgol_window = savgol_window, correct_dark_counts = correct_dark_counts, correct_nonlinearity = correct_nonlinearity)
+    cnts = _correct_for_dark(spec, cnts, int_time_sec, method = dark_cnts, savgol_window = savgol_window, correct_dark_counts = correct_dark_counts, correct_nonlinearity = correct_nonlinearity, verbosity = verbosity)
     
-    # Reset integration time to min. value for fast new measurement:
+    # Reset integration time to min. value for fast new measurement (see notes on crappy ocean optics software):
     spec.integration_time_micros(spec._min_int_time_sec*1e6)
     
     # Convert counts to counts/s:
@@ -322,7 +692,11 @@ def getOOspd(spec = None, devnr = 0, int_time_sec = _INT_TIME_SEC, \
         
     # Add wavelengths to spd:
     spd = np.vstack((spec.wavelengths(),cnts))
-       
+    
+    if auto_close == True:
+        spec.close()
+        spec = None
+    
     # output requested:
     if out == 'spd':
         return spd
@@ -330,31 +704,50 @@ def getOOspd(spec = None, devnr = 0, int_time_sec = _INT_TIME_SEC, \
         return eval(out)
 
 def plot_spd(ax, spd, int_time, sum_cnts = 0, max_cnts = 0):
+    """
+    Make a spectrum plot.
+    
+    Args:
+        :ax: 
+            | axes handle.
+        :int_time: 
+            | integration time of spectrum.
+        :sum_cnts:
+            | 0 or int, optional
+            | sum of all counts in spectrum.
+        :max_cnts:
+            | 0 or int, optional
+            | max of all counts in spectrum.
+    Returns:
+        :None:        
+    """
     ax.clear()
     ax.plot(spd[0],spd[1],'b')
     ax.set_xlabel('Wavelength (nm)')
     ax.set_ylabel('counts/s')
     ax.set_title("integration time = {:1.3f}s, sum_cnts = {:1.0f}, max_cnts = {:1.0f}".format(int_time, sum_cnts,max_cnts))
     plt.pause(0.1)
-
+    return None
 
 
 #------------------------------------------------------------------------------
 # Code testing
 if __name__ == '__main__':
+    verbosity = 2
+    
     time.sleep(1) 
     spec = None
     if ('spec' in locals()) | (spec is None): 
-        spec, device = initOOdev(devnr = 0)
+        spec, device = initOOdev(devnr = 0, verbosity = verbosity)
     
         
-    case = 'single'
+    case = 'dark'
     
     if case == 'single': # single measurement
         
         int_time = 3
-        spd = getOOspd(spec, int_time_sec = int_time, spdtype = 'cnts/s',dark_cnts='dark_model.dat')
-        spec.close() 
+        spd = getOOspd(spec, int_time_sec = int_time, spdtype = 'cnts/s',dark_cnts='dark_model.dat', verbosity = verbosity)
+        #spec.close() 
         
         fig = plt.figure()
         ax  = fig.add_subplot(1, 1, 1)
@@ -367,11 +760,11 @@ if __name__ == '__main__':
         
         try:
             while True:
-                spd = getOOspd(spec,int_time_sec = int_time)
+                spd = getOOspd(spec,int_time_sec = int_time, verbosity = verbosity, auto_close = False)
                 plot_spd(ax,spd,int_time, sum_cnts = spd[1].sum(),max_cnts = spd[1].max())
    
         except KeyboardInterrupt:
-            spec.close() 
+            spec.close() # manually close spectrometer
             pass
         
     elif case == 'list': # measure list of integration times
@@ -381,7 +774,7 @@ if __name__ == '__main__':
         max_cnts = np.empty(int_times.shape)
         for i,int_time in enumerate(int_times):
             
-            spd = getOOspd(spec,int_time_sec = int_time, spdtype='cnts')
+            spd = getOOspd(spec,int_time_sec = int_time, spdtype='cnts', verbosity = verbosity, auto_close = False)
             sum_cnts[i] = spd[1].sum()
             max_cnts[i] = spd[1].mean()
             
@@ -389,7 +782,7 @@ if __name__ == '__main__':
             ax  = fig.add_subplot(1, 1, 1)
             plot_spd(ax,spd,int_time, sum_cnts = sum_cnts[i],max_cnts = max_cnts[i])
             
-        spec.close()
+        spec.close() # manually close spectrometer
         fig2 = plt.figure()
         ax1  = fig2.add_subplot(1, 3, 1)
         ax1.plot(int_times,sum_cnts,'ro-')
@@ -399,8 +792,8 @@ if __name__ == '__main__':
         ax3.plot(np.arange(int_times.size), max_cnts,'bo-')
 
     elif case == 'dark': # create dark_model for dark light/current and readout noise correction
-        dark_model = create_dark_model(spec, dark_model_int_times = _DARK_MODEL_INT_TIMES, savgol_window = _SAVGOL_WINDOW, correct_dark_counts = _CORRECT_DARK_COUNTS, correct_nonlinearity = _CORRECT_NONLINEARITY)
-        spec.close()
+        dark_model = create_dark_model(spec, dark_model_int_times = _DARK_MODEL_INT_TIMES, savgol_window = _SAVGOL_WINDOW, correct_dark_counts = _CORRECT_DARK_COUNTS, correct_nonlinearity = _CORRECT_NONLINEARITY, verbosity = verbosity)
+        #spec.close()
         
         # write dark model to file
         pd.DataFrame(dark_model).to_csv('dark_model.dat', index=False, header=False, float_format='%1.4f')
