@@ -68,7 +68,7 @@ _CRI_DEFAULTS['cierf'] = _CRI_DEFAULTS['cierf-224-2017'].copy()
 
 
 _CRI_DEFAULTS['iesrf-tm30-15'] = {'sampleset' : "_CRI_RFL['ies-tm30-15']['99']['5nm']", 
-                                 'ref_type' : 'iesrf', 
+                                 'ref_type' : 'iesrf-tm30-15', 
                                  'cieobs' : {'xyz': '1964_10', 'cct' : '1931_2'}, 
                                  'avg' : np.mean, 'scale' :{'fcn' : log_scale, 'cfactor' : [7.54]}, 
                                  'cspace' : {'type': 'jab_cam02ucs', 'xyzw':None, 'mcat':'cat02', 'Yw':100.0, 'conditions' :{'La':100.0,'surround':'avg','D':1.0,'Yb':20.0,'Dtype':None},'yellowbluepurplecorrect' : None},
@@ -78,7 +78,7 @@ _CRI_DEFAULTS['iesrf-tm30-15'] = {'sampleset' : "_CRI_RFL['ies-tm30-15']['99']['
                                  }
 
 _CRI_DEFAULTS['iesrf-tm30-18'] = {'sampleset' : "_CRI_RFL['ies-tm30-18']['99']['5nm']", 
-                                 'ref_type' : 'iesrf', 
+                                 'ref_type' : 'iesrf-tm30-18', 
                                  'cieobs' : {'xyz': '1964_10', 'cct' : '1931_2'}, 
                                  'avg' : np.mean, 'scale' :{'fcn' : log_scale, 'cfactor' : [6.73]}, 
                                  'cspace' : {'type': 'jab_cam02ucs', 'xyzw':None, 'mcat':'cat02', 'Yw':100.0, 'conditions' :{'La':100.0,'surround':'avg','D':1.0,'Yb':20.0,'Dtype':None},'yellowbluepurplecorrect' : None},

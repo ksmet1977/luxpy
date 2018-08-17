@@ -167,7 +167,8 @@ import scipy as sp
 from scipy import interpolate
 from scipy.optimize import minimize
 from scipy.spatial import cKDTree
-__all__ += ['np','pd','plt','sp','interpolate','minimize','cKDTree']
+import skimage
+__all__ += ['np','pd','plt','sp','interpolate','minimize','cKDTree','skimage']
 
 
 

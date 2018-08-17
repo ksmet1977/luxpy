@@ -522,8 +522,8 @@ def spd_to_jab_t_r(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'jabt,jabr', wl = No
     cct, duv = xyz_to_cct(xyztw, cieobs = cieobs['cct'], out = 'cct,duv',mode = 'lut')
     
     # A.c. get reference ill.:
-    Sr = cri_ref(cct, ref_type = ref_type, cieobs = cieobs['xyz'], wl3 = SPD[0])
-    
+    Sr = cri_ref(cct, ref_type = ref_type, cieobs = cieobs['cct'], wl3 = SPD[0])
+
     # B. calculate xyz and xyzw of data (spds) and Sr:
     xyzti, xyztw = spd_to_xyz(SPD, cieobs = cieobs['xyz'], rfl = sampleset, out = 2)
     xyzri, xyzrw = spd_to_xyz(Sr, cieobs = cieobs['xyz'], rfl = sampleset, out = 2)
