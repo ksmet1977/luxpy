@@ -4,11 +4,11 @@
 [logo]: https://github.com/ksmet1977/luxpy/blob/master/docs/images/LUXPY__logo.jpg
 
 * Author: K. A.G. Smet (ksmet1977 at gmail.com)
-* Version: 1.3.07
-* Date: June 1, 2018
+* Version: 1.3.08
+* Date: August 27, 2018
 * License: [GPLv3](https://github.com/ksmet1977/luxpy/blob/master/LICENSE.md)
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1298963.svg)](https://doi.org/10.5281/zenodo.1298963)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1298964.svg)](https://doi.org/10.5281/zenodo.1298964)
 
 **Luxpy** is an open source package under a GPLv3 license that supports several common
 **lighting**, **colorimetric**, **color appearance** and other **color science**

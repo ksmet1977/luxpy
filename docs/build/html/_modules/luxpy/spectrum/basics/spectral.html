@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.spectrum.basics.spectral &mdash; LuxPy 1.3.7 documentation</title>
+  <title>luxpy.spectrum.basics.spectral &mdash; LuxPy 1.3.8 documentation</title>
   
 
   
@@ -56,7 +56,7 @@
             
             
               <div class="version">
-                1.3.7
+                1.3.8
               </div>
             
           
@@ -355,6 +355,8 @@
 <span class="sd">            |       - &#39;max&#39;: max-normalization times norm_f</span>
 <span class="sd">            |       - &#39;ru&#39;: to :norm_f: radiometric units </span>
 <span class="sd">            |       - &#39;pu&#39;: to :norm_f: photometric units </span>
+<span class="sd">            |       - &#39;pusa&#39;: to :norm_f: photometric units (with Km corrected</span>
+<span class="sd">            |                             to standard air, cfr. CIE TN003-2015)</span>
 <span class="sd">            |       - &#39;qu&#39;: to :norm_f: quantal energy units</span>
 <span class="sd">        :norm_f:</span>
 <span class="sd">            | 1, optional</span>
@@ -388,7 +390,7 @@
             <span class="n">wl</span> <span class="o">=</span> <span class="kc">True</span> <span class="c1"># for &#39;qu&#39; (quantal) normalization wl MUST be first column</span>
             <span class="n">wlr</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             
-        <span class="k">if</span> <span class="p">((</span><span class="s1">&#39;area&#39;</span> <span class="ow">in</span> <span class="n">norm_type</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="s1">&#39;ru&#39;</span> <span class="ow">in</span> <span class="n">norm_type</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="s1">&#39;pu&#39;</span> <span class="ow">in</span> <span class="n">norm_type</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">wl</span> <span class="o">==</span> <span class="kc">True</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">((</span><span class="s1">&#39;area&#39;</span> <span class="ow">in</span> <span class="n">norm_type</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="s1">&#39;ru&#39;</span> <span class="ow">in</span> <span class="n">norm_type</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="s1">&#39;pu&#39;</span> <span class="ow">in</span> <span class="n">norm_type</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="s1">&#39;pusa&#39;</span> <span class="ow">in</span> <span class="n">norm_type</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">wl</span> <span class="o">==</span> <span class="kc">True</span><span class="p">):</span>
             <span class="n">dl</span> <span class="o">=</span> <span class="n">getwld</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">dl</span> <span class="o">=</span> <span class="mi">1</span> <span class="c1">#no wavelengths provided</span>
@@ -418,7 +420,7 @@
                 <span class="c1">#wl_index = np.where((np.abs(wlr-norm_f_)==np.min(np.abs(wlr-norm_f_))))[0]</span>
                 <span class="n">wl_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">wlr</span><span class="o">-</span><span class="n">norm_f_</span><span class="p">)</span><span class="o">.</span><span class="n">argmin</span><span class="p">()</span>
                 <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">offset</span><span class="p">]</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">offset</span><span class="p">]</span><span class="o">/</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">offset</span><span class="p">][</span><span class="n">wl_index</span><span class="p">]</span>
-            <span class="k">elif</span> <span class="p">(</span><span class="n">norm_type_</span> <span class="o">==</span> <span class="s1">&#39;ru&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">norm_type_</span> <span class="o">==</span> <span class="s1">&#39;pu&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">norm_type_</span> <span class="o">==</span> <span class="s1">&#39;qu&#39;</span><span class="p">):</span>
+            <span class="k">elif</span> <span class="p">(</span><span class="n">norm_type_</span> <span class="o">==</span> <span class="s1">&#39;ru&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">norm_type_</span> <span class="o">==</span> <span class="s1">&#39;pu&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">norm_type</span> <span class="o">==</span> <span class="s1">&#39;pusa&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">norm_type_</span> <span class="o">==</span> <span class="s1">&#39;qu&#39;</span><span class="p">):</span>
                 <span class="n">rpq_power</span> <span class="o">=</span> <span class="n">spd_to_power</span><span class="p">(</span><span class="n">data</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span><span class="n">i</span><span class="o">+</span><span class="n">offset</span><span class="p">],:],</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">ptype</span> <span class="o">=</span> <span class="n">norm_type_</span><span class="p">)</span>
                 <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">offset</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">norm_f</span><span class="o">/</span><span class="n">rpq_power</span><span class="p">)</span><span class="o">*</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">offset</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
@@ -543,6 +545,8 @@
 <span class="sd">            |       - &#39;max&#39;: max-normalization times norm_f</span>
 <span class="sd">            |       - &#39;ru&#39;: to :norm_f: radiometric units </span>
 <span class="sd">            |       - &#39;pu&#39;: to :norm_f: photometric units </span>
+<span class="sd">            |       - &#39;pusa&#39;: to :norm_f: photometric units (with Km corrected</span>
+<span class="sd">            |                             to standard air, cfr. CIE TN003-2015)</span>
 <span class="sd">            |       - &#39;qu&#39;: to :norm_f: quantal energy units</span>
 <span class="sd">        :norm_f:</span>
 <span class="sd">            | 1, optional</span>
@@ -616,6 +620,8 @@
 <span class="sd">            |       - &#39;max&#39;: max-normalization times norm_f</span>
 <span class="sd">            |       - &#39;ru&#39;: to :norm_f: radiometric units </span>
 <span class="sd">            |       - &#39;pu&#39;: to :norm_f: photometric units </span>
+<span class="sd">            |       - &#39;pusa&#39;: to :norm_f: photometric units (with Km corrected</span>
+<span class="sd">            |                             to standard air, cfr. CIE TN003-2015)</span>
 <span class="sd">            |       - &#39;qu&#39;: to :norm_f: quantal energy units</span>
 <span class="sd">        :norm_f:</span>
 <span class="sd">            | 1, optional</span>
@@ -671,6 +677,8 @@
 <span class="sd">            |       - &#39;max&#39;: max-normalization times norm_f</span>
 <span class="sd">            |       - &#39;ru&#39;: to :norm_f: radiometric units </span>
 <span class="sd">            |       - &#39;pu&#39;: to :norm_f: photometric units </span>
+<span class="sd">            |       - &#39;pusa&#39;: to :norm_f: photometric units (with Km corrected</span>
+<span class="sd">            |                             to standard air, cfr. CIE TN003-2015)</span>
 <span class="sd">            |       - &#39;qu&#39;: to :norm_f: quantal energy units</span>
 <span class="sd">        :norm_f:</span>
 <span class="sd">            | 1, optional</span>
@@ -886,6 +894,8 @@
 <span class="sd">            | &#39;ru&#39; or str, optional</span>
 <span class="sd">            | str: - &#39;ru&#39;: in radiometric units </span>
 <span class="sd">            |      - &#39;pu&#39;: in photometric units </span>
+<span class="sd">            |      - &#39;pusa&#39;: in photometric units with Km corrected </span>
+<span class="sd">            |                to standard air (cfr. CIE TN003-2015)</span>
 <span class="sd">            |      - &#39;qu&#39;: in quantal energy units</span>
 <span class="sd">        :cieobs: </span>
 <span class="sd">            | _CIEOBS or str, optional</span>
@@ -901,7 +911,7 @@
     <span class="k">if</span> <span class="n">ptype</span> <span class="o">==</span> <span class="s1">&#39;ru&#39;</span><span class="p">:</span> <span class="c1">#normalize to radiometric units</span>
         <span class="n">p</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span><span class="n">dl</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])))</span><span class="o">.</span><span class="n">T</span>
 
-    <span class="k">elif</span> <span class="n">ptype</span> <span class="o">==</span> <span class="s1">&#39;pu&#39;</span><span class="p">:</span> <span class="c1"># normalize in photometric units</span>
+    <span class="k">elif</span> <span class="n">ptype</span> <span class="o">==</span> <span class="s1">&#39;pusa&#39;</span><span class="p">:</span> <span class="c1"># normalize in photometric units with correction of Km to standard air</span>
     
         <span class="c1"># Calculate correction factor for Km in standard air:</span>
         <span class="n">na</span> <span class="o">=</span> <span class="n">_BB</span><span class="p">[</span><span class="s1">&#39;na&#39;</span><span class="p">]</span> <span class="c1"># n for standard air</span>
@@ -913,6 +923,14 @@
         <span class="n">Vl</span><span class="p">,</span> <span class="n">Km</span> <span class="o">=</span> <span class="n">vlbar</span><span class="p">(</span><span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">wl_new</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">out</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
         <span class="n">Km</span> <span class="o">=</span> <span class="n">Km</span><span class="o">*</span><span class="n">Km_correction_factor</span>
         <span class="n">p</span> <span class="o">=</span> <span class="n">Km</span><span class="o">*</span><span class="n">np2d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span><span class="n">dl</span><span class="o">*</span><span class="n">Vl</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span><span class="o">.</span><span class="n">T</span>
+        
+    <span class="k">elif</span> <span class="n">ptype</span> <span class="o">==</span> <span class="s1">&#39;pu&#39;</span><span class="p">:</span> <span class="c1"># normalize in photometric units</span>
+    
+        <span class="c1"># Get Vlambda and Km (for E):</span>
+        <span class="n">Vl</span><span class="p">,</span> <span class="n">Km</span> <span class="o">=</span> <span class="n">vlbar</span><span class="p">(</span><span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">wl_new</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">out</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">Km</span> <span class="o">=</span> <span class="n">Km</span><span class="o">*</span><span class="n">Km_correction_factor</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">Km</span><span class="o">*</span><span class="n">np2d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span><span class="n">dl</span><span class="o">*</span><span class="n">Vl</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span><span class="o">.</span><span class="n">T</span>
+
     
     <span class="k">elif</span> <span class="n">ptype</span> <span class="o">==</span> <span class="s1">&#39;qu&#39;</span><span class="p">:</span> <span class="c1"># normalize to quantual units</span>
 
@@ -947,6 +965,8 @@
 <span class="sd">            |       - &#39;max&#39;: max-normalization times norm_f</span>
 <span class="sd">            |       - &#39;ru&#39;: to :norm_f: radiometric units </span>
 <span class="sd">            |       - &#39;pu&#39;: to :norm_f: photometric units </span>
+<span class="sd">            |       - &#39;pusa&#39;: to :norm_f: photometric units (with Km corrected</span>
+<span class="sd">            |                             to standard air, cfr. CIE TN003-2015)</span>
 <span class="sd">            |       - &#39;qu&#39;: to :norm_f: quantal energy units</span>
 <span class="sd">        :norm_f:</span>
 <span class="sd">            | 1, optional</span>
@@ -1026,6 +1046,8 @@
 <span class="sd">            |       - &#39;max&#39;: max-normalization times norm_f</span>
 <span class="sd">            |       - &#39;ru&#39;: to :norm_f: radiometric units </span>
 <span class="sd">            |       - &#39;pu&#39;: to :norm_f: photometric units </span>
+<span class="sd">            |       - &#39;pusa&#39;: to :norm_f: photometric units (with Km corrected</span>
+<span class="sd">            |                             to standard air, cfr. CIE TN003-2015)</span>
 <span class="sd">            |       - &#39;qu&#39;: to :norm_f: quantal energy units</span>
 <span class="sd">        :norm_f:</span>
 <span class="sd">            | 1, optional</span>
@@ -1123,6 +1145,8 @@
 <span class="sd">            |       - &#39;max&#39;: max-normalization times norm_f</span>
 <span class="sd">            |       - &#39;ru&#39;: to :norm_f: radiometric units </span>
 <span class="sd">            |       - &#39;pu&#39;: to :norm_f: photometric units </span>
+<span class="sd">            |       - &#39;pusa&#39;: to :norm_f: photometric units (with Km corrected</span>
+<span class="sd">            |                             to standard air, cfr. CIE TN003-2015)</span>
 <span class="sd">            |       - &#39;qu&#39;: to :norm_f: quantal energy units</span>
 <span class="sd">        :norm_f:</span>
 <span class="sd">            | 1, optional</span>
@@ -1258,7 +1282,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../../../',
-            VERSION:'1.3.7',
+            VERSION:'1.3.8',
             LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
