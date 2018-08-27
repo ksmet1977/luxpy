@@ -19,5 +19,5 @@ Core
  * from scipy import interpolate 
  * from scipy.optimize import minimize 
  * from scipy.spatial import cKDTree 
- * import skimage 
+ * from skimage.io import imsave as skimsave
 
