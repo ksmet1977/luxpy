@@ -777,7 +777,6 @@ def spd_to_power(data, ptype = 'ru', cieobs = _CIEOBS):
     
         # Get Vlambda and Km (for E):
         Vl, Km = vlbar(cieobs = cieobs, wl_new = data[0], out = 2)
-        Km = Km*Km_correction_factor
         p = Km*np2d(np.dot(data[1:],dl*Vl[1])).T
 
     
