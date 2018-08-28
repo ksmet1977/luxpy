@@ -4,8 +4,8 @@ LuxPy: a package for lighting and color science
 ===============================================
 
     * Author: K. A.G. Smet (ksmet1977 at gmail.com)
-    * Version: 1.3.09
-    * Date: August 27, 2018
+    * Version: 1.3.10
+    * Date: August 28, 2018
     * License: GPLv3
 
     * DOI: https://doi.org/10.5281/zenodo.1298963
@@ -181,6 +181,9 @@ __all__ += ['np','pd','plt','sp','interpolate','minimize','cKDTree','skimsave']
 #------------------------------------------------------------------------------
 # Setup output format of print:
 np.set_printoptions(formatter={'float': lambda x: "{0:0.4e}".format(x)}) 
+
+# Setup numpy warnings:
+np.seterr(over = 'ignore', under = 'ignore')
 
 #------------------------------------------------------------------------------
 # os related:
