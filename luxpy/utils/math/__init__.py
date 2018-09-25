@@ -69,6 +69,10 @@ Module with useful math functions
 
  :histogram(): | Histogram function that can take as bins either the center
                | (cfr. matlab hist) or bin-edges.
+               
+ :v_to_cik(): Calculate 2x2 '(covariance matrix)^-1' elements cik from v-format ellipse descriptor.
+
+ :cik_to_v(): Calculate v-format ellipse descriptor from 2x2 'covariance matrix'^-1 cik.
 
  :minimizebnd(): scipy.minimize() that allows contrained parameters on 
                  unconstrained methods(port of Matlab's fminsearchbnd). 

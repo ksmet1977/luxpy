@@ -26,6 +26,11 @@ Module for color difference calculations
  :DE_2000(): Calculate DE2000 color difference.
 
  :DE_cspace():  Calculate color difference DE in specific color space.
+ 
+ :get_macadam_ellipse(): Estimate n-step MacAdam ellipse at CIE x,y coordinates  
 """
 from .colordifferences import *
 __all__ = colordifferences.__all__
+
+from .macadamellipses import *
+__all__ += macadamellipses.__all__

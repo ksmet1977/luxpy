@@ -294,14 +294,13 @@ _CSPACE_AXES = {**_CSPACE_AXES, **_CAM_AXES}
 from .color.ctf.colortf import *
 __all__ += color.ctf.colortf.__all__
 
-#   Load DE (color difference) module:
-from .color.deltaE import colordifferences as deltaE
-__all__ += ['deltaE']
-
 #   Load some basic graphics functions:
 from .color.utils.plotters import *
 __all__ += color.utils.plotters.__all__
 
+#   Load DE (color difference) module:
+from .color import deltaE 
+__all__ += ['deltaE']
 
 #   Load color rendition sub-package:
 from .color.cri import colorrendition as cri

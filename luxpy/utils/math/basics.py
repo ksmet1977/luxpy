@@ -69,6 +69,9 @@ Module with useful basic math functions
  :histogram(): | Histogram function that can take as bins either the center
                | (cfr. matlab hist) or bin-edges.
 
+ :v_to_cik(): Calculate 2x2 '(covariance matrix)^-1' elements cik from v-format ellipse descriptor.
+
+ :cik_to_v(): Calculate v-format ellipse descriptor from 2x2 'covariance matrix'^-1 cik.
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 ===============================================================================
@@ -81,6 +84,7 @@ __all__  = ['normalize_3x3_matrix','symmM_to_posdefM','check_symmetric',
             'histogram', 'pol2cart', 'cart2pol']
 __all__ += ['bvgpdf','mahalanobis2','dot23', 'rms','geomean','polyarea']
 __all__ += ['magnitude_v','angle_v1v2']
+__all__ += ['v_to_cik', 'cik_to_v']
 
 
 #------------------------------------------------------------------------------
@@ -614,3 +618,78 @@ def histogram(a, bins=10, bin_center = False, range=None, normed=False, weights=
 
     else:
         return np.histogram(a, bins=bins, range=range, normed=normed, weights=weights, density=density)
+
+#------------------------------------------------------------------------------
+def v_to_cik(v, inverse = False):
+    """
+    Calculate 2x2 '(covariance matrix)^-1' elements cik 
+    
+    Args:
+        :v: 
+            | (Nx5) np.ndarray
+            | ellipse parameters [Rmax,Rmin,xc,yc,theta]
+    
+    Returns:
+        :cik: 
+            '2x2xN' (covariance matrix)^-1
+    
+    Notes:
+        | cik is not actually a covariance matrix,
+        | only for a Gaussian or normal distribution!
+
+    """
+    v = np.atleast_2d(v)
+    g11 = (1/v[:,0]*np.cos(v[:,4]))**2 + (1/v[:,1]*np.sin(v[:,4]))**2
+    g22 = (1/v[:,0]*np.sin(v[:,4]))**2 + (1/v[:,1]*np.cos(v[:,4]))**2
+    g12 = (1/v[:,0]**2 - 1/v[:,1]**2)*np.sin(v[:,4])*np.cos(v[:,4])
+    cik = np.zeros((g11.shape[0],2,2))
+
+    for i in np.arange(g11.shape[0]):
+        cik[i,:,:] = np.vstack((np.hstack((g11[i],g12[i])), np.hstack((g12[i],g22[i]))))
+        if inverse == True:
+            cik[i,:,:] = np.linalg.inv(cik[i,:,:])
+    return cik
+#------------------------------------------------------------------------------
+
+def cik_to_v(cik, xyc = None, inverse = False):
+    """
+    Calculate v-format ellipse descriptor from 2x2 'covariance matrix'^-1 cik 
+    
+    Args:
+        :cik: 
+            '2x2xN' (covariance matrix)^-1
+            
+    Returns:
+        :v: 
+            | (Nx5) np.ndarray
+            | ellipse parameters [Rmax,Rmin,xc,yc,theta]
+
+    Notes:
+        | cik is not actually the inverse covariance matrix,
+        | only for a Gaussian or normal distribution!
+
+    """
+    if inverse == True:
+        for i in np.arange(cik.shape[0]):
+            cik[i,:,:] = np.linalg.inv(cik[i,:,:])
+            
+    g11 = cik[:,0,0]
+    g22 = cik[:,1,1] 
+    g12 = cik[:,0,1]
+
+    theta2 = 1/2*np.arctan2(2*g12,(g11-g22))
+    theta = theta2 + (np.pi/2)*(g12<0)
+    theta2 = theta
+    cottheta = np.cos(theta)/np.sin(theta) #np.cot(theta)
+    cottheta[np.isinf(cottheta)] = 0
+
+    a = 1/np.sqrt((g22 + g12*cottheta))
+    b = 1/np.sqrt((g11 - g12*cottheta))
+
+    v = np.vstack((a, b, np.zeros(a.shape), np.zeros(a.shape), theta)).T
+    
+    # add center coordinates:
+    if xyc is not None:
+        v[:,2:4] = xyc
+    
+    return v

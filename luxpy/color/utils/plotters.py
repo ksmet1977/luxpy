@@ -44,13 +44,19 @@ Module with functions related to plotting of color data
               <https://doi.org/10.1002/col.21793>`_
     
  :plotcircle(): Plot one or more concentric circles.
+ 
+ :plotellipse(): Plot one or more ellipses.
+     
+ :plot_chromaticity_diagram_colors(): Plot the chromaticity diagram colors.
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
-from luxpy import np, plt, _CIEOBS, _CSPACE, _CSPACE_AXES, _CIE_ILLUMINANTS, _CMF, daylightlocus, colortf, Yxy_to_xyz, asplit, spd_to_xyz, cri_ref
+from luxpy import np, plt, _EPS, _CIEOBS, _CSPACE, _CSPACE_AXES, _CIE_ILLUMINANTS, _CMF, daylightlocus, colortf, Yxy_to_xyz, asplit, spd_to_xyz, cri_ref, xyz_to_srgb
 
-__all__ = ['plotSL','plotDL','plotBB','plot_color_data','plotceruleanline','plotUH','plotcircle']
+from matplotlib.patches import Polygon
+
+__all__ = ['plotSL','plotDL','plotBB','plot_color_data','plotceruleanline','plotUH','plotcircle','plotellipse','plot_chromaticity_diagram_colors']
 
 
 
@@ -246,7 +252,12 @@ def plotBB(ccts = None, cieobs =_CIEOBS, cspace = _CSPACE, axh = None, cctlabels
     if show == False:
         return axh
     
-def plotSL(cieobs =_CIEOBS, cspace = _CSPACE,  DL = True, BBL = True, D65 = False, EEW = False, cctlabels = False, axh = None, show = True, cspace_pars = {}, formatstr = 'k-', **kwargs):
+def plotSL(cieobs =_CIEOBS, cspace = _CSPACE, DL = True, BBL = True, D65 = False,\
+           EEW = False, cctlabels = False, axh = None, show = True,\
+           cspace_pars = {}, formatstr = 'k-',\
+           diagram_colors = False, diagram_samples = 100, diagram_opacity = 1.0,\
+           diagram_lightness = 0.25,\
+           **kwargs):
     """
     Plot spectrum locus for cieobs in cspace.
     
@@ -287,6 +298,18 @@ def plotSL(cieobs =_CIEOBS, cspace = _CSPACE,  DL = True, BBL = True, D65 = Fals
             | {} or dict, optional
             | Dict with parameters required by color space specified in :cspace: 
             | (for use with luxpy.colortf())
+        :diagram_colors:
+            | False, optional
+            | True: plot colored chromaticity diagram.
+        :diagram_samples:
+            | 256, optional
+            | Sampling resolution of color space.
+        :diagram_opacity:
+            | 1.0, optional
+            | Sets opacity of chromaticity diagram
+        :diagram_lightness:
+            | 0.25, optional
+            | Sets lightness of chromaticity diagram
         :kwargs: 
             | additional keyword arguments for use with matplotlib.pyplot.
     
@@ -306,8 +329,14 @@ def plotSL(cieobs =_CIEOBS, cspace = _CSPACE,  DL = True, BBL = True, D65 = Fals
     if np.any([DL,BBL,D65,EEW]):
         show = False
 
-
-    axh_ = plot_color_data(x,y,axh = axh, cieobs = cieobs, cspace = cspace, show = show, formatstr=formatstr,  **kwargs)
+    axh_ = plot_chromaticity_diagram_colors(axh = axh, show = diagram_colors, cspace = cspace, cieobs = cieobs,\
+                                            cspace_pars = cspace_pars,\
+                                            diagram_samples = diagram_samples,\
+                                            diagram_opacity = diagram_opacity,\
+                                            diagram_lightness = diagram_lightness,\
+                                            label_fontname = None, label_fontsize = None)
+        
+    axh_ = plot_color_data(x,y,axh = axh_, cieobs = cieobs, cspace = cspace, show = show, formatstr=formatstr,  **kwargs)
 
 
     if DL == True:
@@ -325,7 +354,9 @@ def plotSL(cieobs =_CIEOBS, cspace = _CSPACE,  DL = True, BBL = True, D65 = Fals
     if EEW == True:
         YxyEEW = colortf(spd_to_xyz(_CIE_ILLUMINANTS['E']), tf = cspace, tfa0 = cspace_pars)
         plt.plot(YxyEEW[...,1],YxyEEW[...,2],'ko')
-        
+    
+    
+    
     if showcopy == False:
         return axh_
     else:
@@ -489,3 +520,247 @@ def plotcircle(center = np.array([0.,0.]),radii = np.arange(0,60,10), angles = n
             plt.plot(x,y,color = color, linestyle = linestyle)
     if out == 'x,y':
         return xs,ys
+
+#------------------------------------------------------------------------------
+def plotellipse(v, cspace_in = 'Yxy', cspace_out = None, nsamples = 100, \
+                show = True, axh = None, \
+                line_color = 'darkgray', line_style = ':', line_width = 1, line_marker = '', line_markersize = 4,\
+                plot_center = False, center_marker = 'o', center_color = 'darkgray', center_markersize = 4,\
+                show_grid = True, label_fontname = 'Times New Roman', label_fontsize = 12,\
+                out = None):
+    """
+    Plot ellipse(s) given in v-format [Rmax,Rmin,xc,yc,theta].
+    
+    Args:
+        :v: 
+            | (Nx5) ndarray
+            | ellipse parameters [Rmax,Rmin,xc,yc,theta]
+        :cspace_in:
+            | 'Yxy', optional
+            | Color space of v.
+            | If None: no color space assumed. Axis labels assumed ('x','y').
+        :cspace_out:
+            | None, optional
+            | Color space to plot ellipse(s) in.
+            | If None: plot in cspace_in.
+        :nsamples:
+            | 100 or int, optional
+            | Number of points (samples) in ellipse boundary
+        :show:
+            | True or boolean, optional
+            | Plot ellipse(s) (True) or not (False)
+        :axh: 
+            | None, optional
+            | Ax-handle to plot ellipse(s) in.
+            | If None: create new figure with axes.
+        :line_color:
+            | 'darkgray', optional
+            | Color to plot ellipse(s) in.
+        :line_style:
+            | ':', optional
+            | Linestyle of ellipse(s).
+        :line_width':
+            | 1, optional
+            | Width of ellipse boundary line.
+        :line_marker:
+            | 'none', optional
+            | Marker for ellipse boundary.
+        :line_markersize:
+            | 4, optional
+            | Size of markers in ellipse boundary.
+        :plot_center:
+            | False, optional
+            | Plot center of ellipse: yes (True) or no (False)
+        :center_color:
+            | 'darkgray', optional
+            | Color to plot ellipse center in.
+        :center_marker:
+            | 'o', optional
+            | Marker for ellipse center.
+        :center_markersize:
+            | 4, optional
+            | Size of marker of ellipse center.
+        :show_grid:
+            | True, optional
+            | Show grid (True) or not (False)
+        :label_fontname: 
+            | 'Times New Roman', optional
+            | Sets font type of axis labels.
+        :label_fontsize:
+            | 12, optional
+            | Sets font size of axis labels.
+        :out:
+            | None, optional
+            | Output of function
+            | If None: returns None. Can be used to output axh of newly created
+            |      figure axes or to return Yxys an ndarray with coordinates of 
+            |       ellipse boundaries in cspace_out (shape = (nsamples,3,N)) 
+            
+        
+    Returns:
+        :returns: None, or whatever set by :out:.
+    """
+    Yxys = np.zeros((nsamples,3,v.shape[0]))
+    for i,vi in enumerate(v):
+        
+        # Set sample density of ellipse boundary:
+        t = np.linspace(0, 2*np.pi, nsamples)
+        
+        a = vi[0] # major axis
+        b = vi[1] # minor axis
+        xyc = vi[2:4,None] # center
+        theta = vi[-1] # rotation angle
+        
+        # define rotation matrix:
+        R = np.hstack(( np.vstack((np.cos(theta), np.sin(theta))), np.vstack((-np.sin(theta), np.cos(theta)))))
+ 
+        # Calculate ellipses:
+        Yxyc = np.vstack((1, xyc)).T
+        Yxy = np.vstack((np.ones((1,nsamples)), xyc + np.dot(R, np.vstack((a*np.cos(t), b*np.sin(t))) ))).T
+        Yxys[:,:,i] = Yxy
+        
+        # Convert to requested color space:
+        if (cspace_out is not None) & (cspace_in is not None):
+            Yxy = colortf(Yxy, cspace_in + '>' + cspace_out)
+            Yxyc = colortf(Yxyc, cspace_in + '>' + cspace_out)
+
+        
+        # plot ellipses:
+        if show == True:
+            if (axh is None) & (i == 0):
+                fig = plt.figure()
+                axh = fig.add_subplot(111)
+            
+            if (cspace_in is None):
+                xlabel = 'x'
+                ylabel = 'y'
+            
+            if (cspace_out is not None):
+                xlabel = _CSPACE_AXES[cspace_out][1]
+                ylabel = _CSPACE_AXES[cspace_out][2]
+            
+            if plot_center == True:
+                plt.plot(Yxyc[:,1],Yxyc[:,2],color = center_color, linestyle = 'none', marker = center_marker, markersize = center_markersize)
+
+            plt.plot(Yxy[:,1],Yxy[:,2],color = line_color, linestyle = line_style, linewidth = line_width, marker = line_marker, markersize = line_markersize)
+            plt.xlabel(xlabel, fontname = label_fontname, fontsize = label_fontsize)
+            plt.ylabel(ylabel, fontname = label_fontname, fontsize = label_fontsize)
+            if show_grid == True:
+                plt.grid()
+            #plt.show()     
+            
+    if out is not None:
+        return eval(out)
+    else:
+        return None
+
+#------------------------------------------------------------------------------
+def plot_chromaticity_diagram_colors(samples = 256, diagram_opacity = 1.0, diagram_lightness = 0.25,\
+                                      cieobs = _CIEOBS, cspace = 'Yxy', cspace_pars = {},\
+                                      show = True, axh = None,\
+                                      show_grid = True, label_fontname = 'Times New Roman', label_fontsize = 12,\
+                                      **kwargs):
+    """
+    Plot the chromaticity diagram colors.
+    
+    Args:
+        :samples:
+            | 256, optional
+            | Sampling resolution of color space.
+        :diagram_opacity:
+            | 1.0, optional
+            | Sets opacity of chromaticity diagram
+        :diagram_lightness:
+            | 0.25, optional
+            | Sets lightness of chromaticity diagram
+        :axh: 
+            | None or axes handle, optional
+            | Determines axes to plot data in.
+            | None: make new figure.
+        :show:
+            | True or False, optional
+            | Invoke matplotlib.pyplot.show() right after plotting
+        :cieobs:
+            | luxpy._CIEOBS or str, optional
+            | Determines CMF set to calculate spectrum locus or other.
+        :cspace:
+            | luxpy._CSPACE or str, optional
+            | Determines color space / chromaticity diagram to plot data in.
+            | Note that data is expected to be in specified :cspace:
+        :cspace_pars:
+            | {} or dict, optional
+            | Dict with parameters required by color space specified in :cspace: 
+            | (for use with luxpy.colortf())
+        :show_grid:
+            | True, optional
+            | Show grid (True) or not (False)
+        :label_fontname: 
+            | 'Times New Roman', optional
+            | Sets font type of axis labels.
+        :label_fontsize:
+            | 12, optional
+            | Sets font size of axis labels.
+        :kwargs: 
+            | additional keyword arguments for use with matplotlib.pyplot.
+        
+    Returns:
+        
+    """
+    offset = _EPS
+    ii, jj = np.meshgrid(np.linspace(offset, 1 + offset, samples), np.linspace(1+offset, offset, samples))
+    ij = np.dstack((ii, jj))
+    
+    SL =  _CMF[cieobs]['bar'][1:4].T
+    SL = np.vstack((SL,SL[0]))
+    SL = 100.0*SL/SL[:,1,None]
+    SL = colortf(SL, tf = cspace, tfa0 = cspace_pars)
+    Y,x,y = asplit(SL)
+    SL = np.vstack((x,y)).T
+
+    
+    ij2D = ij.reshape((samples**2,2))
+    ij2D = np.hstack((diagram_lightness*100*np.ones((ij2D.shape[0],1)), ij2D))
+    xyz = colortf(ij2D, tf = cspace + '>xyz', tfa0 = cspace_pars)
+
+    xyz[xyz < 0] = 0
+    xyz[np.isinf(xyz.sum(axis=1)),:] = np.nan
+    xyz[np.isnan(xyz.sum(axis=1)),:] = offset
+    
+    srgb = xyz_to_srgb(xyz)
+    srgb = srgb/srgb.max()
+    srgb = srgb.reshape((samples,samples,3))
+
+    if show == True:
+        if axh is None:
+            fig = plt.figure()
+            axh = fig.add_subplot(111)
+        polygon = Polygon(SL, facecolor='none', edgecolor='none')
+        axh.add_patch(polygon)
+        image = axh.imshow(
+            srgb,
+            interpolation='bilinear',
+            extent = (0.0, 1, -0.05, 1),
+            clip_path=None,
+            alpha=diagram_opacity)
+        image.set_clip_path(polygon)
+        plt.plot(x,y, color = 'darkgray')
+        if cspace == 'Yxy':
+            plt.xlim([0,1])
+            plt.ylim([0,1])
+        elif cspace == 'Yuv':
+            plt.xlim([0,0.6])
+            plt.ylim([0,0.6])
+        if (cspace is not None):
+            xlabel = _CSPACE_AXES[cspace][1]
+            ylabel = _CSPACE_AXES[cspace][2]
+            if (label_fontname is not None) & (label_fontsize is not None):
+                plt.xlabel(xlabel, fontname = label_fontname, fontsize = label_fontsize)
+                plt.ylabel(ylabel, fontname = label_fontname, fontsize = label_fontsize)
+                
+        if show_grid == True:
+            plt.grid()
+        #plt.show()
+    
+        return axh
+    else:
+        return None
