@@ -22,8 +22,10 @@ Module for MacAdam ellipses
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
-from luxpy import (np, plt, _CSPACE_AXES, colortf, cKDTree )
+from luxpy import (np, plt, _CIEOBS,_CSPACE_AXES, _CMF, _EPS, colortf, cKDTree, Yxy_to_xyz, xyz_to_srgb, asplit )
 
+from matplotlib.collections import LineCollection
+from matplotlib.patches import Polygon
 
 def v_to_cik(v):
     """
@@ -317,6 +319,178 @@ def plotellipse(v, cspace_in = 'Yxy', cspace_out = None, nsamples = 100, \
     else:
         return None
 
+
+def plot_chromaticity_diagram_colours(samples = 256, diagram_opacity = 1.0, diagram_lightness = 0.25,\
+                                      cieobs = _CIEOBS, cspace = 'Yxy', cspace_pars = {},\
+                                      show = True, axh = None,\
+                                      show_grid = True, label_fontname = 'Times New Roman', label_fontsize = 12,\
+                                      **kwargs):
+    """
+    Plot the chromaticity diagram colours.
+    
+    Args:
+        :samples:
+            | 256, optional
+            | Sampling resolution of color space.
+        :diagram_opacity:
+            | 1.0, optional
+            | Sets opacity of chromaticity diagram
+        :diagram_lightness:
+            | 0.25, optional
+            | Sets lightness of chromaticity diagram
+        :axh: 
+            | None or axes handle, optional
+            | Determines axes to plot data in.
+            | None: make new figure.
+        :show:
+            | True or False, optional
+            | Invoke matplotlib.pyplot.show() right after plotting
+        :cieobs:
+            | luxpy._CIEOBS or str, optional
+            | Determines CMF set to calculate spectrum locus or other.
+        :cspace:
+            | luxpy._CSPACE or str, optional
+            | Determines color space / chromaticity diagram to plot data in.
+            | Note that data is expected to be in specified :cspace:
+        :cspace_pars:
+            | {} or dict, optional
+            | Dict with parameters required by color space specified in :cspace: 
+            | (for use with luxpy.colortf())
+        :show_grid:
+            | True, optional
+            | Show grid (True) or not (False)
+        :label_fontname: 
+            | 'Times New Roman', optional
+            | Sets font type of axis labels.
+        :label_fontsize:
+            | 12, optional
+            | Sets font size of axis labels.
+        :kwargs: 
+            | additional keyword arguments for use with matplotlib.pyplot.
+        
+    Returns:
+        
+    """
+    offset = _EPS
+    ii, jj = np.meshgrid(np.linspace(offset, 1 + offset, samples), np.linspace(1+offset, offset, samples))
+    ij = np.dstack((ii, jj))
+    
+    SL =  _CMF[cieobs]['bar'][1:4].T
+    SL = np.vstack((SL,SL[0]))
+    SL = 100.0*SL/SL[:,1,None]
+    SL = colortf(SL, tf = cspace, tfa0 = cspace_pars)
+    Y,x,y = asplit(SL)
+    spectral_locus = np.vstack((x,y)).T
+
+    
+    ij2D = ij.reshape((samples**2,2))
+    ij2D = np.hstack((diagram_lightness*100*np.ones((ij2D.shape[0],1)), ij2D))
+    xyz = colortf(ij2D, tf = cspace + '>xyz', tfa0 = cspace_pars)
+
+    xyz[xyz < 0] = 0
+    xyz[np.isinf(xyz.sum(axis=1)),:] = np.nan
+    xyz[np.isnan(xyz.sum(axis=1)),:] = offset
+    
+    srgb = xyz_to_srgb(xyz)
+    srgb = srgb/srgb.max()
+    srgb = srgb.reshape((samples,samples,3))
+
+    fig = plt.figure()
+    axes = fig.add_subplot(111)
+    plt.imshow
+
+    if show == True:
+        if axh is None:
+            fig = plt.figure()
+            axh = fig.add_subplot(111)
+        polygon = Polygon(spectral_locus, facecolor='none', edgecolor='none')
+        axh.add_patch(polygon)
+        image = axh.imshow(
+            srgb,
+            interpolation='bilinear',
+            extent = (0.0, 1, -0.05, 1),
+            clip_path=None,
+            alpha=diagram_opacity)
+        image.set_clip_path(polygon)
+        plt.plot(x,y, color = 'darkgray')
+        plt.xlim([0,1])
+        plt.ylim([0,1])
+        if (cspace is not None):
+            xlabel = _CSPACE_AXES[cspace][1]
+            ylabel = _CSPACE_AXES[cspace][2]
+            plt.xlabel(xlabel, fontname = label_fontname, fontsize = label_fontsize)
+            plt.ylabel(ylabel, fontname = label_fontname, fontsize = label_fontsize)
+        if show_grid == True:
+            plt.grid()
+        plt.show()
+    
+        return axh
+    else:
+        return None
+
+def plot_chrom():
+    x = np.asarray([0.175596, 0.172787, 0.170806, 0.170085, 0.160343, 0.146958, 0.139149,\
+                    0.133536, 0.126688, 0.115830, 0.109616, 0.099146, 0.091310, 0.078130,\
+                    0.068717, 0.054675, 0.040763, 0.027497, 0.016270, 0.008169, 0.004876,\
+                    0.003983, 0.003859, 0.004646, 0.007988, 0.013870, 0.022244, 0.027273,\
+                    0.032820, 0.038851, 0.045327, 0.052175, 0.059323, 0.066713, 0.074299,\
+                    0.089937, 0.114155, 0.138695, 0.154714, 0.192865, 0.229607, 0.265760,\
+                    0.301588, 0.337346, 0.373083, 0.408717, 0.444043, 0.478755, 0.512467,\
+                    0.544767, 0.575132, 0.602914, 0.627018, 0.648215, 0.665746, 0.680061,\
+                    0.691487, 0.700589, 0.707901, 0.714015, 0.719017, 0.723016, 0.734674])
+    y = np.asarray([ 0.005295, 0.004800, 0.005472, 0.005976, 0.014496, 0.026643, 0.035211,\
+                    0.042704, 0.053441, 0.073601, 0.086866, 0.112037, 0.132737, 0.170464,\
+                    0.200773, 0.254155, 0.317049, 0.387997, 0.463035, 0.538504, 0.587196,\
+                    0.610526, 0.654897, 0.675970, 0.715407, 0.750246, 0.779682, 0.792153,\
+                    0.802971, 0.812059, 0.819430, 0.825200, 0.829460, 0.832306, 0.833833,\
+                    0.833316, 0.826231, 0.814796, 0.805884, 0.781648, 0.754347, 0.724342,\
+                    0.692326, 0.658867, 0.624470, 0.589626, 0.554734, 0.520222, 0.486611,\
+                    0.454454, 0.424252, 0.396516, 0.372510, 0.351413, 0.334028, 0.319765,\
+                    0.308359, 0.299317, 0.292044, 0.285945, 0.280951, 0.276964, 0.265326])
+    N = x.shape[0]
+    i = 1
+    e = 1/3
+    steps = 25
+    xy4rgb = np.zeros((N*steps*4, 5))
+    for w in np.arange(N):                              # wavelength
+        w2 = np.mod(w,N) + 1
+        a1 = np.arctan2(y[w] - e, x[w] - e)             # start angle
+        a2 = np.arctan2(y[w2] - e, x[w2] - e)           # end angle
+        r1 = ((x[w] - e)**2 + (y[w] - e)**2)**0.5       # start radius
+        r2 = ((x[w2] - e)**2 + (y[w2] - e)**2)**0.5     # end radius
+        xyz = np.zeros((4,3))
+        for c in np.arange(steps):                      # colorfulness
+            # patch polygon
+            xyz[0,0] = e + r1*np.cos(a1)*c/steps
+            xyz[0,1] = e + r1*np.sin(a1)*c/steps
+            xyz[0,2] = 1 - xyz[0,0] - xyz[0,1]
+            xyz[1,0] = e + r1*np.cos(a1)*(c-1)/steps
+            xyz[1,1] = e + r1*np.sin(a1)*(c-1)/steps
+            xyz[1,2] = 1 - xyz[1,0] - xyz[1,1]
+            xyz[2,0] = e + r2*np.cos(a2)*(c-1)/steps
+            xyz[2,1] = e + r2*np.sin(a2)*(c-1)/steps
+            xyz[2,2] = 1 - xyz[2,0] - xyz[2,1]
+            xyz[3,0] = e + r2*np.cos(a2)*c/steps
+            xyz[3,1] = e + r2*np.sin(a2)*c/steps
+            xyz[3,2] = 1 - xyz[3,0] - xyz[3,1]
+            # compute sRGB for vertices
+            rgb = xyz_to_srgb(xyz)
+            # store the results
+            xy4rgb[i:i+2,0:2] = xyz[:,0:2]
+            xy4rgb[i:i+2,2:5] = rgb
+            i = i + 4
+
+
+    rows = xy4rgb.shape[0]
+    f = [1, 2, 3, 4]
+    v = zeros((4,3))
+#    for i = 1:4:rows
+#        v(:,1:2) = xy4rgb(i:i+3,1:2)
+#        patch('Vertices',v, 'Faces',f, 'EdgeColor','none', ...
+#            'FaceVertexCData',xy4rgb[i:i+3,3:5],'FaceColor','interp')
+
+
+
 if __name__ == '__main__':
     
     # Get MacAdam ellipses:
@@ -327,9 +501,13 @@ if __name__ == '__main__':
     v_mac_est = macadam_ellipses(xy_test)
 
     # Plot results:
-    axh = plotellipse(v_mac, show = True, cspace_out = 'Yxy',plot_center = False, center_color = 'r', out = 'axh')
-    plotellipse(v_mac_est, show = True, axh = axh, cspace_out = 'Yxy',line_color = 'g', plot_center = True, center_color = 'g')
-    
+    cspace = 'Yuv'
+    axh = plot_chromaticity_diagram_colours(cspace = cspace)
+    axh = plotellipse(v_mac, show = True, axh = axh, cspace_out = cspace,plot_center = False, center_color = 'r', out = 'axh', line_style = ':', line_color ='k',line_width = 1.5)
+    plotellipse(v_mac_est, show = True, axh = axh, cspace_out = cspace,line_color = 'k', plot_center = True, center_color = 'k')
+    if cspace == 'Yuv':
+        axh.set_xlim([0,0.6])
+        axh.set_ylim([0,0.6])
     
     
     
