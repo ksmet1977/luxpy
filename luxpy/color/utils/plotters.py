@@ -768,18 +768,21 @@ def plot_chromaticity_diagram_colors(samples = 256, diagram_opacity = 1.0, diagr
         return None
 
 #------------------------------------------------------------------------------
-def plot_spectrum_colors(spd = None, \
+def plot_spectrum_colors(spd = None, spdmax = None,\
                          wavelength_height = -0.05, wavelength_opacity = 1.0, wavelength_lightness = 1.0,\
                          cieobs = _CIEOBS, show = True, axh = None,\
                          show_grid = True,ylabel = 'Spectral intensity (a.u.)',\
                          **kwargs):
     """
-    Plot the spd with spectrum colors.
+    Plot the spectrum colors.
     
     Args:
         :spd:
             | None, optional
             | Spectrum
+        :spdmax:
+            | None, optional
+            | max ylim is set at 1.05 or (1+abs(wavelength_height)*spdmax)
         :wavelength_opacity:
             | 1.0, optional
             | Sets opacity of wavelength rectangle.
@@ -826,9 +829,12 @@ def plot_spectrum_colors(spd = None, \
             fig = plt.figure()
             axh = fig.add_subplot(111)
          
-        if wavelength_height == 'spd':
+        if (wavelength_height == 'spd') & (spd is not None):
+            if spdmax is None:
+                spdmax = np.nanmax(spd[1:,:])
+            y_min, y_max = 0.0, spdmax*(1.05)
             x_min, x_max = spd[0,:].min(), spd[0,:].max()
-            y_min, y_max = 0.0, spd[1,:].max()*(1.05)
+
             SLrect = np.vstack([
                 (x_min, 0.0),
                 spd.T,
@@ -837,9 +843,19 @@ def plot_spectrum_colors(spd = None, \
             wavelength_height = y_max        
             spdmax = 1
         else:
-            spdmax = spd[1,:].max()
+            if (spdmax is None) & (spd is not None):
+                spdmax = np.nanmax(spd[1:,:])
+                y_min, y_max = wavelength_height*spdmax, spdmax*(1 + np.abs(wavelength_height))
+
+            elif (spdmax is None) & (spd is None):
+                spdmax = 1
+                y_min, y_max = wavelength_height, 0
+                
+            elif (spdmax is not None):
+                y_min, y_max = wavelength_height*spdmax, spdmax#*(1 + np.abs(wavelength_height))
+
+                    
             x_min, x_max = wavs.min(), wavs.max()
-            y_min, y_max = wavelength_height*spdmax, spd[1,:].max()*(1 + np.abs(wavelength_height))
             SLrect = np.vstack([
                 (x_min, 0.0),
                 (x_min, wavelength_height*spdmax),
@@ -848,8 +864,8 @@ def plot_spectrum_colors(spd = None, \
                 ])
         
         axh.set_xlim([x_min,x_max])
-        axh.set_ylim([y_min,y_max])  
-            
+        axh.set_ylim([y_min,y_max])     
+
         polygon = Polygon(SLrect, facecolor=None, edgecolor=None)
         axh.add_patch(polygon)
         padding = 0.1
@@ -862,15 +878,16 @@ def plot_spectrum_colors(spd = None, \
                clip_path = polygon) 
         
         if spd is not None:
-            axh.plot(spd[0,:],spd[1,:], color = 'k', label = 'spd')
+            axh.plot(spd[0:1,:].T,spd[1:,:].T, color = 'k', label = 'spd')
  
-        
         if show_grid == True:
             plt.grid()
         axh.set_xlabel('Wavelengths (nm)',kwargs)
-        axh.set_ylabel(ylabel, kwargs)
+        axh.set_ylabel(ylabel, kwargs)        
+
         #plt.show()
     
         return axh
     else:
         return None
+

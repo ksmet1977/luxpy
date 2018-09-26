@@ -75,7 +75,7 @@ SPD methods
 
 from luxpy import _CIEOBS, _WL3, _BB, _S012_DAYLIGHTPHASE, _INTERP_TYPES, _S_INTERP_TYPE, _R_INTERP_TYPE, _CRI_REF_TYPE, _CRI_REF_TYPES
 from luxpy import spd_to_xyz, cie_interp, getwlr, getwld, spd_normalize
-from luxpy import np, pd, plt, interpolate
+from luxpy import np, pd, plt, interpolate, plot_spectrum_colors
 from .CDATA import XYZ, LAB
 
 class SPD:
@@ -191,7 +191,7 @@ class SPD:
         """
         return pd.read_csv(file, names = None, index_col = None, header = header, sep = sep).values.T
 
-    def plot(self, ylabel = 'Spectrum', *args,**kwargs):
+    def plot(self, ylabel = 'Spectrum', wavelength_bar = True, *args,**kwargs):
         """
         Make a plot of the spectral data in SPD instance.
         
@@ -200,6 +200,9 @@ class SPD:
                 | handle to current axes.
         """
         plt.plot(self.wl, self.value.T, *args,**kwargs)
+        if wavelength_bar == True:
+            Smax = np.nanmax(self.value)
+            axh = plot_spectrum_colors(spd = None,spdmax=Smax, axh = plt.gca(), wavelength_height = -0.05)
         plt.xlabel('Wavelength (nm)')
         plt.ylabel(ylabel)
         return plt.gca()
