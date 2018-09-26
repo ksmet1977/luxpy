@@ -882,7 +882,7 @@ def plot_spectrum_colors(spd = None, spdmax = None,\
  
         if show_grid == True:
             plt.grid()
-        axh.set_xlabel('Wavelengths (nm)',kwargs)
+        axh.set_xlabel('Wavelength (nm)',kwargs)
         axh.set_ylabel(ylabel, kwargs)        
 
         #plt.show()
