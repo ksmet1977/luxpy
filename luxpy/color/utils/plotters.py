@@ -49,6 +49,8 @@ Module with functions related to plotting of color data
      
  :plot_chromaticity_diagram_colors(): Plot the chromaticity diagram colors.
 
+ :plot_spectrum_colors(): Plot spd with spectrum colors.
+ 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
@@ -56,7 +58,7 @@ from luxpy import np, plt, _EPS, _CIEOBS, _CSPACE, _CSPACE_AXES, _CIE_ILLUMINANT
 
 from matplotlib.patches import Polygon
 
-__all__ = ['plotSL','plotDL','plotBB','plot_color_data','plotceruleanline','plotUH','plotcircle','plotellipse','plot_chromaticity_diagram_colors']
+__all__ = ['plotSL','plotDL','plotBB','plot_color_data','plotceruleanline','plotUH','plotcircle','plotellipse','plot_chromaticity_diagram_colors','plot_spectrum_colors']
 
 
 
@@ -759,6 +761,114 @@ def plot_chromaticity_diagram_colors(samples = 256, diagram_opacity = 1.0, diagr
                 
         if show_grid == True:
             plt.grid()
+        #plt.show()
+    
+        return axh
+    else:
+        return None
+
+#------------------------------------------------------------------------------
+def plot_spectrum_colors(spd = None, \
+                         wavelength_height = -0.05, wavelength_opacity = 1.0, wavelength_lightness = 1.0,\
+                         cieobs = _CIEOBS, show = True, axh = None,\
+                         show_grid = True,ylabel = 'Spectral intensity (a.u.)',\
+                         **kwargs):
+    """
+    Plot the spd with spectrum colors.
+    
+    Args:
+        :spd:
+            | None, optional
+            | Spectrum
+        :wavelength_opacity:
+            | 1.0, optional
+            | Sets opacity of wavelength rectangle.
+        :wavelength_lightness:
+            | 1.0, optional
+            | Sets lightness of wavelength rectangle.
+        :wavelength_height:
+            | -0.05 or 'spd', optional
+            | Determine wavelength bar height 
+            | if not 'spd': x% of spd.max()
+        :axh: 
+            | None or axes handle, optional
+            | Determines axes to plot data in.
+            | None: make new figure.
+        :show:
+            | True or False, optional
+            | Invoke matplotlib.pyplot.show() right after plotting
+        :cieobs:
+            | luxpy._CIEOBS or str, optional
+            | Determines CMF set to calculate spectrum locus or other.
+        :show_grid:
+            | True, optional
+            | Show grid (True) or not (False)
+        :ylabel:
+            | 'Spectral intensity (a.u.)' or str, optional
+            | Set y-axis label.
+        :kwargs: 
+            | additional keyword arguments for use with matplotlib.pyplot.
+        
+    Returns:
+        
+    """
+    
+    cmfs = _CMF[cieobs]['bar']
+    
+    wavs = cmfs[0:1].T
+    SL =  cmfs[1:4].T    
+    
+    srgb = xyz_to_srgb(wavelength_lightness*100*SL)
+    srgb = srgb/srgb.max()
+    
+    if show == True:
+        if axh is None:
+            fig = plt.figure()
+            axh = fig.add_subplot(111)
+         
+        if wavelength_height == 'spd':
+            x_min, x_max = spd[0,:].min(), spd[0,:].max()
+            y_min, y_max = 0.0, spd[1,:].max()*(1.05)
+            SLrect = np.vstack([
+                (x_min, 0.0),
+                spd.T,
+                (x_max, 0.0),
+                ])
+            wavelength_height = y_max        
+            spdmax = 1
+        else:
+            spdmax = spd[1,:].max()
+            x_min, x_max = wavs.min(), wavs.max()
+            y_min, y_max = wavelength_height*spdmax, spd[1,:].max()*(1 + np.abs(wavelength_height))
+            SLrect = np.vstack([
+                (x_min, 0.0),
+                (x_min, wavelength_height*spdmax),
+                (x_max, wavelength_height*spdmax),
+                (x_max, 0.0),
+                ])
+        
+        axh.set_xlim([x_min,x_max])
+        axh.set_ylim([y_min,y_max])  
+            
+        polygon = Polygon(SLrect, facecolor=None, edgecolor=None)
+        axh.add_patch(polygon)
+        padding = 0.1
+        axh.bar(x = wavs - padding,
+               height = wavelength_height*spdmax,
+               width = 1 + padding,
+               color = srgb,
+               align = 'edge',
+               linewidth = 0,
+               clip_path = polygon) 
+        
+        if spd is not None:
+            axh.plot(spd[0,:],spd[1,:], color = 'k', label = 'spd')
+ 
+        
+        if show_grid == True:
+            plt.grid()
+        axh.set_xlabel('Wavelengths (nm)',kwargs)
+        axh.set_ylabel(ylabel, kwargs)
         #plt.show()
     
         return axh
