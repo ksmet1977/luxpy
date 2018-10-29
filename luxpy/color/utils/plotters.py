@@ -771,7 +771,7 @@ def plot_chromaticity_diagram_colors(samples = 256, diagram_opacity = 1.0, diagr
 def plot_spectrum_colors(spd = None, spdmax = None,\
                          wavelength_height = -0.05, wavelength_opacity = 1.0, wavelength_lightness = 1.0,\
                          cieobs = _CIEOBS, show = True, axh = None,\
-                         show_grid = True,ylabel = 'Spectral intensity (a.u.)',\
+                         show_grid = True,ylabel = 'Spectral intensity (a.u.)',xlim=None,\
                          **kwargs):
     """
     Plot the spectrum colors.
@@ -809,6 +809,9 @@ def plot_spectrum_colors(spd = None, spdmax = None,\
         :ylabel:
             | 'Spectral intensity (a.u.)' or str, optional
             | Set y-axis label.
+        :xlim:
+            | None, optional
+            | list or ndarray with xlimits.
         :kwargs: 
             | additional keyword arguments for use with matplotlib.pyplot.
         
@@ -833,7 +836,10 @@ def plot_spectrum_colors(spd = None, spdmax = None,\
             if spdmax is None:
                 spdmax = np.nanmax(spd[1:,:])
             y_min, y_max = 0.0, spdmax*(1.05)
-            x_min, x_max = spd[0,:].min(), spd[0,:].max()
+            if xlim is None:
+                x_min, x_max = spd[0,:].min(), spd[0,:].max()
+            else:
+                x_min, x_max = xlim
 
             SLrect = np.vstack([
                 (x_min, 0.0),
@@ -855,7 +861,11 @@ def plot_spectrum_colors(spd = None, spdmax = None,\
                 y_min, y_max = wavelength_height*spdmax, spdmax#*(1 + np.abs(wavelength_height))
 
                     
-            x_min, x_max = wavs.min(), wavs.max()
+            if xlim is None:
+                x_min, x_max = wavs.min(), wavs.max()
+            else:
+                x_min, x_max = xlim
+                
             SLrect = np.vstack([
                 (x_min, 0.0),
                 (x_min, wavelength_height*spdmax),
