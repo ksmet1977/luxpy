@@ -278,7 +278,7 @@ def spd_normalize(data, norm_type = None, norm_f = 1, wl = True, cieobs = _CIEOB
 	
 #--------------------------------------------------------------------------------------------------
 
-def cie_interp(data,wl_new, kind = None, negative_values_allowed = False):
+def cie_interp(data,wl_new, kind = None, negative_values_allowed = False, extrap_values = None):
     """
     Interpolate / extrapolate spectral data following standard CIE15-2004.
     
@@ -301,6 +301,10 @@ def cie_interp(data,wl_new, kind = None, negative_values_allowed = False):
         :negative_values_allowed: 
             | False, optional
             | If False: negative values are clipped to zero.
+        :extrap_values:
+            | None, optional
+            | float or list or ndarray with values to extrapolate
+            | If None: use CIE recommended 'closest value' approach.
     
     Returns:
         :returns: 
@@ -313,6 +317,8 @@ def cie_interp(data,wl_new, kind = None, negative_values_allowed = False):
         
         if (not np.array_equal(data[0],wl_new)):
        
+            extrap_values = np.atleast_1d(extrap_values)
+            
             # Set interpolation type based on data type:
             if kind in _INTERP_TYPES['linear']:
                 kind = 'linear'
@@ -332,8 +338,13 @@ def cie_interp(data,wl_new, kind = None, negative_values_allowed = False):
                 Si[i] = Si_f(wl_new)
                 
                 #extrapolate by replicating closest known (in source data!) value (conform CIE2004 recommendation) 
-                Si[i][wl_new<wl[0]] = S[i][0]
-                Si[i][wl_new>wl[-1]] = S[i][-1]
+                if extrap_values[0] is None:
+                    Si[i][wl_new<wl[0]] = S[i][0]
+                    Si[i][wl_new>wl[-1]] = S[i][-1]
+                else:
+                    Si[i][wl_new<wl[0]] = extrap_values[0]
+                    Si[i][wl_new>wl[-1]] = extrap_values[-1]  
+                    
                 
             # No negative values allowed for spectra:    
             if negative_values_allowed == False:

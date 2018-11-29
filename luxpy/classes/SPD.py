@@ -81,7 +81,7 @@ from .CDATA import XYZ, LAB
 class SPD:
     
     def __init__(self, spd = None, wl = None, ax0iswl = True, dtype = 'S', \
-                 wl_new = None, interp_method = 'auto', negative_values_allowed = False, \
+                 wl_new = None, interp_method = 'auto', negative_values_allowed = False, extrap_values = None,\
                  norm_type = None, norm_f = 1,\
                  header = None, sep = ','):
         """
@@ -119,6 +119,10 @@ class SPD:
                 | False, optional (for cie_interp())
                 | Spectral data can not be negative. Values < 0 are therefore 
                   clipped when set to False.
+            :extrap_values:
+                | None, optional
+                | float or list or ndarray with values to extrapolate
+                | If None: use CIE recommended 'closest value' approach.
             :norm_type:
                 | None or str, optional
                 | - 'lambda': make lambda in norm_f equal to 1
@@ -161,7 +165,7 @@ class SPD:
         if wl_new is not None:
             if interp_method == 'auto':
                 interp_method = dtype
-            self.cie_interp(wl_new, kind = interp_method, negative_values_allowed = negative_values_allowed)
+            self.cie_interp(wl_new, kind = interp_method, negative_values_allowed = negative_values_allowed, extrap_values = extrap_values)
         if norm_type is not None:
             self.normalize(norm_type = norm_type, norm_f = norm_f)
 
@@ -329,7 +333,7 @@ class SPD:
         return self
 
     #--------------------------------------------------------------------------------------------------
-    def cie_interp(self,wl_new, kind = 'auto', negative_values_allowed = False):
+    def cie_interp(self,wl_new, kind = 'auto', negative_values_allowed = False, extrap_values = None):
         """
         Interpolate / extrapolate spectral data following standard CIE15-2004.
         
@@ -350,6 +354,10 @@ class SPD:
             :negative_values_allowed:
                 | False, optional
                 | If False: negative values are clipped to zero
+            :extrap_values:
+                | None, optional
+                | float or list or ndarray with values to extrapolate
+                | If None: use CIE recommended 'closest value' approach.
         
         Returns:
             :returns:
@@ -358,7 +366,7 @@ class SPD:
         """
         if (kind == 'auto') & (self.dtype is not None):
             kind = self.dtype
-        spd = cie_interp(self.get_(), wl_new, kind = kind, negative_values_allowed = negative_values_allowed)
+        spd = cie_interp(self.get_(), wl_new, kind = kind, negative_values_allowed = negative_values_allowed, extrap_values = extrap_values)
         self.wl = spd[0]
         self.value = spd[1:]
         return self

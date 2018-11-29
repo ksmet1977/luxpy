@@ -213,7 +213,7 @@ def minimizebnd(fun, x0, args=(), method = 'nelder-mead', use_bnd = True, \
         
     if 'OutputFcn' in options:
         if options['OutputFcn'] is not None:
-            params.OutputFcn = options.OutputFcn
+            params['OutputFcn'] = options['OutputFcn']
             options['OutputFcn']  = outfun_wrapper
 
     
@@ -272,11 +272,11 @@ def xtransform(x,params):
     for i in np.arange(params['n']):
         if params['BoundClass'][i] == 1:
               # lower bound only
-              xtrans[i] = params.LB[i] + x[k]**2
+              xtrans[i] = params['LB'][i] + x[k]**2
 
         elif params['BoundClass'][i] == 2:
               # upper bound only
-              xtrans[i] = params.UB[i] - x[k]**2
+              xtrans[i] = params['UB'][i] - x[k]**2
      
         elif params['BoundClass'][i] == 3:
               # lower and upper bounds
