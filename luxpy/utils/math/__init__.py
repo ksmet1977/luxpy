@@ -79,6 +79,8 @@ Module with useful math functions
                  Starting, lower and upper bounds values can also be provided 
                  as a dict.
  :DEMO: Module for Differential Evolutionary Multi-objective Optimization  (DEMO).
+ 
+ :vec3: Module for spherical vector coordinates.
                  
 ===============================================================================
 """
@@ -89,7 +91,10 @@ from .minimizebnd import minimizebnd
 __all__ += ['minimizebnd']
 
 from .DEMO import DEMO as DEMO
-__all__ +=['DEMO']
+__all__ += ['DEMO']
+
+from .vec3 import vec3 as vec3
+__all__ += ['vec3']
 
 
 
