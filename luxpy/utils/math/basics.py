@@ -61,6 +61,10 @@ Module with useful basic math functions
  :cart2pol(): Converts Cartesian to polar coordinates.
 
  :pol2cart(): Converts polar to Cartesian coordinates.
+ 
+ :cart2spher(): Converts Cartesian to spherical coordinates.
+ 
+ :spher2cart(): Converts spherical to Cartesian coordinates.
 
  :magnitude_v():  Calculates magnitude of vector.
 
@@ -81,7 +85,7 @@ from luxpy import np, np2d
 from scipy.special import erf, erfinv
 __all__  = ['normalize_3x3_matrix','symmM_to_posdefM','check_symmetric',
             'check_posdef','positive_arctan','line_intersect','erf', 'erfinv', 
-            'histogram', 'pol2cart', 'cart2pol']
+            'histogram', 'pol2cart', 'cart2pol', 'spher2cart', 'cart2spher']
 __all__ += ['bvgpdf','mahalanobis2','dot23', 'rms','geomean','polyarea']
 __all__ += ['magnitude_v','angle_v1v2']
 __all__ += ['v_to_cik', 'cik_to_v']
@@ -539,6 +543,70 @@ def pol2cart(theta, r = None, htype = 'deg'):
         theta = theta[...,0].copy()
     theta = theta*d2r
     return r*np.cos(theta), r*np.sin(theta)
+
+#------------------------------------------------------------------------------
+def spher2cart(theta, phi, r = 1., deg = True):
+    """
+    Convert spherical to cartesian coordinates.
+    
+    Args:
+        :theta:
+            | Float, int or ndarray
+            | Angle with positive z-axis.
+        :phi:
+            | Float, int or ndarray
+            | Angle around positive z-axis starting from x-axis.
+        :r:
+            | 1, optional
+            | Float, int or ndarray
+            | radius
+            
+    Returns:
+        :x, y, z:
+            | tuple of floats, ints or ndarrays
+            | Cartesian coordinates
+    """
+    if deg == True:
+        theta = np.deg2rad(theta)
+        phi = np.deg2rad(phi)
+    x= r*np.sin(theta)*np.cos(phi)
+    y= r*np.sin(theta)*np.sin(phi)
+    z= r*np.cos(theta)
+    return x,y,z
+
+def cart2spher(x,y,z, deg = True):
+    """
+    Convert cartesian to spherical coordinates.
+    
+    Args:        
+        :x, y, z:
+            | tuple of floats, ints or ndarrays
+            | Cartesian coordinates
+    Returns:
+        :theta:
+            | Float, int or ndarray
+            | Angle with positive z-axis.
+        :phi:
+            | Float, int or ndarray
+            | Angle around positive z-axis starting from x-axis.
+        :r:
+            | 1, optional
+            | Float, int or ndarray
+            | radius
+
+    """
+    r = np.sqrt(x*x + y*y + z*z)
+    phi = np.arctan2(y,x)
+    phi[phi<0.] = phi[phi<0.] + 2*np.pi
+    zdr = z/r
+    zdr[zdr > 1.] = 1.
+    zdr[zdr<-1.] = -1
+    theta = np.arccos(zdr)
+    if deg == True:
+        theta = theta*180/np.pi
+        phi = phi *180/np.pi
+    return theta, phi, r   
+
 
 #------------------------------------------------------------------------------
 # magnitude of a vector

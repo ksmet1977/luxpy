@@ -106,6 +106,9 @@ LuxPy package structure
 |			
 |		/.hypspcsim
 |			hyperspectral_img_simulator.py
+|
+|     /.iolidfiles
+|       io_lid_files.py
 
 
 
@@ -333,6 +336,8 @@ __all__ += ['spdbuild']
 from .toolboxes.hypspcim import hyperspectral_img_simulator as hypspcim
 __all__ += ['hypspcim']
 
-
+#   Load hypspcim sub_package:
+from .toolboxes.iolidfiles import io_lid_files as iolidfiles
+__all__ += ['iolidfiles']
 
 ###############################################################################

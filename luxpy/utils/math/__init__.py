@@ -62,6 +62,10 @@ Module with useful math functions
  :cart2pol(): Converts Cartesian to polar coordinates.
 
  :pol2cart(): Converts polar to Cartesian coordinates.
+ 
+ :cart2spher(): Converts Cartesian to spherical coordinates.
+ 
+ :spher2cart(): Converts spherical to Cartesian coordinates.
 
  :magnitude_v():  Calculates magnitude of vector.
 
