@@ -169,7 +169,7 @@ def plot_cri_graphics(data, cri_type = None, hbins = 16, start_hue = 0.0, scalef
     if not isinstance(data,dict):
         data = spd_to_ies_tm30_metrics(data, cri_type = cri_type, hbins = hbins, start_hue = start_hue, scalef = scalef, vf_model_type = vf_model_type, vf_pcolorshift = vf_pcolorshift, scale_vf_chroma_to_sample_chroma = scale_vf_chroma_to_sample_chroma)
 
-    Rcshi, Rf, Rfchhi_vf, Rfhi, Rfhi_vf, Rfhshi_vf, Rfi, Rt, Rti, Rg, Rhshi, SPD, bjabr, bjabt, cct, cri_type, dataVF, duv = [data[x] for x in sorted(data.keys())]
+    Rcshi, Rf, Rfchhi_vf, Rfhi, Rfhi_vf, Rfhshi_vf, Rfi,  Rg, Rhshi, Rt, Rti, SPD, bjabr, bjabt, cct, cri_type, dataVF, duv = [data[x] for x in sorted(data.keys())]
     hbins = cri_type['rg_pars']['nhbins']
     start_hue = cri_type['rg_pars']['start_hue']
     scalef = cri_type['rg_pars']['normalized_chroma_ref']
