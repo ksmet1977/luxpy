@@ -54,6 +54,7 @@ class vec3:
             if len(args) == 2:
                 args.append(np.ones(args[0].shape))
             self.set_tpr(*args)
+        self.shape = self.x.shape
         
     def __repr__(self):
         return 'vec3' + repr(tuple((self.x, self.y, self.z)))
