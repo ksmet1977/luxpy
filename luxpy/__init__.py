@@ -4,8 +4,8 @@ LuxPy: a package for lighting and color science
 ===============================================
 
     * Author: K. A.G. Smet (ksmet1977 at gmail.com)
-    * Version: 1.3.10
-    * Date: August 28, 2018
+    * Version: 1.3.11
+    * Date: December 24, 2018
     * License: GPLv3
 
     * DOI: https://doi.org/10.5281/zenodo.1298963
@@ -34,8 +34,13 @@ LuxPy package structure
 |		/ helpers
 |         helpers.py
 |		/.math
-|			math.py
-|			optimizers.py
+|			basics.py
+|			minimizebnd.py
+|			/.DEMO
+|				DEMO.py
+|				demo_opt.py
+|			/.vec3
+|				vec3.py			
 |	
 |	/spectrum
 |		cmf.py
