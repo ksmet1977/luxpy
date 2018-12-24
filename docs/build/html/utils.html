@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Utils sub-package &mdash; LuxPy 1.3.10 documentation</title>
+  <title>Utils sub-package &mdash; LuxPy 1.3.11 documentation</title>
   
 
   
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                1.3.10
+                1.3.11
               </div>
             
           
@@ -1050,6 +1050,10 @@ shape and orientation determined by sigmainv.</td>
 </tr>
 <tr class="field-odd field"><th class="field-name">pol2cart():</th><td class="field-body">Converts polar to Cartesian coordinates.</td>
 </tr>
+<tr class="field-even field"><th class="field-name">cart2spher():</th><td class="field-body">Converts Cartesian to spherical coordinates.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">spher2cart():</th><td class="field-body">Converts spherical to Cartesian coordinates.</td>
+</tr>
 <tr class="field-even field"><th class="field-name">magnitude_v():</th><td class="field-body">Calculates magnitude of vector.</td>
 </tr>
 <tr class="field-odd field"><th class="field-name">angle_v1v2():</th><td class="field-body">Calculates angle between two vectors.</td>
@@ -1060,12 +1064,18 @@ shape and orientation determined by sigmainv.</td>
 </div>
 </td>
 </tr>
+<tr class="field-odd field"><th class="field-name">v_to_cik():</th><td class="field-body">Calculate 2x2 ‘(covariance matrix)^-1’ elements cik from v-format ellipse descriptor.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">cik_to_v():</th><td class="field-body">Calculate v-format ellipse descriptor from 2x2 ‘covariance matrix’^-1 cik.</td>
+</tr>
 <tr class="field-odd field"><th class="field-name">minimizebnd():</th><td class="field-body">scipy.minimize() that allows contrained parameters on 
 unconstrained methods(port of Matlab’s fminsearchbnd). 
 Starting, lower and upper bounds values can also be provided 
 as a dict.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">DEMO:</th><td class="field-body">Module for Differential Evolutionary Multi-objective Optimization  (DEMO).</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">vec3:</th><td class="field-body">Module for spherical vector coordinates.</td>
 </tr>
 </tbody>
 </table>
@@ -1521,6 +1531,104 @@ the center (cfr. matlab hist) or bin-edges.</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="luxpy.utils.math.spher2cart">
+<code class="descclassname">luxpy.utils.math.</code><code class="descname">spher2cart</code><span class="sig-paren">(</span><em>theta</em>, <em>phi</em>, <em>r=1.0</em>, <em>deg=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/math/basics.html#spher2cart"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.math.spher2cart" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert spherical to cartesian coordinates.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">theta:</th><td class="field-body"><div class="first last line-block">
+<div class="line">Float, int or ndarray</div>
+<div class="line">Angle with positive z-axis.</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">phi:</th><td class="field-body"><div class="first last line-block">
+<div class="line">Float, int or ndarray</div>
+<div class="line">Angle around positive z-axis starting from x-axis.</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">r:</th><td class="field-body"><div class="first last line-block">
+<div class="line">1, optional</div>
+<div class="line">Float, int or ndarray</div>
+<div class="line">radius</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">x, y, z:</th><td class="field-body"><div class="first last line-block">
+<div class="line">tuple of floats, ints or ndarrays</div>
+<div class="line">Cartesian coordinates</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="luxpy.utils.math.cart2spher">
+<code class="descclassname">luxpy.utils.math.</code><code class="descname">cart2spher</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>z</em>, <em>deg=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/math/basics.html#cart2spher"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.math.cart2spher" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert cartesian to spherical coordinates.</p>
+<dl class="docutils">
+<dt>Args:        </dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">x, y, z:</th><td class="field-body"><div class="first last line-block">
+<div class="line">tuple of floats, ints or ndarrays</div>
+<div class="line">Cartesian coordinates</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">theta:</th><td class="field-body"><div class="first last line-block">
+<div class="line">Float, int or ndarray</div>
+<div class="line">Angle with positive z-axis.</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">phi:</th><td class="field-body"><div class="first last line-block">
+<div class="line">Float, int or ndarray</div>
+<div class="line">Angle around positive z-axis starting from x-axis.</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">r:</th><td class="field-body"><div class="first last line-block">
+<div class="line">1, optional</div>
+<div class="line">Float, int or ndarray</div>
+<div class="line">radius</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
 <dt id="luxpy.utils.math.bvgpdf">
 <code class="descclassname">luxpy.utils.math.</code><code class="descname">bvgpdf</code><span class="sig-paren">(</span><em>x</em>, <em>y=None</em>, <em>mu=None</em>, <em>sigmainv=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/math/basics.html#bvgpdf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.math.bvgpdf" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evaluate bivariate Gaussian probability density function (BVGPDF) at (x,y) 
@@ -1888,6 +1996,82 @@ using einsum().</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="luxpy.utils.math.v_to_cik">
+<code class="descclassname">luxpy.utils.math.</code><code class="descname">v_to_cik</code><span class="sig-paren">(</span><em>v</em>, <em>inverse=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/math/basics.html#v_to_cik"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.math.v_to_cik" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate 2x2 ‘(covariance matrix)^-1’ elements cik</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">v:</th><td class="field-body"><div class="first last line-block">
+<div class="line">(Nx5) np.ndarray</div>
+<div class="line">ellipse parameters [Rmax,Rmin,xc,yc,theta]</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">cik:</th><td class="field-body">‘2x2xN’ (covariance matrix)^-1</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Notes:</dt>
+<dd><div class="first last line-block">
+<div class="line">cik is not actually a covariance matrix,</div>
+<div class="line">only for a Gaussian or normal distribution!</div>
+</div>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="luxpy.utils.math.cik_to_v">
+<code class="descclassname">luxpy.utils.math.</code><code class="descname">cik_to_v</code><span class="sig-paren">(</span><em>cik</em>, <em>xyc=None</em>, <em>inverse=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/math/basics.html#cik_to_v"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.math.cik_to_v" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate v-format ellipse descriptor from 2x2 ‘covariance matrix’^-1 cik</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">cik:</th><td class="field-body">‘2x2xN’ (covariance matrix)^-1</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">v:</th><td class="field-body"><div class="first last line-block">
+<div class="line">(Nx5) np.ndarray</div>
+<div class="line">ellipse parameters [Rmax,Rmin,xc,yc,theta]</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Notes:</dt>
+<dd><div class="first last line-block">
+<div class="line">cik is not actually the inverse covariance matrix,</div>
+<div class="line">only for a Gaussian or normal distribution!</div>
+</div>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
 <dt id="luxpy.utils.math.minimizebnd">
 <code class="descclassname">luxpy.utils.math.</code><code class="descname">minimizebnd</code><span class="sig-paren">(</span><em>fun</em>, <em>x0</em>, <em>args=()</em>, <em>method='nelder-mead'</em>, <em>use_bnd=True</em>, <em>bounds=(None</em>, <em>None)</em>, <em>options=None</em>, <em>x0_vsize=None</em>, <em>x0_keys=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/math/minimizebnd.html#minimizebnd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.math.minimizebnd" title="Permalink to this definition">¶</a></dt>
 <dd><p>Minimization function that allows for bounds on any type of method in 
@@ -1996,7 +2180,7 @@ with final solutions (res[‘x’])</div>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'1.3.10',
+            VERSION:'1.3.11',
             LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',

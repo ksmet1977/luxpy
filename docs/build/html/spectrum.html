@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Spectrum sub-package &mdash; LuxPy 1.3.10 documentation</title>
+  <title>Spectrum sub-package &mdash; LuxPy 1.3.11 documentation</title>
   
 
   
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                1.3.10
+                1.3.11
               </div>
             
           
@@ -564,7 +564,7 @@ or which wavelength is normalized to 1 for ‘lambda’ option.</div>
 
 <dl class="function">
 <dt id="luxpy.spectrum.cie_interp">
-<code class="descclassname">luxpy.spectrum.</code><code class="descname">cie_interp</code><span class="sig-paren">(</span><em>data</em>, <em>wl_new</em>, <em>kind=None</em>, <em>negative_values_allowed=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/basics/spectral.html#cie_interp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.spectrum.cie_interp" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">luxpy.spectrum.</code><code class="descname">cie_interp</code><span class="sig-paren">(</span><em>data</em>, <em>wl_new</em>, <em>kind=None</em>, <em>negative_values_allowed=False</em>, <em>extrap_values=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/basics/spectral.html#cie_interp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.spectrum.cie_interp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Interpolate / extrapolate spectral data following standard CIE15-2004.</p>
 <div class="line-block">
 <div class="line">The kind of interpolation depends on the spectrum type defined in :kind:. </div>
@@ -607,6 +607,13 @@ or which wavelength is normalized to 1 for ‘lambda’ option.</div>
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><div class="first last line-block">
 <div class="line">False, optional</div>
 <div class="line">If False: negative values are clipped to zero.</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">extrap_values:</th><td class="field-body"><div class="first last line-block">
+<div class="line">None, optional</div>
+<div class="line">float or list or ndarray with values to extrapolate</div>
+<div class="line">If None: use CIE recommended ‘closest value’ approach.</div>
 </div>
 </td>
 </tr>
@@ -1514,7 +1521,7 @@ than the ones in _CRI_REF_TYPES.</dd>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'1.3.10',
+            VERSION:'1.3.11',
             LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',

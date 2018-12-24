@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Color sub-package &mdash; LuxPy 1.3.10 documentation</title>
+  <title>Color sub-package &mdash; LuxPy 1.3.11 documentation</title>
   
 
   
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                1.3.10
+                1.3.11
               </div>
             
           
@@ -261,7 +261,7 @@ Color Research &amp; Application, 39(3), 279–287.</a></div>
 <hr class="docutils" />
 <dl class="function">
 <dt id="luxpy.color.utils.plotSL">
-<code class="descclassname">luxpy.color.utils.</code><code class="descname">plotSL</code><span class="sig-paren">(</span><em>cieobs='1931_2'</em>, <em>cspace='Yuv'</em>, <em>DL=True</em>, <em>BBL=True</em>, <em>D65=False</em>, <em>EEW=False</em>, <em>cctlabels=False</em>, <em>axh=None</em>, <em>show=True</em>, <em>cspace_pars={}</em>, <em>formatstr='k-'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/utils/plotters.html#plotSL"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.utils.plotSL" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">luxpy.color.utils.</code><code class="descname">plotSL</code><span class="sig-paren">(</span><em>cieobs='1931_2'</em>, <em>cspace='Yuv'</em>, <em>DL=True</em>, <em>BBL=True</em>, <em>D65=False</em>, <em>EEW=False</em>, <em>cctlabels=False</em>, <em>axh=None</em>, <em>show=True</em>, <em>cspace_pars={}</em>, <em>formatstr='k-'</em>, <em>diagram_colors=False</em>, <em>diagram_samples=100</em>, <em>diagram_opacity=1.0</em>, <em>diagram_lightness=0.25</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/utils/plotters.html#plotSL"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.utils.plotSL" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot spectrum locus for cieobs in cspace.</p>
 <dl class="docutils">
 <dt>Args: </dt>
@@ -335,6 +335,33 @@ Color Research &amp; Application, 39(3), 279–287.</a></div>
 <div class="line">{} or dict, optional</div>
 <div class="line">Dict with parameters required by color space specified in :cspace: </div>
 <div class="line">(for use with luxpy.colortf())</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">diagram_colors:</th><td class="field-body"><div class="first last line-block">
+<div class="line">False, optional</div>
+<div class="line">True: plot colored chromaticity diagram.</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">diagram_samples:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><div class="first last line-block">
+<div class="line">256, optional</div>
+<div class="line">Sampling resolution of color space.</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">diagram_opacity:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><div class="first last line-block">
+<div class="line">1.0, optional</div>
+<div class="line">Sets opacity of chromaticity diagram</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">diagram_lightness:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><div class="first last line-block">
+<div class="line">0.25, optional</div>
+<div class="line">Sets lightness of chromaticity diagram</div>
 </div>
 </td>
 </tr>
@@ -859,6 +886,344 @@ Color Research &amp; Application, 39(3), 279–287.</a>
 </table>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="luxpy.color.utils.plotellipse">
+<code class="descclassname">luxpy.color.utils.</code><code class="descname">plotellipse</code><span class="sig-paren">(</span><em>v</em>, <em>cspace_in='Yxy'</em>, <em>cspace_out=None</em>, <em>nsamples=100</em>, <em>show=True</em>, <em>axh=None</em>, <em>line_color='darkgray'</em>, <em>line_style=':'</em>, <em>line_width=1</em>, <em>line_marker=''</em>, <em>line_markersize=4</em>, <em>plot_center=False</em>, <em>center_marker='o'</em>, <em>center_color='darkgray'</em>, <em>center_markersize=4</em>, <em>show_grid=True</em>, <em>label_fontname='Times New Roman'</em>, <em>label_fontsize=12</em>, <em>out=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/utils/plotters.html#plotellipse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.utils.plotellipse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot ellipse(s) given in v-format [Rmax,Rmin,xc,yc,theta].</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">v:</th><td class="field-body"><div class="first last line-block">
+<div class="line">(Nx5) ndarray</div>
+<div class="line">ellipse parameters [Rmax,Rmin,xc,yc,theta]</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">cspace_in:</th><td class="field-body"><div class="first last line-block">
+<div class="line">‘Yxy’, optional</div>
+<div class="line">Color space of v.</div>
+<div class="line">If None: no color space assumed. Axis labels assumed (‘x’,’y’).</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">cspace_out:</th><td class="field-body"><div class="first last line-block">
+<div class="line">None, optional</div>
+<div class="line">Color space to plot ellipse(s) in.</div>
+<div class="line">If None: plot in cspace_in.</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">nsamples:</th><td class="field-body"><div class="first last line-block">
+<div class="line">100 or int, optional</div>
+<div class="line">Number of points (samples) in ellipse boundary</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">show:</th><td class="field-body"><div class="first last line-block">
+<div class="line">True or boolean, optional</div>
+<div class="line">Plot ellipse(s) (True) or not (False)</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">axh:</th><td class="field-body"><div class="first last line-block">
+<div class="line">None, optional</div>
+<div class="line">Ax-handle to plot ellipse(s) in.</div>
+<div class="line">If None: create new figure with axes.</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">line_color:</th><td class="field-body"><div class="first last line-block">
+<div class="line">‘darkgray’, optional</div>
+<div class="line">Color to plot ellipse(s) in.</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">line_style:</th><td class="field-body"><div class="first last line-block">
+<div class="line">‘:’, optional</div>
+<div class="line">Linestyle of ellipse(s).</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">line_width’:</th><td class="field-body"><div class="first last line-block">
+<div class="line">1, optional</div>
+<div class="line">Width of ellipse boundary line.</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">line_marker:</th><td class="field-body"><div class="first last line-block">
+<div class="line">‘none’, optional</div>
+<div class="line">Marker for ellipse boundary.</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">line_markersize:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><div class="first last line-block">
+<div class="line">4, optional</div>
+<div class="line">Size of markers in ellipse boundary.</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">plot_center:</th><td class="field-body"><div class="first last line-block">
+<div class="line">False, optional</div>
+<div class="line">Plot center of ellipse: yes (True) or no (False)</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">center_color:</th><td class="field-body"><div class="first last line-block">
+<div class="line">‘darkgray’, optional</div>
+<div class="line">Color to plot ellipse center in.</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">center_marker:</th><td class="field-body"><div class="first last line-block">
+<div class="line">‘o’, optional</div>
+<div class="line">Marker for ellipse center.</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">center_markersize:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><div class="first last line-block">
+<div class="line">4, optional</div>
+<div class="line">Size of marker of ellipse center.</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">show_grid:</th><td class="field-body"><div class="first last line-block">
+<div class="line">True, optional</div>
+<div class="line">Show grid (True) or not (False)</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">label_fontname:</th><td class="field-body"><div class="first last line-block">
+<div class="line">‘Times New Roman’, optional</div>
+<div class="line">Sets font type of axis labels.</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">label_fontsize:</th><td class="field-body"><div class="first last line-block">
+<div class="line">12, optional</div>
+<div class="line">Sets font size of axis labels.</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">out:</th><td class="field-body"><div class="first last line-block">
+<div class="line">None, optional</div>
+<div class="line">Output of function</div>
+<div class="line">If None: returns None. Can be used to output axh of newly created</div>
+<div class="line-block">
+<div class="line">figure axes or to return Yxys an ndarray with coordinates of </div>
+<div class="line-block">
+<div class="line">ellipse boundaries in cspace_out (shape = (nsamples,3,N)) </div>
+</div>
+</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">returns:</th><td class="field-body">None, or whatever set by :out:.</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="luxpy.color.utils.plot_chromaticity_diagram_colors">
+<code class="descclassname">luxpy.color.utils.</code><code class="descname">plot_chromaticity_diagram_colors</code><span class="sig-paren">(</span><em>samples=256</em>, <em>diagram_opacity=1.0</em>, <em>diagram_lightness=0.25</em>, <em>cieobs='1931_2'</em>, <em>cspace='Yxy'</em>, <em>cspace_pars={}</em>, <em>show=True</em>, <em>axh=None</em>, <em>show_grid=True</em>, <em>label_fontname='Times New Roman'</em>, <em>label_fontsize=12</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/utils/plotters.html#plot_chromaticity_diagram_colors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.utils.plot_chromaticity_diagram_colors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the chromaticity diagram colors.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">samples:</th><td class="field-body"><div class="first last line-block">
+<div class="line">256, optional</div>
+<div class="line">Sampling resolution of color space.</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">diagram_opacity:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><div class="first last line-block">
+<div class="line">1.0, optional</div>
+<div class="line">Sets opacity of chromaticity diagram</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">diagram_lightness:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><div class="first last line-block">
+<div class="line">0.25, optional</div>
+<div class="line">Sets lightness of chromaticity diagram</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">axh:</th><td class="field-body"><div class="first last line-block">
+<div class="line">None or axes handle, optional</div>
+<div class="line">Determines axes to plot data in.</div>
+<div class="line">None: make new figure.</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">show:</th><td class="field-body"><div class="first last line-block">
+<div class="line">True or False, optional</div>
+<div class="line">Invoke matplotlib.pyplot.show() right after plotting</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">cieobs:</th><td class="field-body"><div class="first last line-block">
+<div class="line">luxpy._CIEOBS or str, optional</div>
+<div class="line">Determines CMF set to calculate spectrum locus or other.</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">cspace:</th><td class="field-body"><div class="first last line-block">
+<div class="line">luxpy._CSPACE or str, optional</div>
+<div class="line">Determines color space / chromaticity diagram to plot data in.</div>
+<div class="line">Note that data is expected to be in specified :cspace:</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">cspace_pars:</th><td class="field-body"><div class="first last line-block">
+<div class="line">{} or dict, optional</div>
+<div class="line">Dict with parameters required by color space specified in :cspace: </div>
+<div class="line">(for use with luxpy.colortf())</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">show_grid:</th><td class="field-body"><div class="first last line-block">
+<div class="line">True, optional</div>
+<div class="line">Show grid (True) or not (False)</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">label_fontname:</th><td class="field-body"><div class="first last line-block">
+<div class="line">‘Times New Roman’, optional</div>
+<div class="line">Sets font type of axis labels.</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">label_fontsize:</th><td class="field-body"><div class="first last line-block">
+<div class="line">12, optional</div>
+<div class="line">Sets font size of axis labels.</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">kwargs:</th><td class="field-body"><div class="first last line-block">
+<div class="line">additional keyword arguments for use with matplotlib.pyplot.</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<p>Returns:</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="luxpy.color.utils.plot_spectrum_colors">
+<code class="descclassname">luxpy.color.utils.</code><code class="descname">plot_spectrum_colors</code><span class="sig-paren">(</span><em>spd=None</em>, <em>spdmax=None</em>, <em>wavelength_height=-0.05</em>, <em>wavelength_opacity=1.0</em>, <em>wavelength_lightness=1.0</em>, <em>cieobs='1931_2'</em>, <em>show=True</em>, <em>axh=None</em>, <em>show_grid=True</em>, <em>ylabel='Spectral intensity (a.u.)'</em>, <em>xlim=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/utils/plotters.html#plot_spectrum_colors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.utils.plot_spectrum_colors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the spectrum colors.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">spd:</th><td class="field-body"><div class="first last line-block">
+<div class="line">None, optional</div>
+<div class="line">Spectrum</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">spdmax:</th><td class="field-body"><div class="first last line-block">
+<div class="line">None, optional</div>
+<div class="line">max ylim is set at 1.05 or (1+abs(wavelength_height)*spdmax)</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">wavelength_opacity:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><div class="first last line-block">
+<div class="line">1.0, optional</div>
+<div class="line">Sets opacity of wavelength rectangle.</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">wavelength_lightness:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><div class="first last line-block">
+<div class="line">1.0, optional</div>
+<div class="line">Sets lightness of wavelength rectangle.</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">wavelength_height:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><div class="first last line-block">
+<div class="line">-0.05 or ‘spd’, optional</div>
+<div class="line">Determine wavelength bar height </div>
+<div class="line">if not ‘spd’: x% of spd.max()</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">axh:</th><td class="field-body"><div class="first last line-block">
+<div class="line">None or axes handle, optional</div>
+<div class="line">Determines axes to plot data in.</div>
+<div class="line">None: make new figure.</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">show:</th><td class="field-body"><div class="first last line-block">
+<div class="line">True or False, optional</div>
+<div class="line">Invoke matplotlib.pyplot.show() right after plotting</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">cieobs:</th><td class="field-body"><div class="first last line-block">
+<div class="line">luxpy._CIEOBS or str, optional</div>
+<div class="line">Determines CMF set to calculate spectrum locus or other.</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">show_grid:</th><td class="field-body"><div class="first last line-block">
+<div class="line">True, optional</div>
+<div class="line">Show grid (True) or not (False)</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">ylabel:</th><td class="field-body"><div class="first last line-block">
+<div class="line">‘Spectral intensity (a.u.)’ or str, optional</div>
+<div class="line">Set y-axis label.</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">xlim:</th><td class="field-body"><div class="first last line-block">
+<div class="line">None, optional</div>
+<div class="line">list or ndarray with xlimits.</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">kwargs:</th><td class="field-body"><div class="first last line-block">
+<div class="line">additional keyword arguments for use with matplotlib.pyplot.</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<p>Returns:</p>
 </dd></dl>
 
 </div>
@@ -4718,6 +5083,9 @@ Journal of the Optical Society of America A, 33(3), A319–A331.</a></dd>
 </tr>
 <tr class="field-even field"><th class="field-name">DE_cspace():</th><td class="field-body">Calculate color difference DE in specific color space.</td>
 </tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">get_macadam_ellipse():</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">Estimate n-step MacAdam ellipse at CIE x,y coordinates</td>
+</tr>
 </tbody>
 </table>
 </div></blockquote>
@@ -5073,6 +5441,68 @@ and returns them as a tuple.</div>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">returns:</th><td class="field-body"><div class="first last line-block">
 <div class="line">ndarray with DEi [, DEa] or other as specified by :out:</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="luxpy.color.deltaE.get_macadam_ellipse">
+<code class="descclassname">luxpy.color.deltaE.</code><code class="descname">get_macadam_ellipse</code><span class="sig-paren">(</span><em>xy=None</em>, <em>k_neighbours=3</em>, <em>nsteps=10</em>, <em>average_cik=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/deltaE/macadamellipses.html#get_macadam_ellipse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.deltaE.get_macadam_ellipse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Estimate n-step MacAdam ellipse at CIE x,y coordinates xy by calculating 
+average inverse covariance ellipse of the k_neighbours closest ellipses.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">xy:</th><td class="field-body"><div class="first last line-block">
+<div class="line">None or ndarray, optional</div>
+<div class="line">If None: output Macadam ellipses, if not None: xy are the </div>
+<div class="line">CIE xy coordinates for which ellipses will be estimated.</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">k_neighbours:</th><td class="field-body"><div class="first last line-block">
+<div class="line">3, optional</div>
+<div class="line">Number of nearest ellipses to use to calculate ellipse at xy</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">nsteps:</th><td class="field-body"><div class="first last line-block">
+<div class="line">10, optional</div>
+<div class="line">Set number of MacAdam steps of ellipse.</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">average_cik:</th><td class="field-body"><div class="first last line-block">
+<div class="line">True, optional</div>
+<div class="line">If True: take distance weighted average of inverse </div>
+<div class="line-block">
+<div class="line">‘covariance ellipse’ elements cik. </div>
+</div>
+<div class="line">If False: average major &amp; minor axis lengths and </div>
+<div class="line-block">
+<div class="line">ellipse orientation angles directly.</div>
+</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">v_mac_est:</th><td class="field-body"><div class="first last line-block">
+<div class="line">estimated MacAdam ellipse(s) in v-format [Rmax,Rmin,xc,yc,theta]</div>
 </div>
 </td>
 </tr>
@@ -9641,7 +10071,7 @@ luxpy.cri.plot_shift_data() and returned for use in other functions</div>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'1.3.10',
+            VERSION:'1.3.11',
             LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.color.utils.plotters &mdash; LuxPy 1.3.10 documentation</title>
+  <title>luxpy.color.utils.plotters &mdash; LuxPy 1.3.11 documentation</title>
   
 
   
@@ -56,7 +56,7 @@
             
             
               <div class="version">
-                1.3.10
+                1.3.11
               </div>
             
           
@@ -195,13 +195,21 @@
 <span class="sd">              &lt;https://doi.org/10.1002/col.21793&gt;`_</span>
 <span class="sd">    </span>
 <span class="sd"> :plotcircle(): Plot one or more concentric circles.</span>
+<span class="sd"> </span>
+<span class="sd"> :plotellipse(): Plot one or more ellipses.</span>
+<span class="sd">     </span>
+<span class="sd"> :plot_chromaticity_diagram_colors(): Plot the chromaticity diagram colors.</span>
 
+<span class="sd"> :plot_spectrum_colors(): Plot spd with spectrum colors.</span>
+<span class="sd"> </span>
 <span class="sd">.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">plt</span><span class="p">,</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">_CSPACE</span><span class="p">,</span> <span class="n">_CSPACE_AXES</span><span class="p">,</span> <span class="n">_CIE_ILLUMINANTS</span><span class="p">,</span> <span class="n">_CMF</span><span class="p">,</span> <span class="n">daylightlocus</span><span class="p">,</span> <span class="n">colortf</span><span class="p">,</span> <span class="n">Yxy_to_xyz</span><span class="p">,</span> <span class="n">asplit</span><span class="p">,</span> <span class="n">spd_to_xyz</span><span class="p">,</span> <span class="n">cri_ref</span>
+<span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">plt</span><span class="p">,</span> <span class="n">_EPS</span><span class="p">,</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">_CSPACE</span><span class="p">,</span> <span class="n">_CSPACE_AXES</span><span class="p">,</span> <span class="n">_CIE_ILLUMINANTS</span><span class="p">,</span> <span class="n">_CMF</span><span class="p">,</span> <span class="n">daylightlocus</span><span class="p">,</span> <span class="n">colortf</span><span class="p">,</span> <span class="n">Yxy_to_xyz</span><span class="p">,</span> <span class="n">asplit</span><span class="p">,</span> <span class="n">spd_to_xyz</span><span class="p">,</span> <span class="n">cri_ref</span><span class="p">,</span> <span class="n">xyz_to_srgb</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;plotSL&#39;</span><span class="p">,</span><span class="s1">&#39;plotDL&#39;</span><span class="p">,</span><span class="s1">&#39;plotBB&#39;</span><span class="p">,</span><span class="s1">&#39;plot_color_data&#39;</span><span class="p">,</span><span class="s1">&#39;plotceruleanline&#39;</span><span class="p">,</span><span class="s1">&#39;plotUH&#39;</span><span class="p">,</span><span class="s1">&#39;plotcircle&#39;</span><span class="p">]</span>
+<span class="kn">from</span> <span class="nn">matplotlib.patches</span> <span class="k">import</span> <span class="n">Polygon</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;plotSL&#39;</span><span class="p">,</span><span class="s1">&#39;plotDL&#39;</span><span class="p">,</span><span class="s1">&#39;plotBB&#39;</span><span class="p">,</span><span class="s1">&#39;plot_color_data&#39;</span><span class="p">,</span><span class="s1">&#39;plotceruleanline&#39;</span><span class="p">,</span><span class="s1">&#39;plotUH&#39;</span><span class="p">,</span><span class="s1">&#39;plotcircle&#39;</span><span class="p">,</span><span class="s1">&#39;plotellipse&#39;</span><span class="p">,</span><span class="s1">&#39;plot_chromaticity_diagram_colors&#39;</span><span class="p">,</span><span class="s1">&#39;plot_spectrum_colors&#39;</span><span class="p">]</span>
 
 
 
@@ -397,7 +405,12 @@
     <span class="k">if</span> <span class="n">show</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">axh</span></div>
     
-<div class="viewcode-block" id="plotSL"><a class="viewcode-back" href="../../../../color.html#luxpy.color.utils.plotSL">[docs]</a><span class="k">def</span> <span class="nf">plotSL</span><span class="p">(</span><span class="n">cieobs</span> <span class="o">=</span><span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">cspace</span> <span class="o">=</span> <span class="n">_CSPACE</span><span class="p">,</span>  <span class="n">DL</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">BBL</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">D65</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">EEW</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">cctlabels</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">axh</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">show</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">cspace_pars</span> <span class="o">=</span> <span class="p">{},</span> <span class="n">formatstr</span> <span class="o">=</span> <span class="s1">&#39;k-&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="plotSL"><a class="viewcode-back" href="../../../../color.html#luxpy.color.utils.plotSL">[docs]</a><span class="k">def</span> <span class="nf">plotSL</span><span class="p">(</span><span class="n">cieobs</span> <span class="o">=</span><span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">cspace</span> <span class="o">=</span> <span class="n">_CSPACE</span><span class="p">,</span> <span class="n">DL</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">BBL</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">D65</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>\
+           <span class="n">EEW</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">cctlabels</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">axh</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">show</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>\
+           <span class="n">cspace_pars</span> <span class="o">=</span> <span class="p">{},</span> <span class="n">formatstr</span> <span class="o">=</span> <span class="s1">&#39;k-&#39;</span><span class="p">,</span>\
+           <span class="n">diagram_colors</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">diagram_samples</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="n">diagram_opacity</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>\
+           <span class="n">diagram_lightness</span> <span class="o">=</span> <span class="mf">0.25</span><span class="p">,</span>\
+           <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot spectrum locus for cieobs in cspace.</span>
 <span class="sd">    </span>
@@ -438,6 +451,18 @@
 <span class="sd">            | {} or dict, optional</span>
 <span class="sd">            | Dict with parameters required by color space specified in :cspace: </span>
 <span class="sd">            | (for use with luxpy.colortf())</span>
+<span class="sd">        :diagram_colors:</span>
+<span class="sd">            | False, optional</span>
+<span class="sd">            | True: plot colored chromaticity diagram.</span>
+<span class="sd">        :diagram_samples:</span>
+<span class="sd">            | 256, optional</span>
+<span class="sd">            | Sampling resolution of color space.</span>
+<span class="sd">        :diagram_opacity:</span>
+<span class="sd">            | 1.0, optional</span>
+<span class="sd">            | Sets opacity of chromaticity diagram</span>
+<span class="sd">        :diagram_lightness:</span>
+<span class="sd">            | 0.25, optional</span>
+<span class="sd">            | Sets lightness of chromaticity diagram</span>
 <span class="sd">        :kwargs: </span>
 <span class="sd">            | additional keyword arguments for use with matplotlib.pyplot.</span>
 <span class="sd">    </span>
@@ -457,8 +482,14 @@
     <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">([</span><span class="n">DL</span><span class="p">,</span><span class="n">BBL</span><span class="p">,</span><span class="n">D65</span><span class="p">,</span><span class="n">EEW</span><span class="p">]):</span>
         <span class="n">show</span> <span class="o">=</span> <span class="kc">False</span>
 
-
-    <span class="n">axh_</span> <span class="o">=</span> <span class="n">plot_color_data</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">axh</span> <span class="o">=</span> <span class="n">axh</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">cspace</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">,</span> <span class="n">show</span> <span class="o">=</span> <span class="n">show</span><span class="p">,</span> <span class="n">formatstr</span><span class="o">=</span><span class="n">formatstr</span><span class="p">,</span>  <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">axh_</span> <span class="o">=</span> <span class="n">plot_chromaticity_diagram_colors</span><span class="p">(</span><span class="n">axh</span> <span class="o">=</span> <span class="n">axh</span><span class="p">,</span> <span class="n">show</span> <span class="o">=</span> <span class="n">diagram_colors</span><span class="p">,</span> <span class="n">cspace</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span>\
+                                            <span class="n">cspace_pars</span> <span class="o">=</span> <span class="n">cspace_pars</span><span class="p">,</span>\
+                                            <span class="n">diagram_samples</span> <span class="o">=</span> <span class="n">diagram_samples</span><span class="p">,</span>\
+                                            <span class="n">diagram_opacity</span> <span class="o">=</span> <span class="n">diagram_opacity</span><span class="p">,</span>\
+                                            <span class="n">diagram_lightness</span> <span class="o">=</span> <span class="n">diagram_lightness</span><span class="p">,</span>\
+                                            <span class="n">label_fontname</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">label_fontsize</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
+        
+    <span class="n">axh_</span> <span class="o">=</span> <span class="n">plot_color_data</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">axh</span> <span class="o">=</span> <span class="n">axh_</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">cspace</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">,</span> <span class="n">show</span> <span class="o">=</span> <span class="n">show</span><span class="p">,</span> <span class="n">formatstr</span><span class="o">=</span><span class="n">formatstr</span><span class="p">,</span>  <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
 
     <span class="k">if</span> <span class="n">DL</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
@@ -476,7 +507,9 @@
     <span class="k">if</span> <span class="n">EEW</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
         <span class="n">YxyEEW</span> <span class="o">=</span> <span class="n">colortf</span><span class="p">(</span><span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">_CIE_ILLUMINANTS</span><span class="p">[</span><span class="s1">&#39;E&#39;</span><span class="p">]),</span> <span class="n">tf</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">,</span> <span class="n">tfa0</span> <span class="o">=</span> <span class="n">cspace_pars</span><span class="p">)</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">YxyEEW</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="n">YxyEEW</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="s1">&#39;ko&#39;</span><span class="p">)</span>
-        
+    
+    
+    
     <span class="k">if</span> <span class="n">showcopy</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">axh_</span>
     <span class="k">else</span><span class="p">:</span>
@@ -640,6 +673,385 @@
             <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="n">color</span><span class="p">,</span> <span class="n">linestyle</span> <span class="o">=</span> <span class="n">linestyle</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;x,y&#39;</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">xs</span><span class="p">,</span><span class="n">ys</span></div>
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="plotellipse"><a class="viewcode-back" href="../../../../color.html#luxpy.color.utils.plotellipse">[docs]</a><span class="k">def</span> <span class="nf">plotellipse</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">cspace_in</span> <span class="o">=</span> <span class="s1">&#39;Yxy&#39;</span><span class="p">,</span> <span class="n">cspace_out</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">nsamples</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> \
+                <span class="n">show</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">axh</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> \
+                <span class="n">line_color</span> <span class="o">=</span> <span class="s1">&#39;darkgray&#39;</span><span class="p">,</span> <span class="n">line_style</span> <span class="o">=</span> <span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="n">line_width</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">line_marker</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">line_markersize</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>\
+                <span class="n">plot_center</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">center_marker</span> <span class="o">=</span> <span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">center_color</span> <span class="o">=</span> <span class="s1">&#39;darkgray&#39;</span><span class="p">,</span> <span class="n">center_markersize</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>\
+                <span class="n">show_grid</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">label_fontname</span> <span class="o">=</span> <span class="s1">&#39;Times New Roman&#39;</span><span class="p">,</span> <span class="n">label_fontsize</span> <span class="o">=</span> <span class="mi">12</span><span class="p">,</span>\
+                <span class="n">out</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot ellipse(s) given in v-format [Rmax,Rmin,xc,yc,theta].</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :v: </span>
+<span class="sd">            | (Nx5) ndarray</span>
+<span class="sd">            | ellipse parameters [Rmax,Rmin,xc,yc,theta]</span>
+<span class="sd">        :cspace_in:</span>
+<span class="sd">            | &#39;Yxy&#39;, optional</span>
+<span class="sd">            | Color space of v.</span>
+<span class="sd">            | If None: no color space assumed. Axis labels assumed (&#39;x&#39;,&#39;y&#39;).</span>
+<span class="sd">        :cspace_out:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | Color space to plot ellipse(s) in.</span>
+<span class="sd">            | If None: plot in cspace_in.</span>
+<span class="sd">        :nsamples:</span>
+<span class="sd">            | 100 or int, optional</span>
+<span class="sd">            | Number of points (samples) in ellipse boundary</span>
+<span class="sd">        :show:</span>
+<span class="sd">            | True or boolean, optional</span>
+<span class="sd">            | Plot ellipse(s) (True) or not (False)</span>
+<span class="sd">        :axh: </span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | Ax-handle to plot ellipse(s) in.</span>
+<span class="sd">            | If None: create new figure with axes.</span>
+<span class="sd">        :line_color:</span>
+<span class="sd">            | &#39;darkgray&#39;, optional</span>
+<span class="sd">            | Color to plot ellipse(s) in.</span>
+<span class="sd">        :line_style:</span>
+<span class="sd">            | &#39;:&#39;, optional</span>
+<span class="sd">            | Linestyle of ellipse(s).</span>
+<span class="sd">        :line_width&#39;:</span>
+<span class="sd">            | 1, optional</span>
+<span class="sd">            | Width of ellipse boundary line.</span>
+<span class="sd">        :line_marker:</span>
+<span class="sd">            | &#39;none&#39;, optional</span>
+<span class="sd">            | Marker for ellipse boundary.</span>
+<span class="sd">        :line_markersize:</span>
+<span class="sd">            | 4, optional</span>
+<span class="sd">            | Size of markers in ellipse boundary.</span>
+<span class="sd">        :plot_center:</span>
+<span class="sd">            | False, optional</span>
+<span class="sd">            | Plot center of ellipse: yes (True) or no (False)</span>
+<span class="sd">        :center_color:</span>
+<span class="sd">            | &#39;darkgray&#39;, optional</span>
+<span class="sd">            | Color to plot ellipse center in.</span>
+<span class="sd">        :center_marker:</span>
+<span class="sd">            | &#39;o&#39;, optional</span>
+<span class="sd">            | Marker for ellipse center.</span>
+<span class="sd">        :center_markersize:</span>
+<span class="sd">            | 4, optional</span>
+<span class="sd">            | Size of marker of ellipse center.</span>
+<span class="sd">        :show_grid:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | Show grid (True) or not (False)</span>
+<span class="sd">        :label_fontname: </span>
+<span class="sd">            | &#39;Times New Roman&#39;, optional</span>
+<span class="sd">            | Sets font type of axis labels.</span>
+<span class="sd">        :label_fontsize:</span>
+<span class="sd">            | 12, optional</span>
+<span class="sd">            | Sets font size of axis labels.</span>
+<span class="sd">        :out:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | Output of function</span>
+<span class="sd">            | If None: returns None. Can be used to output axh of newly created</span>
+<span class="sd">            |      figure axes or to return Yxys an ndarray with coordinates of </span>
+<span class="sd">            |       ellipse boundaries in cspace_out (shape = (nsamples,3,N)) </span>
+<span class="sd">            </span>
+<span class="sd">        </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :returns: None, or whatever set by :out:.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">Yxys</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nsamples</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="n">v</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">vi</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+        
+        <span class="c1"># Set sample density of ellipse boundary:</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">nsamples</span><span class="p">)</span>
+        
+        <span class="n">a</span> <span class="o">=</span> <span class="n">vi</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># major axis</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">vi</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># minor axis</span>
+        <span class="n">xyc</span> <span class="o">=</span> <span class="n">vi</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">4</span><span class="p">,</span><span class="kc">None</span><span class="p">]</span> <span class="c1"># center</span>
+        <span class="n">theta</span> <span class="o">=</span> <span class="n">vi</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># rotation angle</span>
+        
+        <span class="c1"># define rotation matrix:</span>
+        <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">))),</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)))))</span>
+ 
+        <span class="c1"># Calculate ellipses:</span>
+        <span class="n">Yxyc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="n">xyc</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">Yxy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span><span class="n">nsamples</span><span class="p">)),</span> <span class="n">xyc</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">a</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">t</span><span class="p">),</span> <span class="n">b</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">t</span><span class="p">)))</span> <span class="p">)))</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">Yxys</span><span class="p">[:,:,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">Yxy</span>
+        
+        <span class="c1"># Convert to requested color space:</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">cspace_out</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">cspace_in</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="n">Yxy</span> <span class="o">=</span> <span class="n">colortf</span><span class="p">(</span><span class="n">Yxy</span><span class="p">,</span> <span class="n">cspace_in</span> <span class="o">+</span> <span class="s1">&#39;&gt;&#39;</span> <span class="o">+</span> <span class="n">cspace_out</span><span class="p">)</span>
+            <span class="n">Yxyc</span> <span class="o">=</span> <span class="n">colortf</span><span class="p">(</span><span class="n">Yxyc</span><span class="p">,</span> <span class="n">cspace_in</span> <span class="o">+</span> <span class="s1">&#39;&gt;&#39;</span> <span class="o">+</span> <span class="n">cspace_out</span><span class="p">)</span>
+
+        
+        <span class="c1"># plot ellipses:</span>
+        <span class="k">if</span> <span class="n">show</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">axh</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+                <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+                <span class="n">axh</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
+            
+            <span class="k">if</span> <span class="p">(</span><span class="n">cspace_in</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+                <span class="n">xlabel</span> <span class="o">=</span> <span class="s1">&#39;x&#39;</span>
+                <span class="n">ylabel</span> <span class="o">=</span> <span class="s1">&#39;y&#39;</span>
+            
+            <span class="k">if</span> <span class="p">(</span><span class="n">cspace_out</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+                <span class="n">xlabel</span> <span class="o">=</span> <span class="n">_CSPACE_AXES</span><span class="p">[</span><span class="n">cspace_out</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">ylabel</span> <span class="o">=</span> <span class="n">_CSPACE_AXES</span><span class="p">[</span><span class="n">cspace_out</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>
+            
+            <span class="k">if</span> <span class="n">plot_center</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">Yxyc</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span><span class="n">Yxyc</span><span class="p">[:,</span><span class="mi">2</span><span class="p">],</span><span class="n">color</span> <span class="o">=</span> <span class="n">center_color</span><span class="p">,</span> <span class="n">linestyle</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">marker</span> <span class="o">=</span> <span class="n">center_marker</span><span class="p">,</span> <span class="n">markersize</span> <span class="o">=</span> <span class="n">center_markersize</span><span class="p">)</span>
+
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">Yxy</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span><span class="n">Yxy</span><span class="p">[:,</span><span class="mi">2</span><span class="p">],</span><span class="n">color</span> <span class="o">=</span> <span class="n">line_color</span><span class="p">,</span> <span class="n">linestyle</span> <span class="o">=</span> <span class="n">line_style</span><span class="p">,</span> <span class="n">linewidth</span> <span class="o">=</span> <span class="n">line_width</span><span class="p">,</span> <span class="n">marker</span> <span class="o">=</span> <span class="n">line_marker</span><span class="p">,</span> <span class="n">markersize</span> <span class="o">=</span> <span class="n">line_markersize</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="n">xlabel</span><span class="p">,</span> <span class="n">fontname</span> <span class="o">=</span> <span class="n">label_fontname</span><span class="p">,</span> <span class="n">fontsize</span> <span class="o">=</span> <span class="n">label_fontsize</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="n">ylabel</span><span class="p">,</span> <span class="n">fontname</span> <span class="o">=</span> <span class="n">label_fontname</span><span class="p">,</span> <span class="n">fontsize</span> <span class="o">=</span> <span class="n">label_fontsize</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">show_grid</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+            <span class="c1">#plt.show()     </span>
+            
+    <span class="k">if</span> <span class="n">out</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">eval</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="plot_chromaticity_diagram_colors"><a class="viewcode-back" href="../../../../color.html#luxpy.color.utils.plot_chromaticity_diagram_colors">[docs]</a><span class="k">def</span> <span class="nf">plot_chromaticity_diagram_colors</span><span class="p">(</span><span class="n">samples</span> <span class="o">=</span> <span class="mi">256</span><span class="p">,</span> <span class="n">diagram_opacity</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">diagram_lightness</span> <span class="o">=</span> <span class="mf">0.25</span><span class="p">,</span>\
+                                      <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">cspace</span> <span class="o">=</span> <span class="s1">&#39;Yxy&#39;</span><span class="p">,</span> <span class="n">cspace_pars</span> <span class="o">=</span> <span class="p">{},</span>\
+                                      <span class="n">show</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">axh</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>\
+                                      <span class="n">show_grid</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">label_fontname</span> <span class="o">=</span> <span class="s1">&#39;Times New Roman&#39;</span><span class="p">,</span> <span class="n">label_fontsize</span> <span class="o">=</span> <span class="mi">12</span><span class="p">,</span>\
+                                      <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot the chromaticity diagram colors.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :samples:</span>
+<span class="sd">            | 256, optional</span>
+<span class="sd">            | Sampling resolution of color space.</span>
+<span class="sd">        :diagram_opacity:</span>
+<span class="sd">            | 1.0, optional</span>
+<span class="sd">            | Sets opacity of chromaticity diagram</span>
+<span class="sd">        :diagram_lightness:</span>
+<span class="sd">            | 0.25, optional</span>
+<span class="sd">            | Sets lightness of chromaticity diagram</span>
+<span class="sd">        :axh: </span>
+<span class="sd">            | None or axes handle, optional</span>
+<span class="sd">            | Determines axes to plot data in.</span>
+<span class="sd">            | None: make new figure.</span>
+<span class="sd">        :show:</span>
+<span class="sd">            | True or False, optional</span>
+<span class="sd">            | Invoke matplotlib.pyplot.show() right after plotting</span>
+<span class="sd">        :cieobs:</span>
+<span class="sd">            | luxpy._CIEOBS or str, optional</span>
+<span class="sd">            | Determines CMF set to calculate spectrum locus or other.</span>
+<span class="sd">        :cspace:</span>
+<span class="sd">            | luxpy._CSPACE or str, optional</span>
+<span class="sd">            | Determines color space / chromaticity diagram to plot data in.</span>
+<span class="sd">            | Note that data is expected to be in specified :cspace:</span>
+<span class="sd">        :cspace_pars:</span>
+<span class="sd">            | {} or dict, optional</span>
+<span class="sd">            | Dict with parameters required by color space specified in :cspace: </span>
+<span class="sd">            | (for use with luxpy.colortf())</span>
+<span class="sd">        :show_grid:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | Show grid (True) or not (False)</span>
+<span class="sd">        :label_fontname: </span>
+<span class="sd">            | &#39;Times New Roman&#39;, optional</span>
+<span class="sd">            | Sets font type of axis labels.</span>
+<span class="sd">        :label_fontsize:</span>
+<span class="sd">            | 12, optional</span>
+<span class="sd">            | Sets font size of axis labels.</span>
+<span class="sd">        :kwargs: </span>
+<span class="sd">            | additional keyword arguments for use with matplotlib.pyplot.</span>
+<span class="sd">        </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">offset</span> <span class="o">=</span> <span class="n">_EPS</span>
+    <span class="n">ii</span><span class="p">,</span> <span class="n">jj</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">offset</span><span class="p">,</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">offset</span><span class="p">,</span> <span class="n">samples</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">offset</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">samples</span><span class="p">))</span>
+    <span class="n">ij</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dstack</span><span class="p">((</span><span class="n">ii</span><span class="p">,</span> <span class="n">jj</span><span class="p">))</span>
+    
+    <span class="n">SL</span> <span class="o">=</span>  <span class="n">_CMF</span><span class="p">[</span><span class="n">cieobs</span><span class="p">][</span><span class="s1">&#39;bar&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">SL</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">SL</span><span class="p">,</span><span class="n">SL</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+    <span class="n">SL</span> <span class="o">=</span> <span class="mf">100.0</span><span class="o">*</span><span class="n">SL</span><span class="o">/</span><span class="n">SL</span><span class="p">[:,</span><span class="mi">1</span><span class="p">,</span><span class="kc">None</span><span class="p">]</span>
+    <span class="n">SL</span> <span class="o">=</span> <span class="n">colortf</span><span class="p">(</span><span class="n">SL</span><span class="p">,</span> <span class="n">tf</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">,</span> <span class="n">tfa0</span> <span class="o">=</span> <span class="n">cspace_pars</span><span class="p">)</span>
+    <span class="n">Y</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="n">asplit</span><span class="p">(</span><span class="n">SL</span><span class="p">)</span>
+    <span class="n">SL</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>
+
+    
+    <span class="n">ij2D</span> <span class="o">=</span> <span class="n">ij</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">samples</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+    <span class="n">ij2D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">diagram_lightness</span><span class="o">*</span><span class="mi">100</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">ij2D</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">1</span><span class="p">)),</span> <span class="n">ij2D</span><span class="p">))</span>
+    <span class="n">xyz</span> <span class="o">=</span> <span class="n">colortf</span><span class="p">(</span><span class="n">ij2D</span><span class="p">,</span> <span class="n">tf</span> <span class="o">=</span> <span class="n">cspace</span> <span class="o">+</span> <span class="s1">&#39;&gt;xyz&#39;</span><span class="p">,</span> <span class="n">tfa0</span> <span class="o">=</span> <span class="n">cspace_pars</span><span class="p">)</span>
+
+    <span class="n">xyz</span><span class="p">[</span><span class="n">xyz</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">xyz</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">xyz</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)),:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="n">xyz</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">xyz</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)),:]</span> <span class="o">=</span> <span class="n">offset</span>
+    
+    <span class="n">srgb</span> <span class="o">=</span> <span class="n">xyz_to_srgb</span><span class="p">(</span><span class="n">xyz</span><span class="p">)</span>
+    <span class="n">srgb</span> <span class="o">=</span> <span class="n">srgb</span><span class="o">/</span><span class="n">srgb</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+    <span class="n">srgb</span> <span class="o">=</span> <span class="n">srgb</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">samples</span><span class="p">,</span><span class="n">samples</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">show</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">axh</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+            <span class="n">axh</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
+        <span class="n">polygon</span> <span class="o">=</span> <span class="n">Polygon</span><span class="p">(</span><span class="n">SL</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">)</span>
+        <span class="n">axh</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">polygon</span><span class="p">)</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">axh</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span>
+            <span class="n">srgb</span><span class="p">,</span>
+            <span class="n">interpolation</span><span class="o">=</span><span class="s1">&#39;bilinear&#39;</span><span class="p">,</span>
+            <span class="n">extent</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.05</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+            <span class="n">clip_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">alpha</span><span class="o">=</span><span class="n">diagram_opacity</span><span class="p">)</span>
+        <span class="n">image</span><span class="o">.</span><span class="n">set_clip_path</span><span class="p">(</span><span class="n">polygon</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;darkgray&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cspace</span> <span class="o">==</span> <span class="s1">&#39;Yxy&#39;</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="n">cspace</span> <span class="o">==</span> <span class="s1">&#39;Yuv&#39;</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mf">0.6</span><span class="p">])</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mf">0.6</span><span class="p">])</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">cspace</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="n">xlabel</span> <span class="o">=</span> <span class="n">_CSPACE_AXES</span><span class="p">[</span><span class="n">cspace</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">ylabel</span> <span class="o">=</span> <span class="n">_CSPACE_AXES</span><span class="p">[</span><span class="n">cspace</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">label_fontname</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">label_fontsize</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="n">xlabel</span><span class="p">,</span> <span class="n">fontname</span> <span class="o">=</span> <span class="n">label_fontname</span><span class="p">,</span> <span class="n">fontsize</span> <span class="o">=</span> <span class="n">label_fontsize</span><span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="n">ylabel</span><span class="p">,</span> <span class="n">fontname</span> <span class="o">=</span> <span class="n">label_fontname</span><span class="p">,</span> <span class="n">fontsize</span> <span class="o">=</span> <span class="n">label_fontsize</span><span class="p">)</span>
+                
+        <span class="k">if</span> <span class="n">show_grid</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+        <span class="c1">#plt.show()</span>
+    
+        <span class="k">return</span> <span class="n">axh</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="plot_spectrum_colors"><a class="viewcode-back" href="../../../../color.html#luxpy.color.utils.plot_spectrum_colors">[docs]</a><span class="k">def</span> <span class="nf">plot_spectrum_colors</span><span class="p">(</span><span class="n">spd</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">spdmax</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>\
+                         <span class="n">wavelength_height</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">wavelength_opacity</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">wavelength_lightness</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>\
+                         <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">show</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">axh</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>\
+                         <span class="n">show_grid</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span><span class="n">ylabel</span> <span class="o">=</span> <span class="s1">&#39;Spectral intensity (a.u.)&#39;</span><span class="p">,</span><span class="n">xlim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>\
+                         <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot the spectrum colors.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :spd:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | Spectrum</span>
+<span class="sd">        :spdmax:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | max ylim is set at 1.05 or (1+abs(wavelength_height)*spdmax)</span>
+<span class="sd">        :wavelength_opacity:</span>
+<span class="sd">            | 1.0, optional</span>
+<span class="sd">            | Sets opacity of wavelength rectangle.</span>
+<span class="sd">        :wavelength_lightness:</span>
+<span class="sd">            | 1.0, optional</span>
+<span class="sd">            | Sets lightness of wavelength rectangle.</span>
+<span class="sd">        :wavelength_height:</span>
+<span class="sd">            | -0.05 or &#39;spd&#39;, optional</span>
+<span class="sd">            | Determine wavelength bar height </span>
+<span class="sd">            | if not &#39;spd&#39;: x% of spd.max()</span>
+<span class="sd">        :axh: </span>
+<span class="sd">            | None or axes handle, optional</span>
+<span class="sd">            | Determines axes to plot data in.</span>
+<span class="sd">            | None: make new figure.</span>
+<span class="sd">        :show:</span>
+<span class="sd">            | True or False, optional</span>
+<span class="sd">            | Invoke matplotlib.pyplot.show() right after plotting</span>
+<span class="sd">        :cieobs:</span>
+<span class="sd">            | luxpy._CIEOBS or str, optional</span>
+<span class="sd">            | Determines CMF set to calculate spectrum locus or other.</span>
+<span class="sd">        :show_grid:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | Show grid (True) or not (False)</span>
+<span class="sd">        :ylabel:</span>
+<span class="sd">            | &#39;Spectral intensity (a.u.)&#39; or str, optional</span>
+<span class="sd">            | Set y-axis label.</span>
+<span class="sd">        :xlim:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | list or ndarray with xlimits.</span>
+<span class="sd">        :kwargs: </span>
+<span class="sd">            | additional keyword arguments for use with matplotlib.pyplot.</span>
+<span class="sd">        </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">cmfs</span> <span class="o">=</span> <span class="n">_CMF</span><span class="p">[</span><span class="n">cieobs</span><span class="p">][</span><span class="s1">&#39;bar&#39;</span><span class="p">]</span>
+    
+    <span class="n">wavs</span> <span class="o">=</span> <span class="n">cmfs</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">SL</span> <span class="o">=</span>  <span class="n">cmfs</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">T</span>    
+    
+    <span class="n">srgb</span> <span class="o">=</span> <span class="n">xyz_to_srgb</span><span class="p">(</span><span class="n">wavelength_lightness</span><span class="o">*</span><span class="mi">100</span><span class="o">*</span><span class="n">SL</span><span class="p">)</span>
+    <span class="n">srgb</span> <span class="o">=</span> <span class="n">srgb</span><span class="o">/</span><span class="n">srgb</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+    
+    <span class="k">if</span> <span class="n">show</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">axh</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+            <span class="n">axh</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
+         
+        <span class="k">if</span> <span class="p">(</span><span class="n">wavelength_height</span> <span class="o">==</span> <span class="s1">&#39;spd&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">spd</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">spdmax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">spdmax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">spd</span><span class="p">[</span><span class="mi">1</span><span class="p">:,:])</span>
+            <span class="n">y_min</span><span class="p">,</span> <span class="n">y_max</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">spdmax</span><span class="o">*</span><span class="p">(</span><span class="mf">1.05</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">xlim</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span> <span class="o">=</span> <span class="n">spd</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">spd</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span> <span class="o">=</span> <span class="n">xlim</span>
+
+            <span class="n">SLrect</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span>
+                <span class="p">(</span><span class="n">x_min</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+                <span class="n">spd</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
+                <span class="p">(</span><span class="n">x_max</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+                <span class="p">])</span>
+            <span class="n">wavelength_height</span> <span class="o">=</span> <span class="n">y_max</span>        
+            <span class="n">spdmax</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">spdmax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">spd</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+                <span class="n">spdmax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">spd</span><span class="p">[</span><span class="mi">1</span><span class="p">:,:])</span>
+                <span class="n">y_min</span><span class="p">,</span> <span class="n">y_max</span> <span class="o">=</span> <span class="n">wavelength_height</span><span class="o">*</span><span class="n">spdmax</span><span class="p">,</span> <span class="n">spdmax</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">wavelength_height</span><span class="p">))</span>
+
+            <span class="k">elif</span> <span class="p">(</span><span class="n">spdmax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">spd</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+                <span class="n">spdmax</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="n">y_min</span><span class="p">,</span> <span class="n">y_max</span> <span class="o">=</span> <span class="n">wavelength_height</span><span class="p">,</span> <span class="mi">0</span>
+                
+            <span class="k">elif</span> <span class="p">(</span><span class="n">spdmax</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+                <span class="n">y_min</span><span class="p">,</span> <span class="n">y_max</span> <span class="o">=</span> <span class="n">wavelength_height</span><span class="o">*</span><span class="n">spdmax</span><span class="p">,</span> <span class="n">spdmax</span><span class="c1">#*(1 + np.abs(wavelength_height))</span>
+
+                    
+            <span class="k">if</span> <span class="n">xlim</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span> <span class="o">=</span> <span class="n">wavs</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">wavs</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span> <span class="o">=</span> <span class="n">xlim</span>
+                
+            <span class="n">SLrect</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span>
+                <span class="p">(</span><span class="n">x_min</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+                <span class="p">(</span><span class="n">x_min</span><span class="p">,</span> <span class="n">wavelength_height</span><span class="o">*</span><span class="n">spdmax</span><span class="p">),</span>
+                <span class="p">(</span><span class="n">x_max</span><span class="p">,</span> <span class="n">wavelength_height</span><span class="o">*</span><span class="n">spdmax</span><span class="p">),</span>
+                <span class="p">(</span><span class="n">x_max</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+                <span class="p">])</span>
+        
+        <span class="n">axh</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">([</span><span class="n">x_min</span><span class="p">,</span><span class="n">x_max</span><span class="p">])</span>
+        <span class="n">axh</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="n">y_min</span><span class="p">,</span><span class="n">y_max</span><span class="p">])</span>     
+
+        <span class="n">polygon</span> <span class="o">=</span> <span class="n">Polygon</span><span class="p">(</span><span class="n">SLrect</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">axh</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">polygon</span><span class="p">)</span>
+        <span class="n">padding</span> <span class="o">=</span> <span class="mf">0.1</span>
+        <span class="n">axh</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">wavs</span> <span class="o">-</span> <span class="n">padding</span><span class="p">,</span>
+               <span class="n">height</span> <span class="o">=</span> <span class="n">wavelength_height</span><span class="o">*</span><span class="n">spdmax</span><span class="p">,</span>
+               <span class="n">width</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">padding</span><span class="p">,</span>
+               <span class="n">color</span> <span class="o">=</span> <span class="n">srgb</span><span class="p">,</span>
+               <span class="n">align</span> <span class="o">=</span> <span class="s1">&#39;edge&#39;</span><span class="p">,</span>
+               <span class="n">linewidth</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+               <span class="n">clip_path</span> <span class="o">=</span> <span class="n">polygon</span><span class="p">)</span> 
+        
+        <span class="k">if</span> <span class="n">spd</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">axh</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">spd</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">,:]</span><span class="o">.</span><span class="n">T</span><span class="p">,</span><span class="n">spd</span><span class="p">[</span><span class="mi">1</span><span class="p">:,:]</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;spd&#39;</span><span class="p">)</span>
+ 
+        <span class="k">if</span> <span class="n">show_grid</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+        <span class="n">axh</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Wavelength (nm)&#39;</span><span class="p">,</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">axh</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">ylabel</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>        
+
+        <span class="c1">#plt.show()</span>
+    
+        <span class="k">return</span> <span class="n">axh</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
 </pre></div>
 
            </div>
@@ -674,7 +1086,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../../../',
-            VERSION:'1.3.10',
+            VERSION:'1.3.11',
             LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
