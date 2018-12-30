@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.color.cri.utils.helpers &mdash; LuxPy 1.3.11 documentation</title>
+  <title>luxpy.color.cri.utils.helpers &mdash; LuxPy 1.3.12 documentation</title>
   
 
   
@@ -56,7 +56,7 @@
             
             
               <div class="version">
-                1.3.11
+                1.3.12
               </div>
             
           
@@ -202,7 +202,7 @@
 <span class="sd">.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="p">(</span><span class="n">np</span><span class="p">,</span> <span class="n">_S_INTERP_TYPE</span><span class="p">,</span> <span class="n">_CRI_RFL</span><span class="p">,</span> <span class="n">_IESTM30</span><span class="p">,</span> <span class="n">math</span><span class="p">,</span> <span class="n">cam</span><span class="p">,</span> <span class="n">cat</span><span class="p">,</span>
+<span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="p">(</span><span class="n">np</span><span class="p">,</span> <span class="n">_S_INTERP_TYPE</span><span class="p">,</span> <span class="n">_CRI_RFL</span><span class="p">,</span> <span class="n">_IESTM3015</span><span class="p">,</span> <span class="n">math</span><span class="p">,</span> <span class="n">cam</span><span class="p">,</span> <span class="n">cat</span><span class="p">,</span>
                 <span class="n">minimize</span><span class="p">,</span> <span class="n">asplit</span><span class="p">,</span> <span class="n">np2d</span><span class="p">,</span> <span class="n">spd</span><span class="p">,</span> <span class="n">put_args_in_db</span><span class="p">,</span> 
                 <span class="n">colortf</span><span class="p">,</span> <span class="n">spd_to_xyz</span><span class="p">,</span> <span class="n">cri_ref</span><span class="p">,</span> <span class="n">xyz_to_cct</span><span class="p">)</span>
 
@@ -875,7 +875,7 @@
         <span class="k">if</span> <span class="s1">&#39;opt_cri_type&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;scale&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span> 
             <span class="n">opt_cri_type</span> <span class="o">=</span> <span class="n">_CRI_DEFAULTS</span><span class="p">[</span><span class="s1">&#39;ciera&#39;</span><span class="p">]</span> <span class="c1"># use CIE Ra-13.3-1995 as target</span>
         <span class="k">if</span> <span class="s1">&#39;opt_spd_set&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;scale&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span> 
-            <span class="n">opt_spd_set</span> <span class="o">=</span> <span class="n">_IESTM30</span><span class="p">[</span><span class="s1">&#39;S&#39;</span><span class="p">][</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="mi">13</span><span class="p">]</span> <span class="c1"># use CIE F1-F12</span>
+            <span class="n">opt_spd_set</span> <span class="o">=</span> <span class="n">_IESTM3015</span><span class="p">[</span><span class="s1">&#39;S&#39;</span><span class="p">][</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="mi">13</span><span class="p">]</span> <span class="c1"># use CIE F1-F12</span>
         <span class="n">scale_fcn_opt</span> <span class="o">=</span> <span class="n">opt_cri_type</span> <span class="p">[</span><span class="s1">&#39;scale&#39;</span><span class="p">][</span><span class="s1">&#39;fcn&#39;</span><span class="p">]</span>
         <span class="n">scale_factor_opt</span> <span class="o">=</span> <span class="n">opt_cri_type</span> <span class="p">[</span><span class="s1">&#39;scale&#39;</span><span class="p">][</span><span class="s1">&#39;cfactor&#39;</span><span class="p">]</span>
         <span class="n">avg_opt</span> <span class="o">=</span> <span class="n">opt_cri_type</span> <span class="p">[</span><span class="s1">&#39;avg&#39;</span><span class="p">]</span>
@@ -1322,7 +1322,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, Kevin A.G. Smet.
+        &copy; Copyright 2018, Kevin A.G. Smet
 
     </p>
   </div>
@@ -1341,21 +1341,13 @@
 
   
 
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'../../../../../',
-            VERSION:'1.3.11',
-            LANGUAGE:'None',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
-      <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
-      <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
+    
 
   
 

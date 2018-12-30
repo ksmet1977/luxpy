@@ -1,0 +1,467 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>luxpy.color.cri.iestm30.ies_tm30_graphics &mdash; LuxPy 1.3.12 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+
+  
+  <script src="../../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../../index.html" class="icon icon-home"> LuxPy
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.3.12
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../license.html">License: GPLv3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../required_packages.html">Imported (required) packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../luxpy_structure.html">Luxpy package structure</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">LuxPy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>luxpy.color.cri.iestm30.ies_tm30_graphics</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for luxpy.color.cri.iestm30.ies_tm30_graphics</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1">########################################################################</span>
+<span class="c1"># &lt;LUXPY: a Python package for lighting and color science.&gt;</span>
+<span class="c1"># Copyright (C) &lt;2017&gt;  &lt;Kevin A.G. Smet&gt; (ksmet1977 at gmail.com)</span>
+<span class="c1">#</span>
+<span class="c1"># This program is free software: you can redistribute it and/or modify</span>
+<span class="c1"># it under the terms of the GNU General Public License as published by</span>
+<span class="c1"># the Free Software Foundation, either version 3 of the License.</span>
+<span class="c1">#</span>
+<span class="c1"># This program is distributed in the hope that it will be useful,</span>
+<span class="c1"># but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="c1"># MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="c1"># GNU General Public License for more details.</span>
+<span class="c1">#</span>
+<span class="c1"># You should have received a copy of the GNU General Public License</span>
+<span class="c1"># along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<span class="c1">#########################################################################</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module for IES color rendition graphical output</span>
+<span class="sd">===============================================</span>
+
+<span class="sd"> :plot_cri_graphics(): Plots graphical information on color rendition </span>
+<span class="sd">                       properties based on spectral data input or dict with </span>
+<span class="sd">                       pre-calculated measures.</span>
+
+<span class="sd">.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">plt</span><span class="p">,</span> <span class="n">colorsys</span><span class="p">,</span> <span class="n">_CRI_RFL</span>
+
+<span class="kn">from</span> <span class="nn">..utils.helpers</span> <span class="k">import</span> <span class="n">gamut_slicer</span><span class="p">,</span> <span class="n">spd_to_cri</span><span class="p">,</span> <span class="n">jab_to_rhi</span>
+<span class="kn">from</span> <span class="nn">..utils.init_cri_defaults_database</span> <span class="k">import</span> <span class="n">_CRI_DEFAULTS</span>
+
+<span class="kn">from</span> <span class="nn">..utils.graphics</span> <span class="k">import</span> <span class="n">plot_ColorVectorGraphic</span>
+<span class="kn">from</span> <span class="nn">..VFPX.vectorshiftmodel</span> <span class="k">import</span>  <span class="n">_VF_MODEL_TYPE</span><span class="p">,</span> <span class="n">_VF_PCOLORSHIFT</span><span class="p">,</span> <span class="n">VF_colorshift_model</span>
+<span class="kn">from</span> <span class="nn">..VFPX.VF_PX_models</span> <span class="k">import</span> <span class="n">plot_VF_PX_models</span>
+<span class="kn">from</span> <span class="nn">.ies_tm30_metrics</span> <span class="k">import</span> <span class="n">spd_to_ies_tm30_metrics</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;plot_cri_graphics&#39;</span><span class="p">]</span>
+
+
+
+
+<div class="viewcode-block" id="plot_cri_graphics"><a class="viewcode-back" href="../../../../../color.html#luxpy.color.cri.plot_cri_graphics">[docs]</a><span class="k">def</span> <span class="nf">plot_cri_graphics</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">hbins</span> <span class="o">=</span> <span class="mi">16</span><span class="p">,</span> <span class="n">start_hue</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">scalef</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> \
+                      <span class="n">plot_axis_labels</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">bin_labels</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">plot_edge_lines</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> \
+                      <span class="n">plot_center_lines</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">plot_bin_colors</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> \
+                      <span class="n">axtype</span> <span class="o">=</span> <span class="s1">&#39;polar&#39;</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">force_CVG_layout</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                      <span class="n">vf_model_type</span> <span class="o">=</span> <span class="n">_VF_MODEL_TYPE</span><span class="p">,</span> <span class="n">vf_pcolorshift</span> <span class="o">=</span> <span class="n">_VF_PCOLORSHIFT</span><span class="p">,</span> <span class="n">vf_color</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span><span class="p">,</span> \
+                      <span class="n">vf_bin_labels</span> <span class="o">=</span> <span class="n">_VF_PCOLORSHIFT</span><span class="p">[</span><span class="s1">&#39;labels&#39;</span><span class="p">],</span> <span class="n">vf_plot_bin_colors</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> \
+                      <span class="n">scale_vf_chroma_to_sample_chroma</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>\
+                      <span class="n">plot_VF</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">plot_CF</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">plot_SF</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot graphical information on color rendition properties.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :data: </span>
+<span class="sd">            | ndarray with spectral data or dict with pre-computed metrics.</span>
+<span class="sd">        :cri_type:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | If None: defaults to cri_type = &#39;iesrf&#39;.</span>
+<span class="sd">            | :hbins:, :start_hue: and :scalef: are ignored if cri_type not None </span>
+<span class="sd">            | and values are replaced by those in cri_type[&#39;rg_pars&#39;]</span>
+<span class="sd">        :hbins:</span>
+<span class="sd">            | 16 or ndarray with sorted hue bin centers (°), optional</span>
+<span class="sd">        :start_hue: </span>
+<span class="sd">            | 0.0, optional</span>
+<span class="sd">        :scalef:</span>
+<span class="sd">            | 100, optional</span>
+<span class="sd">            | Scale factor for graphic.</span>
+<span class="sd">        :plot_axis_labels:</span>
+<span class="sd">            | False, optional</span>
+<span class="sd">            | Turns axis ticks on/off (True/False).</span>
+<span class="sd">        :bin_labels: </span>
+<span class="sd">            | None or list[str] or &#39;#&#39;, optional</span>
+<span class="sd">            | Plots labels at the bin center hues.</span>
+<span class="sd">            |   - None: don&#39;t plot.</span>
+<span class="sd">            |   - list[str]: list with str for each bin. </span>
+<span class="sd">            |                (len(:bin_labels:) = :nhbins:)</span>
+<span class="sd">            |   - &#39;#&#39;: plots number.</span>
+<span class="sd">        :plot_edge_lines:</span>
+<span class="sd">            | True or False, optional</span>
+<span class="sd">            | Plot grey bin edge lines with &#39;--&#39;.</span>
+<span class="sd">        :plot_center_lines:</span>
+<span class="sd">            | False or True, optional</span>
+<span class="sd">            | Plot colored lines at &#39;center&#39; of hue bin.</span>
+<span class="sd">        :plot_bin_colors: </span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | Colorize hue bins.</span>
+<span class="sd">        :axtype: </span>
+<span class="sd">            | &#39;polar&#39; or &#39;cart&#39;, optional</span>
+<span class="sd">            | Make polar or Cartesian plot.</span>
+<span class="sd">        :ax: </span>
+<span class="sd">            | None or &#39;new&#39; or &#39;same&#39;, optional</span>
+<span class="sd">            |   - None or &#39;new&#39; creates new plot</span>
+<span class="sd">            |   - &#39;same&#39;: continue plot on same axes.</span>
+<span class="sd">            |   - axes handle: plot on specified axes.</span>
+<span class="sd">        :force_CVG_layout: </span>
+<span class="sd">            | False or True, optional</span>
+<span class="sd">            | True: Force plot of basis of CVG.</span>
+<span class="sd">        :vf_model_type: </span>
+<span class="sd">            | _VF_MODEL_TYPE or &#39;M6&#39; or &#39;M5&#39;, optional</span>
+<span class="sd">            | Type of polynomial vector field model to use for the calculation of</span>
+<span class="sd">              base color shift and metameric uncertainty.</span>
+<span class="sd">        :vf_pcolorshift:</span>
+<span class="sd">            | _VF_PCOLORSHIFT or user defined dict, optional</span>
+<span class="sd">            | The polynomial models of degree 5 and 6 can be fully specified or </span>
+<span class="sd">              summarized by the model parameters themselved OR by calculating the</span>
+<span class="sd">              dCoverC and dH at resp. 5 and 6 hues. :VF_pcolorshift: specifies </span>
+<span class="sd">              these hues and chroma level.</span>
+<span class="sd">        :vf_color:</span>
+<span class="sd">            | &#39;k&#39;, optional</span>
+<span class="sd">            | For plotting the vector fields.</span>
+<span class="sd">        :vf_plot_bin_colors: </span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | Colorize hue bins of VF graph.</span>
+<span class="sd">        :scale_vf_chroma_to_sample_chroma:</span>
+<span class="sd">            | False, optional</span>
+<span class="sd">            | Scale chroma of reference and test vf fields such that average of </span>
+<span class="sd">              binned reference chroma equals that of the binned sample chroma</span>
+<span class="sd">              before calculating hue bin metrics.</span>
+<span class="sd">        :vf_bin_labels:</span>
+<span class="sd">            | see :bin_labels:</span>
+<span class="sd">            | Set VF model hue-bin labels.</span>
+<span class="sd">        :plot_CF:</span>
+<span class="sd">            | False, optional</span>
+<span class="sd">            | Plot circle fields.</span>
+<span class="sd">        :plot_VF:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | Plot vector fields.</span>
+<span class="sd">        :plot_SF:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | Plot sample shifts.   </span>
+<span class="sd">            </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :returns: </span>
+<span class="sd">            | (data, </span>
+<span class="sd">            | [plt.gcf(),ax_spd, ax_CVG, ax_locC, ax_locH, ax_VF], </span>
+<span class="sd">            | cmap )</span>
+<span class="sd">            | </span>
+<span class="sd">            | :data: dict with color rendering data</span>
+<span class="sd">            | with keys:</span>
+<span class="sd">            | - &#39;SPD&#39;  : ndarray test SPDs</span>
+<span class="sd">            | - &#39;bjabt&#39;: ndarray with binned jab data under test SPDs</span>
+<span class="sd">            | - &#39;bjabr&#39;: ndarray with binned jab data under reference SPDs</span>
+<span class="sd">            | - &#39;cct&#39;  : ndarray with CCT of test SPD</span>
+<span class="sd">            | - &#39;duv&#39;  : ndarray with distance to blackbody locus of test SPD</span>
+<span class="sd">            | - &#39;Rf&#39;   : ndarray with general color fidelity indices</span>
+<span class="sd">            | - &#39;Rg&#39;   : ndarray with gamut area indices</span>
+<span class="sd">            | - &#39;Rfi&#39;  : ndarray with specific color fidelity indices</span>
+<span class="sd">            | - &#39;Rfhi&#39; : ndarray with local (hue binned) fidelity indices</span>
+<span class="sd">            | - &#39;Rcshi&#39;: ndarray with local chroma shifts indices</span>
+<span class="sd">            | - &#39;Rhshi&#39;: ndarray with local hue shifts indices</span>
+<span class="sd">            | - &#39;Rt&#39;  : ndarray with general metameric uncertainty index Rt</span>
+<span class="sd">            | - &#39;Rti&#39; : ndarray with specific metameric uncertainty indices Rti</span>
+<span class="sd">            | - &#39;Rfhi_vf&#39; : ndarray with local (hue binned) fidelity indices </span>
+<span class="sd">            |               obtained from VF model predictions at color space</span>
+<span class="sd">            |               pixel coordinates</span>
+<span class="sd">            | - &#39;Rcshi_vf&#39;: ndarray with local chroma shifts indices </span>
+<span class="sd">            |               (same as above)</span>
+<span class="sd">            | - &#39;Rhshi_vf&#39;: ndarray with local hue shifts indices </span>
+<span class="sd">            |               (same as above)</span>
+<span class="sd">            |    </span>
+<span class="sd">            | :[...]: list with handles to current figure and 5 axes.</span>
+<span class="sd">            |</span>
+<span class="sd">            | :cmap: list with rgb colors for hue bins </span>
+<span class="sd">                    (for use in other plotting fcns)</span>
+<span class="sd">        </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="nb">dict</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">spd_to_ies_tm30_metrics</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">,</span> <span class="n">hbins</span> <span class="o">=</span> <span class="n">hbins</span><span class="p">,</span> <span class="n">start_hue</span> <span class="o">=</span> <span class="n">start_hue</span><span class="p">,</span> <span class="n">scalef</span> <span class="o">=</span> <span class="n">scalef</span><span class="p">,</span> <span class="n">vf_model_type</span> <span class="o">=</span> <span class="n">vf_model_type</span><span class="p">,</span> <span class="n">vf_pcolorshift</span> <span class="o">=</span> <span class="n">vf_pcolorshift</span><span class="p">,</span> <span class="n">scale_vf_chroma_to_sample_chroma</span> <span class="o">=</span> <span class="n">scale_vf_chroma_to_sample_chroma</span><span class="p">)</span>
+
+    <span class="n">Rcshi</span><span class="p">,</span> <span class="n">Rf</span><span class="p">,</span> <span class="n">Rfchhi_vf</span><span class="p">,</span> <span class="n">Rfhi</span><span class="p">,</span> <span class="n">Rfhi_vf</span><span class="p">,</span> <span class="n">Rfhshi_vf</span><span class="p">,</span> <span class="n">Rfi</span><span class="p">,</span>  <span class="n">Rg</span><span class="p">,</span> <span class="n">Rhshi</span><span class="p">,</span> <span class="n">Rt</span><span class="p">,</span> <span class="n">Rti</span><span class="p">,</span> <span class="n">SPD</span><span class="p">,</span> <span class="n">bjabr</span><span class="p">,</span> <span class="n">bjabt</span><span class="p">,</span> <span class="n">cct</span><span class="p">,</span> <span class="n">cri_type</span><span class="p">,</span> <span class="n">dataVF</span><span class="p">,</span> <span class="n">duv</span> <span class="o">=</span> <span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">())]</span>
+    <span class="n">hbins</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;rg_pars&#39;</span><span class="p">][</span><span class="s1">&#39;nhbins&#39;</span><span class="p">]</span>
+    <span class="n">start_hue</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;rg_pars&#39;</span><span class="p">][</span><span class="s1">&#39;start_hue&#39;</span><span class="p">]</span>
+    <span class="n">scalef</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;rg_pars&#39;</span><span class="p">][</span><span class="s1">&#39;normalized_chroma_ref&#39;</span><span class="p">]</span>
+        
+    <span class="c1">#layout = np.array([[3,3,0,0],[1,0,2,2],[0,0,2,1],[2,2,1,1],[0,2,1,1],[1,2,1,1]])</span>
+    <span class="c1">#layout = np.array([[6,6,0,0],[0,3,3,3],[3,3,3,3],[0,0,3,2],[2,2,2,2],[2,0,2,2],[4,0,2,2]])</span>
+    <span class="n">layout</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">],[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">4</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">4</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">]])</span>
+    
+    <span class="k">def</span> <span class="nf">create_subplot</span><span class="p">(</span><span class="n">layout</span><span class="p">,</span><span class="n">n</span><span class="p">,</span> <span class="n">polar</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">frameon</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot2grid</span><span class="p">(</span><span class="n">layout</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">],</span> <span class="n">layout</span><span class="p">[</span><span class="n">n</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">],</span> <span class="n">colspan</span> <span class="o">=</span> <span class="n">layout</span><span class="p">[</span><span class="n">n</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="n">rowspan</span> <span class="o">=</span> <span class="n">layout</span><span class="p">[</span><span class="n">n</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="n">polar</span> <span class="o">=</span> <span class="n">polar</span><span class="p">,</span> <span class="n">frameon</span> <span class="o">=</span> <span class="n">frameon</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ax</span>
+    
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cct</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+        
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">144</span><span class="p">)</span>
+    
+        <span class="c1"># Plot CVG:</span>
+        <span class="n">ax_CVG</span> <span class="o">=</span> <span class="n">create_subplot</span><span class="p">(</span><span class="n">layout</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span> <span class="n">polar</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">frameon</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">figCVG</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">cmap</span> <span class="o">=</span> <span class="n">plot_ColorVectorGraphic</span><span class="p">(</span><span class="n">bjabt</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">i</span><span class="p">,:],</span> <span class="n">bjabr</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">i</span><span class="p">,:],</span> <span class="n">hbins</span> <span class="o">=</span> <span class="n">hbins</span><span class="p">,</span> <span class="n">axtype</span> <span class="o">=</span> <span class="n">axtype</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">ax_CVG</span><span class="p">,</span> <span class="n">plot_center_lines</span> <span class="o">=</span> <span class="n">plot_center_lines</span><span class="p">,</span> <span class="n">plot_edge_lines</span> <span class="o">=</span> <span class="n">plot_edge_lines</span><span class="p">,</span>  <span class="n">plot_bin_colors</span> <span class="o">=</span> <span class="n">plot_bin_colors</span><span class="p">,</span> <span class="n">scalef</span> <span class="o">=</span> <span class="n">scalef</span><span class="p">,</span> <span class="n">force_CVG_layout</span> <span class="o">=</span> <span class="n">force_CVG_layout</span><span class="p">,</span> <span class="n">bin_labels</span> <span class="o">=</span> <span class="s1">&#39;#&#39;</span><span class="p">)</span>
+        
+        <span class="c1"># Plot VF:</span>
+        <span class="n">ax_VF</span> <span class="o">=</span> <span class="n">create_subplot</span><span class="p">(</span><span class="n">layout</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span> <span class="n">polar</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">frameon</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">hbin_cmap</span> <span class="o">=</span> <span class="kc">None</span>
+    
+        <span class="n">ax_VF</span><span class="p">,</span> <span class="n">hbin_cmap</span> <span class="o">=</span> <span class="n">plot_VF_PX_models</span><span class="p">([</span><span class="n">dataVF</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span> <span class="n">dataPX</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">plot_VF</span> <span class="o">=</span> <span class="n">plot_VF</span><span class="p">,</span> <span class="n">plot_PX</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">axtype</span> <span class="o">=</span> <span class="s1">&#39;polar&#39;</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">ax_VF</span><span class="p">,</span> \
+                           <span class="n">plot_circle_field</span> <span class="o">=</span> <span class="n">plot_CF</span><span class="p">,</span> <span class="n">plot_sample_shifts</span> <span class="o">=</span> <span class="n">plot_SF</span><span class="p">,</span> <span class="n">plot_bin_colors</span> <span class="o">=</span> <span class="n">vf_plot_bin_colors</span><span class="p">,</span> \
+                           <span class="n">plot_samples_shifts_at_pixel_center</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">jabp_sampled</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> \
+                           <span class="n">plot_VF_colors</span> <span class="o">=</span> <span class="p">[</span><span class="n">vf_color</span><span class="p">],</span> <span class="n">plot_PX_colors</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;r&#39;</span><span class="p">],</span> <span class="n">hbin_cmap</span> <span class="o">=</span> <span class="n">hbin_cmap</span><span class="p">,</span> <span class="n">force_CVG_layout</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">bin_labels</span> <span class="o">=</span> <span class="n">vf_bin_labels</span><span class="p">)</span>
+    
+        <span class="c1"># Plot test SPD:</span>
+        <span class="n">ax_spd</span> <span class="o">=</span> <span class="n">create_subplot</span><span class="p">(</span><span class="n">layout</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">ax_spd</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">SPD</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">SPD</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="n">SPD</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span><span class="s1">&#39;r-&#39;</span><span class="p">)</span>
+        <span class="n">ax_spd</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">730</span><span class="p">,</span><span class="mf">0.9</span><span class="p">,</span><span class="s1">&#39;CCT = </span><span class="si">{:1.0f}</span><span class="s1"> K&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cct</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]),</span><span class="n">fontsize</span> <span class="o">=</span> <span class="mi">9</span><span class="p">,</span> <span class="n">horizontalalignment</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span><span class="n">verticalalignment</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span><span class="n">rotation</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span><span class="o">*</span><span class="mf">0.3</span><span class="p">)</span>
+        <span class="n">ax_spd</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">730</span><span class="p">,</span><span class="mf">0.8</span><span class="p">,</span><span class="s1">&#39;Duv = </span><span class="si">{:1.4f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">duv</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]),</span><span class="n">fontsize</span> <span class="o">=</span> <span class="mi">9</span><span class="p">,</span> <span class="n">horizontalalignment</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span><span class="n">verticalalignment</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span><span class="n">rotation</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span><span class="o">*</span><span class="mf">0.3</span><span class="p">)</span>
+        <span class="n">ax_spd</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">730</span><span class="p">,</span><span class="mf">0.7</span><span class="p">,</span><span class="s1">&#39;IES Rf = </span><span class="si">{:1.0f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">Rf</span><span class="p">[:,</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]),</span><span class="n">fontsize</span> <span class="o">=</span> <span class="mi">9</span><span class="p">,</span> <span class="n">horizontalalignment</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span><span class="n">verticalalignment</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span><span class="n">rotation</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span><span class="o">*</span><span class="mf">0.3</span><span class="p">)</span>
+        <span class="n">ax_spd</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">730</span><span class="p">,</span><span class="mf">0.6</span><span class="p">,</span><span class="s1">&#39;IES Rg = </span><span class="si">{:1.0f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">Rg</span><span class="p">[:,</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]),</span><span class="n">fontsize</span> <span class="o">=</span> <span class="mi">9</span><span class="p">,</span> <span class="n">horizontalalignment</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span><span class="n">verticalalignment</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span><span class="n">rotation</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span><span class="o">*</span><span class="mf">0.3</span><span class="p">)</span>
+        <span class="n">ax_spd</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">730</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="s1">&#39;Rt = </span><span class="si">{:1.0f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">Rt</span><span class="p">[:,</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]),</span><span class="n">fontsize</span> <span class="o">=</span> <span class="mi">9</span><span class="p">,</span> <span class="n">horizontalalignment</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span><span class="n">verticalalignment</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span><span class="n">rotation</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span><span class="o">*</span><span class="mf">0.3</span><span class="p">)</span>
+        <span class="n">ax_spd</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Wavelength (nm)&#39;</span><span class="p">,</span> <span class="n">fontsize</span> <span class="o">=</span> <span class="mi">9</span><span class="p">)</span>
+        <span class="n">ax_spd</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Rel. spectral intensity&#39;</span><span class="p">,</span> <span class="n">fontsize</span> <span class="o">=</span> <span class="mi">9</span><span class="p">)</span>
+        <span class="n">ax_spd</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">([</span><span class="mi">360</span><span class="p">,</span><span class="mi">830</span><span class="p">])</span>
+        
+        <span class="c1"># Plot local color fidelity, Rfhi:</span>
+        <span class="n">ax_Rfi</span> <span class="o">=</span> <span class="n">create_subplot</span><span class="p">(</span><span class="n">layout</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">hbins</span><span class="p">):</span>
+            <span class="n">ax_Rfi</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">hbins</span><span class="p">)[</span><span class="n">j</span><span class="p">],</span><span class="n">Rfhi</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="n">i</span><span class="p">],</span> <span class="n">color</span> <span class="o">=</span> <span class="n">cmap</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">width</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span><span class="n">edgecolor</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.4</span><span class="p">)</span>
+            <span class="n">ax_Rfi</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">hbins</span><span class="p">)[</span><span class="n">j</span><span class="p">],</span><span class="n">Rfhi</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="mf">1.1</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:1.0f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">Rfhi</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="n">i</span><span class="p">])</span> <span class="p">,</span><span class="n">fontsize</span> <span class="o">=</span> <span class="mi">9</span><span class="p">,</span><span class="n">horizontalalignment</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span><span class="n">verticalalignment</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span><span class="o">*</span><span class="mf">0.3</span><span class="p">)</span>
+        <span class="n">ax_Rfi</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">120</span><span class="p">])</span>
+        <span class="n">xticks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">hbins</span><span class="p">)</span>
+        <span class="n">xtickslabels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">{:1.0f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ii</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">hbins</span><span class="p">)]</span>
+        <span class="n">ax_Rfi</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="n">xticks</span><span class="p">)</span>
+        <span class="n">ax_Rfi</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">xtickslabels</span><span class="p">,</span> <span class="n">fontsize</span> <span class="o">=</span> <span class="mi">8</span><span class="p">)</span>
+        <span class="n">ax_Rfi</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Local color fidelity $R_{f,hi}$&#39;</span><span class="p">)</span>
+        <span class="n">ax_Rfi</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Hue bin #&#39;</span><span class="p">)</span>
+        
+        <span class="c1"># Plot local chroma shift, Rcshi:</span>
+        <span class="n">ax_locC</span> <span class="o">=</span> <span class="n">create_subplot</span><span class="p">(</span><span class="n">layout</span><span class="p">,</span><span class="mi">5</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">hbins</span><span class="p">):</span>
+            <span class="n">ax_locC</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">hbins</span><span class="p">)[</span><span class="n">j</span><span class="p">],</span><span class="n">Rcshi</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="n">i</span><span class="p">],</span> <span class="n">color</span> <span class="o">=</span> <span class="n">cmap</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">width</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span><span class="n">edgecolor</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.4</span><span class="p">)</span>
+            <span class="n">ax_locC</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">hbins</span><span class="p">)[</span><span class="n">j</span><span class="p">],</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">Rcshi</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="n">i</span><span class="p">])</span><span class="o">*</span><span class="mf">0.1</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:1.0f}</span><span class="s1">%&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">Rcshi</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="n">i</span><span class="p">])</span> <span class="p">,</span><span class="n">fontsize</span> <span class="o">=</span> <span class="mi">9</span><span class="p">,</span><span class="n">horizontalalignment</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span><span class="n">verticalalignment</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span><span class="n">rotation</span> <span class="o">=</span> <span class="mi">90</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span><span class="o">*</span><span class="mf">0.3</span><span class="p">)</span>
+        <span class="n">ylim</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">Rcshi</span><span class="o">.</span><span class="n">min</span><span class="p">()),</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">Rcshi</span><span class="o">.</span><span class="n">min</span><span class="p">()),</span><span class="mf">0.2</span><span class="p">])</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">*</span><span class="mf">1.5</span>
+        <span class="n">ax_locC</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="o">-</span><span class="n">ylim</span><span class="p">,</span><span class="n">ylim</span><span class="p">])</span>
+        <span class="n">ax_locC</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Local chroma shift, $R_{cs,hi}$&#39;</span><span class="p">)</span>
+        <span class="n">ax_locC</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">([])</span>
+        <span class="n">ax_locC</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">([</span><span class="s1">&#39;</span><span class="si">{:1.2f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ii</span><span class="p">)</span> <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="n">ax_locC</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">()],</span> <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;white&#39;</span><span class="p">)</span>
+        
+        <span class="c1"># Plot local hue shift, Rhshi:</span>
+        <span class="n">ax_locH</span> <span class="o">=</span> <span class="n">create_subplot</span><span class="p">(</span><span class="n">layout</span><span class="p">,</span><span class="mi">6</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">hbins</span><span class="p">):</span>
+            <span class="n">ax_locH</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">hbins</span><span class="p">)[</span><span class="n">j</span><span class="p">],</span><span class="n">Rhshi</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="n">i</span><span class="p">],</span> <span class="n">color</span> <span class="o">=</span> <span class="n">cmap</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">width</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span><span class="n">edgecolor</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.4</span><span class="p">)</span>
+            <span class="n">ax_locH</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">hbins</span><span class="p">)[</span><span class="n">j</span><span class="p">],</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">Rhshi</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="n">i</span><span class="p">])</span><span class="o">*</span><span class="mf">0.2</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:1.3f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">Rhshi</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="n">i</span><span class="p">])</span> <span class="p">,</span><span class="n">fontsize</span> <span class="o">=</span> <span class="mi">9</span><span class="p">,</span><span class="n">horizontalalignment</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span><span class="n">verticalalignment</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span><span class="n">rotation</span> <span class="o">=</span> <span class="mi">90</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span><span class="o">*</span><span class="mf">0.3</span><span class="p">)</span>
+        <span class="n">ylim</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">Rhshi</span><span class="o">.</span><span class="n">min</span><span class="p">()),</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">Rhshi</span><span class="o">.</span><span class="n">min</span><span class="p">()),</span><span class="mf">0.2</span><span class="p">])</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">*</span><span class="mf">1.5</span>
+        <span class="n">ax_locH</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="o">-</span><span class="n">ylim</span><span class="p">,</span><span class="n">ylim</span><span class="p">])</span>
+        <span class="n">ax_locH</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Local hue shift, $R_{hs,hi}$&#39;</span><span class="p">)</span>
+        <span class="n">ax_locH</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">([])</span>
+        <span class="n">ax_locH</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">([</span><span class="s1">&#39;</span><span class="si">{:1.2f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ii</span><span class="p">)</span> <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="n">ax_locH</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">()],</span> <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;white&#39;</span><span class="p">)</span>
+              
+        <span class="c1"># Plot local color fidelity of VF, vfRfhi:</span>
+        <span class="n">ax_vfRfi</span> <span class="o">=</span> <span class="n">create_subplot</span><span class="p">(</span><span class="n">layout</span><span class="p">,</span><span class="mi">7</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">hbins</span><span class="p">):</span>
+            <span class="n">ax_vfRfi</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">hbins</span><span class="p">)[</span><span class="n">j</span><span class="p">],</span><span class="n">Rfhi_vf</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="n">i</span><span class="p">],</span> <span class="n">color</span> <span class="o">=</span> <span class="n">cmap</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">width</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span><span class="n">edgecolor</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.4</span><span class="p">)</span>
+            <span class="n">ax_vfRfi</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">hbins</span><span class="p">)[</span><span class="n">j</span><span class="p">],</span><span class="n">Rfhi_vf</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="mf">1.1</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:1.0f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">Rfhi_vf</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="n">i</span><span class="p">])</span> <span class="p">,</span><span class="n">fontsize</span> <span class="o">=</span> <span class="mi">9</span><span class="p">,</span><span class="n">horizontalalignment</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span><span class="n">verticalalignment</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span><span class="o">*</span><span class="mf">0.3</span><span class="p">)</span>
+        <span class="n">ax_vfRfi</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">120</span><span class="p">])</span>
+        <span class="n">xticks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">hbins</span><span class="p">)</span>
+        <span class="n">xtickslabels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">{:1.0f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ii</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">hbins</span><span class="p">)]</span>
+        <span class="n">ax_vfRfi</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="n">xticks</span><span class="p">)</span>
+        <span class="n">ax_vfRfi</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">xtickslabels</span><span class="p">,</span> <span class="n">fontsize</span> <span class="o">=</span> <span class="mi">8</span><span class="p">)</span>
+        <span class="n">ax_vfRfi</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Local VF color fidelity $vfR_{f,hi}$&#39;</span><span class="p">)</span>
+        <span class="n">ax_vfRfi</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Hue bin #&#39;</span><span class="p">)</span>
+       
+        <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+        
+    <span class="k">return</span>  <span class="n">data</span><span class="p">,</span>  <span class="p">[</span><span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">(),</span><span class="n">ax_spd</span><span class="p">,</span> <span class="n">ax_CVG</span><span class="p">,</span> <span class="n">ax_locC</span><span class="p">,</span> <span class="n">ax_locH</span><span class="p">,</span> <span class="n">ax_VF</span><span class="p">],</span> <span class="n">cmap</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Kevin A.G. Smet
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
