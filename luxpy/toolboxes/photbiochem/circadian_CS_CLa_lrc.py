@@ -258,7 +258,7 @@ if __name__ == '__main__':
      
     E = 100
     El = _CIE_ILLUMINANTS['D65']
-    S = lx._IESTM30['S']['data'][:4]
+    S = lx._IESTM3015['S']['data'][:4]
     CS, CLa = spd_to_CS_CLa_lrc(El = El, E = E, \
                                     sum_sources = False, interpolate_sources = False)
     print('out')
