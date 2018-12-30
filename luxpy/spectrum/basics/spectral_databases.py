@@ -75,8 +75,8 @@ _IESTM3015 = {'S': {'data': getdata(_S_PATH + 'IESTM30_15_Sspds.dat',kind='np').
 _IESTM3015['S']['info'] = getdata(_S_PATH + 'IESTM30_15_Sinfo.txt',kind='np',header='infer',verbosity = False)
 _IESTM3015_S = _IESTM3015['S']
 
-_IESTM3018 = {'S': {'data': getdata(_S_PATH + 'IESTM30_18_Sspds.dat',kind='np').transpose()}}
-_IESTM3018['S']['info'] = getdata(_S_PATH + 'IESTM30_18_Sinfo.txt',kind='np',header='infer',verbosity = False)
+_IESTM3018 = {'S': {'data': getdata(_S_PATH + 'IESTM30_15_Sspds.dat',kind='np').transpose()}}
+_IESTM3018['S']['info'] = getdata(_S_PATH + 'IESTM30_15_Sinfo.txt',kind='np',header='infer',verbosity = False)
 _IESTM3018_S = _IESTM3018['S']
 
 
