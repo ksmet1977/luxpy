@@ -31,5 +31,5 @@ for i, cmf_type in enumerate(_CMF['types']): # store all in single nested dict
     _CMF[cmf_type]['bar'] =  xyzbar(cieobs = cmf_type, scr = 'file', kind = 'np')
 
 # load spd and rfl data in /spd/:
-from .spectral_databases import _R_PATH, _S_PATH, _CIE_ILLUMINANTS, _IESTM30, _CRI_RFL, _MUNSELL
-__all__ += ['_R_PATH', '_S_PATH', '_CRI_RFL', '_CIE_ILLUMINANTS', '_IESTM30','_MUNSELL'] 
+from .spectral_databases import _R_PATH, _S_PATH, _CIE_ILLUMINANTS, _IESTM3015, _IESTM3018, _CRI_RFL, _MUNSELL
+__all__ += ['_R_PATH', '_S_PATH', '_CRI_RFL', '_CIE_ILLUMINANTS', '_IESTM3015','_IESTM3018','_MUNSELL'] 

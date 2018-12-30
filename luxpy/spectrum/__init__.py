@@ -117,10 +117,10 @@ spectrum/spectral_databases.py
 
  :_R_PATH: Path to with spectral reflectance data
 
- :_IESTM30: Database with spectral reflectances related to and light source 
+ :_IESTM3015: Database with spectral reflectances related to and light source 
             spectra contained excel calculator of IES TM30-15 publication.
 
- :_IESTM30_S: Database with only light source spectra contained in the 
+ :_IESTM3015_S: Database with only light source spectra contained in the 
               IES TM30-15 excel calculator.
 
  :_CIE_ILLUMINANTS: | Database with CIE illuminants: 

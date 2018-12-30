@@ -125,6 +125,7 @@ Imported packages
  * from mpl_toolkits.mplot3d import Axes3D
  * import colorsys
  * import itertools
+ * import copy
 
  * import numpy as np
  * import pandas as pd
@@ -166,7 +167,8 @@ from collections import OrderedDict as odict
 from mpl_toolkits.mplot3d import Axes3D
 import colorsys
 import itertools
-__all__ = ['os','warnings','odict','Axes3D','colorsys','itertools']
+import copy
+__all__ = ['os','warnings','odict','Axes3D','colorsys','itertools','copy']
 
 # 3e party:
 import numpy as np

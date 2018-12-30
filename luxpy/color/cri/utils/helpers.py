@@ -51,7 +51,7 @@ Module with color rendition, fidelity and gamut area helper functions
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
-from luxpy import (np, _S_INTERP_TYPE, _CRI_RFL, _IESTM30, math, cam, cat,
+from luxpy import (np, _S_INTERP_TYPE, _CRI_RFL, _IESTM3015, math, cam, cat,
                 minimize, asplit, np2d, spd, put_args_in_db, 
                 colortf, spd_to_xyz, cri_ref, xyz_to_cct)
 
@@ -724,7 +724,7 @@ def optimize_scale_factor(cri_type, opt_scale_factor, scale_fcn, avg) :
         if 'opt_cri_type' not in cri_type['scale'].keys(): 
             opt_cri_type = _CRI_DEFAULTS['ciera'] # use CIE Ra-13.3-1995 as target
         if 'opt_spd_set' not in cri_type['scale'].keys(): 
-            opt_spd_set = _IESTM30['S']['data'][0:13] # use CIE F1-F12
+            opt_spd_set = _IESTM3015['S']['data'][0:13] # use CIE F1-F12
         scale_fcn_opt = opt_cri_type ['scale']['fcn']
         scale_factor_opt = opt_cri_type ['scale']['cfactor']
         avg_opt = opt_cri_type ['avg']

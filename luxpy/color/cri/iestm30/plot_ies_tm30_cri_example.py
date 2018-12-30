@@ -28,7 +28,7 @@ import colorsys
 
 plot_iestm30_output = True
 
-SPDs = lx._IESTM30['S']['data']
+SPDs = lx._IESTM3015['S']['data']
 
 SPD = SPDs[:3]
 
