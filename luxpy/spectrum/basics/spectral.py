@@ -805,7 +805,7 @@ def spd_to_power(data, ptype = 'ru', cieobs = _CIEOBS):
 #---CIE illuminants------------------------------------------------------------
 #------------------------------------------------------------------------------
 
-def blackbody(cct, wl3 = None, norm_type = None, norm_f = None):
+def blackbody(cct, wl3 = None):
     """
     Calculate blackbody radiator spectrum for correlated color temperature (cct).
     
@@ -817,21 +817,6 @@ def blackbody(cct, wl3 = None, norm_type = None, norm_f = None):
             | None, optional
             | New wavelength range for interpolation. 
             | Defaults to wavelengths specified by luxpy._WL3.
-        :norm_type: 
-            | None, optional 
-            |       - 'lambda': make lambda in norm_f equal to 1
-            |       - 'area': area-normalization times norm_f
-            |       - 'max': max-normalization times norm_f
-            |       - 'ru': to :norm_f: radiometric units 
-            |       - 'pu': to :norm_f: photometric units 
-            |       - 'pusa': to :norm_f: photometric units (with Km corrected
-            |                             to standard air, cfr. CIE TN003-2015)
-            |       - 'qu': to :norm_f: quantal energy units
-        :norm_f:
-            | 1, optional
-            | Normalization factor that determines the size of normalization 
-              for 'max' and 'area' 
-              or which wavelength is normalized to 1 for 'lambda' option.
 
     Returns:
         :returns:
@@ -886,7 +871,7 @@ def daylightlocus(cct, force_daylight_below4000K = False):
    
    
 #------------------------------------------------------------------------------
-def daylightphase(cct, wl3 = None, norm_type = None, norm_f = None, force_daylight_below4000K = False, verbosity = None):
+def daylightphase(cct, wl3 = None, force_daylight_below4000K = False, verbosity = None):
     """
     Calculate daylight phase spectrum for correlated color temperature (cct).
         
@@ -898,21 +883,6 @@ def daylightphase(cct, wl3 = None, norm_type = None, norm_f = None, force_daylig
             | None, optional
             | New wavelength range for interpolation. 
             | Defaults to wavelengths specified by luxpy._WL3.
-        :norm_type: 
-            | None, optional 
-            |       - 'lambda': make lambda in norm_f equal to 1
-            |       - 'area': area-normalization times norm_f
-            |       - 'max': max-normalization times norm_f
-            |       - 'ru': to :norm_f: radiometric units 
-            |       - 'pu': to :norm_f: photometric units 
-            |       - 'pusa': to :norm_f: photometric units (with Km corrected
-            |                             to standard air, cfr. CIE TN003-2015)
-            |       - 'qu': to :norm_f: quantal energy units
-        :norm_f:
-            | 1, optional
-            | Normalization factor that determines the size of normalization 
-              for 'max' and 'area' 
-              or which wavelength is normalized to 1 for 'lambda' option.
         :force_daylight_below4000K: 
             | False or True, optional
             | Daylight locus approximation is not defined below 4000 K, 
@@ -1072,13 +1042,11 @@ def cri_ref(ccts, wl3 = None, ref_type = _CRI_REF_TYPE, mix_range = None, cieobs
                 SrBB = blackbody(cct,wl3)
                 SrDL = daylightphase(cct,wl3,verbosity = None,force_daylight_below4000K = force_daylight_below4000K)
                 cmf = xyzbar(cieobs = cieobs, scr = 'dict', wl_new = wl3)
-                k = _CMF[cieobs]['K']
                 wl = SrBB[0]
                 ld = getwld(wl)
-                Y_SrBB = np.array(np.sum(SrBB[1]*cmf[2]*ld*k))
-                Y_SrDL = np.array(np.sum(SrDL[1]*cmf[2]*ld*k))
-                SrBB = 100.0*SrBB/Y_SrBB
-                SrDL = 100.0*SrDL/Y_SrDL
+
+                SrBB = 100.0*SrBB[1]/np.array(np.sum(SrBB[1]*cmf[2]*ld))
+                SrDL = 100.0*SrDL[1]/np.array(np.sum(SrDL[1]*cmf[2]*ld))
                 Tb = float(mix_range_[0])
                 Te = float(mix_range_[1])
                 cBB = (Te-cct)/(Te-Tb)
@@ -1092,18 +1060,16 @@ def cri_ref(ccts, wl3 = None, ref_type = _CRI_REF_TYPE, mix_range = None, cieobs
                 elif cDL > 1:
                     cDL = 1.0
 
-                Sr = SrBB[1]*cBB + SrDL[1]*cDL
+                Sr = SrBB*cBB + SrDL*cDL
                 Sr[Sr==float('NaN')]=0.0
-                Sr560 = Sr[np.where(np.abs(wl[0] - 560.0) == np.min(np.abs(wl[0] - 560.0)))[0]]
-    
+                Sr560 = Sr[np.where(np.abs(wl - 560.0) == np.min(np.abs(wl - 560.0)))[0]]
                 Sr = np.vstack((wl,(Sr/Sr560)))
                      
             if i == 0:
                 Srs = Sr[1]
-
             else:
                 Srs = np.vstack((Srs,Sr[1]))
                     
         Srs = np.vstack((Sr[0],Srs))
-            
+
         return  spd(Srs, wl = None, norm_type = norm_type, norm_f = norm_f)	
