@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Spectrum sub-package &mdash; LuxPy 1.3.13 documentation</title>
+  <title>Spectrum sub-package &mdash; LuxPy 1.3.14 documentation</title>
   
 
   
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                1.3.13
+                1.3.14
               </div>
             
           
@@ -1158,7 +1158,7 @@ or quantal energy units.</p>
 
 <dl class="function">
 <dt id="luxpy.spectrum.blackbody">
-<code class="descclassname">luxpy.spectrum.</code><code class="descname">blackbody</code><span class="sig-paren">(</span><em>cct</em>, <em>wl3=None</em>, <em>norm_type=None</em>, <em>norm_f=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/basics/spectral.html#blackbody"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.spectrum.blackbody" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">luxpy.spectrum.</code><code class="descname">blackbody</code><span class="sig-paren">(</span><em>cct</em>, <em>wl3=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/basics/spectral.html#blackbody"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.spectrum.blackbody" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate blackbody radiator spectrum for correlated color temperature (cct).</p>
 <dl class="docutils">
 <dt>Args:</dt>
@@ -1176,31 +1176,6 @@ or quantal energy units.</p>
 <div class="line">None, optional</div>
 <div class="line">New wavelength range for interpolation. </div>
 <div class="line">Defaults to wavelengths specified by luxpy._WL3.</div>
-</div>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">norm_type:</th><td class="field-body"><div class="first last line-block">
-<div class="line">None, optional </div>
-<div class="line-block">
-<div class="line">- ‘lambda’: make lambda in norm_f equal to 1</div>
-<div class="line">- ‘area’: area-normalization times norm_f</div>
-<div class="line">- ‘max’: max-normalization times norm_f</div>
-<div class="line">- ‘ru’: to :norm_f: radiometric units </div>
-<div class="line">- ‘pu’: to :norm_f: photometric units </div>
-<div class="line">- ‘pusa’: to :norm_f: photometric units (with Km corrected</div>
-<div class="line-block">
-<div class="line">to standard air, cfr. CIE TN003-2015)</div>
-</div>
-<div class="line">- ‘qu’: to :norm_f: quantal energy units</div>
-</div>
-</div>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">norm_f:</th><td class="field-body"><div class="first last line-block">
-<div class="line">1, optional</div>
-<div class="line">Normalization factor that determines the size of normalization 
-for ‘max’ and ‘area’ 
-or which wavelength is normalized to 1 for ‘lambda’ option.</div>
 </div>
 </td>
 </tr>
@@ -1273,7 +1248,7 @@ or which wavelength is normalized to 1 for ‘lambda’ option.</div>
 
 <dl class="function">
 <dt id="luxpy.spectrum.daylightphase">
-<code class="descclassname">luxpy.spectrum.</code><code class="descname">daylightphase</code><span class="sig-paren">(</span><em>cct</em>, <em>wl3=None</em>, <em>norm_type=None</em>, <em>norm_f=None</em>, <em>force_daylight_below4000K=False</em>, <em>verbosity=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/basics/spectral.html#daylightphase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.spectrum.daylightphase" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">luxpy.spectrum.</code><code class="descname">daylightphase</code><span class="sig-paren">(</span><em>cct</em>, <em>wl3=None</em>, <em>force_daylight_below4000K=False</em>, <em>verbosity=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/basics/spectral.html#daylightphase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.spectrum.daylightphase" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate daylight phase spectrum for correlated color temperature (cct).</p>
 <dl class="docutils">
 <dt>Args:</dt>
@@ -1291,31 +1266,6 @@ or which wavelength is normalized to 1 for ‘lambda’ option.</div>
 <div class="line">None, optional</div>
 <div class="line">New wavelength range for interpolation. </div>
 <div class="line">Defaults to wavelengths specified by luxpy._WL3.</div>
-</div>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">norm_type:</th><td class="field-body"><div class="first last line-block">
-<div class="line">None, optional </div>
-<div class="line-block">
-<div class="line">- ‘lambda’: make lambda in norm_f equal to 1</div>
-<div class="line">- ‘area’: area-normalization times norm_f</div>
-<div class="line">- ‘max’: max-normalization times norm_f</div>
-<div class="line">- ‘ru’: to :norm_f: radiometric units </div>
-<div class="line">- ‘pu’: to :norm_f: photometric units </div>
-<div class="line">- ‘pusa’: to :norm_f: photometric units (with Km corrected</div>
-<div class="line-block">
-<div class="line">to standard air, cfr. CIE TN003-2015)</div>
-</div>
-<div class="line">- ‘qu’: to :norm_f: quantal energy units</div>
-</div>
-</div>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">norm_f:</th><td class="field-body"><div class="first last line-block">
-<div class="line">1, optional</div>
-<div class="line">Normalization factor that determines the size of normalization 
-for ‘max’ and ‘area’ 
-or which wavelength is normalized to 1 for ‘lambda’ option.</div>
 </div>
 </td>
 </tr>

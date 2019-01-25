@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.color.cam.cam15u &mdash; LuxPy 1.3.13 documentation</title>
+  <title>luxpy.color.cam.cam15u &mdash; LuxPy 1.3.14 documentation</title>
   
 
   
@@ -56,7 +56,7 @@
             
             
               <div class="version">
-                1.3.13
+                1.3.14
               </div>
             
           
@@ -182,7 +182,7 @@
 <span class="sd">            Opt. Express, vol. 23, no. 10, pp. 13455–13466. </span>
 <span class="sd">            &lt;https://www.osapublishing.org/oe/abstract.cfm?uri=oe-23-10-13455&amp;origin=search&gt;`_</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">_CIE_ILLUMINANTS</span><span class="p">,</span> <span class="n">_MUNSELL</span><span class="p">,</span> <span class="n">np2d</span><span class="p">,</span> <span class="n">spd_to_xyz</span><span class="p">,</span> <span class="n">asplit</span><span class="p">,</span> <span class="n">ajoin</span>
+<span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">_CMF</span><span class="p">,</span> <span class="n">_CIE_ILLUMINANTS</span><span class="p">,</span> <span class="n">_MUNSELL</span><span class="p">,</span> <span class="n">np2d</span><span class="p">,</span> <span class="n">spd_to_xyz</span><span class="p">,</span> <span class="n">asplit</span><span class="p">,</span> <span class="n">ajoin</span><span class="p">,</span><span class="n">cie_interp</span>
 <span class="kn">from</span> <span class="nn">luxpy.color.cam.colorappearancemodels</span> <span class="k">import</span> <span class="n">hue_angle</span><span class="p">,</span> <span class="n">hue_quadrature</span>
 
 <span class="n">_CAM15U_AXES</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;qabW_cam15u&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Q (cam15u)&quot;</span><span class="p">,</span> <span class="s2">&quot;aW (cam15u)&quot;</span><span class="p">,</span> <span class="s2">&quot;bW (cam15u)&quot;</span><span class="p">]}</span> 

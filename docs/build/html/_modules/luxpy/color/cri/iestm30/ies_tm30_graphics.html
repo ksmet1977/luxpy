@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.color.cri.iestm30.ies_tm30_graphics &mdash; LuxPy 1.3.13 documentation</title>
+  <title>luxpy.color.cri.iestm30.ies_tm30_graphics &mdash; LuxPy 1.3.14 documentation</title>
   
 
   
@@ -56,7 +56,7 @@
             
             
               <div class="version">
-                1.3.13
+                1.3.14
               </div>
             
           
@@ -178,13 +178,13 @@
 <span class="sd">.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">plt</span><span class="p">,</span> <span class="n">colorsys</span><span class="p">,</span> <span class="n">_CRI_RFL</span>
+<span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">plt</span>
 
-<span class="kn">from</span> <span class="nn">..utils.helpers</span> <span class="k">import</span> <span class="n">gamut_slicer</span><span class="p">,</span> <span class="n">spd_to_cri</span><span class="p">,</span> <span class="n">jab_to_rhi</span>
-<span class="kn">from</span> <span class="nn">..utils.init_cri_defaults_database</span> <span class="k">import</span> <span class="n">_CRI_DEFAULTS</span>
+<span class="c1">#from ..utils.helpers import spd_to_cri, jab_to_rhi</span>
+<span class="c1">#from ..utils.init_cri_defaults_database import _CRI_DEFAULTS</span>
 
 <span class="kn">from</span> <span class="nn">..utils.graphics</span> <span class="k">import</span> <span class="n">plot_ColorVectorGraphic</span>
-<span class="kn">from</span> <span class="nn">..VFPX.vectorshiftmodel</span> <span class="k">import</span>  <span class="n">_VF_MODEL_TYPE</span><span class="p">,</span> <span class="n">_VF_PCOLORSHIFT</span><span class="p">,</span> <span class="n">VF_colorshift_model</span>
+<span class="kn">from</span> <span class="nn">..VFPX.vectorshiftmodel</span> <span class="k">import</span>  <span class="n">_VF_MODEL_TYPE</span><span class="p">,</span> <span class="n">_VF_PCOLORSHIFT</span> 
 <span class="kn">from</span> <span class="nn">..VFPX.VF_PX_models</span> <span class="k">import</span> <span class="n">plot_VF_PX_models</span>
 <span class="kn">from</span> <span class="nn">.ies_tm30_metrics</span> <span class="k">import</span> <span class="n">spd_to_ies_tm30_metrics</span>
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;plot_cri_graphics&#39;</span><span class="p">]</span>

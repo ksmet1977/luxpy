@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.color.cri.utils.helpers &mdash; LuxPy 1.3.13 documentation</title>
+  <title>luxpy.color.cri.utils.helpers &mdash; LuxPy 1.3.14 documentation</title>
   
 
   
@@ -56,7 +56,7 @@
             
             
               <div class="version">
-                1.3.13
+                1.3.14
               </div>
             
           
@@ -490,7 +490,7 @@
      
     <span class="c1"># A. Local Color Fidelity, Rfhi:</span>
     <span class="k">if</span> <span class="n">use_bin_avg_DEi</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
-        <span class="n">DEi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">((</span><span class="n">jabt</span> <span class="o">-</span> <span class="n">bjabr</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">jabt</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">keepdims</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
+        <span class="n">DEi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">((</span><span class="n">jabt</span> <span class="o">-</span> <span class="n">jabr</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">jabt</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">keepdims</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
     <span class="n">Rfhi</span> <span class="o">=</span> <span class="n">scale_fcn</span><span class="p">(</span><span class="n">DEi</span><span class="p">,</span><span class="n">scale_factor</span><span class="p">)</span>
     
     <span class="c1"># B.Local chroma shift and hue shift, [Rcshi, Rhshi]:</span>

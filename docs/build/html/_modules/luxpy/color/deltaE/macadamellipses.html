@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.color.deltaE.macadamellipses &mdash; LuxPy 1.3.13 documentation</title>
+  <title>luxpy.color.deltaE.macadamellipses &mdash; LuxPy 1.3.14 documentation</title>
   
 
   
@@ -56,7 +56,7 @@
             
             
               <div class="version">
-                1.3.13
+                1.3.14
               </div>
             
           
@@ -175,9 +175,11 @@
 
 <span class="sd">.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="p">(</span><span class="n">np</span><span class="p">,</span> <span class="n">plt</span><span class="p">,</span> <span class="n">math</span><span class="p">,</span> <span class="n">_CIEOBS</span><span class="p">,</span><span class="n">_CSPACE_AXES</span><span class="p">,</span> <span class="n">_CMF</span><span class="p">,</span> <span class="n">_EPS</span><span class="p">,</span> <span class="n">colortf</span><span class="p">,</span> \
-                   <span class="n">cKDTree</span><span class="p">,</span> <span class="n">plotSL</span><span class="p">,</span> <span class="n">Yxy_to_xyz</span><span class="p">,</span> <span class="n">xyz_to_srgb</span><span class="p">,</span> <span class="n">asplit</span><span class="p">,</span>\
-                   <span class="n">plot_chromaticity_diagram_colors</span><span class="p">,</span> <span class="n">plotellipse</span><span class="p">)</span>
+<span class="c1">#from luxpy import (np, plt, math, _CIEOBS,_CSPACE_AXES, _CMF, _EPS, colortf, \</span>
+<span class="c1">#                   cKDTree, plotSL, Yxy_to_xyz, xyz_to_srgb, asplit,\</span>
+<span class="c1">#                   plot_chromaticity_diagram_colors, plotellipse)</span>
+
+<span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="p">(</span><span class="n">np</span><span class="p">,</span> <span class="n">plt</span><span class="p">,</span> <span class="n">math</span><span class="p">,</span> <span class="n">cKDTree</span><span class="p">,</span> <span class="n">plotSL</span><span class="p">,</span> <span class="n">plot_chromaticity_diagram_colors</span><span class="p">,</span> <span class="n">plotellipse</span><span class="p">)</span>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;get_macadam_ellipse&#39;</span><span class="p">]</span>

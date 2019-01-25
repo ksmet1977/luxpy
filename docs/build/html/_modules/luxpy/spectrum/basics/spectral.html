@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.spectrum.basics.spectral &mdash; LuxPy 1.3.13 documentation</title>
+  <title>luxpy.spectrum.basics.spectral &mdash; LuxPy 1.3.14 documentation</title>
   
 
   
@@ -56,7 +56,7 @@
             
             
               <div class="version">
-                1.3.13
+                1.3.14
               </div>
             
           
@@ -956,7 +956,7 @@
 <span class="c1">#---CIE illuminants------------------------------------------------------------</span>
 <span class="c1">#------------------------------------------------------------------------------</span>
 
-<div class="viewcode-block" id="blackbody"><a class="viewcode-back" href="../../../../spectrum.html#luxpy.spectrum.blackbody">[docs]</a><span class="k">def</span> <span class="nf">blackbody</span><span class="p">(</span><span class="n">cct</span><span class="p">,</span> <span class="n">wl3</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">norm_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">norm_f</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="blackbody"><a class="viewcode-back" href="../../../../spectrum.html#luxpy.spectrum.blackbody">[docs]</a><span class="k">def</span> <span class="nf">blackbody</span><span class="p">(</span><span class="n">cct</span><span class="p">,</span> <span class="n">wl3</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate blackbody radiator spectrum for correlated color temperature (cct).</span>
 <span class="sd">    </span>
@@ -968,21 +968,6 @@
 <span class="sd">            | None, optional</span>
 <span class="sd">            | New wavelength range for interpolation. </span>
 <span class="sd">            | Defaults to wavelengths specified by luxpy._WL3.</span>
-<span class="sd">        :norm_type: </span>
-<span class="sd">            | None, optional </span>
-<span class="sd">            |       - &#39;lambda&#39;: make lambda in norm_f equal to 1</span>
-<span class="sd">            |       - &#39;area&#39;: area-normalization times norm_f</span>
-<span class="sd">            |       - &#39;max&#39;: max-normalization times norm_f</span>
-<span class="sd">            |       - &#39;ru&#39;: to :norm_f: radiometric units </span>
-<span class="sd">            |       - &#39;pu&#39;: to :norm_f: photometric units </span>
-<span class="sd">            |       - &#39;pusa&#39;: to :norm_f: photometric units (with Km corrected</span>
-<span class="sd">            |                             to standard air, cfr. CIE TN003-2015)</span>
-<span class="sd">            |       - &#39;qu&#39;: to :norm_f: quantal energy units</span>
-<span class="sd">        :norm_f:</span>
-<span class="sd">            | 1, optional</span>
-<span class="sd">            | Normalization factor that determines the size of normalization </span>
-<span class="sd">              for &#39;max&#39; and &#39;area&#39; </span>
-<span class="sd">              or which wavelength is normalized to 1 for &#39;lambda&#39; option.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        :returns:</span>
@@ -1037,7 +1022,7 @@
    
    
 <span class="c1">#------------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="daylightphase"><a class="viewcode-back" href="../../../../spectrum.html#luxpy.spectrum.daylightphase">[docs]</a><span class="k">def</span> <span class="nf">daylightphase</span><span class="p">(</span><span class="n">cct</span><span class="p">,</span> <span class="n">wl3</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">norm_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">norm_f</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">force_daylight_below4000K</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="daylightphase"><a class="viewcode-back" href="../../../../spectrum.html#luxpy.spectrum.daylightphase">[docs]</a><span class="k">def</span> <span class="nf">daylightphase</span><span class="p">(</span><span class="n">cct</span><span class="p">,</span> <span class="n">wl3</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">force_daylight_below4000K</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate daylight phase spectrum for correlated color temperature (cct).</span>
 <span class="sd">        </span>
@@ -1049,21 +1034,6 @@
 <span class="sd">            | None, optional</span>
 <span class="sd">            | New wavelength range for interpolation. </span>
 <span class="sd">            | Defaults to wavelengths specified by luxpy._WL3.</span>
-<span class="sd">        :norm_type: </span>
-<span class="sd">            | None, optional </span>
-<span class="sd">            |       - &#39;lambda&#39;: make lambda in norm_f equal to 1</span>
-<span class="sd">            |       - &#39;area&#39;: area-normalization times norm_f</span>
-<span class="sd">            |       - &#39;max&#39;: max-normalization times norm_f</span>
-<span class="sd">            |       - &#39;ru&#39;: to :norm_f: radiometric units </span>
-<span class="sd">            |       - &#39;pu&#39;: to :norm_f: photometric units </span>
-<span class="sd">            |       - &#39;pusa&#39;: to :norm_f: photometric units (with Km corrected</span>
-<span class="sd">            |                             to standard air, cfr. CIE TN003-2015)</span>
-<span class="sd">            |       - &#39;qu&#39;: to :norm_f: quantal energy units</span>
-<span class="sd">        :norm_f:</span>
-<span class="sd">            | 1, optional</span>
-<span class="sd">            | Normalization factor that determines the size of normalization </span>
-<span class="sd">              for &#39;max&#39; and &#39;area&#39; </span>
-<span class="sd">              or which wavelength is normalized to 1 for &#39;lambda&#39; option.</span>
 <span class="sd">        :force_daylight_below4000K: </span>
 <span class="sd">            | False or True, optional</span>
 <span class="sd">            | Daylight locus approximation is not defined below 4000 K, </span>
@@ -1223,13 +1193,11 @@
                 <span class="n">SrBB</span> <span class="o">=</span> <span class="n">blackbody</span><span class="p">(</span><span class="n">cct</span><span class="p">,</span><span class="n">wl3</span><span class="p">)</span>
                 <span class="n">SrDL</span> <span class="o">=</span> <span class="n">daylightphase</span><span class="p">(</span><span class="n">cct</span><span class="p">,</span><span class="n">wl3</span><span class="p">,</span><span class="n">verbosity</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span><span class="n">force_daylight_below4000K</span> <span class="o">=</span> <span class="n">force_daylight_below4000K</span><span class="p">)</span>
                 <span class="n">cmf</span> <span class="o">=</span> <span class="n">xyzbar</span><span class="p">(</span><span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">scr</span> <span class="o">=</span> <span class="s1">&#39;dict&#39;</span><span class="p">,</span> <span class="n">wl_new</span> <span class="o">=</span> <span class="n">wl3</span><span class="p">)</span>
-                <span class="n">k</span> <span class="o">=</span> <span class="n">_CMF</span><span class="p">[</span><span class="n">cieobs</span><span class="p">][</span><span class="s1">&#39;K&#39;</span><span class="p">]</span>
                 <span class="n">wl</span> <span class="o">=</span> <span class="n">SrBB</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
                 <span class="n">ld</span> <span class="o">=</span> <span class="n">getwld</span><span class="p">(</span><span class="n">wl</span><span class="p">)</span>
-                <span class="n">Y_SrBB</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">SrBB</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">cmf</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="n">ld</span><span class="o">*</span><span class="n">k</span><span class="p">))</span>
-                <span class="n">Y_SrDL</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">SrDL</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">cmf</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="n">ld</span><span class="o">*</span><span class="n">k</span><span class="p">))</span>
-                <span class="n">SrBB</span> <span class="o">=</span> <span class="mf">100.0</span><span class="o">*</span><span class="n">SrBB</span><span class="o">/</span><span class="n">Y_SrBB</span>
-                <span class="n">SrDL</span> <span class="o">=</span> <span class="mf">100.0</span><span class="o">*</span><span class="n">SrDL</span><span class="o">/</span><span class="n">Y_SrDL</span>
+
+                <span class="n">SrBB</span> <span class="o">=</span> <span class="mf">100.0</span><span class="o">*</span><span class="n">SrBB</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">SrBB</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">cmf</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="n">ld</span><span class="p">))</span>
+                <span class="n">SrDL</span> <span class="o">=</span> <span class="mf">100.0</span><span class="o">*</span><span class="n">SrDL</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">SrDL</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">cmf</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="n">ld</span><span class="p">))</span>
                 <span class="n">Tb</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">mix_range_</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
                 <span class="n">Te</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">mix_range_</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
                 <span class="n">cBB</span> <span class="o">=</span> <span class="p">(</span><span class="n">Te</span><span class="o">-</span><span class="n">cct</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">Te</span><span class="o">-</span><span class="n">Tb</span><span class="p">)</span>
@@ -1243,20 +1211,18 @@
                 <span class="k">elif</span> <span class="n">cDL</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
                     <span class="n">cDL</span> <span class="o">=</span> <span class="mf">1.0</span>
 
-                <span class="n">Sr</span> <span class="o">=</span> <span class="n">SrBB</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">cBB</span> <span class="o">+</span> <span class="n">SrDL</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">cDL</span>
+                <span class="n">Sr</span> <span class="o">=</span> <span class="n">SrBB</span><span class="o">*</span><span class="n">cBB</span> <span class="o">+</span> <span class="n">SrDL</span><span class="o">*</span><span class="n">cDL</span>
                 <span class="n">Sr</span><span class="p">[</span><span class="n">Sr</span><span class="o">==</span><span class="nb">float</span><span class="p">(</span><span class="s1">&#39;NaN&#39;</span><span class="p">)]</span><span class="o">=</span><span class="mf">0.0</span>
-                <span class="n">Sr560</span> <span class="o">=</span> <span class="n">Sr</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">wl</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mf">560.0</span><span class="p">)</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">wl</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mf">560.0</span><span class="p">)))[</span><span class="mi">0</span><span class="p">]]</span>
-    
+                <span class="n">Sr560</span> <span class="o">=</span> <span class="n">Sr</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">wl</span> <span class="o">-</span> <span class="mf">560.0</span><span class="p">)</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">wl</span> <span class="o">-</span> <span class="mf">560.0</span><span class="p">)))[</span><span class="mi">0</span><span class="p">]]</span>
                 <span class="n">Sr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">wl</span><span class="p">,(</span><span class="n">Sr</span><span class="o">/</span><span class="n">Sr560</span><span class="p">)))</span>
                      
             <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">Srs</span> <span class="o">=</span> <span class="n">Sr</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">Srs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">Srs</span><span class="p">,</span><span class="n">Sr</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
                     
         <span class="n">Srs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">Sr</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">Srs</span><span class="p">))</span>
-            
+
         <span class="k">return</span>  <span class="n">spd</span><span class="p">(</span><span class="n">Srs</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">norm_type</span> <span class="o">=</span> <span class="n">norm_type</span><span class="p">,</span> <span class="n">norm_f</span> <span class="o">=</span> <span class="n">norm_f</span><span class="p">)</span>	</div>
 </pre></div>
 

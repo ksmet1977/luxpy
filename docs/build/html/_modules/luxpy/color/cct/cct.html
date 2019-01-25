@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.color.cct.cct &mdash; LuxPy 1.3.13 documentation</title>
+  <title>luxpy.color.cct.cct &mdash; LuxPy 1.3.14 documentation</title>
   
 
   
@@ -56,7 +56,7 @@
             
             
               <div class="version">
-                1.3.13
+                1.3.14
               </div>
             
           
@@ -337,7 +337,7 @@
 <span class="sd">        &lt;http://onlinelibrary.wiley.com/doi/10.1002/col.5080170211/abstract&gt;`_</span>
 <span class="sd">	 &quot;&quot;&quot;</span>
     <span class="n">Yxy</span> <span class="o">=</span> <span class="n">xyz_to_Yxy</span><span class="p">(</span><span class="n">xyzw</span><span class="p">)</span>
-    <span class="n">axis_of_v3</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">xyzw</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>
+    <span class="c1">#axis_of_v3 = len(xyzw.shape)-1</span>
     <span class="n">n</span> <span class="o">=</span> <span class="p">(</span><span class="n">Yxy</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="mf">0.3320</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">Yxy</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span><span class="o">-</span><span class="mf">0.1858</span><span class="p">)</span>
     <span class="k">return</span>  <span class="n">np2d</span><span class="p">(</span><span class="o">-</span><span class="mf">449.0</span><span class="o">*</span><span class="p">(</span><span class="n">n</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span> <span class="o">+</span> <span class="mf">3525.0</span><span class="o">*</span><span class="p">(</span><span class="n">n</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="mf">6823.3</span><span class="o">*</span><span class="n">n</span> <span class="o">+</span> <span class="mf">5520.33</span><span class="p">)</span><span class="o">.</span><span class="n">T</span></div>
 
@@ -453,7 +453,7 @@
        
     <span class="c1"># get 1960 u,v of test source:</span>
     <span class="n">Yuvt</span> <span class="o">=</span> <span class="n">xyz_to_Yuv</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">xyzw</span><span class="p">))</span> <span class="c1"># remove possible 1-dim + convert xyzw to CIE 1976 u&#39;,v&#39;</span>
-    <span class="n">axis_of_v3t</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">Yuvt</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span> <span class="c1"># axis containing color components</span>
+    <span class="c1">#axis_of_v3t = len(Yuvt.shape)-1 # axis containing color components</span>
     <span class="n">ut</span> <span class="o">=</span> <span class="n">Yuvt</span><span class="p">[:,</span><span class="mi">1</span><span class="p">,</span><span class="kc">None</span><span class="p">]</span> <span class="c1">#.take([1],axis = axis_of_v3t) # get CIE 1960 u</span>
     <span class="n">vt</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span><span class="o">*</span><span class="n">Yuvt</span><span class="p">[:,</span><span class="mi">2</span><span class="p">,</span><span class="kc">None</span><span class="p">]</span> <span class="c1">#.take([2],axis = axis_of_v3t) # get CIE 1960 v</span>
 
@@ -530,14 +530,14 @@
     
             <span class="c1"># Convert to CIE 1960 u,v:</span>
             <span class="n">Yuv</span> <span class="o">=</span> <span class="n">xyz_to_Yuv</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">xyz</span><span class="p">))</span> <span class="c1"># remove possible 1-dim + convert xyz to CIE 1976 u&#39;,v&#39;</span>
-            <span class="n">axis_of_v3</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">Yuv</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span> <span class="c1"># axis containing color components</span>
+            <span class="c1">#axis_of_v3 = len(Yuv.shape)-1 # axis containing color components</span>
             <span class="n">u</span> <span class="o">=</span> <span class="n">Yuv</span><span class="p">[:,</span><span class="mi">1</span><span class="p">,</span><span class="kc">None</span><span class="p">]</span> <span class="c1"># get CIE 1960 u</span>
             <span class="n">v</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.0</span><span class="o">/</span><span class="mf">3.0</span><span class="p">)</span><span class="o">*</span><span class="n">Yuv</span><span class="p">[:,</span><span class="mi">2</span><span class="p">,</span><span class="kc">None</span><span class="p">]</span> <span class="c1"># get CIE 1960 v</span>
             
             <span class="c1"># Calculate distance between list of uv&#39;s and uv of test source:</span>
             <span class="n">dc</span> <span class="o">=</span> <span class="p">((</span><span class="n">ut</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">u</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">vt</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">v</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
             <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">dc</span><span class="o">.</span><span class="n">min</span><span class="p">())</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
-                <span class="n">eps</span> <span class="o">=</span> <span class="n">_EPS</span>
+                <span class="c1">#eps = _EPS</span>
                 <span class="n">q</span> <span class="o">=</span> <span class="n">dc</span><span class="o">.</span><span class="n">argmin</span><span class="p">()</span>
     
                 <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">q</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span> <span class="c1">#to minimize calculation time: only calculate median when necessary</span>
@@ -714,7 +714,7 @@
         <span class="c1"># Triangular solution:</span>
         <span class="n">x</span> <span class="o">=</span> <span class="p">((</span><span class="n">delta_uv_m1</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">-</span><span class="p">(</span><span class="n">delta_uv_p1</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">+</span><span class="p">(</span><span class="n">delta_uv_p1m1</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">delta_uv_p1m1</span><span class="p">)</span>
         <span class="n">Tx</span> <span class="o">=</span> <span class="n">cct_m1</span> <span class="o">+</span> <span class="p">((</span><span class="n">cct_p1</span> <span class="o">-</span> <span class="n">cct_m1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">/</span> <span class="n">delta_uv_p1m1</span><span class="p">))</span>
-        <span class="n">uBB</span> <span class="o">=</span> <span class="n">uv_m1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">uv_p1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">uv_m1</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">/</span> <span class="n">delta_uv_p1m1</span><span class="p">)</span>
+        <span class="c1">#uBB = uv_m1[0] + (uv_p1[0] - uv_m1[0]) * (x / delta_uv_p1m1)</span>
         <span class="n">vBB</span> <span class="o">=</span> <span class="n">uv_m1</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">uv_p1</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">uv_m1</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">/</span> <span class="n">delta_uv_p1m1</span><span class="p">)</span>
 
         <span class="n">Tx_corrected_triangular</span> <span class="o">=</span> <span class="n">Tx</span><span class="o">*</span><span class="mf">0.99991</span>

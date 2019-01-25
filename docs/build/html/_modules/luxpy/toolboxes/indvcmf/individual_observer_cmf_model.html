@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.toolboxes.indvcmf.individual_observer_cmf_model &mdash; LuxPy 1.3.13 documentation</title>
+  <title>luxpy.toolboxes.indvcmf.individual_observer_cmf_model &mdash; LuxPy 1.3.14 documentation</title>
   
 
   
@@ -56,7 +56,7 @@
             
             
               <div class="version">
-                1.3.13
+                1.3.14
               </div>
             
           
@@ -223,9 +223,7 @@
 
 <span class="sd">.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">pd</span><span class="p">,</span> <span class="n">interpolate</span><span class="p">,</span> <span class="n">math</span><span class="p">,</span> <span class="n">_PKG_PATH</span><span class="p">,</span> <span class="n">_SEP</span><span class="p">,</span> <span class="n">_CMF</span><span class="p">,</span> <span class="n">dictkv</span><span class="p">,</span>  <span class="n">xyzbar</span><span class="p">,</span> <span class="n">spd</span><span class="p">,</span> <span class="n">getdata</span><span class="p">,</span> <span class="n">getwlr</span>
-
-<span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="n">plt</span>
+<span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">interpolate</span><span class="p">,</span> <span class="n">math</span><span class="p">,</span> <span class="n">plt</span><span class="p">,</span> <span class="n">_WL3</span><span class="p">,</span> <span class="n">_PKG_PATH</span><span class="p">,</span> <span class="n">_SEP</span><span class="p">,</span> <span class="n">_CMF</span><span class="p">,</span> <span class="n">spd</span><span class="p">,</span> <span class="n">getdata</span><span class="p">,</span> <span class="n">getwlr</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;_INDVCMF_DATA_PATH&#39;</span><span class="p">,</span><span class="s1">&#39;_INDVCMF_DATA&#39;</span><span class="p">,</span><span class="s1">&#39;_INDVCMF_STD_DEV_ALL_PARAM&#39;</span><span class="p">,</span><span class="s1">&#39;_INDVCMF_CATOBSPFCTR&#39;</span><span class="p">,</span> <span class="s1">&#39;_INDVCMF_M_2d&#39;</span><span class="p">,</span> <span class="s1">&#39;_INDVCMF_M_10d&#39;</span><span class="p">]</span>
 <span class="n">__all__</span> <span class="o">+=</span><span class="p">[</span><span class="s1">&#39;cie2006cmfsEx&#39;</span><span class="p">,</span><span class="s1">&#39;getMonteCarloParam&#39;</span><span class="p">,</span><span class="s1">&#39;genMonteCarloObs&#39;</span><span class="p">,</span><span class="s1">&#39;getCatObs&#39;</span><span class="p">]</span>
