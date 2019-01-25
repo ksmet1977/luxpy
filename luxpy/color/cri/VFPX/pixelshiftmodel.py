@@ -29,7 +29,7 @@ Module with functions related to color rendering Pixel models
 """
 
 from luxpy import np
-from .vectorshiftmodel import _VF_DELTAR,_VF_DELTAR, generate_grid
+from .vectorshiftmodel import _VF_DELTAR, _VF_MAXR, generate_grid
 
 __all__ = ['get_pixel_coordinates','PX_colorshift_model']
 
@@ -83,7 +83,7 @@ def get_pixel_coordinates(jab, jab_ranges = None, jab_deltas = None, limit_grid_
         jp = gridp[idx,0]
         ap = gridp[idx,1]
         bp = gridp[idx,2]
-        Cp = np.sqrt(ap**2+bp**2)
+        #Cp = np.sqrt(ap**2+bp**2)
                       
         if type(jab_deltas) == np.ndarray:
             sampleID = np.where(((np.abs(jab[...,0]-jp) <= jab_deltas[0]/2) & (np.abs(jab[...,1]-ap) <= jab_deltas[1]/2) & (np.abs(jab[...,2]-bp) <= jab_deltas[2]/2)))
@@ -175,8 +175,8 @@ def PX_colorshift_model(Jabt,Jabr, jab_ranges = None, jab_deltas = None,limit_gr
     for i in np.arange(Npixels):
         Jabr_avg[idxp[i],:] = Jabr[pixelsamplenrs[i],:].mean(axis=0)
         Jabt_avg[idxp[i],:] = Jabt[pixelsamplenrs[i],:].mean(axis=0)
-        jabtemp = Jabr[pixelsamplenrs[i],:]
-        jabtempm = Jabr_avg[idxp[i],:]
+        #jabtemp = Jabr[pixelsamplenrs[i],:]
+        #jabtempm = Jabr_avg[idxp[i],:]
             
     # calculate Jab vector shift:    
     vectorshift = Jabt_avg - Jabr_avg

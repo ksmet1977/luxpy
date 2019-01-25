@@ -57,7 +57,7 @@ Module for loading light source (spd) and reflectance (rfl) spectra databases
             
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
-from luxpy import np, pd, copy, _PKG_PATH, _SEP, _EPS, getdata 
+from luxpy import np, copy, _PKG_PATH, _SEP, getdata 
 __all__ = ['_R_PATH','_S_PATH', '_IESTM3015','_IESTM3015_S','_IESTM3018','_IESTM3018_S','_CRI_RFL','_CIE_ILLUMINANTS','_MUNSELL']
 
 

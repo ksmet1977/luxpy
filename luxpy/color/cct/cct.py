@@ -186,7 +186,7 @@ def xyz_to_cct_mcamy(xyzw):
         <http://onlinelibrary.wiley.com/doi/10.1002/col.5080170211/abstract>`_
 	 """
     Yxy = xyz_to_Yxy(xyzw)
-    axis_of_v3 = len(xyzw.shape)-1
+    #axis_of_v3 = len(xyzw.shape)-1
     n = (Yxy[:,1]-0.3320)/(Yxy[:,2]-0.1858)
     return  np2d(-449.0*(n**3) + 3525.0*(n**2) - 6823.3*n + 5520.33).T
 
@@ -302,7 +302,7 @@ def xyz_to_cct_search(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None, accuracy = 
        
     # get 1960 u,v of test source:
     Yuvt = xyz_to_Yuv(np.squeeze(xyzw)) # remove possible 1-dim + convert xyzw to CIE 1976 u',v'
-    axis_of_v3t = len(Yuvt.shape)-1 # axis containing color components
+    #axis_of_v3t = len(Yuvt.shape)-1 # axis containing color components
     ut = Yuvt[:,1,None] #.take([1],axis = axis_of_v3t) # get CIE 1960 u
     vt = (2/3)*Yuvt[:,2,None] #.take([2],axis = axis_of_v3t) # get CIE 1960 v
 
@@ -379,14 +379,14 @@ def xyz_to_cct_search(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None, accuracy = 
     
             # Convert to CIE 1960 u,v:
             Yuv = xyz_to_Yuv(np.squeeze(xyz)) # remove possible 1-dim + convert xyz to CIE 1976 u',v'
-            axis_of_v3 = len(Yuv.shape)-1 # axis containing color components
+            #axis_of_v3 = len(Yuv.shape)-1 # axis containing color components
             u = Yuv[:,1,None] # get CIE 1960 u
             v = (2.0/3.0)*Yuv[:,2,None] # get CIE 1960 v
             
             # Calculate distance between list of uv's and uv of test source:
             dc = ((ut[i] - u)**2 + (vt[i] - v)**2)**0.5
             if np.isnan(dc.min()) == False:
-                eps = _EPS
+                #eps = _EPS
                 q = dc.argmin()
     
                 if np.size(q) > 1: #to minimize calculation time: only calculate median when necessary
@@ -563,7 +563,7 @@ def xyz_to_cct_ohno(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, accuracy = 0
         # Triangular solution:
         x = ((delta_uv_m1**2)-(delta_uv_p1**2)+(delta_uv_p1m1**2))/(2*delta_uv_p1m1)
         Tx = cct_m1 + ((cct_p1 - cct_m1) * (x / delta_uv_p1m1))
-        uBB = uv_m1[0] + (uv_p1[0] - uv_m1[0]) * (x / delta_uv_p1m1)
+        #uBB = uv_m1[0] + (uv_p1[0] - uv_m1[0]) * (x / delta_uv_p1m1)
         vBB = uv_m1[1] + (uv_p1[1] - uv_m1[1]) * (x / delta_uv_p1m1)
 
         Tx_corrected_triangular = Tx*0.99991

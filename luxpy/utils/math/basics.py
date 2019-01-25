@@ -81,7 +81,7 @@ Module with useful basic math functions
 ===============================================================================
 """
 
-from luxpy import np, np2d, asplit
+from luxpy import np, np2d, _EPS, asplit
 from scipy.special import erf, erfinv
 __all__  = ['normalize_3x3_matrix','symmM_to_posdefM','check_symmetric',
             'check_posdef','positive_arctan','line_intersect','erf', 'erfinv', 

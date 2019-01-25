@@ -72,9 +72,7 @@ https://www.rit.edu/cos/colorscience/re_AsanoObserverFunctions.php
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
-from luxpy import np, pd, interpolate, math, _PKG_PATH, _SEP, _CMF, dictkv,  xyzbar, spd, getdata, getwlr
-
-from luxpy import plt
+from luxpy import np, interpolate, math, plt, _WL3, _PKG_PATH, _SEP, _CMF, spd, getdata, getwlr
 
 __all__ = ['_INDVCMF_DATA_PATH','_INDVCMF_DATA','_INDVCMF_STD_DEV_ALL_PARAM','_INDVCMF_CATOBSPFCTR', '_INDVCMF_M_2d', '_INDVCMF_M_10d']
 __all__ +=['cie2006cmfsEx','getMonteCarloParam','genMonteCarloObs','getCatObs']

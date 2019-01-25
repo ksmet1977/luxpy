@@ -24,9 +24,11 @@ Module for MacAdam ellipses
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
-from luxpy import (np, plt, math, _CIEOBS,_CSPACE_AXES, _CMF, _EPS, colortf, \
-                   cKDTree, plotSL, Yxy_to_xyz, xyz_to_srgb, asplit,\
-                   plot_chromaticity_diagram_colors, plotellipse)
+#from luxpy import (np, plt, math, _CIEOBS,_CSPACE_AXES, _CMF, _EPS, colortf, \
+#                   cKDTree, plotSL, Yxy_to_xyz, xyz_to_srgb, asplit,\
+#                   plot_chromaticity_diagram_colors, plotellipse)
+
+from luxpy import (np, plt, math, cKDTree, plotSL, plot_chromaticity_diagram_colors, plotellipse)
 
 
 __all__ = ['get_macadam_ellipse']

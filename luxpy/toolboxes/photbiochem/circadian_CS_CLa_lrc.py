@@ -61,7 +61,7 @@ Also see notes in doc_string of spd_to_CS_CLa_lrc()
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
-from luxpy import np, sp, plt, _PKG_PATH, _SEP, _CIE_ILLUMINANTS, getdata, getwld, cie_interp, spd_to_xyz
+from luxpy import np, sp, _PKG_PATH, _SEP, _CIE_ILLUMINANTS, getdata, getwld, cie_interp, _IESTM3015
 
 
 __all__=['_LRC_CLA_CS_CONST','spd_to_CS_CLa_lrc']
@@ -258,7 +258,7 @@ if __name__ == '__main__':
      
     E = 100
     El = _CIE_ILLUMINANTS['D65']
-    S = lx._IESTM3015['S']['data'][:4]
+    S = _IESTM3015['S']['data'][:4]
     CS, CLa = spd_to_CS_CLa_lrc(El = El, E = E, \
                                     sum_sources = False, interpolate_sources = False)
     print('out')

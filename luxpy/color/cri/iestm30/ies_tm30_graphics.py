@@ -27,13 +27,13 @@ Module for IES color rendition graphical output
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
-from luxpy import np, plt, colorsys, _CRI_RFL
+from luxpy import np, plt
 
-from ..utils.helpers import gamut_slicer, spd_to_cri, jab_to_rhi
-from ..utils.init_cri_defaults_database import _CRI_DEFAULTS
+#from ..utils.helpers import spd_to_cri, jab_to_rhi
+#from ..utils.init_cri_defaults_database import _CRI_DEFAULTS
 
 from ..utils.graphics import plot_ColorVectorGraphic
-from ..VFPX.vectorshiftmodel import  _VF_MODEL_TYPE, _VF_PCOLORSHIFT, VF_colorshift_model
+from ..VFPX.vectorshiftmodel import  _VF_MODEL_TYPE, _VF_PCOLORSHIFT 
 from ..VFPX.VF_PX_models import plot_VF_PX_models
 from .ies_tm30_metrics import spd_to_ies_tm30_metrics
 __all__ = ['plot_cri_graphics']

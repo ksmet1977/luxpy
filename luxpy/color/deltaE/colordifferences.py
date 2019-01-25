@@ -13,7 +13,7 @@ Module for color difference calculations
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
-from luxpy import np, np2d, cam, _COLORTF_DEFAULT_WHITE_POINT, _CSPACE, colortf, xyz_to_lab
+from luxpy import np, np2d, cam, _CSPACE, colortf, xyz_to_lab
 
 
 __all__ = ['DE_camucs', 'DE2000','DE_cspace']
@@ -226,13 +226,13 @@ def DE2000(xyzt, xyzr, dtype = 'xyz', DEtype = 'jab', avg = None, avg_axis = 0, 
     at = labt[...,1:2]
     bt = labt[...,2:3]
     Ct = np.sqrt(at**2 + bt**2)
-    ht = cam.hue_angle(at,bt,htype = 'rad')
+    #ht = cam.hue_angle(at,bt,htype = 'rad')
     
     Lr = labr[...,0:1]
     ar = labr[...,1:2]
     br = labr[...,2:3]
     Cr = np.sqrt(ar**2 + br**2)
-    hr = cam.hue_angle(at,bt,htype = 'rad')
+    #hr = cam.hue_angle(at,bt,htype = 'rad')
     
     # Step 1:
     Cavg = (Ct + Cr)/2

@@ -141,7 +141,7 @@ from luxpy import xyz_to_jabM_cam16, jabM_cam16_to_xyz, xyz_to_jabC_cam16, jabC_
 from luxpy import xyz_to_jab_cam02ucs, jab_cam02ucs_to_xyz, xyz_to_jab_cam02lcd, jab_cam02lcd_to_xyz, xyz_to_jab_cam02scd, jab_cam02scd_to_xyz 
 from luxpy import xyz_to_jab_cam16ucs, jab_cam16ucs_to_xyz, xyz_to_jab_cam16lcd, jab_cam16lcd_to_xyz, xyz_to_jab_cam16scd, jab_cam16scd_to_xyz
 from luxpy import xyz_to_qabW_cam15u, qabW_cam15u_to_xyz
-from luxpy import xyz_to_lab_cam_sww16, lab_cam_sww16_to_xyz
+from luxpy import xyz_to_lab_cam_sww16, lab_cam_sww16_to_xyz 
 from luxpy import colortf, put_args_in_db
 
 from luxpy import plt, np, todim
@@ -708,7 +708,7 @@ class XYZ(CDATA):
         """
         See ?luxpy.xyz_to_lab_cam_sww_2016
         """
-        value = xyz_to_lab_cam_sww_2016(self.value, dataw = xyzw, Yb = Yb, Lw = Lw, relative = relative, parameters = parameters, inputtype = inputtype, cieobs = cieobs)
+        value = xyz_to_lab_cam_sww16(self.value, dataw = xyzw, Yb = Yb, Lw = Lw, relative = relative, parameters = parameters, inputtype = inputtype, cieobs = cieobs)
         return LAB(value = value, dtype = 'cam_sww_2016', xyzw = xyzw, Yb = Yb, Lw = Lw, relative = relative, parameters = parameters, cieobs = cieobs)
           
 ###############################################################################

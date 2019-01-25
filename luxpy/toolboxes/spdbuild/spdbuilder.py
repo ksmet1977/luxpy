@@ -65,9 +65,9 @@ References
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
-from luxpy import (np, plt, warnings, minimize, math, _WL3, _CIEOBS, _EPS, np2d, 
-                   vec_to_dict, getwlr, SPD, plotSL, 
-                   spd_to_xyz, xyz_to_Yxy, Yxy_to_xyz, colortf, xyz_to_cct)
+from luxpy import (np, plt, warnings, math, _WL3, _CIEOBS, _EPS, np2d, 
+                   vec_to_dict, getwlr, SPD,
+                   spd_to_xyz, xyz_to_Yxy, colortf, xyz_to_cct)
 from luxpy import cri 
 import itertools
 
@@ -1820,9 +1820,9 @@ def spd_optimizer(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs = _CIEO
             spds = N_components # optimize spd model parameters, such as peakwl, fwhm, ... using N components.
                 
     else:
-        if isinstance(components_spds,dict): # optimize spectrum fluxes of set of component spectra defined by parameters in dict
+        if isinstance(component_spds,dict): # optimize spectrum fluxes of set of component spectra defined by parameters in dict
             if N_components is None:
-                N_components = components_spds['N_components']
+                N_components = component_spds['N_components']
         else: # optimize spectrum fluxes of pre-defined set of component spectra:
             spds = component_spds 
             N_components = spds.shape[0]

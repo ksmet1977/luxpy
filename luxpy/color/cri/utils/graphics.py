@@ -128,7 +128,7 @@ def plot_hue_bins(hbins = 16, start_hue = 0.0, scalef = 100, \
         # Calculate hue-bin boundaries:
         r = np.vstack((np.zeros(hbincenters.shape),scalef*np.ones(hbincenters.shape)))
         theta = np.vstack((np.zeros(hbincenters.shape),hbincenters))
-        t = hbincenters.copy()
+        #t = hbincenters.copy()
         dU = np.roll(hbincenters.copy(),-1)
         dL = np.roll(hbincenters.copy(),1)
         dtU = dU-hbincenters

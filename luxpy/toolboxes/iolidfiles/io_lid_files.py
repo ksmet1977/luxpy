@@ -29,8 +29,7 @@ Module for reading / writing LID data from IES and LDT files.
      
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
-import os
-import numpy as np
+from luxpy import np, os 
 
 __all__ =['read_lamp_data']
 

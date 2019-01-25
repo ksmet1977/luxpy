@@ -339,7 +339,7 @@ def jab_to_rhi(jabt, jabr, DEi, cri_type = _CRI_TYPE_DEFAULT, start_hue = None,\
      
     # A. Local Color Fidelity, Rfhi:
     if use_bin_avg_DEi == False:
-        DEi = np.power((jabt - bjabr), 2).sum(axis = len(jabt.shape)-1,keepdims = False)**0.5
+        DEi = np.power((jabt - jabr), 2).sum(axis = len(jabt.shape)-1,keepdims = False)**0.5
     Rfhi = scale_fcn(DEi,scale_factor)
     
     # B.Local chroma shift and hue shift, [Rcshi, Rhshi]:

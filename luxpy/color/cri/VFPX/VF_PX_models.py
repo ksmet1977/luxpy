@@ -87,7 +87,7 @@ VECTOR FIELD & PIXEL MODEL
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
-from luxpy import np, pd, _CIE_ILLUMINANTS, spd_to_xyz, colortf
+from luxpy import np, pd, os, _CIE_ILLUMINANTS, spd_to_xyz, colortf
 from .vectorshiftmodel import *
 from .pixelshiftmodel import *
 

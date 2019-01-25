@@ -73,10 +73,10 @@ SPD methods
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
-from luxpy import _CIEOBS, _WL3, _BB, _S012_DAYLIGHTPHASE, _INTERP_TYPES, _S_INTERP_TYPE, _R_INTERP_TYPE, _CRI_REF_TYPE, _CRI_REF_TYPES
-from luxpy import spd_to_xyz, cie_interp, getwlr, getwld, spd_normalize
-from luxpy import np, pd, plt, interpolate, plot_spectrum_colors
-from .CDATA import XYZ, LAB
+from luxpy import _CIEOBS #, _WL3, _BB, _S012_DAYLIGHTPHASE, _INTERP_TYPES, _S_INTERP_TYPE, _R_INTERP_TYPE, _CRI_REF_TYPE, _CRI_REF_TYPES
+from luxpy import spd_to_xyz, cie_interp, getwld, spd_normalize
+from luxpy import np, pd, plt, plot_spectrum_colors
+from .CDATA import XYZ 
 
 class SPD:
     

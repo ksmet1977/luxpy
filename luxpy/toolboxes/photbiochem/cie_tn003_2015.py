@@ -85,7 +85,7 @@ References:
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
-from luxpy import np, _PKG_PATH, _SEP, _CIEOBS, _CMF, _BB, np2d, spd, getdata, getwld, vlbar,spd_to_power, spd_normalize
+from luxpy import np, _PKG_PATH, _SEP, _CIEOBS, _BB, spd, getdata, getwld, vlbar,spd_to_power, spd_normalize
 
 __all__ = ['_PHOTORECEPTORS','_QUANTITIES', '_ACTIONSPECTRA','Km_correction_factor',
            '_Ee_SYMBOLS', '_E_SYMBOLS', '_Q_SYMBOLS', 

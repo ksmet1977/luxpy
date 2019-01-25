@@ -315,9 +315,9 @@ def apply_poly_model_at_hue_x(poly_model, pmodel, dCHoverC_res, \
     dHoverC_res = dCHoverC_res[:,2:3]
     dHsigi = np.exp((np.dstack((np.abs(hx-href),np.abs((hx-href-2*np.pi)),np.abs(hx-href-2*np.pi))).min(axis=2)**2)/(-2)/sig)
     dH_x_sig = (180/np.pi)*(np.sqrt((dHsigi*(dHoverC_res**2)).sum(axis=0,keepdims=True)/dHsigi.sum(axis=0,keepdims=True)))
-    dH_x_sig_avg = np.sqrt(np.sum(dH_x_sig**2,axis=1)/hx.shape[0])
+    #dH_x_sig_avg = np.sqrt(np.sum(dH_x_sig**2,axis=1)/hx.shape[0])
     dCoverC_x_sig = (np.sqrt((dHsigi*(dCoverC_res**2)).sum(axis=0,keepdims=True)/dHsigi.sum(axis=0,keepdims=True)))
-    dCoverC_x_sig_avg = np.sqrt(np.sum(dCoverC_x_sig**2,axis=1)/hx.shape[0])
+    #dCoverC_x_sig_avg = np.sqrt(np.sum(dCoverC_x_sig**2,axis=1)/hx.shape[0])
 
     return dCoverC_x, dCoverC_x_sig, dH_x, dH_x_sig
 
@@ -478,7 +478,7 @@ def VF_colorshift_model(S, cri_type = _VF_CRI_DEFAULT, model_type = _VF_MODEL_TY
     
     # In case of multiple source SPDs, pool:
     if (len(Jabr.shape) == 3) & (Jabr.shape[1]>1) & (pool == True):
-        Nsamples = Jabr.shape[0]
+        #Nsamples = Jabr.shape[0]
         Jabr = np.transpose(Jabr,(1,0,2)) # set lamps on first dimension
         Jabt = np.transpose(Jabt,(1,0,2))
         Jabr = Jabr.reshape(Jabr.shape[0]*Jabr.shape[1],3) # put all lamp data one after the other
