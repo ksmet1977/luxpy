@@ -69,7 +69,7 @@ cat: Module supporting chromatic adaptation transforms (corresponding colors)
 ===============================================================================
 """
        
-from luxpy import np, _CMF, math, np2d, asplit, ajoin, _EPS
+from luxpy import np, _CMF, math, np2d, asplit, ajoin, _EPS, xyz_to_Vrb_mb
 
 __all__ = ['_WHITE_POINT','_LA', '_MCATS',
            'check_dimensions','get_transfer_function','get_degree_of_adaptation',
@@ -316,7 +316,7 @@ def get_degree_of_adaptation(Dtype = None, **kwargs):
             PAR = ['xyzw','Dmax'] 
             xyzw = np.array([kwargs['xyzw']])
             Dmax = np.array([kwargs['Dmax']])
-            D = smet2017_Dmodel(xyzw,Dmax = Dmax)
+            D = smet2017_D(xyzw,Dmax = Dmax)
         else:
             PAR = ["? user defined"]
             D = np.array(eval(Dtype))
