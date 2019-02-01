@@ -7,6 +7,7 @@
 import numpy as np
 import luxpy as lx
 import timeit
+import pickle
 
 # first get test data
 def get_test_spectra(M,N):
@@ -17,6 +18,7 @@ def get_test_spectra(M,N):
 
 #-------------------------------------------------------------------------------
 # Get test spectra:
+MN = (1,2,4,10,100,100)
 spd1,rfl1 = get_test_spectra(1,1)
 spd2,rfl2 = get_test_spectra(2,2)
 spd4,rfl4 = get_test_spectra(4,4)
@@ -32,7 +34,7 @@ Nfunctions = 6*(len(fcns)-1*(not ("spd_to_xyz" in fcns))) + 4*(("spd_to_xyz" in 
 performance =  np.nan*np.ones((len(spds),len(rfls),Nfunctions))
 perf_strs = lx.odict()
 
-Ntimeit = 10
+Ntimeit = 10000 # same as in Julia
 def btime(f,number = 1000):
     return timeit.timeit(f, number = number)/number*1e6 #convert from sec to μs. 
 
@@ -197,6 +199,42 @@ for (i,spdi) in enumerate(spds):
             print("Testing xyz_to_lms:")
             performance, perf_strs = get_ctf_performance(performance, perf_strs, "lms", lx.xyz_to_lms, lx.lms_to_xyz, k, i,j, xyzi, xyzij, xyzwij, xyzw1, takes_wp = False)
             k = k + 6
+
+#------------------------------------------------------------------------------       
         
+def analyze_performance(write_to_xls=False):
+    # Python: store in dict:
+    n = list(perf_strs.keys())
+    performance_=performance[:,:,n]
+    perf_dict_py=lx.odict()
+    for i in range(len(perf_strs.values())):
+        perf_dict_py[list(perf_strs.values())[i]] = performance_[:,:,i]
+        
+    # Julia: get data from tmp folder:
+    tmppath = "D:/Documents/JULIALANG/Julia-0.7.0/jlux/tmp/"
+    f = lambda x: lx.getdata(tmppath+list(perf_dict_py.keys())[x]+'.dat')
+    perf_dict_jl=lx.odict()
+    for i in range(len(perf_strs.values())):
+        perf_dict_jl[list(perf_strs.values())[i]] = f(i)
+    
+    # Calculate ratio of py/jl:
+    perf_dict_pydivjl=lx.odict()
+    for i in range(len(perf_strs.values())):
+        key = list(perf_strs.values())[i]
+        perf_dict_pydivjl[key] = perf_dict_py[key]/perf_dict_jl[key]
+        
+    with open('perf_dicts_py_jl.pickle', 'wb') as handle:
+        pickle.dump((perf_dict_py,perf_dict_jl,perf_dict_pydivjl), handle, protocol=pickle.HIGHEST_PROTOCOL)
+     
+        
+    getkv = lambda i: (list(perf_dict_pydivjl.keys())[i],perf_dict_pydivjl[list(perf_dict_pydivjl.keys())[i]])
+    
+    # write to excel file
+    spdsize = ["{:1.0f}".format(MNi) for MNi in MN]
+    for i in range(len(perf_dict_py.keys())):
+        lx.write_to_excel("performance_comp_py1e2_jl1e4.xlsx",lx.pd.DataFrame(getkv(i)[1],columns = spdsize,index=spdsize),getkv(i)[0])
+      
+    return perf_dict_pydivjl, getkv
 
-
+# Perform analysis:
+perf_dict_pydivjl, getkv = analyze_performance(write_to_xls=False)
