@@ -68,6 +68,8 @@ def get_ctf_performance(performance, perf_strs, cspace, fwf, bwf, k, i, j, xyzi,
             print("   xyzij, forward: {:1.4f} μs".format(performance[i,j,k+3]))
             print("   xyzij, backward: {:1.4f} μs".format(performance[i,j,k+4]))        
             
+            perf_strs[k+5] =  cspace+", ..."
+            perf_strs[k+6] =  cspace+", ..."
 
     else:
         out = fwf(xyzi, xyzw = xyzw1)
