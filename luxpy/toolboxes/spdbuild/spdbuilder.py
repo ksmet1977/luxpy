@@ -350,12 +350,12 @@ def phosphor_led_spd(peakwl = 450, fwhm = 20, wl = _WL3, bw_order = -1, with_wl 
         peakwl = np.atleast_1d(peakwl)
         if ('component_spds' in out.split(',')):
             fp = component_spds.copy()
-            for i in np.arange(fp.shape[0]):
+            for i in range(fp.shape[0]):
                 fp[i,np.where(wl >= peakwl[i]),:] = 1
                 component_spds[...,i] = component_spds[...,i]*fp[...,i] # multiplication with piecewise function f'
         if ('spd' in out.split(',')):
             fp = mono_led.copy()
-            for i in np.arange(fp.shape[0]):
+            for i in range(fp.shape[0]):
                 fp[i,np.where(wl >= peakwl[i])] = 1
                 spd[i] = spd[i]*fp[i] # multiplication with piecewise function f'
 
@@ -367,7 +367,7 @@ def phosphor_led_spd(peakwl = 450, fwhm = 20, wl = _WL3, bw_order = -1, with_wl 
         mono_led_str = 'Mono_led_1'
         ph1_str = 'Phosphor_1'
         ph2_str = 'Phosphor_2'
-        for i in np.arange(spd.shape[0]):
+        for i in range(spd.shape[0]):
             plt.figure()
             if ph1 is not None:
                 plt.plot(wl,mono_led[i].T,'b--', label = mono_led_str)
@@ -568,7 +568,7 @@ def spd_builder(flux = None, component_spds = None, peakwl = 450, fwhm = 20, bw_
 
         # Calculate spectrum:
         spd = math.dot23(M,component_spds.T)
-        spd = np.atleast_2d([spd[i,:,i] for i in np.arange(N)])
+        spd = np.atleast_2d([spd[i,:,i] for i in range(N)])
         spd = spd/spd.max(axis = 1, keepdims = True)
         
         
@@ -585,7 +585,7 @@ def spd_builder(flux = None, component_spds = None, peakwl = 450, fwhm = 20, bw_
             component_spds_plot = component_spds.T.copy()
         else:
             component_spds_plot = component_spds.copy()
-        for i in np.arange(spd.shape[0]):
+        for i in range(spd.shape[0]):
             plt.figure()
             if component_spds_plot.shape[0] == 3:
                 plt.plot(wl,component_spds_plot[i,:,0],'b--', label = 'Component 1')
@@ -945,7 +945,7 @@ def fitnessfcn(x, spd_constructor, spd_constructor_pars = None, F_rss = True, de
         # store squared weighted differences for speed:
         output_str = 'c{:1.0f}: F = {:1.' + '{:1.0f}'.format(decimals.max()) + 'f}' + ' : '
 
-        for i in np.arange(N):
+        for i in range(N):
             if obj_fcn[i] is not None:
                 obj_vals[i] = obj_fcn[i](spdi, **obj_fcn_pars[i])
                 
@@ -1107,7 +1107,7 @@ def spd_constructor_3(x, constructor_pars = {}, **kwargs):
 
     # Generate all possible 3-channel combinations (component triangles):
     N = Yxyi.shape[0]
-    combos = np.array(list(itertools.combinations(np.arange(N), 3))) 
+    combos = np.array(list(itertools.combinations(range(N), 3))) 
    
     # calculate fluxes to obtain target Yxyt:
     M3 = color3mixer(Yxy_target,Yxyi[combos[:,0],:],Yxyi[combos[:,1],:],Yxyi[combos[:,2],:])
@@ -1122,7 +1122,7 @@ def spd_constructor_3(x, constructor_pars = {}, **kwargs):
         # Calulate fluxes of all components from M3 and x_final:            
         M_final = cp['triangle_strengths'][:,None]*M3
         M = np.empty((N))
-        for i in np.arange(N):
+        for i in range(N):
             M[i] = np.nansum(M_final[np.where(combos == i)])
     else:
         M = M3
@@ -1365,19 +1365,19 @@ def get_optim_pars_dict(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs =
     # Set max and min values:
     if len(peakwl_min) != len(peakwl):
         peakwl_min = min(peakwl_min)*np.ones(N_components)
-        peakwl = [max([peakwl_min[i],peakwl[i]]) for i in np.arange(N_components)] #ensure values are within bounds
+        peakwl = [max([peakwl_min[i],peakwl[i]]) for i in range(N_components)] #ensure values are within bounds
 
     if len(peakwl_max) != len(peakwl):
         peakwl_max = max(peakwl_max)*np.ones(N_components)
-        peakwl = [min([peakwl_max[i],peakwl[i]]) for i in np.arange(N_components)] #ensure values are within bounds
+        peakwl = [min([peakwl_max[i],peakwl[i]]) for i in range(N_components)] #ensure values are within bounds
 
     if len(fwhm_min) != len(fwhm):
         fwhm_min = min(fwhm_min)*np.ones(N_components)
-        fwhm = [max([fwhm_min[i],fwhm[i]]) for i in np.arange(N_components)] #ensure values are within bounds
+        fwhm = [max([fwhm_min[i],fwhm[i]]) for i in range(N_components)] #ensure values are within bounds
 
     if len(fwhm_max) != len(fwhm):
         fwhm_max = max(fwhm_max)*np.ones(N_components)
-        fwhm = [min([fwhm_max[i],fwhm[i]]) for i in np.arange(N_components)] #ensure values are within bounds
+        fwhm = [min([fwhm_max[i],fwhm[i]]) for i in range(N_components)] #ensure values are within bounds
     
     if allow_butterworth_mono_spds == True: # do nothing, no butterworth profile requested
         bw_order = np.atleast_2d(bw_order) # convert to ndarray for boolean slicing
@@ -1385,11 +1385,11 @@ def get_optim_pars_dict(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs =
         bw_order = bw_order.tolist()[0] # convert back to list for normal processing
         if (len(bw_order_max) != len(bw_order)):
             bw_order_max = max(bw_order_max)*np.ones(N_components)
-            bw_order = [min([bw_order_max[i],np.abs(bw_order[i])]) for i in np.arange(N_components)] #ensure values are within bounds
+            bw_order = [min([bw_order_max[i],np.abs(bw_order[i])]) for i in range(N_components)] #ensure values are within bounds
 
         if (len(bw_order_min) != len(bw_order)):
             bw_order_min = min(bw_order_min)*np.ones(N_components)
-            bw_order = [max([bw_order_min[i],np.abs(bw_order[i])]) for i in np.arange(N_components)] #ensure values are within bounds
+            bw_order = [max([bw_order_min[i],np.abs(bw_order[i])]) for i in range(N_components)] #ensure values are within bounds
             
     else:
         bw_order = -1
@@ -1417,7 +1417,7 @@ def get_optim_pars_dict(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs =
 
     # Generate random set of triangle_strengths (for '3mixer'):
     if triangle_strengths is None:
-        combos = np.array(list(itertools.combinations(np.arange(N_components), 3))) 
+        combos = np.array(list(itertools.combinations(range(N_components), 3))) 
         opts['triangle_strengths'] = np.random.rand(combos.shape[0])
     else:
         opts['triangle_strengths'] = triangle_strengths

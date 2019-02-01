@@ -645,9 +645,9 @@ def xyz_to_ipt(xyz, cieobs = _CIEOBS, xyzw = None, M = None, **kwargs):
             lms = np.einsum('ij,lj->li', M, xyz)
     else:
         if len(xyz.shape) == 3: # second dim of xyz must match dim of 1st of M and 1st dim of xyzw
-            lms = np.concatenate([np.einsum('ij,klj->kli', M[i], xyz[:,i:i+1,:]) for i in np.arange(M.shape[0])],axis=1)
+            lms = np.concatenate([np.einsum('ij,klj->kli', M[i], xyz[:,i:i+1,:]) for i in range(M.shape[0])],axis=1)
         else: # first dim of xyz must match dim of 1st of M and 1st dim of xyzw
-            lms = np.concatenate([np.einsum('ij,lj->li', M[i], xyz[i:i+1,:]) for i in np.arange(M.shape[0])],axis=0)
+            lms = np.concatenate([np.einsum('ij,lj->li', M[i], xyz[i:i+1,:]) for i in range(M.shape[0])],axis=0)
         
     #lms = np.dot(M,xyz.T).T
 
@@ -727,9 +727,9 @@ def ipt_to_xyz(ipt, cieobs = _CIEOBS, xyzw = None, M = None, **kwargs):
             xyz = np.einsum('ij,lj->li', np.linalg.inv(M), lms)
     else:
         if len(ipt.shape) == 3: # second dim of lms must match dim of 1st of M and 1st dim of xyzw
-            xyz = np.concatenate([np.einsum('ij,klj->kli', np.linalg.inv(M[i]), lms[:,i:i+1,:]) for i in np.arange(M.shape[0])],axis=1)
+            xyz = np.concatenate([np.einsum('ij,klj->kli', np.linalg.inv(M[i]), lms[:,i:i+1,:]) for i in range(M.shape[0])],axis=1)
         else: # first dim of lms must match dim of 1st of M and 1st dim of xyzw
-            xyz = np.concatenate([np.einsum('ij,lj->li', np.linalg.inv(M[i]), lms[i:i+1,:]) for i in np.arange(M.shape[0])],axis=0)
+            xyz = np.concatenate([np.einsum('ij,lj->li', np.linalg.inv(M[i]), lms[i:i+1,:]) for i in range(M.shape[0])],axis=0)
 
     #xyz = np.dot(np.linalg.inv(M),lms.T).T
     xyz = xyz * 100.0

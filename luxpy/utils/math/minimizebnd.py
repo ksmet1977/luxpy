@@ -114,7 +114,7 @@ def minimizebnd(fun, x0, args=(), method = 'nelder-mead', use_bnd = True, \
     #    % 4 --> fixed variable
         params['BoundClass'] = np.zeros(n)
     
-        for i in np.arange(n):
+        for i in range(n):
           k = np.isfinite(LB[i]) + 2*np.isfinite(UB[i])
           params['BoundClass'][i] = k
           if (k==3) & (LB[i]==UB[i]):
@@ -124,7 +124,7 @@ def minimizebnd(fun, x0, args=(), method = 'nelder-mead', use_bnd = True, \
         # surrogates. Check for infeasible starting guesses.
         x0u = x0
         k = 0
-        for i in np.arange(n):
+        for i in range(n):
             
             if params['BoundClass'][i] == 1:
                 # lower bound only
@@ -269,7 +269,7 @@ def xtransform(x,params):
     
     # k allows some variables to be fixed, thus dropped from the optimization.
     k=0
-    for i in np.arange(params['n']):
+    for i in range(params['n']):
         if params['BoundClass'][i] == 1:
               # lower bound only
               xtrans[i] = params['LB'][i] + x[k]**2

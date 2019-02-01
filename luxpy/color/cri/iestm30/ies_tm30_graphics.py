@@ -214,9 +214,9 @@ def plot_cri_graphics(data, cri_type = None, hbins = 16, start_hue = 0.0, scalef
         
         # Plot local color fidelity, Rfhi:
         ax_Rfi = create_subplot(layout,4)
-        for j in np.arange(hbins):
-            ax_Rfi.bar(np.arange(hbins)[j],Rfhi[j,i], color = cmap[j], width = 1,edgecolor = 'k', alpha = 0.4)
-            ax_Rfi.text(np.arange(hbins)[j],Rfhi[j,i]*1.1, '{:1.0f}'.format(Rfhi[j,i]) ,fontsize = 9,horizontalalignment='center',verticalalignment='center',color = np.array([1,1,1])*0.3)
+        for j in range(hbins):
+            ax_Rfi.bar(range(hbins)[j],Rfhi[j,i], color = cmap[j], width = 1,edgecolor = 'k', alpha = 0.4)
+            ax_Rfi.text(range(hbins)[j],Rfhi[j,i]*1.1, '{:1.0f}'.format(Rfhi[j,i]) ,fontsize = 9,horizontalalignment='center',verticalalignment='center',color = np.array([1,1,1])*0.3)
         ax_Rfi.set_ylim([0,120])
         xticks = np.arange(hbins)
         xtickslabels = ['{:1.0f}'.format(ii+1) for ii in range(hbins)]
@@ -227,9 +227,9 @@ def plot_cri_graphics(data, cri_type = None, hbins = 16, start_hue = 0.0, scalef
         
         # Plot local chroma shift, Rcshi:
         ax_locC = create_subplot(layout,5)
-        for j in np.arange(hbins):
-            ax_locC.bar(np.arange(hbins)[j],Rcshi[j,i], color = cmap[j], width = 1,edgecolor = 'k', alpha = 0.4)
-            ax_locC.text(np.arange(hbins)[j],-np.sign(Rcshi[j,i])*0.1, '{:1.0f}%'.format(100*Rcshi[j,i]) ,fontsize = 9,horizontalalignment='center',verticalalignment='center',rotation = 90, color = np.array([1,1,1])*0.3)
+        for j in range(hbins):
+            ax_locC.bar(range(hbins)[j],Rcshi[j,i], color = cmap[j], width = 1,edgecolor = 'k', alpha = 0.4)
+            ax_locC.text(range(hbins)[j],-np.sign(Rcshi[j,i])*0.1, '{:1.0f}%'.format(100*Rcshi[j,i]) ,fontsize = 9,horizontalalignment='center',verticalalignment='center',rotation = 90, color = np.array([1,1,1])*0.3)
         ylim = np.array([np.abs(Rcshi.min()),np.abs(Rcshi.min()),0.2]).max()*1.5
         ax_locC.set_ylim([-ylim,ylim])
         ax_locC.set_ylabel(r'Local chroma shift, $R_{cs,hi}$')
@@ -238,9 +238,9 @@ def plot_cri_graphics(data, cri_type = None, hbins = 16, start_hue = 0.0, scalef
         
         # Plot local hue shift, Rhshi:
         ax_locH = create_subplot(layout,6)
-        for j in np.arange(hbins):
-            ax_locH.bar(np.arange(hbins)[j],Rhshi[j,i], color = cmap[j], width = 1,edgecolor = 'k', alpha = 0.4)
-            ax_locH.text(np.arange(hbins)[j],-np.sign(Rhshi[j,i])*0.2, '{:1.3f}'.format(Rhshi[j,i]) ,fontsize = 9,horizontalalignment='center',verticalalignment='center',rotation = 90, color = np.array([1,1,1])*0.3)
+        for j in range(hbins):
+            ax_locH.bar(range(hbins)[j],Rhshi[j,i], color = cmap[j], width = 1,edgecolor = 'k', alpha = 0.4)
+            ax_locH.text(range(hbins)[j],-np.sign(Rhshi[j,i])*0.2, '{:1.3f}'.format(Rhshi[j,i]) ,fontsize = 9,horizontalalignment='center',verticalalignment='center',rotation = 90, color = np.array([1,1,1])*0.3)
         ylim = np.array([np.abs(Rhshi.min()),np.abs(Rhshi.min()),0.2]).max()*1.5
         ax_locH.set_ylim([-ylim,ylim])
         ax_locH.set_ylabel(r'Local hue shift, $R_{hs,hi}$')
@@ -249,9 +249,9 @@ def plot_cri_graphics(data, cri_type = None, hbins = 16, start_hue = 0.0, scalef
               
         # Plot local color fidelity of VF, vfRfhi:
         ax_vfRfi = create_subplot(layout,7)
-        for j in np.arange(hbins):
-            ax_vfRfi.bar(np.arange(hbins)[j],Rfhi_vf[j,i], color = cmap[j], width = 1,edgecolor = 'k', alpha = 0.4)
-            ax_vfRfi.text(np.arange(hbins)[j],Rfhi_vf[j,i]*1.1, '{:1.0f}'.format(Rfhi_vf[j,i]) ,fontsize = 9,horizontalalignment='center',verticalalignment='center',color = np.array([1,1,1])*0.3)
+        for j in range(hbins):
+            ax_vfRfi.bar(range(hbins)[j],Rfhi_vf[j,i], color = cmap[j], width = 1,edgecolor = 'k', alpha = 0.4)
+            ax_vfRfi.text(range(hbins)[j],Rfhi_vf[j,i]*1.1, '{:1.0f}'.format(Rfhi_vf[j,i]) ,fontsize = 9,horizontalalignment='center',verticalalignment='center',color = np.array([1,1,1])*0.3)
         ax_vfRfi.set_ylim([0,120])
         xticks = np.arange(hbins)
         xtickslabels = ['{:1.0f}'.format(ii+1) for ii in range(hbins)]

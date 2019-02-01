@@ -113,7 +113,7 @@ def normalize_3x3_matrix(M, xyz0 = np.array([[1.0,1.0,1.0]])):
     if xyz0.shape[0] == 1:
         return np.dot(np.diagflat(1/(np.dot(M,xyz0.T))),M)
     else:
-        return np.concatenate([np.dot(np.diagflat(1/(np.dot(M,xyz0[1].T))),M) for i in np.arange(xyz0.shape[0])],axis=0).reshape(xyz0.shape[0],3,3)
+        return np.concatenate([np.dot(np.diagflat(1/(np.dot(M,xyz0[1].T))),M) for i in range(xyz0.shape[0])],axis=0).reshape(xyz0.shape[0],3,3)
 
 #------------------------------------------------------------------------------
 def line_intersect(a1, a2, b1, b2):
@@ -715,7 +715,7 @@ def v_to_cik(v, inverse = False):
     g12 = (1/v[:,0]**2 - 1/v[:,1]**2)*np.sin(v[:,4])*np.cos(v[:,4])
     cik = np.zeros((g11.shape[0],2,2))
 
-    for i in np.arange(g11.shape[0]):
+    for i in range(g11.shape[0]):
         cik[i,:,:] = np.vstack((np.hstack((g11[i],g12[i])), np.hstack((g12[i],g22[i]))))
         if inverse == True:
             cik[i,:,:] = np.linalg.inv(cik[i,:,:])
@@ -741,7 +741,7 @@ def cik_to_v(cik, xyc = None, inverse = False):
 
     """
     if inverse == True:
-        for i in np.arange(cik.shape[0]):
+        for i in range(cik.shape[0]):
             cik[i,:,:] = np.linalg.inv(cik[i,:,:])
             
     g11 = cik[:,0,0]

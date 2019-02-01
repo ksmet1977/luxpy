@@ -329,7 +329,7 @@ if __name__ == '__main__':
     
     # Normalize to Lw:
     xyzw2 = spd_to_xyz(C, cieobs = cieobs, relative = False)
-    for i in np.arange(C.shape[0]-1):
+    for i in range(C.shape[0]-1):
         C[i+1] = Lw*C[i+1]/xyzw2[i,1]
     xyz, xyzw = spd_to_xyz(C, cieobs = cieobs, relative = True, rfl = rflM, out = 2)
 

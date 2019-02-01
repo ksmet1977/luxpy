@@ -77,7 +77,7 @@ def get_pixel_coordinates(jab, jab_ranges = None, jab_deltas = None, limit_grid_
 
     # determine pixel coordinates of each sample in jab:
     samplesIDs = []
-    for idx in np.arange(gridp.shape[0]):
+    for idx in range(gridp.shape[0]):
         
         # get pixel coordinates:
         jp = gridp[idx,0]
@@ -172,7 +172,7 @@ def PX_colorshift_model(Jabt,Jabr, jab_ranges = None, jab_deltas = None,limit_gr
     Npixels = len(idxp) # number of non-empty pixels
     Jabr_avg = np.nan*np.ones((gridp.shape[0],3))
     Jabt_avg = Jabr_avg.copy()
-    for i in np.arange(Npixels):
+    for i in range(Npixels):
         Jabr_avg[idxp[i],:] = Jabr[pixelsamplenrs[i],:].mean(axis=0)
         Jabt_avg[idxp[i],:] = Jabt[pixelsamplenrs[i],:].mean(axis=0)
         #jabtemp = Jabr[pixelsamplenrs[i],:]

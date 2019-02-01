@@ -386,7 +386,7 @@ def selection(P, O, options):
        Pnew['x'] = np.hstack((Pnew['x'], Xrem.copy())) 
        Pnew['f'] = np.hstack((Pnew['f'], Frem.copy()))
     elif aux > 0:
-       for ii in np.arange(aux):
+       for ii in range(aux):
           cdist = crowdingdistance(Frem)
           imin = cdist.argmin()#gets the point with smaller crowding distance
           Frem = np.delete(Frem, imin, axis = 1) # Frem(:,imin) = []; #and remove it
@@ -546,7 +546,7 @@ def dtlz2(x, M):
     # Computes the functions:
     f = np.empty((M,x.shape[1]))
     f[0,:] = (1 + g)*np.prod(np.cos(np.pi/2*x[:(M-1),:]), axis = 0)
-    for ii in np.arange(1,M-1):
+    for ii in range(1,M-1):
         f[ii,:] = (1 + g) * np.prod(np.cos(np.pi/2*x[:(M-ii-1),:]), axis = 0) * np.sin(np.pi/2*x[M-ii-1,:])
     f[M-1,:] = (1 + g) * np.sin(np.pi/2*x[0,:])
     return f
