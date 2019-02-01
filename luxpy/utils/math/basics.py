@@ -110,7 +110,10 @@ def normalize_3x3_matrix(M, xyz0 = np.array([[1.0,1.0,1.0]])):
     M = np2d(M)
     if M.shape[-1]==9:
         M = M.reshape(3,3)
-    return np.dot(np.diagflat(1/(np.dot(M,xyz0.T))),M)
+    if xyz0.shape[0] == 1:
+        return np.dot(np.diagflat(1/(np.dot(M,xyz0.T))),M)
+    else:
+        return np.concatenate([np.dot(np.diagflat(1/(np.dot(M,xyz0[1].T))),M) for i in np.arange(xyz0.shape[0])],axis=0).reshape(xyz0.shape[0],3,3)
 
 #------------------------------------------------------------------------------
 def line_intersect(a1, a2, b1, b2):

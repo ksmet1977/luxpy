@@ -92,7 +92,7 @@ _CSPACE_AXES['ipt'] = ['I', "P", "T"]
 _CSPACE_AXES['wuv'] = ['W*', "U*", "V*"]
 _CSPACE_AXES['Vrb_mb'] = ['V (Macleod-Boyton)', "r (Macleod-Boyton)", "b (Macleod-Boyton)"]
 _CSPACE_AXES['cct'] = ['', 'cct','duv']
-
+_CSPACE_AXES['srgb'] = ['sR', 'sG','sB']
 
 # pre-calculate matrices for conversion of xyz to lms and back for use in xyz_to_ipt() and ipt_to_xyz():
 _IPT_M = {'lms2ipt': np.array([[0.4000,0.4000,0.2000],[4.4550,-4.8510,0.3960],[0.8056,0.3572,-1.1628]]),
@@ -638,10 +638,17 @@ def xyz_to_ipt(xyz, cieobs = _CIEOBS, xyzw = None, M = None, **kwargs):
     xyz = xyz/100.0
 
     # convert xyz to lms:
-    if len(xyz.shape) == 3:
-        lms = np.einsum('ij,klj->kli', M, xyz)
+    if np.ndim(M)==2:
+        if len(xyz.shape) == 3:
+            lms = np.einsum('ij,klj->kli', M, xyz)
+        else:
+            lms = np.einsum('ij,lj->li', M, xyz)
     else:
-        lms = np.einsum('ij,lj->li', M, xyz)
+        if len(xyz.shape) == 3: # second dim of xyz must match dim of 1st of M and 1st dim of xyzw
+            lms = np.concatenate([np.einsum('ij,klj->kli', M[i], xyz[:,i:i+1,:]) for i in np.arange(M.shape[0])],axis=1)
+        else: # first dim of xyz must match dim of 1st of M and 1st dim of xyzw
+            lms = np.concatenate([np.einsum('ij,lj->li', M[i], xyz[i:i+1,:]) for i in np.arange(M.shape[0])],axis=0)
+        
     #lms = np.dot(M,xyz.T).T
 
     #response compression: lms to lms'
@@ -706,17 +713,24 @@ def ipt_to_xyz(ipt, cieobs = _CIEOBS, xyzw = None, M = None, **kwargs):
         lmsp = np.einsum('ij,klj->kli', np.linalg.inv(_IPT_M['lms2ipt']), ipt)
     else:
         lmsp = np.einsum('ij,lj->li', np.linalg.inv(_IPT_M['lms2ipt']), ipt)
-
+        
     # reverse response compression: lms' to lms
     lms = lmsp**(1.0/0.43)
     p = np.where(lmsp<0.0)
     lms[p] = -np.abs(lmsp[p])**(1.0/0.43)
 
     # convert from lms to xyz:
-    if len(ipt.shape) == 3:
-        xyz = np.einsum('ij,klj->kli', np.linalg.inv(M), lms)
+    if np.ndim(M)==2:
+        if len(ipt.shape) == 3:
+            xyz = np.einsum('ij,klj->kli', np.linalg.inv(M), lms)
+        else:
+            xyz = np.einsum('ij,lj->li', np.linalg.inv(M), lms)
     else:
-        xyz = np.einsum('ij,lj->li', np.linalg.inv(M), lms)
+        if len(ipt.shape) == 3: # second dim of lms must match dim of 1st of M and 1st dim of xyzw
+            xyz = np.concatenate([np.einsum('ij,klj->kli', np.linalg.inv(M[i]), lms[:,i:i+1,:]) for i in np.arange(M.shape[0])],axis=1)
+        else: # first dim of lms must match dim of 1st of M and 1st dim of xyzw
+            xyz = np.concatenate([np.einsum('ij,lj->li', np.linalg.inv(M[i]), lms[i:i+1,:]) for i in np.arange(M.shape[0])],axis=0)
+
     #xyz = np.dot(np.linalg.inv(M),lms.T).T
     xyz = xyz * 100.0
     xyz[np.where(xyz<0.0)] = 0.0
@@ -744,7 +758,7 @@ def xyz_to_Ydlep(xyz, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT, **k
             | ndarray with Y, dominant (complementary) wavelength
               and excitation purity
     """
-
+    
     xyz3 = np3d(xyz).copy()
 
     # flip axis so that shortest dim is on axis0 (save time in looping):
@@ -855,7 +869,6 @@ def Ydlep_to_xyz(Ydlep, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT, *
             | ndarray with tristimulus values
     """
 
-
     Ydlep3 = np3d(Ydlep).copy()
 
     # flip axis so that shortest dim is on axis0 (save time in looping):
@@ -912,7 +925,6 @@ def Ydlep_to_xyz(Ydlep, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT, *
         # complementary:
         pc = np.where(dom[:,i] < 0.0)
         hdom[pc] = hdom[pc] - np.sign(dom[:,i][pc] - 180.0)*180.0 # get positive hue angle
-
 
         # calculate intersection of line through white point and test point and purple line:
         xy = np.vstack((x_dom_wl,y_dom_wl)).T
@@ -1002,11 +1014,11 @@ def srgb_to_xyz(rgb, **kwargs):
 
     """
     rgb = np2d(rgb)
+    
     # define 3x3 matrix
     M = np.array([[0.4124564,  0.3575761,  0.1804375],
                   [0.2126729,  0.7151522,  0.0721750],
                   [0.0193339,  0.1191920,  0.9503041]])
-
 
     # scale device coordinates:
     sRGB = rgb/255
@@ -1019,7 +1031,6 @@ def srgb_to_xyz(rgb, **kwargs):
     srgb = ((srgb + 0.055)/1.055)**2.4
 
     srgb[nonlin] = sRGB[nonlin]/12.92
-
 
     if len(srgb.shape) == 3:
         xyz = np.einsum('ij,klj->kli', M, srgb)*100
