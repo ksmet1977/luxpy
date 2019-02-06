@@ -19,6 +19,7 @@ Ntimeit = 10000 # same as in Julia
 def btime(f,number = 1000):
     return timeit.timeit(f, number = number)/number*1e6 #convert from sec to μs. 
 
+    
 def get_ctf_performance(performance, perf_strs, cspace, fwf, bwf, k, i, j, xyzi, xyzij, xyzwij, xyzw1,takes_wp = False):
     print("dimensions: size(xyzi):", xyzi.shape, ", size(xyzij):", xyzij.shape)
     if takes_wp == False:
@@ -141,7 +142,7 @@ if __name__ == '__main__':
     
     #-------------------------------------------------------------------------------
     # Get test spectra:
-    MN = (1,2,4,10,100,100)
+    MN = (1,2,4,10,100,1000)
     spd1,rfl1 = get_test_spectra(1,1)
     spd2,rfl2 = get_test_spectra(2,2)
     spd4,rfl4 = get_test_spectra(4,4)
