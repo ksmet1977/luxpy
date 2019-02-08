@@ -22,10 +22,10 @@ cam_02_X: Module with CIECAM02-type color appearance models
 
  :_CAM_02_X_UNIQUE_HUE_DATA: database of unique hues with corresponding 
                              Hue quadratures and eccentricity factors 
-                             for ciecam02, cam16, ciecam97s, cam15u)
+                             for ciecam02, cam16, ciecam97s)
 
  :_CAM_02_X_SURROUND_PARAMETERS: database of surround param. c, Nc, F and FLL 
-                                 for ciecam02, cam16, ciecam97s and cam15u.
+                                 for ciecam02, cam16, ciecam97s.
 
  :_CAM_02_X_NAKA_RUSHTON_PARAMETERS: | database with parameters 
                                        (n, sig, scaling and noise) 
@@ -240,7 +240,7 @@ def hue_quadrature(h, unique_hue_data = None):
     
     Args:
         :h: 
-            | float or list[float] or ndarray with hue data in degrees (!).
+            | float or ndarray [(N,) or (N,1)] with hue data in degrees (!).
         :unique_hue data:
             | None or str or dict, optional
             |   - None: H = h.
@@ -251,30 +251,42 @@ def hue_quadrature(h, unique_hue_data = None):
     
     Returns:
         :H: 
-            | float or list[float] or ndarray of Hue quadrature value(s).
+            | ndarray of Hue quadrature value(s).
     """
     if unique_hue_data is None:
         return h
     elif isinstance(unique_hue_data,str):
         unique_hue_data = _UNIQUE_HUE_DATA[unique_hue_data]
     
-    squeezed = 0
-    if h.shape[0] == 1:
-        h = np.squeeze(h,axis = 0)
-        squeezed = 1
+    changed_number_to_array = False
+    if isinstance(h,float) | isinstance(h,int):
+       h = np.atleast_1d(h)
+       changed_number_to_array = True
+    
+    squeezed = False
+    if h.ndim > 1:
+        if (h.shape[0] == 1):
+            h = np.squeeze(h,axis = 0)
+            squeezed = True
+
     
     hi = unique_hue_data['hi']
     Hi = unique_hue_data['Hi']
     ei = unique_hue_data['ei']
-    h[h<hi[0]] = h[h<hi[0]] + 360.0
-    h_hi = np.repeat(np.atleast_2d(h),repeats=len(hi),axis = 1)
+    h[h<hi[0]] += 360.0
+    h_tmp = np.atleast_2d(h)
+    if h_tmp.shape[0] == 1:
+        h_tmp = h_tmp.T
+    h_hi = np.repeat(h_tmp,repeats=len(hi),axis = 1)
     hi_h = np.repeat(np.atleast_2d(hi),repeats=h.shape[0],axis = 0)
-    d = h_hi-hi_h
+    d = (h_hi-hi_h)
     d[d<0] = 1000.0
     p = d.argmin(axis=1)
     p[p==(len(hi)-1)] = 0 # make sure last unique hue data is not selected
     H = np.array([Hi[pi] + (100.0*(h[i]-hi[pi])/ei[pi])/((h[i]-hi[pi])/ei[pi] + (hi[pi+1] - h[i])/ei[pi+1]) for (i,pi) in enumerate(p)])
-    if squeezed == 1:
+    if changed_number_to_array:
+        H = H[0]
+    if squeezed:
         H = np.expand_dims(H,axis=0)
     return H
 

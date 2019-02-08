@@ -108,7 +108,7 @@ def analyze_performance(performance, perf_strs, MN, write_to_xls=False):
     keys = list(perf_dict_py.keys())
     
     # Julia: get data from tmp folder:
-    tmppath = "D:/Documents/JULIALANG/Julia-0.7.0/jlux/tmp/"
+    tmppath = "D:/Documents/JULIALANG/Julia-0.7.0/jlux/tmp/10000/"
     f = lambda x: lx.getdata(tmppath+keys[x]+'.dat')
     perf_dict_jl=lx.odict()
     for i in range(len(keys)):
