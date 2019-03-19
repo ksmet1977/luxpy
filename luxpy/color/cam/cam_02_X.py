@@ -446,7 +446,7 @@ def cam_structure_ciecam02_cam16(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, \
 
         # transform from xyzw to cat sensor space:
         rgbw = np.dot(mcat,xyzwi.T)
-
+        
         # apply von Kries cat to white:
         rgbwc = ((100.0*D/rgbw) + (1 - D))*rgbw # factor 100 from ciecam02 is replaced with Yw[i] in cam16, but see 'note' in Fairchild's "Color Appearance Models" (p291 ni 3ed.)
 
@@ -465,7 +465,7 @@ def cam_structure_ciecam02_cam16(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, \
         # apply repsonse compression to white:
         rgbwpa = naka_rushton(FL*rgbwp/100.0, cam = camtype)
         rgbwpa[pw] = 0.1 - (naka_rushton(FL*np.abs(rgbwp[pw])/100.0, cam = camtype) - 0.1)
-        
+
         # split white into separate cone signals:
         rwpa, gwpa, bwpa = asplit(rgbwpa)
         
@@ -476,7 +476,7 @@ def cam_structure_ciecam02_cam16(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, \
         
             # calculate stimuli:
             xyzi = Yw[i]*data[:,i]/yw # normalize xyzw
-            
+
             # transform from xyz to cat02 sensor space:
             rgb = np.dot(mcat,xyzi.T)
 
@@ -496,7 +496,7 @@ def cam_structure_ciecam02_cam16(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, \
             # apply repsonse compression:
             rgbpa = naka_rushton(FL*rgbp/100.0, cam = camtype)
             rgbpa[p] = 0.1 - (naka_rushton(FL*np.abs(rgbp[p])/100.0, cam = camtype) - 0.1)
-            
+
             # split into separate cone signals:
             rpa, gpa, bpa = asplit(rgbpa)
             

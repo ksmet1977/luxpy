@@ -502,8 +502,9 @@ def spd_to_jab_t_r(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'jabt,jabr', wl = No
     #Override input parameters with data specified in cri_type:
     args = locals().copy() # get dict with keyword input arguments to function (used to overwrite non-None input arguments present in cri_type dict)
     cri_type = process_cri_type_input(cri_type, args, callerfunction = 'cri.spd_to_jab_t_r')
+
     avg, catf, cieobs, cri_specific_pars, cspace, ref_type, rg_pars, sampleset, scale = [cri_type[x] for x in sorted(cri_type.keys())] 
-   
+
     # make SPD atleast_2d:
     SPD = np2d(SPD)
 
@@ -522,7 +523,10 @@ def spd_to_jab_t_r(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'jabt,jabr', wl = No
     cct, duv = xyz_to_cct(xyztw, cieobs = cieobs['cct'], out = 'cct,duv',mode = 'lut')
     
     # A.c. get reference ill.:
-    Sr = cri_ref(cct, ref_type = ref_type, cieobs = cieobs['cct'], wl3 = SPD[0])
+    if isinstance(ref_type,np.ndarray):
+        Sr = cri_ref(ref_type, ref_type = 'spd', cieobs = cieobs['cct'], wl3 = SPD[0])
+    else:
+        Sr = cri_ref(cct, ref_type = ref_type, cieobs = cieobs['cct'], wl3 = SPD[0])
 
     # B. calculate xyz and xyzw of data (spds) and Sr:
     xyzti, xyztw = spd_to_xyz(SPD, cieobs = cieobs['xyz'], rfl = sampleset, out = 2)
@@ -669,6 +673,7 @@ def spd_to_DEi(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'DEi', wl = None, \
     """
     #Override input parameters with data specified in cri_type:
     args = locals().copy() # get dict with keyword input arguments to function (used to overwrite non-None input arguments present in cri_type dict)
+    
     cri_type = process_cri_type_input(cri_type, args, callerfunction = 'cri.spd_to_DEi')
 
     # calculate Jabt of test and Jabr of the reference illuminant corresponding to test: 
@@ -1117,6 +1122,7 @@ def spd_to_cri(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'Rf', wl = None, \
     
     #Override input parameters with data specified in cri_type:
     args = locals().copy() # get dict with keyword input arguments to function (used to overwrite non-None input arguments present in cri_type dict)
+
     cri_type = process_cri_type_input(cri_type, args, callerfunction = 'cri.spd_to_cri')
     
     # unpack some keys:
