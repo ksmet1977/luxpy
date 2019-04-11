@@ -245,7 +245,14 @@ if __name__ == '__main__':
                     performance, perf_strs = get_ctf_performance(performance, perf_strs, "lms", lx.xyz_to_lms, lx.lms_to_xyz, k, i,j, xyzi, xyzij, xyzwij, xyzw1, takes_wp = False)
                     k = k + 6
     
-#------------------------------------------------------------------------------       
+    #------------------------------------------------------------------------------       
      
-# Perform analysis:
-perf_dict_pydivjl, getkv = analyze_performance(performance, perf_strs, MN, write_to_xls=True)
+        # Perform analysis:
+        perf_dict_pydivjl, getkv = analyze_performance(performance, perf_strs, MN, write_to_xls=True)
+        
+    else:
+        spd,rfl = get_test_spectra(3,2)
+        xyz = lx.spd_to_xyz(spd,relative=True,rfl=rfl)
+        xyz1=xyz[:,0,:]
+        xyzw2 = lx.spd_to_xyz(spd,relative=True)
+        xyzw1=xyzw2[0,:]

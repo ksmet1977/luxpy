@@ -70,7 +70,7 @@ def cam_sww16(data, dataw = None, Yb = 20.0, Lw = 400.0, Ccwb = None, relative =
             |    - str: 'best-fit-JOSA' or 'best-fit-all-Munsell'
             |    - dict: user defined model parameters 
             |            (dict should have same structure)
-        :inputtpe:
+        :inputtype:
             | 'xyz' or 'spd', optional
             | Specifies the type of input: 
             |     tristimulus values or spectral data for the forward mode.
@@ -124,17 +124,17 @@ def cam_sww16(data, dataw = None, Yb = 20.0, Lw = 400.0, Ccwb = None, relative =
     
     # setup default adaptation field:   
     if (dataw is None):
-        dataw = _CIE_ILLUMINANTS['C'] # get illuminant C
+        dataw = _CIE_ILLUMINANTS['C'].copy() # get illuminant C
         xyzw = spd_to_xyz(dataw, cieobs = cieobs,relative=False) # get abs. tristimulus values
         if relative == False: #input is expected to be absolute
-            dataw[1:] = Lw*dataw[1:]/xyzw[0,1] #dataw = Lw*dataw # make absolute
+            dataw[1:] = Lw*dataw[1:]/xyzw[:,1:2] #dataw = Lw*dataw # make absolute
         else:
             dataw = dataw # make relative (Y=100)
         if inputtype == 'xyz':
             dataw = spd_to_xyz(dataw, cieobs = cieobs, relative = relative)
 
     # precomputations:
-    Mxyz2lms = np.dot(np.diag(cLMS),math.normalize_3x3_matrix(Mxyz2lms, np.array([1, 1, 1]))) # normalize matrix for xyz-> lms conversion to ill. E weighted with cLMS   
+    Mxyz2lms = np.dot(np.diag(cLMS),math.normalize_3x3_matrix(Mxyz2lms, np.array([[1, 1, 1]]))) # normalize matrix for xyz-> lms conversion to ill. E weighted with cLMS   
     invMxyz2lms = np.linalg.inv(Mxyz2lms)
     MAab = np.array([clambda,calpha,cbeta])
     invMAab = np.linalg.inv(MAab)
@@ -143,17 +143,16 @@ def cam_sww16(data, dataw = None, Yb = 20.0, Lw = 400.0, Ccwb = None, relative =
     data = np2d(data).copy() # stimulus data (can be upto NxMx3 for xyz, or [N x (M+1) x wl] for spd))
     dataw = np2d(dataw).copy() # white point (can be upto Nx3 for xyz, or [(N+1) x wl] for spd)
 
-    #make first axis of dataw have 'same' dimensions as data:         
+    # make axis 1 of dataw have 'same' dimensions as data:         
     if (data.ndim == 2): 
-        data = np.expand_dims(data, axis = 1)  #add light source axis 1     
+        data = np.expand_dims(data, axis = 1)  # add light source axis 1     
 
     if inputtype == 'xyz': 
         if dataw.shape[0] == 1: #make dataw have same lights source dimension size as data
             dataw = np.repeat(dataw,data.shape[1],axis=0)                
     else:
         if dataw.shape[0] == 2:
-            dataw = np.vstack((dataw[0],np.repeat(dataw[1:], data.shape[0]-1*(direction == 'forward'), axis = 0)))
-
+            dataw = np.vstack((dataw[0],np.repeat(dataw[1:], data.shape[1], axis = 0)))
 
     
     # Flip light source dim to axis 0:
@@ -171,8 +170,8 @@ def cam_sww16(data, dataw = None, Yb = 20.0, Lw = 400.0, Ccwb = None, relative =
 
         # stage 1: calculate photon rates of stimulus and adapting field, lmst & lmsf:
         if (inputtype != 'xyz'):            
-            xyzw_abs = spd_to_xyz(np.vstack((dataw[0],dataw[i+1])), cieobs = cieobs, relative = False)
             if relative == True:
+                xyzw_abs = spd_to_xyz(np.vstack((dataw[0],dataw[i+1])), cieobs = cieobs, relative = False)
                 dataw[i+1] = Lw*dataw[i+1]/xyzw_abs[0,1] # make absolute
             xyzw = spd_to_xyz(np.vstack((dataw[0],dataw[i+1])), cieobs = cieobs, relative = False)
             lmsw = 683.0*np.dot(Mxyz2lms,xyzw.T).T/_CMF[cieobs]['K']
@@ -202,8 +201,10 @@ def cam_sww16(data, dataw = None, Yb = 20.0, Lw = 400.0, Ccwb = None, relative =
         lmsfp = math.erf(Cc*(np.log(lmsf/lms0) + Cf*np.log(lmsf/lms0)))
         lmstp = np.vstack((lmsfp,lmstp)) # add adaptation field lms temporarily to lmsp for quick calculation
         
+        
         # stage 3: calculate optic nerve signals, lam*, alphp, betp:
         lstar,alph, bet = asplit(np.dot(MAab, lmstp.T).T)
+
         alphp = cga1[0]*alph
         alphp[alph<0] = cga1[1]*alph[alph<0]
         betp = cgb1[0]*bet
@@ -218,7 +219,6 @@ def cam_sww16(data, dataw = None, Yb = 20.0, Lw = 400.0, Ccwb = None, relative =
         alph_int = cab_int[0]*(np.cos(cab_int[1]*np.pi/180.0)*alphpp - np.sin(cab_int[1]*np.pi/180.0)*betpp)
         bet_int = cab_int[0]*(np.sin(cab_int[1]*np.pi/180.0)*alphpp + np.cos(cab_int[1]*np.pi/180.0)*betpp)
         lstar_out = lstar_int
-        
         
         if direction == 'forward':
             if Ccwb is None:
@@ -237,7 +237,7 @@ def cam_sww16(data, dataw = None, Yb = 20.0, Lw = 400.0, Ccwb = None, relative =
             
             # get lstar_out, alph_out & bet_out for data:
             lstar_out, alph_out, bet_out = asplit(data[i])
-            
+        
             # stage 5 inverse: 
             # undo cortical white-balance:
             if Ccwb is None:
@@ -255,7 +255,7 @@ def cam_sww16(data, dataw = None, Yb = 20.0, Lw = 400.0, Ccwb = None, relative =
             betpp = (1.0 / cab_int[0]) * (np.sin(-cab_int[1]*np.pi/180.0)*alph_int + np.cos(-cab_int[1]*np.pi/180.0)*bet_int)
             lstar_int = lstar_out
             lstar = (lstar_int /cl_int[0]) - cl_int[1] 
-             
+            
             # stage 4 inverse:
             alphp = 0.5*(alphpp/cga2[0] + betpp/cgb2[0])  # <-- alphpp = (Cga2.*(alphp+betp));
             betp = 0.5*(alphpp/cga2[0] - betpp/cgb2[0]) # <-- betpp = (Cgb2.*(alphp-betp));
@@ -318,7 +318,7 @@ def lab_cam_sww16_to_xyz(lab, xyzw = None, Yb = 20.0, Lw = 400.0, Ccwb = None, r
 
 
 #------------------------------------------------------------------------------
-if __name__ == '__main__':
+if __name__ == '__main___':
     C = _CIE_ILLUMINANTS['C'].copy()
     C = np.vstack((C,cie_interp(_CIE_ILLUMINANTS['D65'],C[0],kind='spd')[1:]))
     M = _MUNSELL.copy()
