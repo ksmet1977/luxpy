@@ -108,20 +108,22 @@ def get_macadam_ellipse(xy = None, k_neighbours = 3, nsteps = 10, average_cik = 
         
         # Calculate k_neighbours closest ellipses to xy:
         tree = cKDTree(v_mac[:,2:4], copy_data = True)
-        d, inds = tree.query(xy, k = k_neighbours )
+        d, inds = tree.query(xy, k = k_neighbours)
     
         if k_neighbours  > 1:
             pd = 1
             w = (1.0 / np.abs(d)**pd)[:,:,None] # inverse distance weigthing
-            v_mac_est = np.sum(w * v_mac[inds,:], axis=1) / np.sum(w, axis=1) # for average xyc
             if average_cik == True:
                 cik_long_est = np.sum(w * cik_long[inds,:], axis=1) / np.sum(w, axis=1)
+            else:
+                v_mac_est = np.sum(w * v_mac[inds,:], axis=1) / np.sum(w, axis=1) # for average xyc
+
         else:
             v_mac_est = v_mac[inds,:].copy()
         
         # convert cik back to v:
-        cik_est = np.dstack((cik_long_est[:,0:2],cik_long_est[:,2:4]))
-        if average_cik == True:
+        if (average_cik == True) & (k_neighbours >1):
+            cik_est = np.dstack((cik_long_est[:,0:2],cik_long_est[:,2:4]))
             v_mac_est = math.cik_to_v(cik_est, inverse = True)
         v_mac_est[:,2:4] = xy
     else:

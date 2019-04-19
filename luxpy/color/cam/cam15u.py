@@ -138,7 +138,7 @@ def cam15u(data, fov = 10.0, inputtype = 'xyz', direction = 'forward', outin = '
             rgb = (lms / _CMF['2006_10']['K']) * k # convert to rho, gamma, beta
         elif (inputtype == 'xyz') & (direction == 'forward'):
             rgb = np.dot(Mxyz2rgb,data[i].T).T
-       
+
         if direction == 'forward':
             
             # apply cube-root compression:

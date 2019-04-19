@@ -699,10 +699,12 @@ def v_to_cik(v, inverse = False):
         :v: 
             | (Nx5) np.ndarray
             | ellipse parameters [Rmax,Rmin,xc,yc,theta]
+        :inverse:
+            | If True: return inverse of cik.
     
     Returns:
         :cik: 
-            '2x2xN' (covariance matrix)^-1
+            'Nx2x2' (covariance matrix)^-1
     
     Notes:
         | cik is not actually a covariance matrix,
@@ -728,7 +730,10 @@ def cik_to_v(cik, xyc = None, inverse = False):
     
     Args:
         :cik: 
-            '2x2xN' (covariance matrix)^-1
+            | 'Nx2x2' (covariance matrix)^-1
+        :inverse:
+            | If True: input is inverse of cik.
+              
             
     Returns:
         :v: 
@@ -748,14 +753,17 @@ def cik_to_v(cik, xyc = None, inverse = False):
     g22 = cik[:,1,1] 
     g12 = cik[:,0,1]
 
-    theta2 = 1/2*np.arctan2(2*g12,(g11-g22))
-    theta = theta2 + (np.pi/2)*(g12<0)
-    theta2 = theta
+    theta = 0.5*np.arctan2(2*g12,(g11-g22)) + (np.pi/2)*(g12<0)
+    #theta = theta2 + (np.pi/2)*(g12<0)
+    #theta2 = theta
     cottheta = np.cos(theta)/np.sin(theta) #np.cot(theta)
     cottheta[np.isinf(cottheta)] = 0
 
     a = 1/np.sqrt((g22 + g12*cottheta))
     b = 1/np.sqrt((g11 - g12*cottheta))
+
+    # ensure largest ellipse axis is first (correct angle):
+    c = b>a; a[c], b[c], th[c] = b[c],a[c],th[c]+np.pi/2
 
     v = np.vstack((a, b, np.zeros(a.shape), np.zeros(a.shape), theta)).T
     
@@ -764,3 +772,5 @@ def cik_to_v(cik, xyc = None, inverse = False):
         v[:,2:4] = xyc
     
     return v
+
+    
