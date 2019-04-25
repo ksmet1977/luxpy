@@ -76,7 +76,11 @@ Module with useful basic math functions
  :v_to_cik(): Calculate 2x2 '(covariance matrix)^-1' elements cik from v-format ellipse descriptor.
 
  :cik_to_v(): Calculate v-format ellipse descriptor from 2x2 'covariance matrix'^-1 cik.
+ 
+ :fmod(): Floating point modulus, e.g.: fmod(theta, np.pi * 2) would keep an angle in [0, 2pi]b
 
+ :fit_ellipse(): Fit an ellipse to supplied data points.
+ 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 ===============================================================================
 """
@@ -88,7 +92,7 @@ __all__  = ['normalize_3x3_matrix','symmM_to_posdefM','check_symmetric',
             'histogram', 'pol2cart', 'cart2pol', 'spher2cart', 'cart2spher']
 __all__ += ['bvgpdf','mahalanobis2','dot23', 'rms','geomean','polyarea']
 __all__ += ['magnitude_v','angle_v1v2']
-__all__ += ['v_to_cik', 'cik_to_v']
+__all__ += ['v_to_cik', 'cik_to_v', 'fmod', 'fit_ellipse']
 
 
 #------------------------------------------------------------------------------
@@ -763,7 +767,7 @@ def cik_to_v(cik, xyc = None, inverse = False):
     b = 1/np.sqrt((g11 - g12*cottheta))
 
     # ensure largest ellipse axis is first (correct angle):
-    c = b>a; a[c], b[c], th[c] = b[c],a[c],th[c]+np.pi/2
+    c = b>a; a[c], b[c], theta[c] = b[c],a[c],theta[c]+np.pi/2
 
     v = np.vstack((a, b, np.zeros(a.shape), np.zeros(a.shape), theta)).T
     
@@ -773,4 +777,74 @@ def cik_to_v(cik, xyc = None, inverse = False):
     
     return v
 
+def fmod(x, y):
+    """
+    Floating point modulus
+        e.g., fmod(theta, np.pi * 2) would keep an angle in [0, 2pi]
+
+    Args:
+        :x:
+            | angle to restrict
+        :y: 
+            | end of  interval [0, y] to restrict to
+    
+    Returns:
+        :r: floating point modulus
+    """
+    r = x
+    while(r < 0):
+        r = r + y
+    while(r > y):
+        r = r - y
+    return r
+
+
+def fit_ellipse(xy):
+    """
+    Fit an ellipse to supplied data points.
+
+    Args:
+        :xy: 
+            | coordinates of points to fit (Nx2 array)
+            
+    Returns:
+        :v:
+            | vector with ellipse parameters [Rmax,Rmin, xc,yc, theta]
+    """
+    # remove centroid:
+    center = xy.mean(axis=0)
+    xy -= center
+    
+    # Fit ellipse:
+    x, y = xy[:,0:1], xy[:,1:2]
+    D = np.hstack((x * x, x * y, y * y, x, y, np.ones_like(x)))
+    S, C = np.dot(D.T, D), np.zeros([6, 6])
+    C[0, 2], C[2, 0], C[1, 1] = 2, 2, -1
+    U, s, V = np.linalg.svd(np.dot(np.linalg.inv(S), C))
+    e = U[:, 0]
+        
+    # get ellipse axis lengths, center and orientation:
+    b, c, d, f, g, a = e[1] / 2, e[2], e[3] / 2, e[4] / 2, e[5], e[0]
+    
+    # get ellipse center:
+    num = b * b - a * c
+    xc = ((c * d - b * f) / num) + center[0]
+    yc = ((a * f - b * d) / num) + center[1]
+    
+    # get ellipse orientation:
+    theta = np.arctan2(np.array(2 * b), np.array((a - c))) / 2
+    
+    # axis lengths:
+    up = 2 * (a * f * f + c * d * d + g * b * b - 2 * b * d * f - a * c * g)
+    down1 = (b * b - a * c) * ((c - a) * np.sqrt(1 + 4 * b * b / ((a - c) * (a - c))) - (c + a))
+    down2 = (b * b - a * c) * ((a - c) * np.sqrt(1 + 4 * b * b / ((a - c) * (a - c))) - (c + a))
+    a, b  = np.sqrt(up / down1), np.sqrt(up / down2)
+
+    # assert that a is the major axis (otherwise swap and correct angle)
+    if(b > a):
+        b, a = a, b
+
+        # ensure the angle is betwen 0 and 2*pi
+        theta = fmod(theta, 2.0 * np.pi)
+    return np.hstack((a, b, xc, yc, theta))
     

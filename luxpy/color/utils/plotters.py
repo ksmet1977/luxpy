@@ -54,7 +54,7 @@ Module with functions related to plotting of color data
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
-from luxpy import np, plt, _EPS, _CIEOBS, _CSPACE, _CSPACE_AXES, _CIE_ILLUMINANTS, _CMF, daylightlocus, colortf, Yxy_to_xyz, asplit, spd_to_xyz, cri_ref, xyz_to_srgb
+from luxpy import np, plt, math, _EPS, _CIEOBS, _CSPACE, _CSPACE_AXES, _CIE_ILLUMINANTS, _CMF, daylightlocus, colortf, Yxy_to_xyz, asplit, spd_to_xyz, cri_ref, xyz_to_srgb
 
 from matplotlib.patches import Polygon
 
@@ -603,6 +603,7 @@ def plotellipse(v, cspace_in = 'Yxy', cspace_out = None, nsamples = 100, \
         :returns: None, or whatever set by :out:.
     """
     Yxys = np.zeros((nsamples,3,v.shape[0]))
+    ellipse_vs = np.zeros((v.shape[0],5))
     for i,vi in enumerate(v):
         
         # Set sample density of ellipse boundary:
@@ -625,6 +626,12 @@ def plotellipse(v, cspace_in = 'Yxy', cspace_out = None, nsamples = 100, \
         if (cspace_out is not None) & (cspace_in is not None):
             Yxy = colortf(Yxy, cspace_in + '>' + cspace_out)
             Yxyc = colortf(Yxyc, cspace_in + '>' + cspace_out)
+            Yxys[:,:,i] = Yxy
+            
+            # get ellipse parameters in requested color space:
+            ellipse_vs[i,:] = math.fit_ellipse(Yxy[:,1:])
+            #de = np.sqrt((Yxy[:,1]-Yxyc[:,1])**2 + (Yxy[:,2]-Yxyc[:,2])**2)
+            #ellipse_vs[i,:] = np.hstack((de.max(),de.min(),Yxyc[:,1],Yxyc[:,2],np.nan)) # nan because orientation is xy, but request is some other color space. Change later to actual angle when fitellipse() has been implemented
 
         
         # plot ellipses:
@@ -650,7 +657,7 @@ def plotellipse(v, cspace_in = 'Yxy', cspace_out = None, nsamples = 100, \
             if show_grid == True:
                 plt.grid()
             #plt.show()     
-            
+    Yxys = np.transpose(Yxys,axes=(0,2,1))       
     if out is not None:
         return eval(out)
     else:
