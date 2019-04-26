@@ -813,7 +813,7 @@ def fit_ellipse(xy):
     """
     # remove centroid:
     center = xy.mean(axis=0)
-    xy -= center
+    xy = xy - center
     
     # Fit ellipse:
     x, y = xy[:,0:1], xy[:,1:2]

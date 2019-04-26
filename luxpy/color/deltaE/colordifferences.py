@@ -3,7 +3,7 @@
 Module for color difference calculations
 ========================================
 
- :process_DEi(): Process color difference input DEi for output (helper fnc).
+ :_process_DEi(): Process color difference input DEi for output (helper fnc).
 
  :DE_camucs(): Calculate color appearance difference DE using camucs type model.
 
@@ -18,7 +18,7 @@ from luxpy import np, np2d, cam, _CSPACE, colortf, xyz_to_lab
 
 __all__ = ['DE_camucs', 'DE2000','DE_cspace']
 
-def process_DEi(DEi, DEtype = 'jab', avg = None, avg_axis = 0, out = 'DEi'):
+def _process_DEi(DEi, DEtype = 'jab', avg = None, avg_axis = 0, out = 'DEi'):
     """
     Process color difference input DEi for output (helper function).
     
@@ -31,7 +31,7 @@ def process_DEi(DEi, DEtype = 'jab', avg = None, avg_axis = 0, out = 'DEi'):
             |    - 'jab' : calculates full color difference over all 3 dimensions.
             |    - 'ab'  : calculates chromaticity difference.
             |    - 'j'   : calculates lightness or brightness difference 
-            |             (depending on :outin:).
+            |             (depending on :out:).
             |    - 'j,ab': calculates both 'j' and 'ab' options 
                           and returns them as a tuple.
         :avg:
@@ -120,7 +120,7 @@ def DE_camucs(xyzt, xyzr, DEtype = 'jab', avg = None, avg_axis = 0, out = 'DEi',
             | Str specifier for which type of color attribute compression 
               parameters to use:
             |   -'ucs': uniform color space, 
-            |   -'lcd', large color differences, 
+            |   -'lcd': large color differences, 
             |   -'scd': small color differences
 
     Note:
@@ -147,7 +147,7 @@ def DE_camucs(xyzt, xyzr, DEtype = 'jab', avg = None, avg_axis = 0, out = 'DEi',
     DEi = ((((jabt[...,0:1]-jabr[...,0:1])/KL)**2).sum(axis = jabt[...,0:1].ndim - 1, keepdims = True),\
                ((jabt[...,1:3]-jabr[...,1:3])**2).sum(axis = jabt[...,1:3].ndim - 1, keepdims = True))
     
-    return process_DEi(DEi, DEtype = DEtype, avg = avg, avg_axis = avg_axis, out = out)
+    return _process_DEi(DEi, DEtype = DEtype, avg = avg, avg_axis = avg_axis, out = out)
     
 
 
@@ -286,7 +286,7 @@ def DE2000(xyzt, xyzr, dtype = 'xyz', DEtype = 'jab', avg = None, avg_axis = 0, 
     DEi = ((dL/(kL*SL))**2 , (dCp/(kC*SC))**2 + (dH/(kH*SH))**2 + RT*(dCp/(kC*SC))*(dH/(kH*SH)))
     
 
-    return process_DEi(DEi, DEtype = DEtype, avg = avg, avg_axis = avg_axis, out = out)
+    return _process_DEi(DEi, DEtype = DEtype, avg = avg, avg_axis = avg_axis, out = out)
 
 def DE_cspace(xyzt, xyzr, dtype = 'xyz', tf = _CSPACE, DEtype = 'jab', avg = None, avg_axis = 0, out = 'DEi',
               xyzwt = None, xyzwr = None, fwtft = {}, fwtfr = {}, KLCH = None,\
@@ -442,6 +442,6 @@ def DE_cspace(xyzt, xyzr, dtype = 'xyz', tf = _CSPACE, DEtype = 'jab', avg = Non
             
             DEi = ((dJ/KLCH[0])**2, (dC/KLCH[1])**2 + (dH/KLCH[2])**2)
     
-    return process_DEi(DEi, DEtype = DEtype, avg = avg, avg_axis = avg_axis, out = out)
+    return _process_DEi(DEi, DEtype = DEtype, avg = avg, avg_axis = avg_axis, out = out)
 
 
