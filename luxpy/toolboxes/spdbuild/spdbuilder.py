@@ -1131,7 +1131,7 @@ def spd_constructor_3(x, constructor_pars = {}, **kwargs):
     spd = get_w_summed_spd(M, spds)
     
     # When all out-of-gamut: set spd to NaN's:
-    if sum(M) == 0:
+    if M.sum() == 0:
         spd[1:,:] = np.nan
         
     return spd,M,spds
@@ -1662,7 +1662,6 @@ def initialize_spd_optim_pars(component_data, N_components = None,\
             spd_optim_pars['UB'] =  np.ones(spd_model_pars['triangle_strengths'].shape[0])
             spd_optim_pars['x0'] =  spd_model_pars['triangle_strengths'].copy()
     
-    print(spd_optim_pars)
     return spd_optim_pars, spd_model_pars
 
             
@@ -1827,7 +1826,16 @@ def spd_optimizer(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs = _CIEO
         if isinstance(component_spds,dict): # optimize spectrum fluxes of set of component spectra defined by parameters in dict
             if N_components is None:
                 N_components = component_spds['N_components']
-            spds = component_spds
+            else:
+                
+                if bool(component_spds) == False: #isempty
+                    spd_model_pars = initialize_spd_model_pars(N_components, N_components = N_components, allow_butterworth_mono_spds = allow_butterworth_mono_spds, optimizer_type = optimizer_type, wl = wl)
+                    spd_model_pars["peakwl"] = peakwl
+                    spd_model_pars["fwhm"] = fwhm
+                    
+                    spd_model_pars = initialize_spd_model_pars(spd_model_pars, N_components = N_components, allow_butterworth_mono_spds = allow_butterworth_mono_spds, optimizer_type = optimizer_type, wl = wl)
+                    print("modelpars:",spd_model_pars)
+            spds = spd_model_pars
         else: # optimize spectrum fluxes of pre-defined set of component spectra:
             spds = component_spds 
             N_components = spds.shape[0]
@@ -1979,10 +1987,11 @@ if __name__ == '__main__':
     obj_fcn_weights = [1,1]
     decimals = [5,5]
     
-    N_components = 5 #if not None, spd model parameters (peakwl, fwhm, ...) are optimized
+    N_components = 4 #if not None, spd model parameters (peakwl, fwhm, ...) are optimized
+    component_spds = None; #component_spds= {}; # if empty dict, then generate using initialize_spd_model_pars and overwrite with function args: peakwl and fwhm. N_components must match length of either peakwl or fwhm
     allow_butterworth_mono_spds = False
     S3, _ = spd_optimizer(target, tar_type = tar_type, cspace_bwtf = {'cieobs' : cieobs, 'mode' : 'search'},\
-                          optimizer_type = '2mixer', N_components = N_components,\
+                          optimizer_type = '2mixer', N_components = N_components,component_spds = component_spds,\
                           allow_butterworth_mono_spds = allow_butterworth_mono_spds,\
                           peakwl = peakwl, fwhm = fwhm, obj_fcn = obj_fcn, obj_tar_vals = obj_tar_vals,\
                           obj_fcn_weights = obj_fcn_weights, decimals = decimals,\
