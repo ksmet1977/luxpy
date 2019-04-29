@@ -415,7 +415,7 @@ def spd_builder(flux = None, component_spds = None, peakwl = 450, fwhm = 20, bw_
             | int or float or list or ndarray, optional
             | Peak wavelengths of the monochromatic led.
         :fwhm:
-            | int or float or list or ndarray, optional
+            | int or float or list or ndarray, optional (but must be same shape as peakw!)
             | Full-Width-Half-Maximum of gaussian.
         :wl:
             | _WL3, optional
@@ -1102,7 +1102,7 @@ def spd_constructor_3(x, constructor_pars = {}, **kwargs):
     spds = spd # component spds in Nxwl format
     
     # Calculate xyzi and Yxyi of component spectra:
-    xyzi = spd_to_xyz(spds, relative = False, cieobs = cieobs)
+    xyzi = spd_to_xyz(spds, relative = False, cieobs = cp['cieobs'])
     Yxyi = xyz_to_Yxy(xyzi)
 
     # Generate all possible 3-channel combinations (component triangles):
@@ -1612,39 +1612,43 @@ def initialize_spd_optim_pars(component_data, N_components = None,\
             spd_optim_pars['x0'] = np.hstack((spd_optim_pars['x0'],spd_model_pars['triangle_strengths']))
         
     elif isinstance(component_data,dict):
+        
         # input is dict with component parameters:
         spd_optim_pars['LB'] = []
         spd_optim_pars['UB'] = []
         spd_optim_pars['x0'] = []
-        
         if component_data['peakwl'] is None:
-            spd_optim_pars['LB'].append(spd_model_pars['peakwl_min'])
-            spd_optim_pars['UB'].append(spd_model_pars['peakwl_max'])
-            spd_optim_pars['x0'].append(list(np.linspace(min(spd_model_pars['peakwl_min']),max(spd_model_pars['peakwl_max']),N)))
+            spd_optim_pars['LB'] += list(spd_model_pars['peakwl_min'])
+            spd_optim_pars['UB'] += list(spd_model_pars['peakwl_max'])
+            spd_optim_pars['x0'] += list(np.linspace(min(spd_model_pars['peakwl_min']),max(spd_model_pars['peakwl_max']),N))
         
         if component_data['fwhm'] is None:
-            spd_optim_pars['LB'].append(spd_model_pars['fwhm_min'])
-            spd_optim_pars['UB'].append(spd_model_pars['fwhm_max'])
+            spd_optim_pars['LB'] += list(spd_model_pars['fwhm_min'])
+            spd_optim_pars['UB'] += list(spd_model_pars['fwhm_max'])
             fwhm_ = (wl[-1]-wl[0])/(N-1)*np.ones(N)
             if fwhm_[0] < min(spd_model_pars['fwhm_min']):
                 fwhm_ = min(spd_model_pars['fwhm_min'])*np.ones(N)
-            spd_optim_pars['x0'].append(list(fwhm_))
+            spd_optim_pars['x0'] += list(fwhm_)
         
         if allow_butterworth_mono_spds == True:
-            spd_optim_pars['LB'].append(spd_model_pars['bw_order_min'])
-            spd_optim_pars['UB'].append(spd_model_pars['bw_order_max'])
-            spd_optim_pars['x0'].append(spd_model_pars['bw_order'])
+            spd_optim_pars['LB'] += list(spd_model_pars['bw_order_min'])
+            spd_optim_pars['UB'] += list(spd_model_pars['bw_order_max'])
+            spd_optim_pars['x0'] += list(spd_model_pars['bw_order'])
 
         
         if optimizer_type == '2mixer':
-            spd_optim_pars['LB'].append(list(np.zeros(N-3)))
-            spd_optim_pars['UB'] .append(list(np.ones(N-3)))
-            spd_optim_pars['x0'].append(spd_model_pars['pair_strengths'])
+            spd_optim_pars['LB'] += list(np.zeros(N-3))
+            spd_optim_pars['UB'] += list(np.ones(N-3))
+            spd_optim_pars['x0'] += list(spd_model_pars['pair_strengths'])
         
         elif optimizer_type == '3mixer':
-            spd_optim_pars['LB'].append(list(np.zeros(spd_model_pars['triangle_strengths'].shape[0])))
-            spd_optim_pars['UB'].append(list(np.ones(spd_model_pars['triangle_strengths'].shape[0])))
-            spd_optim_pars['x0'].append(spd_model_pars['triangle_strengths'])
+            spd_optim_pars['LB'] += list(np.zeros(spd_model_pars['triangle_strengths'].shape[0]))
+            spd_optim_pars['UB'] += list(np.ones(spd_model_pars['triangle_strengths'].shape[0]))
+            spd_optim_pars['x0'] += list(spd_model_pars['triangle_strengths'])
+            
+        spd_optim_pars['x0'] = np.array(spd_optim_pars['x0'])
+        spd_optim_pars['LB'] = np.array(spd_optim_pars['LB'])
+        spd_optim_pars['UB'] = np.array(spd_optim_pars['UB'])
 
     else:
         # input is ndarray with component spectra
@@ -1658,7 +1662,7 @@ def initialize_spd_optim_pars(component_data, N_components = None,\
             spd_optim_pars['UB'] =  np.ones(spd_model_pars['triangle_strengths'].shape[0])
             spd_optim_pars['x0'] =  spd_model_pars['triangle_strengths'].copy()
     
-
+    print(spd_optim_pars)
     return spd_optim_pars, spd_model_pars
 
             
@@ -1823,6 +1827,7 @@ def spd_optimizer(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs = _CIEO
         if isinstance(component_spds,dict): # optimize spectrum fluxes of set of component spectra defined by parameters in dict
             if N_components is None:
                 N_components = component_spds['N_components']
+            spds = component_spds
         else: # optimize spectrum fluxes of pre-defined set of component spectra:
             spds = component_spds 
             N_components = spds.shape[0]

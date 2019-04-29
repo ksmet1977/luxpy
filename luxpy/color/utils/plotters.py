@@ -111,7 +111,7 @@ def plot_color_data(x,y,z=None, axh=None, show = True, cieobs =_CIEOBS, \
             fig = plt.figure()
             axh = plt.axes(projection='3d')
         axh.plot3D(x,y,z,formatstr, linewidth = 2,**kwargs)
-        plt.xlabel(_CSPACE_AXES[cspace][0], kwargs)
+        plt.zlabel(_CSPACE_AXES[cspace][0], kwargs)
     else:
         plt.plot(x,y,formatstr,linewidth = 2,**kwargs)
         
@@ -250,7 +250,7 @@ def plotBB(ccts = None, cieobs =_CIEOBS, cspace = _CSPACE, axh = None, cctlabels
                     plt.plot(x[i],y[i],'k+', color = '0.5')
                     plt.text(x[i]*1.05,y[i]*0.95,'{:1.0f}K'.format(ccts1[i]), color = '0.5')
         plt.plot(x[-1],y[-1],'k+', color = '0.5')
-        plt.text(x[-1]*1.05,y[-1]*0.95,'{:1.3e}K'.format(ccts[-1]), color = '0.5')    
+        plt.text(x[-1]*1.05,y[-1]*0.95,'{:1.0e}K'.format(ccts[-1]), color = '0.5')    
     if show == False:
         return axh
     
