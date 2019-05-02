@@ -3,7 +3,7 @@
 
 ## Installation:
 
- 1. Download and install the **seabreeze** installer from sourceforge:[https://sourceforge.net/projects/seabreeze/files/SeaBreeze/installers/](https://sourceforge.net/projects/seabreeze/files/SeaBreeze/installers/)
+ 1. Download and install the **seabreeze** installer from sourceforge: [https://sourceforge.net/projects/seabreeze/files/SeaBreeze/installers/](https://sourceforge.net/projects/seabreeze/files/SeaBreeze/installers/)
  2. Install **python-seabreeze**: ``conda install -c poehlmann python-seabreeze``
  3. Windows: Force the spectrometer to use a libusb driver via Zadig: [zadig.akeo.ie](http://zadig.akeo.ie/)
  4. Install **pyusb** (``import usb.core``, ``usb.core.find()`` should work before proceeding)
