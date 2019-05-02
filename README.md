@@ -3,7 +3,7 @@
 
 [logo]: https://github.com/ksmet1977/luxpy/blob/master/docs/images/LUXPY__logo.jpg
 
-* Author: K. A.G. Smet (ksmet1977 at gmail.com)
+* Author: Kevin A.G. Smet (ksmet1977 at gmail.com)
 * Version: 1.4.0
 * Date: May 02, 2019
 * License: [GPLv3](https://github.com/ksmet1977/luxpy/blob/master/LICENSE.md)
