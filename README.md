@@ -10,7 +10,7 @@
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1298963.svg)](https://doi.org/10.5281/zenodo.1298963)
 
-### Cite:
+### Cite LuxPy:
 If you use the package, please cite the following **tutorial paper** published in **LEUKOS**:
 [**Smet, K. A. G. (2019). Tutorial: The LuxPy Python Toolbox for Lighting and Color Science. LEUKOS, 1–23. DOI: 10.1080/15502724.2018.1518717**](https://www.tandfonline.com/doi/full/10.1080/15502724.2018.1518717)
 
@@ -39,9 +39,10 @@ As of May 2019, LuxPy now also has a toolbox **spectro** for **spectral measurem
 * spectro.oceanoptics (under development): more tricky installation (requires manual install of **seabreeze** SDK and **python-seabreeze**, **pyusb**, ...; see subpackage help for more info)
 
 -------------------------------------------------------------------------------
-## How to use (basics)?
+## How to use LuxPy (basics)?
 An overview of the basic usage is given in the [**luxpy basic usage.ipynb**](https://github.com/ksmet1977/luxpy/blob/master/luxpy_basic_usage.ipynb) jupyter notebook,
- as well as the tutorial paper published in LEUKOS.
+ as well as the tutorial paper published in LEUKOS: [**Smet, K. A. G. (2019). Tutorial: The LuxPy Python Toolbox for Lighting and Color Science. LEUKOS, 1–23. DOI: 10.1080/15502724.2018.1518717**](https://www.tandfonline.com/doi/full/10.1080/15502724.2018.1518717)
+
 
 For more details on installation, structure, functionality, etc., see: 
  1. the github pages on: [**ksmet1977.github.io/luxpy/**](http://ksmet1977.github.io/luxpy/) 
