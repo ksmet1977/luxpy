@@ -10,6 +10,9 @@
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1298963.svg)](https://doi.org/10.5281/zenodo.1298963)
 
+[**Smet, K. A. G. (2019). Tutorial: The LuxPy Python Toolbox for Lighting and Color Science. LEUKOS, 1–23. https://doi.org/10.1080/15502724.2018.1518717**](https://www.tandfonline.com/doi/full/10.1080/15502724.2018.1518717)
+
+
 **Luxpy** is an open source package under a GPLv3 license that supports several common
 **lighting**, **colorimetric**, **color appearance** and other **color science**
  related calculations and models, such as:
@@ -28,8 +31,7 @@
 * color differences (cam02ucs, DE2000, ...)
 * ...
 
--------------------------------------------------------------------------------
-May 2019: LuxPy now also has a toolbox **spectro** for **spectral measurements** with **JETI** and **OceanOptics** spectrometers:
+As of May 2019, LuxPy now also has a toolbox **spectro** for **spectral measurements** with **JETI** and **OceanOptics** spectrometers:
 * spectro.jeti: easy installation (dll's are part of sub-package).
 * spectro.oceanoptics (under development): more tricky installation (requires manual install of **seabreeze** SDK and **python-seabreeze**, **pyusb**, ...; see subpackage help for more info)
 
