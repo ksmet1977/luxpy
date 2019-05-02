@@ -52,7 +52,7 @@ Default parameters:
     
 Notes:
 ------
-    1. Changed read_eeprom_slot() in eeprom.py in *pyseabreeze* because the 
+    1. Changed read_eeprom_slot() in eeprom.py in **pyseabreeze** because the 
 	ubs output used ',' as decimal separator instead of '.' (probably because
 	of the use of a french keyboard, despite having system set to use '.' as separator):  
 	line 20 in eeprom.py: "return data.rstrip('\x00')" was changed to
@@ -60,7 +60,7 @@ Notes:
 	
     2. More info on: https://github.com/ap--/python-seabreeze
 	
-	3. Cooling for supported spectrometers not yet implemented (May 2, 2019)
+	3. Cooling for supported spectrometers not yet implemented/tested (May 2, 2019).
  
     4. Due to the way ocean optics firmware/drivers are implemented, 
 	most spectrometers do not support an abort mode of the standard 'free running mode', 

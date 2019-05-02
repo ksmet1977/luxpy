@@ -4,7 +4,7 @@ LuxPy: a package for lighting and color science
 ===============================================
 
     * Author: K. A.G. Smet (ksmet1977 at gmail.com)
-    * Version: 1.3.15
+    * Version: 1.4.0
     * Date: May 02, 2019
     * License: GPLv3
 
@@ -112,8 +112,14 @@ LuxPy package structure
 |		/.hypspcsim
 |			hyperspectral_img_simulator.py
 |
-|     /.iolidfiles
-|       io_lid_files.py
+|       /.iolidfiles
+|          io_lid_files.py
+|       
+|       /spectro
+|          /jeti
+|             jeti.py
+|          /oceanoptics
+|             oceanoptics.py
 
 
 
@@ -179,6 +185,8 @@ from scipy import interpolate
 from scipy.optimize import minimize
 from scipy.spatial import cKDTree
 from skimage.io import imsave as skimsave
+# (imports for spectro toolbox are done there to avoid dependency 
+# on manual install requirements)
 __all__ += ['np','pd','plt','sp','interpolate','minimize','cKDTree','skimsave']
 
 
@@ -346,5 +354,9 @@ __all__ += ['hypspcim']
 #   Load hypspcim sub_package:
 from .toolboxes.iolidfiles import io_lid_files as iolidfiles
 __all__ += ['iolidfiles']
+
+#   Load spectro sub_package:
+from .toolboxes.spectro import spectro as spectro
+__all__ += ['spectro']
 
 ###############################################################################

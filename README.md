@@ -4,7 +4,7 @@
 [logo]: https://github.com/ksmet1977/luxpy/blob/master/docs/images/LUXPY__logo.jpg
 
 * Author: K. A.G. Smet (ksmet1977 at gmail.com)
-* Version: 1.3.15
+* Version: 1.4.0
 * Date: May 02, 2019
 * License: [GPLv3](https://github.com/ksmet1977/luxpy/blob/master/LICENSE.md)
 
@@ -24,7 +24,14 @@
 * calculation of photobiological quantities
 * Multi-component spectrum creation and optimization
 * Hyper-spectral image simulation and rendering
+* MacAdam ellipses
+* color differences (cam02ucs, DE2000, ...)
 * ...
+
+-------------------------------------------------------------------------------
+May 2019: LuxPy now also has a toolbox **spectro** for **spectral measurements** with **JETI** and **OceanOptics** spectrometers:
+* spectro.jeti: easy installation (dll's are part of sub-package).
+* spectro.oceanoptics (under development): more tricky installation (requires manual install of **seabreeze** SDK and **python-seabreeze**, **pyusb**, ...; see subpackage help for more info)
 
 -------------------------------------------------------------------------------
 ## How to use (basics)?
