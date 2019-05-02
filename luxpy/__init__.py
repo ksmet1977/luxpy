@@ -9,7 +9,7 @@ LuxPy: a package for lighting and color science
     * License: GPLv3
 
     * DOI: https://doi.org/10.5281/zenodo.1298963
-
+    * Cite: `Smet, K. A. G. (2019). Tutorial: The LuxPy Python Toolbox for Lighting and Color Science. LEUKOS, 1–23. DOI: 10.1080/15502724.2018.1518717 <https://www.tandfonline.com/doi/full/10.1080/15502724.2018.1518717>`_ 
 
 License
 -------
