@@ -34,6 +34,11 @@ May 2019: LuxPy now also has a toolbox **spectro** for **spectral measurements**
 * spectro.oceanoptics (under development): more tricky installation (requires manual install of **seabreeze** SDK and **python-seabreeze**, **pyusb**, ...; see subpackage help for more info)
 
 -------------------------------------------------------------------------------
+## Cite:
+If you use the package, please cite:
+[**Smet, K. A. G. (2019). Tutorial: The LuxPy Python Toolbox for Lighting and Color Science. LEUKOS, 1–23. https://doi.org/10.1080/15502724.2018.1518717**](https://www.tandfonline.com/doi/full/10.1080/15502724.2018.1518717)
+
+-------------------------------------------------------------------------------
 ## How to use (basics)?
 An overview of the basic usage is given in the [**luxpy basic usage.ipynb**](https://github.com/ksmet1977/luxpy/blob/master/luxpy_basic_usage.ipynb) jupyter notebook 
 
