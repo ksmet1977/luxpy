@@ -37,12 +37,13 @@ As of May 2019, LuxPy now also has a toolbox **spectro** for **spectral measurem
 
 -------------------------------------------------------------------------------
 ## Cite:
-If you use the package, please cite:
+If you use the package, please cite the following tutorial paper published in LEUKOS:
 [**Smet, K. A. G. (2019). Tutorial: The LuxPy Python Toolbox for Lighting and Color Science. LEUKOS, 1–23. https://doi.org/10.1080/15502724.2018.1518717**](https://www.tandfonline.com/doi/full/10.1080/15502724.2018.1518717)
 
 -------------------------------------------------------------------------------
 ## How to use (basics)?
-An overview of the basic usage is given in the [**luxpy basic usage.ipynb**](https://github.com/ksmet1977/luxpy/blob/master/luxpy_basic_usage.ipynb) jupyter notebook 
+An overview of the basic usage is given in the [**luxpy basic usage.ipynb**](https://github.com/ksmet1977/luxpy/blob/master/luxpy_basic_usage.ipynb) jupyter notebook,
+ as well as the tutorial paper published in LEUKOS.
 
 For more details on installation, structure, functionality, etc., see: 
  1. the github pages on: [**ksmet1977.github.io/luxpy/**](http://ksmet1977.github.io/luxpy/) 
