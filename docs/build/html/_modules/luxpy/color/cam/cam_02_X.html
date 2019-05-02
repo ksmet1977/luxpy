@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.color.cam.cam_02_X &mdash; LuxPy 1.3.14 documentation</title>
+  <title>luxpy.color.cam.cam_02_X &mdash; LuxPy 1.3.15 documentation</title>
   
 
   
@@ -56,7 +56,7 @@
             
             
               <div class="version">
-                1.3.14
+                1.3.15
               </div>
             
           
@@ -173,10 +173,10 @@
 
 <span class="sd"> :_CAM_02_X_UNIQUE_HUE_DATA: database of unique hues with corresponding </span>
 <span class="sd">                             Hue quadratures and eccentricity factors </span>
-<span class="sd">                             for ciecam02, cam16, ciecam97s, cam15u)</span>
+<span class="sd">                             for ciecam02, cam16, ciecam97s)</span>
 
 <span class="sd"> :_CAM_02_X_SURROUND_PARAMETERS: database of surround param. c, Nc, F and FLL </span>
-<span class="sd">                                 for ciecam02, cam16, ciecam97s and cam15u.</span>
+<span class="sd">                                 for ciecam02, cam16, ciecam97s.</span>
 
 <span class="sd"> :_CAM_02_X_NAKA_RUSHTON_PARAMETERS: | database with parameters </span>
 <span class="sd">                                       (n, sig, scaling and noise) </span>
@@ -391,7 +391,7 @@
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        :h: </span>
-<span class="sd">            | float or list[float] or ndarray with hue data in degrees (!).</span>
+<span class="sd">            | float or ndarray [(N,) or (N,1)] with hue data in degrees (!).</span>
 <span class="sd">        :unique_hue data:</span>
 <span class="sd">            | None or str or dict, optional</span>
 <span class="sd">            |   - None: H = h.</span>
@@ -402,30 +402,42 @@
 <span class="sd">    </span>
 <span class="sd">    Returns:</span>
 <span class="sd">        :H: </span>
-<span class="sd">            | float or list[float] or ndarray of Hue quadrature value(s).</span>
+<span class="sd">            | ndarray of Hue quadrature value(s).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">unique_hue_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">h</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">unique_hue_data</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
         <span class="n">unique_hue_data</span> <span class="o">=</span> <span class="n">_UNIQUE_HUE_DATA</span><span class="p">[</span><span class="n">unique_hue_data</span><span class="p">]</span>
     
-    <span class="n">squeezed</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">if</span> <span class="n">h</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">h</span><span class="p">,</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
-        <span class="n">squeezed</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">changed_number_to_array</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">h</span><span class="p">,</span><span class="nb">float</span><span class="p">)</span> <span class="o">|</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">h</span><span class="p">,</span><span class="nb">int</span><span class="p">):</span>
+       <span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+       <span class="n">changed_number_to_array</span> <span class="o">=</span> <span class="kc">True</span>
+    
+    <span class="n">squeezed</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="n">h</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">h</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">h</span><span class="p">,</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">squeezed</span> <span class="o">=</span> <span class="kc">True</span>
+
     
     <span class="n">hi</span> <span class="o">=</span> <span class="n">unique_hue_data</span><span class="p">[</span><span class="s1">&#39;hi&#39;</span><span class="p">]</span>
     <span class="n">Hi</span> <span class="o">=</span> <span class="n">unique_hue_data</span><span class="p">[</span><span class="s1">&#39;Hi&#39;</span><span class="p">]</span>
     <span class="n">ei</span> <span class="o">=</span> <span class="n">unique_hue_data</span><span class="p">[</span><span class="s1">&#39;ei&#39;</span><span class="p">]</span>
-    <span class="n">h</span><span class="p">[</span><span class="n">h</span><span class="o">&lt;</span><span class="n">hi</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">h</span><span class="p">[</span><span class="n">h</span><span class="o">&lt;</span><span class="n">hi</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">+</span> <span class="mf">360.0</span>
-    <span class="n">h_hi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">h</span><span class="p">),</span><span class="n">repeats</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">hi</span><span class="p">),</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">h</span><span class="p">[</span><span class="n">h</span><span class="o">&lt;</span><span class="n">hi</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">+=</span> <span class="mf">360.0</span>
+    <span class="n">h_tmp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">h_tmp</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">h_tmp</span> <span class="o">=</span> <span class="n">h_tmp</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">h_hi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">h_tmp</span><span class="p">,</span><span class="n">repeats</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">hi</span><span class="p">),</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
     <span class="n">hi_h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">hi</span><span class="p">),</span><span class="n">repeats</span><span class="o">=</span><span class="n">h</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
-    <span class="n">d</span> <span class="o">=</span> <span class="n">h_hi</span><span class="o">-</span><span class="n">hi_h</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="p">(</span><span class="n">h_hi</span><span class="o">-</span><span class="n">hi_h</span><span class="p">)</span>
     <span class="n">d</span><span class="p">[</span><span class="n">d</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1000.0</span>
     <span class="n">p</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="n">p</span><span class="p">[</span><span class="n">p</span><span class="o">==</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">hi</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># make sure last unique hue data is not selected</span>
     <span class="n">H</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">Hi</span><span class="p">[</span><span class="n">pi</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="mf">100.0</span><span class="o">*</span><span class="p">(</span><span class="n">h</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="n">hi</span><span class="p">[</span><span class="n">pi</span><span class="p">])</span><span class="o">/</span><span class="n">ei</span><span class="p">[</span><span class="n">pi</span><span class="p">])</span><span class="o">/</span><span class="p">((</span><span class="n">h</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="n">hi</span><span class="p">[</span><span class="n">pi</span><span class="p">])</span><span class="o">/</span><span class="n">ei</span><span class="p">[</span><span class="n">pi</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">hi</span><span class="p">[</span><span class="n">pi</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">h</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">/</span><span class="n">ei</span><span class="p">[</span><span class="n">pi</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">pi</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">p</span><span class="p">)])</span>
-    <span class="k">if</span> <span class="n">squeezed</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">changed_number_to_array</span><span class="p">:</span>
+        <span class="n">H</span> <span class="o">=</span> <span class="n">H</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">squeezed</span><span class="p">:</span>
         <span class="n">H</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">H</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">H</span></div>
 
@@ -585,7 +597,7 @@
 
         <span class="c1"># transform from xyzw to cat sensor space:</span>
         <span class="n">rgbw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">mcat</span><span class="p">,</span><span class="n">xyzwi</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
-
+        
         <span class="c1"># apply von Kries cat to white:</span>
         <span class="n">rgbwc</span> <span class="o">=</span> <span class="p">((</span><span class="mf">100.0</span><span class="o">*</span><span class="n">D</span><span class="o">/</span><span class="n">rgbw</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">D</span><span class="p">))</span><span class="o">*</span><span class="n">rgbw</span> <span class="c1"># factor 100 from ciecam02 is replaced with Yw[i] in cam16, but see &#39;note&#39; in Fairchild&#39;s &quot;Color Appearance Models&quot; (p291 ni 3ed.)</span>
 
@@ -604,7 +616,7 @@
         <span class="c1"># apply repsonse compression to white:</span>
         <span class="n">rgbwpa</span> <span class="o">=</span> <span class="n">naka_rushton</span><span class="p">(</span><span class="n">FL</span><span class="o">*</span><span class="n">rgbwp</span><span class="o">/</span><span class="mf">100.0</span><span class="p">,</span> <span class="n">cam</span> <span class="o">=</span> <span class="n">camtype</span><span class="p">)</span>
         <span class="n">rgbwpa</span><span class="p">[</span><span class="n">pw</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="o">-</span> <span class="p">(</span><span class="n">naka_rushton</span><span class="p">(</span><span class="n">FL</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">rgbwp</span><span class="p">[</span><span class="n">pw</span><span class="p">])</span><span class="o">/</span><span class="mf">100.0</span><span class="p">,</span> <span class="n">cam</span> <span class="o">=</span> <span class="n">camtype</span><span class="p">)</span> <span class="o">-</span> <span class="mf">0.1</span><span class="p">)</span>
-        
+
         <span class="c1"># split white into separate cone signals:</span>
         <span class="n">rwpa</span><span class="p">,</span> <span class="n">gwpa</span><span class="p">,</span> <span class="n">bwpa</span> <span class="o">=</span> <span class="n">asplit</span><span class="p">(</span><span class="n">rgbwpa</span><span class="p">)</span>
         
@@ -615,7 +627,7 @@
         
             <span class="c1"># calculate stimuli:</span>
             <span class="n">xyzi</span> <span class="o">=</span> <span class="n">Yw</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">data</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span><span class="o">/</span><span class="n">yw</span> <span class="c1"># normalize xyzw</span>
-            
+
             <span class="c1"># transform from xyz to cat02 sensor space:</span>
             <span class="n">rgb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">mcat</span><span class="p">,</span><span class="n">xyzi</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
 
@@ -635,7 +647,7 @@
             <span class="c1"># apply repsonse compression:</span>
             <span class="n">rgbpa</span> <span class="o">=</span> <span class="n">naka_rushton</span><span class="p">(</span><span class="n">FL</span><span class="o">*</span><span class="n">rgbp</span><span class="o">/</span><span class="mf">100.0</span><span class="p">,</span> <span class="n">cam</span> <span class="o">=</span> <span class="n">camtype</span><span class="p">)</span>
             <span class="n">rgbpa</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="o">-</span> <span class="p">(</span><span class="n">naka_rushton</span><span class="p">(</span><span class="n">FL</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">rgbp</span><span class="p">[</span><span class="n">p</span><span class="p">])</span><span class="o">/</span><span class="mf">100.0</span><span class="p">,</span> <span class="n">cam</span> <span class="o">=</span> <span class="n">camtype</span><span class="p">)</span> <span class="o">-</span> <span class="mf">0.1</span><span class="p">)</span>
-            
+
             <span class="c1"># split into separate cone signals:</span>
             <span class="n">rpa</span><span class="p">,</span> <span class="n">gpa</span><span class="p">,</span> <span class="n">bpa</span> <span class="o">=</span> <span class="n">asplit</span><span class="p">(</span><span class="n">rgbpa</span><span class="p">)</span>
             

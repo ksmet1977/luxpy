@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.color.ctf.colortransforms &mdash; LuxPy 1.3.14 documentation</title>
+  <title>luxpy.color.ctf.colortransforms &mdash; LuxPy 1.3.15 documentation</title>
   
 
   
@@ -56,7 +56,7 @@
             
             
               <div class="version">
-                1.3.14
+                1.3.15
               </div>
             
           
@@ -238,12 +238,12 @@
 <span class="n">_CSPACE_AXES</span><span class="p">[</span><span class="s1">&#39;xyz&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="s1">&#39;Z&#39;</span><span class="p">]</span>
 <span class="n">_CSPACE_AXES</span><span class="p">[</span><span class="s1">&#39;lms&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;L&#39;</span><span class="p">,</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;S&#39;</span><span class="p">]</span>
 <span class="n">_CSPACE_AXES</span><span class="p">[</span><span class="s1">&#39;lab&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;L*&#39;</span><span class="p">,</span> <span class="s2">&quot;a*&quot;</span><span class="p">,</span> <span class="s2">&quot;b*&quot;</span><span class="p">]</span>
-<span class="n">_CSPACE_AXES</span><span class="p">[</span><span class="s1">&#39;luv&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;L*&#39;</span><span class="p">,</span> <span class="s2">&quot;u*&quot;</span><span class="p">,</span> <span class="s2">&quot;u*&quot;</span><span class="p">]</span>
+<span class="n">_CSPACE_AXES</span><span class="p">[</span><span class="s1">&#39;luv&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;L*&#39;</span><span class="p">,</span> <span class="s2">&quot;u*&quot;</span><span class="p">,</span> <span class="s2">&quot;v*&quot;</span><span class="p">]</span>
 <span class="n">_CSPACE_AXES</span><span class="p">[</span><span class="s1">&#39;ipt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;I&#39;</span><span class="p">,</span> <span class="s2">&quot;P&quot;</span><span class="p">,</span> <span class="s2">&quot;T&quot;</span><span class="p">]</span>
 <span class="n">_CSPACE_AXES</span><span class="p">[</span><span class="s1">&#39;wuv&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;W*&#39;</span><span class="p">,</span> <span class="s2">&quot;U*&quot;</span><span class="p">,</span> <span class="s2">&quot;V*&quot;</span><span class="p">]</span>
 <span class="n">_CSPACE_AXES</span><span class="p">[</span><span class="s1">&#39;Vrb_mb&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;V (Macleod-Boyton)&#39;</span><span class="p">,</span> <span class="s2">&quot;r (Macleod-Boyton)&quot;</span><span class="p">,</span> <span class="s2">&quot;b (Macleod-Boyton)&quot;</span><span class="p">]</span>
 <span class="n">_CSPACE_AXES</span><span class="p">[</span><span class="s1">&#39;cct&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;cct&#39;</span><span class="p">,</span><span class="s1">&#39;duv&#39;</span><span class="p">]</span>
-
+<span class="n">_CSPACE_AXES</span><span class="p">[</span><span class="s1">&#39;srgb&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;sR&#39;</span><span class="p">,</span> <span class="s1">&#39;sG&#39;</span><span class="p">,</span><span class="s1">&#39;sB&#39;</span><span class="p">]</span>
 
 <span class="c1"># pre-calculate matrices for conversion of xyz to lms and back for use in xyz_to_ipt() and ipt_to_xyz():</span>
 <span class="n">_IPT_M</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;lms2ipt&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.4000</span><span class="p">,</span><span class="mf">0.4000</span><span class="p">,</span><span class="mf">0.2000</span><span class="p">],[</span><span class="mf">4.4550</span><span class="p">,</span><span class="o">-</span><span class="mf">4.8510</span><span class="p">,</span><span class="mf">0.3960</span><span class="p">],[</span><span class="mf">0.8056</span><span class="p">,</span><span class="mf">0.3572</span><span class="p">,</span><span class="o">-</span><span class="mf">1.1628</span><span class="p">]]),</span>
@@ -789,10 +789,17 @@
     <span class="n">xyz</span> <span class="o">=</span> <span class="n">xyz</span><span class="o">/</span><span class="mf">100.0</span>
 
     <span class="c1"># convert xyz to lms:</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">xyz</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
-        <span class="n">lms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;ij,klj-&gt;kli&#39;</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">xyz</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">ndim</span><span class="p">(</span><span class="n">M</span><span class="p">)</span><span class="o">==</span><span class="mi">2</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">xyz</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">lms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;ij,klj-&gt;kli&#39;</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">xyz</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">lms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;ij,lj-&gt;li&#39;</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">xyz</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">lms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;ij,lj-&gt;li&#39;</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">xyz</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">xyz</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span> <span class="c1"># second dim of xyz must match dim of 1st of M and 1st dim of xyzw</span>
+            <span class="n">lms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;ij,klj-&gt;kli&#39;</span><span class="p">,</span> <span class="n">M</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">xyz</span><span class="p">[:,</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,:])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">M</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span> <span class="c1"># first dim of xyz must match dim of 1st of M and 1st dim of xyzw</span>
+            <span class="n">lms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;ij,lj-&gt;li&#39;</span><span class="p">,</span> <span class="n">M</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">xyz</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,:])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">M</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])],</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        
     <span class="c1">#lms = np.dot(M,xyz.T).T</span>
 
     <span class="c1">#response compression: lms to lms&#39;</span>
@@ -857,17 +864,24 @@
         <span class="n">lmsp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;ij,klj-&gt;kli&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">_IPT_M</span><span class="p">[</span><span class="s1">&#39;lms2ipt&#39;</span><span class="p">]),</span> <span class="n">ipt</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">lmsp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;ij,lj-&gt;li&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">_IPT_M</span><span class="p">[</span><span class="s1">&#39;lms2ipt&#39;</span><span class="p">]),</span> <span class="n">ipt</span><span class="p">)</span>
-
+        
     <span class="c1"># reverse response compression: lms&#39; to lms</span>
     <span class="n">lms</span> <span class="o">=</span> <span class="n">lmsp</span><span class="o">**</span><span class="p">(</span><span class="mf">1.0</span><span class="o">/</span><span class="mf">0.43</span><span class="p">)</span>
     <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">lmsp</span><span class="o">&lt;</span><span class="mf">0.0</span><span class="p">)</span>
     <span class="n">lms</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">lmsp</span><span class="p">[</span><span class="n">p</span><span class="p">])</span><span class="o">**</span><span class="p">(</span><span class="mf">1.0</span><span class="o">/</span><span class="mf">0.43</span><span class="p">)</span>
 
     <span class="c1"># convert from lms to xyz:</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ipt</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
-        <span class="n">xyz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;ij,klj-&gt;kli&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">M</span><span class="p">),</span> <span class="n">lms</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">ndim</span><span class="p">(</span><span class="n">M</span><span class="p">)</span><span class="o">==</span><span class="mi">2</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ipt</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">xyz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;ij,klj-&gt;kli&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">M</span><span class="p">),</span> <span class="n">lms</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">xyz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;ij,lj-&gt;li&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">M</span><span class="p">),</span> <span class="n">lms</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">xyz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;ij,lj-&gt;li&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">M</span><span class="p">),</span> <span class="n">lms</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ipt</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span> <span class="c1"># second dim of lms must match dim of 1st of M and 1st dim of xyzw</span>
+            <span class="n">xyz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;ij,klj-&gt;kli&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">M</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span> <span class="n">lms</span><span class="p">[:,</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,:])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">M</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span> <span class="c1"># first dim of lms must match dim of 1st of M and 1st dim of xyzw</span>
+            <span class="n">xyz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;ij,lj-&gt;li&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">M</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span> <span class="n">lms</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,:])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">M</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])],</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
     <span class="c1">#xyz = np.dot(np.linalg.inv(M),lms.T).T</span>
     <span class="n">xyz</span> <span class="o">=</span> <span class="n">xyz</span> <span class="o">*</span> <span class="mf">100.0</span>
     <span class="n">xyz</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">xyz</span><span class="o">&lt;</span><span class="mf">0.0</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.0</span>
@@ -895,7 +909,7 @@
 <span class="sd">            | ndarray with Y, dominant (complementary) wavelength</span>
 <span class="sd">              and excitation purity</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
+    
     <span class="n">xyz3</span> <span class="o">=</span> <span class="n">np3d</span><span class="p">(</span><span class="n">xyz</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
     <span class="c1"># flip axis so that shortest dim is on axis0 (save time in looping):</span>
@@ -1006,7 +1020,6 @@
 <span class="sd">            | ndarray with tristimulus values</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-
     <span class="n">Ydlep3</span> <span class="o">=</span> <span class="n">np3d</span><span class="p">(</span><span class="n">Ydlep</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
     <span class="c1"># flip axis so that shortest dim is on axis0 (save time in looping):</span>
@@ -1063,7 +1076,6 @@
         <span class="c1"># complementary:</span>
         <span class="n">pc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">dom</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">)</span>
         <span class="n">hdom</span><span class="p">[</span><span class="n">pc</span><span class="p">]</span> <span class="o">=</span> <span class="n">hdom</span><span class="p">[</span><span class="n">pc</span><span class="p">]</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">dom</span><span class="p">[:,</span><span class="n">i</span><span class="p">][</span><span class="n">pc</span><span class="p">]</span> <span class="o">-</span> <span class="mf">180.0</span><span class="p">)</span><span class="o">*</span><span class="mf">180.0</span> <span class="c1"># get positive hue angle</span>
-
 
         <span class="c1"># calculate intersection of line through white point and test point and purple line:</span>
         <span class="n">xy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">x_dom_wl</span><span class="p">,</span><span class="n">y_dom_wl</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>
@@ -1153,11 +1165,11 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">rgb</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">(</span><span class="n">rgb</span><span class="p">)</span>
+    
     <span class="c1"># define 3x3 matrix</span>
     <span class="n">M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.4124564</span><span class="p">,</span>  <span class="mf">0.3575761</span><span class="p">,</span>  <span class="mf">0.1804375</span><span class="p">],</span>
                   <span class="p">[</span><span class="mf">0.2126729</span><span class="p">,</span>  <span class="mf">0.7151522</span><span class="p">,</span>  <span class="mf">0.0721750</span><span class="p">],</span>
                   <span class="p">[</span><span class="mf">0.0193339</span><span class="p">,</span>  <span class="mf">0.1191920</span><span class="p">,</span>  <span class="mf">0.9503041</span><span class="p">]])</span>
-
 
     <span class="c1"># scale device coordinates:</span>
     <span class="n">sRGB</span> <span class="o">=</span> <span class="n">rgb</span><span class="o">/</span><span class="mi">255</span>
@@ -1170,7 +1182,6 @@
     <span class="n">srgb</span> <span class="o">=</span> <span class="p">((</span><span class="n">srgb</span> <span class="o">+</span> <span class="mf">0.055</span><span class="p">)</span><span class="o">/</span><span class="mf">1.055</span><span class="p">)</span><span class="o">**</span><span class="mf">2.4</span>
 
     <span class="n">srgb</span><span class="p">[</span><span class="n">nonlin</span><span class="p">]</span> <span class="o">=</span> <span class="n">sRGB</span><span class="p">[</span><span class="n">nonlin</span><span class="p">]</span><span class="o">/</span><span class="mf">12.92</span>
-
 
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">srgb</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
         <span class="n">xyz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;ij,klj-&gt;kli&#39;</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">srgb</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span>
