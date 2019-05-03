@@ -41,6 +41,7 @@ Default parameters:
  :_TINT_MIN: minimum integration time #set to None -> If None: find it on device (in 'start_meas()' fcn.)
  :_ERROR: error value.
  :_PKG_PATH = path to (sub)-package.
+ :_VERBOSITY: (0: nothing, 1: text)
  
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
@@ -53,7 +54,7 @@ import time
 import os
 import platform
 
-__all__  = ['_TWAIT_STATUS', '_TINT_MIN', '_TINT_MAX', '_ERROR']
+__all__  = ['_TWAIT_STATUS', '_TINT_MIN', '_TINT_MAX', '_ERROR','_VERBOSITY']
 __all__ += ['dvc_open','dvc_close', 'dvc_detect', 'start_meas', 'check_meas_status','wait_until_meas_is_finished']
 __all__ += ['read_spectral_radiance']
 __all__ += ['dvc_reset', 'set_default', 'get_wavelength_params','measure_flicker_freq']
@@ -78,6 +79,7 @@ _TINT_MAX = 60
 _TINT_MIN = None # If None: find it on device (in 'start_meas()' fcn.)
 _ERROR = None
 _PKG_PATH = os.path.dirname(__file__)
+_VERBOSITY = 1
 
 def load_dlls(path = _PKG_PATH):
     """
@@ -107,24 +109,24 @@ def load_dlls(path = _PKG_PATH):
 
 jtc, jtre = load_dlls(path = _PKG_PATH)
 
-def dvc_open(dwDevice = 0, Errors = {}, out = "dwDevice,Errors", verbosity = 1):
+def dvc_open(dvc = 0, Errors = {}, out = "dvc,Errors", verbosity = _VERBOSITY):
     """
     Open device.
     
     Args:
-        :dwDevice:
+        :dvc:
             | Device handle (class ctypes) or int.
         :Errors:
             | Dict with error messages.
         :out:
-            | "dwDevice, Errors", optional
+            | "dvc,Errors", optional
             | Requested return.
         :verbosity:
             | 1, optional
             | 0: no printed error message output.
     
     Returns:
-        :dwDevice:
+        :dvc:
             | Device handle (class ctypes), if succesfull open (_ERROR: failure, nan: closed)
         :Errors:
             | Dict with error messages.
@@ -134,47 +136,47 @@ def dvc_open(dwDevice = 0, Errors = {}, out = "dwDevice,Errors", verbosity = 1):
         Errors["OpenDevice"] = None
         
         # Initialize device :
-        if isinstance(dwDevice, int):
+        if isinstance(dvc, int):
                     
-            # Get number of connected JETI devices (stored in dwDevice):
+            # Get number of connected JETI devices (stored in dvc):
             NumDevices, Errors = dvc_detect(Errors=Errors, out = "NumDevices,Errors", verbosity = verbosity)
             
             if NumDevices > 0:
             
                 # Open device:
-                dvc_nr = dwDevice
-                dwDevice = DWORD_PTR(DWORD(dwDevice))
-                dwError = jtc.JETI_OpenDevice(dvc_nr, ctypes.byref(dwDevice))
+                dvc_nr = dvc
+                dvc = DWORD_PTR(DWORD(dvc))
+                dwError = jtc.JETI_OpenDevice(dvc_nr, ctypes.byref(dvc))
                 Errors["OpenDevice"] = dwError
                 if (dwError != 0):
                     if verbosity == 1:
                         print("Could not connect to device. Error code = {}".format(dwError))
-                    dwDevice, Errors = dvc_close(dwDevice, Errors = Errors, close_device = True, out = "dwDevice,Errors", verbosity = verbosity)
+                    dvc, Errors = dvc_close(dvc, Errors = Errors, close_device = True, out = "dvc,Errors", verbosity = verbosity)
             else:
                 raise Exception('dvc_open(): No devices detected!')
-                dwDevice = np.nan
+                dvc = np.nan
         else: # already open
             Errors["OpenDevice"] = 0
-            dvc_nr = dwDevice
+            dvc_nr = dvc
     except:
             Errors["OpenDevice"] = "dvc_open() fails."
-            dwDevice = dvc_nr # return whatever the orginal input was.
+            dvc = dvc_nr # return whatever the orginal input was.
     finally:    
-        if out == "dwDevice,Errors":
-            return dwDevice, Errors
-        elif out == "dwDevice":
-            return dwDevice
+        if out == "dvc,Errors":
+            return dvc, Errors
+        elif out == "dvc":
+            return dvc
         elif out == "Errors":
             return Errors
         else:
             raise Exception("Requested output error.")
 
-def dvc_close(dwDevice, Errors = {}, close_device = True, out = "dwDevice,Errors", verbosity = 1):
+def dvc_close(dvc, Errors = {}, close_device = True, out = "dvc,Errors", verbosity = _VERBOSITY):
     """
     Close device.
     
     Args:
-        :dwDevice:
+        :dvc:
             | Device handle (class ctypes) or int.
         :Errors:
             | Dict with error messages.
@@ -182,27 +184,27 @@ def dvc_close(dwDevice, Errors = {}, close_device = True, out = "dwDevice,Errors
             | True: try and close device.
             | False: Do nothing.
         :out:
-            | "dwDevice, Errors", optional
+            | "dvc,Errors", optional
             | Requested return.
         :verbosity:
             | 1, optional
             | 0: no printed error message output.
     
     Returns:
-        :dwDevice,Errors:
-            | Device handle (_ERROR: failure; nan: closed; class ctype if dwDevice was opened and close_device == False)
+        :dvc,Errors:
+            | Device handle (_ERROR: failure; nan: closed; class ctype if dvc was opened and close_device == False)
         :Errors:
             | Dict with error messages.
     """
     Errors["CloseDevice"] = None
     out = out.replace(' ','')
     try:
-        if _check_dwDevice_open(dwDevice) & (close_device == True):
-            dwError = jtc.JETI_CloseDevice(dwDevice)
+        if _check_dvc_open(dvc) & (close_device == True):
+            dwError = jtc.JETI_CloseDevice(dvc)
             Errors["CloseDevice"] = dwError
-            dwDevice = np.nan # nan signifies closed device
+            dvc = np.nan # nan signifies closed device
             if (dwError != 0):
-                dwDevice = _ERROR
+                dvc = _ERROR
                 if verbosity == 1:
                     print("Could not close JETI device.")
         else:
@@ -210,16 +212,16 @@ def dvc_close(dwDevice, Errors = {}, close_device = True, out = "dwDevice,Errors
     except:
         Errors["CloseDevice"] = "dvc_close() failed."
     finally:
-        if out == "dwDevice,Errors":
-            return dwDevice, Errors
-        elif out == "dwDevice":
-            return dwDevice
+        if out == "dvc,Errors":
+            return dvc, Errors
+        elif out == "dvc":
+            return dvc
         elif out == "Errors":
             return Errors
         else:
             raise Exception("Requested output error.")
 
-def dvc_detect(Errors={}, out = "NumDevices,Errors", verbosity = 1):
+def dvc_detect(Errors={}, out = "NumDevices,Errors", verbosity = _VERBOSITY):
     """
     Detect number of connected JETI devices.
     
@@ -262,12 +264,12 @@ def dvc_detect(Errors={}, out = "NumDevices,Errors", verbosity = 1):
             raise Exception("Requested output error.")
 
 
-def start_meas(dwDevice, Tint = 0.0, autoTint_max = _TINT_MAX, Nscans = 1, wlstep = 1, Errors = {}, out = "Tint,Errors", verbosity = 1):
+def start_meas(dvc, Tint = 0.0, autoTint_max = _TINT_MAX, Nscans = 1, wlstep = 1, Errors = {}, out = "Tint,Errors", verbosity = _VERBOSITY):
     """
     Start measurement on already opened device.
     
     Args:
-        :dwDevice:
+        :dvc:
             | Device handle (of class ctypes).
         :Tint:
             | 0 or Float, optional
@@ -281,7 +283,7 @@ def start_meas(dwDevice, Tint = 0.0, autoTint_max = _TINT_MAX, Nscans = 1, wlste
             | 1 or Int, optional
             | Wavelength step size in nm.
         :out:
-            | "Tint, Errors", optional
+            | "Tint,Errors", optional
             | Requested return.
         :Errors:
             | Dict with error messages.
@@ -302,7 +304,7 @@ def start_meas(dwDevice, Tint = 0.0, autoTint_max = _TINT_MAX, Nscans = 1, wlste
         # Find minimum integration time for connected device and re-set global variable _TINT_MIN (to avoid having to call the function a second time for this device):
         global _TINT_MIN
         if _TINT_MIN is None:
-            _TINT_MIN, Errors = get_min_integration_time(dwDevice, out = "MinTint,Errors", Errors = Errors, verbosity = verbosity)
+            _TINT_MIN, Errors = get_min_integration_time(dvc, out = "MinTint,Errors", Errors = Errors, verbosity = verbosity)
             
         # Limit integration time to max value:
         Tint = _limit_Tint(Tint, Tint_min = _TINT_MIN, Tint_max = _TINT_MAX)
@@ -310,8 +312,8 @@ def start_meas(dwDevice, Tint = 0.0, autoTint_max = _TINT_MAX, Nscans = 1, wlste
         
         # For automated Tint:
         if Tint == 0:
-            MaxTint,Errors = get_max_auto_integration_time(dwDevice, out = "MaxTint,Errors", Errors = Errors, verbosity = verbosity)
-            Errors = set_max_auto_integration_time(dwDevice, MaxTint = autoTint_max, out = "Errors", Errors = Errors, verbosity = verbosity)
+            MaxTint,Errors = get_max_auto_integration_time(dvc, out = "MaxTint,Errors", Errors = Errors, verbosity = verbosity)
+            Errors = set_max_auto_integration_time(dvc, MaxTint = autoTint_max, out = "Errors", Errors = Errors, verbosity = verbosity)
           
         
         # Convert measurement parameters to ctypes:
@@ -320,7 +322,7 @@ def start_meas(dwDevice, Tint = 0.0, autoTint_max = _TINT_MAX, Nscans = 1, wlste
         dwStep = DWORD(np.int(wlstep)) # wavelength step in nm
                             
         # Start measurement:
-        dwError = jtre.JETI_MeasureEx(dwDevice, fTint, wAver, dwStep)
+        dwError = jtre.JETI_MeasureEx(dvc, fTint, wAver, dwStep)
         Errors["MeasureEx"] = dwError
         if (dwError != 0):
             if (verbosity == 1):
@@ -337,15 +339,15 @@ def start_meas(dwDevice, Tint = 0.0, autoTint_max = _TINT_MAX, Nscans = 1, wlste
         else:
             raise Exception("Requested output error.")
 
-def check_meas_status(dwDevice, out = "status,Errors", Errors = {}, verbosity = 1):
+def check_meas_status(dvc, out = "status,Errors", Errors = {}, verbosity = _VERBOSITY):
     """
     Check status of initiated measurement.
     
     Args:
-        :dwDevice:
+        :dvc:
             | Device handle (of class ctypes).
         :out:
-            | "Tint, Errors", optional
+            | "Tint,Errors", optional
             | Requested return.
         :Errors:
             | Dict with error messages.
@@ -363,7 +365,7 @@ def check_meas_status(dwDevice, out = "status,Errors", Errors = {}, verbosity = 
     try:
         Errors["MeasureStatusEx"] = None
         boStatus = BOOL(True)
-        dwError = jtre.JETI_MeasureStatusEx(dwDevice, ctypes.byref(boStatus))
+        dwError = jtre.JETI_MeasureStatusEx(dvc, ctypes.byref(boStatus))
         Errors["MeasureStatusEx"] = dwError
         if (dwError != 0):
             status = _ERROR
@@ -385,12 +387,12 @@ def check_meas_status(dwDevice, out = "status,Errors", Errors = {}, verbosity = 
             raise Exception("Requested output error.")
         
      
-def wait_until_meas_is_finished(dwDevice, Tint = None, twait = _TWAIT_STATUS, out = "status,Errors", Errors = {}, verbosity = 1):
+def wait_until_meas_is_finished(dvc, Tint = None, twait = _TWAIT_STATUS, out = "status,Errors", Errors = {}, verbosity = _VERBOSITY):
     """
     Wait until measurement is finished.
     
     Args:
-        :dwDevice:
+        :dvc:
             | Device handle (of class ctypes).
         :Tint:
             | 0 or Float, optional
@@ -427,7 +429,7 @@ def wait_until_meas_is_finished(dwDevice, Tint = None, twait = _TWAIT_STATUS, ou
         status = True
         while status:
             time.sleep(twait)
-            status, Error = check_meas_status(dwDevice, out = "status,Errors", Errors = Errors, verbosity = verbosity)
+            status, Error = check_meas_status(dvc, out = "status,Errors", Errors = Errors, verbosity = verbosity)
     except:
         Errors["MeasureStatusEx"] = "wait_until_meas_is_finished() fails."
         status = _ERROR
@@ -441,12 +443,12 @@ def wait_until_meas_is_finished(dwDevice, Tint = None, twait = _TWAIT_STATUS, ou
         else:
             raise Exception("Requested output error.")
         
-def read_spectral_radiance(dwDevice, wlstart = 360, wlend = 830, wlstep = 1, out = "spd,Errors", Errors = {}, verbosity = 1):
+def read_spectral_radiance(dvc, wlstart = 360, wlend = 830, wlstep = 1, out = "spd,Errors", Errors = {}, verbosity = _VERBOSITY):
     """
     Read measured spectral radiance (W/m².sr.nm) from device.
     
     Args:
-        :dwDevice:
+        :dvc:
             | Device handle (of class ctypes).
         :wlstart:
             | 360 or Int, optional
@@ -489,7 +491,7 @@ def read_spectral_radiance(dwDevice, wlstart = 360, wlend = 830, wlstep = 1, out
     fSprad = (FLOAT * wls.shape[0])() 
     
     # get pointer to start of spectral radiance 
-    dwError = jtre.JETI_SpecRadEx(dwDevice, dwBeg, dwEnd, ctypes.byref(fSprad)) 
+    dwError = jtre.JETI_SpecRadEx(dvc, dwBeg, dwEnd, ctypes.byref(fSprad)) 
     Errors["SpecRadEx"] = dwError
     if (dwError != 0):
         if (verbosity == 1):
@@ -514,12 +516,12 @@ def read_spectral_radiance(dwDevice, wlstart = 360, wlend = 830, wlstep = 1, out
         raise Exception("Requested output error.")
 
 
-def dvc_reset(dwDevice, Errors = {}, verbosity = 1):
+def dvc_reset(dvc, Errors = {}, verbosity = _VERBOSITY):
     """
     Reset device. (same as disconnecting and reconnecting USB)
     
     Args:
-        :dwDevice:
+        :dvc:
             | Device handle (class ctypes) or int.
         :Errors:
             | Dict with error messages.
@@ -533,10 +535,10 @@ def dvc_reset(dwDevice, Errors = {}, verbosity = 1):
     """
     try:
         Errors["HardReset"] = None
-        dwError = jtc.JETI_HardReset(dwDevice)
+        dwError = jtc.JETI_HardReset(dvc)
         Errors["HardReset"] = dwError
         if (dwError != 0):
-            dwDevice = _ERROR
+            dvc = _ERROR
             if verbosity == 1:
                 print("Could not do a hard reset of JETI device.")
     except:
@@ -544,12 +546,12 @@ def dvc_reset(dwDevice, Errors = {}, verbosity = 1):
     finally:
         return Errors
 
-def set_default(dwDevice, out = "Errors", Errors = {}, verbosity = 1):
+def set_default(dvc, out = "Errors", Errors = {}, verbosity = _VERBOSITY):
     """
     Set all measurement parameters to the default values.
     
     Args:
-        :dwDevice:
+        :dvc:
             | Device handle (class ctypes) or int.
         :out:
             | "MaxTint,Errors", optional
@@ -568,7 +570,7 @@ def set_default(dwDevice, out = "Errors", Errors = {}, verbosity = 1):
     
     try:
         Errors["SetDefault"] = None
-        dwError = jtc.JETI_SetDefault(dwDevice)
+        dwError = jtc.JETI_SetDefault(dvc)
         Errors["SetDefault"] = dwError
         if (dwError != 0):
             if verbosity == 1:
@@ -581,12 +583,12 @@ def set_default(dwDevice, out = "Errors", Errors = {}, verbosity = 1):
         else:
             raise Exception("Requested output error.")
 
-def get_wavelength_params(dwDevice, out = "wlsFit,Errors", Errors = {}, verbosity = 1):
+def get_wavelength_params(dvc, out = "wlsFit,Errors", Errors = {}, verbosity = _VERBOSITY):
     """
     Get wavelength calibration parameters of polynomial of order 5.
     
     Args:
-        :dwDevice:
+        :dvc:
             | Device handle (class ctypes) or int.
         :out:
             | "wlsFit,Errors", optional
@@ -612,7 +614,7 @@ def get_wavelength_params(dwDevice, out = "wlsFit,Errors", Errors = {}, verbosit
         fFit = (FLOAT * 5)(*[0,0,0,0,0]) 
         
         # get pointer to start of parameter array: 
-        dwError = jtc.JETI_GetFit(dwDevice, ctypes.byref(fFit))
+        dwError = jtc.JETI_GetFit(dvc, ctypes.byref(fFit))
         Errors["GetFit"] = dwError
         if (dwError != 0):
             if verbosity == 1:
@@ -633,12 +635,12 @@ def get_wavelength_params(dwDevice, out = "wlsFit,Errors", Errors = {}, verbosit
             raise Exception("Requested output error.")
     
 
-def measure_flicker_freq(dwDevice, out = "flHz,warning,Errors", Errors = {}, verbosity = 1):
+def measure_flicker_freq(dvc, out = "flHz,warning,Errors", Errors = {}, verbosity = _VERBOSITY):
     """
     Measure flicker frequency (Hz).
     
     Args:
-        :dwDevice:
+        :dvc:
             | Device handle (class ctypes) or int.
         :out:
             | "flHz,dwWarning,Errors", optional
@@ -663,7 +665,7 @@ def measure_flicker_freq(dwDevice, out = "flHz,warning,Errors", Errors = {}, ver
         Errors["GetFlickerFreq"] = None
         fFlickerFreq = FLOAT(0.0)
         dwWarning = DWORD(0)
-        dwError = jtc.JETI_GetFlickerFreq (dwDevice, ctypes.byref(fFlickerFreq), ctypes.byref(dwWarning))
+        dwError = jtc.JETI_GetFlickerFreq (dvc, ctypes.byref(fFlickerFreq), ctypes.byref(dwWarning))
         Errors["GetFlickerFreq"] = dwError
         if (dwError != 0):
             flHz = _ERROR
@@ -695,12 +697,12 @@ def measure_flicker_freq(dwDevice, out = "flHz,warning,Errors", Errors = {}, ver
         else:
             raise Exception("Requested output error.")
 
-def get_laser_status(dwDevice, out = "status,Errors", Errors = {}, verbosity = 1):
+def get_laser_status(dvc, out = "status,Errors", Errors = {}, verbosity = _VERBOSITY):
     """
     Get pilot laser status of device.
     
     Args:
-        :dwDevice:
+        :dvc:
             | Device handle (class ctypes) or int.
         :out:
             | "status,Errors", optional
@@ -721,7 +723,7 @@ def get_laser_status(dwDevice, out = "status,Errors", Errors = {}, verbosity = 1
     try:
         Errors["GetLaserStat"] = None
         boLaserStat = BOOL(True)
-        dwError = jtc.JETI_GetLaserStat(dwDevice, ctypes.byref(boLaserStat))
+        dwError = jtc.JETI_GetLaserStat(dvc, ctypes.byref(boLaserStat))
         Errors["GetLaserStat"] = dwError
         if (dwError != 0):
             status = _ERROR
@@ -742,12 +744,12 @@ def get_laser_status(dwDevice, out = "status,Errors", Errors = {}, verbosity = 1
         else:
             raise Exception("Requested output error.")
 
-def set_laser_status(dwDevice, status = False, out = "Errors", Errors = {}, verbosity = 1):
+def set_laser_status(dvc, status = False, out = "Errors", Errors = {}, verbosity = _VERBOSITY):
     """
     Set pilot laser status of device.
     
     Args:
-        :dwDevice:
+        :dvc:
             | Device handle (class ctypes) or int.
         :status:
             | status of pilot laser (True: ON, False: OFF).
@@ -768,7 +770,7 @@ def set_laser_status(dwDevice, status = False, out = "Errors", Errors = {}, verb
     try:
         Errors["SetLaserStat"] = None
         boLaserStat = BOOL(status)
-        dwError = jtc.JETI_SetLaserStat(dwDevice, boLaserStat)
+        dwError = jtc.JETI_SetLaserStat(dvc, boLaserStat)
         Errors["SetLaserStat"] = dwError
         if (dwError != 0):
             if verbosity == 1:
@@ -782,12 +784,12 @@ def set_laser_status(dwDevice, status = False, out = "Errors", Errors = {}, verb
             raise Exception("Requested output error.")
 
 
-def set_laser(dwDevice, laser_on = True, laser_intensity = 1000, Errors = {}, verbosity = 1):
+def set_laser(dvc, laser_on = True, laser_intensity = 1000, Errors = {}, verbosity = _VERBOSITY):
     """
     Turn laser ON (3 modulation types: 7Hz (1), 28 Hz (2) and 255 Hz (3)) or OFF (0) and set laser intensity.
     
     Args:
-        :dwDevice:
+        :dvc:
             | Device handle.
         :laser_on:
             | 0: OFF, >0: ON -> 1: PWM 7Hz, 2: PWM 28 Hz, 3: 255 Hz, optional
@@ -810,46 +812,46 @@ def set_laser(dwDevice, laser_on = True, laser_intensity = 1000, Errors = {}, ve
         Errors["SetLaserIntensity"] = None
         
         # Open device if not already opened!
-        if not _check_dwDevice_open(dwDevice):
-            dwDevice_was_open = False
-            dwDevice, Errors = dvc_open(dwDevice = dwDevice, Errors = Errors, out = "dwDevice,Errors", verbosity = verbosity)    
+        if not _check_dvc_open(dvc):
+            dvc_was_open = False
+            dvc, Errors = dvc_open(dvc = dvc, Errors = Errors, out = "dvc,Errors", verbosity = verbosity)    
         else:
-            dwDevice_was_open = True
+            dvc_was_open = True
             
         # Set laser intensity and modulation:   
         if laser_intensity > 1000:
             laser_intensity = 1000
         if np.int(laser_on) not in [0,1,2,3]:
             laser_on = 3
-        if (bool(laser_on) == True) & (_check_dwDevice_open(dwDevice)):
-            dwError = jtc.JETI_SetLaserIntensity(dwDevice, DWORD(laser_intensity), DWORD(np.int(laser_on)))
+        if (bool(laser_on) == True) & (_check_dvc_open(dvc)):
+            dwError = jtc.JETI_SetLaserIntensity(dvc, DWORD(laser_intensity), DWORD(np.int(laser_on)))
             if dwError != 0:    
                 if (verbosity == 1):
                     print("Could not set pilot laser intensity and/or modulation. Error code = {}".format(dwError))
             Errors["SetLaserIntensity"] = dwError
-        elif (bool(laser_on) == False) & (_check_dwDevice_open(dwDevice)):
-            dwError = jtc.JETI_SetLaserIntensity(dwDevice, DWORD(np.int(laser_intensity)), DWORD(0))
+        elif (bool(laser_on) == False) & (_check_dvc_open(dvc)):
+            dwError = jtc.JETI_SetLaserIntensity(dvc, DWORD(np.int(laser_intensity)), DWORD(0))
             if dwError != 0:    
                 if (verbosity == 1):
                     print("Could not turn OFF pilot laser. Error code = {}".format(dwError))
             Errors["SetLaserIntensity"] = dwError
         
         # Toggle laser status:  
-        Errors = set_laser_status(dwDevice, status = bool(laser_on), out = "Errors", Errors = Errors, verbosity = verbosity)
+        Errors = set_laser_status(dvc, status = bool(laser_on), out = "Errors", Errors = Errors, verbosity = verbosity)
 
     except:
         Errors["SetLaserIntensity"] = "set_laser() fails."
     finally:
-        dwDevice, Errors = dvc_close(dwDevice, Errors = Errors, close_device = (dwDevice_was_open == False), out = "dwDevice,Errors", verbosity = verbosity)
+        dvc, Errors = dvc_close(dvc, Errors = Errors, close_device = (dvc_was_open == False), out = "dvc,Errors", verbosity = verbosity)
         return Errors
 
  
-def get_calibration_range(dwDevice, out = "CalibRange,Errors", Errors = {}, verbosity = 1):
+def get_calibration_range(dvc, out = "CalibRange,Errors", Errors = {}, verbosity = _VERBOSITY):
     """
     Get calibration range.
     
     Args:
-        :dwDevice:
+        :dvc:
             | Device handle (class ctypes) or int.
         :out:
             | "Tint,Errors", optional
@@ -872,7 +874,7 @@ def get_calibration_range(dwDevice, out = "CalibRange,Errors", Errors = {}, verb
         dwBegin = DWORD(0)
         dwEnd = DWORD(0)
         dwStep = DWORD(0)
-        dwError = jtc.JETI_GetCalibRange(dwDevice, ctypes.byref(dwBegin),ctypes.byref(dwEnd), ctypes.byref(dwStep))
+        dwError = jtc.JETI_GetCalibRange(dvc, ctypes.byref(dwBegin),ctypes.byref(dwEnd), ctypes.byref(dwStep))
         Errors["GetCalibRange"] = dwError
         if (dwError != 0):
             CalibRange = [_ERROR]*3
@@ -893,12 +895,12 @@ def get_calibration_range(dwDevice, out = "CalibRange,Errors", Errors = {}, verb
         else:
             raise Exception("Requested output error.")
   
-def get_shutter_status(dwDevice, out = "status,Errors", Errors = {}, verbosity = 1):
+def get_shutter_status(dvc, out = "status,Errors", Errors = {}, verbosity = _VERBOSITY):
     """
     Get shutter status of device.
     
     Args:
-        :dwDevice:
+        :dvc:
             | Device handle (class ctypes) or int.
         :out:
             | "Errors", optional
@@ -919,7 +921,7 @@ def get_shutter_status(dwDevice, out = "status,Errors", Errors = {}, verbosity =
     try:
         Errors["GetShutterStat"] = None
         boShutterStat = BOOL(0)
-        dwError = jtc.JETI_GetLaserStat(dwDevice, ctypes.byref(boShutterStat))
+        dwError = jtc.JETI_GetLaserStat(dvc, ctypes.byref(boShutterStat))
         Errors["GetShutterStat"] = dwError
         if (dwError != 0):
             status = _ERROR
@@ -940,12 +942,12 @@ def get_shutter_status(dwDevice, out = "status,Errors", Errors = {}, verbosity =
         else:
             raise Exception("Requested output error.")
 
-def set_shutter_status(dwDevice, status = False, out = "Errors", Errors = {}, verbosity = 1):
+def set_shutter_status(dvc, status = False, out = "Errors", Errors = {}, verbosity = _VERBOSITY):
     """
     Set shutter status of device.
     
     Args:
-        :dwDevice:
+        :dvc:
             | Device handle (class ctypes) or int.
         :status:
             | status of shutter (True(1): OPEN, False(0): CLOSED).
@@ -966,7 +968,7 @@ def set_shutter_status(dwDevice, status = False, out = "Errors", Errors = {}, ve
     try:
         Errors["SetShutterStat"] = None
         boShutterStat = BOOL(status)
-        dwError = jtc.JETI_SetLaserStat(dwDevice, boShutterStat)
+        dwError = jtc.JETI_SetLaserStat(dvc, boShutterStat)
         Errors["SetShutterStat"] = dwError
         if (dwError != 0):
             if verbosity == 1:
@@ -979,12 +981,12 @@ def set_shutter_status(dwDevice, status = False, out = "Errors", Errors = {}, ve
         else:
             raise Exception("Requested output error.")
    
-def get_integration_time(dwDevice, out = "Tint,Errors", Errors = {}, verbosity = 1):
+def get_integration_time(dvc, out = "Tint,Errors", Errors = {}, verbosity = _VERBOSITY):
     """
     Get (default) integration time stored in device.
     
     Args:
-        :dwDevice:
+        :dvc:
             | Device handle (class ctypes) or int.
         :out:
             | "Tint,Errors", optional
@@ -1005,7 +1007,7 @@ def get_integration_time(dwDevice, out = "Tint,Errors", Errors = {}, verbosity =
     try:
         Errors["GetTint"] = None
         fTint = FLOAT(0.0)
-        dwError = jtc.JETI_GetTint(dwDevice, ctypes.byref(fTint))
+        dwError = jtc.JETI_GetTint(dvc, ctypes.byref(fTint))
         Errors["GetTint"] = dwError
         if (dwError != 0):
             Tint = _ERROR
@@ -1026,12 +1028,12 @@ def get_integration_time(dwDevice, out = "Tint,Errors", Errors = {}, verbosity =
         else:
             raise Exception("Requested output error.")
 
-def get_min_integration_time(dwDevice, out = "MinTint,Errors", Errors = {}, verbosity = 1):
+def get_min_integration_time(dvc, out = "MinTint,Errors", Errors = {}, verbosity = _VERBOSITY):
     """
     Get the minimum integration time (seconds) which can be used with the connected device.
     
     Args:
-        :dwDevice:
+        :dvc:
             | Device handle (class ctypes) or int.
         :out:
             | "MinTint,Errors", optional
@@ -1052,7 +1054,7 @@ def get_min_integration_time(dwDevice, out = "MinTint,Errors", Errors = {}, verb
     try:
         Errors["GetMinTintConf"] = None
         fMinTint = FLOAT(0.0)
-        dwError = jtc.JETI_GetMinTintConf(dwDevice, ctypes.byref(fMinTint))
+        dwError = jtc.JETI_GetMinTintConf(dvc, ctypes.byref(fMinTint))
         Errors["GetMinTintConf"] = dwError
         if (dwError != 0):
             MinTint = _ERROR
@@ -1074,12 +1076,12 @@ def get_min_integration_time(dwDevice, out = "MinTint,Errors", Errors = {}, verb
             raise Exception("Requested output error.")
 
        
-def get_max_auto_integration_time(dwDevice, out = "MaxTint,Errors", Errors = {}, verbosity = 1):
+def get_max_auto_integration_time(dvc, out = "MaxTint,Errors", Errors = {}, verbosity = _VERBOSITY):
     """
     Get the maximum integration time which will be used for adaption (automated Tint selection).
     
     Args:
-        :dwDevice:
+        :dvc:
             | Device handle (class ctypes) or int.
         :out:
             | "MaxTint,Errors", optional
@@ -1100,7 +1102,7 @@ def get_max_auto_integration_time(dwDevice, out = "MaxTint,Errors", Errors = {},
     try:
         Errors["GetMaxTintConf"] = None
         fMaxTint = FLOAT(0.0)
-        dwError = jtc.JETI_GetMaxTintConf(dwDevice, ctypes.byref(fMaxTint))
+        dwError = jtc.JETI_GetMaxTintConf(dvc, ctypes.byref(fMaxTint))
         Errors["GetMaxTintConf"] = dwError
         if (dwError != 0):
             MaxTint = _ERROR
@@ -1122,12 +1124,12 @@ def get_max_auto_integration_time(dwDevice, out = "MaxTint,Errors", Errors = {},
             raise Exception("Requested output error.")
         
     
-def set_max_auto_integration_time(dwDevice, MaxTint = _TINT_MAX, out = "Errors", Errors = {}, verbosity = 1):
+def set_max_auto_integration_time(dvc, MaxTint = _TINT_MAX, out = "Errors", Errors = {}, verbosity = _VERBOSITY):
     """
     Set the maximum integration time which will be used for adaption (automated Tint selection).
     
     Args:
-        :dwDevice:
+        :dvc:
             | Device handle (class ctypes) or int.
         :MaxTint:
             | maximum integration time which will be used for adaption (automated Tint selection).
@@ -1148,7 +1150,7 @@ def set_max_auto_integration_time(dwDevice, MaxTint = _TINT_MAX, out = "Errors",
     try:
         Errors["SetMaxTintConf"] = None
         fMaxTint = FLOAT(MaxTint*1000) # seconds -> milliseconds
-        dwError = jtc.JETI_SetMaxTintConf(dwDevice, fMaxTint)
+        dwError = jtc.JETI_SetMaxTintConf(dvc, fMaxTint)
         Errors["SetMaxTintConf"] = dwError
         if (dwError != 0):
             if verbosity == 1:
@@ -1175,24 +1177,28 @@ def _limit_Tint(Tint, Tint_min = _TINT_MIN, Tint_max = _TINT_MAX):
             Tint = Tint_max
     return Tint
     
-def _check_dwDevice_open(dwDevice):
+def _check_dvc_open(dvc):
     """
-    Check if device has been opened (dwDevice is of class 'ctypes'). Returns bool.
+    Check if device has been opened (dvc is of class 'ctypes'). Returns bool.
     """
-    return ("ctypes" in str(type(dwDevice)))
+    return ("ctypes" in str(type(dvc)))
 
     
     
-def get_spd(Tint = 0.0, autoTint_max = _TINT_MAX, Nscans = 1, wlstep = 1, wlstart = 360, wlend = 830, 
-           dwDevice = 0, twait = _TWAIT_STATUS, out = "spd", close_device = True, 
-           laser_on = 0, laser_intensity = 1000, verbosity = 1):
+def get_spd(dvc = 0, Tint = 0.0, autoTint_max = _TINT_MAX, Nscans = 1, wlstep = 1, 
+            wlstart = 360, wlend = 830, 
+            twait = _TWAIT_STATUS, out = "spd", close_device = True, 
+            laser_on = 0, laser_intensity = 1000, verbosity = _VERBOSITY):
     """
     Measure spectral radiance (W/nm.sr.m²).
     
     Args:
+        :dvc:
+            | 0 or Int or ctypes.wintypes.LP_c_ulong, optional
+            | Number of the spectrometer device to load (0 = 1st) or handle (ctypes) to pre_initialized device.
         :Tint:
             | 0 or Float, optional
-            | Integration time in seconds. (if 0: find best integration time).
+            | Integration time in seconds. (if 0: find best integration time, but < autoTint_max).
         :autoTint_max:
             | Limit Tint to this value when Tint = 0.
         :Nscans:
@@ -1207,20 +1213,17 @@ def get_spd(Tint = 0.0, autoTint_max = _TINT_MAX, Nscans = 1, wlstep = 1, wlstar
         :wlend:
             | 830 or Int, optional
             | Start wavelength in nm. (max = 1000 nm)
-        :dwDevice:
-            | 0 or Int or ctypes.wintypes.LP_c_ulong, optional
-            | Number of spectrometer device to load (0 = 1st) or handle (ctypes) to pre_initialized device.
         :twait:
             | 0.1 or Float, optional
             | Time in seconds to wait before checking status of device. 
             | (If 0: wait :Tint: seconds, unless :Tint: == 0, then wait _TWAIT_STATUS seconds)
         :out:
-            | "spd" [",dwDevice, Errors"], optional
-            | Requested return. If "spd" in out.split(","):do spectral measurement, else: initialize dwDevice handle [and turn laser ON or OFF].
+            | "spd" [",dvc, Errors"], optional
+            | Requested return. If "spd" in out.split(","):do spectral measurement, else: initialize dvc handle [and turn laser ON or OFF].
         :close_device:
             | True or False, optional
             | Close device at the end of the measurement.
-            | If 'dwDevice' not in out.split(','): always close!!!
+            | If 'dvc' not in out.split(','): always close!!!
         :laser_on:
             | 0: OFF, >0: ON -> 1: PWM 7Hz, 2: PWM 28 Hz, 3: 255 Hz, optional
             | True (>0): turn laser on to select measurement area; False (0): turn off. 
@@ -1233,9 +1236,9 @@ def get_spd(Tint = 0.0, autoTint_max = _TINT_MAX, Nscans = 1, wlstep = 1, wlstar
             | 0: no printed error message output.
     Returns:
         :returns: 
-            | spd [,dwDevice, Errors] (as specified in :out:)
+            | spd [,dvc, Errors] (as specified in :out:)
             | - "spd": ndarray with wavelengths (1st row) and spectral radiance (2nd row).
-            | - "dwDevice": ctypes handle to device (if open) or nan (if closed).
+            | - "dvc": ctypes handle to device (if open) or nan (if closed).
             | - "Errors": dict with error message returned by device during various steps of the spectral measurement process.
     """
     # Initialize dict with errors messages for each of the different measurement steps:
@@ -1258,32 +1261,32 @@ def get_spd(Tint = 0.0, autoTint_max = _TINT_MAX, Nscans = 1, wlstep = 1, wlstar
 
     try:
         # Initialize device :
-        dwDevice, Errors = dvc_open(dwDevice = dwDevice, Errors = Errors, out = "dwDevice,Errors", verbosity = verbosity)    
+        dvc, Errors = dvc_open(dvc = dvc, Errors = Errors, out = "dvc,Errors", verbosity = verbosity)    
         
-        if (_check_dwDevice_open(dwDevice)) & ("spd" in out.split(",")):
+        if (_check_dvc_open(dvc)) & ("spd" in out.split(",")):
             
             # Turn off laser before starting measurement:
-            Errors = set_laser(dwDevice, laser_on = False, laser_intensity = laser_intensity, Errors = Errors, verbosity = verbosity)
+            Errors = set_laser(dvc, laser_on = False, laser_intensity = laser_intensity, Errors = Errors, verbosity = verbosity)
                     
                             
             # Start measurement:
-            Tint, Errors = start_meas(dwDevice, Tint = Tint, autoTint_max = autoTint_max, Nscans = Nscans, wlstep = wlstep, Errors = Errors, out = "Tint, Errors", verbosity = verbosity)
+            Tint, Errors = start_meas(dvc, Tint = Tint, autoTint_max = autoTint_max, Nscans = Nscans, wlstep = wlstep, Errors = Errors, out = "Tint, Errors", verbosity = verbosity)
             
             # wait until measurement is finished (check intermediate status every twait seconds):
-            status, Errors = wait_until_meas_is_finished(dwDevice, Tint = Tint, twait = twait, out = "status,Errors", Errors = Errors, verbosity = verbosity)
+            status, Errors = wait_until_meas_is_finished(dvc, Tint = Tint, twait = twait, out = "status,Errors", Errors = Errors, verbosity = verbosity)
             
             if status == False:
                 # Read measured spectral radiance from device:
-                spd, Errors = read_spectral_radiance(dwDevice, wlstart = wlstart, wlend = wlend, wlstep = wlstep, out = "spd,Errors", Errors = Errors, verbosity = verbosity)    
+                spd, Errors = read_spectral_radiance(dvc, wlstart = wlstart, wlend = wlend, wlstep = wlstep, out = "spd,Errors", Errors = Errors, verbosity = verbosity)    
             
             # Close device:
-            dwDevice, Errors = dvc_close(dwDevice, Errors = Errors, close_device = close_device, out = "dwDevice,Errors", verbosity = verbosity)
+            dvc, Errors = dvc_close(dvc, Errors = Errors, close_device = close_device, out = "dvc,Errors", verbosity = verbosity)
         
-        elif (_check_dwDevice_open(dwDevice)) & ("spd" not in out.split(",")): # only dwDevice handle was requested or to turn laser ON.
-            Errors = set_laser(dwDevice, laser_on = laser_on, laser_intensity = laser_intensity, Errors = Errors, verbosity = verbosity)
+        elif (_check_dvc_open(dvc)) & ("spd" not in out.split(",")): # only dvc handle was requested or to turn laser ON.
+            Errors = set_laser(dvc, laser_on = laser_on, laser_intensity = laser_intensity, Errors = Errors, verbosity = verbosity)
         
-        if np.isnan(dwDevice):
-            Errors["get_spd"] = 0
+        if np.isnan(dvc):
+            Errors["get_spd"] = int(np.sum([x for x in Errors.values() if x is not None]) > 0)
         else:
             Errors["get_spd"] = "No open device."
         
@@ -1293,18 +1296,18 @@ def get_spd(Tint = 0.0, autoTint_max = _TINT_MAX, Nscans = 1, wlstep = 1, wlstar
         # Generate requested return:
         if out == "spd":
             return spd
-        elif out == "dwDevice":
-            return dwDevice
+        elif out == "dvc":
+            return dvc
         elif out == "Errors":
             return Errors
         elif out == "spd,Errors":
             return spd, Errors
-        elif out == "spd,dwDevice":
-            return spd, dwDevice
-        elif out == "spd,Errors,dwDevice":
-            return spd, Errors, dwDevice
-        elif out == "spd,dwDevice,Errors":
-            return spd, dwDevice, Errors
+        elif out == "spd,dvc":
+            return spd, dvc
+        elif out == "spd,Errors,dvc":
+            return spd, Errors, dvc
+        elif out == "spd,dvc,Errors":
+            return spd, dvc, Errors
         else:
             raise Exception("Requested output error.")
 
@@ -1319,12 +1322,12 @@ if __name__ == "__main__":
     if runtests == True:
     
         # Make a spectral radiance measurement:
-        spd,dwDevice,Errors = get_spd(Tint = 0, autoTint_max = _TINT_MAX, Nscans = 1, wlstep = 1, wlstart = 360, wlend = 830,
-                     dwDevice = 0, twait = _TWAIT_STATUS, out = "spd,dwDevice,Errors", close_device = True, 
+        spd,dvc,Errors = get_spd(Tint = 0, autoTint_max = _TINT_MAX, Nscans = 1, wlstep = 1, wlstart = 360, wlend = 830,
+                     dvc = 0, twait = _TWAIT_STATUS, out = "spd,dvc,Errors", close_device = True, 
                      laser_on = False, laser_intensity = 1000.0, verbosity = 1)
         
-        # Print dwDevice and Errors:
-        print("dwDevice: ",dwDevice)
+        # Print dvc and Errors:
+        print("dvc: ",dvc)
         print("Errors: ",Errors)
         
         # Plot spd:
