@@ -1261,7 +1261,7 @@ def get_spd(dvc = 0, Tint = 0.0, autoTint_max = _TINT_MAX, Nscans = 1, wlstep = 
         # Initialize device :
         dvc, Errors = dvc_open(dvc = dvc, Errors = Errors, out = "dvc,Errors", verbosity = verbosity)    
         
-        if (_check_dvc_open(dvc)) & ("spd" in out.split(",")):
+        if (_check_dvc_open(dvc)) & (("spd" in out.split(",")) & (Tint is not None)):
             
             # Turn off laser before starting measurement:
             Errors = set_laser(dvc = dvc, laser_on = False, laser_intensity = laser_intensity, Errors = Errors, verbosity = verbosity)
@@ -1277,19 +1277,18 @@ def get_spd(dvc = 0, Tint = 0.0, autoTint_max = _TINT_MAX, Nscans = 1, wlstep = 
                 # Read measured spectral radiance from device:
                 spd, Errors = read_spectral_radiance(dvc, wlstart = wlstart, wlend = wlend, wlstep = wlstep, out = "spd,Errors", Errors = Errors, verbosity = verbosity)    
             
-            # Close device:
-            dvc, Errors = dvc_close(dvc, Errors = Errors, close_device = close_device, out = "dvc,Errors", verbosity = verbosity)
-        
-        elif (_check_dvc_open(dvc)) & (("spd" not in out.split(",")) | (Tint is None)): # only dvc handle was requested or to turn laser ON.
+        elif (("spd" not in out.split(",")) | (Tint is None)): # only dvc handle was requested or to turn laser ON.
             Errors = set_laser(dvc = dvc, laser_on = laser_on, laser_intensity = laser_intensity, Errors = Errors, verbosity = verbosity)
         
-        if np.isnan(dvc):
-            Errors["get_spd"] = int(np.sum([x for x in Errors.values() if x is not None]) > 0)
-        else:
-            Errors["get_spd"] = "No open device."
+        # Close device:
+        dvc, Errors = dvc_close(dvc, Errors = Errors, close_device = (close_device) | ('dvc' not in out.split(',')), out = "dvc,Errors", verbosity = verbosity)
+    
+        
+        Errors["get_spd"] = int(np.sum([int(bool(x)) for x in Errors.values() if (x is not None)]) > 0)
         
     except:
         Errors["get_spd"] = "get_spd fails."
+        
     finally:
         # Generate requested return:
         if out == "spd":

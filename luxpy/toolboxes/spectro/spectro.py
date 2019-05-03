@@ -38,20 +38,21 @@ Notes
  
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
+
 __all__ = ['init','get_spd']
 
-# Try to preload all sub-modules:
-try:
-    from .jeti import jeti as jeti
-    __all__ += ['jeti']
-except:
-    Warning('Could not load jeti sub-module into spectro.')
-try:
-    from .oceanoptics import oceanoptics as oceanoptics
-    __all__ += ['oceanoptics']
-except:
-    Warning('Could not load oceanoptics sub-module into spectro. Make python-seabreeze, pyubs, etc. is installed correctly.')
-
+## Try to preload all sub-modules:
+#try:
+#    from .jeti import jeti as jeti
+#    __all__ += ['jeti']
+#except:
+#    Warning('Could not load jeti sub-module into spectro.')
+#try:
+#    from .oceanoptics import oceanoptics as oceanoptics
+#    __all__ += ['oceanoptics']
+#except:
+#    Warning('Could not load oceanoptics sub-module into spectro. Make python-seabreeze, pyubs, etc. is installed correctly.')
+#
 
 
 def init(manufacturer):
@@ -63,17 +64,26 @@ def init(manufacturer):
             # import inside function to ensure that the module only get loaded 
             # when needed to avoid having to have working installations for the 
             # other manufacturers:
-            from .jeti import jeti as jeti     
+            try:
+                from .jeti import jeti as jeti
+                return jeti
+            except:
+                Warning('Could not load jeti sub-module into spectro.')
+ 
         
         elif manufacturer == 'oceanoptics':
             # import inside function to ensure that the module only get loaded 
             # when needed to avoid having to have working installations for the 
             # other manufacturers:
-            from .oceanoptics import oceanoptics as oceanoptics
+            try:
+                from .oceanoptics import oceanoptics as oceanoptics
+                return oceanoptics
+            except:
+                Warning('Could not load oceanoptics sub-module into spectro. Make python-seabreeze, pyubs, etc. is installed correctly.')
         else:
             raise Exception('Unsupported manufacturer!')
 
-	    
+  
 
 def get_spd(manufacturer = 'jeti', dvc = 0, Tint = 0, autoTint_max = None, close_device = True, out = 'spd', **kwargs):
 	"""
@@ -112,11 +122,6 @@ def get_spd(manufacturer = 'jeti', dvc = 0, Tint = 0, autoTint_max = None, close
         :Errors:
             | Dict with error messages.]
 	"""
-	if manufacturer == 'jeti':
-		return jeti.get_spd(dvc = dvc, Tint = Tint, autoTint_max = autoTint_max, 
-                            close_device = close_device, out = out, **kwargs)
-    
-    
-	elif manufacturer == 'oceanoptics':
-		return oceanoptics.get_spd(dvc = dvc, Tint = Tint, autoTint_max = autoTint_max, 
-                                   close_device = close_device, out = out, **kwargs)
+	spec = init(manufacturer)
+	return spec.get_spd(dvc = dvc, Tint = Tint, autoTint_max = autoTint_max, 
+                     close_device = close_device, out = out, **kwargs)

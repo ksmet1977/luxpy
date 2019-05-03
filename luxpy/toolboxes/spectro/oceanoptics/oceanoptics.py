@@ -39,7 +39,7 @@ Functions:
 Default parameters:
 -------------------
  :_TINT: default integration time in seconds
- :_MAX_TINT: max integration time, If None: get max supported by device
+ :_TINT_MAX: max integration time, If None: get max supported by device
  :_CORRECT_DARK_COUNTS: bool, automatic dark count correction supported by some spectrometers
  :_CORRECT_NONLINEARITY: bool, automatic non-linearity correction
  :_TARGET_MAX_CNTS_RATIO: float, aim for e.g. 80% (0.8) of max number of counts
@@ -912,7 +912,7 @@ def cntsps_to_radiom_units(cntsps, REFmeas = None, REFspd = None, RFL = None, \
         
 
 
-def get_spd(dvc = 0, Tint = _TINT, autoTint_max = _MAX_TINT, \
+def get_spd(dvc = 0, Tint = _TINT, autoTint_max = _TINT_MAX, \
             correct_dark_counts = _CORRECT_DARK_COUNTS, correct_nonlinearity = _CORRECT_NONLINEARITY, \
             tec_temperature_C = None,  \
             dark_cnts = _DARK_MODEL, savgol_window = _SAVGOL_WINDOW,\
