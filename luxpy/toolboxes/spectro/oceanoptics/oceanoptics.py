@@ -135,55 +135,53 @@ def dvc_open(dvc = 0, Errors = {}, out = "dvc,Errors", verbosity = _VERBOSITY):
             | Dict with error messages.
     """
     out = out.replace(' ','')
-#    try:
-    Errors["OpenDevice"] = None
-    if isinstance(dvc,int):
-
-        # Get list of connected OO devices:
-        devices = []
-        while devices == []:
-            devices = sb.list_devices()
-            time.sleep(0.5)
-        if verbosity > 0:
-            print("List of Ocean Optics devices:")
-            print(devices)
-        time.sleep(1)
+    try:
+        Errors["OpenDevice"] = None
+        if isinstance(dvc,int):
     
-    
-        if verbosity > 0:
-            print("Opening device: {:1.0f}".format(dvc))
-        # Initialize device:
-        dvc = sb.Spectrometer(devices[dvc])
-        time.sleep(1)
-    
-        # Add other info to dvc struct:
-        dvc._tint_min = dvc._dev.interface._INTEGRATION_TIME_MIN/1e6
-        dvc._tint_max = dvc._dev.interface._INTEGRATION_TIME_MAX/1e6
-    
-        if dvc._has_nonlinearity_coeffs:
-            if sum(dvc._nc) == 0: # avoid problems with division by zero by messed up coefficients.
-                dvc._nc[0] = 1.0
-            
-        # Set global variable _TINT_MAX to device dependent value
-        global _TINT_MAX
-        if _TINT_MAX is None:
-            _TINT_MAX = dvc._tint_max
-            
-        Errors["OpenDevice"] = 0
-#    except:
-#        Errors["OpenDevice"] = 'dvc_open() fails.'
-#        dvc = _ERROR 
-#    finally:
-    if out == "dvc,Errors":
-        return dvc, Errors
-    elif out == "dvc":
-        return dvc
-    elif out == "Errors":
-        return Errors
-    else:
-        raise Exception("Requested output error.")
-
-    return dvc
+            # Get list of connected OO devices:
+            devices = []
+            while devices == []:
+                devices = sb.list_devices()
+                time.sleep(0.5)
+            if verbosity > 0:
+                print("List of Ocean Optics devices:")
+                print(devices)
+            time.sleep(1)
+        
+        
+            if verbosity > 0:
+                print("Opening device: {:1.0f}".format(dvc))
+            # Initialize device:
+            dvc = sb.Spectrometer(devices[dvc])
+            time.sleep(1)
+        
+            # Add other info to dvc struct:
+            dvc._tint_min = dvc._dev.interface._INTEGRATION_TIME_MIN/1e6
+            dvc._tint_max = dvc._dev.interface._INTEGRATION_TIME_MAX/1e6
+        
+            if dvc._has_nonlinearity_coeffs:
+                if sum(dvc._nc) == 0: # avoid problems with division by zero by messed up coefficients.
+                    dvc._nc[0] = 1.0
+                
+            # Set global variable _TINT_MAX to device dependent value
+            global _TINT_MAX
+            if _TINT_MAX is None:
+                _TINT_MAX = dvc._tint_max
+                
+            Errors["OpenDevice"] = 0
+    except:
+        Errors["OpenDevice"] = 'dvc_open() fails.'
+        dvc = _ERROR 
+    finally:
+        if out == "dvc,Errors":
+            return dvc, Errors
+        elif out == "dvc":
+            return dvc
+        elif out == "Errors":
+            return Errors
+        else:
+            raise Exception("Requested output error.")
 
 def dvc_close(dvc, Errors = {}, close_device = True, out = "dvc,Errors", verbosity = _VERBOSITY):
     """
@@ -319,7 +317,7 @@ def create_dark_model(dvc, dark_model_Tints = _DARK_MODEL_TINTS, \
     
     Args:
         :dvc: 
-            | spectrometer handle
+            | spectrometer handle or int
         :dark_model_Tints:
             | _DARK_MODEL_TINTS, optional
             | ndarray with increasing integration times at which a 
@@ -373,6 +371,10 @@ def create_dark_model(dvc, dark_model_Tints = _DARK_MODEL_TINTS, \
     Errors["create_dark_model"] = None
     out = out.replace(' ','')
     try:
+        
+        if isinstance(dvc,int):
+            dvc, Errors = dvc_open(dvc = dvc, out='dvc,Errors', Errors = Errors, verbosity = verbosity)
+        
         # Ask user response:
         root = tkinter.Tk() #hide tkinter main window for messagebox
         if verbosity > 0:
@@ -1050,82 +1052,82 @@ def get_spd(dvc = 0, Tint = _TINT, autoTint_max = _TINT_MAX, \
     Errors = {} 
     Errors["get_spd"] = None
     out = out.replace(' ','')
-#    try:
-    # Initialize device:
-    dvc, Errors = dvc_open(dvc = dvc, Errors = Errors, out = 'dvc,Errors')
-    
-    # Enable tec and set temperature:
-    if tec_temperature_C is not None:
-        Errors["tec_set_temperature_C"] = None
-        try:
-            dvc.tec_set_enable(True)
-            dvc.tec_set_temperature_C(set_point_C = tec_temperature_C)
-            time.sleep(0.5)
-            if verbosity > 0:
-                print("Device temperature = {:1.1f}°C".format(dvc.tec_get_temperature_C()))
-            Errors["tec_set_temperature_C"] = 0
-        except:
-            Errors["tec_set_temperature_C"] = 'Fails'
-    
-    # Find optimum integration time and get counts (0: unlimited (but < autoTint_max), >0 fixed)
-    Tint, cnts,Errors = _find_opt_Tint(dvc, Tint, autoTint_max = autoTint_max, correct_nonlinearity = correct_nonlinearity, verbosity = verbosity, Errors = Errors, out= 'Tint,cnts,Errors')
-    
-    # Get cnts anew when correct_dark_counts == True (is set to False in _find_opt_Tint):
-    if (correct_dark_counts == True) & dvc._has_dark_pixels:
-        cnts,Errors = _getOOcounts(dvc, Tint, correct_dark_counts = correct_dark_counts, correct_nonlinearity = correct_nonlinearity, Errors = Errors, out='cnts,Errors')
-
-    # Correct for dark_counts if not supported by device:
-    cnts,Errors = _correct_for_dark(dvc, cnts, Tint, method = dark_cnts, savgol_window = savgol_window, correct_dark_counts = correct_dark_counts, correct_nonlinearity = correct_nonlinearity, verbosity = verbosity, Errors = Errors, out = 'cnts,Errors')
-    
-    # Reset integration time to min. value for fast new measurement (see notes on crappy ocean optics software):
-    dvc.integration_time_micros(dvc._tint_min*1e6)
-    
-    # Add wavelengths to spd:
-    spd = np.vstack((dvc.wavelengths(),cnts))
-    
-    # Interpolate to requested wavelength range and stepsize:
-    if (wlstep is not None) & (wlstart is not None) & (wlend is not None):
-        spd = cie_interp(spd, getwlr([wlstart,wlend,wlstep]), kind = 'spd')
-    
-    # Convert to units:
-    if units == 'cnts':
-        pass
-    
-    elif units == 'cnts/s':
-        # Convert counts to counts/s:
-        spd[1,:] = cnts/Tint
+    try:
+        # Initialize device:
+        dvc, Errors = dvc_open(dvc = dvc, Errors = Errors, out = 'dvc,Errors', verbosity = verbosity)
         
-    elif (REFmeas is not None) & (REFspd is not None):
-        # Convert cnts/s to radiometric units:
-        spd[1,:] = cnts/Tint
-        spd, Errors = cntsps_to_radiom_units(spd, RFL = RFL, REFmeas = REFmeas, REFspd = REFspd, Errors = Errors, out='spd,Errors')
+        # Enable tec and set temperature:
+        if tec_temperature_C is not None:
+            Errors["tec_set_temperature_C"] = None
+            try:
+                dvc.tec_set_enable(True)
+                dvc.tec_set_temperature_C(set_point_C = tec_temperature_C)
+                time.sleep(0.5)
+                if verbosity > 0:
+                    print("Device temperature = {:1.1f}°C".format(dvc.tec_get_temperature_C()))
+                Errors["tec_set_temperature_C"] = 0
+            except:
+                Errors["tec_set_temperature_C"] = 'Fails'
+        
+        # Find optimum integration time and get counts (0: unlimited (but < autoTint_max), >0 fixed)
+        Tint, cnts,Errors = _find_opt_Tint(dvc, Tint, autoTint_max = autoTint_max, correct_nonlinearity = correct_nonlinearity, verbosity = verbosity, Errors = Errors, out= 'Tint,cnts,Errors')
+        
+        # Get cnts anew when correct_dark_counts == True (is set to False in _find_opt_Tint):
+        if (correct_dark_counts == True) & dvc._has_dark_pixels:
+            cnts,Errors = _getOOcounts(dvc, Tint, correct_dark_counts = correct_dark_counts, correct_nonlinearity = correct_nonlinearity, Errors = Errors, out='cnts,Errors')
     
-    if "spd" not in out.split(','):
-        close_device = True # force close because dvc is not requested as output!
-    dvc, Errors = dvc_close(dvc, close_device = close_device, verbosity = verbosity, Errors = Errors, out = 'dvc,Errors')
-
-    Errors["get_spd"] = int(np.sum([int(bool(x)) for x in Errors.values() if x is not None]) > 0)
-#    except:
-#        Errors["get_spd"] = 'Fails.'
-#        spd = np.array([np.nan])
-#    finally:
-    # Generate requested return:
-    if out == "spd":
-        return spd
-    elif out == "dvc":
-        return dvc
-    elif out == "Errors":
-        return Errors
-    elif out == "spd,Errors":
-        return spd, Errors
-    elif out == "spd,dvc":
-        return spd, dvc
-    elif out == "spd,Errors,dvc":
-        return spd, Errors, dvc
-    elif out == "spd,dvc,Errors":
-        return spd, dvc, Errors
-    else:
-        raise Exception("Requested output error.")
+        # Correct for dark_counts if not supported by device:
+        cnts,Errors = _correct_for_dark(dvc, cnts, Tint, method = dark_cnts, savgol_window = savgol_window, correct_dark_counts = correct_dark_counts, correct_nonlinearity = correct_nonlinearity, verbosity = verbosity, Errors = Errors, out = 'cnts,Errors')
+        
+        # Reset integration time to min. value for fast new measurement (see notes on crappy ocean optics software):
+        dvc.integration_time_micros(dvc._tint_min*1e6)
+        
+        # Add wavelengths to spd:
+        spd = np.vstack((dvc.wavelengths(),cnts))
+        
+        # Interpolate to requested wavelength range and stepsize:
+        if (wlstep is not None) & (wlstart is not None) & (wlend is not None):
+            spd = cie_interp(spd, getwlr([wlstart,wlend,wlstep]), kind = 'spd')
+        
+        # Convert to units:
+        if units == 'cnts':
+            pass
+        
+        elif units == 'cnts/s':
+            # Convert counts to counts/s:
+            spd[1,:] = cnts/Tint
+            
+        elif (REFmeas is not None) & (REFspd is not None):
+            # Convert cnts/s to radiometric units:
+            spd[1,:] = cnts/Tint
+            spd, Errors = cntsps_to_radiom_units(spd, RFL = RFL, REFmeas = REFmeas, REFspd = REFspd, Errors = Errors, out='spd,Errors')
+        
+        if "spd" not in out.split(','):
+            close_device = True # force close because dvc is not requested as output!
+        dvc, Errors = dvc_close(dvc, close_device = close_device, verbosity = verbosity, Errors = Errors, out = 'dvc,Errors')
+    
+        Errors["get_spd"] = int(np.sum([int(bool(x)) for x in Errors.values() if x is not None]) > 0)
+    except:
+        Errors["get_spd"] = 'Fails.'
+        spd = np.array([np.nan])
+    finally:
+        # Generate requested return:
+        if out == "spd":
+            return spd
+        elif out == "dvc":
+            return dvc
+        elif out == "Errors":
+            return Errors
+        elif out == "spd,Errors":
+            return spd, Errors
+        elif out == "spd,dvc":
+            return spd, dvc
+        elif out == "spd,Errors,dvc":
+            return spd, Errors, dvc
+        elif out == "spd,dvc,Errors":
+            return spd, dvc, Errors
+        else:
+            raise Exception("Requested output error.")
 
 def plot_spd(ax, spd, Tint, sum_cnts = 0, max_cnts = 0):
     """
