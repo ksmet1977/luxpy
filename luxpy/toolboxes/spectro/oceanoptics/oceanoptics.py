@@ -49,7 +49,7 @@ Default parameters:
  :_SAVGOL_WINDOW: window for smoothing of dark measurements
  :_SAVGOL_ORDER: order of savgol filter
  :_VERBOSITY: (0: nothing, 1: text, 2: text + graphs)
- :_DARK_MODEL: path and file where default dark_model is stored.
+ :_DARK_MODEL_PATH: path and file where default dark_model is stored.
  :_ERROR: error value.
     
 Notes:
@@ -105,11 +105,11 @@ _CORRECT_NONLINEARITY = False # automatic non-linearity correction
 _TARGET_MAX_CNTS_RATIO = 0.8 # aim for 80% of max number of counts
 _IT_RATIO_INCREASE = 1.2 # first stage: increase Tint by this fraction
 _MAX_NUMBER_OF_RATIO_INCREASES = 4 # number of times to apply ration increase before estimating using lin. regr.
-_DARK_MODEL_TINTS = np.linspace(1e-6, 10, 5) # array with integration times for dark model
+_DARK_MODEL_TINTS = np.linspace(1e-6, 4, 3) # array with integration times for dark model
 _SAVGOL_WINDOW = 1/20.0 # window for smoothing of dark measurements
 _SAVGOL_ORDER = 3 # order of savgol filter
 _VERBOSITY = 1 # verbosity (0: nothing, 1: text, 2: text + graphs)
-_DARK_MODEL = os.path.join(os.path.dirname(__file__),'data','dark_model.dat')
+_DARK_MODEL_PATH = os.path.join(os.path.dirname(__file__),'data','dark_model.dat')
 _ERROR = None
 
 def dvc_open(dvc = 0, Errors = {}, out = "dvc,Errors", verbosity = _VERBOSITY):
@@ -313,7 +313,7 @@ def create_dark_model(dvc, dark_model_Tints = _DARK_MODEL_TINTS, \
                       correct_dark_counts = _CORRECT_DARK_COUNTS, \
                       correct_nonlinearity = _CORRECT_NONLINEARITY, \
                       verbosity = _VERBOSITY, close_device = True, \
-                      Errors = {}, out = 'dark_model,Errors'):
+                      Errors = {}, out = 'dark_model,Errors', filename = None):
     """
     Create a dark model to account for readout noise and dark light.
     
@@ -354,6 +354,11 @@ def create_dark_model(dvc, dark_model_Tints = _DARK_MODEL_TINTS, \
         :out:
             | "dark_model,Errors", optional
             | Requested return.
+        :filename:
+            | None or 0 or str, optional
+            | None: don't write (default)
+            | 0: use default location: _DARK_MODEL_PATH
+            | Path + filename to write dark_model to.
             
     Returns:
         :dark_model: 
@@ -391,7 +396,7 @@ def create_dark_model(dvc, dark_model_Tints = _DARK_MODEL_TINTS, \
         for i,it in enumerate(dark_model_Tints):
             if verbosity > 0:
                 print("Measuring dark counts for integration time {:1.0f}/{:1.0f} ({:1.4f}s)".format(i,len(dark_model_Tints),it))
-            dark_Tint, dark_cnts = _find_opt_Tint(dvc, it, correct_dark_counts = correct_dark_counts, correct_nonlinearity = correct_nonlinearity)
+            dark_Tint, dark_cnts, Errors = _find_opt_Tint(dvc, it, correct_dark_counts = correct_dark_counts, correct_nonlinearity = correct_nonlinearity, Errors = Errors, out = 'Tint,cnts,Errors')
             dark_cnts_s = savgol_filter(dark_cnts, savgol_window, _SAVGOL_ORDER)
             
              # Graphic output
@@ -407,7 +412,7 @@ def create_dark_model(dvc, dark_model_Tints = _DARK_MODEL_TINTS, \
                 ax2.plot(dvc.wavelengths(), dark_cnts_s,'.')
                 plt.show()
                 plt.pause(0.1)
-  
+      
             if i == 0:
                 dark_cnts_arr = dark_cnts
                 dark_cnts_s_arr = dark_cnts_s
@@ -439,13 +444,21 @@ def create_dark_model(dvc, dark_model_Tints = _DARK_MODEL_TINTS, \
         
         # Store integration times and dark counts in nd-array:
         if savgol_window > 0: # use smoothed dark measurements
-            dark_model = np.hstack((np.vstack((np.nan,dark_its_arr[:,None])),\
+            dark_model = np.hstack((np.vstack((0,dark_its_arr[:,None])),\
                                 np.vstack((dvc.wavelengths(),dark_cnts_s_arr))))
         else: # use non-smoothed dark measurements
-            dark_model = np.hstack((np.vstack((np.nan,dark_its_arr[:,None])),\
+            dark_model = np.hstack((np.vstack((0,dark_its_arr[:,None])),\
                                 np.vstack((dvc.wavelengths(),dark_cnts_arr))))
             
         dvc, Errors = dvc_close(dvc, Errors = Errors, close_device = close_device, verbosity = verbosity)
+        Errors["create_dark_model"] = 0
+        try:
+            if filename is not None:
+                if filename == 0:
+                    filename = _DARK_MODEL_PATH
+                pd.DataFrame(dark_model).to_csv(filename, index=False, header=False, float_format='%1.5f')
+        except:
+            Warning('Could not write dark_model to {:s}'.format(filename))
         Errors["create_dark_model"] = 0
     except:
         Errors["create_dark_model"] = 'fails'
@@ -517,43 +530,42 @@ def estimate_dark_from_model(Tint, dark_model, Errors = {}, out = 'cnts,Errors')
     """
     Errors["estimate_dark"] = None
     out = out.replace(' ','')
-#try:
-
-    if not np.isnan(dark_model).any():
-        
-        if dark_model.shape[0] > 2: # contains array with dark model
-            dark_its_arr = dark_model[1:,0] # integration times
-            dark_cnts_arr = dark_model[1:,1:] # dark counts (first axis of dark_model are wavelengths)
-            p1,p2 = _find_two_closest(Tint, dark_its_arr)
-            dark1 = dark_cnts_arr[p1]
-            dark2 = dark_cnts_arr[p2]
-            it1 = dark_its_arr[p1]
-            it2 = dark_its_arr[p2]
-            dark = dark1 + (Tint-it1)*(dark2-dark1)/(it2-it1)
-            cnts = np.vstack((dark_model[0,1:],dark)) # add wavelengths and return dark cnts
-            Errors["estimate_dark"] = 0
-        elif dark_model.shape[0] == 2: # contains array with dark spectrum
-            cnts = dark_model 
-            Errors["estimate_dark"] = 0
+    try:
+        if not np.isnan(dark_model).any():
+            
+            if dark_model.shape[0] > 2: # contains array with dark model
+                dark_its_arr = dark_model[1:,0] # integration times
+                dark_cnts_arr = dark_model[1:,1:] # dark counts (first axis of dark_model are wavelengths)
+                p1,p2 = _find_two_closest(Tint, dark_its_arr)
+                dark1 = dark_cnts_arr[p1]
+                dark2 = dark_cnts_arr[p2]
+                it1 = dark_its_arr[p1]
+                it2 = dark_its_arr[p2]
+                dark = dark1 + (Tint-it1)*(dark2-dark1)/(it2-it1)
+                cnts = np.vstack((dark_model[0,1:],dark)) # add wavelengths and return dark cnts
+                Errors["estimate_dark"] = 0
+            elif dark_model.shape[0] == 2: # contains array with dark spectrum
+                cnts = dark_model 
+                Errors["estimate_dark"] = 0
+            else:
+                Errors["estimate_dark"] = "dark_model does not contain a dark model (.shape[0] > 2) or spectrum (.shape[0] == 2)! Setting dark to 0."
+                Warning(Errors["estimate_dark"])
+                cnts = np.array([[0]])
         else:
-            Errors["estimate_dark"] = "dark_model does not contain a dark model (.shape[0] > 2) or spectrum (.shape[0] == 2)! Setting dark to 0."
-            Warning(Errors["estimate_dark"])
+            Errors["estimate_dark"] = "dark_model contained NaN's (no model available), setting dark to 0."
             cnts = np.array([[0]])
-    else:
-        Errors["estimate_dark"] = "dark_model contained NaN's (no model available), setting dark to 0."
-        cnts = np.array([[0]])
-#    except:
-#        Errors["estimate_dark"] = "Fails. Setting dark to 0."
-#        cnts = np.array([0])
-#    finally:
-    if out == "cnts,Errors":
-        return cnts, Errors
-    elif out == "cnts":
-        return cnts
-    elif out == "Errors":
-        return Errors
-    else:
-        raise Exception("Requested output error.")
+    except:
+        Errors["estimate_dark"] = "Fails. Setting dark to 0."
+        cnts = np.array([0])
+    finally:
+        if out == "cnts,Errors":
+            return cnts, Errors
+        elif out == "cnts":
+            return cnts
+        elif out == "Errors":
+            return Errors
+        else:
+            raise Exception("Requested output error.")
         
             
 
@@ -712,166 +724,166 @@ def _find_opt_Tint(dvc, Tint, autoTint_max = _TINT_MAX, \
     """
     Errors["_find_opt_Tint"] = None
     out = out.replace(' ','')
-#    try:
-    # Get max pixel value and min. integration time:
-    max_value = dvc._dev.interface._MAX_PIXEL_VALUE
-    Tint_min = dvc._tint_min
-                
-    
-    # Limit max integration time:
-    Tint_max = autoTint_max
-    if Tint_max is not None:
-        if Tint_max > dvc._tint_max:
-            Tint_max = dvc._tint_max 
-        if Tint > Tint_max:
-            Tint = Tint_max
-    else:
-        if Tint > dvc._tint_max:
-            Tint = dvc._tint_max
-            
-    # Setup integration time and limit if necessary:
-    if Tint > 0:
-        Tint_max = None # None means fixed integration time  
-        if Tint > dvc._tint_max:
-            Tint = dvc._tint_max
-    elif Tint == 0:
-        if autoTint_max is not None:
-            if autoTint_max > dvc._tint_max:
-                autoTint_max = dvc._tint_max 
-            if Tint > autoTint_max:
-                Tint = autoTint_max
-            Tint_max = autoTint_max
+    try:
+        # Get max pixel value and min. integration time:
+        max_value = dvc._dev.interface._MAX_PIXEL_VALUE
+        Tint_min = dvc._tint_min
+                    
+        
+        # Limit max integration time:
+        Tint_max = autoTint_max
+        if Tint_max is not None:
+            if Tint_max > dvc._tint_max:
+                Tint_max = dvc._tint_max 
+            if Tint > Tint_max:
+                Tint = Tint_max
         else:
-            Tint_max = dvc._tint_max
+            if Tint > dvc._tint_max:
+                Tint = dvc._tint_max
+                
+        # Setup integration time and limit if necessary:
+        if Tint > 0:
+            Tint_max = None # None means fixed integration time  
+            if Tint > dvc._tint_max:
+                Tint = dvc._tint_max
+        elif Tint == 0:
+            if autoTint_max is not None:
+                if autoTint_max > dvc._tint_max:
+                    autoTint_max = dvc._tint_max 
+                if Tint > autoTint_max:
+                    Tint = autoTint_max
+                Tint_max = autoTint_max
+            else:
+                Tint_max = dvc._tint_max
+                
+        # Ensure Tint is high enough (Tint == 0 is encoded by Tint_max == None)
+        if Tint < Tint_min:
+            Tint = Tint_min
             
-    # Ensure Tint is high enough (Tint == 0 is encoded by Tint_max == None)
-    if Tint < Tint_min:
-        Tint = Tint_min
         
+        # Determine integration time for optimum counts:
+        getcnts = lambda it, Errors: _getOOcounts(dvc, it, correct_dark_counts = False, correct_nonlinearity = correct_nonlinearity, Errors = Errors, out='cnts,Errors')
+        is_sat_bool = lambda cnts: (cnts.max() >= max_value) # check for saturation
+        counter = 0
+        if Tint_max is not None:
+            target_cnts_bool = lambda cnts: (cnts.max() < (max_value*_TARGET_MAX_CNTS_RATIO)) # check for max_counts
+            target_it_bool = lambda it: (it <= Tint_max) # check for Tint_max
+                    
+            it = Tint_min # start at min. Tint
+            cnts, Errors = getcnts(it, Errors) # get cnts
+            its = [it] # store Tint in array
+            max_cnts = [cnts.max()] # store max_cnts in array
+            max_number_of_ratio_increases = _MAX_NUMBER_OF_RATIO_INCREASES
+            
+            if verbosity > 1:
+                fig_opt = plt.figure('Integration time optimization')
+                ax_opt1 = fig_opt.add_subplot(1,1,1)
+                ax_opt1.set_xlabel('Integration time (s)')
+                ax_opt1.set_ylabel('Maximum counts')
+            extra_increase_factor_for_low_light_levels = 1    
+            while (target_cnts_bool(cnts) & target_it_bool(it)) & (not is_sat_bool(cnts)):
+                if (len(max_cnts) < (max_number_of_ratio_increases)):
+                    it = it * _IT_RATIO_INCREASE * extra_increase_factor_for_low_light_levels
+                else:
+                    p_max_cnts_vs_its = np.polyfit(max_cnts[-(max_number_of_ratio_increases-1):],its[-(max_number_of_ratio_increases-1):],1) # try and predict a value close to target cnts
+                    it = np.polyval(p_max_cnts_vs_its, max_value*_TARGET_MAX_CNTS_RATIO)
+                    if not target_it_bool(it):
+                        it = Tint_max
+                if verbosity > 0:
+                    print("Integration time optimization: measuring ... {:1.5f}s".format(it))
+                
+                # get counts:
+                cnts, Errors = getcnts(it, Errors)
     
-    # Determine integration time for optimum counts:
-    getcnts = lambda it, Errors: _getOOcounts(dvc, it, correct_dark_counts = False, correct_nonlinearity = correct_nonlinearity, Errors = Errors, out='cnts,Errors')
-    is_sat_bool = lambda cnts: (cnts.max() >= max_value) # check for saturation
-    counter = 0
-    if Tint_max is not None:
-        target_cnts_bool = lambda cnts: (cnts.max() < (max_value*_TARGET_MAX_CNTS_RATIO)) # check for max_counts
-        target_it_bool = lambda it: (it <= Tint_max) # check for Tint_max
                 
-        it = Tint_min # start at min. Tint
-        cnts, Errors = getcnts(it, Errors) # get cnts
-        its = [it] # store Tint in array
-        max_cnts = [cnts.max()] # store max_cnts in array
-        max_number_of_ratio_increases = _MAX_NUMBER_OF_RATIO_INCREASES
-        
-        if verbosity > 1:
-            fig_opt = plt.figure('Integration time optimization')
-            ax_opt1 = fig_opt.add_subplot(1,1,1)
-            ax_opt1.set_xlabel('Integration time (s)')
-            ax_opt1.set_ylabel('Maximum counts')
-        extra_increase_factor_for_low_light_levels = 1    
-        while (target_cnts_bool(cnts) & target_it_bool(it)) & (not is_sat_bool(cnts)):
-            if (len(max_cnts) < (max_number_of_ratio_increases)):
-                it = it * _IT_RATIO_INCREASE * extra_increase_factor_for_low_light_levels
-            else:
-                p_max_cnts_vs_its = np.polyfit(max_cnts[-(max_number_of_ratio_increases-1):],its[-(max_number_of_ratio_increases-1):],1) # try and predict a value close to target cnts
-                it = np.polyval(p_max_cnts_vs_its, max_value*_TARGET_MAX_CNTS_RATIO)
-                if not target_it_bool(it):
-                    it = Tint_max
-            if verbosity > 0:
-                print("Integration time optimization: measuring ... {:1.5f}s".format(it))
-            
-            # get counts:
-            cnts, Errors = getcnts(it, Errors)
-
-            
-            # Ensure only increasing it-vs-max, 
-            # if not: sign of unstable measurement due to to short integration time
-            if (cnts.max() > max_cnts[-1]):
+                # Ensure only increasing it-vs-max, 
+                # if not: sign of unstable measurement due to to short integration time
+                if (cnts.max() > max_cnts[-1]):
+                    its.append(it) # keep track of integration times
+                    max_cnts.append(cnts.max())  # keep track of max counts
+                    counter = 0
+                    extra_increase_factor_for_low_light_levels = 1
+                elif (len(max_cnts) > max_number_of_ratio_increases):
+                    counter += 1 # if max keeps the same, get out of loop
+                    if counter > 3:
+                        if verbosity > 0:
+                            print('Break while loop using counter.')
+                        break
+                else:
+                    extra_increase_factor_for_low_light_levels = extra_increase_factor_for_low_light_levels * 1.5
+    #               print(extra_increase_factor_for_low_light_levels)
+    
+    #            if verbosity > 0:
+    #                print('     List of integration times (s):')
+    #                print(its)
+    #                print('     List of max. counts:')
+    #                print(max_cnts)
+    #                print('\n')
+    
+                if verbosity > 1:
+                    ax_opt1.plot(its[-1],max_cnts[-1],'o')
+                    plt.show()
+                    plt.pause(0.1)
+                
+                # When current fitted Tint or max. cnts differ by less than 10%
+                # from previous or when Tint == Tint_max, break while loop 
+                # (i.e. sacrifice small gain for increased efficiency):
+                if (len(max_cnts) > max_number_of_ratio_increases):
+                    if ((np.abs(1.0*cnts.max() - max_cnts[-2])/max_cnts[-2]) < 0.1) | ((np.abs(1.0*it - its[-2])/its[-2]) < 0.1) | (it ==  Tint_max): # if max counts changes by less than 1%: break loop
+                        if verbosity > 0:
+                            print('Break while loop: less than 10% diff between last two max. or Tint values, or Tint == Tint_max.')
+                        break
+    
+                
+            while is_sat_bool(cnts): # if saturated, start reducing Tint again
+                it = it / _IT_RATIO_INCREASE
+                if verbosity > 0:
+                    print('Saturated max count value. Reducing integration time to {:1.2f}s'.format(it))
                 its.append(it) # keep track of integration times
-                max_cnts.append(cnts.max())  # keep track of max counts
-                counter = 0
-                extra_increase_factor_for_low_light_levels = 1
-            elif (len(max_cnts) > max_number_of_ratio_increases):
-                counter += 1 # if max keeps the same, get out of loop
-                if counter > 3:
-                    if verbosity > 0:
-                        print('Break while loop using counter.')
-                    break
-            else:
-                extra_increase_factor_for_low_light_levels = extra_increase_factor_for_low_light_levels * 1.5
-#               print(extra_increase_factor_for_low_light_levels)
-
-#            if verbosity > 0:
-#                print('     List of integration times (s):')
-#                print(its)
-#                print('     List of max. counts:')
-#                print(max_cnts)
-#                print('\n')
-
-            if verbosity > 1:
-                ax_opt1.plot(its[-1],max_cnts[-1],'o')
-                plt.show()
-                plt.pause(0.1)
-            
-            # When current fitted Tint or max. cnts differ by less than 10%
-            # from previous or when Tint == Tint_max, break while loop 
-            # (i.e. sacrifice small gain for increased efficiency):
-            if (len(max_cnts) > max_number_of_ratio_increases):
-                if ((np.abs(1.0*cnts.max() - max_cnts[-2])/max_cnts[-2]) < 0.1) | ((np.abs(1.0*it - its[-2])/its[-2]) < 0.1) | (it ==  Tint_max): # if max counts changes by less than 1%: break loop
-                    if verbosity > 0:
-                        print('Break while loop: less than 10% diff between last two max. or Tint values, or Tint == Tint_max.')
-                    break
-
-            
-        while is_sat_bool(cnts): # if saturated, start reducing Tint again
-            it = it / _IT_RATIO_INCREASE
-            if verbosity > 0:
-                print('Saturated max count value. Reducing integration time to {:1.2f}s'.format(it))
-            its.append(it) # keep track of integration times
-            cnts, Errors = getcnts(it, Errors)
-            
-            max_cnts.append(cnts.max())  # keep track of max counts
-            
-            if verbosity > 1:
-                ax_opt1.plot(its[-1],max_cnts[-1],'s')
-                plt.show()
-                plt.pause(0.1)
+                cnts, Errors = getcnts(it, Errors)
                 
-        Tint = it
-   
-    else:
-        # Limit integration time to min-max range:
-        if Tint < dvc._tint_min:
-            Tint = dvc._tint_min
-        if Tint > dvc._tint_max:
-            Tint = dvc._tint_max
-
-        # get counts:
-        cnts, Errors = getcnts(Tint, Errors)
-        if is_sat_bool(cnts):
-            if verbosity > 0:
-                print('WARNING: Saturated max count value at integration time of {:1.2f}s'.format(Tint))
-    Errors["_find_opt_Tint"] = 0 
-#    except:
-#        Errors["_find_opt_Tint"] = 'Fails.'
-#        Tint, cnts = _ERROR, _ERROR
-#    finally:
-    if out == "Tint,cnts,Errors":
-        return Tint, cnts, Errors
-    elif out == "Tint,cnts":
-        return Tint, cnts
-    elif out == "Tint,Errors":
-        return Tint, Errors
-    elif out == "cnts,Errors":
-        return cnts, Errors
-    elif out == "Tint":
-        return Tint
-    elif out == "cnts":
-        return cnts
-    elif out == "Errors":
-        return Errors
-    else:
-        raise Exception("Requested output error.")
+                max_cnts.append(cnts.max())  # keep track of max counts
+                
+                if verbosity > 1:
+                    ax_opt1.plot(its[-1],max_cnts[-1],'s')
+                    plt.show()
+                    plt.pause(0.1)
+                    
+            Tint = it
+       
+        else:
+            # Limit integration time to min-max range:
+            if Tint < dvc._tint_min:
+                Tint = dvc._tint_min
+            if Tint > dvc._tint_max:
+                Tint = dvc._tint_max
+    
+            # get counts:
+            cnts, Errors = getcnts(Tint, Errors)
+            if is_sat_bool(cnts):
+                if verbosity > 0:
+                    print('WARNING: Saturated max count value at integration time of {:1.2f}s'.format(Tint))
+        Errors["_find_opt_Tint"] = 0 
+    except:
+        Errors["_find_opt_Tint"] = 'Fails.'
+        Tint, cnts = _ERROR, _ERROR
+    finally:
+        if out == "Tint,cnts,Errors":
+            return Tint, cnts, Errors
+        elif out == "Tint,cnts":
+            return Tint, cnts
+        elif out == "Tint,Errors":
+            return Tint, Errors
+        elif out == "cnts,Errors":
+            return cnts, Errors
+        elif out == "Tint":
+            return Tint
+        elif out == "cnts":
+            return cnts
+        elif out == "Errors":
+            return Errors
+        else:
+            raise Exception("Requested output error.")
         
 
 def cntsps_to_radiom_units(cntsps, REFmeas = None, REFspd = None, RFL = None, \
@@ -931,7 +943,7 @@ def cntsps_to_radiom_units(cntsps, REFmeas = None, REFspd = None, RFL = None, \
 def get_spd(dvc = 0, Tint = _TINT, autoTint_max = _TINT_MAX, \
             correct_dark_counts = _CORRECT_DARK_COUNTS, correct_nonlinearity = _CORRECT_NONLINEARITY, \
             tec_temperature_C = None,  \
-            dark_cnts = _DARK_MODEL, savgol_window = _SAVGOL_WINDOW,\
+            dark_cnts = _DARK_MODEL_PATH, savgol_window = _SAVGOL_WINDOW,\
             units = 'cnts/s', verbosity = _VERBOSITY,
             close_device = True, wlstep = None, wlstart = None, wlend = None,\
             REFmeas = None, REFspd = None, RFL = None, \
@@ -1155,7 +1167,7 @@ if __name__ == '__main__':
         dvc, Errors = dvc_open(dvc = dvc, out='dvc,Errors', verbosity = verbosity)
     
     # Set type of measurement    
-    case = 'cont' # other options: 'single','cont','list','dark'
+    case = 'dark' # other options: 'single','cont','list','dark'
     
     if case == 'single': # single measurement
         autoTint_max = 3 # set integration time in secs.
