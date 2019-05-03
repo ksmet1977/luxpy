@@ -135,8 +135,10 @@ def dvc_open(dvc = 0, Errors = {}, out = "dvc,Errors", verbosity = _VERBOSITY):
             | Dict with error messages.
     """
     out = out.replace(' ','')
-    try:
-        Errors["OpenDevice"] = None
+#    try:
+    Errors["OpenDevice"] = None
+    if isinstance(dvc,int):
+
         # Get list of connected OO devices:
         devices = []
         while devices == []:
@@ -146,36 +148,40 @@ def dvc_open(dvc = 0, Errors = {}, out = "dvc,Errors", verbosity = _VERBOSITY):
             print("List of Ocean Optics devices:")
             print(devices)
         time.sleep(1)
-        
-        if isinstance(dvc,int):
-            if verbosity > 0:
-                print("Opening device: {:1.0f}".fomat(dvc))
-            # Initialize device:
-            dvc = sb.Spectrometer(devices[dvc])
-            time.sleep(1)
-        
+    
+    
+        if verbosity > 0:
+            print("Opening device: {:1.0f}".format(dvc))
+        # Initialize device:
+        dvc = sb.Spectrometer(devices[dvc])
+        time.sleep(1)
+    
         # Add other info to dvc struct:
         dvc._tint_min = dvc._dev.interface._INTEGRATION_TIME_MIN/1e6
         dvc._tint_max = dvc._dev.interface._INTEGRATION_TIME_MAX/1e6
-        
+    
+        if dvc._has_nonlinearity_coeffs:
+            if sum(dvc._nc) == 0: # avoid problems with division by zero by messed up coefficients.
+                dvc._nc[0] = 1.0
+            
         # Set global variable _TINT_MAX to device dependent value
         global _TINT_MAX
         if _TINT_MAX is None:
             _TINT_MAX = dvc._tint_max
             
         Errors["OpenDevice"] = 0
-    except:
-        Errors["OpenDevice"] = 'dvc_open() fails.'
-        dvc = _ERROR 
-    finally:
-        if out == "dvc,Errors":
-            return dvc, Errors
-        elif out == "dvc":
-            return dvc
-        elif out == "Errors":
-            return Errors
-        else:
-            raise Exception("Requested output error.")
+#    except:
+#        Errors["OpenDevice"] = 'dvc_open() fails.'
+#        dvc = _ERROR 
+#    finally:
+    if out == "dvc,Errors":
+        return dvc, Errors
+    elif out == "dvc":
+        return dvc
+    elif out == "Errors":
+        return Errors
+    else:
+        raise Exception("Requested output error.")
 
     return dvc
 
@@ -278,6 +284,13 @@ def _getOOcounts(dvc, Tint = _TINT, \
     try:
         Errors['MeasureCnts'] = None
         dvc.integration_time_micros(Tint*1e6) # expects micro secs.
+        
+        # Turn off features some devices do not support.
+        if not dvc._has_dark_pixels:
+            correct_dark_counts = False
+        if not dvc._has_nonlinearity_coeffs:
+            correct_nonlinearity = False
+            
         cnts = dvc.intensities(correct_dark_counts = correct_dark_counts, correct_nonlinearity = correct_nonlinearity)
         cnts = dvc.intensities(correct_dark_counts = correct_dark_counts, correct_nonlinearity = correct_nonlinearity) # double call to avoid ending up with wrong buffer values due to poor programming of ocean optics api
         Errors['MeasureCnts'] = 0
@@ -293,7 +306,7 @@ def _getOOcounts(dvc, Tint = _TINT, \
             return Errors
         else:
             raise Exception("Requested output error.")
-
+    
 
 def create_dark_model(dvc, dark_model_Tints = _DARK_MODEL_TINTS, \
                       savgol_window = _SAVGOL_WINDOW, \
@@ -478,7 +491,7 @@ def _find_two_closest(value, values):
         p2 = p1 - 1
     return p1,p2
 
-def estimate_dark_from_model(Tint, dark_model, Errors = {}, out = 'dark,Errors'):
+def estimate_dark_from_model(Tint, dark_model, Errors = {}, out = 'cnts,Errors'):
     """
     Estimate the dark spectrum for a specified integration time given a dark model.
     
@@ -497,49 +510,50 @@ def estimate_dark_from_model(Tint, dark_model, Errors = {}, out = 'dark,Errors')
             | Requested return.
             
     Returns:
-        :dark:
+        :cnts:
             | dark spectrum (row 0: wavelengths, row 1: counts)
         :Errors:
             | dictionary with errors.
     """
     Errors["estimate_dark"] = None
     out = out.replace(' ','')
-    try:
-        if not np.isnan(dark_model).any():
-            
-            if dark_model.shape[0] > 2: # contains array with dark model
-                dark_its_arr = dark_model[1:,0] # integration times
-                dark_cnts_arr = dark_model[1:,1:] # dark counts (first axis of dark_model are wavelengths)
-                p1,p2 = _find_two_closest(Tint, dark_its_arr)
-                dark1 = dark_cnts_arr[p1]
-                dark2 = dark_cnts_arr[p2]
-                it1 = dark_its_arr[p1]
-                it2 = dark_its_arr[p2]
-                dark = dark1 + (Tint-it1)*(dark2-dark1)/(it2-it1)
-                dark = np.vstack((dark_model[0,1:],dark)) # add wavelengths and return dark cnts
-                Errors["estimate_dark"] = 0
-            elif dark_model.shape[0] == 2: # contains array with dark spectrum
-                dark = dark_model 
-                Errors["estimate_dark"] = 0
-            else:
-                Errors["estimate_dark"] = "dark_model does not contain a dark model (.shape[0] > 2) or spectrum (.shape[0] == 2)! Setting dark to 0."
-                Warning(Errors["estimate_dark"])
-                dark = np.array([0])
+#try:
+
+    if not np.isnan(dark_model).any():
+        
+        if dark_model.shape[0] > 2: # contains array with dark model
+            dark_its_arr = dark_model[1:,0] # integration times
+            dark_cnts_arr = dark_model[1:,1:] # dark counts (first axis of dark_model are wavelengths)
+            p1,p2 = _find_two_closest(Tint, dark_its_arr)
+            dark1 = dark_cnts_arr[p1]
+            dark2 = dark_cnts_arr[p2]
+            it1 = dark_its_arr[p1]
+            it2 = dark_its_arr[p2]
+            dark = dark1 + (Tint-it1)*(dark2-dark1)/(it2-it1)
+            cnts = np.vstack((dark_model[0,1:],dark)) # add wavelengths and return dark cnts
+            Errors["estimate_dark"] = 0
+        elif dark_model.shape[0] == 2: # contains array with dark spectrum
+            cnts = dark_model 
+            Errors["estimate_dark"] = 0
         else:
-            Errors["estimate_dark"] = "dark_model contained NaN's (no model available), setting dark to 0."
-            dark = np.array([0])
-    except:
-        Errors["estimate_dark"] = "Fails. Setting dark to 0."
-        dark = np.array([0])
-    finally:
-        if out == "dark,Errors":
-            return dark, Errors
-        elif out == "dark":
-            return dark
-        elif out == "Errors":
-            return Errors
-        else:
-            raise Exception("Requested output error.")
+            Errors["estimate_dark"] = "dark_model does not contain a dark model (.shape[0] > 2) or spectrum (.shape[0] == 2)! Setting dark to 0."
+            Warning(Errors["estimate_dark"])
+            cnts = np.array([[0]])
+    else:
+        Errors["estimate_dark"] = "dark_model contained NaN's (no model available), setting dark to 0."
+        cnts = np.array([[0]])
+#    except:
+#        Errors["estimate_dark"] = "Fails. Setting dark to 0."
+#        cnts = np.array([0])
+#    finally:
+    if out == "cnts,Errors":
+        return cnts, Errors
+    elif out == "cnts":
+        return cnts
+    elif out == "Errors":
+        return Errors
+    else:
+        raise Exception("Requested output error.")
         
             
 
@@ -608,7 +622,7 @@ def _correct_for_dark(dvc, cnts, Tint, method = 'dark_model.dat', \
     out = out.replace(' ','')
     try:
         if method == 'none':
-            pass
+            dark_cnts = 0
         elif method == 'measure':
                 # Determine odd window_length of savgol filter for smoothing (if 0: no smoothing):
                 if savgol_window > 0:
@@ -622,11 +636,12 @@ def _correct_for_dark(dvc, cnts, Tint, method = 'dark_model.dat', \
                 if verbosity > 0:
                     print("Close shutter and press Ok in messagebox to continue with measurement.")
                 messagebox.showinfo("Dark Measurement","Close shutter and press Ok to continue with measurement.")
-                
                 dark_cnts, Errors = _getOOcounts(dvc, Tint = Tint, correct_dark_counts = correct_dark_counts, correct_nonlinearity = correct_nonlinearity, Errors = Errors, out = 'cnts,Errors')
                 if savgol_window > 0: # apply smoothing
-                    dark_cnts = savgol_filter(dark_cnts, savgol_window, _SAVGOL_ORDER)
-                
+                    try:
+                        dark_cnts = savgol_filter(dark_cnts, savgol_window, _SAVGOL_ORDER)
+                    except:
+                        pass
                 # Ask user response:
                 if verbosity > 0:
                     print("Dark measurement completed. Press Ok in messagebox to continue with measurement.")
@@ -651,7 +666,7 @@ def _correct_for_dark(dvc, cnts, Tint, method = 'dark_model.dat', \
             return Errors
         else:
             raise Exception("Requested output error.")
-        
+            
         
         
 
@@ -697,166 +712,166 @@ def _find_opt_Tint(dvc, Tint, autoTint_max = _TINT_MAX, \
     """
     Errors["_find_opt_Tint"] = None
     out = out.replace(' ','')
-    try:
-        # Get max pixel value and min. integration time:
-        max_value = dvc._dev.interface._MAX_PIXEL_VALUE
-        Tint_min = dvc._tint_min
-                    
-        
-        # Limit max integration time:
-        Tint_max = autoTint_max
-        if Tint_max is not None:
-            if Tint_max > dvc._tint_max:
-                Tint_max = dvc._tint_max 
-            if Tint > Tint_max:
-                Tint = Tint_max
-        else:
-            if Tint > dvc._tint_max:
-                Tint = dvc._tint_max
+#    try:
+    # Get max pixel value and min. integration time:
+    max_value = dvc._dev.interface._MAX_PIXEL_VALUE
+    Tint_min = dvc._tint_min
                 
-        # Setup integration time and limit if necessary:
-        if Tint > 0:
-            Tint_max = None # None means fixed integration time  
-            if Tint > dvc._tint_max:
-                Tint = dvc._tint_max
-        elif Tint == 0:
-            if autoTint_max is not None:
-                if autoTint_max > dvc._tint_max:
-                    autoTint_max = dvc._tint_max 
-                if Tint > autoTint_max:
-                    Tint = autoTint_max
-                Tint_max = autoTint_max
-            else:
-                Tint_max = dvc._tint_max
-                
-        # Ensure Tint is high enough (Tint == 0 is encoded by Tint_max == None)
-        if Tint < Tint_min:
-            Tint = Tint_min
+    
+    # Limit max integration time:
+    Tint_max = autoTint_max
+    if Tint_max is not None:
+        if Tint_max > dvc._tint_max:
+            Tint_max = dvc._tint_max 
+        if Tint > Tint_max:
+            Tint = Tint_max
+    else:
+        if Tint > dvc._tint_max:
+            Tint = dvc._tint_max
             
+    # Setup integration time and limit if necessary:
+    if Tint > 0:
+        Tint_max = None # None means fixed integration time  
+        if Tint > dvc._tint_max:
+            Tint = dvc._tint_max
+    elif Tint == 0:
+        if autoTint_max is not None:
+            if autoTint_max > dvc._tint_max:
+                autoTint_max = dvc._tint_max 
+            if Tint > autoTint_max:
+                Tint = autoTint_max
+            Tint_max = autoTint_max
+        else:
+            Tint_max = dvc._tint_max
+            
+    # Ensure Tint is high enough (Tint == 0 is encoded by Tint_max == None)
+    if Tint < Tint_min:
+        Tint = Tint_min
         
-        # Determine integration time for optimum counts:
-        getcnts, Errors = lambda it, Errors: _getOOcounts(dvc, it, correct_dark_counts = False, correct_nonlinearity = correct_nonlinearity, Errors = Errors, out='cnts,Errors')
-        is_sat_bool = lambda cnts: (cnts.max() >= max_value) # check for saturation
-        counter = 0
-        if Tint_max is not None:
-            target_cnts_bool = lambda cnts: (cnts.max() < (max_value*_TARGET_MAX_CNTS_RATIO)) # check for max_counts
-            target_it_bool = lambda it: (it <= Tint_max) # check for Tint_max
-                    
-            it = Tint_min # start at min. Tint
-            cnts, Errors = getcnts(it, Errors) # get cnts
-            its = [it] # store Tint in array
-            max_cnts = [cnts.max()] # store max_cnts in array
-            max_number_of_ratio_increases = _MAX_NUMBER_OF_RATIO_INCREASES
+    
+    # Determine integration time for optimum counts:
+    getcnts = lambda it, Errors: _getOOcounts(dvc, it, correct_dark_counts = False, correct_nonlinearity = correct_nonlinearity, Errors = Errors, out='cnts,Errors')
+    is_sat_bool = lambda cnts: (cnts.max() >= max_value) # check for saturation
+    counter = 0
+    if Tint_max is not None:
+        target_cnts_bool = lambda cnts: (cnts.max() < (max_value*_TARGET_MAX_CNTS_RATIO)) # check for max_counts
+        target_it_bool = lambda it: (it <= Tint_max) # check for Tint_max
+                
+        it = Tint_min # start at min. Tint
+        cnts, Errors = getcnts(it, Errors) # get cnts
+        its = [it] # store Tint in array
+        max_cnts = [cnts.max()] # store max_cnts in array
+        max_number_of_ratio_increases = _MAX_NUMBER_OF_RATIO_INCREASES
+        
+        if verbosity > 1:
+            fig_opt = plt.figure('Integration time optimization')
+            ax_opt1 = fig_opt.add_subplot(1,1,1)
+            ax_opt1.set_xlabel('Integration time (s)')
+            ax_opt1.set_ylabel('Maximum counts')
+        extra_increase_factor_for_low_light_levels = 1    
+        while (target_cnts_bool(cnts) & target_it_bool(it)) & (not is_sat_bool(cnts)):
+            if (len(max_cnts) < (max_number_of_ratio_increases)):
+                it = it * _IT_RATIO_INCREASE * extra_increase_factor_for_low_light_levels
+            else:
+                p_max_cnts_vs_its = np.polyfit(max_cnts[-(max_number_of_ratio_increases-1):],its[-(max_number_of_ratio_increases-1):],1) # try and predict a value close to target cnts
+                it = np.polyval(p_max_cnts_vs_its, max_value*_TARGET_MAX_CNTS_RATIO)
+                if not target_it_bool(it):
+                    it = Tint_max
+            if verbosity > 0:
+                print("Integration time optimization: measuring ... {:1.5f}s".format(it))
+            
+            # get counts:
+            cnts, Errors = getcnts(it, Errors)
+
+            
+            # Ensure only increasing it-vs-max, 
+            # if not: sign of unstable measurement due to to short integration time
+            if (cnts.max() > max_cnts[-1]):
+                its.append(it) # keep track of integration times
+                max_cnts.append(cnts.max())  # keep track of max counts
+                counter = 0
+                extra_increase_factor_for_low_light_levels = 1
+            elif (len(max_cnts) > max_number_of_ratio_increases):
+                counter += 1 # if max keeps the same, get out of loop
+                if counter > 3:
+                    if verbosity > 0:
+                        print('Break while loop using counter.')
+                    break
+            else:
+                extra_increase_factor_for_low_light_levels = extra_increase_factor_for_low_light_levels * 1.5
+#               print(extra_increase_factor_for_low_light_levels)
+
+#            if verbosity > 0:
+#                print('     List of integration times (s):')
+#                print(its)
+#                print('     List of max. counts:')
+#                print(max_cnts)
+#                print('\n')
+
+            if verbosity > 1:
+                ax_opt1.plot(its[-1],max_cnts[-1],'o')
+                plt.show()
+                plt.pause(0.1)
+            
+            # When current fitted Tint or max. cnts differ by less than 10%
+            # from previous or when Tint == Tint_max, break while loop 
+            # (i.e. sacrifice small gain for increased efficiency):
+            if (len(max_cnts) > max_number_of_ratio_increases):
+                if ((np.abs(1.0*cnts.max() - max_cnts[-2])/max_cnts[-2]) < 0.1) | ((np.abs(1.0*it - its[-2])/its[-2]) < 0.1) | (it ==  Tint_max): # if max counts changes by less than 1%: break loop
+                    if verbosity > 0:
+                        print('Break while loop: less than 10% diff between last two max. or Tint values, or Tint == Tint_max.')
+                    break
+
+            
+        while is_sat_bool(cnts): # if saturated, start reducing Tint again
+            it = it / _IT_RATIO_INCREASE
+            if verbosity > 0:
+                print('Saturated max count value. Reducing integration time to {:1.2f}s'.format(it))
+            its.append(it) # keep track of integration times
+            cnts, Errors = getcnts(it, Errors)
+            
+            max_cnts.append(cnts.max())  # keep track of max counts
             
             if verbosity > 1:
-                fig_opt = plt.figure('Integration time optimization')
-                ax_opt1 = fig_opt.add_subplot(1,1,1)
-                ax_opt1.set_xlabel('Integration time (s)')
-                ax_opt1.set_ylabel('Maximum counts')
-            extra_increase_factor_for_low_light_levels = 1    
-            while (target_cnts_bool(cnts) & target_it_bool(it)) & (not is_sat_bool(cnts)):
-                if (len(max_cnts) < (max_number_of_ratio_increases)):
-                    it = it * _IT_RATIO_INCREASE * extra_increase_factor_for_low_light_levels
-                else:
-                    p_max_cnts_vs_its = np.polyfit(max_cnts[-(max_number_of_ratio_increases-1):],its[-(max_number_of_ratio_increases-1):],1) # try and predict a value close to target cnts
-                    it = np.polyval(p_max_cnts_vs_its, max_value*_TARGET_MAX_CNTS_RATIO)
-                    if not target_it_bool(it):
-                        it = Tint_max
-                if verbosity > 0:
-                    print("Integration time optimization: measuring ... {:1.5f}s".format(it))
+                ax_opt1.plot(its[-1],max_cnts[-1],'s')
+                plt.show()
+                plt.pause(0.1)
                 
-                # get counts:
-                cnts, Errors = getcnts(it, Errors)
-    
-                
-                # Ensure only increasing it-vs-max, 
-                # if not: sign of unstable measurement due to to short integration time
-                if (cnts.max() > max_cnts[-1]):
-                    its.append(it) # keep track of integration times
-                    max_cnts.append(cnts.max())  # keep track of max counts
-                    counter = 0
-                    extra_increase_factor_for_low_light_levels = 1
-                elif (len(max_cnts) > max_number_of_ratio_increases):
-                    counter += 1 # if max keeps the same, get out of loop
-                    if counter > 3:
-                        if verbosity > 0:
-                            print('Break while loop using counter.')
-                        break
-                else:
-                    extra_increase_factor_for_low_light_levels = extra_increase_factor_for_low_light_levels * 1.5
-    #               print(extra_increase_factor_for_low_light_levels)
-    
-    #            if verbosity > 0:
-    #                print('     List of integration times (s):')
-    #                print(its)
-    #                print('     List of max. counts:')
-    #                print(max_cnts)
-    #                print('\n')
-    
-                if verbosity > 1:
-                    ax_opt1.plot(its[-1],max_cnts[-1],'o')
-                    plt.show()
-                    plt.pause(0.1)
-                
-                # When current fitted Tint or max. cnts differ by less than 10%
-                # from previous or when Tint == Tint_max, break while loop 
-                # (i.e. sacrifice small gain for increased efficiency):
-                if (len(max_cnts) > max_number_of_ratio_increases):
-                    if ((np.abs(1.0*cnts.max() - max_cnts[-2])/max_cnts[-2]) < 0.1) | ((np.abs(1.0*it - its[-2])/its[-2]) < 0.1) | (it ==  Tint_max): # if max counts changes by less than 1%: break loop
-                        if verbosity > 0:
-                            print('Break while loop: less than 10% diff between last two max. or Tint values, or Tint == Tint_max.')
-                        break
-    
-                
-            while is_sat_bool(cnts): # if saturated, start reducing Tint again
-                it = it / _IT_RATIO_INCREASE
-                if verbosity > 0:
-                    print('Saturated max count value. Reducing integration time to {:1.2f}s'.format(it))
-                its.append(it) # keep track of integration times
-                cnts, Errors = getcnts(it, Errors)
-                
-                max_cnts.append(cnts.max())  # keep track of max counts
-                
-                if verbosity > 1:
-                    ax_opt1.plot(its[-1],max_cnts[-1],'s')
-                    plt.show()
-                    plt.pause(0.1)
-                    
-            Tint = it
-       
-        else:
-            # Limit integration time to min-max range:
-            if Tint < dvc._tint_min:
-                Tint = dvc._tint_min
-            if Tint > dvc._tint_max:
-                Tint = dvc._tint_max
-    
-            # get counts:
-            cnts, Errors = getcnts(Tint, Errors)
-            if is_sat_bool(cnts):
-                if verbosity > 0:
-                    print('WARNING: Saturated max count value at integration time of {:1.2f}s'.format(Tint))
-        Errors["_find_opt_Tint"] = 0 
-    except:
-        Errors["_find_opt_Tint"] = 'Fails.'
-        Tint, cnts = _ERROR, _ERROR
-    finally:
-        if out == "Tint,cnts,Errors":
-            return Tint, cnts, Errors
-        elif out == "Tint,cnts":
-            return Tint, cnts
-        elif out == "Tint,Errors":
-            return Tint, Errors
-        elif out == "cnts,Errors":
-            return cnts, Errors
-        elif out == "Tint":
-            return Tint
-        elif out == "cnts":
-            return cnts
-        elif out == "Errors":
-            return Errors
-        else:
-            raise Exception("Requested output error.")
+        Tint = it
+   
+    else:
+        # Limit integration time to min-max range:
+        if Tint < dvc._tint_min:
+            Tint = dvc._tint_min
+        if Tint > dvc._tint_max:
+            Tint = dvc._tint_max
+
+        # get counts:
+        cnts, Errors = getcnts(Tint, Errors)
+        if is_sat_bool(cnts):
+            if verbosity > 0:
+                print('WARNING: Saturated max count value at integration time of {:1.2f}s'.format(Tint))
+    Errors["_find_opt_Tint"] = 0 
+#    except:
+#        Errors["_find_opt_Tint"] = 'Fails.'
+#        Tint, cnts = _ERROR, _ERROR
+#    finally:
+    if out == "Tint,cnts,Errors":
+        return Tint, cnts, Errors
+    elif out == "Tint,cnts":
+        return Tint, cnts
+    elif out == "Tint,Errors":
+        return Tint, Errors
+    elif out == "cnts,Errors":
+        return cnts, Errors
+    elif out == "Tint":
+        return Tint
+    elif out == "cnts":
+        return cnts
+    elif out == "Errors":
+        return Errors
+    else:
+        raise Exception("Requested output error.")
         
 
 def cntsps_to_radiom_units(cntsps, REFmeas = None, REFspd = None, RFL = None, \
@@ -879,28 +894,29 @@ def cntsps_to_radiom_units(cntsps, REFmeas = None, REFspd = None, RFL = None, \
     :Errors:
         | Dict with error messages.
     :out:
-        | "spd,dvc,Errors", optional
+        | "spd,Errors", optional
         | Requested return.
 
     """
     Errors["cntsps_to_radiom_units"] = None
     out = out.replace(' ','')
+    spd = cntsps.copy()
     try:
         if (REFmeas is not None) & (REFspd is not None):
             REFmeas = cie_interp(REFmeas, spd[1,:], kind = 'spd')
             REFspd = cie_interp(REFspd, spd[1,:], kind = 'spd')
-            REFspd[1,np.where[REFspd[1,:]==0]] = _EPS # avoid division by zero
+            REFspd[1,np.where(REFspd[1,:]==0)] = _EPS # avoid division by zero
             spd[1,:] = spd[1,:]/REFmeas[1,:]*REFspd[1,:]
         if RFL is not None:
             RFL = cie_interp(RFL, spd[1,:], kind = 'rfl')
-            RFL[1,np.where[RFL[1,:]==0]] = _EPS # avoid division by zero
+            RFL[1,np.where(RFL[1,:]==0)] = _EPS # avoid division by zero
             spd[1,:] = spd[1,:]/RFL[1,:]
         Errors["cntsps_to_radiom_units"] = 0
     except:
         Errors["cntsps_to_radiom_units"] = 'Fails.'
         Warning('Could not convert to radiometric units. Output is counts/sec!')
     finally:
-        if out == 'spd, Errors':
+        if out == 'spd,Errors':
             return spd, Errors
         elif out == 'spd':
             return spd
@@ -943,7 +959,7 @@ def get_spd(dvc = 0, Tint = _TINT, autoTint_max = _TINT_MAX, \
             | True: Automatic non-linearity correction.
         :tec_temperature_C: None, optional
             | Set board temperature on TEC supported spectrometers.
-            | NOT YET IMPLEMENTED (13/07/2018)
+            | NOT YET IMPLEMENTED (3/05/2019)
         :dark_cnts:
             | 'dark_model.dat' or str or ndarray, optional
             | If str: 
@@ -1022,81 +1038,82 @@ def get_spd(dvc = 0, Tint = _TINT, autoTint_max = _TINT_MAX, \
     Errors = {} 
     Errors["get_spd"] = None
     out = out.replace(' ','')
-    try:
-        # Initialize device:
-        dvc, Errors = dvc_open(dvc = dvc, Errors = Errors, out = 'dvc,Errors')
-        
-        # Enable tec and set temperature:
-        if tec_temperature_C is not None:
-            Errors["tec_set_temperature_C"] = None
-            try:
-                dvc.tec_set_enable(True)
-                dvc.tec_set_temperature_C(set_point_C = tec_temperature_C)
-                time.sleep(0.5)
-                if verbosity > 0:
-                    print("Device temperature = {:1.1f}°C".format(dvc.tec_get_temperature_C()))
-                Errors["tec_set_temperature_C"] = 0
-            except:
-                Errors["tec_set_temperature_C"] = 'Fails'
-        
-        # Find optimum integration time and get counts (0: unlimited (but < autoTint_max), >0 fixed)
-        Tint, cnts,Errors = _find_opt_Tint(dvc, Tint, autoTint_max = autoTint_max, verbosity = verbosity, Errors = Errors, out= 'Tint,cnts,Errors')
-        
-        # Get cnts anew when correct_dark_counts == True (is set to False in _find_opt_Tint):
-        if correct_dark_counts == True:
-            cnts,Errors = _getOOcounts(dvc, Tint, correct_dark_counts = correct_dark_counts, correct_nonlinearity = correct_nonlinearity, Errors = Errors, out='cnts,Errors')
-        
-        # Correct for dark_counts if not supported by device:
-        cnts,Errors = _correct_for_dark(dvc, cnts, Tint, method = dark_cnts, savgol_window = savgol_window, correct_dark_counts = correct_dark_counts, correct_nonlinearity = correct_nonlinearity, verbosity = verbosity, Errors = Errors, out = 'cnts,Errors')
-        
-        # Reset integration time to min. value for fast new measurement (see notes on crappy ocean optics software):
-        dvc.integration_time_micros(dvc._tint_min*1e6)
-        
-        # Add wavelengths to spd:
-        spd = np.vstack((dvc.wavelengths(),cnts))
-        
-        # Interpolate to requested wavelength range and stepsize:
-        if (wlstep is not None) & (wlstart is not None) & (wlend is not None):
-            spd = cie_interp(spd, getwlr([wlstart,wlend,wlstep]), kind = 'spd')
-        
-        # Convert to units:
-        if units == 'cnts':
-            pass
-        
-        elif units == 'cnts/s':
-            # Convert counts to counts/s:
-            spd[1,:] = cnts/Tint
-            
-        elif (REFmeas is not None) & (REFspd is not None):
-            # Convert cnts/s to radiometric units:
-            spd[1,:] = cnts/Tint
-            spd = cntsps_to_radiom_units(spd, RFL = RFL, REFmeas = REFmeas, REFspd = REFspd)
-        
-        if "spd" not in out.split(','):
-            close_device = True # force close because dvc is not requested as output!
-        dvc, Errors = dvc_close(dvc, close_device = close_device, verbosity = verbosity, Errors = Errors, out = 'dvc,Errors')
+#    try:
+    # Initialize device:
+    dvc, Errors = dvc_open(dvc = dvc, Errors = Errors, out = 'dvc,Errors')
     
-        Errors["get_spd"] = int(np.sum([x for x in Errors.values() if x is not None]) > 0)
-    except:
-        Errors["get_spd"] = 'Fails.'
-    finally:
-        # Generate requested return:
-        if out == "spd":
-            return spd
-        elif out == "dvc":
-            return dvc
-        elif out == "Errors":
-            return Errors
-        elif out == "spd,Errors":
-            return spd, Errors
-        elif out == "spd,dvc":
-            return spd, dvc
-        elif out == "spd,Errors,dvc":
-            return spd, Errors, dvc
-        elif out == "spd,dvc,Errors":
-            return spd, dvc, Errors
-        else:
-            raise Exception("Requested output error.")
+    # Enable tec and set temperature:
+    if tec_temperature_C is not None:
+        Errors["tec_set_temperature_C"] = None
+        try:
+            dvc.tec_set_enable(True)
+            dvc.tec_set_temperature_C(set_point_C = tec_temperature_C)
+            time.sleep(0.5)
+            if verbosity > 0:
+                print("Device temperature = {:1.1f}°C".format(dvc.tec_get_temperature_C()))
+            Errors["tec_set_temperature_C"] = 0
+        except:
+            Errors["tec_set_temperature_C"] = 'Fails'
+    
+    # Find optimum integration time and get counts (0: unlimited (but < autoTint_max), >0 fixed)
+    Tint, cnts,Errors = _find_opt_Tint(dvc, Tint, autoTint_max = autoTint_max, correct_nonlinearity = correct_nonlinearity, verbosity = verbosity, Errors = Errors, out= 'Tint,cnts,Errors')
+    
+    # Get cnts anew when correct_dark_counts == True (is set to False in _find_opt_Tint):
+    if (correct_dark_counts == True) & dvc._has_dark_pixels:
+        cnts,Errors = _getOOcounts(dvc, Tint, correct_dark_counts = correct_dark_counts, correct_nonlinearity = correct_nonlinearity, Errors = Errors, out='cnts,Errors')
+
+    # Correct for dark_counts if not supported by device:
+    cnts,Errors = _correct_for_dark(dvc, cnts, Tint, method = dark_cnts, savgol_window = savgol_window, correct_dark_counts = correct_dark_counts, correct_nonlinearity = correct_nonlinearity, verbosity = verbosity, Errors = Errors, out = 'cnts,Errors')
+    
+    # Reset integration time to min. value for fast new measurement (see notes on crappy ocean optics software):
+    dvc.integration_time_micros(dvc._tint_min*1e6)
+    
+    # Add wavelengths to spd:
+    spd = np.vstack((dvc.wavelengths(),cnts))
+    
+    # Interpolate to requested wavelength range and stepsize:
+    if (wlstep is not None) & (wlstart is not None) & (wlend is not None):
+        spd = cie_interp(spd, getwlr([wlstart,wlend,wlstep]), kind = 'spd')
+    
+    # Convert to units:
+    if units == 'cnts':
+        pass
+    
+    elif units == 'cnts/s':
+        # Convert counts to counts/s:
+        spd[1,:] = cnts/Tint
+        
+    elif (REFmeas is not None) & (REFspd is not None):
+        # Convert cnts/s to radiometric units:
+        spd[1,:] = cnts/Tint
+        spd, Errors = cntsps_to_radiom_units(spd, RFL = RFL, REFmeas = REFmeas, REFspd = REFspd, Errors = Errors, out='spd,Errors')
+    
+    if "spd" not in out.split(','):
+        close_device = True # force close because dvc is not requested as output!
+    dvc, Errors = dvc_close(dvc, close_device = close_device, verbosity = verbosity, Errors = Errors, out = 'dvc,Errors')
+
+    Errors["get_spd"] = int(np.sum([int(bool(x)) for x in Errors.values() if x is not None]) > 0)
+#    except:
+#        Errors["get_spd"] = 'Fails.'
+#        spd = np.array([np.nan])
+#    finally:
+    # Generate requested return:
+    if out == "spd":
+        return spd
+    elif out == "dvc":
+        return dvc
+    elif out == "Errors":
+        return Errors
+    elif out == "spd,Errors":
+        return spd, Errors
+    elif out == "spd,dvc":
+        return spd, dvc
+    elif out == "spd,Errors,dvc":
+        return spd, Errors, dvc
+    elif out == "spd,dvc,Errors":
+        return spd, dvc, Errors
+    else:
+        raise Exception("Requested output error.")
 
 def plot_spd(ax, spd, Tint, sum_cnts = 0, max_cnts = 0):
     """
@@ -1134,18 +1151,17 @@ if __name__ == '__main__':
     
     # Initialize/open spectrometer:
     dvc = 0
-    if ('dvc' in locals()) | (isinstance(dvc,int)): 
-        dvc = dvc_open(dvc = dvc, verbosity = verbosity)
+    if (isinstance(dvc,int)): 
+        dvc, Errors = dvc_open(dvc = dvc, out='dvc,Errors', verbosity = verbosity)
     
     # Set type of measurement    
     case = 'cont' # other options: 'single','cont','list','dark'
     
     if case == 'single': # single measurement
-        Errors = {}
         autoTint_max = 3 # set integration time in secs.
         
         # Measure spectrum in cnts/s and correct for dark (when finished auto close spectrometer):
-        spd,dvc,Errors = get_spd(dvc, Tint = 0, autoTint_max = autoTint_max, units = 'cnts',dark_cnts='dark_model.dat', verbosity = verbosity, Errors=Errors, out = 'spd,dvc,Errors')
+        spd,dvc,Errors = get_spd(dvc = dvc, Tint = 1, autoTint_max = autoTint_max, units = 'cnts',dark_cnts='./data/dark_model.dat', verbosity = verbosity,  out = 'spd,dvc,Errors')
         
         # Make a plot of the measured spectrum:
         fig = plt.figure()
@@ -1153,7 +1169,6 @@ if __name__ == '__main__':
         plot_spd(ax,spd,autoTint_max, sum_cnts = spd[1].sum(),max_cnts = spd[1].max())
         
     elif case == 'cont': # continuous measurement
-        Errors = {}
         
         # Create figure and axes for graphic results:
         fig = plt.figure()
@@ -1163,16 +1178,16 @@ if __name__ == '__main__':
         autoTint_max = 0.5
         try:
             while True:
-                spd,dvc,Errors = get_spd(dvc,Tint = 0, autoTint_max = autoTint_max, verbosity = verbosity, close_device = False, Errors=Errors, out = 'spd,dvc,Errors')
+                spd,dvc,Errors = get_spd(dvc = dvc,Tint = 0.1, autoTint_max = autoTint_max, verbosity = verbosity, close_device = False, out = 'spd,dvc,Errors')
                 plot_spd(ax,spd, autoTint_max, sum_cnts = spd[1].sum(),max_cnts = spd[1].max())
    
         except KeyboardInterrupt:
             # manually close spectrometer
-            dvc, Errors = dvc_close(dvc, Errors = Errors, close_device = True, verbosity = verbosity)
+            dvc, Errors = dvc_close(dvc, Errors = Errors, close_device = True, verbosity = verbosity, out = 'dvc,Errors')
 
         
     elif case == 'list': # measure list of integration times
-        Errors = {}
+
         Tints = np.array([3.2,0.8,1.6,3.2,1.6,0.2,0.2,0.2])/20 # illustrate need for two consecutive measurements to get correct spd (see _getOOcounts())
         Tints = np.array([0.1,0.2,0.3,0.4,0.5])/1 # quick example
         
@@ -1184,7 +1199,7 @@ if __name__ == '__main__':
         for i,Tint in enumerate(Tints):
             
             # Measure spectrum and store sum and max:
-            spd,dvc,Errors = get_spd(dvc,Tint = Tint, autoTint_max = None, units='cnts', verbosity = verbosity, close_device = False, Errors=Errors, out = 'spd,dvc,Errors')
+            spd,dvc,Errors = get_spd(dvc = dvc,Tint = Tint, autoTint_max = None, units='cnts', verbosity = verbosity, close_device = False,  out = 'spd,dvc,Errors')
             sum_cnts[i] = spd[1].sum()
             max_cnts[i] = spd[1].mean()
             
@@ -1194,7 +1209,7 @@ if __name__ == '__main__':
             plot_spd(ax,spd,Tint, sum_cnts = sum_cnts[i],max_cnts = max_cnts[i])
             
         # manually close spectrometer:
-        dvc, Errors = dvc_close(dvc, Errors = Errors, close_device = True, verbosity = verbosity)
+        dvc, Errors = dvc_close(dvc, Errors = Errors, close_device = True, verbosity = verbosity, out='dvc,Errors')
 
         
         # Plot sum and max versus integration times:
