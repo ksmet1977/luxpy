@@ -162,6 +162,12 @@ DO NOT CHANGE THESE CONSTANTS!
 ###############################################################################
 # Initialze LuxPy
 ###############################################################################
+# Package info:
+__VERSION__ = 'v1.4.0'
+__AUTHOR__ = 'Kevin A.G. Smet'
+__EMAIL__ = 'ksmet1977 at gmail.com'
+__URL__ = 'github.com/ksmet1977/luxpy/'
+__all__ = ['__VERSION__','__AUTHOR__','__EMAIL__', '__URL__']
 
 #==============================================================================
 # Import required modules
@@ -174,7 +180,7 @@ from mpl_toolkits.mplot3d import Axes3D
 import colorsys
 import itertools
 import copy
-__all__ = ['os','warnings','odict','Axes3D','colorsys','itertools','copy']
+__all__ += ['os','warnings','odict','Axes3D','colorsys','itertools','copy']
 
 # 3e party:
 import numpy as np
@@ -194,7 +200,6 @@ __all__ += ['np','pd','plt','sp','interpolate','minimize','cKDTree','skimsave']
 #==============================================================================
 # Set up basic luxpy parameters
 #==============================================================================
-
 
 #------------------------------------------------------------------------------
 # Setup output format of print:

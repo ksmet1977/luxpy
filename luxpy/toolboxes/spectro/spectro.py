@@ -25,6 +25,7 @@ Supported devices:
  * JETI: specbos 1211, ...
  * OceanOptics: QEPro, QE65Pro, QE65000, USB2000, USB650,...
  
+ :init(manufacturer): import module for specified manufacturer. Make sure everything (drivers, external packages, ...) required is installed! 
  :get_spd(): wrapper function to measure a spectral power distribution using a spectrometer of one of the supported manufacturers. 
  
 Notes
@@ -37,13 +38,44 @@ Notes
  
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
+__all__ = ['init','get_spd']
 
-#from .jeti import jeti as jeti
-#from .oceanoptics import oceanoptics as oceanoptics
+# Try to preload all sub-modules:
+try:
+    from .jeti import jeti as jeti
+    __all__ += ['jeti']
+except:
+    Warning('Could not load jeti sub-module into spectro.')
+try:
+    from .oceanoptics import oceanoptics as oceanoptics
+    __all__ += ['oceanoptics']
+except:
+    Warning('Could not load oceanoptics sub-module into spectro. Make python-seabreeze, pyubs, etc. is installed correctly.')
 
-__all__ = ['get_spd']
 
-def get_spd(manufacturer = 'jeti', dvc = 0, Tint = 0, autoTint_max = None, close_device = True, Errors = {}, out = 'spd', **kwargs):
+
+def init(manufacturer):
+    """
+    Import module for specified manufacturer. Make sure everything (drivers, external packages, ...) required is installed!
+    """
+    if (manufacturer not in globals()):#(eval(manufacturer) is None):
+        if manufacturer == 'jeti':
+            # import inside function to ensure that the module only get loaded 
+            # when needed to avoid having to have working installations for the 
+            # other manufacturers:
+            from .jeti import jeti as jeti     
+        
+        elif manufacturer == 'oceanoptics':
+            # import inside function to ensure that the module only get loaded 
+            # when needed to avoid having to have working installations for the 
+            # other manufacturers:
+            from .oceanoptics import oceanoptics as oceanoptics
+        else:
+            raise Exception('Unsupported manufacturer!')
+
+	    
+
+def get_spd(manufacturer = 'jeti', dvc = 0, Tint = 0, autoTint_max = None, close_device = True, out = 'spd', **kwargs):
 	"""
 	Measure a spectral power distribution using a spectrometer of one of the supported manufacturers. 
 	
@@ -65,8 +97,6 @@ def get_spd(manufacturer = 'jeti', dvc = 0, Tint = 0, autoTint_max = None, close
             | True, optional
             | Close spectrometer after measurement.
             | If 'dvc' not in out.split(','): always close!!!
-        :Errors:
-            | Dict with error messages.
         :out:
             | "spd" or e.g. "spd,dvc,Errors", optional
             | Requested return.
@@ -82,22 +112,11 @@ def get_spd(manufacturer = 'jeti', dvc = 0, Tint = 0, autoTint_max = None, close
         :Errors:
             | Dict with error messages.]
 	"""
-    
 	if manufacturer == 'jeti':
-        # import inside function to ensure that the module only get loaded 
-        # when needed to avoid having to have working installations for the 
-        # other manufacturers:
-		from .jeti import jeti as jeti 
-		return jeti.get_spd(dvc = dvc, autoTint_max = autoTint_max, 
-                            close_device = close_device, Error = Errors, 
-                            out = out, **kwargs)
+		return jeti.get_spd(dvc = dvc, Tint = Tint, autoTint_max = autoTint_max, 
+                            close_device = close_device, out = out, **kwargs)
     
     
 	elif manufacturer == 'oceanoptics':
-        # import inside function to ensure that the module only get loaded 
-        # when needed to avoid having to have working installations for the 
-        # other manufacturers:
-		from .oceanoptics import oceanoptics as oceanoptics
-		return oceanoptics.get_spd(dvc = dvc, autoTint_max = autoTint_max, 
-                                   close_device = close_device, Error = Errors,
-                                   out = out, **kwargs)
+		return oceanoptics.get_spd(dvc = dvc, Tint = Tint, autoTint_max = autoTint_max, 
+                                   close_device = close_device, out = out, **kwargs)

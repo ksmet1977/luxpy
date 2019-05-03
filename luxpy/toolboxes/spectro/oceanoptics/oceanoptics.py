@@ -919,7 +919,7 @@ def get_spd(dvc = 0, Tint = _TINT, autoTint_max = _MAX_TINT, \
             units = 'cnts/s', verbosity = _VERBOSITY,
             close_device = True, wlstep = None, wlstart = None, wlend = None,\
             REFmeas = None, REFspd = None, RFL = None, \
-            Errors = {}, out = 'spd,dvc,Errors'):
+            out = 'spd,dvc,Errors'):
     """
     Measure a light spectrum.
     
@@ -990,8 +990,6 @@ def get_spd(dvc = 0, Tint = _TINT, autoTint_max = _MAX_TINT, \
             | None, optional
             | Used to convert illumination to to radiometric units.
             | ndarray (2,N) with spectral reflectance of a tile illuminated by test source.
-        :Errors:
-            | Dict with error messages.
         :out:
             | "spd,dvc,Errors", optional
             | Requested return.
@@ -1021,6 +1019,7 @@ def get_spd(dvc = 0, Tint = _TINT, autoTint_max = _MAX_TINT, \
 		integration time the momemt the function is called and which puts the 
 		spectrometer in idle mode when no spectrum is requested.
     """
+    Errors = {} 
     Errors["get_spd"] = None
     out = out.replace(' ','')
     try:

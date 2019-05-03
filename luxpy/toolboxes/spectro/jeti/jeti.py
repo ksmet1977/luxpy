@@ -81,6 +81,8 @@ _ERROR = None
 _PKG_PATH = os.path.dirname(__file__)
 _VERBOSITY = 1
 
+
+
 def load_dlls(path = _PKG_PATH):
     """
     Load dlls.
@@ -305,6 +307,9 @@ def start_meas(dvc, Tint = 0.0, autoTint_max = _TINT_MAX, Nscans = 1, wlstep = 1
         global _TINT_MIN
         if _TINT_MIN is None:
             _TINT_MIN, Errors = get_min_integration_time(dvc, out = "MinTint,Errors", Errors = Errors, verbosity = verbosity)
+         
+        if autoTint_max is None:
+            autoTint_max = _TINT_MAX
             
         # Limit integration time to max value:
         Tint = _limit_Tint(Tint, Tint_min = _TINT_MIN, Tint_max = _TINT_MAX)
@@ -784,7 +789,7 @@ def set_laser_status(dvc, status = False, out = "Errors", Errors = {}, verbosity
             raise Exception("Requested output error.")
 
 
-def set_laser(dvc, laser_on = True, laser_intensity = 1000, Errors = {}, verbosity = _VERBOSITY):
+def set_laser(dvc = 0, laser_on = True, laser_intensity = 1000, Errors = {}, verbosity = _VERBOSITY):
     """
     Turn laser ON (3 modulation types: 7Hz (1), 28 Hz (2) and 255 Hz (3)) or OFF (0) and set laser intensity.
     
@@ -1227,7 +1232,7 @@ def get_spd(dvc = 0, Tint = 0.0, autoTint_max = _TINT_MAX, Nscans = 1, wlstep = 
         :laser_on:
             | 0: OFF, >0: ON -> 1: PWM 7Hz, 2: PWM 28 Hz, 3: 255 Hz, optional
             | True (>0): turn laser on to select measurement area; False (0): turn off. 
-            | (Can only be ON when "spd" is not in out.split(","))
+            | (Can only be ON when "spd" is not in out.split(",") | if Tint is None)
         :laser_intensity: 
             | 1000.0, optional
             | Laser intensity in ‰ (pro-mille).
@@ -1244,13 +1249,6 @@ def get_spd(dvc = 0, Tint = 0.0, autoTint_max = _TINT_MAX, Nscans = 1, wlstep = 
     # Initialize dict with errors messages for each of the different measurement steps:
     Errors = {} 
     Errors["get_spd"] = None
-    Errors["GetNumDevices"] = None
-    Errors["OpenDevice"] = None
-    Errors["SetLaserIntensity"] = None
-    Errors["MeasureEx"] = None
-    Errors["MeasureStatusEx"] = None
-    Errors["SpecRadEx"] = None
-    Errors["CloseDevice"] = None
     out = out.replace(' ','')
     
     # Get wavelength range:
@@ -1266,7 +1264,7 @@ def get_spd(dvc = 0, Tint = 0.0, autoTint_max = _TINT_MAX, Nscans = 1, wlstep = 
         if (_check_dvc_open(dvc)) & ("spd" in out.split(",")):
             
             # Turn off laser before starting measurement:
-            Errors = set_laser(dvc, laser_on = False, laser_intensity = laser_intensity, Errors = Errors, verbosity = verbosity)
+            Errors = set_laser(dvc = dvc, laser_on = False, laser_intensity = laser_intensity, Errors = Errors, verbosity = verbosity)
                     
                             
             # Start measurement:
@@ -1282,8 +1280,8 @@ def get_spd(dvc = 0, Tint = 0.0, autoTint_max = _TINT_MAX, Nscans = 1, wlstep = 
             # Close device:
             dvc, Errors = dvc_close(dvc, Errors = Errors, close_device = close_device, out = "dvc,Errors", verbosity = verbosity)
         
-        elif (_check_dvc_open(dvc)) & ("spd" not in out.split(",")): # only dvc handle was requested or to turn laser ON.
-            Errors = set_laser(dvc, laser_on = laser_on, laser_intensity = laser_intensity, Errors = Errors, verbosity = verbosity)
+        elif (_check_dvc_open(dvc)) & (("spd" not in out.split(",")) | (Tint is None)): # only dvc handle was requested or to turn laser ON.
+            Errors = set_laser(dvc = dvc, laser_on = laser_on, laser_intensity = laser_intensity, Errors = Errors, verbosity = verbosity)
         
         if np.isnan(dvc):
             Errors["get_spd"] = int(np.sum([x for x in Errors.values() if x is not None]) > 0)
