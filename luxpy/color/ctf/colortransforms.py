@@ -116,11 +116,12 @@ def xyz_to_Yxy(xyz, **kwargs):
               (Y value refers to luminance or luminance factor)
     """
     xyz = np2d(xyz)
-    X,Y,Z = asplit(xyz)
-    sumxyz = X + Y + Z
-    x = X / sumxyz
-    y = Y / sumxyz
-    return ajoin((Y,x,y))
+    Yxy = xyz.astype(np.float)
+    sumxyz = xyz[...,0] + xyz[...,1] + xyz[...,2]
+    Yxy[...,0] = xyz[...,1]
+    Yxy[...,1] = xyz[...,0] / sumxyz
+    Yxy[...,2] = xyz[...,1] / sumxyz
+    return Yxy
 
 
 def Yxy_to_xyz(Yxy, **kwargs):
@@ -137,11 +138,11 @@ def Yxy_to_xyz(Yxy, **kwargs):
             | ndarray with tristimulus values
     """
     Yxy = np2d(Yxy)
-
-    Y,x,y = asplit(Yxy)
-    X = Y*x/y
-    Z = Y*(1.0-x-y)/y
-    return ajoin((X,Y,Z))
+    xyz = Yxy.astype(np.float)
+    xyz[...,1] = Yxy[...,0]
+    xyz[...,0] = Yxy[...,0]*Yxy[...,1]/Yxy[...,2]
+    xyz[...,2] = Yxy[...,0]*(1.0-Yxy[...,1]-Yxy[...,2])/Yxy[...,2]
+    return xyz
 
 def xyz_to_Yuv(xyz,**kwargs):
     """
@@ -157,12 +158,12 @@ def xyz_to_Yuv(xyz,**kwargs):
               (Y value refers to luminance or luminance factor)
     """
     xyz = np2d(xyz)
-
-    X,Y,Z = asplit(xyz)
-    denom = X + 15.0*Y + 3.0*Z
-    u = 4.0*X / denom
-    v = 9.0*Y / denom
-    return ajoin((Y,u,v))
+    Yuv = xyz.astype(np.float)#*1.0 #*1.0 to ensure float and have a copy
+    denom = xyz[...,0] + 15.0*xyz[...,1] + 3.0*xyz[...,2]
+    Yuv[...,0] = xyz[...,1]
+    Yuv[...,1] = 4.0*xyz[...,0] / denom
+    Yuv[...,2] = 9.0*xyz[...,1] / denom
+    return Yuv
 
 
 def Yuv_to_xyz(Yuv, **kwargs):
@@ -179,11 +180,11 @@ def Yuv_to_xyz(Yuv, **kwargs):
             | ndarray with tristimulus values
     """
     Yuv = np2d(Yuv)
-
-    Y,u,v = asplit(Yuv)
-    X = Y*(9.0*u)/(4.0*v)
-    Z = Y*(12.0 - 3.0*u - 20.0*v)/(4.0*v)
-    return ajoin((X,Y,Z))
+    xyz = Yuv.astype(np.float)
+    xyz[...,1] = Yuv[...,0]
+    xyz[...,0] = Yuv[...,0]*(9.0*Yuv[...,1])/(4.0*Yuv[...,2])
+    xyz[...,2] = Yuv[...,0]*(12.0 - 3.0*Yuv[...,1] - 20.0*Yuv[...,2])/(4.0*Yuv[...,2])
+    return xyz
 
 
 def xyz_to_wuv(xyz, xyzw = _COLORTF_DEFAULT_WHITE_POINT, **kwargs):
@@ -201,18 +202,13 @@ def xyz_to_wuv(xyz, xyzw = _COLORTF_DEFAULT_WHITE_POINT, **kwargs):
         :wuv: 
             | ndarray with W*U*V* values
     """
-    xyz = np2d(xyz)
-    xyzw = np2d(xyzw)
-    Yuv = xyz_to_Yuv(xyz) # convert to cie 1976 u'v'
-    Yuvw = xyz_to_Yuv(xyzw)
-    Y, u, v = asplit(Yuv)
-    Yw, uw, vw = asplit(Yuvw)
-    v = (2.0/3.0)*v # convert to cie 1960 u, v
-    vw = (2.0/3.0)*vw # convert to cie 1960 u, v
-    W = 25.0*(Y**(1/3)) - 17.0
-    U = 13.0*W*(u - uw)
-    V = 13.0*W*(v - vw)
-    return ajoin((W,U,V))
+    Yuv = xyz_to_Yuv(np2d(xyz)) # convert to cie 1976 u'v'
+    Yuvw = xyz_to_Yuv(np2d(xyzw))
+    wuv = xyz.astype(np.float)
+    wuv[...,0] = 25.0*(Yuv[...,0]**(1/3)) - 17.0
+    wuv[...,1] = 13.0*wuv[...,0]*(Yuv[...,1] - Yuvw[...,1])
+    wuv[...,2] = 13.0*wuv[...,0]*(Yuv[...,2] - Yuvw[...,2])*(2.0/3.0) #*(2/3) to convert to cie 1960 u, v
+    return wuv
 
 def wuv_to_xyz(wuv,xyzw = _COLORTF_DEFAULT_WHITE_POINT, **kwargs):
     """
@@ -230,16 +226,11 @@ def wuv_to_xyz(wuv,xyzw = _COLORTF_DEFAULT_WHITE_POINT, **kwargs):
             | ndarray with tristimulus values
 	 """
     wuv = np2d(wuv)
-    xyzw = np2d(xyzw)
-
     Yuvw = xyz_to_Yuv(xyzw) # convert to cie 1976 u'v'
-    Yw, uw, vw = asplit(Yuvw)
-    vw = (2.0/3.0)*vw # convert to cie 1960 u, v
-    W,U,V = asplit(wuv)
-    Y = ((W + 17.0) / 25.0)**3.0
-    u = uw + U/(13.0*W)
-    v = (vw + V/(13.0*W)) * (3.0/2.0)
-    Yuv = ajoin((Y,u,v)) # = 1976 u',v'
+    Yuv = wuv.astype(np.float)
+    Yuv[...,0] = ((wuv[...,0] + 17.0) / 25.0)**3.0
+    Yuv[...,1] = Yuvw[...,1] + wuv[...,1]/(13.0*wuv[...,0])
+    Yuv[...,2] = Yuvw[...,2] + wuv[...,2]/(13.0*wuv[...,0]) * (3.0/2.0) # convert to cie 1960 u, v
     return Yuv_to_xyz(Yuv)
 
 
@@ -358,11 +349,12 @@ def xyz_to_lab(xyz, xyzw = None, cieobs = _CIEOBS, **kwargs):
     fXYZr[pqr] = ((841/108)*XYZr[pqr]+16.0/116.0)
 
     # calculate L*, a*, b*:
-    L = 116.0*(fXYZr[...,1]) - 16.0
-    L[pqr[...,1]] = 903.3*XYZr[pqr[...,1],1]
-    a = 500.0*(fXYZr[...,0]-fXYZr[...,1])
-    b = 200.0*(fXYZr[...,1]-fXYZr[...,2])
-    return ajoin((L,a,b))
+    Lab = xyz.astype(np.float)
+    Lab[...,0] = 116.0*(fXYZr[...,1]) - 16.0
+    Lab[pqr[...,1],0] = 903.3*XYZr[pqr[...,1],1]
+    Lab[...,1] = 500.0*(fXYZr[...,0]-fXYZr[...,1])
+    Lab[...,2] = 200.0*(fXYZr[...,1]-fXYZr[...,2])
+    return Lab
 
 
 def lab_to_xyz(lab, xyzw = None, cieobs = _CIEOBS, **kwargs):
@@ -391,25 +383,20 @@ def lab_to_xyz(lab, xyzw = None, cieobs = _CIEOBS, **kwargs):
     # make xyzw same shape as data:
     xyzw = xyzw*np.ones(lab.shape)
 
-    # set knee point of function:
-    k=(24/116) #(24/116)**3**(1/3)
-
     # get L*, a*, b* and Xw, Yw, Zw:
-    L,a,b = asplit(lab)
-    Xw,Yw,Zw = asplit(xyzw)
-
-    fy = (L + 16.0) / 116.0
-    fx = a / 500.0 + fy
-    fz = fy - b/200.0
+    fXYZ = lab.astype(np.float)
+    fXYZ[...,1] = (lab[...,0] + 16.0) / 116.0
+    fXYZ[...,0] = lab[...,1] / 500.0 + fXYZ[...,1]
+    fXYZ[...,2] = fXYZ[...,1] - lab[...,2]/200.0
 
     # apply 3rd power:
-    X,Y,Z = [xw*(x**3.0) for (x,xw) in ((fx,Xw),(fy,Yw),(fz,Zw))]
+    xyz = (fXYZ**3.0)*xyzw
 
     # Now calculate T where T/Tn is below the knee point:
-    p,q,r = [np.where(x<k) for x in (fx,fy,fz)]
-    X[p],Y[q],Z[r] = [np.squeeze(xw[xp]*((x[xp] - 16.0/116.0) / (841/108))) for (x,xw,xp) in ((fx,Xw,p),(fy,Yw,q),(fz,Zw,r))]
+    pqr = fXYZ<=(24/116) #(24/116)**3**(1/3)
+    xyz[pqr] = np.squeeze(xyzw[pqr]*((fXYZ[pqr] - 16.0/116.0) / (841/108)))
 
-    return ajoin((X,Y,Z))
+    return xyz
 
 
 
@@ -436,22 +423,19 @@ def xyz_to_luv(xyz, xyzw = None, cieobs = _CIEOBS, **kwargs):
     if xyzw is None:
         xyzw = spd_to_xyz(_CIE_ILLUMINANTS['D65'],cieobs = cieobs)
 
-    # make xyzw same shape as xyz:
-    xyzw = todim(xyzw, xyz.shape)
-
     # Calculate u',v' of test and white:
-    Y,u,v = asplit(xyz_to_Yuv(xyz))
-    Yw,uw,vw = asplit(xyz_to_Yuv(xyzw))
+    Yuv = xyz_to_Yuv(xyz)
+    Yuvw = xyz_to_Yuv(todim(xyzw, xyz.shape)) # todim: make xyzw same shape as xyz
 
     #uv1976 to CIELUV
-    YdivYw = Y / Yw
-    L = 116.0*YdivYw**(1.0/3.0) - 16.0
+    luv = xyz.astype(np.float)
+    YdivYw = Yuv[...,0] / Yuvw[...,0]
+    luv[...,0] = 116.0*YdivYw**(1.0/3.0) - 16.0
     p = np.where(YdivYw <= (6.0/29.0)**3.0)
-    L[p] = ((29.0/3.0)**3.0)*YdivYw[p]
-    u = 13.0*L*(u-uw)
-    v = 13.0*L*(v-vw)
-
-    return ajoin((L,u,v))
+    luv[...,0][p] = ((29.0/3.0)**3.0)*YdivYw[p]
+    luv[...,1] = 13.0*luv[...,0]*(Yuv[...,1]-Yuvw[...,1])
+    luv[...,2] = 13.0*luv[...,0]*(Yuv[...,2]-Yuvw[...,2])
+    return luv
 
 
 def luv_to_xyz(luv, xyzw = None, cieobs = _CIEOBS, **kwargs):
@@ -474,28 +458,22 @@ def luv_to_xyz(luv, xyzw = None, cieobs = _CIEOBS, **kwargs):
     """
     luv = np2d(luv)
 
-
     if xyzw is None:
         xyzw = spd_to_xyz(_CIE_ILLUMINANTS['D65'],cieobs = cieobs)
 
-    # Make xyzw same shape as luv:
+    # Make xyzw same shape as luv and convert to Yuv:
     Yuvw = todim(xyz_to_Yuv(xyzw), luv.shape, equal_shape = True)
 
-    # Get Yw, uw,vw:
-    Yw,uw,vw = asplit(Yuvw)
-
     # calculate u'v' from u*,v*:
-    L,u,v = asplit(luv)
-    up,vp = [(x / (13*L)) + xw for (x,xw) in ((u,uw),(v,vw))]
-    up[np.where(L == 0.0)] = 0.0
-    vp[np.where(L == 0.0)] = 0.0
+    Yuv = luv.astype(np.float)
+    Yuv[...,1:3] = (luv[...,1:3] / (13*luv[...,0])) + Yuvw[...,1:3]
+    Yuv[Yuv[...,0]==0,1:3] = 0
 
-    fy = (L + 16.0) / 116.0
-    Y = Yw*(fy**3.0)
-    p = np.where((Y/Yw) < ((6.0/29.0)**3.0))
-    Y[p] = Yw[p]*(L[p]/((29.0/3.0)**3.0))
+    Yuv[...,0] = Yuvw[...,0]*(((luv[...,0] + 16.0) / 116.0)**3.0)
+    p = np.where((Yuv[...,0]/Yuvw[...,0]) < ((6.0/29.0)**3.0))
+    Yuv[...,0][p] = Yuvw[...,0][p]*(luv[...,0][p]/((29.0/3.0)**3.0))
 
-    return Yuv_to_xyz(ajoin((Y,up,vp)))
+    return Yuv_to_xyz(Yuv)
 
 
 #-------------------------------------------------------------------------------------------------
@@ -532,14 +510,18 @@ def xyz_to_Vrb_mb(xyz, cieobs = _CIEOBS, scaling = [1,1], M = None, **kwargs):
     """
     xyz = np2d(xyz)
 
-    X,Y,Z = asplit(xyz)
     if M is None:
         M = _CMF[cieobs]['M']
-    R, G, B = [M[i,0]*X + M[i,1]*Y + M[i,2]*Z for i in range(3)]
-    V = R + G
-    r = R / V * scaling[0]
-    b = B / V * scaling[1]
-    return ajoin((V,r,b))
+        
+    if len(xyz.shape) == 3:
+        RGB = np.einsum('ij,klj->kli', M, xyz)
+    else:
+        RGB = np.einsum('ij,lj->li', M, xyz)
+    Vrb = xyz.astype(np.float)        
+    Vrb[...,0] = RGB[...,0] + RGB[...,1]
+    Vrb[...,1] = RGB[...,0] / Vrb[...,0] * scaling[0]
+    Vrb[...,2] = RGB[...,2] / Vrb[...,0] * scaling[1]
+    return Vrb
 
 
 def Vrb_mb_to_xyz(Vrb,cieobs = _CIEOBS, scaling = [1,1], M = None, Minverted = False, **kwargs):
@@ -577,17 +559,19 @@ def Vrb_mb_to_xyz(Vrb,cieobs = _CIEOBS, scaling = [1,1], M = None, Minverted = F
            <https://www.osapublishing.org/josa/abstract.cfm?uri=josa-69-8-1183>`_
     """
     Vrb = np2d(Vrb)
-
-    V,r,b = asplit(Vrb)
-    R = r*V / scaling[0]
-    B = b*V / scaling[1]
-    G = V-R
+    RGB = Vrb.astype(np.float)
+    RGB[...,0] = Vrb[...,1]*Vrb[...,0] / scaling[0]
+    RGB[...,2] = Vrb[...,2]*Vrb[...,0] / scaling[1]
+    RGB[...,1] = Vrb[...,0] - RGB[...,0]
     if M is None:
         M = _CMF[cieobs]['M']
     if Minverted == False:
         M = np.linalg.inv(M)
-    X, Y, Z = [M[i,0]*R + M[i,1]*G + M[i,2]*B for i in range(3)]
-    return ajoin((X,Y,Z))
+    
+    if len(RGB.shape) == 3:
+        return np.einsum('ij,klj->kli', M, RGB)
+    else:
+        return np.einsum('ij,lj->li', M, RGB)
 
 
 def xyz_to_ipt(xyz, cieobs = _CIEOBS, xyzw = None, M = None, **kwargs):
@@ -738,7 +722,7 @@ def ipt_to_xyz(ipt, cieobs = _CIEOBS, xyzw = None, M = None, **kwargs):
     return xyz
 
 #------------------------------------------------------------------------------
-def xyz_to_Ydlep(xyz, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT, **kwargs):
+def xyz_to_Ydlep(xyz, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT, flip_axes = False, **kwargs):
     """
     Convert XYZ tristimulus values to Y, dominant (complementary) wavelength
     and excitation purity.
@@ -747,22 +731,25 @@ def xyz_to_Ydlep(xyz, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT, **k
         :xyz:
             | ndarray with tristimulus values
         :xyzw:
-            | None or ndarray with tristimulus values of white point, optional
+            | None or ndarray with tristimulus values of a single (!) native white point, optional
             | None defaults to xyz of CIE D65 using the :cieobs: observer.
         :cieobs:
             | luxpy._CIEOBS, optional
             | CMF set to use when calculating spectrum locus coordinates.
-
+        :flip_axes:
+            | False, optional
+            | If True: flip axis 0 and axis 1 in Ydelep to increase speed of loop in function.
+            |          (single xyzw with is not flipped!)
     Returns:
         :Ydlep: 
             | ndarray with Y, dominant (complementary) wavelength
               and excitation purity
     """
     
-    xyz3 = np3d(xyz).copy()
+    xyz3 = np3d(xyz).copy().astype(np.float)
 
     # flip axis so that shortest dim is on axis0 (save time in looping):
-    if xyz3.shape[0] < xyz3.shape[1]:
+    if (xyz3.shape[0] < xyz3.shape[1]) & (flip_axes == True):
         axes12flipped = True
         xyz3 = xyz3.transpose((1,0,2))
     else:
@@ -848,7 +835,7 @@ def xyz_to_Ydlep(xyz, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT, **k
 
 
 
-def Ydlep_to_xyz(Ydlep, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT, **kwargs):
+def Ydlep_to_xyz(Ydlep, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT, flip_axes = False, **kwargs):
     """
     Convert Y, dominant (complementary) wavelength and excitation purity to XYZ
     tristimulus values.
@@ -858,21 +845,24 @@ def Ydlep_to_xyz(Ydlep, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT, *
             | ndarray with Y, dominant (complementary) wavelength
               and excitation purity
         :xyzw: 
-            | None or narray with tristimulus values of white point, optional
+            | None or narray with tristimulus values of a single (!) native white point, optional
             | None defaults to xyz of CIE D65 using the :cieobs: observer.
         :cieobs:
             | luxpy._CIEOBS, optional
             | CMF set to use when calculating spectrum locus coordinates.
-
+        :flip_axes:
+            | False, optional
+            | If True: flip axis 0 and axis 1 in Ydelep to increase speed of loop in function.
+            |          (single xyzw with is not flipped!)
     Returns:
         :xyz: 
             | ndarray with tristimulus values
     """
 
-    Ydlep3 = np3d(Ydlep).copy()
+    Ydlep3 = np3d(Ydlep).copy().astype(np.float)
 
-    # flip axis so that shortest dim is on axis0 (save time in looping):
-    if Ydlep3.shape[0] < Ydlep3.shape[1]:
+    # flip axis so that longest dim is on first axis  (save time in looping):
+    if (Ydlep3.shape[0] < Ydlep3.shape[1]) & (flip_axes == True):
         axes12flipped = True
         Ydlep3 = Ydlep3.transpose((1,0,2))
     else:
