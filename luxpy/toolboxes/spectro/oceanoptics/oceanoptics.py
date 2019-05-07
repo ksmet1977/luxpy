@@ -116,13 +116,15 @@ _DARK_MODEL_PATH = os.path.join(os.path.dirname(__file__),'data','dark_model.dat
 _ERROR = None # Error value (for some cases, NaN is used anyway!)
 _TEMPC = -20.0 # default value of temperature (°C) to cool TEC supporting devices.
 
-def dvc_open(dvc = 0, Errors = {}, out = "dvc,Errors", verbosity = _VERBOSITY):
+def dvc_open(dvc = 0, N = 10000, Errors = {}, out = "dvc,Errors", verbosity = _VERBOSITY):
     """
     Open device.
     
     Args:
         :dvc:
             | Device handle or int.
+        :N:
+            | Maximum number of times to try detecting devices before giving up. 
         :Errors:
             | Dict with error messages.
         :out:
@@ -145,7 +147,8 @@ def dvc_open(dvc = 0, Errors = {}, out = "dvc,Errors", verbosity = _VERBOSITY):
     
             # Get list of connected OO devices:
             devices = []
-            while devices == []:
+            cntr = 0
+            while (devices == []) | (cntr == N): #cnts to avoid infinite loop
                 devices = sb.list_devices()
                 time.sleep(0.5)
             if verbosity > 0:
@@ -153,34 +156,38 @@ def dvc_open(dvc = 0, Errors = {}, out = "dvc,Errors", verbosity = _VERBOSITY):
                 print(devices)
             time.sleep(1)
         
-        
-            if verbosity > 0:
-                print("Opening device: {:1.0f}".format(dvc))
-            # Initialize device:
-            dvc = sb.Spectrometer(devices[dvc])
-            time.sleep(1)
-        
-            # Add other info to dvc struct:
-            dvc._tint_min = dvc._dev.interface._INTEGRATION_TIME_MIN/1e6
-            dvc._tint_max = dvc._dev.interface._INTEGRATION_TIME_MAX/1e6
-        
-            if dvc._has_nonlinearity_coeffs:
-                if sum(dvc._nc) == 0: # avoid problems with division by zero by messed up coefficients.
-                    dvc._nc[0] = 1.0
-               
-            # check for tec feature:
-            try:
-                dvc.tec_set_enable(True)
-                dvc._has_tec = True
-            except:
-                dvc._has_tec = False
-            
-            # Set global variable _TINT_MAX to device dependent value
-            global _TINT_MAX
-            if _TINT_MAX is None:
-                _TINT_MAX = dvc._tint_max
+            if devices != []:
+                if verbosity > 0:
+                    print("Opening device: {:1.0f}".format(dvc))
                 
-            Errors["OpenDevice"] = 0
+                # Initialize device:
+                dvc = sb.Spectrometer(devices[dvc])
+                time.sleep(1)
+            
+                # Add other info to dvc struct:
+                dvc._tint_min = dvc._dev.interface._INTEGRATION_TIME_MIN/1e6
+                dvc._tint_max = dvc._dev.interface._INTEGRATION_TIME_MAX/1e6
+            
+                if dvc._has_nonlinearity_coeffs:
+                    if sum(dvc._nc) == 0: # avoid problems with division by zero by messed up coefficients.
+                        dvc._nc[0] = 1.0
+                   
+                # check for tec feature:
+                try:
+                    dvc.tec_set_enable(True)
+                    dvc._has_tec = True
+                except:
+                    dvc._has_tec = False
+                
+                # Set global variable _TINT_MAX to device dependent value
+                global _TINT_MAX
+                if _TINT_MAX is None:
+                    _TINT_MAX = dvc._tint_max
+                Errors["OpenDevice"] = 0
+            else:
+                dvc = _ERROR
+                Errors["OpenDevice"] = 'dvc_open() could not detect any device, even after {:1.0f} tries. Make sure you have set the usb driver for your spectrometer to libusb using e.g. Zadig!'.format(N)
+            
     except:
         Errors["OpenDevice"] = 'dvc_open() fails.'
         dvc = _ERROR 
