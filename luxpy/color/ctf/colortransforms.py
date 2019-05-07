@@ -116,7 +116,7 @@ def xyz_to_Yxy(xyz, **kwargs):
               (Y value refers to luminance or luminance factor)
     """
     xyz = np2d(xyz)
-    Yxy = xyz.astype(np.float)
+    Yxy = np.empty(xyz.shape)
     sumxyz = xyz[...,0] + xyz[...,1] + xyz[...,2]
     Yxy[...,0] = xyz[...,1]
     Yxy[...,1] = xyz[...,0] / sumxyz
@@ -138,7 +138,7 @@ def Yxy_to_xyz(Yxy, **kwargs):
             | ndarray with tristimulus values
     """
     Yxy = np2d(Yxy)
-    xyz = Yxy.astype(np.float)
+    xyz = np.empty(Yxy.shape)
     xyz[...,1] = Yxy[...,0]
     xyz[...,0] = Yxy[...,0]*Yxy[...,1]/Yxy[...,2]
     xyz[...,2] = Yxy[...,0]*(1.0-Yxy[...,1]-Yxy[...,2])/Yxy[...,2]
@@ -158,7 +158,7 @@ def xyz_to_Yuv(xyz,**kwargs):
               (Y value refers to luminance or luminance factor)
     """
     xyz = np2d(xyz)
-    Yuv = xyz.astype(np.float)#*1.0 #*1.0 to ensure float and have a copy
+    Yuv = np.empty(xyz.shape)
     denom = xyz[...,0] + 15.0*xyz[...,1] + 3.0*xyz[...,2]
     Yuv[...,0] = xyz[...,1]
     Yuv[...,1] = 4.0*xyz[...,0] / denom
@@ -180,7 +180,7 @@ def Yuv_to_xyz(Yuv, **kwargs):
             | ndarray with tristimulus values
     """
     Yuv = np2d(Yuv)
-    xyz = Yuv.astype(np.float)
+    xyz = np.empty(Yuv.shape)
     xyz[...,1] = Yuv[...,0]
     xyz[...,0] = Yuv[...,0]*(9.0*Yuv[...,1])/(4.0*Yuv[...,2])
     xyz[...,2] = Yuv[...,0]*(12.0 - 3.0*Yuv[...,1] - 20.0*Yuv[...,2])/(4.0*Yuv[...,2])
@@ -204,7 +204,7 @@ def xyz_to_wuv(xyz, xyzw = _COLORTF_DEFAULT_WHITE_POINT, **kwargs):
     """
     Yuv = xyz_to_Yuv(np2d(xyz)) # convert to cie 1976 u'v'
     Yuvw = xyz_to_Yuv(np2d(xyzw))
-    wuv = xyz.astype(np.float)
+    wuv = np.empty(xyz.shape)
     wuv[...,0] = 25.0*(Yuv[...,0]**(1/3)) - 17.0
     wuv[...,1] = 13.0*wuv[...,0]*(Yuv[...,1] - Yuvw[...,1])
     wuv[...,2] = 13.0*wuv[...,0]*(Yuv[...,2] - Yuvw[...,2])*(2.0/3.0) #*(2/3) to convert to cie 1960 u, v
@@ -227,7 +227,7 @@ def wuv_to_xyz(wuv,xyzw = _COLORTF_DEFAULT_WHITE_POINT, **kwargs):
 	 """
     wuv = np2d(wuv)
     Yuvw = xyz_to_Yuv(xyzw) # convert to cie 1976 u'v'
-    Yuv = wuv.astype(np.float)
+    Yuv = np.empty(wuv.shape)
     Yuv[...,0] = ((wuv[...,0] + 17.0) / 25.0)**3.0
     Yuv[...,1] = Yuvw[...,1] + wuv[...,1]/(13.0*wuv[...,0])
     Yuv[...,2] = Yuvw[...,2] + wuv[...,2]/(13.0*wuv[...,0]) * (3.0/2.0) # convert to cie 1960 u, v
@@ -349,7 +349,7 @@ def xyz_to_lab(xyz, xyzw = None, cieobs = _CIEOBS, **kwargs):
     fXYZr[pqr] = ((841/108)*XYZr[pqr]+16.0/116.0)
 
     # calculate L*, a*, b*:
-    Lab = xyz.astype(np.float)
+    Lab = np.empty(xyz.shape)
     Lab[...,0] = 116.0*(fXYZr[...,1]) - 16.0
     Lab[pqr[...,1],0] = 903.3*XYZr[pqr[...,1],1]
     Lab[...,1] = 500.0*(fXYZr[...,0]-fXYZr[...,1])
@@ -384,7 +384,7 @@ def lab_to_xyz(lab, xyzw = None, cieobs = _CIEOBS, **kwargs):
     xyzw = xyzw*np.ones(lab.shape)
 
     # get L*, a*, b* and Xw, Yw, Zw:
-    fXYZ = lab.astype(np.float)
+    fXYZ = np.empty(lab.shape)
     fXYZ[...,1] = (lab[...,0] + 16.0) / 116.0
     fXYZ[...,0] = lab[...,1] / 500.0 + fXYZ[...,1]
     fXYZ[...,2] = fXYZ[...,1] - lab[...,2]/200.0
@@ -428,7 +428,7 @@ def xyz_to_luv(xyz, xyzw = None, cieobs = _CIEOBS, **kwargs):
     Yuvw = xyz_to_Yuv(todim(xyzw, xyz.shape)) # todim: make xyzw same shape as xyz
 
     #uv1976 to CIELUV
-    luv = xyz.astype(np.float)
+    luv = np.empty(xyz.shape)
     YdivYw = Yuv[...,0] / Yuvw[...,0]
     luv[...,0] = 116.0*YdivYw**(1.0/3.0) - 16.0
     p = np.where(YdivYw <= (6.0/29.0)**3.0)
@@ -465,7 +465,7 @@ def luv_to_xyz(luv, xyzw = None, cieobs = _CIEOBS, **kwargs):
     Yuvw = todim(xyz_to_Yuv(xyzw), luv.shape, equal_shape = True)
 
     # calculate u'v' from u*,v*:
-    Yuv = luv.astype(np.float)
+    Yuv = np.empty(luv.shape)
     Yuv[...,1:3] = (luv[...,1:3] / (13*luv[...,0])) + Yuvw[...,1:3]
     Yuv[Yuv[...,0]==0,1:3] = 0
 
@@ -517,7 +517,7 @@ def xyz_to_Vrb_mb(xyz, cieobs = _CIEOBS, scaling = [1,1], M = None, **kwargs):
         RGB = np.einsum('ij,klj->kli', M, xyz)
     else:
         RGB = np.einsum('ij,lj->li', M, xyz)
-    Vrb = xyz.astype(np.float)        
+    Vrb = np.empty(xyz.shape)       
     Vrb[...,0] = RGB[...,0] + RGB[...,1]
     Vrb[...,1] = RGB[...,0] / Vrb[...,0] * scaling[0]
     Vrb[...,2] = RGB[...,2] / Vrb[...,0] * scaling[1]
@@ -559,7 +559,7 @@ def Vrb_mb_to_xyz(Vrb,cieobs = _CIEOBS, scaling = [1,1], M = None, Minverted = F
            <https://www.osapublishing.org/josa/abstract.cfm?uri=josa-69-8-1183>`_
     """
     Vrb = np2d(Vrb)
-    RGB = Vrb.astype(np.float)
+    RGB = np.empty(Vrb.shape)
     RGB[...,0] = Vrb[...,1]*Vrb[...,0] / scaling[0]
     RGB[...,2] = Vrb[...,2]*Vrb[...,0] / scaling[1]
     RGB[...,1] = Vrb[...,0] - RGB[...,0]
@@ -783,8 +783,8 @@ def xyz_to_Ydlep(xyz, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT, fli
     hsl_max = hsl[0] # max hue angle at min wavelength
     hsl_min = hsl[-1] # min hue angle at max wavelength
 
-    dominantwavelength = np.zeros(Y.shape)
-    purity = dominantwavelength.copy()
+    dominantwavelength = np.empty(Y.shape)
+    purity = np.empty(Y.shape)
     for i in range(xyz3.shape[1]):
 
             # find index of complementary wavelengths/hues:
@@ -888,8 +888,8 @@ def Ydlep_to_xyz(Ydlep, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT, f
     Ysl,xsl,ysl = asplit(Yxysl)
 
     # loop over longest dim:
-    x = np.zeros(Y.shape)
-    y = x.copy()
+    x = np.empty(Y.shape)
+    y = np.empty(Y.shape)
     for i in range(Ydlep3.shape[1]):
 
         # find closest wl's to dom:
