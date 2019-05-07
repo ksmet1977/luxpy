@@ -116,7 +116,7 @@ _DARK_MODEL_PATH = os.path.join(os.path.dirname(__file__),'data','dark_model.dat
 _ERROR = None # Error value (for some cases, NaN is used anyway!)
 _TEMPC = -20.0 # default value of temperature (°C) to cool TEC supporting devices.
 
-def dvc_open(dvc = 0, N = 10000, Errors = {}, out = "dvc,Errors", verbosity = _VERBOSITY):
+def dvc_open(dvc = 0, N = 10, Errors = {}, out = "dvc,Errors", verbosity = _VERBOSITY):
     """
     Open device.
     
@@ -148,17 +148,19 @@ def dvc_open(dvc = 0, N = 10000, Errors = {}, out = "dvc,Errors", verbosity = _V
             # Get list of connected OO devices:
             devices = []
             cntr = 0
-            while (devices == []) | (cntr == N): #cnts to avoid infinite loop
+            if verbosity > 0:
+                print("Trying to detect Ocean Optics devices ...")
+            while (devices == []) & (cntr < N): #cnts to avoid infinite loop
+                cntr += 1
                 devices = sb.list_devices()
                 time.sleep(0.5)
             if verbosity > 0:
-                print("List of Ocean Optics devices:")
-                print(devices)
+                print("The following Ocean Optics devices were found: ", devices)
             time.sleep(1)
         
             if devices != []:
                 if verbosity > 0:
-                    print("Opening device: {:1.0f}".format(dvc))
+                    print("Opening device number: {:1.0f}".format(dvc))
                 
                 # Initialize device:
                 dvc = sb.Spectrometer(devices[dvc])
@@ -1201,6 +1203,9 @@ def get_spd(dvc = 0, Tint = _TINT, autoTint_max = _TINT_MAX, \
     try: 
         # Set temperature (if device has tec support):
         tempC_meas, Errors = set_temperature(dvc=dvc, tempC = tempC, repeat_get_temp = repeat_get_temp, Errors = Errors, out = 'tempC_meas,Errors', verbosity = verbosity)
+        
+        if verbosity > 0:
+            print('Getting spectrum ...')
         
         # Find optimum integration time and get counts (0: unlimited (but < autoTint_max), >0 fixed)
         Tint, cnts,Errors = _find_opt_Tint(dvc, Tint, autoTint_max = autoTint_max, correct_nonlinearity = correct_nonlinearity, verbosity = verbosity, Errors = Errors, out= 'Tint,cnts,Errors')
