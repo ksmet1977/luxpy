@@ -35,9 +35,11 @@ Functions:
  :get_spd(): measure spectrum
  :create_dark_model(): create a model for dark counts
  :estimate_dark_from_model(): estimate dark counts for specified integration time based on model
- 
-Default parameters:
--------------------
+ :get_temperature(): Get temperature of ocean optics devive (if tec supported; returns NaN if not).
+ :set_temperature(): Set temperature of ocean optics devive (if tec supported).
+
+Default parameters (not exported):
+----------------------------------
  :_TINT: default integration time in seconds
  :_TINT_MAX: max integration time, If None: get max supported by device
  :_CORRECT_DARK_COUNTS: bool, automatic dark count correction supported by some spectrometers
@@ -51,6 +53,7 @@ Default parameters:
  :_VERBOSITY: (0: nothing, 1: text, 2: text + graphs)
  :_DARK_MODEL_PATH: path and file where default dark_model is stored.
  :_ERROR: error value.
+ :_TEMPC: default value of temperature (°C) to cool TEC supporting devices.
     
 Notes:
 ------
@@ -95,7 +98,7 @@ seabreeze.use("pyseabreeze")
 import seabreeze.spectrometers as sb
 
 
-__all__ = ['dvc_open','dvc_close', 'get_spd','create_dark_model','estimate_dark_from_model','plot_spd']
+__all__ = ['dvc_open','dvc_close', 'get_spd','create_dark_model','estimate_dark_from_model','plot_spd', 'get_temperature', 'set_temperature']
 
 # Init default parameters
 _TINT = 0.5 # default integration time
@@ -110,7 +113,8 @@ _SAVGOL_WINDOW = 1/20.0 # window for smoothing of dark measurements
 _SAVGOL_ORDER = 3 # order of savgol filter
 _VERBOSITY = 1 # verbosity (0: nothing, 1: text, 2: text + graphs)
 _DARK_MODEL_PATH = os.path.join(os.path.dirname(__file__),'data','dark_model.dat')
-_ERROR = None
+_ERROR = None # Error value (for some cases, NaN is used anyway!)
+_TEMPC = -20.0 # default value of temperature (°C) to cool TEC supporting devices.
 
 def dvc_open(dvc = 0, Errors = {}, out = "dvc,Errors", verbosity = _VERBOSITY):
     """
@@ -163,7 +167,14 @@ def dvc_open(dvc = 0, Errors = {}, out = "dvc,Errors", verbosity = _VERBOSITY):
             if dvc._has_nonlinearity_coeffs:
                 if sum(dvc._nc) == 0: # avoid problems with division by zero by messed up coefficients.
                     dvc._nc[0] = 1.0
-                
+               
+            # check for tec feature:
+            try:
+                dvc.tec_set_enable(True)
+                dvc._has_tec = True
+            except:
+                dvc._has_tec = False
+            
             # Set global variable _TINT_MAX to device dependent value
             global _TINT_MAX
             if _TINT_MAX is None:
@@ -460,7 +471,7 @@ def create_dark_model(dvc, dark_model_Tints = _DARK_MODEL_TINTS, \
                     filename = _DARK_MODEL_PATH
                 pd.DataFrame(dark_model).to_csv(filename, index=False, header=False, float_format='%1.5f')
         except:
-            Warning('Could not write dark_model to {:s}'.format(filename))
+            print('WARNING: Could not write dark_model to {:s}'.format(filename))
         Errors["create_dark_model"] = 0
     except:
         Errors["create_dark_model"] = 'fails'
@@ -551,7 +562,7 @@ def estimate_dark_from_model(Tint, dark_model, Errors = {}, out = 'cnts,Errors')
                 Errors["estimate_dark"] = 0
             else:
                 Errors["estimate_dark"] = "dark_model does not contain a dark model (.shape[0] > 2) or spectrum (.shape[0] == 2)! Setting dark to 0."
-                Warning(Errors["estimate_dark"])
+                print('WARNING: ' + Errors["estimate_dark"])
                 cnts = np.array([[0]])
         else:
             Errors["estimate_dark"] = "dark_model contained NaN's (no model available), setting dark to 0."
@@ -693,9 +704,10 @@ def _find_opt_Tint(dvc, Tint, autoTint_max = _TINT_MAX, \
     
     Args:
         :Tint:
-            | == 0: unlimited search for integration time, but < autoTint_max
-            | >0: fixed integration time
-            | <0: find optimum, but <= Tint
+            | 0 or Float, optional
+            | Integration time in seconds. (if 0: find best integration time, but < autoTint_max).
+        :autoTint_max:
+            | Limit Tint to this value when Tint = 0.
         :correct_dark_counts: 
             | False, optional
             | True: Automatic (if supported) dark counts subtraction using 'covered'
@@ -731,7 +743,6 @@ def _find_opt_Tint(dvc, Tint, autoTint_max = _TINT_MAX, \
         max_value = dvc._dev.interface._MAX_PIXEL_VALUE
         Tint_min = dvc._tint_min
                     
-        
         # Limit max integration time:
         Tint_max = autoTint_max
         if Tint_max is not None:
@@ -761,7 +772,6 @@ def _find_opt_Tint(dvc, Tint, autoTint_max = _TINT_MAX, \
         # Ensure Tint is high enough (Tint == 0 is encoded by Tint_max == None)
         if Tint < Tint_min:
             Tint = Tint_min
-            
         
         # Determine integration time for optimum counts:
         getcnts = lambda it, Errors: _getOOcounts(dvc, it, correct_dark_counts = False, correct_nonlinearity = correct_nonlinearity, Errors = Errors, out='cnts,Errors')
@@ -928,7 +938,7 @@ def cntsps_to_radiom_units(cntsps, REFmeas = None, REFspd = None, RFL = None, \
         Errors["cntsps_to_radiom_units"] = 0
     except:
         Errors["cntsps_to_radiom_units"] = 'Fails.'
-        Warning('Could not convert to radiometric units. Output is counts/sec!')
+        print('WARNING: Could not convert to radiometric units. Output is counts/sec!')
     finally:
         if out == 'spd,Errors':
             return spd, Errors
@@ -938,13 +948,135 @@ def cntsps_to_radiom_units(cntsps, REFmeas = None, REFspd = None, RFL = None, \
             return Errors
         else:
             raise Exception("Requested output error.")
+ 
+
+def set_temperature(dvc=0, tempC = _TEMPC, repeat_get_temp = 2, Errors = {}, out = 'Errors', verbosity = _VERBOSITY):
+    """
+    Set temperature of ocean optics devive (if tec supported).
+    
+    Args:
+        :dvc:
+            | Spectrometer handle or int, optional
+            | If int: device will be opened before and closed after getting the temperature.
+        :tempC:
+            | _TEMPC or float, optional
+            | Temperature (°C) to cool device to.
+        :repeat_get_temp:
+            | 2 or int, optional
+            | Number of times to repeat dvc.tec_get_temperature_C() to get temp (min. twice due to firmware error.)
+        :Errors:
+            | Dict with error messages, optional
+        :out:
+            | "Errors", optional
+            | Requested return.
             
+    Returns:
+        :Errors:
+            | Dict with error messages.
+        [:tempC_meas:
+            | Temperature in °C.(NaN if no TEC support)]
+    """
+    out = out.replace(' ','')
+    if isinstance(dvc,int):
+        was_closed = True
+    elif isinstance(dvc,seabreeze.spectrometers.Spectrometer):
+        was_closed = False
+    else:
+        was_closed = True
+    try:
+        Errors["set_temperature"] = None
+        if isinstance(dvc,int):
+            dvc,Errors = dvc_open(dvc=dvc,Errors=Errors,verbosity=verbosity)
+            was_closed = True
+        
+        tempC_meas = np.nan 
+        if isinstance(dvc,seabreeze.spectrometers.Spectrometer): 
+            if dvc._has_tec:
+                dvc.tec_set_temperature_C(set_point_C = tempC)
+                time.sleep(0.5)
+                if ('tempC_meas' in out.split(',')) | (verbosity > 0):
+                    tempC_meas, Errors = get_temperature(dvc=dvc, repeat_get_temp = repeat_get_temp, Errors = Errors, out = 'tempC,Errors', verbosity = verbosity)
+                if (verbosity > 0):
+                    print('Requested device temperature (°C) = {:1.1f}'.format(tempC))                      
+        Errors["set_temperature"] = 0
+        
+    except:
+        Errors["set_temperature"] = 'tec_set_temperature_C() fails.'
+        tempC_meas = np.nan  
+    finally:
+        dvc,Errors = dvc_close(dvc = dvc, close_device = was_closed, Errors = Errors, out = 'dvc,Errors')
+        if out == 'Errors':
+            return Errors
+        elif out == 'tempC_meas,Errors':
+            return tempC_meas, Errors
+        elif out == 'tempC_meas':
+            return tempC_meas
+
+           
+def get_temperature(dvc=0, repeat_get_temp = 2, Errors = {}, out = 'tempC,Errors', verbosity = _VERBOSITY):
+    """
+    Get temperature of ocean optics devive (if tec supported).
+    
+    Args:
+        :dvc:
+            | Spectrometer handle or int, optional
+            | If int: device will be opened before and closed after getting the temperature.
+        :repeat_get_temp:
+            | 2 or int, optional
+            | Number of times to repeat dvc.tec_get_temperature_C() to get temp (min. twice due to firmware error.)
+        :Errors:
+            | Dict with error messages, optional
+        :out:
+            | "tempC,Errors", optional
+            | Requested return.
+            
+    Returns:
+        :tempC:
+            | Temperature in °C (NaN if no TEC support).
+        :Errors:
+            | Dict with error messages.
+    """
+    out = out.replace(' ','')
+    if isinstance(dvc,int):
+        was_closed = True
+    elif isinstance(dvc,seabreeze.spectrometers.Spectrometer):
+        was_closed = False
+    else:
+        was_closed = True
+    try:
+        Errors["get_temperature"] = None
+        if isinstance(dvc,int):
+            dvc,Errors = dvc_open(dvc=dvc,Errors=Errors,verbosity=verbosity)
+        
+        if isinstance(dvc,seabreeze.spectrometers.Spectrometer): 
+            if dvc._has_tec:
+                for i in range(min(2,int(repeat_get_temp))):
+                    tempC = dvc.tec_get_temperature_C()# repeat it a few times (due to error in firmware!)
+                    time.sleep(0.01)
+                if verbosity > 0:
+                    print("Device temperature = {:1.1f}°C".format(tempC))     
+            else:
+                tempC = np.nan
+                Errors["get_temperature"] = 0
+    
+    except:
+        Errors["get_temperature"] = 'tec_get_temperature_C() fails.'
+        tempC = np.nan
+    finally:
+        dvc,Errors = dvc_close(dvc = dvc, close_device = was_closed, Errors = Errors, out = 'dvc,Errors')
+        if out == 'tempC,Errors':
+            return tempC, Errors
+        elif out == 'tempC':
+            return tempC
+        elif out == 'Errors':
+            return Errors
+        
         
 
 
 def get_spd(dvc = 0, Tint = _TINT, autoTint_max = _TINT_MAX, \
             correct_dark_counts = _CORRECT_DARK_COUNTS, correct_nonlinearity = _CORRECT_NONLINEARITY, \
-            tec_temperature_C = None,  \
+            tempC = _TEMPC, repeat_get_temp = 2, \
             dark_cnts = _DARK_MODEL_PATH, savgol_window = _SAVGOL_WINDOW,\
             units = 'cnts/s', verbosity = _VERBOSITY,
             close_device = True, wlstep = None, wlstart = None, wlend = None,\
@@ -971,9 +1103,11 @@ def get_spd(dvc = 0, Tint = _TINT, autoTint_max = _TINT_MAX, \
         :correct_nonlinearity:
             | _CORRECT_NONLINEARITY or boolean, optional
             | True: Automatic non-linearity correction.
-        :tec_temperature_C: None, optional
+        :tempC: None, optional
             | Set board temperature on TEC supported spectrometers.
-            | NOT YET IMPLEMENTED (3/05/2019)
+        :repeat_get_temp:
+            | 2 or int, optional
+            | Number of times to repeat dvc.tec_get_temperature_C() to get temp (min. twice due to firmware error.)
         :dark_cnts:
             | 'dark_model.dat' or str or ndarray, optional
             | If str: 
@@ -1055,19 +1189,11 @@ def get_spd(dvc = 0, Tint = _TINT, autoTint_max = _TINT_MAX, \
     try:
         # Initialize device:
         dvc, Errors = dvc_open(dvc = dvc, Errors = Errors, out = 'dvc,Errors', verbosity = verbosity)
-        
-        # Enable tec and set temperature:
-        if tec_temperature_C is not None:
-            Errors["tec_set_temperature_C"] = None
-            try:
-                dvc.tec_set_enable(True)
-                dvc.tec_set_temperature_C(set_point_C = tec_temperature_C)
-                time.sleep(0.5)
-                if verbosity > 0:
-                    print("Device temperature = {:1.1f}°C".format(dvc.tec_get_temperature_C()))
-                Errors["tec_set_temperature_C"] = 0
-            except:
-                Errors["tec_set_temperature_C"] = 'Fails'
+    except:
+        raise Exception('Could not open sepctrometer. Try reconnecting (unplug and replug USB)')
+    try: 
+        # Set temperature (if device has tec support):
+        tempC_meas, Errors = set_temperature(dvc=dvc, tempC = tempC, repeat_get_temp = repeat_get_temp, Errors = Errors, out = 'tempC_meas,Errors', verbosity = verbosity)
         
         # Find optimum integration time and get counts (0: unlimited (but < autoTint_max), >0 fixed)
         Tint, cnts,Errors = _find_opt_Tint(dvc, Tint, autoTint_max = autoTint_max, correct_nonlinearity = correct_nonlinearity, verbosity = verbosity, Errors = Errors, out= 'Tint,cnts,Errors')
@@ -1104,13 +1230,15 @@ def get_spd(dvc = 0, Tint = _TINT, autoTint_max = _TINT_MAX, \
         
         if "spd" not in out.split(','):
             close_device = True # force close because dvc is not requested as output!
-        dvc, Errors = dvc_close(dvc, close_device = close_device, verbosity = verbosity, Errors = Errors, out = 'dvc,Errors')
-    
+                
         Errors["get_spd"] = int(np.sum([int(bool(x)) for x in Errors.values() if x is not None]) > 0)
     except:
         Errors["get_spd"] = 'Fails.'
         spd = np.array([np.nan])
     finally:
+        #Close device if requested.
+        dvc, Errors = dvc_close(dvc, close_device = close_device, verbosity = verbosity, Errors = Errors, out = 'dvc,Errors')
+        
         # Generate requested return:
         if out == "spd":
             return spd
@@ -1169,7 +1297,7 @@ if __name__ == '__main__':
         dvc, Errors = dvc_open(dvc = dvc, out='dvc,Errors', verbosity = verbosity)
     
     # Set type of measurement    
-    case = 'dark' # other options: 'single','cont','list','dark'
+    case = 'single' # other options: 'single','cont','list','dark'
     
     if case == 'single': # single measurement
         autoTint_max = 3 # set integration time in secs.
