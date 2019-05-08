@@ -83,14 +83,20 @@ Notes:
     
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
-import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
-import tkinter
-from tkinter import messagebox
+
+
+#import matplotlib.pyplot as plt
+#import numpy as np
+#import pandas as pd
+#import tkinter
+#from tkinter import messagebox
+#import time
+#import os
+
 from scipy.signal import savgol_filter
-import time
-import os
+from tkinter import messagebox
+
+from luxpy import plt, np, pd, tkinter, time, os
 from luxpy import cie_interp, getwlr, _EPS
 
 import seabreeze

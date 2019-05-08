@@ -1,0 +1,67 @@
+{% set name = "luxpy" %}
+{% set version = "1.4.2" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: "{{ version }}"
+
+source:
+  path: ../../
+
+build:
+  number: 0
+  script: "{{ PYTHON }} -m pip install . --no-deps --ignore-installed -vv "
+
+requirements:
+  host:
+    - matplotlib
+    - numpy >=1.14
+    - pandas
+    - pip
+    - python
+    - imageio
+    - scipy
+  run:
+    - matplotlib
+    - numpy >=1.14
+    - pandas
+    - python
+    - imageio
+    - scipy
+
+test:
+  imports:
+    - luxpy
+    - luxpy.classes
+    - luxpy.color
+    - luxpy.color.cam
+    - luxpy.color.cat
+    - luxpy.color.cct
+    - luxpy.color.cri
+    - luxpy.color.cri.VFPX
+    - luxpy.color.cri.iestm30
+    - luxpy.color.cri.indices
+    - luxpy.color.cri.utils
+    - luxpy.color.ctf
+    - luxpy.color.deltaE
+    - luxpy.color.utils
+    - luxpy.spectrum
+    - luxpy.spectrum.basics
+    - luxpy.utils
+    - luxpy.utils.helpers
+    - luxpy.utils.math
+    - luxpy.utils.math.DEMO
+    - luxpy.utils.math.vec3
+
+about:
+  home: https://github.com/ksmet1977/luxpy
+  license: GPLv3
+  license_family: GPL3
+  license_file: LICENSE.md
+  summary: Python package for lighting and color science
+  doc_url: https://ksmet1977.github.io/luxpy
+  dev_url: 
+
+extra:
+  recipe-maintainers:
+    - ksmet1977

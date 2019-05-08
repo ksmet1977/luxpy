@@ -17,7 +17,7 @@ Module for hyper spectral image simulation
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
-from luxpy import (warnings, np, plt, skimsave, cKDTree, cat, colortf, _PKG_PATH, _SEP, _CIEOBS, 
+from luxpy import (warnings, np, plt, imsave, cKDTree, cat, colortf, _PKG_PATH, _SEP, _CIEOBS, 
                    _CIE_ILLUMINANTS, _CRI_RFL, _EPS, spd_to_xyz,plot_color_data)
 from luxpy.toolboxes.spdbuild import spdbuilder as spb
 
@@ -287,7 +287,7 @@ def render_image(img = None, spd = None, rfl = None, out = 'img_hyp', \
         #print('Writing rendering results to image file: {}'.format(write_to_file))
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            skimsave(write_to_file, img_original_rendered)
+            imsave(write_to_file, img_original_rendered)
 
     if show == True:
         # show images using pyplot.show():

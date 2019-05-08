@@ -46,13 +46,12 @@ Default parameters:
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
-
-import ctypes
-from ctypes import wintypes
-import numpy as np
-import time
-import os
-import platform
+from luxpy import np, ctypes, time, os, platform
+#import ctypes
+#import numpy as np
+#import time
+#import os
+#import platform
 
 __all__  = ['_TWAIT_STATUS', '_TINT_MIN', '_TINT_MAX', '_ERROR','_VERBOSITY']
 __all__ += ['dvc_open','dvc_close', 'dvc_detect', 'start_meas', 'check_meas_status','wait_until_meas_is_finished']
@@ -66,9 +65,9 @@ __all__ += ['get_spd']
 
 
 # set ctypes:
-DWORD = wintypes.DWORD
+DWORD = ctypes.wintypes.DWORD
 DWORD_PTR = ctypes.POINTER(DWORD)
-WORD = wintypes.WORD
+WORD = ctypes.wintypes.WORD
 BOOL = ctypes.c_bool
 FLOAT = ctypes.c_float
 INT32 = ctypes.c_int32

@@ -4,8 +4,8 @@ LuxPy: a package for lighting and color science
 ===============================================
 
     * Author: K. A.G. Smet (ksmet1977 at gmail.com)
-    * Version: 1.4.1
-    * Date: May 03, 2019
+    * Version: 1.4.2
+    * Date: May 08, 2019
     * License: GPLv3
 
     * DOI: https://doi.org/10.5281/zenodo.1298963
@@ -83,8 +83,7 @@ LuxPy package structure
 |					pixelshiftmodel.py
 |		/utils
 |			plotters.py
-|		
-|		
+|			
 |	/classes
 |		SPD.py
 |		CDATA.py
@@ -95,7 +94,6 @@ LuxPy package structure
 |		/rfls
 |		/cctluts
 |
-|		
 |	/toolboxes
 |		
 |		/.photbiochem
@@ -121,26 +119,36 @@ LuxPy package structure
 |          /oceanoptics
 |             oceanoptics.py
 
-
-
-Imported packages
------------------
- * import os
- * import warnings
- * from collections import OrderedDict as odict
- * from mpl_toolkits.mplot3d import Axes3D
- * import colorsys
- * import itertools
+Imported core packages:
+-----------------------
+ * import os 
+ * import warnings 
+ * from collections import OrderedDict as odict 
+ * from mpl_toolkits.mplot3d import Axes3D 
+ * import colorsys 
+ * import itertools 
  * import copy
-
- * import numpy as np
- * import pandas as pd
- * import matplotlib.pyplot as plt
- * import scipy as sp
- * from scipy import interpolate
- * from scipy.optimize import minimize
- * from scipy.spatial import cKDTree
- * from skimage.io import imsave as skimsave
+ * import time
+ * import tkinter
+ * import ctypes
+ * import platform
+ 
+Imported 3e party dependencies (automatic install):
+---------------------------------------------------
+ * import numpy as np 
+ * import pandas as pd 
+ * import matplotlib.pyplot as plt 
+ * import scipy as sp 
+ * from scipy import interpolate 
+ * from scipy.optimize import minimize 
+ * from scipy.spatial import cKDTree 
+ * from imageio import imsave
+ 
+Imported 3e party dependencies (requiring manual install):
+----------------------------------------------------------
+To control Ocean Optics spectrometers with spectro toolbox:
+ * import seabreeze (conda install -c poehlmann python-seabreeze)
+ * pip install pyusb (for use with 'pyseabreeze' backend of python-seabreeze)
 
 
 Global constants
@@ -163,11 +171,11 @@ DO NOT CHANGE THESE CONSTANTS!
 # Initialze LuxPy
 ###############################################################################
 # Package info:
-__VERSION__ = 'v1.4.1'
+__VERSION__ = 'v1.4.2'
 __AUTHOR__ = 'Kevin A.G. Smet'
 __EMAIL__ = 'ksmet1977 at gmail.com'
 __URL__ = 'github.com/ksmet1977/luxpy/'
-__DATE__ = '03-May-2019'
+__DATE__ = '08-May-2019'
 __all__ = ['__VERSION__','__AUTHOR__','__EMAIL__', '__URL__','__DATE__']
 
 #==============================================================================
@@ -181,7 +189,11 @@ from mpl_toolkits.mplot3d import Axes3D
 import colorsys
 import itertools
 import copy
-__all__ += ['os','warnings','odict','Axes3D','colorsys','itertools','copy']
+import time
+import tkinter
+import ctypes
+import platform
+__all__ += ['os','warnings','odict','Axes3D','colorsys','itertools','copy','time','tkinter','ctypes','platform']
 
 # 3e party:
 import numpy as np
@@ -191,10 +203,10 @@ import scipy as sp
 from scipy import interpolate
 from scipy.optimize import minimize
 from scipy.spatial import cKDTree
-from skimage.io import imsave as skimsave
-# (imports for spectro toolbox are done there to avoid dependency 
+from imageio import imsave
+# (some imports for spectro toolbox are done there to avoid dependency 
 # on manual install requirements)
-__all__ += ['np','pd','plt','sp','interpolate','minimize','cKDTree','skimsave']
+__all__ += ['np','pd','plt','sp','interpolate','minimize','cKDTree','imsave']
 
 
 
