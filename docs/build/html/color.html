@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Color sub-package &mdash; LuxPy 1.4.1 documentation</title>
+  <title>Color sub-package &mdash; LuxPy 1.4.2 documentation</title>
   
 
   
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                1.4.1
+                1.4.2
               </div>
             
           
@@ -2124,7 +2124,7 @@ In IS&amp;T 6th Color Imaging Conference, (Scottsdale, Arizona, USA), pp. 8–13
 
 <dl class="function">
 <dt id="luxpy.color.ctf.colortransforms.xyz_to_Ydlep">
-<code class="descclassname">luxpy.color.ctf.colortransforms.</code><code class="descname">xyz_to_Ydlep</code><span class="sig-paren">(</span><em>xyz</em>, <em>cieobs='1931_2'</em>, <em>xyzw=array([1.0000e+02</em>, <em>1.0000e+02</em>, <em>1.0000e+02])</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/ctf/colortransforms.html#xyz_to_Ydlep"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.ctf.colortransforms.xyz_to_Ydlep" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">luxpy.color.ctf.colortransforms.</code><code class="descname">xyz_to_Ydlep</code><span class="sig-paren">(</span><em>xyz</em>, <em>cieobs='1931_2'</em>, <em>xyzw=array([1.0000e+02</em>, <em>1.0000e+02</em>, <em>1.0000e+02])</em>, <em>flip_axes=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/ctf/colortransforms.html#xyz_to_Ydlep"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.ctf.colortransforms.xyz_to_Ydlep" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert XYZ tristimulus values to Y, dominant (complementary) wavelength
 and excitation purity.</p>
 <dl class="docutils">
@@ -2139,7 +2139,7 @@ and excitation purity.</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">xyzw:</th><td class="field-body"><div class="first last line-block">
-<div class="line">None or ndarray with tristimulus values of white point, optional</div>
+<div class="line">None or ndarray with tristimulus values of a single (!) native white point, optional</div>
 <div class="line">None defaults to xyz of CIE D65 using the :cieobs: observer.</div>
 </div>
 </td>
@@ -2147,6 +2147,15 @@ and excitation purity.</p>
 <tr class="field-odd field"><th class="field-name">cieobs:</th><td class="field-body"><div class="first last line-block">
 <div class="line">luxpy._CIEOBS, optional</div>
 <div class="line">CMF set to use when calculating spectrum locus coordinates.</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">flip_axes:</th><td class="field-body"><div class="first last line-block">
+<div class="line">False, optional</div>
+<div class="line">If True: flip axis 0 and axis 1 in Ydelep to increase speed of loop in function.</div>
+<div class="line-block">
+<div class="line">(single xyzw with is not flipped!)</div>
+</div>
 </div>
 </td>
 </tr>
@@ -2172,7 +2181,7 @@ and excitation purity</div>
 
 <dl class="function">
 <dt id="luxpy.color.ctf.colortransforms.Ydlep_to_xyz">
-<code class="descclassname">luxpy.color.ctf.colortransforms.</code><code class="descname">Ydlep_to_xyz</code><span class="sig-paren">(</span><em>Ydlep</em>, <em>cieobs='1931_2'</em>, <em>xyzw=array([1.0000e+02</em>, <em>1.0000e+02</em>, <em>1.0000e+02])</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/ctf/colortransforms.html#Ydlep_to_xyz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.ctf.colortransforms.Ydlep_to_xyz" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">luxpy.color.ctf.colortransforms.</code><code class="descname">Ydlep_to_xyz</code><span class="sig-paren">(</span><em>Ydlep</em>, <em>cieobs='1931_2'</em>, <em>xyzw=array([1.0000e+02</em>, <em>1.0000e+02</em>, <em>1.0000e+02])</em>, <em>flip_axes=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/ctf/colortransforms.html#Ydlep_to_xyz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.ctf.colortransforms.Ydlep_to_xyz" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert Y, dominant (complementary) wavelength and excitation purity to XYZ
 tristimulus values.</p>
 <dl class="docutils">
@@ -2188,7 +2197,7 @@ and excitation purity</div>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">xyzw:</th><td class="field-body"><div class="first last line-block">
-<div class="line">None or narray with tristimulus values of white point, optional</div>
+<div class="line">None or narray with tristimulus values of a single (!) native white point, optional</div>
 <div class="line">None defaults to xyz of CIE D65 using the :cieobs: observer.</div>
 </div>
 </td>
@@ -2196,6 +2205,15 @@ and excitation purity</div>
 <tr class="field-odd field"><th class="field-name">cieobs:</th><td class="field-body"><div class="first last line-block">
 <div class="line">luxpy._CIEOBS, optional</div>
 <div class="line">CMF set to use when calculating spectrum locus coordinates.</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">flip_axes:</th><td class="field-body"><div class="first last line-block">
+<div class="line">False, optional</div>
+<div class="line">If True: flip axis 0 and axis 1 in Ydelep to increase speed of loop in function.</div>
+<div class="line-block">
+<div class="line">(single xyzw with is not flipped!)</div>
+</div>
 </div>
 </td>
 </tr>
@@ -10037,7 +10055,7 @@ luxpy.cri.plot_shift_data() and returned for use in other functions</div>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, Kevin A.G. Smet
+        &copy; Copyright 2019, Kevin A.G. Smet
 
     </p>
   </div>

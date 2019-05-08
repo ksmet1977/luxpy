@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Imported (required) packages &mdash; LuxPy 1.4.1 documentation</title>
+  <title>Imported (required) packages &mdash; LuxPy 1.4.2 documentation</title>
   
 
   
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                1.4.1
+                1.4.2
               </div>
             
           
@@ -88,7 +88,8 @@
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Imported (required) packages</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#core">Core</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#e-party-dependencies">3e party dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#e-party-dependencies-automatic-install">3e party dependencies (automatic install)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#e-party-dependencies-requiring-manual-install">3e party dependencies (requiring manual install)</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="luxpy_structure.html">Luxpy package structure</a></li>
@@ -168,11 +169,16 @@
 <li>from mpl_toolkits.mplot3d import Axes3D</li>
 <li>import colorsys</li>
 <li>import itertools</li>
+<li>import copy</li>
+<li>import time</li>
+<li>import tkinter</li>
+<li>import ctypes</li>
+<li>import platform</li>
 </ul>
 </div></blockquote>
 </div>
-<div class="section" id="e-party-dependencies">
-<h2>3e party dependencies<a class="headerlink" href="#e-party-dependencies" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="e-party-dependencies-automatic-install">
+<h2>3e party dependencies (automatic install)<a class="headerlink" href="#e-party-dependencies-automatic-install" title="Permalink to this headline">¶</a></h2>
 <blockquote>
 <div><ul class="simple">
 <li>import numpy as np</li>
@@ -182,9 +188,20 @@
 <li>from scipy import interpolate</li>
 <li>from scipy.optimize import minimize</li>
 <li>from scipy.spatial import cKDTree</li>
-<li>from skimage.io import imsave as skimsave</li>
+<li>from imageio import imsave</li>
 </ul>
 </div></blockquote>
+</div>
+<div class="section" id="e-party-dependencies-requiring-manual-install">
+<h2>3e party dependencies (requiring manual install)<a class="headerlink" href="#e-party-dependencies-requiring-manual-install" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>To control Ocean Optics spectrometers with spectro toolbox:</dt>
+<dd><ul class="first last simple">
+<li>import seabreeze (conda install -c poehlmann python-seabreeze)</li>
+<li>pip install pyusb (for use with ‘pyseabreeze’ backend of python-seabreeze)</li>
+</ul>
+</dd>
+</dl>
 </div>
 </div>
 
@@ -208,7 +225,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, Kevin A.G. Smet
+        &copy; Copyright 2019, Kevin A.G. Smet
 
     </p>
   </div>

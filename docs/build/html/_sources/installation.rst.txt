@@ -23,9 +23,13 @@ Install luxpy
 		
 		``>> conda install -n py36 pip``
 		
-	5. Install luxpy package from pypi:
+	5a. Install luxpy package from pypi:
 		
 		``>> pip install luxpy``
+		
+	5b. Install luxpy package from anaconda:
+		
+		``>> conda install -c ksmet1977 luxpy``
 		
 
 :Note:
