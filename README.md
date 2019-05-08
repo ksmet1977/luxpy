@@ -40,7 +40,7 @@ As of May 2019, LuxPy now also has a toolbox **spectro** for **spectral measurem
 
 -------------------------------------------------------------------------------
 ## How to use LuxPy (basics)?
-Luxpy can be installed from pypi `pip install luxpy` or anaconda `conda install -ksmet1977 luxpy`.
+Luxpy can be easily installed from pypi `pip install luxpy` or anaconda `conda install -c ksmet1977 luxpy`.
 
 An overview of the *basic usage* is given in the [**luxpy basic usage.ipynb**](https://github.com/ksmet1977/luxpy/blob/master/luxpy_basic_usage.ipynb) jupyter notebook,
  as well as the tutorial paper published in LEUKOS: [**Smet, K. A. G. (2019). Tutorial: The LuxPy Python Toolbox for Lighting and Color Science. LEUKOS, 1–23. DOI: 10.1080/15502724.2018.1518717**](https://www.tandfonline.com/doi/full/10.1080/15502724.2018.1518717)
