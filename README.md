@@ -40,14 +40,15 @@ As of May 2019, LuxPy now also has a toolbox **spectro** for **spectral measurem
 
 -------------------------------------------------------------------------------
 ## How to use LuxPy (basics)?
-An overview of the basic usage is given in the [**luxpy basic usage.ipynb**](https://github.com/ksmet1977/luxpy/blob/master/luxpy_basic_usage.ipynb) jupyter notebook,
+Luxpy can be installed from pypi `pip install luxpy` or anaconda `conda install -ksmet1977 luxpy`.
+
+An overview of the *basic usage* is given in the [**luxpy basic usage.ipynb**](https://github.com/ksmet1977/luxpy/blob/master/luxpy_basic_usage.ipynb) jupyter notebook,
  as well as the tutorial paper published in LEUKOS: [**Smet, K. A. G. (2019). Tutorial: The LuxPy Python Toolbox for Lighting and Color Science. LEUKOS, 1–23. DOI: 10.1080/15502724.2018.1518717**](https://www.tandfonline.com/doi/full/10.1080/15502724.2018.1518717)
-
-
-For more details on installation, structure, functionality, etc., see: 
+ 
+For more details on structure, functionality, etc., see: 
  1. the github pages on: [**ksmet1977.github.io/luxpy/**](http://ksmet1977.github.io/luxpy/) 
  2. the [**LuxPy_Documentation**](https://github.com/ksmet1977/luxpy/blob/master/LuxPy_Documentation.pdf) pdf
- 2. or, the **\__doc__string** of each function. 
+ 3. or, the **\__doc__string** of each function. 
         
     To get help on, for example the **spd_to_xyz()** function, type:
 
