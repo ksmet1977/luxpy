@@ -331,24 +331,27 @@ def plotSL(cieobs =_CIEOBS, cspace = _CSPACE, DL = True, BBL = True, D65 = False
     if np.any([DL,BBL,D65,EEW]):
         show = False
 
-    axh_ = plot_chromaticity_diagram_colors(axh = axh, show = diagram_colors, cspace = cspace, cieobs = cieobs,\
-                                            cspace_pars = cspace_pars,\
-                                            diagram_samples = diagram_samples,\
-                                            diagram_opacity = diagram_opacity,\
-                                            diagram_lightness = diagram_lightness,\
-                                            label_fontname = None, label_fontsize = None)
-        
+    if diagram_colors == True:
+        axh_ = plot_chromaticity_diagram_colors(axh = axh, show = diagram_colors, cspace = cspace, cieobs = cieobs,\
+                                                cspace_pars = cspace_pars,\
+                                                diagram_samples = diagram_samples,\
+                                                diagram_opacity = diagram_opacity,\
+                                                diagram_lightness = diagram_lightness,\
+                                                label_fontname = None, label_fontsize = None)
+    else:
+        axh_ = axh
+            
     axh_ = plot_color_data(x,y,axh = axh_, cieobs = cieobs, cspace = cspace, show = show, formatstr=formatstr,  **kwargs)
 
 
     if DL == True:
         if 'label' in kwargs.keys(): # avoid label also being used for DL
             kwargs.pop('label')
-        plotDL(ccts = None, cieobs = cieobs, cspace = cspace, axh = axh, show = show, cspace_pars = cspace_pars, formatstr = 'k:',  **kwargs)
+        plotDL(ccts = None, cieobs = cieobs, cspace = cspace, axh = axh_, show = show, cspace_pars = cspace_pars, formatstr = 'k:',  **kwargs)
     if BBL == True:
         if 'label' in kwargs.keys(): # avoid label also being used for BB
             kwargs.pop('label')
-        plotBB(ccts = None, cieobs = cieobs, cspace = cspace, axh = axh, show = show, cspace_pars = cspace_pars, cctlabels = cctlabels, formatstr = 'k-.',  **kwargs)
+        plotBB(ccts = None, cieobs = cieobs, cspace = cspace, axh = axh_, show = show, cspace_pars = cspace_pars, cctlabels = cctlabels, formatstr = 'k-.',  **kwargs)
     
     if D65 == True:
         YxyD65 = colortf(spd_to_xyz(_CIE_ILLUMINANTS['D65']), tf = cspace, tfa0 = cspace_pars)
@@ -664,7 +667,7 @@ def plotellipse(v, cspace_in = 'Yxy', cspace_out = None, nsamples = 100, \
         return None
 
 #------------------------------------------------------------------------------
-def plot_chromaticity_diagram_colors(samples = 256, diagram_opacity = 1.0, diagram_lightness = 0.25,\
+def plot_chromaticity_diagram_colors(diagram_samples = 256, diagram_opacity = 1.0, diagram_lightness = 0.25,\
                                       cieobs = _CIEOBS, cspace = 'Yxy', cspace_pars = {},\
                                       show = True, axh = None,\
                                       show_grid = True, label_fontname = 'Times New Roman', label_fontsize = 12,\
@@ -673,7 +676,7 @@ def plot_chromaticity_diagram_colors(samples = 256, diagram_opacity = 1.0, diagr
     Plot the chromaticity diagram colors.
     
     Args:
-        :samples:
+        :diagram_samples:
             | 256, optional
             | Sampling resolution of color space.
         :diagram_opacity:
@@ -716,7 +719,7 @@ def plot_chromaticity_diagram_colors(samples = 256, diagram_opacity = 1.0, diagr
         
     """
     offset = _EPS
-    ii, jj = np.meshgrid(np.linspace(offset, 1 + offset, samples), np.linspace(1+offset, offset, samples))
+    ii, jj = np.meshgrid(np.linspace(offset, 1 + offset, diagram_samples), np.linspace(1+offset, offset, diagram_samples))
     ij = np.dstack((ii, jj))
     
     SL =  _CMF[cieobs]['bar'][1:4].T
@@ -727,7 +730,7 @@ def plot_chromaticity_diagram_colors(samples = 256, diagram_opacity = 1.0, diagr
     SL = np.vstack((x,y)).T
 
     
-    ij2D = ij.reshape((samples**2,2))
+    ij2D = ij.reshape((diagram_samples**2,2))
     ij2D = np.hstack((diagram_lightness*100*np.ones((ij2D.shape[0],1)), ij2D))
     xyz = colortf(ij2D, tf = cspace + '>xyz', tfa0 = cspace_pars)
 
@@ -737,7 +740,7 @@ def plot_chromaticity_diagram_colors(samples = 256, diagram_opacity = 1.0, diagr
     
     srgb = xyz_to_srgb(xyz)
     srgb = srgb/srgb.max()
-    srgb = srgb.reshape((samples,samples,3))
+    srgb = srgb.reshape((diagram_samples,diagram_samples,3))
 
     if show == True:
         if axh is None:

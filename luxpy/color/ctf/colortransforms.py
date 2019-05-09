@@ -950,7 +950,7 @@ def xyz_to_srgb(xyz, **kwargs):
 
     Returns:
         :rgb: 
-            | ndarray with R,G,B values.
+            | ndarray with R,G,B values (uint8).
     """
 
     xyz = np2d(xyz)
@@ -996,7 +996,7 @@ def srgb_to_xyz(rgb, **kwargs):
 
     Args:
         :rgb: 
-            | ndarray with srgb values.
+            | ndarray with srgb values (uint8).
 
     Returns:
         :xyz: 
@@ -1014,7 +1014,7 @@ def srgb_to_xyz(rgb, **kwargs):
     sRGB = rgb/255
 
     # test for non-linear part of conversion
-    nonlin = np.where(sRGB <  0.0031308)#0.03928)
+    nonlin = np.where((rgb/255) <  0.0031308)#0.03928)
 
     # apply gamma function to convert to sRGB
     srgb = sRGB.copy()
