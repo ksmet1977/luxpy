@@ -42,7 +42,8 @@ Default parameters:
  :_ERROR: error value.
  :_PKG_PATH = path to (sub)-package.
  :_VERBOSITY: (0: nothing, 1: text)
- 
+ :_TINT_MIN_MUL_FACTOR': sets multiplication factor for the min. integration time send to the device to avoid error code 11. (set at 5).
+
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
@@ -53,7 +54,7 @@ from luxpy import np, ctypes, time, os, platform
 #import os
 #import platform
 
-__all__  = ['_TWAIT_STATUS', '_TINT_MIN', '_TINT_MAX', '_ERROR','_VERBOSITY']
+__all__  = ['_TWAIT_STATUS', '_TINT_MIN', '_TINT_MAX', '_ERROR','_VERBOSITY','_TINT_MIN_MUL_FACTOR']
 __all__ += ['dvc_open','dvc_close', 'dvc_detect', 'start_meas', 'check_meas_status','wait_until_meas_is_finished']
 __all__ += ['read_spectral_radiance']
 __all__ += ['dvc_reset', 'set_default', 'get_wavelength_params','measure_flicker_freq']
@@ -79,7 +80,7 @@ _TINT_MIN = None # If None: find it on device (in 'start_meas()' fcn.)
 _ERROR = None
 _PKG_PATH = os.path.dirname(__file__)
 _VERBOSITY = 1
-
+_TINT_MIN_MUL_FACTOR = 5
 
 
 def load_dlls(path = _PKG_PATH):
@@ -309,11 +310,11 @@ def start_meas(dvc, Tint = 0.0, autoTint_max = _TINT_MAX, Nscans = 1, wlstep = 1
          
         if autoTint_max is None:
             autoTint_max = _TINT_MAX
-            
+  
         # Limit integration time to max value:
         Tint = _limit_Tint(Tint, Tint_min = _TINT_MIN, Tint_max = _TINT_MAX)
         autoTint_max = _limit_Tint(autoTint_max, Tint_min = _TINT_MIN, Tint_max = _TINT_MAX)
-        
+
         # For automated Tint:
         if Tint == 0:
             MaxTint,Errors = get_max_auto_integration_time(dvc, out = "MaxTint,Errors", Errors = Errors, verbosity = verbosity)
@@ -1065,7 +1066,7 @@ def get_min_integration_time(dvc, out = "MinTint,Errors", Errors = {}, verbosity
             if verbosity == 1:
                 print("Could not get the minimum integration time.")
         else:
-            MinTint = fMinTint.value / 1000 # in seconds
+            MinTint = (fMinTint.value / 1000) * _TINT_MIN_MUL_FACTOR # in seconds, factor determined exp. lower values result in error code 11 when trying to run start_meas()
     except:
         Errors["GetMinTintConf"] = "get_min_integration_time() fails."
         MinTint = _ERROR
