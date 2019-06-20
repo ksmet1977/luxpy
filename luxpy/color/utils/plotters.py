@@ -646,6 +646,9 @@ def plotellipse(v, cspace_in = 'Yxy', cspace_out = None, nsamples = 100, \
             if (cspace_in is None):
                 xlabel = 'x'
                 ylabel = 'y'
+            else:
+                xlabel = _CSPACE_AXES[cspace_in][1]
+                ylabel = _CSPACE_AXES[cspace_in][2]
             
             if (cspace_out is not None):
                 xlabel = _CSPACE_AXES[cspace_out][1]

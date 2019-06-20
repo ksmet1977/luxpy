@@ -652,10 +652,13 @@ def spd_to_xyz(data,  relative = True, rfl = None, cieobs = _CIEOBS, K = None, o
     else:
         scr = 'cieobs'
         if (K is None) & (relative == False):
-            #K = 1
-            raise Exception('spd_to_xyz: user defined CMF set, \
-                            but no scaling factor has been supplied.\
-                            Setting K = 1.')
+            K = 1
+#            raise Exception('spd_to_xyz: user defined CMF set, \
+#                            but no scaling factor has been supplied.\
+#                            Setting K = 1.')
+#            print('spd_to_xyz: user defined CMF set, \
+#                            but no scaling factor has been supplied.\
+#                            Setting K = 1.')
             
     cmf = xyzbar(cieobs = cieobs, scr = scr, wl_new = data[0], kind = 'np') #also interpolate to wl of data
     if cie_std_dev_obs is not None:
