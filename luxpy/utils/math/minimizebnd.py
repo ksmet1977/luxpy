@@ -55,7 +55,7 @@ def minimizebnd(fun, x0, args=(), method = 'nelder-mead', use_bnd = True, \
     """
     # Convert dict to vec:
     if isinstance(x0, dict):
-        x0 = vec_to_dict(dic = x0, vsize = x0_vsize, keys = x0_keys)
+        x0, vsize = vec_to_dict(dic = x0, vsize = x0_vsize, keys = x0_keys)
     
     if use_bnd == False:
         res = minimize(fun, x0, args = args, options = options, **kwargs)
@@ -71,9 +71,9 @@ def minimizebnd(fun, x0, args=(), method = 'nelder-mead', use_bnd = True, \
         
         # Convert dict to vec:
         if isinstance(LB, dict):
-            LB = vec_to_dict(dic = LB, vsize = x0_vsize, keys = x0_keys)
-        if isinstance(LB, dict):
-            UB = vec_to_dict(dic = UB, vsize = x0_vsize, keys = x0_keys)
+            LB, vsize = vec_to_dict(dic = LB, vsize = x0_vsize, keys = x0_keys)
+        if isinstance(UB, dict):
+            UB, vsize = vec_to_dict(dic = UB, vsize = x0_vsize, keys = x0_keys)
         
         #size checks
         xsize = x0.shape
