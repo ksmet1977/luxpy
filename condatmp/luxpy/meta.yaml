@@ -6,8 +6,7 @@ package:
   version: "{{ version }}"
 
 source:
-  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: fdeb4290ed5e61545bb8baeb390f029f4f5e29b3ce20437db2aa82dd59b72395
+  path: ../../
 
 build:
   number: 0
@@ -15,19 +14,19 @@ build:
 
 requirements:
   host:
-    - imageio
     - matplotlib
-    - numpy
+    - numpy >=1.14
     - pandas
     - pip
     - python
+    - imageio
     - scipy
   run:
-    - imageio
     - matplotlib
-    - numpy
+    - numpy >=1.14
     - pandas
     - python
+    - imageio
     - scipy
 
 test:
@@ -58,11 +57,11 @@ about:
   home: https://github.com/ksmet1977/luxpy
   license: GPLv3
   license_family: GPL3
-  license_file: 
+  license_file: LICENSE.md
   summary: Python package for lighting and color science
-  doc_url: 
+  doc_url: https://ksmet1977.github.io/luxpy
   dev_url: 
 
 extra:
   recipe-maintainers:
-    - your-github-id-here
+    - ksmet1977
