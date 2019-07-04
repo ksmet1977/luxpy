@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Toolboxes &mdash; LuxPy 1.4.3 documentation</title>
+  <title>Toolboxes &mdash; LuxPy 1.4.4 documentation</title>
   
 
   
@@ -57,7 +57,7 @@
             
             
               <div class="version">
-                1.4.3
+                1.4.4
               </div>
             
           
@@ -2279,7 +2279,7 @@ ndarray with spectral data.</div>
 
 <dl class="function">
 <dt id="luxpy.toolboxes.spdbuild.initialize_spd_optim_pars">
-<code class="descclassname">luxpy.toolboxes.spdbuild.</code><code class="descname">initialize_spd_optim_pars</code><span class="sig-paren">(</span><em>component_data, N_components=None, allow_butterworth_mono_spds=False, optimizer_type='2mixer', wl=[360.0, 830.0, 1.0]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/spdbuild/spdbuilder.html#initialize_spd_optim_pars"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.spdbuild.initialize_spd_optim_pars" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">luxpy.toolboxes.spdbuild.</code><code class="descname">initialize_spd_optim_pars</code><span class="sig-paren">(</span><em>component_data, N_components=None, allow_butterworth_mono_spds=False, optimizer_type='2mixer', wl=[360.0, 830.0, 1.0], spd_model_pars=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/spdbuild/spdbuilder.html#initialize_spd_optim_pars"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.spdbuild.initialize_spd_optim_pars" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize spd_optim_pars dict based on type of component_data.</p>
 <dl class="docutils">
 <dt>Args:</dt>
@@ -2331,6 +2331,13 @@ when :component_data: is dict and user wants to override dict. </div>
 <div class="line">_WL3, optional</div>
 <div class="line">Wavelengths used in optimization when :component_data: is not an
 ndarray with spectral data.</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">spd_model_pars:</th><td class="field-body"><div class="first last line-block">
+<div class="line">None, optional</div>
+<div class="line">If None, initialize based on type of component_data.</div>
+<div class="line">else: initialize on pre-defined spd_model_pars dict.</div>
 </div>
 </td>
 </tr>
