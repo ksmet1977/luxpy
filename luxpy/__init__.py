@@ -4,8 +4,8 @@ LuxPy: a package for lighting and color science
 ===============================================
 
     * Author: K. A.G. Smet (ksmet1977 at gmail.com)
-    * Version: 1.4.2
-    * Date: May 08, 2019
+    * Version: 1.4.3
+    * Date: July 04, 2019
     * License: GPLv3
 
     * DOI: https://doi.org/10.5281/zenodo.1298963
@@ -171,11 +171,11 @@ DO NOT CHANGE THESE CONSTANTS!
 # Initialze LuxPy
 ###############################################################################
 # Package info:
-__VERSION__ = 'v1.4.2'
+__VERSION__ = 'v1.4.3'
 __AUTHOR__ = 'Kevin A.G. Smet'
 __EMAIL__ = 'ksmet1977 at gmail.com'
 __URL__ = 'github.com/ksmet1977/luxpy/'
-__DATE__ = '08-May-2019'
+__DATE__ = '04-Jul-2019'
 __all__ = ['__VERSION__','__AUTHOR__','__EMAIL__', '__URL__','__DATE__']
 
 #==============================================================================

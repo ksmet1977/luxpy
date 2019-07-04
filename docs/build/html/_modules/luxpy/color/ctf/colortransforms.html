@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.color.ctf.colortransforms &mdash; LuxPy 1.4.2 documentation</title>
+  <title>luxpy.color.ctf.colortransforms &mdash; LuxPy 1.4.3 documentation</title>
   
 
   
@@ -56,7 +56,7 @@
             
             
               <div class="version">
-                1.4.2
+                1.4.3
               </div>
             
           
@@ -1101,7 +1101,7 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        :rgb: </span>
-<span class="sd">            | ndarray with R,G,B values.</span>
+<span class="sd">            | ndarray with R,G,B values (uint8).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">xyz</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">(</span><span class="n">xyz</span><span class="p">)</span>
@@ -1147,7 +1147,7 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        :rgb: </span>
-<span class="sd">            | ndarray with srgb values.</span>
+<span class="sd">            | ndarray with srgb values (uint8).</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        :xyz: </span>
@@ -1165,7 +1165,7 @@
     <span class="n">sRGB</span> <span class="o">=</span> <span class="n">rgb</span><span class="o">/</span><span class="mi">255</span>
 
     <span class="c1"># test for non-linear part of conversion</span>
-    <span class="n">nonlin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">sRGB</span> <span class="o">&lt;</span>  <span class="mf">0.0031308</span><span class="p">)</span><span class="c1">#0.03928)</span>
+    <span class="n">nonlin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">rgb</span><span class="o">/</span><span class="mi">255</span><span class="p">)</span> <span class="o">&lt;</span>  <span class="mf">0.0031308</span><span class="p">)</span><span class="c1">#0.03928)</span>
 
     <span class="c1"># apply gamma function to convert to sRGB</span>
     <span class="n">srgb</span> <span class="o">=</span> <span class="n">sRGB</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>

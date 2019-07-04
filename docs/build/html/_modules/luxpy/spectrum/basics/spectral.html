@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.spectrum.basics.spectral &mdash; LuxPy 1.4.2 documentation</title>
+  <title>luxpy.spectrum.basics.spectral &mdash; LuxPy 1.4.3 documentation</title>
   
 
   
@@ -56,7 +56,7 @@
             
             
               <div class="version">
-                1.4.2
+                1.4.3
               </div>
             
           
@@ -803,10 +803,13 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">scr</span> <span class="o">=</span> <span class="s1">&#39;cieobs&#39;</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">K</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">relative</span> <span class="o">==</span> <span class="kc">False</span><span class="p">):</span>
-            <span class="c1">#K = 1</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;spd_to_xyz: user defined CMF set, </span><span class="se">\</span>
-<span class="s1">                            but no scaling factor has been supplied.</span><span class="se">\</span>
-<span class="s1">                            Setting K = 1.&#39;</span><span class="p">)</span>
+            <span class="n">K</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="c1">#            raise Exception(&#39;spd_to_xyz: user defined CMF set, \</span>
+<span class="c1">#                            but no scaling factor has been supplied.\</span>
+<span class="c1">#                            Setting K = 1.&#39;)</span>
+<span class="c1">#            print(&#39;spd_to_xyz: user defined CMF set, \</span>
+<span class="c1">#                            but no scaling factor has been supplied.\</span>
+<span class="c1">#                            Setting K = 1.&#39;)</span>
             
     <span class="n">cmf</span> <span class="o">=</span> <span class="n">xyzbar</span><span class="p">(</span><span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">scr</span> <span class="o">=</span> <span class="n">scr</span><span class="p">,</span> <span class="n">wl_new</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;np&#39;</span><span class="p">)</span> <span class="c1">#also interpolate to wl of data</span>
     <span class="k">if</span> <span class="n">cie_std_dev_obs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>

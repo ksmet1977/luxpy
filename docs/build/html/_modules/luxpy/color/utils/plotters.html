@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.color.utils.plotters &mdash; LuxPy 1.4.2 documentation</title>
+  <title>luxpy.color.utils.plotters &mdash; LuxPy 1.4.3 documentation</title>
   
 
   
@@ -56,7 +56,7 @@
             
             
               <div class="version">
-                1.4.2
+                1.4.3
               </div>
             
           
@@ -482,24 +482,27 @@
     <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">([</span><span class="n">DL</span><span class="p">,</span><span class="n">BBL</span><span class="p">,</span><span class="n">D65</span><span class="p">,</span><span class="n">EEW</span><span class="p">]):</span>
         <span class="n">show</span> <span class="o">=</span> <span class="kc">False</span>
 
-    <span class="n">axh_</span> <span class="o">=</span> <span class="n">plot_chromaticity_diagram_colors</span><span class="p">(</span><span class="n">axh</span> <span class="o">=</span> <span class="n">axh</span><span class="p">,</span> <span class="n">show</span> <span class="o">=</span> <span class="n">diagram_colors</span><span class="p">,</span> <span class="n">cspace</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span>\
-                                            <span class="n">cspace_pars</span> <span class="o">=</span> <span class="n">cspace_pars</span><span class="p">,</span>\
-                                            <span class="n">diagram_samples</span> <span class="o">=</span> <span class="n">diagram_samples</span><span class="p">,</span>\
-                                            <span class="n">diagram_opacity</span> <span class="o">=</span> <span class="n">diagram_opacity</span><span class="p">,</span>\
-                                            <span class="n">diagram_lightness</span> <span class="o">=</span> <span class="n">diagram_lightness</span><span class="p">,</span>\
-                                            <span class="n">label_fontname</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">label_fontsize</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
-        
+    <span class="k">if</span> <span class="n">diagram_colors</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">axh_</span> <span class="o">=</span> <span class="n">plot_chromaticity_diagram_colors</span><span class="p">(</span><span class="n">axh</span> <span class="o">=</span> <span class="n">axh</span><span class="p">,</span> <span class="n">show</span> <span class="o">=</span> <span class="n">diagram_colors</span><span class="p">,</span> <span class="n">cspace</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span>\
+                                                <span class="n">cspace_pars</span> <span class="o">=</span> <span class="n">cspace_pars</span><span class="p">,</span>\
+                                                <span class="n">diagram_samples</span> <span class="o">=</span> <span class="n">diagram_samples</span><span class="p">,</span>\
+                                                <span class="n">diagram_opacity</span> <span class="o">=</span> <span class="n">diagram_opacity</span><span class="p">,</span>\
+                                                <span class="n">diagram_lightness</span> <span class="o">=</span> <span class="n">diagram_lightness</span><span class="p">,</span>\
+                                                <span class="n">label_fontname</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">label_fontsize</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">axh_</span> <span class="o">=</span> <span class="n">axh</span>
+            
     <span class="n">axh_</span> <span class="o">=</span> <span class="n">plot_color_data</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">axh</span> <span class="o">=</span> <span class="n">axh_</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">cspace</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">,</span> <span class="n">show</span> <span class="o">=</span> <span class="n">show</span><span class="p">,</span> <span class="n">formatstr</span><span class="o">=</span><span class="n">formatstr</span><span class="p">,</span>  <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
 
     <span class="k">if</span> <span class="n">DL</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
         <span class="k">if</span> <span class="s1">&#39;label&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span> <span class="c1"># avoid label also being used for DL</span>
             <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;label&#39;</span><span class="p">)</span>
-        <span class="n">plotDL</span><span class="p">(</span><span class="n">ccts</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">cspace</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">,</span> <span class="n">axh</span> <span class="o">=</span> <span class="n">axh</span><span class="p">,</span> <span class="n">show</span> <span class="o">=</span> <span class="n">show</span><span class="p">,</span> <span class="n">cspace_pars</span> <span class="o">=</span> <span class="n">cspace_pars</span><span class="p">,</span> <span class="n">formatstr</span> <span class="o">=</span> <span class="s1">&#39;k:&#39;</span><span class="p">,</span>  <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">plotDL</span><span class="p">(</span><span class="n">ccts</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">cspace</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">,</span> <span class="n">axh</span> <span class="o">=</span> <span class="n">axh_</span><span class="p">,</span> <span class="n">show</span> <span class="o">=</span> <span class="n">show</span><span class="p">,</span> <span class="n">cspace_pars</span> <span class="o">=</span> <span class="n">cspace_pars</span><span class="p">,</span> <span class="n">formatstr</span> <span class="o">=</span> <span class="s1">&#39;k:&#39;</span><span class="p">,</span>  <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">BBL</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
         <span class="k">if</span> <span class="s1">&#39;label&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span> <span class="c1"># avoid label also being used for BB</span>
             <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;label&#39;</span><span class="p">)</span>
-        <span class="n">plotBB</span><span class="p">(</span><span class="n">ccts</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">cspace</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">,</span> <span class="n">axh</span> <span class="o">=</span> <span class="n">axh</span><span class="p">,</span> <span class="n">show</span> <span class="o">=</span> <span class="n">show</span><span class="p">,</span> <span class="n">cspace_pars</span> <span class="o">=</span> <span class="n">cspace_pars</span><span class="p">,</span> <span class="n">cctlabels</span> <span class="o">=</span> <span class="n">cctlabels</span><span class="p">,</span> <span class="n">formatstr</span> <span class="o">=</span> <span class="s1">&#39;k-.&#39;</span><span class="p">,</span>  <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">plotBB</span><span class="p">(</span><span class="n">ccts</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">cspace</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">,</span> <span class="n">axh</span> <span class="o">=</span> <span class="n">axh_</span><span class="p">,</span> <span class="n">show</span> <span class="o">=</span> <span class="n">show</span><span class="p">,</span> <span class="n">cspace_pars</span> <span class="o">=</span> <span class="n">cspace_pars</span><span class="p">,</span> <span class="n">cctlabels</span> <span class="o">=</span> <span class="n">cctlabels</span><span class="p">,</span> <span class="n">formatstr</span> <span class="o">=</span> <span class="s1">&#39;k-.&#39;</span><span class="p">,</span>  <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     
     <span class="k">if</span> <span class="n">D65</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
         <span class="n">YxyD65</span> <span class="o">=</span> <span class="n">colortf</span><span class="p">(</span><span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">_CIE_ILLUMINANTS</span><span class="p">[</span><span class="s1">&#39;D65&#39;</span><span class="p">]),</span> <span class="n">tf</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">,</span> <span class="n">tfa0</span> <span class="o">=</span> <span class="n">cspace_pars</span><span class="p">)</span>
@@ -794,6 +797,9 @@
             <span class="k">if</span> <span class="p">(</span><span class="n">cspace_in</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
                 <span class="n">xlabel</span> <span class="o">=</span> <span class="s1">&#39;x&#39;</span>
                 <span class="n">ylabel</span> <span class="o">=</span> <span class="s1">&#39;y&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">xlabel</span> <span class="o">=</span> <span class="n">_CSPACE_AXES</span><span class="p">[</span><span class="n">cspace_in</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">ylabel</span> <span class="o">=</span> <span class="n">_CSPACE_AXES</span><span class="p">[</span><span class="n">cspace_in</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>
             
             <span class="k">if</span> <span class="p">(</span><span class="n">cspace_out</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
                 <span class="n">xlabel</span> <span class="o">=</span> <span class="n">_CSPACE_AXES</span><span class="p">[</span><span class="n">cspace_out</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
@@ -815,7 +821,7 @@
         <span class="k">return</span> <span class="kc">None</span></div>
 
 <span class="c1">#------------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="plot_chromaticity_diagram_colors"><a class="viewcode-back" href="../../../../color.html#luxpy.color.utils.plot_chromaticity_diagram_colors">[docs]</a><span class="k">def</span> <span class="nf">plot_chromaticity_diagram_colors</span><span class="p">(</span><span class="n">samples</span> <span class="o">=</span> <span class="mi">256</span><span class="p">,</span> <span class="n">diagram_opacity</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">diagram_lightness</span> <span class="o">=</span> <span class="mf">0.25</span><span class="p">,</span>\
+<div class="viewcode-block" id="plot_chromaticity_diagram_colors"><a class="viewcode-back" href="../../../../color.html#luxpy.color.utils.plot_chromaticity_diagram_colors">[docs]</a><span class="k">def</span> <span class="nf">plot_chromaticity_diagram_colors</span><span class="p">(</span><span class="n">diagram_samples</span> <span class="o">=</span> <span class="mi">256</span><span class="p">,</span> <span class="n">diagram_opacity</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">diagram_lightness</span> <span class="o">=</span> <span class="mf">0.25</span><span class="p">,</span>\
                                       <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">cspace</span> <span class="o">=</span> <span class="s1">&#39;Yxy&#39;</span><span class="p">,</span> <span class="n">cspace_pars</span> <span class="o">=</span> <span class="p">{},</span>\
                                       <span class="n">show</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">axh</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>\
                                       <span class="n">show_grid</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">label_fontname</span> <span class="o">=</span> <span class="s1">&#39;Times New Roman&#39;</span><span class="p">,</span> <span class="n">label_fontsize</span> <span class="o">=</span> <span class="mi">12</span><span class="p">,</span>\
@@ -824,7 +830,7 @@
 <span class="sd">    Plot the chromaticity diagram colors.</span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
-<span class="sd">        :samples:</span>
+<span class="sd">        :diagram_samples:</span>
 <span class="sd">            | 256, optional</span>
 <span class="sd">            | Sampling resolution of color space.</span>
 <span class="sd">        :diagram_opacity:</span>
@@ -867,7 +873,7 @@
 <span class="sd">        </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">offset</span> <span class="o">=</span> <span class="n">_EPS</span>
-    <span class="n">ii</span><span class="p">,</span> <span class="n">jj</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">offset</span><span class="p">,</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">offset</span><span class="p">,</span> <span class="n">samples</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">offset</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">samples</span><span class="p">))</span>
+    <span class="n">ii</span><span class="p">,</span> <span class="n">jj</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">offset</span><span class="p">,</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">offset</span><span class="p">,</span> <span class="n">diagram_samples</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">offset</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">diagram_samples</span><span class="p">))</span>
     <span class="n">ij</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dstack</span><span class="p">((</span><span class="n">ii</span><span class="p">,</span> <span class="n">jj</span><span class="p">))</span>
     
     <span class="n">SL</span> <span class="o">=</span>  <span class="n">_CMF</span><span class="p">[</span><span class="n">cieobs</span><span class="p">][</span><span class="s1">&#39;bar&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">T</span>
@@ -878,7 +884,7 @@
     <span class="n">SL</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>
 
     
-    <span class="n">ij2D</span> <span class="o">=</span> <span class="n">ij</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">samples</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+    <span class="n">ij2D</span> <span class="o">=</span> <span class="n">ij</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">diagram_samples</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
     <span class="n">ij2D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">diagram_lightness</span><span class="o">*</span><span class="mi">100</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">ij2D</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">1</span><span class="p">)),</span> <span class="n">ij2D</span><span class="p">))</span>
     <span class="n">xyz</span> <span class="o">=</span> <span class="n">colortf</span><span class="p">(</span><span class="n">ij2D</span><span class="p">,</span> <span class="n">tf</span> <span class="o">=</span> <span class="n">cspace</span> <span class="o">+</span> <span class="s1">&#39;&gt;xyz&#39;</span><span class="p">,</span> <span class="n">tfa0</span> <span class="o">=</span> <span class="n">cspace_pars</span><span class="p">)</span>
 
@@ -888,7 +894,7 @@
     
     <span class="n">srgb</span> <span class="o">=</span> <span class="n">xyz_to_srgb</span><span class="p">(</span><span class="n">xyz</span><span class="p">)</span>
     <span class="n">srgb</span> <span class="o">=</span> <span class="n">srgb</span><span class="o">/</span><span class="n">srgb</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
-    <span class="n">srgb</span> <span class="o">=</span> <span class="n">srgb</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">samples</span><span class="p">,</span><span class="n">samples</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+    <span class="n">srgb</span> <span class="o">=</span> <span class="n">srgb</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">diagram_samples</span><span class="p">,</span><span class="n">diagram_samples</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
 
     <span class="k">if</span> <span class="n">show</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">axh</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>

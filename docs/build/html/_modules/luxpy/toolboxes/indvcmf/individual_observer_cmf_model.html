@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.toolboxes.indvcmf.individual_observer_cmf_model &mdash; LuxPy 1.4.2 documentation</title>
+  <title>luxpy.toolboxes.indvcmf.individual_observer_cmf_model &mdash; LuxPy 1.4.3 documentation</title>
   
 
   
@@ -56,7 +56,7 @@
             
             
               <div class="version">
-                1.4.2
+                1.4.3
               </div>
             
           
@@ -747,11 +747,11 @@
 <span class="sd">        is calculated by linear interpolation between </span>
 <span class="sd">        the _INDVCMF_M_2d and _INDVCMF_M_10d matrices.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">a</span> <span class="o">=</span> <span class="p">(</span><span class="mi">10</span><span class="o">-</span><span class="n">fieldsize</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">10</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">a</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
-        <span class="n">a</span> <span class="o">=</span> <span class="mi">2</span>
-    <span class="k">elif</span> <span class="n">a</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">:</span>
-        <span class="n">a</span> <span class="o">=</span> <span class="mi">10</span>        
+    <span class="k">if</span> <span class="n">fieldsize</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">fieldsize</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="k">elif</span> <span class="n">fieldsize</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">:</span>
+        <span class="n">fieldsize</span> <span class="o">=</span> <span class="mi">10</span> 
+    <span class="n">a</span> <span class="o">=</span> <span class="p">(</span><span class="mi">10</span><span class="o">-</span><span class="n">fieldsize</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">10</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span>      
     <span class="k">return</span> <span class="n">_INDVCMF_M_2d</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">a</span><span class="p">)</span> <span class="o">+</span> <span class="n">a</span><span class="o">*</span><span class="n">_INDVCMF_M_10d</span>
 
 <span class="k">def</span> <span class="nf">lmsb_to_xyzb</span><span class="p">(</span><span class="n">lms</span><span class="p">,</span> <span class="n">fieldsize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;XYZ&#39;</span><span class="p">,</span> <span class="n">allow_negative_values</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>

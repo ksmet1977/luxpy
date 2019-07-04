@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Color sub-package &mdash; LuxPy 1.4.2 documentation</title>
+  <title>Color sub-package &mdash; LuxPy 1.4.3 documentation</title>
   
 
   
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                1.4.2
+                1.4.3
               </div>
             
           
@@ -1042,7 +1042,7 @@ Color Research &amp; Application, 39(3), 279–287.</a>
 
 <dl class="function">
 <dt id="luxpy.color.utils.plot_chromaticity_diagram_colors">
-<code class="descclassname">luxpy.color.utils.</code><code class="descname">plot_chromaticity_diagram_colors</code><span class="sig-paren">(</span><em>samples=256</em>, <em>diagram_opacity=1.0</em>, <em>diagram_lightness=0.25</em>, <em>cieobs='1931_2'</em>, <em>cspace='Yxy'</em>, <em>cspace_pars={}</em>, <em>show=True</em>, <em>axh=None</em>, <em>show_grid=True</em>, <em>label_fontname='Times New Roman'</em>, <em>label_fontsize=12</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/utils/plotters.html#plot_chromaticity_diagram_colors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.utils.plot_chromaticity_diagram_colors" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">luxpy.color.utils.</code><code class="descname">plot_chromaticity_diagram_colors</code><span class="sig-paren">(</span><em>diagram_samples=256</em>, <em>diagram_opacity=1.0</em>, <em>diagram_lightness=0.25</em>, <em>cieobs='1931_2'</em>, <em>cspace='Yxy'</em>, <em>cspace_pars={}</em>, <em>show=True</em>, <em>axh=None</em>, <em>show_grid=True</em>, <em>label_fontname='Times New Roman'</em>, <em>label_fontsize=12</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/utils/plotters.html#plot_chromaticity_diagram_colors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.utils.plot_chromaticity_diagram_colors" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot the chromaticity diagram colors.</p>
 <dl class="docutils">
 <dt>Args:</dt>
@@ -1050,7 +1050,8 @@ Color Research &amp; Application, 39(3), 279–287.</a>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">samples:</th><td class="field-body"><div class="first last line-block">
+<tr class="field-odd field"><th class="field-name" colspan="2">diagram_samples:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><div class="first last line-block">
 <div class="line">256, optional</div>
 <div class="line">Sampling resolution of color space.</div>
 </div>
@@ -2260,7 +2261,7 @@ and excitation purity</div>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">rgb:</th><td class="field-body"><div class="first last line-block">
-<div class="line">ndarray with R,G,B values.</div>
+<div class="line">ndarray with R,G,B values (uint8).</div>
 </div>
 </td>
 </tr>
@@ -2281,7 +2282,7 @@ and excitation purity</div>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">rgb:</th><td class="field-body"><div class="first last line-block">
-<div class="line">ndarray with srgb values.</div>
+<div class="line">ndarray with srgb values (uint8).</div>
 </div>
 </td>
 </tr>
