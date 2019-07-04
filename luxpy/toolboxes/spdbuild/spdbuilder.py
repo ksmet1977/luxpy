@@ -50,7 +50,7 @@ Functions
 
  :initialize_spd_optim_pars(): Initialize spd_optim_pars (x0, lb, ub for use
                                with math.minimizebnd) based on type 
-                               of component_data.
+                               of component_data (or predefined values in spd_model_pars dict).
                 
  :spd_optimizer(): Generate a spectrum with specified white point and optimized
                    for certain objective functions from a set of component 
@@ -1255,8 +1255,10 @@ def spd_optimizer_2_3(optimizer_type = '2mixer', \
         spd_optim_pars, spd_model_pars = initialize_spd_optim_pars(component_data, \
                                                                    optimizer_type = optimizer_type, \
                                                                    allow_butterworth_mono_spds = allow_butterworth_mono_spds, \
-                                                                   wl = wl)        
+                                                                   wl = wl,\
+                                                                   spd_model_pars = spd_model_pars)        
         spd_model_pars = {**spd_model_pars, **spd_optim_pars} # merge two dicts
+        
     else:
         if 'x0' not in spd_model_pars:
             spd_optim_pars['x0'] = None
@@ -1546,7 +1548,8 @@ def initialize_spd_model_pars(component_data, N_components = None, allow_butterw
 
 def initialize_spd_optim_pars(component_data, N_components = None,\
                               allow_butterworth_mono_spds = False,\
-                              optimizer_type = '2mixer', wl = _WL3):
+                              optimizer_type = '2mixer', wl = _WL3,\
+                              spd_model_pars = None):
     """
     Initialize spd_optim_pars dict based on type of component_data.
     
@@ -1576,6 +1579,10 @@ def initialize_spd_optim_pars(component_data, N_components = None,\
             | _WL3, optional
             | Wavelengths used in optimization when :component_data: is not an
               ndarray with spectral data.
+        :spd_model_pars:
+            | None, optional
+            | If None, initialize based on type of component_data.
+            | else: initialize on pre-defined spd_model_pars dict.
         
     Returns:
         :spd_optim_pars:
@@ -1583,9 +1590,11 @@ def initialize_spd_optim_pars(component_data, N_components = None,\
 
     """
     spd_optim_pars = {}
-    spd_model_pars = initialize_spd_model_pars(component_data, N_components = N_components,\
+    if spd_model_pars is None:
+        spd_model_pars = initialize_spd_model_pars(component_data, N_components = N_components,\
                                                optimizer_type = optimizer_type, \
                                                allow_butterworth_mono_spds = allow_butterworth_mono_spds, wl = wl)
+    
     N = spd_model_pars['N_components']
 
     # Initialize parameter dict:
@@ -1821,7 +1830,24 @@ def spd_optimizer(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs = _CIEO
             N_components = spds.shape[0]
         else:
             spds = N_components # optimize spd model parameters, such as peakwl, fwhm, ... using N components.
-                
+            spd_model_pars = initialize_spd_model_pars(N_components, N_components = N_components, allow_butterworth_mono_spds = allow_butterworth_mono_spds, optimizer_type = optimizer_type, wl = wl)    
+            
+            # Update spd_model_pas with values from input arguments:
+            def correct_len(x):
+                if not isinstance(x,list):
+                    if not isinstance(x,np.ndarray):
+                        x = [x]
+                if len(list(x)) == 1:
+                    x = list(x)*N_components
+                elif len(list(x)) != N_components:
+                    raise Exception('Length of list not compatible with N_components={:1.0f}'.format(N_components))
+                return x
+            spd_model_pars['peakwl_min'] = correct_len(peakwl_min)
+            spd_model_pars['peakwl_max'] = correct_len(peakwl_max)
+            spd_model_pars['fwhm_min'] = correct_len(fwhm_min)
+            spd_model_pars['fwhm_max'] = correct_len(fwhm_max)
+            spd_model_pars['bw_order_min'] = correct_len(bw_order_min)
+            spd_model_pars['bw_order_max'] = correct_len(bw_order_max)
     else:
         if isinstance(component_spds,dict): # optimize spectrum fluxes of set of component spectra defined by parameters in dict
             if N_components is None:
@@ -1834,7 +1860,6 @@ def spd_optimizer(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs = _CIEO
                     spd_model_pars["fwhm"] = fwhm
                     
                     spd_model_pars = initialize_spd_model_pars(spd_model_pars, N_components = N_components, allow_butterworth_mono_spds = allow_butterworth_mono_spds, optimizer_type = optimizer_type, wl = wl)
-                    print("modelpars:",spd_model_pars)
             spds = spd_model_pars
         else: # optimize spectrum fluxes of pre-defined set of component spectra:
             spds = component_spds 
@@ -1873,7 +1898,7 @@ if __name__ == '__main__':
     
     plt.close('all')
     cieobs = '1931_2'
-    
+        
     #--------------------------------------------------------------------------
     print('1: spd_builder():')
     # Set up two basis LED spectra:
@@ -2010,4 +2035,35 @@ if __name__ == '__main__':
     #plot spd:
     plt.figure()
     SPD(S3).plot()
-##    
+##  
+    #--------------------------------------------------------------------------
+    print('3: spd_optimizer() with constraints on peakwl and fwhm:')
+    target = 5000
+    obj_fcn = [cri.spd_to_iesrf, cri.spd_to_iesrg]
+    obj_tar_vals = [90,110]
+    
+    S4, _ = spd_optimizer(target = target, \
+                          tar_type = 'cct',\
+                          cieobs = cieobs,\
+                          cspace_bwtf = {'cieobs' : cieobs, 'mode' : 'search'},\
+                          optimizer_type = '3mixer',\
+                          N_components = 3,
+                          obj_fcn = obj_fcn, \
+                          obj_tar_vals = obj_tar_vals,\
+                          peakwl_min = [400], peakwl_max = [700],\
+                          fwhm_min = [3], fwhm_max = [3],\
+                          wl = np.array([360,830,1]),\
+                          verbosity = 0)
+    # Check output agrees with target:
+    xyz = spd_to_xyz(S4, relative = False, cieobs = cieobs)
+    cct = xyz_to_cct(xyz, cieobs = cieobs, mode = 'search')
+    Rf = obj_fcn1(S4)
+    Rg = obj_fcn2(S4)
+    print('\nResults (optim,target):')
+    print("cct(K): ({:1.1f},{:1.1f})".format(cct[0,0], target))
+    print("Rf: ({:1.2f},{:1.2f})".format(Rf[0,0], obj_tar_vals[0]))
+    print("Rg: ({:1.2f}, {:1.2f})".format(Rg[0,0], obj_tar_vals[1]))
+    
+    #plot spd:
+    plt.figure()
+    SPD(S4).plot()
