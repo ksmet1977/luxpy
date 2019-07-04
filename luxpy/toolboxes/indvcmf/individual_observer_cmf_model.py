@@ -596,11 +596,11 @@ def get_lms_to_xyz_matrix(fieldsize = 10):
         is calculated by linear interpolation between 
         the _INDVCMF_M_2d and _INDVCMF_M_10d matrices.
     """
-    a = (10-fieldsize)/(10-2)
-    if a < 2:
-        a = 2
-    elif a > 10:
-        a = 10        
+    if fieldsize < 2:
+        fieldsize = 2
+    elif fieldsize > 10:
+        fieldsize = 10 
+    a = (10-fieldsize)/(10-2)      
     return _INDVCMF_M_2d*(1 - a) + a*_INDVCMF_M_10d
 
 def lmsb_to_xyzb(lms, fieldsize = 10, out = 'XYZ', allow_negative_values = False):
