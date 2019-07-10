@@ -118,6 +118,9 @@ LuxPy package structure
 |             jeti.py
 |          /oceanoptics
 |             oceanoptics.py
+|
+|       /rgb2spec
+|           smits_mistuba.py
 
 Imported core packages:
 -----------------------
@@ -376,5 +379,9 @@ __all__ += ['iolidfiles']
 #   Load spectro sub_package:
 from .toolboxes.spectro import spectro as spectro
 __all__ += ['spectro']
+
+#   Load rgb2spec sub_package:
+from .toolboxes import rgb2spec
+__all__ += ['rgb2spec']
 
 ###############################################################################
