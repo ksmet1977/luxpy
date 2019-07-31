@@ -27,7 +27,7 @@ SPD fields
  :self.value: values of spectral data
     
  :self.dtype: spectral data type ('S' light source, or 'R', reflectance, ...),
-              used to determine interpolation method following CIE15-2004.
+              used to determine interpolation method following CIE15-2017.
     
  :self.shape: self.value.shape
 
@@ -65,7 +65,7 @@ SPD methods
 
  :self.normalize(): Normalize spectral power distributions in SPD instance.
 
- :self.cie_interp(): Interpolate / extrapolate spectral data following CIE15-2004.
+ :self.cie_interp(): Interpolate / extrapolate spectral data following CIE15-2018.
 
  :self.to_xyz(): Calculates xyz tristimulus values from spectral data 
                  and return as instance of class XYZ.
@@ -108,7 +108,7 @@ class SPD:
                   reflectance spectra, etc.)
                 | See SPD._INTERP_TYPES for more options. 
                 | This is used to automatically determine the correct kind of
-                  interpolation method according to CIE15-2004.
+                  interpolation method according to CIE15-2018.
             :wl_new: 
                 | None or ndarray with wavelength range, optional
                 | If None: don't interpolate, else perform interpolation.
@@ -335,7 +335,7 @@ class SPD:
     #--------------------------------------------------------------------------------------------------
     def cie_interp(self,wl_new, kind = 'auto', negative_values_allowed = False, extrap_values = None):
         """
-        Interpolate / extrapolate spectral data following standard CIE15-2004.
+        Interpolate / extrapolate spectral data following standard CIE15-2018.
         
         | The interpolation type depends on the spectrum type defined in :kind:. 
         | Extrapolation is always done by replicate the closest known values.
@@ -418,9 +418,7 @@ class SPD:
                 |         and with xyzw.shape = (data.shape[0],3)
                  
         References:
-            1. `CIE15:2004, 
-            “Colorimetry,” CIE, Vienna, Austria, 2004.
-            <http://www.cie.co.at/index.php/index.php?i_ca_id=304)>`_
+            1. `CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018. <https://doi.org/10.25039/TR.015.2018>`_
         """
         if (out == 2):
             xyz, xyzw = spd_to_xyz(self.get_(),  relative = relative, rfl = rfl, cieobs = cieobs, out = out)

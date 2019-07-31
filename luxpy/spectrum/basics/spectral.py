@@ -50,7 +50,7 @@ Module supporting basic spectral calculations.
                    radiometric, photometric and quantal energy units).
 
  :cie_interp(): Interpolate / extrapolate spectral data following standard 
-                [CIE15:2004, “Colorimetry,” CIE, Vienna, Austria, 2004.]
+                [`CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018. <https://doi.org/10.25039/TR.015.2018>`_]
 
  :spd(): | All-in-one function that can:
          |  1. Read spectral data from data file or take input directly as 
@@ -79,7 +79,7 @@ Module supporting basic spectral calculations.
          
  :cri_ref(): Calculates a reference illuminant spectrum based on cct for color 
              rendering index calculations.
-            (`CIE15:2004CIE15:2004, “Colorimetry,” CIE, Vienna, Austria, 2004. <http://www.cie.co.at/index.php/index.php?i_ca_id=304)>`_, 
+            (`CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018. <https://doi.org/10.25039/TR.015.2018>`_, 
              `cie224:2017, CIE 2017 Colour Fidelity Index for accurate scientific use. (2017), ISBN 978-3-902842-61-9. <http://www.cie.co.at/index.php?i_ca_id=1027>`_,
              `IES-TM-30-15: Method for Evaluating Light Source Color Rendition. New York, NY: The Illuminating Engineering Society of North America. <https://www.ies.org/store/technical-memoranda/ies-method-for-evaluating-light-source-color-rendition/>`_
  
@@ -87,10 +87,7 @@ Module supporting basic spectral calculations.
 References
 ----------
 
-    1. `CIE15-2004 (2004). 
-    Colorimetry 
-    (Vienna, Austria: CIE) 
-    <http://www.cie.co.at/index.php/index.php?i_ca_id=304>`_
+    1. `CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018. <https://doi.org/10.25039/TR.015.2018>`_
     
     2. `cie224:2017, CIE 2017 Colour Fidelity Index for accurate scientific use. (2017),
     ISBN 978-3-902842-61-9. 
@@ -280,7 +277,7 @@ def spd_normalize(data, norm_type = None, norm_f = 1, wl = True, cieobs = _CIEOB
 
 def cie_interp(data,wl_new, kind = None, negative_values_allowed = False, extrap_values = None):
     """
-    Interpolate / extrapolate spectral data following standard CIE15-2004.
+    Interpolate / extrapolate spectral data following standard CIE15-2018.
     
     | The kind of interpolation depends on the spectrum type defined in :kind:. 
     | Extrapolation is always done by replicate the closest known values.
@@ -498,8 +495,7 @@ def xyzbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, norm_type = None, norm
         
             
     References:
-        1. `CIE15:2004. Colorimetry. CIE, Vienna. 
-        <http://www.cie.co.at/index.php/index.php?i_ca_id=304>`_
+        1. `CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018. <https://doi.org/10.25039/TR.015.2018>`_
     """
     if scr is 'file':
         dict_or_file = _PKG_PATH + _SEP + 'data' + _SEP + 'cmfs' + _SEP + 'ciexyz_' + cieobs + '.dat'
@@ -559,8 +555,7 @@ def vlbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, norm_type = None, norm_
         
             
     References:
-        1. `CIE15:2004. Colorimetry. CIE, Vienna 
-        <http://www.cie.co.at/index.php/index.php?i_ca_id=304>`_
+        1. `CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018. <https://doi.org/10.25039/TR.015.2018>`_
     """
     if scr == 'dict':
         dict_or_file = _CMF[cieobs]['bar'][[0,2],:] 
@@ -587,7 +582,7 @@ def spd_to_xyz(data,  relative = True, rfl = None, cieobs = _CIEOBS, K = None, o
             | (.shape = (number of spectra + 1, number of wavelengths))
             | Note that :data: is never interpolated, only CMFs and RFLs. 
             | This way interpolation errors due to peaky spectra are avoided. 
-              Conform CIE15-2004.
+              Conform CIE15-2018.
         :relative: 
             | True or False, optional
             | Calculate relative XYZ (Yw = 100) or absolute XYZ (Y = Luminance)
@@ -632,8 +627,7 @@ def spd_to_xyz(data,  relative = True, rfl = None, cieobs = _CIEOBS, K = None, o
             |        and with xyzw.shape = (data.shape[0],3)
              
     References:
-        1. `CIE15:2004. Colorimetry. CIE, Vienna. 
-        <http://www.cie.co.at/index.php/index.php?i_ca_id=304>`_
+        1. `CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018. <https://doi.org/10.25039/TR.015.2018>`_
     """
     
     if isinstance(data,pd.DataFrame): # convert to np format
@@ -713,7 +707,7 @@ def spd_to_ler(data, cieobs = _CIEOBS, K = None):
             | (.shape = (number of spectra + 1, number of wavelengths))
             | Note that :data: is never interpolated, only CMFs and RFLs. 
             | This way interpolation errors due to peaky spectra are avoided. 
-            | Conform CIE15-2004.
+            | Conform CIE15-2018.
         :cieobs: 
             | luxpy._CIEOBS, optional
             | Determines the color matching function set used in the 
@@ -728,8 +722,7 @@ def spd_to_ler(data, cieobs = _CIEOBS, K = None):
             | ndarray of LER values. 
              
     References:
-        1. `CIE15:2004. Colorimetry. CIE, Vienna.
-        <http://www.cie.co.at/index.php/index.php?i_ca_id=304>`_
+        1. `CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018. <https://doi.org/10.25039/TR.015.2018>`_
     """
     
     if isinstance(cieobs,str):    
@@ -827,8 +820,7 @@ def blackbody(cct, wl3 = None):
               (:returns:[0] contains wavelengths)
             
     References:
-        1. `CIE15:2004. Colorimetry. 
-        <http://www.cie.co.at/index.php/index.php?i_ca_id=304>`_
+        1. `CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018. <https://doi.org/10.25039/TR.015.2018>`_
     """
     cct=float(cct)
     if wl3 is None: 
@@ -857,8 +849,7 @@ def daylightlocus(cct, force_daylight_below4000K = False):
             | (ndarray of x-coordinates, ndarray of y-coordinates)
         
     References:
-        1. `CIE15:2004. Colorimetry. 
-        <http://www.cie.co.at/index.php/index.php?i_ca_id=304>`_
+        1. `CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018. <https://doi.org/10.25039/TR.015.2018>`_
     """
     cct = np2d(cct)
     if np.any((cct < 4000.0) & (force_daylight_below4000K == False)):
@@ -901,8 +892,7 @@ def daylightphase(cct, wl3 = None, force_daylight_below4000K = False, verbosity 
               (:returns:[0] contains wavelengths)
             
     References:
-        1. `CIE15:2004. Colorimetry. 
-        <http://www.cie.co.at/index.php/index.php?i_ca_id=304>`_
+        1. `CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018. <https://doi.org/10.25039/TR.015.2018>`_
      """
     cct=float(cct)
     if wl3 is None: 

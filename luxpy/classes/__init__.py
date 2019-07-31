@@ -27,7 +27,7 @@ SPD fields
  :self.value: values of spectral data
     
  :self.dtype: spectral data type ('S' light source, or 'R', reflectance, ...),
-              used to determine interpolation method following CIE15-2004.
+              used to determine interpolation method following CIE15-2018.
     
  :self.shape: self.value.shape
 
@@ -65,7 +65,7 @@ SPD methods
 
  :self.normalize(): Normalize spectral power distributions in SPD instance.
 
- :self.cie_interp(): Interpolate / extrapolate spectral data following CIE15-2004.
+ :self.cie_interp(): Interpolate / extrapolate spectral data following CIE15-2018.
 
  :self.to_xyz(): Calculates xyz tristimulus values from spectral data 
                  and return as instance of class XYZ.

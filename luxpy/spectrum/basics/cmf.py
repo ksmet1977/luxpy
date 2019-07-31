@@ -62,10 +62,7 @@ cmf.py
 References
 ----------
 
-    1. `CIE15-2004 (2004). 
-    Colorimetry 
-    (Vienna, Austria: CIE) 
-    <http://www.cie.co.at/index.php/index.php?i_ca_id=304>`_
+    1. `CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018. <https://doi.org/10.25039/TR.015.2018>`_
 
     2. `CIE, and CIE (2006). 
     Fundamental Chromaticity Diagram with Physiological Axes - Part I.(Vienna: CIE).
