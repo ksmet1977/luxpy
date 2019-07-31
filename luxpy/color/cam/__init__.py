@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-
 cam: sub-package with color appearance models
 =============================================
 
  :_UNIQUE_HUE_DATA: database of unique hues with corresponding 
                              Hue quadratures and eccentricity factors 
-                             for ciecam02, cam16, ciecam97s, cam15u)
+                             for ciecam02, cam16, ciecam97s, cam15u, cam18sl)
 
  :_SURROUND_PARAMETERS: database of surround param. c, Nc, F and FLL 
                                  for ciecam02, cam16, ciecam97s and cam15u.
@@ -25,6 +24,8 @@ cam: sub-package with color appearance models
  :_CAM15U_PARAMETERS: database with CAM15u model parameters.
  
  :_CAM_SWW16_PARAMETERS: cam_sww16 model parameters.
+ 
+ :_CAM18SL_PARAMETERS: database with CAM18sl model parameters
 
  :_CAM_DEFAULT_WHITE_POINT: Default internal reference white point (xyz)
 
@@ -89,8 +90,18 @@ cam: sub-package with color appearance models
               Opt. Express, vol. 23, no. 10, pp. 13455–13466. 
               <https://www.osapublishing.org/oe/abstract.cfm?uri=oe-23-10-13455&origin=search>`_
             
- :cam_sww16(): A simple principled color appearance model based on a mapping 
-               of the Munsell color system.
+ :cam_sww16(): | A simple principled color appearance model based on a mapping 
+                 of the Munsell color system.
+               | `Smet, K. A. G., Webster, M. A., & Whitehead, L. A. (2016). 
+                   A simple principled approach for modeling and understanding uniform color metrics. 
+                   Journal of the Optical Society of America A, 33(3), A319–A331. 
+                   <https://doi.org/10.1364/JOSAA.33.00A319>`_
+               
+ :cam18sl(): | calculates the output for the CAM18sl model for self-luminous related stimuli. 
+             | `Hermans, S., Smet, K. A. G., & Hanselaer, P. (2018). 
+               "Color appearance model for self-luminous stimuli."
+               Journal of the Optical Society of America A, 35(12), 2000–2009. 
+               <https://doi.org/10.1364/JOSAA.35.002000>`_        
 
  :wrappers:
       | 'xyz_to_jabM_ciecam02', 'jabM_ciecam02_to_xyz',
@@ -105,6 +116,7 @@ cam: sub-package with color appearance models
       | 'xyz_to_jab_cam16scd', 'jab_cam16scd_to_xyz',
       | 'xyz_to_qabW_cam15u', 'qabW_cam15u_to_xyz',
       | 'xyz_to_lAb_cam_sww16', 'lab_cam_sww16_to_xyz'
+      | 'xyz_to_qabW_cam18sl', 'qabW_cam18sl_to_xyz',
 
 
 
