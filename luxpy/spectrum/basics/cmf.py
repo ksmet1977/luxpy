@@ -88,7 +88,7 @@ __all__ = ['_CMF']
 #--------------------------------------------------------------------------------------------------
 # load all cmfs and set up nested dict:
 _CMF_TYPES = ['1931_2','1964_10','2006_2','2006_10','1931_2_judd1951','1931_2_juddvos1978','1951_20_scotopic','cie_std_dev_obs_f1']
-_CMF_K_VALUES = [683.002, 683.6, 683.002, 683.002, 683.002, 683.002, 1700.06, 0.0] 
+_CMF_K_VALUES = [683.002, 683.599, 683.358, 683.144, 683.002, 683.002, 1700.06, 0.0] 
 
 #def _dictkv(keys=None,values=None, ordered = True): 
 #    # Easy input of of keys and values into dict (both should be iterable lists)

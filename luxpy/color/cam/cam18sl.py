@@ -1,0 +1,382 @@
+# -*- coding: utf-8 -*-
+"""
+Module with CAM18sl color appearance model
+==========================================
+
+ :_CAM_18SL_AXES: dict with list[str,str,str] containing axis labels 
+                  of defined cspaces.
+                  
+ :_CAM18SL_PARAMETERS: database with CAM18sl model parameters.
+ 
+ :_CAM18SL_UNIQUE_HUE_DATA: database of unique hues with corresponding 
+                           Hue quadratures and eccentricity factors 
+                           for cam18sl)
+                              
+ :_CAM18SL_NAKA_RUSHTON_PARAMETERS: | database with parameters 
+                                     (n, sig, scaling and noise) 
+                                     for the Naka-Rushton function: 
+                                    | scaling * ((data**n) / ((data**n) + (sig**n))) + noise
+                                       
+ :cam18sl(): | calculates the output for the CAM18sl model for self-luminous related stimuli. 
+             | `Hermans, S., Smet, K. A. G., & Hanselaer, P. (2018). 
+               "Color appearance model for self-luminous stimuli."
+               Journal of the Optical Society of America A, 35(12), 2000–2009. 
+               <https://doi.org/10.1364/JOSAA.35.002000>`_
+"""
+from luxpy import np, _CMF, _CIE_ILLUMINANTS, _MUNSELL, np2d, spd_to_xyz, asplit, ajoin,cie_interp, getwlr, _WL3, np2dT
+from luxpy.color.cam.colorappearancemodels import hue_angle, hue_quadrature, naka_rushton
+
+_CAM18SL_WL3 = [390,830,1]
+
+_CAM18SL_AXES = {'qabW_cam18sl' : ["Q (cam18sl)", "aW (cam18sl)", "bW (cam18sl)"]} 
+
+_CAM18SL_UNIQUE_HUE_DATA = {'hues': 'red yellow green blue red'.split(), 'i': np.arange(5.0), 'hi':[20.14, 90.0, 164.25,237.53,380.14],'ei':[0.8,0.7,1.0,1.2,0.8],'Hi':[0.0,100.0,200.0,300.0,400.0]}
+
+_CAM18SL_NAKA_RUSHTON_PARAMETERS = {'n': 0.58, 'sig': lambda bg: 291.20 + 71.8*bg**0.78, 'scaling': 1, 'noise': 0}
+
+_CAM18SL_PARAMETERS = {'k': [676.7, 794.0, 1461.5],
+                       'nakarushton': _CAM18SL_NAKA_RUSHTON_PARAMETERS,
+                       'unique_hue_data':_CAM18SL_UNIQUE_HUE_DATA, 
+                       'cA':0.937 ,'cAlms':[2.0, 1.0, 1/20] ,
+                       'ca': 0.63, 'calms':[1.0,-12/11,1/11],
+                       'cb': 0.12, 'cblms': [1.0, 1.0,-2.0], 
+                       'cM': 3260, 'cHK': [0.0024,1.09], 'cW': [2.29,2.09], 
+                       'cfov': 0.271} 
+                       
+#_CAM18SL_SURROUND_PARAMETERS = {'surrounds': ['dark'], 'dark' : {'c': None, 'Nc':None,'F':None,'FLL':None}}
+
+__all__ = ['cam18sl','_CAM18SL_AXES','_CAM18SL_UNIQUE_HUE_DATA', '_CAM18SL_PARAMETERS','_CAM18SL_NAKA_RUSHTON_PARAMETERS', '_CAM18SL_SURROUND_PARAMETERS']
+
+#------------------------------------------------------------------------------------------------------------------------------------------------------------------------------            
+def cam18sl(data, datab = None, Lb = [100], fov = 10.0, inputtype = 'xyz', direction = 'forward', outin = 'Q,aW,bW', parameters = None):
+    """
+    Convert between CIE 2006 10°  XYZ tristimulus values (or spectral data) 
+    and CAM18sl color appearance correlates.
+    
+    Args:
+        :data: 
+            | ndarray of CIE 2006 10°  absolute XYZ tristimulus values or spectral data
+              or color appearance attributes of stimulus
+        :datab: 
+            | ndarray of CIE 2006 10°  absolute XYZ tristimulus values or spectral data
+              of stimulus background
+        :Lb: 
+            | [100], optional
+            | Luminance (cd/m²) value(s) of background(s) calculated using the CIE 1964 10° CMFs 
+            | (only used in case datab == None and the background is assumed to be an Equal-Energy-White)
+        :fov: 
+            | 10.0, optional
+            | Field-of-view of stimulus (for size effect on brightness)
+        :inputtpe:
+            | 'xyz' or 'spd', optional
+            | Specifies the type of input: 
+            |     tristimulus values or spectral data for the forward mode.
+        :direction:
+            | 'forward' or 'inverse', optional
+            |   -'forward': xyz -> cam18sl
+            |   -'inverse': cam18sl -> xyz 
+        :outin:
+            | 'Q,aW,bW' or str, optional
+            | 'Q,aW,bW' (brightness and opponent signals for amount-of-neutral)
+            |  other options: 'Q,aM,bM' (colorfulness) and 'Q,aS,bS' (saturation)
+            | Str specifying the type of 
+            |     input (:direction: == 'inverse') and 
+            |     output (:direction: == 'forward')
+        :parameters:
+            | None or dict, optional
+            | Set of model parameters.
+            |   - None: defaults to luxpy.cam._CAM18SL_PARAMETERS 
+            |    (see references below)
+    
+    Returns:
+        :returns: 
+            | ndarray with color appearance correlates (:direction: == 'forward')
+            |  or 
+            | XYZ tristimulus values (:direction: == 'inverse')
+
+    References: 
+        1. `Hermans, S., Smet, K. A. G., & Hanselaer, P. (2018). 
+        "Color appearance model for self-luminous stimuli."
+        Journal of the Optical Society of America A, 35(12), 2000–2009. 
+        <https://doi.org/10.1364/JOSAA.35.002000>`_ 
+     """
+    
+    if parameters is None:
+        parameters = _CAM18SL_PARAMETERS
+        
+    outin = outin.split(',')    
+    
+    #unpack model parameters:
+    cA, cAlms, cHK, cM, cW, ca, calms, cb, cblms, cfov, k, naka, unique_hue_data = [parameters[x] for x in sorted(parameters.keys())]
+    
+    # precomputations:
+    Mlms2xyz = np.linalg.inv(_CMF['2006_10']['M'])
+    MAab = np.array([cAlms,calms,cblms])
+    invMAab = np.linalg.inv(MAab)    
+    
+    #-------------------------------------------------
+    # setup EEW reference field and default background field (Lr should be equal to Lb):
+    # Get Lb values:
+    if datab is not None:
+        if inputtype != 'xyz':
+            Lb = spd_to_xyz(datab, cieobs = '1964_10', relative = False)[...,1:2]
+        else:
+            Lb = datab[...,1:2]
+    else:
+        if isinstance(Lb,list):
+            Lb = np2dT(Lb)
+
+    # Setup EEW ref of same luminance as datab:
+    wlr = getwlr(_CAM18SL_WL3)
+    datar = np.vstack((wlr,np.ones((Lb.shape[1], wlr.shape[0])))) # create eew
+    xyzr = spd_to_xyz(datar, cieobs = '1964_10', relative = False) # get abs. tristimulus values
+    datar[1:] = datar[1:]/xyzr[...,1]*Lb
+    # Create datab if None:
+    if (datab is None):
+        if inputtype != 'xyz':
+            datab = datar.copy()
+        else:
+            datab = spd_to_xyz(datar, cieobs = '2006_10', relative = False)
+            datar = datab.copy()
+
+ 
+    # prepare data and datab for loop over backgrounds: 
+    # make axis 1 of datab have 'same' dimensions as data:         
+    if (data.ndim == 2): 
+        data = np.expand_dims(data, axis = 1)  # add light source axis 1     
+
+    if inputtype == 'xyz': 
+        if datab.shape[0] == 1: #make datab and datar have same lights source dimension (used to store different backgrounds) size as data
+            datab = np.repeat(datab,data.shape[1],axis=0)  
+            datar = np.repeat(datar,data.shape[1],axis=0)               
+    else:
+        if datab.shape[0] == 2:
+            datab = np.vstack((datab[0],np.repeat(datab[1:], data.shape[1], axis = 0)))
+        if datar.shape[0] == 2:
+            datar = np.vstack((datar[0],np.repeat(datar[1:], data.shape[1], axis = 0)))
+
+    # Flip light source/ background dim to axis 0:
+    data = np.transpose(data, axes = (1,0,2))
+    #-------------------------------------------------
+    
+    #initialize camout:     
+    dshape = list(data.shape)
+    dshape[-1] = len(outin) # requested number of correlates
+    if (inputtype != 'xyz') & (direction == 'forward'):
+        dshape[-2] = dshape[-2] - 1 # wavelength row doesn't count & only with forward can the input data be spectral
+    camout = np.nan*np.ones(dshape)
+    
+
+    for i in range(data.shape[0]):
+       
+        # get rho, gamma, beta of background and reference white:
+        if (inputtype != 'xyz'):
+            xyzb = spd_to_xyz(np.vstack((datab[0], datab[i+1:i+2,:])), cieobs = '2006_10', relative = False)
+            xyzr = spd_to_xyz(np.vstack((datar[0], datar[i+1:i+2,:])), cieobs = '2006_10', relative = False)
+        else:
+            xyzb = datab[i:i+1,:] 
+            xyzr = datar[i:i+1,:]   
+        lmsb = np.dot(_CMF['2006_10']['M'],xyzb.T).T # convert to l,m,s
+        rgbb = (lmsb / _CMF['2006_10']['K']) * k # convert to rho, gamma, beta
+        lmsr = np.dot(_CMF['2006_10']['M'],xyzr.T).T # convert to l,m,s
+        rgbr = (lmsr / _CMF['2006_10']['K']) * k # convert to rho, gamma, beta
+       
+        
+        if direction == 'forward':
+            # get rho, gamma, beta of stimulus:
+            if (inputtype != 'xyz'):
+                xyz = spd_to_xyz(data[i], cieobs = '2006_10', relative = False)   
+            elif (inputtype == 'xyz'):
+                xyz = data[i]
+            lms = np.dot(_CMF['2006_10']['M'],xyz.T).T # convert to l,m,s
+            rgb = (lms / _CMF['2006_10']['K']) * k # convert to rho, gamma, beta
+        
+            # apply von-kries cat with D = 1:
+            rgba = np.dot(np.diag((rgbr/rgbb)[0]),rgb.T).T
+            
+            # apply naka-rushton compression:
+            rgbc = naka_rushton(rgba, n = naka['n'], sig = naka['sig'](rgbr.mean()), noise = naka['noise'], scaling = naka['scaling'])
+
+            #rgbc = np.ones(rgbc.shape)*rgbc.mean() # test if eew ends up at origin
+            
+            # calculate achromatic and color difference signals, A, a, b:
+            Aab = np.dot(MAab, rgbc.T).T
+            A,a,b = asplit(Aab)
+            a = ca*a
+            b = cb*b
+
+            # calculate colorfullness like signal M:
+            M = cM*((a**2.0 + b**2.0)**0.5)
+
+            # calculate brightness Q:
+            Q = cA*(A + cHK[0]*M**cHK[1]) # last term is contribution of Helmholtz-Kohlrausch effect on brightness
+                      
+            # calculate saturation, s:
+            s = M / Q
+            
+            # calculate amount of white, W:
+            W = 1 / (1.0 + cW[0]*(s**cW[1]))
+
+            #  adjust Q for size (fov) of stimulus (matter of debate whether to do this before or after calculation of s or W, there was no data on s, M or W for different sized stimuli: after)
+            Q = Q*(fov/10.0)**cfov
+            
+            # calculate hue, h and Hue quadrature, H:
+            h = hue_angle(a,b, htype = 'deg')
+
+            if 'H' in outin:
+                H = hue_quadrature(h, unique_hue_data = unique_hue_data)
+            else:
+                H = None
+
+            # calculate cart. co.:
+            if 'aM' in outin:
+                aM = M*np.cos(h*np.pi/180.0)
+                bM = M*np.sin(h*np.pi/180.0)
+            
+            if 'aS' in outin:
+                aS = s*np.cos(h*np.pi/180.0)
+                bS = s*np.sin(h*np.pi/180.0)
+            
+            if 'aW' in outin:
+                aW = W*np.cos(h*np.pi/180.0)
+                bW = W*np.sin(h*np.pi/180.0)
+            
+    
+            if (outin != ['Q','aW','bW']):
+                camout[i] =  eval('ajoin(('+','.join(outin)+'))')
+            else:
+                camout[i] = ajoin((Q,aW,bW))
+    
+        
+        elif direction == 'inverse':
+
+            # get Q, M and a, b depending on input type:        
+            if 'aW' in outin:
+                Q,a,b = asplit(data[i])
+                Q = Q / ((fov/10.0)**cfov) #adjust Q for size (fov) of stimulus back to that 10° ref
+                W = (a**2.0 + b**2.0)**0.5
+                s = (((1.0 / W) - 1.0)/cW[0])**(1.0/cW[1])
+                M = s*Q
+                
+            
+            if 'aM' in outin:
+                Q,a,b = asplit(data[i])
+                Q = Q / ((fov/10.0)**cfov) #adjust Q for size (fov) of stimulus back to that 10° ref
+                M = (a**2.0 + b**2.0)**0.5
+            
+            if 'aS' in outin:
+                Q,a,b = asplit(data[i])
+                Q = Q / ((fov/10.0)**cfov) #adjust Q for size (fov) of stimulus back to that 10° ref
+                s = (a**2.0 + b**2.0)**0.5
+                M = s*Q
+                      
+            if 'h' in outin:
+                Q, WsM, h = asplit(data[i])
+                Q = Q / ((fov/10.0)**cfov) #adjust Q for size (fov) of stimulus back to that 10° ref
+                if 'W' in outin:
+                     s = (((1.0 / WsM) - 1.0)/cW[0])**(1.0/cW[1])
+                     M = s*Q
+                elif 's' in outin:
+                     M = WsM*Q
+                elif 'M' in outin:
+                     M = WsM
+            
+            # calculate achromatic signal, A from Q and M:
+            A = Q/cA - cHK[0]*M**cHK[1]
+            
+            # calculate hue angle:
+            h = hue_angle(a,b, htype = 'rad')
+            
+            # calculate a,b from M and h:
+            a = (M/cM)*np.cos(h)
+            b = (M/cM)*np.sin(h)
+            a = a/ca
+            b = b/cb
+
+            # create Aab:
+            Aab = ajoin((A,a,b))    
+            
+            # calculate rgbc:
+            rgbc = np.dot(invMAab, Aab.T).T    
+            
+            # decompress rgbc to (adapted) rgba :
+            rgba = naka_rushton(rgbc, n = naka['n'], sig = naka['sig'](rgbr), noise = naka['noise'], scaling = naka['scaling'], direction = 'inverse')
+            
+            # apply inverse von-kries cat with D = 1:
+            rgb = np.dot(np.diag((rgbb/rgbr)[0]),rgba.T).T
+            
+            # convert rgb to lms to xyz:
+            lms = rgb/k*_CMF['2006_10']['K']  
+            xyz = np.dot(Mlms2xyz,lms.T).T 
+            
+            camout[i] = xyz
+    
+    if camout.shape[0] == 1:
+        camout = np.squeeze(camout,axis = 0)
+    
+    return camout
+ 
+#------------------------------------------------------------------------------
+def xyz_to_qabW_cam18sl(xyz, xyzb = None, Lb = [100], fov = 10.0, parameters = None, **kwargs):
+    """
+    Wrapper function for cam18sl forward mode with 'Q,aW,bW' output.
+    
+    | For help on parameter details: ?luxpy.cam.cam18sl
+    """
+    return cam18sl(xyz, datab = xyzb, Lb = Lb, fov = fov, direction = 'forward', inputtype = 'xyz', outin = 'Q,aW,bW', parameters = parameters)
+                
+def qabW_cam18sl_to_xyz(qab, xyzb = None, Lb = [100], fov = 10.0, parameters = None, **kwargs):
+    """
+    Wrapper function for cam18sl inverse mode with 'Q,aW,bW' input.
+    
+    | For help on parameter details: ?luxpy.cam.cam18sl
+    """
+    return cam18sl(qab, datab = xyzb, Lb = Lb, fov = fov, direction = 'inverse', inputtype = 'xyz', outin = 'Q,aW,bW', parameters = parameters)
+
+
+#------------------------------------------------------------------------------
+if __name__ == '__main__':
+    C = _CIE_ILLUMINANTS['C'].copy()
+    C = np.vstack((C,cie_interp(_CIE_ILLUMINANTS['D65'],C[0],kind='spd')[1:]))
+    M = _MUNSELL.copy()
+    rflM = M['R']
+    cieobs = '2006_10'
+    
+    # Normalize to Lw:
+    Lw = 100
+    xyzw2 = spd_to_xyz(C, cieobs = cieobs, relative = False)
+    for i in range(C.shape[0]-1):
+        C[i+1] = Lw*C[i+1]/xyzw2[i,1]
+
+    
+    xyz, xyzw = spd_to_xyz(C, cieobs = cieobs, relative = True, rfl = rflM, out = 2)
+    qab = xyz_to_qabW_cam18sl(xyzw, xyzb = None, Lb = [100], fov = 10.0)
+    qab2 = cam18sl(C, datab = None, Lb = [100], fov = 10.0, direction = 'forward', inputtype = 'spd', outin = 'Q,aW,bW', parameters = None)
+           
+    xyz_ = qabW_cam18sl_to_xyz(qab, xyzb = None, Lb = [100], fov = 10.0)
+    print('qab: ',qab)
+    print('qab2: ',qab2)
+    print('delta: ', xyzw-xyz_)
+    
+    # test 2:
+    cieobs = '2006_10'
+    Lb = np2d([100])
+    wlr = getwlr(_CAM18SL_WL3)
+    EEW = np.vstack((wlr,np.ones((Lb.shape[1], wlr.shape[0])))) 
+    E = cie_interp(_CIE_ILLUMINANTS['E'],EEW[0],kind='spd')
+    D65 = cie_interp(_CIE_ILLUMINANTS['D65'],EEW[0],kind='spd')
+    A = cie_interp(_CIE_ILLUMINANTS['A'],EEW[0],kind='spd')
+    C = cie_interp(_CIE_ILLUMINANTS['C'],EEW[0],kind='spd')
+    
+    STIM = np.vstack((EEW, E[1:], C[1:], D65[1,:], A[1:]))
+    xyz = spd_to_xyz(STIM, cieobs = cieobs, relative = False)
+    STIM[1:] = STIM[1:]/xyz[...,1:2]*Lw 
+    xyz = spd_to_xyz(STIM, cieobs = cieobs, relative = False)
+    
+    BG = EEW
+    qab = cam18sl(EEW, datab = EEW, Lb = [100], fov = 10.0, direction = 'forward', inputtype = 'spd', outin = 'Q,aM,bM', parameters = None)
+    print('test 2 qab: ')
+    print(qab)
+    
+    
+    

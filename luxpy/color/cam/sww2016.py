@@ -154,7 +154,6 @@ def cam_sww16(data, dataw = None, Yb = 20.0, Lw = 400.0, Ccwb = None, relative =
         if dataw.shape[0] == 2:
             dataw = np.vstack((dataw[0],np.repeat(dataw[1:], data.shape[1], axis = 0)))
 
-    
     # Flip light source dim to axis 0:
     data = np.transpose(data, axes = (1,0,2))
   

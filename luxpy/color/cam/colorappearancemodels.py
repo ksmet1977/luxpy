@@ -22,7 +22,7 @@ cam: sub-package with color appearance models
 
  :_UNIQUE_HUE_DATA: database of unique hues with corresponding 
                              Hue quadratures and eccentricity factors 
-                             for ciecam02, cam16, ciecam97s, cam15u)
+                             for ciecam02, cam16, ciecam97s, cam15u, cam18sl)
 
  :_SURROUND_PARAMETERS: database of surround param. c, Nc, F and FLL 
                                  for ciecam02, cam16, ciecam97s and cam15u.
@@ -41,6 +41,8 @@ cam: sub-package with color appearance models
  :_CAM15U_PARAMETERS: database with CAM15u model parameters.
  
  :_CAM_SWW16_PARAMETERS: cam_sww16 model parameters.
+ 
+ :_CAM18SL_PARAMETERS: database with CAM18sl model parameters
 
  :_CAM_DEFAULT_WHITE_POINT: Default internal reference white point (xyz)
 
@@ -105,8 +107,18 @@ cam: sub-package with color appearance models
             Opt. Express, vol. 23, no. 10, pp. 13455–13466. 
             <https://www.osapublishing.org/oe/abstract.cfm?uri=oe-23-10-13455&origin=search>`_
             
- :cam_sww16(): A simple principled color appearance model based on a mapping 
-               of the Munsell color system.
+ :cam_sww16(): | A simple principled color appearance model based on a mapping 
+                 of the Munsell color system.
+               | `Smet, K. A. G., Webster, M. A., & Whitehead, L. A. (2016). 
+                   A simple principled approach for modeling and understanding uniform color metrics. 
+                   Journal of the Optical Society of America A, 33(3), A319–A331. 
+                   <https://doi.org/10.1364/JOSAA.33.00A319>`_
+               
+ :cam18sl(): | calculates the output for the CAM18sl model for self-luminous related stimuli. 
+             | `Hermans, S., Smet, K. A. G., & Hanselaer, P. (2018). 
+               "Color appearance model for self-luminous stimuli."
+               Journal of the Optical Society of America A, 35(12), 2000–2009. 
+               <https://doi.org/10.1364/JOSAA.35.002000>`_           
 
  :specific_wrappers_in_the_'xyz_to_cspace()' and 'cpsace_to_xyz()' format:
       | 'xyz_to_jabM_ciecam02', 'jabM_ciecam02_to_xyz',
@@ -120,7 +132,8 @@ cam: sub-package with color appearance models
       | 'xyz_to_jab_cam16lcd', 'jab_cam16lcd_to_xyz',
       | 'xyz_to_jab_cam16scd', 'jab_cam16scd_to_xyz',
       | 'xyz_to_qabW_cam15u', 'qabW_cam15u_to_xyz',
-      | 'xyz_to_lAb_cam_sww16', 'lab_cam_sww16_to_xyz'
+      | 'xyz_to_lab_cam_sww16', 'lab_cam_sww16_to_xyz',
+      | 'xyz_to_qabW_cam18sl', 'qabW_cam18sl_to_xyz',
 
 
 
@@ -148,15 +161,20 @@ from .cam15u import  (cam15u, _CAM15U_AXES, _CAM15U_UNIQUE_HUE_DATA, _CAM15U_PAR
                       xyz_to_qabW_cam15u, qabW_cam15u_to_xyz)
 from .sww2016 import (cam_sww16, _CAM_SWW16_AXES, _CAM_SWW16_PARAMETERS,
                       xyz_to_lab_cam_sww16, lab_cam_sww16_to_xyz)
+from .cam18sl import  (cam18sl, _CAM18SL_AXES, _CAM18SL_UNIQUE_HUE_DATA, _CAM18SL_PARAMETERS,
+                      _CAM18SL_NAKA_RUSHTON_PARAMETERS, xyz_to_qabW_cam18sl, qabW_cam18sl_to_xyz)
+
 
 __all__ = ['_CAM_AXES', '_UNIQUE_HUE_DATA','_SURROUND_PARAMETERS',
            '_NAKA_RUSHTON_PARAMETERS','_CAM_02_X_UCS_PARAMETERS']
+
 __all__ += ['_CAM_DEFAULT_TYPE', '_CAM_DEFAULT_WHITE_POINT', 
             '_CAM_DEFAULT_CONDITIONS']
-__all__ += ['_CAM15U_PARAMETERS','_CAM_SWW16_PARAMETERS']
+
+__all__ += ['_CAM15U_PARAMETERS','_CAM_SWW16_PARAMETERS','_CAM18SL_PARAMETERS']
 
 __all__ += ['hue_angle', 'hue_quadrature','naka_rushton','ciecam02','cam16',
-            'cam02ucs','cam16ucs','cam15u','cam_sww16']
+            'cam02ucs','cam16ucs','cam15u','cam_sww16','cam18sl']
 
 __all__ += ['xyz_to_jabM_ciecam02', 'jabM_ciecam02_to_xyz',
             'xyz_to_jabC_ciecam02', 'jabC_ciecam02_to_xyz',
@@ -169,22 +187,30 @@ __all__ += ['xyz_to_jabM_ciecam02', 'jabM_ciecam02_to_xyz',
             'xyz_to_jab_cam16lcd', 'jab_cam16lcd_to_xyz',
             'xyz_to_jab_cam16scd', 'jab_cam16scd_to_xyz', 
             'xyz_to_qabW_cam15u', 'qabW_cam15u_to_xyz',
-            'xyz_to_lab_cam_sww16', 'lab_cam_sww16_to_xyz'
+            'xyz_to_lab_cam_sww16', 'lab_cam_sww16_to_xyz',
+            'xyz_to_qabW_cam18sl', 'qabW_cam18sl_to_xyz'
             ]
 
 _CAM_AXES = _CAM_02_X_AXES
 _CAM_AXES['qabW_cam15u'] = _CAM15U_AXES 
 _CAM_AXES['lab_cam_sww16'] = _CAM_SWW16_AXES
+_CAM_AXES['qabW_cam18sl'] = _CAM18SL_AXES 
 
 _UNIQUE_HUE_DATA = _CAM_02_X_UNIQUE_HUE_DATA
 _UNIQUE_HUE_DATA['cam15u'] = _CAM15U_UNIQUE_HUE_DATA
 _UNIQUE_HUE_DATA['models'].append('cam15u')
+_UNIQUE_HUE_DATA['cam18sl'] = _CAM18SL_UNIQUE_HUE_DATA
+_UNIQUE_HUE_DATA['models'].append('cam18sl')
 
 _SURROUND_PARAMETERS = _CAM_02_X_SURROUND_PARAMETERS
 _SURROUND_PARAMETERS['cam15u'] = _CAM15U_SURROUND_PARAMETERS
+_SURROUND_PARAMETERS['cam_sww16'] = {} 
+_SURROUND_PARAMETERS['cam18sl'] = {}
+
 
 _NAKA_RUSHTON_PARAMETERS = _CAM_02_X_NAKA_RUSHTON_PARAMETERS
 _NAKA_RUSHTON_PARAMETERS['cam15u'] =  _CAM15U_NAKA_RUSHTON_PARAMETERS
+_NAKA_RUSHTON_PARAMETERS['cam18sl'] =  _CAM18SL_NAKA_RUSHTON_PARAMETERS
 
 _CAM_DEFAULT_TYPE = _CAM_02_X_DEFAULT_TYPE
 _CAM_DEFAULT_WHITE_POINT = _CAM_02_X_DEFAULT_WHITE_POINT
