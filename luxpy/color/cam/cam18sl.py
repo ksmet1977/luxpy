@@ -127,10 +127,16 @@ def cam18sl(data, datab = None, Lb = [100], fov = 10.0, inputtype = 'xyz', direc
             Lb = np2dT(Lb)
 
     # Setup EEW ref of same luminance as datab:
-    wlr = getwlr(_CAM18SL_WL3)
-    datar = np.vstack((wlr,np.ones((Lb.shape[1], wlr.shape[0])))) # create eew
+    if inputtype == 'xyz':
+        wlr = getwlr(_CAM18SL_WL3)
+    else:
+        if datab is None:
+            wlr = data[0] # use wlr of stimulus data
+        else:
+            wlr = datab[0] # use wlr of background data
+    datar = np.vstack((wlr,np.ones((Lb.shape[0], wlr.shape[0])))) # create eew
     xyzr = spd_to_xyz(datar, cieobs = '1964_10', relative = False) # get abs. tristimulus values
-    datar[1:] = datar[1:]/xyzr[...,1]*Lb
+    datar[1:] = datar[1:]/xyzr[...,1:2]*Lb
     # Create datab if None:
     if (datab is None):
         if inputtype != 'xyz':
@@ -157,6 +163,7 @@ def cam18sl(data, datab = None, Lb = [100], fov = 10.0, inputtype = 'xyz', direc
 
     # Flip light source/ background dim to axis 0:
     data = np.transpose(data, axes = (1,0,2))
+
     #-------------------------------------------------
     
     #initialize camout:     
@@ -166,7 +173,7 @@ def cam18sl(data, datab = None, Lb = [100], fov = 10.0, inputtype = 'xyz', direc
         dshape[-2] = dshape[-2] - 1 # wavelength row doesn't count & only with forward can the input data be spectral
     camout = np.nan*np.ones(dshape)
     
-
+  
     for i in range(data.shape[0]):
        
         # get rho, gamma, beta of background and reference white:
@@ -175,12 +182,14 @@ def cam18sl(data, datab = None, Lb = [100], fov = 10.0, inputtype = 'xyz', direc
             xyzr = spd_to_xyz(np.vstack((datar[0], datar[i+1:i+2,:])), cieobs = '2006_10', relative = False)
         else:
             xyzb = datab[i:i+1,:] 
-            xyzr = datar[i:i+1,:]   
+            xyzr = datar[i:i+1,:] 
+
         lmsb = np.dot(_CMF['2006_10']['M'],xyzb.T).T # convert to l,m,s
         rgbb = (lmsb / _CMF['2006_10']['K']) * k # convert to rho, gamma, beta
-        lmsr = np.dot(_CMF['2006_10']['M'],xyzr.T).T # convert to l,m,s
-        rgbr = (lmsr / _CMF['2006_10']['K']) * k # convert to rho, gamma, beta
-       
+        #lmsr = np.dot(_CMF['2006_10']['M'],xyzr.T).T # convert to l,m,s
+        #rgbr = (lmsr / _CMF['2006_10']['K']) * k # convert to rho, gamma, beta
+        #rgbr = rgbr/rgbr[...,1:2]*Lb[i] # calculated EEW cone excitations at same luminance values as background
+        rgbr = np.ones(xyzr.shape)*Lb[i] # explicitely equal EEW cone excitations at same luminance values as background
         
         if direction == 'forward':
             # get rho, gamma, beta of stimulus:
@@ -190,10 +199,14 @@ def cam18sl(data, datab = None, Lb = [100], fov = 10.0, inputtype = 'xyz', direc
                 xyz = data[i]
             lms = np.dot(_CMF['2006_10']['M'],xyz.T).T # convert to l,m,s
             rgb = (lms / _CMF['2006_10']['K']) * k # convert to rho, gamma, beta
-        
-            # apply von-kries cat with D = 1:
-            rgba = np.dot(np.diag((rgbr/rgbb)[0]),rgb.T).T
             
+            # apply von-kries cat with D = 1:
+            if (rgbb == 0).any():
+                Mcat = np.eye(3)
+            else:
+                Mcat = np.diag((rgbr/rgbb)[0])
+            rgba = np.dot(Mcat,rgb.T).T
+
             # apply naka-rushton compression:
             rgbc = naka_rushton(rgba, n = naka['n'], sig = naka['sig'](rgbr.mean()), noise = naka['noise'], scaling = naka['scaling'])
 
@@ -204,13 +217,13 @@ def cam18sl(data, datab = None, Lb = [100], fov = 10.0, inputtype = 'xyz', direc
             A,a,b = asplit(Aab)
             a = ca*a
             b = cb*b
-
+            
             # calculate colorfullness like signal M:
             M = cM*((a**2.0 + b**2.0)**0.5)
 
             # calculate brightness Q:
             Q = cA*(A + cHK[0]*M**cHK[1]) # last term is contribution of Helmholtz-Kohlrausch effect on brightness
-                      
+            
             # calculate saturation, s:
             s = M / Q
             
@@ -219,10 +232,9 @@ def cam18sl(data, datab = None, Lb = [100], fov = 10.0, inputtype = 'xyz', direc
 
             #  adjust Q for size (fov) of stimulus (matter of debate whether to do this before or after calculation of s or W, there was no data on s, M or W for different sized stimuli: after)
             Q = Q*(fov/10.0)**cfov
-            
+
             # calculate hue, h and Hue quadrature, H:
             h = hue_angle(a,b, htype = 'deg')
-
             if 'H' in outin:
                 H = hue_quadrature(h, unique_hue_data = unique_hue_data)
             else:
@@ -240,8 +252,7 @@ def cam18sl(data, datab = None, Lb = [100], fov = 10.0, inputtype = 'xyz', direc
             if 'aW' in outin:
                 aW = W*np.cos(h*np.pi/180.0)
                 bW = W*np.sin(h*np.pi/180.0)
-            
-    
+
             if (outin != ['Q','aW','bW']):
                 camout[i] =  eval('ajoin(('+','.join(outin)+'))')
             else:
@@ -283,28 +294,29 @@ def cam18sl(data, datab = None, Lb = [100], fov = 10.0, inputtype = 'xyz', direc
             
             # calculate achromatic signal, A from Q and M:
             A = Q/cA - cHK[0]*M**cHK[1]
-            
+
             # calculate hue angle:
             h = hue_angle(a,b, htype = 'rad')
             
             # calculate a,b from M and h:
             a = (M/cM)*np.cos(h)
             b = (M/cM)*np.sin(h)
+
             a = a/ca
             b = b/cb
 
             # create Aab:
             Aab = ajoin((A,a,b))    
-            
+
             # calculate rgbc:
             rgbc = np.dot(invMAab, Aab.T).T    
-            
+
             # decompress rgbc to (adapted) rgba :
-            rgba = naka_rushton(rgbc, n = naka['n'], sig = naka['sig'](rgbr), noise = naka['noise'], scaling = naka['scaling'], direction = 'inverse')
-            
+            rgba = naka_rushton(rgbc, n = naka['n'], sig = naka['sig'](rgbr.mean()), noise = naka['noise'], scaling = naka['scaling'], direction = 'inverse')
+
             # apply inverse von-kries cat with D = 1:
             rgb = np.dot(np.diag((rgbb/rgbr)[0]),rgba.T).T
-            
+
             # convert rgb to lms to xyz:
             lms = rgb/k*_CMF['2006_10']['K']  
             xyz = np.dot(Mlms2xyz,lms.T).T 
@@ -351,11 +363,10 @@ if __name__ == '__main__':
     
     xyz, xyzw = spd_to_xyz(C, cieobs = cieobs, relative = True, rfl = rflM, out = 2)
     qab = xyz_to_qabW_cam18sl(xyzw, xyzb = None, Lb = [100], fov = 10.0)
-    qab2 = cam18sl(C, datab = None, Lb = [100], fov = 10.0, direction = 'forward', inputtype = 'spd', outin = 'Q,aW,bW', parameters = None)
-           
-    xyz_ = qabW_cam18sl_to_xyz(qab, xyzb = None, Lb = [100], fov = 10.0)
     print('qab: ',qab)
-    print('qab2: ',qab2)
+    qab2 = cam18sl(C, datab = None, Lb = [100], fov = 10.0, direction = 'forward', inputtype = 'spd', outin = 'Q,aW,bW', parameters = None)
+    print('qab2: ',qab2)       
+    xyz_ = qabW_cam18sl_to_xyz(qab, xyzb = None, Lb = [100], fov = 10.0)
     print('delta: ', xyzw-xyz_)
     
     # test 2:
@@ -374,7 +385,7 @@ if __name__ == '__main__':
     xyz = spd_to_xyz(STIM, cieobs = cieobs, relative = False)
     
     BG = EEW
-    qab = cam18sl(EEW, datab = EEW, Lb = [100], fov = 10.0, direction = 'forward', inputtype = 'spd', outin = 'Q,aM,bM', parameters = None)
+    qab = cam18sl(EEW, datab = EEW, Lb = [100], fov = 10.0, direction = 'forward', inputtype = 'spd', outin = 'Q,aW,bW', parameters = None)
     print('test 2 qab: ')
     print(qab)
     

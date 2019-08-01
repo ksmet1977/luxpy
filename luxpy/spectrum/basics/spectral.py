@@ -503,7 +503,6 @@ def xyzbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, norm_type = None, norm
         dict_or_file = _CMF[cieobs]['bar']
     elif scr == 'cieobs':
         dict_or_file = cieobs #can be file or data itself
-
     return spd(data = dict_or_file, wl = wl_new, interpolation = 'linear', kind = kind, columns = ['wl','xb','yb','zb'])
 
 #--------------------------------------------------------------------------------------------------
