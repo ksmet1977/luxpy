@@ -1,0 +1,14 @@
+# Make source distribution and wheel:
+python setup.py sdist bdist_wheel
+twine upload dist/luxpy-1.4.8*
+
+# Make documentation:
+cd docs
+make html
+make latexpdf
+
+# Build conda version:
+cd conda
+conda skeleton pypi luxpy
+conda-build luxpy
+anaconda upload C:\Python3\miniconda3\envs\py36\conda-bld\win-64\luxpy-1.4.8-py36h39e3cac_0.tar.bz2
