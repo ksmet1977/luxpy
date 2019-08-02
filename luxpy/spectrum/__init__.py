@@ -105,8 +105,8 @@ spectrum/spectral.py
          
  :cri_ref(): Calculates a reference illuminant spectrum based on cct for color 
              rendering index calculations.
-            (`CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018. <https://doi.org/10.25039/TR.015.2018>`_, 
-             `cie224:2017, CIE 2017 Colour Fidelity Index for accurate scientific use. (2017), ISBN 978-3-902842-61-9. <https://doi.org/10.25039/TR.015.2018>`_,
+            (`CIE15:2018, “Colorimetry”, CIE, Vienna, Austria, 2018. <https://doi.org/10.25039/TR.015.2018>`_, 
+             `cie224:2017, CIE 2017 Colour Fidelity Index for accurate scientific use. (2017), ISBN 978-3-902842-61-9. <http://www.cie.co.at/index.php?i_ca_id=1027>`_,
              `IES-TM-30-15: Method for Evaluating Light Source Color Rendition. New York, NY: The Illuminating Engineering Society of North America. <https://www.ies.org/store/technical-memoranda/ies-method-for-evaluating-light-source-color-rendition/>`_
  
 spectrum/spectral_databases.py

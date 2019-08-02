@@ -40,7 +40,7 @@ _CAM18SL_PARAMETERS = {'k': [676.7, 794.0, 1461.5],
                        'cA':0.937 ,'cAlms':[2.0, 1.0, 1/20] ,
                        'ca': 0.63, 'calms':[1.0,-12/11,1/11],
                        'cb': 0.12, 'cblms': [1.0, 1.0,-2.0], 
-                       'cM': 3260, 'cHK': [0.0024,1.09], 'cW': [2.29,2.09], 
+                       'cM': 3260, 'cHK': [0.0024,1.09], 'cW': [1/11672,2.09], 
                        'cfov': 0.271} 
                        
 #_CAM18SL_SURROUND_PARAMETERS = {'surrounds': ['dark'], 'dark' : {'c': None, 'Nc':None,'F':None,'FLL':None}}
@@ -345,6 +345,38 @@ def qabW_cam18sl_to_xyz(qab, xyzb = None, Lb = [100], fov = 10.0, parameters = N
     """
     return cam18sl(qab, datab = xyzb, Lb = Lb, fov = fov, direction = 'inverse', inputtype = 'xyz', outin = 'Q,aW,bW', parameters = parameters)
 
+def xyz_to_qabM_cam18sl(xyz, xyzb = None, Lb = [100], fov = 10.0, parameters = None, **kwargs):
+    """
+    Wrapper function for cam18sl forward mode with 'Q,aM,bM' output.
+    
+    | For help on parameter details: ?luxpy.cam.cam18sl
+    """
+    return cam18sl(xyz, datab = xyzb, Lb = Lb, fov = fov, direction = 'forward', inputtype = 'xyz', outin = 'Q,aM,bM', parameters = parameters)
+                
+def qabM_cam18sl_to_xyz(qab, xyzb = None, Lb = [100], fov = 10.0, parameters = None, **kwargs):
+    """
+    Wrapper function for cam18sl inverse mode with 'Q,aM,bM' input.
+    
+    | For help on parameter details: ?luxpy.cam.cam18sl
+    """
+    return cam18sl(qab, datab = xyzb, Lb = Lb, fov = fov, direction = 'inverse', inputtype = 'xyz', outin = 'Q,aM,bM', parameters = parameters)
+
+def xyz_to_qabS_cam18sl(xyz, xyzb = None, Lb = [100], fov = 10.0, parameters = None, **kwargs):
+    """
+    Wrapper function for cam18sl forward mode with 'Q,aS,bS' output.
+    
+    | For help on parameter details: ?luxpy.cam.cam18sl
+    """
+    return cam18sl(xyz, datab = xyzb, Lb = Lb, fov = fov, direction = 'forward', inputtype = 'xyz', outin = 'Q,aS,bS', parameters = parameters)
+                
+def qabS_cam18sl_to_xyz(qab, xyzb = None, Lb = [100], fov = 10.0, parameters = None, **kwargs):
+    """
+    Wrapper function for cam18sl inverse mode with 'Q,aS,bS' input.
+    
+    | For help on parameter details: ?luxpy.cam.cam18sl
+    """
+    return cam18sl(qab, datab = xyzb, Lb = Lb, fov = fov, direction = 'inverse', inputtype = 'xyz', outin = 'Q,aS,bS', parameters = parameters)
+
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
@@ -386,8 +418,7 @@ if __name__ == '__main__':
     
     BG = EEW
     qab = cam18sl(EEW, datab = EEW, Lb = [100], fov = 10.0, direction = 'forward', inputtype = 'spd', outin = 'Q,aW,bW', parameters = None)
-    print('test 2 qab: ')
-    print(qab)
+    print('test 2 qab: ',qab)
     
     
     

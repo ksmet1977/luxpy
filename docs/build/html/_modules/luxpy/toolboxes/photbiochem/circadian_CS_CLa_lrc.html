@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.toolboxes.photbiochem.circadian_CS_CLa_lrc &mdash; LuxPy 1.4.4 documentation</title>
+  <title>luxpy.toolboxes.photbiochem.circadian_CS_CLa_lrc &mdash; LuxPy 1.4.7 documentation</title>
   
 
   
@@ -56,7 +56,7 @@
             
             
               <div class="version">
-                1.4.4
+                1.4.7
               </div>
             
           
@@ -196,24 +196,23 @@
 <span class="sd">    2. `LRC Excel based Circadian stimulus calculator. &lt;http://www.lrc.rpi.edu/resources/CSCalculator_2017_10_03_Mac.xlsm&gt;`_</span>
 <span class="sd">    </span>
 <span class="sd">    3. `Rea MS, Figueiro MG, Bierman A, and Hamner R (2012). </span>
-<span class="sd">    Modelling the spectral sensitivity of the human circadian system. </span>
-<span class="sd">    Light. Res. Technol. 44, 386–396.  </span>
-<span class="sd">    &lt;http://journals.sagepub.com/doi/full/10.1177/1477153512467607&gt;`_</span>
-<span class="sd">    </span>
+<span class="sd">        Modelling the spectral sensitivity of the human circadian system. </span>
+<span class="sd">        Light. Res. Technol. 44, 386–396.  </span>
+<span class="sd">        &lt;https://doi.org/10.1177/1477153511430474&gt;`_</span>
+<span class="sd">            </span>
 <span class="sd">    4. `Rea MS, Figueiro MG, Bierman A, and Hamner R (2012). </span>
-<span class="sd">    Erratum: Modeling the spectral sensitivity of the human circadian system </span>
-<span class="sd">    (Lighting Research and Technology (2012) 44:4 (386-396) </span>
-<span class="sd">    DOI: 10.1177/1477153511430474)). </span>
-<span class="sd">    Light. Res. Technol. 44, 516.</span>
-<span class="sd">    &lt;http://journals.sagepub.com/doi/10.1177/1477153512467607&gt;`_</span>
+<span class="sd">        Erratum: Modeling the spectral sensitivity of the human circadian system </span>
+<span class="sd">        (Lighting Research and Technology (2012) 44:4 (386-396)). </span>
+<span class="sd">        Light. Res. Technol. 44, 516.</span>
+<span class="sd">        &lt;https://doi.org/10.1177/1477153512467607&gt;`_</span>
 
 
 <span class="sd">Also see notes in doc_string of spd_to_CS_CLa_lrc()</span>
 
 <span class="sd">.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">sp</span><span class="p">,</span> <span class="n">_PKG_PATH</span><span class="p">,</span> <span class="n">_SEP</span><span class="p">,</span> <span class="n">_CIE_ILLUMINANTS</span><span class="p">,</span> <span class="n">getdata</span><span class="p">,</span> <span class="n">getwld</span><span class="p">,</span> <span class="n">cie_interp</span><span class="p">,</span> <span class="n">_IESTM3015</span>
-
+<span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">sp</span><span class="p">,</span> <span class="n">_PKG_PATH</span><span class="p">,</span> <span class="n">_SEP</span><span class="p">,</span> <span class="n">_CIE_ILLUMINANTS</span><span class="p">,</span> <span class="n">getdata</span><span class="p">,</span> <span class="n">getwld</span><span class="p">,</span> <span class="n">cie_interp</span><span class="p">,</span> <span class="n">_IESTM3015</span><span class="p">,</span> <span class="n">blackbody</span>
+<span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="n">spd_to_power</span>
 
 <span class="n">__all__</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;_LRC_CLA_CS_CONST&#39;</span><span class="p">,</span><span class="s1">&#39;spd_to_CS_CLa_lrc&#39;</span><span class="p">]</span>
 
@@ -245,11 +244,17 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        ndarray with CLa values.</span>
 <span class="sd">        </span>
-<span class="sd">    Reference:</span>
+<span class="sd">    References:</span>
 <span class="sd">        1. `Rea MS, Figueiro MG, Bierman A, and Hamner R (2012). </span>
 <span class="sd">        Modelling the spectral sensitivity of the human circadian system. </span>
 <span class="sd">        Light. Res. Technol. 44, 386–396.  </span>
-<span class="sd">        &lt;http://journals.sagepub.com/doi/full/10.1177/1477153512467607&gt;`_</span>
+<span class="sd">        &lt;https://doi.org/10.1177/1477153511430474&gt;`_</span>
+<span class="sd">            </span>
+<span class="sd">        2. `Rea MS, Figueiro MG, Bierman A, and Hamner R (2012). </span>
+<span class="sd">        Erratum: Modeling the spectral sensitivity of the human circadian system </span>
+<span class="sd">        (Lighting Research and Technology (2012) 44:4 (386-396)). </span>
+<span class="sd">        Light. Res. Technol. 44, 516.</span>
+<span class="sd">        &lt;https://doi.org/10.1177/1477153512467607&gt;`_</span>
 <span class="sd">        </span>
 <span class="sd">        </span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -267,7 +272,7 @@
     <span class="n">fcn1_3</span> <span class="o">=</span> <span class="n">a_rod</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">integral</span><span class="p">(</span><span class="n">Vscotl</span><span class="o">*</span><span class="n">Elv</span><span class="o">*</span><span class="n">dl</span><span class="p">)</span><span class="o">/</span><span class="n">RodSat</span><span class="p">))</span>
 
     <span class="c1"># Satisfying cond. is effectively adding fcn1_2 and fcn1_3 to fcn1_1:</span>
-    <span class="n">CLa</span> <span class="o">=</span> <span class="n">Norm</span><span class="o">*</span><span class="p">(</span><span class="n">fcn2</span> <span class="o">+</span> <span class="mi">1</span><span class="o">*</span><span class="p">(</span><span class="n">cond_number</span><span class="o">&gt;=</span><span class="mi">0</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">a_b_y</span><span class="o">*</span><span class="n">cond_number</span><span class="p">)</span> <span class="o">-</span> <span class="n">fcn1_3</span><span class="p">)</span>
+    <span class="n">CLa</span> <span class="o">=</span> <span class="n">Norm</span><span class="o">*</span><span class="p">(</span><span class="n">fcn2</span> <span class="o">+</span> <span class="mi">1</span><span class="o">*</span><span class="p">(</span><span class="n">cond_number</span><span class="o">&gt;=</span><span class="mi">0</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">a_b_y</span><span class="o">*</span><span class="n">cond_number</span> <span class="o">-</span> <span class="n">fcn1_3</span><span class="p">))</span>
     
     <span class="k">return</span> <span class="n">CLa</span>
     
@@ -280,12 +285,12 @@
     <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">cs_cl_lrs</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">key</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;l&#39;</span><span class="p">:</span> <span class="c1">#signifies l for spectral data</span>
             <span class="n">temp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">cs_cl_lrs</span><span class="p">[</span><span class="s1">&#39;WL&#39;</span><span class="p">],</span><span class="n">cs_cl_lrs</span><span class="p">[</span><span class="n">key</span><span class="p">]))</span> <span class="c1"># construct [wl,S] data</span>
-            <span class="n">cs_cl_lrs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">cie_interp</span><span class="p">(</span><span class="n">temp</span><span class="p">,</span><span class="n">wl</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;cmf&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span> <span class="c1"># interpolate and store in dict</span>
+            <span class="n">cs_cl_lrs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">cie_interp</span><span class="p">(</span><span class="n">temp</span><span class="p">,</span><span class="n">wl</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;cmf&#39;</span><span class="p">,</span> <span class="n">negative_values_allowed</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span> <span class="c1"># interpolate and store in dict</span>
     <span class="n">cs_cl_lrs</span><span class="p">[</span><span class="s1">&#39;WL&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">wl</span> <span class="c1"># store new wavelength range</span>
     
     <span class="k">return</span>  <span class="n">cs_cl_lrs</span>
 
-
+        
 <div class="viewcode-block" id="spd_to_CS_CLa_lrc"><a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.photbiochem.spd_to_CS_CLa_lrc">[docs]</a><span class="k">def</span> <span class="nf">spd_to_CS_CLa_lrc</span><span class="p">(</span><span class="n">El</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">E</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> \
                           <span class="n">sum_sources</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">interpolate_sources</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -352,14 +357,13 @@
 <span class="sd">        3. `Rea MS, Figueiro MG, Bierman A, and Hamner R (2012). </span>
 <span class="sd">        Modelling the spectral sensitivity of the human circadian system. </span>
 <span class="sd">        Light. Res. Technol. 44, 386–396.  </span>
-<span class="sd">        &lt;http://journals.sagepub.com/doi/full/10.1177/1477153512467607&gt;`_</span>
+<span class="sd">        &lt;https://doi.org/10.1177/1477153511430474&gt;`_</span>
 <span class="sd">            </span>
 <span class="sd">        4. `Rea MS, Figueiro MG, Bierman A, and Hamner R (2012). </span>
 <span class="sd">        Erratum: Modeling the spectral sensitivity of the human circadian system </span>
-<span class="sd">        (Lighting Research and Technology (2012) 44:4 (386-396) </span>
-<span class="sd">        DOI: 10.1177/1477153511430474)). </span>
+<span class="sd">        (Lighting Research and Technology (2012) 44:4 (386-396)). </span>
 <span class="sd">        Light. Res. Technol. 44, 516.</span>
-<span class="sd">        &lt;http://journals.sagepub.com/doi/10.1177/1477153512467607&gt;`_</span>
+<span class="sd">        &lt;https://doi.org/10.1177/1477153512467607&gt;`_</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Create copy of dict with model parameters and spectral data:</span>
     <span class="n">cs_cl_lrs</span> <span class="o">=</span> <span class="n">_LRC_CLA_CS_CONST</span><span class="p">[</span><span class="s1">&#39;CLa&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
@@ -372,7 +376,7 @@
         <span class="n">El</span> <span class="o">=</span> <span class="n">cie_interp</span><span class="p">(</span><span class="n">El</span><span class="p">,</span> <span class="n">cs_cl_lrs</span><span class="p">[</span><span class="s1">&#39;WL&#39;</span><span class="p">],</span> <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;spd&#39;</span><span class="p">)</span>
     
     <span class="c1"># Get wavelength spacing:</span>
-    <span class="n">dl</span> <span class="o">=</span> <span class="n">getwld</span><span class="p">(</span><span class="n">El</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>          
+    <span class="n">dl</span> <span class="o">=</span> <span class="n">getwld</span><span class="p">(</span><span class="n">El</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>        
     
     <span class="c1"># Separate wavelengths and data:</span>
     <span class="n">wl</span> <span class="o">=</span> <span class="n">El</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -380,13 +384,13 @@
       
     <span class="c1"># define integral function:</span>
     <span class="n">integral</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">sp</span><span class="o">.</span><span class="n">integrate</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="n">wl</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> 
-    <span class="n">integral</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">x</span><span class="p">,</span>  <span class="n">axis</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> 
+    <span class="c1">#integral = lambda x: np.sum(x,  axis = -1) </span>
     
     <span class="c1"># Rescale El to E (if not None):</span>
     <span class="k">if</span> <span class="n">E</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
 
         <span class="c1"># Calculate current E value of El:</span>
-        <span class="n">E_cv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="mi">683</span> <span class="o">*</span> <span class="n">integral</span><span class="p">(</span><span class="n">cs_cl_lrs</span><span class="p">[</span><span class="s1">&#39;Vphotl&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">Elv</span><span class="o">*</span><span class="n">dl</span><span class="p">))</span>
+        <span class="n">E_cv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="mf">683.002</span> <span class="o">*</span> <span class="n">integral</span><span class="p">(</span><span class="n">cs_cl_lrs</span><span class="p">[</span><span class="s1">&#39;Vphotl&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">Elv</span><span class="o">*</span><span class="n">dl</span><span class="p">))</span>
 
         <span class="c1"># Rescale El to supplied E:</span>
         <span class="n">Elv</span> <span class="o">=</span> <span class="p">(</span><span class="n">E</span><span class="o">/</span><span class="n">E_cv</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="o">*</span><span class="n">Elv</span>
@@ -403,18 +407,18 @@
     <span class="n">CS</span> <span class="o">=</span> <span class="mf">0.7</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="n">CLa</span><span class="o">/</span><span class="mf">355.7</span><span class="p">)</span><span class="o">**</span><span class="mf">1.1026</span><span class="p">)))</span>
     
     <span class="k">return</span> <span class="n">CS</span><span class="p">,</span> <span class="n">CLa</span></div>
-        
+
         
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
      
     <span class="n">E</span> <span class="o">=</span> <span class="mi">100</span>
-    <span class="n">El</span> <span class="o">=</span> <span class="n">_CIE_ILLUMINANTS</span><span class="p">[</span><span class="s1">&#39;D65&#39;</span><span class="p">]</span>
-    <span class="n">S</span> <span class="o">=</span> <span class="n">_IESTM3015</span><span class="p">[</span><span class="s1">&#39;S&#39;</span><span class="p">][</span><span class="s1">&#39;data&#39;</span><span class="p">][:</span><span class="mi">4</span><span class="p">]</span>
+    <span class="n">El</span> <span class="o">=</span> <span class="n">_CIE_ILLUMINANTS</span><span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> 
+    <span class="n">El</span> <span class="o">=</span> <span class="n">El</span><span class="p">[:,(</span><span class="n">El</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">&gt;=</span><span class="mi">380</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">El</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">&lt;=</span><span class="mi">730</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">((</span><span class="n">El</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">%</span><span class="mi">2</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">)]</span>
     <span class="n">CS</span><span class="p">,</span> <span class="n">CLa</span> <span class="o">=</span> <span class="n">spd_to_CS_CLa_lrc</span><span class="p">(</span><span class="n">El</span> <span class="o">=</span> <span class="n">El</span><span class="p">,</span> <span class="n">E</span> <span class="o">=</span> <span class="n">E</span><span class="p">,</span> \
                                     <span class="n">sum_sources</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">interpolate_sources</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;out&#39;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">CS</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">CLa</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Cs: &#39;</span><span class="p">,</span> <span class="n">CS</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;CLa: &#39;</span><span class="p">,</span><span class="n">CLa</span><span class="p">)</span>
 </pre></div>
 
            </div>

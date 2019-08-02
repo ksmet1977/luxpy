@@ -4,8 +4,8 @@
 [logo]: https://github.com/ksmet1977/luxpy/blob/master/docs/images/LUXPY__logo.jpg
 
 * Author: Kevin A.G. Smet (ksmet1977 at gmail.com)
-* Version: 1.4.4
-* Date: July 04, 2019
+* Version: 1.4.7
+* Date: August 02, 2019
 * License: [GPLv3](https://github.com/ksmet1977/luxpy/blob/master/LICENSE.md)
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1298963.svg)](https://doi.org/10.5281/zenodo.1298963)

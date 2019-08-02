@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Color sub-package &mdash; LuxPy 1.4.4 documentation</title>
+  <title>Color sub-package &mdash; LuxPy 1.4.7 documentation</title>
   
 
   
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                1.4.4
+                1.4.7
               </div>
             
           
@@ -1294,7 +1294,7 @@ of luxpy.spd_to_xyz())</div></blockquote>
 <h4>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h4>
 <blockquote>
 <div><ol class="arabic simple">
-<li><a class="reference external" href="http://www.cie.co.at/index.php/index.php?i_ca_id=304">CIE15-2004 (2004). Colorimetry (Vienna, Austria: CIE)</a></li>
+<li><a class="reference external" href="https://doi.org/10.25039/TR.015.2018">CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018.</a></li>
 <li><a class="reference external" href="http://www.ingentaconnect.com/content/ist/cic/1998/00001998/00000001/art00003?crawler=true">Ebner F, and Fairchild MD (1998).
 Development and testing of a color space (IPT) with improved hue uniformity.
 In IS&amp;T 6th Color Imaging Conference, (Scottsdale, Arizona, USA), pp. 8–13.</a></li>
@@ -3768,7 +3768,7 @@ condition pair. If len(:mcat:) == 1, the same matrix is used.</div>
 <tr class="field-odd field"><th class="field-name" colspan="2">_UNIQUE_HUE_DATA:</th></tr>
 <tr class="field-odd field"><td>&#160;</td><td class="field-body">database of unique hues with corresponding 
 Hue quadratures and eccentricity factors 
-for ciecam02, cam16, ciecam97s, cam15u)</td>
+for ciecam02, cam16, ciecam97s, cam15u, cam18sl)</td>
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">_SURROUND_PARAMETERS:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body">database of surround param. c, Nc, F and FLL 
@@ -3801,38 +3801,41 @@ from ciecam02/cam16 to:</div>
 <tr class="field-even field"><th class="field-name" colspan="2">_CAM_SWW16_PARAMETERS:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body">cam_sww16 model parameters.</td>
 </tr>
-<tr class="field-odd field"><th class="field-name" colspan="2">_CAM_DEFAULT_WHITE_POINT:</th></tr>
-<tr class="field-odd field"><td>&#160;</td><td class="field-body">Default internal reference white point (xyz)</td>
+<tr class="field-odd field"><th class="field-name" colspan="2">_CAM18SL_PARAMETERS:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">database with CAM18sl model parameters</td>
 </tr>
-<tr class="field-even field"><th class="field-name" colspan="2">_CAM_DEFAULT_TYPE:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body">Default CAM type str specifier.</td>
+<tr class="field-even field"><th class="field-name" colspan="2">_CAM_DEFAULT_WHITE_POINT:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body">Default internal reference white point (xyz)</td>
 </tr>
-<tr class="field-odd field"><th class="field-name" colspan="2">_CAM_DEFAULT_MCAT:</th></tr>
-<tr class="field-odd field"><td>&#160;</td><td class="field-body">Default MCAT specifier.</td>
+<tr class="field-odd field"><th class="field-name" colspan="2">_CAM_DEFAULT_TYPE:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">Default CAM type str specifier.</td>
 </tr>
-<tr class="field-even field"><th class="field-name" colspan="2">_CAM_02_X_DEFAULT_CONDITIONS:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body">Default CAM model parameters for model 
+<tr class="field-even field"><th class="field-name" colspan="2">_CAM_DEFAULT_MCAT:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body">Default MCAT specifier.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">_CAM_02_X_DEFAULT_CONDITIONS:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">Default CAM model parameters for model 
 in cam._CAM_DEFAULT_TYPE</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">_CAM_AXES:</th><td class="field-body">dict with list[str,str,str] containing axis labels 
+<tr class="field-even field"><th class="field-name">_CAM_AXES:</th><td class="field-body">dict with list[str,str,str] containing axis labels 
 of defined cspaces.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">naka_rushton():</th><td class="field-body">applies a Naka-Rushton function to the input</td>
+<tr class="field-odd field"><th class="field-name">naka_rushton():</th><td class="field-body">applies a Naka-Rushton function to the input</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">hue_angle():</th><td class="field-body">calculates a positive hue angle</td>
+<tr class="field-even field"><th class="field-name">hue_angle():</th><td class="field-body">calculates a positive hue angle</td>
 </tr>
-<tr class="field-even field"><th class="field-name" colspan="2">hue_quadrature():</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body">calculates the Hue quadrature from the hue.</td>
+<tr class="field-odd field"><th class="field-name" colspan="2">hue_quadrature():</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">calculates the Hue quadrature from the hue.</td>
 </tr>
-<tr class="field-odd field"><th class="field-name" colspan="2">cam_structure_ciecam02_cam16():</th></tr>
-<tr class="field-odd field"><td>&#160;</td><td class="field-body"><div class="first last line-block">
+<tr class="field-even field"><th class="field-name" colspan="2">cam_structure_ciecam02_cam16():</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><div class="first last line-block">
 <div class="line">basic structure of ciecam02 and cam16 models.</div>
 <div class="line">Has ‘forward’ (xyz –&gt; color attributes) 
 and ‘inverse’ (color attributes –&gt; xyz) modes.</div>
 </div>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">ciecam02():</th><td class="field-body"><div class="first last line-block">
+<tr class="field-odd field"><th class="field-name">ciecam02():</th><td class="field-body"><div class="first last line-block">
 <div class="line">calculates ciecam02 output </div>
 <div class="line">(wrapper for cam_structure_ciecam02_cam16 with specifics 
 of ciecam02): </div>
@@ -3842,7 +3845,7 @@ IS&amp;T/SID Tenth Color Imaging Conference. p. 23, 2002.</a></div>
 </div>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">cam16():</th><td class="field-body"><div class="first last line-block">
+<tr class="field-even field"><th class="field-name">cam16():</th><td class="field-body"><div class="first last line-block">
 <div class="line">calculates cam16 output </div>
 <div class="line">(wrapper for cam_structure_ciecam02_cam16 with specifics 
 of cam16):  </div>
@@ -3852,11 +3855,11 @@ Color Res. Appl., p. n/a–n/a.</a></div>
 </div>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name" colspan="2">camucs_structure():</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body">basic structure to go to ucs, lcd and scd color spaces 
+<tr class="field-odd field"><th class="field-name" colspan="2">camucs_structure():</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">basic structure to go to ucs, lcd and scd color spaces 
 (forward + inverse available)</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">cam02ucs():</th><td class="field-body"><div class="first last line-block">
+<tr class="field-even field"><th class="field-name">cam02ucs():</th><td class="field-body"><div class="first last line-block">
 <div class="line">calculates ucs (or lcd, scd) output based on ciecam02 
 (forward + inverse available)</div>
 <div class="line"><a class="reference external" href="http://onlinelibrary.wiley.com/doi/10.1002/col.20227/abstract">M. R. Luo, G. Cui, and C. Li, 
@@ -3865,7 +3868,7 @@ Color Res. Appl., vol. 31, no. 4, pp. 320–330, 2006.</a></div>
 </div>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">cam16ucs():</th><td class="field-body"><div class="first last line-block">
+<tr class="field-odd field"><th class="field-name">cam16ucs():</th><td class="field-body"><div class="first last line-block">
 <div class="line">calculates ucs (or lcd, scd) output based on cam16 
 (forward + inverse available)</div>
 <div class="line"><a class="reference external" href="http://onlinelibrary.wiley.com/doi/10.1002/col.22131/abstract">C. Li, Z. Li, Z. Wang, Y. Xu, M. R. Luo, G. Cui, M. Melgosa, M. H. Brill, and M. Pointer, 
@@ -3874,7 +3877,7 @@ Color Res. Appl., p. n/a–n/a.</a></div>
 </div>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">cam15u():</th><td class="field-body"><div class="first last line-block">
+<tr class="field-even field"><th class="field-name">cam15u():</th><td class="field-body"><div class="first last line-block">
 <div class="line">calculates the output for the CAM15u model for self-luminous unrelated stimuli. </div>
 <div class="line"><a class="reference external" href="https://www.osapublishing.org/oe/abstract.cfm?uri=oe-23-9-12045&amp;origin=search">M. Withouck, K. A. G. Smet, W. R. Ryckaert, and P. Hanselaer, 
 “Experimental driven modelling of the color appearance of 
@@ -3886,8 +3889,22 @@ Opt. Express, vol. 23, no. 10, pp. 13455–13466.</a></div>
 </div>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">cam_sww16():</th><td class="field-body">A simple principled color appearance model based on a mapping 
-of the Munsell color system.</td>
+<tr class="field-odd field"><th class="field-name">cam_sww16():</th><td class="field-body"><div class="first last line-block">
+<div class="line">A simple principled color appearance model based on a mapping 
+of the Munsell color system.</div>
+<div class="line"><a class="reference external" href="https://doi.org/10.1364/JOSAA.33.00A319">Smet, K. A. G., Webster, M. A., &amp; Whitehead, L. A. (2016). 
+A simple principled approach for modeling and understanding uniform color metrics. 
+Journal of the Optical Society of America A, 33(3), A319–A331.</a></div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">cam18sl():</th><td class="field-body"><div class="first last line-block">
+<div class="line">calculates the output for the CAM18sl model for self-luminous related stimuli. </div>
+<div class="line"><a class="reference external" href="https://doi.org/10.1364/JOSAA.35.002000">Hermans, S., Smet, K. A. G., &amp; Hanselaer, P. (2018). 
+“Color appearance model for self-luminous stimuli.”
+Journal of the Optical Society of America A, 35(12), 2000–2009.</a>        </div>
+</div>
+</td>
 </tr>
 <tr class="field-odd field"><th class="field-name">wrappers:</th><td class="field-body"><div class="first last line-block">
 <div class="line">‘xyz_to_jabM_ciecam02’, ‘jabM_ciecam02_to_xyz’,</div>
@@ -3902,6 +3919,9 @@ of the Munsell color system.</td>
 <div class="line">‘xyz_to_jab_cam16scd’, ‘jab_cam16scd_to_xyz’,</div>
 <div class="line">‘xyz_to_qabW_cam15u’, ‘qabW_cam15u_to_xyz’,</div>
 <div class="line">‘xyz_to_lAb_cam_sww16’, ‘lab_cam_sww16_to_xyz’</div>
+<div class="line">‘xyz_to_qabW_cam18sl’, ‘qabW_cam18sl_to_xyz’,</div>
+<div class="line">‘xyz_to_qabM_cam18sl’, ‘qabM_cam18sl_to_xyz’,</div>
+<div class="line">‘xyz_to_qabS_cam18sl’, ‘qabS_cam18sl_to_xyz’,</div>
 </div>
 </td>
 </tr>
@@ -4851,6 +4871,113 @@ Journal of the Optical Society of America A, 33(3), A319–A331.</a></dd>
 </dd></dl>
 
 <dl class="function">
+<dt id="luxpy.color.cam.cam18sl">
+<code class="descclassname">luxpy.color.cam.</code><code class="descname">cam18sl</code><span class="sig-paren">(</span><em>data, datab=None, Lb=[100], fov=10.0, inputtype='xyz', direction='forward', outin='Q,aW,bW', parameters=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cam/cam18sl.html#cam18sl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cam.cam18sl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert between CIE 2006 10°  XYZ tristimulus values (or spectral data) 
+and CAM18sl color appearance correlates.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">data:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray of CIE 2006 10°  absolute XYZ tristimulus values or spectral data
+or color appearance attributes of stimulus</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">datab:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray of CIE 2006 10°  absolute XYZ tristimulus values or spectral data
+of stimulus background</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Lb:</th><td class="field-body"><div class="first last line-block">
+<div class="line">[100], optional</div>
+<div class="line">Luminance (cd/m²) value(s) of background(s) calculated using the CIE 1964 10° CMFs </div>
+<div class="line">(only used in case datab == None and the background is assumed to be an Equal-Energy-White)</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">fov:</th><td class="field-body"><div class="first last line-block">
+<div class="line">10.0, optional</div>
+<div class="line">Field-of-view of stimulus (for size effect on brightness)</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">inputtpe:</th><td class="field-body"><div class="first last line-block">
+<div class="line">‘xyz’ or ‘spd’, optional</div>
+<div class="line">Specifies the type of input: </div>
+<div class="line-block">
+<div class="line">tristimulus values or spectral data for the forward mode.</div>
+</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">direction:</th><td class="field-body"><div class="first last line-block">
+<div class="line">‘forward’ or ‘inverse’, optional</div>
+<div class="line-block">
+<div class="line">-‘forward’: xyz -&gt; cam18sl</div>
+<div class="line">-‘inverse’: cam18sl -&gt; xyz </div>
+</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">outin:</th><td class="field-body"><div class="first last line-block">
+<div class="line">‘Q,aW,bW’ or str, optional</div>
+<div class="line">‘Q,aW,bW’ (brightness and opponent signals for amount-of-neutral)</div>
+<div class="line-block">
+<div class="line">other options: ‘Q,aM,bM’ (colorfulness) and ‘Q,aS,bS’ (saturation)</div>
+</div>
+<div class="line">Str specifying the type of </div>
+<div class="line-block">
+<div class="line">input (:direction: == ‘inverse’) and </div>
+<div class="line">output (:direction: == ‘forward’)</div>
+</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">parameters:</th><td class="field-body"><div class="first last line-block">
+<div class="line">None or dict, optional</div>
+<div class="line">Set of model parameters.</div>
+<div class="line-block">
+<div class="line">- None: defaults to luxpy.cam._CAM18SL_PARAMETERS </div>
+<div class="line-block">
+<div class="line">(see references below)</div>
+</div>
+</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">returns:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray with color appearance correlates (:direction: == ‘forward’)</div>
+<div class="line-block">
+<div class="line">or </div>
+</div>
+<div class="line">XYZ tristimulus values (:direction: == ‘inverse’)</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>References: </dt>
+<dd>1. <a class="reference external" href="https://doi.org/10.1364/JOSAA.35.002000">Hermans, S., Smet, K. A. G., &amp; Hanselaer, P. (2018). 
+“Color appearance model for self-luminous stimuli.”
+Journal of the Optical Society of America A, 35(12), 2000–2009.</a></dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
 <dt id="luxpy.color.cam.xyz_to_jabM_ciecam02">
 <code class="descclassname">luxpy.color.cam.</code><code class="descname">xyz_to_jabM_ciecam02</code><span class="sig-paren">(</span><em>data</em>, <em>xyzw=array([[1.0000e+02</em>, <em>1.0000e+02</em>, <em>1.0000e+02]])</em>, <em>Yw=100.0</em>, <em>conditions={'D': 1.0</em>, <em>'Dtype': None</em>, <em>'La': 100.0</em>, <em>'Yb': 20.0</em>, <em>'surround': 'avg'}</em>, <em>yellowbluepurplecorrect=None</em>, <em>mcat='cat02'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cam/cam_02_X.html#xyz_to_jabM_ciecam02"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cam.xyz_to_jabM_ciecam02" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wrapper function for ciecam02 forward mode with J,aM,bM output.</p>
@@ -5063,6 +5190,60 @@ Journal of the Optical Society of America A, 33(3), A319–A331.</a></dd>
 <dd><p>Wrapper function for cam_sww16 inverse mode with ‘xyz’ input.</p>
 <div class="line-block">
 <div class="line">For help on parameter details: ?luxpy.cam.cam_sww16</div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="luxpy.color.cam.xyz_to_qabW_cam18sl">
+<code class="descclassname">luxpy.color.cam.</code><code class="descname">xyz_to_qabW_cam18sl</code><span class="sig-paren">(</span><em>xyz, xyzb=None, Lb=[100], fov=10.0, parameters=None, **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cam/cam18sl.html#xyz_to_qabW_cam18sl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cam.xyz_to_qabW_cam18sl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper function for cam18sl forward mode with ‘Q,aW,bW’ output.</p>
+<div class="line-block">
+<div class="line">For help on parameter details: ?luxpy.cam.cam18sl</div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="luxpy.color.cam.qabW_cam18sl_to_xyz">
+<code class="descclassname">luxpy.color.cam.</code><code class="descname">qabW_cam18sl_to_xyz</code><span class="sig-paren">(</span><em>qab, xyzb=None, Lb=[100], fov=10.0, parameters=None, **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cam/cam18sl.html#qabW_cam18sl_to_xyz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cam.qabW_cam18sl_to_xyz" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper function for cam18sl inverse mode with ‘Q,aW,bW’ input.</p>
+<div class="line-block">
+<div class="line">For help on parameter details: ?luxpy.cam.cam18sl</div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="luxpy.color.cam.xyz_to_qabM_cam18sl">
+<code class="descclassname">luxpy.color.cam.</code><code class="descname">xyz_to_qabM_cam18sl</code><span class="sig-paren">(</span><em>xyz, xyzb=None, Lb=[100], fov=10.0, parameters=None, **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cam/cam18sl.html#xyz_to_qabM_cam18sl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cam.xyz_to_qabM_cam18sl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper function for cam18sl forward mode with ‘Q,aM,bM’ output.</p>
+<div class="line-block">
+<div class="line">For help on parameter details: ?luxpy.cam.cam18sl</div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="luxpy.color.cam.qabM_cam18sl_to_xyz">
+<code class="descclassname">luxpy.color.cam.</code><code class="descname">qabM_cam18sl_to_xyz</code><span class="sig-paren">(</span><em>qab, xyzb=None, Lb=[100], fov=10.0, parameters=None, **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cam/cam18sl.html#qabM_cam18sl_to_xyz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cam.qabM_cam18sl_to_xyz" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper function for cam18sl inverse mode with ‘Q,aM,bM’ input.</p>
+<div class="line-block">
+<div class="line">For help on parameter details: ?luxpy.cam.cam18sl</div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="luxpy.color.cam.xyz_to_qabS_cam18sl">
+<code class="descclassname">luxpy.color.cam.</code><code class="descname">xyz_to_qabS_cam18sl</code><span class="sig-paren">(</span><em>xyz, xyzb=None, Lb=[100], fov=10.0, parameters=None, **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cam/cam18sl.html#xyz_to_qabS_cam18sl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cam.xyz_to_qabS_cam18sl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper function for cam18sl forward mode with ‘Q,aS,bS’ output.</p>
+<div class="line-block">
+<div class="line">For help on parameter details: ?luxpy.cam.cam18sl</div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="luxpy.color.cam.qabS_cam18sl_to_xyz">
+<code class="descclassname">luxpy.color.cam.</code><code class="descname">qabS_cam18sl_to_xyz</code><span class="sig-paren">(</span><em>qab, xyzb=None, Lb=[100], fov=10.0, parameters=None, **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cam/cam18sl.html#qabS_cam18sl_to_xyz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cam.qabS_cam18sl_to_xyz" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper function for cam18sl inverse mode with ‘Q,aS,bS’ input.</p>
+<div class="line-block">
+<div class="line">For help on parameter details: ?luxpy.cam.cam18sl</div>
 </div>
 </dd></dl>
 

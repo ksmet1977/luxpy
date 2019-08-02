@@ -45,24 +45,23 @@ References
     2. `LRC Excel based Circadian stimulus calculator. <http://www.lrc.rpi.edu/resources/CSCalculator_2017_10_03_Mac.xlsm>`_
     
     3. `Rea MS, Figueiro MG, Bierman A, and Hamner R (2012). 
-    Modelling the spectral sensitivity of the human circadian system. 
-    Light. Res. Technol. 44, 386–396.  
-    <http://journals.sagepub.com/doi/full/10.1177/1477153512467607>`_
-    
+        Modelling the spectral sensitivity of the human circadian system. 
+        Light. Res. Technol. 44, 386–396.  
+        <https://doi.org/10.1177/1477153511430474>`_
+            
     4. `Rea MS, Figueiro MG, Bierman A, and Hamner R (2012). 
-    Erratum: Modeling the spectral sensitivity of the human circadian system 
-    (Lighting Research and Technology (2012) 44:4 (386-396) 
-    DOI: 10.1177/1477153511430474)). 
-    Light. Res. Technol. 44, 516.
-    <http://journals.sagepub.com/doi/10.1177/1477153512467607>`_
+        Erratum: Modeling the spectral sensitivity of the human circadian system 
+        (Lighting Research and Technology (2012) 44:4 (386-396)). 
+        Light. Res. Technol. 44, 516.
+        <https://doi.org/10.1177/1477153512467607>`_
 
 
 Also see notes in doc_string of spd_to_CS_CLa_lrc()
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
-from luxpy import np, sp, _PKG_PATH, _SEP, _CIE_ILLUMINANTS, getdata, getwld, cie_interp, _IESTM3015
-
+from luxpy import np, sp, _PKG_PATH, _SEP, _CIE_ILLUMINANTS, getdata, getwld, cie_interp, _IESTM3015, blackbody
+from luxpy import spd_to_power
 
 __all__=['_LRC_CLA_CS_CONST','spd_to_CS_CLa_lrc']
 
@@ -94,11 +93,17 @@ def fCLa(wl, Elv, integral, Norm = None, k = None, a_b_y = None, a_rod = None, R
     Returns:
         ndarray with CLa values.
         
-    Reference:
+    References:
         1. `Rea MS, Figueiro MG, Bierman A, and Hamner R (2012). 
         Modelling the spectral sensitivity of the human circadian system. 
         Light. Res. Technol. 44, 386–396.  
-        <http://journals.sagepub.com/doi/full/10.1177/1477153512467607>`_
+        <https://doi.org/10.1177/1477153511430474>`_
+            
+        2. `Rea MS, Figueiro MG, Bierman A, and Hamner R (2012). 
+        Erratum: Modeling the spectral sensitivity of the human circadian system 
+        (Lighting Research and Technology (2012) 44:4 (386-396)). 
+        Light. Res. Technol. 44, 516.
+        <https://doi.org/10.1177/1477153512467607>`_
         
         
     """
@@ -116,7 +121,7 @@ def fCLa(wl, Elv, integral, Norm = None, k = None, a_b_y = None, a_rod = None, R
     fcn1_3 = a_rod * (1 - np.exp(-integral(Vscotl*Elv*dl)/RodSat))
 
     # Satisfying cond. is effectively adding fcn1_2 and fcn1_3 to fcn1_1:
-    CLa = Norm*(fcn2 + 1*(cond_number>=0)*(a_b_y*cond_number) - fcn1_3)
+    CLa = Norm*(fcn2 + 1*(cond_number>=0)*(a_b_y*cond_number - fcn1_3))
     
     return CLa
     
@@ -129,12 +134,12 @@ def interpolate_efficiency_functions(wl, cs_cl_lrs):
     for key in cs_cl_lrs:
         if key[-1] == 'l': #signifies l for spectral data
             temp = np.vstack((cs_cl_lrs['WL'],cs_cl_lrs[key])) # construct [wl,S] data
-            cs_cl_lrs[key] = cie_interp(temp,wl, kind = 'cmf')[1:] # interpolate and store in dict
+            cs_cl_lrs[key] = cie_interp(temp,wl, kind = 'cmf', negative_values_allowed=True)[1:] # interpolate and store in dict
     cs_cl_lrs['WL'] = wl # store new wavelength range
     
     return  cs_cl_lrs
 
-
+        
 def spd_to_CS_CLa_lrc(El = None, E = None, \
                           sum_sources = False, interpolate_sources = True):
     """
@@ -201,14 +206,13 @@ def spd_to_CS_CLa_lrc(El = None, E = None, \
         3. `Rea MS, Figueiro MG, Bierman A, and Hamner R (2012). 
         Modelling the spectral sensitivity of the human circadian system. 
         Light. Res. Technol. 44, 386–396.  
-        <http://journals.sagepub.com/doi/full/10.1177/1477153512467607>`_
+        <https://doi.org/10.1177/1477153511430474>`_
             
         4. `Rea MS, Figueiro MG, Bierman A, and Hamner R (2012). 
         Erratum: Modeling the spectral sensitivity of the human circadian system 
-        (Lighting Research and Technology (2012) 44:4 (386-396) 
-        DOI: 10.1177/1477153511430474)). 
+        (Lighting Research and Technology (2012) 44:4 (386-396)). 
         Light. Res. Technol. 44, 516.
-        <http://journals.sagepub.com/doi/10.1177/1477153512467607>`_
+        <https://doi.org/10.1177/1477153512467607>`_
     """
     # Create copy of dict with model parameters and spectral data:
     cs_cl_lrs = _LRC_CLA_CS_CONST['CLa'].copy()
@@ -221,7 +225,7 @@ def spd_to_CS_CLa_lrc(El = None, E = None, \
         El = cie_interp(El, cs_cl_lrs['WL'], kind = 'spd')
     
     # Get wavelength spacing:
-    dl = getwld(El[0])          
+    dl = getwld(El[0])        
     
     # Separate wavelengths and data:
     wl = El[0]
@@ -229,13 +233,13 @@ def spd_to_CS_CLa_lrc(El = None, E = None, \
       
     # define integral function:
     integral = lambda x: sp.integrate.trapz(x, x = wl, axis = -1) 
-    integral = lambda x: np.sum(x,  axis = -1) 
+    #integral = lambda x: np.sum(x,  axis = -1) 
     
     # Rescale El to E (if not None):
     if E is not None:
 
         # Calculate current E value of El:
-        E_cv = np.atleast_2d(683 * integral(cs_cl_lrs['Vphotl']*Elv*dl))
+        E_cv = np.atleast_2d(683.002 * integral(cs_cl_lrs['Vphotl']*Elv*dl))
 
         # Rescale El to supplied E:
         Elv = (E/E_cv).T*Elv
@@ -252,15 +256,15 @@ def spd_to_CS_CLa_lrc(El = None, E = None, \
     CS = 0.7 * (1 - (1/(1 + (CLa/355.7)**1.1026)))
     
     return CS, CLa
-        
+
         
 if __name__ == '__main__':
      
     E = 100
-    El = _CIE_ILLUMINANTS['D65']
-    S = _IESTM3015['S']['data'][:4]
+    El = _CIE_ILLUMINANTS['A'].copy() 
+    El = El[:,(El[0]>=380) & (El[0]<=730) & ((El[0]%2)==0)]
     CS, CLa = spd_to_CS_CLa_lrc(El = El, E = E, \
                                     sum_sources = False, interpolate_sources = False)
     print('out')
-    print(CS)
-    print(CLa)
+    print('Cs: ', CS)
+    print('CLa: ',CLa)

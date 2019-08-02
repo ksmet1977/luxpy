@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Spectrum sub-package &mdash; LuxPy 1.4.4 documentation</title>
+  <title>Spectrum sub-package &mdash; LuxPy 1.4.7 documentation</title>
   
 
   
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                1.4.4
+                1.4.7
               </div>
             
           
@@ -302,7 +302,7 @@ radiometric, photometric and quantal energy units).</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">cie_interp():</th><td class="field-body"><p class="first">Interpolate / extrapolate spectral data following standard 
-[CIE15:2004, “Colorimetry,” CIE, Vienna, Austria, 2004.]</p>
+[<a class="reference external" href="https://doi.org/10.25039/TR.015.2018">CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018.</a>]</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">spd():</th><td class="field-body"><div class="first line-block">
@@ -349,7 +349,7 @@ or quantal energy units.</p>
 <dt>Calculates a reference illuminant spectrum based on cct for color </dt>
 <dd><p class="first last">rendering index calculations.</p>
 </dd>
-<dt>(<a class="reference external" href="http://www.cie.co.at/index.php/index.php?i_ca_id=304)">CIE15:2004CIE15:2004, “Colorimetry,” CIE, Vienna, Austria, 2004.</a>, </dt>
+<dt>(<a class="reference external" href="https://doi.org/10.25039/TR.015.2018">CIE15:2018, “Colorimetry”, CIE, Vienna, Austria, 2018.</a>, </dt>
 <dd><p class="first last"><a class="reference external" href="http://www.cie.co.at/index.php?i_ca_id=1027">cie224:2017, CIE 2017 Colour Fidelity Index for accurate scientific use. (2017), ISBN 978-3-902842-61-9.</a>,
 <a class="reference external" href="https://www.ies.org/store/technical-memoranda/ies-method-for-evaluating-light-source-color-rendition/">IES-TM-30-15: Method for Evaluating Light Source Color Rendition. New York, NY: The Illuminating Engineering Society of North America.</a></p>
 </dd>
@@ -408,9 +408,9 @@ and Value (V), Chroma (C), hue (h) and (ab) specifications.</td>
 <div class="section" id="references">
 <h4>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h4>
 <blockquote>
-<div><p>1. <a class="reference external" href="http://www.cie.co.at/index.php/index.php?i_ca_id=304">CIE15-2004 (2004). 
-Colorimetry 
-(Vienna, Austria: CIE)</a></p>
+<div><ol class="arabic simple">
+<li><a class="reference external" href="https://doi.org/10.25039/TR.015.2018">CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018.</a></li>
+</ol>
 <p>2. <a class="reference external" href="http://www.cie.co.at/publications/fundamental-chromaticity-diagram-physiological-axes-part-1">CIE, and CIE (2006). 
 Fundamental Chromaticity Diagram with Physiological Axes - Part I.(Vienna: CIE).</a></p>
 <p>3. <a class="reference external" href="http://www.cie.co.at/index.php?i_ca_id=1027">cie224:2017, CIE 2017 Colour Fidelity Index for accurate scientific use. (2017),
@@ -565,7 +565,7 @@ or which wavelength is normalized to 1 for ‘lambda’ option.</div>
 <dl class="function">
 <dt id="luxpy.spectrum.cie_interp">
 <code class="descclassname">luxpy.spectrum.</code><code class="descname">cie_interp</code><span class="sig-paren">(</span><em>data</em>, <em>wl_new</em>, <em>kind=None</em>, <em>negative_values_allowed=False</em>, <em>extrap_values=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/basics/spectral.html#cie_interp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.spectrum.cie_interp" title="Permalink to this definition">¶</a></dt>
-<dd><p>Interpolate / extrapolate spectral data following standard CIE15-2004.</p>
+<dd><p>Interpolate / extrapolate spectral data following standard CIE15-2018.</p>
 <div class="line-block">
 <div class="line">The kind of interpolation depends on the spectrum type defined in :kind:. </div>
 <div class="line">Extrapolation is always done by replicate the closest known values.</div>
@@ -832,7 +832,10 @@ or which wavelength is normalized to 1 for ‘lambda’ option.</div>
 </table>
 </dd>
 <dt>References:</dt>
-<dd>1. <a class="reference external" href="http://www.cie.co.at/index.php/index.php?i_ca_id=304">CIE15:2004. Colorimetry. CIE, Vienna.</a></dd>
+<dd><ol class="first last arabic simple">
+<li><a class="reference external" href="https://doi.org/10.25039/TR.015.2018">CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018.</a></li>
+</ol>
+</dd>
 </dl>
 </dd></dl>
 
@@ -926,7 +929,10 @@ or which wavelength is normalized to 1 for ‘lambda’ option.</div>
 </table>
 </dd>
 <dt>References:</dt>
-<dd>1. <a class="reference external" href="http://www.cie.co.at/index.php/index.php?i_ca_id=304">CIE15:2004. Colorimetry. CIE, Vienna</a></dd>
+<dd><ol class="first last arabic simple">
+<li><a class="reference external" href="https://doi.org/10.25039/TR.015.2018">CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018.</a></li>
+</ol>
+</dd>
 </dl>
 </dd></dl>
 
@@ -945,7 +951,7 @@ or which wavelength is normalized to 1 for ‘lambda’ option.</div>
 <div class="line">(.shape = (number of spectra + 1, number of wavelengths))</div>
 <div class="line">Note that :data: is never interpolated, only CMFs and RFLs. </div>
 <div class="line">This way interpolation errors due to peaky spectra are avoided. 
-Conform CIE15-2004.</div>
+Conform CIE15-2018.</div>
 </div>
 </td>
 </tr>
@@ -1045,7 +1051,10 @@ calculation of XYZ.</div>
 </table>
 </dd>
 <dt>References:</dt>
-<dd>1. <a class="reference external" href="http://www.cie.co.at/index.php/index.php?i_ca_id=304">CIE15:2004. Colorimetry. CIE, Vienna.</a></dd>
+<dd><ol class="first last arabic simple">
+<li><a class="reference external" href="https://doi.org/10.25039/TR.015.2018">CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018.</a></li>
+</ol>
+</dd>
 </dl>
 </dd></dl>
 
@@ -1064,7 +1073,7 @@ calculation of XYZ.</div>
 <div class="line">(.shape = (number of spectra + 1, number of wavelengths))</div>
 <div class="line">Note that :data: is never interpolated, only CMFs and RFLs. </div>
 <div class="line">This way interpolation errors due to peaky spectra are avoided. </div>
-<div class="line">Conform CIE15-2004.</div>
+<div class="line">Conform CIE15-2018.</div>
 </div>
 </td>
 </tr>
@@ -1101,7 +1110,10 @@ calculation of XYZ.</div>
 </table>
 </dd>
 <dt>References:</dt>
-<dd>1. <a class="reference external" href="http://www.cie.co.at/index.php/index.php?i_ca_id=304">CIE15:2004. Colorimetry. CIE, Vienna.</a></dd>
+<dd><ol class="first last arabic simple">
+<li><a class="reference external" href="https://doi.org/10.25039/TR.015.2018">CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018.</a></li>
+</ol>
+</dd>
 </dl>
 </dd></dl>
 
@@ -1197,7 +1209,10 @@ or quantal energy units.</p>
 </table>
 </dd>
 <dt>References:</dt>
-<dd>1. <a class="reference external" href="http://www.cie.co.at/index.php/index.php?i_ca_id=304">CIE15:2004. Colorimetry.</a></dd>
+<dd><ol class="first last arabic simple">
+<li><a class="reference external" href="https://doi.org/10.25039/TR.015.2018">CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018.</a></li>
+</ol>
+</dd>
 </dl>
 </dd></dl>
 
@@ -1242,7 +1257,10 @@ or quantal energy units.</p>
 </table>
 </dd>
 <dt>References:</dt>
-<dd>1. <a class="reference external" href="http://www.cie.co.at/index.php/index.php?i_ca_id=304">CIE15:2004. Colorimetry.</a></dd>
+<dd><ol class="first last arabic simple">
+<li><a class="reference external" href="https://doi.org/10.25039/TR.015.2018">CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018.</a></li>
+</ol>
+</dd>
 </dl>
 </dd></dl>
 
@@ -1304,7 +1322,10 @@ or quantal energy units.</p>
 </table>
 </dd>
 <dt>References:</dt>
-<dd>1. <a class="reference external" href="http://www.cie.co.at/index.php/index.php?i_ca_id=304">CIE15:2004. Colorimetry.</a></dd>
+<dd><ol class="first last arabic simple">
+<li><a class="reference external" href="https://doi.org/10.25039/TR.015.2018">CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018.</a></li>
+</ol>
+</dd>
 </dl>
 </dd></dl>
 

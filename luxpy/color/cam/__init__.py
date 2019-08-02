@@ -117,6 +117,8 @@ cam: sub-package with color appearance models
       | 'xyz_to_qabW_cam15u', 'qabW_cam15u_to_xyz',
       | 'xyz_to_lAb_cam_sww16', 'lab_cam_sww16_to_xyz'
       | 'xyz_to_qabW_cam18sl', 'qabW_cam18sl_to_xyz',
+      | 'xyz_to_qabM_cam18sl', 'qabM_cam18sl_to_xyz',
+      | 'xyz_to_qabS_cam18sl', 'qabS_cam18sl_to_xyz',
 
 
 

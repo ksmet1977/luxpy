@@ -134,6 +134,9 @@ cam: sub-package with color appearance models
       | 'xyz_to_qabW_cam15u', 'qabW_cam15u_to_xyz',
       | 'xyz_to_lab_cam_sww16', 'lab_cam_sww16_to_xyz',
       | 'xyz_to_qabW_cam18sl', 'qabW_cam18sl_to_xyz',
+      | 'xyz_to_qabM_cam18sl', 'qabM_cam18sl_to_xyz',
+      | 'xyz_to_qabS_cam18sl', 'qabS_cam18sl_to_xyz',
+
 
 
 
@@ -162,7 +165,8 @@ from .cam15u import  (cam15u, _CAM15U_AXES, _CAM15U_UNIQUE_HUE_DATA, _CAM15U_PAR
 from .sww2016 import (cam_sww16, _CAM_SWW16_AXES, _CAM_SWW16_PARAMETERS,
                       xyz_to_lab_cam_sww16, lab_cam_sww16_to_xyz)
 from .cam18sl import  (cam18sl, _CAM18SL_AXES, _CAM18SL_UNIQUE_HUE_DATA, _CAM18SL_PARAMETERS,
-                      _CAM18SL_NAKA_RUSHTON_PARAMETERS, xyz_to_qabW_cam18sl, qabW_cam18sl_to_xyz)
+                      _CAM18SL_NAKA_RUSHTON_PARAMETERS, xyz_to_qabW_cam18sl, qabW_cam18sl_to_xyz,
+                      xyz_to_qabM_cam18sl, qabM_cam18sl_to_xyz, xyz_to_qabS_cam18sl, qabS_cam18sl_to_xyz)
 
 
 __all__ = ['_CAM_AXES', '_UNIQUE_HUE_DATA','_SURROUND_PARAMETERS',
@@ -188,7 +192,9 @@ __all__ += ['xyz_to_jabM_ciecam02', 'jabM_ciecam02_to_xyz',
             'xyz_to_jab_cam16scd', 'jab_cam16scd_to_xyz', 
             'xyz_to_qabW_cam15u', 'qabW_cam15u_to_xyz',
             'xyz_to_lab_cam_sww16', 'lab_cam_sww16_to_xyz',
-            'xyz_to_qabW_cam18sl', 'qabW_cam18sl_to_xyz'
+            'xyz_to_qabW_cam18sl', 'qabW_cam18sl_to_xyz',
+            'xyz_to_qabM_cam18sl', 'qabM_cam18sl_to_xyz',
+            'xyz_to_qabS_cam18sl', 'qabS_cam18sl_to_xyz'
             ]
 
 _CAM_AXES = _CAM_02_X_AXES

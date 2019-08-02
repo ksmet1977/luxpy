@@ -55,9 +55,9 @@ cct: Module with functions related to correlated color temperature calculations
 
  :cct_to_mired(): Converts from CCT to Mired scale (or back).
 
+
 ===============================================================================
 """
-
 
 from .cct import *
 __all__ = cct.__all__

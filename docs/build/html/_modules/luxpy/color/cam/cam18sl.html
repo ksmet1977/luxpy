@@ -1,0 +1,626 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>luxpy.color.cam.cam18sl &mdash; LuxPy 1.4.7 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> LuxPy
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.4.7
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../license.html">License: GPLv3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../required_packages.html">Imported (required) packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../luxpy_structure.html">Luxpy package structure</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">LuxPy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>luxpy.color.cam.cam18sl</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for luxpy.color.cam.cam18sl</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module with CAM18sl color appearance model</span>
+<span class="sd">==========================================</span>
+
+<span class="sd"> :_CAM_18SL_AXES: dict with list[str,str,str] containing axis labels </span>
+<span class="sd">                  of defined cspaces.</span>
+<span class="sd">                  </span>
+<span class="sd"> :_CAM18SL_PARAMETERS: database with CAM18sl model parameters.</span>
+<span class="sd"> </span>
+<span class="sd"> :_CAM18SL_UNIQUE_HUE_DATA: database of unique hues with corresponding </span>
+<span class="sd">                           Hue quadratures and eccentricity factors </span>
+<span class="sd">                           for cam18sl)</span>
+<span class="sd">                              </span>
+<span class="sd"> :_CAM18SL_NAKA_RUSHTON_PARAMETERS: | database with parameters </span>
+<span class="sd">                                     (n, sig, scaling and noise) </span>
+<span class="sd">                                     for the Naka-Rushton function: </span>
+<span class="sd">                                    | scaling * ((data**n) / ((data**n) + (sig**n))) + noise</span>
+<span class="sd">                                       </span>
+<span class="sd"> :cam18sl(): | calculates the output for the CAM18sl model for self-luminous related stimuli. </span>
+<span class="sd">             | `Hermans, S., Smet, K. A. G., &amp; Hanselaer, P. (2018). </span>
+<span class="sd">               &quot;Color appearance model for self-luminous stimuli.&quot;</span>
+<span class="sd">               Journal of the Optical Society of America A, 35(12), 2000–2009. </span>
+<span class="sd">               &lt;https://doi.org/10.1364/JOSAA.35.002000&gt;`_</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">_CMF</span><span class="p">,</span> <span class="n">_CIE_ILLUMINANTS</span><span class="p">,</span> <span class="n">_MUNSELL</span><span class="p">,</span> <span class="n">np2d</span><span class="p">,</span> <span class="n">spd_to_xyz</span><span class="p">,</span> <span class="n">asplit</span><span class="p">,</span> <span class="n">ajoin</span><span class="p">,</span><span class="n">cie_interp</span><span class="p">,</span> <span class="n">getwlr</span><span class="p">,</span> <span class="n">_WL3</span><span class="p">,</span> <span class="n">np2dT</span>
+<span class="kn">from</span> <span class="nn">luxpy.color.cam.colorappearancemodels</span> <span class="k">import</span> <span class="n">hue_angle</span><span class="p">,</span> <span class="n">hue_quadrature</span><span class="p">,</span> <span class="n">naka_rushton</span>
+
+<span class="n">_CAM18SL_WL3</span> <span class="o">=</span> <span class="p">[</span><span class="mi">390</span><span class="p">,</span><span class="mi">830</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="n">_CAM18SL_AXES</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;qabW_cam18sl&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Q (cam18sl)&quot;</span><span class="p">,</span> <span class="s2">&quot;aW (cam18sl)&quot;</span><span class="p">,</span> <span class="s2">&quot;bW (cam18sl)&quot;</span><span class="p">]}</span> 
+
+<span class="n">_CAM18SL_UNIQUE_HUE_DATA</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;hues&#39;</span><span class="p">:</span> <span class="s1">&#39;red yellow green blue red&#39;</span><span class="o">.</span><span class="n">split</span><span class="p">(),</span> <span class="s1">&#39;i&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">5.0</span><span class="p">),</span> <span class="s1">&#39;hi&#39;</span><span class="p">:[</span><span class="mf">20.14</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">,</span> <span class="mf">164.25</span><span class="p">,</span><span class="mf">237.53</span><span class="p">,</span><span class="mf">380.14</span><span class="p">],</span><span class="s1">&#39;ei&#39;</span><span class="p">:[</span><span class="mf">0.8</span><span class="p">,</span><span class="mf">0.7</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.2</span><span class="p">,</span><span class="mf">0.8</span><span class="p">],</span><span class="s1">&#39;Hi&#39;</span><span class="p">:[</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">100.0</span><span class="p">,</span><span class="mf">200.0</span><span class="p">,</span><span class="mf">300.0</span><span class="p">,</span><span class="mf">400.0</span><span class="p">]}</span>
+
+<span class="n">_CAM18SL_NAKA_RUSHTON_PARAMETERS</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;n&#39;</span><span class="p">:</span> <span class="mf">0.58</span><span class="p">,</span> <span class="s1">&#39;sig&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">bg</span><span class="p">:</span> <span class="mf">291.20</span> <span class="o">+</span> <span class="mf">71.8</span><span class="o">*</span><span class="n">bg</span><span class="o">**</span><span class="mf">0.78</span><span class="p">,</span> <span class="s1">&#39;scaling&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;noise&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
+
+<span class="n">_CAM18SL_PARAMETERS</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;k&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">676.7</span><span class="p">,</span> <span class="mf">794.0</span><span class="p">,</span> <span class="mf">1461.5</span><span class="p">],</span>
+                       <span class="s1">&#39;nakarushton&#39;</span><span class="p">:</span> <span class="n">_CAM18SL_NAKA_RUSHTON_PARAMETERS</span><span class="p">,</span>
+                       <span class="s1">&#39;unique_hue_data&#39;</span><span class="p">:</span><span class="n">_CAM18SL_UNIQUE_HUE_DATA</span><span class="p">,</span> 
+                       <span class="s1">&#39;cA&#39;</span><span class="p">:</span><span class="mf">0.937</span> <span class="p">,</span><span class="s1">&#39;cAlms&#39;</span><span class="p">:[</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="mi">20</span><span class="p">]</span> <span class="p">,</span>
+                       <span class="s1">&#39;ca&#39;</span><span class="p">:</span> <span class="mf">0.63</span><span class="p">,</span> <span class="s1">&#39;calms&#39;</span><span class="p">:[</span><span class="mf">1.0</span><span class="p">,</span><span class="o">-</span><span class="mi">12</span><span class="o">/</span><span class="mi">11</span><span class="p">,</span><span class="mi">1</span><span class="o">/</span><span class="mi">11</span><span class="p">],</span>
+                       <span class="s1">&#39;cb&#39;</span><span class="p">:</span> <span class="mf">0.12</span><span class="p">,</span> <span class="s1">&#39;cblms&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span><span class="o">-</span><span class="mf">2.0</span><span class="p">],</span> 
+                       <span class="s1">&#39;cM&#39;</span><span class="p">:</span> <span class="mi">3260</span><span class="p">,</span> <span class="s1">&#39;cHK&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.0024</span><span class="p">,</span><span class="mf">1.09</span><span class="p">],</span> <span class="s1">&#39;cW&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="o">/</span><span class="mi">11672</span><span class="p">,</span><span class="mf">2.09</span><span class="p">],</span> 
+                       <span class="s1">&#39;cfov&#39;</span><span class="p">:</span> <span class="mf">0.271</span><span class="p">}</span> 
+                       
+<span class="c1">#_CAM18SL_SURROUND_PARAMETERS = {&#39;surrounds&#39;: [&#39;dark&#39;], &#39;dark&#39; : {&#39;c&#39;: None, &#39;Nc&#39;:None,&#39;F&#39;:None,&#39;FLL&#39;:None}}</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;cam18sl&#39;</span><span class="p">,</span><span class="s1">&#39;_CAM18SL_AXES&#39;</span><span class="p">,</span><span class="s1">&#39;_CAM18SL_UNIQUE_HUE_DATA&#39;</span><span class="p">,</span> <span class="s1">&#39;_CAM18SL_PARAMETERS&#39;</span><span class="p">,</span><span class="s1">&#39;_CAM18SL_NAKA_RUSHTON_PARAMETERS&#39;</span><span class="p">,</span> <span class="s1">&#39;_CAM18SL_SURROUND_PARAMETERS&#39;</span><span class="p">]</span>
+
+<span class="c1">#------------------------------------------------------------------------------------------------------------------------------------------------------------------------------            </span>
+<div class="viewcode-block" id="cam18sl"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.cam18sl">[docs]</a><span class="k">def</span> <span class="nf">cam18sl</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">datab</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Lb</span> <span class="o">=</span> <span class="p">[</span><span class="mi">100</span><span class="p">],</span> <span class="n">fov</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span> <span class="n">inputtype</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;forward&#39;</span><span class="p">,</span> <span class="n">outin</span> <span class="o">=</span> <span class="s1">&#39;Q,aW,bW&#39;</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert between CIE 2006 10°  XYZ tristimulus values (or spectral data) </span>
+<span class="sd">    and CAM18sl color appearance correlates.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :data: </span>
+<span class="sd">            | ndarray of CIE 2006 10°  absolute XYZ tristimulus values or spectral data</span>
+<span class="sd">              or color appearance attributes of stimulus</span>
+<span class="sd">        :datab: </span>
+<span class="sd">            | ndarray of CIE 2006 10°  absolute XYZ tristimulus values or spectral data</span>
+<span class="sd">              of stimulus background</span>
+<span class="sd">        :Lb: </span>
+<span class="sd">            | [100], optional</span>
+<span class="sd">            | Luminance (cd/m²) value(s) of background(s) calculated using the CIE 1964 10° CMFs </span>
+<span class="sd">            | (only used in case datab == None and the background is assumed to be an Equal-Energy-White)</span>
+<span class="sd">        :fov: </span>
+<span class="sd">            | 10.0, optional</span>
+<span class="sd">            | Field-of-view of stimulus (for size effect on brightness)</span>
+<span class="sd">        :inputtpe:</span>
+<span class="sd">            | &#39;xyz&#39; or &#39;spd&#39;, optional</span>
+<span class="sd">            | Specifies the type of input: </span>
+<span class="sd">            |     tristimulus values or spectral data for the forward mode.</span>
+<span class="sd">        :direction:</span>
+<span class="sd">            | &#39;forward&#39; or &#39;inverse&#39;, optional</span>
+<span class="sd">            |   -&#39;forward&#39;: xyz -&gt; cam18sl</span>
+<span class="sd">            |   -&#39;inverse&#39;: cam18sl -&gt; xyz </span>
+<span class="sd">        :outin:</span>
+<span class="sd">            | &#39;Q,aW,bW&#39; or str, optional</span>
+<span class="sd">            | &#39;Q,aW,bW&#39; (brightness and opponent signals for amount-of-neutral)</span>
+<span class="sd">            |  other options: &#39;Q,aM,bM&#39; (colorfulness) and &#39;Q,aS,bS&#39; (saturation)</span>
+<span class="sd">            | Str specifying the type of </span>
+<span class="sd">            |     input (:direction: == &#39;inverse&#39;) and </span>
+<span class="sd">            |     output (:direction: == &#39;forward&#39;)</span>
+<span class="sd">        :parameters:</span>
+<span class="sd">            | None or dict, optional</span>
+<span class="sd">            | Set of model parameters.</span>
+<span class="sd">            |   - None: defaults to luxpy.cam._CAM18SL_PARAMETERS </span>
+<span class="sd">            |    (see references below)</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :returns: </span>
+<span class="sd">            | ndarray with color appearance correlates (:direction: == &#39;forward&#39;)</span>
+<span class="sd">            |  or </span>
+<span class="sd">            | XYZ tristimulus values (:direction: == &#39;inverse&#39;)</span>
+
+<span class="sd">    References: </span>
+<span class="sd">        1. `Hermans, S., Smet, K. A. G., &amp; Hanselaer, P. (2018). </span>
+<span class="sd">        &quot;Color appearance model for self-luminous stimuli.&quot;</span>
+<span class="sd">        Journal of the Optical Society of America A, 35(12), 2000–2009. </span>
+<span class="sd">        &lt;https://doi.org/10.1364/JOSAA.35.002000&gt;`_ </span>
+<span class="sd">     &quot;&quot;&quot;</span>
+    
+    <span class="k">if</span> <span class="n">parameters</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">parameters</span> <span class="o">=</span> <span class="n">_CAM18SL_PARAMETERS</span>
+        
+    <span class="n">outin</span> <span class="o">=</span> <span class="n">outin</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>    
+    
+    <span class="c1">#unpack model parameters:</span>
+    <span class="n">cA</span><span class="p">,</span> <span class="n">cAlms</span><span class="p">,</span> <span class="n">cHK</span><span class="p">,</span> <span class="n">cM</span><span class="p">,</span> <span class="n">cW</span><span class="p">,</span> <span class="n">ca</span><span class="p">,</span> <span class="n">calms</span><span class="p">,</span> <span class="n">cb</span><span class="p">,</span> <span class="n">cblms</span><span class="p">,</span> <span class="n">cfov</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">naka</span><span class="p">,</span> <span class="n">unique_hue_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">parameters</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">())]</span>
+    
+    <span class="c1"># precomputations:</span>
+    <span class="n">Mlms2xyz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">_CMF</span><span class="p">[</span><span class="s1">&#39;2006_10&#39;</span><span class="p">][</span><span class="s1">&#39;M&#39;</span><span class="p">])</span>
+    <span class="n">MAab</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">cAlms</span><span class="p">,</span><span class="n">calms</span><span class="p">,</span><span class="n">cblms</span><span class="p">])</span>
+    <span class="n">invMAab</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">MAab</span><span class="p">)</span>    
+    
+    <span class="c1">#-------------------------------------------------</span>
+    <span class="c1"># setup EEW reference field and default background field (Lr should be equal to Lb):</span>
+    <span class="c1"># Get Lb values:</span>
+    <span class="k">if</span> <span class="n">datab</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">inputtype</span> <span class="o">!=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">:</span>
+            <span class="n">Lb</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">datab</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;1964_10&#39;</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">Lb</span> <span class="o">=</span> <span class="n">datab</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">Lb</span><span class="p">,</span><span class="nb">list</span><span class="p">):</span>
+            <span class="n">Lb</span> <span class="o">=</span> <span class="n">np2dT</span><span class="p">(</span><span class="n">Lb</span><span class="p">)</span>
+
+    <span class="c1"># Setup EEW ref of same luminance as datab:</span>
+    <span class="k">if</span> <span class="n">inputtype</span> <span class="o">==</span> <span class="s1">&#39;xyz&#39;</span><span class="p">:</span>
+        <span class="n">wlr</span> <span class="o">=</span> <span class="n">getwlr</span><span class="p">(</span><span class="n">_CAM18SL_WL3</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">datab</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">wlr</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># use wlr of stimulus data</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">wlr</span> <span class="o">=</span> <span class="n">datab</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># use wlr of background data</span>
+    <span class="n">datar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">wlr</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">Lb</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">wlr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))))</span> <span class="c1"># create eew</span>
+    <span class="n">xyzr</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">datar</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;1964_10&#39;</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="c1"># get abs. tristimulus values</span>
+    <span class="n">datar</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">=</span> <span class="n">datar</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">/</span><span class="n">xyzr</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="n">Lb</span>
+    <span class="c1"># Create datab if None:</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">datab</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">inputtype</span> <span class="o">!=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">:</span>
+            <span class="n">datab</span> <span class="o">=</span> <span class="n">datar</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">datab</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">datar</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;2006_10&#39;</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+            <span class="n">datar</span> <span class="o">=</span> <span class="n">datab</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+ 
+    <span class="c1"># prepare data and datab for loop over backgrounds: </span>
+    <span class="c1"># make axis 1 of datab have &#39;same&#39; dimensions as data:         </span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">):</span> 
+        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># add light source axis 1     </span>
+
+    <span class="k">if</span> <span class="n">inputtype</span> <span class="o">==</span> <span class="s1">&#39;xyz&#39;</span><span class="p">:</span> 
+        <span class="k">if</span> <span class="n">datab</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> <span class="c1">#make datab and datar have same lights source dimension (used to store different backgrounds) size as data</span>
+            <span class="n">datab</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">datab</span><span class="p">,</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  
+            <span class="n">datar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">datar</span><span class="p">,</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>               
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">datab</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">datab</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">datab</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">datab</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)))</span>
+        <span class="k">if</span> <span class="n">datar</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">datar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">datar</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">datar</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)))</span>
+
+    <span class="c1"># Flip light source/ background dim to axis 0:</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+
+    <span class="c1">#-------------------------------------------------</span>
+    
+    <span class="c1">#initialize camout:     </span>
+    <span class="n">dshape</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="n">dshape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">outin</span><span class="p">)</span> <span class="c1"># requested number of correlates</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">inputtype</span> <span class="o">!=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">direction</span> <span class="o">==</span> <span class="s1">&#39;forward&#39;</span><span class="p">):</span>
+        <span class="n">dshape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">dshape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span> <span class="c1"># wavelength row doesn&#39;t count &amp; only with forward can the input data be spectral</span>
+    <span class="n">camout</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">dshape</span><span class="p">)</span>
+    
+  
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+       
+        <span class="c1"># get rho, gamma, beta of background and reference white:</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">inputtype</span> <span class="o">!=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">):</span>
+            <span class="n">xyzb</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">datab</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">datab</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">2</span><span class="p">,:])),</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;2006_10&#39;</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+            <span class="n">xyzr</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">datar</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">datar</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">2</span><span class="p">,:])),</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;2006_10&#39;</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">xyzb</span> <span class="o">=</span> <span class="n">datab</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,:]</span> 
+            <span class="n">xyzr</span> <span class="o">=</span> <span class="n">datar</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,:]</span> 
+
+        <span class="n">lmsb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">_CMF</span><span class="p">[</span><span class="s1">&#39;2006_10&#39;</span><span class="p">][</span><span class="s1">&#39;M&#39;</span><span class="p">],</span><span class="n">xyzb</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">T</span> <span class="c1"># convert to l,m,s</span>
+        <span class="n">rgbb</span> <span class="o">=</span> <span class="p">(</span><span class="n">lmsb</span> <span class="o">/</span> <span class="n">_CMF</span><span class="p">[</span><span class="s1">&#39;2006_10&#39;</span><span class="p">][</span><span class="s1">&#39;K&#39;</span><span class="p">])</span> <span class="o">*</span> <span class="n">k</span> <span class="c1"># convert to rho, gamma, beta</span>
+        <span class="c1">#lmsr = np.dot(_CMF[&#39;2006_10&#39;][&#39;M&#39;],xyzr.T).T # convert to l,m,s</span>
+        <span class="c1">#rgbr = (lmsr / _CMF[&#39;2006_10&#39;][&#39;K&#39;]) * k # convert to rho, gamma, beta</span>
+        <span class="c1">#rgbr = rgbr/rgbr[...,1:2]*Lb[i] # calculated EEW cone excitations at same luminance values as background</span>
+        <span class="n">rgbr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">xyzr</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">*</span><span class="n">Lb</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="c1"># explicitely equal EEW cone excitations at same luminance values as background</span>
+        
+        <span class="k">if</span> <span class="n">direction</span> <span class="o">==</span> <span class="s1">&#39;forward&#39;</span><span class="p">:</span>
+            <span class="c1"># get rho, gamma, beta of stimulus:</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">inputtype</span> <span class="o">!=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">):</span>
+                <span class="n">xyz</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;2006_10&#39;</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>   
+            <span class="k">elif</span> <span class="p">(</span><span class="n">inputtype</span> <span class="o">==</span> <span class="s1">&#39;xyz&#39;</span><span class="p">):</span>
+                <span class="n">xyz</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">lms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">_CMF</span><span class="p">[</span><span class="s1">&#39;2006_10&#39;</span><span class="p">][</span><span class="s1">&#39;M&#39;</span><span class="p">],</span><span class="n">xyz</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">T</span> <span class="c1"># convert to l,m,s</span>
+            <span class="n">rgb</span> <span class="o">=</span> <span class="p">(</span><span class="n">lms</span> <span class="o">/</span> <span class="n">_CMF</span><span class="p">[</span><span class="s1">&#39;2006_10&#39;</span><span class="p">][</span><span class="s1">&#39;K&#39;</span><span class="p">])</span> <span class="o">*</span> <span class="n">k</span> <span class="c1"># convert to rho, gamma, beta</span>
+            
+            <span class="c1"># apply von-kries cat with D = 1:</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">rgbb</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+                <span class="n">Mcat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">Mcat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">((</span><span class="n">rgbr</span><span class="o">/</span><span class="n">rgbb</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">rgba</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Mcat</span><span class="p">,</span><span class="n">rgb</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+
+            <span class="c1"># apply naka-rushton compression:</span>
+            <span class="n">rgbc</span> <span class="o">=</span> <span class="n">naka_rushton</span><span class="p">(</span><span class="n">rgba</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="n">naka</span><span class="p">[</span><span class="s1">&#39;n&#39;</span><span class="p">],</span> <span class="n">sig</span> <span class="o">=</span> <span class="n">naka</span><span class="p">[</span><span class="s1">&#39;sig&#39;</span><span class="p">](</span><span class="n">rgbr</span><span class="o">.</span><span class="n">mean</span><span class="p">()),</span> <span class="n">noise</span> <span class="o">=</span> <span class="n">naka</span><span class="p">[</span><span class="s1">&#39;noise&#39;</span><span class="p">],</span> <span class="n">scaling</span> <span class="o">=</span> <span class="n">naka</span><span class="p">[</span><span class="s1">&#39;scaling&#39;</span><span class="p">])</span>
+
+            <span class="c1">#rgbc = np.ones(rgbc.shape)*rgbc.mean() # test if eew ends up at origin</span>
+            
+            <span class="c1"># calculate achromatic and color difference signals, A, a, b:</span>
+            <span class="n">Aab</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">MAab</span><span class="p">,</span> <span class="n">rgbc</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+            <span class="n">A</span><span class="p">,</span><span class="n">a</span><span class="p">,</span><span class="n">b</span> <span class="o">=</span> <span class="n">asplit</span><span class="p">(</span><span class="n">Aab</span><span class="p">)</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="n">ca</span><span class="o">*</span><span class="n">a</span>
+            <span class="n">b</span> <span class="o">=</span> <span class="n">cb</span><span class="o">*</span><span class="n">b</span>
+            
+            <span class="c1"># calculate colorfullness like signal M:</span>
+            <span class="n">M</span> <span class="o">=</span> <span class="n">cM</span><span class="o">*</span><span class="p">((</span><span class="n">a</span><span class="o">**</span><span class="mf">2.0</span> <span class="o">+</span> <span class="n">b</span><span class="o">**</span><span class="mf">2.0</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span><span class="p">)</span>
+
+            <span class="c1"># calculate brightness Q:</span>
+            <span class="n">Q</span> <span class="o">=</span> <span class="n">cA</span><span class="o">*</span><span class="p">(</span><span class="n">A</span> <span class="o">+</span> <span class="n">cHK</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">M</span><span class="o">**</span><span class="n">cHK</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="c1"># last term is contribution of Helmholtz-Kohlrausch effect on brightness</span>
+            
+            <span class="c1"># calculate saturation, s:</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="n">M</span> <span class="o">/</span> <span class="n">Q</span>
+            
+            <span class="c1"># calculate amount of white, W:</span>
+            <span class="n">W</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">cW</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">s</span><span class="o">**</span><span class="n">cW</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+
+            <span class="c1">#  adjust Q for size (fov) of stimulus (matter of debate whether to do this before or after calculation of s or W, there was no data on s, M or W for different sized stimuli: after)</span>
+            <span class="n">Q</span> <span class="o">=</span> <span class="n">Q</span><span class="o">*</span><span class="p">(</span><span class="n">fov</span><span class="o">/</span><span class="mf">10.0</span><span class="p">)</span><span class="o">**</span><span class="n">cfov</span>
+
+            <span class="c1"># calculate hue, h and Hue quadrature, H:</span>
+            <span class="n">h</span> <span class="o">=</span> <span class="n">hue_angle</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span> <span class="n">htype</span> <span class="o">=</span> <span class="s1">&#39;deg&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s1">&#39;H&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">:</span>
+                <span class="n">H</span> <span class="o">=</span> <span class="n">hue_quadrature</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">unique_hue_data</span> <span class="o">=</span> <span class="n">unique_hue_data</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">H</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="c1"># calculate cart. co.:</span>
+            <span class="k">if</span> <span class="s1">&#39;aM&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">:</span>
+                <span class="n">aM</span> <span class="o">=</span> <span class="n">M</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">h</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.0</span><span class="p">)</span>
+                <span class="n">bM</span> <span class="o">=</span> <span class="n">M</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">h</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.0</span><span class="p">)</span>
+            
+            <span class="k">if</span> <span class="s1">&#39;aS&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">:</span>
+                <span class="n">aS</span> <span class="o">=</span> <span class="n">s</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">h</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.0</span><span class="p">)</span>
+                <span class="n">bS</span> <span class="o">=</span> <span class="n">s</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">h</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.0</span><span class="p">)</span>
+            
+            <span class="k">if</span> <span class="s1">&#39;aW&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">:</span>
+                <span class="n">aW</span> <span class="o">=</span> <span class="n">W</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">h</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.0</span><span class="p">)</span>
+                <span class="n">bW</span> <span class="o">=</span> <span class="n">W</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">h</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.0</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="n">outin</span> <span class="o">!=</span> <span class="p">[</span><span class="s1">&#39;Q&#39;</span><span class="p">,</span><span class="s1">&#39;aW&#39;</span><span class="p">,</span><span class="s1">&#39;bW&#39;</span><span class="p">]):</span>
+                <span class="n">camout</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span>  <span class="nb">eval</span><span class="p">(</span><span class="s1">&#39;ajoin((&#39;</span><span class="o">+</span><span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outin</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;))&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">camout</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">ajoin</span><span class="p">((</span><span class="n">Q</span><span class="p">,</span><span class="n">aW</span><span class="p">,</span><span class="n">bW</span><span class="p">))</span>
+    
+        
+        <span class="k">elif</span> <span class="n">direction</span> <span class="o">==</span> <span class="s1">&#39;inverse&#39;</span><span class="p">:</span>
+
+            <span class="c1"># get Q, M and a, b depending on input type:        </span>
+            <span class="k">if</span> <span class="s1">&#39;aW&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">:</span>
+                <span class="n">Q</span><span class="p">,</span><span class="n">a</span><span class="p">,</span><span class="n">b</span> <span class="o">=</span> <span class="n">asplit</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="n">Q</span> <span class="o">=</span> <span class="n">Q</span> <span class="o">/</span> <span class="p">((</span><span class="n">fov</span><span class="o">/</span><span class="mf">10.0</span><span class="p">)</span><span class="o">**</span><span class="n">cfov</span><span class="p">)</span> <span class="c1">#adjust Q for size (fov) of stimulus back to that 10° ref</span>
+                <span class="n">W</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span><span class="o">**</span><span class="mf">2.0</span> <span class="o">+</span> <span class="n">b</span><span class="o">**</span><span class="mf">2.0</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
+                <span class="n">s</span> <span class="o">=</span> <span class="p">(((</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">W</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span><span class="o">/</span><span class="n">cW</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">**</span><span class="p">(</span><span class="mf">1.0</span><span class="o">/</span><span class="n">cW</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="n">M</span> <span class="o">=</span> <span class="n">s</span><span class="o">*</span><span class="n">Q</span>
+                
+            
+            <span class="k">if</span> <span class="s1">&#39;aM&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">:</span>
+                <span class="n">Q</span><span class="p">,</span><span class="n">a</span><span class="p">,</span><span class="n">b</span> <span class="o">=</span> <span class="n">asplit</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="n">Q</span> <span class="o">=</span> <span class="n">Q</span> <span class="o">/</span> <span class="p">((</span><span class="n">fov</span><span class="o">/</span><span class="mf">10.0</span><span class="p">)</span><span class="o">**</span><span class="n">cfov</span><span class="p">)</span> <span class="c1">#adjust Q for size (fov) of stimulus back to that 10° ref</span>
+                <span class="n">M</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span><span class="o">**</span><span class="mf">2.0</span> <span class="o">+</span> <span class="n">b</span><span class="o">**</span><span class="mf">2.0</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
+            
+            <span class="k">if</span> <span class="s1">&#39;aS&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">:</span>
+                <span class="n">Q</span><span class="p">,</span><span class="n">a</span><span class="p">,</span><span class="n">b</span> <span class="o">=</span> <span class="n">asplit</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="n">Q</span> <span class="o">=</span> <span class="n">Q</span> <span class="o">/</span> <span class="p">((</span><span class="n">fov</span><span class="o">/</span><span class="mf">10.0</span><span class="p">)</span><span class="o">**</span><span class="n">cfov</span><span class="p">)</span> <span class="c1">#adjust Q for size (fov) of stimulus back to that 10° ref</span>
+                <span class="n">s</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span><span class="o">**</span><span class="mf">2.0</span> <span class="o">+</span> <span class="n">b</span><span class="o">**</span><span class="mf">2.0</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
+                <span class="n">M</span> <span class="o">=</span> <span class="n">s</span><span class="o">*</span><span class="n">Q</span>
+                      
+            <span class="k">if</span> <span class="s1">&#39;h&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">:</span>
+                <span class="n">Q</span><span class="p">,</span> <span class="n">WsM</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">asplit</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="n">Q</span> <span class="o">=</span> <span class="n">Q</span> <span class="o">/</span> <span class="p">((</span><span class="n">fov</span><span class="o">/</span><span class="mf">10.0</span><span class="p">)</span><span class="o">**</span><span class="n">cfov</span><span class="p">)</span> <span class="c1">#adjust Q for size (fov) of stimulus back to that 10° ref</span>
+                <span class="k">if</span> <span class="s1">&#39;W&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">:</span>
+                     <span class="n">s</span> <span class="o">=</span> <span class="p">(((</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">WsM</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span><span class="o">/</span><span class="n">cW</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">**</span><span class="p">(</span><span class="mf">1.0</span><span class="o">/</span><span class="n">cW</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                     <span class="n">M</span> <span class="o">=</span> <span class="n">s</span><span class="o">*</span><span class="n">Q</span>
+                <span class="k">elif</span> <span class="s1">&#39;s&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">:</span>
+                     <span class="n">M</span> <span class="o">=</span> <span class="n">WsM</span><span class="o">*</span><span class="n">Q</span>
+                <span class="k">elif</span> <span class="s1">&#39;M&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">:</span>
+                     <span class="n">M</span> <span class="o">=</span> <span class="n">WsM</span>
+            
+            <span class="c1"># calculate achromatic signal, A from Q and M:</span>
+            <span class="n">A</span> <span class="o">=</span> <span class="n">Q</span><span class="o">/</span><span class="n">cA</span> <span class="o">-</span> <span class="n">cHK</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">M</span><span class="o">**</span><span class="n">cHK</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+            <span class="c1"># calculate hue angle:</span>
+            <span class="n">h</span> <span class="o">=</span> <span class="n">hue_angle</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span> <span class="n">htype</span> <span class="o">=</span> <span class="s1">&#39;rad&#39;</span><span class="p">)</span>
+            
+            <span class="c1"># calculate a,b from M and h:</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="p">(</span><span class="n">M</span><span class="o">/</span><span class="n">cM</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+            <span class="n">b</span> <span class="o">=</span> <span class="p">(</span><span class="n">M</span><span class="o">/</span><span class="n">cM</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+
+            <span class="n">a</span> <span class="o">=</span> <span class="n">a</span><span class="o">/</span><span class="n">ca</span>
+            <span class="n">b</span> <span class="o">=</span> <span class="n">b</span><span class="o">/</span><span class="n">cb</span>
+
+            <span class="c1"># create Aab:</span>
+            <span class="n">Aab</span> <span class="o">=</span> <span class="n">ajoin</span><span class="p">((</span><span class="n">A</span><span class="p">,</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">))</span>    
+
+            <span class="c1"># calculate rgbc:</span>
+            <span class="n">rgbc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">invMAab</span><span class="p">,</span> <span class="n">Aab</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>    
+
+            <span class="c1"># decompress rgbc to (adapted) rgba :</span>
+            <span class="n">rgba</span> <span class="o">=</span> <span class="n">naka_rushton</span><span class="p">(</span><span class="n">rgbc</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="n">naka</span><span class="p">[</span><span class="s1">&#39;n&#39;</span><span class="p">],</span> <span class="n">sig</span> <span class="o">=</span> <span class="n">naka</span><span class="p">[</span><span class="s1">&#39;sig&#39;</span><span class="p">](</span><span class="n">rgbr</span><span class="o">.</span><span class="n">mean</span><span class="p">()),</span> <span class="n">noise</span> <span class="o">=</span> <span class="n">naka</span><span class="p">[</span><span class="s1">&#39;noise&#39;</span><span class="p">],</span> <span class="n">scaling</span> <span class="o">=</span> <span class="n">naka</span><span class="p">[</span><span class="s1">&#39;scaling&#39;</span><span class="p">],</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;inverse&#39;</span><span class="p">)</span>
+
+            <span class="c1"># apply inverse von-kries cat with D = 1:</span>
+            <span class="n">rgb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">((</span><span class="n">rgbb</span><span class="o">/</span><span class="n">rgbr</span><span class="p">)[</span><span class="mi">0</span><span class="p">]),</span><span class="n">rgba</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+
+            <span class="c1"># convert rgb to lms to xyz:</span>
+            <span class="n">lms</span> <span class="o">=</span> <span class="n">rgb</span><span class="o">/</span><span class="n">k</span><span class="o">*</span><span class="n">_CMF</span><span class="p">[</span><span class="s1">&#39;2006_10&#39;</span><span class="p">][</span><span class="s1">&#39;K&#39;</span><span class="p">]</span>  
+            <span class="n">xyz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Mlms2xyz</span><span class="p">,</span><span class="n">lms</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">T</span> 
+            
+            <span class="n">camout</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">xyz</span>
+    
+    <span class="k">if</span> <span class="n">camout</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">camout</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">camout</span><span class="p">,</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">camout</span></div>
+ 
+<span class="c1">#------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="xyz_to_qabW_cam18sl"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.xyz_to_qabW_cam18sl">[docs]</a><span class="k">def</span> <span class="nf">xyz_to_qabW_cam18sl</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">xyzb</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Lb</span> <span class="o">=</span> <span class="p">[</span><span class="mi">100</span><span class="p">],</span> <span class="n">fov</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wrapper function for cam18sl forward mode with &#39;Q,aW,bW&#39; output.</span>
+<span class="sd">    </span>
+<span class="sd">    | For help on parameter details: ?luxpy.cam.cam18sl</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">cam18sl</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">datab</span> <span class="o">=</span> <span class="n">xyzb</span><span class="p">,</span> <span class="n">Lb</span> <span class="o">=</span> <span class="n">Lb</span><span class="p">,</span> <span class="n">fov</span> <span class="o">=</span> <span class="n">fov</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;forward&#39;</span><span class="p">,</span> <span class="n">inputtype</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">outin</span> <span class="o">=</span> <span class="s1">&#39;Q,aW,bW&#39;</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">)</span></div>
+                
+<div class="viewcode-block" id="qabW_cam18sl_to_xyz"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.qabW_cam18sl_to_xyz">[docs]</a><span class="k">def</span> <span class="nf">qabW_cam18sl_to_xyz</span><span class="p">(</span><span class="n">qab</span><span class="p">,</span> <span class="n">xyzb</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Lb</span> <span class="o">=</span> <span class="p">[</span><span class="mi">100</span><span class="p">],</span> <span class="n">fov</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wrapper function for cam18sl inverse mode with &#39;Q,aW,bW&#39; input.</span>
+<span class="sd">    </span>
+<span class="sd">    | For help on parameter details: ?luxpy.cam.cam18sl</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">cam18sl</span><span class="p">(</span><span class="n">qab</span><span class="p">,</span> <span class="n">datab</span> <span class="o">=</span> <span class="n">xyzb</span><span class="p">,</span> <span class="n">Lb</span> <span class="o">=</span> <span class="n">Lb</span><span class="p">,</span> <span class="n">fov</span> <span class="o">=</span> <span class="n">fov</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;inverse&#39;</span><span class="p">,</span> <span class="n">inputtype</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">outin</span> <span class="o">=</span> <span class="s1">&#39;Q,aW,bW&#39;</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="xyz_to_qabM_cam18sl"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.xyz_to_qabM_cam18sl">[docs]</a><span class="k">def</span> <span class="nf">xyz_to_qabM_cam18sl</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">xyzb</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Lb</span> <span class="o">=</span> <span class="p">[</span><span class="mi">100</span><span class="p">],</span> <span class="n">fov</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wrapper function for cam18sl forward mode with &#39;Q,aM,bM&#39; output.</span>
+<span class="sd">    </span>
+<span class="sd">    | For help on parameter details: ?luxpy.cam.cam18sl</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">cam18sl</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">datab</span> <span class="o">=</span> <span class="n">xyzb</span><span class="p">,</span> <span class="n">Lb</span> <span class="o">=</span> <span class="n">Lb</span><span class="p">,</span> <span class="n">fov</span> <span class="o">=</span> <span class="n">fov</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;forward&#39;</span><span class="p">,</span> <span class="n">inputtype</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">outin</span> <span class="o">=</span> <span class="s1">&#39;Q,aM,bM&#39;</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">)</span></div>
+                
+<div class="viewcode-block" id="qabM_cam18sl_to_xyz"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.qabM_cam18sl_to_xyz">[docs]</a><span class="k">def</span> <span class="nf">qabM_cam18sl_to_xyz</span><span class="p">(</span><span class="n">qab</span><span class="p">,</span> <span class="n">xyzb</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Lb</span> <span class="o">=</span> <span class="p">[</span><span class="mi">100</span><span class="p">],</span> <span class="n">fov</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wrapper function for cam18sl inverse mode with &#39;Q,aM,bM&#39; input.</span>
+<span class="sd">    </span>
+<span class="sd">    | For help on parameter details: ?luxpy.cam.cam18sl</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">cam18sl</span><span class="p">(</span><span class="n">qab</span><span class="p">,</span> <span class="n">datab</span> <span class="o">=</span> <span class="n">xyzb</span><span class="p">,</span> <span class="n">Lb</span> <span class="o">=</span> <span class="n">Lb</span><span class="p">,</span> <span class="n">fov</span> <span class="o">=</span> <span class="n">fov</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;inverse&#39;</span><span class="p">,</span> <span class="n">inputtype</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">outin</span> <span class="o">=</span> <span class="s1">&#39;Q,aM,bM&#39;</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="xyz_to_qabS_cam18sl"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.xyz_to_qabS_cam18sl">[docs]</a><span class="k">def</span> <span class="nf">xyz_to_qabS_cam18sl</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">xyzb</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Lb</span> <span class="o">=</span> <span class="p">[</span><span class="mi">100</span><span class="p">],</span> <span class="n">fov</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wrapper function for cam18sl forward mode with &#39;Q,aS,bS&#39; output.</span>
+<span class="sd">    </span>
+<span class="sd">    | For help on parameter details: ?luxpy.cam.cam18sl</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">cam18sl</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">datab</span> <span class="o">=</span> <span class="n">xyzb</span><span class="p">,</span> <span class="n">Lb</span> <span class="o">=</span> <span class="n">Lb</span><span class="p">,</span> <span class="n">fov</span> <span class="o">=</span> <span class="n">fov</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;forward&#39;</span><span class="p">,</span> <span class="n">inputtype</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">outin</span> <span class="o">=</span> <span class="s1">&#39;Q,aS,bS&#39;</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">)</span></div>
+                
+<div class="viewcode-block" id="qabS_cam18sl_to_xyz"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.qabS_cam18sl_to_xyz">[docs]</a><span class="k">def</span> <span class="nf">qabS_cam18sl_to_xyz</span><span class="p">(</span><span class="n">qab</span><span class="p">,</span> <span class="n">xyzb</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Lb</span> <span class="o">=</span> <span class="p">[</span><span class="mi">100</span><span class="p">],</span> <span class="n">fov</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wrapper function for cam18sl inverse mode with &#39;Q,aS,bS&#39; input.</span>
+<span class="sd">    </span>
+<span class="sd">    | For help on parameter details: ?luxpy.cam.cam18sl</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">cam18sl</span><span class="p">(</span><span class="n">qab</span><span class="p">,</span> <span class="n">datab</span> <span class="o">=</span> <span class="n">xyzb</span><span class="p">,</span> <span class="n">Lb</span> <span class="o">=</span> <span class="n">Lb</span><span class="p">,</span> <span class="n">fov</span> <span class="o">=</span> <span class="n">fov</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;inverse&#39;</span><span class="p">,</span> <span class="n">inputtype</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">outin</span> <span class="o">=</span> <span class="s1">&#39;Q,aS,bS&#39;</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">)</span></div>
+
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">C</span> <span class="o">=</span> <span class="n">_CIE_ILLUMINANTS</span><span class="p">[</span><span class="s1">&#39;C&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">C</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">C</span><span class="p">,</span><span class="n">cie_interp</span><span class="p">(</span><span class="n">_CIE_ILLUMINANTS</span><span class="p">[</span><span class="s1">&#39;D65&#39;</span><span class="p">],</span><span class="n">C</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;spd&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]))</span>
+    <span class="n">M</span> <span class="o">=</span> <span class="n">_MUNSELL</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">rflM</span> <span class="o">=</span> <span class="n">M</span><span class="p">[</span><span class="s1">&#39;R&#39;</span><span class="p">]</span>
+    <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;2006_10&#39;</span>
+    
+    <span class="c1"># Normalize to Lw:</span>
+    <span class="n">Lw</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="n">xyzw2</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">C</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">C</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">C</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">Lw</span><span class="o">*</span><span class="n">C</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="n">xyzw2</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+
+    
+    <span class="n">xyz</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">C</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">rfl</span> <span class="o">=</span> <span class="n">rflM</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">qab</span> <span class="o">=</span> <span class="n">xyz_to_qabW_cam18sl</span><span class="p">(</span><span class="n">xyzw</span><span class="p">,</span> <span class="n">xyzb</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Lb</span> <span class="o">=</span> <span class="p">[</span><span class="mi">100</span><span class="p">],</span> <span class="n">fov</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;qab: &#39;</span><span class="p">,</span><span class="n">qab</span><span class="p">)</span>
+    <span class="n">qab2</span> <span class="o">=</span> <span class="n">cam18sl</span><span class="p">(</span><span class="n">C</span><span class="p">,</span> <span class="n">datab</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Lb</span> <span class="o">=</span> <span class="p">[</span><span class="mi">100</span><span class="p">],</span> <span class="n">fov</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;forward&#39;</span><span class="p">,</span> <span class="n">inputtype</span> <span class="o">=</span> <span class="s1">&#39;spd&#39;</span><span class="p">,</span> <span class="n">outin</span> <span class="o">=</span> <span class="s1">&#39;Q,aW,bW&#39;</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;qab2: &#39;</span><span class="p">,</span><span class="n">qab2</span><span class="p">)</span>       
+    <span class="n">xyz_</span> <span class="o">=</span> <span class="n">qabW_cam18sl_to_xyz</span><span class="p">(</span><span class="n">qab</span><span class="p">,</span> <span class="n">xyzb</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Lb</span> <span class="o">=</span> <span class="p">[</span><span class="mi">100</span><span class="p">],</span> <span class="n">fov</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;delta: &#39;</span><span class="p">,</span> <span class="n">xyzw</span><span class="o">-</span><span class="n">xyz_</span><span class="p">)</span>
+    
+    <span class="c1"># test 2:</span>
+    <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;2006_10&#39;</span>
+    <span class="n">Lb</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">([</span><span class="mi">100</span><span class="p">])</span>
+    <span class="n">wlr</span> <span class="o">=</span> <span class="n">getwlr</span><span class="p">(</span><span class="n">_CAM18SL_WL3</span><span class="p">)</span>
+    <span class="n">EEW</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">wlr</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">Lb</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">wlr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))))</span> 
+    <span class="n">E</span> <span class="o">=</span> <span class="n">cie_interp</span><span class="p">(</span><span class="n">_CIE_ILLUMINANTS</span><span class="p">[</span><span class="s1">&#39;E&#39;</span><span class="p">],</span><span class="n">EEW</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;spd&#39;</span><span class="p">)</span>
+    <span class="n">D65</span> <span class="o">=</span> <span class="n">cie_interp</span><span class="p">(</span><span class="n">_CIE_ILLUMINANTS</span><span class="p">[</span><span class="s1">&#39;D65&#39;</span><span class="p">],</span><span class="n">EEW</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;spd&#39;</span><span class="p">)</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="n">cie_interp</span><span class="p">(</span><span class="n">_CIE_ILLUMINANTS</span><span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">],</span><span class="n">EEW</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;spd&#39;</span><span class="p">)</span>
+    <span class="n">C</span> <span class="o">=</span> <span class="n">cie_interp</span><span class="p">(</span><span class="n">_CIE_ILLUMINANTS</span><span class="p">[</span><span class="s1">&#39;C&#39;</span><span class="p">],</span><span class="n">EEW</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;spd&#39;</span><span class="p">)</span>
+    
+    <span class="n">STIM</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">EEW</span><span class="p">,</span> <span class="n">E</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">C</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">D65</span><span class="p">[</span><span class="mi">1</span><span class="p">,:],</span> <span class="n">A</span><span class="p">[</span><span class="mi">1</span><span class="p">:]))</span>
+    <span class="n">xyz</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">STIM</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">STIM</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">=</span> <span class="n">STIM</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">/</span><span class="n">xyz</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="n">Lw</span> 
+    <span class="n">xyz</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">STIM</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+    
+    <span class="n">BG</span> <span class="o">=</span> <span class="n">EEW</span>
+    <span class="n">qab</span> <span class="o">=</span> <span class="n">cam18sl</span><span class="p">(</span><span class="n">EEW</span><span class="p">,</span> <span class="n">datab</span> <span class="o">=</span> <span class="n">EEW</span><span class="p">,</span> <span class="n">Lb</span> <span class="o">=</span> <span class="p">[</span><span class="mi">100</span><span class="p">],</span> <span class="n">fov</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;forward&#39;</span><span class="p">,</span> <span class="n">inputtype</span> <span class="o">=</span> <span class="s1">&#39;spd&#39;</span><span class="p">,</span> <span class="n">outin</span> <span class="o">=</span> <span class="s1">&#39;Q,aW,bW&#39;</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;test 2 qab: &#39;</span><span class="p">,</span><span class="n">qab</span><span class="p">)</span>
+    
+    
+    
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Kevin A.G. Smet
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -4,8 +4,8 @@ LuxPy: a package for lighting and color science
 ===============================================
 
     * Author: K. A.G. Smet (ksmet1977 at gmail.com)
-    * Version: 1.4.4
-    * Date: July 04, 2019
+    * Version: 1.4.7
+    * Date: August 02, 2019
     * License: GPLv3
 
     * DOI: https://doi.org/10.5281/zenodo.1298963
@@ -83,6 +83,9 @@ LuxPy package structure
 |					pixelshiftmodel.py
 |		/utils
 |			plotters.py
+|
+|       /whiteness
+|           smet_white_loci.py
 |			
 |	/classes
 |		SPD.py
@@ -174,11 +177,11 @@ DO NOT CHANGE THESE CONSTANTS!
 # Initialze LuxPy
 ###############################################################################
 # Package info:
-__VERSION__ = 'v1.4.4'
+__VERSION__ = 'v1.4.7'
 __AUTHOR__ = 'Kevin A.G. Smet'
 __EMAIL__ = 'ksmet1977 at gmail.com'
 __URL__ = 'github.com/ksmet1977/luxpy/'
-__DATE__ = '04-Jul-2019'
+__DATE__ = '02-Aug-2019'
 __all__ = ['__VERSION__','__AUTHOR__','__EMAIL__', '__URL__','__DATE__']
 
 #==============================================================================
@@ -288,6 +291,10 @@ __all__ += color.cct.cct.__all__
 from .color.cat import chromaticadaptation as cat
 __all__ += ['cat']
 
+#   Load whiteness metric module:
+from .color.whiteness.smet_white_loci import *
+__all__ += color.whiteness.smet_white_loci.__all__
+
 #   Load color appearance model module:
 from .color.cam import colorappearancemodels as cam
 __all__ += ['cam']
@@ -306,7 +313,10 @@ from .color.cam import (_CAM_AXES,
                   xyz_to_jab_cam16lcd, jab_cam16lcd_to_xyz,
                   xyz_to_jab_cam16scd, jab_cam16scd_to_xyz, 
                   xyz_to_qabW_cam15u, qabW_cam15u_to_xyz, 
-                  xyz_to_lab_cam_sww16, lab_cam_sww16_to_xyz)
+                  xyz_to_lab_cam_sww16, lab_cam_sww16_to_xyz,
+                  xyz_to_qabW_cam18sl, qabW_cam18sl_to_xyz,
+                  xyz_to_qabM_cam18sl, qabM_cam18sl_to_xyz,
+                  xyz_to_qabS_cam18sl, qabS_cam18sl_to_xyz)
 
 __all__ += ['_CAM_AXES', 
           'xyz_to_jabM_ciecam02', 'jabM_ciecam02_to_xyz', 
@@ -320,12 +330,14 @@ __all__ += ['_CAM_AXES',
           'xyz_to_jab_cam16lcd', 'jab_cam16lcd_to_xyz',
           'xyz_to_jab_cam16scd', 'jab_cam16scd_to_xyz', 
           'xyz_to_qabW_cam15u', 'qabW_cam15u_to_xyz', 
-          'xyz_to_lab_cam_sww16', 'lab_cam_sww16_to_xyz']
+          'xyz_to_lab_cam_sww16', 'lab_cam_sww16_to_xyz',
+          'xyz_to_qabW_cam18sl', 'qabW_cam18sl_to_xyz',
+          'xyz_to_qabM_cam18sl', 'qabM_cam18sl_to_xyz',
+          'xyz_to_qabS_cam18sl', 'qabS_cam18sl_to_xyz']
 
 
 #   Merge _CAM_AXES dict with _CSPACE_AXES dict:
 _CSPACE_AXES = {**_CSPACE_AXES, **_CAM_AXES} 
-
 
 
 #   Extend color transform module:

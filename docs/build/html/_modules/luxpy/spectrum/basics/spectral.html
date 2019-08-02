@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.spectrum.basics.spectral &mdash; LuxPy 1.4.4 documentation</title>
+  <title>luxpy.spectrum.basics.spectral &mdash; LuxPy 1.4.7 documentation</title>
   
 
   
@@ -56,7 +56,7 @@
             
             
               <div class="version">
-                1.4.4
+                1.4.7
               </div>
             
           
@@ -201,7 +201,7 @@
 <span class="sd">                   radiometric, photometric and quantal energy units).</span>
 
 <span class="sd"> :cie_interp(): Interpolate / extrapolate spectral data following standard </span>
-<span class="sd">                [CIE15:2004, “Colorimetry,” CIE, Vienna, Austria, 2004.]</span>
+<span class="sd">                [`CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018. &lt;https://doi.org/10.25039/TR.015.2018&gt;`_]</span>
 
 <span class="sd"> :spd(): | All-in-one function that can:</span>
 <span class="sd">         |  1. Read spectral data from data file or take input directly as </span>
@@ -230,18 +230,15 @@
 <span class="sd">         </span>
 <span class="sd"> :cri_ref(): Calculates a reference illuminant spectrum based on cct for color </span>
 <span class="sd">             rendering index calculations.</span>
-<span class="sd">            (`CIE15:2004CIE15:2004, “Colorimetry,” CIE, Vienna, Austria, 2004. &lt;http://www.cie.co.at/index.php/index.php?i_ca_id=304)&gt;`_, </span>
+<span class="sd">            (`CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018. &lt;https://doi.org/10.25039/TR.015.2018&gt;`_, </span>
 <span class="sd">             `cie224:2017, CIE 2017 Colour Fidelity Index for accurate scientific use. (2017), ISBN 978-3-902842-61-9. &lt;http://www.cie.co.at/index.php?i_ca_id=1027&gt;`_,</span>
 <span class="sd">             `IES-TM-30-15: Method for Evaluating Light Source Color Rendition. New York, NY: The Illuminating Engineering Society of North America. &lt;https://www.ies.org/store/technical-memoranda/ies-method-for-evaluating-light-source-color-rendition/&gt;`_</span>
-
+<span class="sd"> </span>
 <span class="sd">    </span>
 <span class="sd">References</span>
 <span class="sd">----------</span>
 
-<span class="sd">    1. `CIE15-2004 (2004). </span>
-<span class="sd">    Colorimetry </span>
-<span class="sd">    (Vienna, Austria: CIE) </span>
-<span class="sd">    &lt;http://www.cie.co.at/index.php/index.php?i_ca_id=304&gt;`_</span>
+<span class="sd">    1. `CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018. &lt;https://doi.org/10.25039/TR.015.2018&gt;`_</span>
 <span class="sd">    </span>
 <span class="sd">    2. `cie224:2017, CIE 2017 Colour Fidelity Index for accurate scientific use. (2017),</span>
 <span class="sd">    ISBN 978-3-902842-61-9. </span>
@@ -431,7 +428,7 @@
 
 <div class="viewcode-block" id="cie_interp"><a class="viewcode-back" href="../../../../spectrum.html#luxpy.spectrum.cie_interp">[docs]</a><span class="k">def</span> <span class="nf">cie_interp</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">wl_new</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">negative_values_allowed</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">extrap_values</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Interpolate / extrapolate spectral data following standard CIE15-2004.</span>
+<span class="sd">    Interpolate / extrapolate spectral data following standard CIE15-2018.</span>
 <span class="sd">    </span>
 <span class="sd">    | The kind of interpolation depends on the spectrum type defined in :kind:. </span>
 <span class="sd">    | Extrapolation is always done by replicate the closest known values.</span>
@@ -649,8 +646,7 @@
 <span class="sd">        </span>
 <span class="sd">            </span>
 <span class="sd">    References:</span>
-<span class="sd">        1. `CIE15:2004. Colorimetry. CIE, Vienna. </span>
-<span class="sd">        &lt;http://www.cie.co.at/index.php/index.php?i_ca_id=304&gt;`_</span>
+<span class="sd">        1. `CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018. &lt;https://doi.org/10.25039/TR.015.2018&gt;`_</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">scr</span> <span class="ow">is</span> <span class="s1">&#39;file&#39;</span><span class="p">:</span>
         <span class="n">dict_or_file</span> <span class="o">=</span> <span class="n">_PKG_PATH</span> <span class="o">+</span> <span class="n">_SEP</span> <span class="o">+</span> <span class="s1">&#39;data&#39;</span> <span class="o">+</span> <span class="n">_SEP</span> <span class="o">+</span> <span class="s1">&#39;cmfs&#39;</span> <span class="o">+</span> <span class="n">_SEP</span> <span class="o">+</span> <span class="s1">&#39;ciexyz_&#39;</span> <span class="o">+</span> <span class="n">cieobs</span> <span class="o">+</span> <span class="s1">&#39;.dat&#39;</span>
@@ -658,7 +654,6 @@
         <span class="n">dict_or_file</span> <span class="o">=</span> <span class="n">_CMF</span><span class="p">[</span><span class="n">cieobs</span><span class="p">][</span><span class="s1">&#39;bar&#39;</span><span class="p">]</span>
     <span class="k">elif</span> <span class="n">scr</span> <span class="o">==</span> <span class="s1">&#39;cieobs&#39;</span><span class="p">:</span>
         <span class="n">dict_or_file</span> <span class="o">=</span> <span class="n">cieobs</span> <span class="c1">#can be file or data itself</span>
-
     <span class="k">return</span> <span class="n">spd</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="n">dict_or_file</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="n">wl_new</span><span class="p">,</span> <span class="n">interpolation</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="n">kind</span><span class="p">,</span> <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;wl&#39;</span><span class="p">,</span><span class="s1">&#39;xb&#39;</span><span class="p">,</span><span class="s1">&#39;yb&#39;</span><span class="p">,</span><span class="s1">&#39;zb&#39;</span><span class="p">])</span></div>
 
 <span class="c1">#--------------------------------------------------------------------------------------------------</span>
@@ -710,8 +705,7 @@
 <span class="sd">        </span>
 <span class="sd">            </span>
 <span class="sd">    References:</span>
-<span class="sd">        1. `CIE15:2004. Colorimetry. CIE, Vienna </span>
-<span class="sd">        &lt;http://www.cie.co.at/index.php/index.php?i_ca_id=304&gt;`_</span>
+<span class="sd">        1. `CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018. &lt;https://doi.org/10.25039/TR.015.2018&gt;`_</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">scr</span> <span class="o">==</span> <span class="s1">&#39;dict&#39;</span><span class="p">:</span>
         <span class="n">dict_or_file</span> <span class="o">=</span> <span class="n">_CMF</span><span class="p">[</span><span class="n">cieobs</span><span class="p">][</span><span class="s1">&#39;bar&#39;</span><span class="p">][[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">],:]</span> 
@@ -738,7 +732,7 @@
 <span class="sd">            | (.shape = (number of spectra + 1, number of wavelengths))</span>
 <span class="sd">            | Note that :data: is never interpolated, only CMFs and RFLs. </span>
 <span class="sd">            | This way interpolation errors due to peaky spectra are avoided. </span>
-<span class="sd">              Conform CIE15-2004.</span>
+<span class="sd">              Conform CIE15-2018.</span>
 <span class="sd">        :relative: </span>
 <span class="sd">            | True or False, optional</span>
 <span class="sd">            | Calculate relative XYZ (Yw = 100) or absolute XYZ (Y = Luminance)</span>
@@ -783,8 +777,7 @@
 <span class="sd">            |        and with xyzw.shape = (data.shape[0],3)</span>
 <span class="sd">             </span>
 <span class="sd">    References:</span>
-<span class="sd">        1. `CIE15:2004. Colorimetry. CIE, Vienna. </span>
-<span class="sd">        &lt;http://www.cie.co.at/index.php/index.php?i_ca_id=304&gt;`_</span>
+<span class="sd">        1. `CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018. &lt;https://doi.org/10.25039/TR.015.2018&gt;`_</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span> <span class="c1"># convert to np format</span>
@@ -864,7 +857,7 @@
 <span class="sd">            | (.shape = (number of spectra + 1, number of wavelengths))</span>
 <span class="sd">            | Note that :data: is never interpolated, only CMFs and RFLs. </span>
 <span class="sd">            | This way interpolation errors due to peaky spectra are avoided. </span>
-<span class="sd">            | Conform CIE15-2004.</span>
+<span class="sd">            | Conform CIE15-2018.</span>
 <span class="sd">        :cieobs: </span>
 <span class="sd">            | luxpy._CIEOBS, optional</span>
 <span class="sd">            | Determines the color matching function set used in the </span>
@@ -879,8 +872,7 @@
 <span class="sd">            | ndarray of LER values. </span>
 <span class="sd">             </span>
 <span class="sd">    References:</span>
-<span class="sd">        1. `CIE15:2004. Colorimetry. CIE, Vienna.</span>
-<span class="sd">        &lt;http://www.cie.co.at/index.php/index.php?i_ca_id=304&gt;`_</span>
+<span class="sd">        1. `CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018. &lt;https://doi.org/10.25039/TR.015.2018&gt;`_</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cieobs</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>    
@@ -978,8 +970,7 @@
 <span class="sd">              (:returns:[0] contains wavelengths)</span>
 <span class="sd">            </span>
 <span class="sd">    References:</span>
-<span class="sd">        1. `CIE15:2004. Colorimetry. </span>
-<span class="sd">        &lt;http://www.cie.co.at/index.php/index.php?i_ca_id=304&gt;`_</span>
+<span class="sd">        1. `CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018. &lt;https://doi.org/10.25039/TR.015.2018&gt;`_</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">cct</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">cct</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">wl3</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> 
@@ -1008,8 +999,7 @@
 <span class="sd">            | (ndarray of x-coordinates, ndarray of y-coordinates)</span>
 <span class="sd">        </span>
 <span class="sd">    References:</span>
-<span class="sd">        1. `CIE15:2004. Colorimetry. </span>
-<span class="sd">        &lt;http://www.cie.co.at/index.php/index.php?i_ca_id=304&gt;`_</span>
+<span class="sd">        1. `CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018. &lt;https://doi.org/10.25039/TR.015.2018&gt;`_</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">cct</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">(</span><span class="n">cct</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">((</span><span class="n">cct</span> <span class="o">&lt;</span> <span class="mf">4000.0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">force_daylight_below4000K</span> <span class="o">==</span> <span class="kc">False</span><span class="p">)):</span>
@@ -1052,8 +1042,7 @@
 <span class="sd">              (:returns:[0] contains wavelengths)</span>
 <span class="sd">            </span>
 <span class="sd">    References:</span>
-<span class="sd">        1. `CIE15:2004. Colorimetry. </span>
-<span class="sd">        &lt;http://www.cie.co.at/index.php/index.php?i_ca_id=304&gt;`_</span>
+<span class="sd">        1. `CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018. &lt;https://doi.org/10.25039/TR.015.2018&gt;`_</span>
 <span class="sd">     &quot;&quot;&quot;</span>
     <span class="n">cct</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">cct</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">wl3</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> 
