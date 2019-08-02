@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.toolboxes.photbiochem.circadian_CS_CLa_lrc &mdash; LuxPy 1.4.7 documentation</title>
+  <title>luxpy.toolboxes.photbiochem.circadian_CS_CLa_lrc &mdash; LuxPy 1.4.8 documentation</title>
   
 
   
@@ -56,7 +56,7 @@
             
             
               <div class="version">
-                1.4.7
+                1.4.8
               </div>
             
           
@@ -211,8 +211,9 @@
 
 <span class="sd">.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">sp</span><span class="p">,</span> <span class="n">_PKG_PATH</span><span class="p">,</span> <span class="n">_SEP</span><span class="p">,</span> <span class="n">_CIE_ILLUMINANTS</span><span class="p">,</span> <span class="n">getdata</span><span class="p">,</span> <span class="n">getwld</span><span class="p">,</span> <span class="n">cie_interp</span><span class="p">,</span> <span class="n">_IESTM3015</span><span class="p">,</span> <span class="n">blackbody</span>
+<span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">_PKG_PATH</span><span class="p">,</span> <span class="n">_SEP</span><span class="p">,</span> <span class="n">_CIE_ILLUMINANTS</span><span class="p">,</span> <span class="n">getdata</span><span class="p">,</span> <span class="n">getwld</span><span class="p">,</span> <span class="n">cie_interp</span><span class="p">,</span> <span class="n">_IESTM3015</span><span class="p">,</span> <span class="n">blackbody</span>
 <span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="n">spd_to_power</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">integrate</span>
 
 <span class="n">__all__</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;_LRC_CLA_CS_CONST&#39;</span><span class="p">,</span><span class="s1">&#39;spd_to_CS_CLa_lrc&#39;</span><span class="p">]</span>
 
@@ -383,7 +384,7 @@
     <span class="n">Elv</span> <span class="o">=</span> <span class="n">El</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
       
     <span class="c1"># define integral function:</span>
-    <span class="n">integral</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">sp</span><span class="o">.</span><span class="n">integrate</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="n">wl</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> 
+    <span class="n">integral</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">integrate</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="n">wl</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> 
     <span class="c1">#integral = lambda x: np.sum(x,  axis = -1) </span>
     
     <span class="c1"># Rescale El to E (if not None):</span>

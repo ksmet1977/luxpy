@@ -60,8 +60,9 @@ Also see notes in doc_string of spd_to_CS_CLa_lrc()
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
-from luxpy import np, sp, _PKG_PATH, _SEP, _CIE_ILLUMINANTS, getdata, getwld, cie_interp, _IESTM3015, blackbody
+from luxpy import np, _PKG_PATH, _SEP, _CIE_ILLUMINANTS, getdata, getwld, cie_interp, _IESTM3015, blackbody
 from luxpy import spd_to_power
+from scipy import integrate
 
 __all__=['_LRC_CLA_CS_CONST','spd_to_CS_CLa_lrc']
 
@@ -232,7 +233,7 @@ def spd_to_CS_CLa_lrc(El = None, E = None, \
     Elv = El[1:].copy()
       
     # define integral function:
-    integral = lambda x: sp.integrate.trapz(x, x = wl, axis = -1) 
+    integral = lambda x: integrate.trapz(x, x = wl, axis = -1) 
     #integral = lambda x: np.sum(x,  axis = -1) 
     
     # Rescale El to E (if not None):
