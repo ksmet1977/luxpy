@@ -15,7 +15,7 @@ Module with CAM18sl color appearance model
  :_CAM18SL_NAKA_RUSHTON_PARAMETERS: | database with parameters 
                                      (n, sig, scaling and noise) 
                                      for the Naka-Rushton function: 
-                                    | scaling * ((data**n) / ((data**n) + (sig**n))) + noise
+                                    | NK(x) = sign(x) * scaling * ((|x|**n) / ((|x|**n) + (sig**n))) + noise
                                        
  :cam18sl(): | calculates the output for the CAM18sl model for self-luminous related stimuli. 
              | `Hermans, S., Smet, K. A. G., & Hanselaer, P. (2018). 

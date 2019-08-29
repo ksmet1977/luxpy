@@ -30,7 +30,7 @@ cam_02_X: Module with CIECAM02-type color appearance models
  :_CAM_02_X_NAKA_RUSHTON_PARAMETERS: | database with parameters 
                                        (n, sig, scaling and noise) 
                                        for the Naka-Rushton function: 
-                                     | scaling * ((data**n) / ((data**n) + (sig**n))) + noise
+                                     | NK(x) = sign(x) * scaling * ((|x|**n) / ((|x|**n) + (sig**n))) + noise
 
  :_CAM_02_X_UCS_PARAMETERS: | database with parameters specifying the conversion 
                               from ciecam02/cam16 to:
@@ -167,7 +167,7 @@ def naka_rushton(data, sig = 2.0, n = 0.73, scaling = 1.0, noise = 0.0, cam = No
     """
     Apply a Naka-Rushton response compression (n) and an adaptive shift (sig).
     
-    | NK(x) = scaling * ((x**n) / ((x**n) + (sig**n))) + noise
+    | NK(x) = sign(x) * scaling * ((|x|**n) / ((|x|**n) + (sig**n))) + noise
     
     Args:
         :data:
@@ -203,14 +203,14 @@ def naka_rushton(data, sig = 2.0, n = 0.73, scaling = 1.0, noise = 0.0, cam = No
         noise = _NAKA_RUSHTON_PARAMETERS[cam]['noise']
         
     if direction == 'forward':
-        return scaling * ((data**n) / ((data**n) + (sig**n))) + noise
+        return np.sign(data)*scaling * ((np.abs(data)**n) / ((np.abs(data)**n) + (sig**n))) + noise
     elif direction =='inverse':
-        Ip =  sig*(((np.abs(data-noise))/(scaling-np.abs(data-noise))))**(1/n)
+        Ip =  sig*(((np.abs(np.abs(data)-noise))/(scaling-np.abs(np.abs(data)-noise))))**(1/n)
         if not np.isscalar(Ip):
-            p = np.where(data < noise)
+            p = np.where(np.abs(data) < noise)
             Ip[p] = -Ip[p]
         else:
-            if data < noise:
+            if np.abs(data) < noise:
                 Ip = -Ip
         return Ip
 
