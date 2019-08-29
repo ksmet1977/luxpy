@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.color.cam.cam18sl &mdash; LuxPy 1.4.8 documentation</title>
+  <title>luxpy.color.cam.cam18sl &mdash; LuxPy 1.4.9 documentation</title>
   
 
   
@@ -56,7 +56,7 @@
             
             
               <div class="version">
-                1.4.8
+                1.4.9
               </div>
             
           
@@ -166,7 +166,7 @@
 <span class="sd"> :_CAM18SL_NAKA_RUSHTON_PARAMETERS: | database with parameters </span>
 <span class="sd">                                     (n, sig, scaling and noise) </span>
 <span class="sd">                                     for the Naka-Rushton function: </span>
-<span class="sd">                                    | scaling * ((data**n) / ((data**n) + (sig**n))) + noise</span>
+<span class="sd">                                    | NK(x) = sign(x) * scaling * ((abs(x)**n) / ((abs(x)**n) + (sig**n))) + noise</span>
 <span class="sd">                                       </span>
 <span class="sd"> :cam18sl(): | calculates the output for the CAM18sl model for self-luminous related stimuli. </span>
 <span class="sd">             | `Hermans, S., Smet, K. A. G., &amp; Hanselaer, P. (2018). </span>

@@ -13,7 +13,7 @@ cam: sub-package with color appearance models
  :_NAKA_RUSHTON_PARAMETERS: | database with parameters 
                                        (n, sig, scaling and noise) 
                                        for the Naka-Rushton function: 
-                            | NK(x) = sign(x) * scaling * ((|x|**n) / ((|x|**n) + (sig**n))) + noise
+                            | NK(x) = sign(x) * scaling * ((abs(x)**n) / ((abs(x)**n) + (sig**n))) + noise
 
  :_CAM_02_X_UCS_PARAMETERS: | database with parameters specifying the conversion 
                               from ciecam02/cam16 to:

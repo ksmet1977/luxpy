@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Color sub-package &mdash; LuxPy 1.4.8 documentation</title>
+  <title>Color sub-package &mdash; LuxPy 1.4.9 documentation</title>
   
 
   
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                1.4.8
+                1.4.9
               </div>
             
           
@@ -3779,7 +3779,7 @@ for ciecam02, cam16, ciecam97s and cam15u.</td>
 <div class="line">database with parameters 
 (n, sig, scaling and noise) 
 for the Naka-Rushton function: </div>
-<div class="line">scaling * ((data**n) / ((data**n) + (sig**n))) + noise</div>
+<div class="line">NK(x) = sign(x) * scaling * ((abs(x)**n) / ((abs(x)**n) + (sig**n))) + noise</div>
 </div>
 </td>
 </tr>
@@ -4033,7 +4033,7 @@ from opponent signals a and b.</p>
 <code class="descclassname">luxpy.color.cam.</code><code class="descname">naka_rushton</code><span class="sig-paren">(</span><em>data</em>, <em>sig=2.0</em>, <em>n=0.73</em>, <em>scaling=1.0</em>, <em>noise=0.0</em>, <em>cam=None</em>, <em>direction='forward'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cam/cam_02_X.html#naka_rushton"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cam.naka_rushton" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply a Naka-Rushton response compression (n) and an adaptive shift (sig).</p>
 <div class="line-block">
-<div class="line">NK(x) = scaling * ((x**n) / ((x**n) + (sig**n))) + noise</div>
+<div class="line">NK(x) = sign(x) * scaling * ((abs(x)**n) / ((abs(x)**n) + (sig**n))) + noise</div>
 </div>
 <dl class="docutils">
 <dt>Args:</dt>

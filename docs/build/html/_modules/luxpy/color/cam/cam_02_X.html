@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.color.cam.cam_02_X &mdash; LuxPy 1.4.8 documentation</title>
+  <title>luxpy.color.cam.cam_02_X &mdash; LuxPy 1.4.9 documentation</title>
   
 
   
@@ -56,7 +56,7 @@
             
             
               <div class="version">
-                1.4.8
+                1.4.9
               </div>
             
           
@@ -181,7 +181,7 @@
 <span class="sd"> :_CAM_02_X_NAKA_RUSHTON_PARAMETERS: | database with parameters </span>
 <span class="sd">                                       (n, sig, scaling and noise) </span>
 <span class="sd">                                       for the Naka-Rushton function: </span>
-<span class="sd">                                     | scaling * ((data**n) / ((data**n) + (sig**n))) + noise</span>
+<span class="sd">                                     | NK(x) = sign(x) * scaling * ((abs(x)**n) / ((abs(x)**n) + (sig**n))) + noise</span>
 
 <span class="sd"> :_CAM_02_X_UCS_PARAMETERS: | database with parameters specifying the conversion </span>
 <span class="sd">                              from ciecam02/cam16 to:</span>
@@ -318,7 +318,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Apply a Naka-Rushton response compression (n) and an adaptive shift (sig).</span>
 <span class="sd">    </span>
-<span class="sd">    | NK(x) = scaling * ((x**n) / ((x**n) + (sig**n))) + noise</span>
+<span class="sd">    | NK(x) = sign(x) * scaling * ((abs(x)**n) / ((abs(x)**n) + (sig**n))) + noise</span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        :data:</span>
@@ -354,14 +354,14 @@
         <span class="n">noise</span> <span class="o">=</span> <span class="n">_NAKA_RUSHTON_PARAMETERS</span><span class="p">[</span><span class="n">cam</span><span class="p">][</span><span class="s1">&#39;noise&#39;</span><span class="p">]</span>
         
     <span class="k">if</span> <span class="n">direction</span> <span class="o">==</span> <span class="s1">&#39;forward&#39;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">scaling</span> <span class="o">*</span> <span class="p">((</span><span class="n">data</span><span class="o">**</span><span class="n">n</span><span class="p">)</span> <span class="o">/</span> <span class="p">((</span><span class="n">data</span><span class="o">**</span><span class="n">n</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">sig</span><span class="o">**</span><span class="n">n</span><span class="p">)))</span> <span class="o">+</span> <span class="n">noise</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">*</span><span class="n">scaling</span> <span class="o">*</span> <span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">**</span><span class="n">n</span><span class="p">)</span> <span class="o">/</span> <span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">**</span><span class="n">n</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">sig</span><span class="o">**</span><span class="n">n</span><span class="p">)))</span> <span class="o">+</span> <span class="n">noise</span>
     <span class="k">elif</span> <span class="n">direction</span> <span class="o">==</span><span class="s1">&#39;inverse&#39;</span><span class="p">:</span>
-        <span class="n">Ip</span> <span class="o">=</span>  <span class="n">sig</span><span class="o">*</span><span class="p">(((</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">data</span><span class="o">-</span><span class="n">noise</span><span class="p">))</span><span class="o">/</span><span class="p">(</span><span class="n">scaling</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">data</span><span class="o">-</span><span class="n">noise</span><span class="p">))))</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">n</span><span class="p">)</span>
+        <span class="n">Ip</span> <span class="o">=</span>  <span class="n">sig</span><span class="o">*</span><span class="p">(((</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">-</span><span class="n">noise</span><span class="p">))</span><span class="o">/</span><span class="p">(</span><span class="n">scaling</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">-</span><span class="n">noise</span><span class="p">))))</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">n</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">Ip</span><span class="p">):</span>
-            <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">data</span> <span class="o">&lt;</span> <span class="n">noise</span><span class="p">)</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">noise</span><span class="p">)</span>
             <span class="n">Ip</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">Ip</span><span class="p">[</span><span class="n">p</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">data</span> <span class="o">&lt;</span> <span class="n">noise</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">noise</span><span class="p">:</span>
                 <span class="n">Ip</span> <span class="o">=</span> <span class="o">-</span><span class="n">Ip</span>
         <span class="k">return</span> <span class="n">Ip</span></div>
 

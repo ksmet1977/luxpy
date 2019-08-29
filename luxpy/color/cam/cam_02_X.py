@@ -30,7 +30,7 @@ cam_02_X: Module with CIECAM02-type color appearance models
  :_CAM_02_X_NAKA_RUSHTON_PARAMETERS: | database with parameters 
                                        (n, sig, scaling and noise) 
                                        for the Naka-Rushton function: 
-                                     | NK(x) = sign(x) * scaling * ((|x|**n) / ((|x|**n) + (sig**n))) + noise
+                                     | NK(x) = sign(x) * scaling * ((abs(x)**n) / ((abs(x)**n) + (sig**n))) + noise
 
  :_CAM_02_X_UCS_PARAMETERS: | database with parameters specifying the conversion 
                               from ciecam02/cam16 to:
@@ -167,7 +167,7 @@ def naka_rushton(data, sig = 2.0, n = 0.73, scaling = 1.0, noise = 0.0, cam = No
     """
     Apply a Naka-Rushton response compression (n) and an adaptive shift (sig).
     
-    | NK(x) = sign(x) * scaling * ((|x|**n) / ((|x|**n) + (sig**n))) + noise
+    | NK(x) = sign(x) * scaling * ((abs(x)**n) / ((abs(x)**n) + (sig**n))) + noise
     
     Args:
         :data:
