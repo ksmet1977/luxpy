@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.utils.math.basics &mdash; LuxPy 1.4.9 documentation</title>
+  <title>luxpy.utils.math.basics &mdash; LuxPy 1.4.10 documentation</title>
   
 
   
@@ -56,7 +56,7 @@
             
             
               <div class="version">
-                1.4.9
+                1.4.10
               </div>
             
           
@@ -232,18 +232,20 @@
 
 <span class="sd"> :fit_ellipse(): Fit an ellipse to supplied data points.</span>
 <span class="sd"> </span>
+<span class="sd"> :ndinterp1(): Perform n-dimensional interpolation using Delaunay triangulation.</span>
+<span class="sd"> </span>
 <span class="sd">.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)</span>
 <span class="sd">===============================================================================</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">np2d</span><span class="p">,</span> <span class="n">_EPS</span><span class="p">,</span> <span class="n">asplit</span>
+<span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">sp</span><span class="p">,</span> <span class="n">np2d</span><span class="p">,</span> <span class="n">_EPS</span><span class="p">,</span> <span class="n">asplit</span>
 <span class="kn">from</span> <span class="nn">scipy.special</span> <span class="k">import</span> <span class="n">erf</span><span class="p">,</span> <span class="n">erfinv</span>
 <span class="n">__all__</span>  <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;normalize_3x3_matrix&#39;</span><span class="p">,</span><span class="s1">&#39;symmM_to_posdefM&#39;</span><span class="p">,</span><span class="s1">&#39;check_symmetric&#39;</span><span class="p">,</span>
             <span class="s1">&#39;check_posdef&#39;</span><span class="p">,</span><span class="s1">&#39;positive_arctan&#39;</span><span class="p">,</span><span class="s1">&#39;line_intersect&#39;</span><span class="p">,</span><span class="s1">&#39;erf&#39;</span><span class="p">,</span> <span class="s1">&#39;erfinv&#39;</span><span class="p">,</span> 
             <span class="s1">&#39;histogram&#39;</span><span class="p">,</span> <span class="s1">&#39;pol2cart&#39;</span><span class="p">,</span> <span class="s1">&#39;cart2pol&#39;</span><span class="p">,</span> <span class="s1">&#39;spher2cart&#39;</span><span class="p">,</span> <span class="s1">&#39;cart2spher&#39;</span><span class="p">]</span>
 <span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;bvgpdf&#39;</span><span class="p">,</span><span class="s1">&#39;mahalanobis2&#39;</span><span class="p">,</span><span class="s1">&#39;dot23&#39;</span><span class="p">,</span> <span class="s1">&#39;rms&#39;</span><span class="p">,</span><span class="s1">&#39;geomean&#39;</span><span class="p">,</span><span class="s1">&#39;polyarea&#39;</span><span class="p">]</span>
 <span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;magnitude_v&#39;</span><span class="p">,</span><span class="s1">&#39;angle_v1v2&#39;</span><span class="p">]</span>
-<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;v_to_cik&#39;</span><span class="p">,</span> <span class="s1">&#39;cik_to_v&#39;</span><span class="p">,</span> <span class="s1">&#39;fmod&#39;</span><span class="p">,</span> <span class="s1">&#39;fit_ellipse&#39;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;v_to_cik&#39;</span><span class="p">,</span> <span class="s1">&#39;cik_to_v&#39;</span><span class="p">,</span> <span class="s1">&#39;fmod&#39;</span><span class="p">,</span> <span class="s1">&#39;fit_ellipse&#39;</span><span class="p">,</span><span class="s1">&#39;ndinterp1&#39;</span><span class="p">]</span>
 
 
 <span class="c1">#------------------------------------------------------------------------------</span>
@@ -998,6 +1000,53 @@
         <span class="c1"># ensure the angle is betwen 0 and 2*pi</span>
         <span class="n">theta</span> <span class="o">=</span> <span class="n">fmod</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">xc</span><span class="p">,</span> <span class="n">yc</span><span class="p">,</span> <span class="n">theta</span><span class="p">))</span></div>
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="ndinterp1"><a class="viewcode-back" href="../../../../utils.html#luxpy.utils.math.ndinterp1">[docs]</a><span class="k">def</span> <span class="nf">ndinterp1</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Xnew</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Perform n-dimensional linear interpolation using Delaunay triangulation.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :X: </span>
+<span class="sd">            | ndarray with n-dimensional coordinates (last axis represents dimension).</span>
+<span class="sd">        :Y: </span>
+<span class="sd">            | ndarray with values at coordinates in X.</span>
+<span class="sd">        :Xnew: </span>
+<span class="sd">            | ndarray of new coordinates (last axis represents dimension).</span>
+<span class="sd">        </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :Ynew:</span>
+<span class="sd">            | ndarray with new values at coordinates in Xnew.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1">#get dimensions:</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">Xnew</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="c1"># create an object with triangulation</span>
+    <span class="n">tri</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">spatial</span><span class="o">.</span><span class="n">Delaunay</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> 
+    <span class="c1"># find simplexes that contain interpolated points</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">tri</span><span class="o">.</span><span class="n">find_simplex</span><span class="p">(</span><span class="n">Xnew</span><span class="p">)</span>
+    <span class="c1"># get the vertices for each simplex</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">tri</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="n">s</span><span class="p">]</span>
+    <span class="c1"># get transform matrices for each simplex (see explanation bellow)</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">tri</span><span class="o">.</span><span class="n">transform</span><span class="p">[</span><span class="n">s</span><span class="p">]</span>
+    <span class="c1"># for each interpolated point p, mutliply the transform matrix by </span>
+    <span class="c1"># vector p-r, where r=m[:,n,:] is one of the simplex vertices to which </span>
+    <span class="c1"># the matrix m is related to (again, see bellow)</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;ijk,ik-&gt;ij&#39;</span><span class="p">,</span> <span class="n">m</span><span class="p">[:,:</span><span class="n">n</span><span class="p">,:</span><span class="n">n</span><span class="p">],</span> <span class="n">Xnew</span><span class="o">-</span><span class="n">m</span><span class="p">[:,</span><span class="n">n</span><span class="p">,:])</span>
+    
+    <span class="c1"># get the weights for the vertices; `b` contains an n-dimensional vector</span>
+    <span class="c1"># with weights for all but the last vertices of the simplex</span>
+    <span class="c1"># (note that for n-D grid, each simplex consists of n+1 vertices);</span>
+    <span class="c1"># the remaining weight for the last vertex can be copmuted from</span>
+    <span class="c1"># the condition that sum of weights must be equal to 1</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="n">b</span><span class="p">,</span> <span class="mi">1</span><span class="o">-</span><span class="n">b</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)]</span>
+    
+    <span class="c1"># interpolate:</span>
+    <span class="k">if</span> <span class="n">Y</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">Ynew</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;ijk,ij-&gt;ik&#39;</span><span class="p">,</span> <span class="n">Y</span><span class="p">[</span><span class="n">v</span><span class="p">],</span> <span class="n">w</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">Ynew</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;ij,ij-&gt;i&#39;</span><span class="p">,</span> <span class="n">Y</span><span class="p">[</span><span class="n">v</span><span class="p">],</span> <span class="n">w</span><span class="p">)</span>
+        
+    <span class="k">return</span> <span class="n">Ynew</span></div>
     
 </pre></div>
 

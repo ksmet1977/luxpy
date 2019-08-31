@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Toolboxes &mdash; LuxPy 1.4.9 documentation</title>
+  <title>Toolboxes &mdash; LuxPy 1.4.10 documentation</title>
   
 
   
@@ -57,7 +57,7 @@
             
             
               <div class="version">
-                1.4.9
+                1.4.10
               </div>
             
           
@@ -2630,7 +2630,7 @@ set.</td>
 </div></blockquote>
 <dl class="function">
 <dt id="luxpy.toolboxes.hypspcim.render_image">
-<code class="descclassname">luxpy.toolboxes.hypspcim.</code><code class="descname">render_image</code><span class="sig-paren">(</span><em>img=None</em>, <em>spd=None</em>, <em>rfl=None</em>, <em>out='img_hyp'</em>, <em>refspd=None</em>, <em>D=None</em>, <em>cieobs='1931_2'</em>, <em>cspace='ipt'</em>, <em>cspace_tf={}</em>, <em>k_neighbours=4</em>, <em>show=True</em>, <em>verbosity=0</em>, <em>show_ref_img=True</em>, <em>stack_test_ref=12</em>, <em>write_to_file=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/hypspcim/hyperspectral_img_simulator.html#render_image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.hypspcim.render_image" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">luxpy.toolboxes.hypspcim.</code><code class="descname">render_image</code><span class="sig-paren">(</span><em>img=None</em>, <em>spd=None</em>, <em>rfl=None</em>, <em>out='img_hyp'</em>, <em>refspd=None</em>, <em>D=None</em>, <em>cieobs='1931_2'</em>, <em>cspace='xyz'</em>, <em>cspace_tf={}</em>, <em>interp_type='nd'</em>, <em>k_neighbours=4</em>, <em>show=True</em>, <em>verbosity=0</em>, <em>show_ref_img=True</em>, <em>stack_test_ref=12</em>, <em>write_to_file=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/hypspcim/hyperspectral_img_simulator.html#render_image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.hypspcim.render_image" title="Permalink to this definition">¶</a></dt>
 <dd><p>Render image under specified light source spd.</p>
 <dl class="docutils">
 <dt>Args:</dt>
@@ -2684,8 +2684,12 @@ set.</td>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">cspace:</th><td class="field-body"><div class="first last line-block">
-<div class="line">‘ipt’,  optional</div>
+<div class="line">‘xyz’,  optional</div>
 <div class="line">Color space for color coordinate to rfl mapping.</div>
+<div class="line">Tip: Use linear space (e.g. ‘xyz’, ‘Yuv’,…) for (interp_type == ‘nd’),</div>
+<div class="line-block">
+<div class="line">and perceptually uniform space (e.g. ‘ipt’) for (interp_type == ‘nearest’)</div>
+</div>
 </div>
 </td>
 </tr>
@@ -2695,14 +2699,22 @@ set.</td>
 </div>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">k_neighbours:</th><td class="field-body"><div class="first last line-block">
+<tr class="field-even field"><th class="field-name">interp_type:</th><td class="field-body"><div class="first last line-block">
+<div class="line">‘nd’, optional</div>
+<div class="line">Options:</div>
+<div class="line">- ‘nd’: perform n-dimensional linear interpolation using Delaunay triangulation.</div>
+<div class="line">- ‘nearest’: perform nearest neighbour interpolation. </div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">k_neighbours:</th><td class="field-body"><div class="first last line-block">
 <div class="line">4 or int, optional</div>
 <div class="line">Number of nearest neighbours for reflectance spectrum interpolation.</div>
 <div class="line">Neighbours are found using scipy.cKDTree</div>
 </div>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">show:</th><td class="field-body"><div class="first last line-block">
+<tr class="field-even field"><th class="field-name">show:</th><td class="field-body"><div class="first last line-block">
 <div class="line">True, optional</div>
 <div class="line-block">
 <div class="line">Show images.</div>
@@ -2710,27 +2722,27 @@ set.</td>
 </div>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">verbosity:</th><td class="field-body"><div class="first last line-block">
+<tr class="field-odd field"><th class="field-name">verbosity:</th><td class="field-body"><div class="first last line-block">
 <div class="line">0, optional</div>
 <div class="line">If &gt; 0: make a plot of the color coordinates of original and 
 rendered image pixels.</div>
 </div>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">show_ref_img:</th><td class="field-body"><div class="first last line-block">
+<tr class="field-even field"><th class="field-name">show_ref_img:</th><td class="field-body"><div class="first last line-block">
 <div class="line">True, optional</div>
 <div class="line">True: shows rendered image under reference spd. False: shows
 original image.</div>
 </div>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">write_to_file:</th><td class="field-body"><div class="first last line-block">
+<tr class="field-odd field"><th class="field-name">write_to_file:</th><td class="field-body"><div class="first last line-block">
 <div class="line">None, optional</div>
 <div class="line">None: do nothing, else: write to filename(+path) in :write_to_file:</div>
 </div>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">stack_test_ref:</th><td class="field-body"><div class="first last line-block">
+<tr class="field-even field"><th class="field-name">stack_test_ref:</th><td class="field-body"><div class="first last line-block">
 <div class="line">12, optional</div>
 <div class="line-block">
 <div class="line">- 12: left (test), right (ref) format for show and imwrite</div>
@@ -2753,6 +2765,104 @@ original image.</div>
 <tr class="field-odd field"><th class="field-name">returns:</th><td class="field-body"><div class="first last line-block">
 <div class="line">img_hyp, img_ren, </div>
 <div class="line">ndarrays with hyperspectral image and rendered images </div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="luxpy.toolboxes.hypspcim.xyz_to_rfl">
+<code class="descclassname">luxpy.toolboxes.hypspcim.</code><code class="descname">xyz_to_rfl</code><span class="sig-paren">(</span><em>xyz</em>, <em>rfl=None</em>, <em>out='rfl_est'</em>, <em>refspd=None</em>, <em>D=None</em>, <em>cieobs='1931_2'</em>, <em>cspace='xyz'</em>, <em>cspace_tf={}</em>, <em>interp_type='nd'</em>, <em>k_neighbours=4</em>, <em>verbosity=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/hypspcim/hyperspectral_img_simulator.html#xyz_to_rfl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.hypspcim.xyz_to_rfl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Approximate spectral reflectance of xyz based on nd-dimensional linear interpolation 
+or k nearest neighbour interpolation of samples from a standard reflectance set.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">xyz:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray with tristimulus values of target points.</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">rfl:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray, optional</div>
+<div class="line">Reflectance set for color coordinate to rfl mapping.</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">out:</th><td class="field-body"><div class="first last line-block">
+<div class="line">‘rfl_est’ or str, optional</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">refspd:</th><td class="field-body"><div class="first last line-block">
+<div class="line">None, optional</div>
+<div class="line">Refer ence spectrum for color coordinate to rfl mapping.</div>
+<div class="line">None defaults to D65.</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">cieobs:</th><td class="field-body"><div class="first last line-block">
+<div class="line">_CIEOBS, optional</div>
+<div class="line">CMF set used for calculation of xyz from spectral data.</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">cspace:</th><td class="field-body"><div class="first last line-block">
+<div class="line">‘xyz’,  optional</div>
+<div class="line">Color space for color coordinate to rfl mapping.</div>
+<div class="line">Tip: Use linear space (e.g. ‘xyz’, ‘Yuv’,…) for (interp_type == ‘nd’),</div>
+<div class="line-block">
+<div class="line">and perceptually uniform space (e.g. ‘ipt’) for (interp_type == ‘nearest’)</div>
+</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">cspace_tf:</th><td class="field-body"><div class="first last line-block">
+<div class="line">{}, optional</div>
+<div class="line">Dict with parameters for xyz_to_cspace and cspace_to_xyz transform.</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">interp_type:</th><td class="field-body"><div class="first last line-block">
+<div class="line">‘nd’, optional</div>
+<div class="line">Options:</div>
+<div class="line">- ‘nd’: perform n-dimensional linear interpolation using Delaunay triangulation.</div>
+<div class="line">- ‘nearest’: perform nearest neighbour interpolation. </div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">k_neighbours:</th><td class="field-body"><div class="first last line-block">
+<div class="line">4 or int, optional</div>
+<div class="line">Number of nearest neighbours for reflectance spectrum interpolation.</div>
+<div class="line">Neighbours are found using scipy.cKDTree</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">verbosity:</th><td class="field-body"><div class="first last line-block">
+<div class="line">0, optional</div>
+<div class="line">If &gt; 0: make a plot of the color coordinates of original and 
+rendered image pixels.</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">returns:</th><td class="field-body"><div class="first last line-block">
+<div class="line">:rfl_est:</div>
+<div class="line">ndarrays with estimated reflectance spectra.</div>
 </div>
 </td>
 </tr>

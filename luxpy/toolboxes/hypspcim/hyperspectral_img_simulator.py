@@ -18,13 +18,13 @@ Module for hyper spectral image simulation
 """
 
 from luxpy import (warnings, np, plt, imsave, cKDTree, cat, colortf, _PKG_PATH, _SEP, _CIEOBS, 
-                   _CIE_ILLUMINANTS, _CRI_RFL, _EPS, spd_to_xyz,plot_color_data)
+                   _CIE_ILLUMINANTS, _CRI_RFL, _EPS, spd_to_xyz,plot_color_data, math)
 from luxpy.toolboxes.spdbuild import spdbuilder as spb
 
 # from skimage.io import imsave
 # from matplotlib.pyplot import imread
 
-__all__ =['_HYPSPCIM_PATH','_HYPSPCIM_DEFAULT_IMAGE','render_image']             
+__all__ =['_HYPSPCIM_PATH','_HYPSPCIM_DEFAULT_IMAGE','render_image','xyz_to_rfl']             
 
 _HYPSPCIM_PATH = _PKG_PATH + _SEP + 'hypspcim' + _SEP
 _HYPSPCIM_DEFAULT_IMAGE = _PKG_PATH + _SEP + 'toolboxes' + _SEP + 'hypspcim' +  _SEP + 'data' + _SEP + 'testimage1.jpg'
@@ -32,11 +32,11 @@ _HYPSPCIM_DEFAULT_IMAGE = _PKG_PATH + _SEP + 'toolboxes' + _SEP + 'hypspcim' +  
 
 def xyz_to_rfl(xyz, rfl = None, out = 'rfl_est', \
                  refspd = None, D = None, cieobs = _CIEOBS, \
-                 cspace = 'ipt', cspace_tf = {},\
-                 k_neighbours = 4, verbosity = 0):
+                 cspace = 'xyz', cspace_tf = {},\
+                 interp_type = 'nd', k_neighbours = 4, verbosity = 0):
     """
-    Approximate spectral reflectance of xyz based on k nearest neighbour 
-    interpolation of samples from a standard reflectance set.
+    Approximate spectral reflectance of xyz based on nd-dimensional linear interpolation 
+    or k nearest neighbour interpolation of samples from a standard reflectance set.
     
     Args:
         :xyz: 
@@ -54,11 +54,18 @@ def xyz_to_rfl(xyz, rfl = None, out = 'rfl_est', \
             | _CIEOBS, optional
             | CMF set used for calculation of xyz from spectral data.
         :cspace:
-            | 'ipt',  optional
+            | 'xyz',  optional
             | Color space for color coordinate to rfl mapping.
+            | Tip: Use linear space (e.g. 'xyz', 'Yuv',...) for (interp_type == 'nd'),
+            |      and perceptually uniform space (e.g. 'ipt') for (interp_type == 'nearest')
         :cspace_tf:
             | {}, optional
-            | Dict with parameters for xyz_to_... and ..._to_xyz transform.
+            | Dict with parameters for xyz_to_cspace and cspace_to_xyz transform.
+        :interp_type:
+            | 'nd', optional
+            | Options:
+            | - 'nd': perform n-dimensional linear interpolation using Delaunay triangulation.
+            | - 'nearest': perform nearest neighbour interpolation. 
         :k_neighbours:
             | 4 or int, optional
             | Number of nearest neighbours for reflectance spectrum interpolation.
@@ -92,18 +99,24 @@ def xyz_to_rfl(xyz, rfl = None, out = 'rfl_est', \
     # Convert xyz to lab-type values under refspd:
     lab = colortf(xyz, tf = cspace, fwtf = cspace_tf_copy, bwtf = cspace_tf_copy)
     
-    # Find rfl (cfr. lab_rr) from rfl set that results in 'near' metameric 
-    # color coordinates for each value in lab_ur (i.e. smallest DE):
-    # Construct cKDTree:
-    tree = cKDTree(lab_rr, copy_data = True)
-    
-    # Interpolate rfls using k nearest neightbours and inverse distance weigthing:
-    d, inds = tree.query(lab, k = k_neighbours )
-    if k_neighbours  > 1:
-        w = (1.0 / d**2)[:,:,None] # inverse distance weigthing
-        rfl_est = np.sum(w * rfl[inds+1,:], axis=1) / np.sum(w, axis=1)
+    if interp_type == 'nearest':
+        # Find rfl (cfr. lab_rr) from rfl set that results in 'near' metameric 
+        # color coordinates for each value in lab_ur (i.e. smallest DE):
+        # Construct cKDTree:
+        tree = cKDTree(lab_rr, copy_data = True)
+        
+        # Interpolate rfls using k nearest neightbours and inverse distance weigthing:
+        d, inds = tree.query(lab, k = k_neighbours )
+        if k_neighbours  > 1:
+            w = (1.0 / d**2)[:,:,None] # inverse distance weigthing
+            rfl_est = np.sum(w * rfl[inds+1,:], axis=1) / np.sum(w, axis=1)
+        else:
+            rfl_est = rfl[inds+1,:].copy()
+    elif interp_type == 'nd':
+        rfl_est = math.ndinterp1(lab_rr, rfl[1:], lab)
     else:
-        rfl_est = rfl[inds+1,:].copy()
+        raise Exception('xyz_to_rfl(): unsupported interp_type!')
+            
     rfl_est = np.vstack((rfl[0],rfl_est))
         
     if (verbosity > 0) | ('xyz_est' in out.split(',')) | ('lab_est' in out.split(',')) | ('DEi_ab' in out.split(',')) | ('DEa_ab' in out.split(',')):
@@ -128,11 +141,12 @@ def xyz_to_rfl(xyz, rfl = None, out = 'rfl_est', \
         return rfl_est, xyz_est
     else:
         return eval(out)
-
+    
+    
 def render_image(img = None, spd = None, rfl = None, out = 'img_hyp', \
                  refspd = None, D = None, cieobs = _CIEOBS, \
-                 cspace = 'ipt', cspace_tf = {},\
-                 k_neighbours = 4, show = True,
+                 cspace = 'xyz', cspace_tf = {},\
+                 interp_type = 'nd', k_neighbours = 4, show = True,
                  verbosity = 0, show_ref_img = True,\
                  stack_test_ref = 12,\
                  write_to_file = None):
@@ -163,11 +177,19 @@ def render_image(img = None, spd = None, rfl = None, out = 'img_hyp', \
             | _CIEOBS, optional
             | CMF set for calculation of xyz from spectral data.
         :cspace:
-            | 'ipt',  optional
+            | 'xyz',  optional
             | Color space for color coordinate to rfl mapping.
+            | Tip: Use linear space (e.g. 'xyz', 'Yuv',...) for (interp_type == 'nd'),
+            |      and perceptually uniform space (e.g. 'ipt') for (interp_type == 'nearest')
         :cspace_tf:
             | {}, optional
             | Dict with parameters for xyz_to_cspace and cspace_to_xyz transform.
+        :interp_type:
+            | 'nd', optional
+            | Options:
+            | - 'nd': perform n-dimensional linear interpolation using Delaunay triangulation.
+            | - 'nearest': perform nearest neighbour interpolation. 
+
         :k_neighbours:
             | 4 or int, optional
             | Number of nearest neighbours for reflectance spectrum interpolation.
@@ -231,7 +253,7 @@ def render_image(img = None, spd = None, rfl = None, out = 'img_hyp', \
     rfl_est, xyzri = xyz_to_rfl(xyz_ur, rfl = rfl, out = 'rfl_est,xyz_est', \
                  refspd = refspd, D = D, cieobs = cieobs, \
                  cspace = cspace, cspace_tf = cspace_tf,\
-                 k_neighbours = k_neighbours, verbosity = verbosity)
+                 interp_type = interp_type, k_neighbours = k_neighbours, verbosity = verbosity)
     
     
     
@@ -323,11 +345,13 @@ if __name__ == '__main__':
     plt.close('all')
     S = spb.spd_builder(peakwl = [460,525,590],fwhm=[20,40,20],target=4000, tar_type = 'cct') 
     img = _HYPSPCIM_DEFAULT_IMAGE
-    img_hyp,img_ren = render_image(img = img, cspace = 'ipt',spd = S, 
-                                 D=1, show_ref_img = True,
-                                 stack_test_ref = 21,
-                                 out='img_hyp,img_ren',
-                                 write_to_file = 'test.jpg')    
+    img_hyp,img_ren = render_image(img = img, 
+                                   cspace = 'xyz',interp_type='nd',
+                                   spd = S, D=1, 
+                                   show_ref_img = True,
+                                   stack_test_ref = 21,
+                                   out='img_hyp,img_ren',
+                                   write_to_file = 'test.jpg')    
     
         
 

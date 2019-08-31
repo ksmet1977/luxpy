@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.toolboxes.hypspcim.hyperspectral_img_simulator &mdash; LuxPy 1.4.9 documentation</title>
+  <title>luxpy.toolboxes.hypspcim.hyperspectral_img_simulator &mdash; LuxPy 1.4.10 documentation</title>
   
 
   
@@ -56,7 +56,7 @@
             
             
               <div class="version">
-                1.4.9
+                1.4.10
               </div>
             
           
@@ -169,25 +169,25 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="p">(</span><span class="n">warnings</span><span class="p">,</span> <span class="n">np</span><span class="p">,</span> <span class="n">plt</span><span class="p">,</span> <span class="n">imsave</span><span class="p">,</span> <span class="n">cKDTree</span><span class="p">,</span> <span class="n">cat</span><span class="p">,</span> <span class="n">colortf</span><span class="p">,</span> <span class="n">_PKG_PATH</span><span class="p">,</span> <span class="n">_SEP</span><span class="p">,</span> <span class="n">_CIEOBS</span><span class="p">,</span> 
-                   <span class="n">_CIE_ILLUMINANTS</span><span class="p">,</span> <span class="n">_CRI_RFL</span><span class="p">,</span> <span class="n">_EPS</span><span class="p">,</span> <span class="n">spd_to_xyz</span><span class="p">,</span><span class="n">plot_color_data</span><span class="p">)</span>
+                   <span class="n">_CIE_ILLUMINANTS</span><span class="p">,</span> <span class="n">_CRI_RFL</span><span class="p">,</span> <span class="n">_EPS</span><span class="p">,</span> <span class="n">spd_to_xyz</span><span class="p">,</span><span class="n">plot_color_data</span><span class="p">,</span> <span class="n">math</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">luxpy.toolboxes.spdbuild</span> <span class="k">import</span> <span class="n">spdbuilder</span> <span class="k">as</span> <span class="n">spb</span>
 
 <span class="c1"># from skimage.io import imsave</span>
 <span class="c1"># from matplotlib.pyplot import imread</span>
 
-<span class="n">__all__</span> <span class="o">=</span><span class="p">[</span><span class="s1">&#39;_HYPSPCIM_PATH&#39;</span><span class="p">,</span><span class="s1">&#39;_HYPSPCIM_DEFAULT_IMAGE&#39;</span><span class="p">,</span><span class="s1">&#39;render_image&#39;</span><span class="p">]</span>             
+<span class="n">__all__</span> <span class="o">=</span><span class="p">[</span><span class="s1">&#39;_HYPSPCIM_PATH&#39;</span><span class="p">,</span><span class="s1">&#39;_HYPSPCIM_DEFAULT_IMAGE&#39;</span><span class="p">,</span><span class="s1">&#39;render_image&#39;</span><span class="p">,</span><span class="s1">&#39;xyz_to_rfl&#39;</span><span class="p">]</span>             
 
 <span class="n">_HYPSPCIM_PATH</span> <span class="o">=</span> <span class="n">_PKG_PATH</span> <span class="o">+</span> <span class="n">_SEP</span> <span class="o">+</span> <span class="s1">&#39;hypspcim&#39;</span> <span class="o">+</span> <span class="n">_SEP</span>
 <span class="n">_HYPSPCIM_DEFAULT_IMAGE</span> <span class="o">=</span> <span class="n">_PKG_PATH</span> <span class="o">+</span> <span class="n">_SEP</span> <span class="o">+</span> <span class="s1">&#39;toolboxes&#39;</span> <span class="o">+</span> <span class="n">_SEP</span> <span class="o">+</span> <span class="s1">&#39;hypspcim&#39;</span> <span class="o">+</span>  <span class="n">_SEP</span> <span class="o">+</span> <span class="s1">&#39;data&#39;</span> <span class="o">+</span> <span class="n">_SEP</span> <span class="o">+</span> <span class="s1">&#39;testimage1.jpg&#39;</span>
 
 
-<span class="k">def</span> <span class="nf">xyz_to_rfl</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">rfl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;rfl_est&#39;</span><span class="p">,</span> \
+<div class="viewcode-block" id="xyz_to_rfl"><a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.hypspcim.xyz_to_rfl">[docs]</a><span class="k">def</span> <span class="nf">xyz_to_rfl</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">rfl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;rfl_est&#39;</span><span class="p">,</span> \
                  <span class="n">refspd</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> \
-                 <span class="n">cspace</span> <span class="o">=</span> <span class="s1">&#39;ipt&#39;</span><span class="p">,</span> <span class="n">cspace_tf</span> <span class="o">=</span> <span class="p">{},</span>\
-                 <span class="n">k_neighbours</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+                 <span class="n">cspace</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">cspace_tf</span> <span class="o">=</span> <span class="p">{},</span>\
+                 <span class="n">interp_type</span> <span class="o">=</span> <span class="s1">&#39;nd&#39;</span><span class="p">,</span> <span class="n">k_neighbours</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Approximate spectral reflectance of xyz based on k nearest neighbour </span>
-<span class="sd">    interpolation of samples from a standard reflectance set.</span>
+<span class="sd">    Approximate spectral reflectance of xyz based on nd-dimensional linear interpolation </span>
+<span class="sd">    or k nearest neighbour interpolation of samples from a standard reflectance set.</span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        :xyz: </span>
@@ -205,11 +205,18 @@
 <span class="sd">            | _CIEOBS, optional</span>
 <span class="sd">            | CMF set used for calculation of xyz from spectral data.</span>
 <span class="sd">        :cspace:</span>
-<span class="sd">            | &#39;ipt&#39;,  optional</span>
+<span class="sd">            | &#39;xyz&#39;,  optional</span>
 <span class="sd">            | Color space for color coordinate to rfl mapping.</span>
+<span class="sd">            | Tip: Use linear space (e.g. &#39;xyz&#39;, &#39;Yuv&#39;,...) for (interp_type == &#39;nd&#39;),</span>
+<span class="sd">            |      and perceptually uniform space (e.g. &#39;ipt&#39;) for (interp_type == &#39;nearest&#39;)</span>
 <span class="sd">        :cspace_tf:</span>
 <span class="sd">            | {}, optional</span>
-<span class="sd">            | Dict with parameters for xyz_to_... and ..._to_xyz transform.</span>
+<span class="sd">            | Dict with parameters for xyz_to_cspace and cspace_to_xyz transform.</span>
+<span class="sd">        :interp_type:</span>
+<span class="sd">            | &#39;nd&#39;, optional</span>
+<span class="sd">            | Options:</span>
+<span class="sd">            | - &#39;nd&#39;: perform n-dimensional linear interpolation using Delaunay triangulation.</span>
+<span class="sd">            | - &#39;nearest&#39;: perform nearest neighbour interpolation. </span>
 <span class="sd">        :k_neighbours:</span>
 <span class="sd">            | 4 or int, optional</span>
 <span class="sd">            | Number of nearest neighbours for reflectance spectrum interpolation.</span>
@@ -243,18 +250,24 @@
     <span class="c1"># Convert xyz to lab-type values under refspd:</span>
     <span class="n">lab</span> <span class="o">=</span> <span class="n">colortf</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">tf</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">,</span> <span class="n">fwtf</span> <span class="o">=</span> <span class="n">cspace_tf_copy</span><span class="p">,</span> <span class="n">bwtf</span> <span class="o">=</span> <span class="n">cspace_tf_copy</span><span class="p">)</span>
     
-    <span class="c1"># Find rfl (cfr. lab_rr) from rfl set that results in &#39;near&#39; metameric </span>
-    <span class="c1"># color coordinates for each value in lab_ur (i.e. smallest DE):</span>
-    <span class="c1"># Construct cKDTree:</span>
-    <span class="n">tree</span> <span class="o">=</span> <span class="n">cKDTree</span><span class="p">(</span><span class="n">lab_rr</span><span class="p">,</span> <span class="n">copy_data</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
-    
-    <span class="c1"># Interpolate rfls using k nearest neightbours and inverse distance weigthing:</span>
-    <span class="n">d</span><span class="p">,</span> <span class="n">inds</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">lab</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="n">k_neighbours</span> <span class="p">)</span>
-    <span class="k">if</span> <span class="n">k_neighbours</span>  <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="n">w</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">d</span><span class="o">**</span><span class="mi">2</span><span class="p">)[:,:,</span><span class="kc">None</span><span class="p">]</span> <span class="c1"># inverse distance weigthing</span>
-        <span class="n">rfl_est</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">w</span> <span class="o">*</span> <span class="n">rfl</span><span class="p">[</span><span class="n">inds</span><span class="o">+</span><span class="mi">1</span><span class="p">,:],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">interp_type</span> <span class="o">==</span> <span class="s1">&#39;nearest&#39;</span><span class="p">:</span>
+        <span class="c1"># Find rfl (cfr. lab_rr) from rfl set that results in &#39;near&#39; metameric </span>
+        <span class="c1"># color coordinates for each value in lab_ur (i.e. smallest DE):</span>
+        <span class="c1"># Construct cKDTree:</span>
+        <span class="n">tree</span> <span class="o">=</span> <span class="n">cKDTree</span><span class="p">(</span><span class="n">lab_rr</span><span class="p">,</span> <span class="n">copy_data</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+        
+        <span class="c1"># Interpolate rfls using k nearest neightbours and inverse distance weigthing:</span>
+        <span class="n">d</span><span class="p">,</span> <span class="n">inds</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">lab</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="n">k_neighbours</span> <span class="p">)</span>
+        <span class="k">if</span> <span class="n">k_neighbours</span>  <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">w</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">d</span><span class="o">**</span><span class="mi">2</span><span class="p">)[:,:,</span><span class="kc">None</span><span class="p">]</span> <span class="c1"># inverse distance weigthing</span>
+            <span class="n">rfl_est</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">w</span> <span class="o">*</span> <span class="n">rfl</span><span class="p">[</span><span class="n">inds</span><span class="o">+</span><span class="mi">1</span><span class="p">,:],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">rfl_est</span> <span class="o">=</span> <span class="n">rfl</span><span class="p">[</span><span class="n">inds</span><span class="o">+</span><span class="mi">1</span><span class="p">,:]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">interp_type</span> <span class="o">==</span> <span class="s1">&#39;nd&#39;</span><span class="p">:</span>
+        <span class="n">rfl_est</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ndinterp1</span><span class="p">(</span><span class="n">lab_rr</span><span class="p">,</span> <span class="n">rfl</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">lab</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">rfl_est</span> <span class="o">=</span> <span class="n">rfl</span><span class="p">[</span><span class="n">inds</span><span class="o">+</span><span class="mi">1</span><span class="p">,:]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;xyz_to_rfl(): unsupported interp_type!&#39;</span><span class="p">)</span>
+            
     <span class="n">rfl_est</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">rfl</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">rfl_est</span><span class="p">))</span>
         
     <span class="k">if</span> <span class="p">(</span><span class="n">verbosity</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="s1">&#39;xyz_est&#39;</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">))</span> <span class="o">|</span> <span class="p">(</span><span class="s1">&#39;lab_est&#39;</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">))</span> <span class="o">|</span> <span class="p">(</span><span class="s1">&#39;DEi_ab&#39;</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">))</span> <span class="o">|</span> <span class="p">(</span><span class="s1">&#39;DEa_ab&#39;</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)):</span>
@@ -278,12 +291,13 @@
     <span class="k">elif</span> <span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;rfl_est,xyz_est&#39;</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">rfl_est</span><span class="p">,</span> <span class="n">xyz_est</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="nb">eval</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
-
+        <span class="k">return</span> <span class="nb">eval</span><span class="p">(</span><span class="n">out</span><span class="p">)</span></div>
+    
+    
 <div class="viewcode-block" id="render_image"><a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.hypspcim.render_image">[docs]</a><span class="k">def</span> <span class="nf">render_image</span><span class="p">(</span><span class="n">img</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">spd</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">rfl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;img_hyp&#39;</span><span class="p">,</span> \
                  <span class="n">refspd</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> \
-                 <span class="n">cspace</span> <span class="o">=</span> <span class="s1">&#39;ipt&#39;</span><span class="p">,</span> <span class="n">cspace_tf</span> <span class="o">=</span> <span class="p">{},</span>\
-                 <span class="n">k_neighbours</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="n">show</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">cspace</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">cspace_tf</span> <span class="o">=</span> <span class="p">{},</span>\
+                 <span class="n">interp_type</span> <span class="o">=</span> <span class="s1">&#39;nd&#39;</span><span class="p">,</span> <span class="n">k_neighbours</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="n">show</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
                  <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">show_ref_img</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>\
                  <span class="n">stack_test_ref</span> <span class="o">=</span> <span class="mi">12</span><span class="p">,</span>\
                  <span class="n">write_to_file</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
@@ -314,11 +328,19 @@
 <span class="sd">            | _CIEOBS, optional</span>
 <span class="sd">            | CMF set for calculation of xyz from spectral data.</span>
 <span class="sd">        :cspace:</span>
-<span class="sd">            | &#39;ipt&#39;,  optional</span>
+<span class="sd">            | &#39;xyz&#39;,  optional</span>
 <span class="sd">            | Color space for color coordinate to rfl mapping.</span>
+<span class="sd">            | Tip: Use linear space (e.g. &#39;xyz&#39;, &#39;Yuv&#39;,...) for (interp_type == &#39;nd&#39;),</span>
+<span class="sd">            |      and perceptually uniform space (e.g. &#39;ipt&#39;) for (interp_type == &#39;nearest&#39;)</span>
 <span class="sd">        :cspace_tf:</span>
 <span class="sd">            | {}, optional</span>
 <span class="sd">            | Dict with parameters for xyz_to_cspace and cspace_to_xyz transform.</span>
+<span class="sd">        :interp_type:</span>
+<span class="sd">            | &#39;nd&#39;, optional</span>
+<span class="sd">            | Options:</span>
+<span class="sd">            | - &#39;nd&#39;: perform n-dimensional linear interpolation using Delaunay triangulation.</span>
+<span class="sd">            | - &#39;nearest&#39;: perform nearest neighbour interpolation. </span>
+
 <span class="sd">        :k_neighbours:</span>
 <span class="sd">            | 4 or int, optional</span>
 <span class="sd">            | Number of nearest neighbours for reflectance spectrum interpolation.</span>
@@ -382,7 +404,7 @@
     <span class="n">rfl_est</span><span class="p">,</span> <span class="n">xyzri</span> <span class="o">=</span> <span class="n">xyz_to_rfl</span><span class="p">(</span><span class="n">xyz_ur</span><span class="p">,</span> <span class="n">rfl</span> <span class="o">=</span> <span class="n">rfl</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;rfl_est,xyz_est&#39;</span><span class="p">,</span> \
                  <span class="n">refspd</span> <span class="o">=</span> <span class="n">refspd</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="n">D</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> \
                  <span class="n">cspace</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">,</span> <span class="n">cspace_tf</span> <span class="o">=</span> <span class="n">cspace_tf</span><span class="p">,</span>\
-                 <span class="n">k_neighbours</span> <span class="o">=</span> <span class="n">k_neighbours</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="n">verbosity</span><span class="p">)</span>
+                 <span class="n">interp_type</span> <span class="o">=</span> <span class="n">interp_type</span><span class="p">,</span> <span class="n">k_neighbours</span> <span class="o">=</span> <span class="n">k_neighbours</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="n">verbosity</span><span class="p">)</span>
     
     
     
@@ -474,11 +496,13 @@
     <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
     <span class="n">S</span> <span class="o">=</span> <span class="n">spb</span><span class="o">.</span><span class="n">spd_builder</span><span class="p">(</span><span class="n">peakwl</span> <span class="o">=</span> <span class="p">[</span><span class="mi">460</span><span class="p">,</span><span class="mi">525</span><span class="p">,</span><span class="mi">590</span><span class="p">],</span><span class="n">fwhm</span><span class="o">=</span><span class="p">[</span><span class="mi">20</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">20</span><span class="p">],</span><span class="n">target</span><span class="o">=</span><span class="mi">4000</span><span class="p">,</span> <span class="n">tar_type</span> <span class="o">=</span> <span class="s1">&#39;cct&#39;</span><span class="p">)</span> 
     <span class="n">img</span> <span class="o">=</span> <span class="n">_HYPSPCIM_DEFAULT_IMAGE</span>
-    <span class="n">img_hyp</span><span class="p">,</span><span class="n">img_ren</span> <span class="o">=</span> <span class="n">render_image</span><span class="p">(</span><span class="n">img</span> <span class="o">=</span> <span class="n">img</span><span class="p">,</span> <span class="n">cspace</span> <span class="o">=</span> <span class="s1">&#39;ipt&#39;</span><span class="p">,</span><span class="n">spd</span> <span class="o">=</span> <span class="n">S</span><span class="p">,</span> 
-                                 <span class="n">D</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">show_ref_img</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-                                 <span class="n">stack_test_ref</span> <span class="o">=</span> <span class="mi">21</span><span class="p">,</span>
-                                 <span class="n">out</span><span class="o">=</span><span class="s1">&#39;img_hyp,img_ren&#39;</span><span class="p">,</span>
-                                 <span class="n">write_to_file</span> <span class="o">=</span> <span class="s1">&#39;test.jpg&#39;</span><span class="p">)</span>    
+    <span class="n">img_hyp</span><span class="p">,</span><span class="n">img_ren</span> <span class="o">=</span> <span class="n">render_image</span><span class="p">(</span><span class="n">img</span> <span class="o">=</span> <span class="n">img</span><span class="p">,</span> 
+                                   <span class="n">cspace</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span><span class="n">interp_type</span><span class="o">=</span><span class="s1">&#39;nd&#39;</span><span class="p">,</span>
+                                   <span class="n">spd</span> <span class="o">=</span> <span class="n">S</span><span class="p">,</span> <span class="n">D</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> 
+                                   <span class="n">show_ref_img</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                                   <span class="n">stack_test_ref</span> <span class="o">=</span> <span class="mi">21</span><span class="p">,</span>
+                                   <span class="n">out</span><span class="o">=</span><span class="s1">&#39;img_hyp,img_ren&#39;</span><span class="p">,</span>
+                                   <span class="n">write_to_file</span> <span class="o">=</span> <span class="s1">&#39;test.jpg&#39;</span><span class="p">)</span>    
     
         
 

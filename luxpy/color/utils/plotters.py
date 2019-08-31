@@ -111,7 +111,7 @@ def plot_color_data(x,y,z=None, axh=None, show = True, cieobs =_CIEOBS, \
             fig = plt.figure()
             axh = plt.axes(projection='3d')
         axh.plot3D(x,y,z,formatstr, linewidth = 2,**kwargs)
-        plt.zlabel(_CSPACE_AXES[cspace][0], kwargs)
+        axh.set_zlabel(_CSPACE_AXES[cspace][0], kwargs)
     else:
         plt.plot(x,y,formatstr,linewidth = 2,**kwargs)
         

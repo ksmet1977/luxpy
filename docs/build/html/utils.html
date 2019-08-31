@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Utils sub-package &mdash; LuxPy 1.4.9 documentation</title>
+  <title>Utils sub-package &mdash; LuxPy 1.4.10 documentation</title>
   
 
   
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                1.4.9
+                1.4.10
               </div>
             
           
@@ -2146,6 +2146,50 @@ using einsum().</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">v:</th><td class="field-body"><div class="first last line-block">
 <div class="line">vector with ellipse parameters [Rmax,Rmin, xc,yc, theta]</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="luxpy.utils.math.ndinterp1">
+<code class="descclassname">luxpy.utils.math.</code><code class="descname">ndinterp1</code><span class="sig-paren">(</span><em>X</em>, <em>Y</em>, <em>Xnew</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/math/basics.html#ndinterp1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.math.ndinterp1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform n-dimensional linear interpolation using Delaunay triangulation.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">X:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray with n-dimensional coordinates (last axis represents dimension).</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Y:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray with values at coordinates in X.</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Xnew:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray of new coordinates (last axis represents dimension).</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Ynew:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray with new values at coordinates in Xnew.</div>
 </div>
 </td>
 </tr>
