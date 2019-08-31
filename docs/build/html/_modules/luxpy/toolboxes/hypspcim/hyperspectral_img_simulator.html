@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.toolboxes.hypspcim.hyperspectral_img_simulator &mdash; LuxPy 1.4.10 documentation</title>
+  <title>luxpy.toolboxes.hypspcim.hyperspectral_img_simulator &mdash; LuxPy 1.4.11 documentation</title>
   
 
   
@@ -56,7 +56,7 @@
             
             
               <div class="version">
-                1.4.10
+                1.4.11
               </div>
             
           
@@ -265,6 +265,7 @@
             <span class="n">rfl_est</span> <span class="o">=</span> <span class="n">rfl</span><span class="p">[</span><span class="n">inds</span><span class="o">+</span><span class="mi">1</span><span class="p">,:]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="k">elif</span> <span class="n">interp_type</span> <span class="o">==</span> <span class="s1">&#39;nd&#39;</span><span class="p">:</span>
         <span class="n">rfl_est</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ndinterp1</span><span class="p">(</span><span class="n">lab_rr</span><span class="p">,</span> <span class="n">rfl</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">lab</span><span class="p">)</span>
+        <span class="n">rfl_est</span><span class="p">[</span><span class="n">rfl_est</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1">#can occur for points outside convexhull of standard rfl set.</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;xyz_to_rfl(): unsupported interp_type!&#39;</span><span class="p">)</span>
             

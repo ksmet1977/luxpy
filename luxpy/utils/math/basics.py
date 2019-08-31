@@ -83,6 +83,8 @@ Module with useful basic math functions
  
  :ndinterp1(): Perform n-dimensional interpolation using Delaunay triangulation.
  
+ :ndinterp1_scipy(): Perform n-dimensional interpolation using Delaunay triangulation (wrapper around scipy.interpolate.LinearNDInterpolator)
+ 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 ===============================================================================
 """
@@ -94,7 +96,7 @@ __all__  = ['normalize_3x3_matrix','symmM_to_posdefM','check_symmetric',
             'histogram', 'pol2cart', 'cart2pol', 'spher2cart', 'cart2spher']
 __all__ += ['bvgpdf','mahalanobis2','dot23', 'rms','geomean','polyarea']
 __all__ += ['magnitude_v','angle_v1v2']
-__all__ += ['v_to_cik', 'cik_to_v', 'fmod', 'fit_ellipse','ndinterp1']
+__all__ += ['v_to_cik', 'cik_to_v', 'fmod', 'fit_ellipse','ndinterp1','ndinterp1_scipy']
 
 
 #------------------------------------------------------------------------------
@@ -851,9 +853,37 @@ def fit_ellipse(xy):
     return np.hstack((a, b, xc, yc, theta))
 
 #------------------------------------------------------------------------------
+def ndinterp1_scipy(X,Y,Xnew, fill_value = np.nan,  rescale = False):    
+    """
+    Perform a n-dimensional linear interpolation (wrapper around scipy.interpolate.LinearNDInterpolator).
+    
+    Args:
+        :X: 
+            | ndarray with n-dimensional coordinates (last axis represents dimension)
+        :Y: 
+            | ndarray with values at coordinates in X
+        :Xnew: 
+            | ndarray of new coordinates (last axis represents dimension)
+        :fill_value: 
+            | float, optional
+            | Value used to fill in for requested points outside of the
+            | convex hull of the input points.  If not provided, then
+            | the default is ``nan``.
+        :rescale:
+            | bool, optional
+            | Rescale points to unit cube before performing interpolation.
+            | This is useful if some of the input dimensions have
+            | incommensurable units and differ by many orders of magnitude.
+        
+    Returns:
+        :Ynew:
+            | ndarray with new values at coordinates in Xnew
+    """
+    return sp.interpolate.LinearNDInterpolator(X,Y, fill_value = fill_value,  rescale = rescale).__call__(Xnew)
+
 def ndinterp1(X, Y, Xnew):
     """
-    Perform n-dimensional linear interpolation using Delaunay triangulation.
+    Perform nd-dimensional linear interpolation using Delaunay triangulation.
     
     Args:
         :X: 
@@ -862,6 +892,8 @@ def ndinterp1(X, Y, Xnew):
             | ndarray with values at coordinates in X.
         :Xnew: 
             | ndarray of new coordinates (last axis represents dimension).
+            | When outside of the convex hull of X, then a best estimate is 
+            | given based on the closest vertices.
         
     Returns:
         :Ynew:
@@ -879,7 +911,7 @@ def ndinterp1(X, Y, Xnew):
     m = tri.transform[s]
     # for each interpolated point p, mutliply the transform matrix by 
     # vector p-r, where r=m[:,n,:] is one of the simplex vertices to which 
-    # the matrix m is related to (again, see bellow)
+    # the matrix m is related to (again, see below)
     b = np.einsum('ijk,ik->ij', m[:,:n,:n], Xnew-m[:,n,:])
     
     # get the weights for the vertices; `b` contains an n-dimensional vector
@@ -888,6 +920,9 @@ def ndinterp1(X, Y, Xnew):
     # the remaining weight for the last vertex can be copmuted from
     # the condition that sum of weights must be equal to 1
     w = np.c_[b, 1-b.sum(axis=1)]
+    
+    # normalize weigths:
+    w = w/w.sum(axis=1, keepdims=True)
     
     # interpolate:
     if Y[v].ndim == 3:

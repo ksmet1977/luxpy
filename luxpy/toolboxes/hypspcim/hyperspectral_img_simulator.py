@@ -114,6 +114,7 @@ def xyz_to_rfl(xyz, rfl = None, out = 'rfl_est', \
             rfl_est = rfl[inds+1,:].copy()
     elif interp_type == 'nd':
         rfl_est = math.ndinterp1(lab_rr, rfl[1:], lab)
+        rfl_est[rfl_est<0] = 0 #can occur for points outside convexhull of standard rfl set.
     else:
         raise Exception('xyz_to_rfl(): unsupported interp_type!')
             

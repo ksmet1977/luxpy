@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Utils sub-package &mdash; LuxPy 1.4.10 documentation</title>
+  <title>Utils sub-package &mdash; LuxPy 1.4.11 documentation</title>
   
 
   
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                1.4.10
+                1.4.11
               </div>
             
           
@@ -2158,7 +2158,7 @@ using einsum().</p>
 <dl class="function">
 <dt id="luxpy.utils.math.ndinterp1">
 <code class="descclassname">luxpy.utils.math.</code><code class="descname">ndinterp1</code><span class="sig-paren">(</span><em>X</em>, <em>Y</em>, <em>Xnew</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/math/basics.html#ndinterp1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.math.ndinterp1" title="Permalink to this definition">¶</a></dt>
-<dd><p>Perform n-dimensional linear interpolation using Delaunay triangulation.</p>
+<dd><p>Perform nd-dimensional linear interpolation using Delaunay triangulation.</p>
 <dl class="docutils">
 <dt>Args:</dt>
 <dd><table class="first last docutils field-list" frame="void" rules="none">
@@ -2177,6 +2177,8 @@ using einsum().</p>
 </tr>
 <tr class="field-odd field"><th class="field-name">Xnew:</th><td class="field-body"><div class="first last line-block">
 <div class="line">ndarray of new coordinates (last axis represents dimension).</div>
+<div class="line">When outside of the convex hull of X, then a best estimate is </div>
+<div class="line">given based on the closest vertices.</div>
 </div>
 </td>
 </tr>
@@ -2190,6 +2192,66 @@ using einsum().</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Ynew:</th><td class="field-body"><div class="first last line-block">
 <div class="line">ndarray with new values at coordinates in Xnew.</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="luxpy.utils.math.ndinterp1_scipy">
+<code class="descclassname">luxpy.utils.math.</code><code class="descname">ndinterp1_scipy</code><span class="sig-paren">(</span><em>X</em>, <em>Y</em>, <em>Xnew</em>, <em>fill_value=nan</em>, <em>rescale=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/math/basics.html#ndinterp1_scipy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.math.ndinterp1_scipy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform a n-dimensional linear interpolation (wrapper around scipy.interpolate.LinearNDInterpolator).</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">X:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray with n-dimensional coordinates (last axis represents dimension)</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Y:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray with values at coordinates in X</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Xnew:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray of new coordinates (last axis represents dimension)</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">fill_value:</th><td class="field-body"><div class="first last line-block">
+<div class="line">float, optional</div>
+<div class="line">Value used to fill in for requested points outside of the</div>
+<div class="line">convex hull of the input points.  If not provided, then</div>
+<div class="line">the default is <code class="docutils literal notranslate"><span class="pre">nan</span></code>.</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">rescale:</th><td class="field-body"><div class="first last line-block">
+<div class="line">bool, optional</div>
+<div class="line">Rescale points to unit cube before performing interpolation.</div>
+<div class="line">This is useful if some of the input dimensions have</div>
+<div class="line">incommensurable units and differ by many orders of magnitude.</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Ynew:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray with new values at coordinates in Xnew</div>
 </div>
 </td>
 </tr>
