@@ -382,6 +382,15 @@ def cam_structure_ciecam02_cam16(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, \
     if data.ndim == 2:
         data = data[:,None] # add dim to avoid looping
     
+    if Yw is not None:
+        Yw = np.atleast_2d(Yw)
+        if Yw.shape[0]==1:
+            Yw = np.repeat(Yw,data.shape[1])
+    else:
+        Yw = xyzw[...,1:2]
+        if Yw.shape[0]==1:
+            Yw = np.repeat(Yw,data.shape[1]) #make xyzw same looping size
+
     if xyzw.ndim < 3:
         if xyzw.shape[0]==1:
             xyzw = (xyzw*np.ones(data.shape[1:]))[None] #make xyzw same looping size
@@ -393,13 +402,6 @@ def cam_structure_ciecam02_cam16(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, \
     if isinstance(conditions,dict):
         conditions = np.repeat(conditions,data.shape[1]) #create condition dict for each xyzw
     
-    if Yw is not None:
-        Yw = np.atleast_1d(Yw)
-        if Yw.shape[0]==1:
-            Yw = np.repeat(Yw,data.shape[1])
-    else:
-        Yw = xyzw[...,1]
-
     dshape = list(data.shape)
     dshape[-1] = len(outin) # requested number of correlates
     camout = np.nan*np.ones(dshape)
@@ -447,7 +449,7 @@ def cam_structure_ciecam02_cam16(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, \
         Ncb = Nbb
         z = 1.48 + FLL*n**0.5
         yw = xyzw[:,i,1,None]
- 
+        
         xyzwi = Yw[i]*xyzw[:,i]/yw # normalize xyzw
 
         # calculate D:
@@ -458,7 +460,7 @@ def cam_structure_ciecam02_cam16(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, \
         rgbw = np.dot(mcat,xyzwi.T)
         
         # apply von Kries cat to white:
-        rgbwc = ((D*Yw.T/rgbw) + (1 - D))*rgbw # factor 100 from ciecam02 is replaced with Yw[i] in cam16, but see 'note' in Fairchild's "Color Appearance Models" (p291 ni 3ed.)
+        rgbwc = ((D*Yw[i].T/rgbw) + (1 - D))*rgbw # factor 100 from ciecam02 is replaced with Yw[i] in cam16, but see 'note' in Fairchild's "Color Appearance Models" (p291 ni 3ed.)
 
         if camtype == 'ciecam02':
             # convert white from cat02 sensor space to cone sensors (hpe):
@@ -527,7 +529,7 @@ def cam_structure_ciecam02_cam16(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, \
             
             # Calculate achromatic signal:
             A =  (2.0*rpa + gpa + (1.0/20.0)*bpa - 0.305)*Nbb
-            
+
             # calculate lightness, J:
             if ('J' in outin) | ('Q' in outin) | ('C' in outin) | ('M' in outin) | ('s' in outin) | ('aS' in outin) | ('aC' in outin) | ('aM' in outin):
                 J = 100.0* (A / Aw)**(c*z)
