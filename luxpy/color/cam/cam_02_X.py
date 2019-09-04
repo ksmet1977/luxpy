@@ -447,6 +447,7 @@ def cam_structure_ciecam02_cam16(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, \
         Ncb = Nbb
         z = 1.48 + FLL*n**0.5
         yw = xyzw[:,i,1,None]
+ 
         xyzwi = Yw[i]*xyzw[:,i]/yw # normalize xyzw
 
         # calculate D:
@@ -457,7 +458,7 @@ def cam_structure_ciecam02_cam16(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, \
         rgbw = np.dot(mcat,xyzwi.T)
         
         # apply von Kries cat to white:
-        rgbwc = ((D*Yw/rgbw) + (1 - D))*rgbw # factor 100 from ciecam02 is replaced with Yw[i] in cam16, but see 'note' in Fairchild's "Color Appearance Models" (p291 ni 3ed.)
+        rgbwc = ((D*Yw.T/rgbw) + (1 - D))*rgbw # factor 100 from ciecam02 is replaced with Yw[i] in cam16, but see 'note' in Fairchild's "Color Appearance Models" (p291 ni 3ed.)
 
         if camtype == 'ciecam02':
             # convert white from cat02 sensor space to cone sensors (hpe):
