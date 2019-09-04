@@ -79,7 +79,7 @@ __all__ += ['generate_grid','calculate_shiftvectors','plot_shift_data','plotcirc
 # Default color space for Vector Field model:
 _VF_CRI_DEFAULT = 'iesrf'
 _VF_CSPACE = _CRI_DEFAULTS[_VF_CRI_DEFAULT]['cspace'].copy()
-_VF_CSPACE_EXAMPLE = {'type' : 'jab_cam02ucs','xyzw':None, 'mcat':'cat02', 'Yw':100.0, 'conditions' :{'La':100.0,'surround':'avg','D':1.0,'Yb':20.0,'Dtype':None},'yellowbluepurplecorrect' : None}
+_VF_CSPACE_EXAMPLE = {'type' : 'jab_cam02ucs','xyzw':None, 'mcat':'cat02', 'Yw':None, 'conditions' :{'La':100.0,'surround':'avg','D':1.0,'Yb':20.0,'Dtype':None},'yellowbluepurplecorrect' : None}
 _VF_CIEOBS = _CRI_DEFAULTS[_VF_CRI_DEFAULT]['cieobs']['xyz']
 
 _VF_MAXR = 40 #maximum C to use in calculations and plotting of vector fields

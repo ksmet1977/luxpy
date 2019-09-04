@@ -167,7 +167,7 @@ def spd_to_ies_tm30_metrics(SPD, cri_type = None, \
 
     # Create dict with CRI info:
     data = {'SPD' : SPD, 'cct' : cct, 'duv' : duv, 'bjabt' : bjabt, 'bjabr' : bjabr,\
-           'Rf' : Rf, 'Rg' : Rg, 'Rfi': Rfi, 'Rfhi' : Rfhi, 'Rchhi' : Rcshi, 'Rhshi' : Rhshi, \
+           'Rf' : Rf, 'Rg' : Rg, 'Rfi': Rfi, 'Rfhi' : Rfhi, 'Rcshi' : Rcshi, 'Rhshi' : Rhshi, \
            'Rt' : Rt, 'Rti' : Rti,  'Rfhi_vf' : Rfhi_vf, 'Rfcshi_vf' : Rcshi_vf, 'Rfhshi_vf' : Rhshi_vf, \
            'dataVF' : dataVF,'cri_type' : cri_type}
     return data

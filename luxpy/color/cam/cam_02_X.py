@@ -293,7 +293,7 @@ def hue_quadrature(h, unique_hue_data = None):
 
 def cam_structure_ciecam02_cam16(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, \
                                  camtype = _CAM_02_X_DEFAULT_TYPE, mcat = None,\
-                                 Yw = np2d(100), conditions = _CAM_02_X_DEFAULT_CONDITIONS,\
+                                 Yw = None, conditions = _CAM_02_X_DEFAULT_CONDITIONS,\
                                  direction = 'forward', outin = 'J,aM,bM', \
                                  yellowbluepurplecorrect = False):
     """
@@ -311,10 +311,16 @@ def cam_structure_ciecam02_cam16(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, \
               of white point(s), optional
             | Can be multiple by specifying a Mx3 ndarray, instead of 1x3.
         :Yw: 
-            | luxpy.np2d(100), optional
+            | None, optional
             | Luminance factor of white point.
-            | Is normally 100 for perfect white diffuser, 
-              is < 100 for e.g. paper as white point.         
+            | If None: xyz (in data) and xyzw are entered as relative tristimulus values 
+            | (normalized to Yw = 100). 
+            | If not None: input tristimulus are absolute and Yw is used to
+            | rescale the absolute values to relative ones (relative to a 
+            | reference perfect white diffuser with Ywr = 100). 
+            | Yw can be < 100 for e.g. paper as white point. If Yw is None, it 
+            | assumed that the relative Y-tristimulus value in xyzw represents 
+            | the luminance factor Yw.
         :camtype: 
             | luxpy.cam._CAM_02_X_DEFAULT_TYPE, optional
             | Str specifier for CAM type to use, options: 'ciecam02' or 'cam16'.
@@ -386,10 +392,13 @@ def cam_structure_ciecam02_cam16(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, \
     
     if isinstance(conditions,dict):
         conditions = np.repeat(conditions,data.shape[1]) #create condition dict for each xyzw
-
-    Yw = np2d(Yw)
-    if Yw.shape[0]==1:
-        Yw = np.repeat(Yw,data.shape[1])
+    
+    if Yw is not None:
+        Yw = np.atleast_1d(Yw)
+        if Yw.shape[0]==1:
+            Yw = np.repeat(Yw,data.shape[1])
+    else:
+        Yw = xyzw[...,1]
 
     dshape = list(data.shape)
     dshape[-1] = len(outin) # requested number of correlates
@@ -448,9 +457,8 @@ def cam_structure_ciecam02_cam16(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, \
         rgbw = np.dot(mcat,xyzwi.T)
         
         # apply von Kries cat to white:
-        rgbwc = ((100.0*D/rgbw) + (1 - D))*rgbw # factor 100 from ciecam02 is replaced with Yw[i] in cam16, but see 'note' in Fairchild's "Color Appearance Models" (p291 ni 3ed.)
+        rgbwc = ((D*Yw/rgbw) + (1 - D))*rgbw # factor 100 from ciecam02 is replaced with Yw[i] in cam16, but see 'note' in Fairchild's "Color Appearance Models" (p291 ni 3ed.)
 
-        
         if camtype == 'ciecam02':
             # convert white from cat02 sensor space to cone sensors (hpe):
             rgbwp = np.dot(mhpe_x_invmcat,rgbwc).T
@@ -481,7 +489,7 @@ def cam_structure_ciecam02_cam16(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, \
             rgb = np.dot(mcat,xyzi.T)
 
             # apply von Kries cat:
-            rgbc = ((100.0*D/rgbw) + (1 - D))*rgb
+            rgbc = ((Yw[i]*D/rgbw) + (1 - D))*rgb
 
             if camtype == 'ciecam02':
                 # convert from cat02 sensor space to cone sensors (hpe):
@@ -499,7 +507,7 @@ def cam_structure_ciecam02_cam16(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, \
 
             # split into separate cone signals:
             rpa, gpa, bpa = asplit(rgbpa)
-            
+
             # calculate initial opponent channels:
             a = rpa - 12.0*gpa/11.0 + bpa/11.0
             b = (1.0/9.0)*(rpa + gpa - 2.0*bpa)
@@ -591,7 +599,7 @@ def cam_structure_ciecam02_cam16(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, \
                 
             # calculate t from J, C:
             t = (C / ((J/100.0)**(1.0/2.0) * (1.64 - 0.29**n)**0.73))**(1.0/0.9)
-            
+
             # calculate eccentricity factor, et:
             et = (np.cos(h*np.pi/180.0 + 2.0) + 3.8) / 4.0
             
@@ -607,12 +615,12 @@ def cam_structure_ciecam02_cam16(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, \
             p4 = p1/bt
             p5 = p1/at
 
-            q = np.where(np.abs(bt) < np.abs(at))
+            q = np.where(np.abs(bt) < np.abs(at))[0]
 
 
             b = p2*(2.0 + p3) * (460.0/1403.0) / (p4 + (2.0 + p3) * (220.0/1403.0) * (at/bt) - (27.0/1403.0) + p3*(6300.0/1403.0))
             a = b * (at/bt)
-
+            
             a[q] = p2[q]*(2.0 + p3) * (460.0/1403.0) / (p5[q] + (2.0 + p3) * (220.0/1403.0) - ((27.0/1403.0) - p3*(6300.0/1403.0)) * (bt[q]/at[q]))
             b[q] = a[q] * (bt[q]/at[q])
             
@@ -620,10 +628,10 @@ def cam_structure_ciecam02_cam16(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, \
             rpa = (460.0*p2 + 451.0*a + 288.0*b) / 1403.0
             gpa = (460.0*p2 - 891.0*a - 261.0*b) / 1403.0
             bpa = (460.0*p2 - 220.0*a - 6300.0*b) / 1403.0
-
+            
             # join values:
             rgbpa = ajoin((rpa,gpa,bpa))
-            
+
             # decompress signals:
             rgbp = (100.0/FL)*naka_rushton(rgbpa, cam = camtype, direction = 'inverse')
            
@@ -638,7 +646,7 @@ def cam_structure_ciecam02_cam16(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, \
                 rgbc = rgbp.T # in cam16, cat and cone sensor spaces are the same
                      
             # apply inverse von Kries cat:
-            rgb = rgbc/ ((100.0*D/rgbw) + (1.0 - D))
+            rgb = rgbc/ ((Yw[i]*D/rgbw) + (1.0 - D))
  
             # transform from cat sensor space to xyz:
             xyzi = np.dot(invmcat,rgb).T
@@ -659,7 +667,7 @@ def cam_structure_ciecam02_cam16(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, \
     
     
 #---------------------------------------------------------------------------------------------------------------------
-def ciecam02(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, mcat = 'cat02', Yw = np2d(100.0),\
+def ciecam02(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, mcat = 'cat02', Yw = None,\
              conditions = _CAM_02_X_DEFAULT_CONDITIONS, direction = 'forward', outin = 'J,aM,bM',\
              yellowbluepurplecorrect = False):
     """
@@ -679,10 +687,16 @@ def ciecam02(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, mcat = 'cat02', Yw = np
               of white point(s), optional
             | Can be multiple by specifying a Mx3 ndarray, instead of 1x3.
         :Yw: 
-            | luxpy.np2d(100), optional
+            | None, optional
             | Luminance factor of white point.
-            | Is normally 100 for perfect white diffuser, 
-              is < 100 for e.g. paper as white point.         
+            | If None: xyz (in data) and xyzw are entered as relative tristimulus values 
+            | (normalized to Yw = 100). 
+            | If not None: input tristimulus are absolute and Yw is used to
+            | rescale the absolute values to relative ones (relative to a 
+            | reference perfect white diffuser with Ywr = 100). 
+            | Yw can be < 100 for e.g. paper as white point. If Yw is None, it 
+            | assumed that the relative Y-tristimulus value in xyzw represents 
+            | the luminance factor Yw.       
         :mcat:
             | 'cat02' or str or ndarray, optional
             | Specifies CAT sensor space.
@@ -731,7 +745,7 @@ def ciecam02(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, mcat = 'cat02', Yw = np
 
 
 #---------------------------------------------------------------------------------------------------------------------
-def cam16(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, mcat = 'cat16', Yw = np2d(100.0),\
+def cam16(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, mcat = 'cat16', Yw = None,\
           conditions = _CAM_02_X_DEFAULT_CONDITIONS, direction = 'forward', outin = 'J,aM,bM'):
     """
     Convert between XYZ tristsimulus values and cam16 color appearance correlates.
@@ -750,10 +764,16 @@ def cam16(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, mcat = 'cat16', Yw = np2d(
               of white point(s), optional
             | Can be multiple by specifying a Mx3 ndarray, instead of 1x3.
         :Yw: 
-            | luxpy.np2d(100), optional
+            | None, optional
             | Luminance factor of white point.
-            | Is normally 100 for perfect white diffuser, 
-              is < 100 for e.g. paper as white point.         
+            | If None: xyz (in data) and xyzw are entered as relative tristimulus values 
+            | (normalized to Yw = 100). 
+            | If not None: input tristimulus are absolute and Yw is used to
+            | rescale the absolute values to relative ones (relative to a 
+            | reference perfect white diffuser with Ywr = 100). 
+            | Yw can be < 100 for e.g. paper as white point. If Yw is None, it 
+            | assumed that the relative Y-tristimulus value in xyzw represents 
+            | the luminance factor Yw.        
         :mcat:
             | 'cat16' or str or ndarray, optional
             | Specifies CAT sensor space.
@@ -797,7 +817,7 @@ def cam16(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, mcat = 'cat16', Yw = np2d(
 
 #---------------------------------------------------------------------------------------------------------------------
 def camucs_structure(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, camtype = _CAM_02_X_DEFAULT_TYPE, \
-                     mcat = None, Yw = np2d(100.0), conditions = _CAM_02_X_DEFAULT_CONDITIONS, \
+                     mcat = None, Yw = None, conditions = _CAM_02_X_DEFAULT_CONDITIONS, \
                      direction = 'forward', outin = 'J,aM,bM', ucstype = 'ucs', \
                      yellowbluepurplecorrect = False):
     """
@@ -823,10 +843,16 @@ def camucs_structure(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, camtype = _CAM_
               of white point(s), optional
             | Can be multiple by specifying a Mx3 ndarray, instead of 1x3.
         :Yw: 
-            | luxpy.np2d(100), optional
+            | None, optional
             | Luminance factor of white point.
-            | Is normally 100 for perfect white diffuser, 
-              is < 100 for e.g. paper as white point.         
+            | If None: xyz (in data) and xyzw are entered as relative tristimulus values 
+            | (normalized to Yw = 100). 
+            | If not None: input tristimulus are absolute and Yw is used to
+            | rescale the absolute values to relative ones (relative to a 
+            | reference perfect white diffuser with Ywr = 100). 
+            | Yw can be < 100 for e.g. paper as white point. If Yw is None, it 
+            | assumed that the relative Y-tristimulus value in xyzw represents 
+            | the luminance factor Yw.      
         :camtype: 
             | luxpy.cam._CAM_02_X_DEFAULT_TYPE, optional
             | Str specifier for CAM type to use, options: 'ciecam02' or 'cam16'.
@@ -933,7 +959,7 @@ def camucs_structure(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, camtype = _CAM_
      
 #---------------------------------------------------------------------------------------------------------------------
 def cam02ucs(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, \
-             Yw = np2d(100.0), conditions = _CAM_02_X_DEFAULT_CONDITIONS, \
+             Yw = None, conditions = _CAM_02_X_DEFAULT_CONDITIONS, \
              direction = 'forward', ucstype = 'ucs', yellowbluepurplecorrect = False, \
              mcat = 'cat02'):
     """
@@ -954,10 +980,16 @@ def cam02ucs(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, \
               of white point(s), optional
             | Can be multiple by specifying a Mx3 ndarray, instead of 1x3.
         :Yw: 
-            | luxpy.np2d(100), optional
+            | None, optional
             | Luminance factor of white point.
-            | Is normally 100 for perfect white diffuser, 
-              is < 100 for e.g. paper as white point.         
+            | If None: xyz (in data) and xyzw are entered as relative tristimulus values 
+            | (normalized to Yw = 100). 
+            | If not None: input tristimulus are absolute and Yw is used to
+            | rescale the absolute values to relative ones (relative to a 
+            | reference perfect white diffuser with Ywr = 100). 
+            | Yw can be < 100 for e.g. paper as white point. If Yw is None, it 
+            | assumed that the relative Y-tristimulus value in xyzw represents 
+            | the luminance factor Yw.        
         :mcat:
             | 'cat02' or str or ndarray, optional
             | Specifies CAT sensor space.
@@ -1011,7 +1043,7 @@ def cam02ucs(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, \
     return camucs_structure(data, xyzw = xyzw, camtype = 'ciecam02', mcat = mcat, Yw = Yw, conditions = conditions, direction = direction, ucstype = ucstype, yellowbluepurplecorrect = yellowbluepurplecorrect)
 
  #---------------------------------------------------------------------------------------------------------------------
-def cam16ucs(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = np2d(100.0), \
+def cam16ucs(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = None, \
              conditions = _CAM_02_X_DEFAULT_CONDITIONS, direction = 'forward', \
              ucstype = 'ucs',  mcat = 'cat16'):
     """
@@ -1031,10 +1063,16 @@ def cam16ucs(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = np2d(100.0), \
               of white point(s), optional
             | Can be multiple by specifying a Mx3 ndarray, instead of 1x3.
         :Yw: 
-            | luxpy.np2d(100), optional
+            | None, optional
             | Luminance factor of white point.
-            | Is normally 100 for perfect white diffuser, 
-              is < 100 for e.g. paper as white point.         .
+            | If None: xyz (in data) and xyzw are entered as relative tristimulus values 
+            | (normalized to Yw = 100). 
+            | If not None: input tristimulus are absolute and Yw is used to
+            | rescale the absolute values to relative ones (relative to a 
+            | reference perfect white diffuser with Ywr = 100). 
+            | Yw can be < 100 for e.g. paper as white point. If Yw is None, it 
+            | assumed that the relative Y-tristimulus value in xyzw represents 
+            | the luminance factor Yw.        .
         :mcat:
             | 'cat16' or str or ndarray, optional
             | Specifies CAT sensor space.
@@ -1095,7 +1133,7 @@ def cam16ucs(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = np2d(100.0), \
 
 #------------------------------------------------------------------------------
 # wrapper function for use with colortf():
-def xyz_to_jabM_ciecam02(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = 100.0,\
+def xyz_to_jabM_ciecam02(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = None,\
                          conditions = _CAM_02_X_DEFAULT_CONDITIONS, \
                          yellowbluepurplecorrect = None, mcat = 'cat02', **kwargs):
     """
@@ -1105,7 +1143,7 @@ def xyz_to_jabM_ciecam02(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = 100.0,
     """
     return ciecam02(data, xyzw = xyzw, Yw = Yw, conditions = conditions, direction = 'forward', outin = 'J,aM,bM', yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
    
-def jabM_ciecam02_to_xyz(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = 100.0,\
+def jabM_ciecam02_to_xyz(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = None,\
                          conditions = _CAM_02_X_DEFAULT_CONDITIONS, \
                          yellowbluepurplecorrect = None, mcat = 'cat02', **kwargs):
     """
@@ -1117,7 +1155,7 @@ def jabM_ciecam02_to_xyz(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = 100.0,
 
 
 
-def xyz_to_jabC_ciecam02(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = 100.0, \
+def xyz_to_jabC_ciecam02(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = None, \
                          conditions = _CAM_02_X_DEFAULT_CONDITIONS, \
                          yellowbluepurplecorrect = None, mcat = 'cat02', **kwargs):
     """
@@ -1127,7 +1165,7 @@ def xyz_to_jabC_ciecam02(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = 100.0,
     """
     return ciecam02(data, xyzw = xyzw, Yw = Yw, conditions = conditions, direction = 'forward', outin = 'J,aC,bC', yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
  
-def jabC_ciecam02_to_xyz(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = 100.0, \
+def jabC_ciecam02_to_xyz(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = None, \
                          conditions = _CAM_02_X_DEFAULT_CONDITIONS, \
                          yellowbluepurplecorrect = None, mcat = 'cat02', **kwargs):
     """
@@ -1139,7 +1177,7 @@ def jabC_ciecam02_to_xyz(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = 100.0,
 
 
               
-def xyz_to_jab_cam02ucs(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = 100.0,\
+def xyz_to_jab_cam02ucs(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = None,\
                         conditions = _CAM_02_X_DEFAULT_CONDITIONS, \
                         yellowbluepurplecorrect = None, mcat = 'cat02', **kwargs):
     """
@@ -1149,7 +1187,7 @@ def xyz_to_jab_cam02ucs(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = 100.0,\
     """
     return cam02ucs(data, xyzw = xyzw, Yw = Yw, conditions = conditions, direction = 'forward', ucstype = 'ucs', yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
                 
-def jab_cam02ucs_to_xyz(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = 100.0, \
+def jab_cam02ucs_to_xyz(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = None, \
                         conditions = _CAM_02_X_DEFAULT_CONDITIONS, \
                         yellowbluepurplecorrect = None, mcat = 'cat02', **kwargs):
     """
@@ -1161,7 +1199,7 @@ def jab_cam02ucs_to_xyz(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = 100.0, 
 
 
 
-def xyz_to_jab_cam02lcd(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = 100.0, \
+def xyz_to_jab_cam02lcd(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = None, \
                         conditions = _CAM_02_X_DEFAULT_CONDITIONS, \
                         yellowbluepurplecorrect = None, mcat = 'cat02', **kwargs):
     """
@@ -1171,7 +1209,7 @@ def xyz_to_jab_cam02lcd(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = 100.0, 
     """
     return cam02ucs(data, xyzw = xyzw, Yw = Yw, conditions = conditions, direction = 'forward', ucstype = 'lcd', yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
                 
-def jab_cam02lcd_to_xyz(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = 100.0, \
+def jab_cam02lcd_to_xyz(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = None, \
                         conditions = _CAM_02_X_DEFAULT_CONDITIONS, \
                         yellowbluepurplecorrect = None, mcat = 'cat02', **kwargs):
     """
@@ -1183,7 +1221,7 @@ def jab_cam02lcd_to_xyz(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = 100.0, 
 
 
 
-def xyz_to_jab_cam02scd(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = 100.0, \
+def xyz_to_jab_cam02scd(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = None, \
                         conditions = _CAM_02_X_DEFAULT_CONDITIONS, \
                         yellowbluepurplecorrect = None, mcat = 'cat02', **kwargs):
     """
@@ -1193,7 +1231,7 @@ def xyz_to_jab_cam02scd(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = 100.0, 
     """
     return cam02ucs(data, xyzw = xyzw, Yw = Yw, conditions = conditions, direction = 'forward', ucstype = 'scd', yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
                 
-def jab_cam02scd_to_xyz(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = 100.0, \
+def jab_cam02scd_to_xyz(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = None, \
                         conditions = _CAM_02_X_DEFAULT_CONDITIONS, \
                         yellowbluepurplecorrect = None, mcat = 'cat02', **kwargs):
     """
@@ -1206,7 +1244,7 @@ def jab_cam02scd_to_xyz(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = 100.0, 
 
 
 #------------------------------------------------------------------------------
-def xyz_to_jabM_cam16(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = 100.0, \
+def xyz_to_jabM_cam16(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = None, \
                       conditions = _CAM_02_X_DEFAULT_CONDITIONS,  mcat = 'cat16', **kwargs):
     """
     Wrapper function for cam16 forward mode with J,aM,bM output.
@@ -1215,7 +1253,7 @@ def xyz_to_jabM_cam16(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = 100.0, \
     """
     return cam16(data, xyzw = xyzw, Yw = Yw, conditions = conditions, direction = 'forward', outin = 'J,aM,bM',  mcat = mcat)
    
-def jabM_cam16_to_xyz(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = 100.0, \
+def jabM_cam16_to_xyz(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = None, \
                       conditions = _CAM_02_X_DEFAULT_CONDITIONS,  mcat = 'cat16', **kwargs):
     """
     Wrapper function for cam16 inverse mode with J,aM,bM input.
@@ -1225,7 +1263,7 @@ def jabM_cam16_to_xyz(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = 100.0, \
     return cam16(data, xyzw = xyzw, Yw = Yw, conditions = conditions, direction = 'inverse', outin = 'J,aM,bM',  mcat = mcat)
 
 
-def xyz_to_jabC_cam16(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = 100.0, \
+def xyz_to_jabC_cam16(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = None, \
                       conditions = _CAM_02_X_DEFAULT_CONDITIONS,  mcat = 'cat16', **kwargs):
     """
     Wrapper function for cam16 forward mode with J,aC,bC output.
@@ -1234,7 +1272,7 @@ def xyz_to_jabC_cam16(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = 100.0, \
     """
     return cam16(data, xyzw = xyzw, Yw = Yw, conditions = conditions, direction = 'forward', outin = 'J,aC,bC',  mcat = mcat)
    
-def jabC_cam16_to_xyz(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = 100.0, \
+def jabC_cam16_to_xyz(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = None, \
                       conditions = _CAM_02_X_DEFAULT_CONDITIONS,  mcat = 'cat16', **kwargs):
     """
     Wrapper function for cam16 inverse mode with J,aC,bC input.
@@ -1245,7 +1283,7 @@ def jabC_cam16_to_xyz(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = 100.0, \
 
 
               
-def xyz_to_jab_cam16ucs(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = 100.0, \
+def xyz_to_jab_cam16ucs(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = None, \
                         conditions = _CAM_02_X_DEFAULT_CONDITIONS,  mcat = 'cat16', **kwargs):
     """
     Wrapper function for cam16ucs forward mode with J,aM,bM output and ucstype = 'ucs'.
@@ -1254,7 +1292,7 @@ def xyz_to_jab_cam16ucs(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = 100.0, 
     """
     return cam16ucs(data, xyzw = xyzw, Yw = Yw, conditions = conditions, direction = 'forward', ucstype = 'ucs', mcat = mcat)
                 
-def jab_cam16ucs_to_xyz(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = 100.0, \
+def jab_cam16ucs_to_xyz(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = None, \
                         conditions = _CAM_02_X_DEFAULT_CONDITIONS, mcat = 'cat16', **kwargs):
     """
     Wrapper function for cam16ucs inverse mode with J,aM,bM input and ucstype = 'ucs'.
@@ -1264,7 +1302,7 @@ def jab_cam16ucs_to_xyz(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = 100.0, 
     return cam16ucs(data, xyzw = xyzw, Yw = Yw, conditions = conditions, direction = 'inverse', ucstype = 'ucs', mcat = mcat)
 
 
-def xyz_to_jab_cam16lcd(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = 100.0, \
+def xyz_to_jab_cam16lcd(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = None, \
                         conditions = _CAM_02_X_DEFAULT_CONDITIONS,  mcat = 'cat16', **kwargs):
     """
     Wrapper function for cam16ucs forward mode with J,aM,bM output and ucstype = 'lcd'.
@@ -1273,7 +1311,7 @@ def xyz_to_jab_cam16lcd(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = 100.0, 
     """
     return cam16ucs(data, xyzw = xyzw, Yw = Yw, conditions = conditions, direction = 'forward', ucstype = 'lcd', mcat = mcat)
                 
-def jab_cam16lcd_to_xyz(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = 100.0, \
+def jab_cam16lcd_to_xyz(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = None, \
                         conditions = _CAM_02_X_DEFAULT_CONDITIONS, mcat = 'cat16', **kwargs):
     """
     Wrapper function for cam16ucs inverse mode with J,aM,bM input and ucstype = 'lcd'.
@@ -1284,7 +1322,7 @@ def jab_cam16lcd_to_xyz(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = 100.0, 
 
 
 
-def xyz_to_jab_cam16scd(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = 100.0, \
+def xyz_to_jab_cam16scd(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = None, \
                         conditions = _CAM_02_X_DEFAULT_CONDITIONS,  mcat = 'cat16', **kwargs):
     """
     Wrapper function for cam16ucs forward mode with J,aM,bM output and ucstype = 'scd'.
@@ -1293,7 +1331,7 @@ def xyz_to_jab_cam16scd(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = 100.0, 
     """
     return cam16ucs(data, xyzw = xyzw, Yw = Yw, conditions = conditions, direction = 'forward', ucstype = 'scd', mcat = mcat)
                 
-def jab_cam16scd_to_xyz(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = 100.0, \
+def jab_cam16scd_to_xyz(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = None, \
                         conditions = _CAM_02_X_DEFAULT_CONDITIONS, mcat = 'cat16', **kwargs):
     """
     Wrapper function for cam16ucs inverse mode with J,aM,bM input  and ucstype = 'scd'. 

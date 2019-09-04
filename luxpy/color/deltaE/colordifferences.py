@@ -81,8 +81,8 @@ def _process_DEi(DEi, DEtype = 'jab', avg = None, avg_axis = 0, out = 'DEi'):
 
 def DE_camucs(xyzt, xyzr, DEtype = 'jab', avg = None, avg_axis = 0, out = 'DEi',
               xyzwt = cam._CAM_02_X_DEFAULT_WHITE_POINT, xyzwr = cam._CAM_02_X_DEFAULT_WHITE_POINT, \
-              Ywt = np2d(100.0), conditionst = cam._CAM_02_X_DEFAULT_CONDITIONS,\
-              Ywr = np2d(100.0), conditionsr = cam._CAM_02_X_DEFAULT_CONDITIONS,\
+              Ywt = None, conditionst = cam._CAM_02_X_DEFAULT_CONDITIONS,\
+              Ywr = None, conditionsr = cam._CAM_02_X_DEFAULT_CONDITIONS,\
               camtype = cam._CAM_02_X_DEFAULT_TYPE, ucstype = 'ucs', mcat = None, \
               outin = 'J,aM,bM', yellowbluepurplecorrect = False, **kwargs):
     
