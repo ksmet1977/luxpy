@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.color.cam.cam_02_X &mdash; LuxPy 1.4.11 documentation</title>
+  <title>luxpy.color.cam.cam_02_X &mdash; LuxPy 1.4.12 documentation</title>
   
 
   
@@ -56,7 +56,7 @@
             
             
               <div class="version">
-                1.4.11
+                1.4.12
               </div>
             
           
@@ -444,7 +444,7 @@
 
 <span class="k">def</span> <span class="nf">cam_structure_ciecam02_cam16</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_WHITE_POINT</span><span class="p">,</span> \
                                  <span class="n">camtype</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_TYPE</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>\
-                                 <span class="n">Yw</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span> <span class="n">conditions</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_CONDITIONS</span><span class="p">,</span>\
+                                 <span class="n">Yw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_CONDITIONS</span><span class="p">,</span>\
                                  <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;forward&#39;</span><span class="p">,</span> <span class="n">outin</span> <span class="o">=</span> <span class="s1">&#39;J,aM,bM&#39;</span><span class="p">,</span> \
                                  <span class="n">yellowbluepurplecorrect</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -462,10 +462,16 @@
 <span class="sd">              of white point(s), optional</span>
 <span class="sd">            | Can be multiple by specifying a Mx3 ndarray, instead of 1x3.</span>
 <span class="sd">        :Yw: </span>
-<span class="sd">            | luxpy.np2d(100), optional</span>
+<span class="sd">            | None, optional</span>
 <span class="sd">            | Luminance factor of white point.</span>
-<span class="sd">            | Is normally 100 for perfect white diffuser, </span>
-<span class="sd">              is &lt; 100 for e.g. paper as white point.         </span>
+<span class="sd">            | If None: xyz (in data) and xyzw are entered as relative tristimulus values </span>
+<span class="sd">            | (normalized to Yw = 100). </span>
+<span class="sd">            | If not None: input tristimulus are absolute and Yw is used to</span>
+<span class="sd">            | rescale the absolute values to relative ones (relative to a </span>
+<span class="sd">            | reference perfect white diffuser with Ywr = 100). </span>
+<span class="sd">            | Yw can be &lt; 100 for e.g. paper as white point. If Yw is None, it </span>
+<span class="sd">            | assumed that the relative Y-tristimulus value in xyzw represents </span>
+<span class="sd">            | the luminance factor Yw.</span>
 <span class="sd">        :camtype: </span>
 <span class="sd">            | luxpy.cam._CAM_02_X_DEFAULT_TYPE, optional</span>
 <span class="sd">            | Str specifier for CAM type to use, options: &#39;ciecam02&#39; or &#39;cam16&#39;.</span>
@@ -527,6 +533,15 @@
     <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span><span class="kc">None</span><span class="p">]</span> <span class="c1"># add dim to avoid looping</span>
     
+    <span class="k">if</span> <span class="n">Yw</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">Yw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">Yw</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">Yw</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">Yw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">Yw</span><span class="p">,</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">Yw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">Yw</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">Yw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">Yw</span><span class="p">,</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="c1">#make xyzw same looping size</span>
+
     <span class="k">if</span> <span class="n">xyzw</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">xyzw</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
             <span class="n">xyzw</span> <span class="o">=</span> <span class="p">(</span><span class="n">xyzw</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:]))[</span><span class="kc">None</span><span class="p">]</span> <span class="c1">#make xyzw same looping size</span>
@@ -537,11 +552,7 @@
     
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">conditions</span><span class="p">,</span><span class="nb">dict</span><span class="p">):</span>
         <span class="n">conditions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">conditions</span><span class="p">,</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="c1">#create condition dict for each xyzw</span>
-
-    <span class="n">Yw</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">(</span><span class="n">Yw</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">Yw</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
-        <span class="n">Yw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">Yw</span><span class="p">,</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-
+    
     <span class="n">dshape</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
     <span class="n">dshape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">outin</span><span class="p">)</span> <span class="c1"># requested number of correlates</span>
     <span class="n">camout</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">dshape</span><span class="p">)</span>
@@ -589,6 +600,7 @@
         <span class="n">Ncb</span> <span class="o">=</span> <span class="n">Nbb</span>
         <span class="n">z</span> <span class="o">=</span> <span class="mf">1.48</span> <span class="o">+</span> <span class="n">FLL</span><span class="o">*</span><span class="n">n</span><span class="o">**</span><span class="mf">0.5</span>
         <span class="n">yw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">[:,</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="kc">None</span><span class="p">]</span>
+        
         <span class="n">xyzwi</span> <span class="o">=</span> <span class="n">Yw</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">xyzw</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span><span class="o">/</span><span class="n">yw</span> <span class="c1"># normalize xyzw</span>
 
         <span class="c1"># calculate D:</span>
@@ -599,9 +611,8 @@
         <span class="n">rgbw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">mcat</span><span class="p">,</span><span class="n">xyzwi</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
         
         <span class="c1"># apply von Kries cat to white:</span>
-        <span class="n">rgbwc</span> <span class="o">=</span> <span class="p">((</span><span class="mf">100.0</span><span class="o">*</span><span class="n">D</span><span class="o">/</span><span class="n">rgbw</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">D</span><span class="p">))</span><span class="o">*</span><span class="n">rgbw</span> <span class="c1"># factor 100 from ciecam02 is replaced with Yw[i] in cam16, but see &#39;note&#39; in Fairchild&#39;s &quot;Color Appearance Models&quot; (p291 ni 3ed.)</span>
+        <span class="n">rgbwc</span> <span class="o">=</span> <span class="p">((</span><span class="n">D</span><span class="o">*</span><span class="n">Yw</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="o">/</span><span class="n">rgbw</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">D</span><span class="p">))</span><span class="o">*</span><span class="n">rgbw</span> <span class="c1"># factor 100 from ciecam02 is replaced with Yw[i] in cam16, but see &#39;note&#39; in Fairchild&#39;s &quot;Color Appearance Models&quot; (p291 ni 3ed.)</span>
 
-        
         <span class="k">if</span> <span class="n">camtype</span> <span class="o">==</span> <span class="s1">&#39;ciecam02&#39;</span><span class="p">:</span>
             <span class="c1"># convert white from cat02 sensor space to cone sensors (hpe):</span>
             <span class="n">rgbwp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">mhpe_x_invmcat</span><span class="p">,</span><span class="n">rgbwc</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
@@ -632,7 +643,7 @@
             <span class="n">rgb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">mcat</span><span class="p">,</span><span class="n">xyzi</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
 
             <span class="c1"># apply von Kries cat:</span>
-            <span class="n">rgbc</span> <span class="o">=</span> <span class="p">((</span><span class="mf">100.0</span><span class="o">*</span><span class="n">D</span><span class="o">/</span><span class="n">rgbw</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">D</span><span class="p">))</span><span class="o">*</span><span class="n">rgb</span>
+            <span class="n">rgbc</span> <span class="o">=</span> <span class="p">((</span><span class="n">Yw</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">D</span><span class="o">/</span><span class="n">rgbw</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">D</span><span class="p">))</span><span class="o">*</span><span class="n">rgb</span>
 
             <span class="k">if</span> <span class="n">camtype</span> <span class="o">==</span> <span class="s1">&#39;ciecam02&#39;</span><span class="p">:</span>
                 <span class="c1"># convert from cat02 sensor space to cone sensors (hpe):</span>
@@ -650,7 +661,7 @@
 
             <span class="c1"># split into separate cone signals:</span>
             <span class="n">rpa</span><span class="p">,</span> <span class="n">gpa</span><span class="p">,</span> <span class="n">bpa</span> <span class="o">=</span> <span class="n">asplit</span><span class="p">(</span><span class="n">rgbpa</span><span class="p">)</span>
-            
+
             <span class="c1"># calculate initial opponent channels:</span>
             <span class="n">a</span> <span class="o">=</span> <span class="n">rpa</span> <span class="o">-</span> <span class="mf">12.0</span><span class="o">*</span><span class="n">gpa</span><span class="o">/</span><span class="mf">11.0</span> <span class="o">+</span> <span class="n">bpa</span><span class="o">/</span><span class="mf">11.0</span>
             <span class="n">b</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span><span class="o">/</span><span class="mf">9.0</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">rpa</span> <span class="o">+</span> <span class="n">gpa</span> <span class="o">-</span> <span class="mf">2.0</span><span class="o">*</span><span class="n">bpa</span><span class="p">)</span>
@@ -669,7 +680,7 @@
             
             <span class="c1"># Calculate achromatic signal:</span>
             <span class="n">A</span> <span class="o">=</span>  <span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="n">rpa</span> <span class="o">+</span> <span class="n">gpa</span> <span class="o">+</span> <span class="p">(</span><span class="mf">1.0</span><span class="o">/</span><span class="mf">20.0</span><span class="p">)</span><span class="o">*</span><span class="n">bpa</span> <span class="o">-</span> <span class="mf">0.305</span><span class="p">)</span><span class="o">*</span><span class="n">Nbb</span>
-            
+
             <span class="c1"># calculate lightness, J:</span>
             <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;J&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="s1">&#39;Q&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="s1">&#39;C&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="s1">&#39;M&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="s1">&#39;s&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="s1">&#39;aS&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="s1">&#39;aC&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="s1">&#39;aM&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">):</span>
                 <span class="n">J</span> <span class="o">=</span> <span class="mf">100.0</span><span class="o">*</span> <span class="p">(</span><span class="n">A</span> <span class="o">/</span> <span class="n">Aw</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="n">c</span><span class="o">*</span><span class="n">z</span><span class="p">)</span>
@@ -742,7 +753,7 @@
                 
             <span class="c1"># calculate t from J, C:</span>
             <span class="n">t</span> <span class="o">=</span> <span class="p">(</span><span class="n">C</span> <span class="o">/</span> <span class="p">((</span><span class="n">J</span><span class="o">/</span><span class="mf">100.0</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="mf">1.0</span><span class="o">/</span><span class="mf">2.0</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.64</span> <span class="o">-</span> <span class="mf">0.29</span><span class="o">**</span><span class="n">n</span><span class="p">)</span><span class="o">**</span><span class="mf">0.73</span><span class="p">))</span><span class="o">**</span><span class="p">(</span><span class="mf">1.0</span><span class="o">/</span><span class="mf">0.9</span><span class="p">)</span>
-            
+
             <span class="c1"># calculate eccentricity factor, et:</span>
             <span class="n">et</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">h</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.0</span> <span class="o">+</span> <span class="mf">2.0</span><span class="p">)</span> <span class="o">+</span> <span class="mf">3.8</span><span class="p">)</span> <span class="o">/</span> <span class="mf">4.0</span>
             
@@ -758,12 +769,12 @@
             <span class="n">p4</span> <span class="o">=</span> <span class="n">p1</span><span class="o">/</span><span class="n">bt</span>
             <span class="n">p5</span> <span class="o">=</span> <span class="n">p1</span><span class="o">/</span><span class="n">at</span>
 
-            <span class="n">q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">bt</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">at</span><span class="p">))</span>
+            <span class="n">q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">bt</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">at</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
 
 
             <span class="n">b</span> <span class="o">=</span> <span class="n">p2</span><span class="o">*</span><span class="p">(</span><span class="mf">2.0</span> <span class="o">+</span> <span class="n">p3</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mf">460.0</span><span class="o">/</span><span class="mf">1403.0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">p4</span> <span class="o">+</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">+</span> <span class="n">p3</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mf">220.0</span><span class="o">/</span><span class="mf">1403.0</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">at</span><span class="o">/</span><span class="n">bt</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="mf">27.0</span><span class="o">/</span><span class="mf">1403.0</span><span class="p">)</span> <span class="o">+</span> <span class="n">p3</span><span class="o">*</span><span class="p">(</span><span class="mf">6300.0</span><span class="o">/</span><span class="mf">1403.0</span><span class="p">))</span>
             <span class="n">a</span> <span class="o">=</span> <span class="n">b</span> <span class="o">*</span> <span class="p">(</span><span class="n">at</span><span class="o">/</span><span class="n">bt</span><span class="p">)</span>
-
+            
             <span class="n">a</span><span class="p">[</span><span class="n">q</span><span class="p">]</span> <span class="o">=</span> <span class="n">p2</span><span class="p">[</span><span class="n">q</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="mf">2.0</span> <span class="o">+</span> <span class="n">p3</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mf">460.0</span><span class="o">/</span><span class="mf">1403.0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">p5</span><span class="p">[</span><span class="n">q</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">+</span> <span class="n">p3</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mf">220.0</span><span class="o">/</span><span class="mf">1403.0</span><span class="p">)</span> <span class="o">-</span> <span class="p">((</span><span class="mf">27.0</span><span class="o">/</span><span class="mf">1403.0</span><span class="p">)</span> <span class="o">-</span> <span class="n">p3</span><span class="o">*</span><span class="p">(</span><span class="mf">6300.0</span><span class="o">/</span><span class="mf">1403.0</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="n">bt</span><span class="p">[</span><span class="n">q</span><span class="p">]</span><span class="o">/</span><span class="n">at</span><span class="p">[</span><span class="n">q</span><span class="p">]))</span>
             <span class="n">b</span><span class="p">[</span><span class="n">q</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">q</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">bt</span><span class="p">[</span><span class="n">q</span><span class="p">]</span><span class="o">/</span><span class="n">at</span><span class="p">[</span><span class="n">q</span><span class="p">])</span>
             
@@ -771,10 +782,10 @@
             <span class="n">rpa</span> <span class="o">=</span> <span class="p">(</span><span class="mf">460.0</span><span class="o">*</span><span class="n">p2</span> <span class="o">+</span> <span class="mf">451.0</span><span class="o">*</span><span class="n">a</span> <span class="o">+</span> <span class="mf">288.0</span><span class="o">*</span><span class="n">b</span><span class="p">)</span> <span class="o">/</span> <span class="mf">1403.0</span>
             <span class="n">gpa</span> <span class="o">=</span> <span class="p">(</span><span class="mf">460.0</span><span class="o">*</span><span class="n">p2</span> <span class="o">-</span> <span class="mf">891.0</span><span class="o">*</span><span class="n">a</span> <span class="o">-</span> <span class="mf">261.0</span><span class="o">*</span><span class="n">b</span><span class="p">)</span> <span class="o">/</span> <span class="mf">1403.0</span>
             <span class="n">bpa</span> <span class="o">=</span> <span class="p">(</span><span class="mf">460.0</span><span class="o">*</span><span class="n">p2</span> <span class="o">-</span> <span class="mf">220.0</span><span class="o">*</span><span class="n">a</span> <span class="o">-</span> <span class="mf">6300.0</span><span class="o">*</span><span class="n">b</span><span class="p">)</span> <span class="o">/</span> <span class="mf">1403.0</span>
-
+            
             <span class="c1"># join values:</span>
             <span class="n">rgbpa</span> <span class="o">=</span> <span class="n">ajoin</span><span class="p">((</span><span class="n">rpa</span><span class="p">,</span><span class="n">gpa</span><span class="p">,</span><span class="n">bpa</span><span class="p">))</span>
-            
+
             <span class="c1"># decompress signals:</span>
             <span class="n">rgbp</span> <span class="o">=</span> <span class="p">(</span><span class="mf">100.0</span><span class="o">/</span><span class="n">FL</span><span class="p">)</span><span class="o">*</span><span class="n">naka_rushton</span><span class="p">(</span><span class="n">rgbpa</span><span class="p">,</span> <span class="n">cam</span> <span class="o">=</span> <span class="n">camtype</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;inverse&#39;</span><span class="p">)</span>
            
@@ -789,7 +800,7 @@
                 <span class="n">rgbc</span> <span class="o">=</span> <span class="n">rgbp</span><span class="o">.</span><span class="n">T</span> <span class="c1"># in cam16, cat and cone sensor spaces are the same</span>
                      
             <span class="c1"># apply inverse von Kries cat:</span>
-            <span class="n">rgb</span> <span class="o">=</span> <span class="n">rgbc</span><span class="o">/</span> <span class="p">((</span><span class="mf">100.0</span><span class="o">*</span><span class="n">D</span><span class="o">/</span><span class="n">rgbw</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">D</span><span class="p">))</span>
+            <span class="n">rgb</span> <span class="o">=</span> <span class="n">rgbc</span><span class="o">/</span> <span class="p">((</span><span class="n">Yw</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">D</span><span class="o">/</span><span class="n">rgbw</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">D</span><span class="p">))</span>
  
             <span class="c1"># transform from cat sensor space to xyz:</span>
             <span class="n">xyzi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">invmcat</span><span class="p">,</span><span class="n">rgb</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
@@ -810,7 +821,7 @@
     
     
 <span class="c1">#---------------------------------------------------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="ciecam02"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.ciecam02">[docs]</a><span class="k">def</span> <span class="nf">ciecam02</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat02&#39;</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">(</span><span class="mf">100.0</span><span class="p">),</span>\
+<div class="viewcode-block" id="ciecam02"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.ciecam02">[docs]</a><span class="k">def</span> <span class="nf">ciecam02</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat02&#39;</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>\
              <span class="n">conditions</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_CONDITIONS</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;forward&#39;</span><span class="p">,</span> <span class="n">outin</span> <span class="o">=</span> <span class="s1">&#39;J,aM,bM&#39;</span><span class="p">,</span>\
              <span class="n">yellowbluepurplecorrect</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -830,10 +841,16 @@
 <span class="sd">              of white point(s), optional</span>
 <span class="sd">            | Can be multiple by specifying a Mx3 ndarray, instead of 1x3.</span>
 <span class="sd">        :Yw: </span>
-<span class="sd">            | luxpy.np2d(100), optional</span>
+<span class="sd">            | None, optional</span>
 <span class="sd">            | Luminance factor of white point.</span>
-<span class="sd">            | Is normally 100 for perfect white diffuser, </span>
-<span class="sd">              is &lt; 100 for e.g. paper as white point.         </span>
+<span class="sd">            | If None: xyz (in data) and xyzw are entered as relative tristimulus values </span>
+<span class="sd">            | (normalized to Yw = 100). </span>
+<span class="sd">            | If not None: input tristimulus are absolute and Yw is used to</span>
+<span class="sd">            | rescale the absolute values to relative ones (relative to a </span>
+<span class="sd">            | reference perfect white diffuser with Ywr = 100). </span>
+<span class="sd">            | Yw can be &lt; 100 for e.g. paper as white point. If Yw is None, it </span>
+<span class="sd">            | assumed that the relative Y-tristimulus value in xyzw represents </span>
+<span class="sd">            | the luminance factor Yw.       </span>
 <span class="sd">        :mcat:</span>
 <span class="sd">            | &#39;cat02&#39; or str or ndarray, optional</span>
 <span class="sd">            | Specifies CAT sensor space.</span>
@@ -882,7 +899,7 @@
 
 
 <span class="c1">#---------------------------------------------------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="cam16"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.cam16">[docs]</a><span class="k">def</span> <span class="nf">cam16</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat16&#39;</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">(</span><span class="mf">100.0</span><span class="p">),</span>\
+<div class="viewcode-block" id="cam16"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.cam16">[docs]</a><span class="k">def</span> <span class="nf">cam16</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat16&#39;</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>\
           <span class="n">conditions</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_CONDITIONS</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;forward&#39;</span><span class="p">,</span> <span class="n">outin</span> <span class="o">=</span> <span class="s1">&#39;J,aM,bM&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert between XYZ tristsimulus values and cam16 color appearance correlates.</span>
@@ -901,10 +918,16 @@
 <span class="sd">              of white point(s), optional</span>
 <span class="sd">            | Can be multiple by specifying a Mx3 ndarray, instead of 1x3.</span>
 <span class="sd">        :Yw: </span>
-<span class="sd">            | luxpy.np2d(100), optional</span>
+<span class="sd">            | None, optional</span>
 <span class="sd">            | Luminance factor of white point.</span>
-<span class="sd">            | Is normally 100 for perfect white diffuser, </span>
-<span class="sd">              is &lt; 100 for e.g. paper as white point.         </span>
+<span class="sd">            | If None: xyz (in data) and xyzw are entered as relative tristimulus values </span>
+<span class="sd">            | (normalized to Yw = 100). </span>
+<span class="sd">            | If not None: input tristimulus are absolute and Yw is used to</span>
+<span class="sd">            | rescale the absolute values to relative ones (relative to a </span>
+<span class="sd">            | reference perfect white diffuser with Ywr = 100). </span>
+<span class="sd">            | Yw can be &lt; 100 for e.g. paper as white point. If Yw is None, it </span>
+<span class="sd">            | assumed that the relative Y-tristimulus value in xyzw represents </span>
+<span class="sd">            | the luminance factor Yw.        </span>
 <span class="sd">        :mcat:</span>
 <span class="sd">            | &#39;cat16&#39; or str or ndarray, optional</span>
 <span class="sd">            | Specifies CAT sensor space.</span>
@@ -948,7 +971,7 @@
 
 <span class="c1">#---------------------------------------------------------------------------------------------------------------------</span>
 <span class="k">def</span> <span class="nf">camucs_structure</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">camtype</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_TYPE</span><span class="p">,</span> \
-                     <span class="n">mcat</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">(</span><span class="mf">100.0</span><span class="p">),</span> <span class="n">conditions</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_CONDITIONS</span><span class="p">,</span> \
+                     <span class="n">mcat</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_CONDITIONS</span><span class="p">,</span> \
                      <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;forward&#39;</span><span class="p">,</span> <span class="n">outin</span> <span class="o">=</span> <span class="s1">&#39;J,aM,bM&#39;</span><span class="p">,</span> <span class="n">ucstype</span> <span class="o">=</span> <span class="s1">&#39;ucs&#39;</span><span class="p">,</span> \
                      <span class="n">yellowbluepurplecorrect</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -974,10 +997,16 @@
 <span class="sd">              of white point(s), optional</span>
 <span class="sd">            | Can be multiple by specifying a Mx3 ndarray, instead of 1x3.</span>
 <span class="sd">        :Yw: </span>
-<span class="sd">            | luxpy.np2d(100), optional</span>
+<span class="sd">            | None, optional</span>
 <span class="sd">            | Luminance factor of white point.</span>
-<span class="sd">            | Is normally 100 for perfect white diffuser, </span>
-<span class="sd">              is &lt; 100 for e.g. paper as white point.         </span>
+<span class="sd">            | If None: xyz (in data) and xyzw are entered as relative tristimulus values </span>
+<span class="sd">            | (normalized to Yw = 100). </span>
+<span class="sd">            | If not None: input tristimulus are absolute and Yw is used to</span>
+<span class="sd">            | rescale the absolute values to relative ones (relative to a </span>
+<span class="sd">            | reference perfect white diffuser with Ywr = 100). </span>
+<span class="sd">            | Yw can be &lt; 100 for e.g. paper as white point. If Yw is None, it </span>
+<span class="sd">            | assumed that the relative Y-tristimulus value in xyzw represents </span>
+<span class="sd">            | the luminance factor Yw.      </span>
 <span class="sd">        :camtype: </span>
 <span class="sd">            | luxpy.cam._CAM_02_X_DEFAULT_TYPE, optional</span>
 <span class="sd">            | Str specifier for CAM type to use, options: &#39;ciecam02&#39; or &#39;cam16&#39;.</span>
@@ -1084,7 +1113,7 @@
      
 <span class="c1">#---------------------------------------------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="cam02ucs"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.cam02ucs">[docs]</a><span class="k">def</span> <span class="nf">cam02ucs</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_WHITE_POINT</span><span class="p">,</span> \
-             <span class="n">Yw</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">(</span><span class="mf">100.0</span><span class="p">),</span> <span class="n">conditions</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_CONDITIONS</span><span class="p">,</span> \
+             <span class="n">Yw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_CONDITIONS</span><span class="p">,</span> \
              <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;forward&#39;</span><span class="p">,</span> <span class="n">ucstype</span> <span class="o">=</span> <span class="s1">&#39;ucs&#39;</span><span class="p">,</span> <span class="n">yellowbluepurplecorrect</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> \
              <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat02&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -1105,10 +1134,16 @@
 <span class="sd">              of white point(s), optional</span>
 <span class="sd">            | Can be multiple by specifying a Mx3 ndarray, instead of 1x3.</span>
 <span class="sd">        :Yw: </span>
-<span class="sd">            | luxpy.np2d(100), optional</span>
+<span class="sd">            | None, optional</span>
 <span class="sd">            | Luminance factor of white point.</span>
-<span class="sd">            | Is normally 100 for perfect white diffuser, </span>
-<span class="sd">              is &lt; 100 for e.g. paper as white point.         </span>
+<span class="sd">            | If None: xyz (in data) and xyzw are entered as relative tristimulus values </span>
+<span class="sd">            | (normalized to Yw = 100). </span>
+<span class="sd">            | If not None: input tristimulus are absolute and Yw is used to</span>
+<span class="sd">            | rescale the absolute values to relative ones (relative to a </span>
+<span class="sd">            | reference perfect white diffuser with Ywr = 100). </span>
+<span class="sd">            | Yw can be &lt; 100 for e.g. paper as white point. If Yw is None, it </span>
+<span class="sd">            | assumed that the relative Y-tristimulus value in xyzw represents </span>
+<span class="sd">            | the luminance factor Yw.        </span>
 <span class="sd">        :mcat:</span>
 <span class="sd">            | &#39;cat02&#39; or str or ndarray, optional</span>
 <span class="sd">            | Specifies CAT sensor space.</span>
@@ -1162,7 +1197,7 @@
     <span class="k">return</span> <span class="n">camucs_structure</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">camtype</span> <span class="o">=</span> <span class="s1">&#39;ciecam02&#39;</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="n">mcat</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="n">Yw</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="n">conditions</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="n">direction</span><span class="p">,</span> <span class="n">ucstype</span> <span class="o">=</span> <span class="n">ucstype</span><span class="p">,</span> <span class="n">yellowbluepurplecorrect</span> <span class="o">=</span> <span class="n">yellowbluepurplecorrect</span><span class="p">)</span></div>
 
  <span class="c1">#---------------------------------------------------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="cam16ucs"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.cam16ucs">[docs]</a><span class="k">def</span> <span class="nf">cam16ucs</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">(</span><span class="mf">100.0</span><span class="p">),</span> \
+<div class="viewcode-block" id="cam16ucs"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.cam16ucs">[docs]</a><span class="k">def</span> <span class="nf">cam16ucs</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> \
              <span class="n">conditions</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_CONDITIONS</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;forward&#39;</span><span class="p">,</span> \
              <span class="n">ucstype</span> <span class="o">=</span> <span class="s1">&#39;ucs&#39;</span><span class="p">,</span>  <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat16&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -1182,10 +1217,16 @@
 <span class="sd">              of white point(s), optional</span>
 <span class="sd">            | Can be multiple by specifying a Mx3 ndarray, instead of 1x3.</span>
 <span class="sd">        :Yw: </span>
-<span class="sd">            | luxpy.np2d(100), optional</span>
+<span class="sd">            | None, optional</span>
 <span class="sd">            | Luminance factor of white point.</span>
-<span class="sd">            | Is normally 100 for perfect white diffuser, </span>
-<span class="sd">              is &lt; 100 for e.g. paper as white point.         .</span>
+<span class="sd">            | If None: xyz (in data) and xyzw are entered as relative tristimulus values </span>
+<span class="sd">            | (normalized to Yw = 100). </span>
+<span class="sd">            | If not None: input tristimulus are absolute and Yw is used to</span>
+<span class="sd">            | rescale the absolute values to relative ones (relative to a </span>
+<span class="sd">            | reference perfect white diffuser with Ywr = 100). </span>
+<span class="sd">            | Yw can be &lt; 100 for e.g. paper as white point. If Yw is None, it </span>
+<span class="sd">            | assumed that the relative Y-tristimulus value in xyzw represents </span>
+<span class="sd">            | the luminance factor Yw.        .</span>
 <span class="sd">        :mcat:</span>
 <span class="sd">            | &#39;cat16&#39; or str or ndarray, optional</span>
 <span class="sd">            | Specifies CAT sensor space.</span>
@@ -1246,7 +1287,7 @@
 
 <span class="c1">#------------------------------------------------------------------------------</span>
 <span class="c1"># wrapper function for use with colortf():</span>
-<div class="viewcode-block" id="xyz_to_jabM_ciecam02"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.xyz_to_jabM_ciecam02">[docs]</a><span class="k">def</span> <span class="nf">xyz_to_jabM_ciecam02</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">,</span>\
+<div class="viewcode-block" id="xyz_to_jabM_ciecam02"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.xyz_to_jabM_ciecam02">[docs]</a><span class="k">def</span> <span class="nf">xyz_to_jabM_ciecam02</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>\
                          <span class="n">conditions</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_CONDITIONS</span><span class="p">,</span> \
                          <span class="n">yellowbluepurplecorrect</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat02&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -1256,7 +1297,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">ciecam02</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="n">Yw</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="n">conditions</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;forward&#39;</span><span class="p">,</span> <span class="n">outin</span> <span class="o">=</span> <span class="s1">&#39;J,aM,bM&#39;</span><span class="p">,</span> <span class="n">yellowbluepurplecorrect</span> <span class="o">=</span> <span class="n">yellowbluepurplecorrect</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="n">mcat</span><span class="p">)</span></div>
    
-<div class="viewcode-block" id="jabM_ciecam02_to_xyz"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.jabM_ciecam02_to_xyz">[docs]</a><span class="k">def</span> <span class="nf">jabM_ciecam02_to_xyz</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">,</span>\
+<div class="viewcode-block" id="jabM_ciecam02_to_xyz"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.jabM_ciecam02_to_xyz">[docs]</a><span class="k">def</span> <span class="nf">jabM_ciecam02_to_xyz</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>\
                          <span class="n">conditions</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_CONDITIONS</span><span class="p">,</span> \
                          <span class="n">yellowbluepurplecorrect</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat02&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -1268,7 +1309,7 @@
 
 
 
-<div class="viewcode-block" id="xyz_to_jabC_ciecam02"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.xyz_to_jabC_ciecam02">[docs]</a><span class="k">def</span> <span class="nf">xyz_to_jabC_ciecam02</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">,</span> \
+<div class="viewcode-block" id="xyz_to_jabC_ciecam02"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.xyz_to_jabC_ciecam02">[docs]</a><span class="k">def</span> <span class="nf">xyz_to_jabC_ciecam02</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> \
                          <span class="n">conditions</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_CONDITIONS</span><span class="p">,</span> \
                          <span class="n">yellowbluepurplecorrect</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat02&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -1278,7 +1319,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">ciecam02</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="n">Yw</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="n">conditions</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;forward&#39;</span><span class="p">,</span> <span class="n">outin</span> <span class="o">=</span> <span class="s1">&#39;J,aC,bC&#39;</span><span class="p">,</span> <span class="n">yellowbluepurplecorrect</span> <span class="o">=</span> <span class="n">yellowbluepurplecorrect</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="n">mcat</span><span class="p">)</span></div>
  
-<div class="viewcode-block" id="jabC_ciecam02_to_xyz"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.jabC_ciecam02_to_xyz">[docs]</a><span class="k">def</span> <span class="nf">jabC_ciecam02_to_xyz</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">,</span> \
+<div class="viewcode-block" id="jabC_ciecam02_to_xyz"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.jabC_ciecam02_to_xyz">[docs]</a><span class="k">def</span> <span class="nf">jabC_ciecam02_to_xyz</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> \
                          <span class="n">conditions</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_CONDITIONS</span><span class="p">,</span> \
                          <span class="n">yellowbluepurplecorrect</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat02&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -1290,7 +1331,7 @@
 
 
               
-<div class="viewcode-block" id="xyz_to_jab_cam02ucs"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.xyz_to_jab_cam02ucs">[docs]</a><span class="k">def</span> <span class="nf">xyz_to_jab_cam02ucs</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">,</span>\
+<div class="viewcode-block" id="xyz_to_jab_cam02ucs"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.xyz_to_jab_cam02ucs">[docs]</a><span class="k">def</span> <span class="nf">xyz_to_jab_cam02ucs</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>\
                         <span class="n">conditions</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_CONDITIONS</span><span class="p">,</span> \
                         <span class="n">yellowbluepurplecorrect</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat02&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -1300,7 +1341,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">cam02ucs</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="n">Yw</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="n">conditions</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;forward&#39;</span><span class="p">,</span> <span class="n">ucstype</span> <span class="o">=</span> <span class="s1">&#39;ucs&#39;</span><span class="p">,</span> <span class="n">yellowbluepurplecorrect</span> <span class="o">=</span> <span class="n">yellowbluepurplecorrect</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="n">mcat</span><span class="p">)</span></div>
                 
-<div class="viewcode-block" id="jab_cam02ucs_to_xyz"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.jab_cam02ucs_to_xyz">[docs]</a><span class="k">def</span> <span class="nf">jab_cam02ucs_to_xyz</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">,</span> \
+<div class="viewcode-block" id="jab_cam02ucs_to_xyz"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.jab_cam02ucs_to_xyz">[docs]</a><span class="k">def</span> <span class="nf">jab_cam02ucs_to_xyz</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> \
                         <span class="n">conditions</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_CONDITIONS</span><span class="p">,</span> \
                         <span class="n">yellowbluepurplecorrect</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat02&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -1312,7 +1353,7 @@
 
 
 
-<div class="viewcode-block" id="xyz_to_jab_cam02lcd"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.xyz_to_jab_cam02lcd">[docs]</a><span class="k">def</span> <span class="nf">xyz_to_jab_cam02lcd</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">,</span> \
+<div class="viewcode-block" id="xyz_to_jab_cam02lcd"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.xyz_to_jab_cam02lcd">[docs]</a><span class="k">def</span> <span class="nf">xyz_to_jab_cam02lcd</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> \
                         <span class="n">conditions</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_CONDITIONS</span><span class="p">,</span> \
                         <span class="n">yellowbluepurplecorrect</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat02&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -1322,7 +1363,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">cam02ucs</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="n">Yw</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="n">conditions</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;forward&#39;</span><span class="p">,</span> <span class="n">ucstype</span> <span class="o">=</span> <span class="s1">&#39;lcd&#39;</span><span class="p">,</span> <span class="n">yellowbluepurplecorrect</span> <span class="o">=</span> <span class="n">yellowbluepurplecorrect</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="n">mcat</span><span class="p">)</span></div>
                 
-<div class="viewcode-block" id="jab_cam02lcd_to_xyz"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.jab_cam02lcd_to_xyz">[docs]</a><span class="k">def</span> <span class="nf">jab_cam02lcd_to_xyz</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">,</span> \
+<div class="viewcode-block" id="jab_cam02lcd_to_xyz"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.jab_cam02lcd_to_xyz">[docs]</a><span class="k">def</span> <span class="nf">jab_cam02lcd_to_xyz</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> \
                         <span class="n">conditions</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_CONDITIONS</span><span class="p">,</span> \
                         <span class="n">yellowbluepurplecorrect</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat02&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -1334,7 +1375,7 @@
 
 
 
-<div class="viewcode-block" id="xyz_to_jab_cam02scd"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.xyz_to_jab_cam02scd">[docs]</a><span class="k">def</span> <span class="nf">xyz_to_jab_cam02scd</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">,</span> \
+<div class="viewcode-block" id="xyz_to_jab_cam02scd"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.xyz_to_jab_cam02scd">[docs]</a><span class="k">def</span> <span class="nf">xyz_to_jab_cam02scd</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> \
                         <span class="n">conditions</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_CONDITIONS</span><span class="p">,</span> \
                         <span class="n">yellowbluepurplecorrect</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat02&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -1344,7 +1385,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">cam02ucs</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="n">Yw</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="n">conditions</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;forward&#39;</span><span class="p">,</span> <span class="n">ucstype</span> <span class="o">=</span> <span class="s1">&#39;scd&#39;</span><span class="p">,</span> <span class="n">yellowbluepurplecorrect</span> <span class="o">=</span> <span class="n">yellowbluepurplecorrect</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="n">mcat</span><span class="p">)</span></div>
                 
-<div class="viewcode-block" id="jab_cam02scd_to_xyz"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.jab_cam02scd_to_xyz">[docs]</a><span class="k">def</span> <span class="nf">jab_cam02scd_to_xyz</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">,</span> \
+<div class="viewcode-block" id="jab_cam02scd_to_xyz"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.jab_cam02scd_to_xyz">[docs]</a><span class="k">def</span> <span class="nf">jab_cam02scd_to_xyz</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> \
                         <span class="n">conditions</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_CONDITIONS</span><span class="p">,</span> \
                         <span class="n">yellowbluepurplecorrect</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat02&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -1357,7 +1398,7 @@
 
 
 <span class="c1">#------------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="xyz_to_jabM_cam16"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.xyz_to_jabM_cam16">[docs]</a><span class="k">def</span> <span class="nf">xyz_to_jabM_cam16</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">,</span> \
+<div class="viewcode-block" id="xyz_to_jabM_cam16"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.xyz_to_jabM_cam16">[docs]</a><span class="k">def</span> <span class="nf">xyz_to_jabM_cam16</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> \
                       <span class="n">conditions</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_CONDITIONS</span><span class="p">,</span>  <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat16&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Wrapper function for cam16 forward mode with J,aM,bM output.</span>
@@ -1366,7 +1407,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">cam16</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="n">Yw</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="n">conditions</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;forward&#39;</span><span class="p">,</span> <span class="n">outin</span> <span class="o">=</span> <span class="s1">&#39;J,aM,bM&#39;</span><span class="p">,</span>  <span class="n">mcat</span> <span class="o">=</span> <span class="n">mcat</span><span class="p">)</span></div>
    
-<div class="viewcode-block" id="jabM_cam16_to_xyz"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.jabM_cam16_to_xyz">[docs]</a><span class="k">def</span> <span class="nf">jabM_cam16_to_xyz</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">,</span> \
+<div class="viewcode-block" id="jabM_cam16_to_xyz"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.jabM_cam16_to_xyz">[docs]</a><span class="k">def</span> <span class="nf">jabM_cam16_to_xyz</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> \
                       <span class="n">conditions</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_CONDITIONS</span><span class="p">,</span>  <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat16&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Wrapper function for cam16 inverse mode with J,aM,bM input.</span>
@@ -1376,7 +1417,7 @@
     <span class="k">return</span> <span class="n">cam16</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="n">Yw</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="n">conditions</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;inverse&#39;</span><span class="p">,</span> <span class="n">outin</span> <span class="o">=</span> <span class="s1">&#39;J,aM,bM&#39;</span><span class="p">,</span>  <span class="n">mcat</span> <span class="o">=</span> <span class="n">mcat</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="xyz_to_jabC_cam16"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.xyz_to_jabC_cam16">[docs]</a><span class="k">def</span> <span class="nf">xyz_to_jabC_cam16</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">,</span> \
+<div class="viewcode-block" id="xyz_to_jabC_cam16"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.xyz_to_jabC_cam16">[docs]</a><span class="k">def</span> <span class="nf">xyz_to_jabC_cam16</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> \
                       <span class="n">conditions</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_CONDITIONS</span><span class="p">,</span>  <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat16&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Wrapper function for cam16 forward mode with J,aC,bC output.</span>
@@ -1385,7 +1426,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">cam16</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="n">Yw</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="n">conditions</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;forward&#39;</span><span class="p">,</span> <span class="n">outin</span> <span class="o">=</span> <span class="s1">&#39;J,aC,bC&#39;</span><span class="p">,</span>  <span class="n">mcat</span> <span class="o">=</span> <span class="n">mcat</span><span class="p">)</span></div>
    
-<div class="viewcode-block" id="jabC_cam16_to_xyz"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.jabC_cam16_to_xyz">[docs]</a><span class="k">def</span> <span class="nf">jabC_cam16_to_xyz</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">,</span> \
+<div class="viewcode-block" id="jabC_cam16_to_xyz"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.jabC_cam16_to_xyz">[docs]</a><span class="k">def</span> <span class="nf">jabC_cam16_to_xyz</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> \
                       <span class="n">conditions</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_CONDITIONS</span><span class="p">,</span>  <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat16&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Wrapper function for cam16 inverse mode with J,aC,bC input.</span>
@@ -1396,7 +1437,7 @@
 
 
               
-<div class="viewcode-block" id="xyz_to_jab_cam16ucs"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.xyz_to_jab_cam16ucs">[docs]</a><span class="k">def</span> <span class="nf">xyz_to_jab_cam16ucs</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">,</span> \
+<div class="viewcode-block" id="xyz_to_jab_cam16ucs"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.xyz_to_jab_cam16ucs">[docs]</a><span class="k">def</span> <span class="nf">xyz_to_jab_cam16ucs</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> \
                         <span class="n">conditions</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_CONDITIONS</span><span class="p">,</span>  <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat16&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Wrapper function for cam16ucs forward mode with J,aM,bM output and ucstype = &#39;ucs&#39;.</span>
@@ -1405,7 +1446,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">cam16ucs</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="n">Yw</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="n">conditions</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;forward&#39;</span><span class="p">,</span> <span class="n">ucstype</span> <span class="o">=</span> <span class="s1">&#39;ucs&#39;</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="n">mcat</span><span class="p">)</span></div>
                 
-<div class="viewcode-block" id="jab_cam16ucs_to_xyz"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.jab_cam16ucs_to_xyz">[docs]</a><span class="k">def</span> <span class="nf">jab_cam16ucs_to_xyz</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">,</span> \
+<div class="viewcode-block" id="jab_cam16ucs_to_xyz"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.jab_cam16ucs_to_xyz">[docs]</a><span class="k">def</span> <span class="nf">jab_cam16ucs_to_xyz</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> \
                         <span class="n">conditions</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_CONDITIONS</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat16&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Wrapper function for cam16ucs inverse mode with J,aM,bM input and ucstype = &#39;ucs&#39;.</span>
@@ -1415,7 +1456,7 @@
     <span class="k">return</span> <span class="n">cam16ucs</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="n">Yw</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="n">conditions</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;inverse&#39;</span><span class="p">,</span> <span class="n">ucstype</span> <span class="o">=</span> <span class="s1">&#39;ucs&#39;</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="n">mcat</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="xyz_to_jab_cam16lcd"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.xyz_to_jab_cam16lcd">[docs]</a><span class="k">def</span> <span class="nf">xyz_to_jab_cam16lcd</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">,</span> \
+<div class="viewcode-block" id="xyz_to_jab_cam16lcd"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.xyz_to_jab_cam16lcd">[docs]</a><span class="k">def</span> <span class="nf">xyz_to_jab_cam16lcd</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> \
                         <span class="n">conditions</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_CONDITIONS</span><span class="p">,</span>  <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat16&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Wrapper function for cam16ucs forward mode with J,aM,bM output and ucstype = &#39;lcd&#39;.</span>
@@ -1424,7 +1465,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">cam16ucs</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="n">Yw</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="n">conditions</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;forward&#39;</span><span class="p">,</span> <span class="n">ucstype</span> <span class="o">=</span> <span class="s1">&#39;lcd&#39;</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="n">mcat</span><span class="p">)</span></div>
                 
-<div class="viewcode-block" id="jab_cam16lcd_to_xyz"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.jab_cam16lcd_to_xyz">[docs]</a><span class="k">def</span> <span class="nf">jab_cam16lcd_to_xyz</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">,</span> \
+<div class="viewcode-block" id="jab_cam16lcd_to_xyz"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.jab_cam16lcd_to_xyz">[docs]</a><span class="k">def</span> <span class="nf">jab_cam16lcd_to_xyz</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> \
                         <span class="n">conditions</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_CONDITIONS</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat16&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Wrapper function for cam16ucs inverse mode with J,aM,bM input and ucstype = &#39;lcd&#39;.</span>
@@ -1435,7 +1476,7 @@
 
 
 
-<div class="viewcode-block" id="xyz_to_jab_cam16scd"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.xyz_to_jab_cam16scd">[docs]</a><span class="k">def</span> <span class="nf">xyz_to_jab_cam16scd</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">,</span> \
+<div class="viewcode-block" id="xyz_to_jab_cam16scd"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.xyz_to_jab_cam16scd">[docs]</a><span class="k">def</span> <span class="nf">xyz_to_jab_cam16scd</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> \
                         <span class="n">conditions</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_CONDITIONS</span><span class="p">,</span>  <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat16&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Wrapper function for cam16ucs forward mode with J,aM,bM output and ucstype = &#39;scd&#39;.</span>
@@ -1444,7 +1485,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">cam16ucs</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="n">Yw</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="n">conditions</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;forward&#39;</span><span class="p">,</span> <span class="n">ucstype</span> <span class="o">=</span> <span class="s1">&#39;scd&#39;</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="n">mcat</span><span class="p">)</span></div>
                 
-<div class="viewcode-block" id="jab_cam16scd_to_xyz"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.jab_cam16scd_to_xyz">[docs]</a><span class="k">def</span> <span class="nf">jab_cam16scd_to_xyz</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">,</span> \
+<div class="viewcode-block" id="jab_cam16scd_to_xyz"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.jab_cam16scd_to_xyz">[docs]</a><span class="k">def</span> <span class="nf">jab_cam16scd_to_xyz</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> \
                         <span class="n">conditions</span> <span class="o">=</span> <span class="n">_CAM_02_X_DEFAULT_CONDITIONS</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat16&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Wrapper function for cam16ucs inverse mode with J,aM,bM input  and ucstype = &#39;scd&#39;. </span>

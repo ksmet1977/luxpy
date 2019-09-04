@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.color.deltaE.colordifferences &mdash; LuxPy 1.4.11 documentation</title>
+  <title>luxpy.color.deltaE.colordifferences &mdash; LuxPy 1.4.12 documentation</title>
   
 
   
@@ -56,7 +56,7 @@
             
             
               <div class="version">
-                1.4.11
+                1.4.12
               </div>
             
           
@@ -232,8 +232,8 @@
 
 <div class="viewcode-block" id="DE_camucs"><a class="viewcode-back" href="../../../../color.html#luxpy.color.deltaE.DE_camucs">[docs]</a><span class="k">def</span> <span class="nf">DE_camucs</span><span class="p">(</span><span class="n">xyzt</span><span class="p">,</span> <span class="n">xyzr</span><span class="p">,</span> <span class="n">DEtype</span> <span class="o">=</span> <span class="s1">&#39;jab&#39;</span><span class="p">,</span> <span class="n">avg</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">avg_axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;DEi&#39;</span><span class="p">,</span>
               <span class="n">xyzwt</span> <span class="o">=</span> <span class="n">cam</span><span class="o">.</span><span class="n">_CAM_02_X_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">xyzwr</span> <span class="o">=</span> <span class="n">cam</span><span class="o">.</span><span class="n">_CAM_02_X_DEFAULT_WHITE_POINT</span><span class="p">,</span> \
-              <span class="n">Ywt</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">(</span><span class="mf">100.0</span><span class="p">),</span> <span class="n">conditionst</span> <span class="o">=</span> <span class="n">cam</span><span class="o">.</span><span class="n">_CAM_02_X_DEFAULT_CONDITIONS</span><span class="p">,</span>\
-              <span class="n">Ywr</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">(</span><span class="mf">100.0</span><span class="p">),</span> <span class="n">conditionsr</span> <span class="o">=</span> <span class="n">cam</span><span class="o">.</span><span class="n">_CAM_02_X_DEFAULT_CONDITIONS</span><span class="p">,</span>\
+              <span class="n">Ywt</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">conditionst</span> <span class="o">=</span> <span class="n">cam</span><span class="o">.</span><span class="n">_CAM_02_X_DEFAULT_CONDITIONS</span><span class="p">,</span>\
+              <span class="n">Ywr</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">conditionsr</span> <span class="o">=</span> <span class="n">cam</span><span class="o">.</span><span class="n">_CAM_02_X_DEFAULT_CONDITIONS</span><span class="p">,</span>\
               <span class="n">camtype</span> <span class="o">=</span> <span class="n">cam</span><span class="o">.</span><span class="n">_CAM_02_X_DEFAULT_TYPE</span><span class="p">,</span> <span class="n">ucstype</span> <span class="o">=</span> <span class="s1">&#39;ucs&#39;</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> \
               <span class="n">outin</span> <span class="o">=</span> <span class="s1">&#39;J,aM,bM&#39;</span><span class="p">,</span> <span class="n">yellowbluepurplecorrect</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     

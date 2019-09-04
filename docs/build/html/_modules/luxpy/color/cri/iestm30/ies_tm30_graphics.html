@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.color.cri.iestm30.ies_tm30_graphics &mdash; LuxPy 1.4.11 documentation</title>
+  <title>luxpy.color.cri.iestm30.ies_tm30_graphics &mdash; LuxPy 1.4.12 documentation</title>
   
 
   
@@ -56,7 +56,7 @@
             
             
               <div class="version">
-                1.4.11
+                1.4.12
               </div>
             
           
@@ -320,7 +320,7 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="nb">dict</span><span class="p">):</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">spd_to_ies_tm30_metrics</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">,</span> <span class="n">hbins</span> <span class="o">=</span> <span class="n">hbins</span><span class="p">,</span> <span class="n">start_hue</span> <span class="o">=</span> <span class="n">start_hue</span><span class="p">,</span> <span class="n">scalef</span> <span class="o">=</span> <span class="n">scalef</span><span class="p">,</span> <span class="n">vf_model_type</span> <span class="o">=</span> <span class="n">vf_model_type</span><span class="p">,</span> <span class="n">vf_pcolorshift</span> <span class="o">=</span> <span class="n">vf_pcolorshift</span><span class="p">,</span> <span class="n">scale_vf_chroma_to_sample_chroma</span> <span class="o">=</span> <span class="n">scale_vf_chroma_to_sample_chroma</span><span class="p">)</span>
 
-    <span class="n">Rcshi</span><span class="p">,</span> <span class="n">Rf</span><span class="p">,</span> <span class="n">Rfchhi_vf</span><span class="p">,</span> <span class="n">Rfhi</span><span class="p">,</span> <span class="n">Rfhi_vf</span><span class="p">,</span> <span class="n">Rfhshi_vf</span><span class="p">,</span> <span class="n">Rfi</span><span class="p">,</span>  <span class="n">Rg</span><span class="p">,</span> <span class="n">Rhshi</span><span class="p">,</span> <span class="n">Rt</span><span class="p">,</span> <span class="n">Rti</span><span class="p">,</span> <span class="n">SPD</span><span class="p">,</span> <span class="n">bjabr</span><span class="p">,</span> <span class="n">bjabt</span><span class="p">,</span> <span class="n">cct</span><span class="p">,</span> <span class="n">cri_type</span><span class="p">,</span> <span class="n">dataVF</span><span class="p">,</span> <span class="n">duv</span> <span class="o">=</span> <span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">())]</span>
+    <span class="n">Rcshi</span><span class="p">,</span> <span class="n">Rf</span><span class="p">,</span> <span class="n">Rfcshi_vf</span><span class="p">,</span> <span class="n">Rfhi</span><span class="p">,</span> <span class="n">Rfhi_vf</span><span class="p">,</span> <span class="n">Rfhshi_vf</span><span class="p">,</span> <span class="n">Rfi</span><span class="p">,</span>  <span class="n">Rg</span><span class="p">,</span> <span class="n">Rhshi</span><span class="p">,</span> <span class="n">Rt</span><span class="p">,</span> <span class="n">Rti</span><span class="p">,</span> <span class="n">SPD</span><span class="p">,</span> <span class="n">bjabr</span><span class="p">,</span> <span class="n">bjabt</span><span class="p">,</span> <span class="n">cct</span><span class="p">,</span> <span class="n">cri_type</span><span class="p">,</span> <span class="n">dataVF</span><span class="p">,</span> <span class="n">duv</span> <span class="o">=</span> <span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">())]</span>
     <span class="n">hbins</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;rg_pars&#39;</span><span class="p">][</span><span class="s1">&#39;nhbins&#39;</span><span class="p">]</span>
     <span class="n">start_hue</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;rg_pars&#39;</span><span class="p">][</span><span class="s1">&#39;start_hue&#39;</span><span class="p">]</span>
     <span class="n">scalef</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;rg_pars&#39;</span><span class="p">][</span><span class="s1">&#39;normalized_chroma_ref&#39;</span><span class="p">]</span>
