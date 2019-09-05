@@ -98,7 +98,7 @@ def xyz_to_rfl(xyz, rfl = None, out = 'rfl_est', \
     
     # Convert xyz to lab-type values under refspd:
     lab = colortf(xyz, tf = cspace, fwtf = cspace_tf_copy, bwtf = cspace_tf_copy)
-    
+    print(interp_type)
     if interp_type == 'nearest':
         # Find rfl (cfr. lab_rr) from rfl set that results in 'near' metameric 
         # color coordinates for each value in lab_ur (i.e. smallest DE):
@@ -108,6 +108,7 @@ def xyz_to_rfl(xyz, rfl = None, out = 'rfl_est', \
         # Interpolate rfls using k nearest neightbours and inverse distance weigthing:
         d, inds = tree.query(lab, k = k_neighbours )
         if k_neighbours  > 1:
+            d += _EPS
             w = (1.0 / d**2)[:,:,None] # inverse distance weigthing
             rfl_est = np.sum(w * rfl[inds+1,:], axis=1) / np.sum(w, axis=1)
         else:
