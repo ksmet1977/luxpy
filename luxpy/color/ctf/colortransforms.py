@@ -946,13 +946,16 @@ def Ydlep_to_xyz(Ydlep, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT, f
     return Yxy_to_xyz(Yxy).reshape(Ydlep.shape)
 
 
-def xyz_to_srgb(xyz, **kwargs):
+def xyz_to_srgb(xyz, gamma = 2.4, **kwargs):
     """
     Calculates IEC:61966 sRGB values from xyz.
 
     Args:
         :xyz: 
             | ndarray with relative tristimulus values.
+        :gamma: 
+            | 2.4, optional
+            | compression in sRGB
 
     Returns:
         :rgb: 
@@ -979,7 +982,7 @@ def xyz_to_srgb(xyz, **kwargs):
     dark = np.where(srgb <=  0.0031308)
 
     # apply gamma function:
-    g = 1/2.4
+    g = 1/gamma
 
     # and scale to range 0-255:
     rgb = srgb.copy()
@@ -996,14 +999,17 @@ def xyz_to_srgb(xyz, **kwargs):
     return rgb
 
 
-def srgb_to_xyz(rgb, **kwargs):
+def srgb_to_xyz(rgb, gamma = 2.4, **kwargs):
     """
     Calculates xyz from IEC:61966 sRGB values.
 
     Args:
         :rgb: 
             | ndarray with srgb values (uint8).
-
+        :gamma: 
+            | 2.4, optional
+            | compression in sRGB
+            
     Returns:
         :xyz: 
             | ndarray with relative tristimulus values.
@@ -1024,7 +1030,7 @@ def srgb_to_xyz(rgb, **kwargs):
 
     # apply gamma function to convert to sRGB
     srgb = sRGB.copy()
-    srgb = ((srgb + 0.055)/1.055)**2.4
+    srgb = ((srgb + 0.055)/1.055)**gamma
 
     srgb[nonlin] = sRGB[nonlin]/12.92
 
