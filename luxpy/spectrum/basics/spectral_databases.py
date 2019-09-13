@@ -58,8 +58,10 @@ Module for loading light source (spd) and reflectance (rfl) spectra databases
            
  :_RFL: | Database (dict) with RFLs, including:
         | * all those in _CRI_RFL, 
-        | * the 1269 Matt Munsell samples,
-        | * the 24 Macbeth CC,
+        | * the 1269 Matt Munsell samples (see also _MUNSELL),
+        | * the 24 Macbeth ColorChecker samples,
+        | * the 215 samples proposed by Opstelten, J.J. , 1983, The establishment of a representative set of test colours
+        |   for the specification of the colour rendering properties of light sources, CIE-20th session, Amsterdam. 
         | * the 114120 RFLs from `(capbone.com/spectral-reflectance-database/)<114120 RFLs from https://capbone.com/spectral-reflectance-database/>`_
             
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
@@ -68,7 +70,7 @@ from luxpy import np, copy, _PKG_PATH, _SEP, getdata
 __all__ = ['_R_PATH','_S_PATH', '_IESTM3015','_IESTM3015_S',
            '_IESTM3018','_IESTM3018_S','_CRI_RFL','_CIE_ILLUMINANTS',
            '_CIE_E', '_CIE_D65', '_CIE_A', '_CIE_C', '_CIE_F4',
-           '_RFL']
+           '_RFL', '_MUNSELL']
 
 
 #_C_dir = _PKG_PATH + _SEP + 'data'+ _SEP + 'cmfs' + _SEP #folder with cmf data
@@ -168,6 +170,11 @@ _CQS = {'v7.5': getdata(_R_PATH + 'CQSv7dot5.dat',kind='np').T}
 _CQS['v9.0'] =  getdata(_R_PATH + 'CQSv9dot0.dat',kind='np').T
 
 #------------------------------------------------------------------------------
+# 215 samples proposed by Opstelten, J.J. , 1983, The establishment of a representative set of test colours
+# for the specification of the colour rendering properties of light sources, CIE-20th session, Amsterdam. 
+_OPSTELTEN215 = {'R' : getdata(_R_PATH + 'Opstelten1983_215.dat',kind='np').T}
+
+#------------------------------------------------------------------------------
 # collect in one dict:
 _CRI_RFL = {'cie-13.3-1995': _CIE133_1995}
 _CRI_RFL['cie-224-2017'] = _CIE224_2017
@@ -180,14 +187,14 @@ _CRI_RFL['cqs'] = _CQS
 
 #------------------------------------------------------------------------------
 # 1269 Munsell spectral reflectance functions:
-_MUNSELL_RFL = {'cieobs':'1931_2', 'Lw' : 400.0, 'Yb': 0.2}
-_MUNSELL_RFL['R'] = getdata(_R_PATH + 'Munsell1269.dat',kind='np').T
+_MUNSELL = {'cieobs':'1931_2', 'Lw' : 400.0, 'Yb': 0.2}
+_MUNSELL['R'] = getdata(_R_PATH + 'Munsell1269.dat',kind='np').T
 temp = getdata(_R_PATH + 'Munsell1269_Notations.dat',kind='np',header = 'infer',verbosity=0)
-_MUNSELL_RFL['H'] = temp[:,1,None]
-_MUNSELL_RFL['V'] = temp[:,2,None]
-_MUNSELL_RFL['C'] = temp[:,3,None]
-_MUNSELL_RFL['h'] = temp[:,4,None]
-_MUNSELL_RFL['ab'] = temp[:,5:7]
+_MUNSELL['H'] = temp[:,1,None]
+_MUNSELL['V'] = temp[:,2,None]
+_MUNSELL['C'] = temp[:,3,None]
+_MUNSELL['h'] = temp[:,4,None]
+_MUNSELL['ab'] = temp[:,5:7]
 
 del temp, ies99categories
 
@@ -207,8 +214,9 @@ finally:
     _CAPBONE_RFL = {'100k': _CAPBONE_100K_RFL}
     
 # Combine RFLs:
-_RFL = {'munsell': _MUNSELL_RFL, 
+_RFL = {'munsell': _MUNSELL, 
          'macbeth':_MACBETH_RFL,
          'capbone': _CAPBONE_RFL,
+         'opstelten': _OPSTELTEN215,
          'cri' : _CRI_RFL}
 #_RFL.update(_CRI_RFL)
