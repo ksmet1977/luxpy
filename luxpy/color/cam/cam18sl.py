@@ -62,7 +62,7 @@ def cam18sl(data, datab = None, Lb = [100], fov = 10.0, inputtype = 'xyz', direc
               of stimulus background
         :Lb: 
             | [100], optional
-            | Luminance (cd/m²) value(s) of background(s) calculated using the CIE 1964 10° CMFs 
+            | Luminance (cd/m²) value(s) of background(s) calculated using the CIE 2006 10° CMFs 
             | (only used in case datab == None and the background is assumed to be an Equal-Energy-White)
         :fov: 
             | 10.0, optional
@@ -93,6 +93,18 @@ def cam18sl(data, datab = None, Lb = [100], fov = 10.0, inputtype = 'xyz', direc
             | ndarray with color appearance correlates (:direction: == 'forward')
             |  or 
             | XYZ tristimulus values (:direction: == 'inverse')
+            
+    Notes:
+        | * Instead of using the CIE 1964 10° CMFs in some places of the model,
+        |   the CIE 2006 10° CMFs are used througout, making it more self_consistent.
+        |   This has an effect on the k scaling factors (now different those in CAM15u) 
+        |   and the illuminant E normalization for use in the chromatic adaptation transform.
+        |   (see future erratum to Hermans et al., 2018)
+        | * The paper also used an equation for the amount of white W, which is
+        |   based on a Q value not expressed in 'bright' ('cA' = 0.937 instead of 123). 
+        |   This has been corrected for in the luxpy version of the model, i.e.
+        |   _CAM18SL_PARAMETERS['cW'][0] has been changed from 2.29 to 1/11672.
+        |   (see future erratum to Hermans et al., 2018)
 
     References: 
         1. `Hermans, S., Smet, K. A. G., & Hanselaer, P. (2018). 
@@ -119,7 +131,7 @@ def cam18sl(data, datab = None, Lb = [100], fov = 10.0, inputtype = 'xyz', direc
     # Get Lb values:
     if datab is not None:
         if inputtype != 'xyz':
-            Lb = spd_to_xyz(datab, cieobs = '1964_10', relative = False)[...,1:2]
+            Lb = spd_to_xyz(datab, cieobs = '2006_10', relative = False)[...,1:2]
         else:
             Lb = datab[...,1:2]
     else:
@@ -135,7 +147,7 @@ def cam18sl(data, datab = None, Lb = [100], fov = 10.0, inputtype = 'xyz', direc
         else:
             wlr = datab[0] # use wlr of background data
     datar = np.vstack((wlr,np.ones((Lb.shape[0], wlr.shape[0])))) # create eew
-    xyzr = spd_to_xyz(datar, cieobs = '1964_10', relative = False) # get abs. tristimulus values
+    xyzr = spd_to_xyz(datar, cieobs = '2006_10', relative = False) # get abs. tristimulus values
     datar[1:] = datar[1:]/xyzr[...,1:2]*Lb
     # Create datab if None:
     if (datab is None):
@@ -190,7 +202,7 @@ def cam18sl(data, datab = None, Lb = [100], fov = 10.0, inputtype = 'xyz', direc
         #rgbr = (lmsr / _CMF['2006_10']['K']) * k # convert to rho, gamma, beta
         #rgbr = rgbr/rgbr[...,1:2]*Lb[i] # calculated EEW cone excitations at same luminance values as background
         rgbr = np.ones(xyzr.shape)*Lb[i] # explicitely equal EEW cone excitations at same luminance values as background
-        
+
         if direction == 'forward':
             # get rho, gamma, beta of stimulus:
             if (inputtype != 'xyz'):
@@ -199,7 +211,7 @@ def cam18sl(data, datab = None, Lb = [100], fov = 10.0, inputtype = 'xyz', direc
                 xyz = data[i]
             lms = np.dot(_CMF['2006_10']['M'],xyz.T).T # convert to l,m,s
             rgb = (lms / _CMF['2006_10']['K']) * k # convert to rho, gamma, beta
-            
+
             # apply von-kries cat with D = 1:
             if (rgbb == 0).any():
                 Mcat = np.eye(3)
@@ -217,16 +229,16 @@ def cam18sl(data, datab = None, Lb = [100], fov = 10.0, inputtype = 'xyz', direc
             A,a,b = asplit(Aab)
             a = ca*a
             b = cb*b
-            
+
             # calculate colorfullness like signal M:
             M = cM*((a**2.0 + b**2.0)**0.5)
 
             # calculate brightness Q:
             Q = cA*(A + cHK[0]*M**cHK[1]) # last term is contribution of Helmholtz-Kohlrausch effect on brightness
-            
+
             # calculate saturation, s:
             s = M / Q
-            
+
             # calculate amount of white, W:
             W = 1 / (1.0 + cW[0]*(s**cW[1]))
 
