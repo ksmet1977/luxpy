@@ -966,7 +966,7 @@ def box_m(*X, ni = None, verbosity = 1):
         1. If p==1: Reduces to Bartlett's test for equal variances.
         2. If (ni>20).all() & (p<6) & (k<6): then a more appropriate chi2 test is used in a some cases.
     """
-    
+
     k = len(X) # groups
     p = np.atleast_2d(X[0]).shape[1] # variables
     if p == 1: # for p == 1: only variance!
@@ -985,15 +985,14 @@ def box_m(*X, ni = None, verbosity = 1):
             ni = ni*np.ones((k,))
         
     N = ni.sum()
-    
-    S = np.array([ni[i]*Si[i] for i in range(len(ni))]).sum(axis=0)/(N - k)
+    S = np.array([(ni[i]-1)*Si[i] for i in range(len(ni))]).sum(axis=0)/(N - k)
 
     M = (N-k)*np.log(det(S)) - ((ni-1)*np.log(det(Si))).sum()
     if p == 1:
         M = M[0]
-    A1 = (2*p**2 + 3*p -1)/(6*(p+1)*(k-1))*((1/(ni-1)).sum() - 1/(N - k))
+    A1 = (2*p**2 + 3*p -1)/(6*(p+1)*(k-1))*((1/(ni-1)) - 1/(N - k)).sum()
     v1 = p*(p+1)*(k-1)/2
-    A2 = (p-1)*(p+2)/(6*(k-1))*((1/(ni-1)**2).sum() - 1/(N - k)**2)
+    A2 = (p-1)*(p+2)/(6*(k-1))*((1/(ni-1)**2) - 1/(N - k)**2).sum()
 
     if (A2 - A1**2) > 0:
         v2 = (v1 + 2)/(A2 - A1**2)
@@ -1012,7 +1011,7 @@ def box_m(*X, ni = None, verbosity = 1):
         statistic = Fv1v2
         pval = 1.0 - sp.stats.f.cdf(Fv1v2,v1,v2)
         dfs = [v1,v2]
-        print(M,Fv1v2,v1,v2,pval)
+
         if (ni>20).all() & (p<6) & (k<6): #use Chi2v1
             chi2v1 = M*(1-A1)
             statistic = chi2v1
