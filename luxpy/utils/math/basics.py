@@ -86,6 +86,8 @@ Module with useful basic math functions
  :ndinterp1_scipy(): Perform n-dimensional interpolation using Delaunay triangulation (wrapper around scipy.interpolate.LinearNDInterpolator)
  
  :box_m(): Performs a Box M test on covariance matrices.
+ 
+ :pitman_morgan(): Pitman-Morgan Test for the difference between correlated variances with paired samples.
      
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 ===============================================================================
@@ -98,7 +100,8 @@ __all__  = ['normalize_3x3_matrix','symmM_to_posdefM','check_symmetric',
             'histogram', 'pol2cart', 'cart2pol', 'spher2cart', 'cart2spher']
 __all__ += ['bvgpdf','mahalanobis2','dot23', 'rms','geomean','polyarea']
 __all__ += ['magnitude_v','angle_v1v2']
-__all__ += ['v_to_cik', 'cik_to_v', 'fmod', 'fit_ellipse','ndinterp1','ndinterp1_scipy','box_m']
+__all__ += ['v_to_cik', 'cik_to_v', 'fmod', 'fit_ellipse','ndinterp1','ndinterp1_scipy']
+__all__ += ['box_m','pitman_morgan']
 
 
 #------------------------------------------------------------------------------
@@ -937,7 +940,7 @@ def ndinterp1(X, Y, Xnew):
         
     return Ynew
 
-def box_m(*X, ni = None, verbosity = 1):
+def box_m(*X, ni = None, verbosity = 0):
     """
     Perform Box's M test (p>=2) to check equality of covariance matrices or Bartlett's test (p==1) for equality of variances.
     
@@ -957,7 +960,7 @@ def box_m(*X, ni = None, verbosity = 1):
             | F or chi2 value (see len(dfs))
         :pval:
             | p-value
-        :dfs:
+        :df:
             | degrees of freedom.
             | if len(dfs) == 2: F-test was used.
             | if len(dfs) == 1: chi2 approx. was used.
@@ -1003,7 +1006,7 @@ def box_m(*X, ni = None, verbosity = 1):
         dfs = [v1,v2]
         
         if verbosity == 1:
-            print('M = {:1.4f}, Fv1v2 = {:1.4f}, v1 = {:1.1f}, v2 = {:1.1f}, p = {:1.4f}'.format(M,Fv1v2,v1,v2,pval))
+            print('M = {:1.4f}, F = {:1.4f}, df1 = {:1.1f}, df2 = {:1.1f}, p = {:1.4f}'.format(M,Fv1v2,v1,v2,pval))
     else:
         v2 = (v1 + 2)/(A1**2 - A2)
         b = v2/(1 - A1 + (2/v2))
@@ -1018,10 +1021,66 @@ def box_m(*X, ni = None, verbosity = 1):
             pval = 1.0 - sp.stats.chi2.cdf(chi2v1,v1)
             dfs = [v1]
             if verbosity == 1:
-                print('M = {:1.4f}, chi2v1 = {:1.4f}, v1 = {:1.1f}, p = {:1.4f}'.format(M,chi2v1,v1,pval))
+                print('M = {:1.4f}, chi2 = {:1.4f}, df1 = {:1.1f}, p = {:1.4f}'.format(M,chi2v1,v1,pval))
 
         else:
             if verbosity == 1:
-                print('M = {:1.4f}, Fv1v2 = {:1.4f}, v1 = {:1.1f}, v2 = {:1.1f}, p = {:1.4f}'.format(M,Fv1v2,v1,v2,pval))
+                print('M = {:1.4f}, F = {:1.4f}, df1 = {:1.1f}, df2 = {:1.1f}, p = {:1.4f}'.format(M,Fv1v2,v1,v2,pval))
 
     return statistic, pval, dfs
+
+def pitman_morgan(X,Y, verbosity = 0):
+    """
+    Pitman-Morgan Test for the difference between correlated variances with paired samples.
+     
+    Args:
+        :X,Y: 
+            | ndarrays with data.
+        :verbosity: 
+            | 0, optional
+            | If 1: print results. 
+            
+    Returns:
+        :tval:
+            | statistic
+        :pval:
+            | p-value
+        :df:
+            | degree of freedom.
+        :ratio:
+            | variance ratio var1/var2 (with var1 > var2).
+
+    Note:
+        1. based on Gardner, R.C. (2001). Psychological Statistics Using SPSS for Windows. New Jersey: Prentice Hall.
+        2. Matlab port from code by Janne Kauttonen (https://nl.mathworks.com/matlabcentral/fileexchange/67910-pitmanmorgantest-x-y; accessed Sep 26, 2019)
+    """
+    N = X.shape[0]
+    var1, var2 = X.var(axis=0),Y.var(axis=0)
+    cor = np.corrcoef(X,Y)[0,1]
+    
+    # must have var1 > var2:
+    if var1 < var2:
+        var1, var2 = var2, var1
+
+    ratio = var1/var2
+    
+    # formulas from Garder (2001, p.57):
+    numerator1_S1minusS2 = var1-var2
+    numerator2_SQRTnminus2 = np.sqrt(N-2)
+    numerator3 = numerator1_S1minusS2*numerator2_SQRTnminus2
+    denominator1_4timesS1timesS2 = 4*var1*var2
+    denominator2_rSquared = cor**2
+    denominator3_1minusrSquared = 1.0 - denominator2_rSquared
+    denominator4_4timesS1timesS2div1minusrSquared = denominator1_4timesS1timesS2*denominator3_1minusrSquared
+    denominator5 = np.sqrt(denominator4_4timesS1timesS2div1minusrSquared)
+    df = N-2
+    if denominator5 == 0:
+        denominator5 = _EPS
+    tval = numerator3/denominator5
+    
+    # compute stats:
+    p = 2*(1.0-sp.stats.t.cdf(tval,df))
+    if verbosity == 1:
+        print('tval = {:1.4f}, df = {:1.1f}, p = {:1.4f}'.format(tval,df, p))
+
+    return tval, p, df, ratio
