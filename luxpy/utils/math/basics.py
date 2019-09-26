@@ -98,7 +98,7 @@ __all__  = ['normalize_3x3_matrix','symmM_to_posdefM','check_symmetric',
             'histogram', 'pol2cart', 'cart2pol', 'spher2cart', 'cart2spher']
 __all__ += ['bvgpdf','mahalanobis2','dot23', 'rms','geomean','polyarea']
 __all__ += ['magnitude_v','angle_v1v2']
-__all__ += ['v_to_cik', 'cik_to_v', 'fmod', 'fit_ellipse','ndinterp1','ndinterp1_scipy']
+__all__ += ['v_to_cik', 'cik_to_v', 'fmod', 'fit_ellipse','ndinterp1','ndinterp1_scipy','box_m']
 
 
 #------------------------------------------------------------------------------
