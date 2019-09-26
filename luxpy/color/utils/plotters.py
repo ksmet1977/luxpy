@@ -655,11 +655,11 @@ def plotellipse(v, cspace_in = 'Yxy', cspace_out = None, nsamples = 100, \
                 ylabel = _CSPACE_AXES[cspace_out][2]
             
             if plot_center == True:
-                plt.plot(Yxyc[:,1],Yxyc[:,2],color = center_color, linestyle = 'none', marker = center_marker, markersize = center_markersize)
+                axh.plot(Yxyc[:,1],Yxyc[:,2],color = center_color, linestyle = 'none', marker = center_marker, markersize = center_markersize)
 
-            plt.plot(Yxy[:,1],Yxy[:,2],color = line_color, linestyle = line_style, linewidth = line_width, marker = line_marker, markersize = line_markersize)
-            plt.xlabel(xlabel, fontname = label_fontname, fontsize = label_fontsize)
-            plt.ylabel(ylabel, fontname = label_fontname, fontsize = label_fontsize)
+            axh.plot(Yxy[:,1],Yxy[:,2],color = line_color, linestyle = line_style, linewidth = line_width, marker = line_marker, markersize = line_markersize)
+            axh.set_xlabel(xlabel, fontname = label_fontname, fontsize = label_fontsize)
+            axh.set_ylabel(ylabel, fontname = label_fontname, fontsize = label_fontsize)
             if show_grid == True:
                 plt.grid()
             #plt.show()     

@@ -85,6 +85,8 @@ Module with useful basic math functions
  
  :ndinterp1_scipy(): Perform n-dimensional interpolation using Delaunay triangulation (wrapper around scipy.interpolate.LinearNDInterpolator)
  
+ :box_m(): Performs a Box M test on covariance matrices.
+     
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 ===============================================================================
 """
@@ -753,6 +755,9 @@ def cik_to_v(cik, xyc = None, inverse = False):
         | only for a Gaussian or normal distribution!
 
     """
+    if cik.ndim < 3:
+        cik = cik[None,...]
+    
     if inverse == True:
         for i in range(cik.shape[0]):
             cik[i,:,:] = np.linalg.inv(cik[i,:,:])
@@ -931,4 +936,93 @@ def ndinterp1(X, Y, Xnew):
         Ynew = np.einsum('ij,ij->i', Y[v], w)
         
     return Ynew
+
+def box_m(*X, ni = None, verbosity = 1):
+    """
+    Perform Box's M test (p>=2) to check equality of covariance matrices or Bartlett's test (p==1) for equality of variances.
     
+    Args:
+        :*X: 
+            | A number (k groups) of 2d-ndarrays (rows: samples, cols: variables) with data.
+            | or a number of 2d-ndarrays with covariance matrices (supply ni!)
+        :ni:
+            | None, optional
+            | If None: X contains data, else, X contains covariance matrices.
+        :verbosity: 
+            | 0, optional
+            | If 1: print results.
+    
+    Returns:
+        :statistic:
+            | F or chi2 value (see len(dfs))
+        :pval:
+            | p-value
+        :dfs:
+            | degrees of freedom.
+            | if len(dfs) == 2: F-test was used.
+            | if len(dfs) == 1: chi2 approx. was used.
+    
+    Notes:
+        1. If p==1: Reduces to Bartlett's test for equal variances.
+        2. If (ni>20).all() & (p<6) & (k<6): then a more appropriate chi2 test is used in a some cases.
+    """
+    
+    k = len(X) # groups
+    p = np.atleast_2d(X[0]).shape[1] # variables
+    if p == 1: # for p == 1: only variance!
+        det = lambda x: np.array(x)
+    else:
+        det = lambda x: np.linalg.det(x)
+    if ni is None: # samples in each group
+        ni = np.array([Xi.shape[0] for Xi in X])
+        Si = np.array([np.cov(Xi.T) for Xi in X])
+        if p == 1:
+            Si = np.atleast_2d(Si).T
+    else:
+        Si = np.array([Xi for Xi in X]) # input are already cov matrices!
+        ni = np.array(ni)
+        if ni.shape[0] == 1:
+            ni = ni*np.ones((k,))
+        
+    N = ni.sum()
+    
+    S = np.array([ni[i]*Si[i] for i in range(len(ni))]).sum(axis=0)/(N - k)
+
+    M = (N-k)*np.log(det(S)) - ((ni-1)*np.log(det(Si))).sum()
+    if p == 1:
+        M = M[0]
+    A1 = (2*p**2 + 3*p -1)/(6*(p+1)*(k-1))*((1/(ni-1)).sum() - 1/(N - k))
+    v1 = p*(p+1)*(k-1)/2
+    A2 = (p-1)*(p+2)/(6*(k-1))*((1/(ni-1)**2).sum() - 1/(N - k)**2)
+
+    if (A2 - A1**2) > 0:
+        v2 = (v1 + 2)/(A2 - A1**2)
+        b = v1/(1 - A1 -(v1/v2))
+        Fv1v2 = M/b
+        statistic = Fv1v2
+        pval = 1.0 - sp.stats.f.cdf(Fv1v2,v1,v2)
+        dfs = [v1,v2]
+        
+        if verbosity == 1:
+            print('M = {:1.4f}, Fv1v2 = {:1.4f}, v1 = {:1.1f}, v2 = {:1.1f}, p = {:1.4f}'.format(M,Fv1v2,v1,v2,pval))
+    else:
+        v2 = (v1 + 2)/(A1**2 - A2)
+        b = v2/(1 - A1 + (2/v2))
+        Fv1v2 = v2*M/(v1*(b - M))
+        statistic = Fv1v2
+        pval = 1.0 - sp.stats.f.cdf(Fv1v2,v1,v2)
+        dfs = [v1,v2]
+        print(M,Fv1v2,v1,v2,pval)
+        if (ni>20).all() & (p<6) & (k<6): #use Chi2v1
+            chi2v1 = M*(1-A1)
+            statistic = chi2v1
+            pval = 1.0 - sp.stats.chi2.cdf(chi2v1,v1)
+            dfs = [v1]
+            if verbosity == 1:
+                print('M = {:1.4f}, chi2v1 = {:1.4f}, v1 = {:1.1f}, p = {:1.4f}'.format(M,chi2v1,v1,pval))
+
+        else:
+            if verbosity == 1:
+                print('M = {:1.4f}, Fv1v2 = {:1.4f}, v1 = {:1.1f}, v2 = {:1.1f}, p = {:1.4f}'.format(M,Fv1v2,v1,v2,pval))
+
+    return statistic, pval, dfs
