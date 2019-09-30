@@ -1,0 +1,1 @@
+import luxpy.utils.math.statistics._skbio_rm_permanova_permdisp as skbio_rm # for independent and repeated measures (requires manual install of skbio: pip install skbio)
