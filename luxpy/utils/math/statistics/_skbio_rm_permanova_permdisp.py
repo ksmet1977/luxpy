@@ -691,7 +691,7 @@ if __name__ == '__main__':
                        [32,34,31,33],
                        [36,38,34,35]])
     
-    Xs = [scores[:,i:i+1] for i in range(4)]
+    Xs = [scores[:,i:i+1] for i in range(scores.shape[1])]
 
     out = run_permanova_permdisp(*Xs, metric = 'euclidean', paired = True, 
                                  permutations = 999, verbosity = 1, 
