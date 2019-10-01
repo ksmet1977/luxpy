@@ -24,7 +24,7 @@ import hdmedians as hd
 from skbio.stats.ordination import pcoa
 from skbio.stats.distance._base import _preprocess_input
 
-__all__ = ['permanova', 'permdisp','run_permanova_permdisp']
+__all__ = ['run_permanova_permdisp', 'permanova', 'permdisp']
 
 def _compute_s_W_S(sample_size, num_groups, tri_idxs, distances, group_sizes, grouping, subjects, paired):
     """Compute PERMANOVA Within & Subjects Sum-of-Squares."""
@@ -93,7 +93,7 @@ def _compute_f_stat(sample_size, num_groups, tri_idxs, distances, group_sizes,
             print('         s_BG = {:1.4f}, s_WG = {:1.4f}, s_BS = {:1.4f}, s_WS = {:1.4f}.'.format(s_BG, s_WG, s_BS, s_WS))
             print('         Setting s_Error to s_WGB (s_S -> 0) (cfr. paired = False)!')
             s_Error = s_WG
-            s_BS = 0.0
+            s_BS = np.nan
             dfErr = (sample_size - num_groups)
 
     else:
@@ -115,7 +115,7 @@ def _compute_f_stat(sample_size, num_groups, tri_idxs, distances, group_sizes,
     # effect sizes:
     p_eta2 = s_BG/(s_BG + s_Error)
     omega2 = (s_BG - dfBG*(s_Error / dfErr))/(s_T - (s_Error / dfErr))
-    R2 = 1.0 - 1 / (1 + stat * num_groups / (dfErr - 1))    
+    R2 = 1.0 - 1 / (1 + stat * num_groups / (dfErr - 1))   
     effect_sizes = {'p_eta2': p_eta2, 'omega2':omega2, 'R2': R2}
  
 #    print('s_BG = {:1.2f}, s_WG = {:1.2f}, s_BS = {:1.2f}, s_WS = {:1.2f}, s_Err = {:1.2f} -- > s_T = {:1.2f}(Sum={:1.2f}:{:1.2f}).'.format(s_BG, s_WG, s_BS, s_WS, s_Error, s_T, s_BG + s_WG, s_BS + s_WS))
@@ -189,7 +189,7 @@ def _create_subjects_index_arr(subjects = None, grouping = None):
                 subjects = np.hstack((subjects,np.arange(((grouping==group)*1).sum())))  
     return subjects
 
-def permanova(distance_matrix, grouping, column=None, permutations=999, paired = False, subjects = None, mean_subject_distance_matrix = None):
+def permanova(distance_matrix, grouping, column=None, permutations=999, paired = False, subjects = None):
     """Test for significant differences between groups using PERMANOVA.
 
     Permutational Multivariate Analysis of Variance (PERMANOVA) is a
@@ -197,14 +197,14 @@ def permanova(distance_matrix, grouping, column=None, permutations=999, paired =
     (e.g., samples) are significantly different based on a categorical factor.
     It is conceptually similar to ANOVA except that it operates on a distance
     matrix, which allows for multivariate analysis. PERMANOVA computes a
-    pseudo-F statistic.
+    pseudo-F2 statistic.
 
     Statistical significance is assessed via a permutation test. The assignment
     of objects to groups (`grouping`) is randomly permuted a number of times
-    (controlled via `permutations`). A pseudo-F statistic is computed for each
-    permutation and the p-value is the proportion of permuted pseudo-F
+    (controlled via `permutations`). A pseudo-F2 statistic is computed for each
+    permutation and the p-value is the proportion of permuted pseudo-F2
     statisics that are equal to or greater than the original (unpermuted)
-    pseudo-F statistic.
+    pseudo-F2 statistic.
 
     Parameters
     ----------
@@ -245,16 +245,19 @@ def permanova(distance_matrix, grouping, column=None, permutations=999, paired =
         Results of the statistical test, including ``test statistic`` and
         ``p-value``.
 
-    See Also
-    --------
-    anosim
-
     Notes
     -----
     See [1]_ for the original method reference, as well as ``vegan::adonis``,
     available in R's vegan package [2]_.
 
     The p-value will be ``np.nan`` if `permutations` is zero.
+    
+    Is based on and uses the skbio package (install manually: pip install skbio).
+    
+    Based on code for permanova and permdisp, but extended for repeated measures or paired data.
+    
+    Uses pseudo-F2 (instead of more biased pseudo-F1 in original code)
+
 
     References
     ----------
@@ -262,6 +265,10 @@ def permanova(distance_matrix, grouping, column=None, permutations=999, paired =
        analysis of variance." Austral Ecology 26.1 (2001): 32-46.
 
     .. [2] http://cran.r-project.org/web/packages/vegan/index.html
+    
+    .. [3] M. J. Anderson, “Permutational Multivariate Analysis of Variance (PERMANOVA),” 
+        Wiley StatsRef: Statistics Reference Online. pp. 1–15, 15-Nov-2017.
+
 
     Examples
     --------
@@ -383,6 +390,9 @@ def permdisp(distance_matrix, grouping, column=None, test='centroid',
         Multivariate Dispersions." Biometrics 62 (2006):245-253
 
     .. [2] http://cran.r-project.org/web/packages/vegan/index.html
+    
+    .. [3] M. J. Anderson, “Permutational Multivariate Analysis of Variance (PERMANOVA),” 
+        Wiley StatsRef: Statistics Reference Online. pp. 1–15, 15-Nov-2017.
 
     Examples
     --------
@@ -626,6 +636,18 @@ def run_permanova_permdisp(*X, metric = 'euclidean', paired = True,
     Returns:
         :(stats_permanova, stats_permdisp):
             | pandas.Series with calculated statistics and other info on the tests.
+    
+    Notes:
+        * Is based on and uses the skbio package (install manually: pip install skbio).
+        * Based on code for permanova and permdisp, but extended for repeated measures or paired data.
+        * Uses pseudo-F2 (instead of more biased pseudo-F1 in original code)
+    
+    References:
+        1. M. J. Anderson, “Permutational Multivariate Analysis of Variance (PERMANOVA),” 
+        Wiley StatsRef: Statistics Reference Online. pp. 1–15, 15-Nov-2017.
+        2. `Scikit-bio <http://scikit-bio.org/>`_
+        
+    
     """
     # Create main distance matrix and grouping indices:
     Dm, grouping = _get_distance_matrix_grouping(*X, metric = metric, Dscale = Dscale)
@@ -656,18 +678,18 @@ def run_permanova_permdisp(*X, metric = 'euclidean', paired = True,
 if __name__ == '__main__': 
 
     # Significant diff.:
-    scores = np.array([[30,28,16,34],
-                       [14,18,10,22],
-                       [24,20,18,30],
-                       [38,34,20,44],
-                       [26,28,14,30]])
+    scores = np.array([[33,28,26,34],
+                       [22,19,20,23],
+                       [24,20,22,25],
+                       [28,24,20,24],
+                       [26,28,24,30]])
     
     # Non-significant diff.:
-    scores = np.array([[26,28,18,24],
-                       [14,18,16,20],
-                       [24,20,18,30],
-                       [32,34,28,35],
-                       [26,28,24,30]])
+    scores2 = np.array([[16,28,24,14],
+                       [17,18,16,20],
+                       [22,20,18,20],
+                       [32,34,31,33],
+                       [36,38,34,35]])
     
     Xs = [scores[:,i:i+1] for i in range(4)]
 
@@ -675,7 +697,7 @@ if __name__ == '__main__':
                                  permutations = 999, verbosity = 1, 
                                  run_permdisp = False, run_permanova = True,
                                  permdisp_test = 'centroid');
-    out = run_permanova_permdisp(*Xs, metric = 'euclidean', paired = False,
-                                 permutations = 999,  verbosity = 1, 
-                                 run_permdisp = False, run_permanova = True,
-                                 permdisp_test = 'centroid')
+#    out = run_permanova_permdisp(*Xs, metric = 'euclidean', paired = False,
+#                                 permutations = 999,  verbosity = 1, 
+#                                 run_permdisp = False, run_permanova = True,
+#                                 permdisp_test = 'centroid')
