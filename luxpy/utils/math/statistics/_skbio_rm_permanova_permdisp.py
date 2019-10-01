@@ -45,7 +45,12 @@ def _compute_s_W_S(sample_size, num_groups, tri_idxs, distances, group_sizes, gr
     s_WG = 0
     for i in range(num_groups):
         s_WG += (distances[grouping_tri == i] ** 2).sum() / group_sizes[i]
-    
+        
+    # for pseudo-F2: Calculate s_WG_V for each group, accounting for different group sizes.
+    s_WG_V = 0
+    for i in range(num_groups):
+        s_WG_V += (1-group_sizes[i]/sample_size)*((1/(group_sizes[i]*(group_sizes[i] - 1)))*distances[grouping_tri == i] ** 2).sum()
+
     if paired == True:
         num_subjects = sample_size//num_groups
         subjects_matrix = -1 * np.ones((sample_size, sample_size), dtype=int)
@@ -61,18 +66,19 @@ def _compute_s_W_S(sample_size, num_groups, tri_idxs, distances, group_sizes, gr
         s_WS = 0
         for i in range(num_subjects):
             s_WS += (distances[subjects_tri == i] ** 2).sum() / num_groups
-
+            
     else:
         s_WS = 0
 
-    return s_WG, s_WS
+    return s_WG, s_WS, s_WG_V
     
 
 def _compute_f_stat(sample_size, num_groups, tri_idxs, distances, group_sizes,
                     s_T, grouping, subjects, paired):
     """Compute PERMANOVA Pseudo-F."""
-    s_WG, s_WS = _compute_s_W_S(sample_size, num_groups, tri_idxs, distances, group_sizes, grouping, subjects, paired)
+    s_WG, s_WS, s_WG_V = _compute_s_W_S(sample_size, num_groups, tri_idxs, distances, group_sizes, grouping, subjects, paired)
     
+    # for pseudo-F1:
     s_BG = s_T - s_WG # = s_Effect
     dfBG = (num_groups - 1)
     
@@ -91,13 +97,21 @@ def _compute_f_stat(sample_size, num_groups, tri_idxs, distances, group_sizes,
             dfErr = (sample_size - num_groups)
 
     else:
-        s_Error = s_WG
+        s_Error = s_WG # for pseudo-F1
+        s_Error2 = s_WG_V # for pseudo-F2
         s_BS = np.nan
         dfErr = (sample_size - num_groups)
         
-    # test statistic:
-    stat = (s_BG / dfBG) / (s_Error / dfErr)    
-        
+    # test statistic, pseudo-F1:
+    stat_ = (s_BG / dfBG) / (s_Error / dfErr)    
+    
+    if paired == True:
+        # test statistic, pseudo-F2 (equals pseudo-F1 for equal sample sizes!):
+        stat = stat_
+    else:
+        # test statistic, pseudo-F2:
+        stat = (s_BG) / (s_Error2) 
+    
     # effect sizes:
     p_eta2 = s_BG/(s_BG + s_Error)
     omega2 = (s_BG - dfBG*(s_Error / dfErr))/(s_T - (s_Error / dfErr))
@@ -268,7 +282,7 @@ def permanova(distance_matrix, grouping, column=None, permutations=999, paired =
     
     stat, p_value, effect_sizes = _run_monte_carlo_stats(test_stat_function, grouping, subjects, permutations, paired)
 
-    results = _build_results('PERMANOVA', paired, 'pseudo-F', sample_size, num_groups, stat, p_value, effect_sizes, permutations)
+    results = _build_results('PERMANOVA', paired, 'pseudo-F2', sample_size, num_groups, stat, p_value, effect_sizes, permutations)
     
     #stats_dict = {'method': 'PERMANOVA', 'paired': paired, 'statistic name':'pseudo-F','sample_size':sample_size,'num_groups':num_groups,'statistic value':stat,'p-value':p_value, 'effect_sizes':effect_sizes, 'permutations':permutations,'result string': results} 
     
@@ -661,4 +675,7 @@ if __name__ == '__main__':
                                  permutations = 999, verbosity = 1, 
                                  run_permdisp = False, run_permanova = True,
                                  permdisp_test = 'centroid');
-    #out = run_permanova_permdisp(*Xs, metric = 'euclidean', permutations = 999, paired = False, verbosity = 1, run_permdisp = False, run_permanova = True)
+    out = run_permanova_permdisp(*Xs, metric = 'euclidean', paired = False,
+                                 permutations = 999,  verbosity = 1, 
+                                 run_permdisp = False, run_permanova = True,
+                                 permdisp_test = 'centroid')
