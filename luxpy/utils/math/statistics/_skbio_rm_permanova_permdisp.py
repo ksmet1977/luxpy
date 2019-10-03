@@ -115,8 +115,10 @@ def _compute_f_stat(sample_size, num_groups, tri_idxs, distances, group_sizes,
     # effect sizes:
     p_eta2 = s_BG/(s_BG + s_Error)
     omega2 = (s_BG - dfBG*(s_Error / dfErr))/(s_T - (s_Error / dfErr))
-    R2 = 1.0 - 1 / (1 + stat * num_groups / (dfErr - 1))   
-    effect_sizes = {'p_eta2': p_eta2, 'omega2':omega2, 'R2': R2}
+    R2 = 1.0 - 1 / (1 + stat * (dfBG / dfErr))   
+    print('t:',sample_size, num_groups, (sample_size - num_groups - 1))
+    R2adj = 1.0 - ((1-R2)*(sample_size - 1)/(sample_size - num_groups - 1))
+    effect_sizes = {'p_eta2': p_eta2, 'omega2':omega2, 'R2': R2, 'R2adj':R2adj}
  
 #    print('s_BG = {:1.2f}, s_WG = {:1.2f}, s_BS = {:1.2f}, s_WS = {:1.2f}, s_Err = {:1.2f} -- > s_T = {:1.2f}(Sum={:1.2f}:{:1.2f}).'.format(s_BG, s_WG, s_BS, s_WS, s_Error, s_T, s_BG + s_WG, s_BS + s_WS))
     
@@ -544,7 +546,8 @@ def _compute_groups(samples, test_type, grouping, subjects, paired, *args):
     else:
         dfErr = sample_size - num_groups
     R2 = 1.0 - 1 / (1 + stat * num_groups / (dfErr - 1))  
-    effect_sizes = {'p_eta2':np.nan,'omega2':np.nan, 'R2':R2} # not yet determined
+    R2adj = 1 - ((1-R2)*(sample_size - 1)/(sample_size - num_groups - 1))
+    effect_sizes = {'p_eta2':np.nan,'omega2':np.nan, 'R2':R2, 'R2adj':R2adj} # not yet determined
     
     return stat, effect_sizes
 
@@ -564,12 +567,12 @@ def _build_results(method_name, paired, test_stat_name, sample_size, num_groups,
     return pd.Series(
         data=[method_name, paired, test_stat_name, sample_size, num_groups, 
               stat, p_value, 
-              effect_sizes['p_eta2'], effect_sizes['omega2'], effect_sizes['R2'], 
+              effect_sizes['p_eta2'], effect_sizes['omega2'], effect_sizes['R2'],effect_sizes['R2adj'], 
               permutations],
         index=['method name', 'paired', 'test statistic name', 
                'sample size', 'number of groups', 
                'test statistic', 'p-value', 
-               'p_eta2', 'omega2','R2',
+               'p_eta2', 'omega2','R2','R2adj',
                'number of permutations'],
         name='%s results' % method_name)    
 
@@ -653,7 +656,7 @@ def run_permanova_permdisp(*X, metric = 'euclidean', paired = True,
     Dm, grouping = _get_distance_matrix_grouping(*X, metric = metric, Dscale = Dscale)
     
     # Perform permdisp & permanova:
-    effect_sizes_empty = {'p_eta2':np.nan,'omega2':np.nan, 'R2':np.nan}
+    effect_sizes_empty = {'p_eta2':np.nan,'omega2':np.nan, 'R2':np.nan, 'R2adj':np.nan}
     if run_permdisp == True:
         stats_pdisp = permdisp(Dm, grouping, column = None, permutations = permutations, paired = paired, test = permdisp_test)
     else:
