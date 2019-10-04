@@ -116,7 +116,7 @@ def _compute_f_stat(sample_size, num_groups, tri_idxs, distances, group_sizes,
     p_eta2 = s_BG/(s_BG + s_Error)
     omega2 = (s_BG - dfBG*(s_Error / dfErr))/(s_T - (s_Error / dfErr))
     R2 = 1.0 - 1 / (1 + stat * (dfBG / dfErr))   
-    print('t:',sample_size, num_groups, (sample_size - num_groups - 1))
+    #print('t:',sample_size, num_groups, (sample_size - num_groups - 1))
     R2adj = 1.0 - ((1-R2)*(sample_size - 1)/(sample_size - num_groups - 1))
     effect_sizes = {'p_eta2': p_eta2, 'omega2':omega2, 'R2': R2, 'R2adj':R2adj}
  
