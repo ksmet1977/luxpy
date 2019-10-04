@@ -29,54 +29,45 @@ Note
 colortransforms.py
 ------------------
 
-
-  * _CSPACE_AXES: dict with list[str,str,str] containing axis labels
+ :_CSPACE_AXES: dict with list[str,str,str] containing axis labels
                 of defined cspaces
+ :_IPT_M: Conversion matrix for IPT color space
+  
+ :_COLORTF_DEFAULT_WHITE_POINT : default white point for colortf (set at Illuminant E)
 
 
-Chromaticity / colorspace functions
-+++++++++++++++++++++++++++++++++++
-
+Supported chromaticity / colorspace functions:
   | * xyz_to_Yxy(), Yxy_to_xyz(): (X,Y,Z) <-> (Y,x,y);
   | * xyz_to_Yuv(), Yuv_to_Yxy(): (X,Y,Z) <-> CIE 1976 (Y,u',v');
   | * xyz_to_xyz(), lms_to_xyz(): (X,Y,Z) <-> (X,Y,Z); for use with colortf()
   | * xyz_to_lms(), lms_to_xyz(): (X,Y,Z) <-> (L,M,S) cone fundamental responses
-  | * xyz_to_lab(), lab_to_xyz(): (X,Y,Z) <-> CIE 1976 (L*,a*,b*)
-  | * xyz_to_luv(), luv_to_xyz(): (X,Y,Z) <-> CIE 1976 (L*,u*,v*)
+  | * xyz_to_lab(), lab_to_xyz(): (X,Y,Z) <-> CIE 1976 (L*a*b*)
+  | * xyz_to_luv(), luv_to_xyz(): (X,Y,Z) <-> CIE 1976 (L*u*v*)
   | * xyz_to_Vrb_mb(),Vrb_mb_to_xyz(): (X,Y,Z) <-> (V,r,b); [Macleod & Boyton, 1979]
-  | * xyz_to_ipt(), ipt_to_xyz(): (X,Y,Z) <-> (I,P,T); [Ebner et al, 1998]
+  | * xyz_to_ipt(), ipt_to_xyz(): (X,Y,Z) <-> (I,P,T); (Ebner et al, 1998)
   | * xyz_to_Ydlep(), Ydlep_to_xyz(): (X,Y,Z) <-> (Y,dl, ep); 
   |                   Y, dominant wavelength (dl) and excitation purity (ep)
   | * xyz_to_srgb(), srgb_to_xyz(): (X,Y,Z) <-> sRGB; (IEC:61966 sRGB)
-  | * xyz_to_jabz(),jabz_to_xyz(): (X,Y,Z) <-> (Jz,az,bz) [Safdar et al, 2017]
-
+  | * xyz_to_jabz(), jabz_to_xyz(): (X,Y,Z) <-> (Jz,az,bz) (Safdar et al, 2017)
 
 References
 ----------
-
     1. `CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018. <https://doi.org/10.25039/TR.015.2018>`_
-
     2. `Ebner F, and Fairchild MD (1998).
        Development and testing of a color space (IPT) with improved hue uniformity.
        In IS&T 6th Color Imaging Conference, (Scottsdale, Arizona, USA), pp. 8–13.
        <http://www.ingentaconnect.com/content/ist/cic/1998/00001998/00000001/art00003?crawler=true>`_
-
     3. `MacLeod DI, and Boynton RM (1979).
        Chromaticity diagram showing cone excitation by stimuli of equal luminance.
        J. Opt. Soc. Am. 69, 1183–1186.
        <https://www.osapublishing.org/josa/abstract.cfm?uri=josa-69-8-1183>`_
-    
     4. `Safdar, M., Cui, G., Kim,Y. J., and  Luo,M. R. (2017).
-        Perceptually uniform color space for image signals including high dynamic range and wide gamut.
-        Opt. Express, vol. 25, no. 13, pp. 15131–15151, Jun. 2017.
-        <http://www.opticsexpress.org/abstract.cfm?URI=oe-25-13-15131>`_
-
+       Perceptually uniform color space for image signals including high dynamic range and wide gamut.
+       Opt. Express, vol. 25, no. 13, pp. 15131–15151, Jun. 2017.
+       <https://www.opticsexpress.org/abstract.cfm?URI=oe-25-13-15131>`_
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 
-"""
-"""
-------------------------------------------------------------------------------
 Created on Wed Jun 28 22:48:09 2017
 """
 

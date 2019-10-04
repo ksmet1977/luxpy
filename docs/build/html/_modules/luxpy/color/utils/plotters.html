@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.color.utils.plotters &mdash; LuxPy 1.4.12 documentation</title>
+  <title>luxpy.color.utils.plotters &mdash; LuxPy 1.4.13 documentation</title>
   
 
   
@@ -56,7 +56,7 @@
             
             
               <div class="version">
-                1.4.12
+                1.4.13
               </div>
             
           
@@ -806,11 +806,11 @@
                 <span class="n">ylabel</span> <span class="o">=</span> <span class="n">_CSPACE_AXES</span><span class="p">[</span><span class="n">cspace_out</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>
             
             <span class="k">if</span> <span class="n">plot_center</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
-                <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">Yxyc</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span><span class="n">Yxyc</span><span class="p">[:,</span><span class="mi">2</span><span class="p">],</span><span class="n">color</span> <span class="o">=</span> <span class="n">center_color</span><span class="p">,</span> <span class="n">linestyle</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">marker</span> <span class="o">=</span> <span class="n">center_marker</span><span class="p">,</span> <span class="n">markersize</span> <span class="o">=</span> <span class="n">center_markersize</span><span class="p">)</span>
+                <span class="n">axh</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">Yxyc</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span><span class="n">Yxyc</span><span class="p">[:,</span><span class="mi">2</span><span class="p">],</span><span class="n">color</span> <span class="o">=</span> <span class="n">center_color</span><span class="p">,</span> <span class="n">linestyle</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">marker</span> <span class="o">=</span> <span class="n">center_marker</span><span class="p">,</span> <span class="n">markersize</span> <span class="o">=</span> <span class="n">center_markersize</span><span class="p">)</span>
 
-            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">Yxy</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span><span class="n">Yxy</span><span class="p">[:,</span><span class="mi">2</span><span class="p">],</span><span class="n">color</span> <span class="o">=</span> <span class="n">line_color</span><span class="p">,</span> <span class="n">linestyle</span> <span class="o">=</span> <span class="n">line_style</span><span class="p">,</span> <span class="n">linewidth</span> <span class="o">=</span> <span class="n">line_width</span><span class="p">,</span> <span class="n">marker</span> <span class="o">=</span> <span class="n">line_marker</span><span class="p">,</span> <span class="n">markersize</span> <span class="o">=</span> <span class="n">line_markersize</span><span class="p">)</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="n">xlabel</span><span class="p">,</span> <span class="n">fontname</span> <span class="o">=</span> <span class="n">label_fontname</span><span class="p">,</span> <span class="n">fontsize</span> <span class="o">=</span> <span class="n">label_fontsize</span><span class="p">)</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="n">ylabel</span><span class="p">,</span> <span class="n">fontname</span> <span class="o">=</span> <span class="n">label_fontname</span><span class="p">,</span> <span class="n">fontsize</span> <span class="o">=</span> <span class="n">label_fontsize</span><span class="p">)</span>
+            <span class="n">axh</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">Yxy</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span><span class="n">Yxy</span><span class="p">[:,</span><span class="mi">2</span><span class="p">],</span><span class="n">color</span> <span class="o">=</span> <span class="n">line_color</span><span class="p">,</span> <span class="n">linestyle</span> <span class="o">=</span> <span class="n">line_style</span><span class="p">,</span> <span class="n">linewidth</span> <span class="o">=</span> <span class="n">line_width</span><span class="p">,</span> <span class="n">marker</span> <span class="o">=</span> <span class="n">line_marker</span><span class="p">,</span> <span class="n">markersize</span> <span class="o">=</span> <span class="n">line_markersize</span><span class="p">)</span>
+            <span class="n">axh</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">xlabel</span><span class="p">,</span> <span class="n">fontname</span> <span class="o">=</span> <span class="n">label_fontname</span><span class="p">,</span> <span class="n">fontsize</span> <span class="o">=</span> <span class="n">label_fontsize</span><span class="p">)</span>
+            <span class="n">axh</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">ylabel</span><span class="p">,</span> <span class="n">fontname</span> <span class="o">=</span> <span class="n">label_fontname</span><span class="p">,</span> <span class="n">fontsize</span> <span class="o">=</span> <span class="n">label_fontsize</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">show_grid</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
                 <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
             <span class="c1">#plt.show()     </span>

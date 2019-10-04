@@ -56,7 +56,7 @@ Module with useful basic math functions
  :polyarea(): | Calculates area of polygon. 
               | (First coordinate should also be last)
 
- :erf(): erf-function, direct import from scipy.special
+ :erf(), erfinv(): erf-function and its inverse, direct import from scipy.special
 
  :cart2pol(): Converts Cartesian to polar coordinates.
 
@@ -945,8 +945,8 @@ def box_m(*X, ni = None, verbosity = 0):
     Perform Box's M test (p>=2) to check equality of covariance matrices or Bartlett's test (p==1) for equality of variances.
     
     Args:
-        :*X: 
-            | A number (k groups) of 2d-ndarrays (rows: samples, cols: variables) with data.
+        :X: 
+            | A number  (k groups) or list of 2d-ndarrays (rows: samples, cols: variables) with data.
             | or a number of 2d-ndarrays with covariance matrices (supply ni!)
         :ni:
             | None, optional
@@ -1051,8 +1051,8 @@ def pitman_morgan(X,Y, verbosity = 0):
             | variance ratio var1/var2 (with var1 > var2).
 
     Note:
-        1. based on Gardner, R.C. (2001). Psychological Statistics Using SPSS for Windows. New Jersey: Prentice Hall.
-        2. Matlab port from code by Janne Kauttonen (https://nl.mathworks.com/matlabcentral/fileexchange/67910-pitmanmorgantest-x-y; accessed Sep 26, 2019)
+        1. Based on Gardner, R.C. (2001). Psychological Statistics Using SPSS for Windows. New Jersey, Prentice Hall.
+        2. Python port from matlab code by Janne Kauttonen (https://nl.mathworks.com/matlabcentral/fileexchange/67910-pitmanmorgantest-x-y; accessed Sep 26, 2019)
     """
     N = X.shape[0]
     var1, var2 = X.var(axis=0),Y.var(axis=0)

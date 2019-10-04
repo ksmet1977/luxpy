@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.color.cam.cam18sl &mdash; LuxPy 1.4.12 documentation</title>
+  <title>luxpy.color.cam.cam18sl &mdash; LuxPy 1.4.13 documentation</title>
   
 
   
@@ -56,7 +56,7 @@
             
             
               <div class="version">
-                1.4.12
+                1.4.13
               </div>
             
           
@@ -213,7 +213,7 @@
 <span class="sd">              of stimulus background</span>
 <span class="sd">        :Lb: </span>
 <span class="sd">            | [100], optional</span>
-<span class="sd">            | Luminance (cd/m²) value(s) of background(s) calculated using the CIE 1964 10° CMFs </span>
+<span class="sd">            | Luminance (cd/m²) value(s) of background(s) calculated using the CIE 2006 10° CMFs </span>
 <span class="sd">            | (only used in case datab == None and the background is assumed to be an Equal-Energy-White)</span>
 <span class="sd">        :fov: </span>
 <span class="sd">            | 10.0, optional</span>
@@ -244,6 +244,18 @@
 <span class="sd">            | ndarray with color appearance correlates (:direction: == &#39;forward&#39;)</span>
 <span class="sd">            |  or </span>
 <span class="sd">            | XYZ tristimulus values (:direction: == &#39;inverse&#39;)</span>
+<span class="sd">            </span>
+<span class="sd">    Notes:</span>
+<span class="sd">        | * Instead of using the CIE 1964 10° CMFs in some places of the model,</span>
+<span class="sd">        |   the CIE 2006 10° CMFs are used througout, making it more self_consistent.</span>
+<span class="sd">        |   This has an effect on the k scaling factors (now different those in CAM15u) </span>
+<span class="sd">        |   and the illuminant E normalization for use in the chromatic adaptation transform.</span>
+<span class="sd">        |   (see future erratum to Hermans et al., 2018)</span>
+<span class="sd">        | * The paper also used an equation for the amount of white W, which is</span>
+<span class="sd">        |   based on a Q value not expressed in &#39;bright&#39; (&#39;cA&#39; = 0.937 instead of 123). </span>
+<span class="sd">        |   This has been corrected for in the luxpy version of the model, i.e.</span>
+<span class="sd">        |   _CAM18SL_PARAMETERS[&#39;cW&#39;][0] has been changed from 2.29 to 1/11672.</span>
+<span class="sd">        |   (see future erratum to Hermans et al., 2018)</span>
 
 <span class="sd">    References: </span>
 <span class="sd">        1. `Hermans, S., Smet, K. A. G., &amp; Hanselaer, P. (2018). </span>
@@ -270,7 +282,7 @@
     <span class="c1"># Get Lb values:</span>
     <span class="k">if</span> <span class="n">datab</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">inputtype</span> <span class="o">!=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">:</span>
-            <span class="n">Lb</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">datab</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;1964_10&#39;</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">Lb</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">datab</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;2006_10&#39;</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">Lb</span> <span class="o">=</span> <span class="n">datab</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
@@ -286,7 +298,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">wlr</span> <span class="o">=</span> <span class="n">datab</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># use wlr of background data</span>
     <span class="n">datar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">wlr</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">Lb</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">wlr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))))</span> <span class="c1"># create eew</span>
-    <span class="n">xyzr</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">datar</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;1964_10&#39;</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="c1"># get abs. tristimulus values</span>
+    <span class="n">xyzr</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">datar</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;2006_10&#39;</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="c1"># get abs. tristimulus values</span>
     <span class="n">datar</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">=</span> <span class="n">datar</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">/</span><span class="n">xyzr</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="n">Lb</span>
     <span class="c1"># Create datab if None:</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">datab</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
@@ -341,7 +353,7 @@
         <span class="c1">#rgbr = (lmsr / _CMF[&#39;2006_10&#39;][&#39;K&#39;]) * k # convert to rho, gamma, beta</span>
         <span class="c1">#rgbr = rgbr/rgbr[...,1:2]*Lb[i] # calculated EEW cone excitations at same luminance values as background</span>
         <span class="n">rgbr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">xyzr</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">*</span><span class="n">Lb</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="c1"># explicitely equal EEW cone excitations at same luminance values as background</span>
-        
+
         <span class="k">if</span> <span class="n">direction</span> <span class="o">==</span> <span class="s1">&#39;forward&#39;</span><span class="p">:</span>
             <span class="c1"># get rho, gamma, beta of stimulus:</span>
             <span class="k">if</span> <span class="p">(</span><span class="n">inputtype</span> <span class="o">!=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">):</span>
@@ -350,7 +362,7 @@
                 <span class="n">xyz</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
             <span class="n">lms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">_CMF</span><span class="p">[</span><span class="s1">&#39;2006_10&#39;</span><span class="p">][</span><span class="s1">&#39;M&#39;</span><span class="p">],</span><span class="n">xyz</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">T</span> <span class="c1"># convert to l,m,s</span>
             <span class="n">rgb</span> <span class="o">=</span> <span class="p">(</span><span class="n">lms</span> <span class="o">/</span> <span class="n">_CMF</span><span class="p">[</span><span class="s1">&#39;2006_10&#39;</span><span class="p">][</span><span class="s1">&#39;K&#39;</span><span class="p">])</span> <span class="o">*</span> <span class="n">k</span> <span class="c1"># convert to rho, gamma, beta</span>
-            
+
             <span class="c1"># apply von-kries cat with D = 1:</span>
             <span class="k">if</span> <span class="p">(</span><span class="n">rgbb</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
                 <span class="n">Mcat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
@@ -368,16 +380,16 @@
             <span class="n">A</span><span class="p">,</span><span class="n">a</span><span class="p">,</span><span class="n">b</span> <span class="o">=</span> <span class="n">asplit</span><span class="p">(</span><span class="n">Aab</span><span class="p">)</span>
             <span class="n">a</span> <span class="o">=</span> <span class="n">ca</span><span class="o">*</span><span class="n">a</span>
             <span class="n">b</span> <span class="o">=</span> <span class="n">cb</span><span class="o">*</span><span class="n">b</span>
-            
+
             <span class="c1"># calculate colorfullness like signal M:</span>
             <span class="n">M</span> <span class="o">=</span> <span class="n">cM</span><span class="o">*</span><span class="p">((</span><span class="n">a</span><span class="o">**</span><span class="mf">2.0</span> <span class="o">+</span> <span class="n">b</span><span class="o">**</span><span class="mf">2.0</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span><span class="p">)</span>
 
             <span class="c1"># calculate brightness Q:</span>
             <span class="n">Q</span> <span class="o">=</span> <span class="n">cA</span><span class="o">*</span><span class="p">(</span><span class="n">A</span> <span class="o">+</span> <span class="n">cHK</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">M</span><span class="o">**</span><span class="n">cHK</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="c1"># last term is contribution of Helmholtz-Kohlrausch effect on brightness</span>
-            
+
             <span class="c1"># calculate saturation, s:</span>
             <span class="n">s</span> <span class="o">=</span> <span class="n">M</span> <span class="o">/</span> <span class="n">Q</span>
-            
+
             <span class="c1"># calculate amount of white, W:</span>
             <span class="n">W</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">cW</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">s</span><span class="o">**</span><span class="n">cW</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
 

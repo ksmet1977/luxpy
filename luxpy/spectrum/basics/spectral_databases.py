@@ -189,7 +189,7 @@ _CRI_RFL['cqs'] = _CQS
 # 1269 Munsell spectral reflectance functions:
 _MUNSELL = {'cieobs':'1931_2', 'Lw' : 400.0, 'Yb': 0.2}
 _MUNSELL['R'] = getdata(_R_PATH + 'Munsell1269.dat',kind='np').T
-temp = getdata(_R_PATH + 'Munsell1269_Notations.dat',kind='np',header = 'infer',verbosity=0)
+temp = getdata(_R_PATH + 'Munsell1269NotationInfo.dat',kind='np',header = 'infer',verbosity=0)
 _MUNSELL['H'] = temp[:,1,None]
 _MUNSELL['V'] = temp[:,2,None]
 _MUNSELL['C'] = temp[:,3,None]

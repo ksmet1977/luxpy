@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.toolboxes.hypspcim.hyperspectral_img_simulator &mdash; LuxPy 1.4.12 documentation</title>
+  <title>luxpy.toolboxes.hypspcim.hyperspectral_img_simulator &mdash; LuxPy 1.4.13 documentation</title>
   
 
   
@@ -56,7 +56,7 @@
             
             
               <div class="version">
-                1.4.12
+                1.4.13
               </div>
             
           
@@ -249,7 +249,7 @@
     
     <span class="c1"># Convert xyz to lab-type values under refspd:</span>
     <span class="n">lab</span> <span class="o">=</span> <span class="n">colortf</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">tf</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">,</span> <span class="n">fwtf</span> <span class="o">=</span> <span class="n">cspace_tf_copy</span><span class="p">,</span> <span class="n">bwtf</span> <span class="o">=</span> <span class="n">cspace_tf_copy</span><span class="p">)</span>
-    
+    <span class="nb">print</span><span class="p">(</span><span class="n">interp_type</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">interp_type</span> <span class="o">==</span> <span class="s1">&#39;nearest&#39;</span><span class="p">:</span>
         <span class="c1"># Find rfl (cfr. lab_rr) from rfl set that results in &#39;near&#39; metameric </span>
         <span class="c1"># color coordinates for each value in lab_ur (i.e. smallest DE):</span>
@@ -259,6 +259,7 @@
         <span class="c1"># Interpolate rfls using k nearest neightbours and inverse distance weigthing:</span>
         <span class="n">d</span><span class="p">,</span> <span class="n">inds</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">lab</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="n">k_neighbours</span> <span class="p">)</span>
         <span class="k">if</span> <span class="n">k_neighbours</span>  <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">d</span> <span class="o">+=</span> <span class="n">_EPS</span>
             <span class="n">w</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">d</span><span class="o">**</span><span class="mi">2</span><span class="p">)[:,:,</span><span class="kc">None</span><span class="p">]</span> <span class="c1"># inverse distance weigthing</span>
             <span class="n">rfl_est</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">w</span> <span class="o">*</span> <span class="n">rfl</span><span class="p">[</span><span class="n">inds</span><span class="o">+</span><span class="mi">1</span><span class="p">,:],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>

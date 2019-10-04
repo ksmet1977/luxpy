@@ -18,7 +18,7 @@
 
 """
 Module with useful math functions
-=======================================
+=================================
 
  :normalize_3x3_matrix(): Normalize 3x3 matrix M to xyz0 -- > [1,1,1]
 
@@ -57,7 +57,7 @@ Module with useful math functions
  :polyarea(): | Calculates area of polygon. 
               | (First coordinate should also be last)
 
- :erf(): erf-function, direct import from scipy.special
+ :erf(), erfinv(): erf-function and its inverse, direct import from scipy.special
 
  :cart2pol(): Converts Cartesian to polar coordinates.
 
@@ -85,6 +85,18 @@ Module with useful math functions
  :DEMO: Module for Differential Evolutionary Multi-objective Optimization  (DEMO).
  
  :vec3: Module for spherical vector coordinates.
+ 
+ :fmod(): Floating point modulus, e.g.: fmod(theta, np.pi * 2) would keep an angle in [0, 2pi]b
+
+ :fit_ellipse(): Fit an ellipse to supplied data points.
+ 
+ :ndinterp1(): Perform n-dimensional interpolation using Delaunay triangulation.
+ 
+ :ndinterp1_scipy(): Perform n-dimensional interpolation using Delaunay triangulation (wrapper around scipy.interpolate.LinearNDInterpolator)
+ 
+ :box_m(): Performs a Box M test on covariance matrices.
+ 
+ :pitman_morgan(): Pitman-Morgan Test for the difference between correlated variances with paired samples.
                  
 ===============================================================================
 """

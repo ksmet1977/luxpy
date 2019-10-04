@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Utils sub-package &mdash; LuxPy 1.4.12 documentation</title>
+  <title>Utils sub-package &mdash; LuxPy 1.4.13 documentation</title>
   
 
   
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                1.4.12
+                1.4.13
               </div>
             
           
@@ -1044,7 +1044,8 @@ shape and orientation determined by sigmainv.</td>
 </div>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">erf():</th><td class="field-body">erf-function, direct import from scipy.special</td>
+<tr class="field-odd field"><th class="field-name" colspan="2">erf(), erfinv():</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">erf-function and its inverse, direct import from scipy.special</td>
 </tr>
 <tr class="field-even field"><th class="field-name">cart2pol():</th><td class="field-body">Converts Cartesian to polar coordinates.</td>
 </tr>
@@ -1076,6 +1077,20 @@ as a dict.</td>
 <tr class="field-even field"><th class="field-name">DEMO:</th><td class="field-body">Module for Differential Evolutionary Multi-objective Optimization  (DEMO).</td>
 </tr>
 <tr class="field-odd field"><th class="field-name">vec3:</th><td class="field-body">Module for spherical vector coordinates.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">fmod():</th><td class="field-body">Floating point modulus, e.g.: fmod(theta, np.pi * 2) would keep an angle in [0, 2pi]b</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">fit_ellipse():</th><td class="field-body">Fit an ellipse to supplied data points.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">ndinterp1():</th><td class="field-body">Perform n-dimensional interpolation using Delaunay triangulation.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">ndinterp1_scipy():</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">Perform n-dimensional interpolation using Delaunay triangulation (wrapper around scipy.interpolate.LinearNDInterpolator)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">box_m():</th><td class="field-body">Performs a Box M test on covariance matrices.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">pitman_morgan():</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">Pitman-Morgan Test for the difference between correlated variances with paired samples.</td>
 </tr>
 </tbody>
 </table>
@@ -1388,7 +1403,37 @@ MATLAB code.
 <dl class="function">
 <dt id="luxpy.utils.math.erfinv">
 <code class="descclassname">luxpy.utils.math.</code><code class="descname">erfinv</code><span class="sig-paren">(</span><em>y</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scipy/special/basic.html#erfinv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.math.erfinv" title="Permalink to this definition">¶</a></dt>
-<dd><p>Inverse function for erf.</p>
+<dd><p>Inverse of the error function erf.</p>
+<p>Computes the inverse of the error function.</p>
+<p>In complex domain, there is no unique complex number w satisfying erf(w)=z.
+This indicates a true inverse function would have multi-value. When the domain restricts to the real, -1 &lt; x &lt; 1,
+there is a unique real number satisfying erf(erfinv(x)) = x.</p>
+<dl class="docutils">
+<dt>y <span class="classifier-delimiter">:</span> <span class="classifier">ndarray</span></dt>
+<dd>Argument at which to evaluate. Domain: [-1, 1]</dd>
+</dl>
+<dl class="docutils">
+<dt>erfinv <span class="classifier-delimiter">:</span> <span class="classifier">ndarray</span></dt>
+<dd>The inverse of erf of y, element-wise</dd>
+</dl>
+<ol class="arabic simple">
+<li>evaluating a float number</li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">special</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">special</span><span class="o">.</span><span class="n">erfinv</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="go">0.4769362762044698</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li>evaluating a ndarray</li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">special</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">special</span><span class="o">.</span><span class="n">erfinv</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+<span class="go">array([       -inf, -0.86312307, -0.5407314 , -0.30457019, -0.0987901 ,</span>
+<span class="go">        0.0987901 ,  0.30457019,  0.5407314 ,  0.86312307,         inf])</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="function">
@@ -2257,6 +2302,132 @@ using einsum().</p>
 </tr>
 </tbody>
 </table>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="luxpy.utils.math.box_m">
+<code class="descclassname">luxpy.utils.math.</code><code class="descname">box_m</code><span class="sig-paren">(</span><em>*X</em>, <em>ni=None</em>, <em>verbosity=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/math/basics.html#box_m"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.math.box_m" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform Box’s M test (p&gt;=2) to check equality of covariance matrices or Bartlett’s test (p==1) for equality of variances.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">X:</th><td class="field-body"><div class="first last line-block">
+<div class="line">A number  (k groups) or list of 2d-ndarrays (rows: samples, cols: variables) with data.</div>
+<div class="line">or a number of 2d-ndarrays with covariance matrices (supply ni!)</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">ni:</th><td class="field-body"><div class="first last line-block">
+<div class="line">None, optional</div>
+<div class="line">If None: X contains data, else, X contains covariance matrices.</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">verbosity:</th><td class="field-body"><div class="first last line-block">
+<div class="line">0, optional</div>
+<div class="line">If 1: print results.</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">statistic:</th><td class="field-body"><div class="first last line-block">
+<div class="line">F or chi2 value (see len(dfs))</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">pval:</th><td class="field-body"><div class="first last line-block">
+<div class="line">p-value</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">df:</th><td class="field-body"><div class="first last line-block">
+<div class="line">degrees of freedom.</div>
+<div class="line">if len(dfs) == 2: F-test was used.</div>
+<div class="line">if len(dfs) == 1: chi2 approx. was used.</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Notes:</dt>
+<dd><ol class="first last arabic simple">
+<li>If p==1: Reduces to Bartlett’s test for equal variances.</li>
+<li>If (ni&gt;20).all() &amp; (p&lt;6) &amp; (k&lt;6): then a more appropriate chi2 test is used in a some cases.</li>
+</ol>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="luxpy.utils.math.pitman_morgan">
+<code class="descclassname">luxpy.utils.math.</code><code class="descname">pitman_morgan</code><span class="sig-paren">(</span><em>X</em>, <em>Y</em>, <em>verbosity=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/math/basics.html#pitman_morgan"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.math.pitman_morgan" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pitman-Morgan Test for the difference between correlated variances with paired samples.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">X,Y:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarrays with data.</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">verbosity:</th><td class="field-body"><div class="first last line-block">
+<div class="line">0, optional</div>
+<div class="line">If 1: print results. </div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">tval:</th><td class="field-body"><div class="first last line-block">
+<div class="line">statistic</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">pval:</th><td class="field-body"><div class="first last line-block">
+<div class="line">p-value</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">df:</th><td class="field-body"><div class="first last line-block">
+<div class="line">degree of freedom.</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">ratio:</th><td class="field-body"><div class="first last line-block">
+<div class="line">variance ratio var1/var2 (with var1 &gt; var2).</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Note:</dt>
+<dd><ol class="first last arabic simple">
+<li>Based on Gardner, R.C. (2001). Psychological Statistics Using SPSS for Windows. New Jersey, Prentice Hall.</li>
+<li>Python port from matlab code by Janne Kauttonen (<a class="reference external" href="https://nl.mathworks.com/matlabcentral/fileexchange/67910-pitmanmorgantest-x-y">https://nl.mathworks.com/matlabcentral/fileexchange/67910-pitmanmorgantest-x-y</a>; accessed Sep 26, 2019)</li>
+</ol>
 </dd>
 </dl>
 </dd></dl>

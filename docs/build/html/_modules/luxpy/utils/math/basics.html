@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.utils.math.basics &mdash; LuxPy 1.4.12 documentation</title>
+  <title>luxpy.utils.math.basics &mdash; LuxPy 1.4.13 documentation</title>
   
 
   
@@ -56,7 +56,7 @@
             
             
               <div class="version">
-                1.4.12
+                1.4.13
               </div>
             
           
@@ -207,7 +207,7 @@
 <span class="sd"> :polyarea(): | Calculates area of polygon. </span>
 <span class="sd">              | (First coordinate should also be last)</span>
 
-<span class="sd"> :erf(): erf-function, direct import from scipy.special</span>
+<span class="sd"> :erf(), erfinv(): erf-function and its inverse, direct import from scipy.special</span>
 
 <span class="sd"> :cart2pol(): Converts Cartesian to polar coordinates.</span>
 
@@ -236,6 +236,10 @@
 <span class="sd"> </span>
 <span class="sd"> :ndinterp1_scipy(): Perform n-dimensional interpolation using Delaunay triangulation (wrapper around scipy.interpolate.LinearNDInterpolator)</span>
 <span class="sd"> </span>
+<span class="sd"> :box_m(): Performs a Box M test on covariance matrices.</span>
+<span class="sd"> </span>
+<span class="sd"> :pitman_morgan(): Pitman-Morgan Test for the difference between correlated variances with paired samples.</span>
+<span class="sd">     </span>
 <span class="sd">.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)</span>
 <span class="sd">===============================================================================</span>
 <span class="sd">&quot;&quot;&quot;</span>
@@ -248,6 +252,7 @@
 <span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;bvgpdf&#39;</span><span class="p">,</span><span class="s1">&#39;mahalanobis2&#39;</span><span class="p">,</span><span class="s1">&#39;dot23&#39;</span><span class="p">,</span> <span class="s1">&#39;rms&#39;</span><span class="p">,</span><span class="s1">&#39;geomean&#39;</span><span class="p">,</span><span class="s1">&#39;polyarea&#39;</span><span class="p">]</span>
 <span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;magnitude_v&#39;</span><span class="p">,</span><span class="s1">&#39;angle_v1v2&#39;</span><span class="p">]</span>
 <span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;v_to_cik&#39;</span><span class="p">,</span> <span class="s1">&#39;cik_to_v&#39;</span><span class="p">,</span> <span class="s1">&#39;fmod&#39;</span><span class="p">,</span> <span class="s1">&#39;fit_ellipse&#39;</span><span class="p">,</span><span class="s1">&#39;ndinterp1&#39;</span><span class="p">,</span><span class="s1">&#39;ndinterp1_scipy&#39;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;box_m&#39;</span><span class="p">,</span><span class="s1">&#39;pitman_morgan&#39;</span><span class="p">]</span>
 
 
 <span class="c1">#------------------------------------------------------------------------------</span>
@@ -904,6 +909,9 @@
 <span class="sd">        | only for a Gaussian or normal distribution!</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">cik</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">cik</span> <span class="o">=</span> <span class="n">cik</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span><span class="o">...</span><span class="p">]</span>
+    
     <span class="k">if</span> <span class="n">inverse</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cik</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
             <span class="n">cik</span><span class="p">[</span><span class="n">i</span><span class="p">,:,:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">cik</span><span class="p">[</span><span class="n">i</span><span class="p">,:,:])</span>
@@ -1082,7 +1090,151 @@
         <span class="n">Ynew</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;ij,ij-&gt;i&#39;</span><span class="p">,</span> <span class="n">Y</span><span class="p">[</span><span class="n">v</span><span class="p">],</span> <span class="n">w</span><span class="p">)</span>
         
     <span class="k">return</span> <span class="n">Ynew</span></div>
+
+<div class="viewcode-block" id="box_m"><a class="viewcode-back" href="../../../../utils.html#luxpy.utils.math.box_m">[docs]</a><span class="k">def</span> <span class="nf">box_m</span><span class="p">(</span><span class="o">*</span><span class="n">X</span><span class="p">,</span> <span class="n">ni</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Perform Box&#39;s M test (p&gt;=2) to check equality of covariance matrices or Bartlett&#39;s test (p==1) for equality of variances.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :X: </span>
+<span class="sd">            | A number  (k groups) or list of 2d-ndarrays (rows: samples, cols: variables) with data.</span>
+<span class="sd">            | or a number of 2d-ndarrays with covariance matrices (supply ni!)</span>
+<span class="sd">        :ni:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | If None: X contains data, else, X contains covariance matrices.</span>
+<span class="sd">        :verbosity: </span>
+<span class="sd">            | 0, optional</span>
+<span class="sd">            | If 1: print results.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :statistic:</span>
+<span class="sd">            | F or chi2 value (see len(dfs))</span>
+<span class="sd">        :pval:</span>
+<span class="sd">            | p-value</span>
+<span class="sd">        :df:</span>
+<span class="sd">            | degrees of freedom.</span>
+<span class="sd">            | if len(dfs) == 2: F-test was used.</span>
+<span class="sd">            | if len(dfs) == 1: chi2 approx. was used.</span>
+<span class="sd">    </span>
+<span class="sd">    Notes:</span>
+<span class="sd">        1. If p==1: Reduces to Bartlett&#39;s test for equal variances.</span>
+<span class="sd">        2. If (ni&gt;20).all() &amp; (p&lt;6) &amp; (k&lt;6): then a more appropriate chi2 test is used in a some cases.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">k</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="c1"># groups</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># variables</span>
+    <span class="k">if</span> <span class="n">p</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> <span class="c1"># for p == 1: only variance!</span>
+        <span class="n">det</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">det</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">ni</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="c1"># samples in each group</span>
+        <span class="n">ni</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">Xi</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">Xi</span> <span class="ow">in</span> <span class="n">X</span><span class="p">])</span>
+        <span class="n">Si</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">cov</span><span class="p">(</span><span class="n">Xi</span><span class="o">.</span><span class="n">T</span><span class="p">)</span> <span class="k">for</span> <span class="n">Xi</span> <span class="ow">in</span> <span class="n">X</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">p</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">Si</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">Si</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">Si</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">Xi</span> <span class="k">for</span> <span class="n">Xi</span> <span class="ow">in</span> <span class="n">X</span><span class="p">])</span> <span class="c1"># input are already cov matrices!</span>
+        <span class="n">ni</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ni</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ni</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">ni</span> <span class="o">=</span> <span class="n">ni</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">k</span><span class="p">,))</span>
+        
+    <span class="n">N</span> <span class="o">=</span> <span class="n">ni</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">S</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([(</span><span class="n">ni</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">Si</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ni</span><span class="p">))])</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="n">k</span><span class="p">)</span>
+
+    <span class="n">M</span> <span class="o">=</span> <span class="p">(</span><span class="n">N</span><span class="o">-</span><span class="n">k</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">det</span><span class="p">(</span><span class="n">S</span><span class="p">))</span> <span class="o">-</span> <span class="p">((</span><span class="n">ni</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">det</span><span class="p">(</span><span class="n">Si</span><span class="p">)))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">p</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">M</span> <span class="o">=</span> <span class="n">M</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">A1</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">p</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">3</span><span class="o">*</span><span class="n">p</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">6</span><span class="o">*</span><span class="p">(</span><span class="n">p</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">k</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span><span class="o">*</span><span class="p">((</span><span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="n">ni</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span> <span class="o">-</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="n">k</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">v1</span> <span class="o">=</span> <span class="n">p</span><span class="o">*</span><span class="p">(</span><span class="n">p</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">k</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>
+    <span class="n">A2</span> <span class="o">=</span> <span class="p">(</span><span class="n">p</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">p</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">6</span><span class="o">*</span><span class="p">(</span><span class="n">k</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span><span class="o">*</span><span class="p">((</span><span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="n">ni</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="n">k</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">A2</span> <span class="o">-</span> <span class="n">A1</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">v2</span> <span class="o">=</span> <span class="p">(</span><span class="n">v1</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">A2</span> <span class="o">-</span> <span class="n">A1</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">v1</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">A1</span> <span class="o">-</span><span class="p">(</span><span class="n">v1</span><span class="o">/</span><span class="n">v2</span><span class="p">))</span>
+        <span class="n">Fv1v2</span> <span class="o">=</span> <span class="n">M</span><span class="o">/</span><span class="n">b</span>
+        <span class="n">statistic</span> <span class="o">=</span> <span class="n">Fv1v2</span>
+        <span class="n">pval</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">sp</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">f</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">Fv1v2</span><span class="p">,</span><span class="n">v1</span><span class="p">,</span><span class="n">v2</span><span class="p">)</span>
+        <span class="n">dfs</span> <span class="o">=</span> <span class="p">[</span><span class="n">v1</span><span class="p">,</span><span class="n">v2</span><span class="p">]</span>
+        
+        <span class="k">if</span> <span class="n">verbosity</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;M = </span><span class="si">{:1.4f}</span><span class="s1">, F = </span><span class="si">{:1.4f}</span><span class="s1">, df1 = </span><span class="si">{:1.1f}</span><span class="s1">, df2 = </span><span class="si">{:1.1f}</span><span class="s1">, p = </span><span class="si">{:1.4f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">M</span><span class="p">,</span><span class="n">Fv1v2</span><span class="p">,</span><span class="n">v1</span><span class="p">,</span><span class="n">v2</span><span class="p">,</span><span class="n">pval</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">v2</span> <span class="o">=</span> <span class="p">(</span><span class="n">v1</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">A1</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">A2</span><span class="p">)</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">v2</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">A1</span> <span class="o">+</span> <span class="p">(</span><span class="mi">2</span><span class="o">/</span><span class="n">v2</span><span class="p">))</span>
+        <span class="n">Fv1v2</span> <span class="o">=</span> <span class="n">v2</span><span class="o">*</span><span class="n">M</span><span class="o">/</span><span class="p">(</span><span class="n">v1</span><span class="o">*</span><span class="p">(</span><span class="n">b</span> <span class="o">-</span> <span class="n">M</span><span class="p">))</span>
+        <span class="n">statistic</span> <span class="o">=</span> <span class="n">Fv1v2</span>
+        <span class="n">pval</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">sp</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">f</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">Fv1v2</span><span class="p">,</span><span class="n">v1</span><span class="p">,</span><span class="n">v2</span><span class="p">)</span>
+        <span class="n">dfs</span> <span class="o">=</span> <span class="p">[</span><span class="n">v1</span><span class="p">,</span><span class="n">v2</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">ni</span><span class="o">&gt;</span><span class="mi">20</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">p</span><span class="o">&lt;</span><span class="mi">6</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">k</span><span class="o">&lt;</span><span class="mi">6</span><span class="p">):</span> <span class="c1">#use Chi2v1</span>
+            <span class="n">chi2v1</span> <span class="o">=</span> <span class="n">M</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">A1</span><span class="p">)</span>
+            <span class="n">statistic</span> <span class="o">=</span> <span class="n">chi2v1</span>
+            <span class="n">pval</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">sp</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">chi2</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">chi2v1</span><span class="p">,</span><span class="n">v1</span><span class="p">)</span>
+            <span class="n">dfs</span> <span class="o">=</span> <span class="p">[</span><span class="n">v1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">verbosity</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;M = </span><span class="si">{:1.4f}</span><span class="s1">, chi2 = </span><span class="si">{:1.4f}</span><span class="s1">, df1 = </span><span class="si">{:1.1f}</span><span class="s1">, p = </span><span class="si">{:1.4f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">M</span><span class="p">,</span><span class="n">chi2v1</span><span class="p">,</span><span class="n">v1</span><span class="p">,</span><span class="n">pval</span><span class="p">))</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">verbosity</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;M = </span><span class="si">{:1.4f}</span><span class="s1">, F = </span><span class="si">{:1.4f}</span><span class="s1">, df1 = </span><span class="si">{:1.1f}</span><span class="s1">, df2 = </span><span class="si">{:1.1f}</span><span class="s1">, p = </span><span class="si">{:1.4f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">M</span><span class="p">,</span><span class="n">Fv1v2</span><span class="p">,</span><span class="n">v1</span><span class="p">,</span><span class="n">v2</span><span class="p">,</span><span class="n">pval</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">statistic</span><span class="p">,</span> <span class="n">pval</span><span class="p">,</span> <span class="n">dfs</span></div>
+
+<div class="viewcode-block" id="pitman_morgan"><a class="viewcode-back" href="../../../../utils.html#luxpy.utils.math.pitman_morgan">[docs]</a><span class="k">def</span> <span class="nf">pitman_morgan</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Pitman-Morgan Test for the difference between correlated variances with paired samples.</span>
+<span class="sd">     </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :X,Y: </span>
+<span class="sd">            | ndarrays with data.</span>
+<span class="sd">        :verbosity: </span>
+<span class="sd">            | 0, optional</span>
+<span class="sd">            | If 1: print results. </span>
+<span class="sd">            </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :tval:</span>
+<span class="sd">            | statistic</span>
+<span class="sd">        :pval:</span>
+<span class="sd">            | p-value</span>
+<span class="sd">        :df:</span>
+<span class="sd">            | degree of freedom.</span>
+<span class="sd">        :ratio:</span>
+<span class="sd">            | variance ratio var1/var2 (with var1 &gt; var2).</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        1. Based on Gardner, R.C. (2001). Psychological Statistics Using SPSS for Windows. New Jersey, Prentice Hall.</span>
+<span class="sd">        2. Python port from matlab code by Janne Kauttonen (https://nl.mathworks.com/matlabcentral/fileexchange/67910-pitmanmorgantest-x-y; accessed Sep 26, 2019)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">var1</span><span class="p">,</span> <span class="n">var2</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span><span class="n">Y</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">cor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">corrcoef</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">)[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
     
+    <span class="c1"># must have var1 &gt; var2:</span>
+    <span class="k">if</span> <span class="n">var1</span> <span class="o">&lt;</span> <span class="n">var2</span><span class="p">:</span>
+        <span class="n">var1</span><span class="p">,</span> <span class="n">var2</span> <span class="o">=</span> <span class="n">var2</span><span class="p">,</span> <span class="n">var1</span>
+
+    <span class="n">ratio</span> <span class="o">=</span> <span class="n">var1</span><span class="o">/</span><span class="n">var2</span>
+    
+    <span class="c1"># formulas from Garder (2001, p.57):</span>
+    <span class="n">numerator1_S1minusS2</span> <span class="o">=</span> <span class="n">var1</span><span class="o">-</span><span class="n">var2</span>
+    <span class="n">numerator2_SQRTnminus2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">N</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">numerator3</span> <span class="o">=</span> <span class="n">numerator1_S1minusS2</span><span class="o">*</span><span class="n">numerator2_SQRTnminus2</span>
+    <span class="n">denominator1_4timesS1timesS2</span> <span class="o">=</span> <span class="mi">4</span><span class="o">*</span><span class="n">var1</span><span class="o">*</span><span class="n">var2</span>
+    <span class="n">denominator2_rSquared</span> <span class="o">=</span> <span class="n">cor</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">denominator3_1minusrSquared</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">denominator2_rSquared</span>
+    <span class="n">denominator4_4timesS1timesS2div1minusrSquared</span> <span class="o">=</span> <span class="n">denominator1_4timesS1timesS2</span><span class="o">*</span><span class="n">denominator3_1minusrSquared</span>
+    <span class="n">denominator5</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">denominator4_4timesS1timesS2div1minusrSquared</span><span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">N</span><span class="o">-</span><span class="mi">2</span>
+    <span class="k">if</span> <span class="n">denominator5</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">denominator5</span> <span class="o">=</span> <span class="n">_EPS</span>
+    <span class="n">tval</span> <span class="o">=</span> <span class="n">numerator3</span><span class="o">/</span><span class="n">denominator5</span>
+    
+    <span class="c1"># compute stats:</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="mf">1.0</span><span class="o">-</span><span class="n">sp</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">tval</span><span class="p">,</span><span class="n">df</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">verbosity</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;tval = </span><span class="si">{:1.4f}</span><span class="s1">, df = </span><span class="si">{:1.1f}</span><span class="s1">, p = </span><span class="si">{:1.4f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tval</span><span class="p">,</span><span class="n">df</span><span class="p">,</span> <span class="n">p</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">tval</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">ratio</span></div>
 </pre></div>
 
            </div>
