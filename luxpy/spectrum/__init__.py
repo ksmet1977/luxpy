@@ -118,14 +118,22 @@ spectrum/spectral_databases.py
 
  :_IESTM3015: Database with spectral reflectances related to and light source 
             spectra contained excel calculator of IES TM30-15 publication.
+            
+ :_IESTM3018: Database with spectral reflectances related to and light source 
+            spectra contained excel calculator of IES TM30-18 publication.
 
  :_IESTM3015_S: Database with only light source spectra contained in the 
               IES TM30-15 excel calculator.
+              
+ :_IESTM3018_S: Database with only light source spectra contained in the 
+              IES TM30-18 excel calculator.
 
  :_CIE_ILLUMINANTS: | Database with CIE illuminants: 
                     | * 'E', 'D65', 'A', 'C',
                     | * 'F1', 'F2', 'F3', 'F4', 'F5', 'F6',
                       'F7', 'F8', 'F9', 'F10', 'F11', 'F12'
+                      
+ :_CIE_E, _CIE_D65, _CIE_A, _CIE_C, _CIE_F4: Some CIE illuminants for easy use.
 
  :_CRI_RFL: | Database with spectral reflectance functions for various 
               color rendition calculators:
@@ -138,6 +146,14 @@ spectrum/spectral_databases.py
 
  :_MUNSELL: Database (dict) with 1269 Munsell spectral reflectance functions 
             and Value (V), Chroma (C), hue (h) and (ab) specifications.
+           
+ :_RFL: | Database (dict) with RFLs, including:
+        | * all those in _CRI_RFL, 
+        | * the 1269 Matt Munsell samples (see also _MUNSELL),
+        | * the 24 Macbeth ColorChecker samples,
+        | * the 215 samples proposed by Opstelten, J.J. , 1983, The establishment of a representative set of test colours
+        |   for the specification of the colour rendering properties of light sources, CIE-20th session, Amsterdam. 
+        | * the 114120 RFLs from `(capbone.com/spectral-reflectance-database/)<114120 RFLs from https://capbone.com/spectral-reflectance-database/>`_
     
     
     
