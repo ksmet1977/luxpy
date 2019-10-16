@@ -101,11 +101,11 @@ def gaussian_spd(peakwl = 530, fwhm = 20, wl = _WL3, with_wl = True):
         :returns:
             | ndarray with spectra.        
     """
-    wl = np.atleast_2d(getwlr(wl)).T # create wavelength range
-    spd = np.exp(-0.5*((wl-np.atleast_2d(peakwl))/np.atleast_2d(fwhm))**2)
+    wl = np.atleast_2d(getwlr(wl)) # create wavelength range
+    spd = np.exp(-0.5*((wl.T-np.atleast_2d(peakwl))/np.atleast_2d(fwhm))**2).T
     if with_wl == True:
         spd = np.vstack((wl, spd))
-    return spd.T
+    return spd
 
 
 #------------------------------------------------------------------------------
@@ -134,11 +134,11 @@ def butterworth_spd(peakwl = 530, fwhm = 20, bw_order = 1, wl = _WL3, with_wl = 
         :returns:
             | ndarray with spectra.        
     """
-    wl = np.atleast_2d(getwlr(wl)).T # create wavelength range
-    spd = 2 / (1 + np.abs((wl-np.atleast_2d(peakwl))/np.atleast_2d(fwhm))**(2*np.atleast_2d(bw_order)))
+    wl = np.atleast_2d(getwlr(wl)) # create wavelength range
+    spd = (2 / (1 + np.abs((wl.T-np.atleast_2d(peakwl))/np.atleast_2d(fwhm))**(2*np.atleast_2d(bw_order)))).T
     if with_wl == True:
         spd = np.vstack((wl, spd))
-    return spd.T
+    return spd
 
 #------------------------------------------------------------------------------
 def mono_led_spd(peakwl = 530, fwhm = 20, wl = _WL3, with_wl = True, strength_shoulder = 2, bw_order = -1):
@@ -476,7 +476,7 @@ def spd_builder(flux = None, component_spds = None, peakwl = 450, fwhm = 20, bw_
         :target: 
             | None, optional
             | ndarray with Yxy chromaticity of target.
-            |  If None: don't override phosphor strengths, else calculate strength
+            | If None: don't override phosphor strengths, else calculate strength
             |           to obtain :target: using color3mixer().
             | If not None AND strength_ph is None or 0: components are 
               monochromatic and colormixer is used to optimize fluxes to 
@@ -1692,7 +1692,8 @@ def spd_optimizer(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs = _CIEO
                   pair_strengths = None,\
                   peakwl_min = [400], peakwl_max = [700],\
                   fwhm_min = [5], fwhm_max = [300],\
-                  bw_order_min = 0, bw_order_max = 100):
+                  bw_order_min = 0, bw_order_max = 100,\
+                  out = 'spds,M'):
     """
     Generate a spectrum with specified white point and optimized for certain 
     objective functions from a set of component spectra or component spectrum 
@@ -1784,6 +1785,9 @@ def spd_optimizer(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs = _CIEO
         :verbosity:
             | 0, optional
             | If > 0: print intermediate results.
+        :out:
+            | 'spds,M', optional
+            | Determines output of function.
          
     Note:
         peakwl:, :fwhm:, ... : see ?spd_builder for more info.   
@@ -1890,7 +1894,10 @@ def spd_optimizer(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs = _CIEO
     
     if with_wl == True:
         spds = np.vstack((getwlr(wl), spds))
-    return spds, M       
+    if out == 'spds,M':
+        return spds, M  
+    else:  
+        return eval(out)
 
 
 #------------------------------------------------------------------------------
