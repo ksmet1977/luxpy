@@ -591,7 +591,7 @@ def spd_to_xyz(data,  relative = True, rfl = None, cieobs = _CIEOBS, K = None, o
         :cieobs:
             | luxpy._CIEOBS or str, optional
             | Determines the color matching functions to be used in the 
-              calculation of XYZ.
+              calculation of XYZ. (see luxpy._CMF['types'] for options).
         :K: 
             | None, optional
             |   e.g.  K  = 683 lm/W for '1931_2' (relative == False) 
