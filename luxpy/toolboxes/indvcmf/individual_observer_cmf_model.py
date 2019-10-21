@@ -105,7 +105,7 @@ __all__ += ['compute_cmfs','plot_cmfs','add_to_cmf_dict']
 
 
 _DATA_PATH = _PKG_PATH + _SEP + 'toolboxes' + _SEP + 'indvcmf' + _SEP + 'data' + _SEP  
-_DATA_PATH = './data/' # for testing
+#_DATA_PATH = './data/' # for testing
 
 global _WL, _DATA, _USE_MY_ROUND, _USE_SIGN_FIGS, _USE_CHOP, _DSRC_STD_DEF,_DSRC_LMS_ODENS_DEF, _LMS_TO_XYZ_METHOD, _DATA
 _DATA = None
@@ -399,13 +399,13 @@ def _load_cietc197_lms_and_odensities(wl=None, path = None):
     if wl is None:
         wl = _WL_CIETC197
     # data from tc197:
-    tmp = pd.read_csv(path  + 'cietc197_absorbances0_1nm.csv', header=None)
+    tmp = pd.read_csv(path  + 'cietc197_absorbances0_1nm.dat', header=None)
     tmp[np.isnan(tmp)] = 0
     tmp = cie_interp(tmp.values[:, [0, 2, 3, 4, 5, 6]].T,wl, kind='linear',negative_values_allowed=True)
     absorbance = tmp[[0, 1, 2, 3],:] #LMS absorbance
     macula_rel = tmp[[0, 5],:] 
     macula_rel[1,:] /= 0.35  # div by 0.35 since macula at 2° has a maximum of 0.35 at 460 (at 5nm step)
-    docul2 = pd.read_csv(path  + 'cietc197_docul2.csv', header=None)
+    docul2 = pd.read_csv(path  + 'cietc197_docul2.dat', header=None)
     ocular_sum_32 = tmp[[0, 4],:].T  # 32 years only!
     docul2 = _docul_fine(ocular_sum_32, docul2)
     docul2 = cie_interp(docul2.T,wl, kind='linear',negative_values_allowed=True)

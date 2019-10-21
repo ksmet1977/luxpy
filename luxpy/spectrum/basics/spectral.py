@@ -102,7 +102,7 @@ References
 """
 
 #--------------------------------------------------------------------------------------------------
-from luxpy import np, pd, interpolate, _PKG_PATH, _SEP, _EPS, _CIEOBS, np2d, getdata
+from luxpy import np, pd, interpolate, _PKG_PATH, _SEP, _EPS, _CIEOBS, np2d, getdata, math
 from .cmf import _CMF
 __all__ = ['_WL3','_BB','_S012_DAYLIGHTPHASE','_INTERP_TYPES','_S_INTERP_TYPE', '_R_INTERP_TYPE','_CRI_REF_TYPE',
            '_CRI_REF_TYPES', 'getwlr','getwld','spd_normalize','cie_interp','spd','xyzbar', 'vlbar', 
@@ -294,7 +294,7 @@ def cie_interp(data,wl_new, kind = None, negative_values_allowed = False, extrap
             |   - If :kind: is a spectrum type (see _INTERP_TYPES), the correct 
             |     interpolation type if automatically chosen.
             |   - Or :kind: can be any interpolation type supported by 
-            |     scipy.interpolate.interp1d
+            |     luxpy.math.interp1
         :negative_values_allowed: 
             | False, optional
             | If False: negative values are clipped to zero.
@@ -331,8 +331,8 @@ def cie_interp(data,wl_new, kind = None, negative_values_allowed = False, extrap
             N = S.shape[0]
             Si=np.ones([N,wl_new.shape[0]])*np.nan 
             for i in range(N):
-                Si_f = interpolate.interp1d(wl,S[i],kind = kind, bounds_error = False)
-                Si[i] = Si_f(wl_new)
+                Si[i] = math.interp1(wl, S[i], wl_new, kind = kind, ext = 'extrapolate')
+                #Si[i] = Si_f(wl_new)
                 
                 #extrapolate by replicating closest known (in source data!) value (conform CIE2004 recommendation) 
                 if extrap_values[0] is None:
@@ -591,7 +591,7 @@ def spd_to_xyz(data,  relative = True, rfl = None, cieobs = _CIEOBS, K = None, o
         :cieobs:
             | luxpy._CIEOBS or str, optional
             | Determines the color matching functions to be used in the 
-              calculation of XYZ. (see luxpy._CMF['types'] for options).
+              calculation of XYZ.
         :K: 
             | None, optional
             |   e.g.  K  = 683 lm/W for '1931_2' (relative == False) 

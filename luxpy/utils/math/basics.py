@@ -100,7 +100,7 @@ __all__  = ['normalize_3x3_matrix','symmM_to_posdefM','check_symmetric',
             'histogram', 'pol2cart', 'cart2pol', 'spher2cart', 'cart2spher']
 __all__ += ['bvgpdf','mahalanobis2','dot23', 'rms','geomean','polyarea']
 __all__ += ['magnitude_v','angle_v1v2']
-__all__ += ['v_to_cik', 'cik_to_v', 'fmod', 'fit_ellipse','ndinterp1','ndinterp1_scipy']
+__all__ += ['v_to_cik', 'cik_to_v', 'fmod', 'fit_ellipse','interp1', 'ndinterp1','ndinterp1_scipy']
 __all__ += ['box_m','pitman_morgan']
 
 
@@ -860,6 +860,31 @@ def fit_ellipse(xy):
         theta = fmod(theta, 2.0 * np.pi)
     return np.hstack((a, b, xc, yc, theta))
 
+#------------------------------------------------------------------------------
+def interp1(X,Y,Xnew, kind = 'linear', ext = 'extrapolate', w = None, bbox=[None, None], check_finite = False):
+    """
+    Perform a 1-dimensional linear interpolation (wrapper around scipy.interpolate.InterpolatedUnivariateSpline).
+    
+    Args:
+        :X: 
+            | ndarray with n-dimensional coordinates (last axis represents dimension)
+        :Y: 
+            | ndarray with values at coordinates in X
+        :Xnew: 
+            | ndarray of new coordinates (last axis represents dimension)
+        :kind:
+            | str or int,  optional
+            | if str: kind is 'translated' to an int value for input to interpolate.InterpolatedUnivariateSpline()
+            | supported options for str: 'linear', 'quadratic', 'cubic', 'quartic', 'quintic'
+        :other args:
+            | see interpolate.InterpolatedUnivariateSpline()
+        
+    Returns:
+        :Ynew:
+            | ndarray with new values at coordinates in Xnew
+    """
+    k = ['linear', 'quadratic', 'cubic', 'quartic', 'quintic'].index(kind) + 1
+    return sp.interpolate.InterpolatedUnivariateSpline(X,Y, ext = ext, k = k, w = w, bbox = bbox, check_finite = check_finite)(Xnew)
 #------------------------------------------------------------------------------
 def ndinterp1_scipy(X,Y,Xnew, fill_value = np.nan,  rescale = False):    
     """
