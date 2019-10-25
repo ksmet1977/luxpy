@@ -16,9 +16,7 @@ Module for Individual Observer lms-CMFs (Asano, 2016)
  :_WL_CRIT: critical wavelength above which interpolation of S-cone data fails.
  
  :_WL: default wavelengths of spectral data in INDVCMF_DATA.
-
  :load_database(): Load a database with parameters and data required by the Asano model.
-
  :init():   Initialize: load database required for Asano Individual Observer Model 
             into the default _DATA dict and set some options for rounding, 
             sign. figs and chopping small value to zero; for source data to use for 
@@ -37,28 +35,22 @@ Module for Individual Observer lms-CMFs (Asano, 2016)
                    on observer variability in color matching and 
                    in physiological parameters. (Use of Asano optical data and model; 
                    or of CIE TC1-91 data and 'variability'-extended model possible)
-
  :getMonteCarloParam(): Get dict with normally-distributed physiological 
                         factors for a population of observers.
                             
  :getUSCensusAgeDist(): Get US Census Age Distribution
-
  :genMonteCarloObs(): Monte-Carlo generation of individual observer 
                       color matching functions (cone fundamentals) for a
                       certain age and field size.
-
  :getCatObs(): Generate cone fundamentals for categorical observers.
-
  :get_lms_to_xyz_matrix(): Calculate lms to xyz conversion matrix for a specific field 
   size determined as a weighted combination of the 2° and 10° matrices.
                             
  :lmsb_to_xyzb(): Convert from LMS cone fundamentals to XYZ CMFs using conversion
                   matrix determined as a weighted combination of the 2° and 10° matrices.
-
  :add_to_cmf_dict(): Add set of cmfs to _CMF dict.
  
  :plot_cmfs(): Plot cmf set.
-
 References
 ----------
  1. `Asano Y, Fairchild MD, and Blondé L (2016). 
@@ -81,18 +73,15 @@ References
  
  5. `CIE TC1-97 cmf functions python code developed by Ivar Farup and Jan Hendrik Wold.
   <https://github.com/ifarup/ciefunctions>`_
-
  
 Notes
 -----
     1. Port of Matlab code from: 
     https://www.rit.edu/cos/colorscience/re_AsanoObserverFunctions.php
     (Accessed April 20, 2018)  
-
     2. Adjusted/extended following CIE TC1-97 Python code (and data):
     github.com/ifarup/ciefunctions (Copyright (C) 2012-2017 Ivar Farup and Jan Henrik Wold)     
     (Accessed October 19, 2019)    
-
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 from luxpy import np, pd, sp, interpolate, math, plt, _WL3, _PKG_PATH, _SEP, _CMF, spd, getdata, getwlr, getwld, cie_interp, spd_to_power, xyz_to_Yxy, spd_normalize
@@ -101,7 +90,7 @@ import warnings
 __all__ = ['_DSRC_STD_DEF', '_DSRC_LMS_ODENS_DEF','_LMS_TO_XYZ_METHOD']
 __all__ += ['load_database','init','quiry_state']
 __all__ += ['cie2006cmfsEx','getMonteCarloParam','genMonteCarloObs','getCatObs']
-__all__ += ['compute_cmfs','plot_cmfs','add_to_cmf_dict']
+__all__ += ['compute_cmfs','plot_cmfs','add_to_cmf_dict','plot_cmfs']
 
 
 _DATA_PATH = _PKG_PATH + _SEP + 'toolboxes' + _SEP + 'indvcmf' + _SEP + 'data' + _SEP  
@@ -132,11 +121,9 @@ _USE_CHOP = True
 def my_round(x, n=0):
     """
     Round array x to n decimal points using round half away from zero.
-
     This function is needed because the rounding specified in the CIE
     recommendation is different from the standard rounding scheme in python
     (which is following the IEEE recommendation).
-
     Args:
         :x: 
             | ndarray
@@ -144,7 +131,6 @@ def my_round(x, n=0):
         :n:
             | int
             | Number of decimal points
-
     Returns:
         :y: 
             | ndarray
@@ -159,16 +145,13 @@ def my_round(x, n=0):
 def sign_figs(x, n=0):
     """
     Round x to n significant figures (not decimal points).
-
     This function is needed because the rounding specified in the CIE
     recommendation is different from the standard rounding scheme in python
     (which is following the IEEE recommendation). Uses my_round (above).
-
     Args:
         :x: 
             | int, float or ndarray
             | Number or array to be rounded.
-
     Returns;
         :t:
             | float or ndarray
@@ -192,9 +175,7 @@ def sign_figs(x, n=0):
 def chop(arr, epsilon=1e-14):
     """
     Chop values smaller than epsilon in absolute value to zero.
-
     Similar to Mathematica function.
-
     Args:
         :arr:
             | float or ndarray
@@ -202,7 +183,6 @@ def chop(arr, epsilon=1e-14):
         :epsilon:
             | float
             | Minimum number.
-
     Returns:
         :chopped:
             | float or ndarray
@@ -348,13 +328,11 @@ def _docul_fine(ocular_sum_32, docul2):
     """
     Calculate the two parts of the expression for the optical density of the 
     ocular media as function of age.
-
     Parameters
     ----------
     ocular_sum_32 : ndarray
         Sum of two ocular functions
     docul2 : ndarray
-
     Returns
     -------
     docul1_fine : ndarray
@@ -399,16 +377,17 @@ def _load_cietc197_lms_and_odensities(wl=None, path = None):
     if wl is None:
         wl = _WL_CIETC197
     # data from tc197:
-    tmp = pd.read_csv(path  + 'cietc197_absorbances0_1nm.dat', header=None)
-    tmp[np.isnan(tmp)] = 0
-    tmp = cie_interp(tmp.values[:, [0, 2, 3, 4, 5, 6]].T,wl, kind='linear',negative_values_allowed=True)
+    tmp = pd.read_csv(path  + 'cietc197_absorbances0_1nm.dat', header=None).values[:, [0, 2, 3, 4, 5, 6]].T
+    tmp[np.isnan(tmp)] = -10**308
+    tmp = cie_interp(tmp,wl, kind = 'linear',negative_values_allowed = True)#, extrap_values = 'ext')
+
     absorbance = tmp[[0, 1, 2, 3],:] #LMS absorbance
     macula_rel = tmp[[0, 5],:] 
     macula_rel[1,:] /= 0.35  # div by 0.35 since macula at 2° has a maximum of 0.35 at 460 (at 5nm step)
     docul2 = pd.read_csv(path  + 'cietc197_docul2.dat', header=None)
     ocular_sum_32 = tmp[[0, 4],:].T  # 32 years only!
     docul2 = _docul_fine(ocular_sum_32, docul2)
-    docul2 = cie_interp(docul2.T,wl, kind='linear',negative_values_allowed=True)
+    docul2 = cie_interp(docul2.T,wl, kind = 'linear',negative_values_allowed = True, extrap_values = True)
     data = {'wls': wl, 'rmd': macula_rel, 'docul':docul2, 'LMSa': absorbance}
     return data
 
@@ -581,7 +560,6 @@ def quiry_state():
 def _d_ocular(age = 32, var_od_lens = 0, docul0 = None):
     """
     Calculate the optical density of the ocular media for a given age.
-
     Args:
         :age:
             | 32, float, optional
@@ -593,7 +571,6 @@ def _d_ocular(age = 32, var_od_lens = 0, docul0 = None):
             | None, optional
             | Uncorrected ocular media density function 
             | None defaults to the one stored in _DATA
-
     Returns:
         :docul:
             | ndarray with the calculated optical density of the ocular media; row 0 are wavelenghts.
@@ -612,12 +589,11 @@ def _d_ocular(age = 32, var_od_lens = 0, docul0 = None):
     else:
         corrected_lomd = docul[1:2,:] * (1.56 + 0.0667*(age-60)) + docul[2:3,:]
     corrected_lomd = corrected_lomd * (1 + var_od_lens/100) # varied overall optical density of lens
-    return np.vstack((docul[:1,:],corrected_lomd)) 
+    return np.array((docul[:1,:],corrected_lomd)) 
 
 def _d_mac_max(fieldsize = 10, var_od = 0):
     """
     Calculate the maximum optical density of the macular pigment for a given field size.
-
     Args:
         :fieldsize:
             | 10, float, optional
@@ -625,7 +601,6 @@ def _d_mac_max(fieldsize = 10, var_od = 0):
         :var_od:
             | 0, optional
             | Variation of optical density of macula.
-
     Returns:
         :d_mac_max:
             | float
@@ -638,7 +613,6 @@ def _d_mac_max(fieldsize = 10, var_od = 0):
 def _d_mac(fieldsize = 10, var_od = 0, rmd0 = None):
     """
     Calculate the optical density of the macular pigment for a given field size.
-
     Args:
         :fieldsize:
             | 10, float, optional
@@ -665,7 +639,6 @@ def _d_mac(fieldsize = 10, var_od = 0, rmd0 = None):
 def _d_LM_max(fieldsize = 10, var_od = 0):
     """
     Calculate the maximum optical density of the L- and M-cone photopigments for a given field size.
-
     Args:
         :field_size:
             | 10, float, optional
@@ -673,7 +646,6 @@ def _d_LM_max(fieldsize = 10, var_od = 0):
         :var_od:
             | 0, optional
             | Variation of optical density.
-
     Returns:
         :d_LM_max:
             | float
@@ -687,7 +659,6 @@ def _d_LM_max(fieldsize = 10, var_od = 0):
 def _d_S_max(fieldsize = 10, var_od = 0):
     """
     Calculate the maximum optical density of the S-cone photopigment for a given field size.
-
     Args:
         :fieldsize:
             | 10, float, optional
@@ -695,7 +666,6 @@ def _d_S_max(fieldsize = 10, var_od = 0):
         :var_od:
             | 0, optional
             | Variation of optical density.
-
     Returns:
         :d_S_max:
             | float
@@ -708,7 +678,6 @@ def _d_S_max(fieldsize = 10, var_od = 0):
 def _LMS_absorptance(fieldsize = 10, var_shft_LMS = [0,0,0], var_od_LMS = [0, 0, 0], LMSa0 = None):
     """
     Calculate the quantal absorptance of the L, M and S cones for a given field size.
-
     Args:
         :fieldsize: 
             | 10, float, optional
@@ -723,7 +692,6 @@ def _LMS_absorptance(fieldsize = 10, var_shft_LMS = [0,0,0], var_od_LMS = [0, 0,
             | None, optional
             | Uncorrected LMS absorptance functions
             | None defaults to the ones stored in _DATA
-
     Returns:
         alpha_lms: 
             | ndarray with the calculated quantal absorptances of the L, M and S cones; row 0 are wavelenghts.
@@ -744,15 +712,26 @@ def _LMS_absorptance(fieldsize = 10, var_shft_LMS = [0,0,0], var_od_LMS = [0, 0,
     
     LMSa_shft = np.empty(LMSa.shape)
     kind = 3 # ->'cubic'
-    LMSa_shft[0] = interpolate.InterpolatedUnivariateSpline(wl_shifted[0],LMSa[0], k = kind, ext = "extrapolate")(wls)
-    LMSa_shft[1] = interpolate.InterpolatedUnivariateSpline(wl_shifted[1],LMSa[1], k = kind, ext = "extrapolate")(wls)
-    LMSa_shft[2] = interpolate.InterpolatedUnivariateSpline(wl_shifted[2],LMSa[2], k = kind, ext = "extrapolate")(wls)
+    if var_shft_LMS[0] == 0:
+        LMSa_shft[0] = LMSa[0]
+    else:
+        LMSa_shft[0] = interpolate.InterpolatedUnivariateSpline(wl_shifted[0],LMSa[0], k = kind, ext = "extrapolate")(wls)
+    if var_shft_LMS[1] == 0:
+        LMSa_shft[1] = LMSa[1]
+    else:
+        LMSa_shft[1] = interpolate.InterpolatedUnivariateSpline(wl_shifted[1],LMSa[1], k = kind, ext = "extrapolate")(wls)
+    
+    
+    if var_shft_LMS[2] == 0:
+        LMSa_shft[2] = LMSa[2]
+    else:
+        LMSa_shft[2] = interpolate.InterpolatedUnivariateSpline(wl_shifted[2],LMSa[2], k = kind, ext = "extrapolate")(wls)
 
-    # Detect poor interpolation (sign switch due to instability):
-    ssw = np.hstack((0,np.sign(np.diff(LMSa_shft[2,:])))) 
-#    LMSa_shft[2,np.where((ssw >= 0) & (wls > 560))] = np.nan
-    wl_min = wls[np.where((ssw >= 0) & (wls > 560))].min()
-    LMSa_shft[2,np.where((wls >= wl_min))] = np.nan
+        # Detect poor interpolation (sign switch due to instability):
+        ssw = np.hstack((0,np.sign(np.diff(LMSa_shft[2,:])))) 
+    #    LMSa_shft[2,np.where((ssw >= 0) & (wls > 560))] = np.nan
+        wl_min = wls[np.where((ssw >= 0) & (wls > 560))].min()
+        LMSa_shft[2,np.where((wls >= wl_min))] = np.nan
     
     # corrected LMS (no age correction):
     pkOd_L = _d_LM_max(fieldsize, var_od_LMS[0])  # varied peak optical density of L-cone
@@ -765,7 +744,7 @@ def _LMS_absorptance(fieldsize = 10, var_shft_LMS = [0,0,0], var_od_LMS = [0, 0,
     alpha_lms[2] = 1 - 10**(-pkOd_S*(10**LMSa_shft[2]))
     
     # this fix is required because the above math fails for alpha_lms[2,:]==0
-    alpha_lms[2,np.where(wls >= _WL_CRIT)] = 0 
+    #alpha_lms[2,np.where(wls >= _WL_CRIT)] = 0 
     return np.vstack((wls,alpha_lms))
 
 def _LMS_quantal(fieldsize = 10, age = 32, var_od_lens = 0, var_od_mac = 0, 
@@ -773,7 +752,6 @@ def _LMS_quantal(fieldsize = 10, age = 32, var_od_lens = 0, var_od_mac = 0,
                  norm_type = 'max', out = 'LMSq', odata0 = None):
     """
     Calculate the quantal based LMS cone fundamentals for a given field size and age.
-
     Args:
         :fieldsize:
             | 10, float, optional
@@ -802,7 +780,6 @@ def _LMS_quantal(fieldsize = 10, age = 32, var_od_lens = 0, var_od_mac = 0,
             | None, optional
             | Dict with uncorrected ocular media and macula density functions and LMS absorptance functions
             | None defaults to the ones stored in _DATA
-
     Returns:
         :LMSq: 
             | ndarray with the calculated quantum_based LMS cone fundamentals; first row are wavelengths.
@@ -840,7 +817,6 @@ def _LMS_energy(fieldsize = 10, age = 32, var_od_lens = 0, var_od_mac = 0,
                 norm_type = 'max', out = 'LMSe', base = False, odata0 = None):
     """
     Calculate the energy based LMS cone fundamentals for a given field size and age.
-
     Args:
         :fieldsize:
             | 10, float, optional
@@ -874,7 +850,6 @@ def _LMS_energy(fieldsize = 10, age = 32, var_od_lens = 0, var_od_mac = 0,
             | None, optional
             | Dict with uncorrected ocular media and macula density functions and LMS absorptance functions
             | None defaults to the ones stored in _DATA
-
     Returns:
         :LMSe: 
             | ndarray with the calculated quantum_based LMS cone fundamentals; first row are wavelengths.
@@ -887,9 +862,9 @@ def _LMS_energy(fieldsize = 10, age = 32, var_od_lens = 0, var_od_mac = 0,
     wls = LMSq[:1,:]
     LMSe = LMSq.copy()
     LMSe[1:,:] = LMSe[1:,:]*wls
-    
+
     # Set NaN values to zero:
-    LMSe[np.isnan(LMSe)] = 0
+    #LMSe[np.isnan(LMSe)] = 0
     
     # Get max values before normalization:
     LMSe_o_max = np.nanmax(LMSe[1:,:], axis = 1, keepdims = True)
@@ -904,7 +879,7 @@ def _LMS_energy(fieldsize = 10, age = 32, var_od_lens = 0, var_od_mac = 0,
         LMSe = sign_figs(LMSe, 9)
     else:
         LMSe = sign_figs(LMSe, 6)
-        
+
     if out == 'LMSe':
         return LMSe
     elif out == 'LMSe,LMSq,alpha_lms,LMSe_o_max,rmd,docul':
@@ -927,14 +902,12 @@ def _LMS_energy(fieldsize = 10, age = 32, var_od_lens = 0, var_od_mac = 0,
 
 def _relative_L_cone_weight_Vl_quantal(fieldsize = 10, age = 32, strategy_2 = True,
                                       LMSa = None, LMSq = None, 
-                                      LMSe = None, LMSe_o_max = None, 
                                       var_od_lens = 0, var_od_mac = 0, 
                                       var_shft_LMS = [0,0,0], var_od_LMS = [0, 0, 0],
                                       out = 'kLq', odata0 = None):
     """
     Compute the weighting factor of the quantal L-cone fundamental in the
     synthesis of the cone-fundamental-based quantal V(λ) function (normalized to max=1).
-
     Args:
         :fieldsize: 
             | 10, float, optional
@@ -952,17 +925,6 @@ def _relative_L_cone_weight_Vl_quantal(fieldsize = 10, age = 32, strategy_2 = Tr
         :LMSq:
             | None, optional
             | Pre-calculated LMSq (if None: will be calculated)
-        :LMSe:
-            | None, optional
-            | Pre-calculated LMSe (if None: will be calculated)
-            | Only for speedy calculation of other functions requiring this. 
-            |       (e.g. _Vl_energy_and_LM_weights)
-        :LMSe_o_max:
-            | None, optional
-            | Max of original (prior to normalization) LMSe.
-            | Pre-calculated value (if None: will be calculated).
-            | Only for speedy calculation of other functions requiring this. 
-            |       (e.g. _Vl_energy_and_LM_weights)
         :var_od_lens:
             | 0, optional
             | Variation of optical density of lens.
@@ -979,7 +941,6 @@ def _relative_L_cone_weight_Vl_quantal(fieldsize = 10, age = 32, strategy_2 = Tr
             | None, optional
             | Dict with uncorrected ocular media and macula density functions and LMS absorptance functions
             | None defaults to the ones stored in _DATA
-
     Returns:
         kLq: 
             | float
@@ -995,35 +956,29 @@ def _relative_L_cone_weight_Vl_quantal(fieldsize = 10, age = 32, strategy_2 = Tr
         
     """
     if strategy_2:
-        fieldsize = 2.
-        
+        field_size = 2.
+    else:
+        field_size = fieldsize
+
     if odata0 is None:
         odata = _DATA['odata']
     else:
         odata = odata0
         
-    # avoid recalculation:  
-    if (LMSa is None) | (LMSq is None) | (((LMSe is None) | (LMSe_o_max is None)) & ('LMSe' in out.split(','))):
-        LMSe_, LMSq_, LMSa_, LMSe_o_max_ = _LMS_energy(fieldsize = fieldsize, age = age,
+    # avoid recalculation if unnecessary:  
+    if (field_size != fieldsize) | (LMSa is None) | (LMSq is None):
+
+        _, LMSq_fs_age, LMSa_fs, _ = _LMS_energy(fieldsize = field_size, age = age,
                                                       var_od_lens = var_od_lens, var_od_mac = var_od_mac,
                                                       var_shft_LMS = var_shft_LMS, var_od_LMS = var_od_LMS, 
                                                       norm_type = 'max', out = 'LMSe,LMSq,alpha_lms,LMSe_o_max',
                                                       base = True, odata0 = odata) # note: base only applies to LMSe !
     else:
-        LMSe_ = LMSe
-        LMSe_o_max_ = LMSe_o_max
-    
-    if LMSa is None:
-        LMSa_fs = LMSa_
-    else:
         LMSa_fs = LMSa
-    if LMSq is None:
-        LMSq_fs_age = LMSq_
-    else:
         LMSq_fs_age = LMSq
-    
+
     LMSa_2 = _LMS_absorptance(fieldsize = 2.0, LMSa0 = odata['LMSa'])
-    LMSq_2_32 = _LMS_quantal(fieldsize = 2, age = 32, odata0 = odata)
+    LMSq_2_32 = _LMS_quantal(fieldsize = 2.0, age = 32, odata0 = odata)
     
     const_fs_age = (LMSa_fs[1, 0] * LMSq_fs_age[2, 0] / (LMSa_fs[2, 0] * LMSq_fs_age[1, 0]))
     const_2_32 = (LMSa_2[1, 0] * LMSq_2_32[2, 0] / (LMSa_2[2, 0] * LMSq_2_32[1, 0]))
@@ -1031,12 +986,6 @@ def _relative_L_cone_weight_Vl_quantal(fieldsize = 10, age = 32, strategy_2 = Tr
     
     if out == 'kLq':
         return kLq_rel
-    elif out == 'kLq,LMSe':
-        return kLq_rel, LMSe_
-    elif out == 'kLq,LMSe,LMSe_o_max':
-        return kLq_rel, LMSe_, LMSe_o_max_
-    elif out == 'kLq,LMSe,LMSq,LMSa':
-        return kLq_rel, LMSe_, LMSq_fs_age, LMSa_fs
     else:
         return eval(out)
 
@@ -1050,7 +999,6 @@ def _Vl_energy_and_LM_weights(fieldsize = 10, age = 32, strategy_2 = True,
     Compute the energy-based V(λ) function (starting from energy-based LMS).
     Return both V(λ) and the the corresponding L and M cone weights used
     in the synthesis.
-
     Args:
         :fieldsize: 
             | 10, float, optional
@@ -1091,7 +1039,6 @@ def _Vl_energy_and_LM_weights(fieldsize = 10, age = 32, strategy_2 = True,
             | None, optional
             | Dict with uncorrected ocular media and macula density functions and LMS absorptance functions
             | None defaults to the ones stored in _DATA
-
     Returns:
         :Vl:
             | ndarray
@@ -1103,28 +1050,24 @@ def _Vl_energy_and_LM_weights(fieldsize = 10, age = 32, strategy_2 = True,
             | i.e. V(λ) = a21*l_bar(λ) + a22*m_bar(λ)
     """
 
-    kLq_rel, LMSe_, LMSe_o_max_ = _relative_L_cone_weight_Vl_quantal(fieldsize = fieldsize, age = age, strategy_2 = strategy_2,
-                                                 LMSa = LMSa, LMSq = LMSq, LMSe = LMSe, LMSe_o_max = LMSe_o_max,
+    kLq_rel = _relative_L_cone_weight_Vl_quantal(fieldsize = fieldsize, age = age, strategy_2 = strategy_2,
+                                                 LMSa = LMSa, LMSq = LMSq,
                                                  var_od_lens = var_od_lens, var_od_mac = var_od_mac, 
                                                  var_shft_LMS = var_shft_LMS, var_od_LMS = var_od_LMS,
-                                                 out = 'kLq,LMSe,LMSe_o_max', odata0 = odata0)
-    
-    (wls, L, M) = (LMSe)[:3,:]
-    (Lo_max, Mo_max) = LMSe_o_max_[:2]
-    Vo = kLq_rel * Lo_max * L + Mo_max * M
-    Vo_max = Vo.max()
+                                                 out = 'kLq', odata0 = odata0)
+    (Lo_max, Mo_max) = LMSe_o_max[:2]
+    Vo_max = (kLq_rel * Lo_max * LMSe[1,:] + Mo_max * LMSe[2,:]).max()
     a21 = my_round(kLq_rel * Lo_max / Vo_max, 8)
     a22 = my_round(Mo_max / Vo_max, 8)
-    V = sign_figs(a21 * L + a22 * M, 7)
-    Vl = np.array([wls, V])
-    return (Vl, (a21, a22))
+    V = sign_figs(a21 * LMSe[1,:] + a22 * LMSe[2,:], 7)
+    Vl = np.array(([LMSe[0,:], V]))
+    return Vl, (a21, a22)
 
 def _xyz_interpolated_reference_system(fieldsize, XYZ31_std, XYZ64_std):
     """
     Compute the spectral chromaticity coordinates of the reference system
     by interpolation between correspoding spectral chromaticity coordinates
     of the CIE 1931 XYZ systems and the CIE 1964 XYZ systems.
-
     Args:
         :fieldsize:
             | float
@@ -1137,7 +1080,6 @@ def _xyz_interpolated_reference_system(fieldsize, XYZ31_std, XYZ64_std):
             | ndarray
             | The CIE 1964 XYZ colour-matching functions (10°), given at 1 nm
             | steps from 360 nm to 830 nm; wavelengths in first row.
-
     Returns:
     -------
         :chromaticity:
@@ -1197,7 +1139,6 @@ def _square_sum(a13, a21, a22, a33,
     """
     Function to be optimised for determination of element a13 in the (non-renormalized) 
     transformation matrix of the linear transformation LMS --> XYZ.
-
     Args:
         :a13: 
             | ndarray
@@ -1225,7 +1166,6 @@ def _square_sum(a13, a21, a22, a33,
         :full_results: 
             | bool
             | Return all results or just the computed error.
-
     Returns:
         :err: 
             | float
@@ -1266,9 +1206,11 @@ def _square_sum(a13, a21, a22, a33,
     a12 = my_round(a12[0], 8)
     a13 = my_round(a13[0], 8)
     trans_mat = np.array([[a11, a12, a13], [a21, a22, 0.], [0., 0., a33]], dtype=np.float)
-    (X, Y, Z) = sign_figs(np.dot(trans_mat, LMS_390_830), 7)
-    sumXYZ = X + Y + Z
-    xyz = np.array([X / sumXYZ, Y / sumXYZ, Z / sumXYZ])
+    XYZ = sign_figs(np.dot(trans_mat, LMS_390_830), 7)
+#    sumXYZ = X + Y + Z
+#    xyz = np.array([X / sumXYZ, Y / sumXYZ, Z / sumXYZ])
+
+    xyz = XYZ/XYZ.sum(axis=0,keepdims=True)
     err = ((xyz - xyz_ref_trunk)**2).sum()
     wl_test_min = wl_390_830[xyz[0, :].argmin()]
     ok = (wl_test_min == wl_ref_min)
@@ -1285,7 +1227,6 @@ def _compute_LMS(wls, L_spline, M_spline, S_spline, base=False):
     """
     Compute the LMS cone fundamentals for given wavelengths, as linear values 
     to respective specified precisions.
-
     Args:
         :wls:
             | ndarray
@@ -1297,7 +1238,6 @@ def _compute_LMS(wls, L_spline, M_spline, S_spline, base=False):
             | The returned energy-based LMS values are given to the precision of
             | 9 sign. figs. / 8 decimal points if 'True', and to the precision of
             | 6 sign. figs. / 5 decimal points if 'False'.
-
     Returns:
         :LMS:
             | ndarray
@@ -1320,7 +1260,6 @@ def _compute_XYZ(L_spline, M_spline, S_spline, V_spline,
                 LMS_spec, LMS_all, LM_weights, xyz_reference):
     """
     Compute the CIE cone-fundamental-based XYZ tristimulus functions.
-
     Args:
         :L_spline, M_spline, S_spline:
             | Spline-interpolation functions for the LMS cone fundamentals (on a linear scale).
@@ -1344,7 +1283,6 @@ def _compute_XYZ(L_spline, M_spline, S_spline, V_spline,
             | The spectral chromaticity coordinates of the reference system
             | (obtained by shape-morphing (interpolation) between the CIE 1931
             | standard and the CIE 1964 standard).
-
     Returns:
         :trans_mat:
             | ndarray
@@ -1380,7 +1318,7 @@ def _compute_XYZ(L_spline, M_spline, S_spline, V_spline,
     else:
         warnings.warn('Obtaining LMS_main by interpolation')
         LMS_main = cie_interp(LMS_all, np.arange(390, 831), kind = 'cubic')
-        
+
     (wl_main, L_main, M_main, S_main) = LMS_main
     V_main = sign_figs(a21 * L_main + a22 * M_main, 7)
     a33 = my_round(V_main.sum() / S_main.sum(), 8)
@@ -1418,6 +1356,7 @@ def _compute_XYZ(L_spline, M_spline, S_spline, V_spline,
                                        L_wl_sum, M_wl_sum, S_wl_sum, V_wl_sum,
                                        L_wl_ref_min, M_wl_ref_min, S_wl_ref_min, V_wl_ref_min,
                                        LMS_390_830, wl_390_830, wl_x_min_ref, True)[1:])        
+    
     # Compute renormalized transformation matrix
     wl_spec = LMS_spec[0,:]
     (X_exact_spec, Y_exact_spec, Z_exact_spec) = np.dot(trans_mat, LMS_spec[1:,:])
@@ -1433,6 +1372,7 @@ def _compute_XYZ(L_spline, M_spline, S_spline, V_spline,
 
     ### renormalized:
     XYZ_spec_N = np.vstack((wl_spec,sign_figs(np.dot(trans_mat_N, LMS_spec[1:,:]),7)))
+
     
     return (trans_mat, XYZ_spec, trans_mat_N, XYZ_spec_N)
 
@@ -1440,7 +1380,7 @@ def _compute_XYZ(L_spline, M_spline, S_spline, V_spline,
 def compute_cmfs(fieldsize = 10, age = 32, wl = None,
                  var_od_lens = 0, var_od_macula = 0, 
                  var_shft_LMS = [0,0,0], var_od_LMS = [0, 0, 0], 
-                 norm_type = 'area', out = 'lms', base = False, 
+                 norm_type = None, out = 'lms', base = False, 
                  strategy_2 = True, odata0 = None,
                  lms_to_xyz_method = None, allow_negative_values = False):
     """
@@ -1536,6 +1476,10 @@ def compute_cmfs(fieldsize = 10, age = 32, wl = None,
          (by Ivar Farup and Jan Henrik Wold, (c) 2012-2017) 
          <http://github.com/ifarup/ciefunctions>`_
     """
+    # TC1-97 ciefunctions rounds fieldsize:
+    fieldsize_tmp = np.round(fieldsize,1)
+    if (fieldsize_tmp == 2) | (fieldsize_tmp == 10):
+        fieldsize = fieldsize_tmp
     
     if odata0 is None:
         odata = _DATA['odata']
@@ -1564,8 +1508,6 @@ def compute_cmfs(fieldsize = 10, age = 32, wl = None,
     # wavelength arrays:
     wl_all = odata['wls']#my_round(np.arange(390., 830. + .01, .1), 1)
     wl_spec = wl
-#    if not np.array_equal(wl_all, my_round(odata['rmd'][0,:],1)):
-#        warnings.warn('wl_all != [390, 830, 0.1]')
 
     # LMS-base values (9 sign.figs.) at 0.1 nm steps from 390 nm to 830 nm;
     # wavelengths in first row.
@@ -1574,10 +1516,11 @@ def compute_cmfs(fieldsize = 10, age = 32, wl = None,
                                                                       var_shft_LMS = var_shft_LMS, var_od_LMS = var_od_LMS, 
                                                                       norm_type = 'max', out = 'LMSe,LMSq,alpha_lms,LMSe_o_max,rmd,docul',
                                                                       base = True, odata0 = odata) # note: base only applies to LMSe !
-    
+
     # Do sompe checks to save on calculation time (don't calculate anything not needed.):
     wl_equal_to_all = np.array_equal(my_round(wl_spec,1), my_round(LMS_base_all[0,:],1))
-    if (not wl_equal_to_all) | (('xyz' in out_list) | ('M' in out_list)):
+    if (not wl_equal_to_all) | ((('xyz' in out_list) | ('XYZ' in out_list) | ('M' in out_list)) & (lms_to_xyz_method == 'cietc197')):
+
         # =======================================================================
         # Create LMS spline functions
         # =======================================================================
@@ -1609,8 +1552,7 @@ def compute_cmfs(fieldsize = 10, age = 32, wl = None,
         
         if lms_to_xyz_method == 'asano':
             XYZ, M = lmsb_to_xyzb(LMS, fieldsize, out = 'xyz, M', allow_negative_values = allow_negative_values)
-
-        
+                    
         elif lms_to_xyz_method == 'cietc197':
         
             # Vλ and weighting factors of the L and M cone fundamentals:
@@ -1624,14 +1566,14 @@ def compute_cmfs(fieldsize = 10, age = 32, wl = None,
                                                                   LMSa = LMSa_, LMSq = LMSq_, 
                                                                   LMSe = LMS_base_all, LMSe_o_max = LMSe_o_max,
                                                                   odata0 = odata0)
-            
+
             # Create spline function for Vlambda:
             wl_all, V_std_all = V_std_all
             V_std_spline = interpolate.InterpolatedUnivariateSpline(wl_all, V_std_all)
             
             #  Determine reference diagram
             xyz_reference = _xyz_interpolated_reference_system(fieldsize, _CMF['1931_2']['bar'].copy(), _CMF['1964_10']['bar'].copy())
-    
+
             # - Non-renormalised tranformation matrix (8 decimal placed)
             # - Non-renormalised CIE cone-fundamental-based XYZ tristimulus
             #   values (7 sign. figs) for specified wavelengths; wavelengths in first row.
@@ -1646,19 +1588,20 @@ def compute_cmfs(fieldsize = 10, age = 32, wl = None,
                                                                                          xyz_reference)
 #            M = trans_mat_std, 
 #            XYZ = XYZ_std_spec
-            
+
             M = trans_mat_std_N
             XYZ = XYZ_std_spec_N
-            
-        
-    
+
     # Output extra:
-    trans_lens = docul.copy()
-    trans_lens[1:,:] = 10**(-docul[1:,:]) 
-    trans_macula = rmd.copy()
-    trans_macula[1:,:] = 10**(-rmd[1:,:]) 
-    sens_photopig = LMSa_.copy()
-    sens_photopig[1:,:] = LMSa_[1:,:] * LMSa_[:1,:] 
+    if 'trans_lens' in out_list:
+        trans_lens = docul.copy()
+        trans_lens[1:,:] = 10**(-docul[1:,:]) 
+    if 'trans_macula' in out_list:
+        trans_macula = rmd.copy()
+        trans_macula[1:,:] = 10**(-rmd[1:,:]) 
+    if 'sens_photopig' in out_list:
+        sens_photopig = LMSa_.copy()
+        sens_photopig[1:,:] = LMSa_[1:,:] * LMSa_[:1,:] 
 
     if ('xyz' in out.lower().split(',')):
         LMS = XYZ
@@ -1667,12 +1610,8 @@ def compute_cmfs(fieldsize = 10, age = 32, wl = None,
         out = out.replace('lms','LMS')
 
 #    # Interpolate/extrapolate:
-#    if wl is None:
-#        interpolation = None
-#    else:
-#        interpolation = 'cubic'
-#    LMS = spd(LMS, wl = wl, interpolation = interpolation, norm_type = norm_type)
-    LMS = spd_normalize(LMS, norm_type = norm_type)
+    if norm_type is not None:
+        LMS = spd_normalize(LMS, norm_type = norm_type)
     xyz0 = LMS[1:,:].sum(axis=1,keepdims=True).T
     xyz0 = xyz0/xyz0[0,1]
     M = math.normalize_3x3_matrix(M, xyz0 = xyz0) #ensure that EEW is always at [100,100,100] in XYZ system
@@ -2081,7 +2020,6 @@ def getCatObs(n_cat = 10, fieldsize = 2,  wl = None,
         observers were derived iteratively. Since the proposed categorical 
         observers are defined by their physiological parameters and ages, their
         CMFs can be derived for any target field size.
-
         2. Categorical observers were ordered by the importance; 
         the first categorical observer vas the average observer equivalent to 
         CIEPO06 with 38 year-old for a given field size, followed by the second
@@ -2239,7 +2177,6 @@ def add_to_cmf_dict(bar = None, cieobs = 'indv', K = 683, M = np.eye(3)):
         :M: 
             | np.eye, optional
             | Matrix for lms to xyz conversion.
-
     """
     if bar is None:
         wl3 = getwlr(_WL3)
@@ -2262,7 +2199,13 @@ def plot_cmfs(cmf,axh = None, **kwargs):
     axh.plot(cmf[0],cmf[3], color ='b', **kwargs)
     axh.set_xlabel("Wavelenghts (nm)")
     return axh
-    
+
+if __name__ == '__main__':
+    init(use_my_round=True,use_sign_figs=True,use_chop=True,dsrc_lms_odens='cietc197',lms_to_xyz_method='cietc197')
+    xyz2b,M2 = compute_cmfs(fieldsize=2.1,age=32,out='xyz,M',lms_to_xyz_method='cietc197',norm_type=None)
+    print(lx.spd_to_xyz(E,relative=False,cieobs=xyz2b,K=1))
+    print(np.dot(M2,np.array([[200,200,200]]).T).T)
+    ax = plot_cmfs(xyz2b)
 if __name__ == '__main__':
     
     data = load_database(wl=_WL)

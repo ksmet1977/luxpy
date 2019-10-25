@@ -55,6 +55,8 @@ cam: sub-package with color appearance models
 
  :_CAM_AXES: dict with list[str,str,str] containing axis labels 
                   of defined cspaces.
+                  
+ :deltaH(): Compute a hue difference, dH = 2*C1*C2*sin(dh/2).
 
  :naka_rushton(): applies a Naka-Rushton function to the input
  
@@ -142,7 +144,7 @@ cam: sub-package with color appearance models
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
-from .cam_02_X import (naka_rushton, hue_angle, hue_quadrature,
+from .cam_02_X import (deltaH, naka_rushton, hue_angle, hue_quadrature,
                        _CAM_02_X_AXES, _CAM_02_X_UNIQUE_HUE_DATA, 
                        _CAM_02_X_SURROUND_PARAMETERS, _CAM_02_X_NAKA_RUSHTON_PARAMETERS,
                        _CAM_02_X_UCS_PARAMETERS, _CAM_02_X_DEFAULT_TYPE,
@@ -177,7 +179,7 @@ __all__ += ['_CAM_DEFAULT_TYPE', '_CAM_DEFAULT_WHITE_POINT',
 
 __all__ += ['_CAM15U_PARAMETERS','_CAM_SWW16_PARAMETERS','_CAM18SL_PARAMETERS']
 
-__all__ += ['hue_angle', 'hue_quadrature','naka_rushton','ciecam02','cam16',
+__all__ += ['deltaH', 'hue_angle', 'hue_quadrature','naka_rushton','ciecam02','cam16',
             'cam02ucs','cam16ucs','cam15u','cam_sww16','cam18sl']
 
 __all__ += ['xyz_to_jabM_ciecam02', 'jabM_ciecam02_to_xyz',

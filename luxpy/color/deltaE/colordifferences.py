@@ -3,6 +3,8 @@
 Module for color difference calculations
 ========================================
 
+ :deltaH(): Compute a hue difference, dH = 2*C1*C2*sin(dh/2)
+ 
  :_process_DEi(): Process color difference input DEi for output (helper fnc).
 
  :DE_camucs(): Calculate color appearance difference DE using camucs type model.
@@ -16,7 +18,31 @@ Module for color difference calculations
 from luxpy import np, np2d, cam, _CSPACE, colortf, xyz_to_lab
 
 
-__all__ = ['DE_camucs', 'DE2000','DE_cspace']
+__all__ = ['deltaH', 'DE_camucs', 'DE2000','DE_cspace']
+
+def deltaH(h1, C1, h2 = None, C2 = None, htype = 'deg'):
+    """
+    Compute a hue difference, dH = 2*C1*C2*sin(dh/2)
+    
+    Args:
+        :h1:
+            | hue for sample 1 (or hue difference if h2 is None)
+        :C1: 
+            | chroma of sample 1 (or prod C1*C2 if C2 is None)
+        :h2: 
+            | hue angle of sample 2 (if None, then h1 contains a hue difference)
+        :C2: 
+            | chroma of sample 2
+        :htype: 
+            | 'deg' or 'rad', optional
+            |   - 'deg': hue angle between 0° and 360°
+            |   - 'rad': hue angle between 0 and 2pi radians
+    
+    Returns:
+        :returns:
+            | ndarray of deltaH values.
+    """
+    return cam.deltaH(h1, C1, h2 = h2, C2 = C2, htype = htype)
 
 def _process_DEi(DEi, DEtype = 'jab', avg = None, avg_axis = 0, out = 'DEi'):
     """
@@ -260,7 +286,8 @@ def DE2000(xyzt, xyzr, dtype = 'xyz', DEtype = 'jab', avg = None, avg_axis = 0, 
     dhp[np.where(np.abs(dhp_) < -180)] = dhp[np.where(np.abs(dhp_) < -180)] + 360
     dhp[np.where(Cpprod == 0)] = 0
 
-    dH = 2*np.sqrt(Cpprod)*np.sin(dhp/2*np.pi/180)
+    #dH = 2*np.sqrt(Cpprod)*np.sin(dhp/2*np.pi/180)
+    dH = deltaH(dhp, Cpprod, htype = 'deg')
 
     # Step 3:
     Lp = (Lr + Lt)/2

@@ -300,8 +300,9 @@ def cie_interp(data,wl_new, kind = None, negative_values_allowed = False, extrap
             | If False: negative values are clipped to zero.
         :extrap_values:
             | None, optional
-            | float or list or ndarray with values to extrapolate
-            | If None: use CIE recommended 'closest value' approach.
+            | If None: use CIE recommended 'closest value' approach when extrapolating.
+            | If float or list or ndarray, use those values to fill extrapolated value(s).
+            | If 'ext': use normal extrapolated values by math.interp1
     
     Returns:
         :returns: 
@@ -329,18 +330,40 @@ def cie_interp(data,wl_new, kind = None, negative_values_allowed = False, extrap
         
             # Interpolate each spectrum in S: 
             N = S.shape[0]
-            Si=np.ones([N,wl_new.shape[0]])*np.nan 
+            Si = np.ones([N,wl_new.shape[0]])*np.nan 
             for i in range(N):
-                Si[i] = math.interp1(wl, S[i], wl_new, kind = kind, ext = 'extrapolate')
-                #Si[i] = Si_f(wl_new)
                 
-                #extrapolate by replicating closest known (in source data!) value (conform CIE2004 recommendation) 
-                if extrap_values[0] is None:
-                    Si[i][wl_new<wl[0]] = S[i][0]
-                    Si[i][wl_new>wl[-1]] = S[i][-1]
+                nan_indices = np.isnan(S[i])
+                if nan_indices.any():
+                    nonan_indices = np.logical_not(nan_indices)
+                    wl_nonan = wl[nonan_indices]
+                    S_i_nonan = S[i][nonan_indices]
+                    Si_nonan = math.interp1(wl_nonan,S_i_nonan, wl_new, kind = kind, ext = 'extrapolate')
+                    
+                    #extrapolate by replicating closest known (in source data!) value (conform CIE2004 recommendation) 
+                    if extrap_values[0] is None:
+                        Si_nonan[wl_new<wl_nonan[0]] = S_i_nonan[0]
+                        Si_nonan[wl_new>wl_nonan[-1]] = S_i_nonan[-1]
+                    elif extrap_values[0][:3] == 'ext':
+                        pass # keep extrapolated vakues 
+                    else:
+                        Si_nonan[wl_new<wl_nonan[0]] = extrap_values[0]
+                        Si_nonan[wl_new>wl_nonan[-1]] = extrap_values[-1]  
+                    Si[i] = Si_nonan
+
                 else:
-                    Si[i][wl_new<wl[0]] = extrap_values[0]
-                    Si[i][wl_new>wl[-1]] = extrap_values[-1]  
+                    Si[i] = math.interp1(wl, S[i], wl_new, kind = kind, ext = 'extrapolate')
+                    #Si[i] = Si_f(wl_new)
+                
+                    #extrapolate by replicating closest known (in source data!) value (conform CIE2004 recommendation) 
+                    if extrap_values[0] is None:
+                        Si[i][wl_new<wl[0]] = S[i][0]
+                        Si[i][wl_new>wl[-1]] = S[i][-1]
+                    elif extrap_values[0][:3] == 'ext':
+                        pass # keep extrapolated vakues 
+                    else:
+                        Si[i][wl_new<wl[0]] = extrap_values[0]
+                        Si[i][wl_new>wl[-1]] = extrap_values[-1]  
                     
                 
             # No negative values allowed for spectra:    
@@ -351,8 +374,7 @@ def cie_interp(data,wl_new, kind = None, negative_values_allowed = False, extrap
             # Add wavelengths to data array: 
             return np.vstack((wl_new,Si))  
     
-    return data
-	
+    return data	
 #--------------------------------------------------------------------------------------------------
 def spd(data = None, interpolation = None, kind = 'np', wl = None,\
         columns = None, sep = ',',header = None, datatype = 'S', \

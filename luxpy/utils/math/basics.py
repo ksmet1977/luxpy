@@ -81,6 +81,8 @@ Module with useful basic math functions
 
  :fit_ellipse(): Fit an ellipse to supplied data points.
  
+ :interp1(): Perform a 1-dimensional linear interpolation (wrapper around scipy.interpolate.InterpolatedUnivariateSpline).
+ 
  :ndinterp1(): Perform n-dimensional interpolation using Delaunay triangulation.
  
  :ndinterp1_scipy(): Perform n-dimensional interpolation using Delaunay triangulation (wrapper around scipy.interpolate.LinearNDInterpolator)

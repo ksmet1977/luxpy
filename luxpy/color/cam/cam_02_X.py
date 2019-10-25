@@ -50,6 +50,8 @@ cam_02_X: Module with CIECAM02-type color appearance models
  :_CAM_02_X_AXES: dict with list[str,str,str] containing axis labels 
                   of defined cspaces.
 
+ :deltaH(): Compute a hue difference, dH = 2*C1*C2*sin(dh/2)
+
  :naka_rushton(): applies a Naka-Rushton function to the input
  
  :hue_angle(): calculates a positive hue angle
@@ -110,7 +112,7 @@ from luxpy import np, math, cat, _CIEOBS, _CIE_ILLUMINANTS, np2d, np2dT, np3d, p
 
 __all__ = ['_CAM_02_X_AXES', '_CAM_02_X_UNIQUE_HUE_DATA','_CAM_02_X_SURROUND_PARAMETERS','_CAM_02_X_NAKA_RUSHTON_PARAMETERS','_CAM_02_X_UCS_PARAMETERS']
 __all__ += ['_CAM_02_X_DEFAULT_TYPE','_CAM_02_X_DEFAULT_WHITE_POINT','_CAM_02_X_DEFAULT_MCAT', '_CAM_02_X_DEFAULT_CONDITIONS']
-__all__ += ['hue_angle', 'hue_quadrature','naka_rushton',
+__all__ += ['deltaH', 'hue_angle', 'hue_quadrature','naka_rushton',
             'cam_structure_ciecam02_cam16','camucs_structure',
             'ciecam02','cam16','cam02ucs','cam16ucs']
 
@@ -289,6 +291,42 @@ def hue_quadrature(h, unique_hue_data = None):
     if squeezed:
         H = np.expand_dims(H,axis=0)
     return H
+
+def deltaH(h1, C1, h2 = None, C2 = None, htype = 'deg'):
+    """
+    Compute a hue difference, dH = 2*C1*C2*sin(dh/2)
+    
+    Args:
+        :h1:
+            | hue for sample 1 (or hue difference if h2 is None)
+        :C1: 
+            | chroma of sample 1 (or prod C1*C2 if C2 is None)
+        :h2: 
+            | hue angle of sample 2 (if None, then h1 contains a hue difference)
+        :C2: 
+            | chroma of sample 2
+        :htype: 
+            | 'deg' or 'rad', optional
+            |   - 'deg': hue angle between 0° and 360°
+            |   - 'rad': hue angle between 0 and 2pi radians
+    
+    Returns:
+        :returns:
+            | ndarray of deltaH values.
+    """
+    if htype == 'deg':
+        r2d = np.pi/180
+    else:
+        r2d = 1.0
+    if h2 is not None:
+        deltah = h1 - h2
+    else:
+        deltah = h1
+    if C2 is not None:
+        Cprod = C1 * C2
+    else:
+        Cprod = C1
+    return 2*(Cprod)**0.5*np.sin(r2d*deltah/2)
 
 
 def cam_structure_ciecam02_cam16(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, \
