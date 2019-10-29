@@ -321,7 +321,7 @@ def _load_asano_lms_and_odensities(wl=None, path=None):
     data['LMSa'] = getdata(path + 'asano_cie2006_Alms.dat', header = None).T 
     for key in data.keys():
         if key != 'wls':
-            data[key] = cie_interp(np.vstack((wls,data[key])),wl,kind='linear',negative_values_allowed=True)
+            data[key] = cie_interp(np.vstack((wls,data[key])), wl, kind='linear',negative_values_allowed=True)
     return data
     
 def _docul_fine(ocular_sum_32, docul2):
@@ -378,9 +378,9 @@ def _load_cietc197_lms_and_odensities(wl=None, path = None):
         wl = _WL_CIETC197
     # data from tc197:
     tmp = pd.read_csv(path  + 'cietc197_absorbances0_1nm.dat', header=None).values[:, [0, 2, 3, 4, 5, 6]].T
-    tmp[np.isnan(tmp)] = -10**308
+    #tmp[np.isnan(tmp)] = -10**308 
     tmp = cie_interp(tmp,wl, kind = 'linear',negative_values_allowed = True)#, extrap_values = 'ext')
-
+    
     absorbance = tmp[[0, 1, 2, 3],:] #LMS absorbance
     macula_rel = tmp[[0, 5],:] 
     macula_rel[1,:] /= 0.35  # div by 0.35 since macula at 2° has a maximum of 0.35 at 460 (at 5nm step)
@@ -696,14 +696,15 @@ def _LMS_absorptance(fieldsize = 10, var_shft_LMS = [0,0,0], var_od_LMS = [0, 0,
         alpha_lms: 
             | ndarray with the calculated quantal absorptances of the L, M and S cones; row 0 are wavelenghts.
     """
+    
     if LMSa0 is None:
         LMSa = _DATA['odata']['LMSa'].copy()
     else:
         LMSa = LMSa0.copy()
-        
+  
     wls = LMSa[:1,:].copy() # wavelengths
     LMSa = LMSa[1:,:] # get rid of wavelengths
-    
+
     # Peak Wavelength Shift:
     wl_shifted = np.empty(LMSa.shape)
     wl_shifted[0] = wls + var_shft_LMS[0] 
@@ -721,18 +722,19 @@ def _LMS_absorptance(fieldsize = 10, var_shft_LMS = [0,0,0], var_od_LMS = [0, 0,
     else:
         LMSa_shft[1] = interpolate.InterpolatedUnivariateSpline(wl_shifted[1],LMSa[1], k = kind, ext = "extrapolate")(wls)
     
-    
     if var_shft_LMS[2] == 0:
         LMSa_shft[2] = LMSa[2]
     else:
-        LMSa_shft[2] = interpolate.InterpolatedUnivariateSpline(wl_shifted[2],LMSa[2], k = kind, ext = "extrapolate")(wls)
+        non_nan_indices = np.logical_not(np.isnan(LMSa[2]))
+        LMSa_shft[2] = interpolate.InterpolatedUnivariateSpline(wl_shifted[2][non_nan_indices],LMSa[2][non_nan_indices], k = kind, ext = "extrapolate")(wls)
 
         # Detect poor interpolation (sign switch due to instability):
         ssw = np.hstack((0,np.sign(np.diff(LMSa_shft[2,:])))) 
-    #    LMSa_shft[2,np.where((ssw >= 0) & (wls > 560))] = np.nan
-        wl_min = wls[np.where((ssw >= 0) & (wls > 560))].min()
-        LMSa_shft[2,np.where((wls >= wl_min))] = np.nan
-    
+        cond = ((ssw >= 0) & (wls > 560))
+        if cond.any():
+            wl_min = wls[np.where(cond)].min()
+            LMSa_shft[2,np.where((wls >= wl_min))] = np.nan
+
     # corrected LMS (no age correction):
     pkOd_L = _d_LM_max(fieldsize, var_od_LMS[0])  # varied peak optical density of L-cone
     pkOd_M = _d_LM_max(fieldsize, var_od_LMS[1])  # varied peak optical density of M-cone
@@ -742,7 +744,7 @@ def _LMS_absorptance(fieldsize = 10, var_shft_LMS = [0,0,0], var_od_LMS = [0, 0,
     alpha_lms[0] = 1 - 10**(-pkOd_L*(10**LMSa_shft[0]))
     alpha_lms[1] = 1 - 10**(-pkOd_M*(10**LMSa_shft[1]))
     alpha_lms[2] = 1 - 10**(-pkOd_S*(10**LMSa_shft[2]))
-    
+#    alpha_lms[np.isnan(alpha_lms)] = 0
     # this fix is required because the above math fails for alpha_lms[2,:]==0
     #alpha_lms[2,np.where(wls >= _WL_CRIT)] = 0 
     return np.vstack((wls,alpha_lms))
@@ -862,9 +864,9 @@ def _LMS_energy(fieldsize = 10, age = 32, var_od_lens = 0, var_od_mac = 0,
     wls = LMSq[:1,:]
     LMSe = LMSq.copy()
     LMSe[1:,:] = LMSe[1:,:]*wls
-
+    
     # Set NaN values to zero:
-    #LMSe[np.isnan(LMSe)] = 0
+    LMSe[np.isnan(LMSe)] = 0
     
     # Get max values before normalization:
     LMSe_o_max = np.nanmax(LMSe[1:,:], axis = 1, keepdims = True)
@@ -964,7 +966,7 @@ def _relative_L_cone_weight_Vl_quantal(fieldsize = 10, age = 32, strategy_2 = Tr
         odata = _DATA['odata']
     else:
         odata = odata0
-        
+  
     # avoid recalculation if unnecessary:  
     if (field_size != fieldsize) | (LMSa is None) | (LMSq is None):
 
@@ -1485,7 +1487,7 @@ def compute_cmfs(fieldsize = 10, age = 32, wl = None,
         odata = _DATA['odata']
     else:
         odata = odata0
-        
+    
     if wl is None:
         wl = odata['wls']
     else:
@@ -1516,7 +1518,6 @@ def compute_cmfs(fieldsize = 10, age = 32, wl = None,
                                                                       var_shft_LMS = var_shft_LMS, var_od_LMS = var_od_LMS, 
                                                                       norm_type = 'max', out = 'LMSe,LMSq,alpha_lms,LMSe_o_max,rmd,docul',
                                                                       base = True, odata0 = odata) # note: base only applies to LMSe !
-
     # Do sompe checks to save on calculation time (don't calculate anything not needed.):
     wl_equal_to_all = np.array_equal(my_round(wl_spec,1), my_round(LMS_base_all[0,:],1))
     if (not wl_equal_to_all) | ((('xyz' in out_list) | ('XYZ' in out_list) | ('M' in out_list)) & (lms_to_xyz_method == 'cietc197')):
@@ -1612,9 +1613,10 @@ def compute_cmfs(fieldsize = 10, age = 32, wl = None,
 #    # Interpolate/extrapolate:
     if norm_type is not None:
         LMS = spd_normalize(LMS, norm_type = norm_type)
-    xyz0 = LMS[1:,:].sum(axis=1,keepdims=True).T
-    xyz0 = xyz0/xyz0[0,1]
-    M = math.normalize_3x3_matrix(M, xyz0 = xyz0) #ensure that EEW is always at [100,100,100] in XYZ system
+    if ('M' in out_list):
+        xyz0 = LMS[1:,:].sum(axis=1,keepdims=True).T
+        xyz0 = xyz0/xyz0[0,1]
+        M = math.normalize_3x3_matrix(M, xyz0 = xyz0) #ensure that EEW is always at [100,100,100] in XYZ system
         
     if (out == 'LMS'):
         return LMS
@@ -1901,7 +1903,7 @@ def genMonteCarloObs(n_obs = 1, fieldsize = 10, list_Age = [32], wl = None,
     var_age = np.random.choice(np.unique(list_AgeRound), \
                                size = n_obs, replace = True,\
                                p = p)
-    
+
     if odata0 is None:
         odata = _DATA['odata']
     else:
@@ -1921,6 +1923,7 @@ def genMonteCarloObs(n_obs = 1, fieldsize = 10, list_Age = [32], wl = None,
         raise Exception("Must request either 'lms' or 'xyz' in :out:.")
         
     LMS_All = np.nan*np.ones((3+1, wl.shape[0],n_obs))
+    
     for k in range(n_obs):
         t_LMS, t_trans_lens, t_trans_macula, t_sens_photopig = cie2006cmfsEx(age = var_age[k], fieldsize = fieldsize, wl = wl,\
                                                                           var_od_lens = vAll['od_lens'][k], var_od_macula = vAll['od_macula'][k], \
@@ -2203,7 +2206,7 @@ def plot_cmfs(cmf,axh = None, **kwargs):
 if __name__ == '__main__':
     init(use_my_round=True,use_sign_figs=True,use_chop=True,dsrc_lms_odens='cietc197',lms_to_xyz_method='cietc197')
     xyz2b,M2 = compute_cmfs(fieldsize=2.1,age=32,out='xyz,M',lms_to_xyz_method='cietc197',norm_type=None)
-    print(lx.spd_to_xyz(E,relative=False,cieobs=xyz2b,K=1))
+    print(lx.spd_to_xyz(lx._CIE_E,relative=False,cieobs=xyz2b,K=1))
     print(np.dot(M2,np.array([[200,200,200]]).T).T)
     ax = plot_cmfs(xyz2b)
 if __name__ == '__main__':

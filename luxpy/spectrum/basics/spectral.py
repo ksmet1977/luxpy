@@ -313,7 +313,7 @@ def cie_interp(data,wl_new, kind = None, negative_values_allowed = False, extrap
         # Wavelength definition:
         wl_new = getwlr(wl_new)
         
-        if (not np.array_equal(data[0],wl_new)):
+        if (not np.array_equal(data[0],wl_new)) | np.isnan(data).any():
        
             extrap_values = np.atleast_1d(extrap_values)
             
@@ -332,7 +332,7 @@ def cie_interp(data,wl_new, kind = None, negative_values_allowed = False, extrap
             N = S.shape[0]
             Si = np.ones([N,wl_new.shape[0]])*np.nan 
             for i in range(N):
-                
+
                 nan_indices = np.isnan(S[i])
                 if nan_indices.any():
                     nonan_indices = np.logical_not(nan_indices)
