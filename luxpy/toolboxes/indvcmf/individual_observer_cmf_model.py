@@ -87,7 +87,7 @@ Notes
 from luxpy import np, pd, sp, interpolate, math, plt, _WL3, _PKG_PATH, _SEP, _CMF, spd, getdata, getwlr, getwld, cie_interp, spd_to_power, xyz_to_Yxy, spd_normalize
 import warnings
 
-__all__ = ['_DSRC_STD_DEF', '_DSRC_LMS_ODENS_DEF','_LMS_TO_XYZ_METHOD']
+__all__ = ['_DATA','_DSRC_STD_DEF', '_DSRC_LMS_ODENS_DEF','_LMS_TO_XYZ_METHOD']
 __all__ += ['load_database','init','quiry_state']
 __all__ += ['cie2006cmfsEx','getMonteCarloParam','genMonteCarloObs','getCatObs']
 __all__ += ['compute_cmfs','plot_cmfs','add_to_cmf_dict','plot_cmfs']

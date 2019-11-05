@@ -101,18 +101,24 @@ _CMF_M_1931_2=np.array([     # definition of 3x3 matrices to convert from xyz to
 [0.0,0.0,1.0]
  ])
          
-_CMF_M_2006_2=np.array([ # Note that these are directly (but inverse) from CIE15:2018, but not normalized to illuminant E!!
-[0.21057582,0.85509764,-0.039698265],
-[-0.41707637,1.1772611,0.078628251],
-[0.0,0.0,0.51683501]
-])
+#_CMF_M_2006_2=np.array([ # Note that these are directly (but inverse) from CIE15:2018, but not normalized to illuminant E!!
+#[0.21057582,0.85509764,-0.039698265],
+#[-0.41707637,1.1772611,0.078628251],
+#[0.0,0.0,0.51683501]
+#])
+_CMF_M_2006_2 = np.linalg.inv(np.array([[1.94735469, -1.41445123, 0.36476327],
+                                        [0.68990272, 0.34832189, 0],
+                                        [0, 0, 1.93485343]]))
 _CMF_M_2006_2 = math.normalize_3x3_matrix(_CMF_M_2006_2) 
         
-_CMF_M_2006_10=np.array([
-[0.21701045,0.83573367,-0.043510597],
-[-0.42997951,1.2038895,0.086210895],
-[0.0,0.0,0.46579234]
-])
+#_CMF_M_2006_10=np.array([
+#[0.21701045,0.83573367,-0.043510597],
+#[-0.42997951,1.2038895,0.086210895],
+#[0.0,0.0,0.46579234]
+#])
+_CMF_M_2006_10 = np.linalg.inv(np.array([[1.93986443, -1.34664359, 0.43044935],
+                                        [0.69283932, 0.34967567, 0],
+                                        [0, 0, 2.14687945]]))
 _CMF_M_2006_10 = math.normalize_3x3_matrix(_CMF_M_2006_10)  
     
 # Note that for the following, no conversion has been defined, so the 1931 HPE matrix is used:    
