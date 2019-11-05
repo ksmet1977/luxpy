@@ -31,8 +31,8 @@ cmf.py
      | * luxpy._CMF[x]['bar'] = numpy array with CMFs for type x 
                                 between 360 nm and 830 nm (has shape: (4,471))
      | * luxpy._CMF[x]['K']   = Constant converting Watt to lumen for CMF type x.
-     | * luxpy._CMF[x]['M']   = XYZ to LMS conversion matrix for CMF type x.
-                                Matrix is numpy arrays with shape: (3,3)
+     | * luxpy._CMF[x]['M']   = XYZ to LMS conversion matrix (normalized to ill. E) for CMF type x.
+                                Matrix is numpy array with shape: (3,3)
                             
      Notes:
          
@@ -77,7 +77,7 @@ References
 ###################################################################################################
 
 #--------------------------------------------------------------------------------------------------
-from luxpy import np
+from luxpy import np, math
 __all__ = ['_CMF']
 
 
@@ -100,16 +100,20 @@ _CMF_M_1931_2=np.array([     # definition of 3x3 matrices to convert from xyz to
 [-0.22981,1.1834,0.04641],
 [0.0,0.0,1.0]
  ])
-_CMF_M_2006_2=np.array([
+         
+_CMF_M_2006_2=np.array([ # Note that these are directly (but inverse) from CIE15:2018, but not normalized to illuminant E!!
 [0.21057582,0.85509764,-0.039698265],
 [-0.41707637,1.1772611,0.078628251],
 [0.0,0.0,0.51683501]
 ])
+_CMF_M_2006_2 = math.normalize_3x3_matrix(_CMF_M_2006_2) 
+        
 _CMF_M_2006_10=np.array([
 [0.21701045,0.83573367,-0.043510597],
 [-0.42997951,1.2038895,0.086210895],
 [0.0,0.0,0.46579234]
 ])
+_CMF_M_2006_10 = math.normalize_3x3_matrix(_CMF_M_2006_10)  
     
 # Note that for the following, no conversion has been defined, so the 1931 HPE matrix is used:    
 _CMF_M_1964_10=np.array([
@@ -117,11 +121,13 @@ _CMF_M_1964_10=np.array([
 [-0.22981,1.1834,0.04641],
 [0.0,0.0,1.0]
 ]) 
+         
 _CMF_M_1931_2_JUDD1951=np.array([
 [0.38971,0.68898,-0.07868],
 [-0.22981,1.1834,0.04641],
 [0.0,0.0,1.0]
 ]) 
+         
 _CMF_M_1931_2_JUDDVOS1978=np.array([
 [0.38971,0.68898,-0.07868],
 [-0.22981,1.1834,0.04641],
