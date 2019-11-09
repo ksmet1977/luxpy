@@ -822,11 +822,19 @@ def fit_ellipse(xy, center_on_mean_xy = False):
             | coordinates of points to fit (Nx2 array)
         :center_on_mean_xy:
             | False, optional
-            | Center ellipse on mean of xy (otherwise it will be offset)
+            | Center ellipse on mean of xy 
+            | (otherwise it might be offset due to solving 
+            | the contrained minization problem: aT*S*a, see ref below.)
             
     Returns:
         :v:
             | vector with ellipse parameters [Rmax,Rmin, xc,yc, theta]
+            
+    Reference:
+        1. Fitzgibbon, A.W., Pilu, M., and Fischer R.B., 
+        Direct least squares fitting of ellipsees, 
+        Proc. of the 13th Internation Conference on Pattern Recognition, 
+        pp 253–257, Vienna, 1996.
     """
     # remove centroid:
 #    center = xy.mean(axis=0)
