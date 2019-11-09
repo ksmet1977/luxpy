@@ -99,6 +99,7 @@ Module with useful basic math functions
 
 from luxpy import np, sp, np2d, _EPS, asplit
 from scipy.special import erf, erfinv
+from scipy import stats
 __all__  = ['normalize_3x3_matrix','symmM_to_posdefM','check_symmetric',
             'check_posdef','positive_arctan','line_intersect','erf', 'erfinv', 
             'histogram', 'pol2cart', 'cart2pol', 'spher2cart', 'cart2spher']
@@ -929,11 +930,11 @@ def fit_cov_ellipse(xy, alpha = 0.05, pdf = 'chi2', SE = False):
     cik = np.linalg.inv(cov_)
     
     if pdf == 'chi2':
-        f = sp.stats.chi2.ppf(1-alpha, xy.shape[1])
+        f = stats.chi2.ppf(1-alpha, xy.shape[1])
     elif pdf == 't':
-        f = sp.stats.t.ppf(1-alpha, xy.shape[0]-1)
+        f = stats.t.ppf(1-alpha, xy.shape[0]-1)
     elif pdf =='norm':
-        f = sp.stats.norm.ppf(1-alpha)
+        f = stats.norm.ppf(1-alpha)
     else:
         f = 1
 
