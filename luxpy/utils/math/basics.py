@@ -81,6 +81,8 @@ Module with useful basic math functions
 
  :fit_ellipse(): Fit an ellipse to supplied data points.
  
+ :fit_cov_ellipse(): Fit an covariance ellipse to supplied data points.
+ 
  :interp1(): Perform a 1-dimensional linear interpolation (wrapper around scipy.interpolate.InterpolatedUnivariateSpline).
  
  :ndinterp1(): Perform n-dimensional interpolation using Delaunay triangulation.
@@ -102,7 +104,8 @@ __all__  = ['normalize_3x3_matrix','symmM_to_posdefM','check_symmetric',
             'histogram', 'pol2cart', 'cart2pol', 'spher2cart', 'cart2spher']
 __all__ += ['bvgpdf','mahalanobis2','dot23', 'rms','geomean','polyarea']
 __all__ += ['magnitude_v','angle_v1v2']
-__all__ += ['v_to_cik', 'cik_to_v', 'fmod', 'fit_ellipse','interp1', 'ndinterp1','ndinterp1_scipy']
+__all__ += ['v_to_cik', 'cik_to_v', 'fmod', 'fit_ellipse','fit_cov_ellipse']
+__all__ += ['interp1', 'ndinterp1','ndinterp1_scipy']
 __all__ += ['box_m','pitman_morgan']
 
 
@@ -840,44 +843,48 @@ def fit_ellipse(xy, center_on_mean_xy = False):
 #    center = xy.mean(axis=0)
 #    xy = xy - center
     
-    
     # Fit ellipse:
     x, y = xy[:,0:1], xy[:,1:2]
     D = np.hstack((x * x, x * y, y * y, x, y, np.ones_like(x)))
     S, C = np.dot(D.T, D), np.zeros([6, 6])
     C[0, 2], C[2, 0], C[1, 1] = 2, 2, -1
-#    U, s, V = np.linalg.svd(np.dot(np.linalg.inv(S), C))
-#    e = U[:, 0]
-    E, V =  np.linalg.eig(np.dot(np.linalg.inv(S), C))
-    n = np.argmax((E))
-    e = V[:,n]
+    U, s, V = np.linalg.svd(np.dot(np.linalg.inv(S), C))
+    e = U[:, 0]
+#    E, V =  np.linalg.eig(np.dot(np.linalg.inv(S), C))
+#    n = np.argmax(np.abs(E))
+#    e = V[:,n]
         
     # get ellipse axis lengths, center and orientation:
     b, c, d, f, g, a = e[1] / 2, e[2], e[3] / 2, e[4] / 2, e[5], e[0]
     
     # get ellipse center:
     num = b * b - a * c
-    xc = ((c * d - b * f) / num) 
-    yc = ((a * f - b * d) / num) 
+    if num == 0:
+        xc = 0
+        yc = 0
+    else:
+        xc = ((c * d - b * f) / num) 
+        yc = ((a * f - b * d) / num) 
     
     # get ellipse orientation:
-#    theta = np.arctan2(np.array(2 * b), np.array((a - c))) / 2
-    if b == 0:
-        if a > c:
-            theta = 0
-        else:
-            theta = np.pi/2
-    else:
-        if a > c:
-            theta = np.arctan(2*b/(a-c))/2
-        else:
-            theta = np.pi/2 + np.arctan(2*b/(a-c))/2
+    theta = np.arctan2(np.array(2 * b), np.array((a - c))) / 2
+#    if b == 0:
+#        if a > c:
+#            theta = 0
+#        else:
+#            theta = np.pi/2
+#    else:
+#        if a > c:
+#            theta = np.arctan2(2*b,(a-c))/2
+#        else:
+#            theta =  np.arctan2(2*b,(a-c))/2 + np.pi/2
         
     # axis lengths:
     up = 2 * (a * f * f + c * d * d + g * b * b - 2 * b * d * f - a * c * g)
     down1 = (b * b - a * c) * ((c - a) * np.sqrt(1 + 4 * b * b / ((a - c) * (a - c))) - (c + a))
     down2 = (b * b - a * c) * ((a - c) * np.sqrt(1 + 4 * b * b / ((a - c) * (a - c))) - (c + a))
     a, b  = np.sqrt((up / down1)), np.sqrt((up / down2))
+
 
     # assert that a is the major axis (otherwise swap and correct angle)
     if(b > a):
@@ -887,9 +894,54 @@ def fit_ellipse(xy, center_on_mean_xy = False):
         
     if center_on_mean_xy == True:
         xc,yc = xy.mean(axis=0)
-        
+
     return np.hstack((a, b, xc, yc, theta))
 
+
+def fit_cov_ellipse(xy, alpha = 0.05, pdf = 'chi2', SE = False):
+    """
+    Fit covariance ellipse to xy data.
+    
+    Args:
+        :xy: 
+            | coordinates of points to fit (Nx2 array)
+        :alpha:
+            | 0.05, optional
+            | alpha significance level 
+            | (e.g alpha = 0.05 fro 95% confidence ellipse)
+        :pdf:
+            | chi2, optional
+            | - 'chi2': Rescale using Chi2-distribution
+            | - 't': Rescale using Student t-distribution
+            | - 'norm': Rescale using normal-distribution
+            | - None: don't rescale (cfr. 1SD / 1SE)
+        :SE:
+            | False, optional
+            | If false, fit standard error ellipse at alpha significance level
+            | If true, fit standard deviation ellipse at alpha significance level
+            
+    Returns:
+        :v:
+            | vector with ellipse parameters [Rmax,Rmin, xc,yc, theta]
+    """
+    xyc = xy.mean(axis=0)
+    cov_ = np.cov(xy.T)
+    cik = np.linalg.inv(cov_)
+    
+    if pdf == 'chi2':
+        f = sp.stats.chi2.ppf(1-alpha, xy.shape[1])
+    elif pdf == 't':
+        f = sp.stats.t.ppf(1-alpha, xy.shape[0]-1)
+    elif pdf =='norm':
+        f = sp.stats.norm.ppf(1-alpha)
+    else:
+        f = 1
+
+    if SE == True:
+        f /= (xy.shape[0]**0.5)
+        
+    v = cik_to_v(cik/f, xyc=xyc)
+    return v
 #------------------------------------------------------------------------------
 def interp1(X,Y,Xnew, kind = 'linear', ext = 'extrapolate', w = None, bbox=[None, None], check_finite = False):
     """
