@@ -813,53 +813,73 @@ def fmod(x, y):
     return r
 
 
-def fit_ellipse(xy):
+def fit_ellipse(xy, center_on_mean_xy = False):
     """
     Fit an ellipse to supplied data points.
 
     Args:
         :xy: 
             | coordinates of points to fit (Nx2 array)
+        :center_on_mean_xy:
+            | False, optional
+            | Center ellipse on mean of xy (otherwise it will be offset)
             
     Returns:
         :v:
             | vector with ellipse parameters [Rmax,Rmin, xc,yc, theta]
     """
     # remove centroid:
-    center = xy.mean(axis=0)
-    xy = xy - center
+#    center = xy.mean(axis=0)
+#    xy = xy - center
+    
     
     # Fit ellipse:
     x, y = xy[:,0:1], xy[:,1:2]
     D = np.hstack((x * x, x * y, y * y, x, y, np.ones_like(x)))
     S, C = np.dot(D.T, D), np.zeros([6, 6])
     C[0, 2], C[2, 0], C[1, 1] = 2, 2, -1
-    U, s, V = np.linalg.svd(np.dot(np.linalg.inv(S), C))
-    e = U[:, 0]
+#    U, s, V = np.linalg.svd(np.dot(np.linalg.inv(S), C))
+#    e = U[:, 0]
+    E, V =  np.linalg.eig(np.dot(np.linalg.inv(S), C))
+    n = np.argmax((E))
+    e = V[:,n]
         
     # get ellipse axis lengths, center and orientation:
     b, c, d, f, g, a = e[1] / 2, e[2], e[3] / 2, e[4] / 2, e[5], e[0]
     
     # get ellipse center:
     num = b * b - a * c
-    xc = ((c * d - b * f) / num) + center[0]
-    yc = ((a * f - b * d) / num) + center[1]
+    xc = ((c * d - b * f) / num) 
+    yc = ((a * f - b * d) / num) 
     
     # get ellipse orientation:
-    theta = np.arctan2(np.array(2 * b), np.array((a - c))) / 2
-    
+#    theta = np.arctan2(np.array(2 * b), np.array((a - c))) / 2
+    if b == 0:
+        if a > c:
+            theta = 0
+        else:
+            theta = np.pi/2
+    else:
+        if a > c:
+            theta = np.arctan(2*b/(a-c))/2
+        else:
+            theta = np.pi/2 + np.arctan(2*b/(a-c))/2
+        
     # axis lengths:
     up = 2 * (a * f * f + c * d * d + g * b * b - 2 * b * d * f - a * c * g)
     down1 = (b * b - a * c) * ((c - a) * np.sqrt(1 + 4 * b * b / ((a - c) * (a - c))) - (c + a))
     down2 = (b * b - a * c) * ((a - c) * np.sqrt(1 + 4 * b * b / ((a - c) * (a - c))) - (c + a))
-    a, b  = np.sqrt(up / down1), np.sqrt(up / down2)
+    a, b  = np.sqrt((up / down1)), np.sqrt((up / down2))
 
     # assert that a is the major axis (otherwise swap and correct angle)
     if(b > a):
         b, a = a, b
-
         # ensure the angle is betwen 0 and 2*pi
         theta = fmod(theta, 2.0 * np.pi)
+        
+    if center_on_mean_xy == True:
+        xc,yc = xy.mean(axis=0)
+        
     return np.hstack((a, b, xc, yc, theta))
 
 #------------------------------------------------------------------------------
