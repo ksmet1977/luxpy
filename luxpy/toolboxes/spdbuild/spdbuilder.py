@@ -1890,12 +1890,13 @@ def spd_optimizer(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs = _CIEO
     
     # store component spectra in spds with first axis components, second axis wavelengths
     spds = component_spds 
-            
+    wl = spds[:1]
+    
     # Calculate combined spd from components and their fluxes:
     spds = (np.atleast_2d(M)*spds[1:].T).T.sum(axis = 0)
     
     if with_wl == True:
-        spds = np.vstack((getwlr(wl), spds))
+        spds = np.vstack((wl, spds))
     if out == 'spds,M':
         return spds, M  
     else:  
