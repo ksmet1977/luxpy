@@ -98,7 +98,7 @@ def xyz_to_rfl(xyz, rfl = None, out = 'rfl_est', \
     
     # Convert xyz to lab-type values under refspd:
     lab = colortf(xyz, tf = cspace, fwtf = cspace_tf_copy, bwtf = cspace_tf_copy)
-    print(interp_type)
+
     if interp_type == 'nearest':
         # Find rfl (cfr. lab_rr) from rfl set that results in 'near' metameric 
         # color coordinates for each value in lab_ur (i.e. smallest DE):
@@ -114,11 +114,31 @@ def xyz_to_rfl(xyz, rfl = None, out = 'rfl_est', \
         else:
             rfl_est = rfl[inds+1,:].copy()
     elif interp_type == 'nd':
-        rfl_est = math.ndinterp1(lab_rr, rfl[1:], lab)
-        rfl_est[rfl_est<0] = 0 #can occur for points outside convexhull of standard rfl set.
+        rfl_est = math.ndinterp1_scipy(lab_rr, rfl[1:], lab)
+            
+        _isnan = np.isnan(rfl_est[:,0]) 
+        
+        if (_isnan.any()): #do nearest neigbour method for those that fail using Delaunay (i.e. ndinterp1_scipy)
+            
+            # Find rfl (cfr. lab_rr) from rfl set that results in 'near' metameric 
+            # color coordinates for each value in lab_ur (i.e. smallest DE):
+            # Construct cKDTree:
+            tree = cKDTree(lab_rr, copy_data = True)
+            
+            # Interpolate rfls using k nearest neightbours and inverse distance weigthing:
+            d, inds = tree.query(lab[_isnan,...], k = k_neighbours )
+            if k_neighbours  > 1:
+                d += _EPS
+                w = (1.0 / d**2)[:,:,None] # inverse distance weigthing
+                rfl_est_isnan = np.sum(w * rfl[inds+1,:], axis=1) / np.sum(w, axis=1)
+            else:
+                rfl_est_isnan = rfl[inds+1,:].copy()
+            rfl_est[_isnan, :] = rfl_est_isnan
     else:
         raise Exception('xyz_to_rfl(): unsupported interp_type!')
-            
+    
+    rfl_est[rfl_est<0] = 0 #can occur for points outside convexhull of standard rfl set.
+
     rfl_est = np.vstack((rfl[0],rfl_est))
         
     if (verbosity > 0) | ('xyz_est' in out.split(',')) | ('lab_est' in out.split(',')) | ('DEi_ab' in out.split(',')) | ('DEa_ab' in out.split(',')):
@@ -345,10 +365,10 @@ def render_image(img = None, spd = None, rfl = None, out = 'img_hyp', \
 
 if __name__ == '__main__':
     plt.close('all')
-    S = spb.spd_builder(peakwl = [460,525,590],fwhm=[20,40,20],target=4000, tar_type = 'cct') 
+    #S = spb.spd_builder(peakwl = [460,525,590],fwhm=[20,40,20],target=4000, tar_type = 'cct') 
     img = _HYPSPCIM_DEFAULT_IMAGE
     img_hyp,img_ren = render_image(img = img, 
-                                   cspace = 'xyz',interp_type='nd',
+                                   cspace = 'Yuv',interp_type='nd',
                                    spd = S, D=1, 
                                    show_ref_img = True,
                                    stack_test_ref = 21,

@@ -1819,6 +1819,8 @@ def spd_optimizer(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs = _CIEO
             
     # Calculate Yxyt (target):
     Yxyt = colortf(target, tf = tar_type+'>Yxy', bwtf = cspace_bwtf)
+    if 'cieobs' in cspace_bwtf.keys():
+        cieobs = cspace_bwtf['cieobs']
     
     # Get component spd / data:
     if component_spds is None:
