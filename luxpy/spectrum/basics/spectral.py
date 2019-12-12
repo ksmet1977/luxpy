@@ -316,7 +316,7 @@ def cie_interp(data,wl_new, kind = None, negative_values_allowed = False, extrap
         if (not np.array_equal(data[0],wl_new)) | np.isnan(data).any():
        
             extrap_values = np.atleast_1d(extrap_values)
-            
+
             # Set interpolation type based on data type:
             if kind in _INTERP_TYPES['linear']:
                 kind = 'linear'
@@ -344,7 +344,7 @@ def cie_interp(data,wl_new, kind = None, negative_values_allowed = False, extrap
                     if extrap_values[0] is None:
                         Si_nonan[wl_new<wl_nonan[0]] = S_i_nonan[0]
                         Si_nonan[wl_new>wl_nonan[-1]] = S_i_nonan[-1]
-                    elif ((type(extrap_values[0])==str) and (extrap_values[0][:3]=='ext')):
+                    elif (((type(extrap_values[0])==np.str_)|(type(extrap_values[0])==str)) and (extrap_values[0][:3]=='ext')):
                         pass
                     else:
                         Si_nonan[wl_new<wl_nonan[0]] = extrap_values[0]
@@ -359,11 +359,12 @@ def cie_interp(data,wl_new, kind = None, negative_values_allowed = False, extrap
                     if extrap_values[0] is None:
                         Si[i][wl_new<wl[0]] = S[i][0]
                         Si[i][wl_new>wl[-1]] = S[i][-1]
-                    elif ((type(extrap_values[0])==str) and (extrap_values[0][:3]=='ext')):
+                    elif (((type(extrap_values[0])==np.str_)|(type(extrap_values[0])==str)) and (extrap_values[0][:3]=='ext')):
                         pass
                     else:
                         Si[i][wl_new<wl[0]] = extrap_values[0]
-                        Si[i][wl_new>wl[-1]] = extrap_values[-1]                      
+                        Si[i][wl_new>wl[-1]] = extrap_values[-1]  
+                    
                 
             # No negative values allowed for spectra:    
             if negative_values_allowed == False:
@@ -374,6 +375,7 @@ def cie_interp(data,wl_new, kind = None, negative_values_allowed = False, extrap
             return np.vstack((wl_new,Si))  
     
     return data	
+
 #--------------------------------------------------------------------------------------------------
 def spd(data = None, interpolation = None, kind = 'np', wl = None,\
         columns = None, sep = ',',header = None, datatype = 'S', \

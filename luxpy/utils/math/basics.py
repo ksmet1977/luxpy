@@ -909,13 +909,13 @@ def fit_cov_ellipse(xy, alpha = 0.05, pdf = 'chi2', SE = False):
         :alpha:
             | 0.05, optional
             | alpha significance level 
-            | (e.g alpha = 0.05 fro 95% confidence ellipse)
+            | (e.g alpha = 0.05 for 95% confidence ellipse)
         :pdf:
             | chi2, optional
             | - 'chi2': Rescale using Chi2-distribution
             | - 't': Rescale using Student t-distribution
             | - 'norm': Rescale using normal-distribution
-            | - None: don't rescale (cfr. 1SD / 1SE)
+            | - None: don't rescale using pdf, use alpha as scalefactor (cfr. alpha* 1SD or alpha * 1SE)
         :SE:
             | False, optional
             | If false, fit standard error ellipse at alpha significance level
@@ -935,11 +935,15 @@ def fit_cov_ellipse(xy, alpha = 0.05, pdf = 'chi2', SE = False):
         f = stats.t.ppf(1-alpha, xy.shape[0]-1)
     elif pdf =='norm':
         f = stats.norm.ppf(1-alpha)
+    elif pdf == 'sample':
+        p = xy.shape[1]
+        n = xy.shape[0]
+        f = (p*(n-1)/(n-p)*stats.f.ppf(1-alpha,p,n-p))
     else:
-        f = 1
-
+        f = alpha #  -> fraction of Mahalanobis distance
+        
     if SE == True:
-        f /= (xy.shape[0]**0.5)
+        f = f/xy.shape[0]
         
     v = cik_to_v(cik/f, xyc=xyc)
     return v
