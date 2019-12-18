@@ -1,5 +1,13 @@
 # -*- coding: utf-8 -*-
 """
+   Temporary copy of individual_observer_cmf_model.py (18/12/2019)
+.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
+"""
+
+
+
+# -*- coding: utf-8 -*-
+"""
 Module for Individual Observer lms-CMFs (Asano, 2016 and CIE TC1-97)
 ====================================================================
     
