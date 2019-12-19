@@ -526,12 +526,19 @@ def init(wl = None, dsrc_std = None, dsrc_lms_odens = None, lms_to_xyz_method = 
     
     if dsrc_std is not None:
         _DSRC_STD_DEF = dsrc_std
+    else:
+        _DSRC_STD_DEF = 'matlab'
+        
 
     if dsrc_lms_odens is not None:
         _DSRC_LMS_ODENS_DEF = dsrc_lms_odens
+    else:
+        _DSRC_LMS_ODENS_DEF = 'cietc197'
     
     if lms_to_xyz_method is not None:
         _LMS_TO_XYZ_METHOD = lms_to_xyz_method
+    else:
+        _LMS_TO_XYZ_METHOD = 'cietc197'
     
     if _DSRC_LMS_ODENS_DEF == 'asano':
         _WL = _WL_ASANO
@@ -1510,7 +1517,7 @@ def compute_cmfs(fieldsize = 10, age = 32, wl = None,
         odata = _DATA['odata']
     else:
         odata = odata0
-    
+
     if wl is None:
         wl = odata['wls']
     else:
