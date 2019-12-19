@@ -736,6 +736,7 @@ def _LMS_absorptance(fieldsize = 10, var_shft_LMS = [0,0,0], var_od_LMS = [0, 0,
     if var_shft_LMS[2] == 0:
         LMSa_shft[2] = LMSa[2]
     else:
+        LMSa[2,np.isinf(LMSa[2,:])] = np.nan
         non_nan_indices = np.logical_not(np.isnan(LMSa[2]))
         LMSa_shft[2] = interpolate.InterpolatedUnivariateSpline(wl_shifted[2][non_nan_indices],LMSa[2][non_nan_indices], k = kind, ext = "extrapolate")(wls)
 

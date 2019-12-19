@@ -744,6 +744,7 @@ def _LMS_absorptance(fieldsize = 10, var_shft_LMS = [0,0,0], var_od_LMS = [0, 0,
     if var_shft_LMS[2] == 0:
         LMSa_shft[2] = LMSa[2]
     else:
+        LMSa[2,np.isinf(LMSa[2,:])] = np.nan
         non_nan_indices = np.logical_not(np.isnan(LMSa[2]))
         LMSa_shft[2] = interpolate.InterpolatedUnivariateSpline(wl_shifted[2][non_nan_indices],LMSa[2][non_nan_indices], k = kind, ext = "extrapolate")(wls)
 
@@ -1924,6 +1925,7 @@ def genMonteCarloObs(n_obs = 1, fieldsize = 10, list_Age = [32], wl = None,
     """
     # Get Normally-distributed Physiological Factors:
     vAll = getMonteCarloParam(n_obs = n_obs) 
+
      
     if list_Age is 'us_census':
         list_Age = getUSCensusAgeDist()
@@ -1943,7 +1945,7 @@ def genMonteCarloObs(n_obs = 1, fieldsize = 10, list_Age = [32], wl = None,
         odata = _DATA['odata']
     else:
         odata = odata0
-    
+
     # Set requested wavelength range:
     if wl is None:
         wl = odata['wls']
@@ -2238,14 +2240,14 @@ def plot_cmfs(cmf,axh = None, **kwargs):
     axh.set_xlabel("Wavelenghts (nm)")
     return axh
 
-if __name__ == '__main__':
+if __name__ == 'x__main__':
     init(use_my_round=True,use_sign_figs=True,use_chop=True,dsrc_lms_odens='cietc197',lms_to_xyz_method='cietc197')
     xyz2b,M2 = compute_cmfs(fieldsize=2.1,age=32,out='xyz,M',lms_to_xyz_method='cietc197',norm_type=None)
     print(lx.spd_to_xyz(lx._CIE_E,relative=False,cieobs=xyz2b,K=1))
     print(np.dot(M2,np.array([[200,200,200]]).T).T)
     ax = plot_cmfs(xyz2b)
     
-if __name__ == '__main__':
+if __name__ == 'x__main__':
     
     data = load_database(wl=_WL)
     _DATA = data.copy()
@@ -2315,3 +2317,26 @@ if __name__ == 'x__main__':
     cct1,duv1 = xyz_to_cct_ohno(xyz1, cieobs = 'CatObs1', out = 'cct,duv')
     print('cct,duv using 1931_2: {:1.0f} K, {:1.4f}'.format(cct2[0,0],duv2[0,0]))
     print('cct,duv using CatObs1: {:1.0f} K, {:1.4f}'.format(cct1[0,0],duv1[0,0]))
+    
+if __name__ == '__main__':
+    # Get set of 20 individual observer lms-CMFs 
+    #lmsb = compute_cmfs(fieldsize = 6, age = 32)
+    lmsb = genMonteCarloObs(n_obs = 1, list_Age = [32], fieldsize = 6)
+    
+    # Use US 2010 population census to generate Age Distribution and output as XYZ CMF:
+    xyzb_us = genMonteCarloObs(n_obs = 20, list_Age = 'us_census', fieldsize = 6, out ='XYZ')
+    
+    # Plot CMFs:
+    plt.figure()
+    
+    plt.plot(xyzb_us[0],xyzb_us[1], color ='r', linestyle='-')
+    plt.plot(xyzb_us[0],xyzb_us[2], color ='g', linestyle='-')
+    plt.plot(xyzb_us[0],xyzb_us[3], color ='b', linestyle='-')
+    plt.xlabel('Wavelength (nm)')
+    plt.ylabel('XYZbar (area normalized)')
+    plt.title('Individual XYZ CMF (US census)')
+    
+    # Add bar with wavelength colors:
+    lx.plot_spectrum_colors(wavelength_height = -0.05,spdmax = 0.020, axh = plt.gca())
+    
+    
