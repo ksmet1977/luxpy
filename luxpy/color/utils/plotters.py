@@ -19,6 +19,8 @@
 Module with functions related to plotting of color data
 =======================================================
 
+ :get_subplot_layout(): Calculate layout of multiple subplots.
+     
  :plot_color_data(): Plot color data (local helper function)
 
  :plotDL(): Plot daylight locus. 
@@ -58,9 +60,28 @@ from luxpy import np, plt, math, _EPS, _CIEOBS, _CSPACE, _CSPACE_AXES, _CIE_ILLU
 
 from matplotlib.patches import Polygon
 
-__all__ = ['plotSL','plotDL','plotBB','plot_color_data','plotceruleanline','plotUH','plotcircle','plotellipse','plot_chromaticity_diagram_colors','plot_spectrum_colors']
+__all__ = ['get_subplot_layout','plotSL','plotDL','plotBB','plot_color_data','plotceruleanline','plotUH','plotcircle','plotellipse','plot_chromaticity_diagram_colors','plot_spectrum_colors']
 
-
+def get_subplot_layout(N, min_1xncols = 3):
+    """
+    Calculate layout of multiple subplots.
+    
+    Args:
+        :N:
+            | Number of plots.
+        :min_1xncols:
+            | Minimum number of columns before splitting over multiple rows.
+            
+    Returns:
+        :nrows, ncols:
+    """
+    if N <= min_1xncols:
+        return 1, N
+    else:
+        sqr = np.ceil(N**0.5)
+        nrows = N//sqr
+        ncols = np.ceil(N/nrows)
+        return int(nrows), int(ncols)
 
 def plot_color_data(x,y,z=None, axh=None, show = True, cieobs =_CIEOBS, \
                     cspace = _CSPACE,  formatstr = 'k-', **kwargs):

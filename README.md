@@ -4,8 +4,8 @@
 [logo]: https://github.com/ksmet1977/luxpy/blob/master/docs/images/LUXPY__logo.jpg
 
 * Author: Kevin A.G. Smet (ksmet1977 at gmail.com)
-* Version: 1.4.13
-* Date: Oct 04, 2019
+* Version: 1.4.14
+* Date: Dec 19, 2019
 * License: [GPLv3](https://github.com/ksmet1977/luxpy/blob/master/LICENSE.md)
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1298963.svg)](https://doi.org/10.5281/zenodo.1298963)
@@ -28,10 +28,12 @@ If you use the package, please cite the following **tutorial paper** published i
 * color appearance models 
 * color rendition indices 
 * calculation of photobiological quantities
-* Multi-component spectrum creation and optimization
-* Hyper-spectral image simulation and rendering
+* multi-component spectrum creation and optimization
+* hyper-spectral image simulation and rendering
 * MacAdam ellipses
 * color differences (cam02ucs, DE2000, ...)
+* modelling of individual observer color matching functions (Asano, 2016)
+* calculation of CIEOP06 (cfr. CIE TC1-97) color matching functions and cone-fundamentals
 * ...
 
 As of May 2019, LuxPy now also has a toolbox **spectro** for **spectral measurements** with **JETI** and **OceanOptics** spectrometers:
