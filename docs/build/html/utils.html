@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Utils sub-package &mdash; LuxPy 1.4.13 documentation</title>
+  <title>Utils sub-package &mdash; LuxPy 1.4.14 documentation</title>
   
 
   
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                1.4.13
+                1.4.14
               </div>
             
           
@@ -1081,6 +1081,11 @@ as a dict.</td>
 <tr class="field-even field"><th class="field-name">fmod():</th><td class="field-body">Floating point modulus, e.g.: fmod(theta, np.pi * 2) would keep an angle in [0, 2pi]b</td>
 </tr>
 <tr class="field-odd field"><th class="field-name">fit_ellipse():</th><td class="field-body">Fit an ellipse to supplied data points.</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">fit_cov_ellipse():</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body">Fit an covariance ellipse to supplied data points.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">interp1():</th><td class="field-body">Perform a 1-dimensional linear interpolation (wrapper around scipy.interpolate.InterpolatedUnivariateSpline).</td>
 </tr>
 <tr class="field-even field"><th class="field-name">ndinterp1():</th><td class="field-body">Perform n-dimensional interpolation using Delaunay triangulation.</td>
 </tr>
@@ -2168,7 +2173,7 @@ using einsum().</p>
 
 <dl class="function">
 <dt id="luxpy.utils.math.fit_ellipse">
-<code class="descclassname">luxpy.utils.math.</code><code class="descname">fit_ellipse</code><span class="sig-paren">(</span><em>xy</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/math/basics.html#fit_ellipse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.math.fit_ellipse" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">luxpy.utils.math.</code><code class="descname">fit_ellipse</code><span class="sig-paren">(</span><em>xy</em>, <em>center_on_mean_xy=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/math/basics.html#fit_ellipse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.math.fit_ellipse" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fit an ellipse to supplied data points.</p>
 <dl class="docutils">
 <dt>Args:</dt>
@@ -2178,6 +2183,15 @@ using einsum().</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">xy:</th><td class="field-body"><div class="first last line-block">
 <div class="line">coordinates of points to fit (Nx2 array)</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">center_on_mean_xy:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><div class="first last line-block">
+<div class="line">False, optional</div>
+<div class="line">Center ellipse on mean of xy </div>
+<div class="line">(otherwise it might be offset due to solving </div>
+<div class="line">the contrained minization problem: aT*S*a, see ref below.)</div>
 </div>
 </td>
 </tr>
@@ -2191,6 +2205,124 @@ using einsum().</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">v:</th><td class="field-body"><div class="first last line-block">
 <div class="line">vector with ellipse parameters [Rmax,Rmin, xc,yc, theta]</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Reference:</dt>
+<dd>1. Fitzgibbon, A.W., Pilu, M., and Fischer R.B., 
+Direct least squares fitting of ellipsees, 
+Proc. of the 13th Internation Conference on Pattern Recognition, 
+pp 253–257, Vienna, 1996.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="luxpy.utils.math.fit_cov_ellipse">
+<code class="descclassname">luxpy.utils.math.</code><code class="descname">fit_cov_ellipse</code><span class="sig-paren">(</span><em>xy</em>, <em>alpha=0.05</em>, <em>pdf='chi2'</em>, <em>SE=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/math/basics.html#fit_cov_ellipse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.math.fit_cov_ellipse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit covariance ellipse to xy data.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">xy:</th><td class="field-body"><div class="first last line-block">
+<div class="line">coordinates of points to fit (Nx2 array)</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">alpha:</th><td class="field-body"><div class="first last line-block">
+<div class="line">0.05, optional</div>
+<div class="line">alpha significance level </div>
+<div class="line">(e.g alpha = 0.05 for 95% confidence ellipse)</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">pdf:</th><td class="field-body"><div class="first last line-block">
+<div class="line">chi2, optional</div>
+<div class="line">- ‘chi2’: Rescale using Chi2-distribution</div>
+<div class="line">- ‘t’: Rescale using Student t-distribution</div>
+<div class="line">- ‘norm’: Rescale using normal-distribution</div>
+<div class="line">- None: don’t rescale using pdf, use alpha as scalefactor (cfr. alpha* 1SD or alpha * 1SE)</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">SE:</th><td class="field-body"><div class="first last line-block">
+<div class="line">False, optional</div>
+<div class="line">If false, fit standard error ellipse at alpha significance level</div>
+<div class="line">If true, fit standard deviation ellipse at alpha significance level</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">v:</th><td class="field-body"><div class="first last line-block">
+<div class="line">vector with ellipse parameters [Rmax,Rmin, xc,yc, theta]</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="luxpy.utils.math.interp1">
+<code class="descclassname">luxpy.utils.math.</code><code class="descname">interp1</code><span class="sig-paren">(</span><em>X, Y, Xnew, kind='linear', ext='extrapolate', w=None, bbox=[None, None], check_finite=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/math/basics.html#interp1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.math.interp1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform a 1-dimensional linear interpolation (wrapper around scipy.interpolate.InterpolatedUnivariateSpline).</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">X:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray with n-dimensional coordinates (last axis represents dimension)</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Y:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray with values at coordinates in X</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Xnew:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray of new coordinates (last axis represents dimension)</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">kind:</th><td class="field-body"><div class="first last line-block">
+<div class="line">str or int,  optional</div>
+<div class="line">if str: kind is ‘translated’ to an int value for input to interpolate.InterpolatedUnivariateSpline()</div>
+<div class="line">supported options for str: ‘linear’, ‘quadratic’, ‘cubic’, ‘quartic’, ‘quintic’</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">other args:</th><td class="field-body"><div class="first last line-block">
+<div class="line">see interpolate.InterpolatedUnivariateSpline()</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Ynew:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray with new values at coordinates in Xnew</div>
 </div>
 </td>
 </tr>

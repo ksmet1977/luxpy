@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.toolboxes.spdbuild.spdbuilder &mdash; LuxPy 1.4.13 documentation</title>
+  <title>luxpy.toolboxes.spdbuild.spdbuilder &mdash; LuxPy 1.4.14 documentation</title>
   
 
   
@@ -56,7 +56,7 @@
             
             
               <div class="version">
-                1.4.13
+                1.4.14
               </div>
             
           
@@ -252,11 +252,11 @@
 <span class="sd">        :returns:</span>
 <span class="sd">            | ndarray with spectra.        </span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">wl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">getwlr</span><span class="p">(</span><span class="n">wl</span><span class="p">))</span><span class="o">.</span><span class="n">T</span> <span class="c1"># create wavelength range</span>
-    <span class="n">spd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="o">*</span><span class="p">((</span><span class="n">wl</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">peakwl</span><span class="p">))</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">fwhm</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">wl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">getwlr</span><span class="p">(</span><span class="n">wl</span><span class="p">))</span> <span class="c1"># create wavelength range</span>
+    <span class="n">spd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="o">*</span><span class="p">((</span><span class="n">wl</span><span class="o">.</span><span class="n">T</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">peakwl</span><span class="p">))</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">fwhm</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
     <span class="k">if</span> <span class="n">with_wl</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
         <span class="n">spd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">wl</span><span class="p">,</span> <span class="n">spd</span><span class="p">))</span>
-    <span class="k">return</span> <span class="n">spd</span><span class="o">.</span><span class="n">T</span></div>
+    <span class="k">return</span> <span class="n">spd</span></div>
 
 
 <span class="c1">#------------------------------------------------------------------------------</span>
@@ -285,11 +285,11 @@
 <span class="sd">        :returns:</span>
 <span class="sd">            | ndarray with spectra.        </span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">wl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">getwlr</span><span class="p">(</span><span class="n">wl</span><span class="p">))</span><span class="o">.</span><span class="n">T</span> <span class="c1"># create wavelength range</span>
-    <span class="n">spd</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">((</span><span class="n">wl</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">peakwl</span><span class="p">))</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">fwhm</span><span class="p">))</span><span class="o">**</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">bw_order</span><span class="p">)))</span>
+    <span class="n">wl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">getwlr</span><span class="p">(</span><span class="n">wl</span><span class="p">))</span> <span class="c1"># create wavelength range</span>
+    <span class="n">spd</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">((</span><span class="n">wl</span><span class="o">.</span><span class="n">T</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">peakwl</span><span class="p">))</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">fwhm</span><span class="p">))</span><span class="o">**</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">bw_order</span><span class="p">))))</span><span class="o">.</span><span class="n">T</span>
     <span class="k">if</span> <span class="n">with_wl</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
         <span class="n">spd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">wl</span><span class="p">,</span> <span class="n">spd</span><span class="p">))</span>
-    <span class="k">return</span> <span class="n">spd</span><span class="o">.</span><span class="n">T</span>
+    <span class="k">return</span> <span class="n">spd</span>
 
 <span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="mono_led_spd"><a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.spdbuild.mono_led_spd">[docs]</a><span class="k">def</span> <span class="nf">mono_led_spd</span><span class="p">(</span><span class="n">peakwl</span> <span class="o">=</span> <span class="mi">530</span><span class="p">,</span> <span class="n">fwhm</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="n">_WL3</span><span class="p">,</span> <span class="n">with_wl</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">strength_shoulder</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">bw_order</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
@@ -627,7 +627,7 @@
 <span class="sd">        :target: </span>
 <span class="sd">            | None, optional</span>
 <span class="sd">            | ndarray with Yxy chromaticity of target.</span>
-<span class="sd">            |  If None: don&#39;t override phosphor strengths, else calculate strength</span>
+<span class="sd">            | If None: don&#39;t override phosphor strengths, else calculate strength</span>
 <span class="sd">            |           to obtain :target: using color3mixer().</span>
 <span class="sd">            | If not None AND strength_ph is None or 0: components are </span>
 <span class="sd">              monochromatic and colormixer is used to optimize fluxes to </span>
@@ -1843,7 +1843,8 @@
                   <span class="n">pair_strengths</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>\
                   <span class="n">peakwl_min</span> <span class="o">=</span> <span class="p">[</span><span class="mi">400</span><span class="p">],</span> <span class="n">peakwl_max</span> <span class="o">=</span> <span class="p">[</span><span class="mi">700</span><span class="p">],</span>\
                   <span class="n">fwhm_min</span> <span class="o">=</span> <span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">fwhm_max</span> <span class="o">=</span> <span class="p">[</span><span class="mi">300</span><span class="p">],</span>\
-                  <span class="n">bw_order_min</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">bw_order_max</span> <span class="o">=</span> <span class="mi">100</span><span class="p">):</span>
+                  <span class="n">bw_order_min</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">bw_order_max</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>\
+                  <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;spds,M&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generate a spectrum with specified white point and optimized for certain </span>
 <span class="sd">    objective functions from a set of component spectra or component spectrum </span>
@@ -1935,6 +1936,9 @@
 <span class="sd">        :verbosity:</span>
 <span class="sd">            | 0, optional</span>
 <span class="sd">            | If &gt; 0: print intermediate results.</span>
+<span class="sd">        :out:</span>
+<span class="sd">            | &#39;spds,M&#39;, optional</span>
+<span class="sd">            | Determines output of function.</span>
 <span class="sd">         </span>
 <span class="sd">    Note:</span>
 <span class="sd">        peakwl:, :fwhm:, ... : see ?spd_builder for more info.   </span>
@@ -1966,6 +1970,8 @@
             
     <span class="c1"># Calculate Yxyt (target):</span>
     <span class="n">Yxyt</span> <span class="o">=</span> <span class="n">colortf</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">tf</span> <span class="o">=</span> <span class="n">tar_type</span><span class="o">+</span><span class="s1">&#39;&gt;Yxy&#39;</span><span class="p">,</span> <span class="n">bwtf</span> <span class="o">=</span> <span class="n">cspace_bwtf</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s1">&#39;cieobs&#39;</span> <span class="ow">in</span> <span class="n">cspace_bwtf</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cspace_bwtf</span><span class="p">[</span><span class="s1">&#39;cieobs&#39;</span><span class="p">]</span>
     
     <span class="c1"># Get component spd / data:</span>
     <span class="k">if</span> <span class="n">component_spds</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -2035,13 +2041,17 @@
     
     <span class="c1"># store component spectra in spds with first axis components, second axis wavelengths</span>
     <span class="n">spds</span> <span class="o">=</span> <span class="n">component_spds</span> 
-            
+    <span class="n">wl</span> <span class="o">=</span> <span class="n">spds</span><span class="p">[:</span><span class="mi">1</span><span class="p">]</span>
+    
     <span class="c1"># Calculate combined spd from components and their fluxes:</span>
     <span class="n">spds</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">M</span><span class="p">)</span><span class="o">*</span><span class="n">spds</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
     
     <span class="k">if</span> <span class="n">with_wl</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
-        <span class="n">spds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">getwlr</span><span class="p">(</span><span class="n">wl</span><span class="p">),</span> <span class="n">spds</span><span class="p">))</span>
-    <span class="k">return</span> <span class="n">spds</span><span class="p">,</span> <span class="n">M</span>       </div>
+        <span class="n">spds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">wl</span><span class="p">,</span> <span class="n">spds</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;spds,M&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">spds</span><span class="p">,</span> <span class="n">M</span>  
+    <span class="k">else</span><span class="p">:</span>  
+        <span class="k">return</span> <span class="nb">eval</span><span class="p">(</span><span class="n">out</span><span class="p">)</span></div>
 
 
 <span class="c1">#------------------------------------------------------------------------------</span>

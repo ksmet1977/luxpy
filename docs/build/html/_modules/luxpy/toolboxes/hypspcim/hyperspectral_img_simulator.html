@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.toolboxes.hypspcim.hyperspectral_img_simulator &mdash; LuxPy 1.4.13 documentation</title>
+  <title>luxpy.toolboxes.hypspcim.hyperspectral_img_simulator &mdash; LuxPy 1.4.14 documentation</title>
   
 
   
@@ -56,7 +56,7 @@
             
             
               <div class="version">
-                1.4.13
+                1.4.14
               </div>
             
           
@@ -249,7 +249,7 @@
     
     <span class="c1"># Convert xyz to lab-type values under refspd:</span>
     <span class="n">lab</span> <span class="o">=</span> <span class="n">colortf</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">tf</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">,</span> <span class="n">fwtf</span> <span class="o">=</span> <span class="n">cspace_tf_copy</span><span class="p">,</span> <span class="n">bwtf</span> <span class="o">=</span> <span class="n">cspace_tf_copy</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">interp_type</span><span class="p">)</span>
+
     <span class="k">if</span> <span class="n">interp_type</span> <span class="o">==</span> <span class="s1">&#39;nearest&#39;</span><span class="p">:</span>
         <span class="c1"># Find rfl (cfr. lab_rr) from rfl set that results in &#39;near&#39; metameric </span>
         <span class="c1"># color coordinates for each value in lab_ur (i.e. smallest DE):</span>
@@ -265,11 +265,31 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">rfl_est</span> <span class="o">=</span> <span class="n">rfl</span><span class="p">[</span><span class="n">inds</span><span class="o">+</span><span class="mi">1</span><span class="p">,:]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="k">elif</span> <span class="n">interp_type</span> <span class="o">==</span> <span class="s1">&#39;nd&#39;</span><span class="p">:</span>
-        <span class="n">rfl_est</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ndinterp1</span><span class="p">(</span><span class="n">lab_rr</span><span class="p">,</span> <span class="n">rfl</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">lab</span><span class="p">)</span>
-        <span class="n">rfl_est</span><span class="p">[</span><span class="n">rfl_est</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1">#can occur for points outside convexhull of standard rfl set.</span>
+        <span class="n">rfl_est</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ndinterp1_scipy</span><span class="p">(</span><span class="n">lab_rr</span><span class="p">,</span> <span class="n">rfl</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">lab</span><span class="p">)</span>
+            
+        <span class="n">_isnan</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">rfl_est</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])</span> 
+        
+        <span class="k">if</span> <span class="p">(</span><span class="n">_isnan</span><span class="o">.</span><span class="n">any</span><span class="p">()):</span> <span class="c1">#do nearest neigbour method for those that fail using Delaunay (i.e. ndinterp1_scipy)</span>
+            
+            <span class="c1"># Find rfl (cfr. lab_rr) from rfl set that results in &#39;near&#39; metameric </span>
+            <span class="c1"># color coordinates for each value in lab_ur (i.e. smallest DE):</span>
+            <span class="c1"># Construct cKDTree:</span>
+            <span class="n">tree</span> <span class="o">=</span> <span class="n">cKDTree</span><span class="p">(</span><span class="n">lab_rr</span><span class="p">,</span> <span class="n">copy_data</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+            
+            <span class="c1"># Interpolate rfls using k nearest neightbours and inverse distance weigthing:</span>
+            <span class="n">d</span><span class="p">,</span> <span class="n">inds</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">lab</span><span class="p">[</span><span class="n">_isnan</span><span class="p">,</span><span class="o">...</span><span class="p">],</span> <span class="n">k</span> <span class="o">=</span> <span class="n">k_neighbours</span> <span class="p">)</span>
+            <span class="k">if</span> <span class="n">k_neighbours</span>  <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">d</span> <span class="o">+=</span> <span class="n">_EPS</span>
+                <span class="n">w</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">d</span><span class="o">**</span><span class="mi">2</span><span class="p">)[:,:,</span><span class="kc">None</span><span class="p">]</span> <span class="c1"># inverse distance weigthing</span>
+                <span class="n">rfl_est_isnan</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">w</span> <span class="o">*</span> <span class="n">rfl</span><span class="p">[</span><span class="n">inds</span><span class="o">+</span><span class="mi">1</span><span class="p">,:],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">rfl_est_isnan</span> <span class="o">=</span> <span class="n">rfl</span><span class="p">[</span><span class="n">inds</span><span class="o">+</span><span class="mi">1</span><span class="p">,:]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">rfl_est</span><span class="p">[</span><span class="n">_isnan</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">rfl_est_isnan</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;xyz_to_rfl(): unsupported interp_type!&#39;</span><span class="p">)</span>
-            
+    
+    <span class="n">rfl_est</span><span class="p">[</span><span class="n">rfl_est</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1">#can occur for points outside convexhull of standard rfl set.</span>
+
     <span class="n">rfl_est</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">rfl</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">rfl_est</span><span class="p">))</span>
         
     <span class="k">if</span> <span class="p">(</span><span class="n">verbosity</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="s1">&#39;xyz_est&#39;</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">))</span> <span class="o">|</span> <span class="p">(</span><span class="s1">&#39;lab_est&#39;</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">))</span> <span class="o">|</span> <span class="p">(</span><span class="s1">&#39;DEi_ab&#39;</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">))</span> <span class="o">|</span> <span class="p">(</span><span class="s1">&#39;DEa_ab&#39;</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)):</span>
@@ -496,10 +516,10 @@
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
-    <span class="n">S</span> <span class="o">=</span> <span class="n">spb</span><span class="o">.</span><span class="n">spd_builder</span><span class="p">(</span><span class="n">peakwl</span> <span class="o">=</span> <span class="p">[</span><span class="mi">460</span><span class="p">,</span><span class="mi">525</span><span class="p">,</span><span class="mi">590</span><span class="p">],</span><span class="n">fwhm</span><span class="o">=</span><span class="p">[</span><span class="mi">20</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">20</span><span class="p">],</span><span class="n">target</span><span class="o">=</span><span class="mi">4000</span><span class="p">,</span> <span class="n">tar_type</span> <span class="o">=</span> <span class="s1">&#39;cct&#39;</span><span class="p">)</span> 
+    <span class="c1">#S = spb.spd_builder(peakwl = [460,525,590],fwhm=[20,40,20],target=4000, tar_type = &#39;cct&#39;) </span>
     <span class="n">img</span> <span class="o">=</span> <span class="n">_HYPSPCIM_DEFAULT_IMAGE</span>
     <span class="n">img_hyp</span><span class="p">,</span><span class="n">img_ren</span> <span class="o">=</span> <span class="n">render_image</span><span class="p">(</span><span class="n">img</span> <span class="o">=</span> <span class="n">img</span><span class="p">,</span> 
-                                   <span class="n">cspace</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span><span class="n">interp_type</span><span class="o">=</span><span class="s1">&#39;nd&#39;</span><span class="p">,</span>
+                                   <span class="n">cspace</span> <span class="o">=</span> <span class="s1">&#39;Yuv&#39;</span><span class="p">,</span><span class="n">interp_type</span><span class="o">=</span><span class="s1">&#39;nd&#39;</span><span class="p">,</span>
                                    <span class="n">spd</span> <span class="o">=</span> <span class="n">S</span><span class="p">,</span> <span class="n">D</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> 
                                    <span class="n">show_ref_img</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
                                    <span class="n">stack_test_ref</span> <span class="o">=</span> <span class="mi">21</span><span class="p">,</span>

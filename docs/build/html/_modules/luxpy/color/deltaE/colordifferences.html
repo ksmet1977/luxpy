@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.color.deltaE.colordifferences &mdash; LuxPy 1.4.13 documentation</title>
+  <title>luxpy.color.deltaE.colordifferences &mdash; LuxPy 1.4.14 documentation</title>
   
 
   
@@ -56,7 +56,7 @@
             
             
               <div class="version">
-                1.4.13
+                1.4.14
               </div>
             
           
@@ -154,6 +154,8 @@
 <span class="sd">Module for color difference calculations</span>
 <span class="sd">========================================</span>
 
+<span class="sd"> :deltaH(): Compute a hue difference, dH = 2*C1*C2*sin(dh/2)</span>
+<span class="sd"> </span>
 <span class="sd"> :_process_DEi(): Process color difference input DEi for output (helper fnc).</span>
 
 <span class="sd"> :DE_camucs(): Calculate color appearance difference DE using camucs type model.</span>
@@ -167,7 +169,31 @@
 <span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">np2d</span><span class="p">,</span> <span class="n">cam</span><span class="p">,</span> <span class="n">_CSPACE</span><span class="p">,</span> <span class="n">colortf</span><span class="p">,</span> <span class="n">xyz_to_lab</span>
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;DE_camucs&#39;</span><span class="p">,</span> <span class="s1">&#39;DE2000&#39;</span><span class="p">,</span><span class="s1">&#39;DE_cspace&#39;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;deltaH&#39;</span><span class="p">,</span> <span class="s1">&#39;DE_camucs&#39;</span><span class="p">,</span> <span class="s1">&#39;DE2000&#39;</span><span class="p">,</span><span class="s1">&#39;DE_cspace&#39;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="deltaH"><a class="viewcode-back" href="../../../../color.html#luxpy.color.deltaE.deltaH">[docs]</a><span class="k">def</span> <span class="nf">deltaH</span><span class="p">(</span><span class="n">h1</span><span class="p">,</span> <span class="n">C1</span><span class="p">,</span> <span class="n">h2</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">C2</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">htype</span> <span class="o">=</span> <span class="s1">&#39;deg&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute a hue difference, dH = 2*C1*C2*sin(dh/2)</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :h1:</span>
+<span class="sd">            | hue for sample 1 (or hue difference if h2 is None)</span>
+<span class="sd">        :C1: </span>
+<span class="sd">            | chroma of sample 1 (or prod C1*C2 if C2 is None)</span>
+<span class="sd">        :h2: </span>
+<span class="sd">            | hue angle of sample 2 (if None, then h1 contains a hue difference)</span>
+<span class="sd">        :C2: </span>
+<span class="sd">            | chroma of sample 2</span>
+<span class="sd">        :htype: </span>
+<span class="sd">            | &#39;deg&#39; or &#39;rad&#39;, optional</span>
+<span class="sd">            |   - &#39;deg&#39;: hue angle between 0° and 360°</span>
+<span class="sd">            |   - &#39;rad&#39;: hue angle between 0 and 2pi radians</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :returns:</span>
+<span class="sd">            | ndarray of deltaH values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">cam</span><span class="o">.</span><span class="n">deltaH</span><span class="p">(</span><span class="n">h1</span><span class="p">,</span> <span class="n">C1</span><span class="p">,</span> <span class="n">h2</span> <span class="o">=</span> <span class="n">h2</span><span class="p">,</span> <span class="n">C2</span> <span class="o">=</span> <span class="n">C2</span><span class="p">,</span> <span class="n">htype</span> <span class="o">=</span> <span class="n">htype</span><span class="p">)</span></div>
 
 <span class="k">def</span> <span class="nf">_process_DEi</span><span class="p">(</span><span class="n">DEi</span><span class="p">,</span> <span class="n">DEtype</span> <span class="o">=</span> <span class="s1">&#39;jab&#39;</span><span class="p">,</span> <span class="n">avg</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">avg_axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;DEi&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -411,7 +437,8 @@
     <span class="n">dhp</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">dhp_</span><span class="p">)</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mi">180</span><span class="p">)]</span> <span class="o">=</span> <span class="n">dhp</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">dhp_</span><span class="p">)</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mi">180</span><span class="p">)]</span> <span class="o">+</span> <span class="mi">360</span>
     <span class="n">dhp</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">Cpprod</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span>
 
-    <span class="n">dH</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">Cpprod</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">dhp</span><span class="o">/</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">180</span><span class="p">)</span>
+    <span class="c1">#dH = 2*np.sqrt(Cpprod)*np.sin(dhp/2*np.pi/180)</span>
+    <span class="n">dH</span> <span class="o">=</span> <span class="n">deltaH</span><span class="p">(</span><span class="n">dhp</span><span class="p">,</span> <span class="n">Cpprod</span><span class="p">,</span> <span class="n">htype</span> <span class="o">=</span> <span class="s1">&#39;deg&#39;</span><span class="p">)</span>
 
     <span class="c1"># Step 3:</span>
     <span class="n">Lp</span> <span class="o">=</span> <span class="p">(</span><span class="n">Lr</span> <span class="o">+</span> <span class="n">Lt</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>

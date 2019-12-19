@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Toolboxes &mdash; LuxPy 1.4.13 documentation</title>
+  <title>Toolboxes &mdash; LuxPy 1.4.14 documentation</title>
   
 
   
@@ -57,7 +57,7 @@
             
             
               <div class="version">
-                1.4.13
+                1.4.14
               </div>
             
           
@@ -732,8 +732,185 @@ Fundamental Chromaticity Diagram with Physiological Axes - Part I
 <a class="reference external" href="https://www.rit.edu/cos/colorscience/re_AsanoObserverFunctions.php">https://www.rit.edu/cos/colorscience/re_AsanoObserverFunctions.php</a>
 (Accessed April 20, 2018)</p>
 <dl class="function">
+<dt id="luxpy.toolboxes.indvcmf.load_database">
+<code class="descclassname">luxpy.toolboxes.indvcmf.</code><code class="descname">load_database</code><span class="sig-paren">(</span><em>wl=None</em>, <em>dsrc_std=None</em>, <em>dsrc_lms_odens=None</em>, <em>path=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/indvcmf/individual_observer_cmf_model.html#load_database"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.indvcmf.load_database" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load database required for Asano Individual Observer Model.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">wl:</th><td class="field-body"><div class="first last line-block">
+<div class="line">None, optional</div>
+<div class="line">Wavelength range to interpolate data to.</div>
+<div class="line">None defaults to the wavelength range associated with data in :dsrc_lms_odens:</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">path:</th><td class="field-body"><div class="first last line-block">
+<div class="line">None, optional</div>
+<div class="line">Path where data files are stored (If None: look in ./data/ folder under toolbox path)</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">dsrc_std:</th><td class="field-body"><div class="first last line-block">
+<div class="line">None, optional</div>
+<div class="line">Data source (‘matlab’ code, or ‘germany’) for stdev data on physiological factors.</div>
+<div class="line">None defaults to string in _DSRC_STD_DEF</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">dsrc_lms_odens:</th><td class="field-body"><div class="first last line-block">
+<div class="line">None, optional</div>
+<div class="line">Data source (‘asano’, ‘cietc197’) for LMS absorbance and optical density data.</div>
+<div class="line">None defaults to string in _DSRC_LMS_ODENS_DEF</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">data:</th><td class="field-body"><div class="first last line-block">
+<div class="line">dict with data for:</div>
+<div class="line">- ‘LMSa’: LMS absorbances </div>
+<div class="line">- ‘rmd’: relative macular pigment density </div>
+<div class="line">- ‘docul’: ocular media optical density </div>
+<div class="line">- ‘USCensus2010population’: data (age and numbers) on a 2010 US Census </div>
+<div class="line">- ‘CatObsPfctr’: dict with iteratively derived Categorical Observer physiological stdevs.</div>
+<div class="line">- ‘M2d’: Asano 2° lms to xyz conversion matrix </div>
+<div class="line">- ‘M10d’: Asano 10° lms to xyz conversion matrix </div>
+<div class="line">- standard deviations on physiological parameters: ‘od_lens’, ‘od_macula’, ‘od_L’, ‘od_M’, ‘od_S’, ‘shft_L’, ‘shft_M’, ‘shft_S’</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="luxpy.toolboxes.indvcmf.init">
+<code class="descclassname">luxpy.toolboxes.indvcmf.</code><code class="descname">init</code><span class="sig-paren">(</span><em>wl=None</em>, <em>dsrc_std=None</em>, <em>dsrc_lms_odens=None</em>, <em>lms_to_xyz_method=None</em>, <em>use_sign_figs=True</em>, <em>use_my_round=True</em>, <em>use_chop=True</em>, <em>path=None</em>, <em>out=None</em>, <em>verbosity=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/indvcmf/individual_observer_cmf_model.html#init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.indvcmf.init" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize: load database required for Asano Individual Observer Model 
+into the default _DATA dict and set some options for rounding, 
+sign. figs and chopping small value to zero; for source data to use for 
+spectral data for LMS absorp. and optical desnities, …</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">wl:</th><td class="field-body"><div class="first last line-block">
+<div class="line">None, optional</div>
+<div class="line">Wavelength range to interpolate data to.</div>
+<div class="line">None defaults to the wavelength range associated with data in :dsrc_lms_odens:</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">dsrc_std:</th><td class="field-body"><div class="first last line-block">
+<div class="line">None, optional</div>
+<div class="line">Data source (‘matlab’ code, or ‘germany’) for stdev data on physiological factors.</div>
+<div class="line">None defaults to string in _DSRC_STD_DEF</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">dsrc_lms_odens:</th><td class="field-body"><div class="first last line-block">
+<div class="line">None, optional</div>
+<div class="line">Data source (‘asano’, ‘cietc197’) for LMS absorbance and optical density data.</div>
+<div class="line">None defaults to string in _DSRC_LMS_ODENS_DEF</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">lms_to_xyz_method:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><div class="first last line-block">
+<div class="line">None, optional</div>
+<div class="line">Method to use to determine lms-to-xyz conversion matrix (options: ‘asano’, ‘cietc197’)</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">use_my_round:</th><td class="field-body"><div class="first last line-block">
+<div class="line">True, optional</div>
+<div class="line">If True: use my_rounding() conform CIE TC1-91 Python code ‘ciefunctions’. (slows down code)</div>
+<div class="line">by setting _USE_MY_ROUND.</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">use_sign_figs:</th><td class="field-body"><div class="first last line-block">
+<div class="line">True, optional</div>
+<div class="line">If True: use sign_figs() conform CIE TC1-91 Python code ‘ciefunctions’. (slows down code)</div>
+<div class="line">by setting _USE_SIGN_FIGS.</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">use_chop:</th><td class="field-body"><div class="first last line-block">
+<div class="line">True, optional</div>
+<div class="line">If True: use chop() conform CIE TC1-91 Python code ‘ciefunctions’. (slows down code)</div>
+<div class="line">by setting _USE_CHOP.</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">path:</th><td class="field-body"><div class="first last line-block">
+<div class="line">None, optional</div>
+<div class="line">Path where data files are stored (If None: look in ./data/ folder under toolbox path)</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">out:</th><td class="field-body"><div class="first last line-block">
+<div class="line">None, optional</div>
+<div class="line">If None: only set global variables, do not output _DATA.copy()</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">verbosity:</th><td class="field-body"><div class="first last line-block">
+<div class="line">1, optional</div>
+<div class="line">Print new state of global settings.</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">data:</th><td class="field-body"><div class="first last line-block">
+<div class="line">if out is not None: return a dict with dict with data for:</div>
+<div class="line">- ‘LMSa’: LMS absorbances </div>
+<div class="line">- ‘rmd’: relative macular pigment density </div>
+<div class="line">- ‘docul’: ocular media optical density </div>
+<div class="line">- ‘USCensus2010population’: data (age and numbers) on a 2010 US Census </div>
+<div class="line">- ‘CatObsPfctr’: dict with iteratively derived Categorical Observer physiological stdevs.</div>
+<div class="line">- ‘M2d’: Asano 2° lms to xyz conversion matrix </div>
+<div class="line">- ‘M10d’: Asano 10° lms to xyz conversion matrix </div>
+<div class="line">- standard deviations on physiological parameters: ‘od_lens’, ‘od_macula’, ‘od_L’, ‘od_M’, ‘od_S’, ‘shft_L’, ‘shft_M’, ‘shft_S’</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="luxpy.toolboxes.indvcmf.query_state">
+<code class="descclassname">luxpy.toolboxes.indvcmf.</code><code class="descname">query_state</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/indvcmf/individual_observer_cmf_model.html#query_state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.indvcmf.query_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print current settings for ‘global variables’.</p>
+</dd></dl>
+
+<dl class="function">
 <dt id="luxpy.toolboxes.indvcmf.cie2006cmfsEx">
-<code class="descclassname">luxpy.toolboxes.indvcmf.</code><code class="descname">cie2006cmfsEx</code><span class="sig-paren">(</span><em>age=32</em>, <em>fieldsize=10</em>, <em>wl=None</em>, <em>var_od_lens=0</em>, <em>var_od_macula=0</em>, <em>var_od_L=0</em>, <em>var_od_M=0</em>, <em>var_od_S=0</em>, <em>var_shft_L=0</em>, <em>var_shft_M=0</em>, <em>var_shft_S=0</em>, <em>out='LMS'</em>, <em>allow_negative_values=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/indvcmf/individual_observer_cmf_model.html#cie2006cmfsEx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.indvcmf.cie2006cmfsEx" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">luxpy.toolboxes.indvcmf.</code><code class="descname">cie2006cmfsEx</code><span class="sig-paren">(</span><em>age=32</em>, <em>fieldsize=10</em>, <em>wl=None</em>, <em>var_od_lens=0</em>, <em>var_od_macula=0</em>, <em>var_od_L=0</em>, <em>var_od_M=0</em>, <em>var_od_S=0</em>, <em>var_shft_L=0</em>, <em>var_shft_M=0</em>, <em>var_shft_S=0</em>, <em>norm_type=None</em>, <em>out='lms'</em>, <em>base=False</em>, <em>strategy_2=True</em>, <em>odata0=None</em>, <em>lms_to_xyz_method=None</em>, <em>allow_negative_values=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/indvcmf/individual_observer_cmf_model.html#cie2006cmfsEx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.indvcmf.cie2006cmfsEx" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate Individual Observer CMFs (cone fundamentals) 
 based on CIE2006 cone fundamentals and published literature 
 on observer variability in color matching and in physiological parameters.</p>
@@ -758,7 +935,7 @@ on observer variability in color matching and in physiological parameters.</p>
 <tr class="field-odd field"><th class="field-name">wl:</th><td class="field-body"><div class="first last line-block">
 <div class="line">None, optional</div>
 <div class="line">Interpolation/extraplation of :LMS: output to specified wavelengths.</div>
-<div class="line">None: output original _WL = np.array([390,780,5])</div>
+<div class="line">None: output original _WL </div>
 </div>
 </td>
 </tr>
@@ -810,17 +987,53 @@ on observer variability in color matching and in physiological parameters.</p>
 </div>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">out:</th><td class="field-body"><div class="first last line-block">
-<div class="line">‘LMS’ or , optional</div>
+<tr class="field-even field"><th class="field-name">norm_type:</th><td class="field-body"><div class="first last line-block">
+<div class="line">None, optional</div>
+<div class="line">- ‘max’: normalize LMSq functions to max = 1</div>
+<div class="line">- ‘area’: normalize to area</div>
+<div class="line">- ‘power’: normalize to power</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">out:</th><td class="field-body"><div class="first last line-block">
+<div class="line">‘lms’ or ‘xyz’, optional</div>
 <div class="line">Determines output.</div>
 </div>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name" colspan="2">allow_negative_values:</th></tr>
+<tr class="field-even field"><th class="field-name">base:</th><td class="field-body"><div class="first last line-block">
+<div class="line">False, boolean, optional</div>
+<div class="line">The returned energy-based LMS cone fundamentals given to the</div>
+<div class="line">precision of 9 sign. figs. if ‘True’, and to the precision of</div>
+<div class="line">6 sign. figs. if ‘False’.</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">strategy_2:</th><td class="field-body"><div class="first last line-block">
+<div class="line">True, bool, optional</div>
+<div class="line">Use strategy 2 in github.com/ifarup/ciefunctions issue #121 for </div>
+<div class="line">computing the weighting factor. If false, strategy 3 is applied.</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">odata0:</th><td class="field-body"><div class="first last line-block">
+<div class="line">None, optional</div>
+<div class="line">Dict with uncorrected ocular media and macula density functions and LMS absorptance functions</div>
+<div class="line">None defaults to the ones stored in _DATA</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">lms_to_xyz_method:</th></tr>
 <tr class="field-odd field"><td>&#160;</td><td class="field-body"><div class="first last line-block">
+<div class="line">None, optional</div>
+<div class="line">Method to use to determine lms-to-xyz conversion matrix (options: ‘asano’, ‘cietc197’)</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">allow_negative_values:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><div class="first last line-block">
 <div class="line">False, optional</div>
-<div class="line">Cone fundamentals or color matching functions 
-should not have negative values.</div>
+<div class="line">Cone fundamentals or color matching functions should not have negative values.</div>
 <div class="line-block">
 <div class="line">If False: X[X&lt;0] = 0.</div>
 </div>
@@ -836,24 +1049,25 @@ should not have negative values.</div>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">returns:</th><td class="field-body"><div class="first line-block">
-<div class="line">- ‘LMS’ : ndarray with individual observer area-normalized </div>
+<div class="line">- ‘LMS’ [or ‘XYZ’]: ndarray with individual observer equal area-normalized </div>
 <div class="line-block">
 <div class="line">cone fundamentals. Wavelength have been added.</div>
 </div>
 </div>
 <div class="last line-block">
-<div class="line">[- ‘trans_lens’: ndarray with lens transmission </div>
+<div class="line">[- ‘M’: lms to xyz conversion matrix</div>
 <div class="line-block">
+<div class="line">-  ‘trans_lens’: ndarray with lens transmission </div>
 <div class="line-block">
-<div class="line">(no wavelengths added, no interpolation)</div>
+<div class="line">(no interpolation)</div>
 </div>
 <div class="line">- ‘trans_macula’: ndarray with macula transmission </div>
 <div class="line-block">
-<div class="line">(no wavelengths added, no interpolation)</div>
+<div class="line">(no interpolation)</div>
 </div>
 <div class="line">- ‘sens_photopig’ : ndarray with photopigment sens. </div>
 <div class="line-block">
-<div class="line">(no wavelengths added, no interpolation)]</div>
+<div class="line">(no interpolation)]</div>
 </div>
 </div>
 </div>
@@ -872,14 +1086,16 @@ Color Res. Appl. 41, 530–539.</a></p>
 <p>3. <a class="reference external" href="http://www.cie.co.at/publications/fundamental-chromaticity-diagram-physiological-axes-part-1">CIE, and CIE (2006). 
 Fundamental Chromaticity Diagram with Physiological Axes - Part I 
 (Vienna: CIE).</a></p>
-<p class="last">4. <a class="reference external" href="https://www.rit.edu/cos/colorscience/re_AsanoObserverFunctions.php">Asano’s Individual Colorimetric Observer Model</a></p>
+<p>4. <a class="reference external" href="https://www.rit.edu/cos/colorscience/re_AsanoObserverFunctions.php">Asano’s Individual Colorimetric Observer Model</a></p>
+<p class="last">5. <a class="reference external" href="http://github.com/ifarup/ciefunctions">CIE TC1-97 Python code for cone fundamentals and XYZ cmf calculations 
+(by Ivar Farup and Jan Henrik Wold, (c) 2012-2017)</a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="luxpy.toolboxes.indvcmf.getMonteCarloParam">
-<code class="descclassname">luxpy.toolboxes.indvcmf.</code><code class="descname">getMonteCarloParam</code><span class="sig-paren">(</span><em>n_obs=1</em>, <em>stdDevAllParam={'od_L': 17.9</em>, <em>'od_M': 17.9</em>, <em>'od_S': 14.7</em>, <em>'od_lens': 19.1</em>, <em>'od_macula': 37.2</em>, <em>'shft_L': 4.0</em>, <em>'shft_M': 3.0</em>, <em>'shft_S': 2.5}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/indvcmf/individual_observer_cmf_model.html#getMonteCarloParam"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.indvcmf.getMonteCarloParam" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">luxpy.toolboxes.indvcmf.</code><code class="descname">getMonteCarloParam</code><span class="sig-paren">(</span><em>n_obs=1</em>, <em>stdDevAllParam={'dsrc': 'matlab'</em>, <em>'od_L': 17.9</em>, <em>'od_M': 17.9</em>, <em>'od_S': 14.7</em>, <em>'od_lens': 19.1</em>, <em>'od_macula': 37.2</em>, <em>'shft_L': 4.0</em>, <em>'shft_M': 3.0</em>, <em>'shft_S': 2.5}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/indvcmf/individual_observer_cmf_model.html#getMonteCarloParam"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.indvcmf.getMonteCarloParam" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get dict with normally-distributed physiological factors 
 for a population of observers.</p>
 <dl class="docutils">
@@ -895,7 +1111,7 @@ for a population of observers.</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">stdDevAllParam:</th><td class="field-body"><div class="first last line-block">
-<div class="line">_INDVCMF_STD_DEV_ALL_PARAM, optional</div>
+<div class="line">_DATA[‘stdev’], optional</div>
 <div class="line">Dict with parameters for:</div>
 <div class="line-block">
 <div class="line">[‘od_lens’, ‘od_macula’, </div>
@@ -928,7 +1144,7 @@ for a population of observers.</p>
 
 <dl class="function">
 <dt id="luxpy.toolboxes.indvcmf.genMonteCarloObs">
-<code class="descclassname">luxpy.toolboxes.indvcmf.</code><code class="descname">genMonteCarloObs</code><span class="sig-paren">(</span><em>n_obs=1, fieldsize=10, list_Age=[32], out='LMS', wl=None, allow_negative_values=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/indvcmf/individual_observer_cmf_model.html#genMonteCarloObs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.indvcmf.genMonteCarloObs" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">luxpy.toolboxes.indvcmf.</code><code class="descname">genMonteCarloObs</code><span class="sig-paren">(</span><em>n_obs=1, fieldsize=10, list_Age=[32], wl=None, norm_type=None, out='lms', base=False, strategy_2=True, odata0=None, lms_to_xyz_method=None, allow_negative_values=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/indvcmf/individual_observer_cmf_model.html#genMonteCarloObs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.indvcmf.genMonteCarloObs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Monte-Carlo generation of individual observer cone fundamentals.</p>
 <dl class="docutils">
 <dt>Args: </dt>
@@ -956,28 +1172,62 @@ to generate list_Age.</div>
 </div>
 </td>
 </tr>
+<tr class="field-even field"><th class="field-name">wl:</th><td class="field-body"><div class="first last line-block">
+<div class="line">None, optional</div>
+<div class="line">Interpolation/extraplation of :LMS: output to specified wavelengths.</div>
+<div class="line">None: output original _WL </div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">norm_type:</th><td class="field-body"><div class="first last line-block">
+<div class="line">None, optional</div>
+<div class="line">- ‘max’: normalize LMSq functions to max = 1</div>
+<div class="line">- ‘area’: normalize to area</div>
+<div class="line">- ‘power’: normalize to power</div>
+</div>
+</td>
+</tr>
 <tr class="field-even field"><th class="field-name">out:</th><td class="field-body"><div class="first last line-block">
-<div class="line">‘LMS’ or str, optional</div>
+<div class="line">‘lms’ or ‘xyz’, optional</div>
 <div class="line">Determines output.</div>
 </div>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">wl:</th><td class="field-body"><div class="first last line-block">
-<div class="line">None, optional</div>
-<div class="line">Interpolation/extraplation of :LMS: output to specified wavelengths.</div>
-<div class="line">None: output original _WL = np.array([390,780,5])</div>
+<tr class="field-odd field"><th class="field-name">base:</th><td class="field-body"><div class="first last line-block">
+<div class="line">False, boolean, optional</div>
+<div class="line">The returned energy-based LMS cone fundamentals given to the</div>
+<div class="line">precision of 9 sign. figs. if ‘True’, and to the precision of</div>
+<div class="line">6 sign. figs. if ‘False’.</div>
 </div>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name" colspan="2">allow_negative_values:</th></tr>
+<tr class="field-even field"><th class="field-name">strategy_2:</th><td class="field-body"><div class="first last line-block">
+<div class="line">True, bool, optional</div>
+<div class="line">Use strategy 2 in github.com/ifarup/ciefunctions issue #121 for </div>
+<div class="line">computing the weighting factor. If false, strategy 3 is applied.</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">odata0:</th><td class="field-body"><div class="first last line-block">
+<div class="line">None, optional</div>
+<div class="line">Dict with uncorrected ocular media and macula density functions and LMS absorptance functions</div>
+<div class="line">None defaults to the ones stored in _DATA</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">lms_to_xyz_method:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><div class="first last line-block">
+<div class="line">None, optional</div>
+<div class="line">Method to use to determine lms-to-xyz conversion matrix (options: ‘asano’, ‘cietc197’)</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">allow_negative_values:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><div class="first last line-block">
 <div class="line">False, optional</div>
-<div class="line">Cone fundamentals or color matching functions </div>
-<div class="line-block">
-<div class="line">should not have negative values.</div>
+<div class="line">Cone fundamentals or color matching functions should not have negative values.</div>
 <div class="line-block">
 <div class="line">If False: X[X&lt;0] = 0.</div>
-</div>
 </div>
 </div>
 </td>
@@ -1020,7 +1270,7 @@ Fundamental Chromaticity Diagram with Physiological Axes - Part I
 
 <dl class="function">
 <dt id="luxpy.toolboxes.indvcmf.getCatObs">
-<code class="descclassname">luxpy.toolboxes.indvcmf.</code><code class="descname">getCatObs</code><span class="sig-paren">(</span><em>n_cat=10</em>, <em>fieldsize=2</em>, <em>out='LMS'</em>, <em>wl=None</em>, <em>allow_negative_values=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/indvcmf/individual_observer_cmf_model.html#getCatObs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.indvcmf.getCatObs" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">luxpy.toolboxes.indvcmf.</code><code class="descname">getCatObs</code><span class="sig-paren">(</span><em>n_cat=10</em>, <em>fieldsize=2</em>, <em>wl=None</em>, <em>norm_type=None</em>, <em>out='lms'</em>, <em>base=False</em>, <em>strategy_2=True</em>, <em>odata0=None</em>, <em>lms_to_xyz_method=None</em>, <em>allow_negative_values=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/indvcmf/individual_observer_cmf_model.html#getCatObs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.indvcmf.getCatObs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate cone fundamentals for categorical observers.</p>
 <dl class="docutils">
 <dt>Args: </dt>
@@ -1050,20 +1300,60 @@ Fundamental Chromaticity Diagram with Physiological Axes - Part I
 <div class="line">None, optional</div>
 <div class="line">Interpolation/extraplation of :LMS: output to specified wavelengths.</div>
 <div class="line-block">
-<div class="line">None: output original _WL = np.array([390,780,5])</div>
+<div class="line">None: output original _WL </div>
 </div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">norm_type:</th><td class="field-body"><div class="first last line-block">
+<div class="line">None, optional</div>
+<div class="line">- ‘max’: normalize LMSq functions to max = 1</div>
+<div class="line">- ‘area’: normalize to area</div>
+<div class="line">- ‘power’: normalize to power</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">out:</th><td class="field-body"><div class="first last line-block">
+<div class="line">‘lms’ or ‘xyz’, optional</div>
+<div class="line">Determines output.</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">base:</th><td class="field-body"><div class="first last line-block">
+<div class="line">False, boolean, optional</div>
+<div class="line">The returned energy-based LMS cone fundamentals given to the</div>
+<div class="line">precision of 9 sign. figs. if ‘True’, and to the precision of</div>
+<div class="line">6 sign. figs. if ‘False’.</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">strategy_2:</th><td class="field-body"><div class="first last line-block">
+<div class="line">True, bool, optional</div>
+<div class="line">Use strategy 2 in github.com/ifarup/ciefunctions issue #121 for </div>
+<div class="line">computing the weighting factor. If false, strategy 3 is applied.</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">odata0:</th><td class="field-body"><div class="first last line-block">
+<div class="line">None, optional</div>
+<div class="line">Dict with uncorrected ocular media and macula density functions and LMS absorptance functions</div>
+<div class="line">None defaults to the ones stored in _DATA</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">lms_to_xyz_method:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><div class="first last line-block">
+<div class="line">None, optional</div>
+<div class="line">Method to use to determine lms-to-xyz conversion matrix (options: ‘asano’, ‘cietc197’)</div>
 </div>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name" colspan="2">allow_negative_values:</th></tr>
 <tr class="field-odd field"><td>&#160;</td><td class="field-body"><div class="first last line-block">
 <div class="line">False, optional</div>
-<div class="line">Cone fundamentals or color matching functions </div>
-<div class="line-block">
-<div class="line">should not have negative values.</div>
+<div class="line">Cone fundamentals or color matching functions should not have negative values.</div>
 <div class="line-block">
 <div class="line">If False: X[X&lt;0] = 0.</div>
-</div>
 </div>
 </div>
 </td>
@@ -1103,8 +1393,8 @@ algorithm, was applied to the 10000 observers minimizing the squared
 Euclidean distance in cone fundamentals space, and categorical 
 observers were derived iteratively. Since the proposed categorical 
 observers are defined by their physiological parameters and ages, their
-CMFs can be derived for any target field size.</p>
-<p>2. Categorical observers were ordered by the importance; 
+CMFs can be derived for any target field size.
+2. Categorical observers were ordered by the importance; 
 the first categorical observer vas the average observer equivalent to 
 CIEPO06 with 38 year-old for a given field size, followed by the second
 most important categorical observer, the third, and so on.</p>
@@ -1113,6 +1403,219 @@ most important categorical observer, the third, and so on.</p>
 </ol>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="luxpy.toolboxes.indvcmf.compute_cmfs">
+<code class="descclassname">luxpy.toolboxes.indvcmf.</code><code class="descname">compute_cmfs</code><span class="sig-paren">(</span><em>fieldsize=10, age=32, wl=None, var_od_lens=0, var_od_macula=0, var_shft_LMS=[0, 0, 0], var_od_LMS=[0, 0, 0], norm_type=None, out='lms', base=False, strategy_2=True, odata0=None, lms_to_xyz_method=None, allow_negative_values=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/indvcmf/individual_observer_cmf_model.html#compute_cmfs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.indvcmf.compute_cmfs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate Individual Observer CMFs (cone fundamentals) 
+based on CIE2006 cone fundamentals and published literature 
+on observer variability in color matching and in physiological parameters.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">age:</th><td class="field-body"><div class="first last line-block">
+<div class="line">32 or float or int, optional</div>
+<div class="line">Observer age</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">fieldsize:</th><td class="field-body"><div class="first last line-block">
+<div class="line">10, optional</div>
+<div class="line">Field size of stimulus in degrees (between 2° and 10°).</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">wl:</th><td class="field-body"><div class="first last line-block">
+<div class="line">None, optional</div>
+<div class="line">Interpolation/extraplation of :LMS: output to specified wavelengths.</div>
+<div class="line">None: output original _WL</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">var_od_lens:</th><td class="field-body"><div class="first last line-block">
+<div class="line">0, optional</div>
+<div class="line">Variation of optical density of lens.</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">var_od_macula:</th><td class="field-body"><div class="first last line-block">
+<div class="line">0, optional</div>
+<div class="line">Variation of optical density of macula.</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">var_shft_LMS:</th><td class="field-body"><div class="first last line-block">
+<div class="line">[0, 0, 0] optional</div>
+<div class="line">Variation (shift) of LMS peak absorptance.</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">var_od_LMS:</th><td class="field-body"><div class="first last line-block">
+<div class="line">[0, 0, 0] optional</div>
+<div class="line">Variation of LMS optical densities.</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">norm_type:</th><td class="field-body"><div class="first last line-block">
+<div class="line">None, optional</div>
+<div class="line">- ‘max’: normalize LMSq functions to max = 1</div>
+<div class="line">- ‘area’: normalize to area</div>
+<div class="line">- ‘power’: normalize to power</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">out:</th><td class="field-body"><div class="first last line-block">
+<div class="line">‘lms’ or ‘xyz’, optional</div>
+<div class="line">Determines output.</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">base:</th><td class="field-body"><div class="first last line-block">
+<div class="line">False, boolean, optional</div>
+<div class="line">The returned energy-based LMS cone fundamentals given to the</div>
+<div class="line">precision of 9 sign. figs. if ‘True’, and to the precision of</div>
+<div class="line">6 sign. figs. if ‘False’.</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">strategy_2:</th><td class="field-body"><div class="first last line-block">
+<div class="line">True, bool, optional</div>
+<div class="line">Use strategy 2 in github.com/ifarup/ciefunctions issue #121 for </div>
+<div class="line">computing the weighting factor. If false, strategy 3 is applied.</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">odata0:</th><td class="field-body"><div class="first last line-block">
+<div class="line">None, optional</div>
+<div class="line">Dict with uncorrected ocular media and macula density functions and LMS absorptance functions</div>
+<div class="line">None defaults to the ones stored in _DATA</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">lms_to_xyz_method:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><div class="first last line-block">
+<div class="line">None, optional</div>
+<div class="line">Method to use to determine lms-to-xyz conversion matrix (options: ‘asano’, ‘cietc197’)</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">allow_negative_values:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><div class="first last line-block">
+<div class="line">False, optional</div>
+<div class="line">Cone fundamentals or color matching functions should not have negative values.</div>
+<div class="line-block">
+<div class="line">If False: X[X&lt;0] = 0.</div>
+</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">returns:</th><td class="field-body"><div class="first line-block">
+<div class="line">- ‘LMS’ [or ‘XYZ’]: ndarray with individual observer equal area-normalized </div>
+<div class="line-block">
+<div class="line">cone fundamentals. Wavelength have been added.</div>
+</div>
+</div>
+<div class="last line-block">
+<div class="line">[- ‘M’: lms to xyz conversion matrix</div>
+<div class="line-block">
+<div class="line">-  ‘trans_lens’: ndarray with lens transmission </div>
+<div class="line-block">
+<div class="line">(no interpolation)</div>
+</div>
+<div class="line">- ‘trans_macula’: ndarray with macula transmission </div>
+<div class="line-block">
+<div class="line">(no interpolation)</div>
+</div>
+<div class="line">- ‘sens_photopig’ : ndarray with photopigment sens. </div>
+<div class="line-block">
+<div class="line">(no interpolation)]</div>
+</div>
+</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>References:</dt>
+<dd><p class="first">1. <a class="reference external" href="http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0145671">Asano Y, Fairchild MD, and Blondé L (2016). 
+Individual Colorimetric Observer Model. 
+PLoS One 11, 1–19.</a></p>
+<p>2. <a class="reference external" href="https://onlinelibrary.wiley.com/doi/abs/10.1002/col.21975">Asano Y, Fairchild MD, Blondé L, and Morvan P (2016). 
+Color matching experiment for highlighting interobserver variability. 
+Color Res. Appl. 41, 530–539.</a></p>
+<p>3. <a class="reference external" href="http://www.cie.co.at/publications/fundamental-chromaticity-diagram-physiological-axes-part-1">CIE, and CIE (2006). 
+Fundamental Chromaticity Diagram with Physiological Axes - Part I 
+(Vienna: CIE).</a></p>
+<p>4. <a class="reference external" href="https://www.rit.edu/cos/colorscience/re_AsanoObserverFunctions.php">Asano’s Individual Colorimetric Observer Model</a></p>
+<p class="last">5. <a class="reference external" href="http://github.com/ifarup/ciefunctions">CIE TC1-97 Python code for cone fundamentals and XYZ cmf calculations 
+(by Ivar Farup and Jan Henrik Wold, (c) 2012-2017)</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="luxpy.toolboxes.indvcmf.plot_cmfs">
+<code class="descclassname">luxpy.toolboxes.indvcmf.</code><code class="descname">plot_cmfs</code><span class="sig-paren">(</span><em>cmf</em>, <em>axh=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/indvcmf/individual_observer_cmf_model.html#plot_cmfs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.indvcmf.plot_cmfs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot cmf set.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="luxpy.toolboxes.indvcmf.add_to_cmf_dict">
+<code class="descclassname">luxpy.toolboxes.indvcmf.</code><code class="descname">add_to_cmf_dict</code><span class="sig-paren">(</span><em>bar=None, cieobs='indv', K=683, M=array([[1.0000e+00, 0.0000e+00, 0.0000e+00],        [0.0000e+00, 1.0000e+00, 0.0000e+00],        [0.0000e+00, 0.0000e+00, 1.0000e+00]])</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/indvcmf/individual_observer_cmf_model.html#add_to_cmf_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.indvcmf.add_to_cmf_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add set of cmfs to _CMF dict.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">bar:</th><td class="field-body"><div class="first last line-block">
+<div class="line">None, optional</div>
+<div class="line">Set of CMFs. None: initializes to empty ndarray.</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">cieobs:</th><td class="field-body"><div class="first last line-block">
+<div class="line">‘indv’ or str, optional</div>
+<div class="line">Name of CMF set.</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">K:</th><td class="field-body"><div class="first last line-block">
+<div class="line">683 (lm/W), optional</div>
+<div class="line">Conversion factor from radiometric to photometric quantity.</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">M:</th><td class="field-body"><div class="first last line-block">
+<div class="line">np.eye, optional</div>
+<div class="line">Matrix for lms to xyz conversion.</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="descclassname">luxpy.toolboxes.indvcmf.</code><code class="descname">plot_cmfs</code><span class="sig-paren">(</span><em>cmf</em>, <em>axh=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/indvcmf/individual_observer_cmf_model.html#plot_cmfs"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Plot cmf set.</p>
 </dd></dl>
 
 </div>
@@ -1681,11 +2184,9 @@ applied. </div>
 <tr class="field-even field"><th class="field-name">target:</th><td class="field-body"><div class="first last line-block">
 <div class="line">None, optional</div>
 <div class="line">ndarray with Yxy chromaticity of target.</div>
-<div class="line-block">
 <div class="line">If None: don’t override phosphor strengths, else calculate strength</div>
 <div class="line-block">
 <div class="line">to obtain :target: using color3mixer().</div>
-</div>
 </div>
 <div class="line">If not None AND strength_ph is None or 0: components are 
 monochromatic and colormixer is used to optimize fluxes to 
@@ -2361,7 +2862,7 @@ ndarray with spectral data.</div>
 
 <dl class="function">
 <dt id="luxpy.toolboxes.spdbuild.spd_optimizer">
-<code class="descclassname">luxpy.toolboxes.spdbuild.</code><code class="descname">spd_optimizer</code><span class="sig-paren">(</span><em>target=array([[1.0000e+02, 3.3333e-01, 3.3333e-01]]), tar_type='Yxy', cieobs='1931_2', optimizer_type='2mixer', spd_constructor=None, spd_model_pars=None, cspace='Yuv', cspace_bwtf={}, cspace_fwtf={}, component_spds=None, N_components=None, obj_fcn=[None], obj_fcn_pars=[{}], obj_fcn_weights=[1], obj_tar_vals=[0], decimals=[5], minimize_method='nelder-mead', minimize_opts=None, F_rss=True, peakwl=[450, 530, 610], fwhm=[20, 20, 20], allow_butterworth_mono_spds=False, bw_order=[-1], wl=[360.0, 830.0, 1.0], with_wl=True, strength_shoulder=2, strength_ph=[0], use_piecewise_fcn=False, peakwl_ph1=[530], fwhm_ph1=[80], strength_ph1=[1], peakwl_ph2=[560], fwhm_ph2=[80], strength_ph2=None, verbosity=0, pair_strengths=None, peakwl_min=[400], peakwl_max=[700], fwhm_min=[5], fwhm_max=[300], bw_order_min=0, bw_order_max=100</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/spdbuild/spdbuilder.html#spd_optimizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.spdbuild.spd_optimizer" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">luxpy.toolboxes.spdbuild.</code><code class="descname">spd_optimizer</code><span class="sig-paren">(</span><em>target=array([[1.0000e+02, 3.3333e-01, 3.3333e-01]]), tar_type='Yxy', cieobs='1931_2', optimizer_type='2mixer', spd_constructor=None, spd_model_pars=None, cspace='Yuv', cspace_bwtf={}, cspace_fwtf={}, component_spds=None, N_components=None, obj_fcn=[None], obj_fcn_pars=[{}], obj_fcn_weights=[1], obj_tar_vals=[0], decimals=[5], minimize_method='nelder-mead', minimize_opts=None, F_rss=True, peakwl=[450, 530, 610], fwhm=[20, 20, 20], allow_butterworth_mono_spds=False, bw_order=[-1], wl=[360.0, 830.0, 1.0], with_wl=True, strength_shoulder=2, strength_ph=[0], use_piecewise_fcn=False, peakwl_ph1=[530], fwhm_ph1=[80], strength_ph1=[1], peakwl_ph2=[560], fwhm_ph2=[80], strength_ph2=None, verbosity=0, pair_strengths=None, peakwl_min=[400], peakwl_max=[700], fwhm_min=[5], fwhm_max=[300], bw_order_min=0, bw_order_max=100, out='spds,M'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/spdbuild/spdbuilder.html#spd_optimizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.spdbuild.spd_optimizer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate a spectrum with specified white point and optimized for certain 
 objective functions from a set of component spectra or component spectrum 
 model parameters.</p>
@@ -2533,6 +3034,12 @@ objective function values.</div>
 <tr class="field-even field"><th class="field-name">verbosity:</th><td class="field-body"><div class="first last line-block">
 <div class="line">0, optional</div>
 <div class="line">If &gt; 0: print intermediate results.</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">out:</th><td class="field-body"><div class="first last line-block">
+<div class="line">‘spds,M’, optional</div>
+<div class="line">Determines output of function.</div>
 </div>
 </td>
 </tr>

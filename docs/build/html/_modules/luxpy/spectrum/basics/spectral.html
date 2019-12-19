@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.spectrum.basics.spectral &mdash; LuxPy 1.4.13 documentation</title>
+  <title>luxpy.spectrum.basics.spectral &mdash; LuxPy 1.4.14 documentation</title>
   
 
   
@@ -56,7 +56,7 @@
             
             
               <div class="version">
-                1.4.13
+                1.4.14
               </div>
             
           
@@ -253,7 +253,7 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="c1">#--------------------------------------------------------------------------------------------------</span>
-<span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">pd</span><span class="p">,</span> <span class="n">interpolate</span><span class="p">,</span> <span class="n">_PKG_PATH</span><span class="p">,</span> <span class="n">_SEP</span><span class="p">,</span> <span class="n">_EPS</span><span class="p">,</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">np2d</span><span class="p">,</span> <span class="n">getdata</span>
+<span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">pd</span><span class="p">,</span> <span class="n">interpolate</span><span class="p">,</span> <span class="n">_PKG_PATH</span><span class="p">,</span> <span class="n">_SEP</span><span class="p">,</span> <span class="n">_EPS</span><span class="p">,</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">np2d</span><span class="p">,</span> <span class="n">getdata</span><span class="p">,</span> <span class="n">math</span>
 <span class="kn">from</span> <span class="nn">.cmf</span> <span class="k">import</span> <span class="n">_CMF</span>
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;_WL3&#39;</span><span class="p">,</span><span class="s1">&#39;_BB&#39;</span><span class="p">,</span><span class="s1">&#39;_S012_DAYLIGHTPHASE&#39;</span><span class="p">,</span><span class="s1">&#39;_INTERP_TYPES&#39;</span><span class="p">,</span><span class="s1">&#39;_S_INTERP_TYPE&#39;</span><span class="p">,</span> <span class="s1">&#39;_R_INTERP_TYPE&#39;</span><span class="p">,</span><span class="s1">&#39;_CRI_REF_TYPE&#39;</span><span class="p">,</span>
            <span class="s1">&#39;_CRI_REF_TYPES&#39;</span><span class="p">,</span> <span class="s1">&#39;getwlr&#39;</span><span class="p">,</span><span class="s1">&#39;getwld&#39;</span><span class="p">,</span><span class="s1">&#39;spd_normalize&#39;</span><span class="p">,</span><span class="s1">&#39;cie_interp&#39;</span><span class="p">,</span><span class="s1">&#39;spd&#39;</span><span class="p">,</span><span class="s1">&#39;xyzbar&#39;</span><span class="p">,</span> <span class="s1">&#39;vlbar&#39;</span><span class="p">,</span> 
@@ -445,14 +445,15 @@
 <span class="sd">            |   - If :kind: is a spectrum type (see _INTERP_TYPES), the correct </span>
 <span class="sd">            |     interpolation type if automatically chosen.</span>
 <span class="sd">            |   - Or :kind: can be any interpolation type supported by </span>
-<span class="sd">            |     scipy.interpolate.interp1d</span>
+<span class="sd">            |     luxpy.math.interp1</span>
 <span class="sd">        :negative_values_allowed: </span>
 <span class="sd">            | False, optional</span>
 <span class="sd">            | If False: negative values are clipped to zero.</span>
 <span class="sd">        :extrap_values:</span>
 <span class="sd">            | None, optional</span>
-<span class="sd">            | float or list or ndarray with values to extrapolate</span>
-<span class="sd">            | If None: use CIE recommended &#39;closest value&#39; approach.</span>
+<span class="sd">            | If None: use CIE recommended &#39;closest value&#39; approach when extrapolating.</span>
+<span class="sd">            | If float or list or ndarray, use those values to fill extrapolated value(s).</span>
+<span class="sd">            | If &#39;ext&#39;: use normal extrapolated values by math.interp1</span>
 <span class="sd">    </span>
 <span class="sd">    Returns:</span>
 <span class="sd">        :returns: </span>
@@ -463,10 +464,10 @@
         <span class="c1"># Wavelength definition:</span>
         <span class="n">wl_new</span> <span class="o">=</span> <span class="n">getwlr</span><span class="p">(</span><span class="n">wl_new</span><span class="p">)</span>
         
-        <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">wl_new</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">wl_new</span><span class="p">))</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
        
             <span class="n">extrap_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">extrap_values</span><span class="p">)</span>
-            
+
             <span class="c1"># Set interpolation type based on data type:</span>
             <span class="k">if</span> <span class="n">kind</span> <span class="ow">in</span> <span class="n">_INTERP_TYPES</span><span class="p">[</span><span class="s1">&#39;linear&#39;</span><span class="p">]:</span>
                 <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span>
@@ -480,18 +481,40 @@
         
             <span class="c1"># Interpolate each spectrum in S: </span>
             <span class="n">N</span> <span class="o">=</span> <span class="n">S</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">Si</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">([</span><span class="n">N</span><span class="p">,</span><span class="n">wl_new</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span> 
+            <span class="n">Si</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">([</span><span class="n">N</span><span class="p">,</span><span class="n">wl_new</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span> 
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
-                <span class="n">Si_f</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">wl</span><span class="p">,</span><span class="n">S</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">kind</span> <span class="o">=</span> <span class="n">kind</span><span class="p">,</span> <span class="n">bounds_error</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
-                <span class="n">Si</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">Si_f</span><span class="p">(</span><span class="n">wl_new</span><span class="p">)</span>
-                
-                <span class="c1">#extrapolate by replicating closest known (in source data!) value (conform CIE2004 recommendation) </span>
-                <span class="k">if</span> <span class="n">extrap_values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">Si</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">wl_new</span><span class="o">&lt;</span><span class="n">wl</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">S</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-                    <span class="n">Si</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">wl_new</span><span class="o">&gt;</span><span class="n">wl</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">S</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+                <span class="n">nan_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">S</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">nan_indices</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+                    <span class="n">nonan_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_not</span><span class="p">(</span><span class="n">nan_indices</span><span class="p">)</span>
+                    <span class="n">wl_nonan</span> <span class="o">=</span> <span class="n">wl</span><span class="p">[</span><span class="n">nonan_indices</span><span class="p">]</span>
+                    <span class="n">S_i_nonan</span> <span class="o">=</span> <span class="n">S</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">nonan_indices</span><span class="p">]</span>
+                    <span class="n">Si_nonan</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">interp1</span><span class="p">(</span><span class="n">wl_nonan</span><span class="p">,</span><span class="n">S_i_nonan</span><span class="p">,</span> <span class="n">wl_new</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="n">kind</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="s1">&#39;extrapolate&#39;</span><span class="p">)</span>
+                    
+                    <span class="c1">#extrapolate by replicating closest known (in source data!) value (conform CIE2004 recommendation) </span>
+                    <span class="k">if</span> <span class="n">extrap_values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">Si_nonan</span><span class="p">[</span><span class="n">wl_new</span><span class="o">&lt;</span><span class="n">wl_nonan</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">S_i_nonan</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                        <span class="n">Si_nonan</span><span class="p">[</span><span class="n">wl_new</span><span class="o">&gt;</span><span class="n">wl_nonan</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">S_i_nonan</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="k">elif</span> <span class="p">(((</span><span class="nb">type</span><span class="p">(</span><span class="n">extrap_values</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">==</span><span class="n">np</span><span class="o">.</span><span class="n">str_</span><span class="p">)</span><span class="o">|</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">extrap_values</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">==</span><span class="nb">str</span><span class="p">))</span> <span class="ow">and</span> <span class="p">(</span><span class="n">extrap_values</span><span class="p">[</span><span class="mi">0</span><span class="p">][:</span><span class="mi">3</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;ext&#39;</span><span class="p">)):</span>
+                        <span class="k">pass</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">Si_nonan</span><span class="p">[</span><span class="n">wl_new</span><span class="o">&lt;</span><span class="n">wl_nonan</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">extrap_values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                        <span class="n">Si_nonan</span><span class="p">[</span><span class="n">wl_new</span><span class="o">&gt;</span><span class="n">wl_nonan</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">extrap_values</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  
+                    <span class="n">Si</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">Si_nonan</span>
+
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">Si</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">wl_new</span><span class="o">&lt;</span><span class="n">wl</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">extrap_values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-                    <span class="n">Si</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">wl_new</span><span class="o">&gt;</span><span class="n">wl</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">extrap_values</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  
+                    <span class="n">Si</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">interp1</span><span class="p">(</span><span class="n">wl</span><span class="p">,</span> <span class="n">S</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">wl_new</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="n">kind</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="s1">&#39;extrapolate&#39;</span><span class="p">)</span>
+                    <span class="c1">#Si[i] = Si_f(wl_new)</span>
+                
+                    <span class="c1">#extrapolate by replicating closest known (in source data!) value (conform CIE2004 recommendation) </span>
+                    <span class="k">if</span> <span class="n">extrap_values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">Si</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">wl_new</span><span class="o">&lt;</span><span class="n">wl</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">S</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                        <span class="n">Si</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">wl_new</span><span class="o">&gt;</span><span class="n">wl</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">S</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="k">elif</span> <span class="p">(((</span><span class="nb">type</span><span class="p">(</span><span class="n">extrap_values</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">==</span><span class="n">np</span><span class="o">.</span><span class="n">str_</span><span class="p">)</span><span class="o">|</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">extrap_values</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">==</span><span class="nb">str</span><span class="p">))</span> <span class="ow">and</span> <span class="p">(</span><span class="n">extrap_values</span><span class="p">[</span><span class="mi">0</span><span class="p">][:</span><span class="mi">3</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;ext&#39;</span><span class="p">)):</span>
+                        <span class="k">pass</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">Si</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">wl_new</span><span class="o">&lt;</span><span class="n">wl</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">extrap_values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                        <span class="n">Si</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">wl_new</span><span class="o">&gt;</span><span class="n">wl</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">extrap_values</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  
                     
                 
             <span class="c1"># No negative values allowed for spectra:    </span>
@@ -502,8 +525,8 @@
             <span class="c1"># Add wavelengths to data array: </span>
             <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">wl_new</span><span class="p">,</span><span class="n">Si</span><span class="p">))</span>  
     
-    <span class="k">return</span> <span class="n">data</span></div>
-	
+    <span class="k">return</span> <span class="n">data</span>	</div>
+
 <span class="c1">#--------------------------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="spd"><a class="viewcode-back" href="../../../../spectrum.html#luxpy.spectrum.spd">[docs]</a><span class="k">def</span> <span class="nf">spd</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">interpolation</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;np&#39;</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>\
         <span class="n">columns</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="p">,</span><span class="n">header</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">datatype</span> <span class="o">=</span> <span class="s1">&#39;S&#39;</span><span class="p">,</span> \

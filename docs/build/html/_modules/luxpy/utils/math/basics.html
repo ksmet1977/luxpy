@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.utils.math.basics &mdash; LuxPy 1.4.13 documentation</title>
+  <title>luxpy.utils.math.basics &mdash; LuxPy 1.4.14 documentation</title>
   
 
   
@@ -56,7 +56,7 @@
             
             
               <div class="version">
-                1.4.13
+                1.4.14
               </div>
             
           
@@ -232,6 +232,10 @@
 
 <span class="sd"> :fit_ellipse(): Fit an ellipse to supplied data points.</span>
 <span class="sd"> </span>
+<span class="sd"> :fit_cov_ellipse(): Fit an covariance ellipse to supplied data points.</span>
+<span class="sd"> </span>
+<span class="sd"> :interp1(): Perform a 1-dimensional linear interpolation (wrapper around scipy.interpolate.InterpolatedUnivariateSpline).</span>
+<span class="sd"> </span>
 <span class="sd"> :ndinterp1(): Perform n-dimensional interpolation using Delaunay triangulation.</span>
 <span class="sd"> </span>
 <span class="sd"> :ndinterp1_scipy(): Perform n-dimensional interpolation using Delaunay triangulation (wrapper around scipy.interpolate.LinearNDInterpolator)</span>
@@ -246,12 +250,14 @@
 
 <span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">sp</span><span class="p">,</span> <span class="n">np2d</span><span class="p">,</span> <span class="n">_EPS</span><span class="p">,</span> <span class="n">asplit</span>
 <span class="kn">from</span> <span class="nn">scipy.special</span> <span class="k">import</span> <span class="n">erf</span><span class="p">,</span> <span class="n">erfinv</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">stats</span>
 <span class="n">__all__</span>  <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;normalize_3x3_matrix&#39;</span><span class="p">,</span><span class="s1">&#39;symmM_to_posdefM&#39;</span><span class="p">,</span><span class="s1">&#39;check_symmetric&#39;</span><span class="p">,</span>
             <span class="s1">&#39;check_posdef&#39;</span><span class="p">,</span><span class="s1">&#39;positive_arctan&#39;</span><span class="p">,</span><span class="s1">&#39;line_intersect&#39;</span><span class="p">,</span><span class="s1">&#39;erf&#39;</span><span class="p">,</span> <span class="s1">&#39;erfinv&#39;</span><span class="p">,</span> 
             <span class="s1">&#39;histogram&#39;</span><span class="p">,</span> <span class="s1">&#39;pol2cart&#39;</span><span class="p">,</span> <span class="s1">&#39;cart2pol&#39;</span><span class="p">,</span> <span class="s1">&#39;spher2cart&#39;</span><span class="p">,</span> <span class="s1">&#39;cart2spher&#39;</span><span class="p">]</span>
 <span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;bvgpdf&#39;</span><span class="p">,</span><span class="s1">&#39;mahalanobis2&#39;</span><span class="p">,</span><span class="s1">&#39;dot23&#39;</span><span class="p">,</span> <span class="s1">&#39;rms&#39;</span><span class="p">,</span><span class="s1">&#39;geomean&#39;</span><span class="p">,</span><span class="s1">&#39;polyarea&#39;</span><span class="p">]</span>
 <span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;magnitude_v&#39;</span><span class="p">,</span><span class="s1">&#39;angle_v1v2&#39;</span><span class="p">]</span>
-<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;v_to_cik&#39;</span><span class="p">,</span> <span class="s1">&#39;cik_to_v&#39;</span><span class="p">,</span> <span class="s1">&#39;fmod&#39;</span><span class="p">,</span> <span class="s1">&#39;fit_ellipse&#39;</span><span class="p">,</span><span class="s1">&#39;ndinterp1&#39;</span><span class="p">,</span><span class="s1">&#39;ndinterp1_scipy&#39;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;v_to_cik&#39;</span><span class="p">,</span> <span class="s1">&#39;cik_to_v&#39;</span><span class="p">,</span> <span class="s1">&#39;fmod&#39;</span><span class="p">,</span> <span class="s1">&#39;fit_ellipse&#39;</span><span class="p">,</span><span class="s1">&#39;fit_cov_ellipse&#39;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;interp1&#39;</span><span class="p">,</span> <span class="s1">&#39;ndinterp1&#39;</span><span class="p">,</span><span class="s1">&#39;ndinterp1_scipy&#39;</span><span class="p">]</span>
 <span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;box_m&#39;</span><span class="p">,</span><span class="s1">&#39;pitman_morgan&#39;</span><span class="p">]</span>
 
 
@@ -962,21 +968,32 @@
     <span class="k">return</span> <span class="n">r</span></div>
 
 
-<div class="viewcode-block" id="fit_ellipse"><a class="viewcode-back" href="../../../../utils.html#luxpy.utils.math.fit_ellipse">[docs]</a><span class="k">def</span> <span class="nf">fit_ellipse</span><span class="p">(</span><span class="n">xy</span><span class="p">):</span>
+<div class="viewcode-block" id="fit_ellipse"><a class="viewcode-back" href="../../../../utils.html#luxpy.utils.math.fit_ellipse">[docs]</a><span class="k">def</span> <span class="nf">fit_ellipse</span><span class="p">(</span><span class="n">xy</span><span class="p">,</span> <span class="n">center_on_mean_xy</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Fit an ellipse to supplied data points.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        :xy: </span>
 <span class="sd">            | coordinates of points to fit (Nx2 array)</span>
+<span class="sd">        :center_on_mean_xy:</span>
+<span class="sd">            | False, optional</span>
+<span class="sd">            | Center ellipse on mean of xy </span>
+<span class="sd">            | (otherwise it might be offset due to solving </span>
+<span class="sd">            | the contrained minization problem: aT*S*a, see ref below.)</span>
 <span class="sd">            </span>
 <span class="sd">    Returns:</span>
 <span class="sd">        :v:</span>
 <span class="sd">            | vector with ellipse parameters [Rmax,Rmin, xc,yc, theta]</span>
+<span class="sd">            </span>
+<span class="sd">    Reference:</span>
+<span class="sd">        1. Fitzgibbon, A.W., Pilu, M., and Fischer R.B., </span>
+<span class="sd">        Direct least squares fitting of ellipsees, </span>
+<span class="sd">        Proc. of the 13th Internation Conference on Pattern Recognition, </span>
+<span class="sd">        pp 253–257, Vienna, 1996.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># remove centroid:</span>
-    <span class="n">center</span> <span class="o">=</span> <span class="n">xy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-    <span class="n">xy</span> <span class="o">=</span> <span class="n">xy</span> <span class="o">-</span> <span class="n">center</span>
+<span class="c1">#    center = xy.mean(axis=0)</span>
+<span class="c1">#    xy = xy - center</span>
     
     <span class="c1"># Fit ellipse:</span>
     <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">xy</span><span class="p">[:,</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">],</span> <span class="n">xy</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
@@ -985,32 +1002,127 @@
     <span class="n">C</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">C</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">C</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>
     <span class="n">U</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">V</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">svd</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">S</span><span class="p">),</span> <span class="n">C</span><span class="p">))</span>
     <span class="n">e</span> <span class="o">=</span> <span class="n">U</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="c1">#    E, V =  np.linalg.eig(np.dot(np.linalg.inv(S), C))</span>
+<span class="c1">#    n = np.argmax(np.abs(E))</span>
+<span class="c1">#    e = V[:,n]</span>
         
     <span class="c1"># get ellipse axis lengths, center and orientation:</span>
     <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">a</span> <span class="o">=</span> <span class="n">e</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">e</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">e</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">e</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">e</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">e</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     
     <span class="c1"># get ellipse center:</span>
     <span class="n">num</span> <span class="o">=</span> <span class="n">b</span> <span class="o">*</span> <span class="n">b</span> <span class="o">-</span> <span class="n">a</span> <span class="o">*</span> <span class="n">c</span>
-    <span class="n">xc</span> <span class="o">=</span> <span class="p">((</span><span class="n">c</span> <span class="o">*</span> <span class="n">d</span> <span class="o">-</span> <span class="n">b</span> <span class="o">*</span> <span class="n">f</span><span class="p">)</span> <span class="o">/</span> <span class="n">num</span><span class="p">)</span> <span class="o">+</span> <span class="n">center</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">yc</span> <span class="o">=</span> <span class="p">((</span><span class="n">a</span> <span class="o">*</span> <span class="n">f</span> <span class="o">-</span> <span class="n">b</span> <span class="o">*</span> <span class="n">d</span><span class="p">)</span> <span class="o">/</span> <span class="n">num</span><span class="p">)</span> <span class="o">+</span> <span class="n">center</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">xc</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">yc</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">xc</span> <span class="o">=</span> <span class="p">((</span><span class="n">c</span> <span class="o">*</span> <span class="n">d</span> <span class="o">-</span> <span class="n">b</span> <span class="o">*</span> <span class="n">f</span><span class="p">)</span> <span class="o">/</span> <span class="n">num</span><span class="p">)</span> 
+        <span class="n">yc</span> <span class="o">=</span> <span class="p">((</span><span class="n">a</span> <span class="o">*</span> <span class="n">f</span> <span class="o">-</span> <span class="n">b</span> <span class="o">*</span> <span class="n">d</span><span class="p">)</span> <span class="o">/</span> <span class="n">num</span><span class="p">)</span> 
     
     <span class="c1"># get ellipse orientation:</span>
     <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">b</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="n">a</span> <span class="o">-</span> <span class="n">c</span><span class="p">)))</span> <span class="o">/</span> <span class="mi">2</span>
-    
+<span class="c1">#    if b == 0:</span>
+<span class="c1">#        if a &gt; c:</span>
+<span class="c1">#            theta = 0</span>
+<span class="c1">#        else:</span>
+<span class="c1">#            theta = np.pi/2</span>
+<span class="c1">#    else:</span>
+<span class="c1">#        if a &gt; c:</span>
+<span class="c1">#            theta = np.arctan2(2*b,(a-c))/2</span>
+<span class="c1">#        else:</span>
+<span class="c1">#            theta =  np.arctan2(2*b,(a-c))/2 + np.pi/2</span>
+        
     <span class="c1"># axis lengths:</span>
     <span class="n">up</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">f</span> <span class="o">*</span> <span class="n">f</span> <span class="o">+</span> <span class="n">c</span> <span class="o">*</span> <span class="n">d</span> <span class="o">*</span> <span class="n">d</span> <span class="o">+</span> <span class="n">g</span> <span class="o">*</span> <span class="n">b</span> <span class="o">*</span> <span class="n">b</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">b</span> <span class="o">*</span> <span class="n">d</span> <span class="o">*</span> <span class="n">f</span> <span class="o">-</span> <span class="n">a</span> <span class="o">*</span> <span class="n">c</span> <span class="o">*</span> <span class="n">g</span><span class="p">)</span>
     <span class="n">down1</span> <span class="o">=</span> <span class="p">(</span><span class="n">b</span> <span class="o">*</span> <span class="n">b</span> <span class="o">-</span> <span class="n">a</span> <span class="o">*</span> <span class="n">c</span><span class="p">)</span> <span class="o">*</span> <span class="p">((</span><span class="n">c</span> <span class="o">-</span> <span class="n">a</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">b</span> <span class="o">*</span> <span class="n">b</span> <span class="o">/</span> <span class="p">((</span><span class="n">a</span> <span class="o">-</span> <span class="n">c</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">a</span> <span class="o">-</span> <span class="n">c</span><span class="p">)))</span> <span class="o">-</span> <span class="p">(</span><span class="n">c</span> <span class="o">+</span> <span class="n">a</span><span class="p">))</span>
     <span class="n">down2</span> <span class="o">=</span> <span class="p">(</span><span class="n">b</span> <span class="o">*</span> <span class="n">b</span> <span class="o">-</span> <span class="n">a</span> <span class="o">*</span> <span class="n">c</span><span class="p">)</span> <span class="o">*</span> <span class="p">((</span><span class="n">a</span> <span class="o">-</span> <span class="n">c</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">b</span> <span class="o">*</span> <span class="n">b</span> <span class="o">/</span> <span class="p">((</span><span class="n">a</span> <span class="o">-</span> <span class="n">c</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">a</span> <span class="o">-</span> <span class="n">c</span><span class="p">)))</span> <span class="o">-</span> <span class="p">(</span><span class="n">c</span> <span class="o">+</span> <span class="n">a</span><span class="p">))</span>
-    <span class="n">a</span><span class="p">,</span> <span class="n">b</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">up</span> <span class="o">/</span> <span class="n">down1</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">up</span> <span class="o">/</span> <span class="n">down2</span><span class="p">)</span>
+    <span class="n">a</span><span class="p">,</span> <span class="n">b</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">up</span> <span class="o">/</span> <span class="n">down1</span><span class="p">)),</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">up</span> <span class="o">/</span> <span class="n">down2</span><span class="p">))</span>
+
 
     <span class="c1"># assert that a is the major axis (otherwise swap and correct angle)</span>
     <span class="k">if</span><span class="p">(</span><span class="n">b</span> <span class="o">&gt;</span> <span class="n">a</span><span class="p">):</span>
         <span class="n">b</span><span class="p">,</span> <span class="n">a</span> <span class="o">=</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span>
-
         <span class="c1"># ensure the angle is betwen 0 and 2*pi</span>
         <span class="n">theta</span> <span class="o">=</span> <span class="n">fmod</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+        
+    <span class="k">if</span> <span class="n">center_on_mean_xy</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">xc</span><span class="p">,</span><span class="n">yc</span> <span class="o">=</span> <span class="n">xy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">xc</span><span class="p">,</span> <span class="n">yc</span><span class="p">,</span> <span class="n">theta</span><span class="p">))</span></div>
 
+
+<div class="viewcode-block" id="fit_cov_ellipse"><a class="viewcode-back" href="../../../../utils.html#luxpy.utils.math.fit_cov_ellipse">[docs]</a><span class="k">def</span> <span class="nf">fit_cov_ellipse</span><span class="p">(</span><span class="n">xy</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span> <span class="n">pdf</span> <span class="o">=</span> <span class="s1">&#39;chi2&#39;</span><span class="p">,</span> <span class="n">SE</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Fit covariance ellipse to xy data.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :xy: </span>
+<span class="sd">            | coordinates of points to fit (Nx2 array)</span>
+<span class="sd">        :alpha:</span>
+<span class="sd">            | 0.05, optional</span>
+<span class="sd">            | alpha significance level </span>
+<span class="sd">            | (e.g alpha = 0.05 for 95% confidence ellipse)</span>
+<span class="sd">        :pdf:</span>
+<span class="sd">            | chi2, optional</span>
+<span class="sd">            | - &#39;chi2&#39;: Rescale using Chi2-distribution</span>
+<span class="sd">            | - &#39;t&#39;: Rescale using Student t-distribution</span>
+<span class="sd">            | - &#39;norm&#39;: Rescale using normal-distribution</span>
+<span class="sd">            | - None: don&#39;t rescale using pdf, use alpha as scalefactor (cfr. alpha* 1SD or alpha * 1SE)</span>
+<span class="sd">        :SE:</span>
+<span class="sd">            | False, optional</span>
+<span class="sd">            | If false, fit standard error ellipse at alpha significance level</span>
+<span class="sd">            | If true, fit standard deviation ellipse at alpha significance level</span>
+<span class="sd">            </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :v:</span>
+<span class="sd">            | vector with ellipse parameters [Rmax,Rmin, xc,yc, theta]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">xyc</span> <span class="o">=</span> <span class="n">xy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">cov_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cov</span><span class="p">(</span><span class="n">xy</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+    <span class="n">cik</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">cov_</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">pdf</span> <span class="o">==</span> <span class="s1">&#39;chi2&#39;</span><span class="p">:</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">chi2</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">alpha</span><span class="p">,</span> <span class="n">xy</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">elif</span> <span class="n">pdf</span> <span class="o">==</span> <span class="s1">&#39;t&#39;</span><span class="p">:</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">alpha</span><span class="p">,</span> <span class="n">xy</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">pdf</span> <span class="o">==</span><span class="s1">&#39;norm&#39;</span><span class="p">:</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">alpha</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">pdf</span> <span class="o">==</span> <span class="s1">&#39;sample&#39;</span><span class="p">:</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">xy</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">xy</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="p">(</span><span class="n">p</span><span class="o">*</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="n">p</span><span class="p">)</span><span class="o">*</span><span class="n">stats</span><span class="o">.</span><span class="n">f</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">alpha</span><span class="p">,</span><span class="n">p</span><span class="p">,</span><span class="n">n</span><span class="o">-</span><span class="n">p</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">alpha</span> <span class="c1">#  -&gt; fraction of Mahalanobis distance</span>
+        
+    <span class="k">if</span> <span class="n">SE</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">f</span><span class="o">/</span><span class="n">xy</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        
+    <span class="n">v</span> <span class="o">=</span> <span class="n">cik_to_v</span><span class="p">(</span><span class="n">cik</span><span class="o">/</span><span class="n">f</span><span class="p">,</span> <span class="n">xyc</span><span class="o">=</span><span class="n">xyc</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">v</span></div>
+<span class="c1">#------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="interp1"><a class="viewcode-back" href="../../../../utils.html#luxpy.utils.math.interp1">[docs]</a><span class="k">def</span> <span class="nf">interp1</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span><span class="n">Xnew</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="s1">&#39;extrapolate&#39;</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">bbox</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">check_finite</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Perform a 1-dimensional linear interpolation (wrapper around scipy.interpolate.InterpolatedUnivariateSpline).</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :X: </span>
+<span class="sd">            | ndarray with n-dimensional coordinates (last axis represents dimension)</span>
+<span class="sd">        :Y: </span>
+<span class="sd">            | ndarray with values at coordinates in X</span>
+<span class="sd">        :Xnew: </span>
+<span class="sd">            | ndarray of new coordinates (last axis represents dimension)</span>
+<span class="sd">        :kind:</span>
+<span class="sd">            | str or int,  optional</span>
+<span class="sd">            | if str: kind is &#39;translated&#39; to an int value for input to interpolate.InterpolatedUnivariateSpline()</span>
+<span class="sd">            | supported options for str: &#39;linear&#39;, &#39;quadratic&#39;, &#39;cubic&#39;, &#39;quartic&#39;, &#39;quintic&#39;</span>
+<span class="sd">        :other args:</span>
+<span class="sd">            | see interpolate.InterpolatedUnivariateSpline()</span>
+<span class="sd">        </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :Ynew:</span>
+<span class="sd">            | ndarray with new values at coordinates in Xnew</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="s1">&#39;quadratic&#39;</span><span class="p">,</span> <span class="s1">&#39;cubic&#39;</span><span class="p">,</span> <span class="s1">&#39;quartic&#39;</span><span class="p">,</span> <span class="s1">&#39;quintic&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">kind</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">sp</span><span class="o">.</span><span class="n">interpolate</span><span class="o">.</span><span class="n">InterpolatedUnivariateSpline</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">ext</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="n">k</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="n">w</span><span class="p">,</span> <span class="n">bbox</span> <span class="o">=</span> <span class="n">bbox</span><span class="p">,</span> <span class="n">check_finite</span> <span class="o">=</span> <span class="n">check_finite</span><span class="p">)(</span><span class="n">Xnew</span><span class="p">)</span></div>
 <span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="ndinterp1_scipy"><a class="viewcode-back" href="../../../../utils.html#luxpy.utils.math.ndinterp1_scipy">[docs]</a><span class="k">def</span> <span class="nf">ndinterp1_scipy</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span><span class="n">Xnew</span><span class="p">,</span> <span class="n">fill_value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>  <span class="n">rescale</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>    
     <span class="sd">&quot;&quot;&quot;</span>

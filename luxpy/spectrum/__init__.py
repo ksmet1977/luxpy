@@ -153,7 +153,7 @@ spectrum/spectral_databases.py
         | * the 24 Macbeth ColorChecker samples,
         | * the 215 samples proposed by Opstelten, J.J. , 1983, The establishment of a representative set of test colours
         |   for the specification of the colour rendering properties of light sources, CIE-20th session, Amsterdam. 
-        | * the 114120 RFLs from `(capbone.com/spectral-reflectance-database/)<114120 RFLs from https://capbone.com/spectral-reflectance-database/>`_
+        | * the 114120 RFLs from capbone.com/spectral-reflectance-database/
     
     
     

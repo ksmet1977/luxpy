@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Color sub-package &mdash; LuxPy 1.4.13 documentation</title>
+  <title>Color sub-package &mdash; LuxPy 1.4.14 documentation</title>
   
 
   
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                1.4.13
+                1.4.14
               </div>
             
           
@@ -259,6 +259,42 @@ Color Research &amp; Application, 39(3), 279–287.</a></div>
 </table>
 </div></blockquote>
 <hr class="docutils" />
+<dl class="function">
+<dt id="luxpy.color.utils.get_subplot_layout">
+<code class="descclassname">luxpy.color.utils.</code><code class="descname">get_subplot_layout</code><span class="sig-paren">(</span><em>N</em>, <em>min_1xncols=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/utils/plotters.html#get_subplot_layout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.utils.get_subplot_layout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate layout of multiple subplots.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">N:</th><td class="field-body"><div class="first last line-block">
+<div class="line">Number of plots.</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">min_1xncols:</th><td class="field-body"><div class="first last line-block">
+<div class="line">Minimum number of columns before splitting over multiple rows.</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">nrows, ncols:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="function">
 <dt id="luxpy.color.utils.plotSL">
 <code class="descclassname">luxpy.color.utils.</code><code class="descname">plotSL</code><span class="sig-paren">(</span><em>cieobs='1931_2'</em>, <em>cspace='Yuv'</em>, <em>DL=True</em>, <em>BBL=True</em>, <em>D65=False</em>, <em>EEW=False</em>, <em>cctlabels=False</em>, <em>axh=None</em>, <em>show=True</em>, <em>cspace_pars={}</em>, <em>formatstr='k-'</em>, <em>diagram_colors=False</em>, <em>diagram_samples=100</em>, <em>diagram_opacity=1.0</em>, <em>diagram_lightness=0.25</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/utils/plotters.html#plotSL"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.utils.plotSL" title="Permalink to this definition">¶</a></dt>
@@ -3950,6 +3986,64 @@ Journal of the Optical Society of America A, 35(12), 2000–2009.</a>        </d
 </table>
 </div></blockquote>
 <dl class="function">
+<dt id="luxpy.color.cam.deltaH">
+<code class="descclassname">luxpy.color.cam.</code><code class="descname">deltaH</code><span class="sig-paren">(</span><em>h1</em>, <em>C1</em>, <em>h2=None</em>, <em>C2=None</em>, <em>htype='deg'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cam/cam_02_X.html#deltaH"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cam.deltaH" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute a hue difference, dH = 2*C1*C2*sin(dh/2)</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">h1:</th><td class="field-body"><div class="first last line-block">
+<div class="line">hue for sample 1 (or hue difference if h2 is None)</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">C1:</th><td class="field-body"><div class="first last line-block">
+<div class="line">chroma of sample 1 (or prod C1*C2 if C2 is None)</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">h2:</th><td class="field-body"><div class="first last line-block">
+<div class="line">hue angle of sample 2 (if None, then h1 contains a hue difference)</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">C2:</th><td class="field-body"><div class="first last line-block">
+<div class="line">chroma of sample 2</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">htype:</th><td class="field-body"><div class="first last line-block">
+<div class="line">‘deg’ or ‘rad’, optional</div>
+<div class="line-block">
+<div class="line">- ‘deg’: hue angle between 0° and 360°</div>
+<div class="line">- ‘rad’: hue angle between 0 and 2pi radians</div>
+</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">returns:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray of deltaH values.</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
 <dt id="luxpy.color.cam.hue_angle">
 <code class="descclassname">luxpy.color.cam.</code><code class="descname">hue_angle</code><span class="sig-paren">(</span><em>a</em>, <em>b</em>, <em>htype='deg'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cam/cam_02_X.html#hue_angle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cam.hue_angle" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate positive hue angle (0°-360° or 0 - 2*pi rad.) 
@@ -5352,6 +5446,64 @@ Journal of the Optical Society of America A, 35(12), 2000–2009.</a></dd>
 </tbody>
 </table>
 </div></blockquote>
+<dl class="function">
+<dt id="luxpy.color.deltaE.deltaH">
+<code class="descclassname">luxpy.color.deltaE.</code><code class="descname">deltaH</code><span class="sig-paren">(</span><em>h1</em>, <em>C1</em>, <em>h2=None</em>, <em>C2=None</em>, <em>htype='deg'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/deltaE/colordifferences.html#deltaH"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.deltaE.deltaH" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute a hue difference, dH = 2*C1*C2*sin(dh/2)</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">h1:</th><td class="field-body"><div class="first last line-block">
+<div class="line">hue for sample 1 (or hue difference if h2 is None)</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">C1:</th><td class="field-body"><div class="first last line-block">
+<div class="line">chroma of sample 1 (or prod C1*C2 if C2 is None)</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">h2:</th><td class="field-body"><div class="first last line-block">
+<div class="line">hue angle of sample 2 (if None, then h1 contains a hue difference)</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">C2:</th><td class="field-body"><div class="first last line-block">
+<div class="line">chroma of sample 2</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">htype:</th><td class="field-body"><div class="first last line-block">
+<div class="line">‘deg’ or ‘rad’, optional</div>
+<div class="line-block">
+<div class="line">- ‘deg’: hue angle between 0° and 360°</div>
+<div class="line">- ‘rad’: hue angle between 0 and 2pi radians</div>
+</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">returns:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray of deltaH values.</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="function">
 <dt id="luxpy.color.deltaE.DE_camucs">
 <code class="descclassname">luxpy.color.deltaE.</code><code class="descname">DE_camucs</code><span class="sig-paren">(</span><em>xyzt</em>, <em>xyzr</em>, <em>DEtype='jab'</em>, <em>avg=None</em>, <em>avg_axis=0</em>, <em>out='DEi'</em>, <em>xyzwt=array([[1.0000e+02</em>, <em>1.0000e+02</em>, <em>1.0000e+02]])</em>, <em>xyzwr=array([[1.0000e+02</em>, <em>1.0000e+02</em>, <em>1.0000e+02]])</em>, <em>Ywt=None</em>, <em>conditionst={'D': 1.0</em>, <em>'Dtype': None</em>, <em>'La': 100.0</em>, <em>'Yb': 20.0</em>, <em>'surround': 'avg'}</em>, <em>Ywr=None</em>, <em>conditionsr={'D': 1.0</em>, <em>'Dtype': None</em>, <em>'La': 100.0</em>, <em>'Yb': 20.0</em>, <em>'surround': 'avg'}</em>, <em>camtype='ciecam02'</em>, <em>ucstype='ucs'</em>, <em>mcat=None</em>, <em>outin='J</em>, <em>aM</em>, <em>bM'</em>, <em>yellowbluepurplecorrect=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/deltaE/colordifferences.html#DE_camucs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.deltaE.DE_camucs" title="Permalink to this definition">¶</a></dt>

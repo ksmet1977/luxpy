@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Spectrum sub-package &mdash; LuxPy 1.4.13 documentation</title>
+  <title>Spectrum sub-package &mdash; LuxPy 1.4.14 documentation</title>
   
 
   
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                1.4.13
+                1.4.14
               </div>
             
           
@@ -374,8 +374,14 @@ or quantal energy units.</p>
 <tr class="field-odd field"><th class="field-name">_IESTM3015:</th><td class="field-body">Database with spectral reflectances related to and light source 
 spectra contained excel calculator of IES TM30-15 publication.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">_IESTM3015_S:</th><td class="field-body">Database with only light source spectra contained in the 
+<tr class="field-even field"><th class="field-name">_IESTM3018:</th><td class="field-body">Database with spectral reflectances related to and light source 
+spectra contained excel calculator of IES TM30-18 publication.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">_IESTM3015_S:</th><td class="field-body">Database with only light source spectra contained in the 
 IES TM30-15 excel calculator.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">_IESTM3018_S:</th><td class="field-body">Database with only light source spectra contained in the 
+IES TM30-18 excel calculator.</td>
 </tr>
 <tr class="field-odd field"><th class="field-name" colspan="2">_CIE_ILLUMINANTS:</th></tr>
 <tr class="field-odd field"><td>&#160;</td><td class="field-body"><div class="first last line-block">
@@ -386,7 +392,10 @@ IES TM30-15 excel calculator.</td>
 </div>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">_CRI_RFL:</th><td class="field-body"><div class="first last line-block">
+<tr class="field-even field"><th class="field-name" colspan="2">_CIE_E, _CIE_D65, _CIE_A, _CIE_C, _CIE_F4:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body">Some CIE illuminants for easy use.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">_CRI_RFL:</th><td class="field-body"><div class="first last line-block">
 <div class="line">Database with spectral reflectance functions for various 
 color rendition calculators:</div>
 <div class="line">* <a class="reference external" href="http://www.cie.co.at/index.php/index.php?i_ca_id=303">CIE 13.3-1995 (8, 14 munsell samples)</a></div>
@@ -398,8 +407,21 @@ color rendition calculators:</div>
 </div>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">_MUNSELL:</th><td class="field-body">Database (dict) with 1269 Munsell spectral reflectance functions 
+<tr class="field-even field"><th class="field-name">_MUNSELL:</th><td class="field-body">Database (dict) with 1269 Munsell spectral reflectance functions 
 and Value (V), Chroma (C), hue (h) and (ab) specifications.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">_RFL:</th><td class="field-body"><div class="first last line-block">
+<div class="line">Database (dict) with RFLs, including:</div>
+<div class="line">* all those in _CRI_RFL, </div>
+<div class="line">* the 1269 Matt Munsell samples (see also _MUNSELL),</div>
+<div class="line">* the 24 Macbeth ColorChecker samples,</div>
+<div class="line">* the 215 samples proposed by Opstelten, J.J. , 1983, The establishment of a representative set of test colours</div>
+<div class="line-block">
+<div class="line">for the specification of the colour rendering properties of light sources, CIE-20th session, Amsterdam. </div>
+</div>
+<div class="line">* the 114120 RFLs from capbone.com/spectral-reflectance-database/</div>
+</div>
+</td>
 </tr>
 </tbody>
 </table>
@@ -597,7 +619,7 @@ or which wavelength is normalized to 1 for ‘lambda’ option.</div>
 </div>
 <div class="line">- Or :kind: can be any interpolation type supported by </div>
 <div class="line-block">
-<div class="line">scipy.interpolate.interp1d</div>
+<div class="line">luxpy.math.interp1</div>
 </div>
 </div>
 </div>
@@ -612,8 +634,9 @@ or which wavelength is normalized to 1 for ‘lambda’ option.</div>
 </tr>
 <tr class="field-odd field"><th class="field-name">extrap_values:</th><td class="field-body"><div class="first last line-block">
 <div class="line">None, optional</div>
-<div class="line">float or list or ndarray with values to extrapolate</div>
-<div class="line">If None: use CIE recommended ‘closest value’ approach.</div>
+<div class="line">If None: use CIE recommended ‘closest value’ approach when extrapolating.</div>
+<div class="line">If float or list or ndarray, use those values to fill extrapolated value(s).</div>
+<div class="line">If ‘ext’: use normal extrapolated values by math.interp1</div>
 </div>
 </td>
 </tr>
