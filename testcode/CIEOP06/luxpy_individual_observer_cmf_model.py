@@ -1,13 +1,5 @@
 # -*- coding: utf-8 -*-
 """
-   Temporary copy of individual_observer_cmf_model.py (18/12/2019)
-.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
-"""
-
-
-
-# -*- coding: utf-8 -*-
-"""
 Module for Individual Observer lms-CMFs (Asano, 2016 and CIE TC1-97)
 ====================================================================
     
@@ -529,7 +521,6 @@ def init(wl = None, dsrc_std = None, dsrc_lms_odens = None, lms_to_xyz_method = 
     else:
         _DSRC_STD_DEF = 'matlab'
         
-
     if dsrc_lms_odens is not None:
         _DSRC_LMS_ODENS_DEF = dsrc_lms_odens
     else:
@@ -1444,7 +1435,7 @@ def compute_cmfs(fieldsize = 10, age = 32, wl = None,
             | [0, 0, 0] optional
             | Variation of LMS optical densities.
         :norm_type:
-            | 'max', optional
+            | None, optional
             | - 'max': normalize LMSq functions to max = 1
             | - 'area': normalize to area
             | - 'power': normalize to power
@@ -1474,7 +1465,7 @@ def compute_cmfs(fieldsize = 10, age = 32, wl = None,
             
     Returns:
         :returns: 
-            | - 'LMS' [or 'XYZ']: ndarray with individual observer area-normalized 
+            | - 'LMS' [or 'XYZ']: ndarray with individual observer equal area-normalized 
             |           cone fundamentals. Wavelength have been added.
                 
             | [- 'M': lms to xyz conversion matrix
@@ -1517,7 +1508,7 @@ def compute_cmfs(fieldsize = 10, age = 32, wl = None,
         odata = _DATA['odata']
     else:
         odata = odata0
-
+    
     if wl is None:
         wl = odata['wls']
     else:
@@ -1636,10 +1627,12 @@ def compute_cmfs(fieldsize = 10, age = 32, wl = None,
     # Change normalization of M to 
     # ensure that EEW is always at [100,100,100] in XYZ system:
     if ('M' in out_list):
-        xyz0 = XYZ[1:,:].sum(axis=1,keepdims=True).T
-        xyz0 = xyz0/xyz0[0,1]
-        M = math.normalize_3x3_matrix(M, xyz0 = xyz0) 
-
+        Mi = np.linalg.inv(M) # M: lms->xyz; Mi: xyz->lms
+        Min = math.normalize_3x3_matrix(Mi, xyz0 = np.array([[1,1,1]])) # normalize Mi matrix
+        M = np.linalg.inv(Min) # calculate new lms->xyz normalized matrix
+        LMS[1:,:] = np.dot(Min,XYZ[1:,:]) # calculate lmsbar such that they match M!
+        
+        
     if (('xyz' in out.lower().split(',')) & ('lms' in out.lower().split(','))):
         # Change normalization of LMS, XYZ:
         if norm_type is not None:
@@ -1661,14 +1654,16 @@ def compute_cmfs(fieldsize = 10, age = 32, wl = None,
         if ('lms' in out.lower().split(',')):
             LMS = sign_figs(LMS, 6) # only LMS. XYZ is output at 7 sign. digit level in tc197 Python code
 
-    if (out == 'LMS'):
+    if (out == 'LMS') | (out == 'lms'):
         return LMS
-    elif (out == 'XYZ'):
+    elif (out == 'XYZ') | (out == 'xyz'):
         return XYZ
-    elif (out == 'LMS,M'):
+    elif (out == 'LMS,M') | (out == 'lms,M'):
         return LMS, M
-    elif (out == 'XYZ,M'):
+    elif (out == 'XYZ,M') | (out == 'xyz,M'):
         return XYZ, M
+    elif (out == 'LMS,XYZ,M') | (out == 'lms,xyz,M'):
+        return LMS, XYZ, M
     elif out == 'M':
         return M
     elif (out == 'LMS,trans_lens,trans_macula,sens_photopig'):
@@ -1682,7 +1677,7 @@ def cie2006cmfsEx(age = 32,fieldsize = 10, wl = None,\
                   var_od_lens = 0, var_od_macula = 0, \
                   var_od_L = 0, var_od_M = 0, var_od_S = 0,\
                   var_shft_L = 0, var_shft_M = 0, var_shft_S = 0,\
-                  norm_type = 'area', out = 'lms', base = False, 
+                  norm_type = None, out = 'lms', base = False, 
                   strategy_2 = True, odata0 = None,
                   lms_to_xyz_method = None, allow_negative_values = False):
     """
@@ -1726,7 +1721,7 @@ def cie2006cmfsEx(age = 32,fieldsize = 10, wl = None,\
             | 0, optional
             | Std Dev. in peak wavelength shift [nm] of S-cone. 
         :norm_type:
-            | 'max', optional
+            | None, optional
             | - 'max': normalize LMSq functions to max = 1
             | - 'area': normalize to area
             | - 'power': normalize to power
@@ -1756,7 +1751,7 @@ def cie2006cmfsEx(age = 32,fieldsize = 10, wl = None,\
             
     Returns:
         :returns: 
-            | - 'LMS' [or 'XYZ']: ndarray with individual observer area-normalized 
+            | - 'LMS' [or 'XYZ']: ndarray with individual observer equal area-normalized 
             |           cone fundamentals. Wavelength have been added.
                 
             | [- 'M': lms to xyz conversion matrix
@@ -1853,7 +1848,7 @@ def getUSCensusAgeDist():
     return list_Age    
 
 def genMonteCarloObs(n_obs = 1, fieldsize = 10, list_Age = [32], wl = None, 
-                     norm_type = 'area', out = 'lms', base = False, 
+                     norm_type = None, out = 'lms', base = False, 
                      strategy_2 = True, odata0 = None,
                      lms_to_xyz_method = None, allow_negative_values = False):
     """
@@ -1876,7 +1871,7 @@ def genMonteCarloObs(n_obs = 1, fieldsize = 10, list_Age = [32], wl = None,
             | Interpolation/extraplation of :LMS: output to specified wavelengths.
             | None: output original _WL 
         :norm_type:
-            | 'max', optional
+            | None, optional
             | - 'max': normalize LMSq functions to max = 1
             | - 'area': normalize to area
             | - 'power': normalize to power
@@ -1932,7 +1927,6 @@ def genMonteCarloObs(n_obs = 1, fieldsize = 10, list_Age = [32], wl = None,
     """
     # Get Normally-distributed Physiological Factors:
     vAll = getMonteCarloParam(n_obs = n_obs) 
-
      
     if list_Age is 'us_census':
         list_Age = getUSCensusAgeDist()
@@ -1952,7 +1946,7 @@ def genMonteCarloObs(n_obs = 1, fieldsize = 10, list_Age = [32], wl = None,
         odata = _DATA['odata']
     else:
         odata = odata0
-
+    
     # Set requested wavelength range:
     if wl is None:
         wl = odata['wls']
@@ -1996,7 +1990,7 @@ def genMonteCarloObs(n_obs = 1, fieldsize = 10, list_Age = [32], wl = None,
 
         
 def getCatObs(n_cat = 10, fieldsize = 2,  wl = None, 
-             norm_type = 'area', out = 'lms', base = False, 
+             norm_type = None, out = 'lms', base = False, 
              strategy_2 = True, odata0 = None,
              lms_to_xyz_method = None, allow_negative_values = False):
     """
@@ -2017,7 +2011,7 @@ def getCatObs(n_cat = 10, fieldsize = 2,  wl = None,
             | Interpolation/extraplation of :LMS: output to specified wavelengths.
             |  None: output original _WL 
         :norm_type:
-            | 'max', optional
+            | None, optional
             | - 'max': normalize LMSq functions to max = 1
             | - 'area': normalize to area
             | - 'power': normalize to power
