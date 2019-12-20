@@ -19,7 +19,7 @@ If you use the package, please cite the following **tutorial paper** published i
 **Luxpy** is an open source package under a GPLv3 license that supports several common
 **lighting**, **colorimetric**, **color appearance** and other **color science**
  related calculations and models, such as:
-* spectral data interpolation (conform CIE15-2004) and normalization
+* spectral data interpolation (conform CIE15-2018) and normalization
 * calculation of daylight phase, blackbody radiator and other reference illuminant spectra
 * calculation of tristimulus values
 * correlated color temperature and Duv
