@@ -52,6 +52,8 @@ Functions
                                with math.minimizebnd) based on type 
                                of component_data (or predefined values in spd_model_pars dict).
                 
+ :get_primary_fluxratios(): Get flux ratios of primaries.
+     
  :spd_optimizer(): Generate a spectrum with specified white point and optimized
                    for certain objective functions from a set of component 
                    spectra or component spectrum model parameters.
@@ -66,7 +68,7 @@ References
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 from luxpy import (np, plt, warnings, math, _WL3, _CIEOBS, _EPS, np2d, 
-                   vec_to_dict, getwlr, SPD,
+                   vec_to_dict, getwlr, SPD, spd_to_power,
                    spd_to_xyz, xyz_to_Yxy, colortf, xyz_to_cct)
 from luxpy import cri 
 import itertools
@@ -76,7 +78,7 @@ import itertools
 __all__ = ['gaussian_spd','mono_led_spd','phosphor_led_spd','spd_builder',
          'get_w_summed_spd','fitnessfcn','spd_constructor_2',
          'spd_constructor_3','spd_optimizer_2_3','get_optim_pars_dict',
-         'initialize_spd_model_pars','initialize_spd_optim_pars','spd_optimizer']
+         'initialize_spd_model_pars','initialize_spd_optim_pars','get_primary_fluxratios','spd_optimizer']
 
 #------------------------------------------------------------------------------
 def gaussian_spd(peakwl = 530, fwhm = 20, wl = _WL3, with_wl = True):
@@ -1673,6 +1675,65 @@ def initialize_spd_optim_pars(component_data, N_components = None,\
     
     return spd_optim_pars, spd_model_pars
 
+#------------------------------------------------------------------------------
+def get_primary_fluxratios(res, primaries, Ytarget = 1, ptype = 'pu', cieobs = _CIEOBS, out = 'M,Sopt'):
+    """
+    Get flux ratios of primaries.
+    
+    Args:
+        :res:
+            | dict or ndarray with optimized fluxes for component spds normalized to max = 1.
+            | (output of spd_optimizer)
+        :primaries:
+            | ndarray with primary spectra.
+        :Ytarget:
+            | 1, optional
+            | M will be scaled to result in a photo-/radio-metric power of Ytarget
+        :ptype:
+            | 'pu' or 'ru', optional
+            | Type of power:
+            | -'pu': photometric units
+            | -'ru': radiometric units
+        :cieobs:
+            | _CIEOBS, optional
+            | CMF set/Vlambda to use in calculation of power.
+            
+    Returns:
+        :M:
+            | ndarray with flux ratios.
+        :Sopt:
+            | ndarray with optimized scaled spectrum.
+    """
+    # Get maximum of primary spectra:
+    max_spds_prim = primaries[1:].max(axis=1,keepdims=True).T
+    
+    # Get M (contribution ratios):
+    M = np.atleast_2d(res['M'].copy())
+
+    # Convert M (contribution ratios) to account for the fact that primaries 
+    # contains absolute radiant powers, while spd_optimizer function normally 
+    # expects normalization to max = 1:
+    M /= max_spds_prim
+    
+    # Get Sopt spectrum:
+    Sopt = np.vstack((primaries[:1,:],(primaries[1:,:]*M.T).sum(axis=0)))
+    
+    # rescale to account for target photometric power:
+    Y = spd_to_power(Sopt, cieobs = cieobs,ptype=ptype)
+    M *= Ytarget/Y
+    
+    # rescale Sopt:
+    Sopt[1:]*=Ytarget/Y
+    
+    if out == 'M,Sopt':
+        return M, Sopt
+    elif out == 'Sopt,M':
+        return Sopt, M
+    elif out == M:
+        return M
+    elif out == 'Sopt':
+        return Sopt
+
             
 #------------------------------------------------------------------------------
 def spd_optimizer(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs = _CIEOBS,\
@@ -1823,6 +1884,7 @@ def spd_optimizer(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs = _CIEO
         cieobs = cspace_bwtf['cieobs']
     
     # Get component spd / data:
+    component_spds_original = None
     if component_spds is None:
         if N_components is None: # Generate component spds from input args:
             if allow_butterworth_mono_spds == False:
@@ -1869,6 +1931,7 @@ def spd_optimizer(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs = _CIEO
             spds = spd_model_pars
         else: # optimize spectrum fluxes of pre-defined set of component spectra:
             spds = component_spds 
+            component_spds_original = spds.copy() # these are the original (unrenormalized) primary spectra.
             N_components = spds.shape[0]
     
     # Check if there are at least 3 spds:
@@ -1888,12 +1951,17 @@ def spd_optimizer(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs = _CIEO
                                                     minimize_opts = minimize_opts,\
                                                     verbosity = verbosity)
     
-    # store component spectra in spds with first axis components, second axis wavelengths
-    spds = component_spds 
-    wl = spds[:1]
+    # Get flux ratios and optimized spectrum:
+    if component_spds_original is not None:
+        component_spds = component_spds_original.copy()
+    M, spd_opt = get_primary_fluxratios(res, component_spds, Ytarget = Yxyt[...,0], ptype = 'pu', cieobs = cieobs, out = 'M,Sopt')
+    res['M'] = M
+    
+    # get wavelengths
+    wl = component_spds[:1]
     
     # Calculate combined spd from components and their fluxes:
-    spds = (np.atleast_2d(M)*spds[1:].T).T.sum(axis = 0)
+    spds = (np.atleast_2d(M)*component_spds[1:].T).T.sum(axis = 0)
     
     if with_wl == True:
         spds = np.vstack((wl, spds))
