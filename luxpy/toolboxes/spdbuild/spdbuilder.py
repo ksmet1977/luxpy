@@ -76,7 +76,7 @@ import itertools
 #np.set_printoptions(formatter={'float': lambda x: "{0:0.2e}".format(x)})
 
 __all__ = ['gaussian_spd','mono_led_spd','phosphor_led_spd','spd_builder',
-         'get_w_summed_spd','fitnessfcn','spd_constructor_2',
+         'get_w_summed_spd','fitnessfcn','spd_constructor_2','color3mixer','colormixer',
          'spd_constructor_3','spd_optimizer_2_3','get_optim_pars_dict',
          'initialize_spd_model_pars','initialize_spd_optim_pars','get_primary_fluxratios','spd_optimizer']
 
@@ -1708,7 +1708,10 @@ def get_primary_fluxratios(res, primaries, Ytarget = 1, ptype = 'pu', cieobs = _
     max_spds_prim = primaries[1:].max(axis=1,keepdims=True).T
     
     # Get M (contribution ratios):
-    M = np.atleast_2d(res['M'].copy())
+    if isinstance(res,dict):
+        M = np.atleast_2d(res['M'].copy())
+    else:
+        M = np.atleast_2d(M.copy())
 
     # Convert M (contribution ratios) to account for the fact that primaries 
     # contains absolute radiant powers, while spd_optimizer function normally 
