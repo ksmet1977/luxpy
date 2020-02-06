@@ -31,7 +31,7 @@ cmf.py
      | * luxpy._CMF[x]['bar'] = numpy array with CMFs for type x 
                                 between 360 nm and 830 nm (has shape: (4,471))
      | * luxpy._CMF[x]['K']   = Constant converting Watt to lumen for CMF type x.
-     | * luxpy._CMF[x]['M']   = XYZ to LMS conversion matrix (normalized to ill. E) for CMF type x.
+     | * luxpy._CMF[x]['M']   = XYZ to LMS conversion matrix for CMF type x.
                                 Matrix is numpy array with shape: (3,3)
                             
      Notes:
@@ -57,6 +57,10 @@ cmf.py
             functions can be called from the X,Y,Z cmf sets. 
             The K value has been set to 1700.06 lm/W and the conversion matrix 
             to np.eye().
+        
+        5. _CMF[x]['M'] for x equal to '2006_2' or '2006_10' is NOT 
+            normalized to illuminant E! These are the original matrices 
+            as defined by [1] & [2].
 
     
 References
@@ -109,7 +113,7 @@ _CMF_M_1931_2=np.array([     # definition of 3x3 matrices to convert from xyz to
 _CMF_M_2006_2 = np.linalg.inv(np.array([[1.94735469, -1.41445123, 0.36476327],
                                         [0.68990272, 0.34832189, 0],
                                         [0, 0, 1.93485343]]))
-_CMF_M_2006_2 = math.normalize_3x3_matrix(_CMF_M_2006_2) 
+#_CMF_M_2006_2 = math.normalize_3x3_matrix(_CMF_M_2006_2) 
         
 #_CMF_M_2006_10=np.array([
 #[0.21701045,0.83573367,-0.043510597],
@@ -119,7 +123,7 @@ _CMF_M_2006_2 = math.normalize_3x3_matrix(_CMF_M_2006_2)
 _CMF_M_2006_10 = np.linalg.inv(np.array([[1.93986443, -1.34664359, 0.43044935],
                                         [0.69283932, 0.34967567, 0],
                                         [0, 0, 2.14687945]]))
-_CMF_M_2006_10 = math.normalize_3x3_matrix(_CMF_M_2006_10)  
+#_CMF_M_2006_10 = math.normalize_3x3_matrix(_CMF_M_2006_10)  
     
 # Note that for the following, no conversion has been defined, so the 1931 HPE matrix is used:    
 _CMF_M_1964_10=np.array([

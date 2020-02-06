@@ -9,6 +9,8 @@ Functions
  :gaussian_spd(): Generate Gaussian spectrum.
 
  :butterworth_spd(): Generate Butterworth based spectrum.
+ 
+ :lorentzian2_spd(): Generate 2nd order Lorentzian based spectrum.
 
  :mono_led_spd(): Generate monochromatic LED spectrum based on a Gaussian 
                   or butterworth profile or according to Ohno (Opt. Eng. 2005).
@@ -75,7 +77,8 @@ import itertools
 
 #np.set_printoptions(formatter={'float': lambda x: "{0:0.2e}".format(x)})
 
-__all__ = ['gaussian_spd','mono_led_spd','phosphor_led_spd','spd_builder',
+__all__ = ['gaussian_spd','butterworth_spd','lorentzian2_spd',
+           'mono_led_spd','phosphor_led_spd','spd_builder',
          'get_w_summed_spd','fitnessfcn','spd_constructor_2','color3mixer','colormixer',
          'spd_constructor_3','spd_optimizer_2_3','get_optim_pars_dict',
          'initialize_spd_model_pars','initialize_spd_optim_pars','get_primary_fluxratios','spd_optimizer']
@@ -101,10 +104,48 @@ def gaussian_spd(peakwl = 530, fwhm = 20, wl = _WL3, with_wl = True):
     
     Returns:
         :returns:
-            | ndarray with spectra.        
+            | ndarray with spectra. 
+    Note:
+        | Gaussian:
+        |    g = exp(-0.5*((wl - peakwl)/fwhm)**2)
     """
     wl = np.atleast_2d(getwlr(wl)) # create wavelength range
     spd = np.exp(-0.5*((wl.T-np.atleast_2d(peakwl))/np.atleast_2d(fwhm))**2).T
+    if with_wl == True:
+        spd = np.vstack((wl, spd))
+    return spd
+
+#------------------------------------------------------------------------------
+def lorentzian2_spd(peakwl = 530, fwhm = 20, wl = _WL3, with_wl = True):
+    """
+    Generate 2nd order Lorentzian spectrum.
+    
+    Args:
+        :peakw: 
+            | int or float or list or ndarray, optional
+            | Peak wavelength
+        :fwhm:
+            | int or float or list or ndarray, optional
+            | Full-Width-Half-Maximum of lorentzian.
+        :wl: 
+            | _WL3, optional 
+            | Wavelength range.
+        :with_wl:
+            | True, optional
+            | True outputs a ndarray with first row wavelengths.
+    
+    Returns:
+        :returns:
+            | ndarray with spectra. 
+            
+    Note:
+        | Lorentzian (2nd order):
+        |    lz = (1 + ((n*(wl - peakwl)/fwhm)**2))**(-2)
+        |       with n = 2*(2**0.5-1)**0.5
+    """
+    wl = np.atleast_2d(getwlr(wl)) # create wavelength range
+    n = 2*(2**0.5-1)**0.5
+    spd = ((1 + (n*(wl.T-np.atleast_2d(peakwl))/np.atleast_2d(fwhm))**2)**(-2)).T
     if with_wl == True:
         spd = np.vstack((wl, spd))
     return spd
@@ -121,7 +162,7 @@ def butterworth_spd(peakwl = 530, fwhm = 20, bw_order = 1, wl = _WL3, with_wl = 
             | Peak wavelength
         :fwhm:
             | int or float or list or ndarray, optional
-            | Full-Width-Half-Maximum of gaussian.
+            | Full-Width-Half-Maximum of butterworth.
         :bw_order: 
             | 1, optional
             | Order of the butterworth function.
@@ -134,10 +175,14 @@ def butterworth_spd(peakwl = 530, fwhm = 20, bw_order = 1, wl = _WL3, with_wl = 
     
     Returns:
         :returns:
-            | ndarray with spectra.        
+            | ndarray with spectra.    
+            
+    Note:
+        | Butterworth :
+        |    bw = 1 / (1 + ((2*(wl - peakwl)/fwhm)**2))
     """
     wl = np.atleast_2d(getwlr(wl)) # create wavelength range
-    spd = (2 / (1 + np.abs((wl.T-np.atleast_2d(peakwl))/np.atleast_2d(fwhm))**(2*np.atleast_2d(bw_order)))).T
+    spd = (1 / (1 + np.abs(2*(wl.T-np.atleast_2d(peakwl))/np.atleast_2d(fwhm))**(2*np.atleast_2d(bw_order)))).T
     if with_wl == True:
         spd = np.vstack((wl, spd))
     return spd
@@ -145,7 +190,7 @@ def butterworth_spd(peakwl = 530, fwhm = 20, bw_order = 1, wl = _WL3, with_wl = 
 #------------------------------------------------------------------------------
 def mono_led_spd(peakwl = 530, fwhm = 20, wl = _WL3, with_wl = True, strength_shoulder = 2, bw_order = -1):
     """
-    Generate monochromatic LED spectrum based on a Gaussian or butterworth
+    Generate monochromatic LED spectrum based on a Gaussian or or Lorentzian or butterworth
     profile or according to Ohno (Opt. Eng. 2005).
         
     Args:
@@ -164,12 +209,14 @@ def mono_led_spd(peakwl = 530, fwhm = 20, wl = _WL3, with_wl = True, strength_sh
         :strength_shoulder:
             | 2, optional
             | Determines the strength of the spectrum shoulders of the mono led.
-            | A value of 1 reduces to a Gaussian model (if bw_order == 0).
+            | A value of 0 reduces to a pure Gaussian model (if bw_order >= -1).
         :bw_order:
             | -1, optional
             | Order of Butterworth function.
-            | If -1: spd profile is Gaussian.
-            | If (bw_order == 0): spd profile is Gaussian, else Butterworth.
+            | If -1 or 0: spd profile is Ohno's gaussian based
+            |          (to obtain pure Gaussian: set strength_shoulder = 0).
+            | If -2: spd profile is Lorentzian,
+            | else (>0): Butterworth.
     
     Returns:
         :returns:
@@ -178,14 +225,18 @@ def mono_led_spd(peakwl = 530, fwhm = 20, wl = _WL3, with_wl = True, strength_sh
     Note:
         | Gaussian:
         |    g = exp(-0.5*((wl - peakwl)/fwhm)**2)
+        |
+        | Lorentzian (2nd order):
+        |    lz = (1 + ((n*(wl - peakwl)/fwhm)**2))**(-2)
+        |       with n = 2*(2**0.5-1)**0.5
         | 
         | Butterworth :
-        |    bw = 2 / (1 + (((wl - peakwl)/fwhm)**2))
+        |    bw = 1 / (1 + ((2*(wl - peakwl)/fwhm)**2))
         | 
         | Ohno's model:
         |    ohno = (g + strength_shoulder*g**5)/(1+strength_shoulder)
         |     
-        |    mono_led_spd = ohno*(bw_order == 0) + bw*(bw_order > 0)
+        |    mono_led_spd = ohno*((bw_order >= -1) & (bw_order <= 0)).T + bw*(bw_order > 0).T + lz*((bw_order >=-2) & (bw_order < -1)).T
     
     Reference:
         1. `Ohno Y (2005). 
@@ -194,14 +245,19 @@ def mono_led_spd(peakwl = 530, fwhm = 20, wl = _WL3, with_wl = True, strength_sh
         <https://ws680.nist.gov/publication/get_pdf.cfm?pub_id=841839>`_
 
     """
-    g = gaussian_spd(peakwl = peakwl, fwhm = fwhm, wl = wl, with_wl = False)
-    ohno = (g + np.atleast_2d(strength_shoulder)*g**5)/(1+np.atleast_2d(strength_shoulder))
     bw_order = np.atleast_2d(bw_order)
-    if (bw_order == -1).all():
-        spd = ohno
+    if (bw_order == -2).all():
+        spd = lorentzian2_spd(peakwl = peakwl, fwhm = fwhm, wl = wl, with_wl = False)
     else:
-        bw = butterworth_spd(peakwl = peakwl, fwhm = fwhm, wl = wl, bw_order = bw_order, with_wl = False)
-        spd = ohno*(bw_order == 0).T + bw*(bw_order > 0).T
+        g = gaussian_spd(peakwl = peakwl, fwhm = fwhm, wl = wl, with_wl = False)
+        ohno = (g + np.atleast_2d(strength_shoulder)*g**5)/(1+np.atleast_2d(strength_shoulder))
+        bw_order = np.atleast_2d(bw_order)
+        if (bw_order == -1).all():
+            spd = ohno
+        else:
+            bw = butterworth_spd(peakwl = peakwl, fwhm = fwhm, wl = wl, bw_order = bw_order, with_wl = False)
+            lz = lorentzian2_spd(peakwl = peakwl, fwhm = fwhm, wl = wl, with_wl = False)
+            spd = ohno*((bw_order >= -1) & (bw_order <= 0)).T + bw*(bw_order > 0).T + lz*((bw_order >=-2) & (bw_order < -1)).T
     if with_wl == True:
         spd = np.vstack((getwlr(wl), spd))
     return spd
@@ -236,14 +292,16 @@ def phosphor_led_spd(peakwl = 450, fwhm = 20, wl = _WL3, bw_order = -1, with_wl 
             | Peak wavelengths of the monochromatic led.
         :fwhm:
             | int or float or list or ndarray, optional
-            | Full-Width-Half-Maximum of gaussian.
+            | Full-Width-Half-Maximum of mono_led spectrum.
         :wl: | _WL3, optional 
             | Wavelength range.
         :bw_order:
             | -1, optional
             | Order of Butterworth function.
-            | If -1: mono_led spd profile is Gaussian.
-            | else: (bw_order == 0): spd profile is Gaussian, else Butterworth.
+            | If -1 or 0: spd profile is Ohno's gaussian based
+            |          (to obtain pure Gaussian: set strength_shoulder = 0).
+            | If -2: spd profile is Lorentzian,
+            | else (>0): Butterworth.
             | Note that this only applies to the monochromatic led  spds and not 
             | the phosphors spds (these are always gaussian based).
         :with_wl:
@@ -425,8 +483,10 @@ def spd_builder(flux = None, component_spds = None, peakwl = 450, fwhm = 20, bw_
         :bw_order:
             | -1, optional
             | Order of Butterworth function.
-            | If -1: mono_led spd profile is Gaussian.
-            | else: (bw_order == 0): spd profile is Gaussian, else Butterworth.
+            | If -1 or 0: spd profile is Ohno's gaussian based
+            |          (to obtain pure Gaussian: set strength_shoulder = 0).
+            | If -2: spd profile is Lorentzian,
+            | else (>0): Butterworth.
             | Note that this only applies to the monochromatic led  spds and not 
             | the phosphors spds (these are always gaussian based).
         :pair_strengths:
@@ -1142,7 +1202,7 @@ def spd_constructor_3(x, constructor_pars = {}, **kwargs):
 def spd_optimizer_2_3(optimizer_type = '2mixer', \
                     spd_constructor = None, spd_model_pars = None,\
                     component_data = 4, N_components = None, wl = _WL3,\
-                    allow_butterworth_mono_spds = False,\
+                    allow_nongaussianbased_mono_spds = False,\
                     Yxy_target = np2d([100,1/3,1/3]), cieobs = _CIEOBS,\
                     obj_fcn = [None], obj_fcn_pars = [{}], obj_fcn_weights = [1],\
                     obj_tar_vals = [0], decimals = [5], \
@@ -1187,7 +1247,7 @@ def spd_optimizer_2_3(optimizer_type = '2mixer', \
             | Specifies number of components used in optimization. (only used 
               when :component_data: is dict and user wants to override dict. 
             | Note that shape of parameters arrays must match N_components).
-        :allow_butterworth_mono_spds: 
+        :allow_nongaussianbased_mono_spds: 
             | False, optional
             | False: use pure Gaussian based monochrom. spds.
         :wl:
@@ -1256,7 +1316,7 @@ def spd_optimizer_2_3(optimizer_type = '2mixer', \
     if optimizer_type != 'user':
         spd_optim_pars, spd_model_pars = initialize_spd_optim_pars(component_data, \
                                                                    optimizer_type = optimizer_type, \
-                                                                   allow_butterworth_mono_spds = allow_butterworth_mono_spds, \
+                                                                   allow_nongaussianbased_mono_spds = allow_nongaussianbased_mono_spds, \
                                                                    wl = wl,\
                                                                    spd_model_pars = spd_model_pars)        
         spd_model_pars = {**spd_model_pars, **spd_optim_pars} # merge two dicts
@@ -1320,7 +1380,7 @@ def get_optim_pars_dict(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs =
               obj_tar_vals = [0], decimals = [5], \
               minimize_method = 'nelder-mead', minimize_opts = None, F_rss = True,\
               peakwl = [450,530,610], fwhm = [20,20,20], \
-              allow_butterworth_mono_spds = False, bw_order = [-1],\
+              allow_nongaussianbased_mono_spds = False, bw_order = [-1],\
               wl = _WL3, with_wl = True, strength_shoulder = 2,\
               strength_ph = [0], use_piecewise_fcn = False,\
               peakwl_ph1 = [530], fwhm_ph1 = [80], strength_ph1 = [1],\
@@ -1329,7 +1389,7 @@ def get_optim_pars_dict(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs =
               pair_strengths = None,triangle_strengths = None,\
               peakwl_min = [400], peakwl_max = [700],\
               fwhm_min = [5], fwhm_max = [300],\
-              bw_order_min = [0], bw_order_max = [100]):
+              bw_order_min = [-2], bw_order_max = [100]):
     """
     Setup dict with optimization parameters.
     
@@ -1362,7 +1422,7 @@ def get_optim_pars_dict(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs =
     if len(peakwl) < N_components:
         dd = (max(peakwl_max)-min(peakwl_min))/(1*N_components)
         peakwl = np.linspace(min(peakwl_min)+dd, max(peakwl_max)-dd, N_components)
-    if allow_butterworth_mono_spds == True:
+    if allow_nongaussianbased_mono_spds == True:
         if len(bw_order) < N_components:
             bw_order = min(bw_order_min)*np.ones(N_components)
     
@@ -1383,17 +1443,17 @@ def get_optim_pars_dict(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs =
         fwhm_max = max(fwhm_max)*np.ones(N_components)
         fwhm = [min([fwhm_max[i],fwhm[i]]) for i in range(N_components)] #ensure values are within bounds
     
-    if allow_butterworth_mono_spds == True: # do nothing, no butterworth profile requested
+    if allow_nongaussianbased_mono_spds == True: # do nothing, no non-gaussian based profile requested
         bw_order = np.atleast_2d(bw_order) # convert to ndarray for boolean slicing
-        bw_order[bw_order == -1] = 0 #0 also results in pure gaussian
+        #bw_order[bw_order == -1] = 0 #0 also results in Ohno based on pure gaussian
         bw_order = bw_order.tolist()[0] # convert back to list for normal processing
         if (len(bw_order_max) != len(bw_order)):
             bw_order_max = max(bw_order_max)*np.ones(N_components)
-            bw_order = [min([bw_order_max[i],np.abs(bw_order[i])]) for i in range(N_components)] #ensure values are within bounds
+            bw_order = [min([bw_order_max[i],(bw_order[i])]) for i in range(N_components)] #ensure values are within bounds
 
         if (len(bw_order_min) != len(bw_order)):
             bw_order_min = min(bw_order_min)*np.ones(N_components)
-            bw_order = [max([bw_order_min[i],np.abs(bw_order[i])]) for i in range(N_components)] #ensure values are within bounds
+            bw_order = [max([bw_order_min[i],(bw_order[i])]) for i in range(N_components)] #ensure values are within bounds
             
     else:
         bw_order = -1
@@ -1411,7 +1471,7 @@ def get_optim_pars_dict(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs =
     opts['bw_order'] = bw_order
     opts['bw_order_min'] = bw_order_min
     opts['bw_order_max'] = bw_order_max
-    opts['allow_butterworth_mono_spds'] = allow_butterworth_mono_spds
+    opts['allow_nongaussianbased_mono_spds'] = allow_nongaussianbased_mono_spds
     
     # Generate random set of pair_strengths (for '2mixer'):
     if pair_strengths is None:
@@ -1429,7 +1489,7 @@ def get_optim_pars_dict(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs =
     return opts
 
 
-def initialize_spd_model_pars(component_data, N_components = None, allow_butterworth_mono_spds = False, optimizer_type = '2mixer', wl = _WL3):
+def initialize_spd_model_pars(component_data, N_components = None, allow_nongaussianbased_mono_spds = False, optimizer_type = '2mixer', wl = _WL3):
     """
     Initialize spd_model_pars dict (for spd_constructor) based on type 
     of component_data.
@@ -1449,10 +1509,10 @@ def initialize_spd_model_pars(component_data, N_components = None, allow_butterw
             | Specifies number of components used in optimization. (only used 
             | when :component_data: is dict and user wants to override dict. 
             | Note that shape of parameters arrays must match N_components).
-        :allow_butterworth_mono_spds:
+        :allow_nongaussianbased_mono_spds:
             | False, optional
-            |  - False: use pure Gaussian based monochrom. spds.
-            |  - True: also allow butterworth type monochrom. spds while optimizing.
+            |  - False: use Gaussian based monochrom. spds.
+            |  - True: also allow butterworth and lorentzian type monochrom. spds while optimizing.
         :optimizer_type:
             | '2mixer', optional
             | Type of spectral optimization routine.
@@ -1471,7 +1531,7 @@ def initialize_spd_model_pars(component_data, N_components = None, allow_butterw
     if isinstance(component_data,int):
         # input is Number of components
         N = component_data
-        spd_model_pars = get_optim_pars_dict(N_components = N, allow_butterworth_mono_spds = allow_butterworth_mono_spds)
+        spd_model_pars = get_optim_pars_dict(N_components = N, allow_nongaussianbased_mono_spds = allow_nongaussianbased_mono_spds)
         spd_model_pars['N_components'] = N
         spd_model_pars['component_spds'] = None
         
@@ -1485,12 +1545,12 @@ def initialize_spd_model_pars(component_data, N_components = None, allow_butterw
         spd_model_pars['list'] = ['peakwl','fwhm']
         spd_model_pars['len'] = [N, N]  
         
-        # Also use butterworth spd profiles, instead of only gaussians:
-        if allow_butterworth_mono_spds == True:
-            spd_model_pars['bw_order'] = np.ones(N)
+        # Also use butterworth/lorentzian spd profiles, instead of only gaussians:
+        if allow_nongaussianbased_mono_spds == True:
+            spd_model_pars['bw_order'] = np.zeros(N)
             spd_model_pars['list'].append('bw_order')
             spd_model_pars['len'].append(N)
-        spd_model_pars['allow_butterworth_mono_spds'] = allow_butterworth_mono_spds           
+        spd_model_pars['allow_nongaussianbased_mono_spds'] = allow_nongaussianbased_mono_spds           
                     
         # Overwrite with input args:
         spd_model_pars['wl'] = wl
@@ -1517,7 +1577,7 @@ def initialize_spd_model_pars(component_data, N_components = None, allow_butterw
             spd_model_pars['list'].append('fwhm')    
             spd_model_pars['len'].append(N)
             
-        if spd_model_pars['allow_butterworth_mono_spds'] == True:
+        if spd_model_pars['allow_nongaussianbased_mono_spds'] == True:
             if component_data['bw_order'] is None:
                 spd_model_pars['list'].append('bw_order')    
                 spd_model_pars['len'].append(N)
@@ -1549,7 +1609,7 @@ def initialize_spd_model_pars(component_data, N_components = None, allow_butterw
     return spd_model_pars
 
 def initialize_spd_optim_pars(component_data, N_components = None,\
-                              allow_butterworth_mono_spds = False,\
+                              allow_nongaussianbased_mono_spds = False,\
                               optimizer_type = '2mixer', wl = _WL3,\
                               spd_model_pars = None):
     """
@@ -1570,9 +1630,9 @@ def initialize_spd_optim_pars(component_data, N_components = None,\
             | Specifies number of components used in optimization. (only used 
               when :component_data: is dict and user wants to override dict. 
             | Note that shape of parameters arrays must match N_components).
-        :allow_butterworth_mono_spds: 
+        :allow_nongaussianbased_mono_spds: 
             | False, optional
-            | False: use pure Gaussian based monochrom. spds.
+            | False: use Gaussian based monochrom. spds.
         :optimizer_type: 
             | '2mixer', optional
             | Type of spectral optimization routine.
@@ -1595,7 +1655,7 @@ def initialize_spd_optim_pars(component_data, N_components = None,\
     if spd_model_pars is None:
         spd_model_pars = initialize_spd_model_pars(component_data, N_components = N_components,\
                                                optimizer_type = optimizer_type, \
-                                               allow_butterworth_mono_spds = allow_butterworth_mono_spds, wl = wl)
+                                               allow_nongaussianbased_mono_spds = allow_nongaussianbased_mono_spds, wl = wl)
     
     N = spd_model_pars['N_components']
 
@@ -1606,7 +1666,7 @@ def initialize_spd_optim_pars(component_data, N_components = None,\
         spd_optim_pars['UB'] = np.hstack((spd_model_pars['peakwl_max'], spd_model_pars['fwhm_max']))
         spd_optim_pars['x0'] = np.hstack((spd_model_pars['peakwl'], spd_model_pars['fwhm']))
         
-        if allow_butterworth_mono_spds == True:
+        if allow_nongaussianbased_mono_spds == True:
             spd_optim_pars['LB'] = np.hstack((spd_optim_pars['LB'],spd_model_pars['bw_order_min']))
             spd_optim_pars['UB'] = np.hstack((spd_optim_pars['UB'],spd_model_pars['bw_order_max']))
             spd_optim_pars['x0'] = np.hstack((spd_optim_pars['x0'],spd_model_pars['bw_order']))
@@ -1641,7 +1701,7 @@ def initialize_spd_optim_pars(component_data, N_components = None,\
                 fwhm_ = min(spd_model_pars['fwhm_min'])*np.ones(N)
             spd_optim_pars['x0'] += list(fwhm_)
         
-        if allow_butterworth_mono_spds == True:
+        if allow_nongaussianbased_mono_spds == True:
             spd_optim_pars['LB'] += list(spd_model_pars['bw_order_min'])
             spd_optim_pars['UB'] += list(spd_model_pars['bw_order_max'])
             spd_optim_pars['x0'] += list(spd_model_pars['bw_order'])
@@ -1747,7 +1807,7 @@ def spd_optimizer(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs = _CIEO
                   obj_tar_vals = [0], decimals = [5], \
                   minimize_method = 'nelder-mead', minimize_opts = None, F_rss = True,\
                   peakwl = [450,530,610], fwhm = [20,20,20], \
-                  allow_butterworth_mono_spds = False, bw_order = [-1],\
+                  allow_nongaussianbased_mono_spds = False, bw_order = [-1],\
                   wl = _WL3, with_wl = True, strength_shoulder = 2,\
                   strength_ph = [0], use_piecewise_fcn = False,\
                   peakwl_ph1 = [530], fwhm_ph1 = [80], strength_ph1 = [1],\
@@ -1756,7 +1816,7 @@ def spd_optimizer(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs = _CIEO
                   pair_strengths = None,\
                   peakwl_min = [400], peakwl_max = [700],\
                   fwhm_min = [5], fwhm_max = [300],\
-                  bw_order_min = 0, bw_order_max = 100,\
+                  bw_order_min = -2, bw_order_max = 100,\
                   out = 'spds,M'):
     """
     Generate a spectrum with specified white point and optimized for certain 
@@ -1812,9 +1872,10 @@ def spd_optimizer(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs = _CIEO
             | Specifies number of components used in optimization. (only used 
               when :component_data: is dict and user wants to override dict value
             | Note that shape of parameters arrays must match N_components).
-        :allow_butterworth_mono_spds:
+        :allow_nongaussianbased_mono_spds:
             | False, optional
-            | False: use pure Gaussian based monochrom. spds.
+            | False: use Ohno monochromatic led spectra based on Gaussian spds.
+            | True: also use Butterworth and Lorentzian spds.
         :wl: 
             | _WL3, optional
             | Wavelengths used in optimization when :component_data: is not an
@@ -1890,7 +1951,7 @@ def spd_optimizer(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs = _CIEO
     component_spds_original = None
     if component_spds is None:
         if N_components is None: # Generate component spds from input args:
-            if allow_butterworth_mono_spds == False:
+            if allow_nongaussianbased_mono_spds == False:
                 bw_order = -1
             spds = spd_builder(flux = None, peakwl = peakwl, fwhm = fwhm, \
                                bw_order = bw_order,\
@@ -1901,7 +1962,7 @@ def spd_optimizer(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs = _CIEO
             N_components = spds.shape[0]
         else:
             spds = N_components # optimize spd model parameters, such as peakwl, fwhm, ... using N components.
-            spd_model_pars = initialize_spd_model_pars(N_components, N_components = N_components, allow_butterworth_mono_spds = allow_butterworth_mono_spds, optimizer_type = optimizer_type, wl = wl)    
+            spd_model_pars = initialize_spd_model_pars(N_components, N_components = N_components, allow_nongaussianbased_mono_spds = allow_nongaussianbased_mono_spds, optimizer_type = optimizer_type, wl = wl)    
             
             # Update spd_model_pas with values from input arguments:
             def correct_len(x):
@@ -1926,11 +1987,11 @@ def spd_optimizer(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs = _CIEO
             else:
                 
                 if bool(component_spds) == False: #isempty
-                    spd_model_pars = initialize_spd_model_pars(N_components, N_components = N_components, allow_butterworth_mono_spds = allow_butterworth_mono_spds, optimizer_type = optimizer_type, wl = wl)
+                    spd_model_pars = initialize_spd_model_pars(N_components, N_components = N_components, allow_nongaussianbased_mono_spds = allow_nongaussianbased_mono_spds, optimizer_type = optimizer_type, wl = wl)
                     spd_model_pars["peakwl"] = peakwl
                     spd_model_pars["fwhm"] = fwhm
                     
-                    spd_model_pars = initialize_spd_model_pars(spd_model_pars, N_components = N_components, allow_butterworth_mono_spds = allow_butterworth_mono_spds, optimizer_type = optimizer_type, wl = wl)
+                    spd_model_pars = initialize_spd_model_pars(spd_model_pars, N_components = N_components, allow_nongaussianbased_mono_spds = allow_nongaussianbased_mono_spds, optimizer_type = optimizer_type, wl = wl)
             spds = spd_model_pars
         else: # optimize spectrum fluxes of pre-defined set of component spectra:
             spds = component_spds 
@@ -1943,7 +2004,7 @@ def spd_optimizer(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs = _CIEO
 
     # optimize spectrum fluxes, model parameters, ... using optimizer_type method 
     spd_opt, M, component_spds, obj_vals, res = spd_optimizer_2_3(component_data = spds, wl = wl,\
-                                                    allow_butterworth_mono_spds = allow_butterworth_mono_spds, \
+                                                    allow_nongaussianbased_mono_spds = allow_nongaussianbased_mono_spds, \
                                                     optimizer_type = optimizer_type, 
                                                     spd_constructor = spd_constructor,\
                                                     spd_model_pars = spd_model_pars,\
@@ -2095,13 +2156,14 @@ if __name__ == '__main__':
     
     N_components = 4 #if not None, spd model parameters (peakwl, fwhm, ...) are optimized
     component_spds = None; #component_spds= {}; # if empty dict, then generate using initialize_spd_model_pars and overwrite with function args: peakwl and fwhm. N_components must match length of either peakwl or fwhm
-    allow_butterworth_mono_spds = False
+    allow_nongaussianbased_mono_spds = False
     S3, _ = spd_optimizer(target, tar_type = tar_type, cspace_bwtf = {'cieobs' : cieobs, 'mode' : 'search'},\
                           optimizer_type = '2mixer', N_components = N_components,component_spds = component_spds,\
-                          allow_butterworth_mono_spds = allow_butterworth_mono_spds,\
+                          allow_nongaussianbased_mono_spds = allow_nongaussianbased_mono_spds,\
                           peakwl = peakwl, fwhm = fwhm, obj_fcn = obj_fcn, obj_tar_vals = obj_tar_vals,\
                           obj_fcn_weights = obj_fcn_weights, decimals = decimals,\
                           use_piecewise_fcn=False, verbosity = 1)
+                          #bw_order=[-2],bw_order_min=-2,bw_order_max=-1.5) # to test use of pure lorentzian mono spds.
     
     # Check output agrees with target:
     xyz = spd_to_xyz(S3, relative = False, cieobs = cieobs)

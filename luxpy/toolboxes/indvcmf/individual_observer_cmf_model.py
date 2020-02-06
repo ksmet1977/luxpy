@@ -1405,7 +1405,8 @@ def compute_cmfs(fieldsize = 10, age = 32, wl = None,
                  var_shft_LMS = [0,0,0], var_od_LMS = [0, 0, 0], 
                  norm_type = None, out = 'lms', base = False, 
                  strategy_2 = True, odata0 = None,
-                 lms_to_xyz_method = None, allow_negative_values = False):
+                 lms_to_xyz_method = None, allow_negative_values = False,
+                 normalize_lms_to_xyz_matrix = False):
     """
     Generate Individual Observer CMFs (cone fundamentals) 
     based on CIE2006 cone fundamentals and published literature 
@@ -1462,6 +1463,9 @@ def compute_cmfs(fieldsize = 10, age = 32, wl = None,
             | False, optional
             | Cone fundamentals or color matching functions should not have negative values.
             |     If False: X[X<0] = 0.
+        :normalize_lms_to_xyz_matrix:
+            | False, optional
+            | Normalize that EEW is always at [100,100,100] in XYZ and LMS system.
             
     Returns:
         :returns: 
@@ -1626,7 +1630,7 @@ def compute_cmfs(fieldsize = 10, age = 32, wl = None,
     
     # Change normalization of M to 
     # ensure that EEW is always at [100,100,100] in XYZ system:
-    if ('M' in out_list):
+    if ('M' in out_list) & (normalize_lms_to_xyz_matrix == True):
         Mi = np.linalg.inv(M) # M: lms->xyz; Mi: xyz->lms
         Min = math.normalize_3x3_matrix(Mi, xyz0 = np.array([[1,1,1]])) # normalize Mi matrix
         M = np.linalg.inv(Min) # calculate new lms->xyz normalized matrix
@@ -1679,7 +1683,8 @@ def cie2006cmfsEx(age = 32,fieldsize = 10, wl = None,\
                   var_shft_L = 0, var_shft_M = 0, var_shft_S = 0,\
                   norm_type = None, out = 'lms', base = False, 
                   strategy_2 = True, odata0 = None,
-                  lms_to_xyz_method = None, allow_negative_values = False):
+                  lms_to_xyz_method = None, allow_negative_values = False,
+                  normalize_lms_to_xyz_matrix = False):
     """
     Generate Individual Observer CMFs (cone fundamentals) 
     based on CIE2006 cone fundamentals and published literature 
@@ -1748,6 +1753,10 @@ def cie2006cmfsEx(age = 32,fieldsize = 10, wl = None,\
             | False, optional
             | Cone fundamentals or color matching functions should not have negative values.
             |     If False: X[X<0] = 0.
+        :normalize_lms_to_xyz_matrix:
+            | False, optional
+            | Normalize that EEW is always at [100,100,100] in XYZ and LMS system.
+
             
     Returns:
         :returns: 
@@ -1792,7 +1801,8 @@ def cie2006cmfsEx(age = 32,fieldsize = 10, wl = None,\
                         norm_type = norm_type, out = out,
                         base = base, strategy_2 = strategy_2, odata0 = odata0,
                         lms_to_xyz_method = lms_to_xyz_method, 
-                        allow_negative_values = allow_negative_values)
+                        allow_negative_values = allow_negative_values,
+                        normalize_lms_to_xyz_matrix = normalize_lms_to_xyz_matrix)
 
 
 def getMonteCarloParam(n_obs = 1, stdDevAllParam = _DATA['stdev'].copy()):
