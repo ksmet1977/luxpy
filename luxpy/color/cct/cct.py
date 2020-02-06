@@ -423,7 +423,7 @@ def xyz_to_cct_search(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None, accuracy = 
                 #calculate difference with previous intermediate solution:
                 delta_cct = abs(cct - ccttemp)
                 
-                ccttemp = np.array([cct]) #%set new intermediate CCT
+                ccttemp = np.array(cct) #%set new intermediate CCT
                 approx_cct_temp = approx_cct_temp_temp
             else:
                 ccttemp = np.nan 
