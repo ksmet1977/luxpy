@@ -160,7 +160,7 @@ def getwlr(wl3 = None):
     
     # Wavelength definition:
     if len(wl3) == 3: # define wavelengths from [start = l0, stop = ln, spacing = dl]
-        wl = np.linspace(wl3[0],wl3[1],np.floor((wl3[1]-wl3[0]+wl3[2])/wl3[2]))
+        wl = np.linspace(wl3[0],wl3[1],int(np.floor((wl3[1]-wl3[0]+wl3[2])/wl3[2])))
     else:
         wl = wl3
     

@@ -193,7 +193,7 @@ def plotDL(ccts = None, cieobs =_CIEOBS, cspace = _CSPACE, axh = None, \
     """
     
     if ccts is None:
-        ccts = 10**np.linspace(np.log10(4000.0),np.log10(10.0**19.0),100.0)
+        ccts = 10**np.linspace(np.log10(4000.0),np.log10(10.0**19.0),100)
         
     xD,yD = daylightlocus(ccts, force_daylight_below4000K = force_daylight_below4000K)
     Y = 100*np.ones(xD.shape)
@@ -252,7 +252,7 @@ def plotBB(ccts = None, cieobs =_CIEOBS, cspace = _CSPACE, axh = None, cctlabels
     """
     if ccts is None:
         ccts1 = np.array([1000.0,1500.0,2000.0,2500.0,3000.0,3500.0,4000.0,5000.0,6000.0,8000.0,10000.0])
-        ccts2 = 10**np.linspace(np.log10(15000.0),np.log10(10.0**19.0),100.0)
+        ccts2 = 10**np.linspace(np.log10(15000.0),np.log10(10.0**19.0),100)
         ccts = np.hstack((ccts1,ccts2))
     else:
         ccts1 = None
@@ -631,7 +631,7 @@ def plotellipse(v, cspace_in = 'Yxy', cspace_out = None, nsamples = 100, \
     for i,vi in enumerate(v):
         
         # Set sample density of ellipse boundary:
-        t = np.linspace(0, 2*np.pi, nsamples)
+        t = np.linspace(0, 2*np.pi, int(nsamples))
         
         a = vi[0] # major axis
         b = vi[1] # minor axis
@@ -743,7 +743,7 @@ def plot_chromaticity_diagram_colors(diagram_samples = 256, diagram_opacity = 1.
         
     """
     offset = _EPS
-    ii, jj = np.meshgrid(np.linspace(offset, 1 + offset, diagram_samples), np.linspace(1+offset, offset, diagram_samples))
+    ii, jj = np.meshgrid(np.linspace(offset, 1 + offset, int(diagram_samples)), np.linspace(1+offset, offset, int(diagram_samples)))
     ij = np.dstack((ii, jj))
     
     SL =  _CMF[cieobs]['bar'][1:4].T
