@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.color.utils.plotters &mdash; LuxPy 1.4.14 documentation</title>
+  <title>luxpy.color.utils.plotters &mdash; LuxPy 1.4.15 documentation</title>
   
 
   
@@ -56,7 +56,7 @@
             
             
               <div class="version">
-                1.4.14
+                1.4.15
               </div>
             
           
@@ -344,7 +344,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     
     <span class="k">if</span> <span class="n">ccts</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">ccts</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="mf">4000.0</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="mf">10.0</span><span class="o">**</span><span class="mf">19.0</span><span class="p">),</span><span class="mf">100.0</span><span class="p">)</span>
+        <span class="n">ccts</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="mf">4000.0</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="mf">10.0</span><span class="o">**</span><span class="mf">19.0</span><span class="p">),</span><span class="mi">100</span><span class="p">)</span>
         
     <span class="n">xD</span><span class="p">,</span><span class="n">yD</span> <span class="o">=</span> <span class="n">daylightlocus</span><span class="p">(</span><span class="n">ccts</span><span class="p">,</span> <span class="n">force_daylight_below4000K</span> <span class="o">=</span> <span class="n">force_daylight_below4000K</span><span class="p">)</span>
     <span class="n">Y</span> <span class="o">=</span> <span class="mi">100</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">xD</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
@@ -403,7 +403,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">ccts</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">ccts1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1000.0</span><span class="p">,</span><span class="mf">1500.0</span><span class="p">,</span><span class="mf">2000.0</span><span class="p">,</span><span class="mf">2500.0</span><span class="p">,</span><span class="mf">3000.0</span><span class="p">,</span><span class="mf">3500.0</span><span class="p">,</span><span class="mf">4000.0</span><span class="p">,</span><span class="mf">5000.0</span><span class="p">,</span><span class="mf">6000.0</span><span class="p">,</span><span class="mf">8000.0</span><span class="p">,</span><span class="mf">10000.0</span><span class="p">])</span>
-        <span class="n">ccts2</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="mf">15000.0</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="mf">10.0</span><span class="o">**</span><span class="mf">19.0</span><span class="p">),</span><span class="mf">100.0</span><span class="p">)</span>
+        <span class="n">ccts2</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="mf">15000.0</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="mf">10.0</span><span class="o">**</span><span class="mf">19.0</span><span class="p">),</span><span class="mi">100</span><span class="p">)</span>
         <span class="n">ccts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">ccts1</span><span class="p">,</span><span class="n">ccts2</span><span class="p">))</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">ccts1</span> <span class="o">=</span> <span class="kc">None</span>
@@ -782,7 +782,7 @@
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">vi</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
         
         <span class="c1"># Set sample density of ellipse boundary:</span>
-        <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">nsamples</span><span class="p">)</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">nsamples</span><span class="p">))</span>
         
         <span class="n">a</span> <span class="o">=</span> <span class="n">vi</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># major axis</span>
         <span class="n">b</span> <span class="o">=</span> <span class="n">vi</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># minor axis</span>
@@ -894,7 +894,7 @@
 <span class="sd">        </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">offset</span> <span class="o">=</span> <span class="n">_EPS</span>
-    <span class="n">ii</span><span class="p">,</span> <span class="n">jj</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">offset</span><span class="p">,</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">offset</span><span class="p">,</span> <span class="n">diagram_samples</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">offset</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">diagram_samples</span><span class="p">))</span>
+    <span class="n">ii</span><span class="p">,</span> <span class="n">jj</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">offset</span><span class="p">,</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">offset</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">diagram_samples</span><span class="p">)),</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">offset</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">diagram_samples</span><span class="p">)))</span>
     <span class="n">ij</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dstack</span><span class="p">((</span><span class="n">ii</span><span class="p">,</span> <span class="n">jj</span><span class="p">))</span>
     
     <span class="n">SL</span> <span class="o">=</span>  <span class="n">_CMF</span><span class="p">[</span><span class="n">cieobs</span><span class="p">][</span><span class="s1">&#39;bar&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">T</span>
@@ -1098,7 +1098,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2019, Kevin A.G. Smet
+        &copy; Copyright 2020, Kevin A.G. Smet
 
     </p>
   </div>

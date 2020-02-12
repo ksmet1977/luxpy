@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.toolboxes.indvcmf.individual_observer_cmf_model &mdash; LuxPy 1.4.14 documentation</title>
+  <title>luxpy.toolboxes.indvcmf.individual_observer_cmf_model &mdash; LuxPy 1.4.15 documentation</title>
   
 
   
@@ -56,7 +56,7 @@
             
             
               <div class="version">
-                1.4.14
+                1.4.15
               </div>
             
           
@@ -1556,7 +1556,8 @@
                  <span class="n">var_shft_LMS</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">var_od_LMS</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> 
                  <span class="n">norm_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;lms&#39;</span><span class="p">,</span> <span class="n">base</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> 
                  <span class="n">strategy_2</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">odata0</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                 <span class="n">lms_to_xyz_method</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">allow_negative_values</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+                 <span class="n">lms_to_xyz_method</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">allow_negative_values</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="n">normalize_lms_to_xyz_matrix</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generate Individual Observer CMFs (cone fundamentals) </span>
 <span class="sd">    based on CIE2006 cone fundamentals and published literature </span>
@@ -1613,6 +1614,9 @@
 <span class="sd">            | False, optional</span>
 <span class="sd">            | Cone fundamentals or color matching functions should not have negative values.</span>
 <span class="sd">            |     If False: X[X&lt;0] = 0.</span>
+<span class="sd">        :normalize_lms_to_xyz_matrix:</span>
+<span class="sd">            | False, optional</span>
+<span class="sd">            | Normalize that EEW is always at [100,100,100] in XYZ and LMS system.</span>
 <span class="sd">            </span>
 <span class="sd">    Returns:</span>
 <span class="sd">        :returns: </span>
@@ -1777,7 +1781,7 @@
     
     <span class="c1"># Change normalization of M to </span>
     <span class="c1"># ensure that EEW is always at [100,100,100] in XYZ system:</span>
-    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;M&#39;</span> <span class="ow">in</span> <span class="n">out_list</span><span class="p">):</span>
+    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;M&#39;</span> <span class="ow">in</span> <span class="n">out_list</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">normalize_lms_to_xyz_matrix</span> <span class="o">==</span> <span class="kc">True</span><span class="p">):</span>
         <span class="n">Mi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">M</span><span class="p">)</span> <span class="c1"># M: lms-&gt;xyz; Mi: xyz-&gt;lms</span>
         <span class="n">Min</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">normalize_3x3_matrix</span><span class="p">(</span><span class="n">Mi</span><span class="p">,</span> <span class="n">xyz0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]]))</span> <span class="c1"># normalize Mi matrix</span>
         <span class="n">M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">Min</span><span class="p">)</span> <span class="c1"># calculate new lms-&gt;xyz normalized matrix</span>
@@ -1830,7 +1834,8 @@
                   <span class="n">var_shft_L</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">var_shft_M</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">var_shft_S</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>\
                   <span class="n">norm_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;lms&#39;</span><span class="p">,</span> <span class="n">base</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> 
                   <span class="n">strategy_2</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">odata0</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                  <span class="n">lms_to_xyz_method</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">allow_negative_values</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+                  <span class="n">lms_to_xyz_method</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">allow_negative_values</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                  <span class="n">normalize_lms_to_xyz_matrix</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generate Individual Observer CMFs (cone fundamentals) </span>
 <span class="sd">    based on CIE2006 cone fundamentals and published literature </span>
@@ -1899,6 +1904,10 @@
 <span class="sd">            | False, optional</span>
 <span class="sd">            | Cone fundamentals or color matching functions should not have negative values.</span>
 <span class="sd">            |     If False: X[X&lt;0] = 0.</span>
+<span class="sd">        :normalize_lms_to_xyz_matrix:</span>
+<span class="sd">            | False, optional</span>
+<span class="sd">            | Normalize that EEW is always at [100,100,100] in XYZ and LMS system.</span>
+
 <span class="sd">            </span>
 <span class="sd">    Returns:</span>
 <span class="sd">        :returns: </span>
@@ -1943,7 +1952,8 @@
                         <span class="n">norm_type</span> <span class="o">=</span> <span class="n">norm_type</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="p">,</span>
                         <span class="n">base</span> <span class="o">=</span> <span class="n">base</span><span class="p">,</span> <span class="n">strategy_2</span> <span class="o">=</span> <span class="n">strategy_2</span><span class="p">,</span> <span class="n">odata0</span> <span class="o">=</span> <span class="n">odata0</span><span class="p">,</span>
                         <span class="n">lms_to_xyz_method</span> <span class="o">=</span> <span class="n">lms_to_xyz_method</span><span class="p">,</span> 
-                        <span class="n">allow_negative_values</span> <span class="o">=</span> <span class="n">allow_negative_values</span><span class="p">)</span></div>
+                        <span class="n">allow_negative_values</span> <span class="o">=</span> <span class="n">allow_negative_values</span><span class="p">,</span>
+                        <span class="n">normalize_lms_to_xyz_matrix</span> <span class="o">=</span> <span class="n">normalize_lms_to_xyz_matrix</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="getMonteCarloParam"><a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.indvcmf.getMonteCarloParam">[docs]</a><span class="k">def</span> <span class="nf">getMonteCarloParam</span><span class="p">(</span><span class="n">n_obs</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">stdDevAllParam</span> <span class="o">=</span> <span class="n">_DATA</span><span class="p">[</span><span class="s1">&#39;stdev&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()):</span>
@@ -2481,7 +2491,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2019, Kevin A.G. Smet
+        &copy; Copyright 2020, Kevin A.G. Smet
 
     </p>
   </div>

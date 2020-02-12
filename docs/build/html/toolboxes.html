@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Toolboxes &mdash; LuxPy 1.4.14 documentation</title>
+  <title>Toolboxes &mdash; LuxPy 1.4.15 documentation</title>
   
 
   
@@ -57,7 +57,7 @@
             
             
               <div class="version">
-                1.4.14
+                1.4.15
               </div>
             
           
@@ -910,7 +910,7 @@ spectral data for LMS absorp. and optical desnities, …</p>
 
 <dl class="function">
 <dt id="luxpy.toolboxes.indvcmf.cie2006cmfsEx">
-<code class="descclassname">luxpy.toolboxes.indvcmf.</code><code class="descname">cie2006cmfsEx</code><span class="sig-paren">(</span><em>age=32</em>, <em>fieldsize=10</em>, <em>wl=None</em>, <em>var_od_lens=0</em>, <em>var_od_macula=0</em>, <em>var_od_L=0</em>, <em>var_od_M=0</em>, <em>var_od_S=0</em>, <em>var_shft_L=0</em>, <em>var_shft_M=0</em>, <em>var_shft_S=0</em>, <em>norm_type=None</em>, <em>out='lms'</em>, <em>base=False</em>, <em>strategy_2=True</em>, <em>odata0=None</em>, <em>lms_to_xyz_method=None</em>, <em>allow_negative_values=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/indvcmf/individual_observer_cmf_model.html#cie2006cmfsEx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.indvcmf.cie2006cmfsEx" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">luxpy.toolboxes.indvcmf.</code><code class="descname">cie2006cmfsEx</code><span class="sig-paren">(</span><em>age=32</em>, <em>fieldsize=10</em>, <em>wl=None</em>, <em>var_od_lens=0</em>, <em>var_od_macula=0</em>, <em>var_od_L=0</em>, <em>var_od_M=0</em>, <em>var_od_S=0</em>, <em>var_shft_L=0</em>, <em>var_shft_M=0</em>, <em>var_shft_S=0</em>, <em>norm_type=None</em>, <em>out='lms'</em>, <em>base=False</em>, <em>strategy_2=True</em>, <em>odata0=None</em>, <em>lms_to_xyz_method=None</em>, <em>allow_negative_values=False</em>, <em>normalize_lms_to_xyz_matrix=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/indvcmf/individual_observer_cmf_model.html#cie2006cmfsEx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.indvcmf.cie2006cmfsEx" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate Individual Observer CMFs (cone fundamentals) 
 based on CIE2006 cone fundamentals and published literature 
 on observer variability in color matching and in physiological parameters.</p>
@@ -1037,6 +1037,13 @@ on observer variability in color matching and in physiological parameters.</p>
 <div class="line-block">
 <div class="line">If False: X[X&lt;0] = 0.</div>
 </div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">normalize_lms_to_xyz_matrix:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><div class="first last line-block">
+<div class="line">False, optional</div>
+<div class="line">Normalize that EEW is always at [100,100,100] in XYZ and LMS system.</div>
 </div>
 </td>
 </tr>
@@ -1407,7 +1414,7 @@ most important categorical observer, the third, and so on.</p>
 
 <dl class="function">
 <dt id="luxpy.toolboxes.indvcmf.compute_cmfs">
-<code class="descclassname">luxpy.toolboxes.indvcmf.</code><code class="descname">compute_cmfs</code><span class="sig-paren">(</span><em>fieldsize=10, age=32, wl=None, var_od_lens=0, var_od_macula=0, var_shft_LMS=[0, 0, 0], var_od_LMS=[0, 0, 0], norm_type=None, out='lms', base=False, strategy_2=True, odata0=None, lms_to_xyz_method=None, allow_negative_values=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/indvcmf/individual_observer_cmf_model.html#compute_cmfs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.indvcmf.compute_cmfs" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">luxpy.toolboxes.indvcmf.</code><code class="descname">compute_cmfs</code><span class="sig-paren">(</span><em>fieldsize=10, age=32, wl=None, var_od_lens=0, var_od_macula=0, var_shft_LMS=[0, 0, 0], var_od_LMS=[0, 0, 0], norm_type=None, out='lms', base=False, strategy_2=True, odata0=None, lms_to_xyz_method=None, allow_negative_values=False, normalize_lms_to_xyz_matrix=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/indvcmf/individual_observer_cmf_model.html#compute_cmfs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.indvcmf.compute_cmfs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate Individual Observer CMFs (cone fundamentals) 
 based on CIE2006 cone fundamentals and published literature 
 on observer variability in color matching and in physiological parameters.</p>
@@ -1510,6 +1517,13 @@ on observer variability in color matching and in physiological parameters.</p>
 <div class="line-block">
 <div class="line">If False: X[X&lt;0] = 0.</div>
 </div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">normalize_lms_to_xyz_matrix:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><div class="first last line-block">
+<div class="line">False, optional</div>
+<div class="line">Normalize that EEW is always at [100,100,100] in XYZ and LMS system.</div>
 </div>
 </td>
 </tr>
@@ -1752,12 +1766,151 @@ spectra or component spectrum model parameters.</td>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">returns:</th><td class="field-body"><div class="first last line-block">
-<div class="line">ndarray with spectra.        </div>
+<div class="line">ndarray with spectra. </div>
 </div>
 </td>
 </tr>
 </tbody>
 </table>
+</dd>
+<dt>Note:</dt>
+<dd><div class="first last line-block">
+<div class="line">Gaussian:</div>
+<div class="line-block">
+<div class="line">g = exp(-0.5*((wl - peakwl)/fwhm)**2)</div>
+</div>
+</div>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="luxpy.toolboxes.spdbuild.butterworth_spd">
+<code class="descclassname">luxpy.toolboxes.spdbuild.</code><code class="descname">butterworth_spd</code><span class="sig-paren">(</span><em>peakwl=530, fwhm=20, bw_order=1, wl=[360.0, 830.0, 1.0], with_wl=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/spdbuild/spdbuilder.html#butterworth_spd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.spdbuild.butterworth_spd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate Butterworth based spectrum.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">peakw:</th><td class="field-body"><div class="first last line-block">
+<div class="line">int or float or list or ndarray, optional</div>
+<div class="line">Peak wavelength</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">fwhm:</th><td class="field-body"><div class="first last line-block">
+<div class="line">int or float or list or ndarray, optional</div>
+<div class="line">Full-Width-Half-Maximum of butterworth.</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">bw_order:</th><td class="field-body"><div class="first last line-block">
+<div class="line">1, optional</div>
+<div class="line">Order of the butterworth function.</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">wl:</th><td class="field-body"><div class="first last line-block">
+<div class="line">_WL3, optional </div>
+<div class="line">Wavelength range.</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">with_wl:</th><td class="field-body"><div class="first last line-block">
+<div class="line">True, optional</div>
+<div class="line">True outputs a ndarray with first row wavelengths.</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">returns:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray with spectra.    </div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Note:</dt>
+<dd><div class="first last line-block">
+<div class="line">Butterworth :</div>
+<div class="line-block">
+<div class="line">bw = 1 / (1 + ((2*(wl - peakwl)/fwhm)**2))</div>
+</div>
+</div>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="luxpy.toolboxes.spdbuild.lorentzian2_spd">
+<code class="descclassname">luxpy.toolboxes.spdbuild.</code><code class="descname">lorentzian2_spd</code><span class="sig-paren">(</span><em>peakwl=530, fwhm=20, wl=[360.0, 830.0, 1.0], with_wl=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/spdbuild/spdbuilder.html#lorentzian2_spd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.spdbuild.lorentzian2_spd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate 2nd order Lorentzian spectrum.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">peakw:</th><td class="field-body"><div class="first last line-block">
+<div class="line">int or float or list or ndarray, optional</div>
+<div class="line">Peak wavelength</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">fwhm:</th><td class="field-body"><div class="first last line-block">
+<div class="line">int or float or list or ndarray, optional</div>
+<div class="line">Full-Width-Half-Maximum of lorentzian.</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">wl:</th><td class="field-body"><div class="first last line-block">
+<div class="line">_WL3, optional </div>
+<div class="line">Wavelength range.</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">with_wl:</th><td class="field-body"><div class="first last line-block">
+<div class="line">True, optional</div>
+<div class="line">True outputs a ndarray with first row wavelengths.</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">returns:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray with spectra. </div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Note:</dt>
+<dd><div class="first last line-block">
+<div class="line">Lorentzian (2nd order):</div>
+<div class="line-block">
+<div class="line">lz = (1 + ((n*(wl - peakwl)/fwhm)**2))**(-2)</div>
+<div class="line-block">
+<div class="line">with n = 2*(2**0.5-1)**0.5</div>
+</div>
+</div>
+</div>
 </dd>
 </dl>
 </dd></dl>
@@ -1765,7 +1918,7 @@ spectra or component spectrum model parameters.</td>
 <dl class="function">
 <dt id="luxpy.toolboxes.spdbuild.mono_led_spd">
 <code class="descclassname">luxpy.toolboxes.spdbuild.</code><code class="descname">mono_led_spd</code><span class="sig-paren">(</span><em>peakwl=530, fwhm=20, wl=[360.0, 830.0, 1.0], with_wl=True, strength_shoulder=2, bw_order=-1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/spdbuild/spdbuilder.html#mono_led_spd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.spdbuild.mono_led_spd" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generate monochromatic LED spectrum based on a Gaussian or butterworth
+<dd><p>Generate monochromatic LED spectrum based on a Gaussian or or Lorentzian or butterworth
 profile or according to Ohno (Opt. Eng. 2005).</p>
 <dl class="docutils">
 <dt>Args:</dt>
@@ -1803,15 +1956,19 @@ profile or according to Ohno (Opt. Eng. 2005).</p>
 <tr class="field-odd field"><td>&#160;</td><td class="field-body"><div class="first last line-block">
 <div class="line">2, optional</div>
 <div class="line">Determines the strength of the spectrum shoulders of the mono led.</div>
-<div class="line">A value of 1 reduces to a Gaussian model (if bw_order == 0).</div>
+<div class="line">A value of 0 reduces to a pure Gaussian model (if bw_order &gt;= -1).</div>
 </div>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">bw_order:</th><td class="field-body"><div class="first last line-block">
 <div class="line">-1, optional</div>
 <div class="line">Order of Butterworth function.</div>
-<div class="line">If -1: spd profile is Gaussian.</div>
-<div class="line">If (bw_order == 0): spd profile is Gaussian, else Butterworth.</div>
+<div class="line">If -1 or 0: spd profile is Ohno’s gaussian based</div>
+<div class="line-block">
+<div class="line">(to obtain pure Gaussian: set strength_shoulder = 0).</div>
+</div>
+<div class="line">If -2: spd profile is Lorentzian,</div>
+<div class="line">else (&gt;0): Butterworth.</div>
 </div>
 </td>
 </tr>
@@ -1838,16 +1995,24 @@ profile or according to Ohno (Opt. Eng. 2005).</p>
 <div class="line">g = exp(-0.5*((wl - peakwl)/fwhm)**2)</div>
 <div class="line"><br /></div>
 </div>
+<div class="line">Lorentzian (2nd order):</div>
+<div class="line-block">
+<div class="line">lz = (1 + ((n*(wl - peakwl)/fwhm)**2))**(-2)</div>
+<div class="line-block">
+<div class="line">with n = 2*(2**0.5-1)**0.5</div>
+<div class="line"><br /></div>
+</div>
+</div>
 <div class="line">Butterworth :</div>
 <div class="line-block">
-<div class="line">bw = 2 / (1 + (((wl - peakwl)/fwhm)**2))</div>
+<div class="line">bw = 1 / (1 + ((2*(wl - peakwl)/fwhm)**2))</div>
 <div class="line"><br /></div>
 </div>
 <div class="line">Ohno’s model:</div>
 <div class="line-block">
 <div class="line">ohno = (g + strength_shoulder*g**5)/(1+strength_shoulder)</div>
 <div class="line"><br /></div>
-<div class="line">mono_led_spd = ohno*(bw_order == 0) + bw*(bw_order &gt; 0)</div>
+<div class="line">mono_led_spd = ohno*((bw_order &gt;= -1) &amp; (bw_order &lt;= 0)).T + bw*(bw_order &gt; 0).T + lz*((bw_order &gt;=-2) &amp; (bw_order &lt; -1)).T</div>
 </div>
 </div>
 </dd>
@@ -1906,7 +2071,7 @@ Opt. Eng. 44, 111302.</a></dd>
 </tr>
 <tr class="field-even field"><th class="field-name">fwhm:</th><td class="field-body"><div class="first last line-block">
 <div class="line">int or float or list or ndarray, optional</div>
-<div class="line">Full-Width-Half-Maximum of gaussian.</div>
+<div class="line">Full-Width-Half-Maximum of mono_led spectrum.</div>
 </div>
 </td>
 </tr>
@@ -1919,8 +2084,12 @@ Opt. Eng. 44, 111302.</a></dd>
 <tr class="field-even field"><th class="field-name">bw_order:</th><td class="field-body"><div class="first last line-block">
 <div class="line">-1, optional</div>
 <div class="line">Order of Butterworth function.</div>
-<div class="line">If -1: mono_led spd profile is Gaussian.</div>
-<div class="line">else: (bw_order == 0): spd profile is Gaussian, else Butterworth.</div>
+<div class="line">If -1 or 0: spd profile is Ohno’s gaussian based</div>
+<div class="line-block">
+<div class="line">(to obtain pure Gaussian: set strength_shoulder = 0).</div>
+</div>
+<div class="line">If -2: spd profile is Lorentzian,</div>
+<div class="line">else (&gt;0): Butterworth.</div>
 <div class="line">Note that this only applies to the monochromatic led  spds and not </div>
 <div class="line">the phosphors spds (these are always gaussian based).</div>
 </div>
@@ -2083,8 +2252,12 @@ Opt. Express 19, 6903–6912.</a></p>
 <tr class="field-even field"><th class="field-name">bw_order:</th><td class="field-body"><div class="first last line-block">
 <div class="line">-1, optional</div>
 <div class="line">Order of Butterworth function.</div>
-<div class="line">If -1: mono_led spd profile is Gaussian.</div>
-<div class="line">else: (bw_order == 0): spd profile is Gaussian, else Butterworth.</div>
+<div class="line">If -1 or 0: spd profile is Ohno’s gaussian based</div>
+<div class="line-block">
+<div class="line">(to obtain pure Gaussian: set strength_shoulder = 0).</div>
+</div>
+<div class="line">If -2: spd profile is Lorentzian,</div>
+<div class="line">else (&gt;0): Butterworth.</div>
 <div class="line">Note that this only applies to the monochromatic led  spds and not </div>
 <div class="line">the phosphors spds (these are always gaussian based).</div>
 </div>
@@ -2434,6 +2607,146 @@ themselves.</div>
 </dd></dl>
 
 <dl class="function">
+<dt id="luxpy.toolboxes.spdbuild.color3mixer">
+<code class="descclassname">luxpy.toolboxes.spdbuild.</code><code class="descname">color3mixer</code><span class="sig-paren">(</span><em>Yxyt</em>, <em>Yxy1</em>, <em>Yxy2</em>, <em>Yxy3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/spdbuild/spdbuilder.html#color3mixer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.spdbuild.color3mixer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate fluxes required to obtain a target chromaticity 
+when (additively) mixing 3 light sources.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Yxyt:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray with target Yxy chromaticities.</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Yxy1:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray with Yxy chromaticities of light sources 1.</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Yxy2:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray with Yxy chromaticities of light sources 2.</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Yxy3:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray with Yxy chromaticities of light sources 3.</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">M:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray with fluxes.</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Note:</dt>
+<dd>Yxyt, Yxy1, … can contain multiple rows, referring to single mixture.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="luxpy.toolboxes.spdbuild.colormixer">
+<code class="descclassname">luxpy.toolboxes.spdbuild.</code><code class="descname">colormixer</code><span class="sig-paren">(</span><em>Yxyt=None</em>, <em>Yxyi=None</em>, <em>n=4</em>, <em>pair_strengths=None</em>, <em>source_order=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/spdbuild/spdbuilder.html#colormixer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.spdbuild.colormixer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate fluxes required to obtain a target chromaticity 
+when (additively) mixing N light sources.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Yxyt:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray with target Yxy chromaticities.</div>
+<div class="line">Defaults to equi-energy white.</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Yxyi:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray with Yxy chromaticities of light sources i = 1 to n.</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">n:</th><td class="field-body"><div class="first last line-block">
+<div class="line">4 or int, optional</div>
+<div class="line">Number of source components to randomly generate when Yxyi is None.</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">pair_strengths:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray with light source pair strengths.  </div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">source_order:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray with order of source components.</div>
+<div class="line">If None: use np.arange(n)</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">M:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray with fluxes.</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Note:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Algorithm:</th><td class="field-body"><div class="first last line-block">
+<div class="line">1. Loop over all source components and create intermediate sources</div>
+<div class="line-block">
+<div class="line">from all (even,odd)-pairs using the relative strengths </div>
+<div class="line-block">
+<div class="line">of the pair (specified in pair_strengths). </div>
+</div>
+</div>
+<div class="line">2. Collect any remaining sources.</div>
+<div class="line">3. Combine with new intermediate source components</div>
+<div class="line">4. Repeat 1-3 until there are only 3 source components left. </div>
+<div class="line">5. Use color3mixer to calculate the required fluxes of the 3 final</div>
+<div class="line-block">
+<div class="line">intermediate components to obtain the target chromaticity. </div>
+</div>
+<div class="line">6. Backward calculate the fluxes of all original source components</div>
+<div class="line-block">
+<div class="line">from the 3 final intermediate fluxes.</div>
+</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
 <dt id="luxpy.toolboxes.spdbuild.spd_constructor_3">
 <code class="descclassname">luxpy.toolboxes.spdbuild.</code><code class="descname">spd_constructor_3</code><span class="sig-paren">(</span><em>x</em>, <em>constructor_pars={}</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/spdbuild/spdbuilder.html#spd_constructor_3"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.spdbuild.spd_constructor_3" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct spd from model parameters using trio’s of intermediate sources.</p>
@@ -2487,7 +2800,7 @@ themselves.</div>
 
 <dl class="function">
 <dt id="luxpy.toolboxes.spdbuild.spd_optimizer_2_3">
-<code class="descclassname">luxpy.toolboxes.spdbuild.</code><code class="descname">spd_optimizer_2_3</code><span class="sig-paren">(</span><em>optimizer_type='2mixer', spd_constructor=None, spd_model_pars=None, component_data=4, N_components=None, wl=[360.0, 830.0, 1.0], allow_butterworth_mono_spds=False, Yxy_target=array([[1.0000e+02, 3.3333e-01, 3.3333e-01]]), cieobs='1931_2', obj_fcn=[None], obj_fcn_pars=[{}], obj_fcn_weights=[1], obj_tar_vals=[0], decimals=[5], minimize_method='nelder-mead', minimize_opts=None, F_rss=True, verbosity=0, **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/spdbuild/spdbuilder.html#spd_optimizer_2_3"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.spdbuild.spd_optimizer_2_3" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">luxpy.toolboxes.spdbuild.</code><code class="descname">spd_optimizer_2_3</code><span class="sig-paren">(</span><em>optimizer_type='2mixer', spd_constructor=None, spd_model_pars=None, component_data=4, N_components=None, wl=[360.0, 830.0, 1.0], allow_nongaussianbased_mono_spds=False, Yxy_target=array([[1.0000e+02, 3.3333e-01, 3.3333e-01]]), cieobs='1931_2', obj_fcn=[None], obj_fcn_pars=[{}], obj_fcn_weights=[1], obj_tar_vals=[0], decimals=[5], minimize_method='nelder-mead', minimize_opts=None, F_rss=True, verbosity=0, **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/spdbuild/spdbuilder.html#spd_optimizer_2_3"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.spdbuild.spd_optimizer_2_3" title="Permalink to this definition">¶</a></dt>
 <dd><p>Optimizes the weights (fluxes) of a set of component spectra by combining 
 pairs (2) or trio’s (3) of components to intermediate sources until only 3
 remain. Color3mixer can then be called to calculate required fluxes to
@@ -2562,7 +2875,7 @@ when :component_data: is dict and user wants to override dict. </div>
 </div>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name" colspan="2">allow_butterworth_mono_spds:</th></tr>
+<tr class="field-even field"><th class="field-name" colspan="2">allow_nongaussianbased_mono_spds:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><div class="first last line-block">
 <div class="line">False, optional</div>
 <div class="line">False: use pure Gaussian based monochrom. spds.</div>
@@ -2676,7 +2989,7 @@ objective function values.</div>
 
 <dl class="function">
 <dt id="luxpy.toolboxes.spdbuild.get_optim_pars_dict">
-<code class="descclassname">luxpy.toolboxes.spdbuild.</code><code class="descname">get_optim_pars_dict</code><span class="sig-paren">(</span><em>target=array([[1.0000e+02, 3.3333e-01, 3.3333e-01]]), tar_type='Yxy', cieobs='1931_2', optimizer_type='2mixer', spd_constructor=None, spd_model_pars=None, cspace='Yuv', cspace_bwtf={}, cspace_fwtf={}, component_spds=None, N_components=None, obj_fcn=[None], obj_fcn_pars=[{}], obj_fcn_weights=[1], obj_tar_vals=[0], decimals=[5], minimize_method='nelder-mead', minimize_opts=None, F_rss=True, peakwl=[450, 530, 610], fwhm=[20, 20, 20], allow_butterworth_mono_spds=False, bw_order=[-1], wl=[360.0, 830.0, 1.0], with_wl=True, strength_shoulder=2, strength_ph=[0], use_piecewise_fcn=False, peakwl_ph1=[530], fwhm_ph1=[80], strength_ph1=[1], peakwl_ph2=[560], fwhm_ph2=[80], strength_ph2=None, verbosity=0, pair_strengths=None, triangle_strengths=None, peakwl_min=[400], peakwl_max=[700], fwhm_min=[5], fwhm_max=[300], bw_order_min=[0], bw_order_max=[100]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/spdbuild/spdbuilder.html#get_optim_pars_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.spdbuild.get_optim_pars_dict" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">luxpy.toolboxes.spdbuild.</code><code class="descname">get_optim_pars_dict</code><span class="sig-paren">(</span><em>target=array([[1.0000e+02, 3.3333e-01, 3.3333e-01]]), tar_type='Yxy', cieobs='1931_2', optimizer_type='2mixer', spd_constructor=None, spd_model_pars=None, cspace='Yuv', cspace_bwtf={}, cspace_fwtf={}, component_spds=None, N_components=None, obj_fcn=[None], obj_fcn_pars=[{}], obj_fcn_weights=[1], obj_tar_vals=[0], decimals=[5], minimize_method='nelder-mead', minimize_opts=None, F_rss=True, peakwl=[450, 530, 610], fwhm=[20, 20, 20], allow_nongaussianbased_mono_spds=False, bw_order=[-1], wl=[360.0, 830.0, 1.0], with_wl=True, strength_shoulder=2, strength_ph=[0], use_piecewise_fcn=False, peakwl_ph1=[530], fwhm_ph1=[80], strength_ph1=[1], peakwl_ph2=[560], fwhm_ph2=[80], strength_ph2=None, verbosity=0, pair_strengths=None, triangle_strengths=None, peakwl_min=[400], peakwl_max=[700], fwhm_min=[5], fwhm_max=[300], bw_order_min=[-2], bw_order_max=[100]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/spdbuild/spdbuilder.html#get_optim_pars_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.spdbuild.get_optim_pars_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Setup dict with optimization parameters.</p>
 <dl class="docutils">
 <dt>Args:</dt>
@@ -2699,7 +3012,7 @@ objective function values.</div>
 
 <dl class="function">
 <dt id="luxpy.toolboxes.spdbuild.initialize_spd_model_pars">
-<code class="descclassname">luxpy.toolboxes.spdbuild.</code><code class="descname">initialize_spd_model_pars</code><span class="sig-paren">(</span><em>component_data, N_components=None, allow_butterworth_mono_spds=False, optimizer_type='2mixer', wl=[360.0, 830.0, 1.0]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/spdbuild/spdbuilder.html#initialize_spd_model_pars"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.spdbuild.initialize_spd_model_pars" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">luxpy.toolboxes.spdbuild.</code><code class="descname">initialize_spd_model_pars</code><span class="sig-paren">(</span><em>component_data, N_components=None, allow_nongaussianbased_mono_spds=False, optimizer_type='2mixer', wl=[360.0, 830.0, 1.0]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/spdbuild/spdbuilder.html#initialize_spd_model_pars"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.spdbuild.initialize_spd_model_pars" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize spd_model_pars dict (for spd_constructor) based on type 
 of component_data.</p>
 <dl class="docutils">
@@ -2734,12 +3047,12 @@ of component_data.</p>
 </div>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name" colspan="2">allow_butterworth_mono_spds:</th></tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">allow_nongaussianbased_mono_spds:</th></tr>
 <tr class="field-odd field"><td>&#160;</td><td class="field-body"><div class="first last line-block">
 <div class="line">False, optional</div>
 <div class="line-block">
-<div class="line">- False: use pure Gaussian based monochrom. spds.</div>
-<div class="line">- True: also allow butterworth type monochrom. spds while optimizing.</div>
+<div class="line">- False: use Gaussian based monochrom. spds.</div>
+<div class="line">- True: also allow butterworth and lorentzian type monochrom. spds while optimizing.</div>
 </div>
 </div>
 </td>
@@ -2779,7 +3092,7 @@ ndarray with spectral data.</div>
 
 <dl class="function">
 <dt id="luxpy.toolboxes.spdbuild.initialize_spd_optim_pars">
-<code class="descclassname">luxpy.toolboxes.spdbuild.</code><code class="descname">initialize_spd_optim_pars</code><span class="sig-paren">(</span><em>component_data, N_components=None, allow_butterworth_mono_spds=False, optimizer_type='2mixer', wl=[360.0, 830.0, 1.0], spd_model_pars=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/spdbuild/spdbuilder.html#initialize_spd_optim_pars"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.spdbuild.initialize_spd_optim_pars" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">luxpy.toolboxes.spdbuild.</code><code class="descname">initialize_spd_optim_pars</code><span class="sig-paren">(</span><em>component_data, N_components=None, allow_nongaussianbased_mono_spds=False, optimizer_type='2mixer', wl=[360.0, 830.0, 1.0], spd_model_pars=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/spdbuild/spdbuilder.html#initialize_spd_optim_pars"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.spdbuild.initialize_spd_optim_pars" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize spd_optim_pars dict based on type of component_data.</p>
 <dl class="docutils">
 <dt>Args:</dt>
@@ -2813,10 +3126,10 @@ when :component_data: is dict and user wants to override dict. </div>
 </div>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name" colspan="2">allow_butterworth_mono_spds:</th></tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">allow_nongaussianbased_mono_spds:</th></tr>
 <tr class="field-odd field"><td>&#160;</td><td class="field-body"><div class="first last line-block">
 <div class="line">False, optional</div>
-<div class="line">False: use pure Gaussian based monochrom. spds.</div>
+<div class="line">False: use Gaussian based monochrom. spds.</div>
 </div>
 </td>
 </tr>
@@ -2861,8 +3174,73 @@ ndarray with spectral data.</div>
 </dd></dl>
 
 <dl class="function">
+<dt id="luxpy.toolboxes.spdbuild.get_primary_fluxratios">
+<code class="descclassname">luxpy.toolboxes.spdbuild.</code><code class="descname">get_primary_fluxratios</code><span class="sig-paren">(</span><em>res</em>, <em>primaries</em>, <em>Ytarget=1</em>, <em>ptype='pu'</em>, <em>cieobs='1931_2'</em>, <em>out='M</em>, <em>Sopt'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/spdbuild/spdbuilder.html#get_primary_fluxratios"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.spdbuild.get_primary_fluxratios" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get flux ratios of primaries.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">res:</th><td class="field-body"><div class="first last line-block">
+<div class="line">dict or ndarray with optimized fluxes for component spds normalized to max = 1.</div>
+<div class="line">(output of spd_optimizer)</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">primaries:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray with primary spectra.</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Ytarget:</th><td class="field-body"><div class="first last line-block">
+<div class="line">1, optional</div>
+<div class="line">M will be scaled to result in a photo-/radio-metric power of Ytarget</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">ptype:</th><td class="field-body"><div class="first last line-block">
+<div class="line">‘pu’ or ‘ru’, optional</div>
+<div class="line">Type of power:</div>
+<div class="line">-‘pu’: photometric units</div>
+<div class="line">-‘ru’: radiometric units</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">cieobs:</th><td class="field-body"><div class="first last line-block">
+<div class="line">_CIEOBS, optional</div>
+<div class="line">CMF set/Vlambda to use in calculation of power.</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">M:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray with flux ratios.</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Sopt:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray with optimized scaled spectrum.</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
 <dt id="luxpy.toolboxes.spdbuild.spd_optimizer">
-<code class="descclassname">luxpy.toolboxes.spdbuild.</code><code class="descname">spd_optimizer</code><span class="sig-paren">(</span><em>target=array([[1.0000e+02, 3.3333e-01, 3.3333e-01]]), tar_type='Yxy', cieobs='1931_2', optimizer_type='2mixer', spd_constructor=None, spd_model_pars=None, cspace='Yuv', cspace_bwtf={}, cspace_fwtf={}, component_spds=None, N_components=None, obj_fcn=[None], obj_fcn_pars=[{}], obj_fcn_weights=[1], obj_tar_vals=[0], decimals=[5], minimize_method='nelder-mead', minimize_opts=None, F_rss=True, peakwl=[450, 530, 610], fwhm=[20, 20, 20], allow_butterworth_mono_spds=False, bw_order=[-1], wl=[360.0, 830.0, 1.0], with_wl=True, strength_shoulder=2, strength_ph=[0], use_piecewise_fcn=False, peakwl_ph1=[530], fwhm_ph1=[80], strength_ph1=[1], peakwl_ph2=[560], fwhm_ph2=[80], strength_ph2=None, verbosity=0, pair_strengths=None, peakwl_min=[400], peakwl_max=[700], fwhm_min=[5], fwhm_max=[300], bw_order_min=0, bw_order_max=100, out='spds,M'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/spdbuild/spdbuilder.html#spd_optimizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.spdbuild.spd_optimizer" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">luxpy.toolboxes.spdbuild.</code><code class="descname">spd_optimizer</code><span class="sig-paren">(</span><em>target=array([[1.0000e+02, 3.3333e-01, 3.3333e-01]]), tar_type='Yxy', cieobs='1931_2', optimizer_type='2mixer', spd_constructor=None, spd_model_pars=None, cspace='Yuv', cspace_bwtf={}, cspace_fwtf={}, component_spds=None, N_components=None, obj_fcn=[None], obj_fcn_pars=[{}], obj_fcn_weights=[1], obj_tar_vals=[0], decimals=[5], minimize_method='nelder-mead', minimize_opts=None, F_rss=True, peakwl=[450, 530, 610], fwhm=[20, 20, 20], allow_nongaussianbased_mono_spds=False, bw_order=[-1], wl=[360.0, 830.0, 1.0], with_wl=True, strength_shoulder=2, strength_ph=[0], use_piecewise_fcn=False, peakwl_ph1=[530], fwhm_ph1=[80], strength_ph1=[1], peakwl_ph2=[560], fwhm_ph2=[80], strength_ph2=None, verbosity=0, pair_strengths=None, peakwl_min=[400], peakwl_max=[700], fwhm_min=[5], fwhm_max=[300], bw_order_min=-2, bw_order_max=100, out='spds,M'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/spdbuild/spdbuilder.html#spd_optimizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.spdbuild.spd_optimizer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate a spectrum with specified white point and optimized for certain 
 objective functions from a set of component spectra or component spectrum 
 model parameters.</p>
@@ -2960,10 +3338,11 @@ when :component_data: is dict and user wants to override dict value</div>
 </div>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name" colspan="2">allow_butterworth_mono_spds:</th></tr>
+<tr class="field-even field"><th class="field-name" colspan="2">allow_nongaussianbased_mono_spds:</th></tr>
 <tr class="field-even field"><td>&#160;</td><td class="field-body"><div class="first last line-block">
 <div class="line">False, optional</div>
-<div class="line">False: use pure Gaussian based monochrom. spds.</div>
+<div class="line">False: use Ohno monochromatic led spectra based on Gaussian spds.</div>
+<div class="line">True: also use Butterworth and Lorentzian spds.</div>
 </div>
 </td>
 </tr>
@@ -3401,7 +3780,7 @@ rendered image pixels.</div>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2019, Kevin A.G. Smet
+        &copy; Copyright 2020, Kevin A.G. Smet
 
     </p>
   </div>
