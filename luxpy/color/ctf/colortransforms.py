@@ -94,7 +94,7 @@ _CSPACE_AXES['srgb'] = ['sR', 'sG','sB']
 # pre-calculate matrices for conversion of xyz to lms and back for use in xyz_to_ipt() and ipt_to_xyz():
 _IPT_M = {'lms2ipt': np.array([[0.4000,0.4000,0.2000],[4.4550,-4.8510,0.3960],[0.8056,0.3572,-1.1628]]),
                               'xyz2lms' : {x : math.normalize_3x3_matrix(_CMF[x]['M'],spd_to_xyz(_CIE_ILLUMINANTS['D65'],cieobs = x)) for x in sorted(_CMF['types'])}}
-_COLORTF_DEFAULT_WHITE_POINT = np.array([100.0, 100.0, 100.0]) # ill. E white point
+_COLORTF_DEFAULT_WHITE_POINT = np.array([[100.0, 100.0, 100.0]]) # ill. E white point
 
 #------------------------------------------------------------------------------
 #---chromaticity coordinates---------------------------------------------------
@@ -610,7 +610,7 @@ def xyz_to_ipt(xyz, cieobs = _CIEOBS, xyzw = None, M = None, **kwargs):
     if M is None:
         M = _IPT_M['xyz2lms'][cieobs].copy() # matrix conversions from xyz to lms
         if xyzw is None:
-            xyzw = spd_to_xyz(_CIE_ILLUMINANTS['D65'],cieobs = cieobs, out = 1)[0]/100.0
+            xyzw = spd_to_xyz(_CIE_ILLUMINANTS['D65'],cieobs = cieobs, out = 1)/100.0
         else:
             xyzw = xyzw/100.0
         M = math.normalize_3x3_matrix(M,xyzw)
@@ -684,7 +684,7 @@ def ipt_to_xyz(ipt, cieobs = _CIEOBS, xyzw = None, M = None, **kwargs):
     if M is None:
         M = _IPT_M['xyz2lms'][cieobs].copy() # matrix conversions from xyz to lms
         if xyzw is None:
-            xyzw = spd_to_xyz(_CIE_ILLUMINANTS['D65'],cieobs = cieobs, out = 1)[0]/100.0
+            xyzw = spd_to_xyz(_CIE_ILLUMINANTS['D65'],cieobs = cieobs, out = 1)/100.0
         else:
             xyzw = xyzw/100.0
         M = math.normalize_3x3_matrix(M,xyzw)

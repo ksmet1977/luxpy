@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.color.ctf.colortransforms &mdash; LuxPy 1.4.15 documentation</title>
+  <title>luxpy.color.ctf.colortransforms &mdash; LuxPy 1.4.16 documentation</title>
   
 
   
@@ -56,7 +56,7 @@
             
             
               <div class="version">
-                1.4.15
+                1.4.16
               </div>
             
           
@@ -245,7 +245,7 @@
 <span class="c1"># pre-calculate matrices for conversion of xyz to lms and back for use in xyz_to_ipt() and ipt_to_xyz():</span>
 <span class="n">_IPT_M</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;lms2ipt&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.4000</span><span class="p">,</span><span class="mf">0.4000</span><span class="p">,</span><span class="mf">0.2000</span><span class="p">],[</span><span class="mf">4.4550</span><span class="p">,</span><span class="o">-</span><span class="mf">4.8510</span><span class="p">,</span><span class="mf">0.3960</span><span class="p">],[</span><span class="mf">0.8056</span><span class="p">,</span><span class="mf">0.3572</span><span class="p">,</span><span class="o">-</span><span class="mf">1.1628</span><span class="p">]]),</span>
                               <span class="s1">&#39;xyz2lms&#39;</span> <span class="p">:</span> <span class="p">{</span><span class="n">x</span> <span class="p">:</span> <span class="n">math</span><span class="o">.</span><span class="n">normalize_3x3_matrix</span><span class="p">(</span><span class="n">_CMF</span><span class="p">[</span><span class="n">x</span><span class="p">][</span><span class="s1">&#39;M&#39;</span><span class="p">],</span><span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">_CIE_ILLUMINANTS</span><span class="p">[</span><span class="s1">&#39;D65&#39;</span><span class="p">],</span><span class="n">cieobs</span> <span class="o">=</span> <span class="n">x</span><span class="p">))</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">_CMF</span><span class="p">[</span><span class="s1">&#39;types&#39;</span><span class="p">])}}</span>
-<span class="n">_COLORTF_DEFAULT_WHITE_POINT</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">100.0</span><span class="p">,</span> <span class="mf">100.0</span><span class="p">,</span> <span class="mf">100.0</span><span class="p">])</span> <span class="c1"># ill. E white point</span>
+<span class="n">_COLORTF_DEFAULT_WHITE_POINT</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">100.0</span><span class="p">,</span> <span class="mf">100.0</span><span class="p">,</span> <span class="mf">100.0</span><span class="p">]])</span> <span class="c1"># ill. E white point</span>
 
 <span class="c1">#------------------------------------------------------------------------------</span>
 <span class="c1">#---chromaticity coordinates---------------------------------------------------</span>
@@ -761,7 +761,7 @@
     <span class="k">if</span> <span class="n">M</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">M</span> <span class="o">=</span> <span class="n">_IPT_M</span><span class="p">[</span><span class="s1">&#39;xyz2lms&#39;</span><span class="p">][</span><span class="n">cieobs</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="c1"># matrix conversions from xyz to lms</span>
         <span class="k">if</span> <span class="n">xyzw</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">xyzw</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">_CIE_ILLUMINANTS</span><span class="p">[</span><span class="s1">&#39;D65&#39;</span><span class="p">],</span><span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="mf">100.0</span>
+            <span class="n">xyzw</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">_CIE_ILLUMINANTS</span><span class="p">[</span><span class="s1">&#39;D65&#39;</span><span class="p">],</span><span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mf">100.0</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="o">/</span><span class="mf">100.0</span>
         <span class="n">M</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">normalize_3x3_matrix</span><span class="p">(</span><span class="n">M</span><span class="p">,</span><span class="n">xyzw</span><span class="p">)</span>
@@ -835,7 +835,7 @@
     <span class="k">if</span> <span class="n">M</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">M</span> <span class="o">=</span> <span class="n">_IPT_M</span><span class="p">[</span><span class="s1">&#39;xyz2lms&#39;</span><span class="p">][</span><span class="n">cieobs</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="c1"># matrix conversions from xyz to lms</span>
         <span class="k">if</span> <span class="n">xyzw</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">xyzw</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">_CIE_ILLUMINANTS</span><span class="p">[</span><span class="s1">&#39;D65&#39;</span><span class="p">],</span><span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="mf">100.0</span>
+            <span class="n">xyzw</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">_CIE_ILLUMINANTS</span><span class="p">[</span><span class="s1">&#39;D65&#39;</span><span class="p">],</span><span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mf">100.0</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="o">/</span><span class="mf">100.0</span>
         <span class="n">M</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">normalize_3x3_matrix</span><span class="p">(</span><span class="n">M</span><span class="p">,</span><span class="n">xyzw</span><span class="p">)</span>
