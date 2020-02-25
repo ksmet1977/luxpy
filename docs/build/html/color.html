@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Color sub-package &mdash; LuxPy 1.4.16 documentation</title>
+  <title>Color sub-package &mdash; LuxPy 1.4.17 documentation</title>
   
 
   
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                1.4.16
+                1.4.17
               </div>
             
           
@@ -5011,7 +5011,7 @@ Journal of the Optical Society of America A, 33(3), A319–A331.</a></dd>
 
 <dl class="function">
 <dt id="luxpy.color.cam.cam18sl">
-<code class="descclassname">luxpy.color.cam.</code><code class="descname">cam18sl</code><span class="sig-paren">(</span><em>data, datab=None, Lb=[100], fov=10.0, inputtype='xyz', direction='forward', outin='Q,aW,bW', parameters=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cam/cam18sl.html#cam18sl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cam.cam18sl" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">luxpy.color.cam.</code><code class="descname">cam18sl</code><span class="sig-paren">(</span><em>data, datab=None, Lb=[100], fov=10.0, inputtype='xyz', direction='forward', outin='Q,aS,bS', parameters=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cam/cam18sl.html#cam18sl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cam.cam18sl" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert between CIE 2006 10°  XYZ tristimulus values (or spectral data) 
 and CAM18sl color appearance correlates.</p>
 <dl class="docutils">
@@ -5064,10 +5064,16 @@ of stimulus background</div>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">outin:</th><td class="field-body"><div class="first last line-block">
-<div class="line">‘Q,aW,bW’ or str, optional</div>
-<div class="line">‘Q,aW,bW’ (brightness and opponent signals for amount-of-neutral)</div>
+<div class="line">‘Q,aS,bS’ or str, optional</div>
+<div class="line">‘Q,aS,bS’ (brightness and opponent signals for saturation)</div>
 <div class="line-block">
-<div class="line">other options: ‘Q,aM,bM’ (colorfulness) and ‘Q,aS,bS’ (saturation)</div>
+<div class="line">other options: ‘Q,aM,bM’ (colorfulness) </div>
+<div class="line-block">
+<div class="line">(Note that ‘Q,aW,bW’ would lead to a Cartesian </div>
+<div class="line-block">
+<div class="line">a,b-coordinate system centered at (1,0))</div>
+</div>
+</div>
 </div>
 <div class="line">Str specifying the type of </div>
 <div class="line-block">
@@ -5124,6 +5130,11 @@ of stimulus background</div>
 <div class="line">This has been corrected for in the luxpy version of the model, i.e.</div>
 <div class="line">_CAM18SL_PARAMETERS[‘cW’][0] has been changed from 2.29 to 1/11672.</div>
 <div class="line">(see future erratum to Hermans et al., 2018)</div>
+</div>
+<div class="line">* Default output was ‘Q,aW,bW’ prior to March 2020, but since this</div>
+<div class="line-block">
+<div class="line">is an a,b Cartesian system centered on (1,0), the default output</div>
+<div class="line">has been changed to ‘Q,aS,bS’.</div>
 </div>
 </div>
 </dd>
@@ -5353,7 +5364,8 @@ Journal of the Optical Society of America A, 35(12), 2000–2009.</a></dd>
 <dl class="function">
 <dt id="luxpy.color.cam.xyz_to_qabW_cam18sl">
 <code class="descclassname">luxpy.color.cam.</code><code class="descname">xyz_to_qabW_cam18sl</code><span class="sig-paren">(</span><em>xyz, xyzb=None, Lb=[100], fov=10.0, parameters=None, **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cam/cam18sl.html#xyz_to_qabW_cam18sl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cam.xyz_to_qabW_cam18sl" title="Permalink to this definition">¶</a></dt>
-<dd><p>Wrapper function for cam18sl forward mode with ‘Q,aW,bW’ output.</p>
+<dd><p>Wrapper function for cam18sl forward mode with ‘Q,aW,bW’ output.
+(Note that ‘Q,aW,bW’ is a Cartesian a,b-coordinate system centered at (1,0))</p>
 <div class="line-block">
 <div class="line">For help on parameter details: ?luxpy.cam.cam18sl</div>
 </div>
@@ -5362,7 +5374,8 @@ Journal of the Optical Society of America A, 35(12), 2000–2009.</a></dd>
 <dl class="function">
 <dt id="luxpy.color.cam.qabW_cam18sl_to_xyz">
 <code class="descclassname">luxpy.color.cam.</code><code class="descname">qabW_cam18sl_to_xyz</code><span class="sig-paren">(</span><em>qab, xyzb=None, Lb=[100], fov=10.0, parameters=None, **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cam/cam18sl.html#qabW_cam18sl_to_xyz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cam.qabW_cam18sl_to_xyz" title="Permalink to this definition">¶</a></dt>
-<dd><p>Wrapper function for cam18sl inverse mode with ‘Q,aW,bW’ input.</p>
+<dd><p>Wrapper function for cam18sl inverse mode with ‘Q,aW,bW’ input.
+(Note that ‘Q,aW,bW’ is a Cartesian a,b-coordinate system centered at (1,0))</p>
 <div class="line-block">
 <div class="line">For help on parameter details: ?luxpy.cam.cam18sl</div>
 </div>
