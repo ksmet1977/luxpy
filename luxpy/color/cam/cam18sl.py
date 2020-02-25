@@ -48,7 +48,7 @@ _CAM18SL_PARAMETERS = {'k': [676.7, 794.0, 1461.5],
 __all__ = ['cam18sl','_CAM18SL_AXES','_CAM18SL_UNIQUE_HUE_DATA', '_CAM18SL_PARAMETERS','_CAM18SL_NAKA_RUSHTON_PARAMETERS', '_CAM18SL_SURROUND_PARAMETERS']
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------            
-def cam18sl(data, datab = None, Lb = [100], fov = 10.0, inputtype = 'xyz', direction = 'forward', outin = 'Q,aW,bW', parameters = None):
+def cam18sl(data, datab = None, Lb = [100], fov = 10.0, inputtype = 'xyz', direction = 'forward', outin = 'Q,aS,bS', parameters = None):
     """
     Convert between CIE 2006 10°  XYZ tristimulus values (or spectral data) 
     and CAM18sl color appearance correlates.
@@ -76,9 +76,11 @@ def cam18sl(data, datab = None, Lb = [100], fov = 10.0, inputtype = 'xyz', direc
             |   -'forward': xyz -> cam18sl
             |   -'inverse': cam18sl -> xyz 
         :outin:
-            | 'Q,aW,bW' or str, optional
-            | 'Q,aW,bW' (brightness and opponent signals for amount-of-neutral)
-            |  other options: 'Q,aM,bM' (colorfulness) and 'Q,aS,bS' (saturation)
+            | 'Q,aS,bS' or str, optional
+            | 'Q,aS,bS' (brightness and opponent signals for saturation)
+            |  other options: 'Q,aM,bM' (colorfulness) 
+            |                 (Note that 'Q,aW,bW' would lead to a Cartesian 
+            |                  a,b-coordinate system centered at (1,0))
             | Str specifying the type of 
             |     input (:direction: == 'inverse') and 
             |     output (:direction: == 'forward')
@@ -105,6 +107,9 @@ def cam18sl(data, datab = None, Lb = [100], fov = 10.0, inputtype = 'xyz', direc
         |   This has been corrected for in the luxpy version of the model, i.e.
         |   _CAM18SL_PARAMETERS['cW'][0] has been changed from 2.29 to 1/11672.
         |   (see future erratum to Hermans et al., 2018)
+        | * Default output was 'Q,aW,bW' prior to March 2020, but since this
+        |   is an a,b Cartesian system centered on (1,0), the default output
+        |   has been changed to 'Q,aS,bS'.
 
     References: 
         1. `Hermans, S., Smet, K. A. G., & Hanselaer, P. (2018). 
@@ -149,6 +154,7 @@ def cam18sl(data, datab = None, Lb = [100], fov = 10.0, inputtype = 'xyz', direc
     datar = np.vstack((wlr,np.ones((Lb.shape[0], wlr.shape[0])))) # create eew
     xyzr = spd_to_xyz(datar, cieobs = '2006_10', relative = False) # get abs. tristimulus values
     datar[1:] = datar[1:]/xyzr[...,1:2]*Lb
+    
     # Create datab if None:
     if (datab is None):
         if inputtype != 'xyz':
@@ -156,7 +162,7 @@ def cam18sl(data, datab = None, Lb = [100], fov = 10.0, inputtype = 'xyz', direc
         else:
             datab = spd_to_xyz(datar, cieobs = '2006_10', relative = False)
             datar = datab.copy()
-
+    
  
     # prepare data and datab for loop over backgrounds: 
     # make axis 1 of datab have 'same' dimensions as data:         
@@ -196,7 +202,7 @@ def cam18sl(data, datab = None, Lb = [100], fov = 10.0, inputtype = 'xyz', direc
         else:
             xyzb = datab[i:i+1,:] 
             xyzr = datar[i:i+1,:] 
-
+        
         lmsb = np.dot(_CMF['2006_10']['M'],xyzb.T).T # convert to l,m,s
         rgbb = (lmsb / _CMF['2006_10']['K']) * k # convert to rho, gamma, beta
         #lmsr = np.dot(_CMF['2006_10']['M'],xyzr.T).T # convert to l,m,s
@@ -266,10 +272,10 @@ def cam18sl(data, datab = None, Lb = [100], fov = 10.0, inputtype = 'xyz', direc
                 aW = W*np.cos(h*np.pi/180.0)
                 bW = W*np.sin(h*np.pi/180.0)
 
-            if (outin != ['Q','aW','bW']):
+            if (outin != ['Q','aS','bS']):
                 camout[i] =  eval('ajoin(('+','.join(outin)+'))')
             else:
-                camout[i] = ajoin((Q,aW,bW))
+                camout[i] = ajoin((Q,aS,bS))
     
         
         elif direction == 'inverse':
@@ -345,6 +351,7 @@ def cam18sl(data, datab = None, Lb = [100], fov = 10.0, inputtype = 'xyz', direc
 def xyz_to_qabW_cam18sl(xyz, xyzb = None, Lb = [100], fov = 10.0, parameters = None, **kwargs):
     """
     Wrapper function for cam18sl forward mode with 'Q,aW,bW' output.
+    (Note that 'Q,aW,bW' is a Cartesian a,b-coordinate system centered at (1,0))
     
     | For help on parameter details: ?luxpy.cam.cam18sl
     """
@@ -353,6 +360,7 @@ def xyz_to_qabW_cam18sl(xyz, xyzb = None, Lb = [100], fov = 10.0, parameters = N
 def qabW_cam18sl_to_xyz(qab, xyzb = None, Lb = [100], fov = 10.0, parameters = None, **kwargs):
     """
     Wrapper function for cam18sl inverse mode with 'Q,aW,bW' input.
+    (Note that 'Q,aW,bW' is a Cartesian a,b-coordinate system centered at (1,0))
     
     | For help on parameter details: ?luxpy.cam.cam18sl
     """
