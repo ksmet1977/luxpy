@@ -164,6 +164,7 @@ def cam18sl(data, datab = None, Lb = [100], fov = 10.0, inputtype = 'xyz', direc
         data = np.expand_dims(data, axis = 1)  # add light source axis 1     
 
     if inputtype == 'xyz': 
+        datar = spd_to_xyz(datar, cieobs = '2006_10', relative = False) # convert to xyz!!
         if datab.shape[0] == 1: #make datab and datar have same lights source dimension (used to store different backgrounds) size as data
             datab = np.repeat(datab,data.shape[1],axis=0)  
             datar = np.repeat(datar,data.shape[1],axis=0)               
