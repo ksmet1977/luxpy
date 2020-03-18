@@ -28,9 +28,14 @@ Module for color difference calculations
  :DE_cspace():  Calculate color difference DE in specific color space.
  
  :get_macadam_ellipse(): Estimate n-step MacAdam ellipse at CIE x,y coordinates  
+ 
+ :get_gij_fmc(): Get gij matrices describing the discrimination ellipses for Yxy using FMC-1 or FMC-2.
+
+ :get_fmc_discrimination_ellipse(): Get n-step discrimination ellipse(s) in v-format (R,r, xc, yc, theta) for Yxy using FMC-1 or FMC-2.
+  
 """
 from .colordifferences import *
 __all__ = colordifferences.__all__
 
-from .macadamellipses import *
-__all__ += macadamellipses.__all__
+from .discriminationellipses import *
+__all__ += discriminationellipses.__all__

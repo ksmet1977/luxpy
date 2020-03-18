@@ -17,10 +17,12 @@
 #########################################################################
 """
 Module for MacAdam ellipses
-==================================================================
+===========================
 
  :get_macadam_ellipse(): Estimate n-step MacAdam ellipse at CIE x,y coordinates  
      
+References:
+  1. MacAdam DL. Visual Sensitivities to Color Differences in Daylight*. J Opt Soc Am. 1942;32(5):247-274.
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
@@ -43,7 +45,6 @@ def get_macadam_ellipse(xy = None, k_neighbours = 3, nsteps = 10, average_cik = 
             | None or ndarray, optional
             | If None: output Macadam ellipses, if not None: xy are the 
             | CIE xy coordinates for which ellipses will be estimated.
-            
         :k_neighbours:
             | 3, optional
             | Number of nearest ellipses to use to calculate ellipse at xy
@@ -60,7 +61,9 @@ def get_macadam_ellipse(xy = None, k_neighbours = 3, nsteps = 10, average_cik = 
     Returns:
         :v_mac_est:
             | estimated MacAdam ellipse(s) in v-format [Rmax,Rmin,xc,yc,theta]
-            
+    
+    References:
+        1. MacAdam DL. Visual Sensitivities to Color Differences in Daylight*. J Opt Soc Am. 1942;32(5):247-274.
     """
     # list of MacAdam ellipses (x10)
     v_mac = np.atleast_2d([
@@ -145,7 +148,7 @@ if __name__ == '__main__':
     v_mac_est = get_macadam_ellipse(xy_test)
 
     # Plot results:
-    cspace = 'Yxy'
+    cspace = 'Yuv'
     #axh = plot_chromaticity_diagram_colors(cspace = cspace)
     axh = plotSL(cspace = cspace, cieobs = '1931_2', show = False, diagram_colors = True)
     axh = plotellipse(v_mac, show = True, axh = axh, cspace_out = cspace,plot_center = False, center_color = 'r', out = 'axh', line_style = ':', line_color ='k',line_width = 1.5)
@@ -153,7 +156,7 @@ if __name__ == '__main__':
     if cspace == 'Yuv':
         axh.set_xlim([0,0.6])
         axh.set_ylim([0,0.6])
-    plt.plot(xy_test[:,0],xy_test[:,1],'ro')
+    plt.plot(xy_test[:,1],xy_test[:,2],'ro')
     
     
     
