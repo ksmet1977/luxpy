@@ -55,12 +55,16 @@ cct: Module with functions related to correlated color temperature calculations
 
  :cct_to_mired(): Converts from CCT to Mired scale (or back).
 
+ :xyz_to_cct_ohno2011(): Calculate cct and Duv from xyz following Ohno (CORM, 2011).
 
 ===============================================================================
 """
 
 from .cct import *
 __all__ = cct.__all__
+
+from .cctduv_ohno_CORM2011 import *
+__all__ += cctduv_ohno_CORM2011.__all__
 
 
 

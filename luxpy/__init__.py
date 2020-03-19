@@ -284,8 +284,8 @@ from .color.ctf.colortransforms import *
 __all__ += color.ctf.colortransforms.__all__
 
 #   Load correlated color temperature module:
-from .color.cct.cct import *
-__all__ += color.cct.cct.__all__
+from .color.cct import *
+__all__ += color.cct.__all__
 
 #   Load chromatic adaptation module:
 from .color.cat import chromaticadaptation as cat
