@@ -55,7 +55,7 @@ cct: Module with functions related to correlated color temperature calculations
 
  :cct_to_mired(): Converts from CCT to Mired scale (or back).
 
- :xyz_to_cct_ohno2011(): Calculate cct and Duv from xyz following Ohno (CORM, 2011).
+ :xyz_to_cct_ohno2011(): Calculate cct and Duv from CIE 1931 2° xyz following Ohno (CORM 2011).
 
 ===============================================================================
 """

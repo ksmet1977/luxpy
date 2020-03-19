@@ -19,7 +19,7 @@
 Module implementing Ohno (2011) CCT&Duv calculation
 ===================================================
 
- :xyz_to_cct_ohno2011(): Calculate cct and Duv from xyz following Ohno (2011).
+ :xyz_to_cct_ohno2011(): Calculate cct and Duv from CIE 1931 2° xyz following Ohno (CORM 2011).
  
 References:
     1. Ohno, Y. (2011). Calculation of CCT and Duv and Practical Conversion Formulae. 
@@ -43,7 +43,7 @@ _KIJ = np.array([[-3.7146000E-03, 5.6061400E-02, -3.307009E-01, 9.750013E-01, -1
 
 def xyz_to_cct_ohno2011(xyz):
     """
-    Calculate cct and Duv from xyz following Ohno (2011).
+    Calculate cct and Duv from CIE 1931 2° xyz following Ohno (2011).
     
     Args:
         :xyz:
