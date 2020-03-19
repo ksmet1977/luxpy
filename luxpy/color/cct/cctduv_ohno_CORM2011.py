@@ -21,6 +21,10 @@ Module implementing Ohno (2011) CCT&Duv calculation
 
  :xyz_to_cct_ohno2011(): Calculate cct and Duv from xyz following Ohno (2011).
  
+References:
+    1. Ohno, Y. (2011). Calculation of CCT and Duv and Practical Conversion Formulae. 
+    CORM 2011 Conference, Gaithersburg, MD, May 3-5, 2011
+
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
