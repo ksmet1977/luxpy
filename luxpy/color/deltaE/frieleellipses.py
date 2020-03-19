@@ -205,7 +205,7 @@ def get_gij_fmc(Yxy, etype = 'fmc2', ellipsoid = True, Y = None, cspace = 'Yxy')
     if ellipsoid == True:
         return gij
     else:
-        if cspace =='xyz':
+        if cspace.lower()=='xyz':
             return gij
         else:
             return gij[:,1:,1:]
