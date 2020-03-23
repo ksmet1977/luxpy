@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.color.deltaE.macadamellipses &mdash; LuxPy 1.4.17 documentation</title>
+  <title>luxpy.color.deltaE.macadamellipses &mdash; LuxPy 1.4.18 documentation</title>
   
 
   
@@ -56,7 +56,7 @@
             
             
               <div class="version">
-                1.4.17
+                1.4.18
               </div>
             
           
@@ -168,10 +168,12 @@
 <span class="c1">#########################################################################</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Module for MacAdam ellipses</span>
-<span class="sd">==================================================================</span>
+<span class="sd">===========================</span>
 
 <span class="sd"> :get_macadam_ellipse(): Estimate n-step MacAdam ellipse at CIE x,y coordinates  </span>
 <span class="sd">     </span>
+<span class="sd">References:</span>
+<span class="sd">  1. MacAdam DL. Visual Sensitivities to Color Differences in Daylight*. J Opt Soc Am. 1942;32(5):247-274.</span>
 
 <span class="sd">.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)</span>
 <span class="sd">&quot;&quot;&quot;</span>
@@ -194,7 +196,6 @@
 <span class="sd">            | None or ndarray, optional</span>
 <span class="sd">            | If None: output Macadam ellipses, if not None: xy are the </span>
 <span class="sd">            | CIE xy coordinates for which ellipses will be estimated.</span>
-<span class="sd">            </span>
 <span class="sd">        :k_neighbours:</span>
 <span class="sd">            | 3, optional</span>
 <span class="sd">            | Number of nearest ellipses to use to calculate ellipse at xy</span>
@@ -211,7 +212,9 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        :v_mac_est:</span>
 <span class="sd">            | estimated MacAdam ellipse(s) in v-format [Rmax,Rmin,xc,yc,theta]</span>
-<span class="sd">            </span>
+<span class="sd">    </span>
+<span class="sd">    References:</span>
+<span class="sd">        1. MacAdam DL. Visual Sensitivities to Color Differences in Daylight*. J Opt Soc Am. 1942;32(5):247-274.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># list of MacAdam ellipses (x10)</span>
     <span class="n">v_mac</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">([</span>
@@ -296,7 +299,7 @@
     <span class="n">v_mac_est</span> <span class="o">=</span> <span class="n">get_macadam_ellipse</span><span class="p">(</span><span class="n">xy_test</span><span class="p">)</span>
 
     <span class="c1"># Plot results:</span>
-    <span class="n">cspace</span> <span class="o">=</span> <span class="s1">&#39;Yxy&#39;</span>
+    <span class="n">cspace</span> <span class="o">=</span> <span class="s1">&#39;Yuv&#39;</span>
     <span class="c1">#axh = plot_chromaticity_diagram_colors(cspace = cspace)</span>
     <span class="n">axh</span> <span class="o">=</span> <span class="n">plotSL</span><span class="p">(</span><span class="n">cspace</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;1931_2&#39;</span><span class="p">,</span> <span class="n">show</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">diagram_colors</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
     <span class="n">axh</span> <span class="o">=</span> <span class="n">plotellipse</span><span class="p">(</span><span class="n">v_mac</span><span class="p">,</span> <span class="n">show</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">axh</span> <span class="o">=</span> <span class="n">axh</span><span class="p">,</span> <span class="n">cspace_out</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">,</span><span class="n">plot_center</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">center_color</span> <span class="o">=</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;axh&#39;</span><span class="p">,</span> <span class="n">line_style</span> <span class="o">=</span> <span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="n">line_color</span> <span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span><span class="n">line_width</span> <span class="o">=</span> <span class="mf">1.5</span><span class="p">)</span>
@@ -304,7 +307,7 @@
     <span class="k">if</span> <span class="n">cspace</span> <span class="o">==</span> <span class="s1">&#39;Yuv&#39;</span><span class="p">:</span>
         <span class="n">axh</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mf">0.6</span><span class="p">])</span>
         <span class="n">axh</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mf">0.6</span><span class="p">])</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xy_test</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span><span class="n">xy_test</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span><span class="s1">&#39;ro&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xy_test</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span><span class="n">xy_test</span><span class="p">[:,</span><span class="mi">2</span><span class="p">],</span><span class="s1">&#39;ro&#39;</span><span class="p">)</span>
     
     
     

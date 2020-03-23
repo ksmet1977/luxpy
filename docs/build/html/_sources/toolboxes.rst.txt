@@ -60,3 +60,59 @@ hypspcim/
    :members:
    :undoc-members:
    :private-members:
+   
+dispcal/ 
+--------
+ :py:
+	* __init__.py
+	* displaycalibration.py 
+
+	
+ :namespace: luxpy.dispcal
+
+.. automodule:: luxpy.toolboxes.dispcal
+   :members:
+   :undoc-members:
+   :private-members:
+   
+rgb2spec/ 
+---------
+ :py:
+	* __init__.py
+	* smits_mitsuba.py 
+
+	
+ :namespace: luxpy.rgb2spec
+
+.. automodule:: luxpy.toolboxes.rgb2spec
+   :members:
+   :undoc-members:
+   :private-members:
+   
+iolidfiles/ 
+-----------
+ :py:
+	* __init__.py
+	* io_lid_files.py 
+
+	
+ :namespace: luxpy.iolidfiles
+
+.. automodule:: luxpy.toolboxes.iolidfiles
+   :members:
+   :undoc-members:
+   :private-members:
+   
+spectro/ 
+--------
+ :py:
+	* __init__.py
+	* spectro.py 
+
+	
+ :namespace: luxpy.spectro
+
+.. automodule:: luxpy.toolboxes.spectro
+   :members:
+   :undoc-members:
+   :private-members:

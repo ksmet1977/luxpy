@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Color sub-package &mdash; LuxPy 1.4.17 documentation</title>
+  <title>Color sub-package &mdash; LuxPy 1.4.18 documentation</title>
   
 
   
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                1.4.17
+                1.4.18
               </div>
             
           
@@ -2556,6 +2556,9 @@ algorithm (between 1e2 K - 1e20 K on a log scale)</td>
 </tr>
 <tr class="field-odd field"><th class="field-name">cct_to_mired():</th><td class="field-body">Converts from CCT to Mired scale (or back).</td>
 </tr>
+<tr class="field-even field"><th class="field-name" colspan="2">xyz_to_cct_ohno2011():</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body">Calculate cct and Duv from CIE 1931 2° xyz following Ohno (CORM 2011).</td>
+</tr>
 </tbody>
 </table>
 </div></blockquote>
@@ -3212,6 +3215,43 @@ the mccamy approximation.</p>
 “Correlated color temperature as an explicit function of 
 chromaticity coordinates”.
 Color Research &amp; Application. 17 (2): 142–144.</a></dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="luxpy.color.cct.xyz_to_cct_ohno2011">
+<code class="descclassname">luxpy.color.cct.</code><code class="descname">xyz_to_cct_ohno2011</code><span class="sig-paren">(</span><em>xyz</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cctduv_ohno_CORM2011.html#xyz_to_cct_ohno2011"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cct.xyz_to_cct_ohno2011" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate cct and Duv from CIE 1931 2° xyz following Ohno (2011).</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">xyz:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray with CIE 1931 2° X,Y,Z tristimulus values</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">cct, duv:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarrays with correlated color temperatures and distance to blackbody locus in CIE 1960 uv</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>References:</dt>
+<dd>1. Ohno, Y. (2011). Calculation of CCT and Duv and Practical Conversion Formulae. 
+CORM 2011 Conference, Gaithersburg, MD, May 3-5, 2011</dd>
 </dl>
 </dd></dl>
 
@@ -5456,6 +5496,11 @@ Journal of the Optical Society of America A, 35(12), 2000–2009.</a></dd>
 <tr class="field-odd field"><th class="field-name" colspan="2">get_macadam_ellipse():</th></tr>
 <tr class="field-odd field"><td>&#160;</td><td class="field-body">Estimate n-step MacAdam ellipse at CIE x,y coordinates</td>
 </tr>
+<tr class="field-even field"><th class="field-name">get_gij_fmc():</th><td class="field-body">Get gij matrices describing the discrimination ellipses for Yxy using FMC-1 or FMC-2.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">get_fmc_discrimination_ellipse():</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">Get n-step discrimination ellipse(s) in v-format (R,r, xc, yc, theta) for Yxy using FMC-1 or FMC-2.</td>
+</tr>
 </tbody>
 </table>
 </div></blockquote>
@@ -5879,6 +5924,88 @@ and returns them as a tuple.</div>
 </dd></dl>
 
 <dl class="function">
+<dt id="luxpy.color.deltaE.get_discrimination_ellipse">
+<code class="descclassname">luxpy.color.deltaE.</code><code class="descname">get_discrimination_ellipse</code><span class="sig-paren">(</span><em>Yxy=array([[1.0000e+02</em>, <em>3.3333e-01</em>, <em>3.3333e-01]])</em>, <em>etype='fmc2'</em>, <em>nsteps=10</em>, <em>k_neighbours=3</em>, <em>average_cik=True</em>, <em>Y=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/deltaE/discriminationellipses.html#get_discrimination_ellipse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.deltaE.get_discrimination_ellipse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get discrimination ellipse(s) in v-format (R,r, xc, yc, theta) for Yxy using an interpolation of the MacAdam ellipses or using FMC-1 or FMC-2.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Yxy:</th><td class="field-body"><div class="first last line-block">
+<div class="line">2D ndarray with [Y,]x,y coordinate centers. </div>
+<div class="line">If Yxy.shape[-1]==2: Y is added using the value from the Y-input argument.</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">etype:</th><td class="field-body"><div class="first last line-block">
+<div class="line">‘fmc2’, optional</div>
+<div class="line">Type color discrimination ellipse estimation to use.</div>
+<div class="line">options: ‘macadam’, ‘fmc1’, ‘fmc2’ </div>
+<div class="line-block">
+<div class="line">- ‘macadam’: interpolate covariance matrices of closest MacAdam ellipses (see: get_macadam_ellipse?).</div>
+<div class="line">- ‘fmc1’: use FMC-1 from ref 2 (see get_fmc_discrimination_ellipse?).</div>
+<div class="line">- ‘fmc2’: use FMC-1 from ref 3 (see get_fmc_discrimination_ellipse?).</div>
+</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">nsteps:</th><td class="field-body"><div class="first last line-block">
+<div class="line">10, optional</div>
+<div class="line">Set multiplication factor for ellipses </div>
+<div class="line">(nsteps=1 corresponds to approximately 1 MacAdam step, </div>
+<div class="line">for FMC-2, Y also has to be 10.69, see note below).</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">k_neighbours:</th><td class="field-body"><div class="first last line-block">
+<div class="line">3, optional</div>
+<div class="line">Only for option ‘macadam’.</div>
+<div class="line">Number of nearest ellipses to use to calculate ellipse at xy </div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">average_cik:</th><td class="field-body"><div class="first last line-block">
+<div class="line">True, optional</div>
+<div class="line">Only for option ‘macadam’.</div>
+<div class="line">If True: take distance weighted average of inverse </div>
+<div class="line-block">
+<div class="line">‘covariance ellipse’ elements cik. </div>
+</div>
+<div class="line">If False: average major &amp; minor axis lengths and </div>
+<div class="line-block">
+<div class="line">ellipse orientation angles directly.</div>
+</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Y:</th><td class="field-body"><div class="first last line-block">
+<div class="line">None, optional</div>
+<div class="line">Only for option ‘fmc2’(see note below).</div>
+<div class="line">If not None: Y = 10.69 and overrides values in Yxy. </div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Note:</dt>
+<dd><ol class="first last arabic simple">
+<li>FMC-2 is almost identical to FMC-1 is Y = 10.69!; see [3]</li>
+</ol>
+</dd>
+<dt>References:</dt>
+<dd><ol class="first last arabic simple">
+<li>MacAdam DL. Visual Sensitivities to Color Differences in Daylight*. J Opt Soc Am. 1942;32(5):247-274.</li>
+<li>Chickering, K.D. (1967), Optimization of the MacAdam-Modified 1965 Friele Color-Difference Formula, 57(4):537-541</li>
+<li>Chickering, K.D. (1971), FMC Color-Difference Formulas: Clarification Concerning Usage, 61(1):118-122</li>
+</ol>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
 <dt id="luxpy.color.deltaE.get_macadam_ellipse">
 <code class="descclassname">luxpy.color.deltaE.</code><code class="descname">get_macadam_ellipse</code><span class="sig-paren">(</span><em>xy=None</em>, <em>k_neighbours=3</em>, <em>nsteps=10</em>, <em>average_cik=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/deltaE/macadamellipses.html#get_macadam_ellipse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.deltaE.get_macadam_ellipse" title="Permalink to this definition">¶</a></dt>
 <dd><p>Estimate n-step MacAdam ellipse at CIE x,y coordinates xy by calculating 
@@ -5936,6 +6063,203 @@ average inverse covariance ellipse of the k_neighbours closest ellipses.</p>
 </tr>
 </tbody>
 </table>
+</dd>
+<dt>References:</dt>
+<dd><ol class="first last arabic simple">
+<li>MacAdam DL. Visual Sensitivities to Color Differences in Daylight*. J Opt Soc Am. 1942;32(5):247-274.</li>
+</ol>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="luxpy.color.deltaE.get_gij_fmc">
+<code class="descclassname">luxpy.color.deltaE.</code><code class="descname">get_gij_fmc</code><span class="sig-paren">(</span><em>Yxy</em>, <em>etype='fmc2'</em>, <em>ellipsoid=True</em>, <em>Y=None</em>, <em>cspace='Yxy'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/deltaE/frieleellipses.html#get_gij_fmc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.deltaE.get_gij_fmc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get gij matrices describing the discrimination ellipses/ellipsoids for Yxy or xyz using FMC-1 or FMC-2.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Yxy:</th><td class="field-body"><div class="first last line-block">
+<div class="line">2D ndarray with [Y,]x,y coordinate centers. </div>
+<div class="line">If Yxy.shape[-1]==2: Y is added using the value from the Y-input argument.</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">etype:</th><td class="field-body"><div class="first last line-block">
+<div class="line">‘fmc2’, optional</div>
+<div class="line">Type of FMC color discrimination equations to use (see references below).</div>
+<div class="line">options: ‘fmc1’, fmc2’</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Y:</th><td class="field-body"><div class="first last line-block">
+<div class="line">None, optional</div>
+<div class="line">Only affects FMC-2 (see note below).</div>
+<div class="line">If not None: Y = 10.69 and overrides values in Yxy. </div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">ellipsoid:</th><td class="field-body"><div class="first last line-block">
+<div class="line">True, optional</div>
+<div class="line">If True: return ellipsoids, else return ellipses (only if cspace == ‘Yxy’)!</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">cspace:</th><td class="field-body"><div class="first last line-block">
+<div class="line">‘Yxy’, optional</div>
+<div class="line">Return coefficients for Yxy-ellipses/ellipsoids (‘Yxy’) or XYZ ellipsoids (‘xyz’)</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Note:</dt>
+<dd><ol class="first last arabic simple">
+<li>FMC-2 is almost identical to FMC-1 is Y = 10.69!; see [2]</li>
+</ol>
+</dd>
+<dt>References:</dt>
+<dd><ol class="first last arabic simple">
+<li>Chickering, K.D. (1967), Optimization of the MacAdam-Modified 1965 Friele Color-Difference Formula, 57(4), p.537-541</li>
+<li>Chickering, K.D. (1971), FMC Color-Difference Formulas: Clarification Concerning Usage, 61(1), p.118-122</li>
+</ol>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="luxpy.color.deltaE.get_fmc_discrimination_ellipse">
+<code class="descclassname">luxpy.color.deltaE.</code><code class="descname">get_fmc_discrimination_ellipse</code><span class="sig-paren">(</span><em>Yxy=array([[1.0000e+02</em>, <em>3.3333e-01</em>, <em>3.3333e-01]])</em>, <em>etype='fmc2'</em>, <em>Y=None</em>, <em>nsteps=10</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/deltaE/frieleellipses.html#get_fmc_discrimination_ellipse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.deltaE.get_fmc_discrimination_ellipse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get discrimination ellipse(s) in v-format (R,r, xc, yc, theta) for Yxy using FMC-1 or FMC-2.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Yxy:</th><td class="field-body"><div class="first last line-block">
+<div class="line">2D ndarray with [Y,]x,y coordinate centers. </div>
+<div class="line">If Yxy.shape[-1]==2: Y is added using the value from the Y-input argument.</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">etype:</th><td class="field-body"><div class="first last line-block">
+<div class="line">‘fmc2’, optional</div>
+<div class="line">Type of FMC color discrimination equations to use (see references below).</div>
+<div class="line">options: ‘fmc1’, fmc2’</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Y:</th><td class="field-body"><div class="first last line-block">
+<div class="line">None, optional</div>
+<div class="line">Only affects FMC-2 (see note below).</div>
+<div class="line">If not None: Y = 10.69 and overrides values in Yxy. </div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">nsteps:</th><td class="field-body"><div class="first last line-block">
+<div class="line">10, optional</div>
+<div class="line">Set multiplication factor for ellipses </div>
+<div class="line">(nsteps=1 corresponds to approximately 1 MacAdam step, </div>
+<div class="line">for FMC-2, Y also has to be 10.69, see note below).</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Note:</dt>
+<dd><ol class="first last arabic simple">
+<li>FMC-2 is almost identical to FMC-1 is Y = 10.69!; see [2]</li>
+</ol>
+</dd>
+<dt>References:</dt>
+<dd><ol class="first last arabic simple">
+<li>Chickering, K.D. (1967), Optimization of the MacAdam-Modified 1965 Friele Color-Difference Formula, 57(4), p.537-541</li>
+<li>Chickering, K.D. (1971), FMC Color-Difference Formulas: Clarification Concerning Usage, 61(1), p.118-122</li>
+</ol>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="luxpy.color.deltaE.discrimination_hotelling_t2">
+<code class="descclassname">luxpy.color.deltaE.</code><code class="descname">discrimination_hotelling_t2</code><span class="sig-paren">(</span><em>Yxy1</em>, <em>Yxy2</em>, <em>etype='fmc2'</em>, <em>ellipsoid=True</em>, <em>Y1=None</em>, <em>Y2=None</em>, <em>cspace='Yxy'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/deltaE/discriminationellipses.html#discrimination_hotelling_t2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.deltaE.discrimination_hotelling_t2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check ‘significance’ of difference using Hotelling’s T2 test on the centers Yxy1 and Yxy2 and their associate FMC-1/2 discrimination ellipses.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Yxy1, Yxy2:</th><td class="field-body"><div class="first last line-block">
+<div class="line">2D ndarrays with [Y,]x,y coordinate centers. </div>
+<div class="line">If Yxy.shape[-1]==2: Y is added using the value from the Y-input argument.</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">etype:</th><td class="field-body"><div class="first last line-block">
+<div class="line">‘fmc2’, optional</div>
+<div class="line">Type of FMC color discrimination equations to use (see references below).</div>
+<div class="line">options: ‘fmc1’, fmc2’</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Y1, Y2:</th><td class="field-body"><div class="first last line-block">
+<div class="line">None, optional</div>
+<div class="line">Only affects FMC-2 (see note below).</div>
+<div class="line">If not None: Yi = 10.69 and overrides values in Yxyi. </div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">ellipsoid:</th><td class="field-body"><div class="first last line-block">
+<div class="line">True, optional</div>
+<div class="line">If True: return ellipsoids, else return ellipses (only if cspace == ‘Yxy’)!</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">cspace:</th><td class="field-body"><div class="first last line-block">
+<div class="line">‘Yxy’, optional</div>
+<div class="line">Return coefficients for Yxy-ellipses/ellipsoids (‘Yxy’) or XYZ ellipsoids (‘xyz’)</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">p:</th><td class="field-body"><div class="first last line-block">
+<div class="line">Chi-square based p-value</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">T2:</th><td class="field-body"><div class="first last line-block">
+<div class="line">T2 test statistic (= mahalanobis distance on summed standard error cov. matrices)</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Steps:</dt>
+<dd>1. For each center coordinate, the standard error covariance matrix gij^-1 = Si/ni
+is determined using the FMC-1 or FMC-2 equations (see refs. 1 &amp; 2).
+2. Calculate sum of covariance matrices: SIG = S1/n1 + S2/n2 = gij1^-1 + gij2^-1
+3. These are then used in Hotelling’s T2 test: T2 = (xy1 - xy2).T*(SIG^-1)*(xy1_xy2)
+4. The T2 statistic is then tested against a Chi-square distribution with 2 or 3 degrees of freedom.</dd>
+<dt>References:</dt>
+<dd><ol class="first last arabic simple">
+<li>Chickering, K.D. (1967), Optimization of the MacAdam-Modified 1965 Friele Color-Difference Formula, 57(4):537-541</li>
+<li>Chickering, K.D. (1971), FMC Color-Difference Formulas: Clarification Concerning Usage, 61(1):118-122</li>
+</ol>
 </dd>
 </dl>
 </dd></dl>

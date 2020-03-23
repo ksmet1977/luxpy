@@ -1,7 +1,7 @@
 LuxPy: a package for lighting and color science
 ===============================================
  * Author: K. A.G. Smet (ksmet1977 at gmail.com)
- * Version: 1.4.18
+ * Version: 1.4.19
  * Date: Mar 23, 2020
  * License: GPLv3
 	

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Toolboxes &mdash; LuxPy 1.4.17 documentation</title>
+  <title>Toolboxes &mdash; LuxPy 1.4.18 documentation</title>
   
 
   
@@ -57,7 +57,7 @@
             
             
               <div class="version">
-                1.4.17
+                1.4.18
               </div>
             
           
@@ -107,6 +107,19 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#hypspcim">hypspcim/</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#module-for-hyper-spectral-image-simulation">Module for hyper spectral image simulation</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#dispcal">dispcal/</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#module-for-display-characterization">Module for display characterization</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#rgb2spec">rgb2spec/</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#iolidfiles">iolidfiles/</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#module-for-reading-and-writing-ies-and-ldt-files">Module for reading and writing IES and LDT files.</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#spectro">spectro/</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#package-for-spectral-measurements">Package for spectral measurements</a></li>
 </ul>
 </li>
 </ul>
@@ -2494,32 +2507,32 @@ objective function values.</div>
 </tr>
 <tr class="field-odd field"><th class="field-name">decimals:</th><td class="field-body"><div class="first last line-block">
 <div class="line">3, optional</div>
-<div class="line">Rounding decimals of objective function values.</div>
+<div class="line">List of rounding decimals of objective function values.</div>
 </div>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">obj_fcn:</th><td class="field-body"><div class="first last line-block">
 <div class="line">[None] or list, optional</div>
-<div class="line">Function handles to objective function.</div>
+<div class="line">List of function handles to objective function.</div>
 </div>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name" colspan="2">obj_fcn_weights:</th></tr>
 <tr class="field-odd field"><td>&#160;</td><td class="field-body"><div class="first last line-block">
 <div class="line">[1] or list, optional.</div>
-<div class="line">Weigths for each obj. fcn</div>
+<div class="line">List of weigths for each obj. fcn</div>
 </div>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">obj_fcn_pars:</th><td class="field-body"><div class="first last line-block">
 <div class="line">[None] or list, optional</div>
-<div class="line">Parameter dicts for each obj. fcn.</div>
+<div class="line">List of parameter dicts for each obj. fcn.</div>
 </div>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">obj_tar_vals:</th><td class="field-body"><div class="first last line-block">
 <div class="line">[0] or list, optional</div>
-<div class="line">Target values for each objective function.</div>
+<div class="line">List of target values for each objective function.</div>
 </div>
 </td>
 </tr>
@@ -3758,6 +3771,1102 @@ rendered image pixels.</div>
 </dl>
 </dd></dl>
 
+</div>
+</div>
+<div class="section" id="dispcal">
+<h2>dispcal/<a class="headerlink" href="#dispcal" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">py:</th><td class="field-body"><ul class="first simple">
+<li>__init__.py</li>
+<li>displaycalibration.py</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">namespace:</th><td class="field-body"><p class="first last">luxpy.dispcal</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<span class="target" id="module-luxpy.toolboxes.dispcal"></span><div class="section" id="module-for-display-characterization">
+<h3>Module for display characterization<a class="headerlink" href="#module-for-display-characterization" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="luxpy.toolboxes.dispcal.calibrate">
+<code class="descclassname">luxpy.toolboxes.dispcal.</code><code class="descname">calibrate</code><span class="sig-paren">(</span><em>rgbcal</em>, <em>xyzcal</em>, <em>L_type='lms'</em>, <em>tr_type='lut'</em>, <em>cieobs='1931_2'</em>, <em>nbit=8</em>, <em>cspace='lab'</em>, <em>avg=&lt;function &lt;lambda&gt;&gt;</em>, <em>verbosity=1</em>, <em>sep='</em>, <em>'</em>, <em>header=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/dispcal/displaycalibration.html#calibrate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.dispcal.calibrate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate TR parameters/lut and conversion matrices.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">rgbcal:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray [Nx3] or string with filename of RGB values </div>
+<div class="line">rgcal must contain at least the following type of settings:</div>
+<div class="line">- pure R,G,B: e.g. for pure R: (R != 0) &amp; (G==0) &amp; (B == 0)</div>
+<div class="line">- white(s): R = G = B = 2**nbit-1</div>
+<div class="line">- gray(s): R = G = B</div>
+<div class="line">- black(s): R = G = B = 0</div>
+<div class="line">- binary colors: cyan (G = B, R = 0), yellow (G = R, B = 0), magenta (R = B, G = 0)</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">xyzcal:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray [Nx3] or string with filename of measured XYZ values for </div>
+<div class="line">the RGB settings in rgbcal.</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">L_type:</th><td class="field-body"><div class="first last line-block">
+<div class="line">‘lms’, optional</div>
+<div class="line">Type of response to use in the derivation of the Tone-Response curves.</div>
+<div class="line">options:</div>
+<div class="line-block">
+<div class="line">- ‘lms’: use cone fundamental responses: L vs R, M vs G and S vs B </div>
+<div class="line-block">
+<div class="line">(reduces noise and generally leads to more accurate characterization) </div>
+</div>
+<div class="line">- ‘Y’: use the luminance signal: Y vs R, Y vs G, Y vs B</div>
+</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">tr_type:</th><td class="field-body"><div class="first last line-block">
+<div class="line">‘lut’, optional</div>
+<div class="line">options:</div>
+<div class="line-block">
+<div class="line">- ‘lut’: Derive/specify Tone-Response as a look-up-table</div>
+<div class="line">- ‘gog’: Derive/specify Tone-Response as a gain-offset-gamma function</div>
+</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">cieobs:</th><td class="field-body"><div class="first last line-block">
+<div class="line">‘1931_2’, optional</div>
+<div class="line">CIE CMF set used to determine the XYZ tristimulus values</div>
+<div class="line">(needed when L_type == ‘lms’: determines the conversion matrix to</div>
+<div class="line">convert xyz to lms values)</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">nbit:</th><td class="field-body"><div class="first last line-block">
+<div class="line">8, optional</div>
+<div class="line">RGB values in nbit format (e.g. 8, 16, …)</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">cspace:</th><td class="field-body"><div class="first last line-block">
+<div class="line">color space or chromaticity diagram to calculate color differences in</div>
+<div class="line">when optimizing the xyz_to_rgb and rgb_to_xyz conversion matrices.</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">avg:</th><td class="field-body"><div class="first last line-block">
+<div class="line">lambda x: ((x**2).mean()**0.5), optional</div>
+<div class="line">Function used to average the color differences of the individual RGB settings</div>
+<div class="line">in the optimization of the xyz_to_rgb and rgb_to_xyz conversion matrices.</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">verbosity:</th><td class="field-body"><div class="first last line-block">
+<div class="line">1, optional</div>
+<div class="line">&gt; 0: print and plot optimization results</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">sep:</th><td class="field-body"><div class="first last line-block">
+<div class="line">‘,’, optional</div>
+<div class="line">separator in files with rgbcal and xyzcal data</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">header:</th><td class="field-body"><div class="first last line-block">
+<div class="line">None, optional</div>
+<div class="line">header specifier for files with rgbcal and xyzcal data </div>
+<div class="line">(see pandas.read_csv)</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">M:</th><td class="field-body"><div class="first last line-block">
+<div class="line">linear rgb to xyz conversion matrix</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">N:</th><td class="field-body"><div class="first last line-block">
+<div class="line">xyz to linear rgb conversion matrix</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">tr:</th><td class="field-body"><div class="first last line-block">
+<div class="line">Tone Response function parameters or lut</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">xyz_black:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray with XYZ tristimulus values of black</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">xyz_white:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray with tristimlus values of white</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="luxpy.toolboxes.dispcal.calibration_performance">
+<code class="descclassname">luxpy.toolboxes.dispcal.</code><code class="descname">calibration_performance</code><span class="sig-paren">(</span><em>rgb</em>, <em>xyztarget</em>, <em>M</em>, <em>N</em>, <em>tr</em>, <em>xyz_black</em>, <em>xyz_white</em>, <em>tr_type='lut'</em>, <em>cspace='lab'</em>, <em>avg=&lt;function &lt;lambda&gt;&gt;</em>, <em>rgb_is_xyz=False</em>, <em>is_verification_data=False</em>, <em>nbit=8</em>, <em>verbosity=1</em>, <em>sep='</em>, <em>'</em>, <em>header=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/dispcal/displaycalibration.html#calibration_performance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.dispcal.calibration_performance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check calibration performance. Calculate DE for each stimulus.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">rgb:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray [Nx3] or string with filename of RGB values </div>
+<div class="line">(or xyz values if argument rgb_to_xyz == True!)</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">xyztarget:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray [Nx3] or string with filename of target XYZ values corresponding </div>
+<div class="line">to the RGB settings (or the measured XYZ values, if argument rgb_to_xyz == True).</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">M:</th><td class="field-body"><div class="first last line-block">
+<div class="line">linear rgb to xyz conversion matrix</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">N:</th><td class="field-body"><div class="first last line-block">
+<div class="line">xyz to linear rgb conversion matrix</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">tr:</th><td class="field-body"><div class="first last line-block">
+<div class="line">Tone Response function parameters or lut</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">xyz_black:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray with XYZ tristimulus values of black</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">xyz_white:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray with tristimlus values of white</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">tr_type:</th><td class="field-body"><div class="first last line-block">
+<div class="line">‘lut’, optional</div>
+<div class="line">options:</div>
+<div class="line-block">
+<div class="line">- ‘lut’: Derive/specify Tone-Response as a look-up-table</div>
+<div class="line">- ‘gog’: Derive/specify Tone-Response as a gain-offset-gamma function</div>
+</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">cspace:</th><td class="field-body"><div class="first last line-block">
+<div class="line">color space or chromaticity diagram to calculate color differences in.</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">avg:</th><td class="field-body"><div class="first last line-block">
+<div class="line">lambda x: ((x**2).mean()**0.5), optional</div>
+<div class="line">Function used to average the color differences of the individual RGB settings</div>
+<div class="line">in the optimization of the xyz_to_rgb and rgb_to_xyz conversion matrices.</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">rgb_is_xyz:</th><td class="field-body"><div class="first last line-block">
+<div class="line">False, optional</div>
+<div class="line">If True: the data in argument rgb are actually measured XYZ tristimulus values</div>
+<div class="line-block">
+<div class="line">and are directly compared to the target xyz.</div>
+</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">is_verification_data:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><div class="first last line-block">
+<div class="line">False, optional</div>
+<div class="line">If False: the data is assumed to be corresponding to RGB value settings used </div>
+<div class="line-block">
+<div class="line">in the calibration (i.e. containing whites, blacks, grays, pure and binary mixtures)</div>
+</div>
+<div class="line">If True: no assumptions on content of rgb, so use this settings when</div>
+<div class="line-block">
+<div class="line">checking the performance for a set of measured and target xyz data</div>
+<div class="line">different than the ones used in the actual calibration measurements. </div>
+</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">nbit:</th><td class="field-body"><div class="first last line-block">
+<div class="line">8, optional</div>
+<div class="line">RGB values in nbit format (e.g. 8, 16, …)</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">verbosity:</th><td class="field-body"><div class="first last line-block">
+<div class="line">1, optional</div>
+<div class="line">&gt; 0: print and plot optimization results</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">sep:</th><td class="field-body"><div class="first last line-block">
+<div class="line">‘,’, optional</div>
+<div class="line">separator in files with rgbcal and xyzcal data</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">header:</th><td class="field-body"><div class="first last line-block">
+<div class="line">None, optional</div>
+<div class="line">header specifier for files with rgbcal and xyzcal data </div>
+<div class="line">(see pandas.read_csv)</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">M:</th><td class="field-body"><div class="first last line-block">
+<div class="line">linear rgb to xyz conversion matrix</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">N:</th><td class="field-body"><div class="first last line-block">
+<div class="line">xyz to linear rgb conversion matrix</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">tr:</th><td class="field-body"><div class="first last line-block">
+<div class="line">Tone Response function parameters or lut</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">xyz_black:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray with XYZ tristimulus values of black</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">xyz_white:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray with tristimlus values of white</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="luxpy.toolboxes.dispcal.rgb_to_xyz">
+<code class="descclassname">luxpy.toolboxes.dispcal.</code><code class="descname">rgb_to_xyz</code><span class="sig-paren">(</span><em>rgb</em>, <em>M</em>, <em>tr</em>, <em>xyz_black</em>, <em>tr_type='lut'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/dispcal/displaycalibration.html#rgb_to_xyz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.dispcal.rgb_to_xyz" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert input rgb to xyz.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">rgb:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray [Nx3] with RGB values </div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">M:</th><td class="field-body"><div class="first last line-block">
+<div class="line">linear rgb to xyz conversion matrix</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">tr:</th><td class="field-body"><div class="first last line-block">
+<div class="line">Tone Response function parameters or lut</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">xyz_black:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray with XYZ tristimulus values of black</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">tr_type:</th><td class="field-body"><div class="first last line-block">
+<div class="line">‘lut’, optional</div>
+<div class="line">Type of Tone Response in tr input argument</div>
+<div class="line">options:</div>
+<div class="line-block">
+<div class="line">- ‘lut’: Tone-Response as a look-up-table</div>
+<div class="line">- ‘gog’: Tone-Response as a gain-offset-gamma function</div>
+</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">xyz:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray [Nx3] of XYZ tristimulus values</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="luxpy.toolboxes.dispcal.xyz_to_rgb">
+<code class="descclassname">luxpy.toolboxes.dispcal.</code><code class="descname">xyz_to_rgb</code><span class="sig-paren">(</span><em>xyz</em>, <em>N</em>, <em>tr</em>, <em>xyz_black</em>, <em>tr_type='lut'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/dispcal/displaycalibration.html#xyz_to_rgb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.dispcal.xyz_to_rgb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert xyz to input rgb.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">xyz:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray [Nx3] with XYZ tristimulus values </div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">N:</th><td class="field-body"><div class="first last line-block">
+<div class="line">xyz to linear rgb conversion matrix</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">tr:</th><td class="field-body"><div class="first last line-block">
+<div class="line">Tone Response function parameters or lut</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">xyz_black:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray with XYZ tristimulus values of black</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">tr_type:</th><td class="field-body"><div class="first last line-block">
+<div class="line">‘lut’, optional</div>
+<div class="line">Type of Tone Response in tr input argument</div>
+<div class="line">options:</div>
+<div class="line-block">
+<div class="line">- ‘lut’: Tone-Response as a look-up-table</div>
+<div class="line">- ‘gog’: Tone-Response as a gain-offset-gamma function</div>
+</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">rgb:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray [Nx3] of display RGB values</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="luxpy.toolboxes.dispcal.DisplayCalibration">
+<em class="property">class </em><code class="descclassname">luxpy.toolboxes.dispcal.</code><code class="descname">DisplayCalibration</code><span class="sig-paren">(</span><em>rgbcal</em>, <em>xyzcal=None</em>, <em>L_type='lms'</em>, <em>cieobs='1931_2'</em>, <em>tr_type='lut'</em>, <em>nbit=8</em>, <em>cspace='lab'</em>, <em>avg=&lt;function DisplayCalibration.&lt;lambda&gt;&gt;</em>, <em>verbosity=1</em>, <em>sep='</em>, <em>'</em>, <em>header=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/dispcal/displaycalibration.html#DisplayCalibration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.dispcal.DisplayCalibration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for display_calibration.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">rgbcal:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray [Nx3] or string with filename of RGB values </div>
+<div class="line">rgcal must contain at least the following type of settings:</div>
+<div class="line">- pure R,G,B: e.g. for pure R: (R != 0) &amp; (G==0) &amp; (B == 0)</div>
+<div class="line">- white(s): R = G = B = 2**nbit-1</div>
+<div class="line">- gray(s): R = G = B</div>
+<div class="line">- black(s): R = G = B = 0</div>
+<div class="line">- binary colors: cyan (G = B, R = 0), yellow (G = R, B = 0), magenta (R = B, G = 0)</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">xyzcal:</th><td class="field-body"><div class="first last line-block">
+<div class="line">None, optional</div>
+<div class="line">ndarray [Nx3] or string with filename of measured XYZ values for </div>
+<div class="line">the RGB settings in rgbcal.</div>
+<div class="line">if None: rgbcal is [Nx6] ndarray containing rgb (columns 0-2) and xyz data (columns 3-5)</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">L_type:</th><td class="field-body"><div class="first last line-block">
+<div class="line">‘lms’, optional</div>
+<div class="line">Type of response to use in the derivation of the Tone-Response curves.</div>
+<div class="line">options:</div>
+<div class="line-block">
+<div class="line">- ‘lms’: use cone fundamental responses: L vs R, M vs G and S vs B </div>
+<div class="line-block">
+<div class="line">(reduces noise and generally leads to more accurate characterization) </div>
+</div>
+<div class="line">- ‘Y’: use the luminance signal: Y vs R, Y vs G, Y vs B</div>
+</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">tr_type:</th><td class="field-body"><div class="first last line-block">
+<div class="line">‘lut’, optional</div>
+<div class="line">options:</div>
+<div class="line-block">
+<div class="line">- ‘lut’: Derive/specify Tone-Response as a look-up-table</div>
+<div class="line">- ‘gog’: Derive/specify Tone-Response as a gain-offset-gamma function</div>
+</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">cieobs:</th><td class="field-body"><div class="first last line-block">
+<div class="line">‘1931_2’, optional</div>
+<div class="line">CIE CMF set used to determine the XYZ tristimulus values</div>
+<div class="line">(needed when L_type == ‘lms’: determines the conversion matrix to</div>
+<div class="line">convert xyz to lms values)</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">nbit:</th><td class="field-body"><div class="first last line-block">
+<div class="line">8, optional</div>
+<div class="line">RGB values in nbit format (e.g. 8, 16, …)</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">cspace:</th><td class="field-body"><div class="first last line-block">
+<div class="line">color space or chromaticity diagram to calculate color differences in</div>
+<div class="line">when optimizing the xyz_to_rgb and rgb_to_xyz conversion matrices.</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">avg:</th><td class="field-body"><div class="first last line-block">
+<div class="line">lambda x: ((x**2).mean()**0.5), optional</div>
+<div class="line">Function used to average the color differences of the individual RGB settings</div>
+<div class="line">in the optimization of the xyz_to_rgb and rgb_to_xyz conversion matrices.</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">verbosity:</th><td class="field-body"><div class="first last line-block">
+<div class="line">1, optional</div>
+<div class="line">&gt; 0: print and plot optimization results</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">sep:</th><td class="field-body"><div class="first last line-block">
+<div class="line">‘,’, optional</div>
+<div class="line">separator in files with rgbcal and xyzcal data</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">header:</th><td class="field-body"><div class="first last line-block">
+<div class="line">None, optional</div>
+<div class="line">header specifier for files with rgbcal and xyzcal data </div>
+<div class="line">(see pandas.read_csv)</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Return:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">calobject:</th><td class="field-body"><div class="first last line-block">
+<div class="line">attributes are: </div>
+<div class="line-block">
+<div class="line">- M: linear rgb to xyz conversion matrix</div>
+<div class="line">- N: xyz to linear rgb conversion matrix</div>
+<div class="line">- TR: Tone Response function parameters or lut</div>
+<div class="line">- xyz_black: ndarray with XYZ tristimulus values of black</div>
+<div class="line">- xyz_white: ndarray with tristimlus values of white</div>
+</div>
+<div class="line">as well as: </div>
+<div class="line-block">
+<div class="line">- rgbcal, xyzcal, cieobs, avg, tr_type, nbit, cspace, verbosity</div>
+<div class="line">- performance: dictionary with various color differences set to np.nan</div>
+<div class="line">-    (run calobject.performance() to fill it with actual values)</div>
+</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<dl class="method">
+<dt id="luxpy.toolboxes.dispcal.DisplayCalibration.check_performance">
+<code class="descname">check_performance</code><span class="sig-paren">(</span><em>rgb=None</em>, <em>xyz=None</em>, <em>verbosity=None</em>, <em>sep='</em>, <em>'</em>, <em>header=None</em>, <em>rgb_is_xyz=False</em>, <em>is_verification_data=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/dispcal/displaycalibration.html#DisplayCalibration.check_performance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.dispcal.DisplayCalibration.check_performance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check calibration performance (if rgbcal is None: use calibration data).</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">rgb:</th><td class="field-body"><div class="first last line-block">
+<div class="line">None, optional</div>
+<div class="line">ndarray [Nx3] or string with filename of RGB values </div>
+<div class="line">(or xyz values if argument rgb_to_xyz == True!)</div>
+<div class="line">If None: use self.rgbcal</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">xyz:</th><td class="field-body"><div class="first last line-block">
+<div class="line">None, optional</div>
+<div class="line">ndarray [Nx3] or string with filename of target XYZ values corresponding </div>
+<div class="line">to the RGB settings (or the measured XYZ values, if argument rgb_to_xyz == True).</div>
+<div class="line">If None: use self.xyzcal</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">verbosity:</th><td class="field-body"><div class="first last line-block">
+<div class="line">None, optional</div>
+<div class="line">if None: use self.verbosity</div>
+<div class="line">if &gt; 0: print and plot optimization results</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">sep:</th><td class="field-body"><div class="first last line-block">
+<div class="line">‘,’, optional</div>
+<div class="line">separator in files with rgb and xyz data</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">header:</th><td class="field-body"><div class="first last line-block">
+<div class="line">None, optional</div>
+<div class="line">header specifier for files with rgb and xyz data </div>
+<div class="line">(see pandas.read_csv)</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">rgb_is_xyz:</th><td class="field-body"><div class="first last line-block">
+<div class="line">False, optional</div>
+<div class="line">If True: the data in argument rgb are actually measured XYZ tristimulus values</div>
+<div class="line-block">
+<div class="line">and are directly compared to the target xyz.</div>
+</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">is_verification_data:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><div class="first last line-block">
+<div class="line">False, optional</div>
+<div class="line">If False: the data is assumed to be corresponding to RGB value settings used </div>
+<div class="line-block">
+<div class="line">in the calibration (i.e. containing whites, blacks, grays, pure and binary mixtures)</div>
+<div class="line">Performance results are stored in self.performance.</div>
+</div>
+<div class="line">If True: no assumptions on content of rgb, so use this settings when</div>
+<div class="line-block">
+<div class="line">checking the performance for a set of measured and target xyz data</div>
+<div class="line">different than the ones used in the actual calibration measurements. </div>
+</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Return:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">performance:</th><td class="field-body"><div class="first last line-block">
+<div class="line">dictionary with various color differences.</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="luxpy.toolboxes.dispcal.DisplayCalibration.to_xyz">
+<code class="descname">to_xyz</code><span class="sig-paren">(</span><em>rgb</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/dispcal/displaycalibration.html#DisplayCalibration.to_xyz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.dispcal.DisplayCalibration.to_xyz" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert display rgb to xyz.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="luxpy.toolboxes.dispcal.DisplayCalibration.to_rgb">
+<code class="descname">to_rgb</code><span class="sig-paren">(</span><em>xyz</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/dispcal/displaycalibration.html#DisplayCalibration.to_rgb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.dispcal.DisplayCalibration.to_rgb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert xyz to display rgb.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="rgb2spec">
+<h2>rgb2spec/<a class="headerlink" href="#rgb2spec" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">py:</th><td class="field-body"><ul class="first simple">
+<li>__init__.py</li>
+<li>smits_mitsuba.py</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">namespace:</th><td class="field-body"><p class="first last">luxpy.rgb2spec</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<span class="target" id="module-luxpy.toolboxes.rgb2spec"></span><p>Module for RGB to spectrum conversions</p>
+<blockquote>
+<div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">_BASESPEC_SMITS:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">Default dict with base spectra for white, cyan, magenta, yellow, blue, green and red for each intent (‘rfl’ or ‘spd’)</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">rgb_to_spec_smits():</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body">Convert an array of RGB values to a spectrum using a smits like conversion as implemented in mitsuba (July 10, 2019)</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">convert():</th><td class="field-body">Convert an array of RGB values to a spectrum (wrapper around rgb_to_spec_smits(), future: implement other methods)</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<dl class="function">
+<dt id="luxpy.toolboxes.rgb2spec.convert">
+<code class="descclassname">luxpy.toolboxes.rgb2spec.</code><code class="descname">convert</code><span class="sig-paren">(</span><em>rgb, method='smits_mtsb', intent='rfl', bitdepth=8, wlr=[360.0, 830.0, 1.0], rgb2spec=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/rgb2spec.html#convert"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.rgb2spec.convert" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert an array of RGB values to a spectrum.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">rgb:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray of list of rgb values</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">method:</th><td class="field-body"><div class="first last line-block">
+<div class="line">‘smits_mtsb’, optional</div>
+<div class="line">Method to use for conversion:</div>
+<div class="line-block">
+<div class="line">- ‘smits_mtsb’: use a smits like conversion as implemented in mitsuba.</div>
+</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">intent:</th><td class="field-body"><div class="first last line-block">
+<div class="line">‘rfl’ (or ‘spd’), optional</div>
+<div class="line">type of requested spectrum conversion .</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">bitdepth:</th><td class="field-body"><div class="first last line-block">
+<div class="line">8, optional</div>
+<div class="line">bit depth of rgb values</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">wlr:</th><td class="field-body"><div class="first last line-block">
+<div class="line">_WL3, optional</div>
+<div class="line">desired wavelength (nm) range of spectrum.</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">rgb2spec:</th><td class="field-body"><div class="first last line-block">
+<div class="line">None, optional</div>
+<div class="line">Dict with base spectra for white, cyan, magenta, yellow, blue, green and red for each intent.</div>
+<div class="line">If None: use _BASESPEC_SMITS.</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">spec:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray with spectrum or spectra (one for each rgb value, first row are the wavelengths)</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="luxpy.toolboxes.rgb2spec.rgb_to_spec_smits">
+<code class="descclassname">luxpy.toolboxes.rgb2spec.</code><code class="descname">rgb_to_spec_smits</code><span class="sig-paren">(</span><em>rgb, intent='rfl', bitdepth=8, wlr=[360.0, 830.0, 1.0], rgb2spec=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/rgb2spec/smits_mitsuba.html#rgb_to_spec_smits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.rgb2spec.rgb_to_spec_smits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert an array of RGB values to a spectrum using a Smits like conversion as implemented in Mitsuba.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">rgb:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray of list of rgb values</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">intent:</th><td class="field-body"><div class="first last line-block">
+<div class="line">‘rfl’ (or ‘spd’), optional</div>
+<div class="line">type of requested spectrum conversion .</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">bitdepth:</th><td class="field-body"><div class="first last line-block">
+<div class="line">8, optional</div>
+<div class="line">bit depth of rgb values</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">wlr:</th><td class="field-body"><div class="first last line-block">
+<div class="line">_WL3, optional</div>
+<div class="line">desired wavelength (nm) range of spectrum.</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">rgb2spec:</th><td class="field-body"><div class="first last line-block">
+<div class="line">None, optional</div>
+<div class="line">Dict with base spectra for white, cyan, magenta, yellow, blue, green and red for each intent.</div>
+<div class="line">If None: use _BASESPEC_SMITS.</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">spec:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray with spectrum or spectra (one for each rgb value, first row are the wavelengths)</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="iolidfiles">
+<h2>iolidfiles/<a class="headerlink" href="#iolidfiles" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">py:</th><td class="field-body"><ul class="first simple">
+<li>__init__.py</li>
+<li>io_lid_files.py</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">namespace:</th><td class="field-body"><p class="first last">luxpy.iolidfiles</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<span class="target" id="module-luxpy.toolboxes.iolidfiles"></span><div class="section" id="module-for-reading-and-writing-ies-and-ldt-files">
+<h3>Module for reading and writing IES and LDT files.<a class="headerlink" href="#module-for-reading-and-writing-ies-and-ldt-files" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">read_lamp_data:</th><td class="field-body"><p class="first">Read in light intensity distribution and other lamp data from LDT or IES files.</p>
+<dl class="last docutils">
+<dt>Notes:</dt>
+<dd><p class="first last">1.Only basic support. Writing is not yet implemented.
+2.Reading IES files is based on Blender’s ies2cycles.py
+3.This was implemented to build some uv-texture maps for rendering and only tested for a few files.
+4. Use at own risk. No warranties.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<dl class="function">
+<dt id="luxpy.toolboxes.iolidfiles.read_lamp_data">
+<code class="descclassname">luxpy.toolboxes.iolidfiles.</code><code class="descname">read_lamp_data</code><span class="sig-paren">(</span><em>filename</em>, <em>multiplier=1.0</em>, <em>verbosity=0</em>, <em>normalize='I0'</em>, <em>only_common_keys=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/iolidfiles/io_lid_files.html#read_lamp_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.iolidfiles.read_lamp_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read in light intensity distribution and other lamp data from LDT or IES files.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">filename:</th><td class="field-body"><div class="first last line-block">
+<div class="line">Filename of IES file.</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">multiplier:</th><td class="field-body"><div class="first last line-block">
+<div class="line">1.0, optional</div>
+<div class="line">Scaler for candela values.</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">verbosity:</th><td class="field-body"><div class="first last line-block">
+<div class="line">0, optional</div>
+<div class="line">Display messages while reading file.</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">normalize:</th><td class="field-body"><div class="first last line-block">
+<div class="line">‘I0’, optional</div>
+<div class="line">If ‘I0’: normalize LID to intensity at (theta,phi) = (0,0)</div>
+<div class="line">If ‘max’: normalize to max = 1.</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">only_common_keys:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><div class="first last line-block">
+<div class="line">False, optional</div>
+<div class="line">If True, output only common dict keys related to angles, values</div>
+<div class="line">and such of LID.</div>
+<div class="line">read_lid_lamp_data(?) for print of common keys and return</div>
+<div class="line-block">
+<div class="line">empty dict with common keys.</div>
+</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">lid:</th><td class="field-body">dict with IES or LDT file data.
+|
+| If file_ext == ‘ies’:
+|    dict_keys(
+| [‘filename’, ‘version’, ‘lamps_num’, ‘lumens_per_lamp’,
+| ‘candela_mult’, ‘v_angles_num’, ‘h_angles_num’, ‘photometric_type’,
+| ‘units_type’, ‘width’, ‘length’, ‘height’, ‘ballast_factor’, 
+| ‘future_use’, ‘input_watts’, ‘v_angs’, ‘h_angs’, ‘lamp_cone_type’,
+| ‘lamp_h_type’, ‘candela_values’, ‘candela_2d’, ‘v_same’, ‘h_same’,
+| ‘intensity’, ‘theta’, ‘values’, ‘phi’, ‘map’,’Iv0’]
+|
+| If file_ext == ‘ldt’:
+|    dict_keys(
+| [‘filename’, ‘version’, ‘manufacturer’, ‘Ityp’,’Isym’,
+| ‘Mc’, ‘Dc’, ‘Ng’, ‘name’, Dg’, ‘cct/cri’, ‘tflux’, ‘lumens_per_lamp’,
+| ‘candela_mult’, ‘tilt’, lamps_num’,
+| ‘cangles’, ‘tangles’,’candela_values’, ‘candela_2d’,
+| ‘intensity’, ‘theta’, ‘values’, ‘phi’, ‘map’, ‘Iv0’]
+| )</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="spectro">
+<h2>spectro/<a class="headerlink" href="#spectro" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">py:</th><td class="field-body"><ul class="first simple">
+<li>__init__.py</li>
+<li>spectro.py</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">namespace:</th><td class="field-body"><p class="first last">luxpy.spectro</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<span class="target" id="module-luxpy.toolboxes.spectro"></span><div class="section" id="package-for-spectral-measurements">
+<h3>Package for spectral measurements<a class="headerlink" href="#package-for-spectral-measurements" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="supported-devices">
+<h4>Supported devices:<a class="headerlink" href="#supported-devices" title="Permalink to this headline">¶</a></h4>
+<blockquote>
+<div><ul class="simple">
+<li>JETI: specbos 1211, etc.</li>
+<li>OceanOptics: QEPro, QE65Pro, QE65000, USB2000, USB650,etc.</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">get_spd():</th><td class="field-body">wrapper function to measure a spectral power distribution using a spectrometer of one of the supported manufacturers.</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</div>
+<div class="section" id="notes">
+<h4>Notes<a class="headerlink" href="#notes" title="Permalink to this headline">¶</a></h4>
+<blockquote>
+<div><ol class="arabic simple">
+<li>For info on the input arguments of get_spd(), see help for each identically named function in each of the subpackages.</li>
+<li>The use of jeti spectrometers requires access to some dll files (delivered with this package).</li>
+<li>The use of oceanoptics spectrometers requires the manual installation of pyseabreeze, as well as some other ‘manual’ settings. See help for oceanoptics sub-package.</li>
+</ol>
+</div></blockquote>
+<dl class="function">
+<dt id="luxpy.toolboxes.spectro.init">
+<code class="descclassname">luxpy.toolboxes.spectro.</code><code class="descname">init</code><span class="sig-paren">(</span><em>manufacturer</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/spectro/spectro.html#init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.spectro.init" title="Permalink to this definition">¶</a></dt>
+<dd><p>Import module for specified manufacturer. Make sure everything (drivers, external packages, …) required is installed!</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="luxpy.toolboxes.spectro.get_spd">
+<code class="descclassname">luxpy.toolboxes.spectro.</code><code class="descname">get_spd</code><span class="sig-paren">(</span><em>manufacturer='jeti'</em>, <em>dvc=0</em>, <em>Tint=0</em>, <em>autoTint_max=None</em>, <em>close_device=True</em>, <em>out='spd'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/spectro/spectro.html#get_spd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.spectro.get_spd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Measure a spectral power distribution using a spectrometer of one of the supported manufacturers.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">manufacturer:</th><td class="field-body"><div class="first last line-block">
+<div class="line">‘jeti’ or ‘oceanoptics’, optional</div>
+<div class="line">Manufacturer of spectrometer (ensures the correct module is loaded).</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">dvc:</th><td class="field-body"><div class="first last line-block">
+<div class="line">0 or int or spectrometer handle, optional</div>
+<div class="line">If int: function will try to initialize the spectrometer to </div>
+<div class="line-block">
+<div class="line">obtain a handle. The int represents the device </div>
+<div class="line">number in a list of all detected devices of the manufacturer.</div>
+</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Tint:</th><td class="field-body"><div class="first last line-block">
+<div class="line">0 or Float, optional</div>
+<div class="line">Integration time in seconds. (if 0: find best integration time, but &lt; autoTint_max).</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">autoTint_max:</th><td class="field-body"><div class="first last line-block">
+<div class="line">Limit Tint to this value when Tint = 0.</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">close_device:</th><td class="field-body"><div class="first last line-block">
+<div class="line">True, optional</div>
+<div class="line">Close spectrometer after measurement.</div>
+<div class="line">If ‘dvc’ not in out.split(‘,’): always close!!!</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">out:</th><td class="field-body"><div class="first last line-block">
+<div class="line">“spd” or e.g. “spd,dvc,Errors”, optional</div>
+<div class="line">Requested return.</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">kwargs:</th><td class="field-body"><div class="first last line-block">
+<div class="line">For info on additional input (keyword) arguments of get_spd(), </div>
+<div class="line">see help for each identically named function in each of the subpackages. </div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">spd:</th><td class="field-body"><div class="first last line-block">
+<div class="line">ndarray with spectrum. (row 0: wavelengths, row1: values)</div>
+</div>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">dvc:</th><td class="field-body"><div class="first last line-block">
+<div class="line">Device handle, if succesfull open (_ERROR: failure, nan: closed)</div>
+</div>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Errors:</th><td class="field-body"><div class="first last line-block">
+<div class="line">Dict with error messages.</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
 </div>
 </div>
 </div>

@@ -22,38 +22,23 @@ Package for spectral measurements
 Supported devices:
 ------------------
 
- * JETI: specbos 1211, ...
- * OceanOptics: QEPro, QE65Pro, QE65000, USB2000, USB650,...
+ * JETI: specbos 1211, etc.
+ * OceanOptics: QEPro, QE65Pro, QE65000, USB2000, USB650,etc.
  
- :init(manufacturer): import module for specified manufacturer. Make sure everything (drivers, external packages, ...) required is installed! 
+ :init(manufacturer): import module for specified manufacturer; make sure everything (drivers, external packages, ...) required is installed! 
+ 
  :get_spd(): wrapper function to measure a spectral power distribution using a spectrometer of one of the supported manufacturers. 
  
 Notes
 -----
  1. For info on the input arguments of get_spd(), see help for each identically named function in each of the subpackages. 
  2. The use of jeti spectrometers requires access to some dll files (delivered with this package).
- 3. The use of oceanoptics spectrometers requires the manual installation of pyseabreeze, 
- as well as some other 'manual' settings. See help for oceanoptics sub-package. 
+ 3. The use of oceanoptics spectrometers requires the manual installation of pyseabreeze, as well as some other 'manual' settings. See help for oceanoptics sub-package. 
 
- 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
 __all__ = ['init','get_spd']
-
-## Try to preload all sub-modules:
-#try:
-#    from .jeti import jeti as jeti
-#    __all__ += ['jeti']
-#except:
-#    Warning('Could not load jeti sub-module into spectro.')
-#try:
-#    from .oceanoptics import oceanoptics as oceanoptics
-#    __all__ += ['oceanoptics']
-#except:
-#    Warning('Could not load oceanoptics sub-module into spectro. Make python-seabreeze, pyubs, etc. is installed correctly.')
-#
-
 
 def init(manufacturer):
     """
@@ -84,20 +69,19 @@ def init(manufacturer):
             raise Exception('Unsupported manufacturer!')
 
   
-
 def get_spd(manufacturer = 'jeti', dvc = 0, Tint = 0, autoTint_max = None, close_device = True, out = 'spd', **kwargs):
-	"""
-	Measure a spectral power distribution using a spectrometer of one of the supported manufacturers. 
-	
-	Args:
+    """
+    Measure a spectral power distribution using a spectrometer of one of the supported manufacturers. 
+    
+    Args:
         :manufacturer:
             | 'jeti' or 'oceanoptics', optional
             | Manufacturer of spectrometer (ensures the correct module is loaded).
         :dvc:
             | 0 or int or spectrometer handle, optional
             | If int: function will try to initialize the spectrometer to 
-            |       obtain a handle. The int represents the device 
-            |       number in a list of all detected devices of the manufacturer.
+            |         obtain a handle. The int represents the device 
+            |         number in a list of all detected devices of the manufacturer.
         :Tint:
             | 0 or Float, optional
             | Integration time in seconds. (if 0: find best integration time, but < autoTint_max).
@@ -110,18 +94,18 @@ def get_spd(manufacturer = 'jeti', dvc = 0, Tint = 0, autoTint_max = None, close
         :out:
             | "spd" or e.g. "spd,dvc,Errors", optional
             | Requested return.
-         :**kwargs:   
-    		| For info on additional input (keyword) arguments of get_spd(), 
-    		| see help for each identically named function in each of the subpackages. 
-    		
+        :kwargs:
+            | For info on additional input (keyword) arguments of get_spd(), 
+            | see help for each identically named function in each of the subpackages. 
+    
     Returns:
         :spd:
             | ndarray with spectrum. (row 0: wavelengths, row1: values)
-        [:dvc:
+        :dvc:
             | Device handle, if succesfull open (_ERROR: failure, nan: closed)
         :Errors:
-            | Dict with error messages.]
-	"""
-	spec = init(manufacturer)
-	return spec.get_spd(dvc = dvc, Tint = Tint, autoTint_max = autoTint_max, 
-                     close_device = close_device, out = out, **kwargs)
+            | Dict with error messages.
+    """
+    spec = init(manufacturer)
+    return spec.get_spd(dvc = dvc, Tint = Tint, autoTint_max = autoTint_max, 
+                        close_device = close_device, out = out, **kwargs)
