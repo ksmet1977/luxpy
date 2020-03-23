@@ -990,7 +990,7 @@ def fitnessfcn(x, spd_constructor, spd_constructor_pars = None, F_rss = True, de
 
     # Goodness-of-fit:
     F = np.nan*np.ones((N))
-    obj_vals = F.copy()
+    obj_vals = [np.nan]*N
     
     if np.isnan(spdi[1:].sum()):
         F = 10000000*np.ones(F.shape)
@@ -998,35 +998,59 @@ def fitnessfcn(x, spd_constructor, spd_constructor_pars = None, F_rss = True, de
     else:
         
         # Make decimals and obj_fcn_weights same size as N:
-        decimals =  decimals*np.ones((N))
-        obj_fcn_weights =  obj_fcn_weights*np.ones((N))
-        obj_fcn_pars = np.asarray(obj_fcn_pars*N)
+        if len(decimals) == 1:
+            decimals =  decimals*np.ones((N))
+        if len(obj_fcn_weights) == 1:
+            obj_fcn_weights =  obj_fcn_weights*np.ones((N))
+        if len(obj_fcn_pars) == 1: 
+            obj_fcn_pars = np.asarray(obj_fcn_pars*N)
         obj_tar_vals = np.asarray(obj_tar_vals)
         
         # Calculate all objective functions and closeness to target values
         # store squared weighted differences for speed:
-        output_str = 'c{:1.0f}: F = {:1.' + '{:1.0f}'.format(decimals.max()) + 'f}' + ' : '
-
+        output_str_start = 'c{:1.0f}: F = {:1.' + '{:1.0f}'.format(decimals.max()) + 'f}' + ' : '
+        output_str = ''
         for i in range(N):
             if obj_fcn[i] is not None:
-                obj_vals[i] = obj_fcn[i](spdi, **obj_fcn_pars[i])
-                
-                if obj_tar_vals[i] > 0:
-                    f_normalize = obj_tar_vals[i]
-                else:
-                    f_normalize = 1
+                if not isinstance(obj_fcn[i],tuple):
+                    obj_vals[i] = obj_fcn[i](spdi, **obj_fcn_pars[i])
+                    if obj_tar_vals[i] > 0:
+                        f_normalize = obj_tar_vals[i]
+                    else:
+                        f_normalize = 1
+                        
+                    F[i] = (obj_fcn_weights[i]*(np.abs((np.round(obj_vals[i],np.int(decimals[i])) - obj_tar_vals[i])/f_normalize)**2))
                     
-                F[i] = (obj_fcn_weights[i]*(np.abs((np.round(obj_vals[i],np.int(decimals[i])) - obj_tar_vals[i])/f_normalize)**2))
-                
-                if (verbosity > 0):
-                    output_str = output_str + r' obj_#{:1.0f}'.format(i+1) + ' = {:1.' + '{:1.0f}'.format(np.int(decimals[i])) + 'f},'
+                    if (verbosity > 0):
+                        output_str = output_str + r' obj_#{:1.0f}'.format(i+1) + ' = {:1.' + '{:1.0f}'.format(np.int(decimals[i])) + 'f},'
+                        output_str = output_str.format(np.squeeze(obj_vals[i]))
+                else:
+                    # Execute function (first tuple element) only once and output desired values to save time:
+                    obj_vals[i] = obj_fcn[i][0](spdi, **obj_fcn_pars[i])
+                    f_normalize = np.ones((obj_tar_vals[i].shape[0])) # obj_tar_vals[i] must also be tuple!!
+                    f_normalize[obj_tar_vals[i]>0] = obj_tar_vals[i][obj_tar_vals[i]>0]
+                    
+                    F[i] = np.nansum(obj_fcn_weights[i]*(np.abs((np.round(obj_vals[i]*10**decimals[i])/10**decimals[i] - obj_tar_vals[i])/f_normalize)**2)) # obj_fcn_weights[i], obj_tar_vals[i] must be tuple!!!
+                  
+                    if (verbosity > 0):
+                        output_str_sub = '('
+                        for jj in range(len(obj_fcn[i])-1):
+                            output_str_sub = output_str_sub + obj_fcn[i][jj+1] + ' = {:1.' + '{:1.0f}'.format(np.int(decimals[i][jj])) + 'f},'
+                        output_str_sub = output_str_sub + ')'
+                        output_str_sub = output_str_sub.format(*np.squeeze(obj_vals[i]))    
+                        output_str = output_str + r' obj_#{:1.0f}'.format(i+1) + ' = {:1.' + '{:1.0f}'.format(np.int(decimals[i].mean())) + 'f} ' + output_str_sub + ','
+                        output_str = output_str.format(F[i])
             else:
                 obj_vals[i] = np.nan
                 F[i] = np.nan
+                
+                if (verbosity > 0):
+                        output_str = output_str + r' obj_#{:1.0f}'.format(i+1) + ' = NaN,'
     
         # Print intermediate results:
         if (verbosity > 0):
-            print(output_str.format(*np.hstack((optcounter, np.sqrt(np.nansum(F)), obj_vals))))
+            output_str = output_str_start + output_str
+            print(output_str.format(*np.hstack((optcounter, np.sqrt(np.nansum(F))))))
     
     # Take Root-Sum-of-Squares of delta((val - tar)**2):
     if F_rss == True:
