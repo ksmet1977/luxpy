@@ -953,19 +953,19 @@ def fitnessfcn(x, spd_constructor, spd_constructor_pars = None, F_rss = True, de
               objective function values.
         :decimals:
             | 3, optional
-            | Rounding decimals of objective function values.
+            | List of rounding decimals of objective function values.
         :obj_fcn: 
             | [None] or list, optional
-            | Function handles to objective function.
+            | List of function handles to objective function.
         :obj_fcn_weights:
             | [1] or list, optional.
-            | Weigths for each obj. fcn
+            | List of weigths for each obj. fcn
         :obj_fcn_pars:
             | [None] or list, optional
-            | Parameter dicts for each obj. fcn.
+            | List of parameter dicts for each obj. fcn.
         :obj_tar_vals:
             | [0] or list, optional
-            | Target values for each objective function.
+            | List of target values for each objective function.
         :verbosity:
             | 0, optional
             | If > 0: print intermediate results.
@@ -1001,14 +1001,14 @@ def fitnessfcn(x, spd_constructor, spd_constructor_pars = None, F_rss = True, de
         if len(decimals) == 1:
             decimals =  decimals*np.ones((N))
         if len(obj_fcn_weights) == 1:
-            obj_fcn_weights =  obj_fcn_weights*np.ones((N))
+            obj_fcn_weights =  obj_fcn_weights*N
         if len(obj_fcn_pars) == 1: 
             obj_fcn_pars = np.asarray(obj_fcn_pars*N)
         obj_tar_vals = np.asarray(obj_tar_vals)
         
         # Calculate all objective functions and closeness to target values
         # store squared weighted differences for speed:
-        output_str_start = 'c{:1.0f}: F = {:1.' + '{:1.0f}'.format(decimals.max()) + 'f}' + ' : '
+        output_str_start = 'c{:1.0f}: F = {:1.' + '{:1.0f}'.format(5) + 'f}' + ' : '
         output_str = ''
         for i in range(N):
             if obj_fcn[i] is not None:
@@ -1026,10 +1026,11 @@ def fitnessfcn(x, spd_constructor, spd_constructor_pars = None, F_rss = True, de
                         output_str = output_str.format(np.squeeze(obj_vals[i]))
                 else:
                     # Execute function (first tuple element) only once and output desired values to save time:
-                    obj_vals[i] = obj_fcn[i][0](spdi, **obj_fcn_pars[i])
+                    obj_vals[i] = np.array(obj_fcn[i][0](spdi, **obj_fcn_pars[i]))
+                    obj_tar_vals[i] = np.array(obj_tar_vals[i])
                     f_normalize = np.ones((obj_tar_vals[i].shape[0])) # obj_tar_vals[i] must also be tuple!!
                     f_normalize[obj_tar_vals[i]>0] = obj_tar_vals[i][obj_tar_vals[i]>0]
-                    
+                    decimals[i] = np.array(decimals[i])
                     F[i] = np.nansum(obj_fcn_weights[i]*(np.abs((np.round(obj_vals[i]*10**decimals[i])/10**decimals[i] - obj_tar_vals[i])/f_normalize)**2)) # obj_fcn_weights[i], obj_tar_vals[i] must be tuple!!!
                   
                     if (verbosity > 0):
