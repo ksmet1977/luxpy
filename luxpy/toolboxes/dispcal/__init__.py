@@ -18,8 +18,21 @@
 """
 Module for display characterization
 ===================================
+ :_PATH_DATA: path to package data folder   
 
- 
+ :_RGB:  set of RGB values that work quite well for display characterization
+   
+ :_XYZ: example set of measured XYZ values corresponding to the RGB values in _RGB
+   
+ :calibrate(): Calculate TR parameters/lut and conversion matrices
+   
+ :calibration_performance(): Check calibration performance (cfr. individual and average color differences for each stimulus). 
+
+ :rgb_to_xyz(): Convert input rgb to xyz
+    
+ :xyz_to_rgb(): Convert input xyz to rgb
+     
+ :DisplayCalibration(): Calculate TR parameters/lut and conversion matrices and store in object.
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """

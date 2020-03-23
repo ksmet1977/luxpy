@@ -17,8 +17,8 @@ def spd_to_tm30(spd):
 
 if __name__ == '__main__':
     
-    run_example_1 = True
-    run_example_2 = False
+    run_example_1 = False
+    run_example_2 = True
     
     cieobs = '1931_2'
     target = 4000 # 4000 K target cct

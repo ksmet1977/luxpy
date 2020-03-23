@@ -18,8 +18,6 @@ Module for display calibration
      
  :DisplayCalibration(): Calculate TR parameters/lut and conversion matrices and store in object.
        
-
-   
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
