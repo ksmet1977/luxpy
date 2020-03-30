@@ -19,7 +19,7 @@
 Module with color rendition, fidelity and gamut area helper functions
 =====================================================================
 
-:gamut_slicer(): Slices the gamut in nhbins slices and provides normalization 
+ :gamut_slicer(): Slices the gamut in nhbins slices and provides normalization 
                   of test gamut to reference gamut.
 
  :jab_to_rg(): Calculates gamut area index, Rg.
@@ -860,7 +860,8 @@ def spd_to_rg(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'Rg', wl = None, \
             | None or dict, optional
             | Dict containing specifying parameters for slicing the gamut.
             | Dict structure: 
-            |     {'nhbins' : None, 'start_hue' : 0, 'normalize_gamut' : True}
+            |     {'nhbins' : None, 'start_hue' : 0, 
+            |       'normalize_gamut' : False, 'normalized_chroma_ref': 100.0}
             |    - key: 'nhbins': int, number of hue bins to slice gamut 
             |                 (None use the one specified in :cri_type: dict).
             |    - key: 'start_hue': float (°), hue at which to start slicing
@@ -1039,7 +1040,8 @@ def spd_to_cri(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'Rf', wl = None, \
             | None or dict, optional
             | Dict containing specifying parameters for slicing the gamut.
             | Dict structure: 
-            |     {'nhbins' : None, 'start_hue' : 0, 'normalize_gamut' : True}
+            |     {'nhbins' : None, 'start_hue' : 0, 
+            |       'normalize_gamut' : False, 'normalized_chroma_ref': 100.0}
             |    - key: 'nhbins': int, number of hue bins to slice gamut 
             |                 (None use the one specified in :cri_type: dict).
             |    - key: 'start_hue': float (°), hue at which to start slicing

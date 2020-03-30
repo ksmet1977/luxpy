@@ -43,7 +43,7 @@ _CRI_DEFAULTS['ciera-13.3-1995'] = {'sampleset' : "_CRI_RFL['cie-13.3-1995']['8'
                          'scale' :{'fcn' : linear_scale, 'cfactor' : [4.6]}, 
                          'cspace' : {'type':'wuv', 'xyzw' : None}, 
                          'catf': {'xyzw':None, 'mcat':'judd-1945','D':1.0,'La':None,'cattype':'vonkries','Dtype':None, 'catmode' : '1>2'}, 
-                         'rg_pars' : {'nhbins': None, 'start_hue':0.0, 'normalize_gamut': False}, 
+                         'rg_pars' : {'nhbins': None, 'start_hue':0.0, 'normalize_gamut': False, 'normalized_chroma_ref' : 100}, 
                          'cri_specific_pars' : None
                          }
 
