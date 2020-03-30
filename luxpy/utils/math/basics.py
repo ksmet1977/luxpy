@@ -78,6 +78,8 @@ Module with useful basic math functions
  :cik_to_v(): Calculate v-format ellipse descriptor from 2x2 'covariance matrix'^-1 cik.
  
  :fmod(): Floating point modulus, e.g.: fmod(theta, np.pi * 2) would keep an angle in [0, 2pi]b
+ 
+ :remove_outliers(): Remove multivariate outliers from data when outside of alpha-level confidence ellipsoid.
 
  :fit_ellipse(): Fit an ellipse to supplied data points.
  
@@ -816,6 +818,29 @@ def fmod(x, y):
         r = r - y
     return r
 
+def remove_outliers(data, alpha = 0.01):
+    """
+    Remove multivariate outliers from data when outside of alpha-level confidence ellipsoid.
+    
+    Args:
+        :data:
+            | Nxp ndarray with multivariate data (N samples, p variables)
+        :alpha:
+            | 0.01, optional
+            | Significance level of confidence ellipsoid marking the boundary for outliers.
+            
+    Return:
+        :data:
+            | (N-... x p) ndarray with multivariate data; outliers removed.
+    """
+    # delete outliers:    
+    datac = data.mean(axis=0)
+    cov_ = np.cov(data.T)
+    f = stats.chi2.ppf(1-alpha, data.shape[1])
+    D = mahalanobis2(data, mu = datac, sigmainv = np.linalg.inv(cov_)/f)**0.5
+    datan = data.copy()
+    datan = datan[D<=1]
+    return datan
 
 def fit_ellipse(xy, center_on_mean_xy = False):
     """
@@ -899,7 +924,8 @@ def fit_ellipse(xy, center_on_mean_xy = False):
     return np.hstack((a, b, xc, yc, theta))
 
 
-def fit_cov_ellipse(xy, alpha = 0.05, pdf = 'chi2', SE = False):
+def fit_cov_ellipse(xy, alpha = 0.05, pdf = 'chi2', SE = False, 
+                    robust = False, robust_alpha = 0.01):
     """
     Fit covariance ellipse to xy data.
     
@@ -920,13 +946,27 @@ def fit_cov_ellipse(xy, alpha = 0.05, pdf = 'chi2', SE = False):
             | False, optional
             | If false, fit standard error ellipse at alpha significance level
             | If true, fit standard deviation ellipse at alpha significance level
+        :robust:
+            | False, optional
+            | If True: remove outliers beyond the confidence ellipsoid before calculating
+            |          the covariances.
+        :robust_alpha:
+            | 0.01, optional
+            | Significance level of confidence ellipsoid marking the boundary for outliers.
             
     Returns:
         :v:
             | vector with ellipse parameters [Rmax,Rmin, xc,yc, theta]
     """
+
+    # delete outliers:    
+    if robust == True:
+        xy = remove_outliers(xy, alpha = robust_alpha)
+    
     xyc = xy.mean(axis=0)
     cov_ = np.cov(xy.T)
+    
+    
     cik = np.linalg.inv(cov_)
     
     if pdf == 'chi2':
@@ -947,6 +987,7 @@ def fit_cov_ellipse(xy, alpha = 0.05, pdf = 'chi2', SE = False):
         
     v = cik_to_v(cik/f, xyc=xyc)
     return v
+
 #------------------------------------------------------------------------------
 def interp1(X,Y,Xnew, kind = 'linear', ext = 'extrapolate', w = None, bbox=[None, None], check_finite = False):
     """
@@ -1052,7 +1093,7 @@ def ndinterp1(X, Y, Xnew):
         
     return Ynew
 
-def box_m(*X, ni = None, verbosity = 0):
+def box_m(*X, ni = None, verbosity = 0, robust = False, robust_alpha = 0.01):
     """
     Perform Box's M test (p>=2) to check equality of covariance matrices or Bartlett's test (p==1) for equality of variances.
     
@@ -1066,6 +1107,13 @@ def box_m(*X, ni = None, verbosity = 0):
         :verbosity: 
             | 0, optional
             | If 1: print results.
+        :robust:
+            | False, optional
+            | If True: remove outliers beyond the confidence ellipsoid before calculating
+            |          the covariances.
+        :robust_alpha:
+            | 0.01, optional
+            | Significance level of confidence ellipsoid marking the boundary for outliers.
     
     Returns:
         :statistic:
@@ -1089,6 +1137,11 @@ def box_m(*X, ni = None, verbosity = 0):
     else:
         det = lambda x: np.linalg.det(x)
     if ni is None: # samples in each group
+        
+        # remove outliers before calculation of box M:
+        if robust == True:
+            X = [remove_outliers(Xi, alpha = robust_alpha) for Xi in X]
+            
         ni = np.array([Xi.shape[0] for Xi in X])
         Si = np.array([np.cov(Xi.T) for Xi in X])
         if p == 1:

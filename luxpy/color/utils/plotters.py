@@ -610,7 +610,7 @@ def plotellipse(v, cspace_in = 'Yxy', cspace_out = None, nsamples = 100, \
             | True, optional
             | Show grid (True) or not (False)
         :llabel:
-            | '',optional
+            | None,optional
             | Legend label for ellipse boundary.
         :label_fontname: 
             | 'Times New Roman', optional
@@ -680,8 +680,11 @@ def plotellipse(v, cspace_in = 'Yxy', cspace_out = None, nsamples = 100, \
             
             if plot_center == True:
                 axh.plot(Yxyc[:,1],Yxyc[:,2],color = center_color, linestyle = 'none', marker = center_marker, markersize = center_markersize)
-
-            axh.plot(Yxy[:,1],Yxy[:,2],color = line_color, linestyle = line_style, linewidth = line_width, marker = line_marker, markersize = line_markersize, label = llabel)
+            if llabel is None:
+                axh.plot(Yxy[:,1],Yxy[:,2],color = line_color, linestyle = line_style, linewidth = line_width, marker = line_marker, markersize = line_markersize)
+            else:
+                axh.plot(Yxy[:,1],Yxy[:,2],color = line_color, linestyle = line_style, linewidth = line_width, marker = line_marker, markersize = line_markersize,label = llabel)
+            
             axh.set_xlabel(xlabel, fontname = label_fontname, fontsize = label_fontsize)
             axh.set_ylabel(ylabel, fontname = label_fontname, fontsize = label_fontsize)
             if show_grid == True:
