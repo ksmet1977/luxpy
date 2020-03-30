@@ -409,7 +409,7 @@ def bvgpdf(x, y = None, mu = None, sigmainv = None):
     return np.exp(-0.5*mahalanobis2(x,y = y, mu = mu, sigmainv= sigmainv))
 
 #------------------------------------------------------------------------------
-def mahalanobis2(x, y = None, mu = None,sigmainv = None):
+def mahalanobis2(x, y = None, z = None, mu = None, sigmainv = None):
     """
     Evaluate the squared mahalanobis distance with center mu and shape 
     and orientation determined by sigmainv. 
@@ -422,33 +422,66 @@ def mahalanobis2(x, y = None, mu = None,sigmainv = None):
             | None or scalar or list or ndarray (.ndim = 1) with y-coordinates 
               at which to evaluate the mahalanobis distance squared, optional.
             | If :y: is None, :x: should be a 2d array.
+        :z: 
+            | None or scalar or list or ndarray (.ndim = 1) with z-coordinates 
+              at which to evaluate the mahalanobis distance squared, optional.
+            | If :z: is None & :y: is None, then :x: should be a 2d array.
         :mu: 
-            | None or ndarray (.ndim = 2) with center coordinates of the 
+            | None or ndarray (.ndim = 1) with center coordinates of the 
               mahalanobis ellipse, optional. 
-            | None defaults to ndarray([0,0]).
+            | None defaults to zeros(2) or zeros(3).
         :sigmainv:
             | None or ndarray with 'inverse covariance matrix', optional 
             | Determines the shape and orientation of the PD.
-            | None default to np.eye(2).
+            | None default to np.eye(2) or eye(3).
     Returns:
          :returns: 
-             | ndarray with magnitude of mahalanobis2(x,y)
+             | ndarray with magnitude of mahalanobis2(x,y[,z])
 
     """
+    if (y is None) & (z is None):
+        p = x.shape[-1]
+    elif (z is None):
+        p = x.shape[-1] if (y is None) else 2
+    elif (z is not None):
+        p = 3 if (y is not None) else 2
+    
     if mu is None:
-        mu = np.zeros(2)
+        mu = np.zeros(p)
     if sigmainv is None:
-        sigmainv = np.eye(2)
+        sigmainv = np.eye(p)
     
     x = np2d(x)
+    mu = np2d(mu)
 
-    if y is not None:
-        x = x - mu[0] # center data on mu 
-        y = np2d(y) - mu[1] # center data on mu 
+    if (y is None) & (z is None):
+        x = x - mu
+        if p == 2:
+            x, y = asplit(x)
+        elif p==3:
+            x, y, z = asplit(x)
+    elif (z is None):
+        if y is None:
+            x = x - mu
+            x, y = asplit(x)
+        else:
+            x = x - mu[...,0] # center data on mu 
+            y = np2d(y) - mu[...,1] # center data on mu 
+    elif (z is not None):
+        if (y is not None):
+            x = x - mu[0] # center data on mu 
+            y = np2d(y) - mu[...,1] # center data on mu 
+            z = np2d(z) - mu[...,2] # center data on mu 
+        else:
+            x = x - mu[...,0] # center data on mu 
+            y = np2d(z) - mu[...,1] # center data on mu 
+            
+    if p == 2:
+        return (sigmainv[0,0] * (x**2.0) + sigmainv[1,1] * (y**2.0) + 2.0*sigmainv[0,1]*(x*y))
     else:
-        x = x - mu # center data on mu    
-        x, y = asplit(x)
-    return (sigmainv[0,0] * (x**2.0) + sigmainv[1,1] * (y**2.0) + 2.0*sigmainv[0,1]*(x*y))
+        return (sigmainv[0,0] * (x**2.0) + sigmainv[1,1] * (y**2.0) + 2.0*sigmainv[0,1]*(x*y) + 
+                sigmainv[2,2] * (z**2.0) + 2.0*sigmainv[0,2]*(x*z) +  2.0*sigmainv[1,2]*(y*z))
+
 
 
 
