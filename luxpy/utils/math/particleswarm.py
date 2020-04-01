@@ -10,26 +10,87 @@ __all__ = ['particleswarm']
 import numpy as np
 import matplotlib as plt
 import subprocess
-import sys
+
 
 # Import PySwarms
 try:
     import pyswarms as ps
 except ImportError:
     try:
-        subprocess.call([sys.executable, "-m", "pip", "install", 'pyswarms'])
+        print("Trying to 'pip install pyswarms' using subprocess.")
+        m = subprocess.call(["pip", "install", 'pyswarms'])
+        if m != 0:
+            raise Exception("Tried importing 'pyswarms', then tried installing it. Please install it manually: pip install pyswarms")  
     except:
         raise Exception("Tried importing 'pyswarms', then tried installing it. Please install it manually: pip install pyswarms")  
 finally:
     import pyswarms as ps
     from pyswarms.utils.plotters import (plot_cost_history, plot_contour, plot_surface)
 
+
 def particleswarm(objfcn, dimensions, args = {}, use_bnds = True, bounds = (None,None), 
                   iters = 100, n_particles = 10, ftol = -np.inf,
                   options = {'c1': 0.5, 'c2': 0.3, 'w':0.9},
                   verbosity = 1,
                   **kwargs):
+        """
+    Global minimization function using particle swarms (wrapper around pyswarms.single.GlobalBestPSO)
     
+    Args:
+        :objfcn:
+            | objective function
+            | Should output a vector with cost values for each of the particles.
+        :dimensions: 
+            | Number of parameter values for the objective function. 
+        :args:
+            | Dict with objfcn input parameters (except the to be optimized x)
+        :use_bnd:
+            | True, optional
+            | False: omits bounds and defaults to regular minimize function.
+        :bounds:
+            | (lower, upper), optional
+            | Tuple of lists or dicts (x0_keys is None) of lower and upper bounds 
+              for each of the parameters values.
+        :iters:
+            | 100, optional
+            | Number of swarm iterations
+        :n_particles:
+            | 10, optional
+            | Number of particles in swarm
+        :ftol:
+            | -np.inf, optional
+            | Relative error in objective_func(best_pos) acceptable for
+            | convergence. Default is :code:`-np.inf`
+        options:
+            | {'c1': 0.5, 'c2': 0.3, 'w':0.9}, optional
+            | dict with keys {'c1', 'c2', 'w'}
+            | A dictionary containing the parameters for the specific
+            | optimization technique.
+            |  - 'c1' : float, cognitive parameter
+            |  - 'c2' : float, social parameter
+            |  - 'w' : float, inertia parameter
+        :verbosity:
+            | 1, optional
+            | If > 0: plot the cost history (see pyswarms's plot_cost_history function)
+        :kwargs: 
+            | allows input for other type of arguments for GlobalBestPSO
+         
+    Note:
+        For more info on other input arguments, see 'ps.single.GlobalBestPSO?'
+         
+    Returns:
+        :res: 
+            | dict with output of minimization:
+            | keys():
+            |   - 'x_final': final solution x
+            |   - 'cost': final function value of obj_fcn()
+            |   - and some of the input arguments characterizing the 
+            |       minimization, such as n_particles, bounds, ftol, options, optimizer.
+
+    Reference:
+        1. pyswarms documentation: https://pyswarms.readthedocs.io/
+    """
+         
     if (bounds[0] is None) & (bounds[1] is None):
         use_bnds = False
     if use_bnds == True:

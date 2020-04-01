@@ -48,10 +48,8 @@ def minimizebnd(fun, x0, args=(), method = 'nelder-mead', use_bnd = True, \
         :res: 
             | dict with minimize() output. 
             | Additionally, function value, fval, of solution is also in :res:,
-              as well as a vector or dict (if x0 was dict) 
-              with final solutions (res['x'])
-        
-        
+            | as well as a vector or dict (if x0 was dict) 
+            | with final solutions (res['x'])
     """
     # Convert dict to vec:
     if isinstance(x0, dict):

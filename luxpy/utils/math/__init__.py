@@ -84,6 +84,8 @@ Module with useful math functions
                  as a dict.
  :DEMO: Module for Differential Evolutionary Multi-objective Optimization  (DEMO).
  
+ :particleswarm(): Global minimization function using particle swarms (wrapper around pyswarms.single.GlobalBestPSO)
+ 
  :vec3: Module for spherical vector coordinates.
  
  :fmod(): Floating point modulus, e.g.: fmod(theta, np.pi * 2) would keep an angle in [0, 2pi]b
@@ -116,6 +118,8 @@ __all__ += ['DEMO']
 from .vec3 import vec3 as vec3
 __all__ += ['vec3']
 
+from .particleswarm import particleswarm
+__all__ += ['particleswarm']
 
 
 
