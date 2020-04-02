@@ -25,8 +25,8 @@ Module for testing LuxPy toolbox (v1.3.06)
 import luxpy as lx
 
 # get some spectral data:
-spds = lx._IESTM30['S']['data'][:5]
-rfls = lx._IESTM30['R']['99']['5nm'][:6]
+spds = lx._IESTM3018['S']['data'][:5]
+rfls = lx._IESTM3018['R']['99']['5nm'][:6]
 
 # check getdata():
 rfls_df = lx.getdata(rfls,kind='df')

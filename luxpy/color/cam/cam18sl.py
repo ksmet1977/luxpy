@@ -154,6 +154,7 @@ def cam18sl(data, datab = None, Lb = [100], fov = 10.0, inputtype = 'xyz', direc
     datar = np.vstack((wlr,np.ones((Lb.shape[0], wlr.shape[0])))) # create eew
     xyzr = spd_to_xyz(datar, cieobs = '2006_10', relative = False) # get abs. tristimulus values
     datar[1:] = datar[1:]/xyzr[...,1:2]*Lb
+
     
     # Create datab if None:
     if (datab is None):
@@ -161,11 +162,10 @@ def cam18sl(data, datab = None, Lb = [100], fov = 10.0, inputtype = 'xyz', direc
             datab = datar.copy()
         else:
             datab = spd_to_xyz(datar, cieobs = '2006_10', relative = False)
-            datar = datab.copy()
     
  
     # prepare data and datab for loop over backgrounds: 
-    # make axis 1 of datab have 'same' dimensions as data:         
+    # make axis 1 of datab have 'same' dimensions as data:       
     if (data.ndim == 2): 
         data = np.expand_dims(data, axis = 1)  # add light source axis 1     
 

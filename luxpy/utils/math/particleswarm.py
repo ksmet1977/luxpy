@@ -33,7 +33,7 @@ def particleswarm(objfcn, dimensions, args = {}, use_bnds = True, bounds = (None
                   options = {'c1': 0.5, 'c2': 0.3, 'w':0.9},
                   verbosity = 1,
                   **kwargs):
-        """
+    """
     Global minimization function using particle swarms (wrapper around pyswarms.single.GlobalBestPSO)
     
     Args:

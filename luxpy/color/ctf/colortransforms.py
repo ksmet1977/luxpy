@@ -463,7 +463,7 @@ def luv_to_xyz(luv, xyzw = None, cieobs = _CIEOBS, **kwargs):
 
     # calculate u'v' from u*,v*:
     Yuv = np.empty(luv.shape)
-    Yuv[...,1:3] = (luv[...,1:3] / (13*luv[...,0])) + Yuvw[...,1:3]
+    Yuv[...,1:3] = (luv[...,1:3] / (13*luv[...,:1])) + Yuvw[...,1:3]
     Yuv[Yuv[...,0]==0,1:3] = 0
 
     Yuv[...,0] = Yuvw[...,0]*(((luv[...,0] + 16.0) / 116.0)**3.0)
