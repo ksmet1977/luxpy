@@ -480,7 +480,7 @@ def cam_sww16(data, dataw = None, Yb = 20.0, Lw = 400.0, Ccwb = None,
         elif direction == 'inverse':
              
             # stack cognitive pre-adapted adaptation field signals (first on stack) together:
-            labf_int = np.hstack((lstar_int[0],alph_int[0],bet_int[0]))
+            #labf_int = np.hstack((lstar_int[0],alph_int[0],bet_int[0]))
             
             # get lstar_out, alph_out & bet_out for data 
             #(contains model perceptual signals in inverse mode!!!):
@@ -538,7 +538,6 @@ def cam_sww16(data, dataw = None, Yb = 20.0, Lw = 400.0, Ccwb = None,
             #---------------------------------------------------------------------------
             #  Inverse stage 1: cone outputs to photon rates:
             #---------------------------------------------------------------------------
-
             lmstp = math.erfinv(lmstp) / Cc - Cf*np.log(lmsf/lms0)
             lmst = np.exp(lmstp) * lms0
 
