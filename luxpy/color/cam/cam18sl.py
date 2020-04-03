@@ -43,7 +43,7 @@ _CAM18SL_PARAMETERS = {'k': [676.7, 794.0, 1461.5],
                        'cM': 3260, 'cHK': [0.0024,1.09], 'cW': [1/11672,2.09], 
                        'cfov': 0.271} 
                        
-#_CAM18SL_SURROUND_PARAMETERS = {'surrounds': ['dark'], 'dark' : {'c': None, 'Nc':None,'F':None,'FLL':None}}
+_CAM18SL_SURROUND_PARAMETERS = {'surrounds': ['dark'], 'dark' : {'c': None, 'Nc':None,'F':None,'FLL':None}}
 
 __all__ = ['cam18sl','_CAM18SL_AXES','_CAM18SL_UNIQUE_HUE_DATA', '_CAM18SL_PARAMETERS','_CAM18SL_NAKA_RUSHTON_PARAMETERS', '_CAM18SL_SURROUND_PARAMETERS']
 
@@ -415,11 +415,11 @@ if __name__ == '__main__':
 
     
     xyz, xyzw = spd_to_xyz(C, cieobs = cieobs, relative = True, rfl = rflM, out = 2)
-    qab = xyz_to_qabW_cam18sl(xyzw, xyzb = None, Lb = [100], fov = 10.0)
-    print('qab: ',qab)
-    qab2 = cam18sl(C, datab = None, Lb = [100], fov = 10.0, direction = 'forward', inputtype = 'spd', outin = 'Q,aW,bW', parameters = None)
-    print('qab2: ',qab2)       
-    xyz_ = qabW_cam18sl_to_xyz(qab, xyzb = None, Lb = [100], fov = 10.0)
+    qab = xyz_to_qabS_cam18sl(xyzw, xyzb = None, Lb = [100], fov = 10.0)
+    print('qabS: ',qab)
+    qab2 = cam18sl(C, datab = None, Lb = [100], fov = 10.0, direction = 'forward', inputtype = 'spd', outin = 'Q,aS,bS', parameters = None)
+    print('qabS2: ',qab2)       
+    xyz_ = qabS_cam18sl_to_xyz(qab, xyzb = None, Lb = [100], fov = 10.0)
     print('delta: ', xyzw-xyz_)
     
     # test 2:
@@ -438,8 +438,8 @@ if __name__ == '__main__':
     xyz = spd_to_xyz(STIM, cieobs = cieobs, relative = False)
     
     BG = EEW
-    qab = cam18sl(EEW, datab = EEW, Lb = [100], fov = 10.0, direction = 'forward', inputtype = 'spd', outin = 'Q,aW,bW', parameters = None)
-    print('test 2 qab: ',qab)
+    qab = cam18sl(EEW, datab = EEW, Lb = [100], fov = 10.0, direction = 'forward', inputtype = 'spd', outin = 'Q,aS,bS', parameters = None)
+    print('test 2 qabS: ',qab)
     
     
     
