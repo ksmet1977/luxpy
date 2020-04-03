@@ -82,6 +82,7 @@ Module with useful math functions
                  unconstrained methods(port of Matlab's fminsearchbnd). 
                  Starting, lower and upper bounds values can also be provided 
                  as a dict.
+                 
  :DEMO: Module for Differential Evolutionary Multi-objective Optimization  (DEMO).
  
  :particleswarm(): Global minimization function using particle swarms (wrapper around pyswarms.single.GlobalBestPSO)
@@ -103,7 +104,8 @@ Module with useful math functions
  :box_m(): Performs a Box M test on covariance matrices.
  
  :pitman_morgan(): Pitman-Morgan Test for the difference between correlated variances with paired samples.
-                 
+    
+ :bipolymod: Module for Bivariate Polynomial Model Optimization             
 ===============================================================================
 """
 from .basics import *
@@ -120,6 +122,10 @@ __all__ += ['vec3']
 
 from .particleswarm import particleswarm
 __all__ += ['particleswarm']
+
+from . import bivariate_poly_model as bipolymod
+__all__ += ['bipolymod']
+
 
 
 
