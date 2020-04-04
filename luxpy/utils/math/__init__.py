@@ -123,8 +123,8 @@ __all__ += ['vec3']
 from .particleswarm import particleswarm
 __all__ += ['particleswarm']
 
-from . import bivariate_poly_model as bipolymod
-__all__ += ['bipolymod']
+from . import bipolymodel as bipolymodel
+__all__ += ['bipolymodel']
 
 
 
