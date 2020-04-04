@@ -105,7 +105,7 @@ Module with useful math functions
  
  :pitman_morgan(): Pitman-Morgan Test for the difference between correlated variances with paired samples.
     
- :bipolymod: Module for Bivariate Polynomial Model Optimization             
+ :mupolymod: Module for Multivariate Polynomial Model Optimization (2D, 3D)            
 ===============================================================================
 """
 from .basics import *
@@ -123,8 +123,8 @@ __all__ += ['vec3']
 from .particleswarm import particleswarm
 __all__ += ['particleswarm']
 
-from . import bipolymodel as bipolymodel
-__all__ += ['bipolymodel']
+from . import mupolymodel as mupolymodel
+__all__ += ['mupolymodel']
 
 
 
