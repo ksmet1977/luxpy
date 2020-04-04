@@ -102,18 +102,24 @@ def get_poly_model(xyt, xyr, model_type = 'M6', get_stats = True, dict_out = Tru
     dx, dy = xt - xr, yt - yr
     
     # B.1 Calculate model matrix:
-    # 5-parameter model:
-    M = np.array([[np.sum(xr*xr), np.sum(xr*yr), np.sum(xr*xr**2),np.sum(xr*xr*yr),np.sum(xr*yr**2)],
-            [np.sum(yr*xr), np.sum(yr*yr), np.sum(yr*xr**2),np.sum(yr*xr*yr),np.sum(yr*yr**2)],
-            [np.sum((xr**2)*xr), np.sum((xr**2)*yr), np.sum((xr**2)*xr**2),np.sum((xr**2)*xr*yr),np.sum((xr**2)*yr**2)],
-            [np.sum(xr*yr*xr), np.sum(xr*yr*yr), np.sum(xr*yr*xr**2),np.sum(xr*yr*xr*yr),np.sum(xr*yr*yr**2)],
-            [np.sum((yr**2)*xr), np.sum((yr**2)*yr), np.sum((yr**2)*xr**2),np.sum((yr**2)*xr*yr),np.sum((yr**2)*yr**2)]])
+#    # 5-parameter model:
+#    M = np.array([[np.sum(xr*xr), np.sum(xr*yr), np.sum(xr*xr**2),np.sum(xr*xr*yr),np.sum(xr*yr**2)],
+#            [np.sum(yr*xr), np.sum(yr*yr), np.sum(yr*xr**2),np.sum(yr*xr*yr),np.sum(yr*yr**2)],
+#            [np.sum((xr**2)*xr), np.sum((xr**2)*yr), np.sum((xr**2)*xr**2),np.sum((xr**2)*xr*yr),np.sum((xr**2)*yr**2)],
+#            [np.sum(xr*yr*xr), np.sum(xr*yr*yr), np.sum(xr*yr*xr**2),np.sum(xr*yr*xr*yr),np.sum(xr*yr*yr**2)],
+#            [np.sum((yr**2)*xr), np.sum((yr**2)*yr), np.sum((yr**2)*xr**2),np.sum((yr**2)*xr*yr),np.sum((yr**2)*yr**2)]])
+#    
+#    #6-parameters model:
+#    if model_type == 'M6': 
+#        M = np.vstack((np.array([[np.sum(1.0*xr),np.sum(1.0*yr), np.sum(1.0*xr**2),np.sum(1.0*xr*yr),np.sum(1.0*yr**2)]]), M)) # add row 0 of M6
+#        M = np.hstack((np.array([[xr.size,np.sum(xr*1.0),np.sum(yr*1.0),np.sum((xr**2)*1.0),np.sum(xr*yr*1.0),np.sum((yr**2)*1.0)]]).T,M)) # add col 0 of M6
+
+    if model_type == 'M5':
+        m = np.vstack((xr, yr, xr**2, xr*yr, yr**2))
+    elif model_type == 'M6':
+        m = np.vstack((np.ones_like(xr), xr, yr, xr**2, xr*yr, yr**2))
+    M = np.dot(m,m.T)    
     
-    #6-parameters model:
-    if model_type == 'M6': 
-        M = np.vstack((np.array([[np.sum(1.0*xr),np.sum(1.0*yr), np.sum(1.0*xr**2),np.sum(1.0*xr*yr),np.sum(1.0*yr**2)]]), M)) # add row 0 of M6
-        M = np.hstack((np.array([[xr.size,np.sum(xr*1.0),np.sum(yr*1.0),np.sum((xr**2)*1.0),np.sum(xr*yr*1.0),np.sum((yr**2)*1.0)]]).T,M)) # add col 0 of M6
-        
     # Get inverse matrix:
     M = np.linalg.inv(M)
     
