@@ -43,3 +43,6 @@
 2020-04-09 21:22:44,503 - pyswarms.single.global_best - INFO - Optimize for 1000 iters with {'c1': 0.5, 'c2': 0.3, 'w': 0.9}
 2020-04-09 21:25:34,405 - pyswarms.single.global_best - INFO - Optimization finished | best cost: 1.43562327308605e-18, best pos: [3.6692e-01 2.0537e-01 4.7758e-01 7.9050e-01 6.2951e+02 5.3046e+02
  4.5024e+02 6.2048e+02 3.3771e+01 6.5420e+01 3.7353e+01 6.8674e+01]
+2020-04-09 21:45:18,972 - pyswarms.single.global_best - INFO - Optimize for 1000 iters with {'c1': 0.5, 'c2': 0.3, 'w': 0.9}
+2020-04-09 21:47:50,961 - pyswarms.single.global_best - INFO - Optimization finished | best cost: 0.0013234898016517393, best pos: [6.9418e-01 6.6555e-01 4.8887e-01 5.2318e-01 6.3751e+02 4.5054e+02
+ 5.2733e+02 4.0036e+02 4.8854e+01 1.6059e+01 5.3232e+01 7.9460e+01]
