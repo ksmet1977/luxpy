@@ -112,8 +112,7 @@ def demo_opt(f, dimensions, args = (), xrange = None, options = {}):
         xrange = np.ones((n,2))*np.inf
         xrange[:,0]*=-1
 
-    np.random.seed(1)
-    
+   
     # flip dimensions of xrange to row-format to column format:
     xrange = xrange.T
     
