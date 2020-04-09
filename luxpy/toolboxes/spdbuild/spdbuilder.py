@@ -2059,9 +2059,39 @@ def spd_optimizer(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs = _CIEO
     else:  
         return eval(out)
 
+if __name__ == '__main__':
+    print('3: spd_optimizer() with constraints on peakwl and fwhm:')
+    target = 4000
+    cieobs='1931_2'
+    obj_fcn = [cri.spd_to_iesrf, cri.spd_to_iesrg]
+    obj_tar_vals = [90,110]
+    n = 4
+    S4, _ = spd_optimizer(minimize_method='Nelder-Mead',
+                          target = target, \
+                          tar_type = 'cct',\
+                          cieobs = cieobs,\
+                          cspace_bwtf = {'cieobs' : cieobs, 'mode' : 'search'},\
+                          optimizer_type = '3mixer',\
+                          N_components = n,
+                          obj_fcn = obj_fcn, \
+                          obj_tar_vals = obj_tar_vals,\
+                          peakwl_min = [400], peakwl_max = [700],\
+                          fwhm_min = [5], fwhm_max = [100],\
+                          wl = np.array([360,830,1]),\
+                          verbosity = 1)
+    # Check output agrees with target:
+    xyz = spd_to_xyz(S4, relative = False, cieobs = cieobs)
+    cct = xyz_to_cct(xyz, cieobs = cieobs, mode = 'search')
+    Rf = obj_fcn[0](S4)
+    Rg = obj_fcn[1](S4)
+    print('\nResults (optim,target):')
+    print("cct(K): ({:1.1f},{:1.1f})".format(cct[0,0], target))
+    print("Rf: ({:1.2f},{:1.2f})".format(Rf[0,0], obj_tar_vals[0]))
+    print("Rg: ({:1.2f}, {:1.2f})".format(Rg[0,0], obj_tar_vals[1]))
+
 
 #------------------------------------------------------------------------------
-if __name__ == '__main__':
+if __name__ == '__main__x':
     
     plt.close('all')
     cieobs = '1931_2'

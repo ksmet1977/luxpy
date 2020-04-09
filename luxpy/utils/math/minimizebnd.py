@@ -188,6 +188,7 @@ def minimizebnd(fun, x0, args=(), method = 'nelder-mead', use_bnd = True, \
             output = {'success': False}
               
             output['x'] = x
+            output['x_final'] = x
             output['iterations'] = 0
             output['funcount'] = 1
             output['algorithm'] = method

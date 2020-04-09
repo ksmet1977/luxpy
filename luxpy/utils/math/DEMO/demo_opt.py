@@ -62,7 +62,7 @@ if __name__ == '__main__':
 
 __all__ = ['demo_opt', 'fobjeval','mutation','recombination','repair','selection','init_options','ndset','crowdingdistance','dtlz2','dtlz_range']
 
-def demo_opt(f, args = (), xrange = None, options = {}):
+def demo_opt(f, dimensions, args = (), xrange = None, options = {}):
     """
     DEMO_OPT: Multi-objective optimization using the DEMO
     This function uses the Differential Evolution for Multi-objective 
@@ -105,21 +105,30 @@ def demo_opt(f, args = (), xrange = None, options = {}):
     # Initialize the parameters of the algorithm with values contained in dict:
     options = init_options(options = options)
 
-    
     # Initial considerations
+    n = dimensions
+    #n = xrange.shape[0] #dimension of the problem
+    if xrange is None:
+        xrange = np.ones((n,2))*np.inf
+        xrange[:,0]*=-1
+
+    np.random.seed(1)
+    
+    # flip dimensions of xrange to row-format to column format:
+    xrange = xrange.T
+    
     n = xrange.shape[0] #dimension of the problem
     P = {'x' :  np.random.rand(n, options['mu'])} #initial decision variables
     P['f'] = fobjeval(f, P['x'], args, xrange) #evaluates the initial population
     m = P['f'].shape[0] #number of objectives
     k = 0 #iterations counter
 
-
     # Beginning of the main loop
-    Pfirst = P.copy()
     axh = None
     while (k <= options['kmax']):
        # Plot the current population (if desired):
        if options['display'] == True:
+           P['f'][P['f']>1e308] = np.nan
            if (k == 0) & (m < 4):
                fig = plt.gcf()
                fig.show()
@@ -156,7 +165,8 @@ def demo_opt(f, args = (), xrange = None, options = {}):
        # Selection and updates
        P = selection(P, O, options)
 
-       print('Iteration #{:1.0f} of {:1.0f}'.format(k, options['kmax']))
+       if options['display'] == True:
+           print('Iteration #{:1.0f} of {:1.0f}'.format(k, options['kmax']))
        k += 1
 
 
@@ -171,7 +181,8 @@ def demo_opt(f, args = (), xrange = None, options = {}):
     fopt = P['f'][:,ispar]
     xopt = Xun[:,ispar]
     
-    return fopt, xopt
+    
+    return fopt.T, xopt.T
 
 #=========================== Sub-functions ================================#
 def fobjeval(f, x, args, xrange):
@@ -199,18 +210,18 @@ def fobjeval(f, x, args, xrange):
            | individuals
     """
     
-    mu = x.shape[1] #number of points
+    #mu = x.shape[1] #number of points
     # Unnormalizes the population:
     Xmin = xrange[:,0][:,None]# * np.ones(options['mu']) #replicate lower bound
     Xmax = xrange[:,1][:,None]# * np.ones(options['mu']) #replicate upper limit
     Xun = (Xmax - Xmin)*x + Xmin
-    
-    if bool(())==False:
-        phi = f(Xun)
-    else:
-        phi = f(Xun, **args)
 
-    return phi
+    if bool(args)==False:
+        phi = f(Xun.T)
+    else:
+        phi = f(Xun.T, *args)
+
+    return phi.T
 #--------------------------------------------------------------------------#
 def mutation(Xp, options):
     """
@@ -369,8 +380,8 @@ def selection(P, O, options):
 
           Pnew['f'] = np.hstack((Pnew['f'], R['f'][:,ispar].copy())) if (Pnew['f'].size) else R['f'][:,ispar].copy()
           Pnew['x'] = np.hstack((Pnew['x'], R['x'][:,ispar].copy())) if (Pnew['x'].size) else R['x'][:,ispar].copy()
-          R['f'] = np.delete(R['f'],ispar, axis = 1) #R['f'][:,ispar] = []; #removes this front
-          R['x'] = np.delete(R['x'],ispar, axis = 1) #R['x'][:,ispar] = []; #removes this front
+          R['f'] = np.delete(R['f'],np.where(ispar)[0], axis = 1) #R['f'][:,ispar] = []; #removes this front
+          R['x'] = np.delete(R['x'],np.where(ispar)[0], axis = 1) #R['x'][:,ispar] = []; #removes this front
        else:
           # Gets the points of this front and goes to the truncation part
           Frem = R['f'][:,ispar].copy()
@@ -383,8 +394,8 @@ def selection(P, O, options):
     # the crowding distance (notice it cannot have too few!)
     aux = (Pnew['f'].shape[1] + Frem.shape[1]) - options['mu'] #remaining points to fill
     if aux == 0:
-       Pnew['x'] = np.hstack((Pnew['x'], Xrem.copy())) 
-       Pnew['f'] = np.hstack((Pnew['f'], Frem.copy()))
+       Pnew['x'] = Xrem.copy()
+       Pnew['f'] = Frem.copy()
     elif aux > 0:
        for ii in range(aux):
           cdist = crowdingdistance(Frem)
@@ -514,7 +525,7 @@ def crowdingdistance(F):
 
 
 # FOR EXAMPLE: demo_opt()
-def dtlz2(x, M):
+def dtlz2_(x, M):
     """
     DTLZ2 multi-objective function
     This function represents a hyper-sphere.
@@ -551,7 +562,7 @@ def dtlz2(x, M):
     f[M-1,:] = (1 + g) * np.sin(np.pi/2*x[0,:])
     return f
 
-def dtlz_range(fname, M):
+def dtlz_range_(fname, M):
     """
     Returns the decision range of a DTLZ function
     The range is simply [0,1] for all variables. What varies is the number 
@@ -592,18 +603,93 @@ def dtlz_range(fname, M):
     return lim
 
 
+def dtlz2(x, M):
+    """
+    DTLZ2 multi-objective function
+    This function represents a hyper-sphere.
+    Using k = 10, the number of dimensions must be n = (M - 1) + k.
+    The Pareto optimal solutions are obtained when the last k variables of x
+    are equal to 0.5.
+    
+    Args:
+        :x: 
+            | a mu x n ndarray with mu points and n dimensions
+        :M: 
+            | a scalar with the number of objectives
+    
+       Returns:
+          f: 
+            | a mu x m ndarray with mu points and their m objectives computed at
+            | the input
+    """
+    k = 10
+    # Error check: the number of dimensions must be M-1+k
+    n = (M-1) + k; #this is the default
+    if x.shape[1] != n:
+       raise Exception('Using k = 10, it is required that the number of dimensions be n = (M - 1) + k = {:1.0f} in this case.'.format(n))
+    
+    xm = x[:,(n-k):].copy() #xm contains the last k variables
+    g = ((xm - 0.5)**2).sum(axis = 1)
+    
+    # Computes the functions:
+    f = np.empty((x.shape[0],M))
+    f[:,0] = (1 + g)*np.prod(np.cos(np.pi/2*x[:,:(M-1)]), axis = 1)
+    for ii in range(1,M-1):
+        f[:,ii] = (1 + g) * np.prod(np.cos(np.pi/2*x[:,:(M-ii-1)]), axis = 1) * np.sin(np.pi/2*x[:,M-ii-1])
+    f[:,M-1] = (1 + g) * np.sin(np.pi/2*x[:,0])
+    return f
+
+def dtlz_range(fname, M):
+    """
+    Returns the decision range of a DTLZ function
+    The range is simply [0,1] for all variables. What varies is the number 
+    of decision variables in each problem. The equation for that is
+    n = (M-1) + k
+    wherein k = 5 for DTLZ1, 10 for DTLZ2-6, and 20 for DTLZ7.
+    
+    Args:
+        :fname: 
+            | a string with the name of the function ('dtlz1', 'dtlz2' etc.)
+        :M: 
+            | a scalar with the number of objectives
+    
+       Returns:
+          :lim: 
+              | a 2 x n matrix wherein the first row is the lower limit 
+               (0), and the second row, the upper limit of search (1)
+    """
+     #Checks if the string has or not the prefix 'dtlz', or if the number later
+     #is greater than 7:
+    fname = fname.lower()
+    if (len(fname) < 5) or (fname[:4] != 'dtlz') or (float(fname[4]) > 7) :
+       raise Exception('Sorry, the function {:s} is not implemented.'.format(fname))
+
+
+    # If the name is o.k., defines the value of k
+    if fname ==  'dtlz1':
+       k = 5
+    elif fname == 'dtlz7':
+       k = 20
+    else: #any other function
+       k = 10;
+
+    n = (M-1) + k #number of decision variables
+    
+    lim = np.vstack((np.zeros((1,n)), np.ones((1,n))))
+    return lim
+
 if __name__ == '__main__':
     # EXAMPLE USE for DTLZ2 problem:
     k = 10
-    opts = init_options(display = True)
+    opts = init_options(display = False)
     f = lambda x: dtlz2(x,k)
     xrange = dtlz_range('dtlz2',k)
     
-    fopt, xopt = demo_opt(f, xrange = xrange, options = opts)
+    fopt, xopt = demo_opt(f, xrange.shape[0], xrange = xrange, options = opts)
     
-    mu = xopt.shape[1]
-    xlast = 0.5*np.ones((k, mu))
-    d = ((xopt[(-1-k):-1,:] - xlast)**2).sum(axis=0)
+    mu = xopt.shape[0]
+    xlast = 0.5*np.ones((mu,k))
+    d = ((xopt[:,(-1-k):-1] - xlast)**2).sum(axis=1)
     print('min(d): {:1.3f}'.format(d.min()))
     print('mean(d): {:1.3f}'.format(d.mean()))
     print('max(d): {:1.3f}'.format(d.max()))

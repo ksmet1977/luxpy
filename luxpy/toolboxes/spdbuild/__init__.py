@@ -19,6 +19,11 @@
 Module for building and optimizing SPDs
 =======================================
 
+ spdbuilder.py
+ 
+Functions
+---------
+
  :gaussian_spd(): Generate Gaussian spectrum.
 
  :butterworth_spd(): Generate Butterworth based spectrum.
@@ -69,8 +74,41 @@ Module for building and optimizing SPDs
                    for certain objective functions from a set of component 
                    spectra or component spectrum model parameters.
                     
+                   
+Module for building and optimizing SPDs (2)
+===========================================
+
+ spdbuilder2020.py
+
+    This module differs from spdbuild.py in the spdoptimizer function,
+    that can use several different minimization algorithms, as well as a user defined
+    method. It is also written such that the user can easily write his own
+    primary constructor function. In contrast to spdbuild.py, it only supports the
+    '3mixer' algorithms for calculating the mixing contributions of the primaries.
+
+Functions
+---------
+ :gaussian_prim_constructor: constructs a gaussian based primary set.
+ 
+ :_setup_wlr: Setup the wavelength range for use in prim_constructor.
+ 
+ :_extract_prim_optimization_parameters: Extact the primary parameters from the optimization vector x and the prim_constructor_parameter_defs dict.
+
+ :_start_optimization_tri: Start optimization of _fitnessfcn for n primaries using the specified minimize_method. (see notes in docstring on specifications for the  user-defined minimization fcn) 
+   
+ :spd_optimizer2(): Generate a spectrum with specified white point and optimized
+                    for certain objective functions from a set of component 
+                    spectra or component spectrum model parameters.
+                
+Notes
+-----
+ 1. See examples below (in spdbuiler2020.'__main__') for use.                
+                   
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 from .spdbuilder import *
 __all__ = spdbuilder.__all__
+
+from .spdbuilder2020 import *
+__all__ += spdbuilder2020.__all__
