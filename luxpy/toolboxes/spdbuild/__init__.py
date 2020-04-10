@@ -112,3 +112,6 @@ __all__ = spdbuilder.__all__
 
 from .spdbuilder2020 import *
 __all__ += spdbuilder2020.__all__
+
+from .spdoptimizer2020 import *
+__all__ += spdoptimizer2020.__all__

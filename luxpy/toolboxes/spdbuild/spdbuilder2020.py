@@ -184,6 +184,23 @@ def gaussian_prim_constructor(x, nprims, wlr,
     Returns:
         :spd:
             | ndarray with spectrum of nprim primaries (1st row = wavelengths)
+            
+            
+    Example on how to create constructor:
+        
+        | def gaussian_prim_constructor(x, nprims, wlr, 
+        |                      prim_constructor_parameter_types, 
+        |                      **prim_constructor_parameter_defs):
+        |    
+        |    # Extract the primary parameters from x and prim_constructor_parameter_defs:
+        |    pars = _extract_prim_optimization_parameters(x, nprims, prim_constructor_parameter_types,
+        |                                         prim_constructor_parameter_defs)
+        |    # setup wavelengths:
+        |    wlr = _setup_wlr(wlr)
+        |
+        |    # Collect parameters from pars dict:
+        |    return np.vstack((wlr,np.exp(-((pars['peakwl']-wlr.T)/pars['fwhm'])**2).T))  
+        
     """
     # Extract the primary parameters from x and prim_constructor_parameter_defs:
     pars = _extract_prim_optimization_parameters(x, nprims, prim_constructor_parameter_types,
@@ -291,13 +308,13 @@ def _fitnessfcn(x, Yxy_target = np.array([[100,1/3,1/3]]), n = 3, wlr = [360,830
                 cieobs=_CIEOBS, prims = None, prim_constructor = gaussian_prim_constructor,
                 prim_constructor_parameter_types = gaussian_prim_parameter_types,
                 prim_constructor_parameter_defs = {},
-                out = 'F', F_rss = True, decimals = [5],
+                out = 'F', pareto = False, decimals = [5],
                 obj_fcn = None, obj_fcn_pars = None, obj_fcn_weights = None, 
                 obj_tar_vals = None, optimizer_type = '3mixer', verbosity = 1):
     """
     Fitness function that calculates closeness of solution x to target values 
-    for specified objective functions. See docstring of spd_optimizer for info
-    on the input parameters. If F_rss is True than the Root-Sum-of-Squares of F
+    for specified objective functions. See docstring of spd_optimizer2 for info
+    on the input parameters. If pareto is False than the Root-Sum-of-Squares of F
     will be used as output during the optimization, else an F for each objective
     functions is output, allowing multi-objective optimizer to work towards a
     pareto optimal boundary.
@@ -357,10 +374,10 @@ def _fitnessfcn(x, Yxy_target = np.array([[100,1/3,1/3]]), n = 3, wlr = [360,830
 
                     # Calculate objective function j:
                     if isinstance(obj_fcn[j],tuple): # one function for each objective:
-                        obj_vals_ij = list(obj_fcn[j][0](spdi, **obj_fcn_pars[j]))
+                        obj_vals_ij = list((obj_fcn[j][0](spdi, **obj_fcn_pars[j]))[:,0])
                     else: # one function for multiple objectives for increased speed:
                         obj_vals_ij = [np.squeeze(obj_fcn[j](spdi, **obj_fcn_pars[j]))]  
-                     
+
                     # Store results in array:
                     obj_vals_i = obj_vals_i + obj_vals_ij
                     F_ij = list(obj_fcn_weights[j]*(((np.round(np.array(obj_vals_ij),int(decimals[j])) - obj_tar_vals_j + eps)**2)/((f_normalize + eps)**2))**0.5)
@@ -413,7 +430,7 @@ def _fitnessfcn(x, Yxy_target = np.array([[100,1/3,1/3]]), n = 3, wlr = [360,830
     
     # Take Root-Sum-of-Squares of delta((val - tar)**2):
     F = np.atleast_2d(F)
-    if (F_rss == True) & (obj_fcn is not None):
+    if (pareto == False) & (obj_fcn is not None):
          F = (np.nansum(F**2,axis = 1,keepdims = True)**0.5)[:,0]
 
     # return requested output:
@@ -440,25 +457,24 @@ def _parse_bnds(bnds,n, min_ = -1e100, max_ = 1e100):
         ub = bnds[1]*np.ones((1,n)) if (isinstance(bnds[1],int) | isinstance(bnds[1],float)) else bnds[1]
     return np.vstack((lb,ub))
 
-def _get_minimize_options_and_Frss(minimize_method, minimize_opts = {}, n = None):
+def _get_minimize_options_and_pareto(minimize_method, minimize_opts = {}, n = None):
     """
-    Set default options if not provided, as well as F_rss (True output Root-Sum-Squares of Fi in _fitnessfcn)
+    Set default options if not provided, as well as pareto (False: output Root-Sum-Squares of Fi in _fitnessfcn)
     """
     if (minimize_method == 'particleswarm') | (minimize_method == 'ps') | (minimize_method == 'nelder-mead'):
-        F_rss = True
+        pareto = False
     elif (minimize_method == 'demo'):
-        F_rss = False # must be output per objective function!!
+        pareto = True # must be output per objective function!!
     else:
-        if 'F_rss' in minimize_opts:
-            F_rss = minimize_opts['F_rss']
+        if 'pareto' in minimize_opts:
+            pareto = minimize_opts['pareto']
         else:
-            F_rss = None
+            pareto = None
 
     if (minimize_opts == {}):
         if (minimize_method == 'particleswarm') | (minimize_method == 'ps'):
             minimize_opts = {'iters': 100, 'n_particles': 10, 'ftol': -np.inf,
                              'ps_opts' : {'c1': 0.5, 'c2': 0.3, 'w':0.9}}
-            print(minimize_opts)
         elif (minimize_method == 'demo'):
             minimize_opts = math.DEMO.init_options(display = True)
         elif (minimize_method == 'nelder-mead'):
@@ -466,14 +482,14 @@ def _get_minimize_options_and_Frss(minimize_method, minimize_opts = {}, n = None
             minimize_opts = {'xtol': 1e-5, 'disp': True, 'maxiter' : 1000*n, 'maxfev' : 1000*n,'fatol': 0.01}
         else:
             if not isinstance(minimize_method, str):
-                minimize_method ={'type':'user-defined, specified as part of opt. function definition'}
+                minimize_opts ={'type':'user-defined, specified as part of opt. function definition'}
                 print('User already set the optimization options when defining the optimization function!')
             else:
                 raise Exception ('Unsupported minimization method.')      
-    return minimize_opts, F_rss      
+    return minimize_opts, pareto      
 
 def _start_optimization_tri(_fitnessfcn, n, fargs_dict, bnds, par_opt_types,
-                            minimize_method, minimize_opts, Frss = None, x0 = None,
+                            minimize_method, minimize_opts, pareto = None, x0 = None,
                             verbosity = 1, out = 'results'):
     """
     Start optimization of _fitnessfcn for n primaries using the specified minimize_method.
@@ -487,7 +503,7 @@ def _start_optimization_tri(_fitnessfcn, n, fargs_dict, bnds, par_opt_types,
             With 'results' a dictionary containing various variables related to the
             optimization. It MUST contain a key 'x_final' containing the final optimized parameters.
             bnds must be [lowerbounds, upperbounds] with x-bounds ndarrays with values for each parameter.
-            args is an argument with a dictionary containing the values for the fitnessfcn. Frss specifies
+            args is an argument with a dictionary containing the values for the fitnessfcn. Pareto specifies
             whether the output of the fitnessfcn should be the Root-Sum-of-Squares (True) of 
             all weighted objective function values or not (False). Individual function values are
             required by true multi-objective optimizers.
@@ -528,7 +544,7 @@ def _start_optimization_tri(_fitnessfcn, n, fargs_dict, bnds, par_opt_types,
     
     # Run user defined optimization algorithm:
     elif not isinstance(minimize_method, str):
-        fargs_dict['F_rss'] = Frss
+        fargs_dict['pareto'] = pareto
         results = minimize_method(_fitnessfcn, N, args = fargs_dict, 
                                   bounds = bnds, verbosity = verbosity,
                                   **minimize_opts)
@@ -584,7 +600,7 @@ def spd_optimizer2(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cspace_bwtf =
                   x0 = None, verbosity = 1):
     """
     Generate a spectrum with specified white point and optimized for certain 
-    objective functions from a set of component spectra or component spectrum 
+    objective functions from a set of primary spectra or primary spectrum 
     model parameters.
     
     Args:
@@ -736,7 +752,7 @@ def spd_optimizer2(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cspace_bwtf =
     for k,v in par_bnds.items(): bnds = np.hstack((bnds, v))
 
     # set default options if not provided:
-    minimize_opts, F_rss = _get_minimize_options_and_Frss(minimize_method, n = bnds[0].size,  
+    minimize_opts, pareto = _get_minimize_options_and_pareto(minimize_method, n = bnds[0].size,  
                                                           minimize_opts = minimize_opts)
     
     # Create inputs for fit_fcn:    
@@ -744,14 +760,14 @@ def spd_optimizer2(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cspace_bwtf =
                   'prims':prims, 'prim_constructor':prim_constructor,
                   'prim_constructor_parameter_types':prim_constructor_parameter_types,
                   'prim_constructor_parameter_defs':prim_constructor_parameter_defs,
-                  'out':'F', 'F_rss':F_rss, 'decimals':decimals, 'obj_fcn':obj_fcn,
+                  'out':'F', 'pareto':pareto, 'decimals':decimals, 'obj_fcn':obj_fcn,
                   'obj_fcn_pars':obj_fcn_pars,'obj_fcn_weights':obj_fcn_weights,
                   'obj_tar_vals':obj_tar_vals,'optimizer_type':optimizer_type,
                   'verbosity':verbosity}   
     
     # Perform optimzation:
     results = _start_optimization_tri(_fitnessfcn, n, fargs_dict, bnds, par_opt_types,
-                                        minimize_method, minimize_opts, Frss = F_rss, 
+                                        minimize_method, minimize_opts, pareto = pareto, 
                                         x0 = x0, verbosity = verbosity, out = 'results')
     
     x_final = results['x_final']
@@ -762,7 +778,10 @@ def spd_optimizer2(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cspace_bwtf =
         return spds, primss, Ms, x_final, results
     else:
         return eval(out)
+
         
+        
+                
       
  #------------------------------------------------------------------------------
 if __name__ == '__main__':    
@@ -770,9 +789,9 @@ if __name__ == '__main__':
     run_example_1 = False # use pre-defined minimization methods
 
     run_example_2 = True # use user-defined  minimization method   
-
+    
     import luxpy as lx
-    cieobs = _CIEOBS
+    cieobs = '1964_10'
     
     # Set number of primaries and target chromaticity:
     n = 4
@@ -781,14 +800,18 @@ if __name__ == '__main__':
     # define function that calculates several objectives at the same time (for speed):
     def spd_to_cris(spd):
         Rf,Rg = lx.cri.spd_to_cri(spd, cri_type='ies-tm30',out='Rf,Rg')
-        return Rf[0,0], Rg[0,0]   
+        return np.vstack((Rf, Rg)) 
     
+    
+    #------------------------------------------------------------------------------
+    # Example using a pre-defined minimization method:
+
     if run_example_1 == True:
 
         # start optimization:
         spd, prims, M = spd_optimizer2(target, tar_type = 'Yxy', cspace_bwtf = {},
                                       n = n, wlr = [360,830,1], prims = None,
-                                      cieobs = _CIEOBS, out = 'spds,primss,Ms', 
+                                      cieobs = cieobs, out = 'spds,primss,Ms', 
                                       prim_constructor = gaussian_prim_constructor,
                                       prim_constructor_parameter_types = ['peakwl', 'fwhm'], 
                                       prim_constructor_parameter_defs = {'peakwl_bnds':[400,700],
@@ -799,7 +822,7 @@ if __name__ == '__main__':
                                       triangle_strengths_bnds = None,
                                       minimize_method = 'nelder-mead',
                                       minimize_opts = {},
-                                      verbosity = 0)
+                                      verbosity = 1)
         Rf, Rg = spd_to_cris(spd)
         print('obj_fcn1:',Rf)
         print('obj_fcn2:',Rg)
@@ -811,8 +834,8 @@ if __name__ == '__main__':
     if run_example_2 == True:
                 
         
-        def user_prim_constructor(x, nprims, wlr, 
-                              prim_constructor_parameter_types = ['peakwl','fwhm'], 
+        def user_prim_constructor2(x, nprims, wlr, 
+                              prim_constructor_parameter_types = ['peakwl','spectral_width'], 
                               **prim_constructor_parameter_defs):
             """
             User defined prim constructor: lorenztian 2e order profile.
@@ -825,12 +848,12 @@ if __name__ == '__main__':
             
             # Collect parameters from pars dict:
             n = 2*(2**0.5-1)**0.5
-            spd = ((1 + (n*(pars['peakwl']-wlr.T)/pars['fwhm'])**2)**(-2)).T
+            spd = ((1 + (n*(pars['peakwl']-wlr.T)/pars['spectral_width'])**2)**(-2)).T
             return np.vstack((wlr, spd))
         
         
         # Create a minimization function with the specified interface:
-        def user_minim(fitnessfcn, Nparameters, args, bounds, verbosity = 1,
+        def user_minim2(fitnessfcn, Nparameters, args, bounds, verbosity = 1,
                        **minimize_opts):
             results = math.particleswarm(fitnessfcn, Nparameters, args = args, 
                                          bounds = bounds, 
@@ -844,21 +867,20 @@ if __name__ == '__main__':
         # start optimization:
         spd, prims, M = spd_optimizer2(target, tar_type = 'Yxy', cspace_bwtf = {},
                                       n = n, wlr = [360,830,1], prims = None,
-                                      cieobs = _CIEOBS, out = 'spds,primss,Ms', 
-                                      prim_constructor = user_prim_constructor,
-                                      prim_constructor_parameter_types = ['peakwl', 'fwhm'], 
+                                      cieobs = cieobs, out = 'spds,primss,Ms', 
+                                      prim_constructor = user_prim_constructor2,
+                                      prim_constructor_parameter_types = ['peakwl', 'spectral_width'], 
                                       prim_constructor_parameter_defs = {'peakwl_bnds':[400,700],
-                                                                         'fwhm_bnds':[5,100]},
+                                                                         'spectral_width_bnds':[5,100]},
                                       obj_fcn = [(spd_to_cris,'Rf','Rg')], 
                                       obj_fcn_pars = [{}], 
                                       obj_fcn_weights = [(1,1)], obj_tar_vals = [(90,110)],
                                       triangle_strengths_bnds = None,
-                                      minimize_method = user_minim,
-                                      minimize_opts = {'F_rss':True},
-                                      verbosity = 1)
+                                      minimize_method = user_minim2,
+                                      minimize_opts = {'pareto':False},
+                                      verbosity = 0)
         
         Rf, Rg = spd_to_cris(spd)
         print('obj_fcn1:',Rf)
         print('obj_fcn2:',Rg)
     
-
