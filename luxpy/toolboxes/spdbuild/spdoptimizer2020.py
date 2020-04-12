@@ -7,7 +7,7 @@ from luxpy import (sp,np, plt, warnings, math, _WL3, _CIEOBS, _EPS, np2d,
                    getwlr, SPD, spd_to_xyz, xyz_to_Yxy, colortf, xyz_to_cct)
 from luxpy import cri 
 
-from  spdbuilder2020 import (_get_default_prim_parameters, _parse_bnds, 
+from  . spdbuilder2020 import (_get_default_prim_parameters, _parse_bnds, 
                               gaussian_prim_constructor, gaussian_prim_parameter_types,
                               _extract_prim_optimization_parameters, _setup_wlr, _triangle_mixer)
 
