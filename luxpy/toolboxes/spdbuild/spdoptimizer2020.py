@@ -7,7 +7,7 @@ from luxpy import (sp,np, plt, warnings, math, _WL3, _CIEOBS, _EPS, np2d,
                    getwlr, SPD, spd_to_xyz, xyz_to_Yxy, colortf, xyz_to_cct)
 from luxpy import cri 
 
-from  . spdbuilder2020 import (_get_default_prim_parameters, _parse_bnds, 
+from  spdbuilder2020 import (_get_default_prim_parameters, _parse_bnds, 
                               gaussian_prim_constructor, gaussian_prim_parameter_types,
                               _extract_prim_optimization_parameters, _setup_wlr, _triangle_mixer)
 
@@ -309,7 +309,7 @@ class Minimizer():
                 x0_triangle_strengths = np.ones((1,npars - len(self.x0)))#np.array([np.random.uniform(bnds[0,i+2*n], bnds[1,i+2*n],1) for i in range(n_triangle_strengths)]).T
                 x0 = np.hstack((x0_triangle_strengths, np.atleast_2d(self.x0)))
             self.x0_with_triangle_strengths = x0
-            self.opts.pop('display')
+            self.opts['disp'] = self.opts.pop('display')
             results = math.minimizebnd(fitness_fcn, x0, args = tuple(fitness_args_list), method = self.method, use_bnd = True, bounds = bounds, options = self.opts)
         
         # Run user defined optimization algorithm:
@@ -752,9 +752,9 @@ class SpectralOptimizer():
  #------------------------------------------------------------------------------
 if __name__ == '__main__':  
     
-    run_example_1 = False # # class based example with pre-defined minimization methods
+    run_example_1 = True # # class based example with pre-defined minimization methods
     
-    run_example_2 = True # # class based example with pre-defined minimization methods and primary set
+    run_example_2 = False # # class based example with pre-defined minimization methods and primary set
 
     run_example_3 = False # # class based example with user-defined  minimization method   
 
@@ -784,7 +784,7 @@ if __name__ == '__main__':
                               prims = None,
                               obj_fcn = ObjFcns(f=[(spd_to_cris,'Rf','Rg')], ft = [(90,110)]),
                               minimizer = Minimizer(method='nelder-mead'),
-                              verbosity = 2)
+                              verbosity = 0)
         # start optimization:
         spd,M = so1.start(out = 'spds,Ms')
         
