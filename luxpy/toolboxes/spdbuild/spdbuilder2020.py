@@ -453,6 +453,7 @@ def _parse_bnds(bnds,n, min_ = -1e100, max_ = 1e100):
             lb = min_*np.ones((1,n))
         if bnds[1] is None:
             ub = max_*np.ones((1,n))
+        
         lb = bnds[0]*np.ones((1,n)) if (isinstance(bnds[0],int) | isinstance(bnds[0],float)) else bnds[0]
         ub = bnds[1]*np.ones((1,n)) if (isinstance(bnds[1],int) | isinstance(bnds[1],float)) else bnds[1]
     return np.vstack((lb,ub))

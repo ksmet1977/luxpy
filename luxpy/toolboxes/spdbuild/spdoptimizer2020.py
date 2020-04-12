@@ -7,7 +7,7 @@ from luxpy import (sp,np, plt, warnings, math, _WL3, _CIEOBS, _EPS, np2d,
                    getwlr, SPD, spd_to_xyz, xyz_to_Yxy, colortf, xyz_to_cct)
 from luxpy import cri 
 
-from . spdbuilder2020 import (_get_default_prim_parameters, _parse_bnds, 
+from  . spdbuilder2020 import (_get_default_prim_parameters, _parse_bnds, 
                               gaussian_prim_constructor, gaussian_prim_parameter_types,
                               _extract_prim_optimization_parameters, _setup_wlr, _triangle_mixer)
 
@@ -52,7 +52,34 @@ class PrimConstructor():
         """
         self.f = f
         self.ptypes = ptypes
-        self.pdefs = pdefs        
+        self.pdefs = pdefs 
+    
+    def get_spd(self, nprim = None, wlr = [360,830,1]):
+        """
+        Get ndarray with spds for prims.
+        
+        Args:
+            :nprim:
+                | None, optional
+                | If not None: generate nprim random prims (based fixed pars and bounds in pdefs) 
+                | else: values for all pars should be defined in pdefs! 
+                |       (nprims is determined by number of elements in pdefs[ptypes[0]])
+        """
+        if (len([1 for x in self.ptypes if x in self.pdefs]) == len(self.ptypes)): # everything needed is already in pdefs!!!
+            return self.f([],nprim,wlr,self.ptypes,**self.pdefs)
+        elif (nprim is not None) | (self.ptypes[0] in self.pdefs):
+            if (self.ptypes[0] in self.pdefs): nprim = len(self.pdefs[self.ptypes[0]])
+            # random x only for free bnds:
+            fixed_pars_defs,free_pars_bnds,free_pars = _get_default_prim_parameters(nprim, self.ptypes,**self.pdefs) 
+            bnds = np.array([[0,1]]).T
+            for k,v in free_pars_bnds.items(): 
+                if v is not None: # in case of self.prim not None!!
+                    bnds = np.hstack((bnds, v))
+            bnds = bnds[:,1:]
+            x = np.array([np.random.uniform(bnds[0,i], bnds[1,i],1) for i in range(bnds.shape[1])]).T # generate random start value within bounds
+            return self.f(x,nprim,wlr,self.ptypes,**self.pdefs)
+        
+        
        
 class ObjFcns():
     def __init__(self,f = None, fp = [{}], fw = [1], ft = [None],  decimals = [5]):
@@ -301,7 +328,6 @@ class SpectralOptimizer():
                   out = 'spds,primss,Ms,results',
                   optimizer_type = '3mixer', triangle_strengths_bnds = None,
                   prim_constructor = PrimConstructor(), prims = None,
-                  prim_pars_bnds = {},
                   obj_fcn = ObjFcns(),
                   minimizer = Minimizer(method='nelder-mead'),
                   verbosity = 1):
@@ -348,9 +374,6 @@ class SpectralOptimizer():
                 | PrimConstructor.f() should have the form: 
                 |   prim_constructor(x, n, wl, ptypes, **pdefs)
                 | see PrimConstructor.__docstring__ for more info.
-            :prim_pars_bnds:
-                | {}, optional
-                | Dictionary for the specification of the bounds on the free parameters.
             :obj_fcn:
                 | ObjFcns(), optional
                 | Instance of class ObjFcns that holds objective functions, their 
@@ -404,14 +427,20 @@ class SpectralOptimizer():
         self.out = out
         self.optimizer_type = optimizer_type
         self.verbosity = verbosity
+        
+        # Setup primaries using either a PrimConstructor object or an ndarray:
         if not isinstance(prim_constructor,PrimConstructor):
-            self.prim_constructor = PrimConstructor(prim_constructor)
-            print("prim_constructor argument not an instance of class PrimConstructor! Initializing as instance with defaults: pars = ['peakwl', 'fwhm'], opts = {}.")
+            if prim_constructor is not None:
+                self.prim_constructor = PrimConstructor(prim_constructor)
+                print("prim_constructor argument not an instance of class PrimConstructor! Initializing as instance with defaults: pars = ['peakwl', 'fwhm'], opts = {}.")
+            else:
+                self.prim_constructor = PrimConstructor(None)
         else:
             self.prim_constructor = prim_constructor
-        self.prims = prims
-        if self.prims is not None: wlr = prims[:1,:]
-        
+        prim_constructor_pdefs = self.prim_constructor.pdefs
+            
+        self._update_nprim_prims(nprim = nprim, prims = prims)
+                
         self.obj_fcn = obj_fcn
         
         if not isinstance(minimizer,Minimizer):
@@ -424,8 +453,29 @@ class SpectralOptimizer():
         # a. update fixed prim constructor pars and setup bound for free parameters
         # b. update triangle_strengths_bnds
         # c. construct a self.bnds attribute with bounds on triangle_strengths and all free parameters for an n-primary mixture.
-        self.prim_pars_bnds = prim_pars_bnds
-        self._update_bnds(nprim = self.nprim, triangle_strengths_bnds = triangle_strengths_bnds, **prim_pars_bnds)
+        self._update_bnds(nprim = self.nprim, triangle_strengths_bnds = triangle_strengths_bnds, **prim_constructor_pdefs)
+#        self.update(nprim = self.nprim, cieobs = self.cieobs, target = self.target, tar_type = self.tar_type, cspace_bwtf = self.cspace_bwtf,
+#               triangle_strengths_bnds = triangle_strengths_bnds, **self.prim_constructor.pdefs)
+
+    def _update_nprim_prims(self, nprim = None, prims = None):
+        """
+        Update prims (and nprim).
+        """
+        self.prims = prims
+        self.nprim = nprim
+        if prims is not None:
+            if nprim is None: nprim = prims.shape[0]-1
+            if isinstance(nprim, np.ndarray):
+                nprim = list(nprim)
+            if isinstance(nprim, list):
+                prims = prims[[0] + nprim,:] # select specific prims in list
+            nprim = prims.shape[0]-1 # set nprim
+            self.prims = prims
+            self.nprim = nprim
+            self.wlr = prims[:1,:]
+        if self.nprim < 3:
+            raise Exception("nprim-error: number of primaries for optimizer_type == '3mixer' should be minimum 3!")
+        
         
 
     def _update_target(self, target = None, tar_type = None, cspace_bwtf = None):
@@ -442,7 +492,7 @@ class SpectralOptimizer():
         if 'cieobs' in cspace_bwtf.keys():
             self.cieobs = cspace_bwtf['cieobs']
     
-    def _update_prim_pars_bnds(self, nprim = None,**kwargs):
+    def _update_prim_pars_bnds(self, nprim = None, **kwargs):
         """
         Get and set fixed and free parameters, as well as bnds on latter for an nprim primary mixture.
         """
@@ -452,14 +502,11 @@ class SpectralOptimizer():
             self.prim_constructor.pdefs = fixed_pars_defs # update prim_constructor with defaults for fixed parameters 
             self.free_pars = free_pars
             self.free_pars_bnds = free_pars_bnds
-            for free_par in free_pars:
-                self.prim_pars_bnds[free_par+'_bnds'] = self.free_pars_bnds[free_par+'_bnds'] 
         else:
             # in case of self.prim not None: then there are no bounds on 
             # those parameters (only triangle_strengths are free)!!
             for i, pt in enumerate(self.prim_constructor.ptypes):
-                self.prim_constructor.pdefs['pt'] = 'fixed_primary_set'
-                self.prim_pars_bnds[pt+'_bnds'] = [[]]
+                self.prim_constructor.pdefs[pt] = 'fixed_primary_set'
                 if i == 0:
                     self.free_pars_bnds = {pt+'_bnds': None}
                 else:
@@ -489,13 +536,14 @@ class SpectralOptimizer():
                 self.bnds = np.hstack((self.bnds, v))
         self.npars = int(self.n_triangle_strengths + len(self.free_pars)*self.nprim)
         
-    def update(self, nprim = None, cieobs = None, target = None, tar_type = None, cspace_bwtf = None,
+    def update(self, nprim = None, prims = None, cieobs = None, target = None, tar_type = None, cspace_bwtf = None,
                triangle_strengths_bnds = None, **prim_kwargs):
         """
         Updates all that is needed when one of the input arguments is changed.
         """
         if cieobs is not None: self.cieobs = cieobs
         self._update_target(target = target, tar_type = tar_type, cspace_bwtf = cspace_bwtf)
+        self._update_nprim_prims(nprim = nprim, prims = prims)
         self._update_bnds(nprim = nprim, triangle_strengths_bnds = triangle_strengths_bnds, **prim_kwargs)
         
 
@@ -599,7 +647,7 @@ class SpectralOptimizer():
              
         # calculate for all spds at once:
         Yxy_ests = colortf(spds,tf='spd>Yxy',bwtf={'cieobs':self.cieobs,'relative':False})
-    
+
         # calculate all objective functions on mass for all spectra:
         isnan_spds = np.isnan(spds[1:,:].sum(axis=1))
         if self.obj_fcn.f is not None:
@@ -705,8 +753,10 @@ class SpectralOptimizer():
 if __name__ == '__main__':  
     
     run_example_1 = False # # class based example with pre-defined minimization methods
+    
+    run_example_2 = True # # class based example with pre-defined minimization methods and primary set
 
-    run_example_2 = True # # class based example with user-defined  minimization method   
+    run_example_3 = False # # class based example with user-defined  minimization method   
 
 
     import luxpy as lx
@@ -728,22 +778,55 @@ if __name__ == '__main__':
                               nprim = nprim, wlr = [360,830,1], cieobs = cieobs, 
                               out = 'spds,primss,Ms,results',
                               optimizer_type = '3mixer', triangle_strengths_bnds = None,
-                              prim_constructor = PrimConstructor() , 
+                              prim_constructor = PrimConstructor(pdefs={'fwhm':[15],
+                                                                        'peakwl_bnds':[400,700],
+                                                                        'fwhm_bnds':[5,100]}), 
                               prims = None,
-                              prim_pars_bnds = {'peakwl_bnds':[400,700],
-                                                'fwhm_bnds':[5,100]},
                               obj_fcn = ObjFcns(f=[(spd_to_cris,'Rf','Rg')], ft = [(90,110)]),
                               minimizer = Minimizer(method='nelder-mead'),
-                              verbosity = 1)
+                              verbosity = 2)
         # start optimization:
         spd,M = so1.start(out = 'spds,Ms')
         
         Rf, Rg = spd_to_cris(spd)
         print('obj_fcn1:',Rf)
         print('obj_fcn2:',Rg)
-    
-    
+        
+        
     if run_example_2 == True:
+        
+        # create set of 4 primaries with fixed fwhm at 15 nm:
+        prims = PrimConstructor(pdefs={'peakwl':[450,520,580,630],'fwhm':[15],
+                                       'peakwl_bnds':[400,700],
+                                       'fwhm_bnds':[5,100]}).get_spd()
+                    
+        # create set of 4 primaries with fixed peakwl and fwhm bounds set to [5,100]:
+        prims2 = PrimConstructor(pdefs={'peakwl':[450,520,580,630],
+                                        'fwhm_bnds':[5,100]}).get_spd()
+                    
+        # create set of 4 primaries with free peakwl and fwhm bounds set to [400,700] and [5,100]:
+        prims3 = PrimConstructor(pdefs={'peakwl_bnds':[400,700],
+                                        'fwhm_bnds':[5,100]}).get_spd(nprim=4)
+        
+        so2 = SpectralOptimizer(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cspace_bwtf = {},
+                              wlr = [360,830,1], cieobs = cieobs, 
+                              out = 'spds,primss,Ms,results',
+                              optimizer_type = '3mixer', triangle_strengths_bnds = None,
+                              prim_constructor = None, 
+                              prims = prims,
+                              obj_fcn = ObjFcns(f=[(spd_to_cris,'Rf','Rg')], ft = [(90,110)]),
+                              minimizer = Minimizer(method='nelder-mead'),
+                              verbosity = 2)
+#        # start optimization:
+        spd,M = so2.start(out = 'spds,Ms')
+        
+        Rf, Rg = spd_to_cris(spd)
+        print('obj_fcn1:',Rf)
+        print('obj_fcn2:',Rg)
+
+    
+    
+    if run_example_3 == True:
         
         
         def user_prim_constructor4(x, nprims, wlr, 
@@ -775,21 +858,21 @@ if __name__ == '__main__':
         
         
         
-        so2 = SpectralOptimizer(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cspace_bwtf = {},
+        so3 = SpectralOptimizer(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cspace_bwtf = {},
                               nprim = 4, wlr = [360,830,1], cieobs = cieobs, 
                               out = 'spds,primss,Ms,results',
                               optimizer_type = '3mixer', triangle_strengths_bnds = None,
                               prim_constructor = PrimConstructor(f = user_prim_constructor4, 
-                                                                 ptypes=['peakwl','spectral_width']) , 
+                                                                 ptypes=['peakwl','spectral_width'],
+                                                                 pdefs = {'peakwl_bnds':[400,700],
+                                                                          'spectral_width_bnds':[5,100]}), 
                               prims = None,
-                              prim_pars_bnds = {'peakwl_bnds':[400,700],
-                                                'spectral_width_bnds':[5,100]},
                               obj_fcn = ObjFcns(f=[(spd_to_cris,'Rf','Rg')], ft = [(90,110)]),
                               minimizer = Minimizer(method=user_minim4),
                               verbosity = 1)
-#        # start optimization:
-#        spd,M = so2.start(out = 'spds,Ms')
-#        
-#        Rf, Rg = spd_to_cris(spd)
-#        print('obj_fcn1:',Rf)
-#        print('obj_fcn2:',Rg)
+        # start optimization:
+        spd,M = so3.start(out = 'spds,Ms')
+        
+        Rf, Rg = spd_to_cris(spd)
+        print('obj_fcn1:',Rf)
+        print('obj_fcn2:',Rg)

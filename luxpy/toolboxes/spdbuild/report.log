@@ -153,3 +153,13 @@ TypeError: only integer scalar arrays can be converted to a scalar index
 2020-04-10 22:26:19,254 - pyswarms.single.global_best - INFO - Optimization finished | best cost: 2.8435979643215772e-05, best pos: [3.59490974e-01 6.52089309e-01 1.01021544e-01 8.22472689e-01
  4.45118346e+02 6.25519268e+02 5.42370762e+02 5.14031438e+02
  2.81217786e+01 6.52302642e+01 5.02496180e+01 7.99566032e+01]
+2020-04-12 06:58:58,117 - pyswarms.single.global_best - INFO - Optimize for 1000 iters with {'c1': 0.5, 'c2': 0.3, 'w': 0.9}
+2020-04-12 06:59:47,829 - pyswarms.single.global_best - INFO - Optimization finished | best cost: 2.4625964317151417e-06, best pos: [5.10979887e-01 3.16332129e-01 2.43462196e-01 7.61307962e-01
+ 6.31130987e+02 5.36504444e+02 4.49282536e+02 6.24480945e+02
+ 5.30661891e+01 8.02438156e+01 5.76232629e+01 2.47139924e+01]
+2020-04-12 07:03:49,561 - pyswarms.single.global_best - INFO - Optimize for 1000 iters with {'c1': 0.5, 'c2': 0.3, 'w': 0.9}
+2020-04-12 07:04:35,620 - pyswarms.single.global_best - INFO - Optimization finished | best cost: 1.43562327308605e-18, best pos: [5.73886953e-01 6.91099319e-01 4.00821791e-01 6.79320007e-01
+ 6.16654753e+02 5.34339224e+02 4.47226979e+02 5.12112596e+02
+ 7.19134723e+01 4.29407539e+01 3.91359929e+01 3.64862906e+01]
+2020-04-12 09:30:13,443 - pyswarms.single.global_best - INFO - Optimize for 1000 iters with {'c1': 0.5, 'c2': 0.3, 'w': 0.9}
+2020-04-12 09:32:31,859 - pyswarms.single.global_best - INFO - Optimize for 1000 iters with {'c1': 0.5, 'c2': 0.3, 'w': 0.9}
