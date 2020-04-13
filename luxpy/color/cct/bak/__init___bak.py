@@ -28,7 +28,7 @@ cct: Module with functions related to correlated color temperature calculations
  :xyz_to_duv(): Calculates Duv, (CCT) from XYZ
                 wrapper for xyz_to_cct_ohno() & xyz_to_cct_search()
 
- :cct_to_xyz(): Calculates xyz from CCT, Duv [100 K < CCT < 1e12]
+ :cct_to_xyz(): Calculates xyz from CCT, Duv [100 K < CCT < 10**20]
 
  :xyz_to_cct_mcamy(): | Calculates CCT from XYZ using Mcamy model:
                       | `McCamy, Calvin S. (April 1992). 
@@ -51,7 +51,7 @@ cct: Module with functions related to correlated color temperature calculations
                        <http://www.tandfonline.com/doi/abs/10.1080/15502724.2014.839020>`_
 
  :xyz_to_cct_search(): Calculates CCT, Duv from XYZ using brute-force search 
-                       algorithm (between 1e2 K - 1e12 K on a log scale)
+                       algorithm (between 1e2 K - 1e20 K on a log scale)
 
  :cct_to_mired(): Converts from CCT to Mired scale (or back).
 
