@@ -621,7 +621,8 @@ def xyz_to_cct_search_fast(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None,
     if (approx_cct_temp == True):
         ccts_est = xyz_to_cct_HA(xyzw, verbosity = 0)
         procent_estimates = np.array([[3000.0, 100000.0,0.05],[100000.0,200000.0,0.1],[200000.0,300000.0,0.25],[300000.0,400000.0,0.4],[400000.0,600000.0,0.4],[600000.0,800000.0,0.4],[800000.0,np.inf,0.25]])
-        if (np.isnan(ccts_est).any()) | (ccts_est == -1).any():
+
+        if ((np.isnan(ccts_est).any()) | (ccts_est == -1).any()) | ((ccts_est < procent_estimates[0,0]).any() | (ccts_est > procent_estimates[-2,1]).any()):
             #calculate preliminary estimates in 50 K to 1e12 range or whatever is given in cct_search_list:
             ccts_est, cct_ranges = _find_closest_ccts(np.hstack((ut,vt)), cieobs = cieobs)
         else:
@@ -659,6 +660,7 @@ def xyz_to_cct_search_fast(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None,
                 dT = np.multiply(ccttemp,procent_estimate) # determines range around CCTtemp (25% around estimate) or 100 K
             
             else:
+                print(cct_ranges)
                 dT = np.abs(np.diff(cct_ranges[i,:]))/2
             delta_cct = dT
         else:
@@ -1006,7 +1008,7 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut', out 
         :cct_search_list:
             | None, optional
             | list of ccts to obtain a first guess for the cct of the input xyz 
-            | when HA estimation fails due to out-of-range cct or when fast == False.
+            | when HA estimation fails due to out-of-range cct or when fast_search == False.
             | None defaults to: [50,100,500,1000,2000,3000,4000,5000,6000,10000,
             |                  20000,50000,1e5,1e6, 1e7, 1e8,1e9, 1e10, 1e11, 1e12]
         :force_out_of_lut: 
@@ -1057,7 +1059,7 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut', out 
                                           upper_cct_max = upper_cct_max, 
                                           approx_cct_temp = approx_cct_temp,
                                           cct_search_list = cct_search_list,
-                                          fast = fast_search)
+                                          fast_search = fast_search)
             
             F = np.sqrt(((100.0*(cct_min[0] - cct[0])/(cct[0]))**2.0) + (((duv_min[0] - duv[0])/(duv[0]))**2.0))
             if out == 'F':
@@ -1076,7 +1078,7 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut', out 
                                            upper_cct_max = upper_cct_max, 
                                            approx_cct_temp = approx_cct_temp,
                                            cct_search_list = cct_search_list,
-                                           fast = fast_search)
+                                           fast_search = fast_search)
             
             if np.abs(duv[i]) > _EPS:
                 # find xyz:
@@ -1155,7 +1157,7 @@ def xyz_to_cct(xyzw, cieobs = _CIEOBS, out = 'cct',mode = 'lut', wl = None, rtol
         :cct_search_list:
             | None, optional
             | list of ccts to obtain a first guess for the cct of the input xyz 
-            | when HA estimation fails due to out-of-range cct or when fast == False.
+            | when HA estimation fails due to out-of-range cct or when fast_search == False.
             | None defaults to: [50,100,500,1000,2000,3000,4000,5000,6000,10000,
             |                  20000,50000,1e5,1e6, 1e7, 1e8,1e9, 1e10, 1e11, 1e12]
         :force_out_of_lut: 
@@ -1229,7 +1231,7 @@ def xyz_to_duv(xyzw, cieobs = _CIEOBS, out = 'duv', mode = 'lut', wl = None,
         :cct_search_list:
             | None, optional
             | list of ccts to obtain a first guess for the cct of the input xyz 
-            | when HA estimation fails due to out-of-range cct or when fast == False.
+            | when HA estimation fails due to out-of-range cct or when fast_search == False.
             | None defaults to: [50,100,500,1000,2000,3000,4000,5000,6000,10000,
             |                  20000,50000,1e5,1e6, 1e7, 1e8,1e9, 1e10, 1e11, 1e12]
         :force_out_of_lut: 
