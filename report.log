@@ -79,3 +79,4 @@
 2020-04-12 08:50:40,835 - pyswarms.single.global_best - INFO - Optimize for 1000 iters with {'c1': 0.5, 'c2': 0.3, 'w': 0.9}
 2020-04-12 08:53:10,722 - pyswarms.single.global_best - INFO - Optimization finished | best cost: 0.0021648418227762176, best pos: [1.3486e-01 4.2769e-01 4.4581e-01 4.9084e-01 5.2768e+02 4.5114e+02
  6.5054e+02 6.0316e+02 4.8841e+01 4.0788e+01 2.9307e+01 4.4086e+01]
+2020-04-15 19:42:35,918 - matplotlib.axes._axes - WARNING - 'c' argument looks like a single numeric RGB or RGBA sequence, which should be avoided as value-mapping will have precedence in case its length matches with 'x' & 'y'.  Please use a 2-D array with a single row if you really want to specify the same RGB or RGBA value for all points.
