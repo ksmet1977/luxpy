@@ -55,7 +55,7 @@ Module with functions related to color rendering Vector Field model
 
  :plot_shift_data(): Plots vector or circle fields.
 
- :plotcircle(): Plot one or more concentric circles.
+ :plotcircle(): Plot one or more concentric circles around (0,0).
 
  :initialize_VF_hue_angles(): Initialize the hue angles that will be used to 
                               'summarize' the VF model fitting parameters.
@@ -788,16 +788,13 @@ def plot_shift_data(data, fieldtype = 'vectorfield', scalef = _VF_MAXR, color = 
     return figCVG, hax, cmap
 
 #------------------------------------------------------------------------------
-def plotcircle(center = np.array([0.,0.]),\
-               radii = np.arange(0,60,10), \
+def plotcircle(radii = np.arange(0,60,10), \
                angles = np.arange(0,350,10),\
                color = 'k',linestyle = '--', out = None):
     """
-    Plot one or more concentric circles.
+    Plot one or more concentric circles around (0,0).
     
     Args:
-        :center: 
-            | np.array([0.,0.]) or ndarray with center coordinates, optional
         :radii:
             | np.arange(0,60,10) or ndarray with radii of circle(s), optional
         :angles:

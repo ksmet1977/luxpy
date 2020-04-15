@@ -58,7 +58,7 @@ VECTOR FIELD MODEL
 
  :plot_shift_data(): Plots vector or circle fields.
 
- :plotcircle(): Plot one or more concentric circles.
+ :plotcircle(): Plot one or more concentric circles around (0,0).
 
  :initialize_VF_hue_angles(): Initialize the hue angles that will be used to 
                               'summarize' the VF model fitting parameters.

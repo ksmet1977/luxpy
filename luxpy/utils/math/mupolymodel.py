@@ -579,21 +579,20 @@ def get_theta_bin_edges_and_cmap(nTbins = 16, Tbins_start_angle = 0):
     
     return np.hstack((dL,360))*np.pi/180, hsv_hues
 
-def plotcircle(center = np.array([0.,0.]),\
-               radii = np.arange(0,60,10), \
-               angles = np.arange(0,350,10),\
-               color = 'k',linestyle = '--', out = None):
+def plotcircle(center = np.array([[0.,0.]]),radii = np.arange(0,60,10), 
+               angles = np.arange(0,350,10),color = 'k',linestyle = '--', 
+               out = None, axh = None):
     """
     Plot one or more concentric circles.
     
     Args:
         :center: 
-            | np.array([0.,0.]) or ndarray with center coordinates, optional
+            | np.array([[0.,0.]]) or ndarray with center coordinates, optional
         :radii:
             | np.arange(0,60,10) or ndarray with radii of circle(s), optional
         :angles:
             | np.arange(0,350,10) or ndarray with angles (°), optional
-        :color: 
+        :color:
             | 'k', optional
             | Color for plotting.
         :linestyle:
@@ -605,13 +604,15 @@ def plotcircle(center = np.array([0.,0.]),\
     """
     xs = np.array([0])
     ys = xs.copy()
+    if ((out != 'x,y') & (axh is None)):
+        fig, axh = plt.subplots(rows=1,ncols=1)
     for ri in radii:
-        x = ri*np.cos(angles*np.pi/180)
-        y = ri*np.sin(angles*np.pi/180)
+        x = center[:,0] + ri*np.cos(angles*np.pi/180)
+        y = center[:,1] + ri*np.sin(angles*np.pi/180)
         xs = np.hstack((xs,x))
         ys = np.hstack((ys,y))
-        if out != 'x,y':
-            plt.plot(x,y,color = color, linestyle = linestyle)
+        if (out != 'x,y'):
+            axh[0].plot(x,y,color = color, linestyle = linestyle)
     if out == 'x,y':
         return xs,ys
     
