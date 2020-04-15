@@ -516,7 +516,7 @@ def plotUH(xyz0 = None, uhues = [0,1,2,3], cieobs = _CIEOBS, cspace = _CSPACE, a
 #------------------------------------------------------------------------------
 def plotcircle(center = np.array([[0.,0.]]),radii = np.arange(0,60,10), 
                angles = np.arange(0,350,10),color = 'k',linestyle = '--', 
-               out = None, axh = None):
+               out = None, axh = None, **kwargs):
     """
     Plot one or more concentric circles.
     
@@ -547,9 +547,11 @@ def plotcircle(center = np.array([[0.,0.]]),radii = np.arange(0,60,10),
         xs = np.hstack((xs,x))
         ys = np.hstack((ys,y))
         if (out != 'x,y'):
-            axh[0].plot(x,y,color = color, linestyle = linestyle)
+            axh.plot(x,y,color = color, linestyle = linestyle, **kwargs)
     if out == 'x,y':
         return xs,ys
+    elif out == 'axh':
+        return axh
 
 #------------------------------------------------------------------------------
 def plotellipse(v, cspace_in = 'Yxy', cspace_out = None, nsamples = 100, \
