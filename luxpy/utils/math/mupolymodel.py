@@ -38,6 +38,33 @@ __all__ = ['get_poly_model','apply_poly_model_at_x',
 #------------------------------------------------------------------------------  
 
 def poly_model(xyz, p = None, k = 0):
+    """
+    Polynomial (2nd order) model.
+    
+    Args:
+        :xyz:
+            | ndarray with input values
+        :p:
+            | None, optional
+            | model parameters (see notes)
+            | If None, return model matrix:
+            |   3D: np.array([1, x, y, x**2, y**2, xy])
+            |   2D: np.array([1, x, y, z, x**2, y**2, z**2, xy, xz, yz])
+            | constant is omitted depending on value of k (0: all, 1: omit)
+        :k:
+            | 0, optional
+            | Omit constant (1) or not (0)
+            | if p is not None: k is automatically determined from size of p
+    
+    Notes:
+        1. Model types:
+            2D-data:
+            | poly_model (n = 5):         p[0]*x + p[1]*y + p[2]*(x**2) + p[3]*(y**2) + p[4]*x*y 
+            | poly_model (n = 6):  p[0] + p[1]*x + p[2]*y + p[3]*(x**2) + p[4]*(y**2) + p[5]*x*y 
+            3D-data:
+            | poly_model (n = 9):          p[0]*x + p[1]*y + p[2]*y + p[3]*(x**2) + p[4]*(y**2) + p[5]*(x**2) + p[6]*x*y + p[7]*x*z + p[8]*y*z 
+            | poly_model (n = 10):  p[0] + p[1]*x + p[2]*y + p[3]*y + p[4]*(x**2) + p[5]*(y**2) + p[5]*(x**2) + p[7]*x*y + p[8]*x*z + p[9]*y*z 
+    """
     m = np.hstack((np.ones((xyz.shape[0],1)), xyz, xyz**2, xyz[:,[0,1]].prod(axis=1,keepdims=True)))
     if xyz.shape[1] == 3:
         m = np.hstack((m, xyz[:,[0,2]].prod(axis=1,keepdims=True),xyz[:,[1,2]].prod(axis=1,keepdims=True)))
@@ -50,7 +77,7 @@ def poly_model(xyz, p = None, k = 0):
         return xyz_pred
 
 
-def get_poly_model(xyzt, xyzr, npar = 10, get_stats = True, dict_out = True, polar_coord = False):
+def get_poly_model(xyzt, xyzr, npar = 10, get_stats = True, dict_out = True, diff_model = True, polar_coord = False):
     """
     Get multivariate polynomial model parameters.
     
@@ -105,7 +132,10 @@ def get_poly_model(xyzt, xyzr, npar = 10, get_stats = True, dict_out = True, pol
             | dToverC = (np.cos(Tr)*dy - np.sin(Tr)*dx)/Rr   
     """
     # A. Calculate dyx:
-    dxyz = xyzt - xyzr
+    if diff_model == True:
+        dxyz = xyzt - xyzr
+    else:
+        dxyz = xyzt.copy()
     
     # B Calculate model matrix:
     m = poly_model(xyzr, p = None, k = xyzt.shape[1]*4 - 2 - npar) # get "vandermonde"-type matrix of [1, x, y, x**2, y**2, xy] or [1,x,y,z,x**2,y**2,z**2,xy,xz,yz]
@@ -163,7 +193,7 @@ def get_poly_model(xyzt, xyzr, npar = 10, get_stats = True, dict_out = True, pol
                 RTref, dRToverR_pred, dRToverR_res, dRToverR_res_std)
 
 
-def apply_poly_model_at_x(xyzr, pmodel, polar_coord = False):
+def apply_poly_model_at_x(xyzr, pmodel, polar_coord = False, diff_model = True, out = 'xyzt,(RTt,RTr)'):
     """
     Applies multivariate polynomial model at cartesian reference coordinates.
     
@@ -187,10 +217,11 @@ def apply_poly_model_at_x(xyzr, pmodel, polar_coord = False):
     # A Set 2nd order color multipliers (shift parameters for xyz: i.e. pxyz):
     includes_cte = pmodel.shape[1] == (xyzr.shape[1]*4-2)
     pxyz = pmodel.copy()
-    pxyz[0,[0 + includes_cte*1]] = 1 + pxyz[0,[0 + includes_cte*1]]
-    pxyz[1,[1 + includes_cte*1]] = 1 + pxyz[1,[1 + includes_cte*1]]
-    if pxyz.shape[0]==3: # also make it work for 2D xy input
-        pxyz[2,[2 + includes_cte*1]] = 1 + pxyz[2,[2 + includes_cte*1]]
+    if diff_model == True:
+        pxyz[0,[0 + includes_cte*1]] = 1 + pxyz[0,[0 + includes_cte*1]]
+        pxyz[1,[1 + includes_cte*1]] = 1 + pxyz[1,[1 + includes_cte*1]]
+        if pxyz.shape[0]==3: # also make it work for 2D xy input
+            pxyz[2,[2 + includes_cte*1]] = 1 + pxyz[2,[2 + includes_cte*1]]
     # B Apply model to reference coordinates using 2nd order multipliers:
     xyzt = poly_model(xyzr, p = pxyz)
     
@@ -200,7 +231,12 @@ def apply_poly_model_at_x(xyzr, pmodel, polar_coord = False):
         RTt = (xyzt**2).sum(axis=1,keepdims=True)**0.5, np.arctan2(xyzr[:,1:2], xyzr[:,0:1]+_EPS) # test radial distance and theta angle
     else:
         RTr, RTt = None, None
-    return xyzt, (RTt,RTr)
+    if out == 'xyzt,(RTt,RTr)':
+        return xyzt, (RTt,RTr)
+    elif out == 'xyzt':
+        return xyzt
+    else:
+        return eval(out)
 
 
 #------------------------------------------------------------------------------
@@ -309,7 +345,7 @@ def generate_circ_grid(RTZ_ranges = np.array([[0,100,10],[0,360,5],[0,100,10]]),
         return xy_grid
 
 
-def generate_vector_field(pmodel = None, xyzr = None, xyzt = None,
+def generate_vector_field(pmodel = None, xyzr = None, xyzt = None, diff_model = True,
                           circle_field = False, make_grid = True, limit_grid_radius = 0,
                           xyz_ranges = np.array([[-100,100,10],[-100,100,10],[0,100,10]]),
                           x_sampling = None, y_sampling = None, z_sampling = None, 
@@ -419,7 +455,7 @@ def generate_vector_field(pmodel = None, xyzr = None, xyzt = None,
         
     if (pmodel is not None):   
         # Apply model at ref. coordinates:
-        xyzt, (RTt, RTr) = apply_poly_model_at_x(xyzr, pmodel, polar_coord = True)
+        xyzt, (RTt, RTr) = apply_poly_model_at_x(xyzr, pmodel, diff_model = diff_model, polar_coord = True)
 
     # plot vector field:
     if (color != 0):
@@ -623,12 +659,71 @@ def plotcircle(center = np.array([[0.,0.]]),radii = np.arange(0,60,10),
 
 class MuPolyModel:
     """
-    multivariate Polynomial Model Class
+    Multivariate Polynomial Model Class
     """
-    def __init__(self, xyzt = None, xyzr = None, pmodel = None, npar = 10, get_stats = True, polar_coord = False):
+    def __init__(self, xyzt = None, xyzr = None, pmodel = None, npar = 10, get_stats = True, diff_model = True, polar_coord = False):
         """
         Initialize / get the poly_model.
-        See get_poly_model? for info on input.
+        
+        Args:
+            :xyzt: 
+                | None, optional
+                | ndarray with target coordinates (to be predicted starting from reference xyzr).
+                | If xyzt & xytr & pmodel is None: empty initialization.
+                | If xyzt & xytr is None and pmodel is not None: initialized using pmodel parameters only.
+            :xyzr: 
+                | None, optional
+                | ndarray with reference coordinates (to be transformed to predictions of xyzt).
+                | If xyzt & xytr & pmodel is None: empty initialization.
+                | If xyzt & xytr is None and pmodel is not None: initialized using pmodel parameters only.
+            :pmodel:
+                | None, optional
+                | If not None (and xyzt & xyzr is None): initialize using pre-computed model parameters in pmodel.
+            :npar:
+                | Specifies the number of parameters of the polynomial model in xy-coordinates 
+                | (npar = 9 or 10 for 3D data, 5 or 6 for 2D data;
+                |  9 and 5 omit the constant term; see notes below)
+            :get_stats:
+                | True, optional
+                | Calculate model statistics: dxyz_pred, dxyz_res, dxyz_res_std, dRToverR_pred, dRToverR_res,  dRToverR_res_std
+                | If False: fill with None's 
+                | See :returns: for more info on statistics.
+            :dict_out:
+                | True, optional
+                | Get function output as dict instead of tuple.
+            :polar_coord:
+                | False, optional
+                | If True: also calculate dR/R (R=radial distance), dT (T=theta) (only when get_stat == True !! )
+                  
+        Returns:   
+            :returns: 
+                | Dict or tuple with:
+                |  - 'poly_model' : function handle to model
+                |  - 'p' : ndarray with model parameters
+                |  - 'M' : optimization matrix
+                |  - 'dxyz pred' : ndarray with dxy model predictions from xr, yr, zr.
+                |  - 'dxyz res' : ndarray with residuals between 'dx,dy,dz' of samples and 
+                |                'dx,dy,dz' predicted by the model.
+                |  - 'dxyz res std' : ndarray with std of 'dxyz res'
+                |  - 'RTred' : ndarray with Radial distance and Theta angles of reference.
+                |  - 'dR/R,dT pred' : ndarray with predictions for dR/R = (Rt - Rr)/Rr and dT = ht - hr
+                |  - 'dR/R,dT res' : ndarray with residuals between 'dR/R,dT' 
+                |                      of samples and 'dR/R,dT' predicted by the model.
+                |  - 'dR/R,dT res std' : ndarray with std of 'dR/R,dT res: 
+    
+        Notes: 
+            1. Model types:
+                2D-data:
+                | poly_model (n = 5):         p[0]*x + p[1]*y + p[2]*(x**2) + p[3]*(y**2) + p[4]*x*y 
+                | poly_model (n = 6):  p[0] + p[1]*x + p[2]*y + p[3]*(x**2) + p[4]*(y**2) + p[5]*x*y 
+                3D-data:
+                | poly_model (n = 9):          p[0]*x + p[1]*y + p[2]*y + p[3]*(x**2) + p[4]*(y**2) + p[5]*(x**2) + p[6]*x*y + p[7]*x*z + p[8]*y*z 
+                | poly_model (n = 10):  p[0] + p[1]*x + p[2]*y + p[3]*y + p[4]*(x**2) + p[5]*(y**2) + p[5]*(x**2) + p[7]*x*y + p[8]*x*z + p[9]*y*z 
+            
+            2. Calculation of dRoverR and dT:
+                | dRoverR = (np.cos(Tr)*dx + np.sin(Tr)*dy)/Rr
+                | dToverC = (np.cos(Tr)*dy - np.sin(Tr)*dx)/Rr   
+
         """
         self.model_type = None
         self.model = None
@@ -636,19 +731,24 @@ class MuPolyModel:
         self.data = None
         self.stats = None
         self.polar_coord = polar_coord
+        self.diff_model = diff_model
         if ((xyzt is None) & (xyzr is None)) & (pmodel is None):
              self.initialized = False
         else:
             if (xyzt is not None) & (xyzr is not None):
-                (poly_model, pmodel, M,
+                n_par = xyzt.shape[1]*4 - 2 
+                if (npar != n_par) & (npar != n_par - 1):
+                    raise Exception('npar input argument not consistent with shape of xyz input. \n2D data: npar = 5 or 6, 3D data: npar = 9 or 10')
+                (poly_model_, pmodel, M,
                 dxyz_pred, dxyz_res, dxyz_res_std, 
                 RTref, dRToverR_pred, dRToverR_res, dRToverR_res_std) = get_poly_model(xyzt, xyzr, npar = npar, 
                                                                                  get_stats = get_stats, 
                                                                                  polar_coord = polar_coord, 
-                                                                                 dict_out=False)
+                                                                                 dict_out=False,
+                                                                                 diff_model = diff_model)
                 self.initialized = True
-                self.model = poly_model
-                self.p = pmodel
+                self.model = poly_model_
+                self.p = np.atleast_2d(pmodel)
                 self.npar = npar
                 self.M = M
                 self.data = {'xyzt':xyzt, 'xyzr':xyzr}
@@ -662,12 +762,12 @@ class MuPolyModel:
             elif (pmodel is not None):
                 self.initialized = True
                 self.model = poly_model
-                self.p = pmodel
-                self.np = np
+                self.p = np.atleast_2d(pmodel)
+                self.npar = len(pmodel)
                 self.data = None
                 self.stats = None
                 
-    def apply(self, xyzr = None, polar_coord = False):
+    def apply(self, xyzr = None, polar_coord = False, diff_model = None, out = 'xyzt,(RTt,RTr)'):
         """
         Apply the poly_model at coordinates in xyzr. 
         See apply_poly_model_at_x? for more info on input arguments.
@@ -679,9 +779,11 @@ class MuPolyModel:
             xyzr = self.data['xyzr']
         if polar_coord is None:
             polar_coord = self.polar_coord
-        return apply_poly_model_at_x(xyzr, p = self.p, polar_coord = polar_coord)
+        if diff_model is None:
+            diff_model = self.diff_model
+        return apply_poly_model_at_x(xyzr, self.p, polar_coord = polar_coord, diff_model = diff_model, out = out)
 
-    def generate_vector_field(self, xyzr = None, xyzt = None,
+    def generate_vector_field(self, xyzr = None, xyzt = None, diff_model = True,
                           circle_field = False, make_grid = True, limit_grid_radius = 0,
                           xyz_ranges = np.array([[-100,100,10],[-100,100,10],[0,100,10]]),
                           x_sampling = None, y_sampling = None, z_sampling = None, 
@@ -697,7 +799,7 @@ class MuPolyModel:
             | xyzt,(RTt,RTr)
         """
         return generate_vector_field(pmodel = self.p, 
-                                     xyzr = xyzr, xyzt = xyzt,
+                                     xyzr = xyzr, xyzt = xyzt, diff_model = diff_model,
                                      circle_field = circle_field, make_grid = make_grid, limit_grid_radius = limit_grid_radius,
                                      xyz_ranges = xyz_ranges,
                                      x_sampling = x_sampling, y_sampling = y_sampling, z_sampling = z_sampling, 
@@ -713,101 +815,112 @@ if __name__ == '__main__':
     import luxpy as lx
     import pandas as pd
     
+    run_example_1 = True
+    run_example_2 = False
+    run_example_0 = True
+    
+    diff_model = False
+    #--------------------------------------------------------------------------
+    # EXAMPLE 0: test
+    #--------------------------------------------------------------------------
+    if run_example_0:
+        pass
+    
     #--------------------------------------------------------------------------
     # EXAMPLE 1: as shift model
     #--------------------------------------------------------------------------
+    if run_example_1:
+        # Generate_test_data:
+        F4 = lx._CIE_ILLUMINANTS['F4'].copy() 
+        M = lx._MUNSELL.copy()
+        rflM = M['R']
+        rflM = lx.cie_interp(rflM,F4[0],kind='rfl')
+        xyz31, xyzw31 = lx.spd_to_xyz(F4, cieobs = '1931_2', relative = True, rfl = rflM, out = 2)
+        xyz06, xyzw06 = lx.spd_to_xyz(F4, cieobs = '2006_2', relative = True, rfl = rflM, out = 2)
+        
+        # For 2D modeling:
+        ab31 = lx.xyz_to_lab(xyz31, xyzw = xyzw31)[:,0,1:]
+        ab06 = lx.xyz_to_lab(xyz06, xyzw = xyzw06)[:,0,1:]
+        
+        # For 3D modeling:
+        abL31 = lx.xyz_to_lab(xyz31, xyzw = xyzw31)[:,0,[1,2,0]]
+        abL06 = lx.xyz_to_lab(xyz06, xyzw = xyzw06)[:,0,[1,2,0]]
     
-    # Generate_test_data:
-    F4 = lx._CIE_ILLUMINANTS['F4'].copy() 
-    M = lx._MUNSELL.copy()
-    rflM = M['R']
-    rflM = lx.cie_interp(rflM,F4[0],kind='rfl')
-    xyz31, xyzw31 = lx.spd_to_xyz(F4, cieobs = '1931_2', relative = True, rfl = rflM, out = 2)
-    xyz06, xyzw06 = lx.spd_to_xyz(F4, cieobs = '2006_2', relative = True, rfl = rflM, out = 2)
+        
+        # Get model that characterizes shift between 1931 and 2006 2° CMFs 
+        # based on relative sample shifts under the two sets:
+        pm = MuPolyModel(ab31, ab06, npar = 6, diff_model = diff_model) # 2D fit
+        pmL = MuPolyModel(abL31, abL06, npar = 10, diff_model = diff_model) # 3D fit
+        
+        # Create a grid of new data points 
+        # and plot shifts in hue angle related colors (by seting Color = None):
+        pm.generate_vector_field(circle_field = True, diff_model = diff_model,
+                                 xyz_ranges = np.array([[-100,100,10],[-100,100,10]]),
+                                 RTZ_ranges = np.array([[0,100,10],[0,360,10]]),
+                                 make_grid = True, limit_grid_radius = 0,
+                                 color = None, axh = None, axtype = 'cart', use_plt_quiver = True,
+                                 nTbins = 32, Tbins_start_angle = 0, title = 'Test MuPolyModel_2D')
+        
+        
+        #Including 3e dimension z:
+        pmL.generate_vector_field(circle_field = True, diff_model = diff_model,
+                                 xyz_ranges = np.array([[-100,100,10],[-100,100,10],[0,100,10]]),
+                                 RTZ_ranges = np.array([[0,100,10],[0,360,10],[0,100,20]]),
+                                 make_grid = True, limit_grid_radius = 0,
+                                 color = None, axh = None, axtype = 'cart', use_plt_quiver = False,
+                                 nTbins = 32, Tbins_start_angle = 0, title = 'Test MuPolyModel_3D')
+        
+        # or, generate some rect. xyz-grid:
+        xyzr_ = generate_rect_grid(xyz_ranges = np.array([[-100,100,10],[-100,100,10],[0,100,10]]), 
+                                   limit_grid_radius = 0)
+        # Apply shift to grid:
+        xyzt_ = apply_poly_model_at_x(xyzr_, pmL.p,polar_coord=True, diff_model = diff_model)[0]
+        fig = plt.figure()
+        axh = fig.add_axes([0.1, 0.1, 0.8, 0.8], projection ='3d')
+        axh.plot(xyzr_[:,0],xyzr_[:,1],xyzr_[:,2],'ro')
+        axh.plot(xyzt_[:,0],xyzt_[:,1],xyzt_[:,2],'b.');
     
-    # For 2D modeling:
-    ab31 = lx.xyz_to_lab(xyz31, xyzw = xyzw31)[:,0,1:]
-    ab06 = lx.xyz_to_lab(xyz06, xyzw = xyzw06)[:,0,1:]
-    
-    # For 3D modeling:
-    abL31 = lx.xyz_to_lab(xyz31, xyzw = xyzw31)[:,0,[1,2,0]]
-    abL06 = lx.xyz_to_lab(xyz06, xyzw = xyzw06)[:,0,[1,2,0]]
-
-    
-    # Get model that characterizes shift between 1931 and 2006 2° CMFs 
-    # based on relative sample shifts under the two sets:
-    pm = MuPolyModel(ab31, ab06, npar = 6) # 2D fit
-    pmL = MuPolyModel(abL31, abL06, npar = 10) # 3D fit
-    
-    # Create a grid of new data points 
-    # and plot shifts in hue angle related colors (by seting Color = None):
-    pm.generate_vector_field(circle_field = True,
-                             xyz_ranges = np.array([[-100,100,10],[-100,100,10]]),
-                             RTZ_ranges = np.array([[0,100,10],[0,360,10]]),
-                             make_grid = True, limit_grid_radius = 0,
-                             color = None, axh = None, axtype = 'cart', use_plt_quiver = True,
-                             nTbins = 32, Tbins_start_angle = 0, title = 'Test MuPolyModel_2D')
-    
-    
-    #Including 3e dimension z:
-    pmL.generate_vector_field(circle_field = True,
-                             xyz_ranges = np.array([[-100,100,10],[-100,100,10],[0,100,10]]),
-                             RTZ_ranges = np.array([[0,100,10],[0,360,10],[0,100,20]]),
-                             make_grid = True, limit_grid_radius = 0,
-                             color = None, axh = None, axtype = 'cart', use_plt_quiver = False,
-                             nTbins = 32, Tbins_start_angle = 0, title = 'Test MuPolyModel_3D')
-    
-    # or, generate some rect. xyz-grid:
-    xyzr_ = generate_rect_grid(xyz_ranges = np.array([[-100,100,10],[-100,100,10],[0,100,10]]), 
-                               limit_grid_radius = 0)
-    # Apply shift to grid:
-    xyzt_ = apply_poly_model_at_x(xyzr_, pmL.p,polar_coord=True)[0]
-    fig = plt.figure()
-    axh = fig.add_axes([0.1, 0.1, 0.8, 0.8], projection ='3d')
-    axh.plot(xyzr_[:,0],xyzr_[:,1],xyzr_[:,2],'ro')
-    axh.plot(xyzt_[:,0],xyzt_[:,1],xyzt_[:,2],'b.');
-
-    # Apply shift to data used to obtain model parameters:
-    xyzt = apply_poly_model_at_x(pmL.data['xyzr'], pmL.p, polar_coord=True)[0]
-    fig2 = plt.figure()
-    axh2 = fig2.add_axes([0.1, 0.1, 0.8, 0.8], projection ='3d')
-    axh2.plot(pmL.data['xyzr'][:,0],pmL.data['xyzr'][:,1],pmL.data['xyzr'][:,2],'ro');
-    axh2.plot(xyzt[:,0],xyzt[:,1],xyzt[:,2],'b.');
-    axh2.plot(abL31[:,0],abL31[:,1],abL31[:,2],'g.'); 
+        # Apply shift to data used to obtain model parameters:
+        xyzt = apply_poly_model_at_x(pmL.data['xyzr'], pmL.p, polar_coord=True, diff_model = diff_model)[0]
+        fig2 = plt.figure()
+        axh2 = fig2.add_axes([0.1, 0.1, 0.8, 0.8], projection ='3d')
+        axh2.plot(pmL.data['xyzr'][:,0],pmL.data['xyzr'][:,1],pmL.data['xyzr'][:,2],'ro');
+        axh2.plot(xyzt[:,0],xyzt[:,1],xyzt[:,2],'b.');
+        axh2.plot(abL31[:,0],abL31[:,1],abL31[:,2],'g.'); 
     
     
     #--------------------------------------------------------------------------
     # EXAMPLE 2: as transformation (example with 2D data, but should work for 3D)
     #--------------------------------------------------------------------------
-
-    ab_test = pd.read_csv('./data/bipolymodeltests/ab_test.dat',header=None,sep='\t').values # final ab SWW CAM signal
-    ab_ref = pd.read_csv('./data/bipolymodeltests/ab_ref.dat',header=None,sep='\t').values   # final CIECAM02
-    dLMS = pd.read_csv('./data/bipolymodeltests/dLMS.dat',header=None,sep='\t').values  # L-M, (L+M)/2 signal of SWW from which final ab signal should be predicted
- 
-    # Generate forward and reverse models:
-    # pm2 = LMS -> ab:
-    pm2 = MuPolyModel(ab_ref, dLMS, npar = 6) 
-    # pm2i = ab -> LMS:
-    pm2i = MuPolyModel(dLMS, ab_ref, npar = 6) 
-    
-    # appply pm2 to dLMS data to go to ab-space, then apply pm2i to return to dLMS:
-    abt2 = apply_poly_model_at_x(dLMS, pm2.p, polar_coord=True)[0]
-    abt2i = apply_poly_model_at_x(abt2, pm2i.p, polar_coord=True)[0]
-    plt.figure()
-    plt.plot(dLMS[:,0],dLMS[:,1],'ro')
-    plt.plot(abt2[:,0],abt2[:,1] ,'b.');
-    plt.plot(abt2i[:,0],abt2i[:,1],'g+')
-    
-    # Apply generated models in inverse order to go from ab -> LMS -> ab
-    # Generate large grid in ab-space:
-    abr_2 = generate_rect_grid(xyz_ranges = np.array([[-30,30,5],[-30,30,5]]), x_sampling = None, y_sampling = None, 
-                               limit_grid_radius = 0)
-    # appply pm2i to ab-space to go to dLMS space, then apply pm2 to return to ab-space:
-    abt_2i = apply_poly_model_at_x(abr_2, pm2i.p, polar_coord=True)[0]
-    abt_2 = apply_poly_model_at_x(abt_2i, pm2.p, polar_coord=True)[0]
-    plt.figure()
-    plt.plot(abr_2[:,0], abr_2[:,1],'ro')
-    plt.plot(abt_2i[:,0],abt_2i[:,1],'b.')
-    plt.plot(abt_2[:,0], abt_2[:,1] ,'g+');
-    
- 
+    if run_example_2:
+        ab_test = pd.read_csv('./data/bipolymodeltests/ab_test.dat',header=None,sep='\t').values # final ab SWW CAM signal
+        ab_ref = pd.read_csv('./data/bipolymodeltests/ab_ref.dat',header=None,sep='\t').values   # final CIECAM02
+        dLMS = pd.read_csv('./data/bipolymodeltests/dLMS.dat',header=None,sep='\t').values  # L-M, (L+M)/2 signal of SWW from which final ab signal should be predicted
+     
+        # Generate forward and reverse models:
+        # pm2 = LMS -> ab:
+        pm2 = MuPolyModel(ab_ref, dLMS, npar = 6, diff_model = diff_model) 
+        # pm2i = ab -> LMS:
+        pm2i = MuPolyModel(dLMS, ab_ref, npar = 6, diff_model = diff_model) 
+        
+        # appply pm2 to dLMS data to go to ab-space, then apply pm2i to return to dLMS:
+        abt2 = apply_poly_model_at_x(dLMS, pm2.p, polar_coord=True, diff_model = diff_model)[0]
+        abt2i = apply_poly_model_at_x(abt2, pm2i.p, polar_coord=True, diff_model = diff_model)[0]
+        plt.figure()
+        plt.plot(dLMS[:,0],dLMS[:,1],'ro')
+        plt.plot(abt2[:,0],abt2[:,1] ,'b.');
+        plt.plot(abt2i[:,0],abt2i[:,1],'g+')
+        
+        # Apply generated models in inverse order to go from ab -> LMS -> ab
+        # Generate large grid in ab-space:
+        abr_2 = generate_rect_grid(xyz_ranges = np.array([[-30,30,5],[-30,30,5]]), x_sampling = None, y_sampling = None, 
+                                   limit_grid_radius = 0)
+        # appply pm2i to ab-space to go to dLMS space, then apply pm2 to return to ab-space:
+        abt_2i = apply_poly_model_at_x(abr_2, pm2i.p, polar_coord=True, diff_model = diff_model)[0]
+        abt_2 = apply_poly_model_at_x(abt_2i, pm2.p, polar_coord=True, diff_model = diff_model)[0]
+        plt.figure()
+        plt.plot(abr_2[:,0], abr_2[:,1],'ro')
+        plt.plot(abt_2i[:,0],abt_2i[:,1],'b.')
+        plt.plot(abt_2[:,0], abt_2[:,1] ,'g+');
+        
+     

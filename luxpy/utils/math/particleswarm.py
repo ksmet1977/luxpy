@@ -27,6 +27,7 @@ finally:
     import pyswarms as ps
     from pyswarms.utils.plotters import (plot_cost_history, plot_contour, plot_surface)
 
+__all__ = ['particleswarm']
 
 def particleswarm(objfcn, dimensions, args = {}, use_bnds = True, bounds = (None,None), 
                   iters = 100, n_particles = 10, ftol = -np.inf,

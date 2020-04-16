@@ -36,6 +36,8 @@ LuxPy package structure
 |		/.math
 |			basics.py
 |			minimizebnd.py
+|           particleswarm.py
+|           mupolymodel.py
 |			/.DEMO
 |				DEMO.py
 |				demo_opt.py
