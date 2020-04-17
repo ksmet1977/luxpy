@@ -125,7 +125,7 @@ _CIE_F_1_12_dict = {'F{:1.0f}'.format(i+1):np.vstack((_CIE_F_1_12[0],_CIE_F_1_12
 _CIE_F3_1_15 = getdata(_S_PATH + 'CIE_F3_1to15.csv',kind='np').T
 _CIE_F3_1_15_dict = {'F3.{:1.0f}'.format(i+1):np.vstack((_CIE_F3_1_15[0],_CIE_F3_1_15[i+1])) for i in range(15)}
 
-_CIE_HP_1_5 = getdata(_S_PATH + 'CIE_F3_1to15.csv',kind='np').T
+_CIE_HP_1_5 = getdata(_S_PATH + 'CIE_HP_1to5.csv',kind='np').T
 _CIE_HP_1_5_dict = {'HP{:1.0f}'.format(i+1):np.vstack((_CIE_HP_1_5[0],_CIE_HP_1_5[i+1])) for i in range(5)}
 
 _CIE_ILLUMINANTS = {'E':E,'D65':D65,'A':A,'B':B,'C':C}
