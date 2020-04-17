@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #########################################################################
-
+from luxpy import np
 
 # Load cmfs, part 1 (prepare basic data dict, no actual cmfs)
 from .cmf import *
@@ -33,9 +33,16 @@ for i, cmf_type in enumerate(_CMF['types']): # store all in single nested dict
 # load spd and rfl data in /spd/:
 from .spectral_databases import (_R_PATH, _S_PATH, _CIE_ILLUMINANTS, 
                                  _IESTM3015, _IESTM3018, 
-                                 _CIE_E, _CIE_D65, _CIE_A, _CIE_C, _CIE_F4,
+                                 _CIE_E, _CIE_D65, _CIE_A, _CIE_B, _CIE_C, _CIE_F4,
+                                 _CIE_F_1_12,_CIE_F3_1_15,_CIE_HP_1_5,
                                  _CRI_RFL, _RFL, _MUNSELL)
+								 
+# add 'all' key to _CIE_ILLUMINANTS that  contains all CIE_ILLUMINANTS in a stack:
+_CIE_ILLUMINANTS['all'] = np.vstack((_CIE_E[0,:],np.array([cie_interp(_CIE_ILLUMINANTS[x],_CIE_E[0,:],kind='linear')[1,:] for x in _CIE_ILLUMINANTS['types']])))				  
+
+								 
 __all__ += ['_R_PATH','_S_PATH', '_CIE_ILLUMINANTS', 
             '_IESTM3015','_IESTM3018',
-            '_CIE_E', '_CIE_D65', '_CIE_A', '_CIE_C', '_CIE_F4',
+            '_CIE_E', '_CIE_D65', '_CIE_A', '_CIE_B', '_CIE_C', '_CIE_F4',
+            '_CIE_F_1_12','_CIE_F3_1_15','_CIE_HP_1_5',
             '_CRI_RFL','_RFL', '_MUNSELL']
