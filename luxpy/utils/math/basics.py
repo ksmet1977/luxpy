@@ -108,7 +108,7 @@ __all__  = ['normalize_3x3_matrix','symmM_to_posdefM','check_symmetric',
 __all__ += ['bvgpdf','mahalanobis2','dot23', 'rms','geomean','polyarea']
 __all__ += ['magnitude_v','angle_v1v2']
 __all__ += ['v_to_cik', 'cik_to_v', 'fmod', 'remove_outliers','fit_ellipse','fit_cov_ellipse']
-__all__ += ['interp1', 'ndinterp1','ndinterp1_scipy']
+__all__ += ['in_hull','interp1', 'ndinterp1','ndinterp1_scipy']
 __all__ += ['box_m','pitman_morgan']
 
 
@@ -1020,6 +1020,27 @@ def fit_cov_ellipse(xy, alpha = 0.05, pdf = 'chi2', SE = False,
         
     v = cik_to_v(cik/f, xyc=xyc)
     return v
+
+#------------------------------------------------------------------------------
+def in_hull(p, hull):
+    """
+    Test if points in `p` are in `hull`
+
+    Args:
+        :p: 
+            | NxK coordinates of N points in K dimensions
+        :hull:
+            | Either a scipy.spatial.Delaunay object or the MxK array of the 
+            | coordinates of M points in K dimensions for which Delaunay 
+            | triangulation will be computed
+            
+    Returns:
+        :bool:
+            | boolean ndarray with True for in-gamut and False for out-of-gamut points
+    """
+    if not isinstance(hull,sp.spatial.Delaunay):
+        hull = sp.spatial.Delaunay(hull)
+    return hull.find_simplex(p)>=0
 
 #------------------------------------------------------------------------------
 def interp1(X,Y,Xnew, kind = 'linear', ext = 'extrapolate', w = None, bbox=[None, None], check_finite = False):

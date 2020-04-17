@@ -83,7 +83,8 @@ Module supporting basic spectral calculations.
              `cie224:2017, CIE 2017 Colour Fidelity Index for accurate scientific use. (2017), ISBN 978-3-902842-61-9. <http://www.cie.co.at/index.php?i_ca_id=1027>`_,
              `IES-TM-30-15: Method for Evaluating Light Source Color Rendition. New York, NY: The Illuminating Engineering Society of North America. <https://www.ies.org/store/technical-memoranda/ies-method-for-evaluating-light-source-color-rendition/>`_
  
-    
+ :detect_peakwl(): Detect peak wavelengths and fwhm of peaks in spectrum spd.    
+
 References
 ----------
 
@@ -102,12 +103,12 @@ References
 """
 
 #--------------------------------------------------------------------------------------------------
-from luxpy import np, pd, interpolate, _PKG_PATH, _SEP, _EPS, _CIEOBS, np2d, getdata, math
+from luxpy import np, pd, sp, plt, interpolate, _PKG_PATH, _SEP, _EPS, _CIEOBS, np2d, getdata, math
 from .cmf import _CMF
 __all__ = ['_WL3','_BB','_S012_DAYLIGHTPHASE','_INTERP_TYPES','_S_INTERP_TYPE', '_R_INTERP_TYPE','_CRI_REF_TYPE',
            '_CRI_REF_TYPES', 'getwlr','getwld','spd_normalize','cie_interp','spd','xyzbar', 'vlbar', 
            'spd_to_xyz', 'spd_to_ler', 'spd_to_power',
-           'blackbody','daylightlocus','daylightphase','cri_ref']
+           'blackbody','daylightlocus','daylightphase','cri_ref','detect_peakwl']
 
 
 #--------------------------------------------------------------------------------------------------
@@ -1088,3 +1089,59 @@ def cri_ref(ccts, wl3 = None, ref_type = _CRI_REF_TYPE, mix_range = None, cieobs
         Srs = np.vstack((Sr[0],Srs))
 
         return  spd(Srs, wl = None, norm_type = norm_type, norm_f = norm_f)	
+    
+    
+def detect_peakwl(spd, n = 1,verbosity = 1, **kwargs):
+    """
+    Detect primary peak wavelengths and fwhm in spectrum spd.
+    
+    Args:
+        :spd:
+            | ndarray with spectral data (2xN). 
+            | First row should be wavelengths.
+        :n:
+            | 1, optional
+            | The number of peaks to try to detect in spd. 
+        :verbosity:
+            | Make a plot of the detected peaks, their fwhm, etc.
+        :kwargs:
+             | Additional input arguments for scipy.signal.find_peaks.
+    Returns:
+        :prop:
+            | list of dictionaries with keys: 
+            | - 'peaks_idx' : index of detected peaks
+            | - 'peaks' : peak wavelength values (nm)
+            | - 'heights' : height of peaks
+            | - 'fwhms' : full-width-half-maxima of peaks
+            | - 'fwhms_mid' : wavelength at the middle of the fwhm-range of the peaks (if this is different from the values in 'peaks', then their is some non-symmetry in the peaks)
+            | - 'fwhms_mid_heights' : height at the middle of the peak
+    """
+    props = []
+    for i in range(spd.shape[0]-1):
+        peaks_, prop_ = sp.signal.find_peaks(spd[i+1,:], **kwargs)
+        prominences = sp.signal.peak_prominences(spd[i+1,:], peaks_)[0]
+        peaks = [peaks_[prominences.argmax()]]
+        prominences[prominences.argmax()] = 0
+        for j in range(n-1):
+            peaks.append(peaks_[prominences.argmax()])
+            prominences[prominences.argmax()] = 0
+        peaks = np.sort(np.array(peaks))
+        peak_heights = spd[i+1,peaks]
+        widths, width_heights, left_ips, right_ips = sp.signal.peak_widths(spd[i+1,:], peaks, rel_height=0.5)
+        left_ips, right_ips = left_ips + spd[0,0], right_ips + spd[0,0]
+    
+        # get middle of fwhm and calculate peak position and height:
+        mpeaks = left_ips + widths/2
+        hmpeaks = sp.interpolate.interp1d(spd[0,:],spd[i+1,:])(mpeaks)
+    
+        prop = {'peaks_idx' : peaks,'peaks' : spd[0,peaks], 'heights' : peak_heights,
+                'fwhms' : widths, 'fwhms_mid' : mpeaks, 'fwhms_mid_heights' : hmpeaks}
+        props.append(prop)
+        if verbosity == 1:
+            print('Peak properties:', prop)
+            results_half = (widths, width_heights, left_ips, right_ips)
+            plt.plot(spd[0,:],spd[i+1,:],'b-',label = 'spectrum')
+            plt.plot(spd[0,peaks],spd[i+1,peaks],'ro', label = 'peaks')
+            plt.hlines(*results_half[1:], color="C2", label = 'FWHM range of peaks')
+            plt.plot(mpeaks,hmpeaks,'gd', label = 'middle of FWHM range')
+    return props
