@@ -187,7 +187,12 @@ __AUTHOR__ = 'Kevin A.G. Smet'
 __EMAIL__ = 'ksmet1977 at gmail.com'
 __URL__ = 'github.com/ksmet1977/luxpy/'
 __DATE__ = '23-Mar-2020'
-__all__ = ['__VERSION__','__AUTHOR__','__EMAIL__', '__URL__','__DATE__']
+__COPYRIGHT__ = 'Copyright (C) 2017-2020 - Kevin A.G. Smet'
+__LICENSE__ = 'GPLv3'
+__DOI__ = ['https://doi.org/10.5281/zenodo.1298963', 'https://doi.org/10.1080/15502724.2018.1518717']
+__CITE__ = '`Smet, K. A. G. (2019). Tutorial: The LuxPy Python Toolbox for Lighting and Color Science. LEUKOS, 1–23. DOI: 10.1080/15502724.2018.1518717 <https://www.tandfonline.com/doi/full/10.1080/15502724.2018.1518717>`_' 
+__all__ = ['__VERSION__','__AUTHOR__','__EMAIL__', '__URL__','__DATE__',
+           '__COPYRIGHT__','__LICENSE__','__DOI__','__CITE__']
 
 #==============================================================================
 # Import required modules
