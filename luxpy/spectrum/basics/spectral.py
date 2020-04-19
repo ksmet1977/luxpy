@@ -83,7 +83,9 @@ Module supporting basic spectral calculations.
              `cie224:2017, CIE 2017 Colour Fidelity Index for accurate scientific use. (2017), ISBN 978-3-902842-61-9. <http://www.cie.co.at/index.php?i_ca_id=1027>`_,
              `IES-TM-30-15: Method for Evaluating Light Source Color Rendition. New York, NY: The Illuminating Engineering Society of North America. <https://www.ies.org/store/technical-memoranda/ies-method-for-evaluating-light-source-color-rendition/>`_
  
- :detect_peakwl(): Detect peak wavelengths and fwhm of peaks in spectrum spd.    
+ :detect_peakwl(): Detect peak wavelengths and fwhm of peaks in spectrum spd.   
+
+ :spd_to_indoor(): Convert spd to indoor variant by multiplying it with the CIE spectral transmission for glass. 
 
 References
 ----------
@@ -103,12 +105,14 @@ References
 """
 
 #--------------------------------------------------------------------------------------------------
-from luxpy import np, pd, sp, plt, interpolate, _PKG_PATH, _SEP, _EPS, _CIEOBS, np2d, getdata, math
+from luxpy import np, pd, sp, plt, _PKG_PATH, _SEP, _EPS, _CIEOBS, np2d, getdata, math
 from .cmf import _CMF
+from .spectral_databases import _CIE_GLASS_ID
+from scipy import signal
 __all__ = ['_WL3','_BB','_S012_DAYLIGHTPHASE','_INTERP_TYPES','_S_INTERP_TYPE', '_R_INTERP_TYPE','_CRI_REF_TYPE',
            '_CRI_REF_TYPES', 'getwlr','getwld','spd_normalize','cie_interp','spd','xyzbar', 'vlbar', 
            'spd_to_xyz', 'spd_to_ler', 'spd_to_power',
-           'blackbody','daylightlocus','daylightphase','cri_ref','detect_peakwl']
+           'blackbody','daylightlocus','daylightphase','cri_ref','detect_peakwl', 'spd_to_indoor']
 
 
 #--------------------------------------------------------------------------------------------------
@@ -154,7 +158,7 @@ def getwlr(wl3 = None):
     Returns:
         :returns: 
             | ndarray (.shape = (n,)) with n wavelengths ranging from
-              start to stop, with wavelength interval equal to spacing.
+            | start to stop, with wavelength interval equal to spacing.
     """
     if wl3 is None:
         wl3 = _WL3
@@ -208,15 +212,15 @@ def spd_normalize(data, norm_type = None, norm_f = 1, wl = True, cieobs = _CIEOB
         :norm_f:
             | 1, optional
             | Normalization factor that determines the size of normalization 
-              for 'max' and 'area' 
-              or which wavelength is normalized to 1 for 'lambda' option.
+            | for 'max' and 'area' 
+            | or which wavelength is normalized to 1 for 'lambda' option.
         :wl: 
             | True or False, optional 
             | If True, the first column of data contains wavelengths.
         :cieobs:
             | _CIEOBS or str, optional
             | Type of cmf set to use for normalization using photometric units 
-              (norm_type == 'pu')
+            | (norm_type == 'pu')
     
     Returns:
         :returns: 
@@ -272,8 +276,8 @@ def spd_normalize(data, norm_type = None, norm_f = 1, wl = True, cieobs = _CIEOB
                 data[i+offset] = (norm_f/rpq_power)*data[i+offset]
             else:
                 data[i+offset]=data[i+offset]/norm_f_
-    return data	
-	
+    return data
+
 #--------------------------------------------------------------------------------------------------
 
 def cie_interp(data,wl_new, kind = None, negative_values_allowed = False, extrap_values = None):
@@ -308,7 +312,7 @@ def cie_interp(data,wl_new, kind = None, negative_values_allowed = False, extrap
     Returns:
         :returns: 
             | ndarray of interpolated spectral data.
-              (.shape = (number of spectra + 1, number of wavelength in wl_new))
+            | (.shape = (number of spectra + 1, number of wavelength in wl_new))
     """
     if (kind is not None):
         # Wavelength definition:
@@ -375,7 +379,7 @@ def cie_interp(data,wl_new, kind = None, negative_values_allowed = False, extrap
             # Add wavelengths to data array: 
             return np.vstack((wl_new,Si))  
     
-    return data	
+    return data
 
 #--------------------------------------------------------------------------------------------------
 def spd(data = None, interpolation = None, kind = 'np', wl = None,\
@@ -384,7 +388,7 @@ def spd(data = None, interpolation = None, kind = 'np', wl = None,\
     """
     | All-in-one function that can:
     |    1. Read spectral data from data file or take input directly 
-         as pandas.dataframe or ndarray.
+    |       as pandas.dataframe or ndarray.
     |    2. Convert spd-like data from ndarray to pandas.dataframe and back.
     |    3. Interpolate spectral data.
     |    4. Normalize spectral data.
@@ -432,8 +436,8 @@ def spd(data = None, interpolation = None, kind = 'np', wl = None,\
         :norm_f:
             | 1, optional
             | Normalization factor that determines the size of normalization 
-              for 'max' and 'area' 
-              or which wavelength is normalized to 1 for 'lambda' option.
+            | for 'max' and 'area' 
+            | or which wavelength is normalized to 1 for 'lambda' option.
     
     Returns:
         :returns: 
@@ -489,7 +493,7 @@ def xyzbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, norm_type = None, norm
         :scr: 
             | 'dict' or 'file', optional
             | Determines whether to load cmfs from file (./data/cmfs/) 
-              or from dict defined in .cmf.py
+            | or from dict defined in .cmf.py
         :wl: 
             | None, optional
             | New wavelength range for interpolation. 
@@ -507,8 +511,8 @@ def xyzbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, norm_type = None, norm
         :norm_f:
             | 1, optional
             | Normalization factor that determines the size of normalization 
-              for 'max' and 'area' 
-              or which wavelength is normalized to 1 for 'lambda' option.
+            | for 'max' and 'area' 
+            | or which wavelength is normalized to 1 for 'lambda' option.
         :kind: 
             | str ['np','df'], optional 
             | Determines type(:returns:), np: ndarray, df: pandas.dataframe
@@ -543,7 +547,7 @@ def vlbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, norm_type = None, norm_
             | - 'dict': get from ybar from _CMF
             | - 'array': ndarray in :cieobs:
             | Determines whether to load cmfs from file (./data/cmfs/) 
-              or from dict defined in .cmf.py
+            | or from dict defined in .cmf.py
             | Vlambda is obtained by collecting Ybar.
         :wl: 
             | None, optional
@@ -562,8 +566,8 @@ def vlbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, norm_type = None, norm_
         :norm_f:
             | 1, optional
             | Normalization factor that determines the size of normalization 
-              for 'max' and 'area' 
-              or which wavelength is normalized to 1 for 'lambda' option.
+            | for 'max' and 'area' 
+            | or which wavelength is normalized to 1 for 'lambda' option.
         :kind: 
             | str ['np','df'], optional 
             | Determines type(:returns:), np: ndarray, df: pandas.dataframe
@@ -593,7 +597,7 @@ def vlbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, norm_type = None, norm_
     else:
         return Vl
 
-	
+
 #--------------------------------------------------------------------------------------------------
 def spd_to_xyz(data,  relative = True, rfl = None, cieobs = _CIEOBS, K = None, out = None, cie_std_dev_obs = None):
     """
@@ -605,7 +609,7 @@ def spd_to_xyz(data,  relative = True, rfl = None, cieobs = _CIEOBS, K = None, o
             | (.shape = (number of spectra + 1, number of wavelengths))
             | Note that :data: is never interpolated, only CMFs and RFLs. 
             | This way interpolation errors due to peaky spectra are avoided. 
-              Conform CIE15-2018.
+            | Conform CIE15-2018.
         :relative: 
             | True or False, optional
             | Calculate relative XYZ (Yw = 100) or absolute XYZ (Y = Luminance)
@@ -615,7 +619,7 @@ def spd_to_xyz(data,  relative = True, rfl = None, cieobs = _CIEOBS, K = None, o
         :cieobs:
             | luxpy._CIEOBS or str, optional
             | Determines the color matching functions to be used in the 
-              calculation of XYZ.
+            | calculation of XYZ.
         :K: 
             | None, optional
             |   e.g.  K  = 683 lm/W for '1931_2' (relative == False) 
@@ -840,7 +844,7 @@ def blackbody(cct, wl3 = None):
     Returns:
         :returns:
             | ndarray with blackbody radiator spectrum
-              (:returns:[0] contains wavelengths)
+            | (:returns:[0] contains wavelengths)
             
     References:
         1. `CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018. <https://doi.org/10.25039/TR.015.2018>`_
@@ -912,7 +916,7 @@ def daylightphase(cct, wl3 = None, force_daylight_below4000K = False, verbosity 
     Returns:
         :returns: 
             | ndarray with daylight phase spectrum
-              (:returns:[0] contains wavelengths)
+             |(:returns:[0] contains wavelengths)
             
     References:
         1. `CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018. <https://doi.org/10.25039/TR.015.2018>`_
@@ -964,9 +968,9 @@ def cri_ref(ccts, wl3 = None, ref_type = _CRI_REF_TYPE, mix_range = None, cieobs
             | Specifies the type of reference spectrum to be calculated.
             | Defaults to luxpy._CRI_REF_TYPE. 
             | If :ref_type: is list of strings, then for each cct in :ccts: 
-              a different reference illuminant can be specified. 
+            | a different reference illuminant can be specified. 
             | If :ref_type: == 'spd', then :ccts: is assumed to be an ndarray
-              of reference illuminant spectra.
+            | of reference illuminant spectra.
         :mix_range: 
             | None or ndarray, optional
             | Determines the cct range between which the reference illuminant is
@@ -982,7 +986,7 @@ def cri_ref(ccts, wl3 = None, ref_type = _CRI_REF_TYPE, mix_range = None, cieobs
         :cieobs: 
             | luxpy._CIEOBS, optional
             | Required for the normalization of the Planckian and Daylight SPDs 
-              when calculating a 'mixed' reference illuminant.
+            | when calculating a 'mixed' reference illuminant.
         :norm_type: 
             | None, optional 
             |       - 'lambda': make lambda in norm_f equal to 1
@@ -996,18 +1000,18 @@ def cri_ref(ccts, wl3 = None, ref_type = _CRI_REF_TYPE, mix_range = None, cieobs
         :norm_f:
             | 1, optional
             | Normalization factor that determines the size of normalization 
-              for 'max' and 'area' 
-              or which wavelength is normalized to 1 for 'lambda' option.
+            | for 'max' and 'area' 
+            | or which wavelength is normalized to 1 for 'lambda' option.
         :force_daylight_below4000K: 
             | False or True, optional
             | Daylight locus approximation is not defined below 4000 K, 
             | but by setting this to True, the calculation can be forced to 
-              calculate it anyway.
+            | calculate it anyway.
     
     Returns:
         :returns: 
             | ndarray with reference illuminant spectra.
-              (:returns:[0] contains wavelengths)
+            | (:returns:[0] contains wavelengths)
 
     Note: 
         Future versions will have the ability to take a dict as input 
@@ -1017,7 +1021,7 @@ def cri_ref(ccts, wl3 = None, ref_type = _CRI_REF_TYPE, mix_range = None, cieobs
     if ref_type == 'spd':
         
         # ccts already contains spectrum of reference:
-        return spd(ccts, wl = wl3, norm_type = norm_type, norm_f = norm_f)	
+        return spd(ccts, wl = wl3, norm_type = norm_type, norm_f = norm_f)
 
     else:
         if mix_range is not None:
@@ -1088,7 +1092,7 @@ def cri_ref(ccts, wl3 = None, ref_type = _CRI_REF_TYPE, mix_range = None, cieobs
                     
         Srs = np.vstack((Sr[0],Srs))
 
-        return  spd(Srs, wl = None, norm_type = norm_type, norm_f = norm_f)	
+        return  spd(Srs, wl = None, norm_type = norm_type, norm_f = norm_f)
     
     
 def detect_peakwl(spd, n = 1,verbosity = 1, **kwargs):
@@ -1105,7 +1109,7 @@ def detect_peakwl(spd, n = 1,verbosity = 1, **kwargs):
         :verbosity:
             | Make a plot of the detected peaks, their fwhm, etc.
         :kwargs:
-             | Additional input arguments for scipy.signal.find_peaks.
+            | Additional input arguments for scipy.signal.find_peaks.
     Returns:
         :prop:
             | list of dictionaries with keys: 
@@ -1118,8 +1122,8 @@ def detect_peakwl(spd, n = 1,verbosity = 1, **kwargs):
     """
     props = []
     for i in range(spd.shape[0]-1):
-        peaks_, prop_ = sp.signal.find_peaks(spd[i+1,:], **kwargs)
-        prominences = sp.signal.peak_prominences(spd[i+1,:], peaks_)[0]
+        peaks_, prop_ = signal.find_peaks(spd[i+1,:], **kwargs)
+        prominences = signal.peak_prominences(spd[i+1,:], peaks_)[0]
         peaks = [peaks_[prominences.argmax()]]
         prominences[prominences.argmax()] = 0
         for j in range(n-1):
@@ -1127,7 +1131,7 @@ def detect_peakwl(spd, n = 1,verbosity = 1, **kwargs):
             prominences[prominences.argmax()] = 0
         peaks = np.sort(np.array(peaks))
         peak_heights = spd[i+1,peaks]
-        widths, width_heights, left_ips, right_ips = sp.signal.peak_widths(spd[i+1,:], peaks, rel_height=0.5)
+        widths, width_heights, left_ips, right_ips = signal.peak_widths(spd[i+1,:], peaks, rel_height=0.5)
         left_ips, right_ips = left_ips + spd[0,0], right_ips + spd[0,0]
     
         # get middle of fwhm and calculate peak position and height:
@@ -1145,3 +1149,13 @@ def detect_peakwl(spd, n = 1,verbosity = 1, **kwargs):
             plt.hlines(*results_half[1:], color="C2", label = 'FWHM range of peaks')
             plt.plot(mpeaks,hmpeaks,'gd', label = 'middle of FWHM range')
     return props
+
+
+def spd_to_indoor(spd):
+    """
+    Convert spd to indoor variant by multiplying it with the CIE spectral transmission for glass.
+    """
+    Tglass = cie_interp(_CIE_GLASS_ID.copy(), spd[0,:], kind = 'tra')[1:,:]
+    spd_ = spd.copy()
+    spd_[1:,:] *= Tglass
+    return spd_
