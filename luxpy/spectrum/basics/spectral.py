@@ -1155,7 +1155,7 @@ def spd_to_indoor(spd):
     """
     Convert spd to indoor variant by multiplying it with the CIE spectral transmission for glass.
     """
-    Tglass = cie_interp(_CIE_GLASS_ID['T'].copy(), spd[0,:], kind = 'tra')[1:,:]
+    Tglass = cie_interp(_CIE_GLASS_ID['T'].copy(), spd[0,:], kind = 'rfl')[1:,:]
     spd_ = spd.copy()
     spd_[1:,:] *= Tglass
     return spd_
