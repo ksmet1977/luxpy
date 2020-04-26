@@ -279,7 +279,6 @@ def spd_normalize(data, norm_type = None, norm_f = 1, wl = True, cieobs = _CIEOB
     return data
 
 #--------------------------------------------------------------------------------------------------
-
 def cie_interp(data,wl_new, kind = None, negative_values_allowed = False, extrap_values = None):
     """
     Interpolate / extrapolate spectral data following standard CIE15-2018.
@@ -299,7 +298,7 @@ def cie_interp(data,wl_new, kind = None, negative_values_allowed = False, extrap
             |   - If :kind: is a spectrum type (see _INTERP_TYPES), the correct 
             |     interpolation type if automatically chosen.
             |   - Or :kind: can be any interpolation type supported by 
-            |     luxpy.math.interp1
+            |     scipy.interpolate.interp1d (math.interp1d if nan's are present!!)
         :negative_values_allowed: 
             | False, optional
             | If False: negative values are clipped to zero.
@@ -307,7 +306,7 @@ def cie_interp(data,wl_new, kind = None, negative_values_allowed = False, extrap
             | None, optional
             | If None: use CIE recommended 'closest value' approach when extrapolating.
             | If float or list or ndarray, use those values to fill extrapolated value(s).
-            | If 'ext': use normal extrapolated values by math.interp1
+            | If 'ext': use normal extrapolated values by scipy.interpolate.interp1d
     
     Returns:
         :returns: 
@@ -335,41 +334,50 @@ def cie_interp(data,wl_new, kind = None, negative_values_allowed = False, extrap
         
             # Interpolate each spectrum in S: 
             N = S.shape[0]
-            Si = np.ones([N,wl_new.shape[0]])*np.nan 
-            for i in range(N):
-
-                nan_indices = np.isnan(S[i])
-                if nan_indices.any():
-                    nonan_indices = np.logical_not(nan_indices)
+            nan_indices = np.isnan(S)
+            
+            # Interpolate all (if not all rows have nan):
+            rows_with_nans = np.where(nan_indices.sum(axis=1))[0]
+            if not (rows_with_nans.size == N):
+                #allrows_nans = False
+                if extrap_values[0] is None:
+                    fill_value = (0,0)
+                elif extrap_values[0][:3] == 'ext':#(((type(extrap_values[0])==np.str_)|(type(extrap_values[0])==str)) and (extrap_values[0][:3]=='ext')):
+                    fill_value = 'extrapolate'
+                else:
+                    fill_value = (extrap_values[0],extrap_values[-1])
+                Si = sp.interpolate.interp1d(wl, S, kind = kind, bounds_error = False, fill_value = fill_value)(wl_new)
+                
+                #extrapolate by replicating closest known (in source data!) value (conform CIE2004 recommendation) 
+                if extrap_values[0] is None:
+                    Si[:,wl_new<wl[0]] = S[:,:1]
+                    Si[:,wl_new>wl[-1]] = S[:,-1:]  
+                    
+            else:
+                #allrows_nans = True
+                Si = np.ones([N,wl_new.shape[0]])*np.nan
+            
+            # Re-interpolate those which have none:
+            if nan_indices.any():
+                #looping required as some values are NaN's
+                for i in rows_with_nans:
+                    
+                    nonan_indices = np.logical_not(nan_indices[i])
                     wl_nonan = wl[nonan_indices]
                     S_i_nonan = S[i][nonan_indices]
                     Si_nonan = math.interp1(wl_nonan,S_i_nonan, wl_new, kind = kind, ext = 'extrapolate')
-                    
+#                    Si_nonan = sp.interpolate.interp1d(wl_nonan, S_i_nonan, kind = kind, bounds_error = False, fill_value = 'extrapolate')(wl_new)
+                  
                     #extrapolate by replicating closest known (in source data!) value (conform CIE2004 recommendation) 
                     if extrap_values[0] is None:
                         Si_nonan[wl_new<wl_nonan[0]] = S_i_nonan[0]
                         Si_nonan[wl_new>wl_nonan[-1]] = S_i_nonan[-1]
-                    elif (((type(extrap_values[0])==np.str_)|(type(extrap_values[0])==str)) and (extrap_values[0][:3]=='ext')):
+                    elif extrap_values[0][:3] == 'ext':#(((type(extrap_values[0])==np.str_)|(type(extrap_values[0])==str)) and (extrap_values[0][:3]=='ext')):
                         pass
                     else:
                         Si_nonan[wl_new<wl_nonan[0]] = extrap_values[0]
                         Si_nonan[wl_new>wl_nonan[-1]] = extrap_values[-1]  
-                    Si[i] = Si_nonan
-
-                else:
-                    Si[i] = math.interp1(wl, S[i], wl_new, kind = kind, ext = 'extrapolate')
-                    #Si[i] = Si_f(wl_new)
-                
-                    #extrapolate by replicating closest known (in source data!) value (conform CIE2004 recommendation) 
-                    if extrap_values[0] is None:
-                        Si[i][wl_new<wl[0]] = S[i][0]
-                        Si[i][wl_new>wl[-1]] = S[i][-1]
-                    elif (((type(extrap_values[0])==np.str_)|(type(extrap_values[0])==str)) and (extrap_values[0][:3]=='ext')):
-                        pass
-                    else:
-                        Si[i][wl_new<wl[0]] = extrap_values[0]
-                        Si[i][wl_new>wl[-1]] = extrap_values[-1]  
-                    
+                    Si[i] = Si_nonan              
                 
             # No negative values allowed for spectra:    
             if negative_values_allowed == False:
@@ -381,6 +389,7 @@ def cie_interp(data,wl_new, kind = None, negative_values_allowed = False, extrap
     
     return data
 
+
 #--------------------------------------------------------------------------------------------------
 def spd(data = None, interpolation = None, kind = 'np', wl = None,\
         columns = None, sep = ',',header = None, datatype = 'S', \
@@ -388,7 +397,7 @@ def spd(data = None, interpolation = None, kind = 'np', wl = None,\
     """
     | All-in-one function that can:
     |    1. Read spectral data from data file or take input directly 
-    |       as pandas.dataframe or ndarray.
+         as pandas.dataframe or ndarray.
     |    2. Convert spd-like data from ndarray to pandas.dataframe and back.
     |    3. Interpolate spectral data.
     |    4. Normalize spectral data.
@@ -436,8 +445,8 @@ def spd(data = None, interpolation = None, kind = 'np', wl = None,\
         :norm_f:
             | 1, optional
             | Normalization factor that determines the size of normalization 
-            | for 'max' and 'area' 
-            | or which wavelength is normalized to 1 for 'lambda' option.
+              for 'max' and 'area' 
+              or which wavelength is normalized to 1 for 'lambda' option.
     
     Returns:
         :returns: 
@@ -455,10 +464,10 @@ def spd(data = None, interpolation = None, kind = 'np', wl = None,\
     # Data input:
     if data is not None:
         if (interpolation is None) & (norm_type is None):
-            data = getdata(data = data, kind = 'np', columns = columns, sep = sep, header = header, datatype = datatype)
+            data = getdata(data = data, kind = 'np', columns = columns, sep = sep, header = header, datatype = datatype, copy = True)
             if (transpose == True): data = data.T
         else:
-            data = getdata(data = data, kind = 'np', columns = columns, sep = sep, header = header, datatype = datatype)#interpolation requires np-array as input
+            data = getdata(data = data, kind = 'np', columns = columns, sep = sep, header = header, datatype = datatype, copy = True)#interpolation requires np-array as input
             if (transpose == True): data = data.T
             data = cie_interp(data = data, wl_new = wl,kind = interpolation)
             data = spd_normalize(data,norm_type = norm_type, norm_f = norm_f, wl = True)
@@ -477,7 +486,7 @@ def spd(data = None, interpolation = None, kind = 'np', wl = None,\
         data = data.T
         
     # convert to desired kind:
-    data = getdata(data = data,kind = kind, columns = columns, datatype = datatype)
+    data = getdata(data = data,kind = kind, columns = columns, datatype = datatype, copy = False) # already copy when data is not None, else new anyway
         
     return data
 

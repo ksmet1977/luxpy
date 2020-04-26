@@ -243,7 +243,7 @@ def vec_to_dict(vec= None, dic = {}, vsize = None, keys = None):
         return vec, vsize
 
 #--------------------------------------------------------------------------------------------------
-def getdata(data, kind = 'np', columns = None, header = None, sep = ',', datatype = 'S', verbosity = True):
+def getdata(data, kind = 'np', columns = None, header = None, sep = ',', datatype = 'S', copy = True, verbosity = True):
     """
     Get data from csv-file 
     or convert between pandas dataframe and numpy 2d-array.
@@ -271,7 +271,10 @@ def getdata(data, kind = 'np', columns = None, header = None, sep = ',', datatyp
             | Is used when creating column headers (:column: is None).
             |   -'S': light source spectrum
             |   -'R': reflectance spectrum
-            |   or other.      
+            |   or other.   
+        :copy:
+            | True, optional
+            | Return a copy of ndarray if kind == 'np', or copy of pd.DataFrame if kind == 'df'
         :verbosity:
             | True, False, optional
             | Print warning when inferring headers from file.
@@ -302,6 +305,8 @@ def getdata(data, kind = 'np', columns = None, header = None, sep = ',', datatyp
 
     elif isinstance(data,pd.DataFrame) & (kind == 'np'):
         data = data.values
+    elif copy == True:
+        data = data.copy()
     return data
 
 #--------------------------------------------------------------------------------------------------
