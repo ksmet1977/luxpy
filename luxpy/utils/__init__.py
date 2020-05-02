@@ -16,3 +16,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #########################################################################
 
+from .utilities import *
+__all__ = utilities.__all__
+
+from .folder_tree import tree
+__all__ += ['tree']

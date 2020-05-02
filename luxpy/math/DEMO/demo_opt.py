@@ -55,7 +55,7 @@ Module for demo_opt
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
-from luxpy import np, plt, Axes3D, put_args_in_db, getdata
+from luxpy.utils import np, plt, Axes3D, put_args_in_db, getdata
 
 if __name__ == '__main__':
     np.set_printoptions(formatter={'float': lambda x: "{0:0.4f}".format(x)})
@@ -98,8 +98,10 @@ def demo_opt(f, dimensions, args = (), xrange = None, options = {}):
           | instead.
 
     Returns: fopt, xopt
-          :fopt: the m x mu_opt ndarray with the mu_opt best objectives
-          :xopt: the n x mu_opt ndarray with the mu_opt best individuals
+          :fopt: 
+            | the m x mu_opt ndarray with the mu_opt best objectives
+          :xopt: 
+            | the n x mu_opt ndarray with the mu_opt best individuals
     """
 
     # Initialize the parameters of the algorithm with values contained in dict:
@@ -187,8 +189,9 @@ def demo_opt(f, dimensions, args = (), xrange = None, options = {}):
 def fobjeval(f, x, args, xrange):
     """
     Evaluates the objective function.
-    Since the population is normalized, this function unnormalizes it and
-    computes the objective values.
+    
+    | Since the population is normalized, this function unnormalizes it and
+    | computes the objective values.
 
     Args:
        :f: 
@@ -225,16 +228,17 @@ def fobjeval(f, x, args, xrange):
 def mutation(Xp, options):
     """
     Performs mutation in the individuals.
-    The mutation is one of the operators responsible for random changes in
-    the individuals. Each parent x will have a new individual, called trial
-    vector u, after the mutation.
-    To do that, pick up two random individuals from the population, x2 and
-    x3, and creates a difference vector v = x2 - x3. Then, chooses another
-    point, called base vector, xb, and creates the trial vector by
-
-       u = xb + F*v = xb + F*(x2 - x3)
-
-    wherein F is an internal parameter, called scale factor.
+    
+    | The mutation is one of the operators responsible for random changes in
+    | the individuals. Each parent x will have a new individual, called trial
+    | vector u, after the mutation.
+    | To do that, pick up two random individuals from the population, x2 and
+    | x3, and creates a difference vector v = x2 - x3. Then, chooses another
+    | point, called base vector, xb, and creates the trial vector by
+    |
+    |   u = xb + F*v = xb + F*(x2 - x3)
+    |
+    | wherein F is an internal parameter, called scale factor.
 
     Args:
        :Xp: 
@@ -272,14 +276,15 @@ def mutation(Xp, options):
 def recombination(Xp, Xm, options):
     """
     Performs recombination in the individuals.
-    The recombination combines the information of the parents and the
-    mutated individuals (also called "trial vectors") to create the
-    offspring. Assuming x represents the i-th parent, and u the i-th trial
-    vector (obtained from the mutation), the offspring xo will have the
-    following j-th coordinate: xo_j = u_j if rand_j <= CR, x_j otherwise
-    wherein rand_j is a number drawn from a uniform distribution from 0 to
-    1, and CR is called the crossover factor. To prevent mere copies, at
-    least one coordinate is guaranteed to belong to the trial vector.
+    
+    | The recombination combines the information of the parents and the
+    | mutated individuals (also called "trial vectors") to create the
+    | offspring. Assuming x represents the i-th parent, and u the i-th trial
+    | vector (obtained from the mutation), the offspring xo will have the
+    | following j-th coordinate: xo_j = u_j if rand_j <= CR, x_j otherwise
+    | wherein rand_j is a number drawn from a uniform distribution from 0 to
+    | 1, and CR is called the crossover factor. To prevent mere copies, at
+    | least one coordinate is guaranteed to belong to the trial vector.
 
    Args:
       :Xp: 
@@ -325,16 +330,17 @@ def repair(Xo):
 def selection(P, O, options):
     """
     Selects the next population.
-    Each parent is compared to its offspring. If the parent dominates its 
-    child, then it goes to the next population. If the offspring dominates 
-    the parent, that new member is added. However, if they are incomparable
-    (there is no mutual domination), them both are sent to the next 
-    population. After that, the new set of individuals must be truncated to 
-    mu, wherein mu is the original number of points.
-    This is accomplished by the use of "non-dominated sorting", that is,
-    ranks the individual in fronts of non-domination, and within each
-    front, measures them by using crowding distance. With regard to these
-    two metrics, the best individuals are kept in the new population.
+    
+    | Each parent is compared to its offspring. If the parent dominates its 
+    | child, then it goes to the next population. If the offspring dominates 
+    | the parent, that new member is added. However, if they are incomparable
+    | (there is no mutual domination), them both are sent to the next 
+    | population. After that, the new set of individuals must be truncated to 
+    | mu, wherein mu is the original number of points.
+    | This is accomplished by the use of "non-dominated sorting", that is,
+    | ranks the individual in fronts of non-domination, and within each
+    | front, measures them by using crowding distance. With regard to these
+    | two metrics, the best individuals are kept in the new population.
 
    Args:
       :P: 
@@ -411,20 +417,28 @@ def selection(P, O, options):
 def init_options(options = {}, F = None, CR = None, kmax = None, mu = None, display = None):
     """
     Initialize options dict.
-    If input arg is None, the default value is used. 
+    
+    |If input arg is None, the default value is used. 
     
     Args:
-        :options: {}, optional
-         | Dict with options
-         | {} initializes dict to default values.
-        :F: scale factor, optional
-        :CR: crossover factor, optional
-        :kmax: maximum number of iterations, optional
-        :mu: population size, optional
-        :display: show or not the population during execution, optional
+        :options: 
+            |{}, optional
+            | Dict with options
+            | {} initializes dict to default values.
+        :F: 
+            | scale factor, optional
+        :CR: 
+            | crossover factor, optional
+        :kmax:
+            | maximum number of iterations, optional
+        :mu: 
+            | population size, optional
+        :display: 
+            | show or not the population during execution, optional
         
     Returns:
-        :options: dict with options.
+        :options: 
+            | dict with options.
     """
     args = locals().copy()
     if bool(options)==False:
@@ -437,7 +451,7 @@ def ndset(F):
     Finds the nondominated set of a set of objective points.
 
     Args:
-      F: 
+      :F: 
           | a m x mu ndarray with mu points and m objectives
 
    Returns:
@@ -480,16 +494,17 @@ def ndset(F):
 def crowdingdistance(F):
     """
     Computes the crowding distance of a nondominated front.
-    The crowding distance gives a measure of how close the individuals are
-    with regard to its neighbors. The higher this value, the greater the
-    spacing. This is used to promote better diversity in the population.
+    
+    | The crowding distance gives a measure of how close the individuals are
+    | with regard to its neighbors. The higher this value, the greater the
+    | spacing. This is used to promote better diversity in the population.
 
     Args:
-       F: 
+       :F: 
            | an m x mu ndarray with mu individuals and m objectives
 
     Returns:
-       cdist: 
+       :cdist: 
            | a m-length column vector
     """
     m, mu = F.shape #gets the size of F
@@ -527,10 +542,11 @@ def crowdingdistance(F):
 def dtlz2_(x, M):
     """
     DTLZ2 multi-objective function
-    This function represents a hyper-sphere.
-    Using k = 10, the number of dimensions must be n = (M - 1) + k.
-    The Pareto optimal solutions are obtained when the last k variables of x
-    are equal to 0.5.
+    
+    | This function represents a hyper-sphere.
+    | Using k = 10, the number of dimensions must be n = (M - 1) + k.
+    | The Pareto optimal solutions are obtained when the last k variables of x
+    | are equal to 0.5.
     
     Args:
         :x: 
@@ -538,8 +554,8 @@ def dtlz2_(x, M):
         :M: 
             | a scalar with the number of objectives
     
-       Returns:
-          f: 
+    Returns:
+        :f: 
             | a m x mu ndarray with mu points and their m objectives computed at
             | the input
     """
@@ -564,10 +580,11 @@ def dtlz2_(x, M):
 def dtlz_range_(fname, M):
     """
     Returns the decision range of a DTLZ function
-    The range is simply [0,1] for all variables. What varies is the number 
-    of decision variables in each problem. The equation for that is
-    n = (M-1) + k
-    wherein k = 5 for DTLZ1, 10 for DTLZ2-6, and 20 for DTLZ7.
+    
+    | The range is simply [0,1] for all variables. What varies is the number 
+    | of decision variables in each problem. The equation for that is
+    | n = (M-1) + k
+    | wherein k = 5 for DTLZ1, 10 for DTLZ2-6, and 20 for DTLZ7.
     
     Args:
         :fname: 
@@ -578,7 +595,7 @@ def dtlz_range_(fname, M):
        Returns:
           :lim: 
               | a n x 2 matrix wherein the first column is the lower limit 
-               (0), and the second column, the upper limit of search (1)
+              |(0), and the second column, the upper limit of search (1)
     """
      #Checks if the string has or not the prefix 'dtlz', or if the number later
      #is greater than 7:
@@ -605,10 +622,11 @@ def dtlz_range_(fname, M):
 def dtlz2(x, M):
     """
     DTLZ2 multi-objective function
-    This function represents a hyper-sphere.
-    Using k = 10, the number of dimensions must be n = (M - 1) + k.
-    The Pareto optimal solutions are obtained when the last k variables of x
-    are equal to 0.5.
+    
+    | This function represents a hyper-sphere.
+    | Using k = 10, the number of dimensions must be n = (M - 1) + k.
+    | The Pareto optimal solutions are obtained when the last k variables of x
+    | are equal to 0.5.
     
     Args:
         :x: 
@@ -617,7 +635,7 @@ def dtlz2(x, M):
             | a scalar with the number of objectives
     
        Returns:
-          f: 
+          :f: 
             | a mu x m ndarray with mu points and their m objectives computed at
             | the input
     """
@@ -641,10 +659,11 @@ def dtlz2(x, M):
 def dtlz_range(fname, M):
     """
     Returns the decision range of a DTLZ function
-    The range is simply [0,1] for all variables. What varies is the number 
-    of decision variables in each problem. The equation for that is
-    n = (M-1) + k
-    wherein k = 5 for DTLZ1, 10 for DTLZ2-6, and 20 for DTLZ7.
+    
+    | The range is simply [0,1] for all variables. What varies is the number 
+    | of decision variables in each problem. The equation for that is
+    | n = (M-1) + k
+    | wherein k = 5 for DTLZ1, 10 for DTLZ2-6, and 20 for DTLZ7.
     
     Args:
         :fname: 
@@ -655,7 +674,7 @@ def dtlz_range(fname, M):
        Returns:
           :lim: 
               | a 2 x n matrix wherein the first row is the lower limit 
-               (0), and the second row, the upper limit of search (1)
+              | (0), and the second row, the upper limit of search (1)
     """
      #Checks if the string has or not the prefix 'dtlz', or if the number later
      #is greater than 7:
@@ -678,6 +697,7 @@ def dtlz_range(fname, M):
     return lim
 
 if __name__ == '__main__':
+
     # EXAMPLE USE for DTLZ2 problem:
     k = 10
     opts = init_options(display = False)

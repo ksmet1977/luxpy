@@ -105,7 +105,8 @@ References
 """
 
 #--------------------------------------------------------------------------------------------------
-from luxpy import np, pd, sp, plt, _PKG_PATH, _SEP, _EPS, _CIEOBS, np2d, getdata, math
+from luxpy import  _CIEOBS, math
+from luxpy.utils import np, pd, sp, plt, _PKG_PATH, _SEP, _EPS, np2d, getdata
 from .cmf import _CMF
 from .spectral_databases import _CIE_GLASS_ID
 from scipy import signal
@@ -160,14 +161,10 @@ def getwlr(wl3 = None):
             | ndarray (.shape = (n,)) with n wavelengths ranging from
             | start to stop, with wavelength interval equal to spacing.
     """
-    if wl3 is None:
-        wl3 = _WL3
+    if wl3 is None: wl3 = _WL3
     
     # Wavelength definition:
-    if len(wl3) == 3: # define wavelengths from [start = l0, stop = ln, spacing = dl]
-        wl = np.linspace(wl3[0],wl3[1],int(np.floor((wl3[1]-wl3[0]+wl3[2])/wl3[2])))
-    else:
-        wl = wl3
+    wl = wl3 if (len(wl3) != 3) else np.linspace(wl3[0],wl3[1],int(np.floor((wl3[1]-wl3[0]+wl3[2])/wl3[2]))) # define wavelengths from [start = l0, stop = ln, spacing = dl]
     
     return wl
 
@@ -185,9 +182,9 @@ def getwld(wl):
             | - float:  for equal wavelength spacings
             | - ndarray (.shape = (n,)): for unequal wavelength spacings
     """
-    d=np.diff(wl)
-    dl=(np.hstack((d[0],d[0:-1]/2.0,d[-1]))+np.hstack((0.0,d[1:]/2.0,0.0)))
-    if np.array_equal(dl,dl.mean()*np.ones(dl.shape)): dl=dl[0]
+    d = np.diff(wl)
+    dl = (np.hstack((d[0],d[0:-1]/2.0,d[-1]))+np.hstack((0.0,d[1:]/2.0,0.0)))
+    if np.array_equal(dl,dl.mean()*np.ones(dl.shape)): dl = dl[0]
     return dl
 
 
@@ -227,18 +224,13 @@ def spd_normalize(data, norm_type = None, norm_f = 1, wl = True, cieobs = _CIEOB
             | ndarray with normalized data.
     """
     if norm_type is not None:
-        if not isinstance(norm_type,list):
-            norm_type = [norm_type]
+        if not isinstance(norm_type,list): norm_type = [norm_type]
+        
         if norm_f is not None:
-            if not isinstance(norm_f,list):
-                norm_f = [norm_f]
+            if not isinstance(norm_f,list): norm_f = [norm_f]
                 
-        if ('lambda' in norm_type):
-            wl = True # for lambda normalization wl MUST be first column
-            wlr = data[0]
-            
-        if ('qu' in norm_type):
-            wl = True # for 'qu' (quantal) normalization wl MUST be first column
+        if ('lambda' in norm_type) | ('qu' in norm_type):
+            wl = True # for lambda & 'qu' normalization wl MUST be first column
             wlr = data[0]
             
         if (('area' in norm_type) | ('ru' in norm_type) | ('pu' in norm_type) | ('pusa' in norm_type)) & (wl == True):
@@ -248,27 +240,18 @@ def spd_normalize(data, norm_type = None, norm_f = 1, wl = True, cieobs = _CIEOB
             
         offset = int(wl)
         for i in range(data.shape[0]-offset):  
-            if len(norm_type)>1:
-                norm_type_ = norm_type[i]
-            else:
-                norm_type_ = norm_type[0]
+            norm_type_ = norm_type[i] if (len(norm_type)>1) else norm_type[0]
+
             if norm_f is not None:
-                if len(norm_f)>1:
-                    norm_f_ = norm_f[i]
-                else:
-                    norm_f_ = norm_f[0]
+                norm_f_ = norm_f[i] if (len(norm_f)>1) else norm_f[0]
             else:
-                if norm_type_ == 'lambda':
-                    norm_f_ = 560.0    
-                else:
-                    norm_f_ = 1.0
+                norm_f_ = 560.0 if (norm_type_ == 'lambda') else 1.0
       
             if norm_type_=='max':
                 data[i+offset]=norm_f_*data[i+offset]/np.max(data[i+offset])
             elif norm_type_=='area':
                 data[i+offset]=norm_f_*data[i+offset]/(np.sum(data[i+offset])*dl)
             elif norm_type_=='lambda':
-                #wl_index = np.where((np.abs(wlr-norm_f_)==np.min(np.abs(wlr-norm_f_))))[0]
                 wl_index = np.abs(wlr-norm_f_).argmin()
                 data[i+offset]=data[i+offset]/data[i+offset][wl_index]
             elif (norm_type_ == 'ru') | (norm_type_ == 'pu') | (norm_type == 'pusa') | (norm_type_ == 'qu'):
@@ -278,6 +261,7 @@ def spd_normalize(data, norm_type = None, norm_f = 1, wl = True, cieobs = _CIEOB
                 data[i+offset]=data[i+offset]/norm_f_
     return data
 
+#--------------------------------------------------------------------------------------------------
 #--------------------------------------------------------------------------------------------------
 def cie_interp(data,wl_new, kind = None, negative_values_allowed = False, extrap_values = None):
     """
@@ -355,7 +339,7 @@ def cie_interp(data,wl_new, kind = None, negative_values_allowed = False, extrap
                     
             else:
                 #allrows_nans = True
-                Si = np.ones([N,wl_new.shape[0]])*np.nan
+                Si = np.zeros([N,wl_new.shape[0]]);Si.fill(np.nan)
             
             # Re-interpolate those which have none:
             if nan_indices.any():
@@ -381,8 +365,7 @@ def cie_interp(data,wl_new, kind = None, negative_values_allowed = False, extrap
                 
             # No negative values allowed for spectra:    
             if negative_values_allowed == False:
-                if np.any(Si):
-                    Si[Si<0.0] = 0.0
+                if np.any(Si): Si[Si<0.0] = 0.0
             
             # Add wavelengths to data array: 
             return np.vstack((wl_new,Si))  
@@ -453,11 +436,8 @@ def spd(data = None, interpolation = None, kind = 'np', wl = None,\
             | ndarray or pandas.dataframe 
             | with interpolated and/or normalized spectral data.
     """
-    if isinstance(data,str):
-        transpose = True #when spd comes from file -> transpose (columns in files should be different spectra)
-    else:
-        transpose = False
-
+    transpose = True if isinstance(data,str) else False #when spd comes from file -> transpose (columns in files should be different spectra)
+         
     # Wavelength definition:
     wl = getwlr(wl)
     
@@ -472,23 +452,21 @@ def spd(data = None, interpolation = None, kind = 'np', wl = None,\
             data = cie_interp(data = data, wl_new = wl,kind = interpolation)
             data = spd_normalize(data,norm_type = norm_type, norm_f = norm_f, wl = True)
         
-        if isinstance(data,pd.DataFrame):
-            columns = data.columns #get possibly updated column names
+        if isinstance(data,pd.DataFrame): columns = data.columns #get possibly updated column names
 
     else:
         data = np2d(wl)
   
      
-    if ((data.shape[0] - 1) == 0): #only wavelengths
-        columns = None
-        
-    if kind == 'df':
-        data = data.T
+    if ((data.shape[0] - 1) == 0): columns = None #only wavelengths
+       
+    if kind == 'df':  data = data.T
         
     # convert to desired kind:
     data = getdata(data = data,kind = kind, columns = columns, datatype = datatype, copy = False) # already copy when data is not None, else new anyway
         
     return data
+
 
 #--------------------------------------------------------------------------------------------------
 def xyzbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, norm_type = None, norm_f = None, kind = 'np'):
@@ -593,7 +571,7 @@ def vlbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, norm_type = None, norm_
     References:
         1. `CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018. <https://doi.org/10.25039/TR.015.2018>`_
     """
-    if scr == 'dict':
+    if scr is 'dict':
         dict_or_file = _CMF[cieobs]['bar'][[0,2],:] 
         K = _CMF[cieobs]['K']
     elif scr is 'vltype':
@@ -618,7 +596,7 @@ def spd_to_xyz(data,  relative = True, rfl = None, cieobs = _CIEOBS, K = None, o
             | (.shape = (number of spectra + 1, number of wavelengths))
             | Note that :data: is never interpolated, only CMFs and RFLs. 
             | This way interpolation errors due to peaky spectra are avoided. 
-            | Conform CIE15-2018.
+              Conform CIE15-2018.
         :relative: 
             | True or False, optional
             | Calculate relative XYZ (Yw = 100) or absolute XYZ (Y = Luminance)
@@ -628,7 +606,7 @@ def spd_to_xyz(data,  relative = True, rfl = None, cieobs = _CIEOBS, K = None, o
         :cieobs:
             | luxpy._CIEOBS or str, optional
             | Determines the color matching functions to be used in the 
-            | calculation of XYZ.
+              calculation of XYZ.
         :K: 
             | None, optional
             |   e.g.  K  = 683 lm/W for '1931_2' (relative == False) 
@@ -666,71 +644,54 @@ def spd_to_xyz(data,  relative = True, rfl = None, cieobs = _CIEOBS, K = None, o
         1. `CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018. <https://doi.org/10.25039/TR.015.2018>`_
     """
     
-    if isinstance(data,pd.DataFrame): # convert to np format
-        data = getdata(data,kind = 'np')
-    else:
-        data = np2d(data) #ensure 2D-array
+    data = getdata(data,kind = 'np') if isinstance(data,pd.DataFrame) else np2d(data) # convert to np format and ensure 2D-array
 
     # get wl spacing:
-    dl=getwld(data[0])
+    dl = getwld(data[0])
     
     # get cmf,k for cieobs:
     if isinstance(cieobs,str):
-        if K is None:
-            K = _CMF[cieobs]['K']
+        if K is None: K = _CMF[cieobs]['K']
         scr = 'dict'
     else:
         scr = 'cieobs'
-        if (K is None) & (relative == False):
-            K = 1
-#            raise Exception('spd_to_xyz: user defined CMF set, \
-#                            but no scaling factor has been supplied.\
-#                            Setting K = 1.')
-#            print('spd_to_xyz: user defined CMF set, \
-#                            but no scaling factor has been supplied.\
-#                            Setting K = 1.')
-            
-    cmf = xyzbar(cieobs = cieobs, scr = scr, wl_new = data[0], kind = 'np') #also interpolate to wl of data
+        if (K is None) & (relative == False): K = 1
+    
+    # Interpolate to wl of data:
+    cmf = xyzbar(cieobs = cieobs, scr = scr, wl_new = data[0], kind = 'np') 
+    
+    # Add CIE standard deviate observer function to cmf if requested:
     if cie_std_dev_obs is not None:
         cmf_cie_std_dev_obs = xyzbar(cieobs = 'cie_std_dev_obs_' + cie_std_dev_obs.lower(), scr = scr, wl_new = data[0], kind = 'np')
-        cmf[1:] = cmf[1:] + cmf_cie_std_dev_obs[1:] # add CIE standard deviate observer function to cmf
+        cmf[1:] = cmf[1:] + cmf_cie_std_dev_obs[1:] 
+    
+    # Rescale xyz using k or 100/Yw:
+    if relative == True: K = 100.0/np.dot(data[1:],cmf[2,:]*dl)
 
-    #interpolate rfls to lambda range of spd:
+    # Interpolate rfls to lambda range of spd and calculate xyz:
     if rfl is not None: 
         rfl = cie_interp(data=np2d(rfl),wl_new = data[0],kind = 'rfl')
         rfl = np.concatenate((np.ones((1,data.shape[1])),rfl[1:])) #add rfl = 1 for light source spectrum
+        xyz = K*np.array([np.dot(rfl,(data[1:]*cmf[i+1,:]*dl).T) for i in range(3)])#calculate tristimulus values
         rflwasnotnone = 1
     else:
         rfl = np.ones((1,data.shape[1]))
+        xyz = (K*(np.dot((cmf[1:]*dl),data[1:].T))[:,None,:])
         rflwasnotnone = 0
-
-    if rflwasnotnone == 1:
-        #rescale xyz using k or 100/Yw:
-        if relative == True:
-            K = 100.0/np.dot(data[1:],cmf[2,:]*dl)
-        xyz = K*np.array([np.dot(rfl,(data[1:]*cmf[i+1,:]*dl).T) for i in range(3)])#calculate tristimulus values
-    else:
-        if relative == True:
-            K = 100.0/np.dot(data[1:],(cmf[2,:]*dl).T)
-        xyz = (K*(np.dot((cmf[1:]*dl),data[1:].T))[:,None,:]) #calculate tristimulus values
     xyz = np.transpose(xyz,[1,2,0]) #order [rfl,spd,xyz]
     
     # Setup output:
     if out == 2:
-        xyzw = np.atleast_2d(np.take(xyz,0,axis = 0))
-        xyz  = np.atleast_2d(np.take(xyz,[i+rflwasnotnone for i in range(rfl.shape[0]-rflwasnotnone)],axis = 0))
-        if rflwasnotnone == 0:
-            xyz = np.squeeze(xyz,axis = 0)
-            #xyzw = np.squeeze(xyzw,axis = 0)
+        xyzw = xyz[0,...]
+        xyz = xyz[rflwasnotnone:,...]
+        if rflwasnotnone == 0: xyz = np.squeeze(xyz,axis = 0)
         return xyz,xyzw
     elif out == 1:
-        if rflwasnotnone == 0:
-            xyz = np.squeeze(xyz,axis = 0)
+        if rflwasnotnone == 0: xyz = np.squeeze(xyz,axis = 0)
         return xyz
     else: 
-        xyz = np.atleast_2d(np.take(xyz,[i+rflwasnotnone for i in range(rfl.shape[0]-rflwasnotnone)],axis = 0))
-        if rflwasnotnone == 0:
-            xyz = np.squeeze(xyz,axis = 0)
+        xyz = xyz[rflwasnotnone:,...]
+        if rflwasnotnone == 0: xyz = np.squeeze(xyz,axis = 0)
         return xyz
 
 def spd_to_ler(data, cieobs = _CIEOBS, K = None):
@@ -762,14 +723,11 @@ def spd_to_ler(data, cieobs = _CIEOBS, K = None):
     """
     
     if isinstance(cieobs,str):    
-        if K == None:
-            K = _CMF[cieobs]['K']
+        if K == None: K = _CMF[cieobs]['K']
         Vl = vlbar(cieobs = cieobs, scr = 'dict',wl_new = data[0], kind = 'np')[1:2] #also interpolate to wl of data
     else:
         Vl = spd(wl = data[0], data = cieobs, interpolation = 'cmf', kind = 'np')[1:2]
-        if K is None:
-            #K = 1
-            raise Exception("spd_to_ler: User defined Vlambda, but no K scaling factor has been supplied.")
+        if K is None: raise Exception("spd_to_ler: User defined Vlambda, but no K scaling factor has been supplied.")
     dl = getwld(data[0])
     return ((K * np.dot((Vl*dl),data[1:].T))/np.sum(data[1:]*dl, axis = data.ndim-1)).T
 
@@ -813,7 +771,7 @@ def spd_to_power(data, ptype = 'ru', cieobs = _CIEOBS):
 
         # Get Vlambda and Km (for E):
         Vl, Km = vlbar(cieobs = cieobs, wl_new = data[0], out = 2)
-        Km = Km*Km_correction_factor
+        Km *= Km_correction_factor
         p = Km*np2d(np.dot(data[1:],dl*Vl[1])).T
         
     elif ptype == 'pu': # normalize in photometric units
@@ -858,9 +816,8 @@ def blackbody(cct, wl3 = None):
     References:
         1. `CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018. <https://doi.org/10.25039/TR.015.2018>`_
     """
-    cct=float(cct)
-    if wl3 is None: 
-        wl3 = _WL3 
+    cct = float(cct)
+    if wl3 is None: wl3 = _WL3 
     wl=getwlr(wl3)
     def fSr(x):
         return (1/np.pi)*_BB['c1']*((x*1.0e-9)**(-5))*(_BB['n']**(-2.0))*(np.exp(_BB['c2']*((_BB['n']*x*1.0e-9*(cct+_EPS))**(-1.0)))-1.0)**(-1.0)
@@ -891,11 +848,10 @@ def daylightlocus(cct, force_daylight_below4000K = False):
     if np.any((cct < 4000.0) & (force_daylight_below4000K == False)):
         raise Exception('spectral.daylightlocus(): Daylight locus approximation not defined below 4000 K')
     
-        
-    xD=-4.607*((1e3/cct)**3.0)+2.9678*((1e3/cct)**2.0)+0.09911*(1000.0/cct)+0.244063
+    xD = -4.607*((1e3/cct)**3.0)+2.9678*((1e3/cct)**2.0)+0.09911*(1000.0/cct)+0.244063
     p = cct>=7000.0
     xD[p] = -2.0064*((1.0e3/cct[p])**3.0)+1.9018*((1.0e3/cct[p])**2.0)+0.24748*(1.0e3/cct[p])+0.23704
-    yD=-3.0*xD**2.0+2.87*xD-0.275
+    yD = -3.0*xD**2.0+2.87*xD-0.275
     return xD,yD
     
    
@@ -930,16 +886,15 @@ def daylightphase(cct, wl3 = None, force_daylight_below4000K = False, verbosity 
     References:
         1. `CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018. <https://doi.org/10.25039/TR.015.2018>`_
      """
-    cct=float(cct)
-    if wl3 is None: 
-        wl3 = _WL3 
+    cct = float(cct)
+    if wl3 is None: wl3 = _WL3 
     if (cct < (4000.0)) & (force_daylight_below4000K == False):
         if verbosity is not None:
             print('Warning daylightphase spd not defined below 4000 K. Using blackbody radiator instead.')
-        Sr = blackbody(cct,wl3)
+        return blackbody(cct,wl3)
     else:
         
-        wl=getwlr(wl3) 
+        wl = getwlr(wl3) 
         
         #interpolate _S012_DAYLIGHTPHASE first to wl range:
         if  not np.array_equal(_S012_DAYLIGHTPHASE[0],wl):
@@ -949,15 +904,13 @@ def daylightphase(cct, wl3 = None, force_daylight_below4000K = False, verbosity 
 
         xD, yD = daylightlocus(cct, force_daylight_below4000K = force_daylight_below4000K)
         
-        M1=(-1.3515-1.7703*xD+5.9114*yD)/(0.0241+0.2562*xD-0.7341*yD)
-        M2=(0.03-31.4424*xD+30.0717*yD)/(0.0241+0.2562*xD-0.7341*yD)
-        Sr=S012_daylightphase[1,:]+M1*S012_daylightphase[2,:]+M2*S012_daylightphase[3,:]
-        Sr560=Sr[:,np.where(np.abs(S012_daylightphase[0,:] - 560.0) == np.min(np.abs(S012_daylightphase[0,:] - 560)))[0]]
-        Sr=Sr/Sr560
-        Sr[Sr==float('NaN')]=0
-        Sr = np.vstack((wl,Sr))
-    return Sr
-#    return spd(Sr, wl = None, norm_type = None, norm_f = None)  
+        M1 = (-1.3515-1.7703*xD+5.9114*yD)/(0.0241+0.2562*xD-0.7341*yD)
+        M2 = (0.03-31.4424*xD+30.0717*yD)/(0.0241+0.2562*xD-0.7341*yD)
+        Sr = S012_daylightphase[1,:]+M1*S012_daylightphase[2,:]+M2*S012_daylightphase[3,:]
+        Sr560 = Sr[:,np.where(np.abs(S012_daylightphase[0,:] - 560.0) == np.min(np.abs(S012_daylightphase[0,:] - 560)))[0]]
+        Sr /= Sr560
+        Sr[Sr==float('NaN')] = 0
+        return np.vstack((wl,Sr))
     
 #------------------------------------------------------------------------------
 def cri_ref(ccts, wl3 = None, ref_type = _CRI_REF_TYPE, mix_range = None, cieobs=_CIEOBS, norm_type = None, norm_f = None, force_daylight_below4000K = False):
@@ -1033,11 +986,9 @@ def cri_ref(ccts, wl3 = None, ref_type = _CRI_REF_TYPE, mix_range = None, cieobs
         return spd(ccts, wl = wl3, norm_type = norm_type, norm_f = norm_f)
 
     else:
-        if mix_range is not None:
-            mix_range = np2d(mix_range)
+        if mix_range is not None: mix_range = np2d(mix_range)
 
-        if not (isinstance(ref_type,list) | isinstance(ref_type,dict)) :
-            ref_type = [ref_type]
+        if not (isinstance(ref_type,list) | isinstance(ref_type,dict)): ref_type = [ref_type]
    
         for i in range(len(ccts)):
             cct = ccts[i]
@@ -1047,20 +998,13 @@ def cri_ref(ccts, wl3 = None, ref_type = _CRI_REF_TYPE, mix_range = None, cieobs
                 raise Exception("cri_ref(): dictionary ref_type: Not yet implemented")
             else:
 
-                if len(ref_type)>1:
-                    ref_type_ = ref_type[i]
-                else:
-                    ref_type_ = ref_type[0]
+                ref_type_ = ref_type[i] if (len(ref_type)>1) else ref_type[0]
 
                 if mix_range is None:
                     mix_range_ =  _CRI_REF_TYPES[ref_type_]
 
                 else:
-                    if mix_range.shape[0]>1:
-                        mix_range_ = mix_range[i] #must be np2d !!!
-                    else:
-                        mix_range_ = mix_range[0]
-            
+                    mix_range_ = mix_range[i] if (mix_range.shape[0]>1) else mix_range[0]  #must be np2d !!!            
       
             if (mix_range_[0] == mix_range_[1]) | (ref_type_[0:2] == 'BB') | (ref_type_[0:2] == 'DL'):
                 if ((cct < mix_range_[0]) & (not (ref_type_[0:2] == 'DL'))) | (ref_type_[0:2] == 'BB'):
@@ -1076,10 +1020,8 @@ def cri_ref(ccts, wl3 = None, ref_type = _CRI_REF_TYPE, mix_range = None, cieobs
 
                 SrBB = 100.0*SrBB[1]/np.array(np.sum(SrBB[1]*cmf[2]*ld))
                 SrDL = 100.0*SrDL[1]/np.array(np.sum(SrDL[1]*cmf[2]*ld))
-                Tb = float(mix_range_[0])
-                Te = float(mix_range_[1])
-                cBB = (Te-cct)/(Te-Tb)
-                cDL = (cct-Tb)/(Te-Tb)
+                Tb, Te = float(mix_range_[0]), float(mix_range_[1])
+                cBB, cDL = (Te-cct)/(Te-Tb), (cct-Tb)/(Te-Tb)
                 if cBB < 0.0:
                     cBB = 0.0
                 elif cBB > 1:
@@ -1090,7 +1032,7 @@ def cri_ref(ccts, wl3 = None, ref_type = _CRI_REF_TYPE, mix_range = None, cieobs
                     cDL = 1.0
 
                 Sr = SrBB*cBB + SrDL*cDL
-                Sr[Sr==float('NaN')]=0.0
+                Sr[Sr==float('NaN')] = 0.0
                 Sr560 = Sr[np.where(np.abs(wl - 560.0) == np.min(np.abs(wl - 560.0)))[0]]
                 Sr = np.vstack((wl,(Sr/Sr560)))
                      

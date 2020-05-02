@@ -21,8 +21,8 @@ Module for display calibration
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
-from luxpy import (_PKG_PATH, _SEP, np, sp, plt, pd, math, _CMF, cie_interp, colortf, _CSPACE_AXES)
-
+from luxpy import (math, _CMF, cie_interp, colortf, _CSPACE_AXES)
+from luxpy.utils import _PKG_PATH, _SEP, np, sp, plt, pd
 __all__ = ['_PATH_DATA', 'calibrate', 'calibration_performance', 'rgb_to_xyz', 'xyz_to_rgb', 'DisplayCalibration','_RGB', '_XYZ']
 
 _PATH = _PKG_PATH + _SEP + 'toolboxes' + _SEP + 'dispcal' + _SEP 

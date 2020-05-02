@@ -71,11 +71,13 @@ References
 Created on Wed Jun 28 22:48:09 2017
 """
 
-from luxpy import np, _CMF, _CIE_ILLUMINANTS, _CIEOBS, _CSPACE, math, spd_to_xyz, np2d, np2dT, np3d, todim, asplit, ajoin
+from luxpy import _CMF, _CIE_ILLUMINANTS, _CIEOBS, _CSPACE, math, spd_to_xyz 
+from luxpy.utils import np, np2d, np2dT, np3d, todim, asplit, ajoin
 
 __all__ = ['_CSPACE_AXES', '_IPT_M','xyz_to_Yxy','Yxy_to_xyz','xyz_to_Yuv','Yuv_to_xyz',
            'xyz_to_wuv','wuv_to_xyz','xyz_to_xyz','xyz_to_lms', 'lms_to_xyz','xyz_to_lab','lab_to_xyz','xyz_to_luv','luv_to_xyz',
-           'xyz_to_Vrb_mb','Vrb_mb_to_xyz','xyz_to_ipt','ipt_to_xyz','xyz_to_Ydlep','Ydlep_to_xyz','xyz_to_srgb','srgb_to_xyz']
+           'xyz_to_Vrb_mb','Vrb_mb_to_xyz','xyz_to_ipt','ipt_to_xyz','xyz_to_Ydlep','Ydlep_to_xyz','xyz_to_srgb','srgb_to_xyz',
+           'xyz_to_jabz','jabz_to_xyz']
 
 #------------------------------------------------------------------------------
 # Database with cspace-axis strings (for plotting):
@@ -110,7 +112,7 @@ def xyz_to_Yxy(xyz, **kwargs):
     Returns:
         :Yxy: 
             | ndarray with Yxy chromaticity values
-              (Y value refers to luminance or luminance factor)
+            |  (Y value refers to luminance or luminance factor)
     """
     xyz = np2d(xyz)
     Yxy = np.empty(xyz.shape)
@@ -128,7 +130,7 @@ def Yxy_to_xyz(Yxy, **kwargs):
     Args:
         :Yxy: 
             | ndarray with Yxy chromaticity values
-              (Y value refers to luminance or luminance factor)
+            |  (Y value refers to luminance or luminance factor)
 
     Returns:
         :xyz: 
@@ -152,7 +154,7 @@ def xyz_to_Yuv(xyz,**kwargs):
     Returns:
         :Yuv: 
             | ndarray with CIE 1976 Yu'v' chromaticity values
-              (Y value refers to luminance or luminance factor)
+            |  (Y value refers to luminance or luminance factor)
     """
     xyz = np2d(xyz)
     Yuv = np.empty(xyz.shape)
@@ -170,7 +172,7 @@ def Yuv_to_xyz(Yuv, **kwargs):
     Args:
         :Yuv: 
             | ndarray with CIE 1976 Yu'v' chromaticity values
-              (Y value refers to luminance or luminance factor)
+            |  (Y value refers to luminance or luminance factor)
 
     Returns:
         :xyz: 
@@ -193,7 +195,7 @@ def xyz_to_wuv(xyz, xyzw = _COLORTF_DEFAULT_WHITE_POINT, **kwargs):
             | ndarray with tristimulus values
         :xyzw: 
             | ndarray with tristimulus values of white point, optional
-              (Defaults to luxpy._COLORTF_DEFAULT_WHITE_POINT)
+            |  (Defaults to luxpy._COLORTF_DEFAULT_WHITE_POINT)
 
     Returns:
         :wuv: 
@@ -216,12 +218,12 @@ def wuv_to_xyz(wuv,xyzw = _COLORTF_DEFAULT_WHITE_POINT, **kwargs):
             | ndarray with W*U*V* values
         :xyzw: 
             | ndarray with tristimulus values of white point, optional
-              (Defaults to luxpy._COLORTF_DEFAULT_WHITE_POINT)
+            |  (Defaults to luxpy._COLORTF_DEFAULT_WHITE_POINT)
 
     Returns:
         :xyz: 
             | ndarray with tristimulus values
-	 """
+    """
     wuv = np2d(wuv)
     Yuvw = xyz_to_Yuv(xyzw) # convert to cie 1976 u'v'
     Yuv = np.empty(wuv.shape)
@@ -534,7 +536,7 @@ def Vrb_mb_to_xyz(Vrb,cieobs = _CIEOBS, scaling = [1,1], M = None, Minverted = F
         :cieobs:
             | luxpy._CIEOBS, optional
             | CMF set to use when getting the default M, which is
-              the xyz to lms conversion matrix.
+            | the xyz to lms conversion matrix.
         :scaling:
             | list of scaling factors for r and b dimensions.
         :M: 
@@ -586,7 +588,7 @@ def xyz_to_ipt(xyz, cieobs = _CIEOBS, xyzw = None, M = None, **kwargs):
         :cieobs:
             | luxpy._CIEOBS, optional
             | CMF set to use when calculating xyzw for rescaling M
-              (only when not None).
+            | (only when not None).
         :M: | None, optional
             | None defaults to xyz to lms conversion matrix determined by :cieobs:
 
@@ -595,8 +597,7 @@ def xyz_to_ipt(xyz, cieobs = _CIEOBS, xyzw = None, M = None, **kwargs):
             | ndarray with IPT color coordinates
 
     Note:
-        :xyz: is assumed to be under D65 viewing conditions! If necessary 
-              perform chromatic adaptation !
+        :xyz: is assumed to be under D65 viewing conditions! If necessary perform chromatic adaptation !
 
     Reference:
         1. `Ebner F, and Fairchild MD (1998).
@@ -660,7 +661,7 @@ def ipt_to_xyz(ipt, cieobs = _CIEOBS, xyzw = None, M = None, **kwargs):
         :cieobs:
             | luxpy._CIEOBS, optional
             | CMF set to use when calculating xyzw for rescaling Mxyz2lms
-              (only when not None).
+            | (only when not None).
         :M: | None, optional
             | None defaults to xyz to lms conversion matrix determined by:cieobs:
 
@@ -669,8 +670,7 @@ def ipt_to_xyz(ipt, cieobs = _CIEOBS, xyzw = None, M = None, **kwargs):
             | ndarray with tristimulus values
 
     Note:
-        :xyz: is assumed to be under D65 viewing conditions! If necessary 
-              perform chromatic adaptation !
+        :xyz: is assumed to be under D65 viewing conditions! If necessary perform chromatic adaptation !
 
     Reference:
         1. `Ebner F, and Fairchild MD (1998).
@@ -740,7 +740,7 @@ def xyz_to_Ydlep(xyz, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT, fli
     Returns:
         :Ydlep: 
             | ndarray with Y, dominant (complementary) wavelength
-              and excitation purity
+            |  and excitation purity
     """
     
     xyz3 = np3d(xyz).copy().astype(np.float)

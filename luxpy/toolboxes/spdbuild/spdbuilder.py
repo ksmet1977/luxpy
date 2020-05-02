@@ -69,11 +69,12 @@ References
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
-from luxpy import (np, plt, warnings, math, _WL3, _CIEOBS, _EPS, np2d, 
-                   vec_to_dict, getwlr, SPD, spd_to_power,
-                   spd_to_xyz, xyz_to_Yxy, colortf, xyz_to_cct)
-from luxpy import cri 
 import itertools
+import warnings
+from luxpy import (math, _WL3, _CIEOBS, getwlr, SPD, spd_to_power,
+                   spd_to_xyz, xyz_to_Yxy, colortf, xyz_to_cct)
+from luxpy.utils import np, plt, _EPS, np2d, vec_to_dict
+from luxpy import cri 
 
 #np.set_printoptions(formatter={'float': lambda x: "{0:0.2e}".format(x)})
 
@@ -344,14 +345,13 @@ def phosphor_led_spd(peakwl = 450, fwhm = 20, wl = _WL3, bw_order = -1, with_wl 
         :use_piecewise_fcn:
             | False, optional
             | True: uses piece-wise function as in Smet et al. 2011. Can give 
-              non_smooth spectra optimized from components to which it is
-              applied. 
+            | non_smooth spectra optimized from components to which it is applied. 
             
     Returns:
         :returns: 
             | spd, component_spds
             | ndarrays with spectra (and component spds used to build the 
-              final spectra) 
+            | final spectra) 
         
         
     References:
@@ -492,7 +492,7 @@ def spd_builder(flux = None, component_spds = None, peakwl = 450, fwhm = 20, bw_
         :pair_strengths:
             | ndarray with pair_strengths of mono_led spds, optional
             | If None: will be randomly selected, possibly resulting in 
-              unphysical (out-of-gamut) solution.
+            | unphysical (out-of-gamut) solution.
         :with_wl:
             | True, optional
             | True outputs a ndarray with first row wavelengths.
@@ -533,16 +533,16 @@ def spd_builder(flux = None, component_spds = None, peakwl = 450, fwhm = 20, bw_
         :use_piecewise_fcn:
             | False, optional
             | True: uses piece-wise function as in Smet et al. 2011. Can give 
-              non_smooth spectra optimized from components to which it is
-              applied. 
+            | non_smooth spectra optimized from components to which it is
+            | applied. 
         :target: 
             | None, optional
             | ndarray with Yxy chromaticity of target.
             | If None: don't override phosphor strengths, else calculate strength
             |           to obtain :target: using color3mixer().
             | If not None AND strength_ph is None or 0: components are 
-              monochromatic and colormixer is used to optimize fluxes to 
-              obtain target chromaticity (N can be > 3 components)
+            | monochromatic and colormixer is used to optimize fluxes to 
+            | obtain target chromaticity (N can be > 3 components)
         :tar_type:
             | 'Yxy' or str, optional
             | Specifies the input type in :target: (e.g. 'Yxy' or 'cct')
@@ -796,10 +796,11 @@ def colormixer(Yxyt = None, Yxyi = None, n = 4, pair_strengths = None, source_or
         N_sources = so.shape[0]
         
         # Pre-initialize:
-        mlut = np.nan*np.ones((2*n-3,8))
+        mlut = np.zeros((2*n-3,8)); mlut.fill(np.nan)
+        tmp_nan = np.zeros((n,1));tmp_nan.fill(np.nan)
         mlut[:n,:] = np.hstack((np.arange(n)[:,None], Yxyi.copy(),\
-                           np.arange(n)[:,None],np.nan*np.ones((n,1)),\
-                           np.ones((n,1)),np.nan*np.ones((n,1))))
+                           np.arange(n)[:,None],tmp_nan,\
+                           np.ones((n,1)),tmp_nan))
         sn_k = -np.ones(np.int(n/2), dtype = int)
         su_k = -np.ones((np.int(n/2),2),dtype = int)  
         
@@ -905,7 +906,7 @@ def colormixer(Yxyt = None, Yxyi = None, n = 4, pair_strengths = None, source_or
                 k += 1
             M = mlut[:n,6]
         else:
-            M = np.nan*M
+            M.fill(np.nan)
 
     else: # Use fast color3mixer
         
@@ -950,7 +951,7 @@ def fitnessfcn(x, spd_constructor, spd_constructor_pars = None, F_rss = True, de
         :F_rss:
             | True, optional
             | Take Root-Sum-of-Squares of 'closeness' values between target and 
-              objective function values.
+            | objective function values.
         :decimals:
             | 3, optional
             | List of rounding decimals of objective function values.
@@ -989,7 +990,7 @@ def fitnessfcn(x, spd_constructor, spd_constructor_pars = None, F_rss = True, de
     spdi,args_out,component_spds = spd_constructor(x,spd_constructor_pars) 
 
     # Goodness-of-fit:
-    F = np.nan*np.ones((N))
+    F = np.zeros((N)); F.fill(np.nan)
     obj_vals = [np.nan]*N
     
     if np.isnan(spdi[1:].sum()):
@@ -1086,10 +1087,10 @@ def spd_constructor_2(x, constructor_pars = {}, **kwargs):
     Construct spd from model parameters using pairs of intermediate sources.
     
     | Pairs (odd,even) of components are selected and combined using 
-      'pair_strength'. This process is continued until only 3 intermediate 
-      (combined) sources remain. Color3mixer is then used to calculate the 
-      fluxes for the remaining 3 sources, after which the fluxes of all 
-      components are back-calculated.
+    |  'pair_strength'. This process is continued until only 3 intermediate 
+    |  (combined) sources remain. Color3mixer is then used to calculate the 
+    |  fluxes for the remaining 3 sources, after which the fluxes of all 
+    |  components are back-calculated.
     
     Args:
         :x: 
@@ -1097,14 +1098,14 @@ def spd_constructor_2(x, constructor_pars = {}, **kwargs):
         :constructor_pars: 
             | dict with model parameters. 
             | Key 'list' determines which parameters are in :x: and key 'len'
-              (Specifies the number of variables representing each parameter).
+            | (Specifies the number of variables representing each parameter).
         
     Returns:
         :returns: 
             | spd, M, spds
             | ndarrays with spectrum corresponding to x, M the fluxes of 
-              the spectral components of spd and spds the spectral components 
-              themselves.
+            | the spectral components of spd and spds the spectral components 
+            | themselves.
     
     """
     cp = constructor_pars.copy()
@@ -1143,10 +1144,10 @@ def spd_constructor_3(x, constructor_pars = {}, **kwargs):
     
     
     | The triangle/trio method creates for all possible combinations of 3 primary
-      component spectra a spectrum that results in the target chromaticity 
-      using color3mixer() and then optimizes the weights of each of the latter 
-      spectra such that adding them (additive mixing) results in obj_vals as 
-      close as possible to the target values.
+    | component spectra a spectrum that results in the target chromaticity 
+    | using color3mixer() and then optimizes the weights of each of the latter 
+    | spectra such that adding them (additive mixing) results in obj_vals as 
+    | close as possible to the target values.
     
     Args:
         :x:
@@ -1154,14 +1155,14 @@ def spd_constructor_3(x, constructor_pars = {}, **kwargs):
         :constructor_pars:
             | dict with model parameters. 
             | Key 'list' determines which parameters are in :x: and key 'len'
-              (specifies the number of variables representing each parameter).
+            | (specifies the number of variables representing each parameter).
         
     Returns:
         :returns: 
             | spd, M, spds
             | ndarrays with spectrum corresponding to x, M the fluxes of 
-              the spectral components of spd and spds the spectral components 
-              themselves.
+            | the spectral components of spd and spds the spectral components 
+            | themselves.
     
     """
     cp = constructor_pars.copy()
@@ -1234,16 +1235,16 @@ def spd_optimizer_2_3(optimizer_type = '2mixer', \
                     minimize_method = 'nelder-mead', minimize_opts = None, F_rss = True,\
                     verbosity = 0,**kwargs):
     """
-    Optimizes the weights (fluxes) of a set of component spectra by combining 
-    pairs (2) or trio's (3) of components to intermediate sources until only 3
-    remain. Color3mixer can then be called to calculate required fluxes to
-    obtain target chromaticity and fluxes are then back-calculated.
+    | Optimizes the weights (fluxes) of a set of component spectra by combining 
+    | pairs (2) or trio's (3) of components to intermediate sources until only 3
+    | remain. Color3mixer can then be called to calculate required fluxes to
+    | obtain target chromaticity and fluxes are then back-calculated.
          
     Args:
         :optimizer_type: 
             | '2mixer' or '3mixer' or 'user', optional
             | Specifies whether to optimize spectral model parameters by 
-              combining pairs or trio's of comonponents.
+            | combining pairs or trio's of comonponents.
         :spd_constructor: 
             | None, optional
             | Function handle to user defined spd_constructor function.
@@ -1256,7 +1257,7 @@ def spd_optimizer_2_3(optimizer_type = '2mixer', \
             | (See e.g. spd_constructor_2 or spd_constructor_3)
         :spd_model_pars: 
             | dict with model parameters required by spd_constructor
-              and with optimization parameters required by minimize (x0, lb, ub).                .
+            | and with optimization parameters required by minimize (x0, lb, ub).                .
             | Only used when :optimizer_type: == 'user'.
         :component_data:
             | 4, optional
@@ -1270,7 +1271,7 @@ def spd_optimizer_2_3(optimizer_type = '2mixer', \
         :N_components:
             | None, optional
             | Specifies number of components used in optimization. (only used 
-              when :component_data: is dict and user wants to override dict. 
+            | when :component_data: is dict and user wants to override dict. 
             | Note that shape of parameters arrays must match N_components).
         :allow_nongaussianbased_mono_spds: 
             | False, optional
@@ -1286,11 +1287,11 @@ def spd_optimizer_2_3(optimizer_type = '2mixer', \
         :cieobs:
             | _CIEOBS, optional
             | CIE CMF set used to calculate chromaticity values if not provided 
-              in :Yxyi:.
+            | in :Yxyi:.
         :F_rss: 
             | True, optional
             | Take Root-Sum-of-Squares of 'closeness' values between target and 
-              objective function values.
+            | objective function values.
         :decimals:
             | 5, optional
             | Rounding decimals of objective function values.
@@ -1516,8 +1517,7 @@ def get_optim_pars_dict(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs =
 
 def initialize_spd_model_pars(component_data, N_components = None, allow_nongaussianbased_mono_spds = False, optimizer_type = '2mixer', wl = _WL3):
     """
-    Initialize spd_model_pars dict (for spd_constructor) based on type 
-    of component_data.
+    Initialize spd_model_pars dict (for spd_constructor) based on type of component_data.
     
     Args:
         :component_data: 
@@ -1545,7 +1545,7 @@ def initialize_spd_model_pars(component_data, N_components = None, allow_nongaus
         :wl: 
             | _WL3, optional
             | Wavelengths used in optimization when :component_data: is not an
-              ndarray with spectral data.
+            | ndarray with spectral data.
         
     Returns:
         :spd_model_pars: 
@@ -1653,7 +1653,7 @@ def initialize_spd_optim_pars(component_data, N_components = None,\
         :N_components:
             | None, optional
             | Specifies number of components used in optimization. (only used 
-              when :component_data: is dict and user wants to override dict. 
+            | when :component_data: is dict and user wants to override dict. 
             | Note that shape of parameters arrays must match N_components).
         :allow_nongaussianbased_mono_spds: 
             | False, optional
@@ -1661,11 +1661,11 @@ def initialize_spd_optim_pars(component_data, N_components = None,\
         :optimizer_type: 
             | '2mixer', optional
             | Type of spectral optimization routine.
-              (other options: '3mixer', 'search')
+            | (other options: '3mixer', 'search')
         :wl:
             | _WL3, optional
             | Wavelengths used in optimization when :component_data: is not an
-              ndarray with spectral data.
+            | ndarray with spectral data.
         :spd_model_pars:
             | None, optional
             | If None, initialize based on type of component_data.
@@ -1844,9 +1844,9 @@ def spd_optimizer(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs = _CIEO
                   bw_order_min = -2, bw_order_max = 100,\
                   out = 'spds,M'):
     """
-    Generate a spectrum with specified white point and optimized for certain 
-    objective functions from a set of component spectra or component spectrum 
-    model parameters.
+    | Generate a spectrum with specified white point and optimized for certain 
+    | objective functions from a set of component spectra or component spectrum 
+    | model parameters.
     
     Args:
         :target: 
@@ -1858,7 +1858,7 @@ def spd_optimizer(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs = _CIEO
         :cieobs:
             | _CIEOBS, optional
             | CIE CMF set used to calculate chromaticity values, if not provided 
-              in :Yxyi:.
+            | in :Yxyi:.
         :optimizer_type:
             | '2mixer',  optional
             | Specifies type of chromaticity optimization 
@@ -1876,7 +1876,7 @@ def spd_optimizer(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs = _CIEO
             | (See e.g. spd_constructor_2 or spd_constructor_3)
         :spd_model_pars:
             | dict with model parameters required by spd_constructor
-              and with optimization parameters required by minimize (x0, lb, ub).                .
+            | and with optimization parameters required by minimize (x0, lb, ub).                .
             | Only used when :optimizer_type: == 'user'.
         :cspace:
             | 'Yuv', optional
@@ -1895,7 +1895,7 @@ def spd_optimizer(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs = _CIEO
         :N_components:
             | None, optional
             | Specifies number of components used in optimization. (only used 
-              when :component_data: is dict and user wants to override dict value
+            | when :component_data: is dict and user wants to override dict value
             | Note that shape of parameters arrays must match N_components).
         :allow_nongaussianbased_mono_spds:
             | False, optional
@@ -1904,11 +1904,11 @@ def spd_optimizer(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs = _CIEO
         :wl: 
             | _WL3, optional
             | Wavelengths used in optimization when :component_data: is not an
-              ndarray with spectral data.
+            | ndarray with spectral data.
         :F_rss: 
             | True, optional
             | Take Root-Sum-of-Squares of 'closeness' values between target and 
-              objective function values.
+            | objective function values.
         :decimals:
             | 5, optional
             | Rounding decimals of objective function values.
@@ -1958,12 +1958,12 @@ def spd_optimizer(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs = _CIEO
         the fluxes for the remaining 3 sources, after which the fluxes of 
         all components are back-calculated.
             
-       2. '3mixer':
-       The triangle/trio method creates for all possible combinations of 
-       3 primary component spectra a spectrum that results in the target 
-       chromaticity using color3mixer() and then optimizes the weights of
-       each of the latter spectra such that adding them (additive mixing) 
-       results in obj_vals as close as possible to the target values.
+        2. '3mixer':
+        The triangle/trio method creates for all possible combinations of 
+        3 primary component spectra a spectrum that results in the target 
+        chromaticity using color3mixer() and then optimizes the weights of
+        each of the latter spectra such that adding them (additive mixing) 
+        results in obj_vals as close as possible to the target values.
 
     """
             

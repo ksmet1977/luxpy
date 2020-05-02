@@ -17,12 +17,13 @@ Module for hyper spectral image simulation
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
-from luxpy import (warnings, np, plt, imsave, cKDTree, cat, colortf, _PKG_PATH, _SEP, _CIEOBS, 
-                   _CIE_ILLUMINANTS, _CRI_RFL, _EPS, spd_to_xyz,plot_color_data, math)
+from luxpy import (cat, colortf, _CIEOBS, _CIE_ILLUMINANTS, _CRI_RFL, 
+                   spd_to_xyz, plot_color_data, math)
+from luxpy.utils import np, plt, sp, _PKG_PATH, _SEP, _EPS 
 from luxpy.toolboxes.spdbuild import spdbuilder as spb
 
-# from skimage.io import imsave
-# from matplotlib.pyplot import imread
+import warnings
+from imageio import imsave
 
 __all__ =['_HYPSPCIM_PATH','_HYPSPCIM_DEFAULT_IMAGE','render_image','xyz_to_rfl']             
 
@@ -69,11 +70,11 @@ def xyz_to_rfl(xyz, rfl = None, out = 'rfl_est', \
         :k_neighbours:
             | 4 or int, optional
             | Number of nearest neighbours for reflectance spectrum interpolation.
-            | Neighbours are found using scipy.cKDTree
+            | Neighbours are found using scipy.spatial.cKDTree
         :verbosity:
             | 0, optional
             | If > 0: make a plot of the color coordinates of original and 
-              rendered image pixels.
+            | rendered image pixels.
 
     Returns:
         :returns: 
@@ -103,7 +104,7 @@ def xyz_to_rfl(xyz, rfl = None, out = 'rfl_est', \
         # Find rfl (cfr. lab_rr) from rfl set that results in 'near' metameric 
         # color coordinates for each value in lab_ur (i.e. smallest DE):
         # Construct cKDTree:
-        tree = cKDTree(lab_rr, copy_data = True)
+        tree = sp.spatial.cKDTree(lab_rr, copy_data = True)
         
         # Interpolate rfls using k nearest neightbours and inverse distance weigthing:
         d, inds = tree.query(lab, k = k_neighbours )
@@ -123,7 +124,7 @@ def xyz_to_rfl(xyz, rfl = None, out = 'rfl_est', \
             # Find rfl (cfr. lab_rr) from rfl set that results in 'near' metameric 
             # color coordinates for each value in lab_ur (i.e. smallest DE):
             # Construct cKDTree:
-            tree = cKDTree(lab_rr, copy_data = True)
+            tree = sp.spatial.cKDTree(lab_rr, copy_data = True)
             
             # Interpolate rfls using k nearest neightbours and inverse distance weigthing:
             d, inds = tree.query(lab[_isnan,...], k = k_neighbours )
@@ -215,7 +216,7 @@ def render_image(img = None, spd = None, rfl = None, out = 'img_hyp', \
         :k_neighbours:
             | 4 or int, optional
             | Number of nearest neighbours for reflectance spectrum interpolation.
-            | Neighbours are found using scipy.cKDTree
+            | Neighbours are found using scipy.spatial.cKDTree
         :show: 
             | True, optional
             |  Show images.
@@ -226,7 +227,7 @@ def render_image(img = None, spd = None, rfl = None, out = 'img_hyp', \
         :show_ref_img:
             | True, optional
             | True: shows rendered image under reference spd. False: shows
-              original image.
+            |  original image.
         :write_to_file:
             | None, optional
             | None: do nothing, else: write to filename(+path) in :write_to_file:

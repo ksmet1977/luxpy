@@ -23,7 +23,8 @@ Module with color fidelity and color gamut area parameter dicts
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
-from luxpy import np, math,put_args_in_db
+from luxpy import math
+from luxpy.utils import np, put_args_in_db
 from .DE_scalers import linear_scale, log_scale, psy_scale
 
 __all__ = ['_CRI_TYPE_DEFAULT', '_CRI_DEFAULTS', 'process_cri_type_input']

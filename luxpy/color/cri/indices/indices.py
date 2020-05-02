@@ -73,7 +73,7 @@ utils/helpers.py
                 |   Rcshi (local chroma shift) 
                 |   Rhshi (local hue shift)
 
- :spd_to_jab_t_r(): Calculates jab color values for a sample set illuminated
+ :spd_to_jab_t_r(): Calculates jab color values for a sample set illuminated 
                     with test source and its reference illuminant.
 
  :spd_to_rg(): Calculates the color gamut index of spectral data 

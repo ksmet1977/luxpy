@@ -53,27 +53,27 @@ Default parameters:
 Notes:
 ------
     1. Changed read_eeprom_slot() in eeprom.py in *pyseabreeze* because the 
-	ubs output used ',' as decimal separator instead of '.' (probably because
-	of the use of a french keyboard, despite having system set to use '.' as separator):  
-	line 20 in eeprom.py: "return data.rstrip('\x00')" was changed to
-	"return data.rstrip('\x00').replace(',','.')"
-	
+    ubs output used ',' as decimal separator instead of '.' (probably because
+    of the use of a french keyboard, despite having system set to use '.' as separator):  
+    line 20 in eeprom.py: "return data.rstrip('\x00')" was changed to
+    "return data.rstrip('\x00').replace(',','.')"
+    
     2. More info on: https://github.com/ap--/python-seabreeze
-	
-	3. Cooling for supported spectrometers not yet implemented (May 2, 2019)
+    
+    3. Cooling for supported spectrometers not yet implemented (May 2, 2019)
  
     4. Due to the way ocean optics firmware/drivers are implemented, 
-	most spectrometers do not support an abort mode of the standard 'free running mode', 
-	which causes spectra to be continuously stored in a FIFO array. 
-	This first-in-first-out (FIFO) causes a very unpractical behavior of the spectrometers,
-	such that, to ensure one gets a spectrum corresponding to the latest integration time 
-	sent to the device, one is forced to call the spec.intensities() function twice! 
-	This means a simple measurements now takes twice as long, resulting in a sub-optimal efficiency. 
+    most spectrometers do not support an abort mode of the standard 'free running mode', 
+    which causes spectra to be continuously stored in a FIFO array. 
+    This first-in-first-out (FIFO) causes a very unpractical behavior of the spectrometers,
+    such that, to ensure one gets a spectrum corresponding to the latest integration time 
+    sent to the device, one is forced to call the spec.intensities() function twice! 
+    This means a simple measurements now takes twice as long, resulting in a sub-optimal efficiency. 
     
-	5. Hopefully, at Ocean Optics, they will, at some point in time, listen to their customers 
-	and implement a simple, logical operation of their devices: one that just reads a spectrum 
-	at the desired integration time the momemt the function is called and which puts the 
-	spectrometer in idle mode when no spectrum is requested.
+    5. Hopefully, at Ocean Optics, they will, at some point in time, listen to their customers 
+    and implement a simple, logical operation of their devices: one that just reads a spectrum 
+    at the desired integration time the momemt the function is called and which puts the 
+    spectrometer in idle mode when no spectrum is requested.
     
     
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)

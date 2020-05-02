@@ -85,8 +85,6 @@ Module with useful math functions
                  
  :DEMO: Module for Differential Evolutionary Multi-objective Optimization  (DEMO).
  
- :particleswarm(): Global minimization function using particle swarms (wrapper around pyswarms.single.GlobalBestPSO)
- 
  :vec3: Module for spherical vector coordinates.
  
  :fmod(): Floating point modulus, e.g.: fmod(theta, np.pi * 2) would keep an angle in [0, 2pi]b
@@ -105,7 +103,10 @@ Module with useful math functions
  
  :pitman_morgan(): Pitman-Morgan Test for the difference between correlated variances with paired samples.
     
- :mupolymod: Module for Multivariate Polynomial Model Optimization (2D, 3D)            
+ :mupolymod: Module for Multivariate Polynomial Model Optimization (2D, 3D)   
+
+ :particleswarm: Module with particleswarm() function for global minimization using particle swarms (wrapper around pyswarms.single.GlobalBestPSO; module is uninmported to minimize dependencies))
+         
 ===============================================================================
 """
 from .basics import *
@@ -120,11 +121,11 @@ __all__ += ['DEMO']
 from .vec3 import vec3 as vec3
 __all__ += ['vec3']
 
-from .particleswarm import particleswarm
-__all__ += ['particleswarm']
-
 from . import mupolymodel as mupolymodel
 __all__ += ['mupolymodel']
+
+#from .particleswarm import particleswarm # (don't import here to minimize explicit dependencies)
+#__all__ += ['particleswarm']
 
 
 

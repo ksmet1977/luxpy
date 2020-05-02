@@ -34,7 +34,7 @@ Functions:
 ===============================================================================
 """
 from luxpy import *
-
+from luxpy.utils import np
 __all__ = ['_COLORTF_DEFAULT_WHITE_POINT','colortf']
 
 
@@ -53,15 +53,15 @@ def colortf(data, tf = _CSPACE, fwtf = {}, bwtf = {}, **kwargs):
             |     E.g. tf = 'spd>xyz' or 'spd>Yuv' or 'Yuv>cct' 
             |      or 'Yuv' or 'Yxy' or ...
             |  If tf is for example 'Yuv', it is assumed to be a transformation 
-               of type: 'xyz>Yuv'
+            |  of type: 'xyz>Yuv'
         :fwtf: 
             | dict with parameters (keys) and values required 
-              by some color transformations for the forward transform: 
-            | i.e. 'xyz>...'
+            | by some color transformations for the forward transform: 
+            |  i.e. 'xyz>...'
         :bwtf:
             | dict with parameters (keys) and values required 
-              by some color transformations for the backward transform: 
-            | i.e. '...>xyz'
+            | by some color transformations for the backward transform: 
+            |  i.e. '...>xyz'
 
     Returns:
         :returns: 
@@ -84,38 +84,3 @@ def colortf(data, tf = _CSPACE, fwtf = {}, bwtf = {}, **kwargs):
         bwfcn = globals()['{}_to_{}'.format(tf[0], 'xyz')]
         fwfcn = globals()['{}_to_{}'.format('xyz', tf[1])]
         return fwfcn(bwfcn(data,**bwtf),**fwtf)   
-
-
-#def colortf(data, tf = _CSPACE, tfa0 = {}, tfa1 = {}, **kwargs):
-#    """
-#    Wrapper function to perform various color transformations.
-#    
-#    Args:
-#        :data: ndarray
-#        :tf: str specifying transform type, optional
-#            E.g. tf = 'spd>xyz' or 'spd>Yuv' or 'Yuv>cct' or 'Yuv' or 'Yxy' or ...
-#            If tf is for example 'Yuv' it is assumed to be a transformation of type: 'xyz>Yuv'
-#        :tfa0: dict with parameters (keys) and values required by some color transformations ('...>xyz')
-#        :tfa1: dict with parameters (keys) and values required by some color transformations ('xyz>...')
-#
-#    Returns:
-#        :returns: ndarray with data transformed to new color space
-#    """
-#    data = np2d(data)
-#    tf = tf.split('>')
-#    if len(tf)>1:
-#        for ii in range(len(tf)):    
-#            if (ii%2 == 1):
-#                out_ = tf[ii]
-#                in_ = 'xyz'
-#                tfa = tfa0
-#            else:
-#                out_ = 'xyz'
-#                in_ = tf[ii]
-#                tfa = tfa1
-#            data = globals()['{}_to_{}'.format(in_, out_)](data,**tfa)
-#
-#	
-#    else:
-#        data = globals()['{}_to_{}'.format('xyz', tf[0])](data,**tfa0)
-#    return data   

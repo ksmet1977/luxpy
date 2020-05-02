@@ -108,7 +108,8 @@ cam_02_X: Module with CIECAM02-type color appearance models
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
-from luxpy import np, math, cat, _CIEOBS, _CIE_ILLUMINANTS, np2d, np2dT, np3d, put_args_in_db, spd_to_xyz, asplit, ajoin
+from luxpy import  math, cat, _CIEOBS, _CIE_ILLUMINANTS, spd_to_xyz 
+from luxpy.utils import np, np2d, np2dT, np3d, put_args_in_db, asplit, ajoin
 
 __all__ = ['_CAM_02_X_AXES', '_CAM_02_X_UNIQUE_HUE_DATA','_CAM_02_X_SURROUND_PARAMETERS','_CAM_02_X_NAKA_RUSHTON_PARAMETERS','_CAM_02_X_UCS_PARAMETERS']
 __all__ += ['_CAM_02_X_DEFAULT_TYPE','_CAM_02_X_DEFAULT_WHITE_POINT','_CAM_02_X_DEFAULT_MCAT', '_CAM_02_X_DEFAULT_CONDITIONS']
@@ -340,13 +341,12 @@ def cam_structure_ciecam02_cam16(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, \
     
     Args:
         :data: 
-            | ndarray with input tristimulus values or 
-              input color appearance correlates
+            | ndarray with input tristimulus values or input color appearance correlates
             | Can be of shape: (N [, xM], x 3), whereby 
-              N refers to samples, M to light sources.
+            | N refers to samples, M to light sources.
         :xyzw:
             | _CAM_02_X_DEFAULT_WHITE_POINT or ndarray with tristimulus values
-              of white point(s), optional
+            | of white point(s), optional
             | Can be multiple by specifying a Mx3 ndarray, instead of 1x3.
         :Yw: 
             | None, optional
@@ -442,7 +442,7 @@ def cam_structure_ciecam02_cam16(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, \
     
     dshape = list(data.shape)
     dshape[-1] = len(outin) # requested number of correlates
-    camout = np.nan*np.ones(dshape)
+    camout = np.zeros(dshape);camout.fill(np.nan)
     
     # get general data:
     if camtype == 'ciecam02':
@@ -719,13 +719,12 @@ def ciecam02(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, mcat = 'cat02', Yw = No
     
     Args:
         :data: 
-            | ndarray with input tristimulus values or 
-              input color appearance correlates
+            | ndarray with input tristimulus values or input color appearance correlates
             | Can be of shape: (N [, xM], x 3), whereby 
-              N refers to samples, M to light sources.
+            | N refers to samples, M to light sources.
         :xyzw:
             | _CAM_02_X_DEFAULT_WHITE_POINT or ndarray with tristimulus values
-              of white point(s), optional
+            | of white point(s), optional
             | Can be multiple by specifying a Mx3 ndarray, instead of 1x3.
         :Yw: 
             | None, optional
@@ -767,7 +766,7 @@ def ciecam02(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, mcat = 'cat02', Yw = No
         :yellowbluepurplecorrect:
             | True or False, optional
             | Correct for yellow-blue and purple problems in ciecam02 
-              (Is not used in cam16 because cat16 solves issues)
+            | (Is not used in cam16 because cat16 solves issues)
     
     Returns:
         :returns: 
@@ -792,17 +791,16 @@ def cam16(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, mcat = 'cat16', Yw = None,
     Convert between XYZ tristsimulus values and cam16 color appearance correlates.
     
    | Wrapper for luxpy.cam.cam_structure_ciecam02_cam16() designed specifically 
-     for camtype = 'cam16'.
+   | for camtype = 'cam16'.
     
     Args:
         :data: 
-            | ndarray with input tristimulus values or 
-              input color appearance correlates
+            | ndarray with input tristimulus values or input color appearance correlates
             | Can be of shape: (N [, xM], x 3), whereby 
-              N refers to samples, M to light sources.
+            | N refers to samples, M to light sources.
         :xyzw:
             | _CAM_02_X_DEFAULT_WHITE_POINT or ndarray with tristimulus values
-              of white point(s), optional
+            | of white point(s), optional
             | Can be multiple by specifying a Mx3 ndarray, instead of 1x3.
         :Yw: 
             | None, optional
@@ -866,8 +864,7 @@ def camucs_structure(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, camtype = _CAM_
     and camucs type color appearance correlates.
     
     | Wrapper for luxpy.cam.cam_structure_ciecam02_cam16() with additional 
-      compression of color attributes
-      for the following case:
+    | compression of color attributes for the following case:
     |    - 'none': original cam space
     |    - 'ucs': for uniform color space
     |    - 'lcd': for large color differences
@@ -1012,13 +1009,12 @@ def cam02ucs(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, \
     
     Args:
         :data: 
-            | ndarray with input tristimulus values or 
-              input color appearance correlates
+            | ndarray with input tristimulus values or input color appearance correlates
             | Can be of shape: (N [, xM], x 3), whereby 
-              N refers to samples, M to light sources.
+            | N refers to samples, M to light sources.
         :xyzw:
             | _CAM_02_X_DEFAULT_WHITE_POINT or ndarray with tristimulus values
-              of white point(s), optional
+            | of white point(s), optional
             | Can be multiple by specifying a Mx3 ndarray, instead of 1x3.
         :Yw: 
             | None, optional
@@ -1095,13 +1091,12 @@ def cam16ucs(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, Yw = None, \
     
     Args:
         :data: 
-            | ndarray with input tristimulus values or 
-              input color appearance correlates
+            | ndarray with input tristimulus values or input color appearance correlates
             | Can be of shape: (N [, xM], x 3), whereby 
-              N refers to samples, M to light sources.
+            | N refers to samples, M to light sources.
         :xyzw:
             | _CAM_02_X_DEFAULT_WHITE_POINT or ndarray with tristimulus values
-              of white point(s), optional
+            | of white point(s), optional
             | Can be multiple by specifying a Mx3 ndarray, instead of 1x3.
         :Yw: 
             | None, optional

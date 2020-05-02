@@ -36,11 +36,12 @@ References
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
-from luxpy import (sp,np, plt, warnings, math, _WL3, _CIEOBS, _EPS, np2d, 
-                   vec_to_dict, getwlr, SPD, spd_to_power,
-                   spd_to_xyz, xyz_to_Yxy, colortf, xyz_to_cct)
-from luxpy import cri 
 import itertools
+import warnings
+from luxpy import (math, cri, _WL3, _CIEOBS, getwlr, SPD, spd_to_power,
+                   spd_to_xyz, xyz_to_Yxy, colortf, xyz_to_cct)
+from luxpy.utils import sp, np, plt, _EPS, np2d, vec_to_dict
+from luxpy.math.particleswarm import particleswarm
 
 __all__ = ['spd_optimizer2','gaussian_prim_constructor','gaussian_prim_parameter_types',
            '_color3mixer','_setup_wlr','_extract_prim_optimization_parameters',
@@ -87,8 +88,7 @@ def _color3mixer(Yxyt,Yxy1,Yxy2,Yxy3):
      
 def _triangle_mixer(Yxy_target, Yxyi, triangle_strengths):
     """
-    Calculates the fluxes of each of the primaries to realize the target 
-    chromaticity Yxy_target given the triangle_strengths.
+    Calculates the fluxes of each of the primaries to realize the target chromaticity Yxy_target given the triangle_strengths.
     """
     # Generate all possible 3-channel combinations (component triangles):
     N = Yxyi.shape[0]
@@ -312,12 +312,12 @@ def _fitnessfcn(x, Yxy_target = np.array([[100,1/3,1/3]]), n = 3, wlr = [360,830
                 obj_fcn = None, obj_fcn_pars = None, obj_fcn_weights = None, 
                 obj_tar_vals = None, optimizer_type = '3mixer', verbosity = 1):
     """
-    Fitness function that calculates closeness of solution x to target values 
-    for specified objective functions. See docstring of spd_optimizer2 for info
-    on the input parameters. If pareto is False than the Root-Sum-of-Squares of F
-    will be used as output during the optimization, else an F for each objective
-    functions is output, allowing multi-objective optimizer to work towards a
-    pareto optimal boundary.
+    | Fitness function that calculates closeness of solution x to target values 
+    | for specified objective functions. See docstring of spd_optimizer2 for info
+    | on the input parameters. If pareto is False than the Root-Sum-of-Squares of F
+    | will be used as output during the optimization, else an F for each objective
+    | functions is output, allowing multi-objective optimizer to work towards a
+    | pareto optimal boundary.
     """
 
     x = np.atleast_2d(x)
@@ -498,16 +498,16 @@ def _start_optimization_tri(_fitnessfcn, n, fargs_dict, bnds, par_opt_types,
     Notes on minimize_method:
         1. Implemented: 'particleswarm', 'demo', 'nelder-mead'
         2. if not isinstance(minimize_method, str): 
-        then it should contain an optimizer funtion with the following interface: 
-            results = minimize_method(fitnessfcn, Nparameters, args = {}, 
-                                      bounds = (lb, ub), verbosity = 1)
-            With 'results' a dictionary containing various variables related to the
-            optimization. It MUST contain a key 'x_final' containing the final optimized parameters.
-            bnds must be [lowerbounds, upperbounds] with x-bounds ndarrays with values for each parameter.
-            args is an argument with a dictionary containing the values for the fitnessfcn. Pareto specifies
-            whether the output of the fitnessfcn should be the Root-Sum-of-Squares (True) of 
-            all weighted objective function values or not (False). Individual function values are
-            required by true multi-objective optimizers.
+            | then it should contain an optimizer funtion with the following interface: 
+            | results = minimize_method(fitnessfcn, Nparameters, args = {}, 
+            |                          bounds = (lb, ub), verbosity = 1)
+            | With 'results' a dictionary containing various variables related to the
+            | optimization. It MUST contain a key 'x_final' containing the final optimized parameters.
+            | bnds must be [lowerbounds, upperbounds] with x-bounds ndarrays with values for each parameter.
+            | args is an argument with a dictionary containing the values for the fitnessfcn. Pareto specifies
+            | whether the output of the fitnessfcn should be the Root-Sum-of-Squares (True) of 
+            | all weighted objective function values or not (False). Individual function values are
+            | required by true multi-objective optimizers.
     """
     
     n_triangle_strengths = int(sp.special.factorial(n)/(sp.special.factorial(n-3)*sp.special.factorial(3)))
@@ -516,7 +516,7 @@ def _start_optimization_tri(_fitnessfcn, n, fargs_dict, bnds, par_opt_types,
     
     # Particle swarm optimization:
     if (minimize_method == 'particleswarm') | (minimize_method == 'ps'):
-        results = math.particleswarm(_fitnessfcn, N, args = fargs_dict, bounds = (bnds[0],bnds[1]), 
+        results = particleswarm(_fitnessfcn, N, args = fargs_dict, bounds = (bnds[0],bnds[1]), 
                                              iters = minimize_opts['iters'],
                                              n_particles = minimize_opts['n_particles'],
                                              ftol = minimize_opts['ftol'],
@@ -561,8 +561,7 @@ def _start_optimization_tri(_fitnessfcn, n, fargs_dict, bnds, par_opt_types,
 
 def _get_default_prim_parameters(nprims, parameter_types = ['peakwl', 'fwhm'], **kwargs):
     """
-    Get dict with default primary parameters, dict with parameter bounds and 
-    a list with parameters to be optimized.
+    Get dict with default primary parameters, dict with parameter bounds and a list with parameters to be optimized.
     """
     keys = list(kwargs.keys())
     parameter_to_be_optimized = []
@@ -600,9 +599,8 @@ def spd_optimizer2(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cspace_bwtf =
                   minimize_method = None, minimize_opts = {},
                   x0 = None, verbosity = 1):
     """
-    Generate a spectrum with specified white point and optimized for certain 
-    objective functions from a set of primary spectra or primary spectrum 
-    model parameters.
+    | Generate a spectrum with specified white point and optimized for certain objective 
+    | functions from a set of primary spectra or primary spectrum model parameters.
     
     Args:
         :target: 
@@ -625,7 +623,7 @@ def spd_optimizer2(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cspace_bwtf =
         :cieobs:
             | _CIEOBS, optional
             | CIE CMF set used to calculate chromaticity values, if not provided 
-              in :Yxyi:.
+            | in :Yxyi:.
         :optimizer_type:
             | '3mixer',  optional
             | Specifies type of chromaticity optimization 
@@ -856,7 +854,7 @@ if __name__ == '__main__':
         # Create a minimization function with the specified interface:
         def user_minim2(fitnessfcn, Nparameters, args, bounds, verbosity = 1,
                        **minimize_opts):
-            results = math.particleswarm(fitnessfcn, Nparameters, args = args, 
+            results = particleswarm(fitnessfcn, Nparameters, args = args, 
                                          bounds = bounds, 
                                          iters = 100, n_particles = 10, ftol = -np.inf,
                                          options = {'c1': 0.5, 'c2': 0.3, 'w':0.9},

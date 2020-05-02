@@ -29,7 +29,7 @@ References:
 """
 
 from luxpy import xyz_to_Yuv
-import numpy as np
+from luxpy.utils import np
 
 __all__ =['xyz_to_cct_ohno2011']
 

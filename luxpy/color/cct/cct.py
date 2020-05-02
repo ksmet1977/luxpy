@@ -75,7 +75,8 @@ cct: Module with functions related to correlated color temperature calculations
 """
 #from . import _CCT_LUT_CALC
 
-from luxpy import np, pd, _PKG_PATH, _SEP, _EPS, _CMF, _CIEOBS, minimize, np2d, np2dT, getdata, dictkv, spd_to_xyz, cri_ref, blackbody, xyz_to_Yxy, xyz_to_Yuv,Yuv_to_xyz
+from luxpy import  _CMF, _CIEOBS, spd_to_xyz, cri_ref, blackbody, xyz_to_Yxy, xyz_to_Yuv,Yuv_to_xyz
+from luxpy.utils import np, pd, sp, _PKG_PATH, _SEP, _EPS, np2d, np2dT, getdata, dictkv
 
 _CCT_LUT_CALC = False # True: (re-)calculates LUTs for ccts in .cctluts/cct_lut_cctlist.dat
 __all__ = ['_CCT_LUT_CALC']
@@ -118,7 +119,7 @@ def calculate_lut(ccts = None, cieobs = None, add_to_lut = True):
     elif isinstance(ccts,str):
         ccts = getdata(ccts)
         
-    Yuv = np.ones((ccts.shape[0],2))*np.nan
+    Yuv = np.zeros((ccts.shape[0],2));Yuv.fill(np.nan)
     for i,cct in enumerate(ccts):
         Yuv[i,:] = xyz_to_Yuv(spd_to_xyz(blackbody(cct, wl3 = [360,830,1]), cieobs = cieobs))[:,1:3]
     u = Yuv[:,0,None] # get CIE 1960 u
@@ -186,7 +187,7 @@ def xyz_to_cct_mcamy(xyzw):
         chromaticity coordinates".
         Color Research & Application. 17 (2): 142–144.
         <http://onlinelibrary.wiley.com/doi/10.1002/col.5080170211/abstract>`_
-	 """
+    """
     Yxy = xyz_to_Yxy(xyzw)
     n = (Yxy[:,1]-0.3320)/(Yxy[:,2]-0.1858)
     return  np2d(-449.0*(n**3) + 3525.0*(n**2) - 6823.3*n + 5520.33).T
@@ -430,7 +431,7 @@ def xyz_to_cct_search_robust(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None, rtol
     vt = (2/3)*Yuvt[:,2,None] # get CIE 1960 v
 
     # Initialize arrays:
-    ccts = np.ones((xyzw.shape[0],1))*np.nan
+    ccts = np.zeros((xyzw.shape[0],1));ccts.fill(np.nan)
     duvs = ccts.copy()
         
     #calculate preliminary estimates in 50 K to 1e12 range or whatever is given in cct_search_list:
@@ -614,7 +615,7 @@ def xyz_to_cct_search_fast(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None,
     vt = (2/3)*Yuvt[:,2,None] #.take([2],axis = axis_of_v3t) # get CIE 1960 v
 
     # Initialize arrays:
-    ccts = np.ones((xyzw.shape[0],1))*np.nan
+    ccts = np.zeros((xyzw.shape[0],1));ccts.fill(np.nan)
     duvs = ccts.copy()
     
     #calculate preliminary solution(s):
@@ -818,7 +819,7 @@ def xyz_to_cct_ohno(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, rtol = 1e-5,
         :force_out_of_lut: 
             | True, optional
             | If True and cct is out of range of the LUT, then switch to 
-              brute-force search method, else return numpy.nan values.
+            | brute-force search method, else return numpy.nan values.
         
     Returns:
         :returns: 
@@ -857,7 +858,7 @@ def xyz_to_cct_ohno(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, rtol = 1e-5,
     uv_LUT = _CCT_LUT[cieobs][:,1:3] 
     
     # calculate CCT of each uv:
-    CCT = np.ones(uv.shape[0])*np.nan # initialize with NaN's
+    CCT = np.zeros(uv.shape[0]);CCT.fill(np.nan) # initialize with NaN's
     Duv = CCT.copy() # initialize with NaN's
     idx_m = 0
     idx_M = uv_LUT.shape[0]-1
@@ -969,7 +970,7 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut', out 
         :duv: 
             | None or ndarray of duv values, optional
             | Note that duv can be supplied together with cct values in :ccts: 
-              as ndarray with shape (N,2)
+            | as ndarray with shape (N,2)
         :cieobs: 
             | luxpy._CIEOBS, optional
             | CMF set used to calculated xyzw.
@@ -979,7 +980,7 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut', out 
         :out: 
             | None (or 1), optional
             | If not None or 1: output a ndarray that contains estimated 
-              xyz and minimization results: 
+            | xyz and minimization results: 
             | (cct_min, duv_min, F_min (objective fcn value))
         :wl: 
             | None, optional
@@ -1014,7 +1015,7 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut', out 
         :force_out_of_lut: 
             | True, optional
             | If True and cct is out of range of the LUT, then switch to 
-              brute-force search method, else return numpy.nan values.
+            | brute-force search method, else return numpy.nan values.
         
     Returns:
         :returns: 
@@ -1023,7 +1024,7 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut', out 
     Note:
         If duv is not supplied (:ccts:.shape is (N,1) and :duv: is None), 
         source is assumed to be on the Planckian locus.
-	 """
+    """
     # make ccts a min. 2d np.array:
     if isinstance(ccts,list):
         ccts = np2dT(np.array(ccts))
@@ -1045,7 +1046,7 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut', out 
     #get estimates of approximate xyz values in case duv = None:
     BB = cri_ref(ccts = cct, wl3 = wl, ref_type = ['BB'])
     xyz_est = spd_to_xyz(data = BB, cieobs = cieobs, out = 1)
-    results = np.ones([ccts.shape[0],3])*np.nan 
+    results = np.zeros([ccts.shape[0],3]);results.fill(np.nan) 
 
     if duv is not None:
         
@@ -1085,7 +1086,7 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut', out 
                 Yuv0 = xyz_to_Yuv(xyz0)
                 uv0 = Yuv0[0] [1:3]
 
-                OptimizeResult = minimize(fun = objfcn,x0 = np.zeros((1,2)), args = (uv0,cct_i, duv_i, 'F'), method = 'Nelder-Mead',options={"maxiter":np.inf, "maxfev":np.inf, 'xatol': 0.000001, 'fatol': 0.000001})
+                OptimizeResult = sp.optimize.minimize(fun = objfcn,x0 = np.zeros((1,2)), args = (uv0,cct_i, duv_i, 'F'), method = 'Nelder-Mead',options={"maxiter":np.inf, "maxfev":np.inf, 'xatol': 0.000001, 'fatol': 0.000001})
                 betas = OptimizeResult['x']
                 #betas = np.zeros(uv0.shape)
                 if out is not None:
@@ -1163,7 +1164,7 @@ def xyz_to_cct(xyzw, cieobs = _CIEOBS, out = 'cct',mode = 'lut', wl = None, rtol
         :force_out_of_lut: 
             | True, optional
             | If True and cct is out of range of the LUT, then switch to 
-              brute-force search method, else return numpy.nan values.
+            | brute-force search method, else return numpy.nan values.
         
     Returns:
         :returns: 
@@ -1237,7 +1238,7 @@ def xyz_to_duv(xyzw, cieobs = _CIEOBS, out = 'duv', mode = 'lut', wl = None,
         :force_out_of_lut: 
             | True, optional
             | If True and cct is out of range of the LUT, then switch to 
-              brute-force search method, else return numpy.nan values.
+            | brute-force search method, else return numpy.nan values.
         
     Returns:
         :returns:

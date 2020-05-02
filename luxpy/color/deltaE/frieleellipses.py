@@ -29,8 +29,8 @@ References:
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
-from luxpy import (np, plt, math, Yxy_to_xyz, plotSL, plot_chromaticity_diagram_colors, plotellipse)
-
+from luxpy import (math, Yxy_to_xyz, plotSL, plot_chromaticity_diagram_colors, plotellipse)
+from luxpy.utils import np, plt
 _M_XYZ_TO_PQS = np.array([[0.724, 0.382, -0.098],[-0.48,1.37,0.1276],[0,0,0.686]])
 
 __all__ = ['get_gij_fmc','get_fmc_discrimination_ellipse']

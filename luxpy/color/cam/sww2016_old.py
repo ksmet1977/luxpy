@@ -18,7 +18,8 @@ References:
     <https://doi.org/10.1364/JOSAA.33.00A319>`_
     .. 
 """
-from luxpy import np, math, _CIE_ILLUMINANTS, _MUNSELL, _CMF, np2d, put_args_in_db, spd_to_xyz, cie_interp,asplit, ajoin
+from luxpy import math, _CIE_ILLUMINANTS, _MUNSELL, _CMF, spd_to_xyz, cie_interp
+from luxpy.utils import np, np2d, put_args_in_db, asplit, ajoin
 
 _CAM_SWW16_AXES = {'lab_cam_sww16' : ["L (lab_cam_sww16)", "a (lab_cam_sww16)", "b (lab_cam_sww16)"]}
 
@@ -162,7 +163,7 @@ def cam_sww16(data, dataw = None, Yb = 20.0, Lw = 400.0, Ccwb = None, relative =
     dshape[-1] = 3 # requested number of correlates: l_int, a_int, b_int
     if (inputtype != 'xyz') & (direction == 'forward'):
         dshape[-2] = dshape[-2] - 1 # wavelength row doesn't count & only with forward can the input data be spectral
-    camout = np.nan*np.ones(dshape)
+    camout = np.zeros(dshape);camout.fill(np.nan)
 
     # apply forward/inverse model for each row in data:
     for i in range(data.shape[0]):

@@ -31,16 +31,26 @@ Simple module for 3D-vectors.
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
-#import numpy as np
-#import matplotlib.pyplot as plt
-#from mpl_toolkits.mplot3d import Axes3D
-from luxpy import (np, plt, Axes3D) 
+from luxpy.utils import (np, plt, Axes3D) 
 
 __all__ = ['vec3', 'rotate', 'dot', 'cross', 'plot']
 
 class vec3:
    
     def __init__(self, *args, argtype = 'xyz', vtype = 'xyz', _TINY = 1e-15):
+        """
+        Initialize 3-dimensional vector.
+
+        Args:
+            :`*args`:
+                | x,y,z coordinates
+            :vtype:
+                | 'xyz', optional
+                | if 'xyz': cartesian coordinate input
+                | if 'tpr': spherical coordinates input (t: theta, p: phi, r: radius)
+            :_TINY:
+                | Set smallest value considered still different from zero.
+        """
         self._TINY = _TINY
         self.vtype = vtype
         if len(args) == 0:
@@ -104,15 +114,41 @@ class vec3:
  
     
     def norm(self):
+        """ get norm """
         return (self.x**2 + self.y**2 + self.z**2)**0.5
     
     def rotate(self, vecA = None, vecB = None, rot_axis = None, rot_angle = None, deg = True, norm = False):
+        """
+        Rotate vector around rotation axis over angle.
+        
+        Args:
+            :rot_axis:
+                | None, optional
+                | vec3 vector specifying rotation axis.
+            :rot_angle:
+                | None, optional
+                | float or int rotation angle.
+            :deg:
+                | True, optional
+                | If False, rot_angle is in radians.
+            :vecA:, :vecB:
+                | None, optional
+                | vec3 vectors defining a normal direction (cross(vecA, vecB)) around 
+                | which to rotate the vector in :v:. If rot_angle is None: rotation
+                | angle is defined by the in-plane angle between vecA and vecB.
+            :norm:
+                | False, optional
+                | Normalize rotated vector.
+            
+        """
         return rotate(self, vecA = vecA, vecB = vecB, rot_axis = rot_axis, rot_angle = rot_angle, deg = deg, norm = norm)
     
     def copy(self):
+        """ copy vector """
         return vec3(self.x.copy(), self.y.copy(), self.z.copy())
     
     def get_tpr(self, *args):
+        """ get spherical coordinates tpr (theta, phi, radius) """
         if len(args) > 0:
             x, y, z = args
         else:
@@ -129,10 +165,12 @@ class vec3:
         return theta, phi, r
     
     def set_tpr(self, *args):
+        """ set spherical coordinate attributes """
         self.x, self.y, self.z = self.get_xyz(*args)
     
     
     def get_xyz(self, *args):
+        """ get cartesian coordinates """
         theta, phi, r = args
         x = r * np.sin(theta) * np.cos(phi);
         y = r * np.sin(theta) * np.sin(phi);
@@ -141,6 +179,32 @@ class vec3:
         return x, y, z
     
     def plot(self, origin = None, ax = None, color = 'k', marker = '.', linestyle = '-', **kwargs):
+        """
+        Plot a vector from origin.
+        
+        Args:
+            :origin:
+                | vec3 vector with same size attributes as in :v:.
+            :ax: 
+                | None, optional
+                | axes handle.
+                | If None, create new figure with axes ax.
+            :color:
+                | 'k', optional
+                | color specifier.
+            :marker:
+                | '.', optional
+                | marker specifier.
+            :linestyle:
+                | '-', optional
+                | linestyle specifier
+            :**kwargs:
+                | other keyword specifiers for plot.
+              
+        Returns:
+            :ax:
+                | handle to figure axes.          
+        """
         plot(self, origin = origin, ax = ax, color = color, marker = marker, linestyle = linestyle, **kwargs)
 
 def _mul(a,b, norm = False):

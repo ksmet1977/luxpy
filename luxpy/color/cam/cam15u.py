@@ -31,7 +31,8 @@ Module with CAM15u color appearance model
             Opt. Express, vol. 23, no. 10, pp. 13455–13466. 
             <https://www.osapublishing.org/oe/abstract.cfm?uri=oe-23-10-13455&origin=search>`_
 """
-from luxpy import np, _CMF, _CIE_ILLUMINANTS, _MUNSELL, np2d, spd_to_xyz, asplit, ajoin,cie_interp
+from luxpy import  _CMF, _CIE_ILLUMINANTS, _MUNSELL, spd_to_xyz, cie_interp
+from luxpy.utils import np, np2d, asplit, ajoin
 from luxpy.color.cam.colorappearancemodels import hue_angle, hue_quadrature
 
 _CAM15U_AXES = {'qabW_cam15u' : ["Q (cam15u)", "aW (cam15u)", "bW (cam15u)"]} 
@@ -55,7 +56,7 @@ def cam15u(data, fov = 10.0, inputtype = 'xyz', direction = 'forward', outin = '
     Args:
         :data: 
             | ndarray of CIE 2006 10°  XYZ tristimulus values or spectral data
-              or color appearance attributes
+            |  or color appearance attributes
         :fov: 
             | 10.0, optional
             | Field-of-view of stimulus (for size effect on brightness)
@@ -128,7 +129,8 @@ def cam15u(data, fov = 10.0, inputtype = 'xyz', direction = 'forward', outin = '
     dshape[-1] = len(outin) # requested number of correlates
     if (inputtype != 'xyz') & (direction == 'forward'):
         dshape[-2] = dshape[-2] - 1 # wavelength row doesn't count & only with forward can the input data be spectral
-    camout = np.nan*np.ones(dshape)
+    
+    camout = np.zeros(dshape); camout.fill(np.nan)
 
     for i in range(data.shape[0]):
         

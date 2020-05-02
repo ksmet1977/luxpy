@@ -35,7 +35,8 @@ References:
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
-from luxpy import (sp, np, plt, math, Yxy_to_xyz, plotSL, plot_chromaticity_diagram_colors, plotellipse)
+from luxpy import (math, Yxy_to_xyz, plotSL, plot_chromaticity_diagram_colors, plotellipse)
+from luxpy.utils import sp, np, plt
 from .macadamellipses import get_macadam_ellipse
 from .frieleellipses import (get_gij_fmc, get_fmc_discrimination_ellipse)
 

@@ -24,7 +24,8 @@ Reference
     <http://www.sciencedirect.com/science/article/pii/S0378778812000837>`_
 
 """
-from luxpy import np, cat, math, _CRI_RFL, _S_INTERP_TYPE, spd, np2d, asplit, spd_to_xyz, xyz_to_ipt, xyz_to_cct
+from luxpy import cat, math, _CRI_RFL, _S_INTERP_TYPE, spd, spd_to_xyz, xyz_to_ipt, xyz_to_cct
+from luxpy.utils import np, np2d, asplit
 from ..utils.DE_scalers import psy_scale
 from ..utils.helpers import jab_to_rg
 
@@ -34,19 +35,19 @@ _MCRI_DEFAULTS = {'sampleset': "_CRI_RFL['mcri']",
                   'cieobs' : {'xyz' : '1964_10', 'cct': '1931_2'}, 
                   'avg': math.geomean, 
                   'scale' : {'fcn': psy_scale, 'cfactor': [21.7016,   4.2106,   2.4154]}, 
-                  'cspace': {'type': 'ipt', 'Mxyz2lms': [[ 0.400070,	0.707270,	-0.080674],[-0.228111, 1.150561,	0.061230],[0.0, 0.0,	0.931757]]}, 
+                  'cspace': {'type': 'ipt', 'Mxyz2lms': [[ 0.400070,    0.707270,   -0.080674],[-0.228111, 1.150561,    0.061230],[0.0, 0.0,    0.931757]]}, 
                   'catf': {'xyzw': [94.81,  100.00,  107.32], 'mcat': 'cat02', 'cattype': 'vonkries', 'F':1, 'Yb': 20.0,'Dtype':'cat02', 'catmode' : '1>2'}, 
                   'rg_pars' : {'nhbins': None, 'start_hue':0.0, 'normalize_gamut': False, 'normalized_chroma_ref' : 100}, 
                   'cri_specific_pars' : {'similarity_ai' : np.array([[-0.09651, 0.41354, 40.64, 16.55, -0.17],
-                                                                     [0.16548, 0.38877, 58.27,	20.37,	-0.59],
-                                                                     [0.32825, 0.49673, 35.97	, 18.05,-6.04],
+                                                                     [0.16548, 0.38877, 58.27,    20.37,    -0.59],
+                                                                     [0.32825, 0.49673, 35.97    , 18.05,-6.04],
                                                                      [0.02115, -0.13658, 261.62, 110.99, -44.86], 
-                                                                     [-0.12686,	-0.22593, 99.06, 55.90, -39.86],
-                                                                     [ 0.18488, 0.01172, 58.23, 62.55,	-22.86],
-                                                                     [-0.03440,	0.23480, 94.71,	32.12, 2.90],
-                                                                     [ 0.04258, 0.05040, 205.54,	53.08,	-35.20], 
-                                                                     [0.15829,  0.13624, 90.21,  70.83,	-19.01],
-                                                                     [-0.01933,	-0.02168,	742.97, 297.66,	-227.30]])}
+                                                                     [-0.12686, -0.22593, 99.06, 55.90, -39.86],
+                                                                     [ 0.18488, 0.01172, 58.23, 62.55, -22.86],
+                                                                     [-0.03440, 0.23480, 94.71, 32.12, 2.90],
+                                                                     [ 0.04258, 0.05040, 205.54, 53.08, -35.20], 
+                                                                     [0.15829,  0.13624, 90.21,  70.83, -19.01],
+                                                                     [-0.01933, -0.02168, 742.97, 297.66, -227.30]])}
                 }
 
 
@@ -58,7 +59,7 @@ def spd_to_mcri(SPD, D = 0.9, E = None, Yb = 20.0, out = 'Rm', wl = None):
     Args: 
         :SPD: 
             | ndarray with spectral data (can be multiple SPDs, 
-              first axis are the wavelengths)
+            |  first axis are the wavelengths)
         :D: 
             | 0.9, optional
             | Degree of adaptation.
@@ -69,7 +70,7 @@ def spd_to_mcri(SPD, D = 0.9, E = None, Yb = 20.0, out = 'Rm', wl = None):
             |  following the 'cat02' model). 
             | If None: the degree is determined by :D:
             |  If (:E: is not None) & (:Yb: is None):  :E: is assumed to contain 
-               the adapting field luminance La (cd/m²).
+            |  the adapting field luminance La (cd/m²).
         :Yb: 
             | 20.0, optional
             | Luminance factor of background. (used when calculating La from E)

@@ -31,8 +31,8 @@ Reference:
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
-from luxpy import np, deltaE, _PKG_PATH, _SEP, _CIE_ILLUMINANTS, getdata, spd_to_xyz, blackbody, xyz_to_cct
-
+from luxpy import deltaE, _CIE_ILLUMINANTS, spd_to_xyz, blackbody, xyz_to_cct
+from luxpy.utils import np, _PKG_PATH, _SEP, getdata 
 
 __all__ = ['_COI_RFL_BLOOD','_COI_CIEOBS','_COI_CSPACE','spd_to_COI_ASNZS1680']
 

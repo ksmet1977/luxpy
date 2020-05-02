@@ -23,7 +23,8 @@ Module with CAM18sl color appearance model
                Journal of the Optical Society of America A, 35(12), 2000–2009. 
                <https://doi.org/10.1364/JOSAA.35.002000>`_
 """
-from luxpy import np, _CMF, _CIE_ILLUMINANTS, _MUNSELL, np2d, spd_to_xyz, asplit, ajoin,cie_interp, getwlr, _WL3, np2dT
+from luxpy import  _CMF, _CIE_ILLUMINANTS, _MUNSELL,  spd_to_xyz, cie_interp, getwlr, _WL3
+from luxpy.utils import np, np2d, np2dT, asplit, ajoin
 from luxpy.color.cam.colorappearancemodels import hue_angle, hue_quadrature, naka_rushton
 
 _CAM18SL_WL3 = [390,830,1]
@@ -56,10 +57,10 @@ def cam18sl(data, datab = None, Lb = [100], fov = 10.0, inputtype = 'xyz', direc
     Args:
         :data: 
             | ndarray of CIE 2006 10°  absolute XYZ tristimulus values or spectral data
-              or color appearance attributes of stimulus
+            |  or color appearance attributes of stimulus
         :datab: 
             | ndarray of CIE 2006 10°  absolute XYZ tristimulus values or spectral data
-              of stimulus background
+            |  of stimulus background
         :Lb: 
             | [100], optional
             | Luminance (cd/m²) value(s) of background(s) calculated using the CIE 2006 10° CMFs 
@@ -190,7 +191,7 @@ def cam18sl(data, datab = None, Lb = [100], fov = 10.0, inputtype = 'xyz', direc
     dshape[-1] = len(outin) # requested number of correlates
     if (inputtype != 'xyz') & (direction == 'forward'):
         dshape[-2] = dshape[-2] - 1 # wavelength row doesn't count & only with forward can the input data be spectral
-    camout = np.nan*np.ones(dshape)
+    camout = np.zeros(dshape);camout.fill(np.nan)
     
   
     for i in range(data.shape[0]):

@@ -55,7 +55,7 @@ def spd_to_iesrf_tm30_15(SPD, out = 'Rf', wl = None, cri_type = 'iesrf-tm30-15')
     Args:
         :SPD: 
             | ndarray with spectral data (can be multiple SPDs, 
-              first axis are the wavelengths)
+            | first axis are the wavelengths)
         :wl: 
             | None, optional
             | Wavelengths (or [start, end, spacing]) to interpolate the SPDs to. 
@@ -94,7 +94,7 @@ def spd_to_iesrg_tm30_15(SPD, out = 'Rg', wl = None, cri_type ='iesrf-tm30-15'):
     Args:
         :SPD: 
             | ndarray with spectral data (can be multiple SPDs, 
-              first axis are the wavelengths)
+            | first axis are the wavelengths)
         :wl: 
             | None, optional
             | Wavelengths (or [start, end, spacing]) to interpolate the SPDs to. 
@@ -133,7 +133,7 @@ def spd_to_iesrf_tm30_18(SPD, out = 'Rf', wl = None, cri_type = 'iesrf-tm30-18')
     Args:
         :SPD: 
             | ndarray with spectral data (can be multiple SPDs, 
-              first axis are the wavelengths)
+            | first axis are the wavelengths)
         :wl: 
             | None, optional
             | Wavelengths (or [start, end, spacing]) to interpolate the SPDs to. 
@@ -172,7 +172,7 @@ def spd_to_iesrg_tm30_18(SPD, out = 'Rg', wl = None, cri_type ='iesrf-tm30-18'):
     Args:
         :SPD: 
             | ndarray with spectral data (can be multiple SPDs, 
-              first axis are the wavelengths)
+            | first axis are the wavelengths)
         :wl: 
             | None, optional
             | Wavelengths (or [start, end, spacing]) to interpolate the SPDs to. 

@@ -4,20 +4,20 @@ Module with scaling functions from DE to CRI-scale.
 ===================================================
 
  :linear_scale():  | Linear color rendering index scale 
-                     from CIE13.3-1974/1995:   
+                   | from CIE13.3-1974/1995:   
                    |     Rfi,a = 100 - c1*DEi,a. (c1 = 4.6)
 
  :log_scale(): | Log-based color rendering index scale 
-                 from Davis & Ohno (2009):  
+               | from Davis & Ohno (2009):  
                |     Rfi,a = 10 * ln(exp((100 - c1*DEi,a)/10) + 1)
 
  :psy_scale():  | Psychometric based color rendering index scale 
-                  from CRI2012 (Smet et al. 2013, LRT):  
+                | from CRI2012 (Smet et al. 2013, LRT):  
                 |     Rfi,a = 100 * (2 / (exp(c1*abs(DEi,a)**(c2) + 1))) ** c3
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
-from luxpy import np
+from luxpy.utils import np
 __all__ = ['linear_scale', 'log_scale', 'psy_scale']
 
 #------------------------------------------------------------------------------

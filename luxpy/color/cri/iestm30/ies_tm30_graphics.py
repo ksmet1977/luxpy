@@ -27,10 +27,7 @@ Module for IES color rendition graphical output
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
-from luxpy import np, plt
-
-#from ..utils.helpers import spd_to_cri, jab_to_rhi
-#from ..utils.init_cri_defaults_database import _CRI_DEFAULTS
+from luxpy.utils import np, plt
 
 from ..utils.graphics import plot_ColorVectorGraphic
 from ..VFPX.vectorshiftmodel import  _VF_MODEL_TYPE, _VF_PCOLORSHIFT 
@@ -104,9 +101,9 @@ def plot_cri_graphics(data, cri_type = None, hbins = 16, start_hue = 0.0, scalef
         :vf_pcolorshift:
             | _VF_PCOLORSHIFT or user defined dict, optional
             | The polynomial models of degree 5 and 6 can be fully specified or 
-              summarized by the model parameters themselved OR by calculating the
-              dCoverC and dH at resp. 5 and 6 hues. :VF_pcolorshift: specifies 
-              these hues and chroma level.
+            | summarized by the model parameters themselved OR by calculating the
+            | dCoverC and dH at resp. 5 and 6 hues. :VF_pcolorshift: specifies 
+            | these hues and chroma level.
         :vf_color:
             | 'k', optional
             | For plotting the vector fields.
@@ -116,8 +113,8 @@ def plot_cri_graphics(data, cri_type = None, hbins = 16, start_hue = 0.0, scalef
         :scale_vf_chroma_to_sample_chroma:
             | False, optional
             | Scale chroma of reference and test vf fields such that average of 
-              binned reference chroma equals that of the binned sample chroma
-              before calculating hue bin metrics.
+            | binned reference chroma equals that of the binned sample chroma
+            | before calculating hue bin metrics.
         :vf_bin_labels:
             | see :bin_labels:
             | Set VF model hue-bin labels.

@@ -15,7 +15,8 @@ Module for color difference calculations
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
-from luxpy import np, np2d, cam, _CSPACE, colortf, xyz_to_lab
+from luxpy import cam, _CSPACE, colortf, xyz_to_lab
+from luxpy.utils import np, np2d
 
 
 __all__ = ['deltaH', 'DE_camucs', 'DE2000','DE_cspace']
@@ -59,7 +60,7 @@ def _process_DEi(DEi, DEtype = 'jab', avg = None, avg_axis = 0, out = 'DEi'):
             |    - 'j'   : calculates lightness or brightness difference 
             |             (depending on :out:).
             |    - 'j,ab': calculates both 'j' and 'ab' options 
-                          and returns them as a tuple.
+            |              and returns them as a tuple.
         :avg:
             | None, optional
             | None: don't calculate average DE, 
@@ -128,7 +129,7 @@ def DE_camucs(xyzt, xyzr, DEtype = 'jab', avg = None, avg_axis = 0, out = 'DEi',
             |    - 'j'   : calculates lightness or brightness difference 
             |             (depending on :outin:).
             |    - 'j,ab': calculates both 'j' and 'ab' options 
-                          and returns them as a tuple.
+            |              and returns them as a tuple.
         :avg:
             | None, optional
             | None: don't calculate average DE, 
@@ -208,7 +209,7 @@ def DE2000(xyzt, xyzr, dtype = 'xyz', DEtype = 'jab', avg = None, avg_axis = 0, 
             |    - 'j'   : calculates lightness or brightness difference 
             |             (depending on :outin:).
             |    - 'j,ab': calculates both 'j' and 'ab' options 
-                          and returns them as a tuple.
+            |              and returns them as a tuple.
         :KLCH: 
             | None, optional
             | Weigths for L, C, H 
@@ -334,12 +335,12 @@ def DE_cspace(xyzt, xyzr, dtype = 'xyz', tf = _CSPACE, DEtype = 'jab', avg = Non
             | None or ndarray, optional
             |   White point tristimulus values of test data
             |   None defaults to the one set in :fwtft: 
-                or else to the default of cspace.
+            |   or else to the default of cspace.
         :xyzwr:
             | None or ndarray, optional
             |   Whitepoint tristimulus values of reference data
             |    None defaults to the one set in non-empty :fwtfr: 
-                 or else to default of cspace.
+            |    or else to default of cspace.
         :tf:
             | _CSPACE, optional
             | Color space to use for color difference calculation.
@@ -350,7 +351,7 @@ def DE_cspace(xyzt, xyzr, dtype = 'xyz', tf = _CSPACE, DEtype = 'jab', avg = Non
         :fwtfr: 
             | {}, optional 
             | Dict with parameters for forward transform 
-              from xyz to cspace for reference data.
+            | from xyz to cspace for reference data.
         :KLCH:
             | None, optional
             | Weigths for L, C, H 
@@ -364,7 +365,7 @@ def DE_cspace(xyzt, xyzr, dtype = 'xyz', tf = _CSPACE, DEtype = 'jab', avg = Non
             |    - 'j'   : calculates lightness or brightness difference 
             |             (depending on :outin:).
             |    - 'j,ab': calculates both 'j' and 'ab' options 
-                          and returns them as a tuple.
+            |              and returns them as a tuple.
         :avg:
             | None, optional
             | None: don't calculate average DE, 

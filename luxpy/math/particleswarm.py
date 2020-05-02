@@ -7,23 +7,13 @@
 __all__ = ['particleswarm']
 
 # Import modules
-import numpy as np
-import matplotlib as plt
 import subprocess
+from luxpy.utils import np, plt, is_importable
 
 
-# Import PySwarms
-try:
-    import pyswarms as ps
-except ImportError:
-    try:
-        print("Trying to 'pip install pyswarms' using subprocess.")
-        m = subprocess.call(["pip", "install", 'pyswarms'])
-        if m != 0:
-            raise Exception("Tried importing 'pyswarms', then tried installing it. Please install it manually: pip install pyswarms")  
-    except:
-        raise Exception("Tried importing 'pyswarms', then tried installing it. Please install it manually: pip install pyswarms")  
-finally:
+# import pyswarms (and if necessary install it):
+success = is_importable('pyswarms', try_pip_install = True)
+if success:
     import pyswarms as ps
     from pyswarms.utils.plotters import (plot_cost_history, plot_contour, plot_surface)
 

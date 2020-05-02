@@ -72,7 +72,8 @@ https://www.rit.edu/cos/colorscience/re_AsanoObserverFunctions.php
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
-from luxpy import np, interpolate, math, plt, _WL3, _PKG_PATH, _SEP, _CMF, spd, getdata, getwlr
+from luxpy import math, _WL3, _CMF, spd, getwlr
+from luxpy.utils import np, sp, plt, _PKG_PATH, _SEP, getdata
 
 __all__ = ['_INDVCMF_DATA_PATH','_INDVCMF_DATA','_INDVCMF_STD_DEV_ALL_PARAM','_INDVCMF_CATOBSPFCTR', '_INDVCMF_M_2d', '_INDVCMF_M_10d']
 __all__ +=['cie2006cmfsEx','getMonteCarloParam','genMonteCarloObs','getCatObs']
@@ -245,9 +246,9 @@ def cie2006cmfsEx(age = 32,fieldsize = 10, wl = None,\
     
     LMSa_shft = np.empty(LMSa.shape)
     kind = 'cubic'
-    LMSa_shft[0] = interpolate.interp1d(wl_shifted[0],LMSa[0], kind = kind, bounds_error = False, fill_value = "extrapolate")(_WL)
-    LMSa_shft[1] = interpolate.interp1d(wl_shifted[1],LMSa[1], kind = kind, bounds_error = False, fill_value = "extrapolate")(_WL)
-    LMSa_shft[2] = interpolate.interp1d(wl_shifted[2],LMSa[2], kind = kind, bounds_error = False, fill_value = "extrapolate")(_WL)
+    LMSa_shft[0] = sp.interpolate.interp1d(wl_shifted[0],LMSa[0], kind = kind, bounds_error = False, fill_value = "extrapolate")(_WL)
+    LMSa_shft[1] = sp.interpolate.interp1d(wl_shifted[1],LMSa[1], kind = kind, bounds_error = False, fill_value = "extrapolate")(_WL)
+    LMSa_shft[2] = sp.interpolate.interp1d(wl_shifted[2],LMSa[2], kind = kind, bounds_error = False, fill_value = "extrapolate")(_WL)
 #    LMSa[2,np.where(_WL >= _WL_CRIT)] = 0 #np.nan # Not defined above 620nm
 #    LMSa_shft[2,np.where(_WL >= _WL_CRIT)] = 0
     
@@ -448,7 +449,7 @@ def genMonteCarloObs(n_obs = 1, fieldsize = 10, list_Age = [32], out = 'LMS', wl
     else:
         wl = _WL
         
-    LMS_All = np.nan*np.ones((3+1, wl.shape[0],n_obs))
+    LMS_All = np.zeros((3+1, wl.shape[0],n_obs)); LMS_All.fill(np.nan)
     for k in range(n_obs):
         t_LMS, t_trans_lens, t_trans_macula, t_sens_photopig = cie2006cmfsEx(age = var_age[k], fieldsize = fieldsize, wl = wl,\
                                                                           var_od_lens = vAll['od_lens'][k], var_od_macula = vAll['od_macula'][k], \
@@ -465,7 +466,7 @@ def genMonteCarloObs(n_obs = 1, fieldsize = 10, list_Age = [32], out = 'LMS', wl
 
     if n_obs == 1:
         LMS_All = np.squeeze(LMS_All, axis = 2)
-	
+
     if ('xyz' in out.lower().split(',')):
         LMS_All = lmsb_to_xyzb(LMS_All, fieldsize, out = 'xyz', allow_negative_values = allow_negative_values)
         out = out.replace('xyz','LMS').replace('XYZ','LMS')
@@ -545,7 +546,7 @@ def getCatObs(n_cat = 10, fieldsize = 2, out = 'LMS', wl = None, allow_negative_
     else:
         wl = _WL
 
-    LMS_All = np.nan*np.ones((3+1,_WL.shape[0],n_cat)) 
+    LMS_All = np.zeros((3+1,_WL.shape[0],n_cat)); LMS_All.fill(np.nan)
     for k in range(n_cat):
         t_LMS = cie2006cmfsEx(age = var_age[k],fieldsize = fieldsize, wl = wl,\
                               var_od_lens = vAll['od_lens'][k],\
@@ -564,7 +565,7 @@ def getCatObs(n_cat = 10, fieldsize = 2, out = 'LMS', wl = None, allow_negative_
     
     if n_cat == 1:
         LMS_All = np.squeeze(LMS_All, axis = 2)
-	
+
     if ('xyz' in out.lower().split(',')):
         LMS_All = lmsb_to_xyzb(LMS_All, fieldsize, out = 'xyz', allow_negative_values = allow_negative_values)
         out = out.replace('xyz','LMS').replace('XYZ','LMS')

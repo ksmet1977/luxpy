@@ -92,7 +92,8 @@ Notes
     (Accessed Dec 18, 2019)    
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
-from luxpy import np, pd, sp, interpolate, math, plt, _WL3, _PKG_PATH, _SEP, _CMF, spd, getdata, getwlr, getwld, cie_interp, spd_to_power, xyz_to_Yxy, spd_normalize
+from luxpy import math, _WL3, _CMF, spd, getwlr, getwld, cie_interp, spd_to_power, xyz_to_Yxy, spd_normalize
+from luxpy.utils import np, pd, sp, plt, _PKG_PATH, _SEP, getdata
 import warnings
 
 __all__ = ['_DATA','_DSRC_STD_DEF', '_DSRC_LMS_ODENS_DEF','_LMS_TO_XYZ_METHOD']
@@ -336,25 +337,28 @@ def _docul_fine(ocular_sum_32, docul2):
     """
     Calculate the two parts of the expression for the optical density of the 
     ocular media as function of age.
-    Parameters
-    ----------
-    ocular_sum_32 : ndarray
-        Sum of two ocular functions
-    docul2 : ndarray
-    Returns
-    -------
-    docul1_fine : ndarray
-        The calculatedd values for part 1, docul1, tabulated with high 
-        resolution
-    docul2_fine : ndarray,
-        The calculatedd values for part 2, docul2, tabulated with high 
-        resolution
+    
+    Args:
+        :ocular_sum_32:
+            | ndarray
+            | Sum of two ocular functions
+        :docul2:
+            | ndarray
+    Returns:
+        :docul1_fine:
+            | ndarray
+            | The calculatedd values for part 1, docul1, tabulated  
+            | with high resolution
+        :docul2_fine:
+            | ndarray
+            | The calculatedd values for part 2, docul2, tabulated  
+            | with high resolution
     """
     docul2_pad = np.zeros((75, 2))             # initialize
     docul2_pad[:, 0] = np.arange(460, 835, 5)  # fill
     docul2_pad[:, 1] = 0                       # fill
     docul2 = np.concatenate((docul2, docul2_pad))
-    spl = interpolate.InterpolatedUnivariateSpline(docul2[:, 0], docul2[:, 1])
+    spl = sp.interpolate.InterpolatedUnivariateSpline(docul2[:, 0], docul2[:, 1])
     docul2_fine = ocular_sum_32.copy()
     docul2_fine[:, 1] = spl(ocular_sum_32[:, 0])
     docul1_fine = ocular_sum_32.copy()
@@ -577,6 +581,7 @@ def query_state():
 def _d_ocular(age = 32, var_od_lens = 0, docul0 = None):
     """
     Calculate the optical density of the ocular media for a given age.
+
     Args:
         :age:
             | 32, float, optional
@@ -588,6 +593,7 @@ def _d_ocular(age = 32, var_od_lens = 0, docul0 = None):
             | None, optional
             | Uncorrected ocular media density function 
             | None defaults to the one stored in _DATA
+
     Returns:
         :docul:
             | ndarray with the calculated optical density of the ocular media; row 0 are wavelenghts.
@@ -611,6 +617,7 @@ def _d_ocular(age = 32, var_od_lens = 0, docul0 = None):
 def _d_mac_max(fieldsize = 10, var_od = 0):
     """
     Calculate the maximum optical density of the macular pigment for a given field size.
+    
     Args:
         :fieldsize:
             | 10, float, optional
@@ -618,6 +625,7 @@ def _d_mac_max(fieldsize = 10, var_od = 0):
         :var_od:
             | 0, optional
             | Variation of optical density of macula.
+
     Returns:
         :d_mac_max:
             | float
@@ -630,6 +638,7 @@ def _d_mac_max(fieldsize = 10, var_od = 0):
 def _d_mac(fieldsize = 10, var_od = 0, rmd0 = None):
     """
     Calculate the optical density of the macular pigment for a given field size.
+    
     Args:
         :fieldsize:
             | 10, float, optional
@@ -656,6 +665,7 @@ def _d_mac(fieldsize = 10, var_od = 0, rmd0 = None):
 def _d_LM_max(fieldsize = 10, var_od = 0):
     """
     Calculate the maximum optical density of the L- and M-cone photopigments for a given field size.
+    
     Args:
         :field_size:
             | 10, float, optional
@@ -663,6 +673,7 @@ def _d_LM_max(fieldsize = 10, var_od = 0):
         :var_od:
             | 0, optional
             | Variation of optical density.
+    
     Returns:
         :d_LM_max:
             | float
@@ -676,6 +687,7 @@ def _d_LM_max(fieldsize = 10, var_od = 0):
 def _d_S_max(fieldsize = 10, var_od = 0):
     """
     Calculate the maximum optical density of the S-cone photopigment for a given field size.
+    
     Args:
         :fieldsize:
             | 10, float, optional
@@ -683,6 +695,7 @@ def _d_S_max(fieldsize = 10, var_od = 0):
         :var_od:
             | 0, optional
             | Variation of optical density.
+
     Returns:
         :d_S_max:
             | float
@@ -695,6 +708,7 @@ def _d_S_max(fieldsize = 10, var_od = 0):
 def _LMS_absorptance(fieldsize = 10, var_shft_LMS = [0,0,0], var_od_LMS = [0, 0, 0], LMSa0 = None):
     """
     Calculate the quantal absorptance of the L, M and S cones for a given field size.
+    
     Args:
         :fieldsize: 
             | 10, float, optional
@@ -709,6 +723,7 @@ def _LMS_absorptance(fieldsize = 10, var_shft_LMS = [0,0,0], var_od_LMS = [0, 0,
             | None, optional
             | Uncorrected LMS absorptance functions
             | None defaults to the ones stored in _DATA
+
     Returns:
         alpha_lms: 
             | ndarray with the calculated quantal absorptances of the L, M and S cones; row 0 are wavelenghts.
@@ -733,18 +748,18 @@ def _LMS_absorptance(fieldsize = 10, var_shft_LMS = [0,0,0], var_od_LMS = [0, 0,
     if var_shft_LMS[0] == 0:
         LMSa_shft[0] = LMSa[0]
     else:
-        LMSa_shft[0] = interpolate.InterpolatedUnivariateSpline(wl_shifted[0],LMSa[0], k = kind, ext = "extrapolate")(wls)
+        LMSa_shft[0] = sp.interpolate.InterpolatedUnivariateSpline(wl_shifted[0],LMSa[0], k = kind, ext = "extrapolate")(wls)
     if var_shft_LMS[1] == 0:
         LMSa_shft[1] = LMSa[1]
     else:
-        LMSa_shft[1] = interpolate.InterpolatedUnivariateSpline(wl_shifted[1],LMSa[1], k = kind, ext = "extrapolate")(wls)
+        LMSa_shft[1] = sp.interpolate.InterpolatedUnivariateSpline(wl_shifted[1],LMSa[1], k = kind, ext = "extrapolate")(wls)
     
     if var_shft_LMS[2] == 0:
         LMSa_shft[2] = LMSa[2]
     else:
         LMSa[2,np.isinf(LMSa[2,:])] = np.nan
         non_nan_indices = np.logical_not(np.isnan(LMSa[2]))
-        LMSa_shft[2] = interpolate.InterpolatedUnivariateSpline(wl_shifted[2][non_nan_indices],LMSa[2][non_nan_indices], k = kind, ext = "extrapolate")(wls)
+        LMSa_shft[2] = sp.interpolate.InterpolatedUnivariateSpline(wl_shifted[2][non_nan_indices],LMSa[2][non_nan_indices], k = kind, ext = "extrapolate")(wls)
 
         # Detect poor interpolation (sign switch due to instability):
         ssw = np.hstack((0,np.sign(np.diff(LMSa_shft[2,:])))) 
@@ -773,6 +788,7 @@ def _LMS_quantal(fieldsize = 10, age = 32, var_od_lens = 0, var_od_mac = 0,
                  norm_type = 'max', out = 'LMSq', odata0 = None):
     """
     Calculate the quantal based LMS cone fundamentals for a given field size and age.
+    
     Args:
         :fieldsize:
             | 10, float, optional
@@ -801,6 +817,7 @@ def _LMS_quantal(fieldsize = 10, age = 32, var_od_lens = 0, var_od_mac = 0,
             | None, optional
             | Dict with uncorrected ocular media and macula density functions and LMS absorptance functions
             | None defaults to the ones stored in _DATA
+
     Returns:
         :LMSq: 
             | ndarray with the calculated quantum_based LMS cone fundamentals; first row are wavelengths.
@@ -839,6 +856,7 @@ def _LMS_energy(fieldsize = 10, age = 32, var_od_lens = 0, var_od_mac = 0,
                 norm_type = 'max', out = 'LMSe', base = False, odata0 = None):
     """
     Calculate the energy based LMS cone fundamentals for a given field size and age.
+    
     Args:
         :fieldsize:
             | 10, float, optional
@@ -872,6 +890,7 @@ def _LMS_energy(fieldsize = 10, age = 32, var_od_lens = 0, var_od_mac = 0,
             | None, optional
             | Dict with uncorrected ocular media and macula density functions and LMS absorptance functions
             | None defaults to the ones stored in _DATA
+
     Returns:
         :LMSe: 
             | ndarray with the calculated quantum_based LMS cone fundamentals; first row are wavelengths.
@@ -930,6 +949,7 @@ def _relative_L_cone_weight_Vl_quantal(fieldsize = 10, age = 32, strategy_2 = Tr
     """
     Compute the weighting factor of the quantal L-cone fundamental in the
     synthesis of the cone-fundamental-based quantal V(λ) function (normalized to max=1).
+    
     Args:
         :fieldsize: 
             | 10, float, optional
@@ -963,6 +983,7 @@ def _relative_L_cone_weight_Vl_quantal(fieldsize = 10, age = 32, strategy_2 = Tr
             | None, optional
             | Dict with uncorrected ocular media and macula density functions and LMS absorptance functions
             | None defaults to the ones stored in _DATA
+
     Returns:
         kLq: 
             | float
@@ -1021,6 +1042,7 @@ def _Vl_energy_and_LM_weights(fieldsize = 10, age = 32, strategy_2 = True,
     Compute the energy-based V(λ) function (starting from energy-based LMS).
     Return both V(λ) and the the corresponding L and M cone weights used
     in the synthesis.
+    
     Args:
         :fieldsize: 
             | 10, float, optional
@@ -1061,6 +1083,7 @@ def _Vl_energy_and_LM_weights(fieldsize = 10, age = 32, strategy_2 = True,
             | None, optional
             | Dict with uncorrected ocular media and macula density functions and LMS absorptance functions
             | None defaults to the ones stored in _DATA
+
     Returns:
         :Vl:
             | ndarray
@@ -1090,6 +1113,7 @@ def _xyz_interpolated_reference_system(fieldsize, XYZ31_std, XYZ64_std):
     Compute the spectral chromaticity coordinates of the reference system
     by interpolation between correspoding spectral chromaticity coordinates
     of the CIE 1931 XYZ systems and the CIE 1964 XYZ systems.
+    
     Args:
         :fieldsize:
             | float
@@ -1102,8 +1126,8 @@ def _xyz_interpolated_reference_system(fieldsize, XYZ31_std, XYZ64_std):
             | ndarray
             | The CIE 1964 XYZ colour-matching functions (10°), given at 1 nm
             | steps from 360 nm to 830 nm; wavelengths in first row.
+
     Returns:
-    -------
         :chromaticity:
             | ndarray
             | The computed interpolated spectral chromaticity coordinates of the
@@ -1131,17 +1155,17 @@ def _xyz_interpolated_reference_system(fieldsize, XYZ31_std, XYZ64_std):
                        700.,
                        830.])
     # wl values
-    wl31_interp = interpolate.InterpolatedUnivariateSpline(wl_knots, wl31_knots, k = 1)(wl31)
-    wl64_interp = interpolate.InterpolatedUnivariateSpline(wl_knots, wl64_knots, k = 1)(wl64)
+    wl31_interp = sp.interpolate.InterpolatedUnivariateSpline(wl_knots, wl31_knots, k = 1)(wl31)
+    wl64_interp = sp.interpolate.InterpolatedUnivariateSpline(wl_knots, wl64_knots, k = 1)(wl64)
 
     # x values
-    x31_interp = interpolate.InterpolatedUnivariateSpline(wl31, x31, k = 3)(wl31_interp)
-    x64_interp = interpolate.InterpolatedUnivariateSpline(wl64, x64, k = 3)(wl64_interp)
+    x31_interp = sp.interpolate.InterpolatedUnivariateSpline(wl31, x31, k = 3)(wl31_interp)
+    x64_interp = sp.interpolate.InterpolatedUnivariateSpline(wl64, x64, k = 3)(wl64_interp)
     x_values = (1-a) * x31_interp + a * x64_interp
     
     # y values
-    y31_interp = interpolate.InterpolatedUnivariateSpline(wl31, y31, k = 3)(wl31_interp)
-    y64_interp = interpolate.InterpolatedUnivariateSpline(wl64, y64, k = 3)(wl64_interp)
+    y31_interp = sp.interpolate.InterpolatedUnivariateSpline(wl31, y31, k = 3)(wl31_interp)
+    y64_interp = sp.interpolate.InterpolatedUnivariateSpline(wl64, y64, k = 3)(wl64_interp)
     y_values = (1-a) * y31_interp + a * y64_interp
     
     # z values
@@ -1161,6 +1185,7 @@ def _square_sum(a13, a21, a22, a33,
     """
     Function to be optimised for determination of element a13 in the (non-renormalized) 
     transformation matrix of the linear transformation LMS --> XYZ.
+    
     Args:
         :a13: 
             | ndarray
@@ -1188,6 +1213,7 @@ def _square_sum(a13, a21, a22, a33,
         :full_results: 
             | bool
             | Return all results or just the computed error.
+
     Returns:
         :err: 
             | float
@@ -1249,6 +1275,7 @@ def _compute_LMS(wls, L_spline, M_spline, S_spline, base=False):
     """
     Compute the LMS cone fundamentals for given wavelengths, as linear values 
     to respective specified precisions.
+    
     Args:
         :wls:
             | ndarray
@@ -1260,6 +1287,7 @@ def _compute_LMS(wls, L_spline, M_spline, S_spline, base=False):
             | The returned energy-based LMS values are given to the precision of
             | 9 sign. figs. / 8 decimal points if 'True', and to the precision of
             | 6 sign. figs. / 5 decimal points if 'False'.
+
     Returns:
         :LMS:
             | ndarray
@@ -1282,6 +1310,7 @@ def _compute_XYZ(L_spline, M_spline, S_spline, V_spline,
                 LMS_spec, LMS_all, LM_weights, xyz_reference):
     """
     Compute the CIE cone-fundamental-based XYZ tristimulus functions.
+    
     Args:
         :L_spline, M_spline, S_spline:
             | Spline-interpolation functions for the LMS cone fundamentals (on a linear scale).
@@ -1305,6 +1334,7 @@ def _compute_XYZ(L_spline, M_spline, S_spline, V_spline,
             | The spectral chromaticity coordinates of the reference system
             | (obtained by shape-morphing (interpolation) between the CIE 1931
             | standard and the CIE 1964 standard).
+
     Returns:
         :trans_mat:
             | ndarray
@@ -1471,7 +1501,7 @@ def compute_cmfs(fieldsize = 10, age = 32, wl = None,
         :returns: 
             | - 'LMS' [or 'XYZ']: ndarray with individual observer equal area-normalized 
             |           cone fundamentals. Wavelength have been added.
-                
+            |    
             | [- 'M': lms to xyz conversion matrix
             |  -  'trans_lens': ndarray with lens transmission 
             |      (no interpolation)
@@ -1553,9 +1583,9 @@ def compute_cmfs(fieldsize = 10, age = 32, wl = None,
         # =======================================================================
         # base:
         (wl_all, L_base_all, M_base_all, S_base_all) = LMS_base_all
-        L_base_spline = interpolate.InterpolatedUnivariateSpline(wl_all, L_base_all)
-        M_base_spline = interpolate.InterpolatedUnivariateSpline(wl_all, M_base_all)
-        S_base_spline = interpolate.InterpolatedUnivariateSpline(wl_all, S_base_all)
+        L_base_spline = sp.interpolate.InterpolatedUnivariateSpline(wl_all, L_base_all)
+        M_base_spline = sp.interpolate.InterpolatedUnivariateSpline(wl_all, M_base_all)
+        S_base_spline = sp.interpolate.InterpolatedUnivariateSpline(wl_all, S_base_all)
             
         # =======================================================================
         # Compute the LMS-base cone fundamentals 
@@ -1594,7 +1624,7 @@ def compute_cmfs(fieldsize = 10, age = 32, wl = None,
 
             # Create spline function for Vlambda:
             wl_all, V_std_all = V_std_all
-            V_std_spline = interpolate.InterpolatedUnivariateSpline(wl_all, V_std_all)
+            V_std_spline = sp.interpolate.InterpolatedUnivariateSpline(wl_all, V_std_all)
             
             #  Determine reference diagram
             xyz_reference = _xyz_interpolated_reference_system(fieldsize, _CMF['1931_2']['bar'].copy(), _CMF['1964_10']['bar'].copy())
@@ -1762,7 +1792,7 @@ def cie2006cmfsEx(age = 32,fieldsize = 10, wl = None,\
         :returns: 
             | - 'LMS' [or 'XYZ']: ndarray with individual observer equal area-normalized 
             |           cone fundamentals. Wavelength have been added.
-                
+            |   
             | [- 'M': lms to xyz conversion matrix
             |  -  'trans_lens': ndarray with lens transmission 
             |      (no interpolation)
@@ -1872,7 +1902,7 @@ def genMonteCarloObs(n_obs = 1, fieldsize = 10, list_Age = [32], wl = None,
             | list of observer ages or str, optional
             | Defaults to 32 (cfr. CIE2006 CMFs)
             | If 'us_census': use US population census of 2010 
-              to generate list_Age.
+            | to generate list_Age.
         :fieldsize: 
             | fieldsize in degrees (between 2° and 10°), optional
             | Defaults to 10°.
@@ -1970,7 +2000,7 @@ def genMonteCarloObs(n_obs = 1, fieldsize = 10, list_Age = [32], wl = None,
     else:
         raise Exception("Must request either 'lms' or 'xyz' in :out:.")
         
-    LMS_All = np.nan*np.ones((3+1, wl.shape[0],n_obs))
+    LMS_All = np.zeros((3+1, wl.shape[0],n_obs)); LMS_All.fill(np.nan)
     
     for k in range(n_obs):
         t_LMS, t_trans_lens, t_trans_macula, t_sens_photopig = cie2006cmfsEx(age = var_age[k], fieldsize = fieldsize, wl = wl,\
@@ -1985,7 +2015,7 @@ def genMonteCarloObs(n_obs = 1, fieldsize = 10, list_Age = [32], wl = None,
         
     if n_obs == 1:
         LMS_All = np.squeeze(LMS_All, axis = 2)
-	
+    
     if ('xyz' in out.lower().split(',')):
         out = out.replace('xyz','LMS').replace('XYZ','LMS')
     if ('lms' in out.lower().split(',')):
@@ -2101,7 +2131,7 @@ def getCatObs(n_cat = 10, fieldsize = 2,  wl = None,
     else:
         raise Exception("Must request either 'lms' or 'xyz' in :out:.")
 
-    LMS_All = np.nan*np.ones((3+1,wl.shape[0],n_cat)) 
+    LMS_All = np.zeros((3+1,wl.shape[0],n_cat)); LMS_All.fill(np.nan)
     for k in range(n_cat):
         t_LMS = cie2006cmfsEx(age = var_age[k],fieldsize = fieldsize, wl = wl,\
                               var_od_lens = vAll['od_lens'][k],\
@@ -2124,7 +2154,7 @@ def getCatObs(n_cat = 10, fieldsize = 2,  wl = None,
     
     if n_cat == 1:
         LMS_All = np.squeeze(LMS_All, axis = 2)
-	
+
     if ('xyz' in out.lower().split(',')):
         out = out.replace('xyz','LMS').replace('XYZ','LMS')
     if ('lms' in out.lower().split(',')):
@@ -2186,6 +2216,7 @@ def lmsb_to_xyzb(lms, fieldsize = 10, out = 'xyz', allow_negative_values = False
             | None, optional
             | None defaults to _LMS_TO_XYZ_METHOD
             | Options: 'asano' (see note below), 'cietc197'
+            
     Returns:
         :returns:
             | LMS 

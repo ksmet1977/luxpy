@@ -16,9 +16,15 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #########################################################################
 """
-Module with helper functions 
-============================
+Module with utility functions and parameters
+============================================
 
+ :_PKG_PATH: absolute path to luxpy package
+ 
+ :_SEP: operating system operator
+ 
+ :_EPS: = 7./3 - 4./3 -1 (machine epsilon)
+ 
  :np2d(): Make a tuple, list or array at least a 2D numpy array.
 
  :np2dT(): Make a tuple, list or array at least a 2D numpy array and tranpose.
@@ -59,16 +65,66 @@ Module with helper functions
            with shape of another array.
            
  :write_to_excel(): Write a DataFrame to existing an Excel file into specific Sheet.
+ 
+ :show_luxpy_tree(): Show luxpy folder structure
+ 
+ :is_importable(): Check if a module is importable / loaded and if it doesn't exist installing it using subprocess
+ 
+ :get_function_kwargs(): Get dictionary of a function's keyword arguments and their default values. 
 
 ===============================================================================
 """
+#------------------------------------------------------------------------------
+# Package imports:
+# Core:
+import os
+import warnings
+import subprocess
+import importlib
+import time
+import cProfile
+import pstats
+import io
+from collections import OrderedDict as odict
+from mpl_toolkits.mplot3d import Axes3D
+__all__ = ['odict','Axes3D']
 
-from luxpy import np, pd, odict, warnings
-__all__ = ['np2d','np3d','np2dT','np3dT','put_args_in_db','vec_to_dict',
+# other:
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import scipy as sp
+
+__all__ += ['np','pd','plt','sp']
+
+
+#------------------------------------------------------------------------------
+# os related utility parameters:
+_PKG_PATH = os.path.dirname(__file__);""" Absolute path to package """ 
+_PKG_PATH = _PKG_PATH[:_PKG_PATH.find("utils")-1]
+_SEP = os.sep; """ Operating system separator """
+__all__ += ['_PKG_PATH','_SEP']
+
+
+#------------------------------------------------------------------------------
+# set some general utility parameters:
+_EPS = 7./3 - 4./3 -1; """ Machine epsilon """
+__all__+=['_EPS']
+
+
+#------------------------------------------------------------------------------
+from .folder_tree import tree
+__all__ += ['np2d','np3d','np2dT','np3dT',
+           'put_args_in_db','vec_to_dict',
            'getdata','dictkv','OD','meshblock','asplit','ajoin',
-           'broadcast_shape','todim','write_to_excel']
+           'broadcast_shape','todim','write_to_excel','show_luxpy_tree',
+           'is_importable','get_function_kwargs','profile_fcn']
 
-#--------------------------------------------------------------------------------------------------
+##############################################################################
+# Start function definitions
+##############################################################################
+
+#------------------------------------------------------------------------------
 def np2d(data):
     """
     Make a tuple, list or numpy array at least a 2D numpy array.
@@ -132,8 +188,7 @@ def np3d(data):
     
 def np3dT(data): # keep last axis the same
     """
-    Make a tuple, list or numpy array at least a 3d numpy array and transposed 
-    first 2 axes.
+    Make a tuple, list or numpy array at least a 3d numpy array and transposed first 2 axes.
     
     Args:
         :data: 
@@ -142,7 +197,7 @@ def np3dT(data): # keep last axis the same
     Returns:
         :returns: 
             | ndarray with .ndim >= 3 and with first two axes 
-              transposed (axis=3 is kept the same).
+            | transposed (axis=3 is kept the same).
     """
     if isinstance(data,np.ndarray):# assume already atleast_3d when nd.array (user has to ensure input is an array)
         if (len(data.shape)>=3):
@@ -308,6 +363,7 @@ def getdata(data, kind = 'np', columns = None, header = None, sep = ',', datatyp
     elif copy == True:
         data = data.copy()
     return data
+
 
 #--------------------------------------------------------------------------------------------------
 def dictkv(keys=None,values=None, ordered = True): 
@@ -587,3 +643,121 @@ def write_to_excel(filename, df, sheet_name='Sheet1', startrow=None,
 
     # save the workbook
     writer.save()
+    
+def show_luxpy_tree(omit = ['.pyc','__pycache__',
+                            '.txt','.dat','.csv','.npz',
+                            '.png','.jpg','.md','.pdf','.ini','.log', '.rar',
+                            'drivers','SDK_','dll','bak']):
+    """
+    Show luxpy foler tree.
+    
+    Args:
+        :omit:
+            | List of folders and file-extensions to omit.
+            
+    Returns:
+        None
+    """
+    tree(_PKG_PATH, omit = omit)
+    return None
+
+
+#------------------------------------------------------------------------------
+def is_importable(string, try_pip_install = False):
+    """
+    Check if string is importable/loadable. If it doesn't then try to 'pip install' it using subprocess.
+    Returns None if succesful, otherwise throws and error or outputs False.
+    
+    Args:
+        :string:
+            | string with package or module name
+        :try_pip_install:
+            | False, optional
+            | True: try pip installing it using subprocess
+    
+    Returns:
+        :success:
+            | True if importable, False if not.
+    """ 
+    success = importlib.util.find_spec(string) is not None
+    if (not success) & (try_pip_install == True):  
+        try:
+            print("Trying to 'pip install {:s}' using subprocess.".format(string))
+            success = subprocess.call(["pip", "install", "{:s}".format(string)])
+            print("subprocess output: ", success)
+            if success != 0:
+                raise Exception("Tried importing '{:s}', then tried pip installing it. Please install it manually: pip install {:s}".format(string,string))  
+            else:
+                print("'pip install {:s}' succesful".format(string))
+            success = importlib.util.find_spec(string) is not None
+        except:
+            success = False
+            raise Exception("Tried importing '{:s}', then tried pip installing it. Please install it manually: pip install {:s}".format(string,string))   
+    return success
+    
+#------------------------------------------------------------------------------
+def get_function_kwargs(f):
+    """
+    Get dictionary of a function's keyword arguments and their default values. 
+    
+    Args:
+        :f:
+            | function name
+    
+    Returns:
+        :dict:
+            | Dict with the function's keyword arguments and their default values
+            | Is empty if there are no defaults (i.e. f.__defaults__ or f.__kwdefaults__ are None).
+    """
+    kwdefs = f.__kwdefaults__
+    if kwdefs is None: kwdefs = {}
+    names = f.__code__.co_varnames[:f.__code__.co_argcount]
+    if f.__defaults__ is not None:
+        d = dict(zip(names[::-1][:len(f.__defaults__)][::-1],f.__defaults__))
+    else:
+        d = {}
+    d.update(kwdefs)
+    return d
+
+#------------------------------------------------------------------------------
+def profile_fcn(fcn, profile=True, sort_stats = 'tottime', output_file=None):
+    """
+    Profile or time a function fcn.
+    
+    Args:
+        :fcn:
+            | function to be profiled or timed (using time.time() difference)
+        :profile:
+            | True, optional
+            | Profile the function, otherwise only time it.
+        :sort_stats:
+            | 'tottime', optional
+            | Sort profile results according to sort_stats ('tottime', 'cumtime',...)
+        :output_file:
+            | None, optional
+            | If not None: output result to output_file.
+            
+    Return:
+        :ps:
+            | Profiler output
+            
+    """
+   
+    if profile == False:
+        start = time.time()
+        fcn()
+        dt = time.time()-start
+        print('%s %f' % ('Time elapsed: ', dt))
+        return dt
+    else:
+        pr = cProfile.Profile()
+        pr.enable()
+        fcn()
+        pr.disable()
+        s = io.StringIO()
+        ps = pstats.Stats(pr, stream=s).sort_stats(sort_stats)
+        ps.print_stats()
+        if output_file is not None:
+            with open(output_file, 'w+') as f:
+                f.write(s.getvalue())
+        return ps

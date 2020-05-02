@@ -8,10 +8,7 @@
    
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
-
-import numpy as np
-import pandas as pd
-import skbio
+from luxpy.utils import np, pd, is_importable
 import itertools
 from functools import partial
 
@@ -19,10 +16,16 @@ import scipy
 from scipy.stats import f_oneway
 from scipy.spatial.distance import cdist
 
-import hdmedians as hd
-
-from skbio.stats.ordination import pcoa
-from skbio.stats.distance._base import _preprocess_input
+# Try importing, if necessary pip-installing, hdmedian and skbio packages that
+# have not been 'required' by luxpy to reduce dependencies for rarely used modules.
+success = is_importable('hdmedians', try_pip_install = True)
+if success:
+    import hdmedians as hd
+success = is_importable('skbio', try_pip_install = True)
+if success:
+    import skbio
+    from skbio.stats.ordination import pcoa
+    from skbio.stats.distance._base import _preprocess_input
 
 __all__ = ['run_permanova_permdisp', 'permanova', 'permdisp']
 
@@ -155,7 +158,11 @@ def _permutate_grouping(grouping, subjects, paired = False):
     return perm_grouping, perm_subjects       
 
 def _index_combinations(indices):
-    # Modified from http://stackoverflow.com/a/11144716
+    """ 
+    Get index combinations
+    
+    Modified from http://stackoverflow.com/a/11144716
+    """
     return np.tile(indices, len(indices)), np.repeat(indices, len(indices))        
 
 def _run_monte_carlo_stats(test_stat_function, grouping, subjects, permutations, paired):
@@ -194,75 +201,77 @@ def _create_subjects_index_arr(subjects = None, grouping = None):
 def permanova(distance_matrix, grouping, column=None, permutations=999, paired = False, subjects = None):
     """Test for significant differences between groups using PERMANOVA.
 
-    Permutational Multivariate Analysis of Variance (PERMANOVA) is a
-    non-parametric method that tests whether two or more groups of objects
-    (e.g., samples) are significantly different based on a categorical factor.
-    It is conceptually similar to ANOVA except that it operates on a distance
-    matrix, which allows for multivariate analysis. PERMANOVA computes a
-    pseudo-F2 statistic.
+    | Permutational Multivariate Analysis of Variance (PERMANOVA) is a
+    | non-parametric method that tests whether two or more groups of objects
+    | (e.g., samples) are significantly different based on a categorical factor.
+    | It is conceptually similar to ANOVA except that it operates on a distance
+    | matrix, which allows for multivariate analysis. PERMANOVA computes a
+    | pseudo-F2 statistic.
+    |
+    | Statistical significance is assessed via a permutation test. The assignment
+    | of objects to groups (`grouping`) is randomly permuted a number of times
+    | (controlled via `permutations`). A pseudo-F2 statistic is computed for each
+    | permutation and the p-value is the proportion of permuted pseudo-F2
+    | statisics that are equal to or greater than the original (unpermuted)
+    | pseudo-F2 statistic.
 
-    Statistical significance is assessed via a permutation test. The assignment
-    of objects to groups (`grouping`) is randomly permuted a number of times
-    (controlled via `permutations`). A pseudo-F2 statistic is computed for each
-    permutation and the p-value is the proportion of permuted pseudo-F2
-    statisics that are equal to or greater than the original (unpermuted)
-    pseudo-F2 statistic.
+    Args:
+    :distance_matrix : 
+        | DistanceMatrix
+        | Distance matrix containing distances between objects (e.g., distances
+        | between samples of microbial communities).
+    :grouping : 
+        | 1-D array_like or pandas.DataFrame
+        | Vector indicating the assignment of objects to groups. For example,
+        | these could be strings or integers denoting which group an object
+        | belongs to. If `grouping` is 1-D ``array_like``, it must be the same
+        | length and in the same order as the objects in `distance_matrix`. If
+        | `grouping` is a ``DataFrame``, the column specified by `column` will be
+        | used as the grouping vector. The ``DataFrame`` must be indexed by the
+        | IDs in `distance_matrix` (i.e., the row labels must be distance matrix
+        | IDs), but the order of IDs between `distance_matrix` and the
+        | ``DataFrame`` need not be the same. All IDs in the distance matrix must
+        | be present in the ``DataFrame``. Extra IDs in the ``DataFrame`` are
+        | allowed (they are ignored in the calculations).
+    :column: 
+        | str, optional
+        |Column name to use as the grouping vector if `grouping` is a
+        |``DataFrame``. Must be provided if `grouping` is a ``DataFrame``.
+        |Cannot be provided if `grouping` is 1-D ``array_like``.
+    :permutations: 
+        | int, optional
+        | Number of permutations to use when assessing statistical
+        | significance. Must be greater than or equal to zero. If zero,
+        | statistical significance calculations will be skipped and the p-value
+        | will be ``np.nan``.
+    :paired:
+        | bool, optional
+        | If True: limit the type of permutations, such that permutations happen 
+        | only over groups, not over samples. SSwithin is then estimated and 
+        | subtracted from the SS between when estimating F_pseudo.
+    :subjects:
+        | 1-D array_like with indices for subjects for use in paired permanova.
+        | If None: array (0...ni) will be generated for each group (same size!).
 
-    Parameters
-    ----------
-    distance_matrix : DistanceMatrix
-        Distance matrix containing distances between objects (e.g., distances
-        between samples of microbial communities).
-    grouping : 1-D array_like or pandas.DataFrame
-        Vector indicating the assignment of objects to groups. For example,
-        these could be strings or integers denoting which group an object
-        belongs to. If `grouping` is 1-D ``array_like``, it must be the same
-        length and in the same order as the objects in `distance_matrix`. If
-        `grouping` is a ``DataFrame``, the column specified by `column` will be
-        used as the grouping vector. The ``DataFrame`` must be indexed by the
-        IDs in `distance_matrix` (i.e., the row labels must be distance matrix
-        IDs), but the order of IDs between `distance_matrix` and the
-        ``DataFrame`` need not be the same. All IDs in the distance matrix must
-        be present in the ``DataFrame``. Extra IDs in the ``DataFrame`` are
-        allowed (they are ignored in the calculations).
-    column : str, optional
-        Column name to use as the grouping vector if `grouping` is a
-        ``DataFrame``. Must be provided if `grouping` is a ``DataFrame``.
-        Cannot be provided if `grouping` is 1-D ``array_like``.
-    permutations : int, optional
-        Number of permutations to use when assessing statistical
-        significance. Must be greater than or equal to zero. If zero,
-        statistical significance calculations will be skipped and the p-value
-        will be ``np.nan``.
-    paired : bool, optional
-        If True: limit the type of permutations, such that permutations happen 
-        only over groups, not over samples. SSwithin is then estimated and 
-        subtracted from the SS between when estimating F_pseudo.
-    :subjects: 1-D array_like with indices for subjects for use in paired permanova.
-        If None: array (0...ni) will be generated for each group (same size!).
+    Returns:
+        | pandas.Series
+        | Results of the statistical test, including ``test statistic`` and
+        | ``p-value``.
 
-    Returns
-    -------
-    pandas.Series
-        Results of the statistical test, including ``test statistic`` and
-        ``p-value``.
-
-    Notes
-    -----
-    See [1]_ for the original method reference, as well as ``vegan::adonis``,
-    available in R's vegan package [2]_.
-
-    The p-value will be ``np.nan`` if `permutations` is zero.
-    
-    Is based on and uses the skbio package (install manually: pip install skbio).
-    
-    Based on code for permanova and permdisp, but extended for repeated measures or paired data.
-    
-    Uses pseudo-F2 (instead of more biased pseudo-F1 in original code)
+    Notes:
+    | See [1]_ for the original method reference, as well as ``vegan::adonis``,
+    | available in R's vegan package [2]_.
+    |
+    | The p-value will be ``np.nan`` if `permutations` is zero.
+    |
+    | Is based on and uses the skbio package (install manually: pip install skbio).
+    |
+    | Based on code for permanova and permdisp, but extended for repeated measures or paired data.
+    | 
+    | Uses pseudo-F2 (instead of more biased pseudo-F1 in original code)
 
 
-    References
-    ----------
+    References:
     .. [1] Anderson, Marti J. "A new method for non-parametric multivariate
        analysis of variance." Austral Ecology 26.1 (2001): 32-46.
 
@@ -272,10 +281,9 @@ def permanova(distance_matrix, grouping, column=None, permutations=999, paired =
         Wiley StatsRef: Statistics Reference Online. pp. 1–15, 15-Nov-2017.
 
 
-    Examples
-    --------
-    See :mod:`skbio.stats.distance.anosim` for usage examples (both functions
-    provide similar interfaces).
+    Examples:
+        | See :mod:`skbio.stats.distance.anosim` for usage examples (both functions
+        | provide similar interfaces).
 
     """
     sample_size, num_groups, grouping, tri_idxs, distances = _preprocess_input(distance_matrix, grouping, column)
@@ -299,95 +307,95 @@ def permanova(distance_matrix, grouping, column=None, permutations=999, paired =
 
 def permdisp(distance_matrix, grouping, column=None, test='centroid',
              permutations=999, paired = False, subjects = None):
-    """Test for Homogeneity of Multivariate Groups Disperisons using Marti
-    Anderson's PERMDISP2 procedure.
+    """
+    Test for Homogeneity of Multivariate Groups Disperisons using Martin Anderson's PERMDISP2 procedure.
 
-    PERMDISP is a multivariate analogue of Levene's test for homogeneity of
-    multivariate variances. Distances are handled by reducing the
-    original distances to principal coordinates. PERMDISP calculates an
-    F-statistic to assess whether the dispersions between groups is significant
+    | PERMDISP is a multivariate analogue of Levene's test for homogeneity of
+    | multivariate variances. Distances are handled by reducing the
+    | original distances to principal coordinates. PERMDISP calculates an
+    | F-statistic to assess whether the dispersions between groups is significant
 
 
-    Parameters
-    ----------
-    distance_matrix : DistanceMatrix
-        Distance matrix containing distances between objects (e.g., distances
-        between samples of microbial communities).
-    grouping : 1-D array_like or pandas.DataFrame
-        Vector indicating the assignment of objects to groups. For example,
-        these could be strings or integers denoting which group an object
-        belongs to. If `grouping` is 1-D ``array_like``, it must be the same
-        length and in the same order as the objects in `distance_matrix`. If
-        `grouping` is a ``DataFrame``, the column specified by `column` will be
-        used as the grouping vector. The ``DataFrame`` must be indexed by the
-        IDs in `distance_matrix` (i.e., the row labels must be distance matrix
-        IDs), but the order of IDs between `distance_matrix` and the
-        ``DataFrame`` need not be the same. All IDs in the distance matrix must
-        be present in the ``DataFrame``. Extra IDs in the ``DataFrame`` are
-        allowed (they are ignored in the calculations).
-    column : str, optional
-        Column name to use as the grouping vector if `grouping` is a
-        ``DataFrame``. Must be provided if `grouping` is a ``DataFrame``.
-        Cannot be provided if `grouping` is 1-D ``array_like``.
-    test : {'centroid', 'median'}
-        determines whether the analysis is done using centroid or spatial
-        median.
-    permutations : int, optional
-        Number of permutations to use when assessing statistical
-        significance. Must be greater than or equal to zero. If zero,
-        statistical significance calculations will be skipped and the p-value
-        will be ``np.nan``.
-    paired : bool, optional
-        If True: limit the type of permutations, such that permutations happen 
-        only over groups, not over samples. 
-        [Sep 27, 2019: CORRECT IMPLEMENTATION? Only operates on allowed permutations.]
-    :subjects: 1-D array_like with indices for subjects for use in paired permanova.
-        If None: array (0...ni) will be generated for each group (same size!).
+    Args:
+        :distance_matrix:
+            | DistanceMatrix
+            | Distance matrix containing distances between objects (e.g., distances
+            | between samples of microbial communities).
+        :grouping:
+            | 1-D array_like or pandas.DataFrame
+            | Vector indicating the assignment of objects to groups. For example,
+            | these could be strings or integers denoting which group an object
+            | belongs to. If `grouping` is 1-D ``array_like``, it must be the same
+            | length and in the same order as the objects in `distance_matrix`. If
+            | `grouping` is a ``DataFrame``, the column specified by `column` will be
+            | used as the grouping vector. The ``DataFrame`` must be indexed by the
+            | IDs in `distance_matrix` (i.e., the row labels must be distance matrix
+               | IDs), but the order of IDs between `distance_matrix` and the
+               | ``DataFrame`` need not be the same. All IDs in the distance matrix must
+               | be present in the ``DataFrame``. Extra IDs in the ``DataFrame`` are
+               | allowed (they are ignored in the calculations).
+          :column: 
+               | str, optional
+               | Column name to use as the grouping vector if `grouping` is a
+               | ``DataFrame``. Must be provided if `grouping` is a ``DataFrame``.
+               | Cannot be provided if `grouping` is 1-D ``array_like``.
+          :test:
+               | {'centroid', 'median'}
+               | determines whether the analysis is done using centroid or spatial median.
+          :permutations: 
+               | int, optional
+               | Number of permutations to use when assessing statistical
+               | significance. Must be greater than or equal to zero. If zero,
+               | statistical significance calculations will be skipped and the p-value
+               | will be ``np.nan``.
+          :paired: 
+               | bool, optional
+               | If True: limit the type of permutations, such that permutations happen 
+               | only over groups, not over samples. 
+               | [Sep 27, 2019: CORRECT IMPLEMENTATION? Only operates on allowed permutations.]
+          :subjects: 
+               | 1-D array_like with indices for subjects for use in paired permanova.
+               | If None: array (0...ni) will be generated for each group (same size!).
 
-    Returns
-    -------
-    pandas.Series
-        Results of the statistical test, including ``test statistic`` and
-        ``p-value``.
+     Returns:
+          | pandas.Series
+        | Results of the statistical test, including ``test statistic`` and
+        | ``p-value``.
 
-    Raises
-    ------
-    TypeError
-        If, when using the spatial median test, the pcoa ordination is not of
-        type np.float32 or np.float64, the spatial median function will fail
-        and the centroid test should be used instead
-    ValueError
-        If the test is not centroid or median.
-    TypeError
-        If the distance matrix is not an instance of a
-        ``skbio.DistanceMatrix``.
-    ValueError
-        If there is only one group
-    ValueError
-        If a list and a column name are both provided
-    ValueError
-        If a list is provided for `grouping` and it's length does not match
-        the number of ids in distance_matrix
-    ValueError
-        If all of the values in the grouping vector are unique
-    KeyError
-        If there are ids in grouping that are not in distance_matrix
+    Raises:
+          :TypeError:
+               | If, when using the spatial median test, the pcoa ordination is not of
+               | type np.float32 or np.float64, the spatial median function will fail
+               | and the centroid test should be used instead
+          :ValueError:
+               | If the test is not centroid or median.
+          :TypeError:
+               | If the distance matrix is not an instance of a
+               | ``skbio.DistanceMatrix``.
+          :ValueError:
+               | If there is only one group
+          :ValueError:
+               | If a list and a column name are both provided
+          :ValueError:
+               | If a list is provided for `grouping` and it's length does not match
+               | the number of ids in distance_matrix
+          :ValueError:
+               | If all of the values in the grouping vector are unique
+          :KeyError:
+               | If there are ids in grouping that are not in distance_matrix
 
-    See Also
-    --------
-    permanova
+    See Also:
+          permanova
 
-    Notes
-    -----
-    The significance of the results from this function will be the same as the
-    results found in vegan's betadisper, however due to floating point
-    variability the F-statistic results may vary slightly.
+    Notes:
+          | The significance of the results from this function will be the same as the
+          | results found in vegan's betadisper, however due to floating point
+          | variability the F-statistic results may vary slightly.
+          |
+          | See [1]_ for the original method reference, as well as
+          | ``vegan::betadisper``, available in R's vegan package [2]_.
 
-    See [1]_ for the original method reference, as well as
-    ``vegan::betadisper``, available in R's vegan package [2]_.
-
-    References
-    ----------
+    References:
     .. [1] Anderson, Marti J. "Distance-Based Tests for Homogeneity of
         Multivariate Dispersions." Biometrics 62 (2006):245-253
 
@@ -396,111 +404,109 @@ def permdisp(distance_matrix, grouping, column=None, test='centroid',
     .. [3] M. J. Anderson, “Permutational Multivariate Analysis of Variance (PERMANOVA),” 
         Wiley StatsRef: Statistics Reference Online. pp. 1–15, 15-Nov-2017.
 
-    Examples
-    --------
-    Load a 6x6 distance matrix and grouping vector denoting 2 groups of
-    objects:
+    Examples:
+          Load a 6x6 distance matrix and grouping vector denoting 2 groups of
+          objects:
 
-    >>> from skbio import DistanceMatrix
-    >>> dm = DistanceMatrix([[0,    0.5,  0.75, 1, 0.66, 0.33],
-    ...                       [0.5,  0,    0.25, 0.33, 0.77, 0.61],
-    ...                       [0.75, 0.25, 0,    0.1, 0.44, 0.55],
-    ...                       [1,    0.33, 0.1,  0, 0.75, 0.88],
-    ...                       [0.66, 0.77, 0.44, 0.75, 0, 0.77],
-    ...                       [0.33, 0.61, 0.55, 0.88, 0.77, 0]],
-    ...                       ['s1', 's2', 's3', 's4', 's5', 's6'])
-    >>> grouping = ['G1', 'G1', 'G1', 'G2', 'G2', 'G2']
+          >>> from skbio import DistanceMatrix
+          >>> dm = DistanceMatrix([[0,    0.5,  0.75, 1, 0.66, 0.33],
+          ...                       [0.5,  0,    0.25, 0.33, 0.77, 0.61],
+          ...                       [0.75, 0.25, 0,    0.1, 0.44, 0.55],
+          ...                       [1,    0.33, 0.1,  0, 0.75, 0.88],
+          ...                       [0.66, 0.77, 0.44, 0.75, 0, 0.77],
+          ...                       [0.33, 0.61, 0.55, 0.88, 0.77, 0]],
+          ...                       ['s1', 's2', 's3', 's4', 's5', 's6'])
+          >>> grouping = ['G1', 'G1', 'G1', 'G2', 'G2', 'G2']
 
-    Run PERMDISP using 99 permutations to caluculate the p-value:
+          Run PERMDISP using 99 permutations to caluculate the p-value:
 
-    >>> from permanova_paired import permdisp
-    >>> import numpy as np
-    >>> #make output deterministic, should not be included during normal use
-    >>> np.random.seed(0)
-    >>> permdisp(dm, grouping, permutations=99)
-    method name               PERMDISP
-    test statistic name        F-value
-    sample size                      6
-    number of groups                 2
-    test statistic             1.03296
-    p-value                       0.35
-    number of permutations          99
-    Name: PERMDISP results, dtype: object
+          >>> from permanova_paired import permdisp
+          >>> import numpy as np
+          >>> #make output deterministic, should not be included during normal use
+          >>> np.random.seed(0)
+          >>> permdisp(dm, grouping, permutations=99)
+          method name               PERMDISP
+          test statistic name        F-value
+          sample size                      6
+          number of groups                 2
+          test statistic             1.03296
+          p-value                       0.35
+          number of permutations          99
+          Name: PERMDISP results, dtype: object
 
-    The return value is a ``pandas.Series`` object containing the results of
-    the statistical test.
+          The return value is a ``pandas.Series`` object containing the results of
+          the statistical test.
 
-    To suppress calculation of the p-value and only obtain the F statistic,
-    specify zero permutations:
+          To suppress calculation of the p-value and only obtain the F statistic,
+          specify zero permutations:
 
-    >>> permdisp(dm, grouping, permutations=0)
-    method name               PERMDISP
-    test statistic name        F-value
-    sample size                      6
-    number of groups                 2
-    test statistic             1.03296
-    p-value                        NaN
-    number of permutations           0
-    Name: PERMDISP results, dtype: object
+          >>> permdisp(dm, grouping, permutations=0)
+          method name               PERMDISP
+          test statistic name        F-value
+          sample size                      6
+          number of groups                 2
+          test statistic             1.03296
+          p-value                        NaN
+          number of permutations           0
+          Name: PERMDISP results, dtype: object
 
-    PERMDISP computes variances based on two types of tests, using either
-    centroids or spatial medians, also commonly referred to as a geometric
-    median. The spatial median is thought to yield a more robust test
-    statistic, and this test is used by default. Spatial medians are computed
-    using an iterative algorithm to find the optimally minimum point from all
-    other points in a group while centroids are computed using a deterministic
-    formula. As such the two different tests yeild slightly different F
-    statistics.
+          PERMDISP computes variances based on two types of tests, using either
+          centroids or spatial medians, also commonly referred to as a geometric
+          median. The spatial median is thought to yield a more robust test
+          statistic, and this test is used by default. Spatial medians are computed
+          using an iterative algorithm to find the optimally minimum point from all
+          other points in a group while centroids are computed using a deterministic
+          formula. As such the two different tests yeild slightly different F
+          statistics.
 
-    >>> np.random.seed(0)
-    >>> permdisp(dm, grouping, test='centroid', permutations=6)
-    method name               PERMDISP
-    test statistic name        F-value
-    sample size                      6
-    number of groups                 2
-    test statistic             3.67082
-    p-value                   0.428571
-    number of permutations           6
-    Name: PERMDISP results, dtype: object
+          >>> np.random.seed(0)
+          >>> permdisp(dm, grouping, test='centroid', permutations=6)
+          method name               PERMDISP
+          test statistic name        F-value
+          sample size                      6
+          number of groups                 2
+          test statistic             3.67082
+          p-value                   0.428571
+          number of permutations           6
+          Name: PERMDISP results, dtype: object
 
-    You can also provide a ``pandas.DataFrame`` and a column denoting the
-    grouping instead of a grouping vector. The following DataFrame's
-    Grouping column specifies the same grouping as the vector we used in the
-    previous examples.:
+          You can also provide a ``pandas.DataFrame`` and a column denoting the
+          grouping instead of a grouping vector. The following DataFrame's
+          Grouping column specifies the same grouping as the vector we used in the
+          previous examples.:
 
-    >>> import pandas as pd
-    >>> df = pd.DataFrame.from_dict(
-    ...      {'Grouping': {'s1': 'G1', 's2': 'G1', 's3': 'G1', 's4': 'G2',
-    ...                    's5': 'G2', 's6': 'G2'}})
-    >>> permdisp(dm, df, 'Grouping', permutations=6, test='centroid')
-    method name               PERMDISP
-    test statistic name        F-value
-    sample size                      6
-    number of groups                 2
-    test statistic             3.67082
-    p-value                   0.428571
-    number of permutations           6
-    Name: PERMDISP results, dtype: object
+          >>> import pandas as pd
+          >>> df = pd.DataFrame.from_dict(
+          ...      {'Grouping': {'s1': 'G1', 's2': 'G1', 's3': 'G1', 's4': 'G2',
+          ...                    's5': 'G2', 's6': 'G2'}})
+          >>> permdisp(dm, df, 'Grouping', permutations=6, test='centroid')
+          method name               PERMDISP
+          test statistic name        F-value
+          sample size                      6
+          number of groups                 2
+          test statistic             3.67082
+          p-value                   0.428571
+          number of permutations           6
+          Name: PERMDISP results, dtype: object
 
-    Note that when providing a ``DataFrame``, the ordering of rows and/or
-    columns does not affect the grouping vector that is extracted. The
-    ``DataFrame`` must be indexed by the distance matrix IDs (i.e., the row
-    labels must be distance matrix IDs).
+          Note that when providing a ``DataFrame``, the ordering of rows and/or
+          columns does not affect the grouping vector that is extracted. The
+          ``DataFrame`` must be indexed by the distance matrix IDs (i.e., the row
+          labels must be distance matrix IDs).
 
-    If IDs (rows) are present in the ``DataFrame`` but not in the distance
-    matrix, they are ignored. The previous example's ``s7`` ID illustrates this
-    behavior: note that even though the ``DataFrame`` had 7 objects, only 6
-    were used in the test (see the "Sample size" row in the results above to
-    confirm this). Thus, the ``DataFrame`` can be a superset of the distance
-    matrix IDs. Note that the reverse is not true: IDs in the distance matrix
-    *must* be present in the ``DataFrame`` or an error will be raised.
+          If IDs (rows) are present in the ``DataFrame`` but not in the distance
+          matrix, they are ignored. The previous example's ``s7`` ID illustrates this
+          behavior: note that even though the ``DataFrame`` had 7 objects, only 6
+          were used in the test (see the "Sample size" row in the results above to
+          confirm this). Thus, the ``DataFrame`` can be a superset of the distance
+          matrix IDs. Note that the reverse is not true: IDs in the distance matrix
+          *must* be present in the ``DataFrame`` or an error will be raised.
 
-    PERMDISP should be used to determine whether the dispersions between the
-    groups in your distance matrix are significantly separated.
-    A non-significant test result indicates that group dispersions are similar
-    to each other. PERMANOVA or ANOSIM should then be used in conjunction to
-    determine whether clustering within groups is significant.
-
+          PERMDISP should be used to determine whether the dispersions between the
+          groups in your distance matrix are significantly separated.
+          A non-significant test result indicates that group dispersions are similar
+          to each other. PERMANOVA or ANOSIM should then be used in conjunction to
+          determine whether clustering within groups is significant.
     """
     if test not in ['centroid', 'median']:
         raise ValueError('Test must be centroid or median')
@@ -553,8 +559,7 @@ def _compute_groups(samples, test_type, grouping, subjects, paired, *args):
 
 def _config_med(x):
     """
-    slice the vector up to the last value to exclude grouping column
-    and transpose the vector to be compatible with hd.geomedian
+    slice the vector up to the last value to exclude grouping column and transpose the vector to be compatible with hd.geomedian
     """
     X = x.values[:, :-1]
     return np.array(hd.geomedian(X.T))
@@ -603,9 +608,9 @@ def run_permanova_permdisp(*X, metric = 'euclidean', paired = True,
                            run_permanova = True, run_permdisp = True,  
                            Dscale = 1.0, permdisp_test = 'centroid'):
     """
-    Run permutation based analysis of variance "permanova" (cfr. diff. in mean)
-    and/or analysis of dispersion "permdisp" (cfr. differences in spread of data)
-    on data array *X.
+    | Run permutation based analysis of variance "permanova" (cfr. diff. in mean)
+    | and/or analysis of dispersion "permdisp" (cfr. differences in spread of data)
+    | on data array *X.
     
     Args:
         :*X: 

@@ -26,7 +26,8 @@ Reference
 
 """
 
-from luxpy import np, math
+from luxpy import math
+from luxpy.utils import np
 from ..utils.DE_scalers import log_scale
 from ..utils.helpers import spd_to_DEi
 
@@ -61,7 +62,7 @@ def  spd_to_cqs(SPD, version = 'v9.0', out = 'Qa',wl = None):
     Args:
         :SPD: 
             | ndarray with spectral data (can be multiple SPDs, 
-              first axis are the wavelengths)
+            | first axis are the wavelengths)
         :version: 
             | 'v9.0' or 'v7.5', optional
         :out: 

@@ -19,9 +19,9 @@
 Module for Circadian Light (CLa) and Stimulus (CS) calculations (LRC)
 =====================================================================
 
-# _LRC_CLA_CS_CONST: dict with model parameters and spectral data.
+:_LRC_CLA_CS_CONST: dict with model parameters and spectral data.
 
-# spd_to_CS_CLa_lrc(): Calculate Circadian Stimulus (CS) and Circadian Light 
+:spd_to_CS_CLa_lrc(): Calculate Circadian Stimulus (CS) and Circadian Light 
                        [LRC: Rea et al 2012]
 
 
@@ -29,11 +29,11 @@ Module for Circadian Light (CLa) and Stimulus (CS) calculations (LRC)
 Definitions
 -----------
 
-1. **Circadian Stimulus (CS)** is the calculated effectiveness of the 
+ 1. **Circadian Stimulus (CS)** is the calculated effectiveness of the 
 spectrally weighted irradiance at the cornea from threshold (CS = 0.1) 
 to saturation (CS = 0.7), assuming a fixed duration of exposure of 1 hour.
 
-2. **Circadian Light (CLA)** is the irradiance at the cornea weighted to reflect 
+ 2. **Circadian Light (CLA)** is the irradiance at the cornea weighted to reflect 
 the spectral sensitivity of the human circadian system as measured by acute 
 melatonin suppression after a 1-hour exposure.
 
@@ -60,8 +60,8 @@ Also see notes in doc_string of spd_to_CS_CLa_lrc()
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
-from luxpy import np, _PKG_PATH, _SEP, _CIE_ILLUMINANTS, getdata, getwld, cie_interp, _IESTM3015, blackbody
-from luxpy import spd_to_power
+from luxpy import _CIE_ILLUMINANTS, getwld, cie_interp, _IESTM3015, blackbody, spd_to_power
+from luxpy.utils import np, _PKG_PATH, _SEP, getdata
 from scipy import integrate
 
 __all__=['_LRC_CLA_CS_CONST','spd_to_CS_CLa_lrc']
@@ -156,7 +156,7 @@ def spd_to_CS_CLa_lrc(El = None, E = None, \
             | None, float or ndarray, optional
             | Illuminance of light sources.
             | If None: El is used as is, otherwise El is renormalized to have
-              an illuminance equal to E.
+            | an illuminance equal to E.
         :sum_sources:
             | False, optional
             |   - False: calculate CS and CLa for all sources in El array.

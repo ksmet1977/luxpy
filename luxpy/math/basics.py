@@ -99,7 +99,7 @@ Module with useful basic math functions
 ===============================================================================
 """
 
-from luxpy import np, sp, np2d, _EPS, asplit
+from luxpy.utils import np, sp, np2d, _EPS, asplit
 from scipy.special import erf, erfinv
 from scipy import stats
 __all__  = ['normalize_3x3_matrix','symmM_to_posdefM','check_symmetric',
@@ -116,7 +116,8 @@ __all__ += ['box_m','pitman_morgan']
 def normalize_3x3_matrix(M, xyz0 = np.array([[1.0,1.0,1.0]])):
     """
     Normalize 3x3 matrix M to xyz0 -- > [1,1,1]
-    If M.shape == (1,9): M is reshaped to (3,3)
+    
+    | If M.shape == (1,9): M is reshaped to (3,3)
     
     Args:
         :M: 
@@ -381,8 +382,7 @@ def symmM_to_posdefM(A = None, atol = 1.0e-9, rtol = 1.0e-9, method = 'make', fo
 #-----------------------------------------------------------------------------
 def bvgpdf(x, y = None, mu = None, sigmainv = None):
     """
-    Evaluate bivariate Gaussian probability density function (BVGPDF) at (x,y) 
-    with center mu and inverse covariance matric, sigmainv.
+    Evaluate bivariate Gaussian probability density function (BVGPDF)
     
     Args:
         :x: 
@@ -411,8 +411,7 @@ def bvgpdf(x, y = None, mu = None, sigmainv = None):
 #------------------------------------------------------------------------------
 def mahalanobis2(x, y = None, z = None, mu = None, sigmainv = None):
     """
-    Evaluate the squared mahalanobis distance with center mu and shape 
-    and orientation determined by sigmainv. 
+    Evaluate the squared mahalanobis distance
     
     Args: 
         :x: 
@@ -707,12 +706,11 @@ def angle_v1v2(v1,v2,htype = 'deg'):
     if htype == 'deg':
         ang = ang*180/np.pi
     return ang
-	
+    
 #------------------------------------------------------------------------------
 def histogram(a, bins=10, bin_center = False, range=None, normed=False, weights=None, density=None):
     """
-    Histogram function that can take as bins either 
-    the center (cfr. matlab hist) or bin-edges.
+    Histogram function that can take as bins either the center (cfr. matlab hist) or bin-edges.
     
     Args: 
         :bin_center:
@@ -758,7 +756,7 @@ def v_to_cik(v, inverse = False):
     
     Returns:
         :cik: 
-            'Nx2x2' (covariance matrix)^-1
+            | 'Nx2x2' (covariance matrix)^-1
     
     Notes:
         | cik is not actually a covariance matrix,
@@ -832,8 +830,9 @@ def cik_to_v(cik, xyc = None, inverse = False):
 
 def fmod(x, y):
     """
-    Floating point modulus
-        e.g., fmod(theta, np.pi * 2) would keep an angle in [0, 2pi]
+    Floating point modulus 
+    
+    | e.g., fmod(theta, np.pi * 2) would keep an angle in [0, 2pi]
 
     Args:
         :x:
@@ -1056,10 +1055,10 @@ def interp1(X,Y,Xnew, kind = 'linear', ext = 'extrapolate', w = None, bbox=[None
             | ndarray of new coordinates (last axis represents dimension)
         :kind:
             | str or int,  optional
-            | if str: kind is 'translated' to an int value for input to interpolate.InterpolatedUnivariateSpline()
+            | if str: kind is 'translated' to an int value for input to scipy.interpolate.InterpolatedUnivariateSpline()
             | supported options for str: 'linear', 'quadratic', 'cubic', 'quartic', 'quintic'
         :other args:
-            | see interpolate.InterpolatedUnivariateSpline()
+            | see scipy.interpolate.InterpolatedUnivariateSpline()
         
     Returns:
         :Ynew:

@@ -85,7 +85,8 @@ References:
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
-from luxpy import np, _PKG_PATH, _SEP, _CIEOBS, _BB, spd, getdata, getwld, vlbar,spd_to_power, spd_normalize
+from luxpy import _CIEOBS, _BB, spd, getwld, vlbar, spd_to_power, spd_normalize
+from luxpy.utils import np, _PKG_PATH, _SEP, getdata
 
 __all__ = ['_PHOTORECEPTORS','_QUANTITIES', '_ACTIONSPECTRA','Km_correction_factor',
            '_Ee_SYMBOLS', '_E_SYMBOLS', '_Q_SYMBOLS', 
@@ -144,9 +145,9 @@ def spd_to_aopicE(sid, Ee = None, E = None, Q = None, cieobs = _CIEOBS, sid_unit
     Returns:
         :returns: 
             | (Eeas, Eas) with Eeas and Eas resp. numpy.ndarrays with the 
-              α-opic irradiance and equivalent illuminance values 
-              of all spectra in :sid: in SI-units. 
-         
+            | α-opic irradiance and equivalent illuminance values 
+            | of all spectra in :sid: in SI-units. 
+            |
             | (other choice can be set using :out:)
     """
     outlist = out.split(',')

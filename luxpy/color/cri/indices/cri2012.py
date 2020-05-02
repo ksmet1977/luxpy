@@ -37,7 +37,7 @@ def spd_to_cri2012(SPD, out = 'Rf', wl = None):
     Args:
         :SPD: 
             | ndarray with spectral data (can be multiple SPDs, 
-              first axis are the wavelengths)
+            | first axis are the wavelengths)
         :wl: 
             | None, optional
             | Wavelengths (or [start, end, spacing]) to interpolate the SPDs to. 
@@ -66,17 +66,21 @@ def spd_to_cri2012_hl17(SPD, out = 'Rf', wl = None):
     with the spectally uniform HL17 mathematical sampleset.
     
     Args:
-        :SPD: ndarray with spectral data (can be multiple SPDs, 
-              first axis are the wavelengths)
-        :wl: None, optional
-            Wavelengths (or [start, end, spacing]) to interpolate the SPDs to. 
-            None: default to no interpolation
-        :out:  'Rf' or str, optional
-            Specifies requested output (e.g. 'Rf,Rfi,cct,duv') 
+        :SPD: 
+            | ndarray with spectral data (can be multiple SPDs, 
+            | first axis are the wavelengths)
+        :wl: 
+            | None, optional
+            | Wavelengths (or [start, end, spacing]) to interpolate the SPDs to. 
+            | None: default to no interpolation
+        :out: 
+            | 'Rf' or str, optional
+            | Specifies requested output (e.g. 'Rf,Rfi,cct,duv') 
     
     Returns:
-        :returns: float or ndarray with CRI2012 Rf for :out: 'Rf'
-            Other output is also possible by changing the :out: str value.
+        :returns: 
+            | float or ndarray with CRI2012 Rf for :out: 'Rf'
+            | Other output is also possible by changing the :out: str value.
     
     Reference:
         1. `Smet, K., Schanda, J., Whitehead, L., & Luo, R. (2013). 
@@ -93,17 +97,21 @@ def spd_to_cri2012_hl1000(SPD, out = 'Rf', wl = None):
     with the spectally uniform Hybrid HL1000 sampleset.
     
     Args:
-        :SPD: ndarray with spectral data (can be multiple SPDs, 
-              first axis are the wavelengths)
-        :wl: None, optional
-            Wavelengths (or [start, end, spacing]) to interpolate the SPDs to. 
-            None: default to no interpolation
-        :out:  'Rf' or str, optional
-            Specifies requested output (e.g. 'Rf,Rfi,cct,duv') 
+        :SPD: 
+            | ndarray with spectral data (can be multiple SPDs, 
+            | first axis are the wavelengths)
+        :wl: 
+            | None, optional
+            | Wavelengths (or [start, end, spacing]) to interpolate the SPDs to. 
+            | None: default to no interpolation
+        :out: 
+            | 'Rf' or str, optional
+            | Specifies requested output (e.g. 'Rf,Rfi,cct,duv') 
     
     Returns:
-        :returns: float or ndarray with CRI2012 Rf for :out: 'Rf'
-            Other output is also possible by changing the :out: str value.
+        :returns: 
+            | float or ndarray with CRI2012 Rf for :out: 'Rf'
+            | Other output is also possible by changing the :out: str value.
     
     Reference:
         1. `Smet, K., Schanda, J., Whitehead, L., & Luo, R. (2013). 
@@ -120,17 +128,21 @@ def spd_to_cri2012_real210(SPD, out = 'Rf', wl = None):
     with the Real-210 sampleset (normally for special color rendering indices).
     
     Args:
-        :SPD: ndarray with spectral data (can be multiple SPDs, 
-              first axis are the wavelengths)
-        :wl: None, optional
-            Wavelengths (or [start, end, spacing]) to interpolate the SPDs to. 
-            None: default to no interpolation
-        :out:  'Rf' or str, optional
-            Specifies requested output (e.g. 'Rf,Rfi,cct,duv') 
+        :SPD: 
+            | ndarray with spectral data (can be multiple SPDs, 
+            | first axis are the wavelengths)
+        :wl: 
+            | None, optional
+            | Wavelengths (or [start, end, spacing]) to interpolate the SPDs to. 
+            | None: default to no interpolation
+        :out: 
+            | 'Rf' or str, optional
+            | Specifies requested output (e.g. 'Rf,Rfi,cct,duv') 
     
     Returns:
-        :returns: float or ndarray with CRI2012 Rf for :out: 'Rf'
-            Other output is also possible by changing the :out: str value.
+        :returns: 
+            | float or ndarray with CRI2012 Rf for :out: 'Rf'
+            | Other output is also possible by changing the :out: str value.
     
     Reference:
         1. `Smet, K., Schanda, J., Whitehead, L., & Luo, R. (2013). 

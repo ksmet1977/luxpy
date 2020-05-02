@@ -2,10 +2,12 @@
 """
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
-
-from luxpy import (sp,np, plt, warnings, math, _WL3, _CIEOBS, _EPS, np2d, 
-                   getwlr, SPD, spd_to_xyz, xyz_to_Yxy, colortf, xyz_to_cct)
+import warnings
+from luxpy import (math, _WL3, _CIEOBS, getwlr, SPD, spd_to_xyz, 
+                   xyz_to_Yxy, colortf, xyz_to_cct)
+from luxpy.utils import sp,np, plt, _EPS, np2d
 from luxpy import cri 
+from luxpy.math.particleswarm import particleswarm
 
 from  . spdbuilder2020 import (_get_default_prim_parameters, _parse_bnds, 
                               gaussian_prim_constructor, gaussian_prim_parameter_types,
@@ -18,8 +20,7 @@ class PrimConstructor():
                  ptypes = ['peakwl', 'fwhm'], 
                  pdefs = {}):
         """
-        Setup instance with a constructor function f for the primaries in the light
-        mixture.
+        Setup instance with a constructor function f for the primaries in the light mixture.
         
         Args:
             :f: 
@@ -84,8 +85,7 @@ class PrimConstructor():
 class ObjFcns():
     def __init__(self,f = None, fp = [{}], fw = [1], ft = [None],  decimals = [5]):
         """
-        Setup instance with objective functions, their input parameters, 
-        their respective weights and target values.
+        Setup instance with objective functions, their input parameters, their respective weights and target values.
         
         Args:
             :f: 
@@ -109,7 +109,7 @@ class ObjFcns():
         self.fw = self._equalize_sizes(fw)
         self.ft = self._equalize_sizes(ft)
         self.decimals = self._equalize_sizes(decimals)
-        self.get_normalization_factors()
+        self._get_normalization_factors()
         
         # get number of objectives:
         self.nobjs = 0
@@ -123,8 +123,7 @@ class ObjFcns():
     
     def _equalize_sizes(self, x):    
         """
-        Equalize structure of x to that of self.f for ease of looping of the 
-        objective functions in the fitness function
+        Equalize structure of x to that of self.f for ease of looping of the objective functions in the fitness function
         """
         xs = []
         if (self.f is not None) & (len(x) == 1): 
@@ -138,7 +137,7 @@ class ObjFcns():
             xs = x
         return xs
         
-    def calculate_fj(self, spdi, j = 0):
+    def _calculate_fj(self, spdi, j = 0):
         """
         Calculate objective function j for input spd.
         """
@@ -148,8 +147,10 @@ class ObjFcns():
         else: # one function for multiple objectives for increased speed:
             return self.f[j](spdi, **self.fp[j])
         
-    def get_normalization_factors(self):
-        # Set normalization factor for F-calculation:
+    def _get_normalization_factors(self):
+        """
+          Set normalization factor for F-calculation
+          """
         if self.f is not None:
             self.f_normalize = []
             for j in range(len(self.f)):
@@ -161,7 +162,8 @@ class ObjFcns():
                     f_normalize = 1
                 self.f_normalize.append(f_normalize)
                 
-    def get_fj_output_str(self, j, obj_vals_ij, F_ij = np.nan, verbosity = 1):
+    def _get_fj_output_str(self, j, obj_vals_ij, F_ij = np.nan, verbosity = 1):
+        """ get output string for objective function fj """
         output_str = ''
         if verbosity > 0:
             if isinstance(self.f[j],tuple):
@@ -229,12 +231,12 @@ class Minimizer():
             
             1. Must be initialzed using class Minimizer!
             2. If not isinstance(minimizer.method, str): 
-                then it should contain an minimization funtion with the following interface: 
-                    results = minimizer.method(fitnessfcn, npars, args = {}, bounds = (lb, ub), verbosity = 1)
-                With 'results' a dictionary containing various variables related to the optimization. 
-                - It MUST contain a key 'x_final' containing the final optimized parameters.
-                - bnds must be [lowerbounds, upperbounds] with x-bounds ndarrays with values for each parameter.
-                - args is an argument with a dictionary containing the input arguments to the fitnessfcn.         
+               | then it should contain an minimization funtion with the following interface: 
+               |     results = minimizer.method(fitnessfcn, npars, args = {}, bounds = (lb, ub), verbosity = 1)
+               | With 'results' a dictionary containing various variables related to the optimization. 
+               |  - It MUST contain a key 'x_final' containing the final optimized parameters.
+               |  - bnds must be [lowerbounds, upperbounds] with x-bounds ndarrays with values for each parameter.
+               |  - args is an argument with a dictionary containing the input arguments to the fitnessfcn.         
         """
 
         self.method = method
@@ -281,14 +283,13 @@ class Minimizer():
     def apply(self, fitness_fcn, npars, fitness_args_dict, bounds, verbosity = 1):
         """
         Run minimizer on fitness function with specified fitness_args_dict input arguments and bounds.
-        
         """
         fitness_args_list = [v for k,v in fitness_args_dict.items()] 
         self.opts['display'] = np.array(verbosity).astype(bool)
                 
         # Particle swarm optimization:
         if (self.method == 'particleswarm') | (self.method == 'ps'):
-            results = math.particleswarm(fitness_fcn, npars, args = fitness_args_dict, bounds = (bounds[0],bounds[1]), 
+            results = particleswarm(fitness_fcn, npars, args = fitness_args_dict, bounds = (bounds[0],bounds[1]), 
                                          iters = self.opts['iters'], n_particles = self.opts['n_particles'],
                                          ftol = self.opts['ftol'], options = self.opts['ps_opts'], verbosity = verbosity)
        
@@ -333,9 +334,9 @@ class SpectralOptimizer():
                   verbosity = 1):
         
         """
-        Initialize instance of SpectralOptimizer to generate a spectrum with 
-        specified white point and optimized for certain objective functions 
-        from a set of primary spectra or primary spectrum model parameters.
+        | Initialize instance of SpectralOptimizer to generate a spectrum with 
+        | specified white point and optimized for certain objective functions 
+        | from a set of primary spectra or primary spectrum model parameters.
         
         Args:
             :target: 
@@ -354,11 +355,11 @@ class SpectralOptimizer():
             :wl: 
                 | [360,830,1], optional
                 | Wavelengths used in optimization when :prims: is not an
-                  ndarray with spectral data.
+                |  ndarray with spectral data.
             :cieobs:
                 | _CIEOBS, optional
                 | CIE CMF set used to calculate chromaticity values, if not provided 
-                  in :Yxyi:.
+                |  in :Yxyi:.
             :optimizer_type:
                 | '3mixer',  optional
                 | Specifies type of chromaticity optimization 
@@ -608,8 +609,7 @@ class SpectralOptimizer():
 
     def _fitness_fcn(self, x, out = 'F'):
         """
-        Fitness function that calculates closeness of solution x to target values 
-        for specified objective functions. 
+        Fitness function that calculates closeness of solution x to target values for specified objective functions. 
         """
         x = np.atleast_2d(x)
 
@@ -658,7 +658,7 @@ class SpectralOptimizer():
                 for j in range(len(self.obj_fcn.f)):
                     
                     # Calculate objective function j:
-                    obj_vals_j = self.obj_fcn.calculate_fj(spds_tmp, j = j).T 
+                    obj_vals_j = self.obj_fcn._calculate_fj(spds_tmp, j = j).T 
 
                     # Store F-results in array:
                     F_j = (self.obj_fcn.fw[j]*(((np.round(obj_vals_j,int(self.obj_fcn.decimals[j][0])) - self.obj_fcn.ft[j] + eps)**2)/((self.obj_fcn.f_normalize[j] + eps)**2))**0.5)
@@ -696,7 +696,7 @@ class SpectralOptimizer():
                             obj_fcn_vals_ij = obj_fcn_vals[j]
                         else:
                             obj_fcn_vals_ij = obj_fcn_vals[j][i]
-                        output_str = output_str + self.obj_fcn.get_fj_output_str(j, obj_fcn_vals_ij, F_ij =  F[i,j], verbosity = 1)
+                        output_str = output_str + self.obj_fcn._get_fj_output_str(j, obj_fcn_vals_ij, F_ij =  F[i,j], verbosity = 1)
                     print(output_str)
                     
         # Take Root-Sum-of-Squares of delta((val - tar)**2):
@@ -728,8 +728,7 @@ class SpectralOptimizer():
         
     def start(self, verbosity = None, out = None):
         """
-        Start optimization of _fitnessfcn for n primaries using the initialized 
-        minimizer and the selected optimizer_type.
+        Start optimization of _fitnessfcn for n primaries using the initialized minimizer and the selected optimizer_type.
         
         Returns variables specified in :out:
         """
@@ -848,7 +847,7 @@ if __name__ == '__main__':
         
         # Create a minimization function with the specified interface:
         def user_minim4(fitnessfcn, npars, args, bounds, verbosity = 1,**opts):
-            results = math.particleswarm(fitnessfcn, npars, args = args, 
+            results = particleswarm(fitnessfcn, npars, args = args, 
                                          bounds = bounds, 
                                          iters = 100, n_particles = 10, ftol = -np.inf,
                                          options = {'c1': 0.5, 'c2': 0.3, 'w':0.9},

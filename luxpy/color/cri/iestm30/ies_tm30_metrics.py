@@ -25,7 +25,8 @@ Extension module for IES TM30 metric calculation with additional Vector Field su
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
-from luxpy import np, _CRI_RFL
+from luxpy import _CRI_RFL
+from luxpy.utils import np
 
 from ..utils.helpers import gamut_slicer, spd_to_cri, jab_to_rhi
 from ..utils.init_cri_defaults_database import _CRI_DEFAULTS
@@ -51,7 +52,7 @@ def spd_to_ies_tm30_metrics(SPD, cri_type = None, \
             | None, optional
             | If None: defaults to cri_type = 'iesrf'.
             | Not none values of :hbins:, :start_hue: and :scalef: overwrite 
-              input in cri_type['rg_pars'] 
+            | input in cri_type['rg_pars'] 
         :hbins:
             | None or numpy.ndarray with sorted hue bin centers (°), optional
         :start_hue: 
@@ -62,14 +63,14 @@ def spd_to_ies_tm30_metrics(SPD, cri_type = None, \
         :vf_pcolorshift:
             | _VF_PCOLORSHIFT or user defined dict, optional
             | The polynomial models of degree 5 and 6 can be fully specified or 
-              summarized by the model parameters themselved OR by calculating the
-              dCoverC and dH at resp. 5 and 6 hues. :VF_pcolorshift: specifies 
-              these hues and chroma level.
+            | summarized by the model parameters themselved OR by calculating the
+            | dCoverC and dH at resp. 5 and 6 hues. :VF_pcolorshift: specifies 
+            | these hues and chroma level.
         :scale_vf_chroma_to_sample_chroma: 
             | False, optional
             | Scale chroma of reference and test vf fields such that average of 
-              binned reference chroma equals that of the binned sample chroma
-              before calculating hue bin metrics.
+            | binned reference chroma equals that of the binned sample chroma
+            | before calculating hue bin metrics.
             
     Returns:
         :data: 

@@ -20,11 +20,8 @@ Multivariate polynomial model
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
-import numpy as np
-import matplotlib.pyplot as plt
 import colorsys
-
-from luxpy import Axes3D
+from luxpy.utils import np, plt, Axes3D
 from . import (cart2pol, positive_arctan)
 
 _EPS = np.finfo('float').eps # used in model to avoid division by zero ! 
@@ -476,7 +473,8 @@ def plot_vector_field(xyzRTt, xyzRTr, color = 'k', axh = None, title = None, axt
                       nTbins = 32, Tbins_start_angle = 0, use_plt_quiver = True):
     """
     Makes a plot of a vector field (if color != 0). 
-    For more info on input parameters, see generate_vector_field?
+    
+    | For more info on input parameters, see generate_vector_field?
     
     Returns:
         None if color == 0 else axes handle

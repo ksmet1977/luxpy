@@ -25,8 +25,9 @@ Module for basic color rendition graphical output
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
-
-from luxpy import np, plt, colorsys,math
+import colorsys
+from luxpy import math
+from luxpy.utils import np, plt
 
 __all__ = [ 'plot_hue_bins','plot_ColorVectorGraphic']
 
@@ -261,7 +262,7 @@ def plot_ColorVectorGraphic(jabt, jabr, hbins = 16, start_hue = 0.0, scalef = 10
     Returns:
         :returns: 
             | gcf(), gca(), list with rgb colors for hue bins (for use in 
-              other plotting fcns)
+            | other plotting fcns)
         
     """
     

@@ -56,8 +56,8 @@ Module with functions related to plotting of color data
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
-from luxpy import np, plt, math, _EPS, _CIEOBS, _CSPACE, _CSPACE_AXES, _CIE_ILLUMINANTS, _CMF, daylightlocus, colortf, Yxy_to_xyz, asplit, spd_to_xyz, cri_ref, xyz_to_srgb
-
+from luxpy import math, _CIEOBS, _CSPACE, _CSPACE_AXES, _CIE_ILLUMINANTS, _CMF, daylightlocus, colortf, Yxy_to_xyz, spd_to_xyz, cri_ref, xyz_to_srgb
+from luxpy.utils import np, plt,_EPS, asplit
 from matplotlib.patches import Polygon
 
 __all__ = ['get_subplot_layout','plotSL','plotDL','plotBB','plot_color_data','plotceruleanline','plotUH','plotcircle','plotellipse','plot_chromaticity_diagram_colors','plot_spectrum_colors']
@@ -181,7 +181,7 @@ def plotDL(ccts = None, cieobs =_CIEOBS, cspace = _CSPACE, axh = None, \
         :cspace_pars:
             | {} or dict, optional
             | Dict with parameters required by color space specified in :cspace: 
-              (for use with luxpy.colortf())
+            | (for use with luxpy.colortf())
         :kwargs: 
             | additional keyword arguments for use with matplotlib.pyplot.
     
@@ -240,7 +240,7 @@ def plotBB(ccts = None, cieobs =_CIEOBS, cspace = _CSPACE, axh = None, cctlabels
         :cspace_pars:
             | {} or dict, optional
             | Dict with parameters required by color space specified in :cspace: 
-              (for use with luxpy.colortf())
+            | (for use with luxpy.colortf())
         :kwargs: 
             | additional keyword arguments for use with matplotlib.pyplot.
     

@@ -19,7 +19,8 @@ References:
     .. 
 """
 
-from luxpy import np, math, _CIE_ILLUMINANTS, _MUNSELL, _CMF, np2d, put_args_in_db, spd_to_xyz, getwlr, cie_interp,asplit, ajoin
+from luxpy import math, _CIE_ILLUMINANTS, _MUNSELL, _CMF, spd_to_xyz, getwlr, cie_interp
+from luxpy.utils import np, np2d, put_args_in_db, asplit, ajoin
 
 _CAM_SWW16_AXES = {'lab_cam_sww16' : ["L (lab_cam_sww16)", "a (lab_cam_sww16)", "b (lab_cam_sww16)"]}
 
@@ -152,7 +153,7 @@ def _massage_input_and_init_output(data, dataw,
     dshape[-1] = 3 # requested number of correlates: l_int, a_int, b_int
     if (inputtype != 'xyz') & (direction == 'forward'):
         dshape[-2] = dshape[-2] - 1 # wavelength row doesn't count & only with forward can the input data be spectral
-    camout = np.nan*np.ones(dshape)
+    camout = np.zeros(dshape);camout.fill(np.nan)
     return data, dataw, camout, originalshape
 
 
@@ -307,7 +308,7 @@ def cam_sww16(data, dataw = None, Yb = 20.0, Lw = 400.0, Ccwb = None,
         :cieobs:
             | '2006_10', optional
             | CMF set to use to perform calculations where spectral data 
-              is involved (inputtype == 'spd'; dataw = None)
+            | is involved (inputtype == 'spd'; dataw = None)
             | Other options: see luxpy._CMF['types']
         :match_to_conversionmatrix_to_cieobs:
             | When channging to a different CIE observer, change the xyz-to_lms
@@ -322,7 +323,7 @@ def cam_sww16(data, dataw = None, Yb = 20.0, Lw = 400.0, Ccwb = None,
     
     Notes:
         | This function implements the JOSA A (parameters = 'JOSA') 
-          published model. 
+        | published model. 
         | With:
         |    1. A correction for the parameter 
         |         in Eq.4 of Fig. 11: 0.952 --> -0.952 

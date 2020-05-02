@@ -28,7 +28,7 @@ Module with functions related to color rendering Pixel models
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
-from luxpy import np
+from luxpy.utils import np
 from .vectorshiftmodel import _VF_DELTAR, _VF_MAXR, generate_grid
 
 __all__ = ['get_pixel_coordinates','PX_colorshift_model']
@@ -49,8 +49,8 @@ def get_pixel_coordinates(jab, jab_ranges = None, jab_deltas = None, limit_grid_
             | float or ndarray, optional
             | Specifies the sampling range. 
             | A float uses jab_deltas as the maximum Euclidean distance to select
-              samples around each pixel center. A ndarray of 3 deltas, uses
-              a city block sampling around each pixel center.
+            | samples around each pixel center. A ndarray of 3 deltas, uses
+            | a city block sampling around each pixel center.
         :limit_grid_radius: 
             | 0, optional
             | A value of zeros keeps grid as specified by axr,bxr.
@@ -113,13 +113,13 @@ def PX_colorshift_model(Jabt,Jabr, jab_ranges = None, jab_deltas = None,limit_gr
             | None or ndarray, optional
             | Specifies the pixelization of color space.
             | (ndarray.shape = (3,3), with  first axis: J,a,b, and second 
-              axis: min, max, delta)
+            | axis: min, max, delta)
         :jab_deltas:
             | float or ndarray, optional
             | Specifies the sampling range. 
             | A float uses jab_deltas as the maximum Euclidean distance to select
-              samples around each pixel center. A ndarray of 3 deltas, uses
-              a city block sampling around each pixel center.
+            | samples around each pixel center. A ndarray of 3 deltas, uses
+            | a city block sampling around each pixel center.
         :limit_grid_radius:
             | 0, optional
             | A value of zeros keeps grid as specified by axr,bxr.
@@ -170,7 +170,7 @@ def PX_colorshift_model(Jabt,Jabr, jab_ranges = None, jab_deltas = None,limit_gr
 
     # get average Jab coordinates for each pixel:
     Npixels = len(idxp) # number of non-empty pixels
-    Jabr_avg = np.nan*np.ones((gridp.shape[0],3))
+    Jabr_avg = np.zeros((gridp.shape[0],3));Jabr_avg.fill(np.nan)
     Jabt_avg = Jabr_avg.copy()
     for i in range(Npixels):
         Jabr_avg[idxp[i],:] = Jabr[pixelsamplenrs[i],:].mean(axis=0)
@@ -183,8 +183,8 @@ def PX_colorshift_model(Jabt,Jabr, jab_ranges = None, jab_deltas = None,limit_gr
     
     # calculate ab vector shift:
     uabs = gridp[gridp[:,0]==0,1:3] #np.unique(gridp[:,1:3],axis=0)
-    vectorshift_ab_J0 = np.ones((uabs.shape[0],2))*np.nan
-    vectorshift_ab = np.ones((vectorshift.shape[0],2))*np.nan
+    vectorshift_ab_J0 = np.zeros((uabs.shape[0],2));vectorshift_ab_J0.fill(np.nan)
+    vectorshift_ab = np.zeros((vectorshift.shape[0],2));vectorshift_ab.fill(np.nan)
     for i in range(uabs.shape[0]):
         cond = (gridp[:,1:3] == uabs[i,:]).all(axis = 1)
         if cond.any() & np.logical_not(np.isnan(vectorshift[cond,1:3]).all()): #last condition is to avoid warning of taking nanmean of empty slice when all are NaNs

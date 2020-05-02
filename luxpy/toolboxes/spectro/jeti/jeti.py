@@ -46,13 +46,12 @@ Default parameters:
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
-
-from luxpy import np, ctypes, time, os, platform
-#import ctypes
-#import numpy as np
-#import time
-#import os
-#import platform
+import warnings
+import numpy as np
+import os
+import time
+import ctypes
+import platform
 
 __all__  = ['_TWAIT_STATUS', '_TINT_MIN', '_TINT_MAX', '_ERROR','_VERBOSITY','_TINT_MIN_MUL_FACTOR']
 __all__ += ['dvc_open','dvc_close', 'dvc_detect', 'start_meas', 'check_meas_status','wait_until_meas_is_finished']
@@ -483,7 +482,8 @@ def read_spectral_radiance(dvc, wlstart = 360, wlend = 830, wlstep = 1, out = "s
     wls = np.arange(np.int(wlstart), np.int(wlend)+np.int(wlstep), np.int(wlstep), dtype=np.float32)
     
     # Initialize spd filled with nan's:
-    spd = np.vstack((wls, np.nan*np.ones(wls.shape)))
+    spd = np.vstack((wls, np.zeros(wls.shape)))
+    spd[1:,:].fill(np.nan)
     
 #    try:
     Errors["SpecRadEx"] = None
@@ -611,7 +611,7 @@ def get_wavelength_params(dvc, out = "wlsFit,Errors", Errors = {}, verbosity = _
             | Dict with error messages.
     """
     out = out.replace(' ','')
-    wlsFit = np.nan*np.ones((5,),dtype=np.float32) # initialize parameter array with nan's
+    wlsFit = np.zeros((5,),dtype=np.float32); wlsFit.fill(np.nan) # initialize parameter array with nan's
     try:
         Errors["GetFit"] = None
         
@@ -1255,7 +1255,8 @@ def get_spd(dvc = 0, Tint = 0.0, autoTint_max = _TINT_MAX, Nscans = 1, wlstep = 
     wls = np.arange(np.int(wlstart), np.int(wlend)+np.int(wlstep), np.int(wlstep), dtype=np.float32)
     
     # Initialize spd filled with nan's:
-    spd = np.vstack((wls, np.nan*np.ones(wls.shape)))
+    spd = np.vstack((wls, np.zeros(wls.shape)))
+    spd[1:,:].fill(np.nan)
 
     try:
         # Initialize device :

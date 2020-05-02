@@ -65,7 +65,8 @@ Module with functions related to color rendering Vector Field model
 """
 
 
-from luxpy import np, plt, math, _CIE_ILLUMINANTS, _MUNSELL,_EPS
+from luxpy import math, _CIE_ILLUMINANTS, _MUNSELL
+from luxpy.utils import np, plt, _EPS
 from ..utils.helpers import spd_to_cri
 from ..utils.init_cri_defaults_database import _CRI_DEFAULTS
 from ..utils.graphics import plot_hue_bins
@@ -108,7 +109,7 @@ def get_poly_model(jabt, jabr, modeltype = _VF_MODEL_TYPE):
         :modeltype:
             | _VF_MODEL_TYPE or 'M6' or 'M5', optional
             | Specifies degree 5 or degree 6 polynomial model in ab-coordinates.
-              (see notes below)
+            | (see notes below)
             
     Returns:
         :returns: 
@@ -237,7 +238,7 @@ def apply_poly_model_at_x(poly_model, pmodel,axr,bxr):
             |  axr,bxr,Cxr,hxr)
             | 
             | ndarrays with ab-coordinates, chroma and hue 
-              predicted by the model (xt), under the reference (xr).
+            | predicted by the model (xt), under the reference (xr).
     """
 
     # Calculate hxr and Cxr:
@@ -283,7 +284,7 @@ def apply_poly_model_at_hue_x(poly_model, pmodel, dCHoverC_res, \
         :sig: 
             | _VF_SIG or float, optional
             | Determines smooth transition between hue-bin-boundaries (no hard 
-              cutoff at hue bin boundary).
+            | cutoff at hue bin boundary).
         
     Returns:
         :returns: 
@@ -406,19 +407,19 @@ def VF_colorshift_model(S, cri_type = _VF_CRI_DEFAULT, model_type = _VF_MODEL_TY
         :pool: 
             | False, optional
             | If :S: contains multiple spectra, True pools all jab data before 
-              modeling the vector field, while False models a different field 
-              for each spectrum.
+            | modeling the vector field, while False models a different field 
+            | for each spectrum.
         :pcolorshift: 
             | default dict (see below) or user defined dict, optional
             | Dict containing the specification input 
-              for apply_poly_model_at_hue_x().
+            | for apply_poly_model_at_hue_x().
             | Default dict = {'href': np.arange(np.pi/10,2*np.pi,2*np.pi/10),
             |                 'Cref' : _VF_MAXR, 
             |                 'sig' : _VF_SIG, 
             |                 'labels' : '#'} 
             | The polynomial models of degree 5 and 6 can be fully specified or 
-              summarized by the model parameters themselved OR by calculating the
-              dCoverC and dH at resp. 5 and 6 hues.
+            | summarized by the model parameters themselved OR by calculating the
+            | dCoverC and dH at resp. 5 and 6 hues.
         :vfcolor:
             | 'k', optional
             | For plotting the vector fields.
@@ -588,8 +589,8 @@ def generate_grid(jab_ranges = None, out = 'grid', \
         :jab_ranges:
             | None or ndarray, optional
             | Specifies the pixelization of color space.
-              (ndarray.shape = (3,3), with  first axis: J,a,b, and second 
-              axis: min, max, delta)
+            | (ndarray.shape = (3,3), with  first axis: J,a,b, and second 
+            | axis: min, max, delta)
         :ax:
             | default ndarray or user defined ndarray, optional
             | default = np.arange(-_VF_MAXR,_VF_MAXR+_VF_DELTAR,_VF_DELTAR) 
@@ -750,7 +751,7 @@ def plot_shift_data(data, fieldtype = 'vectorfield', scalef = _VF_MAXR, color = 
     Returns:
         :returns:
             | figCVG, hax, cmap
-        
+          
             |   :figCVG: handle to CVG figure
             |   :hax: handle to CVG axes
             |   :cmap: list with rgb colors for hue bins 
@@ -808,18 +809,22 @@ def plotcircle(radii = np.arange(0,60,10), \
         :out: 
             | None, optional
             | If None: plot circles, return (x,y) otherwise.
+               
+     Returns:
+          :x,y:
+               | ndarrays with circle coordinates (only returned if out is 'x,y')
     """
-    xs = np.array([0])
-    ys = xs.copy()
+    x = np.array([0])
+    y = x.copy()
     for ri in radii:
-        x = ri*np.cos(angles*np.pi/180)
-        y = ri*np.sin(angles*np.pi/180)
-        xs = np.hstack((xs,x))
-        ys = np.hstack((ys,y))
+        xi = ri*np.cos(angles*np.pi/180)
+        yi = ri*np.sin(angles*np.pi/180)
+        x = np.hstack((x,xi))
+        y = np.hstack((y,yi))
         if out != 'x,y':
-            plt.plot(x,y,color = color, linestyle = linestyle)
+            plt.plot(xi,yi,color = color, linestyle = linestyle)
     if out == 'x,y':
-        return xs,ys
+        return x,y
 
 
 

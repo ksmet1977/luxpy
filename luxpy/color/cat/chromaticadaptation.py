@@ -42,7 +42,7 @@ cat: Module supporting chromatic adaptation transforms (corresponding colors)
  :check_dimensions(): Check if dimensions of data and xyzw match. 
 
  :get_transfer_function(): | Calculate the chromatic adaptation diagonal matrix 
-                             transfer function Dt.  
+                           | transfer function Dt.  
                            | Default = 'vonkries' (others: 'rlab', see Fairchild 1990)
 
  :smet2017_D(): | Calculate the degree of adaptation based on chromaticity. 
@@ -69,7 +69,8 @@ cat: Module supporting chromatic adaptation transforms (corresponding colors)
 ===============================================================================
 """
        
-from luxpy import np, _CMF, math, np2d, asplit, ajoin, _EPS, xyz_to_Vrb_mb
+from luxpy import _CMF, math, xyz_to_Vrb_mb
+from luxpy.utils import np, np2d, asplit, ajoin, _EPS
 
 __all__ = ['_WHITE_POINT','_LA', '_MCATS',
            'check_dimensions','get_transfer_function','get_degree_of_adaptation',
@@ -87,7 +88,7 @@ _MCATS['kries'] = np2d([[0.40024, 0.70760, -0.08081],[-0.22630, 1.16532,  0.0457
 _MCATS['judd-1945'] = np2d([[0.0, 1.0, 0.0],[-0.460,1.360,0.102],[0.0,0.0,1.0]]) # from CIE16-2004, Eq.4, a23 modified from 0.1 to 0.1020 for increased accuracy
 _MCATS['bfd'] = np2d([[0.8951,0.2664,-0.1614],[-0.7502,1.7135,0.0367],[0.0389,-0.0685,1.0296]]) #also used in ciecam97s
 _MCATS['sharp'] = np2d([[1.2694,-0.0988,-0.1706],[-0.8364,1.8006,0.0357],[0.0297,-0.0315,1.0018]])
-_MCATS['cmc'] = np2d([[0.7982,  0.3389,	-0.1371],[-0.5918,  1.5512,	 0.0406],[0.0008,  0.0239,	 0.9753]])
+_MCATS['cmc'] = np2d([[0.7982,  0.3389,-0.1371],[-0.5918,  1.5512, 0.0406],[0.0008,  0.0239, 0.9753]])
 _MCATS['ipt'] = np2d([[0.4002,  0.7075, -0.0807],[-0.2280,  1.1500,  0.0612],[ 0.0,       0.0,       0.9184]])
 _MCATS['lms'] = np2d([[0.2070,   0.8655,  -0.0362],[-0.4307,   1.1780,   0.0949],[ 0.0865,  -0.2197,   0.4633]])
 _MCATS['bianco'] = np2d([[0.8752, 0.2787, -0.1539],[-0.8904, 1.8709, 0.0195],[-0.0061, 0.0162, 0.9899]]) # %Bianco, S. & Schettini, R., Two New von Kries Based Chromatic Adaptation Transforms Found by Numerical Optimization. Color Res Appl 2010, 35(3), 184-192
@@ -207,9 +208,9 @@ def smet2017_D(xyzw, Dmax = None, cieobs = '1964_10'):
         :Dmax:
             | None or float, optional
             | Defaults to 0.6539 (max D obtained under experimental conditions, 
-              but probably too low due to dark surround leading to incomplete 
-              chromatic adaptation even for neutral illuminants 
-              resulting in background luminance (fov~50Â°) of 760 cd/mÂ²))
+            | but probably too low due to dark surround leading to incomplete 
+            | chromatic adaptation even for neutral illuminants 
+            | resulting in background luminance (fov~50Â°) of 760 cd/mÂ²))
         :cieobs:
             | '1964_10', optional
             | CMF set used in deriving model in cited paper.
@@ -258,7 +259,7 @@ def get_degree_of_adaptation(Dtype = None, **kwargs):
             |     D is calculated as follows:
             |        D = 0.08*numpy.log10(La1+La0)+0.76-0.45*(La1-La0)/(La1+La0)
             | If 'smet2017': kwargs should contain 'xyzw' and 'Dmax'
-              (see Smet2017_D for more details).
+            |  (see Smet2017_D for more details).
             | If "? user defined", then D is calculated by:
             |        D = ndarray(eval(:Dtype:))  
     
@@ -369,7 +370,7 @@ def parse_x1x2_parameters(x,target_shape, catmode, expand_2d_to_3d = None, defau
         if (catmode == '1>0>2') | (catmode == '1>2'):
             x20 = np.ones(target_shape)*default[1]
         else:
-            x20 = np.ones(target_shape)*np.nan
+            x20 = np.zeros(target_shape); x20.fill(np.nan)
    else:
         x = np2d(x)
         if (catmode == '1>0>2') |(catmode == '1>2'):
@@ -381,7 +382,7 @@ def parse_x1x2_parameters(x,target_shape, catmode, expand_2d_to_3d = None, defau
                  x20 = x10.copy()
         elif catmode == '1>0':
             x10 = np.ones(target_shape)*x[...,0]
-            x10 = np.ones(target_shape)*np.nan
+            x20 = np.zeros(target_shape); x20.fill(np.nan)
    return x10, x20
 
 #------------------------------------------------------------------------------
@@ -422,7 +423,7 @@ def apply(data, catmode = '1>0>2', cattype = 'vonkries', xyzw1 = None, xyzw2 = N
         :F: 
             | None, optional
             | Surround parameter(s) for CAT02/CAT16 calculations 
-              (:Dtype: == 'cat02' or 'cat16')
+            |  (:Dtype: == 'cat02' or 'cat16')
             | Defaults to [1.0, 1.0]. 
         :Dtype:
             | None, optional
@@ -431,7 +432,7 @@ def apply(data, catmode = '1>0>2', cattype = 'vonkries', xyzw1 = None, xyzw2 = N
         :mcat:
             | ['cat02'], optional
             | List[str] or List[ndarray] of sensor space matrices for each 
-              condition pair. If len(:mcat:) == 1, the same matrix is used.
+            |  condition pair. If len(:mcat:) == 1, the same matrix is used.
         :normxyz0: 
             | None, optional
             | Set of xyz tristimulus values to normalize the sensor space matrix to.
@@ -504,7 +505,7 @@ def apply(data, catmode = '1>0>2', cattype = 'vonkries', xyzw1 = None, xyzw2 = N
 
 
         # transform data (xyz) to sensor space (lms) and perform cat:
-        xyzc = np.ones(data.shape)*np.nan
+        xyzc = np.zeros(data.shape); xyzc.fill(np.nan)
         mcat = np.array(mcat)
         if (mcat.shape[0] != data.shape[1]) & (mcat.shape[0]==1):
             mcat = np.repeat(mcat,data.shape[1],axis = 0)

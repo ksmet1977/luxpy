@@ -51,10 +51,9 @@ Module with color rendition, fidelity and gamut area helper functions
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
-from luxpy import (np, _S_INTERP_TYPE, _CRI_RFL, _IESTM3015, math, cam, cat,
-                minimize, asplit, np2d, spd, put_args_in_db, 
-                colortf, spd_to_xyz, cri_ref, xyz_to_cct)
-
+from luxpy import (_S_INTERP_TYPE, _CRI_RFL, _IESTM3015, math, cam, cat,
+                   spd, colortf, spd_to_xyz, cri_ref, xyz_to_cct)
+from luxpy.utils import np, sp,asplit, np2d, put_args_in_db 
 from .DE_scalers import linear_scale, log_scale, psy_scale
 
 from .init_cri_defaults_database import _CRI_TYPE_DEFAULT, _CRI_DEFAULTS, process_cri_type_input
@@ -75,7 +74,7 @@ def gamut_slicer(jab_test,jab_ref, out = 'jabt,jabr', nhbins = None, \
               of the samples under the test SPD
         :jab_ref:
             | ndarray with Cartesian color coordinates (e.g. Jab) 
-              of the samples under the reference SPD
+            | of the samples under the reference SPD
         :out: 
             | 'jabt,jabr' or str, optional
             | Specifies which variables to output as ndarray
@@ -91,14 +90,14 @@ def gamut_slicer(jab_test,jab_ref, out = 'jabt,jabr', nhbins = None, \
         :normalize_gamut:
             | True or False, optional
             | True normalizes the gamut of test to that of ref.
-              (perfect agreement results in circle).
+            |  (perfect agreement results in circle).
         :normalized_chroma_ref:
             | 100.0 or float, optional
             | Controls the size (chroma/radius) of the normalization circle/gamut.
         :close_gamut:
             | False or True, optional
             | True appends the first jab coordinates to the end of the output 
-              (for plotting closed gamuts)
+            |  (for plotting closed gamuts)
     
     Returns:
         :returns:
@@ -208,10 +207,10 @@ def jab_to_rg(jabt,jabr, max_scale = 100, ordered_and_sliced = False, \
     Args:
         :jabt:  
             | ndarray with Cartesian color coordinates (e.g. Jab) 
-              of the samples under the test SPD
+            | of the samples under the test SPD
         :jabr:
             | ndarray with Cartesian color coordinates (e.g. Jab) 
-              of the samples under the reference SPD
+            | of the samples under the reference SPD
         :max_scale:
             | 100.0, optional
             | Value of Rg when Rf = max_scale (i.e. DEavg = 0)
@@ -219,7 +218,7 @@ def jab_to_rg(jabt,jabr, max_scale = 100, ordered_and_sliced = False, \
             | False or True, optional
             |   - False: Hue ordering will be done with lux.cri.gamut_slicer().
             |   - True: user is responsible for hue-ordering and closing gamut 
-                  (i.e. first element in :jab: equals the last).
+            |     (i.e. first element in :jab: equals the last).
         :nhbins: 
             | None or int, optional
             |   - None: defaults to using the sample hues themselves as 'bins'. 
@@ -232,7 +231,7 @@ def jab_to_rg(jabt,jabr, max_scale = 100, ordered_and_sliced = False, \
         :normalize_gamut:
             | True or False, optional
             | True normalizes the gamut of test to that of ref.
-              (perfect agreement results in circle).
+            | (perfect agreement results in circle).
         :normalized_chroma_ref:
             | 100.0 or float, optional
             | Controls the size (chroma/radius) of the normalization circle/gamut
@@ -293,11 +292,11 @@ def jab_to_rhi(jabt, jabr, DEi, cri_type = _CRI_TYPE_DEFAULT, start_hue = None,\
         :use_bin_avg_DEi: 
             | True, optional
             | Note that following IES-TM30 DEi from gamut_slicer() is obtained by
-              averaging the DEi per hue bin (True), and NOT by averaging the 
-              jabt and jabr per hue  bin and then calculating the DEi (False).
+            | averaging the DEi per hue bin (True), and NOT by averaging the 
+            | jabt and jabr per hue  bin and then calculating the DEi (False).
         :nhbins:
             | int, number of hue bins to slice gamut 
-              (None use the one specified in :cri_type: dict).
+            | (None use the one specified in :cri_type: dict).
         :start_hue: 
             | float (°), hue at which to start slicing
         :scale_fcn:
@@ -372,10 +371,10 @@ def jab_to_DEi(jabt, jabr, out = 'DEi', avg = None):
     Args:
         :jabt: 
             | ndarray with Cartesian color coordinates (e.g. Jab) 
-              of the samples under the test SPD
+            | of the samples under the test SPD
         :jabr:
             | ndarray with Cartesian color coordinates (e.g. Jab) 
-              of the samples under the reference SPD
+            | of the samples under the reference SPD
         :avg: 
             | None, optional
             | If None: don't calculate average, else: avg must be function handle
@@ -415,7 +414,7 @@ def spd_to_jab_t_r(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'jabt,jabr', wl = No
     Args:
         :SPD: 
             | ndarray with spectral data 
-              (can be multiple SPDs, first axis are the wavelengths)
+            | (can be multiple SPDs, first axis are the wavelengths)
         :out: 
             | 'jabt,jabr' or str, optional
             | Specifies requested output (e.g.'jabt,jabr' or 'jabt,jabr,cct,duv') 
@@ -431,7 +430,7 @@ def spd_to_jab_t_r(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'jabt,jabr', wl = No
             |     (see e.g. luxpy.cri._CRI_DEFAULTS['cierf'] 
             |     for required structure)
             | Note that any non-None input arguments to the function will 
-              override default values in cri_type dict.
+            |  override default values in cri_type dict.
             
         :sampleset:
             | None or ndarray or str, optional
@@ -589,7 +588,7 @@ def spd_to_DEi(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'DEi', wl = None, \
     Args:
         :SPD: 
             | ndarray with spectral data 
-              (can be multiple SPDs, first axis are the wavelengths)
+            | (can be multiple SPDs, first axis are the wavelengths)
         :out: 
             | 'DEi' or str, optional
             | Specifies requested output (e.g. 'DEi,DEa,cct,duv') 
@@ -707,7 +706,7 @@ def optimize_scale_factor(cri_type, opt_scale_factor, scale_fcn, avg) :
         :opt_scale:
             | True or False
             | True: optimize scaling-factor, else do nothing and use value of 
-              scaling-factor in :scale: dict.   
+            | scaling-factor in :scale: dict.   
         :scale_fcn:
             | function handle to type of cri scale, 
             | e.g. 
@@ -756,7 +755,7 @@ def optimize_scale_factor(cri_type, opt_scale_factor, scale_fcn, avg) :
             x0 = np.ones(np.sum(opt_scale_factor))
             optfcn = lambda x : math.rms(avg(scale_fcn(DEa,np.hstack( (x,sf[np.invert(opt_scale_factor)]) ))) - Rf_opt,axis=1) # optimize first N 'True' cfactor (for scale_factor input of len = n>=N)
         
-        optresult = minimize(fun = optfcn, x0 = x0, args=(), method = 'Nelder-Mead')
+        optresult = sp.optimize.minimize(fun = optfcn, x0 = x0, args=(), method = 'Nelder-Mead')
         scale_factor = optresult['x']
         
         #Reconstruct 'scale_factor' from optimized and fixed parts:
@@ -782,7 +781,7 @@ def spd_to_rg(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'Rg', wl = None, \
     Args:
         :SPD: 
             | ndarray with spectral data 
-              (can be multiple SPDs, first axis are the wavelengths)
+            | (can be multiple SPDs, first axis are the wavelengths)
         :out: 
             | 'Rg' or str, optional
             | Specifies requested output (e.g. 'Rg,cct,duv') 
@@ -798,7 +797,7 @@ def spd_to_rg(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'Rg', wl = None, \
             |     (see e.g. luxpy.cri._CRI_DEFAULTS['cierf'] 
             |     for required structure)
             | Note that any non-None input arguments to the function will 
-              override default values in cri_type dict.
+            | override default values in cri_type dict.
         :sampleset:
             | None or ndarray or str, optional
             | Specifies set of spectral reflectance samples for cri calculations.
@@ -962,7 +961,7 @@ def spd_to_cri(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'Rf', wl = None, \
     Args:
         :SPD: 
             | ndarray with spectral data 
-              (can be multiple SPDs, first axis are the wavelengths)
+            | (can be multiple SPDs, first axis are the wavelengths)
         :out: 
             | 'Rf' or str, optional
             | Specifies requested output (e.g. 'Rf,cct,duv') 
@@ -978,7 +977,7 @@ def spd_to_cri(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'Rf', wl = None, \
             |     (see e.g. luxpy.cri._CRI_DEFAULTS['cierf'] 
             |     for required structure)
             | Note that any non-None input arguments to the function will 
-              override default values in cri_type dict.
+            | override default values in cri_type dict.
         :sampleset:
             | None or ndarray or str, optional
             | Specifies set of spectral reflectance samples for cri calculations.
@@ -1087,7 +1086,7 @@ def spd_to_cri(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'Rf', wl = None, \
         :opt_scale: 
             | True or False, optional
             | True: optimize scaling-factor, else do nothing and use value of 
-              scaling-factor in :scale: dict.   
+            | scaling-factor in :scale: dict.   
     
     Returns:
         :returns: 

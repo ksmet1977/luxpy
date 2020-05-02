@@ -38,7 +38,7 @@ def spd_to_ciera(SPD, out = 'Rf', wl = None):
     Args:
         :SPD: 
             | ndarray with spectral data 
-              (can be multiple SPDs, first axis are the wavelengths)
+            | (can be multiple SPDs, first axis are the wavelengths)
         :wl: 
             | None, optional
             | Wavelengths (or [start, end, spacing]) to interpolate :SPD: to. 
@@ -70,7 +70,7 @@ def spd_to_cierf(SPD, out = 'Rf', wl = None):
     Args:
         :SPD: 
             | ndarray with spectral data (can be multiple SPDs, 
-              first axis are the wavelengths)
+            | first axis are the wavelengths)
         :wl: 
             | None, optional
             | Wavelengths (or [start, end, spacing]) to interpolate :SPD: to.

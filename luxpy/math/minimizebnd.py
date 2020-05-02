@@ -4,15 +4,14 @@ Module with port from Matlab fminsearchbnd, but applied to SciPy's minimize fcn
 ===============================================================================
 
 
- :minimizebnd(): scipy.minimize() wrapper that allows contrained parameters on 
+ :minimizebnd(): scipy.optimize.minimize() wrapper that allows contrained parameters on 
                  unconstrained methods(port of Matlab's fminsearchbnd). 
                  Starting, lower and upper bounds values can also be provided 
                  as a dict.
 
 ===============================================================================
 """
-
-from luxpy import np, minimize, vec_to_dict
+from luxpy.utils import np, sp, vec_to_dict
 
 __all__ = ['minimizebnd']
 
@@ -20,8 +19,8 @@ def minimizebnd(fun, x0, args=(), method = 'nelder-mead', use_bnd = True, \
                 bounds = (None,None) , options = None, \
                 x0_vsize = None, x0_keys = None, **kwargs):
     """
-    Minimization function that allows for bounds on any type of method in 
-    SciPy's minimize function by transforming the parameters values 
+    | Minimization function that allows for bounds on any type of method in 
+    | SciPy's minimize function by transforming the parameters values 
     | (see Matlab's fminsearchbnd). 
     | Starting values, and lower and upper bounds can also be provided as a dict.
     
@@ -30,19 +29,19 @@ def minimizebnd(fun, x0, args=(), method = 'nelder-mead', use_bnd = True, \
             | parameter starting values
             | If x0_keys is None then :x0: is vector else, :x0: is dict and
             | x0_size should be provided with length/size of values for each of 
-              the keys in :x0: to convert it to a vector.                
+            |  the keys in :x0: to convert it to a vector.                
         :use_bnd:
             | True, optional
             | False: omits bounds and defaults to regular minimize function.
         :bounds:
             | (lower, upper), optional
             | Tuple of lists or dicts (x0_keys is None) of lower and upper bounds 
-              for each of the parameters values.
+            | for each of the parameters values.
         :kwargs: 
             | allows input for other type of arguments (e.g. in OutputFcn)
          
     Note:
-        For other input arguments, see ?scipy.minimize()
+        For other input arguments, see ?scipy.optimize.minimize()
          
     Returns:
         :res: 
@@ -56,7 +55,7 @@ def minimizebnd(fun, x0, args=(), method = 'nelder-mead', use_bnd = True, \
         x0, vsize = vec_to_dict(dic = x0, vsize = x0_vsize, keys = x0_keys)
     
     if use_bnd == False:
-        res = minimize(fun, x0, args = args, options = options, **kwargs)
+        res = sp.optimize.minimize(fun, x0, args = args, options = options, **kwargs)
         res['fval'] = fun(res['x'], *args)
         if x0_keys is None:
             res['x_final'] = res['x']
@@ -218,7 +217,7 @@ def minimizebnd(fun, x0, args=(), method = 'nelder-mead', use_bnd = True, \
     
     # now we can call minimize, but with our own
     # intra-objective function.
-    res = minimize(intrafun, x0u, args = params, method = method, options = options)
+    res = sp.optimize.minimize(intrafun, x0u, args = params, method = method, options = options)
     #[xu,fval,exitflag,output] = fminsearch(@intrafun,x0u,options,params);
     
     # get function value:

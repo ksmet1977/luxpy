@@ -36,9 +36,8 @@ Notes
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
-from  .spectro import *	
+from  .spectro import *
 __all__ = spectro.__all__
-		
 
 
 
