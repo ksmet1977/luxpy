@@ -1,8 +1,21 @@
 Color sub-package
 ====================
 
+ :py:
+	* __init__.py
+	* CDATA.py 
+	
+ :namespace: luxpy
+
+.. automodule:: luxpy.color
+   :members:
+   :undoc-members:
+   :private-members:
+
+
+
 utils/ 
--------
+------
  :py:
 	* __init__.py
 	* plotters.py 
@@ -39,6 +52,7 @@ cct/
  :py:
 	* __init__.py
 	* cct.py 
+	* cctduv_ohno_CORM2011.py
 	
  :namespace: luxpy
 
@@ -68,6 +82,7 @@ cam/
 	* cam_02_X.py
 	* cam15u
 	* sww2016.py
+	* cam18sl.py
 	
  :namespace: luxpy.cam
 
@@ -82,6 +97,9 @@ deltaE/
  :py:
 	* __init__.py
 	* colordifferences.py
+	* discriminationellipses.py
+	* frieleellipses.py
+	* macadamellipses.py
 	
  :namespace: luxpy.deltaE
 
@@ -89,7 +107,20 @@ deltaE/
    :members:
    :undoc-members:
    :private-members:
-   
+ 
+whiteness/ 
+----------
+ :py:
+	* __init__.py
+	* smet_white_loci.py
+	
+ :namespace: luxpy
+
+.. automodule:: luxpy.color.whiteness
+   :members:
+   :undoc-members:
+   :private-members: 
+
    
 cri/ 
 ----

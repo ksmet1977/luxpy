@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Imported (required) packages &mdash; LuxPy 1.4.18 documentation</title>
+  <title>Imported (required) packages &mdash; LuxPy 1.5.0 documentation</title>
   
 
   
@@ -17,34 +17,36 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Luxpy package structure" href="luxpy_structure.html" />
     <link rel="prev" title="Installation" href="installation.html" /> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -58,7 +60,7 @@
             
             
               <div class="version">
-                1.4.18
+                1.5.0
               </div>
             
           
@@ -89,6 +91,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Imported (required) packages</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#core">Core</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#e-party-dependencies-automatic-install">3e party dependencies (automatic install)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#e-party-dependencies-automatic-install-on-import">3e party dependencies (automatic install on import)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#e-party-dependencies-requiring-manual-install">3e party dependencies (requiring manual install)</a></li>
 </ul>
 </li>
@@ -163,17 +166,23 @@
 <h2>Core<a class="headerlink" href="#core" title="Permalink to this headline">¶</a></h2>
 <blockquote>
 <div><ul class="simple">
-<li>import os</li>
-<li>import warnings</li>
-<li>from collections import OrderedDict as odict</li>
-<li>from mpl_toolkits.mplot3d import Axes3D</li>
-<li>import colorsys</li>
-<li>import itertools</li>
-<li>import copy</li>
-<li>import time</li>
-<li>import tkinter</li>
-<li>import ctypes</li>
-<li>import platform</li>
+<li><p>import os</p></li>
+<li><p>import warnings</p></li>
+<li><p>import pathlib</p></li>
+<li><p>import importlib</p></li>
+<li><p>from collections import OrderedDict as odict</p></li>
+<li><p>from mpl_toolkits.mplot3d import Axes3D</p></li>
+<li><p>import colorsys</p></li>
+<li><p>import itertools</p></li>
+<li><p>import copy</p></li>
+<li><p>import time</p></li>
+<li><p>import tkinter</p></li>
+<li><p>import ctypes</p></li>
+<li><p>import platform</p></li>
+<li><p>import subprocess</p></li>
+<li><p>import cProfile</p></li>
+<li><p>import pstats</p></li>
+<li><p>import io</p></li>
 </ul>
 </div></blockquote>
 </div>
@@ -181,24 +190,28 @@
 <h2>3e party dependencies (automatic install)<a class="headerlink" href="#e-party-dependencies-automatic-install" title="Permalink to this headline">¶</a></h2>
 <blockquote>
 <div><ul class="simple">
-<li>import numpy as np</li>
-<li>import pandas as pd</li>
-<li>import matplotlib.pyplot as plt</li>
-<li>import scipy as sp</li>
-<li>from scipy import interpolate</li>
-<li>from scipy.optimize import minimize</li>
-<li>from scipy.spatial import cKDTree</li>
-<li>from imageio import imsave</li>
+<li><p>import numpy as np</p></li>
+<li><p>import pandas as pd</p></li>
+<li><p>import matplotlib.pyplot as plt</p></li>
+<li><p>import scipy as sp</p></li>
+<li><p>import imageio</p></li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="e-party-dependencies-automatic-install-on-import">
+<h2>3e party dependencies (automatic install on import)<a class="headerlink" href="#e-party-dependencies-automatic-install-on-import" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li><p>import pyswarms (when importing particleswarms from math)</p></li>
 </ul>
 </div></blockquote>
 </div>
 <div class="section" id="e-party-dependencies-requiring-manual-install">
 <h2>3e party dependencies (requiring manual install)<a class="headerlink" href="#e-party-dependencies-requiring-manual-install" title="Permalink to this headline">¶</a></h2>
-<dl class="docutils">
-<dt>To control Ocean Optics spectrometers with spectro toolbox:</dt>
-<dd><ul class="first last simple">
-<li>import seabreeze (conda install -c poehlmann python-seabreeze)</li>
-<li>pip install pyusb (for use with ‘pyseabreeze’ backend of python-seabreeze)</li>
+<dl class="simple">
+<dt>To control Ocean Optics spectrometers with spectro toolbox:</dt><dd><ul class="simple">
+<li><p>import seabreeze (conda install -c poehlmann python-seabreeze)</p></li>
+<li><p>pip install pyusb (for use with ‘pyseabreeze’ backend of python-seabreeze)</p></li>
 </ul>
 </dd>
 </dl>
@@ -216,7 +229,7 @@
         <a href="luxpy_structure.html" class="btn btn-neutral float-right" title="Luxpy package structure" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="installation.html" class="btn btn-neutral" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -242,25 +255,16 @@
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-    
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

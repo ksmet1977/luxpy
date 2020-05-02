@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.color.cri.utils.helpers &mdash; LuxPy 1.4.18 documentation</title>
+  <title>luxpy.color.cri.utils.helpers &mdash; LuxPy 1.5.0 documentation</title>
   
 
   
@@ -17,32 +17,34 @@
   
 
   
+  <script type="text/javascript" src="../../../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
+        <script src="../../../../../_static/jquery.js"></script>
+        <script src="../../../../../_static/underscore.js"></script>
+        <script src="../../../../../_static/doctools.js"></script>
+        <script src="../../../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../../../_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="../../../../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../../search.html" /> 
-
-  
-  <script src="../../../../../_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -56,7 +58,7 @@
             
             
               <div class="version">
-                1.4.18
+                1.5.0
               </div>
             
           
@@ -170,7 +172,7 @@
 <span class="sd">Module with color rendition, fidelity and gamut area helper functions</span>
 <span class="sd">=====================================================================</span>
 
-<span class="sd">:gamut_slicer(): Slices the gamut in nhbins slices and provides normalization </span>
+<span class="sd"> :gamut_slicer(): Slices the gamut in nhbins slices and provides normalization </span>
 <span class="sd">                  of test gamut to reference gamut.</span>
 
 <span class="sd"> :jab_to_rg(): Calculates gamut area index, Rg.</span>
@@ -202,13 +204,12 @@
 <span class="sd">.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="p">(</span><span class="n">np</span><span class="p">,</span> <span class="n">_S_INTERP_TYPE</span><span class="p">,</span> <span class="n">_CRI_RFL</span><span class="p">,</span> <span class="n">_IESTM3015</span><span class="p">,</span> <span class="n">math</span><span class="p">,</span> <span class="n">cam</span><span class="p">,</span> <span class="n">cat</span><span class="p">,</span>
-                <span class="n">minimize</span><span class="p">,</span> <span class="n">asplit</span><span class="p">,</span> <span class="n">np2d</span><span class="p">,</span> <span class="n">spd</span><span class="p">,</span> <span class="n">put_args_in_db</span><span class="p">,</span> 
-                <span class="n">colortf</span><span class="p">,</span> <span class="n">spd_to_xyz</span><span class="p">,</span> <span class="n">cri_ref</span><span class="p">,</span> <span class="n">xyz_to_cct</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="p">(</span><span class="n">_S_INTERP_TYPE</span><span class="p">,</span> <span class="n">_CRI_RFL</span><span class="p">,</span> <span class="n">_IESTM3015</span><span class="p">,</span> <span class="n">math</span><span class="p">,</span> <span class="n">cam</span><span class="p">,</span> <span class="n">cat</span><span class="p">,</span>
+                   <span class="n">spd</span><span class="p">,</span> <span class="n">colortf</span><span class="p">,</span> <span class="n">spd_to_xyz</span><span class="p">,</span> <span class="n">cri_ref</span><span class="p">,</span> <span class="n">xyz_to_cct</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">luxpy.utils</span> <span class="kn">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">sp</span><span class="p">,</span><span class="n">asplit</span><span class="p">,</span> <span class="n">np2d</span><span class="p">,</span> <span class="n">put_args_in_db</span> 
+<span class="kn">from</span> <span class="nn">.DE_scalers</span> <span class="kn">import</span> <span class="n">linear_scale</span><span class="p">,</span> <span class="n">log_scale</span><span class="p">,</span> <span class="n">psy_scale</span>
 
-<span class="kn">from</span> <span class="nn">.DE_scalers</span> <span class="k">import</span> <span class="n">linear_scale</span><span class="p">,</span> <span class="n">log_scale</span><span class="p">,</span> <span class="n">psy_scale</span>
-
-<span class="kn">from</span> <span class="nn">.init_cri_defaults_database</span> <span class="k">import</span> <span class="n">_CRI_TYPE_DEFAULT</span><span class="p">,</span> <span class="n">_CRI_DEFAULTS</span><span class="p">,</span> <span class="n">process_cri_type_input</span>
+<span class="kn">from</span> <span class="nn">.init_cri_defaults_database</span> <span class="kn">import</span> <span class="n">_CRI_TYPE_DEFAULT</span><span class="p">,</span> <span class="n">_CRI_DEFAULTS</span><span class="p">,</span> <span class="n">process_cri_type_input</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;gamut_slicer&#39;</span><span class="p">,</span><span class="s1">&#39;jab_to_rg&#39;</span><span class="p">,</span> <span class="s1">&#39;jab_to_rhi&#39;</span><span class="p">,</span> <span class="s1">&#39;jab_to_DEi&#39;</span><span class="p">,</span>
            <span class="s1">&#39;spd_to_DEi&#39;</span><span class="p">,</span> <span class="s1">&#39;spd_to_rg&#39;</span><span class="p">,</span> <span class="s1">&#39;spd_to_cri&#39;</span><span class="p">]</span>
@@ -226,7 +227,7 @@
 <span class="sd">              of the samples under the test SPD</span>
 <span class="sd">        :jab_ref:</span>
 <span class="sd">            | ndarray with Cartesian color coordinates (e.g. Jab) </span>
-<span class="sd">              of the samples under the reference SPD</span>
+<span class="sd">            | of the samples under the reference SPD</span>
 <span class="sd">        :out: </span>
 <span class="sd">            | &#39;jabt,jabr&#39; or str, optional</span>
 <span class="sd">            | Specifies which variables to output as ndarray</span>
@@ -242,14 +243,14 @@
 <span class="sd">        :normalize_gamut:</span>
 <span class="sd">            | True or False, optional</span>
 <span class="sd">            | True normalizes the gamut of test to that of ref.</span>
-<span class="sd">              (perfect agreement results in circle).</span>
+<span class="sd">            |  (perfect agreement results in circle).</span>
 <span class="sd">        :normalized_chroma_ref:</span>
 <span class="sd">            | 100.0 or float, optional</span>
 <span class="sd">            | Controls the size (chroma/radius) of the normalization circle/gamut.</span>
 <span class="sd">        :close_gamut:</span>
 <span class="sd">            | False or True, optional</span>
 <span class="sd">            | True appends the first jab coordinates to the end of the output </span>
-<span class="sd">              (for plotting closed gamuts)</span>
+<span class="sd">            |  (for plotting closed gamuts)</span>
 <span class="sd">    </span>
 <span class="sd">    Returns:</span>
 <span class="sd">        :returns:</span>
@@ -359,10 +360,10 @@
 <span class="sd">    Args:</span>
 <span class="sd">        :jabt:  </span>
 <span class="sd">            | ndarray with Cartesian color coordinates (e.g. Jab) </span>
-<span class="sd">              of the samples under the test SPD</span>
+<span class="sd">            | of the samples under the test SPD</span>
 <span class="sd">        :jabr:</span>
 <span class="sd">            | ndarray with Cartesian color coordinates (e.g. Jab) </span>
-<span class="sd">              of the samples under the reference SPD</span>
+<span class="sd">            | of the samples under the reference SPD</span>
 <span class="sd">        :max_scale:</span>
 <span class="sd">            | 100.0, optional</span>
 <span class="sd">            | Value of Rg when Rf = max_scale (i.e. DEavg = 0)</span>
@@ -370,7 +371,7 @@
 <span class="sd">            | False or True, optional</span>
 <span class="sd">            |   - False: Hue ordering will be done with lux.cri.gamut_slicer().</span>
 <span class="sd">            |   - True: user is responsible for hue-ordering and closing gamut </span>
-<span class="sd">                  (i.e. first element in :jab: equals the last).</span>
+<span class="sd">            |     (i.e. first element in :jab: equals the last).</span>
 <span class="sd">        :nhbins: </span>
 <span class="sd">            | None or int, optional</span>
 <span class="sd">            |   - None: defaults to using the sample hues themselves as &#39;bins&#39;. </span>
@@ -383,7 +384,7 @@
 <span class="sd">        :normalize_gamut:</span>
 <span class="sd">            | True or False, optional</span>
 <span class="sd">            | True normalizes the gamut of test to that of ref.</span>
-<span class="sd">              (perfect agreement results in circle).</span>
+<span class="sd">            | (perfect agreement results in circle).</span>
 <span class="sd">        :normalized_chroma_ref:</span>
 <span class="sd">            | 100.0 or float, optional</span>
 <span class="sd">            | Controls the size (chroma/radius) of the normalization circle/gamut</span>
@@ -444,11 +445,11 @@
 <span class="sd">        :use_bin_avg_DEi: </span>
 <span class="sd">            | True, optional</span>
 <span class="sd">            | Note that following IES-TM30 DEi from gamut_slicer() is obtained by</span>
-<span class="sd">              averaging the DEi per hue bin (True), and NOT by averaging the </span>
-<span class="sd">              jabt and jabr per hue  bin and then calculating the DEi (False).</span>
+<span class="sd">            | averaging the DEi per hue bin (True), and NOT by averaging the </span>
+<span class="sd">            | jabt and jabr per hue  bin and then calculating the DEi (False).</span>
 <span class="sd">        :nhbins:</span>
 <span class="sd">            | int, number of hue bins to slice gamut </span>
-<span class="sd">              (None use the one specified in :cri_type: dict).</span>
+<span class="sd">            | (None use the one specified in :cri_type: dict).</span>
 <span class="sd">        :start_hue: </span>
 <span class="sd">            | float (°), hue at which to start slicing</span>
 <span class="sd">        :scale_fcn:</span>
@@ -523,10 +524,10 @@
 <span class="sd">    Args:</span>
 <span class="sd">        :jabt: </span>
 <span class="sd">            | ndarray with Cartesian color coordinates (e.g. Jab) </span>
-<span class="sd">              of the samples under the test SPD</span>
+<span class="sd">            | of the samples under the test SPD</span>
 <span class="sd">        :jabr:</span>
 <span class="sd">            | ndarray with Cartesian color coordinates (e.g. Jab) </span>
-<span class="sd">              of the samples under the reference SPD</span>
+<span class="sd">            | of the samples under the reference SPD</span>
 <span class="sd">        :avg: </span>
 <span class="sd">            | None, optional</span>
 <span class="sd">            | If None: don&#39;t calculate average, else: avg must be function handle</span>
@@ -566,7 +567,7 @@
 <span class="sd">    Args:</span>
 <span class="sd">        :SPD: </span>
 <span class="sd">            | ndarray with spectral data </span>
-<span class="sd">              (can be multiple SPDs, first axis are the wavelengths)</span>
+<span class="sd">            | (can be multiple SPDs, first axis are the wavelengths)</span>
 <span class="sd">        :out: </span>
 <span class="sd">            | &#39;jabt,jabr&#39; or str, optional</span>
 <span class="sd">            | Specifies requested output (e.g.&#39;jabt,jabr&#39; or &#39;jabt,jabr,cct,duv&#39;) </span>
@@ -582,7 +583,7 @@
 <span class="sd">            |     (see e.g. luxpy.cri._CRI_DEFAULTS[&#39;cierf&#39;] </span>
 <span class="sd">            |     for required structure)</span>
 <span class="sd">            | Note that any non-None input arguments to the function will </span>
-<span class="sd">              override default values in cri_type dict.</span>
+<span class="sd">            |  override default values in cri_type dict.</span>
 <span class="sd">            </span>
 <span class="sd">        :sampleset:</span>
 <span class="sd">            | None or ndarray or str, optional</span>
@@ -740,7 +741,7 @@
 <span class="sd">    Args:</span>
 <span class="sd">        :SPD: </span>
 <span class="sd">            | ndarray with spectral data </span>
-<span class="sd">              (can be multiple SPDs, first axis are the wavelengths)</span>
+<span class="sd">            | (can be multiple SPDs, first axis are the wavelengths)</span>
 <span class="sd">        :out: </span>
 <span class="sd">            | &#39;DEi&#39; or str, optional</span>
 <span class="sd">            | Specifies requested output (e.g. &#39;DEi,DEa,cct,duv&#39;) </span>
@@ -858,7 +859,7 @@
 <span class="sd">        :opt_scale:</span>
 <span class="sd">            | True or False</span>
 <span class="sd">            | True: optimize scaling-factor, else do nothing and use value of </span>
-<span class="sd">              scaling-factor in :scale: dict.   </span>
+<span class="sd">            | scaling-factor in :scale: dict.   </span>
 <span class="sd">        :scale_fcn:</span>
 <span class="sd">            | function handle to type of cri scale, </span>
 <span class="sd">            | e.g. </span>
@@ -907,7 +908,7 @@
             <span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">opt_scale_factor</span><span class="p">))</span>
             <span class="n">optfcn</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="n">math</span><span class="o">.</span><span class="n">rms</span><span class="p">(</span><span class="n">avg</span><span class="p">(</span><span class="n">scale_fcn</span><span class="p">(</span><span class="n">DEa</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">sf</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">invert</span><span class="p">(</span><span class="n">opt_scale_factor</span><span class="p">)])</span> <span class="p">)))</span> <span class="o">-</span> <span class="n">Rf_opt</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># optimize first N &#39;True&#39; cfactor (for scale_factor input of len = n&gt;=N)</span>
         
-        <span class="n">optresult</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span><span class="n">fun</span> <span class="o">=</span> <span class="n">optfcn</span><span class="p">,</span> <span class="n">x0</span> <span class="o">=</span> <span class="n">x0</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(),</span> <span class="n">method</span> <span class="o">=</span> <span class="s1">&#39;Nelder-Mead&#39;</span><span class="p">)</span>
+        <span class="n">optresult</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">fun</span> <span class="o">=</span> <span class="n">optfcn</span><span class="p">,</span> <span class="n">x0</span> <span class="o">=</span> <span class="n">x0</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(),</span> <span class="n">method</span> <span class="o">=</span> <span class="s1">&#39;Nelder-Mead&#39;</span><span class="p">)</span>
         <span class="n">scale_factor</span> <span class="o">=</span> <span class="n">optresult</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span>
         
         <span class="c1">#Reconstruct &#39;scale_factor&#39; from optimized and fixed parts:</span>
@@ -933,7 +934,7 @@
 <span class="sd">    Args:</span>
 <span class="sd">        :SPD: </span>
 <span class="sd">            | ndarray with spectral data </span>
-<span class="sd">              (can be multiple SPDs, first axis are the wavelengths)</span>
+<span class="sd">            | (can be multiple SPDs, first axis are the wavelengths)</span>
 <span class="sd">        :out: </span>
 <span class="sd">            | &#39;Rg&#39; or str, optional</span>
 <span class="sd">            | Specifies requested output (e.g. &#39;Rg,cct,duv&#39;) </span>
@@ -949,7 +950,7 @@
 <span class="sd">            |     (see e.g. luxpy.cri._CRI_DEFAULTS[&#39;cierf&#39;] </span>
 <span class="sd">            |     for required structure)</span>
 <span class="sd">            | Note that any non-None input arguments to the function will </span>
-<span class="sd">              override default values in cri_type dict.</span>
+<span class="sd">            | override default values in cri_type dict.</span>
 <span class="sd">        :sampleset:</span>
 <span class="sd">            | None or ndarray or str, optional</span>
 <span class="sd">            | Specifies set of spectral reflectance samples for cri calculations.</span>
@@ -1011,7 +1012,8 @@
 <span class="sd">            | None or dict, optional</span>
 <span class="sd">            | Dict containing specifying parameters for slicing the gamut.</span>
 <span class="sd">            | Dict structure: </span>
-<span class="sd">            |     {&#39;nhbins&#39; : None, &#39;start_hue&#39; : 0, &#39;normalize_gamut&#39; : True}</span>
+<span class="sd">            |     {&#39;nhbins&#39; : None, &#39;start_hue&#39; : 0, </span>
+<span class="sd">            |       &#39;normalize_gamut&#39; : False, &#39;normalized_chroma_ref&#39;: 100.0}</span>
 <span class="sd">            |    - key: &#39;nhbins&#39;: int, number of hue bins to slice gamut </span>
 <span class="sd">            |                 (None use the one specified in :cri_type: dict).</span>
 <span class="sd">            |    - key: &#39;start_hue&#39;: float (°), hue at which to start slicing</span>
@@ -1112,7 +1114,7 @@
 <span class="sd">    Args:</span>
 <span class="sd">        :SPD: </span>
 <span class="sd">            | ndarray with spectral data </span>
-<span class="sd">              (can be multiple SPDs, first axis are the wavelengths)</span>
+<span class="sd">            | (can be multiple SPDs, first axis are the wavelengths)</span>
 <span class="sd">        :out: </span>
 <span class="sd">            | &#39;Rf&#39; or str, optional</span>
 <span class="sd">            | Specifies requested output (e.g. &#39;Rf,cct,duv&#39;) </span>
@@ -1128,7 +1130,7 @@
 <span class="sd">            |     (see e.g. luxpy.cri._CRI_DEFAULTS[&#39;cierf&#39;] </span>
 <span class="sd">            |     for required structure)</span>
 <span class="sd">            | Note that any non-None input arguments to the function will </span>
-<span class="sd">              override default values in cri_type dict.</span>
+<span class="sd">            | override default values in cri_type dict.</span>
 <span class="sd">        :sampleset:</span>
 <span class="sd">            | None or ndarray or str, optional</span>
 <span class="sd">            | Specifies set of spectral reflectance samples for cri calculations.</span>
@@ -1190,7 +1192,8 @@
 <span class="sd">            | None or dict, optional</span>
 <span class="sd">            | Dict containing specifying parameters for slicing the gamut.</span>
 <span class="sd">            | Dict structure: </span>
-<span class="sd">            |     {&#39;nhbins&#39; : None, &#39;start_hue&#39; : 0, &#39;normalize_gamut&#39; : True}</span>
+<span class="sd">            |     {&#39;nhbins&#39; : None, &#39;start_hue&#39; : 0, </span>
+<span class="sd">            |       &#39;normalize_gamut&#39; : False, &#39;normalized_chroma_ref&#39;: 100.0}</span>
 <span class="sd">            |    - key: &#39;nhbins&#39;: int, number of hue bins to slice gamut </span>
 <span class="sd">            |                 (None use the one specified in :cri_type: dict).</span>
 <span class="sd">            |    - key: &#39;start_hue&#39;: float (°), hue at which to start slicing</span>
@@ -1236,7 +1239,7 @@
 <span class="sd">        :opt_scale: </span>
 <span class="sd">            | True or False, optional</span>
 <span class="sd">            | True: optimize scaling-factor, else do nothing and use value of </span>
-<span class="sd">              scaling-factor in :scale: dict.   </span>
+<span class="sd">            | scaling-factor in :scale: dict.   </span>
 <span class="sd">    </span>
 <span class="sd">    Returns:</span>
 <span class="sd">        :returns: </span>
@@ -1345,25 +1348,16 @@
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
-    
-
-  
-
-  <script type="text/javascript" src="../../../../../_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

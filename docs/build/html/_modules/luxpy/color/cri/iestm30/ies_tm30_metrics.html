@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.color.cri.iestm30.ies_tm30_metrics &mdash; LuxPy 1.4.18 documentation</title>
+  <title>luxpy.color.cri.iestm30.ies_tm30_metrics &mdash; LuxPy 1.5.0 documentation</title>
   
 
   
@@ -17,32 +17,34 @@
   
 
   
+  <script type="text/javascript" src="../../../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
+        <script src="../../../../../_static/jquery.js"></script>
+        <script src="../../../../../_static/underscore.js"></script>
+        <script src="../../../../../_static/doctools.js"></script>
+        <script src="../../../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../../../_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="../../../../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../../search.html" /> 
-
-  
-  <script src="../../../../../_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -56,7 +58,7 @@
             
             
               <div class="version">
-                1.4.18
+                1.5.0
               </div>
             
           
@@ -176,13 +178,14 @@
 
 <span class="sd">.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">_CRI_RFL</span>
+<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="n">_CRI_RFL</span>
+<span class="kn">from</span> <span class="nn">luxpy.utils</span> <span class="kn">import</span> <span class="n">np</span>
 
-<span class="kn">from</span> <span class="nn">..utils.helpers</span> <span class="k">import</span> <span class="n">gamut_slicer</span><span class="p">,</span> <span class="n">spd_to_cri</span><span class="p">,</span> <span class="n">jab_to_rhi</span>
-<span class="kn">from</span> <span class="nn">..utils.init_cri_defaults_database</span> <span class="k">import</span> <span class="n">_CRI_DEFAULTS</span>
+<span class="kn">from</span> <span class="nn">..utils.helpers</span> <span class="kn">import</span> <span class="n">gamut_slicer</span><span class="p">,</span> <span class="n">spd_to_cri</span><span class="p">,</span> <span class="n">jab_to_rhi</span>
+<span class="kn">from</span> <span class="nn">..utils.init_cri_defaults_database</span> <span class="kn">import</span> <span class="n">_CRI_DEFAULTS</span>
 
-<span class="kn">from</span> <span class="nn">..VFPX.vectorshiftmodel</span> <span class="k">import</span>  <span class="n">_VF_MODEL_TYPE</span><span class="p">,</span> <span class="n">_VF_PCOLORSHIFT</span><span class="p">,</span> <span class="n">VF_colorshift_model</span>
-<span class="kn">from</span> <span class="nn">..VFPX.VF_PX_models</span> <span class="k">import</span> <span class="n">plot_VF_PX_models</span>
+<span class="kn">from</span> <span class="nn">..VFPX.vectorshiftmodel</span> <span class="kn">import</span>  <span class="n">_VF_MODEL_TYPE</span><span class="p">,</span> <span class="n">_VF_PCOLORSHIFT</span><span class="p">,</span> <span class="n">VF_colorshift_model</span>
+<span class="kn">from</span> <span class="nn">..VFPX.VF_PX_models</span> <span class="kn">import</span> <span class="n">plot_VF_PX_models</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;spd_to_ies_tm30_metrics&#39;</span><span class="p">]</span>
 
@@ -202,7 +205,7 @@
 <span class="sd">            | None, optional</span>
 <span class="sd">            | If None: defaults to cri_type = &#39;iesrf&#39;.</span>
 <span class="sd">            | Not none values of :hbins:, :start_hue: and :scalef: overwrite </span>
-<span class="sd">              input in cri_type[&#39;rg_pars&#39;] </span>
+<span class="sd">            | input in cri_type[&#39;rg_pars&#39;] </span>
 <span class="sd">        :hbins:</span>
 <span class="sd">            | None or numpy.ndarray with sorted hue bin centers (°), optional</span>
 <span class="sd">        :start_hue: </span>
@@ -213,14 +216,14 @@
 <span class="sd">        :vf_pcolorshift:</span>
 <span class="sd">            | _VF_PCOLORSHIFT or user defined dict, optional</span>
 <span class="sd">            | The polynomial models of degree 5 and 6 can be fully specified or </span>
-<span class="sd">              summarized by the model parameters themselved OR by calculating the</span>
-<span class="sd">              dCoverC and dH at resp. 5 and 6 hues. :VF_pcolorshift: specifies </span>
-<span class="sd">              these hues and chroma level.</span>
+<span class="sd">            | summarized by the model parameters themselved OR by calculating the</span>
+<span class="sd">            | dCoverC and dH at resp. 5 and 6 hues. :VF_pcolorshift: specifies </span>
+<span class="sd">            | these hues and chroma level.</span>
 <span class="sd">        :scale_vf_chroma_to_sample_chroma: </span>
 <span class="sd">            | False, optional</span>
 <span class="sd">            | Scale chroma of reference and test vf fields such that average of </span>
-<span class="sd">              binned reference chroma equals that of the binned sample chroma</span>
-<span class="sd">              before calculating hue bin metrics.</span>
+<span class="sd">            | binned reference chroma equals that of the binned sample chroma</span>
+<span class="sd">            | before calculating hue bin metrics.</span>
 <span class="sd">            </span>
 <span class="sd">    Returns:</span>
 <span class="sd">        :data: </span>
@@ -351,25 +354,16 @@
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
-    
-
-  
-
-  <script type="text/javascript" src="../../../../../_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

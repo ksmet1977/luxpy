@@ -25,7 +25,7 @@ Functions
                 
 Notes
 -----
- 1. See examples below (in '__main__') for use.                
+ 1. See examples below (in '__main__') for use.
 
 References
 ----------
@@ -169,7 +169,7 @@ def gaussian_prim_constructor(x, nprims, wlr,
         :prim_constructor:
             | function that constructs the primaries from the optimization parameters
             | Should have the form: 
-            |   prim_constructor(x, n, wl, prim_constructor_parameter_types, **prim_constructor_parameter_defs)
+            |   prim_constructor(x, n, wl, prim_constructor_parameter_types, prim_constructor_parameter_defs)
         :prim_constructor_parameter_types:
             | gaussian_prim_parameter_types ['peakwl', 'fwhm'], optional
             | List with strings of the parameters used by prim_constructor() to
@@ -187,20 +187,17 @@ def gaussian_prim_constructor(x, nprims, wlr,
             
             
     Example on how to create constructor:
-        
-        | def gaussian_prim_constructor(x, nprims, wlr, 
-        |                      prim_constructor_parameter_types, 
-        |                      **prim_constructor_parameter_defs):
-        |    
-        |    # Extract the primary parameters from x and prim_constructor_parameter_defs:
-        |    pars = _extract_prim_optimization_parameters(x, nprims, prim_constructor_parameter_types,
-        |                                         prim_constructor_parameter_defs)
-        |    # setup wavelengths:
-        |    wlr = _setup_wlr(wlr)
-        |
-        |    # Collect parameters from pars dict:
-        |    return np.vstack((wlr,np.exp(-((pars['peakwl']-wlr.T)/pars['fwhm'])**2).T))  
-        
+        | ```def gaussian_prim_constructor(x, nprims, wlr,```
+        | ```                     prim_constructor_parameter_types,``` 
+        | ```                     **prim_constructor_parameter_defs):```
+        | ``` ```
+        | ```    # Extract the primary parameters from x and prim_constructor_parameter_defs:```
+        | ```    pars = _extract_prim_optimization_parameters(x, nprims, prim_constructor_parameter_types, prim_constructor_parameter_defs)```
+        | ```    # setup wavelengths:```
+        | ```    wlr = _setup_wlr(wlr)```
+        | ``` ```
+        | ```    # Collect parameters from pars dict:```
+        | ```    return np.vstack((wlr,np.exp(-((pars['peakwl']-wlr.T)/pars['fwhm'])**2).T))```
     """
     # Extract the primary parameters from x and prim_constructor_parameter_defs:
     pars = _extract_prim_optimization_parameters(x, nprims, prim_constructor_parameter_types,
@@ -635,7 +632,7 @@ def spd_optimizer2(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cspace_bwtf =
         :prim_constructor:
             | function that constructs the primaries from the optimization parameters
             | Should have the form: 
-            |   prim_constructor(x, n, wl, prim_constructor_parameter_types, **prim_constructor_parameter_defs)
+            |   ``prim_constructor(x, n, wl, prim_constructor_parameter_types, **prim_constructor_parameter_defs)``
         :prim_constructor_parameter_types:
             | gaussian_prim_parameter_types ['peakwl', 'fwhm'], optional
             | List with strings of the parameters used by prim_constructor() to
@@ -711,7 +708,7 @@ def spd_optimizer2(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cspace_bwtf =
             | - 'results': dict with optimization results
 
     Notes on the optimization algorithms:
-         
+        
         1. '3mixer': The triangle/trio method creates for all possible 
         combinations of 3 primary component spectra a spectrum that results in 
         the target chromaticity using color3mixer() and then optimizes the 
@@ -719,8 +716,7 @@ def spd_optimizer2(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cspace_bwtf =
         (additive mixing) results in obj_vals as close as possible to the 
         target values.
        
-        2. '2mixer':
-        APRIL 2020, NOT YET IMPLEMENTED!!
+        2. '2mixer': APRIL 2020, NOT YET IMPLEMENTED!!
         Pairs (odd,even) of components are selected and combined using 
         'pair_strength'. This process is continued until only 3 (combined)
         intermediate sources remain. Color3mixer is then used to calculate 

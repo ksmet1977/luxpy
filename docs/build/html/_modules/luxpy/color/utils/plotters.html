@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.color.utils.plotters &mdash; LuxPy 1.4.18 documentation</title>
+  <title>luxpy.color.utils.plotters &mdash; LuxPy 1.5.0 documentation</title>
   
 
   
@@ -17,32 +17,34 @@
   
 
   
+  <script type="text/javascript" src="../../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
-
-  
-  <script src="../../../../_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -56,7 +58,7 @@
             
             
               <div class="version">
-                1.4.18
+                1.5.0
               </div>
             
           
@@ -207,9 +209,9 @@
 <span class="sd">.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">plt</span><span class="p">,</span> <span class="n">math</span><span class="p">,</span> <span class="n">_EPS</span><span class="p">,</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">_CSPACE</span><span class="p">,</span> <span class="n">_CSPACE_AXES</span><span class="p">,</span> <span class="n">_CIE_ILLUMINANTS</span><span class="p">,</span> <span class="n">_CMF</span><span class="p">,</span> <span class="n">daylightlocus</span><span class="p">,</span> <span class="n">colortf</span><span class="p">,</span> <span class="n">Yxy_to_xyz</span><span class="p">,</span> <span class="n">asplit</span><span class="p">,</span> <span class="n">spd_to_xyz</span><span class="p">,</span> <span class="n">cri_ref</span><span class="p">,</span> <span class="n">xyz_to_srgb</span>
-
-<span class="kn">from</span> <span class="nn">matplotlib.patches</span> <span class="k">import</span> <span class="n">Polygon</span>
+<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="n">math</span><span class="p">,</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">_CSPACE</span><span class="p">,</span> <span class="n">_CSPACE_AXES</span><span class="p">,</span> <span class="n">_CIE_ILLUMINANTS</span><span class="p">,</span> <span class="n">_CMF</span><span class="p">,</span> <span class="n">daylightlocus</span><span class="p">,</span> <span class="n">colortf</span><span class="p">,</span> <span class="n">Yxy_to_xyz</span><span class="p">,</span> <span class="n">spd_to_xyz</span><span class="p">,</span> <span class="n">cri_ref</span><span class="p">,</span> <span class="n">xyz_to_srgb</span>
+<span class="kn">from</span> <span class="nn">luxpy.utils</span> <span class="kn">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">plt</span><span class="p">,</span><span class="n">_EPS</span><span class="p">,</span> <span class="n">asplit</span>
+<span class="kn">from</span> <span class="nn">matplotlib.patches</span> <span class="kn">import</span> <span class="n">Polygon</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;get_subplot_layout&#39;</span><span class="p">,</span><span class="s1">&#39;plotSL&#39;</span><span class="p">,</span><span class="s1">&#39;plotDL&#39;</span><span class="p">,</span><span class="s1">&#39;plotBB&#39;</span><span class="p">,</span><span class="s1">&#39;plot_color_data&#39;</span><span class="p">,</span><span class="s1">&#39;plotceruleanline&#39;</span><span class="p">,</span><span class="s1">&#39;plotUH&#39;</span><span class="p">,</span><span class="s1">&#39;plotcircle&#39;</span><span class="p">,</span><span class="s1">&#39;plotellipse&#39;</span><span class="p">,</span><span class="s1">&#39;plot_chromaticity_diagram_colors&#39;</span><span class="p">,</span><span class="s1">&#39;plot_spectrum_colors&#39;</span><span class="p">]</span>
 
@@ -332,7 +334,7 @@
 <span class="sd">        :cspace_pars:</span>
 <span class="sd">            | {} or dict, optional</span>
 <span class="sd">            | Dict with parameters required by color space specified in :cspace: </span>
-<span class="sd">              (for use with luxpy.colortf())</span>
+<span class="sd">            | (for use with luxpy.colortf())</span>
 <span class="sd">        :kwargs: </span>
 <span class="sd">            | additional keyword arguments for use with matplotlib.pyplot.</span>
 <span class="sd">    </span>
@@ -391,7 +393,7 @@
 <span class="sd">        :cspace_pars:</span>
 <span class="sd">            | {} or dict, optional</span>
 <span class="sd">            | Dict with parameters required by color space specified in :cspace: </span>
-<span class="sd">              (for use with luxpy.colortf())</span>
+<span class="sd">            | (for use with luxpy.colortf())</span>
 <span class="sd">        :kwargs: </span>
 <span class="sd">            | additional keyword arguments for use with matplotlib.pyplot.</span>
 <span class="sd">    </span>
@@ -665,13 +667,15 @@
     <span class="k">return</span>  <span class="n">huniquehues</span></div>
 
 <span class="c1">#------------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="plotcircle"><a class="viewcode-back" href="../../../../color.html#luxpy.color.utils.plotcircle">[docs]</a><span class="k">def</span> <span class="nf">plotcircle</span><span class="p">(</span><span class="n">center</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span><span class="mf">0.</span><span class="p">]),</span><span class="n">radii</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">60</span><span class="p">,</span><span class="mi">10</span><span class="p">),</span> <span class="n">angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">350</span><span class="p">,</span><span class="mi">10</span><span class="p">),</span><span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span><span class="p">,</span><span class="n">linestyle</span> <span class="o">=</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="plotcircle"><a class="viewcode-back" href="../../../../color.html#luxpy.color.utils.plotcircle">[docs]</a><span class="k">def</span> <span class="nf">plotcircle</span><span class="p">(</span><span class="n">center</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.</span><span class="p">,</span><span class="mf">0.</span><span class="p">]]),</span><span class="n">radii</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">60</span><span class="p">,</span><span class="mi">10</span><span class="p">),</span> 
+               <span class="n">angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">350</span><span class="p">,</span><span class="mi">10</span><span class="p">),</span><span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span><span class="p">,</span><span class="n">linestyle</span> <span class="o">=</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> 
+               <span class="n">out</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">axh</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot one or more concentric circles.</span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        :center: </span>
-<span class="sd">            | np.array([0.,0.]) or ndarray with center coordinates, optional</span>
+<span class="sd">            | np.array([[0.,0.]]) or ndarray with center coordinates, optional</span>
 <span class="sd">        :radii:</span>
 <span class="sd">            | np.arange(0,60,10) or ndarray with radii of circle(s), optional</span>
 <span class="sd">        :angles:</span>
@@ -688,22 +692,26 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">xs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">])</span>
     <span class="n">ys</span> <span class="o">=</span> <span class="n">xs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">if</span> <span class="p">((</span><span class="n">out</span> <span class="o">!=</span> <span class="s1">&#39;x,y&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">axh</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)):</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">axh</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">rows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">ri</span> <span class="ow">in</span> <span class="n">radii</span><span class="p">:</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">ri</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angles</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">180</span><span class="p">)</span>
-        <span class="n">y</span> <span class="o">=</span> <span class="n">ri</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angles</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">180</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">center</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">ri</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angles</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">180</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">center</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">ri</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angles</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">180</span><span class="p">)</span>
         <span class="n">xs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">xs</span><span class="p">,</span><span class="n">x</span><span class="p">))</span>
         <span class="n">ys</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">ys</span><span class="p">,</span><span class="n">y</span><span class="p">))</span>
-        <span class="k">if</span> <span class="n">out</span> <span class="o">!=</span> <span class="s1">&#39;x,y&#39;</span><span class="p">:</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="n">color</span><span class="p">,</span> <span class="n">linestyle</span> <span class="o">=</span> <span class="n">linestyle</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">out</span> <span class="o">!=</span> <span class="s1">&#39;x,y&#39;</span><span class="p">):</span>
+            <span class="n">axh</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="n">color</span><span class="p">,</span> <span class="n">linestyle</span> <span class="o">=</span> <span class="n">linestyle</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;x,y&#39;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">xs</span><span class="p">,</span><span class="n">ys</span></div>
+        <span class="k">return</span> <span class="n">xs</span><span class="p">,</span><span class="n">ys</span>
+    <span class="k">elif</span> <span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;axh&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">axh</span></div>
 
 <span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="plotellipse"><a class="viewcode-back" href="../../../../color.html#luxpy.color.utils.plotellipse">[docs]</a><span class="k">def</span> <span class="nf">plotellipse</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">cspace_in</span> <span class="o">=</span> <span class="s1">&#39;Yxy&#39;</span><span class="p">,</span> <span class="n">cspace_out</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">nsamples</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> \
                 <span class="n">show</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">axh</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> \
                 <span class="n">line_color</span> <span class="o">=</span> <span class="s1">&#39;darkgray&#39;</span><span class="p">,</span> <span class="n">line_style</span> <span class="o">=</span> <span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="n">line_width</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">line_marker</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">line_markersize</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>\
                 <span class="n">plot_center</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">center_marker</span> <span class="o">=</span> <span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">center_color</span> <span class="o">=</span> <span class="s1">&#39;darkgray&#39;</span><span class="p">,</span> <span class="n">center_markersize</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>\
-                <span class="n">show_grid</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">label_fontname</span> <span class="o">=</span> <span class="s1">&#39;Times New Roman&#39;</span><span class="p">,</span> <span class="n">label_fontsize</span> <span class="o">=</span> <span class="mi">12</span><span class="p">,</span>\
+                <span class="n">show_grid</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">llabel</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">label_fontname</span> <span class="o">=</span> <span class="s1">&#39;Times New Roman&#39;</span><span class="p">,</span> <span class="n">label_fontsize</span> <span class="o">=</span> <span class="mi">12</span><span class="p">,</span>\
                 <span class="n">out</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot ellipse(s) given in v-format [Rmax,Rmin,xc,yc,theta].</span>
@@ -760,6 +768,9 @@
 <span class="sd">        :show_grid:</span>
 <span class="sd">            | True, optional</span>
 <span class="sd">            | Show grid (True) or not (False)</span>
+<span class="sd">        :llabel:</span>
+<span class="sd">            | None,optional</span>
+<span class="sd">            | Legend label for ellipse boundary.</span>
 <span class="sd">        :label_fontname: </span>
 <span class="sd">            | &#39;Times New Roman&#39;, optional</span>
 <span class="sd">            | Sets font type of axis labels.</span>
@@ -828,8 +839,11 @@
             
             <span class="k">if</span> <span class="n">plot_center</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
                 <span class="n">axh</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">Yxyc</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span><span class="n">Yxyc</span><span class="p">[:,</span><span class="mi">2</span><span class="p">],</span><span class="n">color</span> <span class="o">=</span> <span class="n">center_color</span><span class="p">,</span> <span class="n">linestyle</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">marker</span> <span class="o">=</span> <span class="n">center_marker</span><span class="p">,</span> <span class="n">markersize</span> <span class="o">=</span> <span class="n">center_markersize</span><span class="p">)</span>
-
-            <span class="n">axh</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">Yxy</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span><span class="n">Yxy</span><span class="p">[:,</span><span class="mi">2</span><span class="p">],</span><span class="n">color</span> <span class="o">=</span> <span class="n">line_color</span><span class="p">,</span> <span class="n">linestyle</span> <span class="o">=</span> <span class="n">line_style</span><span class="p">,</span> <span class="n">linewidth</span> <span class="o">=</span> <span class="n">line_width</span><span class="p">,</span> <span class="n">marker</span> <span class="o">=</span> <span class="n">line_marker</span><span class="p">,</span> <span class="n">markersize</span> <span class="o">=</span> <span class="n">line_markersize</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">llabel</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">axh</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">Yxy</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span><span class="n">Yxy</span><span class="p">[:,</span><span class="mi">2</span><span class="p">],</span><span class="n">color</span> <span class="o">=</span> <span class="n">line_color</span><span class="p">,</span> <span class="n">linestyle</span> <span class="o">=</span> <span class="n">line_style</span><span class="p">,</span> <span class="n">linewidth</span> <span class="o">=</span> <span class="n">line_width</span><span class="p">,</span> <span class="n">marker</span> <span class="o">=</span> <span class="n">line_marker</span><span class="p">,</span> <span class="n">markersize</span> <span class="o">=</span> <span class="n">line_markersize</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">axh</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">Yxy</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span><span class="n">Yxy</span><span class="p">[:,</span><span class="mi">2</span><span class="p">],</span><span class="n">color</span> <span class="o">=</span> <span class="n">line_color</span><span class="p">,</span> <span class="n">linestyle</span> <span class="o">=</span> <span class="n">line_style</span><span class="p">,</span> <span class="n">linewidth</span> <span class="o">=</span> <span class="n">line_width</span><span class="p">,</span> <span class="n">marker</span> <span class="o">=</span> <span class="n">line_marker</span><span class="p">,</span> <span class="n">markersize</span> <span class="o">=</span> <span class="n">line_markersize</span><span class="p">,</span><span class="n">label</span> <span class="o">=</span> <span class="n">llabel</span><span class="p">)</span>
+            
             <span class="n">axh</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">xlabel</span><span class="p">,</span> <span class="n">fontname</span> <span class="o">=</span> <span class="n">label_fontname</span><span class="p">,</span> <span class="n">fontsize</span> <span class="o">=</span> <span class="n">label_fontsize</span><span class="p">)</span>
             <span class="n">axh</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">ylabel</span><span class="p">,</span> <span class="n">fontname</span> <span class="o">=</span> <span class="n">label_fontname</span><span class="p">,</span> <span class="n">fontsize</span> <span class="o">=</span> <span class="n">label_fontsize</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">show_grid</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
@@ -1115,25 +1129,16 @@
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../../../_static/doctools.js"></script>
-    
-
-  
-
-  <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

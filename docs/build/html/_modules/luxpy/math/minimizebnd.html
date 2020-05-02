@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.utils.math.minimizebnd &mdash; LuxPy 1.4.18 documentation</title>
+  <title>luxpy.math.minimizebnd &mdash; LuxPy 1.5.0 documentation</title>
   
 
   
@@ -17,36 +17,38 @@
   
 
   
+  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
-  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
-    <link rel="index" title="Index" href="../../../../genindex.html" />
-    <link rel="search" title="Search" href="../../../../search.html" /> 
-
-  
-  <script src="../../../../_static/js/modernizr.min.js"></script>
-
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
-            <a href="../../../../index.html" class="icon icon-home"> LuxPy
+            <a href="../../../index.html" class="icon icon-home"> LuxPy
           
 
           
@@ -56,14 +58,14 @@
             
             
               <div class="version">
-                1.4.18
+                1.5.0
               </div>
             
           
 
           
 <div role="search">
-  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
@@ -82,10 +84,10 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../license.html">License: GPLv3</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../required_packages.html">Imported (required) packages</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../luxpy_structure.html">Luxpy package structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License: GPLv3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../required_packages.html">Imported (required) packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../luxpy_structure.html">Luxpy package structure</a></li>
 </ul>
 
             
@@ -100,7 +102,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../../../index.html">LuxPy</a>
+          <a href="../../../index.html">LuxPy</a>
         
       </nav>
 
@@ -129,11 +131,11 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
         
-          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
         
-      <li>luxpy.utils.math.minimizebnd</li>
+      <li>luxpy.math.minimizebnd</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -148,31 +150,30 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for luxpy.utils.math.minimizebnd</h1><div class="highlight"><pre>
+  <h1>Source code for luxpy.math.minimizebnd</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Module with port from Matlab fminsearchbnd, but applied to SciPy&#39;s minimize fcn</span>
 <span class="sd">===============================================================================</span>
 
 
-<span class="sd"> :minimizebnd(): scipy.minimize() wrapper that allows contrained parameters on </span>
+<span class="sd"> :minimizebnd(): scipy.optimize.minimize() wrapper that allows contrained parameters on </span>
 <span class="sd">                 unconstrained methods(port of Matlab&#39;s fminsearchbnd). </span>
 <span class="sd">                 Starting, lower and upper bounds values can also be provided </span>
 <span class="sd">                 as a dict.</span>
 
 <span class="sd">===============================================================================</span>
 <span class="sd">&quot;&quot;&quot;</span>
-
-<span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">minimize</span><span class="p">,</span> <span class="n">vec_to_dict</span>
+<span class="kn">from</span> <span class="nn">luxpy.utils</span> <span class="kn">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">sp</span><span class="p">,</span> <span class="n">vec_to_dict</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;minimizebnd&#39;</span><span class="p">]</span>
 
-<div class="viewcode-block" id="minimizebnd"><a class="viewcode-back" href="../../../../utils.html#luxpy.utils.math.minimizebnd">[docs]</a><span class="k">def</span> <span class="nf">minimizebnd</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(),</span> <span class="n">method</span> <span class="o">=</span> <span class="s1">&#39;nelder-mead&#39;</span><span class="p">,</span> <span class="n">use_bnd</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> \
+<div class="viewcode-block" id="minimizebnd"><a class="viewcode-back" href="../../../math.html#luxpy.math.minimizebnd">[docs]</a><span class="k">def</span> <span class="nf">minimizebnd</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(),</span> <span class="n">method</span> <span class="o">=</span> <span class="s1">&#39;nelder-mead&#39;</span><span class="p">,</span> <span class="n">use_bnd</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> \
                 <span class="n">bounds</span> <span class="o">=</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span><span class="kc">None</span><span class="p">)</span> <span class="p">,</span> <span class="n">options</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> \
                 <span class="n">x0_vsize</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">x0_keys</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Minimization function that allows for bounds on any type of method in </span>
-<span class="sd">    SciPy&#39;s minimize function by transforming the parameters values </span>
+<span class="sd">    | Minimization function that allows for bounds on any type of method in </span>
+<span class="sd">    | SciPy&#39;s minimize function by transforming the parameters values </span>
 <span class="sd">    | (see Matlab&#39;s fminsearchbnd). </span>
 <span class="sd">    | Starting values, and lower and upper bounds can also be provided as a dict.</span>
 <span class="sd">    </span>
@@ -181,35 +182,33 @@
 <span class="sd">            | parameter starting values</span>
 <span class="sd">            | If x0_keys is None then :x0: is vector else, :x0: is dict and</span>
 <span class="sd">            | x0_size should be provided with length/size of values for each of </span>
-<span class="sd">              the keys in :x0: to convert it to a vector.                </span>
+<span class="sd">            |  the keys in :x0: to convert it to a vector.                </span>
 <span class="sd">        :use_bnd:</span>
 <span class="sd">            | True, optional</span>
 <span class="sd">            | False: omits bounds and defaults to regular minimize function.</span>
 <span class="sd">        :bounds:</span>
 <span class="sd">            | (lower, upper), optional</span>
 <span class="sd">            | Tuple of lists or dicts (x0_keys is None) of lower and upper bounds </span>
-<span class="sd">              for each of the parameters values.</span>
+<span class="sd">            | for each of the parameters values.</span>
 <span class="sd">        :kwargs: </span>
 <span class="sd">            | allows input for other type of arguments (e.g. in OutputFcn)</span>
 <span class="sd">         </span>
 <span class="sd">    Note:</span>
-<span class="sd">        For other input arguments, see ?scipy.minimize()</span>
+<span class="sd">        For other input arguments, see ?scipy.optimize.minimize()</span>
 <span class="sd">         </span>
 <span class="sd">    Returns:</span>
 <span class="sd">        :res: </span>
 <span class="sd">            | dict with minimize() output. </span>
 <span class="sd">            | Additionally, function value, fval, of solution is also in :res:,</span>
-<span class="sd">              as well as a vector or dict (if x0 was dict) </span>
-<span class="sd">              with final solutions (res[&#39;x&#39;])</span>
-<span class="sd">        </span>
-<span class="sd">        </span>
+<span class="sd">            | as well as a vector or dict (if x0 was dict) </span>
+<span class="sd">            | with final solutions (res[&#39;x&#39;])</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Convert dict to vec:</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="n">x0</span><span class="p">,</span> <span class="n">vsize</span> <span class="o">=</span> <span class="n">vec_to_dict</span><span class="p">(</span><span class="n">dic</span> <span class="o">=</span> <span class="n">x0</span><span class="p">,</span> <span class="n">vsize</span> <span class="o">=</span> <span class="n">x0_vsize</span><span class="p">,</span> <span class="n">keys</span> <span class="o">=</span> <span class="n">x0_keys</span><span class="p">)</span>
     
     <span class="k">if</span> <span class="n">use_bnd</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">args</span> <span class="o">=</span> <span class="n">args</span><span class="p">,</span> <span class="n">options</span> <span class="o">=</span> <span class="n">options</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">args</span> <span class="o">=</span> <span class="n">args</span><span class="p">,</span> <span class="n">options</span> <span class="o">=</span> <span class="n">options</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">res</span><span class="p">[</span><span class="s1">&#39;fval&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fun</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">x0_keys</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">res</span><span class="p">[</span><span class="s1">&#39;x_final&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span>
@@ -341,6 +340,7 @@
             <span class="n">output</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;success&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">}</span>
               
             <span class="n">output</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span>
+            <span class="n">output</span><span class="p">[</span><span class="s1">&#39;x_final&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span>
             <span class="n">output</span><span class="p">[</span><span class="s1">&#39;iterations&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="n">output</span><span class="p">[</span><span class="s1">&#39;funcount&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
             <span class="n">output</span><span class="p">[</span><span class="s1">&#39;algorithm&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">method</span>
@@ -370,7 +370,7 @@
     
     <span class="c1"># now we can call minimize, but with our own</span>
     <span class="c1"># intra-objective function.</span>
-    <span class="n">res</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span><span class="n">intrafun</span><span class="p">,</span> <span class="n">x0u</span><span class="p">,</span> <span class="n">args</span> <span class="o">=</span> <span class="n">params</span><span class="p">,</span> <span class="n">method</span> <span class="o">=</span> <span class="n">method</span><span class="p">,</span> <span class="n">options</span> <span class="o">=</span> <span class="n">options</span><span class="p">)</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">intrafun</span><span class="p">,</span> <span class="n">x0u</span><span class="p">,</span> <span class="n">args</span> <span class="o">=</span> <span class="n">params</span><span class="p">,</span> <span class="n">method</span> <span class="o">=</span> <span class="n">method</span><span class="p">,</span> <span class="n">options</span> <span class="o">=</span> <span class="n">options</span><span class="p">)</span>
     <span class="c1">#[xu,fval,exitflag,output] = fminsearch(@intrafun,x0u,options,params);</span>
     
     <span class="c1"># get function value:</span>
@@ -478,25 +478,16 @@
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../../../_static/doctools.js"></script>
-    
-
-  
-
-  <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

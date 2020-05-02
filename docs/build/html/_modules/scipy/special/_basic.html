@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>scipy.special.basic &mdash; LuxPy 1.4.18 documentation</title>
+  <title>scipy.special._basic &mdash; LuxPy 1.5.0 documentation</title>
   
 
   
@@ -17,32 +17,34 @@
   
 
   
+  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
-
-  
-  <script src="../../../_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -56,7 +58,7 @@
             
             
               <div class="version">
-                1.4.18
+                1.5.0
               </div>
             
           
@@ -133,7 +135,7 @@
         
           <li><a href="../../index.html">Module code</a> &raquo;</li>
         
-      <li>scipy.special.basic</li>
+      <li>scipy.special._basic</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -148,45 +150,103 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for scipy.special.basic</h1><div class="highlight"><pre>
+  <h1>Source code for scipy.special._basic</h1><div class="highlight"><pre>
 <span></span><span class="c1">#</span>
 <span class="c1"># Author:  Travis Oliphant, 2002</span>
 <span class="c1">#</span>
 
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">absolute_import</span>
 
 <span class="kn">import</span> <span class="nn">operator</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">math</span>
-<span class="kn">from</span> <span class="nn">scipy._lib.six</span> <span class="k">import</span> <span class="n">xrange</span>
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="p">(</span><span class="n">pi</span><span class="p">,</span> <span class="n">asarray</span><span class="p">,</span> <span class="n">floor</span><span class="p">,</span> <span class="n">isscalar</span><span class="p">,</span> <span class="n">iscomplex</span><span class="p">,</span> <span class="n">real</span><span class="p">,</span>
+<span class="kn">from</span> <span class="nn">scipy._lib.six</span> <span class="kn">import</span> <span class="n">xrange</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="p">(</span><span class="n">pi</span><span class="p">,</span> <span class="n">asarray</span><span class="p">,</span> <span class="n">floor</span><span class="p">,</span> <span class="n">isscalar</span><span class="p">,</span> <span class="n">iscomplex</span><span class="p">,</span> <span class="n">real</span><span class="p">,</span>
                    <span class="n">imag</span><span class="p">,</span> <span class="n">sqrt</span><span class="p">,</span> <span class="n">where</span><span class="p">,</span> <span class="n">mgrid</span><span class="p">,</span> <span class="n">sin</span><span class="p">,</span> <span class="n">place</span><span class="p">,</span> <span class="n">issubdtype</span><span class="p">,</span>
                    <span class="n">extract</span><span class="p">,</span> <span class="n">inexact</span><span class="p">,</span> <span class="n">nan</span><span class="p">,</span> <span class="n">zeros</span><span class="p">,</span> <span class="n">sinc</span><span class="p">)</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">_ufuncs</span> <span class="k">as</span> <span class="n">ufuncs</span>
-<span class="kn">from</span> <span class="nn">._ufuncs</span> <span class="k">import</span> <span class="p">(</span><span class="n">ellipkm1</span><span class="p">,</span> <span class="n">mathieu_a</span><span class="p">,</span> <span class="n">mathieu_b</span><span class="p">,</span> <span class="n">iv</span><span class="p">,</span> <span class="n">jv</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span>
-                      <span class="n">psi</span><span class="p">,</span> <span class="n">_zeta</span><span class="p">,</span> <span class="n">hankel1</span><span class="p">,</span> <span class="n">hankel2</span><span class="p">,</span> <span class="n">yv</span><span class="p">,</span> <span class="n">kv</span><span class="p">,</span> <span class="n">ndtri</span><span class="p">,</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">_ufuncs</span> <span class="k">as</span> <span class="n">ufuncs</span>
+<span class="kn">from</span> <span class="nn">._ufuncs</span> <span class="kn">import</span> <span class="p">(</span><span class="n">mathieu_a</span><span class="p">,</span> <span class="n">mathieu_b</span><span class="p">,</span> <span class="n">iv</span><span class="p">,</span> <span class="n">jv</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span>
+                      <span class="n">psi</span><span class="p">,</span> <span class="n">hankel1</span><span class="p">,</span> <span class="n">hankel2</span><span class="p">,</span> <span class="n">yv</span><span class="p">,</span> <span class="n">kv</span><span class="p">,</span> <span class="n">ndtri</span><span class="p">,</span>
                       <span class="n">poch</span><span class="p">,</span> <span class="n">binom</span><span class="p">,</span> <span class="n">hyp0f1</span><span class="p">)</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">specfun</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">orthogonal</span>
-<span class="kn">from</span> <span class="nn">._comb</span> <span class="k">import</span> <span class="n">_comb_int</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">specfun</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">orthogonal</span>
+<span class="kn">from</span> <span class="nn">._comb</span> <span class="kn">import</span> <span class="n">_comb_int</span>
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ai_zeros&#39;</span><span class="p">,</span> <span class="s1">&#39;assoc_laguerre&#39;</span><span class="p">,</span> <span class="s1">&#39;bei_zeros&#39;</span><span class="p">,</span> <span class="s1">&#39;beip_zeros&#39;</span><span class="p">,</span>
-           <span class="s1">&#39;ber_zeros&#39;</span><span class="p">,</span> <span class="s1">&#39;bernoulli&#39;</span><span class="p">,</span> <span class="s1">&#39;berp_zeros&#39;</span><span class="p">,</span>
-           <span class="s1">&#39;bessel_diff_formula&#39;</span><span class="p">,</span> <span class="s1">&#39;bi_zeros&#39;</span><span class="p">,</span> <span class="s1">&#39;clpmn&#39;</span><span class="p">,</span> <span class="s1">&#39;comb&#39;</span><span class="p">,</span>
-           <span class="s1">&#39;digamma&#39;</span><span class="p">,</span> <span class="s1">&#39;diric&#39;</span><span class="p">,</span> <span class="s1">&#39;ellipk&#39;</span><span class="p">,</span> <span class="s1">&#39;erf_zeros&#39;</span><span class="p">,</span> <span class="s1">&#39;erfcinv&#39;</span><span class="p">,</span>
-           <span class="s1">&#39;erfinv&#39;</span><span class="p">,</span> <span class="s1">&#39;euler&#39;</span><span class="p">,</span> <span class="s1">&#39;factorial&#39;</span><span class="p">,</span> <span class="s1">&#39;factorialk&#39;</span><span class="p">,</span> <span class="s1">&#39;factorial2&#39;</span><span class="p">,</span>
-           <span class="s1">&#39;fresnel_zeros&#39;</span><span class="p">,</span> <span class="s1">&#39;fresnelc_zeros&#39;</span><span class="p">,</span> <span class="s1">&#39;fresnels_zeros&#39;</span><span class="p">,</span>
-           <span class="s1">&#39;gamma&#39;</span><span class="p">,</span> <span class="s1">&#39;h1vp&#39;</span><span class="p">,</span> <span class="s1">&#39;h2vp&#39;</span><span class="p">,</span> <span class="s1">&#39;hankel1&#39;</span><span class="p">,</span> <span class="s1">&#39;hankel2&#39;</span><span class="p">,</span> <span class="s1">&#39;hyp0f1&#39;</span><span class="p">,</span>
-           <span class="s1">&#39;iv&#39;</span><span class="p">,</span> <span class="s1">&#39;ivp&#39;</span><span class="p">,</span> <span class="s1">&#39;jn_zeros&#39;</span><span class="p">,</span> <span class="s1">&#39;jnjnp_zeros&#39;</span><span class="p">,</span> <span class="s1">&#39;jnp_zeros&#39;</span><span class="p">,</span>
-           <span class="s1">&#39;jnyn_zeros&#39;</span><span class="p">,</span> <span class="s1">&#39;jv&#39;</span><span class="p">,</span> <span class="s1">&#39;jvp&#39;</span><span class="p">,</span> <span class="s1">&#39;kei_zeros&#39;</span><span class="p">,</span> <span class="s1">&#39;keip_zeros&#39;</span><span class="p">,</span>
-           <span class="s1">&#39;kelvin_zeros&#39;</span><span class="p">,</span> <span class="s1">&#39;ker_zeros&#39;</span><span class="p">,</span> <span class="s1">&#39;kerp_zeros&#39;</span><span class="p">,</span> <span class="s1">&#39;kv&#39;</span><span class="p">,</span> <span class="s1">&#39;kvp&#39;</span><span class="p">,</span>
-           <span class="s1">&#39;lmbda&#39;</span><span class="p">,</span> <span class="s1">&#39;lpmn&#39;</span><span class="p">,</span> <span class="s1">&#39;lpn&#39;</span><span class="p">,</span> <span class="s1">&#39;lqmn&#39;</span><span class="p">,</span> <span class="s1">&#39;lqn&#39;</span><span class="p">,</span> <span class="s1">&#39;mathieu_a&#39;</span><span class="p">,</span>
-           <span class="s1">&#39;mathieu_b&#39;</span><span class="p">,</span> <span class="s1">&#39;mathieu_even_coef&#39;</span><span class="p">,</span> <span class="s1">&#39;mathieu_odd_coef&#39;</span><span class="p">,</span>
-           <span class="s1">&#39;ndtri&#39;</span><span class="p">,</span> <span class="s1">&#39;obl_cv_seq&#39;</span><span class="p">,</span> <span class="s1">&#39;pbdn_seq&#39;</span><span class="p">,</span> <span class="s1">&#39;pbdv_seq&#39;</span><span class="p">,</span> <span class="s1">&#39;pbvv_seq&#39;</span><span class="p">,</span>
-           <span class="s1">&#39;perm&#39;</span><span class="p">,</span> <span class="s1">&#39;polygamma&#39;</span><span class="p">,</span> <span class="s1">&#39;pro_cv_seq&#39;</span><span class="p">,</span> <span class="s1">&#39;psi&#39;</span><span class="p">,</span> <span class="s1">&#39;riccati_jn&#39;</span><span class="p">,</span>
-           <span class="s1">&#39;riccati_yn&#39;</span><span class="p">,</span> <span class="s1">&#39;sinc&#39;</span><span class="p">,</span> <span class="s1">&#39;y0_zeros&#39;</span><span class="p">,</span> <span class="s1">&#39;y1_zeros&#39;</span><span class="p">,</span> <span class="s1">&#39;y1p_zeros&#39;</span><span class="p">,</span>
-           <span class="s1">&#39;yn_zeros&#39;</span><span class="p">,</span> <span class="s1">&#39;ynp_zeros&#39;</span><span class="p">,</span> <span class="s1">&#39;yv&#39;</span><span class="p">,</span> <span class="s1">&#39;yvp&#39;</span><span class="p">,</span> <span class="s1">&#39;zeta&#39;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;ai_zeros&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;assoc_laguerre&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;bei_zeros&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;beip_zeros&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;ber_zeros&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;bernoulli&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;berp_zeros&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;bi_zeros&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;clpmn&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;comb&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;digamma&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;diric&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;erf_zeros&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;erfcinv&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;erfinv&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;euler&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;factorial&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;factorial2&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;factorialk&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;fresnel_zeros&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;fresnelc_zeros&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;fresnels_zeros&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;gamma&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;h1vp&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;h2vp&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;hankel1&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;hankel2&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;hyp0f1&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;iv&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;ivp&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;jn_zeros&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;jnjnp_zeros&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;jnp_zeros&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;jnyn_zeros&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;jv&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;jvp&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;kei_zeros&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;keip_zeros&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;kelvin_zeros&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;ker_zeros&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;kerp_zeros&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;kv&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;kvp&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;lmbda&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;lpmn&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;lpn&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;lqmn&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;lqn&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;mathieu_a&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;mathieu_b&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;mathieu_even_coef&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;mathieu_odd_coef&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;ndtri&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;obl_cv_seq&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;pbdn_seq&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;pbdv_seq&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;pbvv_seq&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;perm&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;polygamma&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;pro_cv_seq&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;psi&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;riccati_jn&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;riccati_yn&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;sinc&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;y0_zeros&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;y1_zeros&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;y1p_zeros&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;yn_zeros&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;ynp_zeros&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;yv&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;yvp&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;zeta&#39;</span>
+<span class="p">]</span>
 
 
 <span class="k">def</span> <span class="nf">_nonneg_int_or_fail</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">var_name</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
@@ -580,10 +640,6 @@
     <span class="k">return</span> <span class="n">s</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.</span><span class="o">**</span><span class="n">n</span><span class="p">)</span>
 
 
-<span class="n">bessel_diff_formula</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deprecate</span><span class="p">(</span><span class="n">_bessel_diff_formula</span><span class="p">,</span>
-    <span class="n">message</span><span class="o">=</span><span class="s2">&quot;bessel_diff_formula is a private function, do not use it!&quot;</span><span class="p">)</span>
-
-
 <span class="k">def</span> <span class="nf">jvp</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Compute nth derivative of Bessel function Jv(z) with respect to `z`.</span>
 
@@ -904,7 +960,7 @@
     <span class="k">return</span> <span class="n">jn</span><span class="p">[:(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)],</span> <span class="n">jnp</span><span class="p">[:(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
 
 
-<div class="viewcode-block" id="erfinv"><a class="viewcode-back" href="../../../utils.html#luxpy.utils.math.erfinv">[docs]</a><span class="k">def</span> <span class="nf">erfinv</span><span class="p">(</span><span class="n">y</span><span class="p">):</span>
+<div class="viewcode-block" id="erfinv"><a class="viewcode-back" href="../../../math.html#luxpy.math.erfinv">[docs]</a><span class="k">def</span> <span class="nf">erfinv</span><span class="p">(</span><span class="n">y</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Inverse of the error function erf.</span>
 
 <span class="sd">    Computes the inverse of the error function.</span>
@@ -1009,7 +1065,7 @@
 <span class="sd">    array([1.45061616+1.880943j])</span>
 
 <span class="sd">    Check that erf is (close to) zero for the value returned by erf_zeros</span>
-<span class="sd">    </span>
+
 <span class="sd">    &gt;&gt;&gt; special.erf(special.erf_zeros(1))</span>
 <span class="sd">    array([4.95159469e-14-1.16407394e-16j])</span>
 
@@ -1089,21 +1145,32 @@
 
 
 <span class="k">def</span> <span class="nf">polygamma</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Polygamma function n.</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Polygamma functions.</span>
 
-<span class="sd">    This is the nth derivative of the digamma (psi) function.</span>
+<span class="sd">    Defined as :math:`\psi^{(n)}(x)` where :math:`\psi` is the</span>
+<span class="sd">    `digamma` function. See [dlmf]_ for details.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    n : array_like of int</span>
-<span class="sd">        The order of the derivative of `psi`.</span>
+<span class="sd">    n : array_like</span>
+<span class="sd">        The order of the derivative of the digamma function; must be</span>
+<span class="sd">        integral</span>
 <span class="sd">    x : array_like</span>
-<span class="sd">        Where to evaluate the polygamma function.</span>
+<span class="sd">        Real valued input</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    polygamma : ndarray</span>
-<span class="sd">        The result.</span>
+<span class="sd">    ndarray</span>
+<span class="sd">        Function results</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    digamma</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    .. [dlmf] NIST, Digital Library of Mathematical Functions,</span>
+<span class="sd">        https://dlmf.nist.gov/5.15</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -1597,7 +1664,7 @@
 <span class="sd">        Values of Ai(x) evaluated at first `nt` zeros of Ai&#39;(x)</span>
 <span class="sd">    aip : ndarray</span>
 <span class="sd">        Values of Ai&#39;(x) evaluated at first `nt` zeros of Ai(x)</span>
-<span class="sd">        </span>
+
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
 <span class="sd">    &gt;&gt;&gt; from scipy import special</span>
@@ -1610,7 +1677,7 @@
 <span class="sd">    array([ 0.53565666, -0.41901548,  0.38040647])</span>
 <span class="sd">    &gt;&gt;&gt; aip</span>
 <span class="sd">    array([ 0.70121082, -0.80311137,  0.86520403])</span>
-<span class="sd">    </span>
+
 <span class="sd">    References</span>
 <span class="sd">    ----------</span>
 <span class="sd">    .. [1] Zhang, Shanjie and Jin, Jianming. &quot;Computation of Special</span>
@@ -1648,7 +1715,7 @@
 <span class="sd">        Values of Bi(x) evaluated at first `nt` zeros of Bi&#39;(x)</span>
 <span class="sd">    bip : ndarray</span>
 <span class="sd">        Values of Bi&#39;(x) evaluated at first `nt` zeros of Bi(x)</span>
-<span class="sd">    </span>
+
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
 <span class="sd">    &gt;&gt;&gt; from scipy import special</span>
@@ -1661,7 +1728,7 @@
 <span class="sd">    array([-0.45494438,  0.39652284, -0.36796916])</span>
 <span class="sd">    &gt;&gt;&gt; bip</span>
 <span class="sd">    array([ 0.60195789, -0.76031014,  0.83699101])</span>
-<span class="sd">    </span>
+
 <span class="sd">    References</span>
 <span class="sd">    ----------</span>
 <span class="sd">    .. [1] Zhang, Shanjie and Jin, Jianming. &quot;Computation of Special</span>
@@ -2021,51 +2088,6 @@
     <span class="k">return</span> <span class="n">specfun</span><span class="o">.</span><span class="n">segv</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">][:</span><span class="n">maxL</span><span class="p">]</span>
 
 
-<span class="k">def</span> <span class="nf">ellipk</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Complete elliptic integral of the first kind.</span>
-
-<span class="sd">    This function is defined as</span>
-
-<span class="sd">    .. math:: K(m) = \int_0^{\pi/2} [1 - m \sin(t)^2]^{-1/2} dt</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    m : array_like</span>
-<span class="sd">        The parameter of the elliptic integral.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    K : array_like</span>
-<span class="sd">        Value of the elliptic integral.</span>
-
-<span class="sd">    Notes</span>
-<span class="sd">    -----</span>
-<span class="sd">    For more precision around point m = 1, use `ellipkm1`, which this</span>
-<span class="sd">    function calls.</span>
-
-<span class="sd">    The parameterization in terms of :math:`m` follows that of section</span>
-<span class="sd">    17.2 in [1]_. Other parameterizations in terms of the</span>
-<span class="sd">    complementary parameter :math:`1 - m`, modular angle</span>
-<span class="sd">    :math:`\sin^2(\alpha) = m`, or modulus :math:`k^2 = m` are also</span>
-<span class="sd">    used, so be careful that you choose the correct parameter.</span>
-
-<span class="sd">    See Also</span>
-<span class="sd">    --------</span>
-<span class="sd">    ellipkm1 : Complete elliptic integral of the first kind around m = 1</span>
-<span class="sd">    ellipkinc : Incomplete elliptic integral of the first kind</span>
-<span class="sd">    ellipe : Complete elliptic integral of the second kind</span>
-<span class="sd">    ellipeinc : Incomplete elliptic integral of the second kind</span>
-
-<span class="sd">    References</span>
-<span class="sd">    ----------</span>
-<span class="sd">    .. [1] Milton Abramowitz and Irene A. Stegun, eds.</span>
-<span class="sd">           Handbook of Mathematical Functions with Formulas,</span>
-<span class="sd">           Graphs, and Mathematical Tables. New York: Dover, 1972.</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">ellipkm1</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">asarray</span><span class="p">(</span><span class="n">m</span><span class="p">))</span>
-
-
 <span class="k">def</span> <span class="nf">comb</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">repetition</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;The number of combinations of N things taken k at a time.</span>
 
@@ -2096,7 +2118,8 @@
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
 <span class="sd">    - Array arguments accepted only for exact=False case.</span>
-<span class="sd">    - If k &gt; N, N &lt; 0, or k &lt; 0, then a 0 is returned.</span>
+<span class="sd">    - If N &lt; 0, or k &lt; 0, then 0 is returned.</span>
+<span class="sd">    - If k &gt; N and repetition=False, then 0 is returned.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -2280,6 +2303,9 @@
                     <span class="n">out</span><span class="p">[</span><span class="n">n</span> <span class="o">==</span> <span class="n">current</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
             <span class="k">return</span> <span class="n">out</span>
     <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">ndim</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">gamma</span><span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
         <span class="n">n</span> <span class="o">=</span> <span class="n">asarray</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
         <span class="n">vals</span> <span class="o">=</span> <span class="n">gamma</span><span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">where</span><span class="p">(</span><span class="n">n</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">vals</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
@@ -2417,15 +2443,23 @@
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
-<span class="sd">    The two-argument version is the Hurwitz zeta function:</span>
+<span class="sd">    The two-argument version is the Hurwitz zeta function</span>
 
-<span class="sd">    .. math:: \zeta(x, q) = \sum_{k=0}^{\infty} \frac{1}{(k + q)^x},</span>
+<span class="sd">    .. math::</span>
 
-<span class="sd">    Riemann zeta function corresponds to ``q = 1``.</span>
+<span class="sd">        \zeta(x, q) = \sum_{k=0}^{\infty} \frac{1}{(k + q)^x};</span>
+
+<span class="sd">    see [dlmf]_ for details. The Riemann zeta function corresponds to</span>
+<span class="sd">    the case when ``q = 1``.</span>
 
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
 <span class="sd">    zetac</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    .. [dlmf] NIST, Digital Library of Mathematical Functions,</span>
+<span class="sd">        https://dlmf.nist.gov/25.11#i</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -2450,9 +2484,9 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">q</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">q</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="k">return</span> <span class="n">_zeta</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">out</span><span class="p">)</span>
-
+        <span class="k">return</span> <span class="n">ufuncs</span><span class="o">.</span><span class="n">_riemann_zeta</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">out</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ufuncs</span><span class="o">.</span><span class="n">_zeta</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">out</span><span class="p">)</span>
 </pre></div>
 
            </div>
@@ -2482,25 +2516,16 @@
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    
-
-  
-
-  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

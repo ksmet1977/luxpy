@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.color.cri.VFPX.vectorshiftmodel &mdash; LuxPy 1.4.18 documentation</title>
+  <title>luxpy.color.cri.VFPX.vectorshiftmodel &mdash; LuxPy 1.5.0 documentation</title>
   
 
   
@@ -17,32 +17,34 @@
   
 
   
+  <script type="text/javascript" src="../../../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
+        <script src="../../../../../_static/jquery.js"></script>
+        <script src="../../../../../_static/underscore.js"></script>
+        <script src="../../../../../_static/doctools.js"></script>
+        <script src="../../../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../../../_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="../../../../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../../search.html" /> 
-
-  
-  <script src="../../../../../_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -56,7 +58,7 @@
             
             
               <div class="version">
-                1.4.18
+                1.5.0
               </div>
             
           
@@ -206,7 +208,7 @@
 
 <span class="sd"> :plot_shift_data(): Plots vector or circle fields.</span>
 
-<span class="sd"> :plotcircle(): Plot one or more concentric circles.</span>
+<span class="sd"> :plotcircle(): Plot one or more concentric circles around (0,0).</span>
 
 <span class="sd"> :initialize_VF_hue_angles(): Initialize the hue angles that will be used to </span>
 <span class="sd">                              &#39;summarize&#39; the VF model fitting parameters.</span>
@@ -216,10 +218,11 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 
-<span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">plt</span><span class="p">,</span> <span class="n">math</span><span class="p">,</span> <span class="n">_CIE_ILLUMINANTS</span><span class="p">,</span> <span class="n">_MUNSELL</span><span class="p">,</span><span class="n">_EPS</span>
-<span class="kn">from</span> <span class="nn">..utils.helpers</span> <span class="k">import</span> <span class="n">spd_to_cri</span>
-<span class="kn">from</span> <span class="nn">..utils.init_cri_defaults_database</span> <span class="k">import</span> <span class="n">_CRI_DEFAULTS</span>
-<span class="kn">from</span> <span class="nn">..utils.graphics</span> <span class="k">import</span> <span class="n">plot_hue_bins</span>
+<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="n">math</span><span class="p">,</span> <span class="n">_CIE_ILLUMINANTS</span><span class="p">,</span> <span class="n">_MUNSELL</span>
+<span class="kn">from</span> <span class="nn">luxpy.utils</span> <span class="kn">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">plt</span><span class="p">,</span> <span class="n">_EPS</span>
+<span class="kn">from</span> <span class="nn">..utils.helpers</span> <span class="kn">import</span> <span class="n">spd_to_cri</span>
+<span class="kn">from</span> <span class="nn">..utils.init_cri_defaults_database</span> <span class="kn">import</span> <span class="n">_CRI_DEFAULTS</span>
+<span class="kn">from</span> <span class="nn">..utils.graphics</span> <span class="kn">import</span> <span class="n">plot_hue_bins</span>
 
 <span class="c1">#from munsell import *</span>
 
@@ -259,7 +262,7 @@
 <span class="sd">        :modeltype:</span>
 <span class="sd">            | _VF_MODEL_TYPE or &#39;M6&#39; or &#39;M5&#39;, optional</span>
 <span class="sd">            | Specifies degree 5 or degree 6 polynomial model in ab-coordinates.</span>
-<span class="sd">              (see notes below)</span>
+<span class="sd">            | (see notes below)</span>
 <span class="sd">            </span>
 <span class="sd">    Returns:</span>
 <span class="sd">        :returns: </span>
@@ -388,7 +391,7 @@
 <span class="sd">            |  axr,bxr,Cxr,hxr)</span>
 <span class="sd">            | </span>
 <span class="sd">            | ndarrays with ab-coordinates, chroma and hue </span>
-<span class="sd">              predicted by the model (xt), under the reference (xr).</span>
+<span class="sd">            | predicted by the model (xt), under the reference (xr).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># Calculate hxr and Cxr:</span>
@@ -434,7 +437,7 @@
 <span class="sd">        :sig: </span>
 <span class="sd">            | _VF_SIG or float, optional</span>
 <span class="sd">            | Determines smooth transition between hue-bin-boundaries (no hard </span>
-<span class="sd">              cutoff at hue bin boundary).</span>
+<span class="sd">            | cutoff at hue bin boundary).</span>
 <span class="sd">        </span>
 <span class="sd">    Returns:</span>
 <span class="sd">        :returns: </span>
@@ -557,19 +560,19 @@
 <span class="sd">        :pool: </span>
 <span class="sd">            | False, optional</span>
 <span class="sd">            | If :S: contains multiple spectra, True pools all jab data before </span>
-<span class="sd">              modeling the vector field, while False models a different field </span>
-<span class="sd">              for each spectrum.</span>
+<span class="sd">            | modeling the vector field, while False models a different field </span>
+<span class="sd">            | for each spectrum.</span>
 <span class="sd">        :pcolorshift: </span>
 <span class="sd">            | default dict (see below) or user defined dict, optional</span>
 <span class="sd">            | Dict containing the specification input </span>
-<span class="sd">              for apply_poly_model_at_hue_x().</span>
+<span class="sd">            | for apply_poly_model_at_hue_x().</span>
 <span class="sd">            | Default dict = {&#39;href&#39;: np.arange(np.pi/10,2*np.pi,2*np.pi/10),</span>
 <span class="sd">            |                 &#39;Cref&#39; : _VF_MAXR, </span>
 <span class="sd">            |                 &#39;sig&#39; : _VF_SIG, </span>
 <span class="sd">            |                 &#39;labels&#39; : &#39;#&#39;} </span>
 <span class="sd">            | The polynomial models of degree 5 and 6 can be fully specified or </span>
-<span class="sd">              summarized by the model parameters themselved OR by calculating the</span>
-<span class="sd">              dCoverC and dH at resp. 5 and 6 hues.</span>
+<span class="sd">            | summarized by the model parameters themselved OR by calculating the</span>
+<span class="sd">            | dCoverC and dH at resp. 5 and 6 hues.</span>
 <span class="sd">        :vfcolor:</span>
 <span class="sd">            | &#39;k&#39;, optional</span>
 <span class="sd">            | For plotting the vector fields.</span>
@@ -739,8 +742,8 @@
 <span class="sd">        :jab_ranges:</span>
 <span class="sd">            | None or ndarray, optional</span>
 <span class="sd">            | Specifies the pixelization of color space.</span>
-<span class="sd">              (ndarray.shape = (3,3), with  first axis: J,a,b, and second </span>
-<span class="sd">              axis: min, max, delta)</span>
+<span class="sd">            | (ndarray.shape = (3,3), with  first axis: J,a,b, and second </span>
+<span class="sd">            | axis: min, max, delta)</span>
 <span class="sd">        :ax:</span>
 <span class="sd">            | default ndarray or user defined ndarray, optional</span>
 <span class="sd">            | default = np.arange(-_VF_MAXR,_VF_MAXR+_VF_DELTAR,_VF_DELTAR) </span>
@@ -901,7 +904,7 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        :returns:</span>
 <span class="sd">            | figCVG, hax, cmap</span>
-<span class="sd">        </span>
+<span class="sd">          </span>
 <span class="sd">            |   :figCVG: handle to CVG figure</span>
 <span class="sd">            |   :hax: handle to CVG axes</span>
 <span class="sd">            |   :cmap: list with rgb colors for hue bins </span>
@@ -939,16 +942,13 @@
     <span class="k">return</span> <span class="n">figCVG</span><span class="p">,</span> <span class="n">hax</span><span class="p">,</span> <span class="n">cmap</span></div>
 
 <span class="c1">#------------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="plotcircle"><a class="viewcode-back" href="../../../../../color.html#luxpy.color.cri.VFPX.plotcircle">[docs]</a><span class="k">def</span> <span class="nf">plotcircle</span><span class="p">(</span><span class="n">center</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span><span class="mf">0.</span><span class="p">]),</span>\
-               <span class="n">radii</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">60</span><span class="p">,</span><span class="mi">10</span><span class="p">),</span> \
+<div class="viewcode-block" id="plotcircle"><a class="viewcode-back" href="../../../../../color.html#luxpy.color.cri.VFPX.plotcircle">[docs]</a><span class="k">def</span> <span class="nf">plotcircle</span><span class="p">(</span><span class="n">radii</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">60</span><span class="p">,</span><span class="mi">10</span><span class="p">),</span> \
                <span class="n">angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">350</span><span class="p">,</span><span class="mi">10</span><span class="p">),</span>\
                <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span><span class="p">,</span><span class="n">linestyle</span> <span class="o">=</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Plot one or more concentric circles.</span>
+<span class="sd">    Plot one or more concentric circles around (0,0).</span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
-<span class="sd">        :center: </span>
-<span class="sd">            | np.array([0.,0.]) or ndarray with center coordinates, optional</span>
 <span class="sd">        :radii:</span>
 <span class="sd">            | np.arange(0,60,10) or ndarray with radii of circle(s), optional</span>
 <span class="sd">        :angles:</span>
@@ -962,18 +962,22 @@
 <span class="sd">        :out: </span>
 <span class="sd">            | None, optional</span>
 <span class="sd">            | If None: plot circles, return (x,y) otherwise.</span>
+<span class="sd">               </span>
+<span class="sd">     Returns:</span>
+<span class="sd">          :x,y:</span>
+<span class="sd">               | ndarrays with circle coordinates (only returned if out is &#39;x,y&#39;)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">xs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">])</span>
-    <span class="n">ys</span> <span class="o">=</span> <span class="n">xs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">ri</span> <span class="ow">in</span> <span class="n">radii</span><span class="p">:</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">ri</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angles</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">180</span><span class="p">)</span>
-        <span class="n">y</span> <span class="o">=</span> <span class="n">ri</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angles</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">180</span><span class="p">)</span>
-        <span class="n">xs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">xs</span><span class="p">,</span><span class="n">x</span><span class="p">))</span>
-        <span class="n">ys</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">ys</span><span class="p">,</span><span class="n">y</span><span class="p">))</span>
+        <span class="n">xi</span> <span class="o">=</span> <span class="n">ri</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angles</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">180</span><span class="p">)</span>
+        <span class="n">yi</span> <span class="o">=</span> <span class="n">ri</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angles</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">180</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">x</span><span class="p">,</span><span class="n">xi</span><span class="p">))</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">y</span><span class="p">,</span><span class="n">yi</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">out</span> <span class="o">!=</span> <span class="s1">&#39;x,y&#39;</span><span class="p">:</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="n">color</span><span class="p">,</span> <span class="n">linestyle</span> <span class="o">=</span> <span class="n">linestyle</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xi</span><span class="p">,</span><span class="n">yi</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="n">color</span><span class="p">,</span> <span class="n">linestyle</span> <span class="o">=</span> <span class="n">linestyle</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;x,y&#39;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">xs</span><span class="p">,</span><span class="n">ys</span></div>
+        <span class="k">return</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span></div>
 
 
 
@@ -1072,25 +1076,16 @@
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
-    
-
-  
-
-  <script type="text/javascript" src="../../../../../_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

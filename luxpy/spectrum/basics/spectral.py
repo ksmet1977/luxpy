@@ -75,7 +75,7 @@ Module supporting basic spectral calculations.
              
  :daylightlocus(): Calculates daylight chromaticity from cct. 
 
- :daylightphase(): Calculate daylight phase spectrum         
+ :daylightphase(): Calculate daylight phase spectrum.
          
  :cri_ref(): Calculates a reference illuminant spectrum based on cct for color 
              rendering index calculations.
@@ -99,7 +99,6 @@ References
     3. `IES-TM-30-15: Method for Evaluating Light Source Color Rendition. 
     New York, NY: The Illuminating Engineering Society of North America. 
     <https://www.ies.org/store/technical-memoranda/ies-method-for-evaluating-light-source-color-rendition/>`_
-
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
@@ -877,12 +876,12 @@ def daylightphase(cct, wl3 = None, force_daylight_below4000K = False, verbosity 
         :verbosity: 
             | None, optional
             |   If None: do not print warning when CCT < 4000 K.
-            
+
     Returns:
         :returns: 
             | ndarray with daylight phase spectrum
-             |(:returns:[0] contains wavelengths)
-            
+            | (:returns:[0] contains wavelengths)
+
     References:
         1. `CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018. <https://doi.org/10.25039/TR.015.2018>`_
      """

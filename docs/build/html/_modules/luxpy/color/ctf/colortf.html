@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.color.ctf.colortf &mdash; LuxPy 1.4.18 documentation</title>
+  <title>luxpy.color.ctf.colortf &mdash; LuxPy 1.5.0 documentation</title>
   
 
   
@@ -17,32 +17,34 @@
   
 
   
+  <script type="text/javascript" src="../../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
-
-  
-  <script src="../../../../_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -56,7 +58,7 @@
             
             
               <div class="version">
-                1.4.18
+                1.5.0
               </div>
             
           
@@ -184,8 +186,8 @@
 
 <span class="sd">===============================================================================</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="o">*</span>
-
+<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">luxpy.utils</span> <span class="kn">import</span> <span class="n">np</span>
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;_COLORTF_DEFAULT_WHITE_POINT&#39;</span><span class="p">,</span><span class="s1">&#39;colortf&#39;</span><span class="p">]</span>
 
 
@@ -204,15 +206,15 @@
 <span class="sd">            |     E.g. tf = &#39;spd&gt;xyz&#39; or &#39;spd&gt;Yuv&#39; or &#39;Yuv&gt;cct&#39; </span>
 <span class="sd">            |      or &#39;Yuv&#39; or &#39;Yxy&#39; or ...</span>
 <span class="sd">            |  If tf is for example &#39;Yuv&#39;, it is assumed to be a transformation </span>
-<span class="sd">               of type: &#39;xyz&gt;Yuv&#39;</span>
+<span class="sd">            |  of type: &#39;xyz&gt;Yuv&#39;</span>
 <span class="sd">        :fwtf: </span>
 <span class="sd">            | dict with parameters (keys) and values required </span>
-<span class="sd">              by some color transformations for the forward transform: </span>
-<span class="sd">            | i.e. &#39;xyz&gt;...&#39;</span>
+<span class="sd">            | by some color transformations for the forward transform: </span>
+<span class="sd">            |  i.e. &#39;xyz&gt;...&#39;</span>
 <span class="sd">        :bwtf:</span>
 <span class="sd">            | dict with parameters (keys) and values required </span>
-<span class="sd">              by some color transformations for the backward transform: </span>
-<span class="sd">            | i.e. &#39;...&gt;xyz&#39;</span>
+<span class="sd">            | by some color transformations for the backward transform: </span>
+<span class="sd">            |  i.e. &#39;...&gt;xyz&#39;</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        :returns: </span>
@@ -235,41 +237,6 @@
         <span class="n">bwfcn</span> <span class="o">=</span> <span class="nb">globals</span><span class="p">()[</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">_to_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tf</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;xyz&#39;</span><span class="p">)]</span>
         <span class="n">fwfcn</span> <span class="o">=</span> <span class="nb">globals</span><span class="p">()[</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">_to_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">tf</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span>
         <span class="k">return</span> <span class="n">fwfcn</span><span class="p">(</span><span class="n">bwfcn</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="o">**</span><span class="n">bwtf</span><span class="p">),</span><span class="o">**</span><span class="n">fwtf</span><span class="p">)</span>   </div>
-
-
-<span class="c1">#def colortf(data, tf = _CSPACE, tfa0 = {}, tfa1 = {}, **kwargs):</span>
-<span class="c1">#    &quot;&quot;&quot;</span>
-<span class="c1">#    Wrapper function to perform various color transformations.</span>
-<span class="c1">#    </span>
-<span class="c1">#    Args:</span>
-<span class="c1">#        :data: ndarray</span>
-<span class="c1">#        :tf: str specifying transform type, optional</span>
-<span class="c1">#            E.g. tf = &#39;spd&gt;xyz&#39; or &#39;spd&gt;Yuv&#39; or &#39;Yuv&gt;cct&#39; or &#39;Yuv&#39; or &#39;Yxy&#39; or ...</span>
-<span class="c1">#            If tf is for example &#39;Yuv&#39; it is assumed to be a transformation of type: &#39;xyz&gt;Yuv&#39;</span>
-<span class="c1">#        :tfa0: dict with parameters (keys) and values required by some color transformations (&#39;...&gt;xyz&#39;)</span>
-<span class="c1">#        :tfa1: dict with parameters (keys) and values required by some color transformations (&#39;xyz&gt;...&#39;)</span>
-<span class="c1">#</span>
-<span class="c1">#    Returns:</span>
-<span class="c1">#        :returns: ndarray with data transformed to new color space</span>
-<span class="c1">#    &quot;&quot;&quot;</span>
-<span class="c1">#    data = np2d(data)</span>
-<span class="c1">#    tf = tf.split(&#39;&gt;&#39;)</span>
-<span class="c1">#    if len(tf)&gt;1:</span>
-<span class="c1">#        for ii in range(len(tf)):    </span>
-<span class="c1">#            if (ii%2 == 1):</span>
-<span class="c1">#                out_ = tf[ii]</span>
-<span class="c1">#                in_ = &#39;xyz&#39;</span>
-<span class="c1">#                tfa = tfa0</span>
-<span class="c1">#            else:</span>
-<span class="c1">#                out_ = &#39;xyz&#39;</span>
-<span class="c1">#                in_ = tf[ii]</span>
-<span class="c1">#                tfa = tfa1</span>
-<span class="c1">#            data = globals()[&#39;{}_to_{}&#39;.format(in_, out_)](data,**tfa)</span>
-<span class="c1">#</span>
-<span class="c1">#	</span>
-<span class="c1">#    else:</span>
-<span class="c1">#        data = globals()[&#39;{}_to_{}&#39;.format(&#39;xyz&#39;, tf[0])](data,**tfa0)</span>
-<span class="c1">#    return data   </span>
 </pre></div>
 
            </div>
@@ -299,25 +266,16 @@
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../../../_static/doctools.js"></script>
-    
-
-  
-
-  <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

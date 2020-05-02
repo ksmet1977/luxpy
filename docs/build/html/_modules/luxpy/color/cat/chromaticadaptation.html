@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.color.cat.chromaticadaptation &mdash; LuxPy 1.4.18 documentation</title>
+  <title>luxpy.color.cat.chromaticadaptation &mdash; LuxPy 1.5.0 documentation</title>
   
 
   
@@ -17,32 +17,34 @@
   
 
   
+  <script type="text/javascript" src="../../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
-
-  
-  <script src="../../../../_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -56,7 +58,7 @@
             
             
               <div class="version">
-                1.4.18
+                1.5.0
               </div>
             
           
@@ -193,7 +195,7 @@
 <span class="sd"> :check_dimensions(): Check if dimensions of data and xyzw match. </span>
 
 <span class="sd"> :get_transfer_function(): | Calculate the chromatic adaptation diagonal matrix </span>
-<span class="sd">                             transfer function Dt.  </span>
+<span class="sd">                           | transfer function Dt.  </span>
 <span class="sd">                           | Default = &#39;vonkries&#39; (others: &#39;rlab&#39;, see Fairchild 1990)</span>
 
 <span class="sd"> :smet2017_D(): | Calculate the degree of adaptation based on chromaticity. </span>
@@ -220,7 +222,8 @@
 <span class="sd">===============================================================================</span>
 <span class="sd">&quot;&quot;&quot;</span>
        
-<span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">_CMF</span><span class="p">,</span> <span class="n">math</span><span class="p">,</span> <span class="n">np2d</span><span class="p">,</span> <span class="n">asplit</span><span class="p">,</span> <span class="n">ajoin</span><span class="p">,</span> <span class="n">_EPS</span><span class="p">,</span> <span class="n">xyz_to_Vrb_mb</span>
+<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="n">_CMF</span><span class="p">,</span> <span class="n">math</span><span class="p">,</span> <span class="n">xyz_to_Vrb_mb</span>
+<span class="kn">from</span> <span class="nn">luxpy.utils</span> <span class="kn">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">np2d</span><span class="p">,</span> <span class="n">asplit</span><span class="p">,</span> <span class="n">ajoin</span><span class="p">,</span> <span class="n">_EPS</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;_WHITE_POINT&#39;</span><span class="p">,</span><span class="s1">&#39;_LA&#39;</span><span class="p">,</span> <span class="s1">&#39;_MCATS&#39;</span><span class="p">,</span>
            <span class="s1">&#39;check_dimensions&#39;</span><span class="p">,</span><span class="s1">&#39;get_transfer_function&#39;</span><span class="p">,</span><span class="s1">&#39;get_degree_of_adaptation&#39;</span><span class="p">,</span>
@@ -238,7 +241,7 @@
 <span class="n">_MCATS</span><span class="p">[</span><span class="s1">&#39;judd-1945&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],[</span><span class="o">-</span><span class="mf">0.460</span><span class="p">,</span><span class="mf">1.360</span><span class="p">,</span><span class="mf">0.102</span><span class="p">],[</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">]])</span> <span class="c1"># from CIE16-2004, Eq.4, a23 modified from 0.1 to 0.1020 for increased accuracy</span>
 <span class="n">_MCATS</span><span class="p">[</span><span class="s1">&#39;bfd&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">([[</span><span class="mf">0.8951</span><span class="p">,</span><span class="mf">0.2664</span><span class="p">,</span><span class="o">-</span><span class="mf">0.1614</span><span class="p">],[</span><span class="o">-</span><span class="mf">0.7502</span><span class="p">,</span><span class="mf">1.7135</span><span class="p">,</span><span class="mf">0.0367</span><span class="p">],[</span><span class="mf">0.0389</span><span class="p">,</span><span class="o">-</span><span class="mf">0.0685</span><span class="p">,</span><span class="mf">1.0296</span><span class="p">]])</span> <span class="c1">#also used in ciecam97s</span>
 <span class="n">_MCATS</span><span class="p">[</span><span class="s1">&#39;sharp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">([[</span><span class="mf">1.2694</span><span class="p">,</span><span class="o">-</span><span class="mf">0.0988</span><span class="p">,</span><span class="o">-</span><span class="mf">0.1706</span><span class="p">],[</span><span class="o">-</span><span class="mf">0.8364</span><span class="p">,</span><span class="mf">1.8006</span><span class="p">,</span><span class="mf">0.0357</span><span class="p">],[</span><span class="mf">0.0297</span><span class="p">,</span><span class="o">-</span><span class="mf">0.0315</span><span class="p">,</span><span class="mf">1.0018</span><span class="p">]])</span>
-<span class="n">_MCATS</span><span class="p">[</span><span class="s1">&#39;cmc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">([[</span><span class="mf">0.7982</span><span class="p">,</span>  <span class="mf">0.3389</span><span class="p">,</span>	<span class="o">-</span><span class="mf">0.1371</span><span class="p">],[</span><span class="o">-</span><span class="mf">0.5918</span><span class="p">,</span>  <span class="mf">1.5512</span><span class="p">,</span>	 <span class="mf">0.0406</span><span class="p">],[</span><span class="mf">0.0008</span><span class="p">,</span>  <span class="mf">0.0239</span><span class="p">,</span>	 <span class="mf">0.9753</span><span class="p">]])</span>
+<span class="n">_MCATS</span><span class="p">[</span><span class="s1">&#39;cmc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">([[</span><span class="mf">0.7982</span><span class="p">,</span>  <span class="mf">0.3389</span><span class="p">,</span><span class="o">-</span><span class="mf">0.1371</span><span class="p">],[</span><span class="o">-</span><span class="mf">0.5918</span><span class="p">,</span>  <span class="mf">1.5512</span><span class="p">,</span> <span class="mf">0.0406</span><span class="p">],[</span><span class="mf">0.0008</span><span class="p">,</span>  <span class="mf">0.0239</span><span class="p">,</span> <span class="mf">0.9753</span><span class="p">]])</span>
 <span class="n">_MCATS</span><span class="p">[</span><span class="s1">&#39;ipt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">([[</span><span class="mf">0.4002</span><span class="p">,</span>  <span class="mf">0.7075</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0807</span><span class="p">],[</span><span class="o">-</span><span class="mf">0.2280</span><span class="p">,</span>  <span class="mf">1.1500</span><span class="p">,</span>  <span class="mf">0.0612</span><span class="p">],[</span> <span class="mf">0.0</span><span class="p">,</span>       <span class="mf">0.0</span><span class="p">,</span>       <span class="mf">0.9184</span><span class="p">]])</span>
 <span class="n">_MCATS</span><span class="p">[</span><span class="s1">&#39;lms&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">([[</span><span class="mf">0.2070</span><span class="p">,</span>   <span class="mf">0.8655</span><span class="p">,</span>  <span class="o">-</span><span class="mf">0.0362</span><span class="p">],[</span><span class="o">-</span><span class="mf">0.4307</span><span class="p">,</span>   <span class="mf">1.1780</span><span class="p">,</span>   <span class="mf">0.0949</span><span class="p">],[</span> <span class="mf">0.0865</span><span class="p">,</span>  <span class="o">-</span><span class="mf">0.2197</span><span class="p">,</span>   <span class="mf">0.4633</span><span class="p">]])</span>
 <span class="n">_MCATS</span><span class="p">[</span><span class="s1">&#39;bianco&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">([[</span><span class="mf">0.8752</span><span class="p">,</span> <span class="mf">0.2787</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1539</span><span class="p">],[</span><span class="o">-</span><span class="mf">0.8904</span><span class="p">,</span> <span class="mf">1.8709</span><span class="p">,</span> <span class="mf">0.0195</span><span class="p">],[</span><span class="o">-</span><span class="mf">0.0061</span><span class="p">,</span> <span class="mf">0.0162</span><span class="p">,</span> <span class="mf">0.9899</span><span class="p">]])</span> <span class="c1"># %Bianco, S. &amp; Schettini, R., Two New von Kries Based Chromatic Adaptation Transforms Found by Numerical Optimization. Color Res Appl 2010, 35(3), 184-192</span>
@@ -358,9 +361,9 @@
 <span class="sd">        :Dmax:</span>
 <span class="sd">            | None or float, optional</span>
 <span class="sd">            | Defaults to 0.6539 (max D obtained under experimental conditions, </span>
-<span class="sd">              but probably too low due to dark surround leading to incomplete </span>
-<span class="sd">              chromatic adaptation even for neutral illuminants </span>
-<span class="sd">              resulting in background luminance (fov~50Â°) of 760 cd/mÂ²))</span>
+<span class="sd">            | but probably too low due to dark surround leading to incomplete </span>
+<span class="sd">            | chromatic adaptation even for neutral illuminants </span>
+<span class="sd">            | resulting in background luminance (fov~50Â°) of 760 cd/mÂ²))</span>
 <span class="sd">        :cieobs:</span>
 <span class="sd">            | &#39;1964_10&#39;, optional</span>
 <span class="sd">            | CMF set used in deriving model in cited paper.</span>
@@ -409,7 +412,7 @@
 <span class="sd">            |     D is calculated as follows:</span>
 <span class="sd">            |        D = 0.08*numpy.log10(La1+La0)+0.76-0.45*(La1-La0)/(La1+La0)</span>
 <span class="sd">            | If &#39;smet2017&#39;: kwargs should contain &#39;xyzw&#39; and &#39;Dmax&#39;</span>
-<span class="sd">              (see Smet2017_D for more details).</span>
+<span class="sd">            |  (see Smet2017_D for more details).</span>
 <span class="sd">            | If &quot;? user defined&quot;, then D is calculated by:</span>
 <span class="sd">            |        D = ndarray(eval(:Dtype:))  </span>
 <span class="sd">    </span>
@@ -520,7 +523,7 @@
         <span class="k">if</span> <span class="p">(</span><span class="n">catmode</span> <span class="o">==</span> <span class="s1">&#39;1&gt;0&gt;2&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">catmode</span> <span class="o">==</span> <span class="s1">&#39;1&gt;2&#39;</span><span class="p">):</span>
             <span class="n">x20</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">target_shape</span><span class="p">)</span><span class="o">*</span><span class="n">default</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">x20</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">target_shape</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="n">x20</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">target_shape</span><span class="p">);</span> <span class="n">x20</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
    <span class="k">else</span><span class="p">:</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">catmode</span> <span class="o">==</span> <span class="s1">&#39;1&gt;0&gt;2&#39;</span><span class="p">)</span> <span class="o">|</span><span class="p">(</span><span class="n">catmode</span> <span class="o">==</span> <span class="s1">&#39;1&gt;2&#39;</span><span class="p">):</span>
@@ -532,7 +535,7 @@
                  <span class="n">x20</span> <span class="o">=</span> <span class="n">x10</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="k">elif</span> <span class="n">catmode</span> <span class="o">==</span> <span class="s1">&#39;1&gt;0&#39;</span><span class="p">:</span>
             <span class="n">x10</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">target_shape</span><span class="p">)</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">x10</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">target_shape</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="n">x20</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">target_shape</span><span class="p">);</span> <span class="n">x20</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
    <span class="k">return</span> <span class="n">x10</span><span class="p">,</span> <span class="n">x20</span></div>
 
 <span class="c1">#------------------------------------------------------------------------------</span>
@@ -573,7 +576,7 @@
 <span class="sd">        :F: </span>
 <span class="sd">            | None, optional</span>
 <span class="sd">            | Surround parameter(s) for CAT02/CAT16 calculations </span>
-<span class="sd">              (:Dtype: == &#39;cat02&#39; or &#39;cat16&#39;)</span>
+<span class="sd">            |  (:Dtype: == &#39;cat02&#39; or &#39;cat16&#39;)</span>
 <span class="sd">            | Defaults to [1.0, 1.0]. </span>
 <span class="sd">        :Dtype:</span>
 <span class="sd">            | None, optional</span>
@@ -582,7 +585,7 @@
 <span class="sd">        :mcat:</span>
 <span class="sd">            | [&#39;cat02&#39;], optional</span>
 <span class="sd">            | List[str] or List[ndarray] of sensor space matrices for each </span>
-<span class="sd">              condition pair. If len(:mcat:) == 1, the same matrix is used.</span>
+<span class="sd">            |  condition pair. If len(:mcat:) == 1, the same matrix is used.</span>
 <span class="sd">        :normxyz0: </span>
 <span class="sd">            | None, optional</span>
 <span class="sd">            | Set of xyz tristimulus values to normalize the sensor space matrix to.</span>
@@ -655,7 +658,7 @@
 
 
         <span class="c1"># transform data (xyz) to sensor space (lms) and perform cat:</span>
-        <span class="n">xyzc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="n">xyzc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">);</span> <span class="n">xyzc</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
         <span class="n">mcat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mcat</span><span class="p">)</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">mcat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">mcat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="mi">1</span><span class="p">):</span>
             <span class="n">mcat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">mcat</span><span class="p">,</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
@@ -751,25 +754,16 @@
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../../../_static/doctools.js"></script>
-    
-
-  
-
-  <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

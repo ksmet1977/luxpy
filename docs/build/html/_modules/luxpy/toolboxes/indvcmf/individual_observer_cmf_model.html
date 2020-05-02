@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.toolboxes.indvcmf.individual_observer_cmf_model &mdash; LuxPy 1.4.18 documentation</title>
+  <title>luxpy.toolboxes.indvcmf.individual_observer_cmf_model &mdash; LuxPy 1.5.0 documentation</title>
   
 
   
@@ -17,32 +17,34 @@
   
 
   
+  <script type="text/javascript" src="../../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
-
-  
-  <script src="../../../../_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -56,7 +58,7 @@
             
             
               <div class="version">
-                1.4.18
+                1.5.0
               </div>
             
           
@@ -243,7 +245,8 @@
 <span class="sd">    (Accessed Dec 18, 2019)    </span>
 <span class="sd">.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">pd</span><span class="p">,</span> <span class="n">sp</span><span class="p">,</span> <span class="n">interpolate</span><span class="p">,</span> <span class="n">math</span><span class="p">,</span> <span class="n">plt</span><span class="p">,</span> <span class="n">_WL3</span><span class="p">,</span> <span class="n">_PKG_PATH</span><span class="p">,</span> <span class="n">_SEP</span><span class="p">,</span> <span class="n">_CMF</span><span class="p">,</span> <span class="n">spd</span><span class="p">,</span> <span class="n">getdata</span><span class="p">,</span> <span class="n">getwlr</span><span class="p">,</span> <span class="n">getwld</span><span class="p">,</span> <span class="n">cie_interp</span><span class="p">,</span> <span class="n">spd_to_power</span><span class="p">,</span> <span class="n">xyz_to_Yxy</span><span class="p">,</span> <span class="n">spd_normalize</span>
+<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="n">math</span><span class="p">,</span> <span class="n">_WL3</span><span class="p">,</span> <span class="n">_CMF</span><span class="p">,</span> <span class="n">spd</span><span class="p">,</span> <span class="n">getwlr</span><span class="p">,</span> <span class="n">getwld</span><span class="p">,</span> <span class="n">cie_interp</span><span class="p">,</span> <span class="n">spd_to_power</span><span class="p">,</span> <span class="n">xyz_to_Yxy</span><span class="p">,</span> <span class="n">spd_normalize</span>
+<span class="kn">from</span> <span class="nn">luxpy.utils</span> <span class="kn">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">pd</span><span class="p">,</span> <span class="n">sp</span><span class="p">,</span> <span class="n">plt</span><span class="p">,</span> <span class="n">_PKG_PATH</span><span class="p">,</span> <span class="n">_SEP</span><span class="p">,</span> <span class="n">getdata</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;_DATA&#39;</span><span class="p">,</span><span class="s1">&#39;_DSRC_STD_DEF&#39;</span><span class="p">,</span> <span class="s1">&#39;_DSRC_LMS_ODENS_DEF&#39;</span><span class="p">,</span><span class="s1">&#39;_LMS_TO_XYZ_METHOD&#39;</span><span class="p">]</span>
@@ -487,25 +490,28 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the two parts of the expression for the optical density of the </span>
 <span class="sd">    ocular media as function of age.</span>
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    ocular_sum_32 : ndarray</span>
-<span class="sd">        Sum of two ocular functions</span>
-<span class="sd">    docul2 : ndarray</span>
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    docul1_fine : ndarray</span>
-<span class="sd">        The calculatedd values for part 1, docul1, tabulated with high </span>
-<span class="sd">        resolution</span>
-<span class="sd">    docul2_fine : ndarray,</span>
-<span class="sd">        The calculatedd values for part 2, docul2, tabulated with high </span>
-<span class="sd">        resolution</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :ocular_sum_32:</span>
+<span class="sd">            | ndarray</span>
+<span class="sd">            | Sum of two ocular functions</span>
+<span class="sd">        :docul2:</span>
+<span class="sd">            | ndarray</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :docul1_fine:</span>
+<span class="sd">            | ndarray</span>
+<span class="sd">            | The calculatedd values for part 1, docul1, tabulated  </span>
+<span class="sd">            | with high resolution</span>
+<span class="sd">        :docul2_fine:</span>
+<span class="sd">            | ndarray</span>
+<span class="sd">            | The calculatedd values for part 2, docul2, tabulated  </span>
+<span class="sd">            | with high resolution</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">docul2_pad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">75</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>             <span class="c1"># initialize</span>
     <span class="n">docul2_pad</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">460</span><span class="p">,</span> <span class="mi">835</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>  <span class="c1"># fill</span>
     <span class="n">docul2_pad</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>                       <span class="c1"># fill</span>
     <span class="n">docul2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">docul2</span><span class="p">,</span> <span class="n">docul2_pad</span><span class="p">))</span>
-    <span class="n">spl</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">InterpolatedUnivariateSpline</span><span class="p">(</span><span class="n">docul2</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">docul2</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="n">spl</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">interpolate</span><span class="o">.</span><span class="n">InterpolatedUnivariateSpline</span><span class="p">(</span><span class="n">docul2</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">docul2</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span>
     <span class="n">docul2_fine</span> <span class="o">=</span> <span class="n">ocular_sum_32</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="n">docul2_fine</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">spl</span><span class="p">(</span><span class="n">ocular_sum_32</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
     <span class="n">docul1_fine</span> <span class="o">=</span> <span class="n">ocular_sum_32</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
@@ -728,6 +734,7 @@
 <span class="k">def</span> <span class="nf">_d_ocular</span><span class="p">(</span><span class="n">age</span> <span class="o">=</span> <span class="mi">32</span><span class="p">,</span> <span class="n">var_od_lens</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">docul0</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the optical density of the ocular media for a given age.</span>
+
 <span class="sd">    Args:</span>
 <span class="sd">        :age:</span>
 <span class="sd">            | 32, float, optional</span>
@@ -739,6 +746,7 @@
 <span class="sd">            | None, optional</span>
 <span class="sd">            | Uncorrected ocular media density function </span>
 <span class="sd">            | None defaults to the one stored in _DATA</span>
+
 <span class="sd">    Returns:</span>
 <span class="sd">        :docul:</span>
 <span class="sd">            | ndarray with the calculated optical density of the ocular media; row 0 are wavelenghts.</span>
@@ -762,6 +770,7 @@
 <span class="k">def</span> <span class="nf">_d_mac_max</span><span class="p">(</span><span class="n">fieldsize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">var_od</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the maximum optical density of the macular pigment for a given field size.</span>
+<span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        :fieldsize:</span>
 <span class="sd">            | 10, float, optional</span>
@@ -769,6 +778,7 @@
 <span class="sd">        :var_od:</span>
 <span class="sd">            | 0, optional</span>
 <span class="sd">            | Variation of optical density of macula.</span>
+
 <span class="sd">    Returns:</span>
 <span class="sd">        :d_mac_max:</span>
 <span class="sd">            | float</span>
@@ -781,6 +791,7 @@
 <span class="k">def</span> <span class="nf">_d_mac</span><span class="p">(</span><span class="n">fieldsize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">var_od</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">rmd0</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the optical density of the macular pigment for a given field size.</span>
+<span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        :fieldsize:</span>
 <span class="sd">            | 10, float, optional</span>
@@ -807,6 +818,7 @@
 <span class="k">def</span> <span class="nf">_d_LM_max</span><span class="p">(</span><span class="n">fieldsize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">var_od</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the maximum optical density of the L- and M-cone photopigments for a given field size.</span>
+<span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        :field_size:</span>
 <span class="sd">            | 10, float, optional</span>
@@ -814,6 +826,7 @@
 <span class="sd">        :var_od:</span>
 <span class="sd">            | 0, optional</span>
 <span class="sd">            | Variation of optical density.</span>
+<span class="sd">    </span>
 <span class="sd">    Returns:</span>
 <span class="sd">        :d_LM_max:</span>
 <span class="sd">            | float</span>
@@ -827,6 +840,7 @@
 <span class="k">def</span> <span class="nf">_d_S_max</span><span class="p">(</span><span class="n">fieldsize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">var_od</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the maximum optical density of the S-cone photopigment for a given field size.</span>
+<span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        :fieldsize:</span>
 <span class="sd">            | 10, float, optional</span>
@@ -834,6 +848,7 @@
 <span class="sd">        :var_od:</span>
 <span class="sd">            | 0, optional</span>
 <span class="sd">            | Variation of optical density.</span>
+
 <span class="sd">    Returns:</span>
 <span class="sd">        :d_S_max:</span>
 <span class="sd">            | float</span>
@@ -846,6 +861,7 @@
 <span class="k">def</span> <span class="nf">_LMS_absorptance</span><span class="p">(</span><span class="n">fieldsize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">var_shft_LMS</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">var_od_LMS</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">LMSa0</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the quantal absorptance of the L, M and S cones for a given field size.</span>
+<span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        :fieldsize: </span>
 <span class="sd">            | 10, float, optional</span>
@@ -860,6 +876,7 @@
 <span class="sd">            | None, optional</span>
 <span class="sd">            | Uncorrected LMS absorptance functions</span>
 <span class="sd">            | None defaults to the ones stored in _DATA</span>
+
 <span class="sd">    Returns:</span>
 <span class="sd">        alpha_lms: </span>
 <span class="sd">            | ndarray with the calculated quantal absorptances of the L, M and S cones; row 0 are wavelenghts.</span>
@@ -884,18 +901,18 @@
     <span class="k">if</span> <span class="n">var_shft_LMS</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">LMSa_shft</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">LMSa</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">LMSa_shft</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">InterpolatedUnivariateSpline</span><span class="p">(</span><span class="n">wl_shifted</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">LMSa</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">k</span> <span class="o">=</span> <span class="n">kind</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;extrapolate&quot;</span><span class="p">)(</span><span class="n">wls</span><span class="p">)</span>
+        <span class="n">LMSa_shft</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">interpolate</span><span class="o">.</span><span class="n">InterpolatedUnivariateSpline</span><span class="p">(</span><span class="n">wl_shifted</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">LMSa</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">k</span> <span class="o">=</span> <span class="n">kind</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;extrapolate&quot;</span><span class="p">)(</span><span class="n">wls</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">var_shft_LMS</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">LMSa_shft</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">LMSa</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">LMSa_shft</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">InterpolatedUnivariateSpline</span><span class="p">(</span><span class="n">wl_shifted</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">LMSa</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">k</span> <span class="o">=</span> <span class="n">kind</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;extrapolate&quot;</span><span class="p">)(</span><span class="n">wls</span><span class="p">)</span>
+        <span class="n">LMSa_shft</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">interpolate</span><span class="o">.</span><span class="n">InterpolatedUnivariateSpline</span><span class="p">(</span><span class="n">wl_shifted</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">LMSa</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">k</span> <span class="o">=</span> <span class="n">kind</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;extrapolate&quot;</span><span class="p">)(</span><span class="n">wls</span><span class="p">)</span>
     
     <span class="k">if</span> <span class="n">var_shft_LMS</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">LMSa_shft</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">LMSa</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">LMSa</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">LMSa</span><span class="p">[</span><span class="mi">2</span><span class="p">,:])]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
         <span class="n">non_nan_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_not</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">LMSa</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
-        <span class="n">LMSa_shft</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">InterpolatedUnivariateSpline</span><span class="p">(</span><span class="n">wl_shifted</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="n">non_nan_indices</span><span class="p">],</span><span class="n">LMSa</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="n">non_nan_indices</span><span class="p">],</span> <span class="n">k</span> <span class="o">=</span> <span class="n">kind</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;extrapolate&quot;</span><span class="p">)(</span><span class="n">wls</span><span class="p">)</span>
+        <span class="n">LMSa_shft</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">interpolate</span><span class="o">.</span><span class="n">InterpolatedUnivariateSpline</span><span class="p">(</span><span class="n">wl_shifted</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="n">non_nan_indices</span><span class="p">],</span><span class="n">LMSa</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="n">non_nan_indices</span><span class="p">],</span> <span class="n">k</span> <span class="o">=</span> <span class="n">kind</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;extrapolate&quot;</span><span class="p">)(</span><span class="n">wls</span><span class="p">)</span>
 
         <span class="c1"># Detect poor interpolation (sign switch due to instability):</span>
         <span class="n">ssw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">LMSa_shft</span><span class="p">[</span><span class="mi">2</span><span class="p">,:]))))</span> 
@@ -924,6 +941,7 @@
                  <span class="n">norm_type</span> <span class="o">=</span> <span class="s1">&#39;max&#39;</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;LMSq&#39;</span><span class="p">,</span> <span class="n">odata0</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the quantal based LMS cone fundamentals for a given field size and age.</span>
+<span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        :fieldsize:</span>
 <span class="sd">            | 10, float, optional</span>
@@ -952,6 +970,7 @@
 <span class="sd">            | None, optional</span>
 <span class="sd">            | Dict with uncorrected ocular media and macula density functions and LMS absorptance functions</span>
 <span class="sd">            | None defaults to the ones stored in _DATA</span>
+
 <span class="sd">    Returns:</span>
 <span class="sd">        :LMSq: </span>
 <span class="sd">            | ndarray with the calculated quantum_based LMS cone fundamentals; first row are wavelengths.</span>
@@ -990,6 +1009,7 @@
                 <span class="n">norm_type</span> <span class="o">=</span> <span class="s1">&#39;max&#39;</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;LMSe&#39;</span><span class="p">,</span> <span class="n">base</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">odata0</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the energy based LMS cone fundamentals for a given field size and age.</span>
+<span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        :fieldsize:</span>
 <span class="sd">            | 10, float, optional</span>
@@ -1023,6 +1043,7 @@
 <span class="sd">            | None, optional</span>
 <span class="sd">            | Dict with uncorrected ocular media and macula density functions and LMS absorptance functions</span>
 <span class="sd">            | None defaults to the ones stored in _DATA</span>
+
 <span class="sd">    Returns:</span>
 <span class="sd">        :LMSe: </span>
 <span class="sd">            | ndarray with the calculated quantum_based LMS cone fundamentals; first row are wavelengths.</span>
@@ -1081,6 +1102,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compute the weighting factor of the quantal L-cone fundamental in the</span>
 <span class="sd">    synthesis of the cone-fundamental-based quantal V(λ) function (normalized to max=1).</span>
+<span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        :fieldsize: </span>
 <span class="sd">            | 10, float, optional</span>
@@ -1114,6 +1136,7 @@
 <span class="sd">            | None, optional</span>
 <span class="sd">            | Dict with uncorrected ocular media and macula density functions and LMS absorptance functions</span>
 <span class="sd">            | None defaults to the ones stored in _DATA</span>
+
 <span class="sd">    Returns:</span>
 <span class="sd">        kLq: </span>
 <span class="sd">            | float</span>
@@ -1172,6 +1195,7 @@
 <span class="sd">    Compute the energy-based V(λ) function (starting from energy-based LMS).</span>
 <span class="sd">    Return both V(λ) and the the corresponding L and M cone weights used</span>
 <span class="sd">    in the synthesis.</span>
+<span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        :fieldsize: </span>
 <span class="sd">            | 10, float, optional</span>
@@ -1212,6 +1236,7 @@
 <span class="sd">            | None, optional</span>
 <span class="sd">            | Dict with uncorrected ocular media and macula density functions and LMS absorptance functions</span>
 <span class="sd">            | None defaults to the ones stored in _DATA</span>
+
 <span class="sd">    Returns:</span>
 <span class="sd">        :Vl:</span>
 <span class="sd">            | ndarray</span>
@@ -1241,6 +1266,7 @@
 <span class="sd">    Compute the spectral chromaticity coordinates of the reference system</span>
 <span class="sd">    by interpolation between correspoding spectral chromaticity coordinates</span>
 <span class="sd">    of the CIE 1931 XYZ systems and the CIE 1964 XYZ systems.</span>
+<span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        :fieldsize:</span>
 <span class="sd">            | float</span>
@@ -1253,8 +1279,8 @@
 <span class="sd">            | ndarray</span>
 <span class="sd">            | The CIE 1964 XYZ colour-matching functions (10°), given at 1 nm</span>
 <span class="sd">            | steps from 360 nm to 830 nm; wavelengths in first row.</span>
+
 <span class="sd">    Returns:</span>
-<span class="sd">    -------</span>
 <span class="sd">        :chromaticity:</span>
 <span class="sd">            | ndarray</span>
 <span class="sd">            | The computed interpolated spectral chromaticity coordinates of the</span>
@@ -1282,17 +1308,17 @@
                        <span class="mf">700.</span><span class="p">,</span>
                        <span class="mf">830.</span><span class="p">])</span>
     <span class="c1"># wl values</span>
-    <span class="n">wl31_interp</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">InterpolatedUnivariateSpline</span><span class="p">(</span><span class="n">wl_knots</span><span class="p">,</span> <span class="n">wl31_knots</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)(</span><span class="n">wl31</span><span class="p">)</span>
-    <span class="n">wl64_interp</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">InterpolatedUnivariateSpline</span><span class="p">(</span><span class="n">wl_knots</span><span class="p">,</span> <span class="n">wl64_knots</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)(</span><span class="n">wl64</span><span class="p">)</span>
+    <span class="n">wl31_interp</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">interpolate</span><span class="o">.</span><span class="n">InterpolatedUnivariateSpline</span><span class="p">(</span><span class="n">wl_knots</span><span class="p">,</span> <span class="n">wl31_knots</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)(</span><span class="n">wl31</span><span class="p">)</span>
+    <span class="n">wl64_interp</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">interpolate</span><span class="o">.</span><span class="n">InterpolatedUnivariateSpline</span><span class="p">(</span><span class="n">wl_knots</span><span class="p">,</span> <span class="n">wl64_knots</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)(</span><span class="n">wl64</span><span class="p">)</span>
 
     <span class="c1"># x values</span>
-    <span class="n">x31_interp</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">InterpolatedUnivariateSpline</span><span class="p">(</span><span class="n">wl31</span><span class="p">,</span> <span class="n">x31</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">3</span><span class="p">)(</span><span class="n">wl31_interp</span><span class="p">)</span>
-    <span class="n">x64_interp</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">InterpolatedUnivariateSpline</span><span class="p">(</span><span class="n">wl64</span><span class="p">,</span> <span class="n">x64</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">3</span><span class="p">)(</span><span class="n">wl64_interp</span><span class="p">)</span>
+    <span class="n">x31_interp</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">interpolate</span><span class="o">.</span><span class="n">InterpolatedUnivariateSpline</span><span class="p">(</span><span class="n">wl31</span><span class="p">,</span> <span class="n">x31</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">3</span><span class="p">)(</span><span class="n">wl31_interp</span><span class="p">)</span>
+    <span class="n">x64_interp</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">interpolate</span><span class="o">.</span><span class="n">InterpolatedUnivariateSpline</span><span class="p">(</span><span class="n">wl64</span><span class="p">,</span> <span class="n">x64</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">3</span><span class="p">)(</span><span class="n">wl64_interp</span><span class="p">)</span>
     <span class="n">x_values</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">a</span><span class="p">)</span> <span class="o">*</span> <span class="n">x31_interp</span> <span class="o">+</span> <span class="n">a</span> <span class="o">*</span> <span class="n">x64_interp</span>
     
     <span class="c1"># y values</span>
-    <span class="n">y31_interp</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">InterpolatedUnivariateSpline</span><span class="p">(</span><span class="n">wl31</span><span class="p">,</span> <span class="n">y31</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">3</span><span class="p">)(</span><span class="n">wl31_interp</span><span class="p">)</span>
-    <span class="n">y64_interp</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">InterpolatedUnivariateSpline</span><span class="p">(</span><span class="n">wl64</span><span class="p">,</span> <span class="n">y64</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">3</span><span class="p">)(</span><span class="n">wl64_interp</span><span class="p">)</span>
+    <span class="n">y31_interp</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">interpolate</span><span class="o">.</span><span class="n">InterpolatedUnivariateSpline</span><span class="p">(</span><span class="n">wl31</span><span class="p">,</span> <span class="n">y31</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">3</span><span class="p">)(</span><span class="n">wl31_interp</span><span class="p">)</span>
+    <span class="n">y64_interp</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">interpolate</span><span class="o">.</span><span class="n">InterpolatedUnivariateSpline</span><span class="p">(</span><span class="n">wl64</span><span class="p">,</span> <span class="n">y64</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">3</span><span class="p">)(</span><span class="n">wl64_interp</span><span class="p">)</span>
     <span class="n">y_values</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">a</span><span class="p">)</span> <span class="o">*</span> <span class="n">y31_interp</span> <span class="o">+</span> <span class="n">a</span> <span class="o">*</span> <span class="n">y64_interp</span>
     
     <span class="c1"># z values</span>
@@ -1312,6 +1338,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Function to be optimised for determination of element a13 in the (non-renormalized) </span>
 <span class="sd">    transformation matrix of the linear transformation LMS --&gt; XYZ.</span>
+<span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        :a13: </span>
 <span class="sd">            | ndarray</span>
@@ -1339,6 +1366,7 @@
 <span class="sd">        :full_results: </span>
 <span class="sd">            | bool</span>
 <span class="sd">            | Return all results or just the computed error.</span>
+
 <span class="sd">    Returns:</span>
 <span class="sd">        :err: </span>
 <span class="sd">            | float</span>
@@ -1400,6 +1428,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compute the LMS cone fundamentals for given wavelengths, as linear values </span>
 <span class="sd">    to respective specified precisions.</span>
+<span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        :wls:</span>
 <span class="sd">            | ndarray</span>
@@ -1411,6 +1440,7 @@
 <span class="sd">            | The returned energy-based LMS values are given to the precision of</span>
 <span class="sd">            | 9 sign. figs. / 8 decimal points if &#39;True&#39;, and to the precision of</span>
 <span class="sd">            | 6 sign. figs. / 5 decimal points if &#39;False&#39;.</span>
+
 <span class="sd">    Returns:</span>
 <span class="sd">        :LMS:</span>
 <span class="sd">            | ndarray</span>
@@ -1433,6 +1463,7 @@
                 <span class="n">LMS_spec</span><span class="p">,</span> <span class="n">LMS_all</span><span class="p">,</span> <span class="n">LM_weights</span><span class="p">,</span> <span class="n">xyz_reference</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compute the CIE cone-fundamental-based XYZ tristimulus functions.</span>
+<span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        :L_spline, M_spline, S_spline:</span>
 <span class="sd">            | Spline-interpolation functions for the LMS cone fundamentals (on a linear scale).</span>
@@ -1456,6 +1487,7 @@
 <span class="sd">            | The spectral chromaticity coordinates of the reference system</span>
 <span class="sd">            | (obtained by shape-morphing (interpolation) between the CIE 1931</span>
 <span class="sd">            | standard and the CIE 1964 standard).</span>
+
 <span class="sd">    Returns:</span>
 <span class="sd">        :trans_mat:</span>
 <span class="sd">            | ndarray</span>
@@ -1622,7 +1654,7 @@
 <span class="sd">        :returns: </span>
 <span class="sd">            | - &#39;LMS&#39; [or &#39;XYZ&#39;]: ndarray with individual observer equal area-normalized </span>
 <span class="sd">            |           cone fundamentals. Wavelength have been added.</span>
-<span class="sd">                </span>
+<span class="sd">            |    </span>
 <span class="sd">            | [- &#39;M&#39;: lms to xyz conversion matrix</span>
 <span class="sd">            |  -  &#39;trans_lens&#39;: ndarray with lens transmission </span>
 <span class="sd">            |      (no interpolation)</span>
@@ -1704,9 +1736,9 @@
         <span class="c1"># =======================================================================</span>
         <span class="c1"># base:</span>
         <span class="p">(</span><span class="n">wl_all</span><span class="p">,</span> <span class="n">L_base_all</span><span class="p">,</span> <span class="n">M_base_all</span><span class="p">,</span> <span class="n">S_base_all</span><span class="p">)</span> <span class="o">=</span> <span class="n">LMS_base_all</span>
-        <span class="n">L_base_spline</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">InterpolatedUnivariateSpline</span><span class="p">(</span><span class="n">wl_all</span><span class="p">,</span> <span class="n">L_base_all</span><span class="p">)</span>
-        <span class="n">M_base_spline</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">InterpolatedUnivariateSpline</span><span class="p">(</span><span class="n">wl_all</span><span class="p">,</span> <span class="n">M_base_all</span><span class="p">)</span>
-        <span class="n">S_base_spline</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">InterpolatedUnivariateSpline</span><span class="p">(</span><span class="n">wl_all</span><span class="p">,</span> <span class="n">S_base_all</span><span class="p">)</span>
+        <span class="n">L_base_spline</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">interpolate</span><span class="o">.</span><span class="n">InterpolatedUnivariateSpline</span><span class="p">(</span><span class="n">wl_all</span><span class="p">,</span> <span class="n">L_base_all</span><span class="p">)</span>
+        <span class="n">M_base_spline</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">interpolate</span><span class="o">.</span><span class="n">InterpolatedUnivariateSpline</span><span class="p">(</span><span class="n">wl_all</span><span class="p">,</span> <span class="n">M_base_all</span><span class="p">)</span>
+        <span class="n">S_base_spline</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">interpolate</span><span class="o">.</span><span class="n">InterpolatedUnivariateSpline</span><span class="p">(</span><span class="n">wl_all</span><span class="p">,</span> <span class="n">S_base_all</span><span class="p">)</span>
             
         <span class="c1"># =======================================================================</span>
         <span class="c1"># Compute the LMS-base cone fundamentals </span>
@@ -1745,7 +1777,7 @@
 
             <span class="c1"># Create spline function for Vlambda:</span>
             <span class="n">wl_all</span><span class="p">,</span> <span class="n">V_std_all</span> <span class="o">=</span> <span class="n">V_std_all</span>
-            <span class="n">V_std_spline</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">InterpolatedUnivariateSpline</span><span class="p">(</span><span class="n">wl_all</span><span class="p">,</span> <span class="n">V_std_all</span><span class="p">)</span>
+            <span class="n">V_std_spline</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">interpolate</span><span class="o">.</span><span class="n">InterpolatedUnivariateSpline</span><span class="p">(</span><span class="n">wl_all</span><span class="p">,</span> <span class="n">V_std_all</span><span class="p">)</span>
             
             <span class="c1">#  Determine reference diagram</span>
             <span class="n">xyz_reference</span> <span class="o">=</span> <span class="n">_xyz_interpolated_reference_system</span><span class="p">(</span><span class="n">fieldsize</span><span class="p">,</span> <span class="n">_CMF</span><span class="p">[</span><span class="s1">&#39;1931_2&#39;</span><span class="p">][</span><span class="s1">&#39;bar&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">_CMF</span><span class="p">[</span><span class="s1">&#39;1964_10&#39;</span><span class="p">][</span><span class="s1">&#39;bar&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
@@ -1913,7 +1945,7 @@
 <span class="sd">        :returns: </span>
 <span class="sd">            | - &#39;LMS&#39; [or &#39;XYZ&#39;]: ndarray with individual observer equal area-normalized </span>
 <span class="sd">            |           cone fundamentals. Wavelength have been added.</span>
-<span class="sd">                </span>
+<span class="sd">            |   </span>
 <span class="sd">            | [- &#39;M&#39;: lms to xyz conversion matrix</span>
 <span class="sd">            |  -  &#39;trans_lens&#39;: ndarray with lens transmission </span>
 <span class="sd">            |      (no interpolation)</span>
@@ -2023,7 +2055,7 @@
 <span class="sd">            | list of observer ages or str, optional</span>
 <span class="sd">            | Defaults to 32 (cfr. CIE2006 CMFs)</span>
 <span class="sd">            | If &#39;us_census&#39;: use US population census of 2010 </span>
-<span class="sd">              to generate list_Age.</span>
+<span class="sd">            | to generate list_Age.</span>
 <span class="sd">        :fieldsize: </span>
 <span class="sd">            | fieldsize in degrees (between 2° and 10°), optional</span>
 <span class="sd">            | Defaults to 10°.</span>
@@ -2121,7 +2153,7 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Must request either &#39;lms&#39; or &#39;xyz&#39; in :out:.&quot;</span><span class="p">)</span>
         
-    <span class="n">LMS_All</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">wl</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">n_obs</span><span class="p">))</span>
+    <span class="n">LMS_All</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">wl</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">n_obs</span><span class="p">));</span> <span class="n">LMS_All</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
     
     <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_obs</span><span class="p">):</span>
         <span class="n">t_LMS</span><span class="p">,</span> <span class="n">t_trans_lens</span><span class="p">,</span> <span class="n">t_trans_macula</span><span class="p">,</span> <span class="n">t_sens_photopig</span> <span class="o">=</span> <span class="n">cie2006cmfsEx</span><span class="p">(</span><span class="n">age</span> <span class="o">=</span> <span class="n">var_age</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">fieldsize</span> <span class="o">=</span> <span class="n">fieldsize</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="n">wl</span><span class="p">,</span>\
@@ -2136,7 +2168,7 @@
         
     <span class="k">if</span> <span class="n">n_obs</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">LMS_All</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">LMS_All</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
-	
+    
     <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;xyz&#39;</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)):</span>
         <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;xyz&#39;</span><span class="p">,</span><span class="s1">&#39;LMS&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;XYZ&#39;</span><span class="p">,</span><span class="s1">&#39;LMS&#39;</span><span class="p">)</span>
     <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;lms&#39;</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)):</span>
@@ -2252,7 +2284,7 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Must request either &#39;lms&#39; or &#39;xyz&#39; in :out:.&quot;</span><span class="p">)</span>
 
-    <span class="n">LMS_All</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">wl</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">n_cat</span><span class="p">))</span> 
+    <span class="n">LMS_All</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">wl</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">n_cat</span><span class="p">));</span> <span class="n">LMS_All</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_cat</span><span class="p">):</span>
         <span class="n">t_LMS</span> <span class="o">=</span> <span class="n">cie2006cmfsEx</span><span class="p">(</span><span class="n">age</span> <span class="o">=</span> <span class="n">var_age</span><span class="p">[</span><span class="n">k</span><span class="p">],</span><span class="n">fieldsize</span> <span class="o">=</span> <span class="n">fieldsize</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="n">wl</span><span class="p">,</span>\
                               <span class="n">var_od_lens</span> <span class="o">=</span> <span class="n">vAll</span><span class="p">[</span><span class="s1">&#39;od_lens&#39;</span><span class="p">][</span><span class="n">k</span><span class="p">],</span>\
@@ -2275,7 +2307,7 @@
     
     <span class="k">if</span> <span class="n">n_cat</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">LMS_All</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">LMS_All</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
-	
+
     <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;xyz&#39;</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)):</span>
         <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;xyz&#39;</span><span class="p">,</span><span class="s1">&#39;LMS&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;XYZ&#39;</span><span class="p">,</span><span class="s1">&#39;LMS&#39;</span><span class="p">)</span>
     <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;lms&#39;</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)):</span>
@@ -2337,6 +2369,7 @@
 <span class="sd">            | None, optional</span>
 <span class="sd">            | None defaults to _LMS_TO_XYZ_METHOD</span>
 <span class="sd">            | Options: &#39;asano&#39; (see note below), &#39;cietc197&#39;</span>
+<span class="sd">            </span>
 <span class="sd">    Returns:</span>
 <span class="sd">        :returns:</span>
 <span class="sd">            | LMS </span>
@@ -2470,7 +2503,7 @@
 <span class="c1">#    plt.show()</span>
     
     <span class="c1"># Calculate new set of CMFs and calculate xyzw and cct, duv:</span>
-    <span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="n">spd_to_xyz</span><span class="p">,</span> <span class="n">_CIE_ILLUMINANTS</span><span class="p">,</span> <span class="n">xyz_to_cct_ohno</span>
+    <span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="n">spd_to_xyz</span><span class="p">,</span> <span class="n">_CIE_ILLUMINANTS</span><span class="p">,</span> <span class="n">xyz_to_cct_ohno</span>
     <span class="n">XYZb_All_CatObs</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span>  <span class="o">=</span> <span class="n">getCatObs</span><span class="p">(</span><span class="n">n_cat</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">fieldsize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="p">)</span>
     <span class="n">add_to_cmf_dict</span><span class="p">(</span><span class="n">bar</span> <span class="o">=</span> <span class="n">XYZb_All_CatObs</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;CatObs1&#39;</span><span class="p">,</span> <span class="n">K</span> <span class="o">=</span> <span class="mi">683</span><span class="p">)</span> 
     <span class="n">xyz2</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">_CIE_ILLUMINANTS</span><span class="p">[</span><span class="s1">&#39;F4&#39;</span><span class="p">],</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;1931_2&#39;</span><span class="p">)</span>
@@ -2508,25 +2541,16 @@
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../../../_static/doctools.js"></script>
-    
-
-  
-
-  <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

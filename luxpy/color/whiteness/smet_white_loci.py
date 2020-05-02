@@ -11,23 +11,22 @@ Module with Smet et al. (2018) neutral white loci
  
 References
 ----------
-    1. `Smet, K. A. G. (2018). 
-    Two Neutral White Illumination Loci Based on Unique White Rating and Degree of Chromatic Adaptation. 
-    LEUKOS, 14(2), 55–67.  
-    <https://doi.org/10.1080/15502724.2017.1385400>`_  
+    1. `Smet, K. A. G. (2018).Two Neutral White Illumination Loci Based on 
+    Unique White Rating and Degree of Chromatic Adaptation. 
+    LEUKOS, 14(2), 55–67. 
+    <https://doi.org/10.1080/15502724.2017.1385400>`_
     
-    2.`Smet, K., Deconinck, G., & Hanselaer, P. (2014). 
+    2. `Smet, K., Deconinck, G., & Hanselaer, P., (2014), 
     Chromaticity of unique white in object mode. 
     Optics Express, 22(21), 25830–25841. 
     <https://www.osapublishing.org/oe/abstract.cfm?uri=oe-22-21-25830>`_
     
-    3. `Smet, K.A.G.*, Zhai, Q., Luo, M.R., Hanselaer, P., (2017), 
+    3. `Smet, K.A.G., Zhai, Q., Luo, M.R., Hanselaer, P., (2017), 
     Study of chromatic adaptation using memory color matches, 
     Part II: colored illuminants, 
-    Opt. Express, 25(7), pp. 8350-8365.
+    Opt. Express, 25(7), pp. 8350-8365. 
     <https://www.osapublishing.org/oe/abstract.cfm?uri=oe-25-7-8350&origin=search)>`_
 
-Added Aug 02, 2019.
 """
 
 from luxpy import math, cat, xyz_to_Yuv, cri_ref, spd_to_xyz, xyz_to_cct
@@ -62,17 +61,18 @@ def xyz_to_neutrality_smet2018(xyz10, nlocitype = 'uw', uw_model = 'Linvar'):
             | ndarray with calculated neutrality
             
     References:
-        1.`Smet, K., Deconinck, G., & Hanselaer, P. (2014). 
+        1. `Smet, K., Deconinck, G., & Hanselaer, P., (2014), 
         Chromaticity of unique white in object mode. 
         Optics Express, 22(21), 25830–25841. 
         <https://www.osapublishing.org/oe/abstract.cfm?uri=oe-22-21-25830>`_
         
-        2. `Smet, K.A.G.*, Zhai, Q., Luo, M.R., Hanselaer, P., (2017), 
+        2. `Smet, K.A.G., Zhai, Q., Luo, M.R., Hanselaer, P., (2017), 
         Study of chromatic adaptation using memory color matches, 
         Part II: colored illuminants, 
-        Opt. Express, 25(7), pp. 8350-8365.
+        Opt. Express, 25(7), pp. 8350-8365. 
         <https://www.osapublishing.org/oe/abstract.cfm?uri=oe-25-7-8350&origin=search)>`_
     """
+    
     if nlocitype =='uw':
         uv = xyz_to_Yuv(xyz10)[...,1:]
         G0 = lambda up,vp,a: np.exp(-0.5 * (a[0]*(up-a[2])**2 + a[1]*(vp-a[3])**2 + 2*a[4]*(up-a[2])*(vp-a[3])))
@@ -99,19 +99,19 @@ def cct_to_neutral_loci_smet2018(cct, nlocitype = 'uw', out = 'duv,D'):
             | Specifies requested output (other options: 'duv', 'D').
             
     Returns:
-        :duv: ndarray with most neutral Duv10 value corresponding to the cct input.
-        :D: ndarray with the degree of neutrality at (cct, duv).
+        :duv: 
+            | ndarray with most neutral Duv10 value corresponding to the cct input.
+        :D: 
+            | ndarray with the degree of neutrality at (cct, duv).
         
     References:
-         1. `Smet, K. A. G. (2018). 
+        1. `Smet, K.A.G., (2018), 
         Two Neutral White Illumination Loci Based on Unique White Rating and Degree of Chromatic Adaptation. 
-        LEUKOS, 14(2), 55–67.  
-        <https://doi.org/10.1080/15502724.2017.1385400>`_  
-        
+        LEUKOS, 14(2), 55–67. <https://doi.org/10.1080/15502724.2017.1385400>`_
+
     Notes:
-        1. Duv is specified in the CIE 1960 u10v10 chromatity diagram as the 
-        models were developed using CIE 1964 10° tristimulus, chromaticity and CCT values.
-        2. The parameter +0.0172 in Eq. 4b should be -0.0172
+        1. Duv is specified in the CIE 1960 u10v10 chromatity diagram as the models were developed using CIE 1964 10° tristimulus, chromaticity and CCT values.
+        2. The parameter +0.0172 in Eq. 4b should be -0.0172.
     """
     if nlocitype =='uw':
         duv = 0.0202 * np.log(cct/3325)*np.exp(-1.445*np.log(cct/3325)**2) - 0.0137
@@ -130,8 +130,8 @@ def cct_to_neutral_loci_smet2018(cct, nlocitype = 'uw', out = 'duv,D'):
         return D
     else:
         raise Exception('smet_white_loci(): Requested output unrecognized.')
-        
-    
+
+
 if __name__ == '__main__':
     ccts = np.array([6605,6410,6800])
     BBs = cri_ref(ccts, ref_type = ['BB','BB','BB'])
@@ -142,7 +142,5 @@ if __name__ == '__main__':
     Dn_ca = xyz_to_neutrality_smet2018(xyz10, nlocitype='ca')
     Duv10_uw, Dn_uw2 = cct_to_neutral_loci_smet2018(ccts, nlocitype='uw', out='duv,D')
     Duv10_ca, Dn_ca2 = cct_to_neutral_loci_smet2018(ccts, nlocitype='ca', out='duv,D')
-    
-    
-    
+
 

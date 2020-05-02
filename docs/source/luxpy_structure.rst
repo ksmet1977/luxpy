@@ -6,7 +6,7 @@ Luxpy package structure
    :caption: Luxpy package structure: 
    
    utils.rst
+   math.rst
    spectrum.rst
    color.rst
-   classes.rst
    toolboxes.rst

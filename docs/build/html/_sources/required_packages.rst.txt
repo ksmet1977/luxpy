@@ -4,6 +4,8 @@ Core
 ---- 
  * import os 
  * import warnings 
+ * import pathlib
+ * import importlib
  * from collections import OrderedDict as odict 
  * from mpl_toolkits.mplot3d import Axes3D 
  * import colorsys 
@@ -13,6 +15,10 @@ Core
  * import tkinter
  * import ctypes
  * import platform
+ * import subprocess
+ * import cProfile
+ * import pstats
+ * import io
 
 
 3e party dependencies (automatic install)
@@ -21,10 +27,11 @@ Core
  * import pandas as pd 
  * import matplotlib.pyplot as plt 
  * import scipy as sp 
- * from scipy import interpolate 
- * from scipy.optimize import minimize 
- * from scipy.spatial import cKDTree 
- * from imageio import imsave
+ * import imageio
+ 
+3e party dependencies (automatic install on import)
+---------------------------------------------------
+ * import pyswarms (when importing particleswarms from math)
  
  
 3e party dependencies (requiring manual install)

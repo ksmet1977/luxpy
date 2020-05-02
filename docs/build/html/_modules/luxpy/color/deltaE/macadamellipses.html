@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.color.deltaE.macadamellipses &mdash; LuxPy 1.4.18 documentation</title>
+  <title>luxpy.color.deltaE.macadamellipses &mdash; LuxPy 1.5.0 documentation</title>
   
 
   
@@ -17,32 +17,34 @@
   
 
   
+  <script type="text/javascript" src="../../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
-
-  
-  <script src="../../../../_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -56,7 +58,7 @@
             
             
               <div class="version">
-                1.4.18
+                1.5.0
               </div>
             
           
@@ -177,12 +179,9 @@
 
 <span class="sd">.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="c1">#from luxpy import (np, plt, math, _CIEOBS,_CSPACE_AXES, _CMF, _EPS, colortf, \</span>
-<span class="c1">#                   cKDTree, plotSL, Yxy_to_xyz, xyz_to_srgb, asplit,\</span>
-<span class="c1">#                   plot_chromaticity_diagram_colors, plotellipse)</span>
 
-<span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="p">(</span><span class="n">np</span><span class="p">,</span> <span class="n">plt</span><span class="p">,</span> <span class="n">math</span><span class="p">,</span> <span class="n">cKDTree</span><span class="p">,</span> <span class="n">plotSL</span><span class="p">,</span> <span class="n">plot_chromaticity_diagram_colors</span><span class="p">,</span> <span class="n">plotellipse</span><span class="p">)</span>
-
+<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="p">(</span><span class="n">math</span><span class="p">,</span> <span class="n">plotSL</span><span class="p">,</span> <span class="n">plot_chromaticity_diagram_colors</span><span class="p">,</span> <span class="n">plotellipse</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">luxpy.utils</span> <span class="kn">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">sp</span><span class="p">,</span> <span class="n">plt</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;get_macadam_ellipse&#39;</span><span class="p">]</span>
 
@@ -218,32 +217,32 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># list of MacAdam ellipses (x10)</span>
     <span class="n">v_mac</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">([</span>
-    <span class="p">[</span><span class="mf">0.16</span><span class="p">,</span>	<span class="mf">0.057</span><span class="p">,</span>	<span class="mf">0.0085</span><span class="p">,</span>	<span class="mf">0.0035</span><span class="p">,</span>	<span class="mf">62.5</span><span class="p">],</span>
-    <span class="p">[</span><span class="mf">0.187</span><span class="p">,</span>	<span class="mf">0.118</span><span class="p">,</span>	<span class="mf">0.022</span><span class="p">,</span>	<span class="mf">0.0055</span><span class="p">,</span>	<span class="mi">77</span><span class="p">],</span>
-    <span class="p">[</span><span class="mf">0.253</span><span class="p">,</span>	<span class="mf">0.125</span><span class="p">,</span>	<span class="mf">0.025</span><span class="p">,</span>	<span class="mf">0.005</span><span class="p">,</span>	<span class="mf">55.5</span><span class="p">],</span>
-    <span class="p">[</span><span class="mf">0.15</span><span class="p">,</span>	<span class="mf">0.68</span><span class="p">,</span>	   <span class="mf">0.096</span><span class="p">,</span>	<span class="mf">0.023</span><span class="p">,</span>	<span class="mi">105</span><span class="p">],</span>
-    <span class="p">[</span><span class="mf">0.131</span><span class="p">,</span>	<span class="mf">0.521</span><span class="p">,</span>	<span class="mf">0.047</span><span class="p">,</span>	<span class="mf">0.02</span><span class="p">,</span>	   <span class="mf">112.5</span><span class="p">],</span>
-    <span class="p">[</span><span class="mf">0.212</span><span class="p">,</span>	<span class="mf">0.55</span><span class="p">,</span>	   <span class="mf">0.058</span><span class="p">,</span>	<span class="mf">0.023</span><span class="p">,</span>	<span class="mi">100</span><span class="p">],</span>
-    <span class="p">[</span><span class="mf">0.258</span><span class="p">,</span>	<span class="mf">0.45</span><span class="p">,</span>	   <span class="mf">0.05</span><span class="p">,</span>	   <span class="mf">0.02</span><span class="p">,</span>	   <span class="mi">92</span><span class="p">],</span>
-    <span class="p">[</span><span class="mf">0.152</span><span class="p">,</span>	<span class="mf">0.365</span><span class="p">,</span>	<span class="mf">0.038</span><span class="p">,</span>	<span class="mf">0.019</span><span class="p">,</span>	<span class="mi">110</span><span class="p">],</span>
-    <span class="p">[</span><span class="mf">0.28</span><span class="p">,</span>	<span class="mf">0.385</span><span class="p">,</span>	<span class="mf">0.04</span><span class="p">,</span>	   <span class="mf">0.015</span><span class="p">,</span>	<span class="mf">75.5</span><span class="p">],</span>
-    <span class="p">[</span><span class="mf">0.38</span><span class="p">,</span>	<span class="mf">0.498</span><span class="p">,</span>	<span class="mf">0.044</span><span class="p">,</span>	<span class="mf">0.012</span><span class="p">,</span>	<span class="mi">70</span><span class="p">],</span>
-    <span class="p">[</span><span class="mf">0.16</span><span class="p">,</span>	<span class="mf">0.2</span><span class="p">,</span>	   <span class="mf">0.021</span><span class="p">,</span>	<span class="mf">0.0095</span><span class="p">,</span>	<span class="mi">104</span><span class="p">],</span>
-    <span class="p">[</span><span class="mf">0.228</span><span class="p">,</span>	<span class="mf">0.25</span><span class="p">,</span>	   <span class="mf">0.031</span><span class="p">,</span>	<span class="mf">0.009</span><span class="p">,</span>	<span class="mi">72</span><span class="p">],</span>
-    <span class="p">[</span><span class="mf">0.305</span><span class="p">,</span>	<span class="mf">0.323</span><span class="p">,</span>	<span class="mf">0.023</span><span class="p">,</span>	<span class="mf">0.009</span><span class="p">,</span>	<span class="mi">58</span><span class="p">],</span>
-    <span class="p">[</span><span class="mf">0.385</span><span class="p">,</span>	<span class="mf">0.393</span><span class="p">,</span>	<span class="mf">0.038</span><span class="p">,</span>	<span class="mf">0.016</span><span class="p">,</span>	<span class="mf">65.5</span><span class="p">],</span>
-    <span class="p">[</span><span class="mf">0.472</span><span class="p">,</span>	<span class="mf">0.399</span><span class="p">,</span>	<span class="mf">0.032</span><span class="p">,</span>	<span class="mf">0.014</span><span class="p">,</span>	<span class="mi">51</span><span class="p">],</span>
-    <span class="p">[</span><span class="mf">0.527</span><span class="p">,</span>	<span class="mf">0.35</span><span class="p">,</span>	   <span class="mf">0.026</span><span class="p">,</span>	<span class="mf">0.013</span><span class="p">,</span>	<span class="mi">20</span><span class="p">],</span>
-    <span class="p">[</span><span class="mf">0.475</span><span class="p">,</span>	<span class="mf">0.3</span><span class="p">,</span>	   <span class="mf">0.029</span><span class="p">,</span>	<span class="mf">0.011</span><span class="p">,</span>	<span class="mf">28.5</span><span class="p">],</span>
-    <span class="p">[</span><span class="mf">0.51</span><span class="p">,</span>	<span class="mf">0.236</span><span class="p">,</span>	<span class="mf">0.024</span><span class="p">,</span>	<span class="mf">0.012</span><span class="p">,</span>	<span class="mf">29.5</span><span class="p">],</span>
-    <span class="p">[</span><span class="mf">0.596</span><span class="p">,</span>	<span class="mf">0.283</span><span class="p">,</span>	<span class="mf">0.026</span><span class="p">,</span>	<span class="mf">0.013</span><span class="p">,</span>	<span class="mi">13</span><span class="p">],</span>
-    <span class="p">[</span><span class="mf">0.344</span><span class="p">,</span>	<span class="mf">0.284</span><span class="p">,</span>	<span class="mf">0.023</span><span class="p">,</span>	<span class="mf">0.009</span><span class="p">,</span>	<span class="mi">60</span><span class="p">],</span>
-    <span class="p">[</span><span class="mf">0.39</span><span class="p">,</span>	<span class="mf">0.237</span><span class="p">,</span>	<span class="mf">0.025</span><span class="p">,</span>	<span class="mf">0.01</span><span class="p">,</span>	   <span class="mi">47</span><span class="p">],</span>
-    <span class="p">[</span><span class="mf">0.441</span><span class="p">,</span>	<span class="mf">0.198</span><span class="p">,</span>	<span class="mf">0.028</span><span class="p">,</span>	<span class="mf">0.0095</span><span class="p">,</span>	<span class="mf">34.5</span><span class="p">],</span>
-    <span class="p">[</span><span class="mf">0.278</span><span class="p">,</span>	<span class="mf">0.223</span><span class="p">,</span>	<span class="mf">0.024</span><span class="p">,</span>	<span class="mf">0.0055</span><span class="p">,</span>	<span class="mf">57.5</span><span class="p">],</span>
-    <span class="p">[</span><span class="mf">0.3</span><span class="p">,</span>	<span class="mf">0.163</span><span class="p">,</span>	<span class="mf">0.029</span><span class="p">,</span>	<span class="mf">0.006</span><span class="p">,</span>	<span class="mi">54</span><span class="p">],</span>
-    <span class="p">[</span><span class="mf">0.365</span><span class="p">,</span>	<span class="mf">0.153</span><span class="p">,</span>	<span class="mf">0.036</span><span class="p">,</span>	<span class="mf">0.0095</span><span class="p">,</span>	<span class="mi">40</span><span class="p">]</span>
-    <span class="p">])</span>
+         <span class="p">[</span><span class="mf">0.16</span><span class="p">,</span> <span class="mf">0.057</span><span class="p">,</span> <span class="mf">0.0085</span><span class="p">,</span> <span class="mf">0.0035</span><span class="p">,</span> <span class="mf">62.5</span><span class="p">],</span>
+         <span class="p">[</span><span class="mf">0.187</span><span class="p">,</span> <span class="mf">0.118</span><span class="p">,</span> <span class="mf">0.022</span><span class="p">,</span> <span class="mf">0.0055</span><span class="p">,</span> <span class="mi">77</span><span class="p">],</span>
+         <span class="p">[</span><span class="mf">0.253</span><span class="p">,</span> <span class="mf">0.125</span><span class="p">,</span> <span class="mf">0.025</span><span class="p">,</span> <span class="mf">0.005</span><span class="p">,</span> <span class="mf">55.5</span><span class="p">],</span>
+         <span class="p">[</span><span class="mf">0.15</span><span class="p">,</span> <span class="mf">0.68</span><span class="p">,</span> <span class="mf">0.096</span><span class="p">,</span> <span class="mf">0.023</span><span class="p">,</span> <span class="mi">105</span><span class="p">],</span>
+         <span class="p">[</span><span class="mf">0.131</span><span class="p">,</span> <span class="mf">0.521</span><span class="p">,</span> <span class="mf">0.047</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">,</span> <span class="mf">112.5</span><span class="p">],</span>
+         <span class="p">[</span><span class="mf">0.212</span><span class="p">,</span> <span class="mf">0.55</span><span class="p">,</span> <span class="mf">0.058</span><span class="p">,</span> <span class="mf">0.023</span><span class="p">,</span> <span class="mi">100</span><span class="p">],</span>
+         <span class="p">[</span><span class="mf">0.258</span><span class="p">,</span> <span class="mf">0.45</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">,</span> <span class="mi">92</span><span class="p">],</span>
+         <span class="p">[</span><span class="mf">0.152</span><span class="p">,</span> <span class="mf">0.365</span><span class="p">,</span> <span class="mf">0.038</span><span class="p">,</span> <span class="mf">0.019</span><span class="p">,</span> <span class="mi">110</span><span class="p">],</span>
+         <span class="p">[</span><span class="mf">0.28</span><span class="p">,</span> <span class="mf">0.385</span><span class="p">,</span> <span class="mf">0.04</span><span class="p">,</span> <span class="mf">0.015</span><span class="p">,</span> <span class="mf">75.5</span><span class="p">],</span>
+         <span class="p">[</span><span class="mf">0.38</span><span class="p">,</span> <span class="mf">0.498</span><span class="p">,</span> <span class="mf">0.044</span><span class="p">,</span> <span class="mf">0.012</span><span class="p">,</span> <span class="mi">70</span><span class="p">],</span>
+         <span class="p">[</span><span class="mf">0.16</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.021</span><span class="p">,</span> <span class="mf">0.0095</span><span class="p">,</span> <span class="mi">104</span><span class="p">],</span>
+         <span class="p">[</span><span class="mf">0.228</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.031</span><span class="p">,</span> <span class="mf">0.009</span><span class="p">,</span> <span class="mi">72</span><span class="p">],</span>
+         <span class="p">[</span><span class="mf">0.305</span><span class="p">,</span> <span class="mf">0.323</span><span class="p">,</span> <span class="mf">0.023</span><span class="p">,</span> <span class="mf">0.009</span><span class="p">,</span> <span class="mi">58</span><span class="p">],</span>
+         <span class="p">[</span><span class="mf">0.385</span><span class="p">,</span> <span class="mf">0.393</span><span class="p">,</span> <span class="mf">0.038</span><span class="p">,</span> <span class="mf">0.016</span><span class="p">,</span> <span class="mf">65.5</span><span class="p">],</span>
+         <span class="p">[</span><span class="mf">0.472</span><span class="p">,</span> <span class="mf">0.399</span><span class="p">,</span> <span class="mf">0.032</span><span class="p">,</span> <span class="mf">0.014</span><span class="p">,</span> <span class="mi">51</span><span class="p">],</span>
+         <span class="p">[</span><span class="mf">0.527</span><span class="p">,</span> <span class="mf">0.35</span><span class="p">,</span> <span class="mf">0.026</span><span class="p">,</span> <span class="mf">0.013</span><span class="p">,</span> <span class="mi">20</span><span class="p">],</span>
+         <span class="p">[</span><span class="mf">0.475</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.029</span><span class="p">,</span> <span class="mf">0.011</span><span class="p">,</span> <span class="mf">28.5</span><span class="p">],</span>
+         <span class="p">[</span><span class="mf">0.51</span><span class="p">,</span> <span class="mf">0.236</span><span class="p">,</span> <span class="mf">0.024</span><span class="p">,</span> <span class="mf">0.012</span><span class="p">,</span> <span class="mf">29.5</span><span class="p">],</span>
+         <span class="p">[</span><span class="mf">0.596</span><span class="p">,</span> <span class="mf">0.283</span><span class="p">,</span> <span class="mf">0.026</span><span class="p">,</span> <span class="mf">0.013</span><span class="p">,</span> <span class="mi">13</span><span class="p">],</span>
+         <span class="p">[</span><span class="mf">0.344</span><span class="p">,</span> <span class="mf">0.284</span><span class="p">,</span> <span class="mf">0.023</span><span class="p">,</span> <span class="mf">0.009</span><span class="p">,</span> <span class="mi">60</span><span class="p">],</span>
+         <span class="p">[</span><span class="mf">0.39</span><span class="p">,</span> <span class="mf">0.237</span><span class="p">,</span> <span class="mf">0.025</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mi">47</span><span class="p">],</span>
+         <span class="p">[</span><span class="mf">0.441</span><span class="p">,</span> <span class="mf">0.198</span><span class="p">,</span> <span class="mf">0.028</span><span class="p">,</span> <span class="mf">0.0095</span><span class="p">,</span> <span class="mf">34.5</span><span class="p">],</span>
+         <span class="p">[</span><span class="mf">0.278</span><span class="p">,</span> <span class="mf">0.223</span><span class="p">,</span> <span class="mf">0.024</span><span class="p">,</span> <span class="mf">0.0055</span><span class="p">,</span> <span class="mf">57.5</span><span class="p">],</span>
+         <span class="p">[</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.163</span><span class="p">,</span> <span class="mf">0.029</span><span class="p">,</span> <span class="mf">0.006</span><span class="p">,</span> <span class="mi">54</span><span class="p">],</span>
+         <span class="p">[</span><span class="mf">0.365</span><span class="p">,</span> <span class="mf">0.153</span><span class="p">,</span> <span class="mf">0.036</span><span class="p">,</span> <span class="mf">0.0095</span><span class="p">,</span> <span class="mi">40</span><span class="p">]</span>
+         <span class="p">])</span>
     
     <span class="c1"># convert to v-format ([a,b, xc, yc, theta]):</span>
     <span class="n">v_mac</span> <span class="o">=</span> <span class="n">v_mac</span><span class="p">[:,[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">]]</span>
@@ -261,7 +260,7 @@
             <span class="n">cik_long</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">cik</span><span class="p">[:,</span><span class="mi">0</span><span class="p">,:],</span><span class="n">cik</span><span class="p">[:,</span><span class="mi">1</span><span class="p">,:]))</span>
         
         <span class="c1"># Calculate k_neighbours closest ellipses to xy:</span>
-        <span class="n">tree</span> <span class="o">=</span> <span class="n">cKDTree</span><span class="p">(</span><span class="n">v_mac</span><span class="p">[:,</span><span class="mi">2</span><span class="p">:</span><span class="mi">4</span><span class="p">],</span> <span class="n">copy_data</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">tree</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">spatial</span><span class="o">.</span><span class="n">cKDTree</span><span class="p">(</span><span class="n">v_mac</span><span class="p">[:,</span><span class="mi">2</span><span class="p">:</span><span class="mi">4</span><span class="p">],</span> <span class="n">copy_data</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
         <span class="n">d</span><span class="p">,</span> <span class="n">inds</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">xy</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="n">k_neighbours</span><span class="p">)</span>
     
         <span class="k">if</span> <span class="n">k_neighbours</span>  <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
@@ -340,25 +339,16 @@
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../../../_static/doctools.js"></script>
-    
-
-  
-
-  <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

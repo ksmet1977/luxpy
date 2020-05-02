@@ -1239,7 +1239,7 @@ def spd_optimizer_2_3(optimizer_type = '2mixer', \
     | pairs (2) or trio's (3) of components to intermediate sources until only 3
     | remain. Color3mixer can then be called to calculate required fluxes to
     | obtain target chromaticity and fluxes are then back-calculated.
-         
+
     Args:
         :optimizer_type: 
             | '2mixer' or '3mixer' or 'user', optional
@@ -1280,7 +1280,6 @@ def spd_optimizer_2_3(optimizer_type = '2mixer', \
             | _WL3, optional
             | Wavelengths used in optimization when :component_data: is not 
             | ndarray with spectral data.
-
         :Yxy_target:
             | np2d([100,1/3,1/3]), optional
             | ndarray with Yxy chromaticity of target.
@@ -1318,7 +1317,7 @@ def spd_optimizer_2_3(optimizer_type = '2mixer', \
         :verbosity:
             | 0, optional
             | If > 0: print intermediate results.
-            
+
     Returns:
         :returns:
             | M, spd_opt, obj_vals

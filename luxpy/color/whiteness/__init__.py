@@ -14,9 +14,9 @@ References
     1. `Smet, K. A. G. (2018). 
     Two Neutral White Illumination Loci Based on Unique White Rating and Degree of Chromatic Adaptation. 
     LEUKOS, 14(2), 55–67.  
-    <https://doi.org/10.1080/15502724.2017.1385400>`_  
+    <https://doi.org/10.1080/15502724.2017.1385400>`_
     
-    2.`Smet, K., Deconinck, G., & Hanselaer, P. (2014). 
+    2. `Smet, K., Deconinck, G., & Hanselaer, P., (2014), 
     Chromaticity of unique white in object mode. 
     Optics Express, 22(21), 25830–25841. 
     <https://www.osapublishing.org/oe/abstract.cfm?uri=oe-22-21-25830>`_

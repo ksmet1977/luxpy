@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.spectrum.basics.spectral &mdash; LuxPy 1.4.18 documentation</title>
+  <title>luxpy.spectrum.basics.spectral &mdash; LuxPy 1.5.0 documentation</title>
   
 
   
@@ -17,32 +17,34 @@
   
 
   
+  <script type="text/javascript" src="../../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
-
-  
-  <script src="../../../../_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -56,7 +58,7 @@
             
             
               <div class="version">
-                1.4.18
+                1.5.0
               </div>
             
           
@@ -226,7 +228,7 @@
 <span class="sd">             </span>
 <span class="sd"> :daylightlocus(): Calculates daylight chromaticity from cct. </span>
 
-<span class="sd"> :daylightphase(): Calculate daylight phase spectrum         </span>
+<span class="sd"> :daylightphase(): Calculate daylight phase spectrum.</span>
 <span class="sd">         </span>
 <span class="sd"> :cri_ref(): Calculates a reference illuminant spectrum based on cct for color </span>
 <span class="sd">             rendering index calculations.</span>
@@ -234,7 +236,10 @@
 <span class="sd">             `cie224:2017, CIE 2017 Colour Fidelity Index for accurate scientific use. (2017), ISBN 978-3-902842-61-9. &lt;http://www.cie.co.at/index.php?i_ca_id=1027&gt;`_,</span>
 <span class="sd">             `IES-TM-30-15: Method for Evaluating Light Source Color Rendition. New York, NY: The Illuminating Engineering Society of North America. &lt;https://www.ies.org/store/technical-memoranda/ies-method-for-evaluating-light-source-color-rendition/&gt;`_</span>
 <span class="sd"> </span>
-<span class="sd">    </span>
+<span class="sd"> :detect_peakwl(): Detect peak wavelengths and fwhm of peaks in spectrum spd.   </span>
+
+<span class="sd"> :spd_to_indoor(): Convert spd to indoor variant by multiplying it with the CIE spectral transmission for glass. </span>
+
 <span class="sd">References</span>
 <span class="sd">----------</span>
 
@@ -248,17 +253,19 @@
 <span class="sd">    New York, NY: The Illuminating Engineering Society of North America. </span>
 <span class="sd">    &lt;https://www.ies.org/store/technical-memoranda/ies-method-for-evaluating-light-source-color-rendition/&gt;`_</span>
 
-
 <span class="sd">.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="c1">#--------------------------------------------------------------------------------------------------</span>
-<span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">pd</span><span class="p">,</span> <span class="n">interpolate</span><span class="p">,</span> <span class="n">_PKG_PATH</span><span class="p">,</span> <span class="n">_SEP</span><span class="p">,</span> <span class="n">_EPS</span><span class="p">,</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">np2d</span><span class="p">,</span> <span class="n">getdata</span><span class="p">,</span> <span class="n">math</span>
-<span class="kn">from</span> <span class="nn">.cmf</span> <span class="k">import</span> <span class="n">_CMF</span>
+<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span>  <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">math</span>
+<span class="kn">from</span> <span class="nn">luxpy.utils</span> <span class="kn">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">pd</span><span class="p">,</span> <span class="n">sp</span><span class="p">,</span> <span class="n">plt</span><span class="p">,</span> <span class="n">_PKG_PATH</span><span class="p">,</span> <span class="n">_SEP</span><span class="p">,</span> <span class="n">_EPS</span><span class="p">,</span> <span class="n">np2d</span><span class="p">,</span> <span class="n">getdata</span>
+<span class="kn">from</span> <span class="nn">.cmf</span> <span class="kn">import</span> <span class="n">_CMF</span>
+<span class="kn">from</span> <span class="nn">.spectral_databases</span> <span class="kn">import</span> <span class="n">_CIE_GLASS_ID</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">signal</span>
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;_WL3&#39;</span><span class="p">,</span><span class="s1">&#39;_BB&#39;</span><span class="p">,</span><span class="s1">&#39;_S012_DAYLIGHTPHASE&#39;</span><span class="p">,</span><span class="s1">&#39;_INTERP_TYPES&#39;</span><span class="p">,</span><span class="s1">&#39;_S_INTERP_TYPE&#39;</span><span class="p">,</span> <span class="s1">&#39;_R_INTERP_TYPE&#39;</span><span class="p">,</span><span class="s1">&#39;_CRI_REF_TYPE&#39;</span><span class="p">,</span>
            <span class="s1">&#39;_CRI_REF_TYPES&#39;</span><span class="p">,</span> <span class="s1">&#39;getwlr&#39;</span><span class="p">,</span><span class="s1">&#39;getwld&#39;</span><span class="p">,</span><span class="s1">&#39;spd_normalize&#39;</span><span class="p">,</span><span class="s1">&#39;cie_interp&#39;</span><span class="p">,</span><span class="s1">&#39;spd&#39;</span><span class="p">,</span><span class="s1">&#39;xyzbar&#39;</span><span class="p">,</span> <span class="s1">&#39;vlbar&#39;</span><span class="p">,</span> 
            <span class="s1">&#39;spd_to_xyz&#39;</span><span class="p">,</span> <span class="s1">&#39;spd_to_ler&#39;</span><span class="p">,</span> <span class="s1">&#39;spd_to_power&#39;</span><span class="p">,</span>
-           <span class="s1">&#39;blackbody&#39;</span><span class="p">,</span><span class="s1">&#39;daylightlocus&#39;</span><span class="p">,</span><span class="s1">&#39;daylightphase&#39;</span><span class="p">,</span><span class="s1">&#39;cri_ref&#39;</span><span class="p">]</span>
+           <span class="s1">&#39;blackbody&#39;</span><span class="p">,</span><span class="s1">&#39;daylightlocus&#39;</span><span class="p">,</span><span class="s1">&#39;daylightphase&#39;</span><span class="p">,</span><span class="s1">&#39;cri_ref&#39;</span><span class="p">,</span><span class="s1">&#39;detect_peakwl&#39;</span><span class="p">,</span> <span class="s1">&#39;spd_to_indoor&#39;</span><span class="p">]</span>
 
 
 <span class="c1">#--------------------------------------------------------------------------------------------------</span>
@@ -304,16 +311,12 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        :returns: </span>
 <span class="sd">            | ndarray (.shape = (n,)) with n wavelengths ranging from</span>
-<span class="sd">              start to stop, with wavelength interval equal to spacing.</span>
+<span class="sd">            | start to stop, with wavelength interval equal to spacing.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">wl3</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">wl3</span> <span class="o">=</span> <span class="n">_WL3</span>
+    <span class="k">if</span> <span class="n">wl3</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">wl3</span> <span class="o">=</span> <span class="n">_WL3</span>
     
     <span class="c1"># Wavelength definition:</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">wl3</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span> <span class="c1"># define wavelengths from [start = l0, stop = ln, spacing = dl]</span>
-        <span class="n">wl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">wl3</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">wl3</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">((</span><span class="n">wl3</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">wl3</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">wl3</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span><span class="o">/</span><span class="n">wl3</span><span class="p">[</span><span class="mi">2</span><span class="p">])))</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">wl</span> <span class="o">=</span> <span class="n">wl3</span>
+    <span class="n">wl</span> <span class="o">=</span> <span class="n">wl3</span> <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">wl3</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">)</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">wl3</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">wl3</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">((</span><span class="n">wl3</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">wl3</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">wl3</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span><span class="o">/</span><span class="n">wl3</span><span class="p">[</span><span class="mi">2</span><span class="p">])))</span> <span class="c1"># define wavelengths from [start = l0, stop = ln, spacing = dl]</span>
     
     <span class="k">return</span> <span class="n">wl</span></div>
 
@@ -331,9 +334,9 @@
 <span class="sd">            | - float:  for equal wavelength spacings</span>
 <span class="sd">            | - ndarray (.shape = (n,)): for unequal wavelength spacings</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">d</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">wl</span><span class="p">)</span>
-    <span class="n">dl</span><span class="o">=</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="mf">2.0</span><span class="p">,</span><span class="n">d</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="mf">0.0</span><span class="p">,</span><span class="n">d</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">/</span><span class="mf">2.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">)))</span>
-    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">dl</span><span class="p">,</span><span class="n">dl</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">shape</span><span class="p">)):</span> <span class="n">dl</span><span class="o">=</span><span class="n">dl</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">wl</span><span class="p">)</span>
+    <span class="n">dl</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="mf">2.0</span><span class="p">,</span><span class="n">d</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="mf">0.0</span><span class="p">,</span><span class="n">d</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">/</span><span class="mf">2.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">)))</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">dl</span><span class="p">,</span><span class="n">dl</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">shape</span><span class="p">)):</span> <span class="n">dl</span> <span class="o">=</span> <span class="n">dl</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">dl</span></div>
 
 
@@ -358,33 +361,28 @@
 <span class="sd">        :norm_f:</span>
 <span class="sd">            | 1, optional</span>
 <span class="sd">            | Normalization factor that determines the size of normalization </span>
-<span class="sd">              for &#39;max&#39; and &#39;area&#39; </span>
-<span class="sd">              or which wavelength is normalized to 1 for &#39;lambda&#39; option.</span>
+<span class="sd">            | for &#39;max&#39; and &#39;area&#39; </span>
+<span class="sd">            | or which wavelength is normalized to 1 for &#39;lambda&#39; option.</span>
 <span class="sd">        :wl: </span>
 <span class="sd">            | True or False, optional </span>
 <span class="sd">            | If True, the first column of data contains wavelengths.</span>
 <span class="sd">        :cieobs:</span>
 <span class="sd">            | _CIEOBS or str, optional</span>
 <span class="sd">            | Type of cmf set to use for normalization using photometric units </span>
-<span class="sd">              (norm_type == &#39;pu&#39;)</span>
+<span class="sd">            | (norm_type == &#39;pu&#39;)</span>
 <span class="sd">    </span>
 <span class="sd">    Returns:</span>
 <span class="sd">        :returns: </span>
 <span class="sd">            | ndarray with normalized data.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">norm_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">norm_type</span><span class="p">,</span><span class="nb">list</span><span class="p">):</span>
-            <span class="n">norm_type</span> <span class="o">=</span> <span class="p">[</span><span class="n">norm_type</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">norm_type</span><span class="p">,</span><span class="nb">list</span><span class="p">):</span> <span class="n">norm_type</span> <span class="o">=</span> <span class="p">[</span><span class="n">norm_type</span><span class="p">]</span>
+        
         <span class="k">if</span> <span class="n">norm_f</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">norm_f</span><span class="p">,</span><span class="nb">list</span><span class="p">):</span>
-                <span class="n">norm_f</span> <span class="o">=</span> <span class="p">[</span><span class="n">norm_f</span><span class="p">]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">norm_f</span><span class="p">,</span><span class="nb">list</span><span class="p">):</span> <span class="n">norm_f</span> <span class="o">=</span> <span class="p">[</span><span class="n">norm_f</span><span class="p">]</span>
                 
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;lambda&#39;</span> <span class="ow">in</span> <span class="n">norm_type</span><span class="p">):</span>
-            <span class="n">wl</span> <span class="o">=</span> <span class="kc">True</span> <span class="c1"># for lambda normalization wl MUST be first column</span>
-            <span class="n">wlr</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            
-        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;qu&#39;</span> <span class="ow">in</span> <span class="n">norm_type</span><span class="p">):</span>
-            <span class="n">wl</span> <span class="o">=</span> <span class="kc">True</span> <span class="c1"># for &#39;qu&#39; (quantal) normalization wl MUST be first column</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;lambda&#39;</span> <span class="ow">in</span> <span class="n">norm_type</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="s1">&#39;qu&#39;</span> <span class="ow">in</span> <span class="n">norm_type</span><span class="p">):</span>
+            <span class="n">wl</span> <span class="o">=</span> <span class="kc">True</span> <span class="c1"># for lambda &amp; &#39;qu&#39; normalization wl MUST be first column</span>
             <span class="n">wlr</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             
         <span class="k">if</span> <span class="p">((</span><span class="s1">&#39;area&#39;</span> <span class="ow">in</span> <span class="n">norm_type</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="s1">&#39;ru&#39;</span> <span class="ow">in</span> <span class="n">norm_type</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="s1">&#39;pu&#39;</span> <span class="ow">in</span> <span class="n">norm_type</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="s1">&#39;pusa&#39;</span> <span class="ow">in</span> <span class="n">norm_type</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">wl</span> <span class="o">==</span> <span class="kc">True</span><span class="p">):</span>
@@ -394,27 +392,18 @@
             
         <span class="n">offset</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">wl</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">offset</span><span class="p">):</span>  
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">norm_type</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">:</span>
-                <span class="n">norm_type_</span> <span class="o">=</span> <span class="n">norm_type</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">norm_type_</span> <span class="o">=</span> <span class="n">norm_type</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">norm_type_</span> <span class="o">=</span> <span class="n">norm_type</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">norm_type</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">)</span> <span class="k">else</span> <span class="n">norm_type</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
             <span class="k">if</span> <span class="n">norm_f</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">norm_f</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">:</span>
-                    <span class="n">norm_f_</span> <span class="o">=</span> <span class="n">norm_f</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">norm_f_</span> <span class="o">=</span> <span class="n">norm_f</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">norm_f_</span> <span class="o">=</span> <span class="n">norm_f</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">norm_f</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">)</span> <span class="k">else</span> <span class="n">norm_f</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">norm_type_</span> <span class="o">==</span> <span class="s1">&#39;lambda&#39;</span><span class="p">:</span>
-                    <span class="n">norm_f_</span> <span class="o">=</span> <span class="mf">560.0</span>    
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">norm_f_</span> <span class="o">=</span> <span class="mf">1.0</span>
+                <span class="n">norm_f_</span> <span class="o">=</span> <span class="mf">560.0</span> <span class="k">if</span> <span class="p">(</span><span class="n">norm_type_</span> <span class="o">==</span> <span class="s1">&#39;lambda&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="mf">1.0</span>
       
             <span class="k">if</span> <span class="n">norm_type_</span><span class="o">==</span><span class="s1">&#39;max&#39;</span><span class="p">:</span>
                 <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">offset</span><span class="p">]</span><span class="o">=</span><span class="n">norm_f_</span><span class="o">*</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">offset</span><span class="p">]</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">offset</span><span class="p">])</span>
             <span class="k">elif</span> <span class="n">norm_type_</span><span class="o">==</span><span class="s1">&#39;area&#39;</span><span class="p">:</span>
                 <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">offset</span><span class="p">]</span><span class="o">=</span><span class="n">norm_f_</span><span class="o">*</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">offset</span><span class="p">]</span><span class="o">/</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">offset</span><span class="p">])</span><span class="o">*</span><span class="n">dl</span><span class="p">)</span>
             <span class="k">elif</span> <span class="n">norm_type_</span><span class="o">==</span><span class="s1">&#39;lambda&#39;</span><span class="p">:</span>
-                <span class="c1">#wl_index = np.where((np.abs(wlr-norm_f_)==np.min(np.abs(wlr-norm_f_))))[0]</span>
                 <span class="n">wl_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">wlr</span><span class="o">-</span><span class="n">norm_f_</span><span class="p">)</span><span class="o">.</span><span class="n">argmin</span><span class="p">()</span>
                 <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">offset</span><span class="p">]</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">offset</span><span class="p">]</span><span class="o">/</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">offset</span><span class="p">][</span><span class="n">wl_index</span><span class="p">]</span>
             <span class="k">elif</span> <span class="p">(</span><span class="n">norm_type_</span> <span class="o">==</span> <span class="s1">&#39;ru&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">norm_type_</span> <span class="o">==</span> <span class="s1">&#39;pu&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">norm_type</span> <span class="o">==</span> <span class="s1">&#39;pusa&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">norm_type_</span> <span class="o">==</span> <span class="s1">&#39;qu&#39;</span><span class="p">):</span>
@@ -422,10 +411,10 @@
                 <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">offset</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">norm_f</span><span class="o">/</span><span class="n">rpq_power</span><span class="p">)</span><span class="o">*</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">offset</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">offset</span><span class="p">]</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">offset</span><span class="p">]</span><span class="o">/</span><span class="n">norm_f_</span>
-    <span class="k">return</span> <span class="n">data</span>	</div>
-	
-<span class="c1">#--------------------------------------------------------------------------------------------------</span>
+    <span class="k">return</span> <span class="n">data</span></div>
 
+<span class="c1">#--------------------------------------------------------------------------------------------------</span>
+<span class="c1">#--------------------------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="cie_interp"><a class="viewcode-back" href="../../../../spectrum.html#luxpy.spectrum.cie_interp">[docs]</a><span class="k">def</span> <span class="nf">cie_interp</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">wl_new</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">negative_values_allowed</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">extrap_values</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Interpolate / extrapolate spectral data following standard CIE15-2018.</span>
@@ -445,7 +434,7 @@
 <span class="sd">            |   - If :kind: is a spectrum type (see _INTERP_TYPES), the correct </span>
 <span class="sd">            |     interpolation type if automatically chosen.</span>
 <span class="sd">            |   - Or :kind: can be any interpolation type supported by </span>
-<span class="sd">            |     luxpy.math.interp1</span>
+<span class="sd">            |     scipy.interpolate.interp1d (math.interp1d if nan&#39;s are present!!)</span>
 <span class="sd">        :negative_values_allowed: </span>
 <span class="sd">            | False, optional</span>
 <span class="sd">            | If False: negative values are clipped to zero.</span>
@@ -453,12 +442,12 @@
 <span class="sd">            | None, optional</span>
 <span class="sd">            | If None: use CIE recommended &#39;closest value&#39; approach when extrapolating.</span>
 <span class="sd">            | If float or list or ndarray, use those values to fill extrapolated value(s).</span>
-<span class="sd">            | If &#39;ext&#39;: use normal extrapolated values by math.interp1</span>
+<span class="sd">            | If &#39;ext&#39;: use normal extrapolated values by scipy.interpolate.interp1d</span>
 <span class="sd">    </span>
 <span class="sd">    Returns:</span>
 <span class="sd">        :returns: </span>
 <span class="sd">            | ndarray of interpolated spectral data.</span>
-<span class="sd">              (.shape = (number of spectra + 1, number of wavelength in wl_new))</span>
+<span class="sd">            | (.shape = (number of spectra + 1, number of wavelength in wl_new))</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">kind</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
         <span class="c1"># Wavelength definition:</span>
@@ -481,51 +470,60 @@
         
             <span class="c1"># Interpolate each spectrum in S: </span>
             <span class="n">N</span> <span class="o">=</span> <span class="n">S</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">Si</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">([</span><span class="n">N</span><span class="p">,</span><span class="n">wl_new</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span> 
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
-
-                <span class="n">nan_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">S</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-                <span class="k">if</span> <span class="n">nan_indices</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
-                    <span class="n">nonan_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_not</span><span class="p">(</span><span class="n">nan_indices</span><span class="p">)</span>
+            <span class="n">nan_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">S</span><span class="p">)</span>
+            
+            <span class="c1"># Interpolate all (if not all rows have nan):</span>
+            <span class="n">rows_with_nans</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">nan_indices</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">rows_with_nans</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="n">N</span><span class="p">):</span>
+                <span class="c1">#allrows_nans = False</span>
+                <span class="k">if</span> <span class="n">extrap_values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">fill_value</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">extrap_values</span><span class="p">[</span><span class="mi">0</span><span class="p">][:</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;ext&#39;</span><span class="p">:</span><span class="c1">#(((type(extrap_values[0])==np.str_)|(type(extrap_values[0])==str)) and (extrap_values[0][:3]==&#39;ext&#39;)):</span>
+                    <span class="n">fill_value</span> <span class="o">=</span> <span class="s1">&#39;extrapolate&#39;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">fill_value</span> <span class="o">=</span> <span class="p">(</span><span class="n">extrap_values</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">extrap_values</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                <span class="n">Si</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">wl</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="n">kind</span><span class="p">,</span> <span class="n">bounds_error</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">fill_value</span> <span class="o">=</span> <span class="n">fill_value</span><span class="p">)(</span><span class="n">wl_new</span><span class="p">)</span>
+                
+                <span class="c1">#extrapolate by replicating closest known (in source data!) value (conform CIE2004 recommendation) </span>
+                <span class="k">if</span> <span class="n">extrap_values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">Si</span><span class="p">[:,</span><span class="n">wl_new</span><span class="o">&lt;</span><span class="n">wl</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">S</span><span class="p">[:,:</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="n">Si</span><span class="p">[:,</span><span class="n">wl_new</span><span class="o">&gt;</span><span class="n">wl</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">S</span><span class="p">[:,</span><span class="o">-</span><span class="mi">1</span><span class="p">:]</span>  
+                    
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1">#allrows_nans = True</span>
+                <span class="n">Si</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">N</span><span class="p">,</span><span class="n">wl_new</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]]);</span><span class="n">Si</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+            
+            <span class="c1"># Re-interpolate those which have none:</span>
+            <span class="k">if</span> <span class="n">nan_indices</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+                <span class="c1">#looping required as some values are NaN&#39;s</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">rows_with_nans</span><span class="p">:</span>
+                    
+                    <span class="n">nonan_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_not</span><span class="p">(</span><span class="n">nan_indices</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
                     <span class="n">wl_nonan</span> <span class="o">=</span> <span class="n">wl</span><span class="p">[</span><span class="n">nonan_indices</span><span class="p">]</span>
                     <span class="n">S_i_nonan</span> <span class="o">=</span> <span class="n">S</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">nonan_indices</span><span class="p">]</span>
                     <span class="n">Si_nonan</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">interp1</span><span class="p">(</span><span class="n">wl_nonan</span><span class="p">,</span><span class="n">S_i_nonan</span><span class="p">,</span> <span class="n">wl_new</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="n">kind</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="s1">&#39;extrapolate&#39;</span><span class="p">)</span>
-                    
+<span class="c1">#                    Si_nonan = sp.interpolate.interp1d(wl_nonan, S_i_nonan, kind = kind, bounds_error = False, fill_value = &#39;extrapolate&#39;)(wl_new)</span>
+                  
                     <span class="c1">#extrapolate by replicating closest known (in source data!) value (conform CIE2004 recommendation) </span>
                     <span class="k">if</span> <span class="n">extrap_values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                         <span class="n">Si_nonan</span><span class="p">[</span><span class="n">wl_new</span><span class="o">&lt;</span><span class="n">wl_nonan</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">S_i_nonan</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
                         <span class="n">Si_nonan</span><span class="p">[</span><span class="n">wl_new</span><span class="o">&gt;</span><span class="n">wl_nonan</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">S_i_nonan</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-                    <span class="k">elif</span> <span class="p">(((</span><span class="nb">type</span><span class="p">(</span><span class="n">extrap_values</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">==</span><span class="n">np</span><span class="o">.</span><span class="n">str_</span><span class="p">)</span><span class="o">|</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">extrap_values</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">==</span><span class="nb">str</span><span class="p">))</span> <span class="ow">and</span> <span class="p">(</span><span class="n">extrap_values</span><span class="p">[</span><span class="mi">0</span><span class="p">][:</span><span class="mi">3</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;ext&#39;</span><span class="p">)):</span>
+                    <span class="k">elif</span> <span class="n">extrap_values</span><span class="p">[</span><span class="mi">0</span><span class="p">][:</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;ext&#39;</span><span class="p">:</span><span class="c1">#(((type(extrap_values[0])==np.str_)|(type(extrap_values[0])==str)) and (extrap_values[0][:3]==&#39;ext&#39;)):</span>
                         <span class="k">pass</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="n">Si_nonan</span><span class="p">[</span><span class="n">wl_new</span><span class="o">&lt;</span><span class="n">wl_nonan</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">extrap_values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
                         <span class="n">Si_nonan</span><span class="p">[</span><span class="n">wl_new</span><span class="o">&gt;</span><span class="n">wl_nonan</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">extrap_values</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  
-                    <span class="n">Si</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">Si_nonan</span>
-
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">Si</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">interp1</span><span class="p">(</span><span class="n">wl</span><span class="p">,</span> <span class="n">S</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">wl_new</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="n">kind</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="s1">&#39;extrapolate&#39;</span><span class="p">)</span>
-                    <span class="c1">#Si[i] = Si_f(wl_new)</span>
-                
-                    <span class="c1">#extrapolate by replicating closest known (in source data!) value (conform CIE2004 recommendation) </span>
-                    <span class="k">if</span> <span class="n">extrap_values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                        <span class="n">Si</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">wl_new</span><span class="o">&lt;</span><span class="n">wl</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">S</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-                        <span class="n">Si</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">wl_new</span><span class="o">&gt;</span><span class="n">wl</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">S</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-                    <span class="k">elif</span> <span class="p">(((</span><span class="nb">type</span><span class="p">(</span><span class="n">extrap_values</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">==</span><span class="n">np</span><span class="o">.</span><span class="n">str_</span><span class="p">)</span><span class="o">|</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">extrap_values</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">==</span><span class="nb">str</span><span class="p">))</span> <span class="ow">and</span> <span class="p">(</span><span class="n">extrap_values</span><span class="p">[</span><span class="mi">0</span><span class="p">][:</span><span class="mi">3</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;ext&#39;</span><span class="p">)):</span>
-                        <span class="k">pass</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">Si</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">wl_new</span><span class="o">&lt;</span><span class="n">wl</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">extrap_values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-                        <span class="n">Si</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">wl_new</span><span class="o">&gt;</span><span class="n">wl</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">extrap_values</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  
-                    
+                    <span class="n">Si</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">Si_nonan</span>              
                 
             <span class="c1"># No negative values allowed for spectra:    </span>
             <span class="k">if</span> <span class="n">negative_values_allowed</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">Si</span><span class="p">):</span>
-                    <span class="n">Si</span><span class="p">[</span><span class="n">Si</span><span class="o">&lt;</span><span class="mf">0.0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">Si</span><span class="p">):</span> <span class="n">Si</span><span class="p">[</span><span class="n">Si</span><span class="o">&lt;</span><span class="mf">0.0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
             
             <span class="c1"># Add wavelengths to data array: </span>
             <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">wl_new</span><span class="p">,</span><span class="n">Si</span><span class="p">))</span>  
     
-    <span class="k">return</span> <span class="n">data</span>	</div>
+    <span class="k">return</span> <span class="n">data</span></div>
+
 
 <span class="c1">#--------------------------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="spd"><a class="viewcode-back" href="../../../../spectrum.html#luxpy.spectrum.spd">[docs]</a><span class="k">def</span> <span class="nf">spd</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">interpolation</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;np&#39;</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>\
@@ -590,42 +588,37 @@
 <span class="sd">            | ndarray or pandas.dataframe </span>
 <span class="sd">            | with interpolated and/or normalized spectral data.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
-        <span class="n">transpose</span> <span class="o">=</span> <span class="kc">True</span> <span class="c1">#when spd comes from file -&gt; transpose (columns in files should be different spectra)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">transpose</span> <span class="o">=</span> <span class="kc">False</span>
-
+    <span class="n">transpose</span> <span class="o">=</span> <span class="kc">True</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="kc">False</span> <span class="c1">#when spd comes from file -&gt; transpose (columns in files should be different spectra)</span>
+         
     <span class="c1"># Wavelength definition:</span>
     <span class="n">wl</span> <span class="o">=</span> <span class="n">getwlr</span><span class="p">(</span><span class="n">wl</span><span class="p">)</span>
     
     <span class="c1"># Data input:</span>
     <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">interpolation</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">norm_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="n">getdata</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;np&#39;</span><span class="p">,</span> <span class="n">columns</span> <span class="o">=</span> <span class="n">columns</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="n">sep</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="n">header</span><span class="p">,</span> <span class="n">datatype</span> <span class="o">=</span> <span class="n">datatype</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">getdata</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;np&#39;</span><span class="p">,</span> <span class="n">columns</span> <span class="o">=</span> <span class="n">columns</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="n">sep</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="n">header</span><span class="p">,</span> <span class="n">datatype</span> <span class="o">=</span> <span class="n">datatype</span><span class="p">,</span> <span class="n">copy</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
             <span class="k">if</span> <span class="p">(</span><span class="n">transpose</span> <span class="o">==</span> <span class="kc">True</span><span class="p">):</span> <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">T</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="n">getdata</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;np&#39;</span><span class="p">,</span> <span class="n">columns</span> <span class="o">=</span> <span class="n">columns</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="n">sep</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="n">header</span><span class="p">,</span> <span class="n">datatype</span> <span class="o">=</span> <span class="n">datatype</span><span class="p">)</span><span class="c1">#interpolation requires np-array as input</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">getdata</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;np&#39;</span><span class="p">,</span> <span class="n">columns</span> <span class="o">=</span> <span class="n">columns</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="n">sep</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="n">header</span><span class="p">,</span> <span class="n">datatype</span> <span class="o">=</span> <span class="n">datatype</span><span class="p">,</span> <span class="n">copy</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span><span class="c1">#interpolation requires np-array as input</span>
             <span class="k">if</span> <span class="p">(</span><span class="n">transpose</span> <span class="o">==</span> <span class="kc">True</span><span class="p">):</span> <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">T</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">cie_interp</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">,</span> <span class="n">wl_new</span> <span class="o">=</span> <span class="n">wl</span><span class="p">,</span><span class="n">kind</span> <span class="o">=</span> <span class="n">interpolation</span><span class="p">)</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">spd_normalize</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">norm_type</span> <span class="o">=</span> <span class="n">norm_type</span><span class="p">,</span> <span class="n">norm_f</span> <span class="o">=</span> <span class="n">norm_f</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
         
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
-            <span class="n">columns</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span> <span class="c1">#get possibly updated column names</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span> <span class="n">columns</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span> <span class="c1">#get possibly updated column names</span>
 
     <span class="k">else</span><span class="p">:</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">(</span><span class="n">wl</span><span class="p">)</span>
   
      
-    <span class="k">if</span> <span class="p">((</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span> <span class="c1">#only wavelengths</span>
-        <span class="n">columns</span> <span class="o">=</span> <span class="kc">None</span>
-        
-    <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s1">&#39;df&#39;</span><span class="p">:</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">T</span>
+    <span class="k">if</span> <span class="p">((</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span> <span class="n">columns</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1">#only wavelengths</span>
+       
+    <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s1">&#39;df&#39;</span><span class="p">:</span>  <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">T</span>
         
     <span class="c1"># convert to desired kind:</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="n">getdata</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">,</span><span class="n">kind</span> <span class="o">=</span> <span class="n">kind</span><span class="p">,</span> <span class="n">columns</span> <span class="o">=</span> <span class="n">columns</span><span class="p">,</span> <span class="n">datatype</span> <span class="o">=</span> <span class="n">datatype</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">getdata</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">,</span><span class="n">kind</span> <span class="o">=</span> <span class="n">kind</span><span class="p">,</span> <span class="n">columns</span> <span class="o">=</span> <span class="n">columns</span><span class="p">,</span> <span class="n">datatype</span> <span class="o">=</span> <span class="n">datatype</span><span class="p">,</span> <span class="n">copy</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="c1"># already copy when data is not None, else new anyway</span>
         
     <span class="k">return</span> <span class="n">data</span></div>
+
 
 <span class="c1">#--------------------------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="xyzbar"><a class="viewcode-back" href="../../../../spectrum.html#luxpy.spectrum.xyzbar">[docs]</a><span class="k">def</span> <span class="nf">xyzbar</span><span class="p">(</span><span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">scr</span> <span class="o">=</span> <span class="s1">&#39;dict&#39;</span><span class="p">,</span> <span class="n">wl_new</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">norm_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">norm_f</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;np&#39;</span><span class="p">):</span>
@@ -639,7 +632,7 @@
 <span class="sd">        :scr: </span>
 <span class="sd">            | &#39;dict&#39; or &#39;file&#39;, optional</span>
 <span class="sd">            | Determines whether to load cmfs from file (./data/cmfs/) </span>
-<span class="sd">              or from dict defined in .cmf.py</span>
+<span class="sd">            | or from dict defined in .cmf.py</span>
 <span class="sd">        :wl: </span>
 <span class="sd">            | None, optional</span>
 <span class="sd">            | New wavelength range for interpolation. </span>
@@ -657,8 +650,8 @@
 <span class="sd">        :norm_f:</span>
 <span class="sd">            | 1, optional</span>
 <span class="sd">            | Normalization factor that determines the size of normalization </span>
-<span class="sd">              for &#39;max&#39; and &#39;area&#39; </span>
-<span class="sd">              or which wavelength is normalized to 1 for &#39;lambda&#39; option.</span>
+<span class="sd">            | for &#39;max&#39; and &#39;area&#39; </span>
+<span class="sd">            | or which wavelength is normalized to 1 for &#39;lambda&#39; option.</span>
 <span class="sd">        :kind: </span>
 <span class="sd">            | str [&#39;np&#39;,&#39;df&#39;], optional </span>
 <span class="sd">            | Determines type(:returns:), np: ndarray, df: pandas.dataframe</span>
@@ -693,7 +686,7 @@
 <span class="sd">            | - &#39;dict&#39;: get from ybar from _CMF</span>
 <span class="sd">            | - &#39;array&#39;: ndarray in :cieobs:</span>
 <span class="sd">            | Determines whether to load cmfs from file (./data/cmfs/) </span>
-<span class="sd">              or from dict defined in .cmf.py</span>
+<span class="sd">            | or from dict defined in .cmf.py</span>
 <span class="sd">            | Vlambda is obtained by collecting Ybar.</span>
 <span class="sd">        :wl: </span>
 <span class="sd">            | None, optional</span>
@@ -712,8 +705,8 @@
 <span class="sd">        :norm_f:</span>
 <span class="sd">            | 1, optional</span>
 <span class="sd">            | Normalization factor that determines the size of normalization </span>
-<span class="sd">              for &#39;max&#39; and &#39;area&#39; </span>
-<span class="sd">              or which wavelength is normalized to 1 for &#39;lambda&#39; option.</span>
+<span class="sd">            | for &#39;max&#39; and &#39;area&#39; </span>
+<span class="sd">            | or which wavelength is normalized to 1 for &#39;lambda&#39; option.</span>
 <span class="sd">        :kind: </span>
 <span class="sd">            | str [&#39;np&#39;,&#39;df&#39;], optional </span>
 <span class="sd">            | Determines type(:returns:), np: ndarray, df: pandas.dataframe</span>
@@ -730,7 +723,7 @@
 <span class="sd">    References:</span>
 <span class="sd">        1. `CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018. &lt;https://doi.org/10.25039/TR.015.2018&gt;`_</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">scr</span> <span class="o">==</span> <span class="s1">&#39;dict&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">scr</span> <span class="ow">is</span> <span class="s1">&#39;dict&#39;</span><span class="p">:</span>
         <span class="n">dict_or_file</span> <span class="o">=</span> <span class="n">_CMF</span><span class="p">[</span><span class="n">cieobs</span><span class="p">][</span><span class="s1">&#39;bar&#39;</span><span class="p">][[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">],:]</span> 
         <span class="n">K</span> <span class="o">=</span> <span class="n">_CMF</span><span class="p">[</span><span class="n">cieobs</span><span class="p">][</span><span class="s1">&#39;K&#39;</span><span class="p">]</span>
     <span class="k">elif</span> <span class="n">scr</span> <span class="ow">is</span> <span class="s1">&#39;vltype&#39;</span><span class="p">:</span>
@@ -743,7 +736,7 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">Vl</span></div>
 
-	
+
 <span class="c1">#--------------------------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="spd_to_xyz"><a class="viewcode-back" href="../../../../spectrum.html#luxpy.spectrum.spd_to_xyz">[docs]</a><span class="k">def</span> <span class="nf">spd_to_xyz</span><span class="p">(</span><span class="n">data</span><span class="p">,</span>  <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">rfl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">K</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cie_std_dev_obs</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -803,71 +796,54 @@
 <span class="sd">        1. `CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018. &lt;https://doi.org/10.25039/TR.015.2018&gt;`_</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span> <span class="c1"># convert to np format</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">getdata</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;np&#39;</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="c1">#ensure 2D-array</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">getdata</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;np&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="k">else</span> <span class="n">np2d</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="c1"># convert to np format and ensure 2D-array</span>
 
     <span class="c1"># get wl spacing:</span>
-    <span class="n">dl</span><span class="o">=</span><span class="n">getwld</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">dl</span> <span class="o">=</span> <span class="n">getwld</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
     
     <span class="c1"># get cmf,k for cieobs:</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cieobs</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">K</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">K</span> <span class="o">=</span> <span class="n">_CMF</span><span class="p">[</span><span class="n">cieobs</span><span class="p">][</span><span class="s1">&#39;K&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">K</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">K</span> <span class="o">=</span> <span class="n">_CMF</span><span class="p">[</span><span class="n">cieobs</span><span class="p">][</span><span class="s1">&#39;K&#39;</span><span class="p">]</span>
         <span class="n">scr</span> <span class="o">=</span> <span class="s1">&#39;dict&#39;</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">scr</span> <span class="o">=</span> <span class="s1">&#39;cieobs&#39;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">K</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">relative</span> <span class="o">==</span> <span class="kc">False</span><span class="p">):</span>
-            <span class="n">K</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="c1">#            raise Exception(&#39;spd_to_xyz: user defined CMF set, \</span>
-<span class="c1">#                            but no scaling factor has been supplied.\</span>
-<span class="c1">#                            Setting K = 1.&#39;)</span>
-<span class="c1">#            print(&#39;spd_to_xyz: user defined CMF set, \</span>
-<span class="c1">#                            but no scaling factor has been supplied.\</span>
-<span class="c1">#                            Setting K = 1.&#39;)</span>
-            
-    <span class="n">cmf</span> <span class="o">=</span> <span class="n">xyzbar</span><span class="p">(</span><span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">scr</span> <span class="o">=</span> <span class="n">scr</span><span class="p">,</span> <span class="n">wl_new</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;np&#39;</span><span class="p">)</span> <span class="c1">#also interpolate to wl of data</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">K</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">relative</span> <span class="o">==</span> <span class="kc">False</span><span class="p">):</span> <span class="n">K</span> <span class="o">=</span> <span class="mi">1</span>
+    
+    <span class="c1"># Interpolate to wl of data:</span>
+    <span class="n">cmf</span> <span class="o">=</span> <span class="n">xyzbar</span><span class="p">(</span><span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">scr</span> <span class="o">=</span> <span class="n">scr</span><span class="p">,</span> <span class="n">wl_new</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;np&#39;</span><span class="p">)</span> 
+    
+    <span class="c1"># Add CIE standard deviate observer function to cmf if requested:</span>
     <span class="k">if</span> <span class="n">cie_std_dev_obs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">cmf_cie_std_dev_obs</span> <span class="o">=</span> <span class="n">xyzbar</span><span class="p">(</span><span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;cie_std_dev_obs_&#39;</span> <span class="o">+</span> <span class="n">cie_std_dev_obs</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">scr</span> <span class="o">=</span> <span class="n">scr</span><span class="p">,</span> <span class="n">wl_new</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;np&#39;</span><span class="p">)</span>
-        <span class="n">cmf</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">=</span> <span class="n">cmf</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="n">cmf_cie_std_dev_obs</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="c1"># add CIE standard deviate observer function to cmf</span>
+        <span class="n">cmf</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">=</span> <span class="n">cmf</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="n">cmf_cie_std_dev_obs</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> 
+    
+    <span class="c1"># Rescale xyz using k or 100/Yw:</span>
+    <span class="k">if</span> <span class="n">relative</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span> <span class="n">K</span> <span class="o">=</span> <span class="mf">100.0</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span><span class="n">cmf</span><span class="p">[</span><span class="mi">2</span><span class="p">,:]</span><span class="o">*</span><span class="n">dl</span><span class="p">)</span>
 
-    <span class="c1">#interpolate rfls to lambda range of spd:</span>
+    <span class="c1"># Interpolate rfls to lambda range of spd and calculate xyz:</span>
     <span class="k">if</span> <span class="n">rfl</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> 
         <span class="n">rfl</span> <span class="o">=</span> <span class="n">cie_interp</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">np2d</span><span class="p">(</span><span class="n">rfl</span><span class="p">),</span><span class="n">wl_new</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;rfl&#39;</span><span class="p">)</span>
         <span class="n">rfl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])),</span><span class="n">rfl</span><span class="p">[</span><span class="mi">1</span><span class="p">:]))</span> <span class="c1">#add rfl = 1 for light source spectrum</span>
+        <span class="n">xyz</span> <span class="o">=</span> <span class="n">K</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">rfl</span><span class="p">,(</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">*</span><span class="n">cmf</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,:]</span><span class="o">*</span><span class="n">dl</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)])</span><span class="c1">#calculate tristimulus values</span>
         <span class="n">rflwasnotnone</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">rfl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="n">xyz</span> <span class="o">=</span> <span class="p">(</span><span class="n">K</span><span class="o">*</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">((</span><span class="n">cmf</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">*</span><span class="n">dl</span><span class="p">),</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">T</span><span class="p">))[:,</span><span class="kc">None</span><span class="p">,:])</span>
         <span class="n">rflwasnotnone</span> <span class="o">=</span> <span class="mi">0</span>
-
-    <span class="k">if</span> <span class="n">rflwasnotnone</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="c1">#rescale xyz using k or 100/Yw:</span>
-        <span class="k">if</span> <span class="n">relative</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
-            <span class="n">K</span> <span class="o">=</span> <span class="mf">100.0</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span><span class="n">cmf</span><span class="p">[</span><span class="mi">2</span><span class="p">,:]</span><span class="o">*</span><span class="n">dl</span><span class="p">)</span>
-        <span class="n">xyz</span> <span class="o">=</span> <span class="n">K</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">rfl</span><span class="p">,(</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">*</span><span class="n">cmf</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,:]</span><span class="o">*</span><span class="n">dl</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)])</span><span class="c1">#calculate tristimulus values</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">relative</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
-            <span class="n">K</span> <span class="o">=</span> <span class="mf">100.0</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">:],(</span><span class="n">cmf</span><span class="p">[</span><span class="mi">2</span><span class="p">,:]</span><span class="o">*</span><span class="n">dl</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
-        <span class="n">xyz</span> <span class="o">=</span> <span class="p">(</span><span class="n">K</span><span class="o">*</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">((</span><span class="n">cmf</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">*</span><span class="n">dl</span><span class="p">),</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">T</span><span class="p">))[:,</span><span class="kc">None</span><span class="p">,:])</span> <span class="c1">#calculate tristimulus values</span>
     <span class="n">xyz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">xyz</span><span class="p">,[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span> <span class="c1">#order [rfl,spd,xyz]</span>
     
     <span class="c1"># Setup output:</span>
     <span class="k">if</span> <span class="n">out</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-        <span class="n">xyzw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">))</span>
-        <span class="n">xyz</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">xyz</span><span class="p">,[</span><span class="n">i</span><span class="o">+</span><span class="n">rflwasnotnone</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">rfl</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">rflwasnotnone</span><span class="p">)],</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">))</span>
-        <span class="k">if</span> <span class="n">rflwasnotnone</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">xyz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
-            <span class="c1">#xyzw = np.squeeze(xyzw,axis = 0)</span>
+        <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyz</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="o">...</span><span class="p">]</span>
+        <span class="n">xyz</span> <span class="o">=</span> <span class="n">xyz</span><span class="p">[</span><span class="n">rflwasnotnone</span><span class="p">:,</span><span class="o">...</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">rflwasnotnone</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="n">xyz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">xyz</span><span class="p">,</span><span class="n">xyzw</span>
     <span class="k">elif</span> <span class="n">out</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">rflwasnotnone</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">xyz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">rflwasnotnone</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="n">xyz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">xyz</span>
     <span class="k">else</span><span class="p">:</span> 
-        <span class="n">xyz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">xyz</span><span class="p">,[</span><span class="n">i</span><span class="o">+</span><span class="n">rflwasnotnone</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">rfl</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">rflwasnotnone</span><span class="p">)],</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">))</span>
-        <span class="k">if</span> <span class="n">rflwasnotnone</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">xyz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">xyz</span> <span class="o">=</span> <span class="n">xyz</span><span class="p">[</span><span class="n">rflwasnotnone</span><span class="p">:,</span><span class="o">...</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">rflwasnotnone</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="n">xyz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">xyz</span></div>
 
 <div class="viewcode-block" id="spd_to_ler"><a class="viewcode-back" href="../../../../spectrum.html#luxpy.spectrum.spd_to_ler">[docs]</a><span class="k">def</span> <span class="nf">spd_to_ler</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">K</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
@@ -899,14 +875,11 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cieobs</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>    
-        <span class="k">if</span> <span class="n">K</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">K</span> <span class="o">=</span> <span class="n">_CMF</span><span class="p">[</span><span class="n">cieobs</span><span class="p">][</span><span class="s1">&#39;K&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">K</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span> <span class="n">K</span> <span class="o">=</span> <span class="n">_CMF</span><span class="p">[</span><span class="n">cieobs</span><span class="p">][</span><span class="s1">&#39;K&#39;</span><span class="p">]</span>
         <span class="n">Vl</span> <span class="o">=</span> <span class="n">vlbar</span><span class="p">(</span><span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">scr</span> <span class="o">=</span> <span class="s1">&#39;dict&#39;</span><span class="p">,</span><span class="n">wl_new</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;np&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="c1">#also interpolate to wl of data</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">Vl</span> <span class="o">=</span> <span class="n">spd</span><span class="p">(</span><span class="n">wl</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">data</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">interpolation</span> <span class="o">=</span> <span class="s1">&#39;cmf&#39;</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;np&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">K</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="c1">#K = 1</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;spd_to_ler: User defined Vlambda, but no K scaling factor has been supplied.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">K</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;spd_to_ler: User defined Vlambda, but no K scaling factor has been supplied.&quot;</span><span class="p">)</span>
     <span class="n">dl</span> <span class="o">=</span> <span class="n">getwld</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
     <span class="k">return</span> <span class="p">((</span><span class="n">K</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">((</span><span class="n">Vl</span><span class="o">*</span><span class="n">dl</span><span class="p">),</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">T</span><span class="p">))</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">*</span><span class="n">dl</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">ndim</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">T</span></div>
 
@@ -950,7 +923,7 @@
 
         <span class="c1"># Get Vlambda and Km (for E):</span>
         <span class="n">Vl</span><span class="p">,</span> <span class="n">Km</span> <span class="o">=</span> <span class="n">vlbar</span><span class="p">(</span><span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">wl_new</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">out</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
-        <span class="n">Km</span> <span class="o">=</span> <span class="n">Km</span><span class="o">*</span><span class="n">Km_correction_factor</span>
+        <span class="n">Km</span> <span class="o">*=</span> <span class="n">Km_correction_factor</span>
         <span class="n">p</span> <span class="o">=</span> <span class="n">Km</span><span class="o">*</span><span class="n">np2d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span><span class="n">dl</span><span class="o">*</span><span class="n">Vl</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span><span class="o">.</span><span class="n">T</span>
         
     <span class="k">elif</span> <span class="n">ptype</span> <span class="o">==</span> <span class="s1">&#39;pu&#39;</span><span class="p">:</span> <span class="c1"># normalize in photometric units</span>
@@ -990,14 +963,13 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        :returns:</span>
 <span class="sd">            | ndarray with blackbody radiator spectrum</span>
-<span class="sd">              (:returns:[0] contains wavelengths)</span>
+<span class="sd">            | (:returns:[0] contains wavelengths)</span>
 <span class="sd">            </span>
 <span class="sd">    References:</span>
 <span class="sd">        1. `CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018. &lt;https://doi.org/10.25039/TR.015.2018&gt;`_</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">cct</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">cct</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">wl3</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> 
-        <span class="n">wl3</span> <span class="o">=</span> <span class="n">_WL3</span> 
+    <span class="n">cct</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">cct</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">wl3</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">wl3</span> <span class="o">=</span> <span class="n">_WL3</span> 
     <span class="n">wl</span><span class="o">=</span><span class="n">getwlr</span><span class="p">(</span><span class="n">wl3</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">fSr</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span><span class="o">*</span><span class="n">_BB</span><span class="p">[</span><span class="s1">&#39;c1&#39;</span><span class="p">]</span><span class="o">*</span><span class="p">((</span><span class="n">x</span><span class="o">*</span><span class="mf">1.0e-9</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">))</span><span class="o">*</span><span class="p">(</span><span class="n">_BB</span><span class="p">[</span><span class="s1">&#39;n&#39;</span><span class="p">]</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mf">2.0</span><span class="p">))</span><span class="o">*</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">_BB</span><span class="p">[</span><span class="s1">&#39;c2&#39;</span><span class="p">]</span><span class="o">*</span><span class="p">((</span><span class="n">_BB</span><span class="p">[</span><span class="s1">&#39;n&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">x</span><span class="o">*</span><span class="mf">1.0e-9</span><span class="o">*</span><span class="p">(</span><span class="n">cct</span><span class="o">+</span><span class="n">_EPS</span><span class="p">))</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">)))</span><span class="o">-</span><span class="mf">1.0</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">)</span>
@@ -1028,11 +1000,10 @@
     <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">((</span><span class="n">cct</span> <span class="o">&lt;</span> <span class="mf">4000.0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">force_daylight_below4000K</span> <span class="o">==</span> <span class="kc">False</span><span class="p">)):</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;spectral.daylightlocus(): Daylight locus approximation not defined below 4000 K&#39;</span><span class="p">)</span>
     
-        
-    <span class="n">xD</span><span class="o">=-</span><span class="mf">4.607</span><span class="o">*</span><span class="p">((</span><span class="mf">1e3</span><span class="o">/</span><span class="n">cct</span><span class="p">)</span><span class="o">**</span><span class="mf">3.0</span><span class="p">)</span><span class="o">+</span><span class="mf">2.9678</span><span class="o">*</span><span class="p">((</span><span class="mf">1e3</span><span class="o">/</span><span class="n">cct</span><span class="p">)</span><span class="o">**</span><span class="mf">2.0</span><span class="p">)</span><span class="o">+</span><span class="mf">0.09911</span><span class="o">*</span><span class="p">(</span><span class="mf">1000.0</span><span class="o">/</span><span class="n">cct</span><span class="p">)</span><span class="o">+</span><span class="mf">0.244063</span>
+    <span class="n">xD</span> <span class="o">=</span> <span class="o">-</span><span class="mf">4.607</span><span class="o">*</span><span class="p">((</span><span class="mf">1e3</span><span class="o">/</span><span class="n">cct</span><span class="p">)</span><span class="o">**</span><span class="mf">3.0</span><span class="p">)</span><span class="o">+</span><span class="mf">2.9678</span><span class="o">*</span><span class="p">((</span><span class="mf">1e3</span><span class="o">/</span><span class="n">cct</span><span class="p">)</span><span class="o">**</span><span class="mf">2.0</span><span class="p">)</span><span class="o">+</span><span class="mf">0.09911</span><span class="o">*</span><span class="p">(</span><span class="mf">1000.0</span><span class="o">/</span><span class="n">cct</span><span class="p">)</span><span class="o">+</span><span class="mf">0.244063</span>
     <span class="n">p</span> <span class="o">=</span> <span class="n">cct</span><span class="o">&gt;=</span><span class="mf">7000.0</span>
     <span class="n">xD</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mf">2.0064</span><span class="o">*</span><span class="p">((</span><span class="mf">1.0e3</span><span class="o">/</span><span class="n">cct</span><span class="p">[</span><span class="n">p</span><span class="p">])</span><span class="o">**</span><span class="mf">3.0</span><span class="p">)</span><span class="o">+</span><span class="mf">1.9018</span><span class="o">*</span><span class="p">((</span><span class="mf">1.0e3</span><span class="o">/</span><span class="n">cct</span><span class="p">[</span><span class="n">p</span><span class="p">])</span><span class="o">**</span><span class="mf">2.0</span><span class="p">)</span><span class="o">+</span><span class="mf">0.24748</span><span class="o">*</span><span class="p">(</span><span class="mf">1.0e3</span><span class="o">/</span><span class="n">cct</span><span class="p">[</span><span class="n">p</span><span class="p">])</span><span class="o">+</span><span class="mf">0.23704</span>
-    <span class="n">yD</span><span class="o">=-</span><span class="mf">3.0</span><span class="o">*</span><span class="n">xD</span><span class="o">**</span><span class="mf">2.0</span><span class="o">+</span><span class="mf">2.87</span><span class="o">*</span><span class="n">xD</span><span class="o">-</span><span class="mf">0.275</span>
+    <span class="n">yD</span> <span class="o">=</span> <span class="o">-</span><span class="mf">3.0</span><span class="o">*</span><span class="n">xD</span><span class="o">**</span><span class="mf">2.0</span><span class="o">+</span><span class="mf">2.87</span><span class="o">*</span><span class="n">xD</span><span class="o">-</span><span class="mf">0.275</span>
     <span class="k">return</span> <span class="n">xD</span><span class="p">,</span><span class="n">yD</span></div>
     
    
@@ -1058,25 +1029,24 @@
 <span class="sd">        :verbosity: </span>
 <span class="sd">            | None, optional</span>
 <span class="sd">            |   If None: do not print warning when CCT &lt; 4000 K.</span>
-<span class="sd">            </span>
+
 <span class="sd">    Returns:</span>
 <span class="sd">        :returns: </span>
 <span class="sd">            | ndarray with daylight phase spectrum</span>
-<span class="sd">              (:returns:[0] contains wavelengths)</span>
-<span class="sd">            </span>
+<span class="sd">            | (:returns:[0] contains wavelengths)</span>
+
 <span class="sd">    References:</span>
 <span class="sd">        1. `CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018. &lt;https://doi.org/10.25039/TR.015.2018&gt;`_</span>
 <span class="sd">     &quot;&quot;&quot;</span>
-    <span class="n">cct</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">cct</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">wl3</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> 
-        <span class="n">wl3</span> <span class="o">=</span> <span class="n">_WL3</span> 
+    <span class="n">cct</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">cct</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">wl3</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">wl3</span> <span class="o">=</span> <span class="n">_WL3</span> 
     <span class="k">if</span> <span class="p">(</span><span class="n">cct</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mf">4000.0</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">force_daylight_below4000K</span> <span class="o">==</span> <span class="kc">False</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">verbosity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Warning daylightphase spd not defined below 4000 K. Using blackbody radiator instead.&#39;</span><span class="p">)</span>
-        <span class="n">Sr</span> <span class="o">=</span> <span class="n">blackbody</span><span class="p">(</span><span class="n">cct</span><span class="p">,</span><span class="n">wl3</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">blackbody</span><span class="p">(</span><span class="n">cct</span><span class="p">,</span><span class="n">wl3</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         
-        <span class="n">wl</span><span class="o">=</span><span class="n">getwlr</span><span class="p">(</span><span class="n">wl3</span><span class="p">)</span> 
+        <span class="n">wl</span> <span class="o">=</span> <span class="n">getwlr</span><span class="p">(</span><span class="n">wl3</span><span class="p">)</span> 
         
         <span class="c1">#interpolate _S012_DAYLIGHTPHASE first to wl range:</span>
         <span class="k">if</span>  <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">_S012_DAYLIGHTPHASE</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">wl</span><span class="p">):</span>
@@ -1086,15 +1056,13 @@
 
         <span class="n">xD</span><span class="p">,</span> <span class="n">yD</span> <span class="o">=</span> <span class="n">daylightlocus</span><span class="p">(</span><span class="n">cct</span><span class="p">,</span> <span class="n">force_daylight_below4000K</span> <span class="o">=</span> <span class="n">force_daylight_below4000K</span><span class="p">)</span>
         
-        <span class="n">M1</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mf">1.3515</span><span class="o">-</span><span class="mf">1.7703</span><span class="o">*</span><span class="n">xD</span><span class="o">+</span><span class="mf">5.9114</span><span class="o">*</span><span class="n">yD</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mf">0.0241</span><span class="o">+</span><span class="mf">0.2562</span><span class="o">*</span><span class="n">xD</span><span class="o">-</span><span class="mf">0.7341</span><span class="o">*</span><span class="n">yD</span><span class="p">)</span>
-        <span class="n">M2</span><span class="o">=</span><span class="p">(</span><span class="mf">0.03</span><span class="o">-</span><span class="mf">31.4424</span><span class="o">*</span><span class="n">xD</span><span class="o">+</span><span class="mf">30.0717</span><span class="o">*</span><span class="n">yD</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mf">0.0241</span><span class="o">+</span><span class="mf">0.2562</span><span class="o">*</span><span class="n">xD</span><span class="o">-</span><span class="mf">0.7341</span><span class="o">*</span><span class="n">yD</span><span class="p">)</span>
-        <span class="n">Sr</span><span class="o">=</span><span class="n">S012_daylightphase</span><span class="p">[</span><span class="mi">1</span><span class="p">,:]</span><span class="o">+</span><span class="n">M1</span><span class="o">*</span><span class="n">S012_daylightphase</span><span class="p">[</span><span class="mi">2</span><span class="p">,:]</span><span class="o">+</span><span class="n">M2</span><span class="o">*</span><span class="n">S012_daylightphase</span><span class="p">[</span><span class="mi">3</span><span class="p">,:]</span>
-        <span class="n">Sr560</span><span class="o">=</span><span class="n">Sr</span><span class="p">[:,</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">S012_daylightphase</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span> <span class="o">-</span> <span class="mf">560.0</span><span class="p">)</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">S012_daylightphase</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span> <span class="o">-</span> <span class="mi">560</span><span class="p">)))[</span><span class="mi">0</span><span class="p">]]</span>
-        <span class="n">Sr</span><span class="o">=</span><span class="n">Sr</span><span class="o">/</span><span class="n">Sr560</span>
-        <span class="n">Sr</span><span class="p">[</span><span class="n">Sr</span><span class="o">==</span><span class="nb">float</span><span class="p">(</span><span class="s1">&#39;NaN&#39;</span><span class="p">)]</span><span class="o">=</span><span class="mi">0</span>
-        <span class="n">Sr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">wl</span><span class="p">,</span><span class="n">Sr</span><span class="p">))</span>
-    <span class="k">return</span> <span class="n">Sr</span></div>
-<span class="c1">#    return spd(Sr, wl = None, norm_type = None, norm_f = None)  </span>
+        <span class="n">M1</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.3515</span><span class="o">-</span><span class="mf">1.7703</span><span class="o">*</span><span class="n">xD</span><span class="o">+</span><span class="mf">5.9114</span><span class="o">*</span><span class="n">yD</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mf">0.0241</span><span class="o">+</span><span class="mf">0.2562</span><span class="o">*</span><span class="n">xD</span><span class="o">-</span><span class="mf">0.7341</span><span class="o">*</span><span class="n">yD</span><span class="p">)</span>
+        <span class="n">M2</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.03</span><span class="o">-</span><span class="mf">31.4424</span><span class="o">*</span><span class="n">xD</span><span class="o">+</span><span class="mf">30.0717</span><span class="o">*</span><span class="n">yD</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mf">0.0241</span><span class="o">+</span><span class="mf">0.2562</span><span class="o">*</span><span class="n">xD</span><span class="o">-</span><span class="mf">0.7341</span><span class="o">*</span><span class="n">yD</span><span class="p">)</span>
+        <span class="n">Sr</span> <span class="o">=</span> <span class="n">S012_daylightphase</span><span class="p">[</span><span class="mi">1</span><span class="p">,:]</span><span class="o">+</span><span class="n">M1</span><span class="o">*</span><span class="n">S012_daylightphase</span><span class="p">[</span><span class="mi">2</span><span class="p">,:]</span><span class="o">+</span><span class="n">M2</span><span class="o">*</span><span class="n">S012_daylightphase</span><span class="p">[</span><span class="mi">3</span><span class="p">,:]</span>
+        <span class="n">Sr560</span> <span class="o">=</span> <span class="n">Sr</span><span class="p">[:,</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">S012_daylightphase</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span> <span class="o">-</span> <span class="mf">560.0</span><span class="p">)</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">S012_daylightphase</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span> <span class="o">-</span> <span class="mi">560</span><span class="p">)))[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="n">Sr</span> <span class="o">/=</span> <span class="n">Sr560</span>
+        <span class="n">Sr</span><span class="p">[</span><span class="n">Sr</span><span class="o">==</span><span class="nb">float</span><span class="p">(</span><span class="s1">&#39;NaN&#39;</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">wl</span><span class="p">,</span><span class="n">Sr</span><span class="p">))</span></div>
     
 <span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="cri_ref"><a class="viewcode-back" href="../../../../spectrum.html#luxpy.spectrum.cri_ref">[docs]</a><span class="k">def</span> <span class="nf">cri_ref</span><span class="p">(</span><span class="n">ccts</span><span class="p">,</span> <span class="n">wl3</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ref_type</span> <span class="o">=</span> <span class="n">_CRI_REF_TYPE</span><span class="p">,</span> <span class="n">mix_range</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span><span class="o">=</span><span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">norm_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">norm_f</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">force_daylight_below4000K</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
@@ -1114,9 +1082,9 @@
 <span class="sd">            | Specifies the type of reference spectrum to be calculated.</span>
 <span class="sd">            | Defaults to luxpy._CRI_REF_TYPE. </span>
 <span class="sd">            | If :ref_type: is list of strings, then for each cct in :ccts: </span>
-<span class="sd">              a different reference illuminant can be specified. </span>
+<span class="sd">            | a different reference illuminant can be specified. </span>
 <span class="sd">            | If :ref_type: == &#39;spd&#39;, then :ccts: is assumed to be an ndarray</span>
-<span class="sd">              of reference illuminant spectra.</span>
+<span class="sd">            | of reference illuminant spectra.</span>
 <span class="sd">        :mix_range: </span>
 <span class="sd">            | None or ndarray, optional</span>
 <span class="sd">            | Determines the cct range between which the reference illuminant is</span>
@@ -1132,7 +1100,7 @@
 <span class="sd">        :cieobs: </span>
 <span class="sd">            | luxpy._CIEOBS, optional</span>
 <span class="sd">            | Required for the normalization of the Planckian and Daylight SPDs </span>
-<span class="sd">              when calculating a &#39;mixed&#39; reference illuminant.</span>
+<span class="sd">            | when calculating a &#39;mixed&#39; reference illuminant.</span>
 <span class="sd">        :norm_type: </span>
 <span class="sd">            | None, optional </span>
 <span class="sd">            |       - &#39;lambda&#39;: make lambda in norm_f equal to 1</span>
@@ -1146,18 +1114,18 @@
 <span class="sd">        :norm_f:</span>
 <span class="sd">            | 1, optional</span>
 <span class="sd">            | Normalization factor that determines the size of normalization </span>
-<span class="sd">              for &#39;max&#39; and &#39;area&#39; </span>
-<span class="sd">              or which wavelength is normalized to 1 for &#39;lambda&#39; option.</span>
+<span class="sd">            | for &#39;max&#39; and &#39;area&#39; </span>
+<span class="sd">            | or which wavelength is normalized to 1 for &#39;lambda&#39; option.</span>
 <span class="sd">        :force_daylight_below4000K: </span>
 <span class="sd">            | False or True, optional</span>
 <span class="sd">            | Daylight locus approximation is not defined below 4000 K, </span>
 <span class="sd">            | but by setting this to True, the calculation can be forced to </span>
-<span class="sd">              calculate it anyway.</span>
+<span class="sd">            | calculate it anyway.</span>
 <span class="sd">    </span>
 <span class="sd">    Returns:</span>
 <span class="sd">        :returns: </span>
 <span class="sd">            | ndarray with reference illuminant spectra.</span>
-<span class="sd">              (:returns:[0] contains wavelengths)</span>
+<span class="sd">            | (:returns:[0] contains wavelengths)</span>
 
 <span class="sd">    Note: </span>
 <span class="sd">        Future versions will have the ability to take a dict as input </span>
@@ -1167,14 +1135,12 @@
     <span class="k">if</span> <span class="n">ref_type</span> <span class="o">==</span> <span class="s1">&#39;spd&#39;</span><span class="p">:</span>
         
         <span class="c1"># ccts already contains spectrum of reference:</span>
-        <span class="k">return</span> <span class="n">spd</span><span class="p">(</span><span class="n">ccts</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="n">wl3</span><span class="p">,</span> <span class="n">norm_type</span> <span class="o">=</span> <span class="n">norm_type</span><span class="p">,</span> <span class="n">norm_f</span> <span class="o">=</span> <span class="n">norm_f</span><span class="p">)</span>	
+        <span class="k">return</span> <span class="n">spd</span><span class="p">(</span><span class="n">ccts</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="n">wl3</span><span class="p">,</span> <span class="n">norm_type</span> <span class="o">=</span> <span class="n">norm_type</span><span class="p">,</span> <span class="n">norm_f</span> <span class="o">=</span> <span class="n">norm_f</span><span class="p">)</span>
 
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">mix_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">mix_range</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">(</span><span class="n">mix_range</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">mix_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> <span class="n">mix_range</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">(</span><span class="n">mix_range</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">ref_type</span><span class="p">,</span><span class="nb">list</span><span class="p">)</span> <span class="o">|</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ref_type</span><span class="p">,</span><span class="nb">dict</span><span class="p">))</span> <span class="p">:</span>
-            <span class="n">ref_type</span> <span class="o">=</span> <span class="p">[</span><span class="n">ref_type</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">ref_type</span><span class="p">,</span><span class="nb">list</span><span class="p">)</span> <span class="o">|</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ref_type</span><span class="p">,</span><span class="nb">dict</span><span class="p">)):</span> <span class="n">ref_type</span> <span class="o">=</span> <span class="p">[</span><span class="n">ref_type</span><span class="p">]</span>
    
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ccts</span><span class="p">)):</span>
             <span class="n">cct</span> <span class="o">=</span> <span class="n">ccts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
@@ -1184,20 +1150,13 @@
                 <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;cri_ref(): dictionary ref_type: Not yet implemented&quot;</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
 
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ref_type</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">:</span>
-                    <span class="n">ref_type_</span> <span class="o">=</span> <span class="n">ref_type</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">ref_type_</span> <span class="o">=</span> <span class="n">ref_type</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">ref_type_</span> <span class="o">=</span> <span class="n">ref_type</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ref_type</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">)</span> <span class="k">else</span> <span class="n">ref_type</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
                 <span class="k">if</span> <span class="n">mix_range</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="n">mix_range_</span> <span class="o">=</span>  <span class="n">_CRI_REF_TYPES</span><span class="p">[</span><span class="n">ref_type_</span><span class="p">]</span>
 
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">mix_range</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">:</span>
-                        <span class="n">mix_range_</span> <span class="o">=</span> <span class="n">mix_range</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="c1">#must be np2d !!!</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">mix_range_</span> <span class="o">=</span> <span class="n">mix_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            
+                    <span class="n">mix_range_</span> <span class="o">=</span> <span class="n">mix_range</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">if</span> <span class="p">(</span><span class="n">mix_range</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">)</span> <span class="k">else</span> <span class="n">mix_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1">#must be np2d !!!            </span>
       
             <span class="k">if</span> <span class="p">(</span><span class="n">mix_range_</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">mix_range_</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">|</span> <span class="p">(</span><span class="n">ref_type_</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;BB&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">ref_type_</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;DL&#39;</span><span class="p">):</span>
                 <span class="k">if</span> <span class="p">((</span><span class="n">cct</span> <span class="o">&lt;</span> <span class="n">mix_range_</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="ow">not</span> <span class="p">(</span><span class="n">ref_type_</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;DL&#39;</span><span class="p">)))</span> <span class="o">|</span> <span class="p">(</span><span class="n">ref_type_</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;BB&#39;</span><span class="p">):</span>
@@ -1213,10 +1172,8 @@
 
                 <span class="n">SrBB</span> <span class="o">=</span> <span class="mf">100.0</span><span class="o">*</span><span class="n">SrBB</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">SrBB</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">cmf</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="n">ld</span><span class="p">))</span>
                 <span class="n">SrDL</span> <span class="o">=</span> <span class="mf">100.0</span><span class="o">*</span><span class="n">SrDL</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">SrDL</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">cmf</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="n">ld</span><span class="p">))</span>
-                <span class="n">Tb</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">mix_range_</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-                <span class="n">Te</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">mix_range_</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-                <span class="n">cBB</span> <span class="o">=</span> <span class="p">(</span><span class="n">Te</span><span class="o">-</span><span class="n">cct</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">Te</span><span class="o">-</span><span class="n">Tb</span><span class="p">)</span>
-                <span class="n">cDL</span> <span class="o">=</span> <span class="p">(</span><span class="n">cct</span><span class="o">-</span><span class="n">Tb</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">Te</span><span class="o">-</span><span class="n">Tb</span><span class="p">)</span>
+                <span class="n">Tb</span><span class="p">,</span> <span class="n">Te</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">mix_range_</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">mix_range_</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="n">cBB</span><span class="p">,</span> <span class="n">cDL</span> <span class="o">=</span> <span class="p">(</span><span class="n">Te</span><span class="o">-</span><span class="n">cct</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">Te</span><span class="o">-</span><span class="n">Tb</span><span class="p">),</span> <span class="p">(</span><span class="n">cct</span><span class="o">-</span><span class="n">Tb</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">Te</span><span class="o">-</span><span class="n">Tb</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">cBB</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">:</span>
                     <span class="n">cBB</span> <span class="o">=</span> <span class="mf">0.0</span>
                 <span class="k">elif</span> <span class="n">cBB</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
@@ -1227,7 +1184,7 @@
                     <span class="n">cDL</span> <span class="o">=</span> <span class="mf">1.0</span>
 
                 <span class="n">Sr</span> <span class="o">=</span> <span class="n">SrBB</span><span class="o">*</span><span class="n">cBB</span> <span class="o">+</span> <span class="n">SrDL</span><span class="o">*</span><span class="n">cDL</span>
-                <span class="n">Sr</span><span class="p">[</span><span class="n">Sr</span><span class="o">==</span><span class="nb">float</span><span class="p">(</span><span class="s1">&#39;NaN&#39;</span><span class="p">)]</span><span class="o">=</span><span class="mf">0.0</span>
+                <span class="n">Sr</span><span class="p">[</span><span class="n">Sr</span><span class="o">==</span><span class="nb">float</span><span class="p">(</span><span class="s1">&#39;NaN&#39;</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.0</span>
                 <span class="n">Sr560</span> <span class="o">=</span> <span class="n">Sr</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">wl</span> <span class="o">-</span> <span class="mf">560.0</span><span class="p">)</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">wl</span> <span class="o">-</span> <span class="mf">560.0</span><span class="p">)))[</span><span class="mi">0</span><span class="p">]]</span>
                 <span class="n">Sr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">wl</span><span class="p">,(</span><span class="n">Sr</span><span class="o">/</span><span class="n">Sr560</span><span class="p">)))</span>
                      
@@ -1238,7 +1195,73 @@
                     
         <span class="n">Srs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">Sr</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">Srs</span><span class="p">))</span>
 
-        <span class="k">return</span>  <span class="n">spd</span><span class="p">(</span><span class="n">Srs</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">norm_type</span> <span class="o">=</span> <span class="n">norm_type</span><span class="p">,</span> <span class="n">norm_f</span> <span class="o">=</span> <span class="n">norm_f</span><span class="p">)</span>	</div>
+        <span class="k">return</span>  <span class="n">spd</span><span class="p">(</span><span class="n">Srs</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">norm_type</span> <span class="o">=</span> <span class="n">norm_type</span><span class="p">,</span> <span class="n">norm_f</span> <span class="o">=</span> <span class="n">norm_f</span><span class="p">)</span></div>
+    
+    
+<div class="viewcode-block" id="detect_peakwl"><a class="viewcode-back" href="../../../../spectrum.html#luxpy.spectrum.detect_peakwl">[docs]</a><span class="k">def</span> <span class="nf">detect_peakwl</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span><span class="n">verbosity</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Detect primary peak wavelengths and fwhm in spectrum spd.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :spd:</span>
+<span class="sd">            | ndarray with spectral data (2xN). </span>
+<span class="sd">            | First row should be wavelengths.</span>
+<span class="sd">        :n:</span>
+<span class="sd">            | 1, optional</span>
+<span class="sd">            | The number of peaks to try to detect in spd. </span>
+<span class="sd">        :verbosity:</span>
+<span class="sd">            | Make a plot of the detected peaks, their fwhm, etc.</span>
+<span class="sd">        :kwargs:</span>
+<span class="sd">            | Additional input arguments for scipy.signal.find_peaks.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :prop:</span>
+<span class="sd">            | list of dictionaries with keys: </span>
+<span class="sd">            | - &#39;peaks_idx&#39; : index of detected peaks</span>
+<span class="sd">            | - &#39;peaks&#39; : peak wavelength values (nm)</span>
+<span class="sd">            | - &#39;heights&#39; : height of peaks</span>
+<span class="sd">            | - &#39;fwhms&#39; : full-width-half-maxima of peaks</span>
+<span class="sd">            | - &#39;fwhms_mid&#39; : wavelength at the middle of the fwhm-range of the peaks (if this is different from the values in &#39;peaks&#39;, then their is some non-symmetry in the peaks)</span>
+<span class="sd">            | - &#39;fwhms_mid_heights&#39; : height at the middle of the peak</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">props</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">spd</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">peaks_</span><span class="p">,</span> <span class="n">prop_</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">find_peaks</span><span class="p">(</span><span class="n">spd</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,:],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">prominences</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">peak_prominences</span><span class="p">(</span><span class="n">spd</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,:],</span> <span class="n">peaks_</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">peaks</span> <span class="o">=</span> <span class="p">[</span><span class="n">peaks_</span><span class="p">[</span><span class="n">prominences</span><span class="o">.</span><span class="n">argmax</span><span class="p">()]]</span>
+        <span class="n">prominences</span><span class="p">[</span><span class="n">prominences</span><span class="o">.</span><span class="n">argmax</span><span class="p">()]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">peaks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">peaks_</span><span class="p">[</span><span class="n">prominences</span><span class="o">.</span><span class="n">argmax</span><span class="p">()])</span>
+            <span class="n">prominences</span><span class="p">[</span><span class="n">prominences</span><span class="o">.</span><span class="n">argmax</span><span class="p">()]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">peaks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">peaks</span><span class="p">))</span>
+        <span class="n">peak_heights</span> <span class="o">=</span> <span class="n">spd</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">peaks</span><span class="p">]</span>
+        <span class="n">widths</span><span class="p">,</span> <span class="n">width_heights</span><span class="p">,</span> <span class="n">left_ips</span><span class="p">,</span> <span class="n">right_ips</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">peak_widths</span><span class="p">(</span><span class="n">spd</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,:],</span> <span class="n">peaks</span><span class="p">,</span> <span class="n">rel_height</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+        <span class="n">left_ips</span><span class="p">,</span> <span class="n">right_ips</span> <span class="o">=</span> <span class="n">left_ips</span> <span class="o">+</span> <span class="n">spd</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">right_ips</span> <span class="o">+</span> <span class="n">spd</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+    
+        <span class="c1"># get middle of fwhm and calculate peak position and height:</span>
+        <span class="n">mpeaks</span> <span class="o">=</span> <span class="n">left_ips</span> <span class="o">+</span> <span class="n">widths</span><span class="o">/</span><span class="mi">2</span>
+        <span class="n">hmpeaks</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">spd</span><span class="p">[</span><span class="mi">0</span><span class="p">,:],</span><span class="n">spd</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,:])(</span><span class="n">mpeaks</span><span class="p">)</span>
+    
+        <span class="n">prop</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;peaks_idx&#39;</span> <span class="p">:</span> <span class="n">peaks</span><span class="p">,</span><span class="s1">&#39;peaks&#39;</span> <span class="p">:</span> <span class="n">spd</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="n">peaks</span><span class="p">],</span> <span class="s1">&#39;heights&#39;</span> <span class="p">:</span> <span class="n">peak_heights</span><span class="p">,</span>
+                <span class="s1">&#39;fwhms&#39;</span> <span class="p">:</span> <span class="n">widths</span><span class="p">,</span> <span class="s1">&#39;fwhms_mid&#39;</span> <span class="p">:</span> <span class="n">mpeaks</span><span class="p">,</span> <span class="s1">&#39;fwhms_mid_heights&#39;</span> <span class="p">:</span> <span class="n">hmpeaks</span><span class="p">}</span>
+        <span class="n">props</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">prop</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">verbosity</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Peak properties:&#39;</span><span class="p">,</span> <span class="n">prop</span><span class="p">)</span>
+            <span class="n">results_half</span> <span class="o">=</span> <span class="p">(</span><span class="n">widths</span><span class="p">,</span> <span class="n">width_heights</span><span class="p">,</span> <span class="n">left_ips</span><span class="p">,</span> <span class="n">right_ips</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">spd</span><span class="p">[</span><span class="mi">0</span><span class="p">,:],</span><span class="n">spd</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,:],</span><span class="s1">&#39;b-&#39;</span><span class="p">,</span><span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;spectrum&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">spd</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="n">peaks</span><span class="p">],</span><span class="n">spd</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">peaks</span><span class="p">],</span><span class="s1">&#39;ro&#39;</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;peaks&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">hlines</span><span class="p">(</span><span class="o">*</span><span class="n">results_half</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;C2&quot;</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;FWHM range of peaks&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mpeaks</span><span class="p">,</span><span class="n">hmpeaks</span><span class="p">,</span><span class="s1">&#39;gd&#39;</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;middle of FWHM range&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">props</span></div>
+
+
+<div class="viewcode-block" id="spd_to_indoor"><a class="viewcode-back" href="../../../../spectrum.html#luxpy.spectrum.spd_to_indoor">[docs]</a><span class="k">def</span> <span class="nf">spd_to_indoor</span><span class="p">(</span><span class="n">spd</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert spd to indoor variant by multiplying it with the CIE spectral transmission for glass.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">Tglass</span> <span class="o">=</span> <span class="n">cie_interp</span><span class="p">(</span><span class="n">_CIE_GLASS_ID</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">spd</span><span class="p">[</span><span class="mi">0</span><span class="p">,:],</span> <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;rfl&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:,:]</span>
+    <span class="n">spd_</span> <span class="o">=</span> <span class="n">spd</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">spd_</span><span class="p">[</span><span class="mi">1</span><span class="p">:,:]</span> <span class="o">*=</span> <span class="n">Tglass</span>
+    <span class="k">return</span> <span class="n">spd_</span></div>
 </pre></div>
 
            </div>
@@ -1268,25 +1291,16 @@
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../../../_static/doctools.js"></script>
-    
-
-  
-
-  <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

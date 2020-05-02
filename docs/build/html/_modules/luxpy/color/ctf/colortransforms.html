@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.color.ctf.colortransforms &mdash; LuxPy 1.4.18 documentation</title>
+  <title>luxpy.color.ctf.colortransforms &mdash; LuxPy 1.5.0 documentation</title>
   
 
   
@@ -17,32 +17,34 @@
   
 
   
+  <script type="text/javascript" src="../../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
-
-  
-  <script src="../../../../_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -56,7 +58,7 @@
             
             
               <div class="version">
-                1.4.18
+                1.5.0
               </div>
             
           
@@ -182,8 +184,9 @@
 
 <span class="sd"> :_CSPACE_AXES: dict with list[str,str,str] containing axis labels</span>
 <span class="sd">                of defined cspaces</span>
+
 <span class="sd"> :_IPT_M: Conversion matrix for IPT color space</span>
-<span class="sd">  </span>
+
 <span class="sd"> :_COLORTF_DEFAULT_WHITE_POINT : default white point for colortf (set at Illuminant E)</span>
 
 
@@ -199,34 +202,35 @@
 <span class="sd">  | * xyz_to_Ydlep(), Ydlep_to_xyz(): (X,Y,Z) &lt;-&gt; (Y,dl, ep); </span>
 <span class="sd">  |                   Y, dominant wavelength (dl) and excitation purity (ep)</span>
 <span class="sd">  | * xyz_to_srgb(), srgb_to_xyz(): (X,Y,Z) &lt;-&gt; sRGB; (IEC:61966 sRGB)</span>
-<span class="sd">  | * xyz_to_jabz(), jabz_to_xyz(): (X,Y,Z) &lt;-&gt; (Jz,az,bz) (Safdar et al, 2017)</span>
+<span class="sd">  | * xyz_to_jabz(), jabz_to_xyz(): (X,Y,Z) &lt;-&gt; (Jz,az,bz) [Safdar et al, 2017]</span>
 
 <span class="sd">References</span>
 <span class="sd">----------</span>
-<span class="sd">    1. `CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018. &lt;https://doi.org/10.25039/TR.015.2018&gt;`_</span>
+<span class="sd">    1. `CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018.</span>
+<span class="sd">    &lt;https://doi.org/10.25039/TR.015.2018&gt;`_</span>
 <span class="sd">    2. `Ebner F, and Fairchild MD (1998).</span>
-<span class="sd">       Development and testing of a color space (IPT) with improved hue uniformity.</span>
-<span class="sd">       In IS&amp;T 6th Color Imaging Conference, (Scottsdale, Arizona, USA), pp. 8–13.</span>
-<span class="sd">       &lt;http://www.ingentaconnect.com/content/ist/cic/1998/00001998/00000001/art00003?crawler=true&gt;`_</span>
+<span class="sd">    Development and testing of a color space (IPT) with improved hue uniformity.</span>
+<span class="sd">    In IS&amp;T 6th Color Imaging Conference, (Scottsdale, Arizona, USA), pp. 8–13. </span>
+<span class="sd">    &lt;http://www.ingentaconnect.com/content/ist/cic/1998/00001998/00000001/art00003?crawler=true&gt;`_</span>
 <span class="sd">    3. `MacLeod DI, and Boynton RM (1979).</span>
-<span class="sd">       Chromaticity diagram showing cone excitation by stimuli of equal luminance.</span>
-<span class="sd">       J. Opt. Soc. Am. 69, 1183–1186.</span>
-<span class="sd">       &lt;https://www.osapublishing.org/josa/abstract.cfm?uri=josa-69-8-1183&gt;`_</span>
-<span class="sd">    4. `Safdar, M., Cui, G., Kim,Y. J., and  Luo,M. R. (2017).</span>
-<span class="sd">       Perceptually uniform color space for image signals including high dynamic range and wide gamut.</span>
-<span class="sd">       Opt. Express, vol. 25, no. 13, pp. 15131–15151, Jun. 2017.</span>
-<span class="sd">       &lt;https://www.opticsexpress.org/abstract.cfm?URI=oe-25-13-15131&gt;`_</span>
-
+<span class="sd">    Chromaticity diagram showing cone excitation by stimuli of equal luminance.</span>
+<span class="sd">    J. Opt. Soc. Am. 69, 1183–1186. </span>
+<span class="sd">    &lt;https://www.osapublishing.org/josa/abstract.cfm?uri=josa-69-8-1183&gt;`_</span>
+<span class="sd">    4. `Safdar, M., Cui, G., Kim,Y. J., and  Luo, M. R. (2017).</span>
+<span class="sd">    Perceptually uniform color space for image signals including high dynamic range and wide gamut.</span>
+<span class="sd">    Opt. Express, vol. 25, no. 13, pp. 15131–15151, Jun. 2017. </span>
+<span class="sd">    &lt;https://www.opticsexpress.org/abstract.cfm?URI=oe-25-13-15131&gt;`_</span>
+<span class="sd">    </span>
 <span class="sd">.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)</span>
-
-<span class="sd">Created on Wed Jun 28 22:48:09 2017</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">_CMF</span><span class="p">,</span> <span class="n">_CIE_ILLUMINANTS</span><span class="p">,</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">_CSPACE</span><span class="p">,</span> <span class="n">math</span><span class="p">,</span> <span class="n">spd_to_xyz</span><span class="p">,</span> <span class="n">np2d</span><span class="p">,</span> <span class="n">np2dT</span><span class="p">,</span> <span class="n">np3d</span><span class="p">,</span> <span class="n">todim</span><span class="p">,</span> <span class="n">asplit</span><span class="p">,</span> <span class="n">ajoin</span>
+<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="n">_CMF</span><span class="p">,</span> <span class="n">_CIE_ILLUMINANTS</span><span class="p">,</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">_CSPACE</span><span class="p">,</span> <span class="n">math</span><span class="p">,</span> <span class="n">spd_to_xyz</span> 
+<span class="kn">from</span> <span class="nn">luxpy.utils</span> <span class="kn">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">np2d</span><span class="p">,</span> <span class="n">np2dT</span><span class="p">,</span> <span class="n">np3d</span><span class="p">,</span> <span class="n">todim</span><span class="p">,</span> <span class="n">asplit</span><span class="p">,</span> <span class="n">ajoin</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;_CSPACE_AXES&#39;</span><span class="p">,</span> <span class="s1">&#39;_IPT_M&#39;</span><span class="p">,</span><span class="s1">&#39;xyz_to_Yxy&#39;</span><span class="p">,</span><span class="s1">&#39;Yxy_to_xyz&#39;</span><span class="p">,</span><span class="s1">&#39;xyz_to_Yuv&#39;</span><span class="p">,</span><span class="s1">&#39;Yuv_to_xyz&#39;</span><span class="p">,</span>
            <span class="s1">&#39;xyz_to_wuv&#39;</span><span class="p">,</span><span class="s1">&#39;wuv_to_xyz&#39;</span><span class="p">,</span><span class="s1">&#39;xyz_to_xyz&#39;</span><span class="p">,</span><span class="s1">&#39;xyz_to_lms&#39;</span><span class="p">,</span> <span class="s1">&#39;lms_to_xyz&#39;</span><span class="p">,</span><span class="s1">&#39;xyz_to_lab&#39;</span><span class="p">,</span><span class="s1">&#39;lab_to_xyz&#39;</span><span class="p">,</span><span class="s1">&#39;xyz_to_luv&#39;</span><span class="p">,</span><span class="s1">&#39;luv_to_xyz&#39;</span><span class="p">,</span>
-           <span class="s1">&#39;xyz_to_Vrb_mb&#39;</span><span class="p">,</span><span class="s1">&#39;Vrb_mb_to_xyz&#39;</span><span class="p">,</span><span class="s1">&#39;xyz_to_ipt&#39;</span><span class="p">,</span><span class="s1">&#39;ipt_to_xyz&#39;</span><span class="p">,</span><span class="s1">&#39;xyz_to_Ydlep&#39;</span><span class="p">,</span><span class="s1">&#39;Ydlep_to_xyz&#39;</span><span class="p">,</span><span class="s1">&#39;xyz_to_srgb&#39;</span><span class="p">,</span><span class="s1">&#39;srgb_to_xyz&#39;</span><span class="p">]</span>
+           <span class="s1">&#39;xyz_to_Vrb_mb&#39;</span><span class="p">,</span><span class="s1">&#39;Vrb_mb_to_xyz&#39;</span><span class="p">,</span><span class="s1">&#39;xyz_to_ipt&#39;</span><span class="p">,</span><span class="s1">&#39;ipt_to_xyz&#39;</span><span class="p">,</span><span class="s1">&#39;xyz_to_Ydlep&#39;</span><span class="p">,</span><span class="s1">&#39;Ydlep_to_xyz&#39;</span><span class="p">,</span><span class="s1">&#39;xyz_to_srgb&#39;</span><span class="p">,</span><span class="s1">&#39;srgb_to_xyz&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;xyz_to_jabz&#39;</span><span class="p">,</span><span class="s1">&#39;jabz_to_xyz&#39;</span><span class="p">]</span>
 
 <span class="c1">#------------------------------------------------------------------------------</span>
 <span class="c1"># Database with cspace-axis strings (for plotting):</span>
@@ -261,7 +265,7 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        :Yxy: </span>
 <span class="sd">            | ndarray with Yxy chromaticity values</span>
-<span class="sd">              (Y value refers to luminance or luminance factor)</span>
+<span class="sd">            |  (Y value refers to luminance or luminance factor)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">xyz</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">(</span><span class="n">xyz</span><span class="p">)</span>
     <span class="n">Yxy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">xyz</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
@@ -279,7 +283,7 @@
 <span class="sd">    Args:</span>
 <span class="sd">        :Yxy: </span>
 <span class="sd">            | ndarray with Yxy chromaticity values</span>
-<span class="sd">              (Y value refers to luminance or luminance factor)</span>
+<span class="sd">            |  (Y value refers to luminance or luminance factor)</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        :xyz: </span>
@@ -303,7 +307,7 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        :Yuv: </span>
 <span class="sd">            | ndarray with CIE 1976 Yu&#39;v&#39; chromaticity values</span>
-<span class="sd">              (Y value refers to luminance or luminance factor)</span>
+<span class="sd">            |  (Y value refers to luminance or luminance factor)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">xyz</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">(</span><span class="n">xyz</span><span class="p">)</span>
     <span class="n">Yuv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">xyz</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
@@ -321,7 +325,7 @@
 <span class="sd">    Args:</span>
 <span class="sd">        :Yuv: </span>
 <span class="sd">            | ndarray with CIE 1976 Yu&#39;v&#39; chromaticity values</span>
-<span class="sd">              (Y value refers to luminance or luminance factor)</span>
+<span class="sd">            |  (Y value refers to luminance or luminance factor)</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        :xyz: </span>
@@ -344,7 +348,7 @@
 <span class="sd">            | ndarray with tristimulus values</span>
 <span class="sd">        :xyzw: </span>
 <span class="sd">            | ndarray with tristimulus values of white point, optional</span>
-<span class="sd">              (Defaults to luxpy._COLORTF_DEFAULT_WHITE_POINT)</span>
+<span class="sd">            |  (Defaults to luxpy._COLORTF_DEFAULT_WHITE_POINT)</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        :wuv: </span>
@@ -367,12 +371,12 @@
 <span class="sd">            | ndarray with W*U*V* values</span>
 <span class="sd">        :xyzw: </span>
 <span class="sd">            | ndarray with tristimulus values of white point, optional</span>
-<span class="sd">              (Defaults to luxpy._COLORTF_DEFAULT_WHITE_POINT)</span>
+<span class="sd">            |  (Defaults to luxpy._COLORTF_DEFAULT_WHITE_POINT)</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        :xyz: </span>
 <span class="sd">            | ndarray with tristimulus values</span>
-<span class="sd">	 &quot;&quot;&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">wuv</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">(</span><span class="n">wuv</span><span class="p">)</span>
     <span class="n">Yuvw</span> <span class="o">=</span> <span class="n">xyz_to_Yuv</span><span class="p">(</span><span class="n">xyzw</span><span class="p">)</span> <span class="c1"># convert to cie 1976 u&#39;v&#39;</span>
     <span class="n">Yuv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">wuv</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
@@ -614,7 +618,7 @@
 
     <span class="c1"># calculate u&#39;v&#39; from u*,v*:</span>
     <span class="n">Yuv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">luv</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-    <span class="n">Yuv</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">luv</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="mi">13</span><span class="o">*</span><span class="n">luv</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">]))</span> <span class="o">+</span> <span class="n">Yuvw</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+    <span class="n">Yuv</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">luv</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="mi">13</span><span class="o">*</span><span class="n">luv</span><span class="p">[</span><span class="o">...</span><span class="p">,:</span><span class="mi">1</span><span class="p">]))</span> <span class="o">+</span> <span class="n">Yuvw</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
     <span class="n">Yuv</span><span class="p">[</span><span class="n">Yuv</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 
     <span class="n">Yuv</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">Yuvw</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="p">(((</span><span class="n">luv</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mf">16.0</span><span class="p">)</span> <span class="o">/</span> <span class="mf">116.0</span><span class="p">)</span><span class="o">**</span><span class="mf">3.0</span><span class="p">)</span>
@@ -685,7 +689,7 @@
 <span class="sd">        :cieobs:</span>
 <span class="sd">            | luxpy._CIEOBS, optional</span>
 <span class="sd">            | CMF set to use when getting the default M, which is</span>
-<span class="sd">              the xyz to lms conversion matrix.</span>
+<span class="sd">            | the xyz to lms conversion matrix.</span>
 <span class="sd">        :scaling:</span>
 <span class="sd">            | list of scaling factors for r and b dimensions.</span>
 <span class="sd">        :M: </span>
@@ -737,7 +741,7 @@
 <span class="sd">        :cieobs:</span>
 <span class="sd">            | luxpy._CIEOBS, optional</span>
 <span class="sd">            | CMF set to use when calculating xyzw for rescaling M</span>
-<span class="sd">              (only when not None).</span>
+<span class="sd">            | (only when not None).</span>
 <span class="sd">        :M: | None, optional</span>
 <span class="sd">            | None defaults to xyz to lms conversion matrix determined by :cieobs:</span>
 
@@ -746,8 +750,7 @@
 <span class="sd">            | ndarray with IPT color coordinates</span>
 
 <span class="sd">    Note:</span>
-<span class="sd">        :xyz: is assumed to be under D65 viewing conditions! If necessary </span>
-<span class="sd">              perform chromatic adaptation !</span>
+<span class="sd">        :xyz: is assumed to be under D65 viewing conditions! If necessary perform chromatic adaptation !</span>
 
 <span class="sd">    Reference:</span>
 <span class="sd">        1. `Ebner F, and Fairchild MD (1998).</span>
@@ -811,7 +814,7 @@
 <span class="sd">        :cieobs:</span>
 <span class="sd">            | luxpy._CIEOBS, optional</span>
 <span class="sd">            | CMF set to use when calculating xyzw for rescaling Mxyz2lms</span>
-<span class="sd">              (only when not None).</span>
+<span class="sd">            | (only when not None).</span>
 <span class="sd">        :M: | None, optional</span>
 <span class="sd">            | None defaults to xyz to lms conversion matrix determined by:cieobs:</span>
 
@@ -820,8 +823,7 @@
 <span class="sd">            | ndarray with tristimulus values</span>
 
 <span class="sd">    Note:</span>
-<span class="sd">        :xyz: is assumed to be under D65 viewing conditions! If necessary </span>
-<span class="sd">              perform chromatic adaptation !</span>
+<span class="sd">        :xyz: is assumed to be under D65 viewing conditions! If necessary perform chromatic adaptation !</span>
 
 <span class="sd">    Reference:</span>
 <span class="sd">        1. `Ebner F, and Fairchild MD (1998).</span>
@@ -891,7 +893,7 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        :Ydlep: </span>
 <span class="sd">            | ndarray with Y, dominant (complementary) wavelength</span>
-<span class="sd">              and excitation purity</span>
+<span class="sd">            |  and excitation purity</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
     <span class="n">xyz3</span> <span class="o">=</span> <span class="n">np3d</span><span class="p">(</span><span class="n">xyz</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
@@ -1182,7 +1184,7 @@
         <span class="n">xyz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;ij,lj-&gt;li&#39;</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">srgb</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span>
     <span class="k">return</span> <span class="n">xyz</span></div>
 
-<span class="k">def</span> <span class="nf">xyz_to_jabz</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="xyz_to_jabz"><a class="viewcode-back" href="../../../../color.html#luxpy.color.ctf.colortransforms.xyz_to_jabz">[docs]</a><span class="k">def</span> <span class="nf">xyz_to_jabz</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert XYZ tristimulus values to Jz,az,bz color coordinates.</span>
 
@@ -1199,14 +1201,14 @@
 <span class="sd">     |</span>
 <span class="sd">     | 2a. Jz represents the &#39;lightness&#39; relative to a D65 white with luminance = 10000 cd/m² </span>
 <span class="sd">     |      (note that Jz that not exactly equal 1 for this high value, but rather for 102900 cd/m2)</span>
-<span class="sd">     | 2b.  az, bz represent respectively a red-green and a yellow-blue opponent axis </span>
+<span class="sd">     | 2b. az, bz represent respectively a red-green and a yellow-blue opponent axis </span>
 <span class="sd">     |      (but note that a D65 shows a small offset from (0,0))</span>
 
 <span class="sd">    Reference:</span>
-<span class="sd">        1. `Safdar, M., Cui, G., Kim,Y. J., and  Luo,M. R. (2017).</span>
-<span class="sd">            Perceptually uniform color space for image signals including high dynamic range and wide gamut.</span>
-<span class="sd">            Opt. Express, vol. 25, no. 13, pp. 15131–15151, Jun. 2017.</span>
-<span class="sd">            &lt;http://www.opticsexpress.org/abstract.cfm?URI=oe-25-13-15131&gt;`_    </span>
+<span class="sd">        1. `Safdar, M., Cui, G., Kim,Y. J., and Luo, M. R. (2017).</span>
+<span class="sd">        Perceptually uniform color space for image signals including high dynamic range and wide gamut.</span>
+<span class="sd">        Opt. Express, vol. 25, no. 13, pp. 15131–15151, June 2017. </span>
+<span class="sd">        &lt;http://www.opticsexpress.org/abstract.cfm?URI=oe-25-13-15131&gt;`_</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">xyz</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">(</span><span class="n">xyz</span><span class="p">)</span>
     
@@ -1244,9 +1246,9 @@
     <span class="c1"># convert Iabz&#39; to Jabz coordinates:</span>
 
     <span class="n">Iabz</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">((</span><span class="mi">1</span><span class="o">-</span><span class="mf">0.56</span><span class="p">)</span><span class="o">*</span><span class="n">Iabz</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="mf">0.56</span><span class="o">*</span><span class="n">Iabz</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">]))</span> <span class="o">-</span> <span class="mf">1.6295499532821566e-11</span>
-    <span class="k">return</span> <span class="n">Iabz</span>
+    <span class="k">return</span> <span class="n">Iabz</span></div>
 
-<span class="k">def</span> <span class="nf">jabz_to_xyz</span><span class="p">(</span><span class="n">jabz</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="jabz_to_xyz"><a class="viewcode-back" href="../../../../color.html#luxpy.color.ctf.colortransforms.jabz_to_xyz">[docs]</a><span class="k">def</span> <span class="nf">jabz_to_xyz</span><span class="p">(</span><span class="n">jabz</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert Jz,az,bz color coordinates to XYZ tristimulus values.</span>
 
@@ -1266,12 +1268,11 @@
 <span class="sd">     | 2b.  az, bz represent respectively a red-green and a yellow-blue opponent axis </span>
 <span class="sd">     |      (but note that a D65 shows a small offset from (0,0))</span>
 
-
 <span class="sd">    Reference:</span>
-<span class="sd">        1. `Safdar, M., Cui, G., Kim,Y. J., and  Luo,M. R. (2017).</span>
-<span class="sd">            Perceptually uniform color space for image signals including high dynamic range and wide gamut.</span>
-<span class="sd">            Opt. Express, vol. 25, no. 13, pp. 15131–15151, Jun. 2017.</span>
-<span class="sd">            &lt;http://www.opticsexpress.org/abstract.cfm?URI=oe-25-13-15131&gt;`_    </span>
+<span class="sd">        1. `Safdar, M., Cui, G., Kim,Y. J., and Luo, M. R. (2017).</span>
+<span class="sd">        Perceptually uniform color space for image signals including high dynamic range and wide gamut.</span>
+<span class="sd">        Opt. Express, vol. 25, no. 13, pp. 15131–15151, June, 2017.</span>
+<span class="sd">        &lt;http://www.opticsexpress.org/abstract.cfm?URI=oe-25-13-15131&gt;`_</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">jabz</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">(</span><span class="n">jabz</span><span class="p">)</span>
     
@@ -1313,7 +1314,7 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">xyz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;ij,lj-&gt;li&#39;</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">lms</span><span class="p">)</span>
         
-    <span class="k">return</span> <span class="n">xyz</span>
+    <span class="k">return</span> <span class="n">xyz</span></div>
 </pre></div>
 
            </div>
@@ -1343,25 +1344,16 @@
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../../../_static/doctools.js"></script>
-    
-
-  
-
-  <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

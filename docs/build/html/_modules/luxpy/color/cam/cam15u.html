@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.color.cam.cam15u &mdash; LuxPy 1.4.18 documentation</title>
+  <title>luxpy.color.cam.cam15u &mdash; LuxPy 1.5.0 documentation</title>
   
 
   
@@ -17,32 +17,34 @@
   
 
   
+  <script type="text/javascript" src="../../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
-
-  
-  <script src="../../../../_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -56,7 +58,7 @@
             
             
               <div class="version">
-                1.4.18
+                1.5.0
               </div>
             
           
@@ -182,8 +184,9 @@
 <span class="sd">            Opt. Express, vol. 23, no. 10, pp. 13455–13466. </span>
 <span class="sd">            &lt;https://www.osapublishing.org/oe/abstract.cfm?uri=oe-23-10-13455&amp;origin=search&gt;`_</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">_CMF</span><span class="p">,</span> <span class="n">_CIE_ILLUMINANTS</span><span class="p">,</span> <span class="n">_MUNSELL</span><span class="p">,</span> <span class="n">np2d</span><span class="p">,</span> <span class="n">spd_to_xyz</span><span class="p">,</span> <span class="n">asplit</span><span class="p">,</span> <span class="n">ajoin</span><span class="p">,</span><span class="n">cie_interp</span>
-<span class="kn">from</span> <span class="nn">luxpy.color.cam.colorappearancemodels</span> <span class="k">import</span> <span class="n">hue_angle</span><span class="p">,</span> <span class="n">hue_quadrature</span>
+<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span>  <span class="n">_CMF</span><span class="p">,</span> <span class="n">_CIE_ILLUMINANTS</span><span class="p">,</span> <span class="n">_MUNSELL</span><span class="p">,</span> <span class="n">spd_to_xyz</span><span class="p">,</span> <span class="n">cie_interp</span>
+<span class="kn">from</span> <span class="nn">luxpy.utils</span> <span class="kn">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">np2d</span><span class="p">,</span> <span class="n">asplit</span><span class="p">,</span> <span class="n">ajoin</span>
+<span class="kn">from</span> <span class="nn">luxpy.color.cam.colorappearancemodels</span> <span class="kn">import</span> <span class="n">hue_angle</span><span class="p">,</span> <span class="n">hue_quadrature</span>
 
 <span class="n">_CAM15U_AXES</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;qabW_cam15u&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Q (cam15u)&quot;</span><span class="p">,</span> <span class="s2">&quot;aW (cam15u)&quot;</span><span class="p">,</span> <span class="s2">&quot;bW (cam15u)&quot;</span><span class="p">]}</span> 
 
@@ -206,7 +209,7 @@
 <span class="sd">    Args:</span>
 <span class="sd">        :data: </span>
 <span class="sd">            | ndarray of CIE 2006 10°  XYZ tristimulus values or spectral data</span>
-<span class="sd">              or color appearance attributes</span>
+<span class="sd">            |  or color appearance attributes</span>
 <span class="sd">        :fov: </span>
 <span class="sd">            | 10.0, optional</span>
 <span class="sd">            | Field-of-view of stimulus (for size effect on brightness)</span>
@@ -279,7 +282,8 @@
     <span class="n">dshape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">outin</span><span class="p">)</span> <span class="c1"># requested number of correlates</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">inputtype</span> <span class="o">!=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">direction</span> <span class="o">==</span> <span class="s1">&#39;forward&#39;</span><span class="p">):</span>
         <span class="n">dshape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">dshape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span> <span class="c1"># wavelength row doesn&#39;t count &amp; only with forward can the input data be spectral</span>
-    <span class="n">camout</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">dshape</span><span class="p">)</span>
+    
+    <span class="n">camout</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">dshape</span><span class="p">);</span> <span class="n">camout</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
         
@@ -486,25 +490,16 @@
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../../../_static/doctools.js"></script>
-    
-
-  
-
-  <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

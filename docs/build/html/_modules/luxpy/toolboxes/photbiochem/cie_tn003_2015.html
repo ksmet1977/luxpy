@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.toolboxes.photbiochem.cie_tn003_2015 &mdash; LuxPy 1.4.18 documentation</title>
+  <title>luxpy.toolboxes.photbiochem.cie_tn003_2015 &mdash; LuxPy 1.5.0 documentation</title>
   
 
   
@@ -17,32 +17,34 @@
   
 
   
+  <script type="text/javascript" src="../../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
-
-  
-  <script src="../../../../_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -56,7 +58,7 @@
             
             
               <div class="version">
-                1.4.18
+                1.5.0
               </div>
             
           
@@ -236,7 +238,8 @@
 <span class="sd">.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">_PKG_PATH</span><span class="p">,</span> <span class="n">_SEP</span><span class="p">,</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">_BB</span><span class="p">,</span> <span class="n">spd</span><span class="p">,</span> <span class="n">getdata</span><span class="p">,</span> <span class="n">getwld</span><span class="p">,</span> <span class="n">vlbar</span><span class="p">,</span><span class="n">spd_to_power</span><span class="p">,</span> <span class="n">spd_normalize</span>
+<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">_BB</span><span class="p">,</span> <span class="n">spd</span><span class="p">,</span> <span class="n">getwld</span><span class="p">,</span> <span class="n">vlbar</span><span class="p">,</span> <span class="n">spd_to_power</span><span class="p">,</span> <span class="n">spd_normalize</span>
+<span class="kn">from</span> <span class="nn">luxpy.utils</span> <span class="kn">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">_PKG_PATH</span><span class="p">,</span> <span class="n">_SEP</span><span class="p">,</span> <span class="n">getdata</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;_PHOTORECEPTORS&#39;</span><span class="p">,</span><span class="s1">&#39;_QUANTITIES&#39;</span><span class="p">,</span> <span class="s1">&#39;_ACTIONSPECTRA&#39;</span><span class="p">,</span><span class="s1">&#39;Km_correction_factor&#39;</span><span class="p">,</span>
            <span class="s1">&#39;_Ee_SYMBOLS&#39;</span><span class="p">,</span> <span class="s1">&#39;_E_SYMBOLS&#39;</span><span class="p">,</span> <span class="s1">&#39;_Q_SYMBOLS&#39;</span><span class="p">,</span> 
@@ -295,9 +298,9 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        :returns: </span>
 <span class="sd">            | (Eeas, Eas) with Eeas and Eas resp. numpy.ndarrays with the </span>
-<span class="sd">              α-opic irradiance and equivalent illuminance values </span>
-<span class="sd">              of all spectra in :sid: in SI-units. </span>
-<span class="sd">         </span>
+<span class="sd">            | α-opic irradiance and equivalent illuminance values </span>
+<span class="sd">            | of all spectra in :sid: in SI-units. </span>
+<span class="sd">            |</span>
 <span class="sd">            | (other choice can be set using :out:)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">outlist</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
@@ -385,25 +388,16 @@
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../../../_static/doctools.js"></script>
-    
-
-  
-
-  <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

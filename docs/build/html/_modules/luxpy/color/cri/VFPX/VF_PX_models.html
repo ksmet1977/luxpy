@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.color.cri.VFPX.VF_PX_models &mdash; LuxPy 1.4.18 documentation</title>
+  <title>luxpy.color.cri.VFPX.VF_PX_models &mdash; LuxPy 1.5.0 documentation</title>
   
 
   
@@ -17,32 +17,34 @@
   
 
   
+  <script type="text/javascript" src="../../../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
+        <script src="../../../../../_static/jquery.js"></script>
+        <script src="../../../../../_static/underscore.js"></script>
+        <script src="../../../../../_static/doctools.js"></script>
+        <script src="../../../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../../../_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="../../../../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../../search.html" /> 
-
-  
-  <script src="../../../../../_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -56,7 +58,7 @@
             
             
               <div class="version">
-                1.4.18
+                1.5.0
               </div>
             
           
@@ -209,7 +211,7 @@
 
 <span class="sd"> :plot_shift_data(): Plots vector or circle fields.</span>
 
-<span class="sd"> :plotcircle(): Plot one or more concentric circles.</span>
+<span class="sd"> :plotcircle(): Plot one or more concentric circles around (0,0).</span>
 
 <span class="sd"> :initialize_VF_hue_angles(): Initialize the hue angles that will be used to </span>
 <span class="sd">                              &#39;summarize&#39; the VF model fitting parameters.</span>
@@ -237,10 +239,11 @@
 
 <span class="sd">.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)</span>
 <span class="sd">&quot;&quot;&quot;</span>
-
-<span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">pd</span><span class="p">,</span> <span class="n">os</span><span class="p">,</span> <span class="n">_CIE_ILLUMINANTS</span><span class="p">,</span> <span class="n">spd_to_xyz</span><span class="p">,</span> <span class="n">colortf</span>
-<span class="kn">from</span> <span class="nn">.vectorshiftmodel</span> <span class="k">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">.pixelshiftmodel</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="n">_CIE_ILLUMINANTS</span><span class="p">,</span> <span class="n">spd_to_xyz</span><span class="p">,</span> <span class="n">colortf</span>
+<span class="kn">from</span> <span class="nn">luxpy.utils</span> <span class="kn">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">pd</span>
+<span class="kn">from</span> <span class="nn">.vectorshiftmodel</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">.pixelshiftmodel</span> <span class="kn">import</span> <span class="o">*</span>
 
 <span class="c1"># .colorrendition_vectorshiftmodel:</span>
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;_VF_CRI_DEFAULT&#39;</span><span class="p">,</span><span class="s1">&#39;_VF_CSPACE&#39;</span><span class="p">,</span><span class="s1">&#39;_VF_CSPACE_EXAMPLE&#39;</span><span class="p">,</span><span class="s1">&#39;_VF_CIEOBS&#39;</span><span class="p">,</span><span class="s1">&#39;_VF_MAXR&#39;</span><span class="p">,</span><span class="s1">&#39;_VF_DELTAR&#39;</span><span class="p">,</span><span class="s1">&#39;_VF_MODEL_TYPE&#39;</span><span class="p">,</span><span class="s1">&#39;_VF_SIG&#39;</span><span class="p">,</span><span class="s1">&#39;_VF_PCOLORSHIFT&#39;</span><span class="p">]</span>
@@ -275,19 +278,19 @@
 <span class="sd">        :pool:</span>
 <span class="sd">            | False, optional</span>
 <span class="sd">            | If :S: contains multiple spectra, True pools all jab data before </span>
-<span class="sd">              modeling the vector field, while False models a different field </span>
-<span class="sd">              for each spectrum.</span>
+<span class="sd">            | modeling the vector field, while False models a different field </span>
+<span class="sd">            |  for each spectrum.</span>
 <span class="sd">        :pcolorshift: </span>
 <span class="sd">            | default dict (see below) or user defined dict, optional</span>
 <span class="sd">            | Dict containing the specification input </span>
-<span class="sd">              for apply_poly_model_at_hue_x().</span>
+<span class="sd">            |  for apply_poly_model_at_hue_x().</span>
 <span class="sd">            | Default dict = {&#39;href&#39;: np.arange(np.pi/10,2*np.pi,2*np.pi/10),</span>
 <span class="sd">            |                &#39;Cref&#39; : _VF_MAXR, </span>
 <span class="sd">            |                &#39;sig&#39; : _VF_SIG, </span>
 <span class="sd">            |                &#39;labels&#39; : &#39;#&#39;} </span>
 <span class="sd">            | The polynomial models of degree 5 and 6 can be fully specified or </span>
-<span class="sd">              summarized by the model parameters themselved OR by calculating the</span>
-<span class="sd">             dCoverC and dH at resp. 5 and 6 hues.</span>
+<span class="sd">            | summarized by the model parameters themselved OR by calculating the</span>
+<span class="sd">            | dCoverC and dH at resp. 5 and 6 hues.</span>
 <span class="sd">        :vfcolor:</span>
 <span class="sd">            | &#39;k&#39;, optional</span>
 <span class="sd">            | For plotting the vector fields.</span>
@@ -299,7 +302,7 @@
 <span class="sd">        :returns:</span>
 <span class="sd">            | :dataVF:, :dataPX: </span>
 <span class="sd">            | Dicts, for more info, see output description of resp.: </span>
-<span class="sd">              luxpy.cri.VF_colorshift_model() and luxpy.cri.PX_colorshift_model()</span>
+<span class="sd">            | luxpy.cri.VF_colorshift_model() and luxpy.cri.PX_colorshift_model()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># calculate VectorField cri_color_shift model:</span>
     <span class="n">dataVF</span> <span class="o">=</span> <span class="n">VF_colorshift_model</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">,</span> <span class="n">sampleset</span> <span class="o">=</span> <span class="n">sampleset</span><span class="p">,</span> <span class="n">vfcolor</span> <span class="o">=</span> <span class="n">vfcolor</span><span class="p">,</span> <span class="n">pcolorshift</span> <span class="o">=</span> <span class="n">pcolorshift</span><span class="p">,</span> <span class="n">pool</span> <span class="o">=</span> <span class="n">pool</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="n">verbosity</span><span class="p">)</span>
@@ -309,9 +312,9 @@
     <span class="n">PX_jab_ranges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(([</span><span class="mi">0</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="n">_VF_DELTAR</span><span class="p">],[</span><span class="o">-</span><span class="n">_VF_MAXR</span><span class="p">,</span><span class="n">_VF_MAXR</span><span class="o">+</span><span class="n">_VF_DELTAR</span><span class="p">,</span><span class="n">_VF_DELTAR</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="n">_VF_MAXR</span><span class="p">,</span><span class="n">_VF_MAXR</span><span class="o">+</span><span class="n">_VF_DELTAR</span><span class="p">,</span><span class="n">_VF_DELTAR</span><span class="p">]))</span><span class="c1">#IES4880 gamut</span>
    
     <span class="c1"># Calculate shift vectors using vectorfield and pixel methods:</span>
-    <span class="n">delta_SvsVF_vshift_ab_mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">dataVF</span><span class="p">),</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">delta_SvsVF_vshift_ab_mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">dataVF</span><span class="p">),</span><span class="mi">1</span><span class="p">));</span><span class="n">delta_SvsVF_vshift_ab_mean</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
     <span class="n">delta_SvsVF_vshift_ab_mean_normalized</span> <span class="o">=</span> <span class="n">delta_SvsVF_vshift_ab_mean</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-    <span class="n">delta_PXvsVF_vshift_ab_mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">dataVF</span><span class="p">),</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">delta_PXvsVF_vshift_ab_mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">dataVF</span><span class="p">),</span><span class="mi">1</span><span class="p">));</span><span class="n">delta_PXvsVF_vshift_ab_mean</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
     <span class="n">delta_PXvsVF_vshift_ab_mean_normalized</span> <span class="o">=</span> <span class="n">delta_PXvsVF_vshift_ab_mean</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="n">dataPX</span> <span class="o">=</span> <span class="p">[[]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dataVF</span><span class="p">))]</span>
     <span class="k">for</span> <span class="n">Snr</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dataVF</span><span class="p">)):</span>
@@ -351,9 +354,9 @@
 <span class="sd">        :rfl: </span>
 <span class="sd">            | ndarray or str</span>
 <span class="sd">            | Array with of str referring to a set of spectral reflectance </span>
-<span class="sd">              functions to be subsampled.</span>
+<span class="sd">            |  functions to be subsampled.</span>
 <span class="sd">            | If str to file: file must contain data as columns, with first </span>
-<span class="sd">              column the wavelengths.</span>
+<span class="sd">            |  column the wavelengths.</span>
 <span class="sd">        :rflpath:</span>
 <span class="sd">            | &#39;&#39; or str, optional</span>
 <span class="sd">            | Path to folder with rfl-set specified in a str :rfl: filename.</span>
@@ -364,18 +367,18 @@
 <span class="sd">        :S: </span>
 <span class="sd">            | _CIE_ILLUMINANTS[&#39;E&#39;], optional</span>
 <span class="sd">            | Illuminant used to calculate the color coordinates of the spectral </span>
-<span class="sd">              reflectance samples.</span>
+<span class="sd">            |  reflectance samples.</span>
 <span class="sd">        :jab_ranges:</span>
 <span class="sd">            | None or ndarray, optional</span>
 <span class="sd">            | Specifies the pixelization of color space.</span>
-<span class="sd">              (ndarray.shape = (3,3), with  first axis: J,a,b, and second </span>
-<span class="sd">               axis: min, max, delta)</span>
+<span class="sd">            |  (ndarray.shape = (3,3), with  first axis: J,a,b, and second </span>
+<span class="sd">            |   axis: min, max, delta)</span>
 <span class="sd">        :jab_deltas:</span>
 <span class="sd">            | float or ndarray, optional</span>
 <span class="sd">            | Specifies the sampling range. </span>
 <span class="sd">            | A float uses jab_deltas as the maximum Euclidean distance to select</span>
-<span class="sd">             samples around each pixel center. A ndarray of 3 deltas, uses</span>
-<span class="sd">             a city block sampling around each pixel center.</span>
+<span class="sd">            | samples around each pixel center. A ndarray of 3 deltas, uses</span>
+<span class="sd">            | a city block sampling around each pixel center.</span>
 <span class="sd">        :cspace:</span>
 <span class="sd">            | _VF_CSPACE or dict, optional</span>
 <span class="sd">            | Specifies color space. See _VF_CSPACE_EXAMPLE for example structure.</span>
@@ -400,7 +403,7 @@
 <span class="sd">        :returns:</span>
 <span class="sd">            | rflsampled, jabp</span>
 <span class="sd">            | ndarrays with resp. the subsampled set of spectral reflectance </span>
-<span class="sd">              functions and the pixel coordinate centers.</span>
+<span class="sd">            | functions and the pixel coordinate centers.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Testing effects of sample set, pixel size and gamut size:</span>
     <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">rfl</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">:</span>
@@ -419,7 +422,7 @@
     <span class="c1"># Get rfls from set using sampling function (mean or rand):</span>
     <span class="n">W</span> <span class="o">=</span> <span class="n">rfl</span><span class="p">[:</span><span class="mi">1</span><span class="p">]</span>
     <span class="n">R</span> <span class="o">=</span> <span class="n">rfl</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
-    <span class="n">rflsampled</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">idxp</span><span class="p">),</span><span class="n">R</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="n">rflsampled</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">idxp</span><span class="p">),</span><span class="n">R</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]));</span><span class="n">rflsampled</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">idxp</span><span class="p">)):</span>
         <span class="k">if</span> <span class="n">samplefcn</span> <span class="o">==</span> <span class="s1">&#39;mean&#39;</span><span class="p">:</span>
             <span class="n">rfl_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">rfl</span><span class="p">[</span><span class="n">pixelsamplenrs</span><span class="p">[</span><span class="n">i</span><span class="p">],:],</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
@@ -467,17 +470,17 @@
 <span class="sd">        :plot_circle_field:</span>
 <span class="sd">            | True or False, optional</span>
 <span class="sd">            | Plot lines showing how a series of circles of color coordinates is </span>
-<span class="sd">              distorted by the test SPD.</span>
+<span class="sd">            | distorted by the test SPD.</span>
 <span class="sd">            | The width (wider means more) and color (red means more) of the </span>
-<span class="sd">              lines specify the intensity of the hue part of the color shift.</span>
+<span class="sd">            | lines specify the intensity of the hue part of the color shift.</span>
 <span class="sd">        :plot_sample_shifts:</span>
 <span class="sd">            | False or True, optional</span>
 <span class="sd">            | Plots the shifts of the individual samples of the rfl-set used to </span>
-<span class="sd">              calculated the VF model.</span>
+<span class="sd">            | calculated the VF model.</span>
 <span class="sd">        :plot_samples_shifts_at_pixel_center: </span>
 <span class="sd">            | False, optional</span>
 <span class="sd">            | Offers the possibility of shifting the vector shifts of subsampled </span>
-<span class="sd">              sets from the reference illuminant positions to the pixel centers.</span>
+<span class="sd">            | sets from the reference illuminant positions to the pixel centers.</span>
 <span class="sd">            | Note that the pixel centers must be supplied in :jabp_sampled:.</span>
 <span class="sd">        :jabp_sampled:</span>
 <span class="sd">            | None, ndarray, optional</span>
@@ -486,18 +489,18 @@
 <span class="sd">            | [&#39;g&#39;] or list[str], optional</span>
 <span class="sd">            | Specifies the plot color the color shift vectors of the VF model. </span>
 <span class="sd">            | If len(:plot_VF_colors:) == 1: same color for each list element </span>
-<span class="sd">              of :dataVF:.</span>
+<span class="sd">            | of :dataVF:.</span>
 <span class="sd">        :plot_VF_colors:</span>
 <span class="sd">            | [&#39;g&#39;] or list[str], optional</span>
 <span class="sd">            | Specifies the plot color the color shift vectors of the VF model. </span>
 <span class="sd">            | If len(:plot_VF_colors:) == 1: same color for each list element </span>
-<span class="sd">              of :dataVF:.</span>
+<span class="sd">            | of :dataVF:.</span>
 <span class="sd">        :hbin_cmap:</span>
 <span class="sd">            | None or colormap, optional</span>
 <span class="sd">            | Color map with RGB entries for each of the hue bins specified by </span>
-<span class="sd">              the hues in _VF_PCOLORSHIFT.</span>
+<span class="sd">            | the hues in _VF_PCOLORSHIFT.</span>
 <span class="sd">            | If None: cmap will be obtained on first run by </span>
-<span class="sd">              luxpy.cri.plot_shift_data() and returned for use in other functions</span>
+<span class="sd">            | luxpy.cri.plot_shift_data() and returned for use in other functions</span>
 <span class="sd">        :plot_bin_colors:</span>
 <span class="sd">            | True, optional</span>
 <span class="sd">            | Colorize hue-bins.</span>
@@ -623,25 +626,16 @@
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
-    
-
-  
-
-  <script type="text/javascript" src="../../../../../_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

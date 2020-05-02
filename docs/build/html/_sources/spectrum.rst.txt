@@ -1,6 +1,18 @@
 Spectrum sub-package
 ====================
 
+ :py:
+	* __init__.py
+	* SPD.py 
+	
+ :namespace: luxpy
+
+.. automodule:: luxpy.spectrum
+   :members:
+   :undoc-members:
+   :private-members:
+
+
 basics/ 
 -------
  :py:
@@ -11,7 +23,7 @@ basics/
 	
  :namespace: luxpy
 
-.. automodule:: luxpy.spectrum
+.. automodule:: luxpy.spectrum.basics
    :members:
    :undoc-members:
    :private-members:

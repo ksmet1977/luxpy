@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.toolboxes.hypspcim.hyperspectral_img_simulator &mdash; LuxPy 1.4.18 documentation</title>
+  <title>luxpy.toolboxes.hypspcim.hyperspectral_img_simulator &mdash; LuxPy 1.5.0 documentation</title>
   
 
   
@@ -17,32 +17,34 @@
   
 
   
+  <script type="text/javascript" src="../../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
-
-  
-  <script src="../../../../_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -56,7 +58,7 @@
             
             
               <div class="version">
-                1.4.18
+                1.5.0
               </div>
             
           
@@ -168,12 +170,13 @@
 <span class="sd">.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="p">(</span><span class="n">warnings</span><span class="p">,</span> <span class="n">np</span><span class="p">,</span> <span class="n">plt</span><span class="p">,</span> <span class="n">imsave</span><span class="p">,</span> <span class="n">cKDTree</span><span class="p">,</span> <span class="n">cat</span><span class="p">,</span> <span class="n">colortf</span><span class="p">,</span> <span class="n">_PKG_PATH</span><span class="p">,</span> <span class="n">_SEP</span><span class="p">,</span> <span class="n">_CIEOBS</span><span class="p">,</span> 
-                   <span class="n">_CIE_ILLUMINANTS</span><span class="p">,</span> <span class="n">_CRI_RFL</span><span class="p">,</span> <span class="n">_EPS</span><span class="p">,</span> <span class="n">spd_to_xyz</span><span class="p">,</span><span class="n">plot_color_data</span><span class="p">,</span> <span class="n">math</span><span class="p">)</span>
-<span class="kn">from</span> <span class="nn">luxpy.toolboxes.spdbuild</span> <span class="k">import</span> <span class="n">spdbuilder</span> <span class="k">as</span> <span class="n">spb</span>
+<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="p">(</span><span class="n">cat</span><span class="p">,</span> <span class="n">colortf</span><span class="p">,</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">_CIE_ILLUMINANTS</span><span class="p">,</span> <span class="n">_CRI_RFL</span><span class="p">,</span> 
+                   <span class="n">spd_to_xyz</span><span class="p">,</span> <span class="n">plot_color_data</span><span class="p">,</span> <span class="n">math</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">luxpy.utils</span> <span class="kn">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">plt</span><span class="p">,</span> <span class="n">sp</span><span class="p">,</span> <span class="n">_PKG_PATH</span><span class="p">,</span> <span class="n">_SEP</span><span class="p">,</span> <span class="n">_EPS</span> 
+<span class="kn">from</span> <span class="nn">luxpy.toolboxes.spdbuild</span> <span class="kn">import</span> <span class="n">spdbuilder</span> <span class="k">as</span> <span class="n">spb</span>
 
-<span class="c1"># from skimage.io import imsave</span>
-<span class="c1"># from matplotlib.pyplot import imread</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">imageio</span> <span class="kn">import</span> <span class="n">imsave</span>
 
 <span class="n">__all__</span> <span class="o">=</span><span class="p">[</span><span class="s1">&#39;_HYPSPCIM_PATH&#39;</span><span class="p">,</span><span class="s1">&#39;_HYPSPCIM_DEFAULT_IMAGE&#39;</span><span class="p">,</span><span class="s1">&#39;render_image&#39;</span><span class="p">,</span><span class="s1">&#39;xyz_to_rfl&#39;</span><span class="p">]</span>             
 
@@ -220,11 +223,11 @@
 <span class="sd">        :k_neighbours:</span>
 <span class="sd">            | 4 or int, optional</span>
 <span class="sd">            | Number of nearest neighbours for reflectance spectrum interpolation.</span>
-<span class="sd">            | Neighbours are found using scipy.cKDTree</span>
+<span class="sd">            | Neighbours are found using scipy.spatial.cKDTree</span>
 <span class="sd">        :verbosity:</span>
 <span class="sd">            | 0, optional</span>
 <span class="sd">            | If &gt; 0: make a plot of the color coordinates of original and </span>
-<span class="sd">              rendered image pixels.</span>
+<span class="sd">            | rendered image pixels.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        :returns: </span>
@@ -254,7 +257,7 @@
         <span class="c1"># Find rfl (cfr. lab_rr) from rfl set that results in &#39;near&#39; metameric </span>
         <span class="c1"># color coordinates for each value in lab_ur (i.e. smallest DE):</span>
         <span class="c1"># Construct cKDTree:</span>
-        <span class="n">tree</span> <span class="o">=</span> <span class="n">cKDTree</span><span class="p">(</span><span class="n">lab_rr</span><span class="p">,</span> <span class="n">copy_data</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">tree</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">spatial</span><span class="o">.</span><span class="n">cKDTree</span><span class="p">(</span><span class="n">lab_rr</span><span class="p">,</span> <span class="n">copy_data</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
         
         <span class="c1"># Interpolate rfls using k nearest neightbours and inverse distance weigthing:</span>
         <span class="n">d</span><span class="p">,</span> <span class="n">inds</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">lab</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="n">k_neighbours</span> <span class="p">)</span>
@@ -274,7 +277,7 @@
             <span class="c1"># Find rfl (cfr. lab_rr) from rfl set that results in &#39;near&#39; metameric </span>
             <span class="c1"># color coordinates for each value in lab_ur (i.e. smallest DE):</span>
             <span class="c1"># Construct cKDTree:</span>
-            <span class="n">tree</span> <span class="o">=</span> <span class="n">cKDTree</span><span class="p">(</span><span class="n">lab_rr</span><span class="p">,</span> <span class="n">copy_data</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+            <span class="n">tree</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">spatial</span><span class="o">.</span><span class="n">cKDTree</span><span class="p">(</span><span class="n">lab_rr</span><span class="p">,</span> <span class="n">copy_data</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
             
             <span class="c1"># Interpolate rfls using k nearest neightbours and inverse distance weigthing:</span>
             <span class="n">d</span><span class="p">,</span> <span class="n">inds</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">lab</span><span class="p">[</span><span class="n">_isnan</span><span class="p">,</span><span class="o">...</span><span class="p">],</span> <span class="n">k</span> <span class="o">=</span> <span class="n">k_neighbours</span> <span class="p">)</span>
@@ -366,7 +369,7 @@
 <span class="sd">        :k_neighbours:</span>
 <span class="sd">            | 4 or int, optional</span>
 <span class="sd">            | Number of nearest neighbours for reflectance spectrum interpolation.</span>
-<span class="sd">            | Neighbours are found using scipy.cKDTree</span>
+<span class="sd">            | Neighbours are found using scipy.spatial.cKDTree</span>
 <span class="sd">        :show: </span>
 <span class="sd">            | True, optional</span>
 <span class="sd">            |  Show images.</span>
@@ -377,7 +380,7 @@
 <span class="sd">        :show_ref_img:</span>
 <span class="sd">            | True, optional</span>
 <span class="sd">            | True: shows rendered image under reference spd. False: shows</span>
-<span class="sd">              original image.</span>
+<span class="sd">            |  original image.</span>
 <span class="sd">        :write_to_file:</span>
 <span class="sd">            | None, optional</span>
 <span class="sd">            | None: do nothing, else: write to filename(+path) in :write_to_file:</span>
@@ -558,25 +561,16 @@
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../../../_static/doctools.js"></script>
-    
-
-  
-
-  <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

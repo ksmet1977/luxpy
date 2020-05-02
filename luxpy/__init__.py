@@ -240,10 +240,11 @@ __all__ += ['cri']
 #----------------------------------------
 # Import some class functionality:
 #----------------------------------------
-from luxpy.spectrum.SPD import SPD
 from luxpy.color.CDATA import CDATA, XYZ, LAB
-__all__ += ['SPD']
 __all__ += ['CDATA', 'XYZ', 'LAB']
+from luxpy.spectrum.SPD import SPD
+__all__ += ['SPD']
+
 
 
 #----------------------------------------

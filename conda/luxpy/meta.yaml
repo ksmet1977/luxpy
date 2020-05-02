@@ -1,17 +1,17 @@
 {% set name = "luxpy" %}
-{% set version = "1.4.18" %}
+{% set version = "1.5.0" %}
 
 package:
   name: "{{ name|lower }}"
   version: "{{ version }}"
 
 source:
-  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: 18abb6546da49d5725cce694362db2fed638f5e86693b1ad8cdf341f865a21d2
+  url: "https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz"
+  sha256: 0c0bed32f7b9984664a00f21aff632cb9e1d1041dd45229632892fa5be305100
 
 build:
   number: 0
-  script: "{{ PYTHON }} -m pip install . --no-deps --ignore-installed -vv "
+  script: "{{ PYTHON }} -m pip install . -vv"
 
 requirements:
   host:
@@ -33,7 +33,6 @@ requirements:
 test:
   imports:
     - luxpy
-    - luxpy.classes
     - luxpy.color
     - luxpy.color.cam
     - luxpy.color.cat
@@ -47,20 +46,19 @@ test:
     - luxpy.color.deltaE
     - luxpy.color.utils
     - luxpy.color.whiteness
+    - luxpy.math
+    - luxpy.math.DEMO
+    - luxpy.math.vec3
     - luxpy.spectrum
     - luxpy.spectrum.basics
     - luxpy.utils
-    - luxpy.utils.helpers
-    - luxpy.utils.math
-    - luxpy.utils.math.DEMO
-    - luxpy.utils.math.vec3
 
 about:
-  home: https://github.com/ksmet1977/luxpy
+  home: "https://github.com/ksmet1977/luxpy"
   license: GPLv3
   license_family: GPL3
   license_file: 
-  summary: Python package for lighting and color science
+  summary: "Python package for lighting and color science"
   doc_url: 
   dev_url: 
 

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.color.cri.indices.mcri &mdash; LuxPy 1.4.18 documentation</title>
+  <title>luxpy.color.cri.indices.mcri &mdash; LuxPy 1.5.0 documentation</title>
   
 
   
@@ -17,32 +17,34 @@
   
 
   
+  <script type="text/javascript" src="../../../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
+        <script src="../../../../../_static/jquery.js"></script>
+        <script src="../../../../../_static/underscore.js"></script>
+        <script src="../../../../../_static/doctools.js"></script>
+        <script src="../../../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../../../_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="../../../../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../../search.html" /> 
-
-  
-  <script src="../../../../../_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -56,7 +58,7 @@
             
             
               <div class="version">
-                1.4.18
+                1.5.0
               </div>
             
           
@@ -175,9 +177,10 @@
 <span class="sd">    &lt;http://www.sciencedirect.com/science/article/pii/S0378778812000837&gt;`_</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">cat</span><span class="p">,</span> <span class="n">math</span><span class="p">,</span> <span class="n">_CRI_RFL</span><span class="p">,</span> <span class="n">_S_INTERP_TYPE</span><span class="p">,</span> <span class="n">spd</span><span class="p">,</span> <span class="n">np2d</span><span class="p">,</span> <span class="n">asplit</span><span class="p">,</span> <span class="n">spd_to_xyz</span><span class="p">,</span> <span class="n">xyz_to_ipt</span><span class="p">,</span> <span class="n">xyz_to_cct</span>
-<span class="kn">from</span> <span class="nn">..utils.DE_scalers</span> <span class="k">import</span> <span class="n">psy_scale</span>
-<span class="kn">from</span> <span class="nn">..utils.helpers</span> <span class="k">import</span> <span class="n">jab_to_rg</span>
+<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="n">cat</span><span class="p">,</span> <span class="n">math</span><span class="p">,</span> <span class="n">_CRI_RFL</span><span class="p">,</span> <span class="n">_S_INTERP_TYPE</span><span class="p">,</span> <span class="n">spd</span><span class="p">,</span> <span class="n">spd_to_xyz</span><span class="p">,</span> <span class="n">xyz_to_ipt</span><span class="p">,</span> <span class="n">xyz_to_cct</span>
+<span class="kn">from</span> <span class="nn">luxpy.utils</span> <span class="kn">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">np2d</span><span class="p">,</span> <span class="n">asplit</span>
+<span class="kn">from</span> <span class="nn">..utils.DE_scalers</span> <span class="kn">import</span> <span class="n">psy_scale</span>
+<span class="kn">from</span> <span class="nn">..utils.helpers</span> <span class="kn">import</span> <span class="n">jab_to_rg</span>
 
 
 <span class="n">_MCRI_DEFAULTS</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;sampleset&#39;</span><span class="p">:</span> <span class="s2">&quot;_CRI_RFL[&#39;mcri&#39;]&quot;</span><span class="p">,</span> 
@@ -185,19 +188,19 @@
                   <span class="s1">&#39;cieobs&#39;</span> <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;xyz&#39;</span> <span class="p">:</span> <span class="s1">&#39;1964_10&#39;</span><span class="p">,</span> <span class="s1">&#39;cct&#39;</span><span class="p">:</span> <span class="s1">&#39;1931_2&#39;</span><span class="p">},</span> 
                   <span class="s1">&#39;avg&#39;</span><span class="p">:</span> <span class="n">math</span><span class="o">.</span><span class="n">geomean</span><span class="p">,</span> 
                   <span class="s1">&#39;scale&#39;</span> <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;fcn&#39;</span><span class="p">:</span> <span class="n">psy_scale</span><span class="p">,</span> <span class="s1">&#39;cfactor&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">21.7016</span><span class="p">,</span>   <span class="mf">4.2106</span><span class="p">,</span>   <span class="mf">2.4154</span><span class="p">]},</span> 
-                  <span class="s1">&#39;cspace&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;ipt&#39;</span><span class="p">,</span> <span class="s1">&#39;Mxyz2lms&#39;</span><span class="p">:</span> <span class="p">[[</span> <span class="mf">0.400070</span><span class="p">,</span>	<span class="mf">0.707270</span><span class="p">,</span>	<span class="o">-</span><span class="mf">0.080674</span><span class="p">],[</span><span class="o">-</span><span class="mf">0.228111</span><span class="p">,</span> <span class="mf">1.150561</span><span class="p">,</span>	<span class="mf">0.061230</span><span class="p">],[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>	<span class="mf">0.931757</span><span class="p">]]},</span> 
+                  <span class="s1">&#39;cspace&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;ipt&#39;</span><span class="p">,</span> <span class="s1">&#39;Mxyz2lms&#39;</span><span class="p">:</span> <span class="p">[[</span> <span class="mf">0.400070</span><span class="p">,</span>    <span class="mf">0.707270</span><span class="p">,</span>   <span class="o">-</span><span class="mf">0.080674</span><span class="p">],[</span><span class="o">-</span><span class="mf">0.228111</span><span class="p">,</span> <span class="mf">1.150561</span><span class="p">,</span>    <span class="mf">0.061230</span><span class="p">],[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>    <span class="mf">0.931757</span><span class="p">]]},</span> 
                   <span class="s1">&#39;catf&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;xyzw&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">94.81</span><span class="p">,</span>  <span class="mf">100.00</span><span class="p">,</span>  <span class="mf">107.32</span><span class="p">],</span> <span class="s1">&#39;mcat&#39;</span><span class="p">:</span> <span class="s1">&#39;cat02&#39;</span><span class="p">,</span> <span class="s1">&#39;cattype&#39;</span><span class="p">:</span> <span class="s1">&#39;vonkries&#39;</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Yb&#39;</span><span class="p">:</span> <span class="mf">20.0</span><span class="p">,</span><span class="s1">&#39;Dtype&#39;</span><span class="p">:</span><span class="s1">&#39;cat02&#39;</span><span class="p">,</span> <span class="s1">&#39;catmode&#39;</span> <span class="p">:</span> <span class="s1">&#39;1&gt;2&#39;</span><span class="p">},</span> 
                   <span class="s1">&#39;rg_pars&#39;</span> <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;nhbins&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;start_hue&#39;</span><span class="p">:</span><span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;normalize_gamut&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s1">&#39;normalized_chroma_ref&#39;</span> <span class="p">:</span> <span class="mi">100</span><span class="p">},</span> 
                   <span class="s1">&#39;cri_specific_pars&#39;</span> <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;similarity_ai&#39;</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="o">-</span><span class="mf">0.09651</span><span class="p">,</span> <span class="mf">0.41354</span><span class="p">,</span> <span class="mf">40.64</span><span class="p">,</span> <span class="mf">16.55</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.17</span><span class="p">],</span>
-                                                                     <span class="p">[</span><span class="mf">0.16548</span><span class="p">,</span> <span class="mf">0.38877</span><span class="p">,</span> <span class="mf">58.27</span><span class="p">,</span>	<span class="mf">20.37</span><span class="p">,</span>	<span class="o">-</span><span class="mf">0.59</span><span class="p">],</span>
-                                                                     <span class="p">[</span><span class="mf">0.32825</span><span class="p">,</span> <span class="mf">0.49673</span><span class="p">,</span> <span class="mf">35.97</span>	<span class="p">,</span> <span class="mf">18.05</span><span class="p">,</span><span class="o">-</span><span class="mf">6.04</span><span class="p">],</span>
+                                                                     <span class="p">[</span><span class="mf">0.16548</span><span class="p">,</span> <span class="mf">0.38877</span><span class="p">,</span> <span class="mf">58.27</span><span class="p">,</span>    <span class="mf">20.37</span><span class="p">,</span>    <span class="o">-</span><span class="mf">0.59</span><span class="p">],</span>
+                                                                     <span class="p">[</span><span class="mf">0.32825</span><span class="p">,</span> <span class="mf">0.49673</span><span class="p">,</span> <span class="mf">35.97</span>    <span class="p">,</span> <span class="mf">18.05</span><span class="p">,</span><span class="o">-</span><span class="mf">6.04</span><span class="p">],</span>
                                                                      <span class="p">[</span><span class="mf">0.02115</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.13658</span><span class="p">,</span> <span class="mf">261.62</span><span class="p">,</span> <span class="mf">110.99</span><span class="p">,</span> <span class="o">-</span><span class="mf">44.86</span><span class="p">],</span> 
-                                                                     <span class="p">[</span><span class="o">-</span><span class="mf">0.12686</span><span class="p">,</span>	<span class="o">-</span><span class="mf">0.22593</span><span class="p">,</span> <span class="mf">99.06</span><span class="p">,</span> <span class="mf">55.90</span><span class="p">,</span> <span class="o">-</span><span class="mf">39.86</span><span class="p">],</span>
-                                                                     <span class="p">[</span> <span class="mf">0.18488</span><span class="p">,</span> <span class="mf">0.01172</span><span class="p">,</span> <span class="mf">58.23</span><span class="p">,</span> <span class="mf">62.55</span><span class="p">,</span>	<span class="o">-</span><span class="mf">22.86</span><span class="p">],</span>
-                                                                     <span class="p">[</span><span class="o">-</span><span class="mf">0.03440</span><span class="p">,</span>	<span class="mf">0.23480</span><span class="p">,</span> <span class="mf">94.71</span><span class="p">,</span>	<span class="mf">32.12</span><span class="p">,</span> <span class="mf">2.90</span><span class="p">],</span>
-                                                                     <span class="p">[</span> <span class="mf">0.04258</span><span class="p">,</span> <span class="mf">0.05040</span><span class="p">,</span> <span class="mf">205.54</span><span class="p">,</span>	<span class="mf">53.08</span><span class="p">,</span>	<span class="o">-</span><span class="mf">35.20</span><span class="p">],</span> 
-                                                                     <span class="p">[</span><span class="mf">0.15829</span><span class="p">,</span>  <span class="mf">0.13624</span><span class="p">,</span> <span class="mf">90.21</span><span class="p">,</span>  <span class="mf">70.83</span><span class="p">,</span>	<span class="o">-</span><span class="mf">19.01</span><span class="p">],</span>
-                                                                     <span class="p">[</span><span class="o">-</span><span class="mf">0.01933</span><span class="p">,</span>	<span class="o">-</span><span class="mf">0.02168</span><span class="p">,</span>	<span class="mf">742.97</span><span class="p">,</span> <span class="mf">297.66</span><span class="p">,</span>	<span class="o">-</span><span class="mf">227.30</span><span class="p">]])}</span>
+                                                                     <span class="p">[</span><span class="o">-</span><span class="mf">0.12686</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.22593</span><span class="p">,</span> <span class="mf">99.06</span><span class="p">,</span> <span class="mf">55.90</span><span class="p">,</span> <span class="o">-</span><span class="mf">39.86</span><span class="p">],</span>
+                                                                     <span class="p">[</span> <span class="mf">0.18488</span><span class="p">,</span> <span class="mf">0.01172</span><span class="p">,</span> <span class="mf">58.23</span><span class="p">,</span> <span class="mf">62.55</span><span class="p">,</span> <span class="o">-</span><span class="mf">22.86</span><span class="p">],</span>
+                                                                     <span class="p">[</span><span class="o">-</span><span class="mf">0.03440</span><span class="p">,</span> <span class="mf">0.23480</span><span class="p">,</span> <span class="mf">94.71</span><span class="p">,</span> <span class="mf">32.12</span><span class="p">,</span> <span class="mf">2.90</span><span class="p">],</span>
+                                                                     <span class="p">[</span> <span class="mf">0.04258</span><span class="p">,</span> <span class="mf">0.05040</span><span class="p">,</span> <span class="mf">205.54</span><span class="p">,</span> <span class="mf">53.08</span><span class="p">,</span> <span class="o">-</span><span class="mf">35.20</span><span class="p">],</span> 
+                                                                     <span class="p">[</span><span class="mf">0.15829</span><span class="p">,</span>  <span class="mf">0.13624</span><span class="p">,</span> <span class="mf">90.21</span><span class="p">,</span>  <span class="mf">70.83</span><span class="p">,</span> <span class="o">-</span><span class="mf">19.01</span><span class="p">],</span>
+                                                                     <span class="p">[</span><span class="o">-</span><span class="mf">0.01933</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.02168</span><span class="p">,</span> <span class="mf">742.97</span><span class="p">,</span> <span class="mf">297.66</span><span class="p">,</span> <span class="o">-</span><span class="mf">227.30</span><span class="p">]])}</span>
                 <span class="p">}</span>
 
 
@@ -209,7 +212,7 @@
 <span class="sd">    Args: </span>
 <span class="sd">        :SPD: </span>
 <span class="sd">            | ndarray with spectral data (can be multiple SPDs, </span>
-<span class="sd">              first axis are the wavelengths)</span>
+<span class="sd">            |  first axis are the wavelengths)</span>
 <span class="sd">        :D: </span>
 <span class="sd">            | 0.9, optional</span>
 <span class="sd">            | Degree of adaptation.</span>
@@ -220,7 +223,7 @@
 <span class="sd">            |  following the &#39;cat02&#39; model). </span>
 <span class="sd">            | If None: the degree is determined by :D:</span>
 <span class="sd">            |  If (:E: is not None) &amp; (:Yb: is None):  :E: is assumed to contain </span>
-<span class="sd">               the adapting field luminance La (cd/m²).</span>
+<span class="sd">            |  the adapting field luminance La (cd/m²).</span>
 <span class="sd">        :Yb: </span>
 <span class="sd">            | 20.0, optional</span>
 <span class="sd">            | Luminance factor of background. (used when calculating La from E)</span>
@@ -353,25 +356,16 @@
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
-    
-
-  
-
-  <script type="text/javascript" src="../../../../../_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

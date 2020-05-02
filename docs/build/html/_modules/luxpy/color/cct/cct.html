@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.color.cct.cct &mdash; LuxPy 1.4.18 documentation</title>
+  <title>luxpy.color.cct.cct &mdash; LuxPy 1.5.0 documentation</title>
   
 
   
@@ -17,32 +17,34 @@
   
 
   
+  <script type="text/javascript" src="../../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
-
-  
-  <script src="../../../../_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -56,7 +58,7 @@
             
             
               <div class="version">
-                1.4.18
+                1.5.0
               </div>
             
           
@@ -195,7 +197,7 @@
 <span class="sd"> :xyz_to_duv(): Calculates Duv, (CCT) from XYZ</span>
 <span class="sd">                wrapper for xyz_to_cct_ohno() &amp; xyz_to_cct_search()</span>
 
-<span class="sd"> :cct_to_xyz(): Calculates xyz from CCT, Duv [100 K &lt; CCT &lt; 10**20]</span>
+<span class="sd"> :cct_to_xyz(): Calculates xyz from CCT, Duv [100 K &lt; CCT &lt; 1e12]</span>
 
 <span class="sd"> :xyz_to_cct_mcamy(): | Calculates CCT from XYZ using Mcamy model:</span>
 <span class="sd">                      | `McCamy, Calvin S. (April 1992). </span>
@@ -218,7 +220,7 @@
 <span class="sd">                       &lt;http://www.tandfonline.com/doi/abs/10.1080/15502724.2014.839020&gt;`_</span>
 
 <span class="sd"> :xyz_to_cct_search(): Calculates CCT, Duv from XYZ using brute-force search </span>
-<span class="sd">                       algorithm (between 1e2 K - 1e20 K on a log scale)</span>
+<span class="sd">                       algorithm (between 1e2 K - 1e12 K)</span>
 
 <span class="sd"> :cct_to_mired(): Converts from CCT to Mired scale (or back).</span>
 
@@ -226,12 +228,15 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="c1">#from . import _CCT_LUT_CALC</span>
 
-<span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">pd</span><span class="p">,</span> <span class="n">_PKG_PATH</span><span class="p">,</span> <span class="n">_SEP</span><span class="p">,</span> <span class="n">_EPS</span><span class="p">,</span> <span class="n">_CMF</span><span class="p">,</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">minimize</span><span class="p">,</span> <span class="n">np2d</span><span class="p">,</span> <span class="n">np2dT</span><span class="p">,</span> <span class="n">getdata</span><span class="p">,</span> <span class="n">dictkv</span><span class="p">,</span> <span class="n">spd_to_xyz</span><span class="p">,</span> <span class="n">cri_ref</span><span class="p">,</span> <span class="n">blackbody</span><span class="p">,</span> <span class="n">xyz_to_Yxy</span><span class="p">,</span> <span class="n">xyz_to_Yuv</span><span class="p">,</span><span class="n">Yuv_to_xyz</span>
+<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span>  <span class="n">_CMF</span><span class="p">,</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">spd_to_xyz</span><span class="p">,</span> <span class="n">cri_ref</span><span class="p">,</span> <span class="n">blackbody</span><span class="p">,</span> <span class="n">xyz_to_Yxy</span><span class="p">,</span> <span class="n">xyz_to_Yuv</span><span class="p">,</span><span class="n">Yuv_to_xyz</span>
+<span class="kn">from</span> <span class="nn">luxpy.utils</span> <span class="kn">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">pd</span><span class="p">,</span> <span class="n">sp</span><span class="p">,</span> <span class="n">_PKG_PATH</span><span class="p">,</span> <span class="n">_SEP</span><span class="p">,</span> <span class="n">_EPS</span><span class="p">,</span> <span class="n">np2d</span><span class="p">,</span> <span class="n">np2dT</span><span class="p">,</span> <span class="n">getdata</span><span class="p">,</span> <span class="n">dictkv</span>
 
 <span class="n">_CCT_LUT_CALC</span> <span class="o">=</span> <span class="kc">False</span> <span class="c1"># True: (re-)calculates LUTs for ccts in .cctluts/cct_lut_cctlist.dat</span>
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;_CCT_LUT_CALC&#39;</span><span class="p">]</span>
 
-<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;_CCT_LUT&#39;</span><span class="p">,</span><span class="s1">&#39;_CCT_LUT_PATH&#39;</span><span class="p">,</span> <span class="s1">&#39;calculate_luts&#39;</span><span class="p">,</span> <span class="s1">&#39;xyz_to_cct&#39;</span><span class="p">,</span><span class="s1">&#39;xyz_to_duv&#39;</span><span class="p">,</span> <span class="s1">&#39;cct_to_xyz&#39;</span><span class="p">,</span><span class="s1">&#39;cct_to_mired&#39;</span><span class="p">,</span><span class="s1">&#39;xyz_to_cct_ohno&#39;</span><span class="p">,</span><span class="s1">&#39;xyz_to_cct_search&#39;</span><span class="p">,</span><span class="s1">&#39;xyz_to_cct_HA&#39;</span><span class="p">,</span><span class="s1">&#39;xyz_to_cct_mcamy&#39;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;_CCT_LUT&#39;</span><span class="p">,</span><span class="s1">&#39;_CCT_LUT_PATH&#39;</span><span class="p">,</span> <span class="s1">&#39;calculate_luts&#39;</span><span class="p">,</span> <span class="s1">&#39;xyz_to_cct&#39;</span><span class="p">,</span><span class="s1">&#39;xyz_to_duv&#39;</span><span class="p">,</span> <span class="s1">&#39;cct_to_xyz&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;cct_to_mired&#39;</span><span class="p">,</span><span class="s1">&#39;xyz_to_cct_ohno&#39;</span><span class="p">,</span><span class="s1">&#39;xyz_to_cct_search&#39;</span><span class="p">,</span><span class="s1">&#39;xyz_to_cct_search_fast&#39;</span><span class="p">,</span> <span class="s1">&#39;xyz_to_cct_search_robust&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;xyz_to_cct_HA&#39;</span><span class="p">,</span><span class="s1">&#39;xyz_to_cct_mcamy&#39;</span><span class="p">]</span>
 
 <span class="c1">#------------------------------------------------------------------------------</span>
 <span class="n">_CCT_LUT_PATH</span> <span class="o">=</span> <span class="n">_PKG_PATH</span> <span class="o">+</span> <span class="n">_SEP</span> <span class="o">+</span> <span class="s1">&#39;data&#39;</span><span class="o">+</span> <span class="n">_SEP</span> <span class="o">+</span> <span class="s1">&#39;cctluts&#39;</span> <span class="o">+</span> <span class="n">_SEP</span> <span class="c1">#folder with cct lut data</span>
@@ -267,7 +272,7 @@
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ccts</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
         <span class="n">ccts</span> <span class="o">=</span> <span class="n">getdata</span><span class="p">(</span><span class="n">ccts</span><span class="p">)</span>
         
-    <span class="n">Yuv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">ccts</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">2</span><span class="p">))</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="n">Yuv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">ccts</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">2</span><span class="p">));</span><span class="n">Yuv</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">cct</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ccts</span><span class="p">):</span>
         <span class="n">Yuv</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">xyz_to_Yuv</span><span class="p">(</span><span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">blackbody</span><span class="p">(</span><span class="n">cct</span><span class="p">,</span> <span class="n">wl3</span> <span class="o">=</span> <span class="p">[</span><span class="mi">360</span><span class="p">,</span><span class="mi">830</span><span class="p">,</span><span class="mi">1</span><span class="p">]),</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">))[:,</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
     <span class="n">u</span> <span class="o">=</span> <span class="n">Yuv</span><span class="p">[:,</span><span class="mi">0</span><span class="p">,</span><span class="kc">None</span><span class="p">]</span> <span class="c1"># get CIE 1960 u</span>
@@ -335,14 +340,13 @@
 <span class="sd">        chromaticity coordinates&quot;.</span>
 <span class="sd">        Color Research &amp; Application. 17 (2): 142–144.</span>
 <span class="sd">        &lt;http://onlinelibrary.wiley.com/doi/10.1002/col.5080170211/abstract&gt;`_</span>
-<span class="sd">	 &quot;&quot;&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">Yxy</span> <span class="o">=</span> <span class="n">xyz_to_Yxy</span><span class="p">(</span><span class="n">xyzw</span><span class="p">)</span>
-    <span class="c1">#axis_of_v3 = len(xyzw.shape)-1</span>
     <span class="n">n</span> <span class="o">=</span> <span class="p">(</span><span class="n">Yxy</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="mf">0.3320</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">Yxy</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span><span class="o">-</span><span class="mf">0.1858</span><span class="p">)</span>
     <span class="k">return</span>  <span class="n">np2d</span><span class="p">(</span><span class="o">-</span><span class="mf">449.0</span><span class="o">*</span><span class="p">(</span><span class="n">n</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span> <span class="o">+</span> <span class="mf">3525.0</span><span class="o">*</span><span class="p">(</span><span class="n">n</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="mf">6823.3</span><span class="o">*</span><span class="n">n</span> <span class="o">+</span> <span class="mf">5520.33</span><span class="p">)</span><span class="o">.</span><span class="n">T</span></div>
 
 
-<div class="viewcode-block" id="xyz_to_cct_HA"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cct.xyz_to_cct_HA">[docs]</a><span class="k">def</span> <span class="nf">xyz_to_cct_HA</span><span class="p">(</span><span class="n">xyzw</span><span class="p">):</span>
+<div class="viewcode-block" id="xyz_to_cct_HA"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cct.xyz_to_cct_HA">[docs]</a><span class="k">def</span> <span class="nf">xyz_to_cct_HA</span><span class="p">(</span><span class="n">xyzw</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert XYZ tristimulus values to correlated color temperature (CCT). </span>
 <span class="sd">    </span>
@@ -387,26 +391,141 @@
         <span class="n">n</span> <span class="o">=</span> <span class="p">(</span><span class="n">Yxy</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">xe</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">/</span><span class="p">(</span><span class="n">Yxy</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span><span class="o">-</span><span class="n">ye</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
         <span class="n">CCT_i</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">A0</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">A1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="o">-</span><span class="n">n</span><span class="p">,</span><span class="n">t1</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span> <span class="o">+</span> <span class="n">A2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="o">-</span><span class="n">n</span><span class="p">,</span><span class="n">t2</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span> <span class="o">+</span> <span class="n">A3</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="o">-</span><span class="n">n</span><span class="p">,</span><span class="n">t3</span><span class="p">[</span><span class="n">i</span><span class="p">]))))</span>
         <span class="n">p</span> <span class="o">=</span> <span class="p">(</span><span class="n">CCT_i</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="mf">1.0</span><span class="o">-</span><span class="mf">0.05</span><span class="o">*</span><span class="p">(</span><span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">))</span><span class="o">*</span><span class="n">cct_ranges</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">CCT_i</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mf">1.0</span><span class="o">+</span><span class="mf">0.05</span><span class="o">*</span><span class="p">(</span><span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">))</span><span class="o">*</span><span class="n">cct_ranges</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
-        <span class="n">CCT</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="n">CCT_i</span><span class="p">[</span><span class="n">p</span><span class="p">]</span>
+        <span class="n">CCT</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="n">CCT_i</span><span class="p">[</span><span class="n">p</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="n">p</span> <span class="o">=</span> <span class="p">(</span><span class="n">CCT_i</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mf">1.0</span><span class="o">-</span><span class="mf">0.05</span><span class="p">)</span><span class="o">*</span><span class="n">cct_ranges</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="c1">#smaller than smallest valid CCT value</span>
         <span class="n">CCT</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
    
-    <span class="k">if</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">CCT</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span> <span class="o">==</span> <span class="kc">True</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">CCT</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)):</span>
+    <span class="k">if</span> <span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">CCT</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span> <span class="o">==</span> <span class="kc">True</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">CCT</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">verbosity</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warning: xyz_to_cct_HA(): one or more CCTs out of range! --&gt; (CCT &lt; 3 kK,  CCT &gt;800 kK) coded as (-1, NaN) &#39;s&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">CCT</span><span class="o">.</span><span class="n">T</span></div>
 
+<span class="k">def</span> <span class="nf">_find_closest_ccts</span><span class="p">(</span><span class="n">uvw</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">ccts</span> <span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Find closest cct from a list and the two surrounding ccts.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">ccts</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ccts</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">50</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mi">500</span><span class="p">,</span><span class="mi">1000</span><span class="p">,</span><span class="mi">2000</span><span class="p">,</span><span class="mi">3000</span><span class="p">,</span><span class="mi">4000</span><span class="p">,</span><span class="mi">5000</span><span class="p">,</span><span class="mi">6000</span><span class="p">,</span><span class="mi">10000</span><span class="p">,</span><span class="mi">20000</span><span class="p">,</span><span class="mi">50000</span><span class="p">,</span><span class="mf">1e5</span><span class="p">,</span><span class="mf">1e6</span><span class="p">,</span> <span class="mf">1e7</span><span class="p">,</span> <span class="mf">1e8</span><span class="p">,</span><span class="mf">1e9</span><span class="p">,</span> <span class="mf">1e10</span><span class="p">,</span> <span class="mf">1e11</span><span class="p">,</span> <span class="mf">1e12</span><span class="p">])</span>
 
-<div class="viewcode-block" id="xyz_to_cct_search"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cct.xyz_to_cct_search">[docs]</a><span class="k">def</span> <span class="nf">xyz_to_cct_search</span><span class="p">(</span><span class="n">xyzw</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;cct&#39;</span><span class="p">,</span><span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">accuracy</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">upper_cct_max</span> <span class="o">=</span> <span class="mf">10.0</span><span class="o">**</span><span class="mi">20</span><span class="p">,</span> <span class="n">approx_cct_temp</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+    <span class="n">uv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">ccts</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">2</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">cct</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ccts</span><span class="p">):</span>
+        <span class="n">uv</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">xyz_to_Yuv</span><span class="p">(</span><span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">blackbody</span><span class="p">(</span><span class="n">cct</span><span class="p">,</span> <span class="n">wl3</span> <span class="o">=</span> <span class="p">[</span><span class="mi">360</span><span class="p">,</span><span class="mi">830</span><span class="p">,</span><span class="mi">1</span><span class="p">]),</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">))[:,</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+    <span class="n">uv</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">*=</span> <span class="p">(</span><span class="mf">2.0</span><span class="o">/</span><span class="mf">3.0</span><span class="p">)</span> <span class="c1"># get CIE 1960 v</span>
+    
+    <span class="n">dc2</span><span class="o">=</span><span class="p">((</span><span class="n">uv</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="kc">None</span><span class="p">]</span><span class="o">-</span><span class="n">uvw</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span><span class="o">...</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">q</span> <span class="o">=</span> <span class="n">dc2</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">q</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">:</span>
+        <span class="n">ccts_i</span> <span class="o">=</span> <span class="n">ccts</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">q</span><span class="p">,</span><span class="n">q</span><span class="p">))]</span>
+        <span class="n">ccts_i</span><span class="p">[:,</span><span class="n">q</span><span class="o">==</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">ccts</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">q</span><span class="p">,</span><span class="n">q</span><span class="o">+</span><span class="mi">1</span><span class="p">))[:,</span><span class="n">q</span><span class="o">==</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="n">ccts_i</span><span class="p">[:,</span><span class="n">q</span><span class="o">==</span><span class="nb">len</span><span class="p">(</span><span class="n">ccts</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">ccts</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">q</span><span class="p">,</span><span class="n">q</span><span class="o">-</span><span class="mi">1</span><span class="p">))[:,</span><span class="n">q</span><span class="o">==</span><span class="nb">len</span><span class="p">(</span><span class="n">ccts</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+        <span class="n">ccts_i</span><span class="p">[:,(</span><span class="n">q</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">q</span><span class="o">&lt;</span><span class="nb">len</span><span class="p">(</span><span class="n">ccts</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)]</span> <span class="o">=</span> <span class="n">ccts</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">q</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">q</span><span class="o">+</span><span class="mi">1</span><span class="p">))[:,(</span><span class="n">q</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">q</span><span class="o">&lt;</span><span class="nb">len</span><span class="p">(</span><span class="n">ccts</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)]]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">q</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">ccts_i</span> <span class="o">=</span> <span class="n">ccts</span><span class="p">[[</span><span class="n">q</span><span class="p">,</span><span class="n">q</span><span class="o">+</span><span class="mi">1</span><span class="p">]]</span>
+        <span class="k">elif</span> <span class="n">q</span> <span class="o">==</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ccts</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">ccts_i</span> <span class="o">=</span> <span class="n">ccts</span><span class="p">[[</span><span class="n">q</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">q</span><span class="p">]]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ccts_i</span> <span class="o">=</span> <span class="n">ccts</span><span class="p">[[</span><span class="n">q</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">q</span><span class="o">+</span><span class="mi">1</span><span class="p">]]</span>
+        <span class="n">ccts_i</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">(</span><span class="n">ccts_i</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+    <span class="k">return</span> <span class="n">ccts_i</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">ccts_i</span><span class="o">.</span><span class="n">T</span>
+      
+<div class="viewcode-block" id="xyz_to_cct_search"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cct.xyz_to_cct_search">[docs]</a><span class="k">def</span> <span class="nf">xyz_to_cct_search</span><span class="p">(</span><span class="n">xyzw</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;cct&#39;</span><span class="p">,</span><span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">rtol</span> <span class="o">=</span> <span class="mf">1e-5</span><span class="p">,</span> <span class="n">atol</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> 
+                      <span class="n">upper_cct_max</span> <span class="o">=</span> <span class="mf">1e12</span><span class="p">,</span> <span class="n">approx_cct_temp</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">fast</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">cct_search_list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert XYZ tristimulus values to correlated color temperature (CCT) and </span>
+<span class="sd">    Duv(distance above (&gt; 0) or below ( &lt; 0) the Planckian locus) by a </span>
+<span class="sd">    brute-force search. </span>
+<span class="sd">    </span>
+<span class="sd">    Wrapper around xyz_to_cct_search_fast() and xyz_to_cct_search_fast()</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :xyzw: </span>
+<span class="sd">            | ndarray of tristimulus values</span>
+<span class="sd">        :cieobs: </span>
+<span class="sd">            | luxpy._CIEOBS, optional</span>
+<span class="sd">            | CMF set used to calculated xyzw.</span>
+<span class="sd">        :out: </span>
+<span class="sd">            | &#39;cct&#39; (or 1), optional</span>
+<span class="sd">            | Determines what to return.</span>
+<span class="sd">            | Other options: &#39;duv&#39; (or -1), &#39;cct,duv&#39;(or 2), &quot;[cct,duv]&quot; (or -2)</span>
+<span class="sd">        :wl: </span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | Wavelengths used when calculating Planckian radiators.</span>
+<span class="sd">        :rtol: </span>
+<span class="sd">            | 1e-5, float, optional</span>
+<span class="sd">            | Stop brute-force search when cct a relative tolerance is reached.</span>
+<span class="sd">            | The relative tolerance is calculated as dCCT/CCT_est, </span>
+<span class="sd">            | with CCT_est the current intermediate estimate in the </span>
+<span class="sd">            | brute-force search and with dCCT the difference between</span>
+<span class="sd">            | the present and former estimates.</span>
+<span class="sd">        :atol: </span>
+<span class="sd">            | 0.1, optional</span>
+<span class="sd">            | Stop brute-force search when cct a absolute tolerance (K) is reached.</span>
+<span class="sd">        :upper_cct_max: </span>
+<span class="sd">            | 1e12, optional</span>
+<span class="sd">            | Limit brute-force search to this cct.</span>
+<span class="sd">        :cct_search_list:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | list of ccts to obtain a first guess for the cct of the input xyz.</span>
+<span class="sd">            | None defaults to: [50,100,500,1000,2000,3000,4000,5000,6000,10000,</span>
+<span class="sd">            |                  20000,50000,1e5,1e6, 1e7, 1e8,1e9, 1e10, 1e11, 1e12]</span>
+<span class="sd">            | Only for &#39;robust&#39; code option.</span>
+<span class="sd">        :approx_cct_temp: </span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | If True: use xyz_to_cct_HA() to get a first estimate of cct to </span>
+<span class="sd">            |  speed up search.</span>
+<span class="sd">            | Only for &#39;fast&#39; code option.</span>
+<span class="sd">        :fast:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | Use fast brute-force search, i.e. xyz_to_cct_search_fast()</span>
+<span class="sd">        :cct_search_list:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | list of ccts to obtain a first guess for the cct of the input xyz </span>
+<span class="sd">            | when HA estimation fails due to out-of-range cct or when fast == False.</span>
+<span class="sd">            | None defaults to: [50,100,500,1000,2000,3000,4000,5000,6000,10000,</span>
+<span class="sd">            |                  20000,50000,1e5,1e6, 1e7, 1e8,1e9, 1e10, 1e11, 1e12]</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :returns: </span>
+<span class="sd">            | ndarray with:</span>
+<span class="sd">            |    cct: out == &#39;cct&#39; (or 1)</span>
+<span class="sd">            |    duv: out == &#39;duv&#39; (or -1)</span>
+<span class="sd">            |    cct, duv: out == &#39;cct,duv&#39; (or 2)</span>
+<span class="sd">            |    [cct,duv]: out == &quot;[cct,duv]&quot; (or -2) </span>
+<span class="sd">    </span>
+<span class="sd">    Notes:</span>
+<span class="sd">        1. This function is more accurate, but slower than xyz_to_cct_ohno!</span>
+<span class="sd">        Note that cct must be between 50 K - 1e12 K </span>
+<span class="sd">        (very large cct take a long time!!!)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">fast</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">xyz_to_cct_search_robust</span><span class="p">(</span><span class="n">xyzw</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="n">wl</span><span class="p">,</span> 
+                                 <span class="n">rtol</span> <span class="o">=</span> <span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span> <span class="o">=</span> <span class="n">atol</span><span class="p">,</span> <span class="n">upper_cct_max</span> <span class="o">=</span> <span class="n">upper_cct_max</span><span class="p">,</span> 
+                                 <span class="n">cct_search_list</span> <span class="o">=</span> <span class="n">cct_search_list</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">xyz_to_cct_search_fast</span><span class="p">(</span><span class="n">xyzw</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="p">,</span><span class="n">wl</span> <span class="o">=</span> <span class="n">wl</span><span class="p">,</span> 
+                               <span class="n">rtol</span> <span class="o">=</span> <span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span> <span class="o">=</span> <span class="n">atol</span><span class="p">,</span> <span class="n">upper_cct_max</span> <span class="o">=</span> <span class="n">upper_cct_max</span><span class="p">,</span> 
+                               <span class="n">approx_cct_temp</span> <span class="o">=</span> <span class="n">approx_cct_temp</span><span class="p">,</span> <span class="n">cct_search_list</span> <span class="o">=</span> <span class="n">cct_search_list</span><span class="p">)</span></div>
+    
+  
+<div class="viewcode-block" id="xyz_to_cct_search_robust"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cct.xyz_to_cct_search_robust">[docs]</a><span class="k">def</span> <span class="nf">xyz_to_cct_search_robust</span><span class="p">(</span><span class="n">xyzw</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;cct&#39;</span><span class="p">,</span><span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">rtol</span> <span class="o">=</span> <span class="mf">1e-5</span><span class="p">,</span> <span class="n">atol</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> 
+                      <span class="n">upper_cct_max</span> <span class="o">=</span> <span class="mf">1e12</span><span class="p">,</span> <span class="n">cct_search_list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert XYZ tristimulus values to correlated color temperature (CCT) and </span>
 <span class="sd">    Duv(distance above (&gt; 0) or below ( &lt; 0) the Planckian locus) by a </span>
 <span class="sd">    brute-force search. </span>
 
-<span class="sd">    | The algorithm uses an approximate cct_temp (HA approx., see xyz_to_cct_HA) </span>
-<span class="sd">      as starting point or uses the middle of the allowed cct-range </span>
-<span class="sd">      (1e2 K - 1e20 K, higher causes overflow) on a log-scale, then constructs </span>
-<span class="sd">      a 4-step section of the blackbody (Planckian) locus on which to find the</span>
-<span class="sd">      minimum distance to the 1960 uv chromaticity of the test source.</span>
+<span class="sd">    | The algorithm uses an approximate cct_temp as starting point </span>
+<span class="sd">    | then constructs, a 4-step section of the blackbody (Planckian) locus </span>
+<span class="sd">    | on which to find the minimum distance to the 1960 uv chromaticity of </span>
+<span class="sd">    | the test source. The approximate starting point is found by generating </span>
+<span class="sd">    | the uv chromaticity values of a set blackbody radiators spread across the</span>
+<span class="sd">    | locus in a 50 K to 1e12 K range (larger CCT&#39;s cause instability of the </span>
+<span class="sd">    | chromaticity points due to floating point errors), looking for the closest</span>
+<span class="sd">    | blackbody radiator and then calculating the mean of the two surrounding ones.</span>
+<span class="sd">    | The default cct list is [50,100,500,1000,2000,3000,4000,5000,6000,10000,</span>
+<span class="sd">    |                          20000,50000,1e5,1e6, 1e7, 1e8,1e9, 1e10, 1e11, 1e12].</span>
+
 
 <span class="sd">    Args:</span>
 <span class="sd">        :xyzw: </span>
@@ -421,16 +540,207 @@
 <span class="sd">        :wl: </span>
 <span class="sd">            | None, optional</span>
 <span class="sd">            | Wavelengths used when calculating Planckian radiators.</span>
-<span class="sd">        :accuracy: </span>
-<span class="sd">            | float, optional</span>
-<span class="sd">            | Stop brute-force search when cct :accuracy: is reached.</span>
+<span class="sd">        :rtol: </span>
+<span class="sd">            | 1e-5, float, optional</span>
+<span class="sd">            | Stop brute-force search when cct a relative tolerance is reached.</span>
+<span class="sd">            | The relative tolerance is calculated as dCCT/CCT_est, </span>
+<span class="sd">            | with CCT_est the current intermediate estimate in the </span>
+<span class="sd">            | brute-force search and with dCCT the difference between</span>
+<span class="sd">            | the present and former estimates.</span>
+<span class="sd">        :atol: </span>
+<span class="sd">            | 0.1, optional</span>
+<span class="sd">            | Stop brute-force search when cct a absolute tolerance (K) is reached.</span>
 <span class="sd">        :upper_cct_max: </span>
-<span class="sd">            | 10.0**20, optional</span>
+<span class="sd">            | 1e12, optional</span>
+<span class="sd">            | Limit brute-force search to this cct.</span>
+<span class="sd">        :cct_search_list:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | list of ccts to obtain a first guess for the cct of the input xyz.</span>
+<span class="sd">            | None defaults to: [50,100,500,1000,2000,3000,4000,5000,6000,10000,</span>
+<span class="sd">            |                  20000,50000,1e5,1e6, 1e7, 1e8,1e9, 1e10, 1e11, 1e12]</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :returns: </span>
+<span class="sd">            | ndarray with:</span>
+<span class="sd">            |    cct: out == &#39;cct&#39; (or 1)</span>
+<span class="sd">            |    duv: out == &#39;duv&#39; (or -1)</span>
+<span class="sd">            |    cct, duv: out == &#39;cct,duv&#39; (or 2)</span>
+<span class="sd">            |    [cct,duv]: out == &quot;[cct,duv]&quot; (or -2) </span>
+<span class="sd">    </span>
+<span class="sd">    Notes:</span>
+<span class="sd">        1. This function is more accurate, but slower than xyz_to_cct_ohno!</span>
+<span class="sd">        Note that cct must be between 50 K - 1e12 K </span>
+<span class="sd">        (very large cct take a long time!!!)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">xyzw</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">(</span><span class="n">xyzw</span><span class="p">)</span>   
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">xyzw</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;xyz_to_cct_search(): Input xyzw.shape must be &lt;= 2 !&#39;</span><span class="p">)</span>
+       
+    <span class="c1"># get 1960 u,v of test source:</span>
+    <span class="n">Yuvt</span> <span class="o">=</span> <span class="n">xyz_to_Yuv</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">xyzw</span><span class="p">))</span> <span class="c1"># remove possible 1-dim + convert xyzw to CIE 1976 u&#39;,v&#39;</span>
+    <span class="n">ut</span> <span class="o">=</span> <span class="n">Yuvt</span><span class="p">[:,</span><span class="mi">1</span><span class="p">,</span><span class="kc">None</span><span class="p">]</span> <span class="c1"># get CIE 1960 u</span>
+    <span class="n">vt</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span><span class="o">*</span><span class="n">Yuvt</span><span class="p">[:,</span><span class="mi">2</span><span class="p">,</span><span class="kc">None</span><span class="p">]</span> <span class="c1"># get CIE 1960 v</span>
+
+    <span class="c1"># Initialize arrays:</span>
+    <span class="n">ccts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">xyzw</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">1</span><span class="p">));</span><span class="n">ccts</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+    <span class="n">duvs</span> <span class="o">=</span> <span class="n">ccts</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        
+    <span class="c1">#calculate preliminary estimates in 50 K to 1e12 range or whatever is given in cct_search_list:</span>
+    <span class="n">ccts_est</span><span class="p">,</span> <span class="n">cctranges</span> <span class="o">=</span> <span class="n">_find_closest_ccts</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">ut</span><span class="p">,</span><span class="n">vt</span><span class="p">)),</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> 
+                                             <span class="n">ccts</span> <span class="o">=</span> <span class="n">cct_search_list</span><span class="p">)</span>
+     
+    <span class="n">cct_scale_fun</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span>
+    <span class="n">cct_scale_ifun</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span>
+    
+    <span class="c1"># Loop through all ccts:        </span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">xyzw</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+
+        <span class="c1">#initialize CCT search parameters:</span>
+        <span class="n">cct</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="n">duv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="n">ccttemp</span> <span class="o">=</span> <span class="n">ccts_est</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">dT</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">cctranges</span><span class="p">[</span><span class="n">i</span><span class="p">,:]))</span><span class="o">/</span><span class="mi">2</span>     
+      
+        <span class="n">nsteps</span> <span class="o">=</span> <span class="mi">3</span> 
+        <span class="n">signduv</span> <span class="o">=</span> <span class="mf">1.0</span> 
+        <span class="n">delta_cct</span> <span class="o">=</span> <span class="n">dT</span>
+        <span class="n">reached_max_cct</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">while</span> <span class="p">(((</span><span class="n">delta_cct</span><span class="o">*</span><span class="mi">2</span><span class="o">/</span><span class="n">ccttemp</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">rtol</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">delta_cct</span><span class="o">*</span><span class="mi">2</span> <span class="o">&gt;=</span> <span class="n">atol</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">reached_max_cct</span> <span class="o">==</span> <span class="kc">False</span><span class="p">):</span><span class="c1"># &amp; (ccttemp&lt;upper_cct_max)):# keep converging on CCT </span>
+
+            <span class="c1">#generate range of ccts:</span>
+            <span class="n">ccts_i</span> <span class="o">=</span> <span class="n">cct_scale_ifun</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">cct_scale_fun</span><span class="p">(</span><span class="n">ccttemp</span><span class="p">)</span><span class="o">-</span><span class="n">dT</span><span class="p">,</span><span class="n">cct_scale_fun</span><span class="p">(</span><span class="n">ccttemp</span><span class="p">)</span><span class="o">+</span><span class="n">dT</span><span class="p">,</span><span class="n">nsteps</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+            <span class="n">ccts_i</span><span class="p">[</span><span class="n">ccts_i</span> <span class="o">&lt;</span> <span class="mf">100.0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">100.0</span> <span class="c1"># avoid nan&#39;s in calculation</span>
+            <span class="n">reached_max_cct</span> <span class="o">=</span> <span class="kc">True</span> <span class="k">if</span> <span class="p">(</span><span class="n">ccts_i</span><span class="o">&gt;</span><span class="mf">1e12</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="k">else</span> <span class="kc">False</span>
+            <span class="n">ccts_i</span><span class="p">[</span><span class="n">ccts_i</span> <span class="o">&gt;</span> <span class="mf">1e12</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1e12</span>
+
+            <span class="c1"># Generate BB:</span>
+            <span class="n">BB</span> <span class="o">=</span> <span class="n">cri_ref</span><span class="p">(</span><span class="n">ccts_i</span><span class="p">,</span><span class="n">wl3</span> <span class="o">=</span> <span class="n">wl</span><span class="p">,</span><span class="n">ref_type</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;BB&#39;</span><span class="p">],</span><span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">)</span>
+            
+            <span class="c1"># Calculate xyz:</span>
+            <span class="n">xyz</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">BB</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">)</span>
+    
+            <span class="c1"># Convert to CIE 1960 u,v:</span>
+            <span class="n">Yuv</span> <span class="o">=</span> <span class="n">xyz_to_Yuv</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">xyz</span><span class="p">))</span> <span class="c1"># remove possible 1-dim + convert xyz to CIE 1976 u&#39;,v&#39;</span>
+            <span class="n">u</span> <span class="o">=</span> <span class="n">Yuv</span><span class="p">[:,</span><span class="mi">1</span><span class="p">,</span><span class="kc">None</span><span class="p">]</span> <span class="c1"># get CIE 1960 u</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.0</span><span class="o">/</span><span class="mf">3.0</span><span class="p">)</span><span class="o">*</span><span class="n">Yuv</span><span class="p">[:,</span><span class="mi">2</span><span class="p">,</span><span class="kc">None</span><span class="p">]</span> <span class="c1"># get CIE 1960 v</span>
+            
+            <span class="c1"># Calculate distance between list of uv&#39;s and uv of test source:</span>
+            <span class="n">dc</span> <span class="o">=</span> <span class="p">((</span><span class="n">ut</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">u</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">vt</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">v</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
+
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">dc</span><span class="o">.</span><span class="n">min</span><span class="p">())</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+                <span class="n">q</span> <span class="o">=</span> <span class="n">dc</span><span class="o">.</span><span class="n">argmin</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">q</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span> <span class="c1">#to minimize calculation time: only calculate median when necessary</span>
+                    <span class="n">cct</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">ccts_i</span><span class="p">[</span><span class="n">q</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+                    <span class="n">duv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">dc</span><span class="p">[</span><span class="n">q</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+                    <span class="n">q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+                    <span class="n">q</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">q</span><span class="p">)</span> <span class="c1">#must be able to serve as index</span>
+    
+                <span class="k">else</span><span class="p">:</span>
+                     <span class="n">cct</span> <span class="o">=</span> <span class="n">ccts_i</span><span class="p">[</span><span class="n">q</span><span class="p">]</span>
+                     <span class="n">duv</span> <span class="o">=</span> <span class="n">dc</span><span class="p">[</span><span class="n">q</span><span class="p">]</span>
+                
+                <span class="k">if</span> <span class="p">(</span><span class="n">q</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+                    <span class="n">ccttemp</span> <span class="o">=</span> <span class="n">cct_scale_ifun</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cct_scale_fun</span><span class="p">(</span><span class="n">cct</span><span class="p">))</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">dT</span><span class="o">/</span><span class="n">nsteps</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="c1">#dT = 2.0*dT/nsteps</span>
+                    <span class="k">continue</span> <span class="c1"># look in higher section of planckian locus</span>
+                    
+                <span class="k">if</span> <span class="p">(</span><span class="n">q</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">ccts_i</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+                    <span class="n">ccttemp</span> <span class="o">=</span> <span class="n">cct_scale_ifun</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cct_scale_fun</span><span class="p">(</span><span class="n">cct</span><span class="p">))</span> <span class="o">-</span> <span class="mi">2</span><span class="o">*</span><span class="n">dT</span><span class="o">/</span><span class="n">nsteps</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="c1">#dT = 2.0*dT/nsteps</span>
+                    <span class="k">continue</span> <span class="c1"># look in lower section of planckian locus</span>
+                
+                <span class="k">if</span> <span class="p">(</span><span class="n">q</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">q</span> <span class="o">&lt;</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">ccts_i</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)):</span>
+                    <span class="n">dT</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">dT</span><span class="o">/</span><span class="n">nsteps</span>
+                    
+                    <span class="c1"># get Duv sign:</span>
+                    <span class="n">d_p1m1</span> <span class="o">=</span> <span class="p">((</span><span class="n">u</span><span class="p">[</span><span class="n">q</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">u</span><span class="p">[</span><span class="n">q</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">**</span><span class="mf">2.0</span> <span class="o">+</span> <span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="n">q</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">v</span><span class="p">[</span><span class="n">q</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">**</span><span class="mf">2.0</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
+    
+                    <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">dc</span><span class="p">[</span><span class="n">q</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mf">2.0</span> <span class="o">-</span> <span class="n">dc</span><span class="p">[</span><span class="n">q</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mf">2.0</span> <span class="o">+</span> <span class="n">d_p1m1</span><span class="o">**</span><span class="mf">2.0</span><span class="p">)</span><span class="o">/</span><span class="mf">2.0</span><span class="o">*</span><span class="n">d_p1m1</span>
+                    <span class="n">vBB</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="n">q</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="p">((</span><span class="n">v</span><span class="p">[</span><span class="n">q</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">v</span><span class="p">[</span><span class="n">q</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">/</span> <span class="n">d_p1m1</span><span class="p">))</span>
+                    <span class="n">signduv</span> <span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">vt</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="n">vBB</span><span class="p">)</span>
+
+                <span class="c1">#calculate difference with previous intermediate solution:</span>
+                <span class="n">delta_cct</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">cct</span> <span class="o">-</span> <span class="n">ccttemp</span><span class="p">)</span>
+               
+                <span class="n">ccttemp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cct</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="c1">#%set new intermediate CCT</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ccttemp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span> 
+                <span class="n">cct</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                <span class="n">duv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+              
+        <span class="n">duvs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">signduv</span><span class="o">*</span><span class="nb">abs</span><span class="p">(</span><span class="n">duv</span><span class="p">)</span>
+        <span class="n">ccts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">cct</span> <span class="o">+</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">reached_max_cct</span><span class="o">/</span><span class="mi">10</span><span class="p">)</span>
+
+    <span class="c1"># Regulate output:</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;cct&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">out</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np2d</span><span class="p">(</span><span class="n">ccts</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;duv&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">out</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np2d</span><span class="p">(</span><span class="n">duvs</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;cct,duv&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">out</span> <span class="o">==</span> <span class="mi">2</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np2d</span><span class="p">(</span><span class="n">ccts</span><span class="p">),</span> <span class="n">np2d</span><span class="p">(</span><span class="n">duvs</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="n">out</span> <span class="o">==</span> <span class="s2">&quot;[cct,duv]&quot;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">out</span> <span class="o">==</span> <span class="o">-</span><span class="mi">2</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">ccts</span><span class="p">,</span><span class="n">duvs</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>        </div>
+
+<div class="viewcode-block" id="xyz_to_cct_search_fast"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cct.xyz_to_cct_search_fast">[docs]</a><span class="k">def</span> <span class="nf">xyz_to_cct_search_fast</span><span class="p">(</span><span class="n">xyzw</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;cct&#39;</span><span class="p">,</span><span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+                           <span class="n">rtol</span> <span class="o">=</span> <span class="mf">1e-5</span><span class="p">,</span> <span class="n">atol</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">upper_cct_max</span> <span class="o">=</span> <span class="mf">1e12</span><span class="p">,</span> 
+                           <span class="n">approx_cct_temp</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">cct_search_list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert XYZ tristimulus values to correlated color temperature (CCT) and </span>
+<span class="sd">    Duv(distance above (&gt; 0) or below ( &lt; 0) the Planckian locus) by a </span>
+<span class="sd">    brute-force search. </span>
+
+<span class="sd">    | The algorithm uses an approximate cct_temp (HA approx., see xyz_to_cct_HA) </span>
+<span class="sd">    |  as starting point or uses the middle of the allowed cct-range </span>
+<span class="sd">    |  (1e2 K - 1e12 K, higher causes overflow) on a log-scale, then constructs </span>
+<span class="sd">    |  a 4-step section of the blackbody (Planckian) locus on which to find the</span>
+<span class="sd">    |  minimum distance to the 1960 uv chromaticity of the test source.</span>
+<span class="sd">    | If HA fails then another approximate starting point is found by generating </span>
+<span class="sd">    | the uv chromaticity values of a set blackbody radiators spread across the</span>
+<span class="sd">    | locus in a 50 K to 1e12 K range (larger CCT&#39;s cause instability of the </span>
+<span class="sd">    | chromaticity points due to floating point errors), looking for the closest</span>
+<span class="sd">    | blackbody radiator and then calculating the mean of the two surrounding ones.</span>
+<span class="sd">    | The default cct list is [50,100,500,1000,2000,3000,4000,5000,6000,10000,</span>
+<span class="sd">    |                          20000,50000,1e5,1e6, 1e7, 1e8,1e9, 1e10, 1e11, 1e12].</span>
+
+
+<span class="sd">    Args:</span>
+<span class="sd">        :xyzw: </span>
+<span class="sd">            | ndarray of tristimulus values</span>
+<span class="sd">        :cieobs: </span>
+<span class="sd">            | luxpy._CIEOBS, optional</span>
+<span class="sd">            | CMF set used to calculated xyzw.</span>
+<span class="sd">        :out: </span>
+<span class="sd">            | &#39;cct&#39; (or 1), optional</span>
+<span class="sd">            | Determines what to return.</span>
+<span class="sd">            | Other options: &#39;duv&#39; (or -1), &#39;cct,duv&#39;(or 2), &quot;[cct,duv]&quot; (or -2)</span>
+<span class="sd">        :wl: </span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | Wavelengths used when calculating Planckian radiators.</span>
+<span class="sd">        :rtol: </span>
+<span class="sd">            | 1e-5, float, optional</span>
+<span class="sd">            | Stop brute-force search when cct a relative tolerance is reached.</span>
+<span class="sd">            | The relative tolerance is calculated as dCCT/CCT_est, </span>
+<span class="sd">            | with CCT_est the current intermediate estimate in the </span>
+<span class="sd">            | brute-force search and with dCCT the difference between</span>
+<span class="sd">            | the present and former estimates.</span>
+<span class="sd">        :atol: </span>
+<span class="sd">            | 0.1, optional</span>
+<span class="sd">            | Stop brute-force search when cct a absolute tolerance (K) is reached.</span>
+<span class="sd">        :upper_cct_max: </span>
+<span class="sd">            | 1e12, optional</span>
 <span class="sd">            | Limit brute-force search to this cct.</span>
 <span class="sd">        :approx_cct_temp: </span>
 <span class="sd">            | True, optional</span>
 <span class="sd">            | If True: use xyz_to_cct_HA() to get a first estimate of cct to </span>
 <span class="sd">              speed up search.</span>
+<span class="sd">        :cct_search_list:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | list of ccts to obtain a first guess for the cct of the input xyz </span>
+<span class="sd">            | when HA estimation fails due to out-of-range cct.</span>
+<span class="sd">            | None defaults to: [50,100,500,1000,2000,3000,4000,5000,6000,10000,</span>
+<span class="sd">            |                  20000,50000,1e5,1e6, 1e7, 1e8,1e9, 1e10, 1e11, 1e12]</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        :returns: </span>
@@ -458,13 +768,19 @@
     <span class="n">vt</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span><span class="o">*</span><span class="n">Yuvt</span><span class="p">[:,</span><span class="mi">2</span><span class="p">,</span><span class="kc">None</span><span class="p">]</span> <span class="c1">#.take([2],axis = axis_of_v3t) # get CIE 1960 v</span>
 
     <span class="c1"># Initialize arrays:</span>
-    <span class="n">ccts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">xyzw</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">1</span><span class="p">))</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="n">ccts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">xyzw</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">1</span><span class="p">));</span><span class="n">ccts</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
     <span class="n">duvs</span> <span class="o">=</span> <span class="n">ccts</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     
     <span class="c1">#calculate preliminary solution(s):</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">approx_cct_temp</span> <span class="o">==</span> <span class="kc">True</span><span class="p">):</span>
-        <span class="n">ccts_est</span> <span class="o">=</span> <span class="n">xyz_to_cct_HA</span><span class="p">(</span><span class="n">xyzw</span><span class="p">)</span>
+        <span class="n">ccts_est</span> <span class="o">=</span> <span class="n">xyz_to_cct_HA</span><span class="p">(</span><span class="n">xyzw</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
         <span class="n">procent_estimates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">3000.0</span><span class="p">,</span> <span class="mf">100000.0</span><span class="p">,</span><span class="mf">0.05</span><span class="p">],[</span><span class="mf">100000.0</span><span class="p">,</span><span class="mf">200000.0</span><span class="p">,</span><span class="mf">0.1</span><span class="p">],[</span><span class="mf">200000.0</span><span class="p">,</span><span class="mf">300000.0</span><span class="p">,</span><span class="mf">0.25</span><span class="p">],[</span><span class="mf">300000.0</span><span class="p">,</span><span class="mf">400000.0</span><span class="p">,</span><span class="mf">0.4</span><span class="p">],[</span><span class="mf">400000.0</span><span class="p">,</span><span class="mf">600000.0</span><span class="p">,</span><span class="mf">0.4</span><span class="p">],[</span><span class="mf">600000.0</span><span class="p">,</span><span class="mf">800000.0</span><span class="p">,</span><span class="mf">0.4</span><span class="p">],[</span><span class="mf">800000.0</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span><span class="mf">0.25</span><span class="p">]])</span>
+
+        <span class="k">if</span> <span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">ccts_est</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">())</span> <span class="o">|</span> <span class="p">(</span><span class="n">ccts_est</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">())</span> <span class="o">|</span> <span class="p">((</span><span class="n">ccts_est</span> <span class="o">&lt;</span> <span class="n">procent_estimates</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="o">|</span> <span class="p">(</span><span class="n">ccts_est</span> <span class="o">&gt;</span> <span class="n">procent_estimates</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">any</span><span class="p">()):</span>
+            <span class="c1">#calculate preliminary estimates in 50 K to 1e12 range or whatever is given in cct_search_list:</span>
+            <span class="n">ccts_est</span><span class="p">,</span> <span class="n">cct_ranges</span> <span class="o">=</span> <span class="n">_find_closest_ccts</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">ut</span><span class="p">,</span><span class="n">vt</span><span class="p">)),</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cct_ranges</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">upper_cct</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">upper_cct_max</span><span class="p">)</span>
         <span class="n">lower_cct</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="mf">10.0</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
@@ -475,52 +791,50 @@
         <span class="n">ccts_est</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">(</span><span class="n">ccttemp</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">xyzw</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">1</span><span class="p">)))</span>
         <span class="n">dT_approx_cct_False</span> <span class="o">=</span> <span class="n">dT</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
-    
+
     <span class="c1"># Loop through all ccts:        </span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">xyzw</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
 
         <span class="c1">#initialize CCT search parameters:</span>
         <span class="n">cct</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
         <span class="n">duv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-        <span class="n">ccttemp</span> <span class="o">=</span> <span class="n">ccts_est</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        
+        <span class="n">ccttemp</span> <span class="o">=</span> <span class="n">ccts_est</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
         <span class="c1"># Take care of (-1, NaN)&#39;s from xyz_to_cct_HA signifying (CCT &lt; lower, CCT &gt; upper) bounds:</span>
         <span class="n">approx_cct_temp_temp</span> <span class="o">=</span> <span class="n">approx_cct_temp</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">approx_cct_temp</span> <span class="o">==</span> <span class="kc">True</span><span class="p">):</span>
             <span class="n">cct_scale_fun</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span>
             <span class="n">cct_scale_ifun</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span>
-            <span class="k">if</span> <span class="p">(</span><span class="n">ccttemp</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">ccttemp</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span><span class="p">):</span> <span class="c1"># within validity range of CCT estimator-function</span>
+            <span class="k">if</span> <span class="p">((</span><span class="n">ccttemp</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">ccttemp</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">ccttemp</span> <span class="o">&gt;=</span> <span class="n">procent_estimates</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">ccttemp</span> <span class="o">&lt;=</span> <span class="n">procent_estimates</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">]):</span> <span class="c1"># within validity range of CCT estimator-function</span>
                 <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">procent_estimates</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
                     <span class="k">if</span> <span class="p">(</span><span class="n">ccttemp</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="mf">1.0</span><span class="o">-</span><span class="mf">0.05</span><span class="o">*</span><span class="p">(</span><span class="n">ii</span> <span class="o">==</span> <span class="mi">0</span><span class="p">))</span><span class="o">*</span><span class="n">procent_estimates</span><span class="p">[</span><span class="n">ii</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">ccttemp</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mf">1.0</span><span class="o">+</span><span class="mf">0.05</span><span class="o">*</span><span class="p">(</span><span class="n">ii</span> <span class="o">==</span> <span class="mi">0</span><span class="p">))</span><span class="o">*</span><span class="n">procent_estimates</span><span class="p">[</span><span class="n">ii</span><span class="p">,</span><span class="mi">1</span><span class="p">]):</span>
                         <span class="n">procent_estimate</span> <span class="o">=</span> <span class="n">procent_estimates</span><span class="p">[</span><span class="n">ii</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span>
                         <span class="k">break</span>
 
                 <span class="n">dT</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">ccttemp</span><span class="p">,</span><span class="n">procent_estimate</span><span class="p">)</span> <span class="c1"># determines range around CCTtemp (25% around estimate) or 100 K</span>
-            <span class="k">elif</span> <span class="p">(</span><span class="n">ccttemp</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">ccttemp</span><span class="p">)</span> <span class="o">==</span> <span class="kc">False</span><span class="p">):</span>
-                <span class="n">ccttemp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">procent_estimates</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="mi">2</span><span class="p">])</span>
-                <span class="n">procent_estimate</span> <span class="o">=</span> <span class="mi">1</span> <span class="c1"># cover 0 K to min_CCT of estimator</span>
-                <span class="n">dT</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">ccttemp</span><span class="p">,</span><span class="n">procent_estimate</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">ccttemp</span><span class="p">)</span> <span class="o">==</span> <span class="kc">True</span><span class="p">):</span>
-                <span class="n">upper_cct</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">upper_cct_max</span><span class="p">)</span>
-                <span class="n">lower_cct</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="mf">10.0</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
-                <span class="n">cct_scale_fun</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-                <span class="n">cct_scale_ifun</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="mf">10.0</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>
-                <span class="n">dT</span> <span class="o">=</span> <span class="p">(</span><span class="n">cct_scale_fun</span><span class="p">(</span><span class="n">upper_cct</span><span class="p">)</span> <span class="o">-</span> <span class="n">cct_scale_fun</span><span class="p">(</span><span class="n">lower_cct</span><span class="p">))</span><span class="o">/</span><span class="mi">2</span>
-                <span class="n">ccttemp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">cct_scale_ifun</span><span class="p">(</span><span class="n">cct_scale_fun</span><span class="p">(</span><span class="n">lower_cct</span><span class="p">)</span> <span class="o">+</span> <span class="n">dT</span><span class="p">)])</span>
-                <span class="n">approx_cct_temp</span> <span class="o">=</span> <span class="kc">False</span>
+            
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">cct_ranges</span><span class="p">)</span>
+                <span class="n">dT</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">cct_ranges</span><span class="p">[</span><span class="n">i</span><span class="p">,:]))</span><span class="o">/</span><span class="mi">2</span>
+            <span class="n">delta_cct</span> <span class="o">=</span> <span class="n">dT</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">dT</span> <span class="o">=</span> <span class="n">dT_approx_cct_False</span>
+            <span class="n">delta_cct</span> <span class="o">=</span> <span class="n">cct_scale_ifun</span><span class="p">(</span><span class="n">cct_scale_fun</span><span class="p">(</span><span class="n">ccttemp</span><span class="p">)</span> <span class="o">+</span> <span class="n">dT</span><span class="p">)</span> <span class="o">-</span> <span class="n">ccttemp</span>
       
         <span class="n">nsteps</span> <span class="o">=</span> <span class="mi">3</span> 
         <span class="n">signduv</span> <span class="o">=</span> <span class="mf">1.0</span> 
-        <span class="n">ccttemp</span> <span class="o">=</span> <span class="n">ccttemp</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">delta_cct</span> <span class="o">=</span> <span class="n">dT</span>
-        <span class="k">while</span> <span class="p">((</span><span class="n">delta_cct</span> <span class="o">&gt;</span> <span class="n">accuracy</span><span class="p">)):</span><span class="c1"># keep converging on CCT </span>
+        <span class="n">reached_max_cct</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="n">rtols</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">4</span><span class="p">,))</span><span class="o">*</span><span class="mf">1e12</span>
+        <span class="n">cnt</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="p">(((</span><span class="n">delta_cct</span><span class="o">*</span><span class="mi">2</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">atol</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">((</span><span class="n">delta_cct</span><span class="o">*</span><span class="mi">2</span><span class="o">/</span><span class="n">ccttemp</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">rtol</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">reached_max_cct</span> <span class="o">==</span> <span class="kc">False</span><span class="p">):</span><span class="c1"># keep converging on CCT </span>
 
             <span class="c1">#generate range of ccts:</span>
             <span class="n">ccts_i</span> <span class="o">=</span> <span class="n">cct_scale_ifun</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">cct_scale_fun</span><span class="p">(</span><span class="n">ccttemp</span><span class="p">)</span><span class="o">-</span><span class="n">dT</span><span class="p">,</span><span class="n">cct_scale_fun</span><span class="p">(</span><span class="n">ccttemp</span><span class="p">)</span><span class="o">+</span><span class="n">dT</span><span class="p">,</span><span class="n">nsteps</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
-            
             <span class="n">ccts_i</span><span class="p">[</span><span class="n">ccts_i</span> <span class="o">&lt;</span> <span class="mf">100.0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">100.0</span> <span class="c1"># avoid nan&#39;s in calculation</span>
+            <span class="n">reached_max_cct</span> <span class="o">=</span> <span class="kc">True</span> <span class="k">if</span> <span class="p">((</span><span class="n">ccts_i</span><span class="o">&gt;</span><span class="mf">1e12</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">approx_cct_temp</span> <span class="o">==</span> <span class="kc">True</span><span class="p">))</span> <span class="k">else</span> <span class="kc">False</span>
+            <span class="n">ccts_i</span><span class="p">[</span><span class="n">ccts_i</span> <span class="o">&gt;</span> <span class="mf">1e12</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1e12</span> <span class="c1"># avoid nan&#39;s in calculation</span>
+
 
             <span class="c1"># Generate BB:</span>
             <span class="n">BB</span> <span class="o">=</span> <span class="n">cri_ref</span><span class="p">(</span><span class="n">ccts_i</span><span class="p">,</span><span class="n">wl3</span> <span class="o">=</span> <span class="n">wl</span><span class="p">,</span><span class="n">ref_type</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;BB&#39;</span><span class="p">],</span><span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">)</span>
@@ -530,35 +844,47 @@
     
             <span class="c1"># Convert to CIE 1960 u,v:</span>
             <span class="n">Yuv</span> <span class="o">=</span> <span class="n">xyz_to_Yuv</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">xyz</span><span class="p">))</span> <span class="c1"># remove possible 1-dim + convert xyz to CIE 1976 u&#39;,v&#39;</span>
-            <span class="c1">#axis_of_v3 = len(Yuv.shape)-1 # axis containing color components</span>
             <span class="n">u</span> <span class="o">=</span> <span class="n">Yuv</span><span class="p">[:,</span><span class="mi">1</span><span class="p">,</span><span class="kc">None</span><span class="p">]</span> <span class="c1"># get CIE 1960 u</span>
             <span class="n">v</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.0</span><span class="o">/</span><span class="mf">3.0</span><span class="p">)</span><span class="o">*</span><span class="n">Yuv</span><span class="p">[:,</span><span class="mi">2</span><span class="p">,</span><span class="kc">None</span><span class="p">]</span> <span class="c1"># get CIE 1960 v</span>
             
             <span class="c1"># Calculate distance between list of uv&#39;s and uv of test source:</span>
             <span class="n">dc</span> <span class="o">=</span> <span class="p">((</span><span class="n">ut</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">u</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">vt</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">v</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
+
             <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">dc</span><span class="o">.</span><span class="n">min</span><span class="p">())</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
-                <span class="c1">#eps = _EPS</span>
                 <span class="n">q</span> <span class="o">=</span> <span class="n">dc</span><span class="o">.</span><span class="n">argmin</span><span class="p">()</span>
-    
+
                 <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">q</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span> <span class="c1">#to minimize calculation time: only calculate median when necessary</span>
-                    <span class="n">cct</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">ccts</span><span class="p">[</span><span class="n">q</span><span class="p">])</span>
+                    <span class="n">cct</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">ccts_i</span><span class="p">[</span><span class="n">q</span><span class="p">])</span>
                     <span class="n">duv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">dc</span><span class="p">[</span><span class="n">q</span><span class="p">])</span>
                     <span class="n">q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
                     <span class="n">q</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">q</span><span class="p">)</span> <span class="c1">#must be able to serve as index</span>
-    
                 <span class="k">else</span><span class="p">:</span>
                      <span class="n">cct</span> <span class="o">=</span> <span class="n">ccts_i</span><span class="p">[</span><span class="n">q</span><span class="p">]</span>
                      <span class="n">duv</span> <span class="o">=</span> <span class="n">dc</span><span class="p">[</span><span class="n">q</span><span class="p">]</span>
                     
-                
                 <span class="k">if</span> <span class="p">(</span><span class="n">q</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
-                    <span class="n">ccttemp</span> <span class="o">=</span> <span class="n">cct_scale_ifun</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cct_scale_fun</span><span class="p">([</span><span class="n">cct</span><span class="p">]))</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">dT</span><span class="o">/</span><span class="n">nsteps</span><span class="p">)</span>
+                    <span class="n">ccttemp</span> <span class="o">=</span> <span class="n">cct_scale_ifun</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cct_scale_fun</span><span class="p">(</span><span class="n">cct</span><span class="p">))</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">dT</span><span class="o">/</span><span class="n">nsteps</span><span class="p">)</span>
                     <span class="c1">#dT = 2.0*dT/nsteps</span>
+                    
+                    <span class="n">delta_cct</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">cct</span> <span class="o">-</span> <span class="n">ccttemp</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">cnt</span> <span class="o">&gt;</span> <span class="mi">4</span><span class="p">:</span> <span class="c1"># to ensure loop breaks when chromaticity is outside of valid range</span>
+                        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">rtols</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">rtol</span><span class="p">:</span>
+                            <span class="n">cnt</span> <span class="o">=</span> <span class="mi">0</span>
+                            <span class="k">break</span>
+                    <span class="n">cnt</span> <span class="o">+=</span> <span class="mi">1</span>
+                    
                     <span class="k">continue</span> <span class="c1"># look in higher section of planckian locus</span>
                     
-                <span class="k">if</span> <span class="p">(</span><span class="n">q</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">ccts_i</span><span class="p">)):</span>
-                    <span class="n">ccttemp</span> <span class="o">=</span> <span class="n">cct_scale_ifun</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cct_scale_fun</span><span class="p">([</span><span class="n">cct</span><span class="p">]))</span> <span class="o">-</span> <span class="mi">2</span><span class="o">*</span><span class="n">dT</span><span class="o">/</span><span class="n">nsteps</span><span class="p">)</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">q</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">ccts_i</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+                    <span class="n">ccttemp</span> <span class="o">=</span> <span class="n">cct_scale_ifun</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cct_scale_fun</span><span class="p">(</span><span class="n">cct</span><span class="p">))</span> <span class="o">-</span> <span class="mi">2</span><span class="o">*</span><span class="n">dT</span><span class="o">/</span><span class="n">nsteps</span><span class="p">)</span>
                     <span class="c1">#dT = 2.0*dT/nsteps</span>
+                    
+                    <span class="n">delta_cct</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">cct</span> <span class="o">-</span> <span class="n">ccttemp</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">cnt</span> <span class="o">&gt;</span> <span class="mi">4</span><span class="p">:</span> <span class="c1"># to ensure loop breaks when chromaticity is outside of valid range</span>
+                        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">rtols</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">rtol</span><span class="p">:</span>
+                            <span class="n">cnt</span> <span class="o">=</span> <span class="mi">0</span>
+                            <span class="k">break</span>
+                    <span class="n">cnt</span> <span class="o">+=</span> <span class="mi">1</span>
                     <span class="k">continue</span> <span class="c1"># look in lower section of planckian locus</span>
                     
                 <span class="k">if</span> <span class="p">(</span><span class="n">q</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">q</span> <span class="o">&lt;</span> <span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">ccts_i</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
@@ -573,17 +899,17 @@
                 
                 <span class="c1">#calculate difference with previous intermediate solution:</span>
                 <span class="n">delta_cct</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">cct</span> <span class="o">-</span> <span class="n">ccttemp</span><span class="p">)</span>
-                
                 <span class="n">ccttemp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cct</span><span class="p">)</span> <span class="c1">#%set new intermediate CCT</span>
                 <span class="n">approx_cct_temp</span> <span class="o">=</span> <span class="n">approx_cct_temp_temp</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">cnt</span> <span class="o">&gt;</span> <span class="mi">4</span><span class="p">):</span> <span class="n">cnt</span> <span class="o">=</span> <span class="mi">0</span>  
+                <span class="n">rtols</span><span class="p">[</span><span class="n">cnt</span><span class="p">]</span> <span class="o">=</span> <span class="n">delta_cct</span><span class="o">*</span><span class="mi">2</span><span class="o">/</span><span class="n">ccttemp</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">ccttemp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span> 
                 <span class="n">cct</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
                 <span class="n">duv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-              
-
+             
         <span class="n">duvs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">signduv</span><span class="o">*</span><span class="nb">abs</span><span class="p">(</span><span class="n">duv</span><span class="p">)</span>
-        <span class="n">ccts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">cct</span>
+        <span class="n">ccts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">cct</span> <span class="o">+</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">reached_max_cct</span><span class="o">/</span><span class="mi">10</span><span class="p">)</span>
     
     <span class="c1"># Regulate output:</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;cct&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">out</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
@@ -595,7 +921,9 @@
     <span class="k">elif</span> <span class="p">(</span><span class="n">out</span> <span class="o">==</span> <span class="s2">&quot;[cct,duv]&quot;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">out</span> <span class="o">==</span> <span class="o">-</span><span class="mi">2</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">ccts</span><span class="p">,</span><span class="n">duvs</span><span class="p">))</span><span class="o">.</span><span class="n">T</span></div>
 
-<div class="viewcode-block" id="xyz_to_cct_ohno"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cct.xyz_to_cct_ohno">[docs]</a><span class="k">def</span> <span class="nf">xyz_to_cct_ohno</span><span class="p">(</span><span class="n">xyzw</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;cct&#39;</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">accuracy</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">force_out_of_lut</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">upper_cct_max</span> <span class="o">=</span> <span class="mf">10.0</span><span class="o">**</span><span class="mi">20</span><span class="p">,</span> <span class="n">approx_cct_temp</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="xyz_to_cct_ohno"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cct.xyz_to_cct_ohno">[docs]</a><span class="k">def</span> <span class="nf">xyz_to_cct_ohno</span><span class="p">(</span><span class="n">xyzw</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;cct&#39;</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">rtol</span> <span class="o">=</span> <span class="mf">1e-5</span><span class="p">,</span> <span class="n">atol</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> 
+                    <span class="n">force_out_of_lut</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">upper_cct_max</span> <span class="o">=</span> <span class="mf">1e12</span><span class="p">,</span> 
+                    <span class="n">approx_cct_temp</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">cct_search_list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast_search</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert XYZ tristimulus values to correlated color temperature (CCT) and </span>
 <span class="sd">    Duv (distance above (&gt;0) or below (&lt;0) the Planckian locus) </span>
@@ -614,20 +942,37 @@
 <span class="sd">        :wl: </span>
 <span class="sd">            | None, optional</span>
 <span class="sd">            | Wavelengths used when calculating Planckian radiators.</span>
-<span class="sd">        :accuracy: </span>
-<span class="sd">            | float, optional</span>
-<span class="sd">            | Stop brute-force search when cct :accuracy: is reached.</span>
+<span class="sd">        :rtol: </span>
+<span class="sd">            | 1e-5, float, optional</span>
+<span class="sd">            | Stop brute-force search when cct a relative tolerance is reached.</span>
+<span class="sd">            | The relative tolerance is calculated as dCCT/CCT_est, </span>
+<span class="sd">            | with CCT_est the current intermediate estimate in the </span>
+<span class="sd">            | brute-force search and with dCCT the difference between</span>
+<span class="sd">            | the present and former estimates.</span>
+<span class="sd">        :atol: </span>
+<span class="sd">            | 0.1, optional</span>
+<span class="sd">            | Stop brute-force search when cct a absolute tolerance (K) is reached.</span>
 <span class="sd">        :upper_cct_max: </span>
-<span class="sd">            | 10.0**20, optional</span>
+<span class="sd">            | 1e12, optional</span>
 <span class="sd">            | Limit brute-force search to this cct.</span>
 <span class="sd">        :approx_cct_temp: </span>
 <span class="sd">            | True, optional</span>
-<span class="sd">            | If True: use xyz_to_cct_HA() to get a first estimate of cct </span>
-<span class="sd">              to speed up search.</span>
+<span class="sd">            | If True: use xyz_to_cct_HA() to get a first estimate of cct to </span>
+<span class="sd">            |  speed up search.</span>
+<span class="sd">            | Only for &#39;fast&#39; code option.</span>
+<span class="sd">        :fast_search:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | Use fast brute-force search, i.e. xyz_to_cct_search_fast()</span>
+<span class="sd">        :cct_search_list:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | list of ccts to obtain a first guess for the cct of the input xyz </span>
+<span class="sd">            | when HA estimation fails due to out-of-range cct.</span>
+<span class="sd">            | None defaults to: [50,100,500,1000,2000,3000,4000,5000,6000,10000,</span>
+<span class="sd">            |                  20000,50000,1e5,1e6, 1e7, 1e8,1e9, 1e10, 1e11, 1e12]</span>
 <span class="sd">        :force_out_of_lut: </span>
 <span class="sd">            | True, optional</span>
 <span class="sd">            | If True and cct is out of range of the LUT, then switch to </span>
-<span class="sd">              brute-force search method, else return numpy.nan values.</span>
+<span class="sd">            | brute-force search method, else return numpy.nan values.</span>
 <span class="sd">        </span>
 <span class="sd">    Returns:</span>
 <span class="sd">        :returns: </span>
@@ -666,7 +1011,7 @@
     <span class="n">uv_LUT</span> <span class="o">=</span> <span class="n">_CCT_LUT</span><span class="p">[</span><span class="n">cieobs</span><span class="p">][:,</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> 
     
     <span class="c1"># calculate CCT of each uv:</span>
-    <span class="n">CCT</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">uv</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="c1"># initialize with NaN&#39;s</span>
+    <span class="n">CCT</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">uv</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span><span class="n">CCT</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span> <span class="c1"># initialize with NaN&#39;s</span>
     <span class="n">Duv</span> <span class="o">=</span> <span class="n">CCT</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="c1"># initialize with NaN&#39;s</span>
     <span class="n">idx_m</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">idx_M</span> <span class="o">=</span> <span class="n">uv_LUT</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span>
@@ -689,7 +1034,10 @@
         
 
         <span class="k">if</span> <span class="p">(</span><span class="n">out_of_lut</span> <span class="o">==</span> <span class="kc">True</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">force_out_of_lut</span> <span class="o">==</span> <span class="kc">True</span><span class="p">):</span> <span class="c1"># calculate using search-function</span>
-            <span class="n">cct_i</span><span class="p">,</span> <span class="n">Duv_i</span> <span class="o">=</span> <span class="n">xyz_to_cct_search</span><span class="p">(</span><span class="n">xyzw</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="n">wl</span><span class="p">,</span> <span class="n">accuracy</span> <span class="o">=</span> <span class="n">accuracy</span><span class="p">,</span><span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;cct,duv&#39;</span><span class="p">,</span><span class="n">upper_cct_max</span> <span class="o">=</span> <span class="n">upper_cct_max</span><span class="p">,</span> <span class="n">approx_cct_temp</span> <span class="o">=</span> <span class="n">approx_cct_temp</span><span class="p">)</span>
+            <span class="n">cct_i</span><span class="p">,</span> <span class="n">Duv_i</span> <span class="o">=</span> <span class="n">xyz_to_cct_search</span><span class="p">(</span><span class="n">xyzw</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,:],</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="n">wl</span><span class="p">,</span> <span class="n">rtol</span> <span class="o">=</span> <span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span> <span class="o">=</span> <span class="n">atol</span><span class="p">,</span>
+                                             <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;cct,duv&#39;</span><span class="p">,</span><span class="n">upper_cct_max</span> <span class="o">=</span> <span class="n">upper_cct_max</span><span class="p">,</span> 
+                                             <span class="n">approx_cct_temp</span> <span class="o">=</span> <span class="n">approx_cct_temp</span><span class="p">,</span> <span class="n">cct_search_list</span> <span class="o">=</span> <span class="n">cct_search_list</span><span class="p">,</span>
+                                             <span class="n">fast</span> <span class="o">=</span> <span class="n">fast_search</span><span class="p">)</span>
             <span class="n">CCT</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">cct_i</span>
             <span class="n">Duv</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">Duv_i</span>
             <span class="k">continue</span>
@@ -754,7 +1102,9 @@
 
 
 <span class="c1">#---------------------------------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="cct_to_xyz"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cct.cct_to_xyz">[docs]</a><span class="k">def</span> <span class="nf">cct_to_xyz</span><span class="p">(</span><span class="n">ccts</span><span class="p">,</span> <span class="n">duv</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;lut&#39;</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">accuracy</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">force_out_of_lut</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">upper_cct_max</span> <span class="o">=</span> <span class="mf">10.0</span><span class="o">*</span><span class="mi">20</span><span class="p">,</span> <span class="n">approx_cct_temp</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="cct_to_xyz"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cct.cct_to_xyz">[docs]</a><span class="k">def</span> <span class="nf">cct_to_xyz</span><span class="p">(</span><span class="n">ccts</span><span class="p">,</span> <span class="n">duv</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;lut&#39;</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+               <span class="n">rtol</span> <span class="o">=</span> <span class="mf">1e-5</span><span class="p">,</span> <span class="n">atol</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">force_out_of_lut</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">upper_cct_max</span> <span class="o">=</span> <span class="mf">1e12</span><span class="p">,</span> 
+               <span class="n">approx_cct_temp</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">fast_search</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">cct_search_list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert correlated color temperature (CCT) and Duv (distance above (&gt;0) or </span>
 <span class="sd">    below (&lt;0) the Planckian locus) to XYZ tristimulus values.</span>
@@ -773,7 +1123,7 @@
 <span class="sd">        :duv: </span>
 <span class="sd">            | None or ndarray of duv values, optional</span>
 <span class="sd">            | Note that duv can be supplied together with cct values in :ccts: </span>
-<span class="sd">              as ndarray with shape (N,2)</span>
+<span class="sd">            | as ndarray with shape (N,2)</span>
 <span class="sd">        :cieobs: </span>
 <span class="sd">            | luxpy._CIEOBS, optional</span>
 <span class="sd">            | CMF set used to calculated xyzw.</span>
@@ -783,25 +1133,42 @@
 <span class="sd">        :out: </span>
 <span class="sd">            | None (or 1), optional</span>
 <span class="sd">            | If not None or 1: output a ndarray that contains estimated </span>
-<span class="sd">              xyz and minimization results: </span>
+<span class="sd">            | xyz and minimization results: </span>
 <span class="sd">            | (cct_min, duv_min, F_min (objective fcn value))</span>
 <span class="sd">        :wl: </span>
 <span class="sd">            | None, optional</span>
 <span class="sd">            | Wavelengths used when calculating Planckian radiators.</span>
-<span class="sd">        :accuracy: </span>
-<span class="sd">            | float, optional</span>
-<span class="sd">            | Stop brute-force search when cct :accuracy: is reached.</span>
+<span class="sd">        :rtol: </span>
+<span class="sd">            | 1e-5, float, optional</span>
+<span class="sd">            | Stop brute-force search when cct a relative tolerance is reached.</span>
+<span class="sd">            | The relative tolerance is calculated as dCCT/CCT_est, </span>
+<span class="sd">            | with CCT_est the current intermediate estimate in the </span>
+<span class="sd">            | brute-force search and with dCCT the difference between</span>
+<span class="sd">            | the present and former estimates.</span>
+<span class="sd">        :atol: </span>
+<span class="sd">            | 0.1, optional</span>
+<span class="sd">            | Stop brute-force search when cct a absolute tolerance (K) is reached.</span>
 <span class="sd">        :upper_cct_max: </span>
-<span class="sd">            | 10.0**20, optional</span>
+<span class="sd">            | 1e12, optional</span>
 <span class="sd">            | Limit brute-force search to this cct.</span>
 <span class="sd">        :approx_cct_temp: </span>
 <span class="sd">            | True, optional</span>
 <span class="sd">            | If True: use xyz_to_cct_HA() to get a first estimate of cct to </span>
-<span class="sd">              speed up search.</span>
+<span class="sd">            |  speed up search.</span>
+<span class="sd">            | Only for &#39;fast&#39; code option.</span>
+<span class="sd">        :fast_search:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | Use fast brute-force search, i.e. xyz_to_cct_search_fast()</span>
+<span class="sd">        :cct_search_list:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | list of ccts to obtain a first guess for the cct of the input xyz </span>
+<span class="sd">            | when HA estimation fails due to out-of-range cct or when fast_search == False.</span>
+<span class="sd">            | None defaults to: [50,100,500,1000,2000,3000,4000,5000,6000,10000,</span>
+<span class="sd">            |                  20000,50000,1e5,1e6, 1e7, 1e8,1e9, 1e10, 1e11, 1e12]</span>
 <span class="sd">        :force_out_of_lut: </span>
 <span class="sd">            | True, optional</span>
 <span class="sd">            | If True and cct is out of range of the LUT, then switch to </span>
-<span class="sd">              brute-force search method, else return numpy.nan values.</span>
+<span class="sd">            | brute-force search method, else return numpy.nan values.</span>
 <span class="sd">        </span>
 <span class="sd">    Returns:</span>
 <span class="sd">        :returns: </span>
@@ -810,7 +1177,7 @@
 <span class="sd">    Note:</span>
 <span class="sd">        If duv is not supplied (:ccts:.shape is (N,1) and :duv: is None), </span>
 <span class="sd">        source is assumed to be on the Planckian locus.</span>
-<span class="sd">	 &quot;&quot;&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># make ccts a min. 2d np.array:</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ccts</span><span class="p">,</span><span class="nb">list</span><span class="p">):</span>
         <span class="n">ccts</span> <span class="o">=</span> <span class="n">np2dT</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ccts</span><span class="p">))</span>
@@ -832,7 +1199,7 @@
     <span class="c1">#get estimates of approximate xyz values in case duv = None:</span>
     <span class="n">BB</span> <span class="o">=</span> <span class="n">cri_ref</span><span class="p">(</span><span class="n">ccts</span> <span class="o">=</span> <span class="n">cct</span><span class="p">,</span> <span class="n">wl3</span> <span class="o">=</span> <span class="n">wl</span><span class="p">,</span> <span class="n">ref_type</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;BB&#39;</span><span class="p">])</span>
     <span class="n">xyz_est</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="n">BB</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="n">results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">([</span><span class="n">ccts</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">3</span><span class="p">])</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span> 
+    <span class="n">results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">ccts</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">3</span><span class="p">]);</span><span class="n">results</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span> 
 
     <span class="k">if</span> <span class="n">duv</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         
@@ -840,7 +1207,14 @@
         <span class="k">def</span> <span class="nf">objfcn</span><span class="p">(</span><span class="n">uv_offset</span><span class="p">,</span> <span class="n">uv0</span><span class="p">,</span> <span class="n">cct</span><span class="p">,</span> <span class="n">duv</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span><span class="c1">#, cieobs = cieobs, wl = wl, mode = mode):</span>
             <span class="n">uv0</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">(</span><span class="n">uv0</span> <span class="o">+</span> <span class="n">uv_offset</span><span class="p">)</span>
             <span class="n">Yuv0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">np2d</span><span class="p">([</span><span class="mf">100.0</span><span class="p">]),</span> <span class="n">uv0</span><span class="p">),</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-            <span class="n">cct_min</span><span class="p">,</span> <span class="n">duv_min</span> <span class="o">=</span> <span class="n">xyz_to_cct</span><span class="p">(</span><span class="n">Yuv_to_xyz</span><span class="p">(</span><span class="n">Yuv0</span><span class="p">),</span><span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;cct,duv&#39;</span><span class="p">,</span><span class="n">wl</span> <span class="o">=</span> <span class="n">wl</span><span class="p">,</span> <span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span><span class="p">,</span> <span class="n">accuracy</span> <span class="o">=</span> <span class="n">accuracy</span><span class="p">,</span> <span class="n">force_out_of_lut</span> <span class="o">=</span> <span class="n">force_out_of_lut</span><span class="p">,</span> <span class="n">upper_cct_max</span> <span class="o">=</span> <span class="n">upper_cct_max</span><span class="p">,</span> <span class="n">approx_cct_temp</span> <span class="o">=</span> <span class="n">approx_cct_temp</span><span class="p">)</span>
+            <span class="n">cct_min</span><span class="p">,</span> <span class="n">duv_min</span> <span class="o">=</span> <span class="n">xyz_to_cct</span><span class="p">(</span><span class="n">Yuv_to_xyz</span><span class="p">(</span><span class="n">Yuv0</span><span class="p">),</span><span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;cct,duv&#39;</span><span class="p">,</span>
+                                          <span class="n">wl</span> <span class="o">=</span> <span class="n">wl</span><span class="p">,</span> <span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span><span class="p">,</span> <span class="n">rtol</span> <span class="o">=</span> <span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span> <span class="o">=</span> <span class="n">atol</span><span class="p">,</span> 
+                                          <span class="n">force_out_of_lut</span> <span class="o">=</span> <span class="n">force_out_of_lut</span><span class="p">,</span> 
+                                          <span class="n">upper_cct_max</span> <span class="o">=</span> <span class="n">upper_cct_max</span><span class="p">,</span> 
+                                          <span class="n">approx_cct_temp</span> <span class="o">=</span> <span class="n">approx_cct_temp</span><span class="p">,</span>
+                                          <span class="n">cct_search_list</span> <span class="o">=</span> <span class="n">cct_search_list</span><span class="p">,</span>
+                                          <span class="n">fast_search</span> <span class="o">=</span> <span class="n">fast_search</span><span class="p">)</span>
+            
             <span class="n">F</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(((</span><span class="mf">100.0</span><span class="o">*</span><span class="p">(</span><span class="n">cct_min</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">cct</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="p">(</span><span class="n">cct</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span><span class="o">**</span><span class="mf">2.0</span><span class="p">)</span> <span class="o">+</span> <span class="p">(((</span><span class="n">duv_min</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">duv</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="p">(</span><span class="n">duv</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span><span class="o">**</span><span class="mf">2.0</span><span class="p">))</span>
             <span class="k">if</span> <span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;F&#39;</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">F</span>
@@ -852,14 +1226,20 @@
             <span class="n">xyz0</span> <span class="o">=</span> <span class="n">xyz_est</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
             <span class="n">cct_i</span> <span class="o">=</span> <span class="n">cct</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
             <span class="n">duv_i</span> <span class="o">=</span> <span class="n">duv</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-            <span class="n">cct_min</span><span class="p">,</span> <span class="n">duv_min</span> <span class="o">=</span>  <span class="n">xyz_to_cct</span><span class="p">(</span><span class="n">xyz0</span><span class="p">,</span><span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;cct,duv&#39;</span><span class="p">,</span><span class="n">wl</span> <span class="o">=</span> <span class="n">wl</span><span class="p">,</span> <span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span><span class="p">,</span> <span class="n">accuracy</span> <span class="o">=</span> <span class="n">accuracy</span><span class="p">,</span> <span class="n">force_out_of_lut</span> <span class="o">=</span> <span class="n">force_out_of_lut</span><span class="p">,</span> <span class="n">upper_cct_max</span> <span class="o">=</span> <span class="n">upper_cct_max</span><span class="p">,</span> <span class="n">approx_cct_temp</span> <span class="o">=</span> <span class="n">approx_cct_temp</span><span class="p">)</span>
+            <span class="n">cct_min</span><span class="p">,</span> <span class="n">duv_min</span> <span class="o">=</span>  <span class="n">xyz_to_cct</span><span class="p">(</span><span class="n">xyz0</span><span class="p">,</span><span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;cct,duv&#39;</span><span class="p">,</span><span class="n">wl</span> <span class="o">=</span> <span class="n">wl</span><span class="p">,</span> 
+                                           <span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span><span class="p">,</span> <span class="n">rtol</span> <span class="o">=</span> <span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span> <span class="o">=</span> <span class="n">atol</span><span class="p">,</span> 
+                                           <span class="n">force_out_of_lut</span> <span class="o">=</span> <span class="n">force_out_of_lut</span><span class="p">,</span> 
+                                           <span class="n">upper_cct_max</span> <span class="o">=</span> <span class="n">upper_cct_max</span><span class="p">,</span> 
+                                           <span class="n">approx_cct_temp</span> <span class="o">=</span> <span class="n">approx_cct_temp</span><span class="p">,</span>
+                                           <span class="n">cct_search_list</span> <span class="o">=</span> <span class="n">cct_search_list</span><span class="p">,</span>
+                                           <span class="n">fast_search</span> <span class="o">=</span> <span class="n">fast_search</span><span class="p">)</span>
             
             <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">duv</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">&gt;</span> <span class="n">_EPS</span><span class="p">:</span>
                 <span class="c1"># find xyz:</span>
                 <span class="n">Yuv0</span> <span class="o">=</span> <span class="n">xyz_to_Yuv</span><span class="p">(</span><span class="n">xyz0</span><span class="p">)</span>
                 <span class="n">uv0</span> <span class="o">=</span> <span class="n">Yuv0</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
 
-                <span class="n">OptimizeResult</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span><span class="n">fun</span> <span class="o">=</span> <span class="n">objfcn</span><span class="p">,</span><span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)),</span> <span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="n">uv0</span><span class="p">,</span><span class="n">cct_i</span><span class="p">,</span> <span class="n">duv_i</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">),</span> <span class="n">method</span> <span class="o">=</span> <span class="s1">&#39;Nelder-Mead&#39;</span><span class="p">,</span><span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;maxiter&quot;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="s2">&quot;maxfev&quot;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="s1">&#39;xatol&#39;</span><span class="p">:</span> <span class="mf">0.000001</span><span class="p">,</span> <span class="s1">&#39;fatol&#39;</span><span class="p">:</span> <span class="mf">0.000001</span><span class="p">})</span>
+                <span class="n">OptimizeResult</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">fun</span> <span class="o">=</span> <span class="n">objfcn</span><span class="p">,</span><span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)),</span> <span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="n">uv0</span><span class="p">,</span><span class="n">cct_i</span><span class="p">,</span> <span class="n">duv_i</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">),</span> <span class="n">method</span> <span class="o">=</span> <span class="s1">&#39;Nelder-Mead&#39;</span><span class="p">,</span><span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;maxiter&quot;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="s2">&quot;maxfev&quot;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="s1">&#39;xatol&#39;</span><span class="p">:</span> <span class="mf">0.000001</span><span class="p">,</span> <span class="s1">&#39;fatol&#39;</span><span class="p">:</span> <span class="mf">0.000001</span><span class="p">})</span>
                 <span class="n">betas</span> <span class="o">=</span> <span class="n">OptimizeResult</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span>
                 <span class="c1">#betas = np.zeros(uv0.shape)</span>
                 <span class="k">if</span> <span class="n">out</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -881,7 +1261,9 @@
 
 <span class="c1">#-------------------------------------------------------------------------------------------------   </span>
 <span class="c1"># general CCT-wrapper function</span>
-<div class="viewcode-block" id="xyz_to_cct"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cct.xyz_to_cct">[docs]</a><span class="k">def</span> <span class="nf">xyz_to_cct</span><span class="p">(</span><span class="n">xyzw</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;cct&#39;</span><span class="p">,</span><span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;lut&#39;</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span><span class="n">accuracy</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">force_out_of_lut</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">upper_cct_max</span> <span class="o">=</span> <span class="mf">10.0</span><span class="o">**</span><span class="mi">20</span><span class="p">,</span><span class="n">approx_cct_temp</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span> 
+<div class="viewcode-block" id="xyz_to_cct"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cct.xyz_to_cct">[docs]</a><span class="k">def</span> <span class="nf">xyz_to_cct</span><span class="p">(</span><span class="n">xyzw</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;cct&#39;</span><span class="p">,</span><span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;lut&#39;</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">rtol</span> <span class="o">=</span> <span class="mf">1e-5</span><span class="p">,</span> <span class="n">atol</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> 
+               <span class="n">force_out_of_lut</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">upper_cct_max</span> <span class="o">=</span> <span class="mf">1e12</span><span class="p">,</span> 
+               <span class="n">approx_cct_temp</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">fast_search</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">cct_search_list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span> 
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert XYZ tristimulus values to correlated color temperature (CCT) and</span>
 <span class="sd">    Duv (distance above (&gt;0) or below (&lt;0) the Planckian locus)</span>
@@ -905,20 +1287,37 @@
 <span class="sd">        :wl: </span>
 <span class="sd">            | None, optional</span>
 <span class="sd">            | Wavelengths used when calculating Planckian radiators.</span>
-<span class="sd">        :accuracy:</span>
-<span class="sd">            | float, optional</span>
-<span class="sd">            | Stop brute-force search when cct :accuracy: is reached.</span>
+<span class="sd">        :rtol: </span>
+<span class="sd">            | 1e-5, float, optional</span>
+<span class="sd">            | Stop brute-force search when cct a relative tolerance is reached.</span>
+<span class="sd">            | The relative tolerance is calculated as dCCT/CCT_est, </span>
+<span class="sd">            | with CCT_est the current intermediate estimate in the </span>
+<span class="sd">            | brute-force search and with dCCT the difference between</span>
+<span class="sd">            | the present and former estimates.</span>
+<span class="sd">        :atol: </span>
+<span class="sd">            | 0.1, optional</span>
+<span class="sd">            | Stop brute-force search when cct a absolute tolerance (K) is reached.</span>
 <span class="sd">        :upper_cct_max: </span>
-<span class="sd">            | 10.0**20, optional</span>
+<span class="sd">            | 1e12, optional</span>
 <span class="sd">            | Limit brute-force search to this cct.</span>
 <span class="sd">        :approx_cct_temp: </span>
 <span class="sd">            | True, optional</span>
 <span class="sd">            | If True: use xyz_to_cct_HA() to get a first estimate of cct to </span>
-<span class="sd">              speed up search.</span>
+<span class="sd">            |  speed up search.</span>
+<span class="sd">            | Only for &#39;fast&#39; code option.</span>
+<span class="sd">        :fast_search:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | Use fast brute-force search, i.e. xyz_to_cct_search_fast()</span>
+<span class="sd">        :cct_search_list:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | list of ccts to obtain a first guess for the cct of the input xyz </span>
+<span class="sd">            | when HA estimation fails due to out-of-range cct or when fast_search == False.</span>
+<span class="sd">            | None defaults to: [50,100,500,1000,2000,3000,4000,5000,6000,10000,</span>
+<span class="sd">            |                  20000,50000,1e5,1e6, 1e7, 1e8,1e9, 1e10, 1e11, 1e12]</span>
 <span class="sd">        :force_out_of_lut: </span>
 <span class="sd">            | True, optional</span>
 <span class="sd">            | If True and cct is out of range of the LUT, then switch to </span>
-<span class="sd">              brute-force search method, else return numpy.nan values.</span>
+<span class="sd">            | brute-force search method, else return numpy.nan values.</span>
 <span class="sd">        </span>
 <span class="sd">    Returns:</span>
 <span class="sd">        :returns: </span>
@@ -930,12 +1329,15 @@
 <span class="sd">            |    [cct,duv]: out == &quot;[cct,duv]&quot; (or -2)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;lut&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;ohno&#39;</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">xyz_to_cct_ohno</span><span class="p">(</span><span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="p">,</span> <span class="n">accuracy</span> <span class="o">=</span> <span class="n">accuracy</span><span class="p">,</span> <span class="n">force_out_of_lut</span> <span class="o">=</span> <span class="n">force_out_of_lut</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">xyz_to_cct_ohno</span><span class="p">(</span><span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="p">,</span> <span class="n">rtol</span> <span class="o">=</span> <span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span> <span class="o">=</span> <span class="n">atol</span><span class="p">,</span> <span class="n">force_out_of_lut</span> <span class="o">=</span> <span class="n">force_out_of_lut</span><span class="p">,</span>
+                               <span class="n">upper_cct_max</span> <span class="o">=</span> <span class="n">upper_cct_max</span><span class="p">,</span> <span class="n">approx_cct_temp</span> <span class="o">=</span> <span class="n">approx_cct_temp</span><span class="p">,</span> <span class="n">cct_search_list</span> <span class="o">=</span> <span class="n">cct_search_list</span><span class="p">,</span> <span class="n">fast_search</span> <span class="o">=</span> <span class="n">fast_search</span><span class="p">)</span>
     <span class="k">elif</span> <span class="p">(</span><span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;search&#39;</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">xyz_to_cct_search</span><span class="p">(</span><span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="n">wl</span><span class="p">,</span> <span class="n">accuracy</span> <span class="o">=</span> <span class="n">accuracy</span><span class="p">,</span> <span class="n">upper_cct_max</span> <span class="o">=</span> <span class="n">upper_cct_max</span><span class="p">,</span> <span class="n">approx_cct_temp</span> <span class="o">=</span> <span class="n">approx_cct_temp</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">xyz_to_cct_search</span><span class="p">(</span><span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="n">wl</span><span class="p">,</span> <span class="n">rtol</span> <span class="o">=</span> <span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span> <span class="o">=</span> <span class="n">atol</span><span class="p">,</span> <span class="n">upper_cct_max</span> <span class="o">=</span> <span class="n">upper_cct_max</span><span class="p">,</span> <span class="n">approx_cct_temp</span> <span class="o">=</span> <span class="n">approx_cct_temp</span><span class="p">,</span> <span class="n">cct_search_list</span> <span class="o">=</span> <span class="n">cct_search_list</span><span class="p">,</span> <span class="n">fast</span> <span class="o">=</span> <span class="n">fast_search</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="xyz_to_duv"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cct.xyz_to_duv">[docs]</a><span class="k">def</span> <span class="nf">xyz_to_duv</span><span class="p">(</span><span class="n">xyzw</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;duv&#39;</span><span class="p">,</span> <span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;lut&#39;</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span><span class="n">accuracy</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">force_out_of_lut</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">upper_cct_max</span> <span class="o">=</span> <span class="mf">10.0</span><span class="o">**</span><span class="mi">20</span><span class="p">,</span><span class="n">approx_cct_temp</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span> 
+<div class="viewcode-block" id="xyz_to_duv"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cct.xyz_to_duv">[docs]</a><span class="k">def</span> <span class="nf">xyz_to_duv</span><span class="p">(</span><span class="n">xyzw</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;duv&#39;</span><span class="p">,</span> <span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;lut&#39;</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+               <span class="n">rtol</span> <span class="o">=</span> <span class="mf">1e-5</span><span class="p">,</span> <span class="n">atol</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">force_out_of_lut</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">upper_cct_max</span> <span class="o">=</span> <span class="mf">1e12</span><span class="p">,</span> 
+               <span class="n">approx_cct_temp</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">fast_search</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">cct_search_list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span> 
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert XYZ tristimulus values to Duv (distance above (&gt;0) or below (&lt;0) </span>
 <span class="sd">    the Planckian locus) and correlated color temperature (CCT) values</span>
@@ -959,20 +1361,37 @@
 <span class="sd">        :wl: </span>
 <span class="sd">            | None, optional</span>
 <span class="sd">            | Wavelengths used when calculating Planckian radiators.</span>
-<span class="sd">        :accuracy: </span>
-<span class="sd">            | float, optional</span>
-<span class="sd">            | Stop brute-force search when cct :accuracy: is reached.</span>
+<span class="sd">        :rtol: </span>
+<span class="sd">            | 1e-5, float, optional</span>
+<span class="sd">            | Stop brute-force search when cct a relative tolerance is reached.</span>
+<span class="sd">            | The relative tolerance is calculated as dCCT/CCT_est, </span>
+<span class="sd">            | with CCT_est the current intermediate estimate in the </span>
+<span class="sd">            | brute-force search and with dCCT the difference between</span>
+<span class="sd">            | the present and former estimates.</span>
+<span class="sd">        :atol: </span>
+<span class="sd">            | 0.1, optional</span>
+<span class="sd">            | Stop brute-force search when cct a absolute tolerance (K) is reached.</span>
 <span class="sd">        :upper_cct_max: </span>
-<span class="sd">            | 10.0**20, optional</span>
+<span class="sd">            | 1e12, optional</span>
 <span class="sd">            | Limit brute-force search to this cct.</span>
-<span class="sd">        :approx_cct_temp:</span>
+<span class="sd">        :approx_cct_temp: </span>
 <span class="sd">            | True, optional</span>
-<span class="sd">            | If True: use xyz_to_cct_HA() to get a first estimate of cct </span>
-<span class="sd">              to speed up search.</span>
+<span class="sd">            | If True: use xyz_to_cct_HA() to get a first estimate of cct to </span>
+<span class="sd">            |  speed up search.</span>
+<span class="sd">            | Only for &#39;fast&#39; code option.</span>
+<span class="sd">        :fast_search:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | Use fast brute-force search, i.e. xyz_to_cct_search_fast()</span>
+<span class="sd">        :cct_search_list:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | list of ccts to obtain a first guess for the cct of the input xyz </span>
+<span class="sd">            | when HA estimation fails due to out-of-range cct or when fast_search == False.</span>
+<span class="sd">            | None defaults to: [50,100,500,1000,2000,3000,4000,5000,6000,10000,</span>
+<span class="sd">            |                  20000,50000,1e5,1e6, 1e7, 1e8,1e9, 1e10, 1e11, 1e12]</span>
 <span class="sd">        :force_out_of_lut: </span>
 <span class="sd">            | True, optional</span>
 <span class="sd">            | If True and cct is out of range of the LUT, then switch to </span>
-<span class="sd">              brute-force search method, else return numpy.nan values.</span>
+<span class="sd">            | brute-force search method, else return numpy.nan values.</span>
 <span class="sd">        </span>
 <span class="sd">    Returns:</span>
 <span class="sd">        :returns:</span>
@@ -984,9 +1403,10 @@
 <span class="sd">            |     [cct,duv]: out == &quot;[cct,duv]&quot; (or -2)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;lut&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;ohno&#39;</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">xyz_to_cct_ohno</span><span class="p">(</span><span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="p">,</span> <span class="n">accuracy</span> <span class="o">=</span> <span class="n">accuracy</span><span class="p">,</span> <span class="n">force_out_of_lut</span> <span class="o">=</span> <span class="n">force_out_of_lut</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">xyz_to_cct_ohno</span><span class="p">(</span><span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="p">,</span> <span class="n">rtol</span> <span class="o">=</span> <span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span> <span class="o">=</span> <span class="n">atol</span><span class="p">,</span> <span class="n">force_out_of_lut</span> <span class="o">=</span> <span class="n">force_out_of_lut</span><span class="p">,</span>
+                               <span class="n">upper_cct_max</span> <span class="o">=</span> <span class="n">upper_cct_max</span><span class="p">,</span> <span class="n">approx_cct_temp</span> <span class="o">=</span> <span class="n">approx_cct_temp</span><span class="p">,</span> <span class="n">cct_search_list</span> <span class="o">=</span> <span class="n">cct_search_list</span><span class="p">,</span> <span class="n">fast_search</span> <span class="o">=</span> <span class="n">fast_search</span><span class="p">)</span>
     <span class="k">elif</span> <span class="p">(</span><span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;search&#39;</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">xyz_to_cct_search</span><span class="p">(</span><span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="n">wl</span><span class="p">,</span> <span class="n">accuracy</span> <span class="o">=</span> <span class="n">accuracy</span><span class="p">,</span> <span class="n">upper_cct_max</span> <span class="o">=</span> <span class="n">upper_cct_max</span><span class="p">,</span> <span class="n">approx_cct_temp</span> <span class="o">=</span> <span class="n">approx_cct_temp</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">xyz_to_cct_search</span><span class="p">(</span><span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="n">wl</span><span class="p">,</span> <span class="n">rtol</span> <span class="o">=</span> <span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span> <span class="o">=</span> <span class="n">atol</span><span class="p">,</span> <span class="n">upper_cct_max</span> <span class="o">=</span> <span class="n">upper_cct_max</span><span class="p">,</span> <span class="n">approx_cct_temp</span> <span class="o">=</span> <span class="n">approx_cct_temp</span><span class="p">,</span> <span class="n">cct_search_list</span> <span class="o">=</span> <span class="n">cct_search_list</span><span class="p">,</span> <span class="n">fast</span> <span class="o">=</span> <span class="n">fast_search</span><span class="p">)</span></div>
    
    
 <span class="c1">#-------------------------------------------------------------------------------------------------   </span>
@@ -1032,25 +1452,16 @@
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../../../_static/doctools.js"></script>
-    
-
-  
-
-  <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.color.cam.cam_02_X &mdash; LuxPy 1.4.18 documentation</title>
+  <title>luxpy.color.cam.cam_02_X &mdash; LuxPy 1.5.0 documentation</title>
   
 
   
@@ -17,32 +17,34 @@
   
 
   
+  <script type="text/javascript" src="../../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
-
-  
-  <script src="../../../../_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -56,7 +58,7 @@
             
             
               <div class="version">
-                1.4.18
+                1.5.0
               </div>
             
           
@@ -259,7 +261,8 @@
 <span class="sd">.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">math</span><span class="p">,</span> <span class="n">cat</span><span class="p">,</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">_CIE_ILLUMINANTS</span><span class="p">,</span> <span class="n">np2d</span><span class="p">,</span> <span class="n">np2dT</span><span class="p">,</span> <span class="n">np3d</span><span class="p">,</span> <span class="n">put_args_in_db</span><span class="p">,</span> <span class="n">spd_to_xyz</span><span class="p">,</span> <span class="n">asplit</span><span class="p">,</span> <span class="n">ajoin</span>
+<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span>  <span class="n">math</span><span class="p">,</span> <span class="n">cat</span><span class="p">,</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">_CIE_ILLUMINANTS</span><span class="p">,</span> <span class="n">spd_to_xyz</span> 
+<span class="kn">from</span> <span class="nn">luxpy.utils</span> <span class="kn">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">np2d</span><span class="p">,</span> <span class="n">np2dT</span><span class="p">,</span> <span class="n">np3d</span><span class="p">,</span> <span class="n">put_args_in_db</span><span class="p">,</span> <span class="n">asplit</span><span class="p">,</span> <span class="n">ajoin</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;_CAM_02_X_AXES&#39;</span><span class="p">,</span> <span class="s1">&#39;_CAM_02_X_UNIQUE_HUE_DATA&#39;</span><span class="p">,</span><span class="s1">&#39;_CAM_02_X_SURROUND_PARAMETERS&#39;</span><span class="p">,</span><span class="s1">&#39;_CAM_02_X_NAKA_RUSHTON_PARAMETERS&#39;</span><span class="p">,</span><span class="s1">&#39;_CAM_02_X_UCS_PARAMETERS&#39;</span><span class="p">]</span>
 <span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;_CAM_02_X_DEFAULT_TYPE&#39;</span><span class="p">,</span><span class="s1">&#39;_CAM_02_X_DEFAULT_WHITE_POINT&#39;</span><span class="p">,</span><span class="s1">&#39;_CAM_02_X_DEFAULT_MCAT&#39;</span><span class="p">,</span> <span class="s1">&#39;_CAM_02_X_DEFAULT_CONDITIONS&#39;</span><span class="p">]</span>
@@ -491,13 +494,12 @@
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        :data: </span>
-<span class="sd">            | ndarray with input tristimulus values or </span>
-<span class="sd">              input color appearance correlates</span>
+<span class="sd">            | ndarray with input tristimulus values or input color appearance correlates</span>
 <span class="sd">            | Can be of shape: (N [, xM], x 3), whereby </span>
-<span class="sd">              N refers to samples, M to light sources.</span>
+<span class="sd">            | N refers to samples, M to light sources.</span>
 <span class="sd">        :xyzw:</span>
 <span class="sd">            | _CAM_02_X_DEFAULT_WHITE_POINT or ndarray with tristimulus values</span>
-<span class="sd">              of white point(s), optional</span>
+<span class="sd">            | of white point(s), optional</span>
 <span class="sd">            | Can be multiple by specifying a Mx3 ndarray, instead of 1x3.</span>
 <span class="sd">        :Yw: </span>
 <span class="sd">            | None, optional</span>
@@ -593,7 +595,7 @@
     
     <span class="n">dshape</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
     <span class="n">dshape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">outin</span><span class="p">)</span> <span class="c1"># requested number of correlates</span>
-    <span class="n">camout</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">dshape</span><span class="p">)</span>
+    <span class="n">camout</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">dshape</span><span class="p">);</span><span class="n">camout</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
     
     <span class="c1"># get general data:</span>
     <span class="k">if</span> <span class="n">camtype</span> <span class="o">==</span> <span class="s1">&#39;ciecam02&#39;</span><span class="p">:</span>
@@ -870,13 +872,12 @@
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        :data: </span>
-<span class="sd">            | ndarray with input tristimulus values or </span>
-<span class="sd">              input color appearance correlates</span>
+<span class="sd">            | ndarray with input tristimulus values or input color appearance correlates</span>
 <span class="sd">            | Can be of shape: (N [, xM], x 3), whereby </span>
-<span class="sd">              N refers to samples, M to light sources.</span>
+<span class="sd">            | N refers to samples, M to light sources.</span>
 <span class="sd">        :xyzw:</span>
 <span class="sd">            | _CAM_02_X_DEFAULT_WHITE_POINT or ndarray with tristimulus values</span>
-<span class="sd">              of white point(s), optional</span>
+<span class="sd">            | of white point(s), optional</span>
 <span class="sd">            | Can be multiple by specifying a Mx3 ndarray, instead of 1x3.</span>
 <span class="sd">        :Yw: </span>
 <span class="sd">            | None, optional</span>
@@ -918,7 +919,7 @@
 <span class="sd">        :yellowbluepurplecorrect:</span>
 <span class="sd">            | True or False, optional</span>
 <span class="sd">            | Correct for yellow-blue and purple problems in ciecam02 </span>
-<span class="sd">              (Is not used in cam16 because cat16 solves issues)</span>
+<span class="sd">            | (Is not used in cam16 because cat16 solves issues)</span>
 <span class="sd">    </span>
 <span class="sd">    Returns:</span>
 <span class="sd">        :returns: </span>
@@ -943,17 +944,16 @@
 <span class="sd">    Convert between XYZ tristsimulus values and cam16 color appearance correlates.</span>
 <span class="sd">    </span>
 <span class="sd">   | Wrapper for luxpy.cam.cam_structure_ciecam02_cam16() designed specifically </span>
-<span class="sd">     for camtype = &#39;cam16&#39;.</span>
+<span class="sd">   | for camtype = &#39;cam16&#39;.</span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        :data: </span>
-<span class="sd">            | ndarray with input tristimulus values or </span>
-<span class="sd">              input color appearance correlates</span>
+<span class="sd">            | ndarray with input tristimulus values or input color appearance correlates</span>
 <span class="sd">            | Can be of shape: (N [, xM], x 3), whereby </span>
-<span class="sd">              N refers to samples, M to light sources.</span>
+<span class="sd">            | N refers to samples, M to light sources.</span>
 <span class="sd">        :xyzw:</span>
 <span class="sd">            | _CAM_02_X_DEFAULT_WHITE_POINT or ndarray with tristimulus values</span>
-<span class="sd">              of white point(s), optional</span>
+<span class="sd">            | of white point(s), optional</span>
 <span class="sd">            | Can be multiple by specifying a Mx3 ndarray, instead of 1x3.</span>
 <span class="sd">        :Yw: </span>
 <span class="sd">            | None, optional</span>
@@ -1017,8 +1017,7 @@
 <span class="sd">    and camucs type color appearance correlates.</span>
 <span class="sd">    </span>
 <span class="sd">    | Wrapper for luxpy.cam.cam_structure_ciecam02_cam16() with additional </span>
-<span class="sd">      compression of color attributes</span>
-<span class="sd">      for the following case:</span>
+<span class="sd">    | compression of color attributes for the following case:</span>
 <span class="sd">    |    - &#39;none&#39;: original cam space</span>
 <span class="sd">    |    - &#39;ucs&#39;: for uniform color space</span>
 <span class="sd">    |    - &#39;lcd&#39;: for large color differences</span>
@@ -1163,13 +1162,12 @@
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        :data: </span>
-<span class="sd">            | ndarray with input tristimulus values or </span>
-<span class="sd">              input color appearance correlates</span>
+<span class="sd">            | ndarray with input tristimulus values or input color appearance correlates</span>
 <span class="sd">            | Can be of shape: (N [, xM], x 3), whereby </span>
-<span class="sd">              N refers to samples, M to light sources.</span>
+<span class="sd">            | N refers to samples, M to light sources.</span>
 <span class="sd">        :xyzw:</span>
 <span class="sd">            | _CAM_02_X_DEFAULT_WHITE_POINT or ndarray with tristimulus values</span>
-<span class="sd">              of white point(s), optional</span>
+<span class="sd">            | of white point(s), optional</span>
 <span class="sd">            | Can be multiple by specifying a Mx3 ndarray, instead of 1x3.</span>
 <span class="sd">        :Yw: </span>
 <span class="sd">            | None, optional</span>
@@ -1246,13 +1244,12 @@
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        :data: </span>
-<span class="sd">            | ndarray with input tristimulus values or </span>
-<span class="sd">              input color appearance correlates</span>
+<span class="sd">            | ndarray with input tristimulus values or input color appearance correlates</span>
 <span class="sd">            | Can be of shape: (N [, xM], x 3), whereby </span>
-<span class="sd">              N refers to samples, M to light sources.</span>
+<span class="sd">            | N refers to samples, M to light sources.</span>
 <span class="sd">        :xyzw:</span>
 <span class="sd">            | _CAM_02_X_DEFAULT_WHITE_POINT or ndarray with tristimulus values</span>
-<span class="sd">              of white point(s), optional</span>
+<span class="sd">            | of white point(s), optional</span>
 <span class="sd">            | Can be multiple by specifying a Mx3 ndarray, instead of 1x3.</span>
 <span class="sd">        :Yw: </span>
 <span class="sd">            | None, optional</span>
@@ -1590,25 +1587,16 @@
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../../../_static/doctools.js"></script>
-    
-
-  
-
-  <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

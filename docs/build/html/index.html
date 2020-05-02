@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>LuxPy: a package for lighting and color science &mdash; LuxPy 1.4.18 documentation</title>
+  <title>LuxPy: a package for lighting and color science &mdash; LuxPy 1.5.0 documentation</title>
   
 
   
@@ -17,33 +17,35 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="License: GPLv3" href="license.html" /> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -57,7 +59,7 @@
             
             
               <div class="version">
-                1.4.18
+                1.5.0
               </div>
             
           
@@ -155,10 +157,10 @@
 <h1>LuxPy: a package for lighting and color science<a class="headerlink" href="#luxpy-a-package-for-lighting-and-color-science" title="Permalink to this headline">¶</a></h1>
 <blockquote>
 <div><ul class="simple">
-<li>Author: K. A.G. Smet (ksmet1977 at gmail.com)</li>
-<li>Version: 1.4.18</li>
-<li>Date: Mar 23, 2020</li>
-<li>License: GPLv3</li>
+<li><p>Author: K. A.G. Smet (ksmet1977 at gmail.com)</p></li>
+<li><p>Version: 1.5.0</p></li>
+<li><p>Date: May 02, 2020</p></li>
+<li><p>License: GPLv3</p></li>
 </ul>
 </div></blockquote>
 <img alt="my-logo" src="_images/LUXPY__logo.jpg" />
@@ -175,16 +177,20 @@
 <li class="toctree-l1"><a class="reference internal" href="required_packages.html">Imported (required) packages</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="required_packages.html#core">Core</a></li>
 <li class="toctree-l2"><a class="reference internal" href="required_packages.html#e-party-dependencies-automatic-install">3e party dependencies (automatic install)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="required_packages.html#e-party-dependencies-automatic-install-on-import">3e party dependencies (automatic install on import)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="required_packages.html#e-party-dependencies-requiring-manual-install">3e party dependencies (requiring manual install)</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="luxpy_structure.html">Luxpy package structure</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="utils.html">Utils sub-package</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="utils.html#helpers">helpers/</a></li>
-<li class="toctree-l3"><a class="reference internal" href="utils.html#math">math/</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html">Utils sub-package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="math.html">Math sub-package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="math.html#module-with-useful-math-functions">Module with useful math functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="math.html#vec3">vec3/</a></li>
+<li class="toctree-l3"><a class="reference internal" href="math.html#demo">DEMO/</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="spectrum.html">Spectrum sub-package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="spectrum.html#spectrum-sub-package-supporting-basic-spectral-calculations">spectrum: sub-package supporting basic spectral calculations</a></li>
 <li class="toctree-l3"><a class="reference internal" href="spectrum.html#basics">basics/</a></li>
 </ul>
 </li>
@@ -195,11 +201,11 @@
 <li class="toctree-l3"><a class="reference internal" href="color.html#cat">cat/</a></li>
 <li class="toctree-l3"><a class="reference internal" href="color.html#cam">cam/</a></li>
 <li class="toctree-l3"><a class="reference internal" href="color.html#deltae">deltaE/</a></li>
+<li class="toctree-l3"><a class="reference internal" href="color.html#whiteness">whiteness/</a></li>
 <li class="toctree-l3"><a class="reference internal" href="color.html#cri">cri/</a></li>
 <li class="toctree-l3"><a class="reference internal" href="color.html#cri-vfpx">cri/VFPX/</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="classes.html">Classes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="toolboxes.html">Toolboxes</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="toolboxes.html#photbiochem">photbiochem/</a></li>
 <li class="toctree-l3"><a class="reference internal" href="toolboxes.html#indvcmf">indvcmf/</a></li>
@@ -219,9 +225,9 @@
 <div class="section" id="indices-and-tables">
 <h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
 <ul class="simple">
-<li><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></li>
-<li><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></li>
-<li><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></li>
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
 </ul>
 </div>
 
@@ -260,25 +266,16 @@
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-    
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

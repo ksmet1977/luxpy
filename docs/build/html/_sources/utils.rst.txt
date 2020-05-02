@@ -1,28 +1,14 @@
 Utils sub-package
 =================
 
-helpers/ 
---------
  :py:
 	* __init__.py
-	* helpers.py 
+	* utilities.py 
+	* folder_tree.py
 	
- :namespace: luxpy
+ :namespace: luxpy.utils
 
-.. automodule:: luxpy.utils.helpers
-   :members:
-   :undoc-members:
-   :private-members:
-
-math/
------
- :py:
-	* basics.py
-	* optimizers.py
-	
- :namespace: luxpy.math
-
-.. automodule:: luxpy.utils.math
+.. automodule:: luxpy.utils
    :members:
    :undoc-members:
    :private-members:

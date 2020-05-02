@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.utils.helpers.helpers &mdash; LuxPy 1.4.18 documentation</title>
+  <title>luxpy.utils.utilities &mdash; LuxPy 1.5.0 documentation</title>
   
 
   
@@ -17,36 +17,38 @@
   
 
   
+  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
-  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
-    <link rel="index" title="Index" href="../../../../genindex.html" />
-    <link rel="search" title="Search" href="../../../../search.html" /> 
-
-  
-  <script src="../../../../_static/js/modernizr.min.js"></script>
-
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
-            <a href="../../../../index.html" class="icon icon-home"> LuxPy
+            <a href="../../../index.html" class="icon icon-home"> LuxPy
           
 
           
@@ -56,14 +58,14 @@
             
             
               <div class="version">
-                1.4.18
+                1.5.0
               </div>
             
           
 
           
 <div role="search">
-  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
@@ -82,10 +84,10 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../license.html">License: GPLv3</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../required_packages.html">Imported (required) packages</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../luxpy_structure.html">Luxpy package structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License: GPLv3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../required_packages.html">Imported (required) packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../luxpy_structure.html">Luxpy package structure</a></li>
 </ul>
 
             
@@ -100,7 +102,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../../../index.html">LuxPy</a>
+          <a href="../../../index.html">LuxPy</a>
         
       </nav>
 
@@ -129,11 +131,11 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
         
-          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
         
-      <li>luxpy.utils.helpers.helpers</li>
+      <li>luxpy.utils.utilities</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -148,7 +150,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for luxpy.utils.helpers.helpers</h1><div class="highlight"><pre>
+  <h1>Source code for luxpy.utils.utilities</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="c1">########################################################################</span>
 <span class="c1"># &lt;LUXPY: a Python package for lighting and color science.&gt;</span>
@@ -167,9 +169,15 @@
 <span class="c1"># along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
 <span class="c1">#########################################################################</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Module with helper functions </span>
-<span class="sd">============================</span>
+<span class="sd">Module with utility functions and parameters</span>
+<span class="sd">============================================</span>
 
+<span class="sd"> :_PKG_PATH: absolute path to luxpy package</span>
+<span class="sd"> </span>
+<span class="sd"> :_SEP: operating system operator</span>
+<span class="sd"> </span>
+<span class="sd"> :_EPS: = 7./3 - 4./3 -1 (machine epsilon)</span>
+<span class="sd"> </span>
 <span class="sd"> :np2d(): Make a tuple, list or array at least a 2D numpy array.</span>
 
 <span class="sd"> :np2dT(): Make a tuple, list or array at least a 2D numpy array and tranpose.</span>
@@ -210,17 +218,67 @@
 <span class="sd">           with shape of another array.</span>
 <span class="sd">           </span>
 <span class="sd"> :write_to_excel(): Write a DataFrame to existing an Excel file into specific Sheet.</span>
+<span class="sd"> </span>
+<span class="sd"> :show_luxpy_tree(): Show luxpy folder structure</span>
+<span class="sd"> </span>
+<span class="sd"> :is_importable(): Check if a module is importable / loaded and if it doesn&#39;t exist installing it using subprocess</span>
+<span class="sd"> </span>
+<span class="sd"> :get_function_kwargs(): Get dictionary of a function&#39;s keyword arguments and their default values. </span>
 
 <span class="sd">===============================================================================</span>
 <span class="sd">&quot;&quot;&quot;</span>
+<span class="c1">#------------------------------------------------------------------------------</span>
+<span class="c1"># Package imports:</span>
+<span class="c1"># Core:</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">importlib</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">cProfile</span>
+<span class="kn">import</span> <span class="nn">pstats</span>
+<span class="kn">import</span> <span class="nn">io</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span> <span class="k">as</span> <span class="n">odict</span>
+<span class="kn">from</span> <span class="nn">mpl_toolkits.mplot3d</span> <span class="kn">import</span> <span class="n">Axes3D</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;odict&#39;</span><span class="p">,</span><span class="s1">&#39;Axes3D&#39;</span><span class="p">]</span>
 
-<span class="kn">from</span> <span class="nn">luxpy</span> <span class="k">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">pd</span><span class="p">,</span> <span class="n">odict</span><span class="p">,</span> <span class="n">warnings</span>
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;np2d&#39;</span><span class="p">,</span><span class="s1">&#39;np3d&#39;</span><span class="p">,</span><span class="s1">&#39;np2dT&#39;</span><span class="p">,</span><span class="s1">&#39;np3dT&#39;</span><span class="p">,</span><span class="s1">&#39;put_args_in_db&#39;</span><span class="p">,</span><span class="s1">&#39;vec_to_dict&#39;</span><span class="p">,</span>
+<span class="c1"># other:</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">scipy</span> <span class="k">as</span> <span class="nn">sp</span>
+
+<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;np&#39;</span><span class="p">,</span><span class="s1">&#39;pd&#39;</span><span class="p">,</span><span class="s1">&#39;plt&#39;</span><span class="p">,</span><span class="s1">&#39;sp&#39;</span><span class="p">]</span>
+
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+<span class="c1"># os related utility parameters:</span>
+<span class="n">_PKG_PATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">);</span><span class="s2">&quot;&quot;&quot; Absolute path to package &quot;&quot;&quot;</span> 
+<span class="n">_PKG_PATH</span> <span class="o">=</span> <span class="n">_PKG_PATH</span><span class="p">[:</span><span class="n">_PKG_PATH</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;utils&quot;</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">_SEP</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">;</span> <span class="s2">&quot;&quot;&quot; Operating system separator &quot;&quot;&quot;</span>
+<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;_PKG_PATH&#39;</span><span class="p">,</span><span class="s1">&#39;_SEP&#39;</span><span class="p">]</span>
+
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+<span class="c1"># set some general utility parameters:</span>
+<span class="n">_EPS</span> <span class="o">=</span> <span class="mf">7.</span><span class="o">/</span><span class="mi">3</span> <span class="o">-</span> <span class="mf">4.</span><span class="o">/</span><span class="mi">3</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="s2">&quot;&quot;&quot; Machine epsilon &quot;&quot;&quot;</span>
+<span class="n">__all__</span><span class="o">+=</span><span class="p">[</span><span class="s1">&#39;_EPS&#39;</span><span class="p">]</span>
+
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">.folder_tree</span> <span class="kn">import</span> <span class="n">tree</span>
+<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;np2d&#39;</span><span class="p">,</span><span class="s1">&#39;np3d&#39;</span><span class="p">,</span><span class="s1">&#39;np2dT&#39;</span><span class="p">,</span><span class="s1">&#39;np3dT&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;put_args_in_db&#39;</span><span class="p">,</span><span class="s1">&#39;vec_to_dict&#39;</span><span class="p">,</span>
            <span class="s1">&#39;getdata&#39;</span><span class="p">,</span><span class="s1">&#39;dictkv&#39;</span><span class="p">,</span><span class="s1">&#39;OD&#39;</span><span class="p">,</span><span class="s1">&#39;meshblock&#39;</span><span class="p">,</span><span class="s1">&#39;asplit&#39;</span><span class="p">,</span><span class="s1">&#39;ajoin&#39;</span><span class="p">,</span>
-           <span class="s1">&#39;broadcast_shape&#39;</span><span class="p">,</span><span class="s1">&#39;todim&#39;</span><span class="p">,</span><span class="s1">&#39;write_to_excel&#39;</span><span class="p">]</span>
+           <span class="s1">&#39;broadcast_shape&#39;</span><span class="p">,</span><span class="s1">&#39;todim&#39;</span><span class="p">,</span><span class="s1">&#39;write_to_excel&#39;</span><span class="p">,</span><span class="s1">&#39;show_luxpy_tree&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;is_importable&#39;</span><span class="p">,</span><span class="s1">&#39;get_function_kwargs&#39;</span><span class="p">,</span><span class="s1">&#39;profile_fcn&#39;</span><span class="p">]</span>
 
-<span class="c1">#--------------------------------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="np2d"><a class="viewcode-back" href="../../../../utils.html#luxpy.utils.helpers.np2d">[docs]</a><span class="k">def</span> <span class="nf">np2d</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<span class="c1">##############################################################################</span>
+<span class="c1"># Start function definitions</span>
+<span class="c1">##############################################################################</span>
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="np2d"><a class="viewcode-back" href="../../../utils.html#luxpy.utils.np2d">[docs]</a><span class="k">def</span> <span class="nf">np2d</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Make a tuple, list or numpy array at least a 2D numpy array.</span>
 <span class="sd">    </span>
@@ -241,7 +299,7 @@
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="np2dT"><a class="viewcode-back" href="../../../../utils.html#luxpy.utils.helpers.np2dT">[docs]</a><span class="k">def</span> <span class="nf">np2dT</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<div class="viewcode-block" id="np2dT"><a class="viewcode-back" href="../../../utils.html#luxpy.utils.np2dT">[docs]</a><span class="k">def</span> <span class="nf">np2dT</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Make a tuple, list or numpy array at least a 2D numpy array and transpose.</span>
 <span class="sd">    </span>
@@ -261,7 +319,7 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">))</span><span class="o">.</span><span class="n">T</span></div>
 
-<div class="viewcode-block" id="np3d"><a class="viewcode-back" href="../../../../utils.html#luxpy.utils.helpers.np3d">[docs]</a><span class="k">def</span> <span class="nf">np3d</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<div class="viewcode-block" id="np3d"><a class="viewcode-back" href="../../../utils.html#luxpy.utils.np3d">[docs]</a><span class="k">def</span> <span class="nf">np3d</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Make a tuple, list or numpy array at least a 3d numpy array.</span>
 <span class="sd">    </span>
@@ -281,10 +339,9 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">)),</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
     
-<div class="viewcode-block" id="np3dT"><a class="viewcode-back" href="../../../../utils.html#luxpy.utils.helpers.np3dT">[docs]</a><span class="k">def</span> <span class="nf">np3dT</span><span class="p">(</span><span class="n">data</span><span class="p">):</span> <span class="c1"># keep last axis the same</span>
+<div class="viewcode-block" id="np3dT"><a class="viewcode-back" href="../../../utils.html#luxpy.utils.np3dT">[docs]</a><span class="k">def</span> <span class="nf">np3dT</span><span class="p">(</span><span class="n">data</span><span class="p">):</span> <span class="c1"># keep last axis the same</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Make a tuple, list or numpy array at least a 3d numpy array and transposed </span>
-<span class="sd">    first 2 axes.</span>
+<span class="sd">    Make a tuple, list or numpy array at least a 3d numpy array and transposed first 2 axes.</span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        :data: </span>
@@ -293,7 +350,7 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        :returns: </span>
 <span class="sd">            | ndarray with .ndim &gt;= 3 and with first two axes </span>
-<span class="sd">              transposed (axis=3 is kept the same).</span>
+<span class="sd">            | transposed (axis=3 is kept the same).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span><span class="c1"># assume already atleast_3d when nd.array (user has to ensure input is an array)</span>
         <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">&gt;=</span><span class="mi">3</span><span class="p">):</span>
@@ -306,7 +363,7 @@
 
 
 <span class="c1">#------------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="put_args_in_db"><a class="viewcode-back" href="../../../../utils.html#luxpy.utils.helpers.put_args_in_db">[docs]</a><span class="k">def</span> <span class="nf">put_args_in_db</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+<div class="viewcode-block" id="put_args_in_db"><a class="viewcode-back" href="../../../utils.html#luxpy.utils.put_args_in_db">[docs]</a><span class="k">def</span> <span class="nf">put_args_in_db</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Takes the args with not-None input values of a function and overwrites </span>
 <span class="sd">    the values of the corresponding keys in dict db.</span>
@@ -357,7 +414,7 @@
         <span class="k">return</span> <span class="n">db</span></div>
 
 <span class="c1">#------------------------------------------------------------------------------   </span>
-<div class="viewcode-block" id="vec_to_dict"><a class="viewcode-back" href="../../../../utils.html#luxpy.utils.helpers.vec_to_dict">[docs]</a><span class="k">def</span> <span class="nf">vec_to_dict</span><span class="p">(</span><span class="n">vec</span><span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dic</span> <span class="o">=</span> <span class="p">{},</span> <span class="n">vsize</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">keys</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="vec_to_dict"><a class="viewcode-back" href="../../../utils.html#luxpy.utils.vec_to_dict">[docs]</a><span class="k">def</span> <span class="nf">vec_to_dict</span><span class="p">(</span><span class="n">vec</span><span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dic</span> <span class="o">=</span> <span class="p">{},</span> <span class="n">vsize</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">keys</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert dict to vec and vice versa.</span>
 <span class="sd">    </span>
@@ -394,7 +451,7 @@
         <span class="k">return</span> <span class="n">vec</span><span class="p">,</span> <span class="n">vsize</span></div>
 
 <span class="c1">#--------------------------------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="getdata"><a class="viewcode-back" href="../../../../utils.html#luxpy.utils.helpers.getdata">[docs]</a><span class="k">def</span> <span class="nf">getdata</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;np&#39;</span><span class="p">,</span> <span class="n">columns</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">datatype</span> <span class="o">=</span> <span class="s1">&#39;S&#39;</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="getdata"><a class="viewcode-back" href="../../../utils.html#luxpy.utils.getdata">[docs]</a><span class="k">def</span> <span class="nf">getdata</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;np&#39;</span><span class="p">,</span> <span class="n">columns</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">datatype</span> <span class="o">=</span> <span class="s1">&#39;S&#39;</span><span class="p">,</span> <span class="n">copy</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get data from csv-file </span>
 <span class="sd">    or convert between pandas dataframe and numpy 2d-array.</span>
@@ -422,7 +479,10 @@
 <span class="sd">            | Is used when creating column headers (:column: is None).</span>
 <span class="sd">            |   -&#39;S&#39;: light source spectrum</span>
 <span class="sd">            |   -&#39;R&#39;: reflectance spectrum</span>
-<span class="sd">            |   or other.      </span>
+<span class="sd">            |   or other.   </span>
+<span class="sd">        :copy:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | Return a copy of ndarray if kind == &#39;np&#39;, or copy of pd.DataFrame if kind == &#39;df&#39;</span>
 <span class="sd">        :verbosity:</span>
 <span class="sd">            | True, False, optional</span>
 <span class="sd">            | Print warning when inferring headers from file.</span>
@@ -453,10 +513,13 @@
 
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">kind</span> <span class="o">==</span> <span class="s1">&#39;np&#39;</span><span class="p">):</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">values</span>
+    <span class="k">elif</span> <span class="n">copy</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">data</span></div>
 
+
 <span class="c1">#--------------------------------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="dictkv"><a class="viewcode-back" href="../../../../utils.html#luxpy.utils.helpers.dictkv">[docs]</a><span class="k">def</span> <span class="nf">dictkv</span><span class="p">(</span><span class="n">keys</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">values</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ordered</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span> 
+<div class="viewcode-block" id="dictkv"><a class="viewcode-back" href="../../../utils.html#luxpy.utils.dictkv">[docs]</a><span class="k">def</span> <span class="nf">dictkv</span><span class="p">(</span><span class="n">keys</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">values</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ordered</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span> 
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Easy input of of keys and values into dict.</span>
 <span class="sd">    </span>
@@ -482,7 +545,7 @@
 <span class="sd">    This class provides a nice way to create OrderedDict &quot;literals&quot;.</span>
 <span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">slices</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">slices</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">slices</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
             <span class="n">slices</span> <span class="o">=</span> <span class="n">slices</span><span class="p">,</span>
         <span class="k">return</span> <span class="n">odict</span><span class="p">((</span><span class="nb">slice</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="nb">slice</span><span class="o">.</span><span class="n">stop</span><span class="p">)</span> <span class="k">for</span> <span class="nb">slice</span> <span class="ow">in</span> <span class="n">slices</span><span class="p">)</span>
@@ -490,7 +553,7 @@
 <span class="n">OD</span> <span class="o">=</span> <span class="n">OD</span><span class="p">()</span>
 
 <span class="c1">#--------------------------------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="meshblock"><a class="viewcode-back" href="../../../../utils.html#luxpy.utils.helpers.meshblock">[docs]</a><span class="k">def</span> <span class="nf">meshblock</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">):</span>
+<div class="viewcode-block" id="meshblock"><a class="viewcode-back" href="../../../utils.html#luxpy.utils.meshblock">[docs]</a><span class="k">def</span> <span class="nf">meshblock</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create a meshed block from x and y.</span>
 <span class="sd">    </span>
@@ -514,7 +577,7 @@
     <span class="k">return</span> <span class="n">X</span><span class="p">,</span><span class="n">Y</span></div>
 
 <span class="c1">#---------------------------------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="asplit"><a class="viewcode-back" href="../../../../utils.html#luxpy.utils.helpers.asplit">[docs]</a><span class="k">def</span> <span class="nf">asplit</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<div class="viewcode-block" id="asplit"><a class="viewcode-back" href="../../../utils.html#luxpy.utils.asplit">[docs]</a><span class="k">def</span> <span class="nf">asplit</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Split data on last axis</span>
 <span class="sd">    </span>
@@ -531,7 +594,7 @@
     <span class="k">return</span> <span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])]</span></div>
 
 
-<div class="viewcode-block" id="ajoin"><a class="viewcode-back" href="../../../../utils.html#luxpy.utils.helpers.ajoin">[docs]</a><span class="k">def</span> <span class="nf">ajoin</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<div class="viewcode-block" id="ajoin"><a class="viewcode-back" href="../../../utils.html#luxpy.utils.ajoin">[docs]</a><span class="k">def</span> <span class="nf">ajoin</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Join data on last axis.</span>
 <span class="sd">    </span>
@@ -552,7 +615,7 @@
     
 
 <span class="c1">#---------------------------------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="broadcast_shape"><a class="viewcode-back" href="../../../../utils.html#luxpy.utils.helpers.broadcast_shape">[docs]</a><span class="k">def</span> <span class="nf">broadcast_shape</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">target_shape</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">expand_2d_to_3d</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">axis0_repeats</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">axis1_repeats</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="broadcast_shape"><a class="viewcode-back" href="../../../utils.html#luxpy.utils.broadcast_shape">[docs]</a><span class="k">def</span> <span class="nf">broadcast_shape</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">target_shape</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">expand_2d_to_3d</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">axis0_repeats</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">axis1_repeats</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Broadcasts shapes of data to a target_shape.</span>
 <span class="sd">    </span>
@@ -606,7 +669,7 @@
     <span class="k">return</span> <span class="n">data</span></div>
 
 
-<div class="viewcode-block" id="todim"><a class="viewcode-back" href="../../../../utils.html#luxpy.utils.helpers.todim">[docs]</a><span class="k">def</span> <span class="nf">todim</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">tshape</span><span class="p">,</span> <span class="n">add_axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">equal_shape</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span> 
+<div class="viewcode-block" id="todim"><a class="viewcode-back" href="../../../utils.html#luxpy.utils.todim">[docs]</a><span class="k">def</span> <span class="nf">todim</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">tshape</span><span class="p">,</span> <span class="n">add_axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">equal_shape</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span> 
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Expand x to dims that are broadcast-compatable with shape of another array.</span>
 <span class="sd">    </span>
@@ -660,7 +723,7 @@
             <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">tshape</span><span class="p">)</span><span class="o">*</span><span class="n">x</span> <span class="c1">#make dims of x equal to those of a (tshape)</span></div>
         
 <span class="c1">#------------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="write_to_excel"><a class="viewcode-back" href="../../../../utils.html#luxpy.utils.helpers.write_to_excel">[docs]</a><span class="k">def</span> <span class="nf">write_to_excel</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s1">&#39;Sheet1&#39;</span><span class="p">,</span> <span class="n">startrow</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<div class="viewcode-block" id="write_to_excel"><a class="viewcode-back" href="../../../utils.html#luxpy.utils.write_to_excel">[docs]</a><span class="k">def</span> <span class="nf">write_to_excel</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s1">&#39;Sheet1&#39;</span><span class="p">,</span> <span class="n">startrow</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                        <span class="n">truncate_sheet</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> 
                        <span class="o">**</span><span class="n">to_excel_kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -692,7 +755,7 @@
 <span class="sd">    Notes:</span>
 <span class="sd">        Copied from https://stackoverflow.com/questions/20219254/how-to-write-to-an-existing-excel-file-without-overwriting-data-using-pandas</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">openpyxl</span> <span class="k">import</span> <span class="n">load_workbook</span>
+    <span class="kn">from</span> <span class="nn">openpyxl</span> <span class="kn">import</span> <span class="n">load_workbook</span>
 
     <span class="c1"># ignore [engine] parameter if it was passed</span>
     <span class="k">if</span> <span class="s1">&#39;engine&#39;</span> <span class="ow">in</span> <span class="n">to_excel_kwargs</span><span class="p">:</span>
@@ -733,6 +796,124 @@
 
     <span class="c1"># save the workbook</span>
     <span class="n">writer</span><span class="o">.</span><span class="n">save</span><span class="p">()</span></div>
+    
+<div class="viewcode-block" id="show_luxpy_tree"><a class="viewcode-back" href="../../../utils.html#luxpy.utils.show_luxpy_tree">[docs]</a><span class="k">def</span> <span class="nf">show_luxpy_tree</span><span class="p">(</span><span class="n">omit</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;.pyc&#39;</span><span class="p">,</span><span class="s1">&#39;__pycache__&#39;</span><span class="p">,</span>
+                            <span class="s1">&#39;.txt&#39;</span><span class="p">,</span><span class="s1">&#39;.dat&#39;</span><span class="p">,</span><span class="s1">&#39;.csv&#39;</span><span class="p">,</span><span class="s1">&#39;.npz&#39;</span><span class="p">,</span>
+                            <span class="s1">&#39;.png&#39;</span><span class="p">,</span><span class="s1">&#39;.jpg&#39;</span><span class="p">,</span><span class="s1">&#39;.md&#39;</span><span class="p">,</span><span class="s1">&#39;.pdf&#39;</span><span class="p">,</span><span class="s1">&#39;.ini&#39;</span><span class="p">,</span><span class="s1">&#39;.log&#39;</span><span class="p">,</span> <span class="s1">&#39;.rar&#39;</span><span class="p">,</span>
+                            <span class="s1">&#39;drivers&#39;</span><span class="p">,</span><span class="s1">&#39;SDK_&#39;</span><span class="p">,</span><span class="s1">&#39;dll&#39;</span><span class="p">,</span><span class="s1">&#39;bak&#39;</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Show luxpy foler tree.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :omit:</span>
+<span class="sd">            | List of folders and file-extensions to omit.</span>
+<span class="sd">            </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tree</span><span class="p">(</span><span class="n">_PKG_PATH</span><span class="p">,</span> <span class="n">omit</span> <span class="o">=</span> <span class="n">omit</span><span class="p">)</span>
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="is_importable"><a class="viewcode-back" href="../../../utils.html#luxpy.utils.is_importable">[docs]</a><span class="k">def</span> <span class="nf">is_importable</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="n">try_pip_install</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if string is importable/loadable. If it doesn&#39;t then try to &#39;pip install&#39; it using subprocess.</span>
+<span class="sd">    Returns None if succesful, otherwise throws and error or outputs False.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :string:</span>
+<span class="sd">            | string with package or module name</span>
+<span class="sd">        :try_pip_install:</span>
+<span class="sd">            | False, optional</span>
+<span class="sd">            | True: try pip installing it using subprocess</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :success:</span>
+<span class="sd">            | True if importable, False if not.</span>
+<span class="sd">    &quot;&quot;&quot;</span> 
+    <span class="n">success</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">find_spec</span><span class="p">(</span><span class="n">string</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">success</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">try_pip_install</span> <span class="o">==</span> <span class="kc">True</span><span class="p">):</span>  
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Trying to &#39;pip install </span><span class="si">{:s}</span><span class="s2">&#39; using subprocess.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">string</span><span class="p">))</span>
+            <span class="n">success</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">call</span><span class="p">([</span><span class="s2">&quot;pip&quot;</span><span class="p">,</span> <span class="s2">&quot;install&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{:s}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">string</span><span class="p">)])</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;subprocess output: &quot;</span><span class="p">,</span> <span class="n">success</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">success</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Tried importing &#39;</span><span class="si">{:s}</span><span class="s2">&#39;, then tried pip installing it. Please install it manually: pip install </span><span class="si">{:s}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">string</span><span class="p">,</span><span class="n">string</span><span class="p">))</span>  
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&#39;pip install </span><span class="si">{:s}</span><span class="s2">&#39; succesful&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">string</span><span class="p">))</span>
+            <span class="n">success</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">find_spec</span><span class="p">(</span><span class="n">string</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">success</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Tried importing &#39;</span><span class="si">{:s}</span><span class="s2">&#39;, then tried pip installing it. Please install it manually: pip install </span><span class="si">{:s}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">string</span><span class="p">,</span><span class="n">string</span><span class="p">))</span>   
+    <span class="k">return</span> <span class="n">success</span></div>
+    
+<span class="c1">#------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="get_function_kwargs"><a class="viewcode-back" href="../../../utils.html#luxpy.utils.get_function_kwargs">[docs]</a><span class="k">def</span> <span class="nf">get_function_kwargs</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get dictionary of a function&#39;s keyword arguments and their default values. </span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :f:</span>
+<span class="sd">            | function name</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :dict:</span>
+<span class="sd">            | Dict with the function&#39;s keyword arguments and their default values</span>
+<span class="sd">            | Is empty if there are no defaults (i.e. f.__defaults__ or f.__kwdefaults__ are None).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">kwdefs</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="vm">__kwdefaults__</span>
+    <span class="k">if</span> <span class="n">kwdefs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">kwdefs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">names</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="vm">__code__</span><span class="o">.</span><span class="n">co_varnames</span><span class="p">[:</span><span class="n">f</span><span class="o">.</span><span class="vm">__code__</span><span class="o">.</span><span class="n">co_argcount</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="vm">__defaults__</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">names</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">][:</span><span class="nb">len</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="vm">__defaults__</span><span class="p">)][::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">f</span><span class="o">.</span><span class="vm">__defaults__</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">d</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwdefs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">d</span></div>
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="profile_fcn"><a class="viewcode-back" href="../../../utils.html#luxpy.utils.profile_fcn">[docs]</a><span class="k">def</span> <span class="nf">profile_fcn</span><span class="p">(</span><span class="n">fcn</span><span class="p">,</span> <span class="n">profile</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sort_stats</span> <span class="o">=</span> <span class="s1">&#39;tottime&#39;</span><span class="p">,</span> <span class="n">output_file</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Profile or time a function fcn.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :fcn:</span>
+<span class="sd">            | function to be profiled or timed (using time.time() difference)</span>
+<span class="sd">        :profile:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | Profile the function, otherwise only time it.</span>
+<span class="sd">        :sort_stats:</span>
+<span class="sd">            | &#39;tottime&#39;, optional</span>
+<span class="sd">            | Sort profile results according to sort_stats (&#39;tottime&#39;, &#39;cumtime&#39;,...)</span>
+<span class="sd">        :output_file:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | If not None: output result to output_file.</span>
+<span class="sd">            </span>
+<span class="sd">    Return:</span>
+<span class="sd">        :ps:</span>
+<span class="sd">            | Profiler output</span>
+<span class="sd">            </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+   
+    <span class="k">if</span> <span class="n">profile</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">fcn</span><span class="p">()</span>
+        <span class="n">dt</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">start</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> </span><span class="si">%f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="s1">&#39;Time elapsed: &#39;</span><span class="p">,</span> <span class="n">dt</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">dt</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">pr</span> <span class="o">=</span> <span class="n">cProfile</span><span class="o">.</span><span class="n">Profile</span><span class="p">()</span>
+        <span class="n">pr</span><span class="o">.</span><span class="n">enable</span><span class="p">()</span>
+        <span class="n">fcn</span><span class="p">()</span>
+        <span class="n">pr</span><span class="o">.</span><span class="n">disable</span><span class="p">()</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
+        <span class="n">ps</span> <span class="o">=</span> <span class="n">pstats</span><span class="o">.</span><span class="n">Stats</span><span class="p">(</span><span class="n">pr</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">sort_stats</span><span class="p">(</span><span class="n">sort_stats</span><span class="p">)</span>
+        <span class="n">ps</span><span class="o">.</span><span class="n">print_stats</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">output_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="s1">&#39;w+&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">getvalue</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">ps</span></div>
 </pre></div>
 
            </div>
@@ -762,25 +943,16 @@
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../../../_static/doctools.js"></script>
-    
-
-  
-
-  <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>
