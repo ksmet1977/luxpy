@@ -179,9 +179,9 @@
 </dd>
 </dl>
 </div></blockquote>
-<span class="target" id="module-luxpy.utils"></span><dl class="function">
+<span class="target" id="module-luxpy.utils"></span><dl class="py function">
 <dt id="luxpy.utils.tree">
-<code class="sig-prename descclassname">luxpy.utils.</code><code class="sig-name descname">tree</code><span class="sig-paren">(</span><em class="sig-param">dir_path: pathlib.Path</em>, <em class="sig-param">level: int = -1</em>, <em class="sig-param">limit_to_directories: bool = False</em>, <em class="sig-param">length_limit: int = 1000</em>, <em class="sig-param">omit=[]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/folder_tree.html#tree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.tree" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.utils.</code><code class="sig-name descname">tree</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dir_path</span><span class="p">:</span> <span class="n">pathlib.Path</span></em>, <em class="sig-param"><span class="n">level</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">limit_to_directories</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">length_limit</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1000</span></em>, <em class="sig-param"><span class="n">omit</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/folder_tree.html#tree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.tree" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given a directory Path object print a visual tree structure</p>
 <dl class="simple">
 <dt>References:</dt><dd><ol class="arabic simple">
@@ -191,1573 +191,9 @@
 </dl>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="luxpy.utils.odict">
-<code class="sig-prename descclassname">luxpy.utils.</code><code class="sig-name descname">odict</code><a class="headerlink" href="#luxpy.utils.odict" title="Permalink to this definition">¶</a></dt>
-<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">collections.OrderedDict</span></code></p>
-</dd></dl>
-
-<dl class="class">
-<dt id="luxpy.utils.Axes3D">
-<em class="property">class </em><code class="sig-prename descclassname">luxpy.utils.</code><code class="sig-name descname">Axes3D</code><span class="sig-paren">(</span><em class="sig-param">fig</em>, <em class="sig-param">rect=None</em>, <em class="sig-param">*args</em>, <em class="sig-param">azim=-60</em>, <em class="sig-param">elev=30</em>, <em class="sig-param">zscale=None</em>, <em class="sig-param">sharez=None</em>, <em class="sig-param">proj_type='persp'</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D" title="Permalink to this definition">¶</a></dt>
-<dd><p>3D axes object.</p>
-<dl class="attribute">
-<dt id="luxpy.utils.Axes3D.name">
-<code class="sig-name descname">name</code><em class="property"> = '3d'</em><a class="headerlink" href="#luxpy.utils.Axes3D.name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="luxpy.utils.Axes3D._shared_z_axes">
-<code class="sig-name descname">_shared_z_axes</code><em class="property"> = &lt;matplotlib.cbook.Grouper object&gt;</em><a class="headerlink" href="#luxpy.utils.Axes3D._shared_z_axes" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.set_axis_off">
-<code class="sig-name descname">set_axis_off</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.set_axis_off"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.set_axis_off" title="Permalink to this definition">¶</a></dt>
-<dd><p>Turn the x- and y-axis off.</p>
-<p>This affects the axis lines, ticks, ticklabels, grid and axis labels.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.set_axis_on">
-<code class="sig-name descname">set_axis_on</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.set_axis_on"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.set_axis_on" title="Permalink to this definition">¶</a></dt>
-<dd><p>Turn the x- and y-axis on.</p>
-<p>This affects the axis lines, ticks, ticklabels, grid and axis labels.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.have_units">
-<code class="sig-name descname">have_units</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.have_units"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.have_units" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return <em>True</em> if units are set on the <em>x</em>, <em>y</em>, or <em>z</em> axes</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.convert_zunits">
-<code class="sig-name descname">convert_zunits</code><span class="sig-paren">(</span><em class="sig-param">z</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.convert_zunits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.convert_zunits" title="Permalink to this definition">¶</a></dt>
-<dd><p>For artists in an axes, if the zaxis has units support,
-convert <em>z</em> using zaxis unit type</p>
-<div class="versionadded">
-<p><span class="versionmodified added">New in version 1.2.1.</span></p>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D._process_unit_info">
-<code class="sig-name descname">_process_unit_info</code><span class="sig-paren">(</span><em class="sig-param">xdata=None</em>, <em class="sig-param">ydata=None</em>, <em class="sig-param">zdata=None</em>, <em class="sig-param">kwargs=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D._process_unit_info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D._process_unit_info" title="Permalink to this definition">¶</a></dt>
-<dd><p>Look for unit <em>kwargs</em> and update the axis instances as necessary</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.set_top_view">
-<code class="sig-name descname">set_top_view</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.set_top_view"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.set_top_view" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D._init_axis">
-<code class="sig-name descname">_init_axis</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D._init_axis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D._init_axis" title="Permalink to this definition">¶</a></dt>
-<dd><p>Init 3D axes; overrides creation of regular X/Y axes</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.get_zaxis">
-<code class="sig-name descname">get_zaxis</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.get_zaxis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.get_zaxis" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the <code class="docutils literal notranslate"><span class="pre">ZAxis</span></code> (<cite>~.axis3d.Axis</cite>) instance.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D._get_axis_list">
-<code class="sig-name descname">_get_axis_list</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D._get_axis_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D._get_axis_list" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.unit_cube">
-<code class="sig-name descname">unit_cube</code><span class="sig-paren">(</span><em class="sig-param">vals=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.unit_cube"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.unit_cube" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.tunit_cube">
-<code class="sig-name descname">tunit_cube</code><span class="sig-paren">(</span><em class="sig-param">vals=None</em>, <em class="sig-param">M=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.tunit_cube"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.tunit_cube" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.tunit_edges">
-<code class="sig-name descname">tunit_edges</code><span class="sig-paren">(</span><em class="sig-param">vals=None</em>, <em class="sig-param">M=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.tunit_edges"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.tunit_edges" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.draw">
-<code class="sig-name descname">draw</code><span class="sig-paren">(</span><em class="sig-param">renderer</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.draw"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.draw" title="Permalink to this definition">¶</a></dt>
-<dd><p>Draw everything (plot lines, axes, labels)</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.get_axis_position">
-<code class="sig-name descname">get_axis_position</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.get_axis_position"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.get_axis_position" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D._on_units_changed">
-<code class="sig-name descname">_on_units_changed</code><span class="sig-paren">(</span><em class="sig-param">scalex=False</em>, <em class="sig-param">scaley=False</em>, <em class="sig-param">scalez=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D._on_units_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D._on_units_changed" title="Permalink to this definition">¶</a></dt>
-<dd><p>Callback for processing changes to axis units.</p>
-<p>Currently forces updates of data limits and view limits.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.update_datalim">
-<code class="sig-name descname">update_datalim</code><span class="sig-paren">(</span><em class="sig-param">xys</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.update_datalim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.update_datalim" title="Permalink to this definition">¶</a></dt>
-<dd><p>Extend the <cite>~.Axes.dataLim</cite> BBox to include the given points.</p>
-<p>If no data is set currently, the BBox will ignore its limits and set
-the bound to be the bounds of the xydata (<em>xys</em>). Otherwise, it will
-compute the bounds of the union of its current data and the data in
-<em>xys</em>.</p>
-<dl>
-<dt>xys<span class="classifier">2D array-like</span></dt><dd><p>The points to include in the data limits BBox. This can be either
-a list of (x, y) tuples or a Nx2 array.</p>
-</dd>
-<dt>updatex, updatey<span class="classifier">bool, optional, default <em>True</em></span></dt><dd><p>Whether to update the x/y limits.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.get_autoscale_on">
-<code class="sig-name descname">get_autoscale_on</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.get_autoscale_on"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.get_autoscale_on" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get whether autoscaling is applied for all axes on plot commands</p>
-<div class="versionadded">
-<p><span class="versionmodified added">New in version 1.1.0: </span>This function was added, but not tested. Please report any bugs.</p>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.get_autoscalez_on">
-<code class="sig-name descname">get_autoscalez_on</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.get_autoscalez_on"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.get_autoscalez_on" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get whether autoscaling for the z-axis is applied on plot commands</p>
-<div class="versionadded">
-<p><span class="versionmodified added">New in version 1.1.0: </span>This function was added, but not tested. Please report any bugs.</p>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.set_autoscale_on">
-<code class="sig-name descname">set_autoscale_on</code><span class="sig-paren">(</span><em class="sig-param">b</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.set_autoscale_on"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.set_autoscale_on" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set whether autoscaling is applied on plot commands</p>
-<div class="versionadded">
-<p><span class="versionmodified added">New in version 1.1.0: </span>This function was added, but not tested. Please report any bugs.</p>
-</div>
-<p>b : bool</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.set_autoscalez_on">
-<code class="sig-name descname">set_autoscalez_on</code><span class="sig-paren">(</span><em class="sig-param">b</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.set_autoscalez_on"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.set_autoscalez_on" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set whether autoscaling for the z-axis is applied on plot commands</p>
-<div class="versionadded">
-<p><span class="versionmodified added">New in version 1.1.0.</span></p>
-</div>
-<p>b : bool</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.set_zmargin">
-<code class="sig-name descname">set_zmargin</code><span class="sig-paren">(</span><em class="sig-param">m</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.set_zmargin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.set_zmargin" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set padding of Z data limits prior to autoscaling.</p>
-<p><em>m</em> times the data interval will be added to each
-end of that interval before it is used in autoscaling.</p>
-<p>accepts: float in range 0 to 1</p>
-<div class="versionadded">
-<p><span class="versionmodified added">New in version 1.1.0.</span></p>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.margins">
-<code class="sig-name descname">margins</code><span class="sig-paren">(</span><em class="sig-param">*margins</em>, <em class="sig-param">x=None</em>, <em class="sig-param">y=None</em>, <em class="sig-param">z=None</em>, <em class="sig-param">tight=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.margins"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.margins" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convenience method to set or retrieve autoscaling margins.</p>
-<dl class="simple">
-<dt>signatures::</dt><dd><p>margins()</p>
-</dd>
-</dl>
-<p>returns xmargin, ymargin, zmargin</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">margins</span><span class="p">(</span><span class="n">margin</span><span class="p">)</span>
-
-<span class="n">margins</span><span class="p">(</span><span class="n">xmargin</span><span class="p">,</span> <span class="n">ymargin</span><span class="p">,</span> <span class="n">zmargin</span><span class="p">)</span>
-
-<span class="n">margins</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">xmargin</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">ymargin</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="n">zmargin</span><span class="p">)</span>
-
-<span class="n">margins</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">tight</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>All forms above set the xmargin, ymargin and zmargin
-parameters. All keyword parameters are optional.  A single
-positional argument specifies xmargin, ymargin and zmargin.
-Passing both positional and keyword arguments for xmargin,
-ymargin, and/or zmargin is invalid.</p>
-<p>The <em>tight</em> parameter
-is passed to <a class="reference internal" href="#luxpy.utils.Axes3D.autoscale_view" title="luxpy.utils.Axes3D.autoscale_view"><code class="xref py py-meth docutils literal notranslate"><span class="pre">autoscale_view()</span></code></a>, which is executed after
-a margin is changed; the default here is <em>True</em>, on the
-assumption that when margins are specified, no additional
-padding to match tick marks is usually desired.  Setting
-<em>tight</em> to <em>None</em> will preserve the previous setting.</p>
-<p>Specifying any margin changes only the autoscaling; for example,
-if <em>xmargin</em> is not None, then <em>xmargin</em> times the X data
-interval will be added to each end of that interval before
-it is used in autoscaling.</p>
-<div class="versionadded">
-<p><span class="versionmodified added">New in version 1.1.0.</span></p>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.autoscale">
-<code class="sig-name descname">autoscale</code><span class="sig-paren">(</span><em class="sig-param">enable=True</em>, <em class="sig-param">axis='both'</em>, <em class="sig-param">tight=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.autoscale"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.autoscale" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convenience method for simple axis view autoscaling.
-See <code class="xref py py-meth docutils literal notranslate"><span class="pre">matplotlib.axes.Axes.autoscale()</span></code> for full explanation.
-Note that this function behaves the same, but for all
-three axes.  Therefore, ‘z’ can be passed for <em>axis</em>,
-and ‘both’ applies to all three axes.</p>
-<div class="versionadded">
-<p><span class="versionmodified added">New in version 1.1.0.</span></p>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.auto_scale_xyz">
-<code class="sig-name descname">auto_scale_xyz</code><span class="sig-paren">(</span><em class="sig-param">X</em>, <em class="sig-param">Y</em>, <em class="sig-param">Z=None</em>, <em class="sig-param">had_data=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.auto_scale_xyz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.auto_scale_xyz" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.autoscale_view">
-<code class="sig-name descname">autoscale_view</code><span class="sig-paren">(</span><em class="sig-param">tight=None</em>, <em class="sig-param">scalex=True</em>, <em class="sig-param">scaley=True</em>, <em class="sig-param">scalez=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.autoscale_view"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.autoscale_view" title="Permalink to this definition">¶</a></dt>
-<dd><p>Autoscale the view limits using the data limits.
-See <code class="xref py py-meth docutils literal notranslate"><span class="pre">matplotlib.axes.Axes.autoscale_view()</span></code> for documentation.
-Note that this function applies to the 3D axes, and as such
-adds the <em>scalez</em> to the function arguments.</p>
-<div class="versionchanged">
-<p><span class="versionmodified changed">Changed in version 1.1.0: </span>Function signature was changed to better match the 2D version.
-<em>tight</em> is now explicitly a kwarg and placed first.</p>
-</div>
-<div class="versionchanged">
-<p><span class="versionmodified changed">Changed in version 1.2.1: </span>This is now fully functional.</p>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.get_w_lims">
-<code class="sig-name descname">get_w_lims</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.get_w_lims"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.get_w_lims" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get 3D world limits.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D._determine_lims">
-<code class="sig-name descname">_determine_lims</code><span class="sig-paren">(</span><em class="sig-param">xmin=None</em>, <em class="sig-param">xmax=None</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D._determine_lims"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D._determine_lims" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.set_xlim3d">
-<code class="sig-name descname">set_xlim3d</code><span class="sig-paren">(</span><em class="sig-param">left=None</em>, <em class="sig-param">right=None</em>, <em class="sig-param">emit=True</em>, <em class="sig-param">auto=False</em>, <em class="sig-param">*</em>, <em class="sig-param">xmin=None</em>, <em class="sig-param">xmax=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.set_xlim3d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.set_xlim3d" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set 3D x limits.</p>
-<p>See <code class="xref py py-meth docutils literal notranslate"><span class="pre">matplotlib.axes.Axes.set_xlim()</span></code> for full documentation.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.set_xlim">
-<code class="sig-name descname">set_xlim</code><span class="sig-paren">(</span><em class="sig-param">left=None</em>, <em class="sig-param">right=None</em>, <em class="sig-param">emit=True</em>, <em class="sig-param">auto=False</em>, <em class="sig-param">*</em>, <em class="sig-param">xmin=None</em>, <em class="sig-param">xmax=None</em><span class="sig-paren">)</span><a class="headerlink" href="#luxpy.utils.Axes3D.set_xlim" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set 3D x limits.</p>
-<p>See <code class="xref py py-meth docutils literal notranslate"><span class="pre">matplotlib.axes.Axes.set_xlim()</span></code> for full documentation.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.set_ylim3d">
-<code class="sig-name descname">set_ylim3d</code><span class="sig-paren">(</span><em class="sig-param">bottom=None</em>, <em class="sig-param">top=None</em>, <em class="sig-param">emit=True</em>, <em class="sig-param">auto=False</em>, <em class="sig-param">*</em>, <em class="sig-param">ymin=None</em>, <em class="sig-param">ymax=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.set_ylim3d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.set_ylim3d" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set 3D y limits.</p>
-<p>See <code class="xref py py-meth docutils literal notranslate"><span class="pre">matplotlib.axes.Axes.set_ylim()</span></code> for full documentation.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.set_ylim">
-<code class="sig-name descname">set_ylim</code><span class="sig-paren">(</span><em class="sig-param">bottom=None</em>, <em class="sig-param">top=None</em>, <em class="sig-param">emit=True</em>, <em class="sig-param">auto=False</em>, <em class="sig-param">*</em>, <em class="sig-param">ymin=None</em>, <em class="sig-param">ymax=None</em><span class="sig-paren">)</span><a class="headerlink" href="#luxpy.utils.Axes3D.set_ylim" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set 3D y limits.</p>
-<p>See <code class="xref py py-meth docutils literal notranslate"><span class="pre">matplotlib.axes.Axes.set_ylim()</span></code> for full documentation.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.set_zlim3d">
-<code class="sig-name descname">set_zlim3d</code><span class="sig-paren">(</span><em class="sig-param">bottom=None</em>, <em class="sig-param">top=None</em>, <em class="sig-param">emit=True</em>, <em class="sig-param">auto=False</em>, <em class="sig-param">*</em>, <em class="sig-param">zmin=None</em>, <em class="sig-param">zmax=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.set_zlim3d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.set_zlim3d" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set 3D z limits.</p>
-<p>See <code class="xref py py-meth docutils literal notranslate"><span class="pre">matplotlib.axes.Axes.set_ylim()</span></code> for full documentation</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.set_zlim">
-<code class="sig-name descname">set_zlim</code><span class="sig-paren">(</span><em class="sig-param">bottom=None</em>, <em class="sig-param">top=None</em>, <em class="sig-param">emit=True</em>, <em class="sig-param">auto=False</em>, <em class="sig-param">*</em>, <em class="sig-param">zmin=None</em>, <em class="sig-param">zmax=None</em><span class="sig-paren">)</span><a class="headerlink" href="#luxpy.utils.Axes3D.set_zlim" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set 3D z limits.</p>
-<p>See <code class="xref py py-meth docutils literal notranslate"><span class="pre">matplotlib.axes.Axes.set_ylim()</span></code> for full documentation</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.get_xlim3d">
-<code class="sig-name descname">get_xlim3d</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.get_xlim3d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.get_xlim3d" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the x-axis view limits.</p>
-<dl class="simple">
-<dt>left, right<span class="classifier">(float, float)</span></dt><dd><p>The current x-axis limits in data coordinates.</p>
-</dd>
-</dl>
-<p>set_xlim
-set_xbound, get_xbound
-invert_xaxis, xaxis_inverted</p>
-<p>The x-axis may be inverted, in which case the <em>left</em> value will
-be greater than the <em>right</em> value.</p>
-<div class="versionchanged">
-<p><span class="versionmodified changed">Changed in version 1.1.0: </span>This function now correctly refers to the 3D x-limits</p>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.get_xlim">
-<code class="sig-name descname">get_xlim</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#luxpy.utils.Axes3D.get_xlim" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the x-axis view limits.</p>
-<dl class="simple">
-<dt>left, right<span class="classifier">(float, float)</span></dt><dd><p>The current x-axis limits in data coordinates.</p>
-</dd>
-</dl>
-<p>set_xlim
-set_xbound, get_xbound
-invert_xaxis, xaxis_inverted</p>
-<p>The x-axis may be inverted, in which case the <em>left</em> value will
-be greater than the <em>right</em> value.</p>
-<div class="versionchanged">
-<p><span class="versionmodified changed">Changed in version 1.1.0: </span>This function now correctly refers to the 3D x-limits</p>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.get_ylim3d">
-<code class="sig-name descname">get_ylim3d</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.get_ylim3d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.get_ylim3d" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the y-axis view limits.</p>
-<dl class="simple">
-<dt>bottom, top<span class="classifier">(float, float)</span></dt><dd><p>The current y-axis limits in data coordinates.</p>
-</dd>
-</dl>
-<p>set_ylim
-set_ybound, get_ybound
-invert_yaxis, yaxis_inverted</p>
-<p>The y-axis may be inverted, in which case the <em>bottom</em> value
-will be greater than the <em>top</em> value.</p>
-<div class="versionchanged">
-<p><span class="versionmodified changed">Changed in version 1.1.0: </span>This function now correctly refers to the 3D y-limits.</p>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.get_ylim">
-<code class="sig-name descname">get_ylim</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#luxpy.utils.Axes3D.get_ylim" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the y-axis view limits.</p>
-<dl class="simple">
-<dt>bottom, top<span class="classifier">(float, float)</span></dt><dd><p>The current y-axis limits in data coordinates.</p>
-</dd>
-</dl>
-<p>set_ylim
-set_ybound, get_ybound
-invert_yaxis, yaxis_inverted</p>
-<p>The y-axis may be inverted, in which case the <em>bottom</em> value
-will be greater than the <em>top</em> value.</p>
-<div class="versionchanged">
-<p><span class="versionmodified changed">Changed in version 1.1.0: </span>This function now correctly refers to the 3D y-limits.</p>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.get_zlim3d">
-<code class="sig-name descname">get_zlim3d</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.get_zlim3d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.get_zlim3d" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get 3D z limits.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.get_zlim">
-<code class="sig-name descname">get_zlim</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#luxpy.utils.Axes3D.get_zlim" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get 3D z limits.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.get_zscale">
-<code class="sig-name descname">get_zscale</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.get_zscale"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.get_zscale" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.set_xscale">
-<code class="sig-name descname">set_xscale</code><span class="sig-paren">(</span><em class="sig-param">value</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.set_xscale"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.set_xscale" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set the x-axis scale.</p>
-<dl class="simple">
-<dt>value<span class="classifier">{“linear”}</span></dt><dd><p>The axis scale type to apply.  3D axes currently only support
-linear scales; other scales yield nonsensical results.</p>
-</dd>
-<dt><a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs</dt><dd><p>Keyword arguments are nominally forwarded to the scale class, but
-none of them is applicable for linear scales.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.set_yscale">
-<code class="sig-name descname">set_yscale</code><span class="sig-paren">(</span><em class="sig-param">value</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.set_yscale"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.set_yscale" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set the y-axis scale.</p>
-<dl class="simple">
-<dt>value<span class="classifier">{“linear”}</span></dt><dd><p>The axis scale type to apply.  3D axes currently only support
-linear scales; other scales yield nonsensical results.</p>
-</dd>
-<dt><a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs</dt><dd><p>Keyword arguments are nominally forwarded to the scale class, but
-none of them is applicable for linear scales.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.set_zscale">
-<code class="sig-name descname">set_zscale</code><span class="sig-paren">(</span><em class="sig-param">value</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.set_zscale"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.set_zscale" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set the z-axis scale.</p>
-<dl class="simple">
-<dt>value<span class="classifier">{“linear”}</span></dt><dd><p>The axis scale type to apply.  3D axes currently only support
-linear scales; other scales yield nonsensical results.</p>
-</dd>
-<dt><a href="#id5"><span class="problematic" id="id6">**</span></a>kwargs</dt><dd><p>Keyword arguments are nominally forwarded to the scale class, but
-none of them is applicable for linear scales.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.set_zticks">
-<code class="sig-name descname">set_zticks</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.set_zticks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.set_zticks" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set z-axis tick locations.
-See <code class="xref py py-meth docutils literal notranslate"><span class="pre">matplotlib.axes.Axes.set_yticks()</span></code> for more details.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Minor ticks are not supported.</p>
-</div>
-<div class="versionadded">
-<p><span class="versionmodified added">New in version 1.1.0.</span></p>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.get_zticks">
-<code class="sig-name descname">get_zticks</code><span class="sig-paren">(</span><em class="sig-param">minor=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.get_zticks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.get_zticks" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the z ticks as a list of locations
-See <code class="xref py py-meth docutils literal notranslate"><span class="pre">matplotlib.axes.Axes.get_yticks()</span></code> for more details.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Minor ticks are not supported.</p>
-</div>
-<div class="versionadded">
-<p><span class="versionmodified added">New in version 1.1.0.</span></p>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.get_zmajorticklabels">
-<code class="sig-name descname">get_zmajorticklabels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.get_zmajorticklabels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.get_zmajorticklabels" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the ztick labels as a list of Text instances</p>
-<div class="versionadded">
-<p><span class="versionmodified added">New in version 1.1.0.</span></p>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.get_zminorticklabels">
-<code class="sig-name descname">get_zminorticklabels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.get_zminorticklabels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.get_zminorticklabels" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the ztick labels as a list of Text instances</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Minor ticks are not supported. This function was added
-only for completeness.</p>
-</div>
-<div class="versionadded">
-<p><span class="versionmodified added">New in version 1.1.0.</span></p>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.set_zticklabels">
-<code class="sig-name descname">set_zticklabels</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.set_zticklabels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.set_zticklabels" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set z-axis tick labels.
-See <code class="xref py py-meth docutils literal notranslate"><span class="pre">matplotlib.axes.Axes.set_yticklabels()</span></code> for more details.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Minor ticks are not supported by Axes3D objects.</p>
-</div>
-<div class="versionadded">
-<p><span class="versionmodified added">New in version 1.1.0.</span></p>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.get_zticklabels">
-<code class="sig-name descname">get_zticklabels</code><span class="sig-paren">(</span><em class="sig-param">minor=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.get_zticklabels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.get_zticklabels" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get ztick labels as a list of Text instances.
-See <code class="xref py py-meth docutils literal notranslate"><span class="pre">matplotlib.axes.Axes.get_yticklabels()</span></code> for more details.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Minor ticks are not supported.</p>
-</div>
-<div class="versionadded">
-<p><span class="versionmodified added">New in version 1.1.0.</span></p>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.zaxis_date">
-<code class="sig-name descname">zaxis_date</code><span class="sig-paren">(</span><em class="sig-param">tz=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.zaxis_date"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.zaxis_date" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets up z-axis ticks and labels that treat the z data as dates.</p>
-<p><em>tz</em> is a timezone string or <code class="xref py py-class docutils literal notranslate"><span class="pre">tzinfo</span></code> instance.
-Defaults to rc value.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>This function is merely provided for completeness.
-Axes3D objects do not officially support dates for ticks,
-and so this may or may not work as expected.</p>
-</div>
-<div class="versionadded">
-<p><span class="versionmodified added">New in version 1.1.0: </span>This function was added, but not tested. Please report any bugs.</p>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.get_zticklines">
-<code class="sig-name descname">get_zticklines</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.get_zticklines"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.get_zticklines" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get ztick lines as a list of Line2D instances.
-Note that this function is provided merely for completeness.
-These lines are re-calculated as the display changes.</p>
-<div class="versionadded">
-<p><span class="versionmodified added">New in version 1.1.0.</span></p>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.clabel">
-<code class="sig-name descname">clabel</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.clabel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.clabel" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function is currently not implemented for 3D axes.
-Returns <em>None</em>.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.view_init">
-<code class="sig-name descname">view_init</code><span class="sig-paren">(</span><em class="sig-param">elev=None</em>, <em class="sig-param">azim=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.view_init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.view_init" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set the elevation and azimuth of the axes in degrees (not radians).</p>
-<p>This can be used to rotate the axes programmatically.</p>
-<p>‘elev’ stores the elevation angle in the z plane (in degrees).
-‘azim’ stores the azimuth angle in the x,y plane (in degrees).</p>
-<p>if elev or azim are None (default), then the initial value
-is used which was specified in the <a class="reference internal" href="#luxpy.utils.Axes3D" title="luxpy.utils.Axes3D"><code class="xref py py-class docutils literal notranslate"><span class="pre">Axes3D</span></code></a> constructor.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.set_proj_type">
-<code class="sig-name descname">set_proj_type</code><span class="sig-paren">(</span><em class="sig-param">proj_type</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.set_proj_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.set_proj_type" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set the projection type.</p>
-<dl class="simple">
-<dt>proj_type<span class="classifier">str</span></dt><dd><p>Type of projection, accepts ‘persp’ and ‘ortho’.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.get_proj">
-<code class="sig-name descname">get_proj</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.get_proj"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.get_proj" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create the projection matrix from the current viewing position.</p>
-<p>elev stores the elevation angle in the z plane
-azim stores the azimuth angle in the x,y plane</p>
-<p>dist is the distance of the eye viewing point from the object
-point.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.mouse_init">
-<code class="sig-name descname">mouse_init</code><span class="sig-paren">(</span><em class="sig-param">rotate_btn=1</em>, <em class="sig-param">zoom_btn=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.mouse_init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.mouse_init" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initializes mouse button callbacks to enable 3D rotation of the axes.
-Also optionally sets the mouse buttons for 3D rotation and zooming.</p>
-<dl class="simple">
-<dt>rotate_btn<span class="classifier">int or list of int</span></dt><dd><p>The mouse button or buttons to use for 3D rotation of the axes;
-defaults to 1.</p>
-</dd>
-<dt>zoom_btn<span class="classifier">int or list of int</span></dt><dd><p>The mouse button or buttons to use to zoom the 3D axes; defaults to
-3.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.can_zoom">
-<code class="sig-name descname">can_zoom</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.can_zoom"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.can_zoom" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return <em>True</em> if this axes supports the zoom box button functionality.</p>
-<p>3D axes objects do not use the zoom box button.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.can_pan">
-<code class="sig-name descname">can_pan</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.can_pan"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.can_pan" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return <em>True</em> if this axes supports the pan/zoom button functionality.</p>
-<p>3D axes objects do not use the pan/zoom button.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.cla">
-<code class="sig-name descname">cla</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.cla"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.cla" title="Permalink to this definition">¶</a></dt>
-<dd><p>Clear axes</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.disable_mouse_rotation">
-<code class="sig-name descname">disable_mouse_rotation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.disable_mouse_rotation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.disable_mouse_rotation" title="Permalink to this definition">¶</a></dt>
-<dd><p>Disable mouse button callbacks.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D._button_press">
-<code class="sig-name descname">_button_press</code><span class="sig-paren">(</span><em class="sig-param">event</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D._button_press"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D._button_press" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D._button_release">
-<code class="sig-name descname">_button_release</code><span class="sig-paren">(</span><em class="sig-param">event</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D._button_release"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D._button_release" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.format_zdata">
-<code class="sig-name descname">format_zdata</code><span class="sig-paren">(</span><em class="sig-param">z</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.format_zdata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.format_zdata" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return <em>z</em> string formatted.  This function will use the
-<code class="xref py py-attr docutils literal notranslate"><span class="pre">fmt_zdata</span></code> attribute if it is callable, else will fall
-back on the zaxis major formatter</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.format_coord">
-<code class="sig-name descname">format_coord</code><span class="sig-paren">(</span><em class="sig-param">xd</em>, <em class="sig-param">yd</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.format_coord"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.format_coord" title="Permalink to this definition">¶</a></dt>
-<dd><p>Given the 2D view coordinates attempt to guess a 3D coordinate.
-Looks for the nearest edge to the point and then assumes that
-the point is at the same z location as the nearest point on the edge.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D._on_move">
-<code class="sig-name descname">_on_move</code><span class="sig-paren">(</span><em class="sig-param">event</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D._on_move"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D._on_move" title="Permalink to this definition">¶</a></dt>
-<dd><p>Mouse moving</p>
-<p>button-1 rotates by default.  Can be set explicitly in mouse_init().
-button-3 zooms by default.  Can be set explicitly in mouse_init().</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.set_zlabel">
-<code class="sig-name descname">set_zlabel</code><span class="sig-paren">(</span><em class="sig-param">zlabel</em>, <em class="sig-param">fontdict=None</em>, <em class="sig-param">labelpad=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.set_zlabel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.set_zlabel" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set zlabel.  See doc for <code class="xref py py-meth docutils literal notranslate"><span class="pre">set_ylabel()</span></code> for description.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.get_zlabel">
-<code class="sig-name descname">get_zlabel</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.get_zlabel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.get_zlabel" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the z-label text string.</p>
-<div class="versionadded">
-<p><span class="versionmodified added">New in version 1.1.0: </span>This function was added, but not tested. Please report any bugs.</p>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.get_frame_on">
-<code class="sig-name descname">get_frame_on</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.get_frame_on"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.get_frame_on" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get whether the 3D axes panels are drawn.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.set_frame_on">
-<code class="sig-name descname">set_frame_on</code><span class="sig-paren">(</span><em class="sig-param">b</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.set_frame_on"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.set_frame_on" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set whether the 3D axes panels are drawn.</p>
-<p>b : bool</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.grid">
-<code class="sig-name descname">grid</code><span class="sig-paren">(</span><em class="sig-param">b=True</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.grid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.grid" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set / unset 3D grid.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Currently, this function does not behave the same as
-<code class="xref py py-meth docutils literal notranslate"><span class="pre">matplotlib.axes.Axes.grid()</span></code>, but it is intended to
-eventually support that behavior.</p>
-</div>
-<div class="versionchanged">
-<p><span class="versionmodified changed">Changed in version 1.1.0: </span>This function was changed, but not tested. Please report any bugs.</p>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.ticklabel_format">
-<code class="sig-name descname">ticklabel_format</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">style=''</em>, <em class="sig-param">scilimits=None</em>, <em class="sig-param">useOffset=None</em>, <em class="sig-param">axis='both'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.ticklabel_format"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.ticklabel_format" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convenience method for manipulating the ScalarFormatter
-used by default for linear axes in Axed3D objects.</p>
-<p>See <code class="xref py py-meth docutils literal notranslate"><span class="pre">matplotlib.axes.Axes.ticklabel_format()</span></code> for full
-documentation.  Note that this version applies to all three
-axes of the Axes3D object.  Therefore, the <em>axis</em> argument
-will also accept a value of ‘z’ and the value of ‘both’ will
-apply to all three axes.</p>
-<div class="versionadded">
-<p><span class="versionmodified added">New in version 1.1.0: </span>This function was added, but not tested. Please report any bugs.</p>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.locator_params">
-<code class="sig-name descname">locator_params</code><span class="sig-paren">(</span><em class="sig-param">axis='both'</em>, <em class="sig-param">tight=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.locator_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.locator_params" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convenience method for controlling tick locators.</p>
-<p>See <code class="xref py py-meth docutils literal notranslate"><span class="pre">matplotlib.axes.Axes.locator_params()</span></code> for full
-documentation.  Note that this is for Axes3D objects,
-therefore, setting <em>axis</em> to ‘both’ will result in the
-parameters being set for all three axes.  Also, <em>axis</em>
-can also take a value of ‘z’ to apply parameters to the
-z axis.</p>
-<div class="versionadded">
-<p><span class="versionmodified added">New in version 1.1.0: </span>This function was added, but not tested. Please report any bugs.</p>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.tick_params">
-<code class="sig-name descname">tick_params</code><span class="sig-paren">(</span><em class="sig-param">axis='both'</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.tick_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.tick_params" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convenience method for changing the appearance of ticks and
-tick labels.</p>
-<p>See <code class="xref py py-meth docutils literal notranslate"><span class="pre">matplotlib.axes.Axes.tick_params()</span></code> for more complete
-documentation.</p>
-<p>The only difference is that setting <em>axis</em> to ‘both’ will
-mean that the settings are applied to all three axes. Also,
-the <em>axis</em> parameter also accepts a value of ‘z’, which
-would mean to apply to only the z-axis.</p>
-<p>Also, because of how Axes3D objects are drawn very differently
-from regular 2D axes, some of these settings may have
-ambiguous meaning.  For simplicity, the ‘z’ axis will
-accept settings as if it was like the ‘y’ axis.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Axes3D currently ignores some of these settings.</p>
-</div>
-<div class="versionadded">
-<p><span class="versionmodified added">New in version 1.1.0: </span>This function was added, but not tested. Please report any bugs.</p>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.invert_zaxis">
-<code class="sig-name descname">invert_zaxis</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.invert_zaxis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.invert_zaxis" title="Permalink to this definition">¶</a></dt>
-<dd><p>Invert the z-axis.</p>
-<div class="versionadded">
-<p><span class="versionmodified added">New in version 1.1.0: </span>This function was added, but not tested. Please report any bugs.</p>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.zaxis_inverted">
-<code class="sig-name descname">zaxis_inverted</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.zaxis_inverted"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.zaxis_inverted" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns True if the z-axis is inverted.</p>
-<div class="versionadded">
-<p><span class="versionmodified added">New in version 1.1.0: </span>This function was added, but not tested. Please report any bugs.</p>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.get_zbound">
-<code class="sig-name descname">get_zbound</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.get_zbound"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.get_zbound" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the z-axis numerical bounds where:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">lowerBound</span> <span class="o">&lt;</span> <span class="n">upperBound</span>
-</pre></div>
-</div>
-<div class="versionadded">
-<p><span class="versionmodified added">New in version 1.1.0: </span>This function was added, but not tested. Please report any bugs.</p>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.set_zbound">
-<code class="sig-name descname">set_zbound</code><span class="sig-paren">(</span><em class="sig-param">lower=None</em>, <em class="sig-param">upper=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.set_zbound"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.set_zbound" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set the lower and upper numerical bounds of the z-axis.
-This method will honor axes inversion regardless of parameter order.
-It will not change the <code class="xref py py-attr docutils literal notranslate"><span class="pre">_autoscaleZon</span></code> attribute.</p>
-<div class="versionadded">
-<p><span class="versionmodified added">New in version 1.1.0: </span>This function was added, but not tested. Please report any bugs.</p>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.text">
-<code class="sig-name descname">text</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">y</em>, <em class="sig-param">z</em>, <em class="sig-param">s</em>, <em class="sig-param">zdir=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.text" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add text to the plot. kwargs will be passed on to Axes.text,
-except for the <cite>zdir</cite> keyword, which sets the direction to be
-used as the z direction.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.text3D">
-<code class="sig-name descname">text3D</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">y</em>, <em class="sig-param">z</em>, <em class="sig-param">s</em>, <em class="sig-param">zdir=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#luxpy.utils.Axes3D.text3D" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add text to the plot. kwargs will be passed on to Axes.text,
-except for the <cite>zdir</cite> keyword, which sets the direction to be
-used as the z direction.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.text2D">
-<code class="sig-name descname">text2D</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">y</em>, <em class="sig-param">s</em>, <em class="sig-param">fontdict=None</em>, <em class="sig-param">withdash=&lt;deprecated parameter&gt;</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#luxpy.utils.Axes3D.text2D" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add text to the axes.</p>
-<p>Add the text <em>s</em> to the axes at location <em>x</em>, <em>y</em> in data coordinates.</p>
-<dl class="simple">
-<dt>x, y<span class="classifier">scalars</span></dt><dd><p>The position to place the text. By default, this is in data
-coordinates. The coordinate system can be changed using the
-<em>transform</em> parameter.</p>
-</dd>
-<dt>s<span class="classifier">str</span></dt><dd><p>The text.</p>
-</dd>
-<dt>fontdict<span class="classifier">dictionary, optional, default: None</span></dt><dd><p>A dictionary to override the default text properties. If fontdict
-is None, the defaults are determined by your rc parameters.</p>
-</dd>
-<dt>withdash<span class="classifier">boolean, optional, default: False</span></dt><dd><p>Creates a <cite>~matplotlib.text.TextWithDash</cite> instance instead of a
-<cite>~matplotlib.text.Text</cite> instance.</p>
-</dd>
-</dl>
-<dl>
-<dt>text<span class="classifier"><cite>.Text</cite></span></dt><dd><p>The created <cite>.Text</cite> instance.</p>
-</dd>
-</dl>
-<dl>
-<dt><a href="#id7"><span class="problematic" id="id8">**</span></a>kwargs<span class="classifier"><cite>~matplotlib.text.Text</cite> properties.</span></dt><dd><p>Other miscellaneous text parameters.</p>
-</dd>
-</dl>
-<p>Individual keyword arguments can be used to override any given
-parameter:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">text</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>The default transform specifies that text is in data coords,
-alternatively, you can specify text in axis coords (0,0 is
-lower-left and 1,1 is upper-right).  The example below places
-text in the center of the axes:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">text</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="s1">&#39;matplotlib&#39;</span><span class="p">,</span> <span class="n">horizontalalignment</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span>
-<span class="gp">... </span>     <span class="n">verticalalignment</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">transAxes</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>You can put a rectangular box around the text instance (e.g., to
-set a background color) by using the keyword <cite>bbox</cite>.  <cite>bbox</cite> is
-a dictionary of <cite>~matplotlib.patches.Rectangle</cite>
-properties.  For example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">text</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">bbox</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">facecolor</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">))</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.plot">
-<code class="sig-name descname">plot</code><span class="sig-paren">(</span><em class="sig-param">xs</em>, <em class="sig-param">ys</em>, <em class="sig-param">*args</em>, <em class="sig-param">zdir='z'</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.plot" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plot 2D or 3D data.</p>
-<dl class="simple">
-<dt>xs<span class="classifier">1D array-like</span></dt><dd><p>x coordinates of vertices.</p>
-</dd>
-<dt>ys<span class="classifier">1D array-like</span></dt><dd><p>y coordinates of vertices.</p>
-</dd>
-<dt>zs<span class="classifier">scalar or 1D array-like</span></dt><dd><p>z coordinates of vertices; either one for all points or one for
-each point.</p>
-</dd>
-<dt>zdir<span class="classifier">{‘x’, ‘y’, ‘z’}</span></dt><dd><p>When plotting 2D data, the direction to use as z (‘x’, ‘y’ or ‘z’);
-defaults to ‘z’.</p>
-</dd>
-<dt><a href="#id9"><span class="problematic" id="id10">**</span></a>kwargs</dt><dd><p>Other arguments are forwarded to <cite>matplotlib.axes.Axes.plot</cite>.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.plot3D">
-<code class="sig-name descname">plot3D</code><span class="sig-paren">(</span><em class="sig-param">xs</em>, <em class="sig-param">ys</em>, <em class="sig-param">*args</em>, <em class="sig-param">zdir='z'</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#luxpy.utils.Axes3D.plot3D" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plot 2D or 3D data.</p>
-<dl class="simple">
-<dt>xs<span class="classifier">1D array-like</span></dt><dd><p>x coordinates of vertices.</p>
-</dd>
-<dt>ys<span class="classifier">1D array-like</span></dt><dd><p>y coordinates of vertices.</p>
-</dd>
-<dt>zs<span class="classifier">scalar or 1D array-like</span></dt><dd><p>z coordinates of vertices; either one for all points or one for
-each point.</p>
-</dd>
-<dt>zdir<span class="classifier">{‘x’, ‘y’, ‘z’}</span></dt><dd><p>When plotting 2D data, the direction to use as z (‘x’, ‘y’ or ‘z’);
-defaults to ‘z’.</p>
-</dd>
-<dt><a href="#id11"><span class="problematic" id="id12">**</span></a>kwargs</dt><dd><p>Other arguments are forwarded to <cite>matplotlib.axes.Axes.plot</cite>.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.plot_surface">
-<code class="sig-name descname">plot_surface</code><span class="sig-paren">(</span><em class="sig-param">X</em>, <em class="sig-param">Y</em>, <em class="sig-param">Z</em>, <em class="sig-param">*args</em>, <em class="sig-param">norm=None</em>, <em class="sig-param">vmin=None</em>, <em class="sig-param">vmax=None</em>, <em class="sig-param">lightsource=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.plot_surface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.plot_surface" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a surface plot.</p>
-<p>By default it will be colored in shades of a solid color, but it also
-supports color mapping by supplying the <em>cmap</em> argument.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>The <em>rcount</em> and <em>ccount</em> kwargs, which both default to 50,
-determine the maximum number of samples used in each direction.  If
-the input data is larger, it will be downsampled (by slicing) to
-these numbers of points.</p>
-</div>
-<dl>
-<dt>X, Y, Z<span class="classifier">2d arrays</span></dt><dd><p>Data values.</p>
-</dd>
-<dt>rcount, ccount<span class="classifier">int</span></dt><dd><p>Maximum number of samples used in each direction.  If the input
-data is larger, it will be downsampled (by slicing) to these
-numbers of points.  Defaults to 50.</p>
-<div class="versionadded">
-<p><span class="versionmodified added">New in version 2.0.</span></p>
-</div>
-</dd>
-<dt>rstride, cstride<span class="classifier">int</span></dt><dd><p>Downsampling stride in each direction.  These arguments are
-mutually exclusive with <em>rcount</em> and <em>ccount</em>.  If only one of
-<em>rstride</em> or <em>cstride</em> is set, the other defaults to 10.</p>
-<p>‘classic’ mode uses a default of <code class="docutils literal notranslate"><span class="pre">rstride</span> <span class="pre">=</span> <span class="pre">cstride</span> <span class="pre">=</span> <span class="pre">10</span></code> instead
-of the new default of <code class="docutils literal notranslate"><span class="pre">rcount</span> <span class="pre">=</span> <span class="pre">ccount</span> <span class="pre">=</span> <span class="pre">50</span></code>.</p>
-</dd>
-<dt>color<span class="classifier">color-like</span></dt><dd><p>Color of the surface patches.</p>
-</dd>
-<dt>cmap<span class="classifier">Colormap</span></dt><dd><p>Colormap of the surface patches.</p>
-</dd>
-<dt>facecolors<span class="classifier">array-like of colors.</span></dt><dd><p>Colors of each individual patch.</p>
-</dd>
-<dt>norm<span class="classifier">Normalize</span></dt><dd><p>Normalization for the colormap.</p>
-</dd>
-<dt>vmin, vmax<span class="classifier">float</span></dt><dd><p>Bounds for the normalization.</p>
-</dd>
-<dt>shade<span class="classifier">bool</span></dt><dd><p>Whether to shade the facecolors. Defaults to True. Shading is
-always disabled when <cite>cmap</cite> is specified.</p>
-</dd>
-<dt>lightsource<span class="classifier"><cite>~matplotlib.colors.LightSource</cite></span></dt><dd><p>The lightsource to use when <cite>shade</cite> is True.</p>
-</dd>
-<dt><a href="#id13"><span class="problematic" id="id14">**</span></a>kwargs</dt><dd><p>Other arguments are forwarded to <cite>.Poly3DCollection</cite>.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D._generate_normals">
-<code class="sig-name descname">_generate_normals</code><span class="sig-paren">(</span><em class="sig-param">polygons</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D._generate_normals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D._generate_normals" title="Permalink to this definition">¶</a></dt>
-<dd><p>Takes a list of polygons and return an array of their normals.</p>
-<p>Normals point towards the viewer for a face with its vertices in
-counterclockwise order, following the right hand rule.</p>
-<p>Uses three points equally spaced around the polygon.
-This normal of course might not make sense for polygons with more than
-three points not lying in a plane, but it’s a plausible and fast
-approximation.</p>
-<dl class="simple">
-<dt>polygons: list of (M_i, 3) array_like, or (…, M, 3) array_like</dt><dd><p>A sequence of polygons to compute normals for, which can have
-varying numbers of vertices. If the polygons all have the same
-number of vertices and array is passed, then the operation will
-be vectorized.</p>
-</dd>
-</dl>
-<dl class="simple">
-<dt>normals: (…, 3) array_like</dt><dd><p>A normal vector estimated for the polygon.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D._shade_colors">
-<code class="sig-name descname">_shade_colors</code><span class="sig-paren">(</span><em class="sig-param">color</em>, <em class="sig-param">normals</em>, <em class="sig-param">lightsource=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D._shade_colors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D._shade_colors" title="Permalink to this definition">¶</a></dt>
-<dd><p>Shade <em>color</em> using normal vectors given by <em>normals</em>.
-<em>color</em> can also be an array of the same length as <em>normals</em>.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.plot_wireframe">
-<code class="sig-name descname">plot_wireframe</code><span class="sig-paren">(</span><em class="sig-param">X</em>, <em class="sig-param">Y</em>, <em class="sig-param">Z</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.plot_wireframe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.plot_wireframe" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plot a 3D wireframe.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>The <em>rcount</em> and <em>ccount</em> kwargs, which both default to 50,
-determine the maximum number of samples used in each direction.  If
-the input data is larger, it will be downsampled (by slicing) to
-these numbers of points.</p>
-</div>
-<dl>
-<dt>X, Y, Z<span class="classifier">2d arrays</span></dt><dd><p>Data values.</p>
-</dd>
-<dt>rcount, ccount<span class="classifier">int</span></dt><dd><p>Maximum number of samples used in each direction.  If the input
-data is larger, it will be downsampled (by slicing) to these
-numbers of points.  Setting a count to zero causes the data to be
-not sampled in the corresponding direction, producing a 3D line
-plot rather than a wireframe plot.  Defaults to 50.</p>
-<div class="versionadded">
-<p><span class="versionmodified added">New in version 2.0.</span></p>
-</div>
-</dd>
-<dt>rstride, cstride<span class="classifier">int</span></dt><dd><p>Downsampling stride in each direction.  These arguments are
-mutually exclusive with <em>rcount</em> and <em>ccount</em>.  If only one of
-<em>rstride</em> or <em>cstride</em> is set, the other defaults to 1.  Setting a
-stride to zero causes the data to be not sampled in the
-corresponding direction, producing a 3D line plot rather than a
-wireframe plot.</p>
-<p>‘classic’ mode uses a default of <code class="docutils literal notranslate"><span class="pre">rstride</span> <span class="pre">=</span> <span class="pre">cstride</span> <span class="pre">=</span> <span class="pre">1</span></code> instead
-of the new default of <code class="docutils literal notranslate"><span class="pre">rcount</span> <span class="pre">=</span> <span class="pre">ccount</span> <span class="pre">=</span> <span class="pre">50</span></code>.</p>
-</dd>
-<dt><a href="#id15"><span class="problematic" id="id16">**</span></a>kwargs</dt><dd><p>Other arguments are forwarded to <cite>.Line3DCollection</cite>.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.plot_trisurf">
-<code class="sig-name descname">plot_trisurf</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">color=None</em>, <em class="sig-param">norm=None</em>, <em class="sig-param">vmin=None</em>, <em class="sig-param">vmax=None</em>, <em class="sig-param">lightsource=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.plot_trisurf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.plot_trisurf" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plot a triangulated surface.</p>
-<p>The (optional) triangulation can be specified in one of two ways;
-either:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">plot_trisurf</span><span class="p">(</span><span class="n">triangulation</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>where triangulation is a <code class="xref py py-class docutils literal notranslate"><span class="pre">Triangulation</span></code>
-object, or:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">plot_trisurf</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
-<span class="n">plot_trisurf</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">triangles</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
-<span class="n">plot_trisurf</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">triangles</span><span class="o">=</span><span class="n">triangles</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>in which case a Triangulation object will be created.  See
-<code class="xref py py-class docutils literal notranslate"><span class="pre">Triangulation</span></code> for a explanation of
-these possibilities.</p>
-<p>The remaining arguments are:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">plot_trisurf</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">Z</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>where <em>Z</em> is the array of values to contour, one per point
-in the triangulation.</p>
-<dl>
-<dt>X, Y, Z<span class="classifier">array-like</span></dt><dd><p>Data values as 1D arrays.</p>
-</dd>
-<dt>color</dt><dd><p>Color of the surface patches.</p>
-</dd>
-<dt>cmap</dt><dd><p>A colormap for the surface patches.</p>
-</dd>
-<dt>norm<span class="classifier">Normalize</span></dt><dd><p>An instance of Normalize to map values to colors.</p>
-</dd>
-<dt>vmin, vmax<span class="classifier">scalar, optional, default: None</span></dt><dd><p>Minimum and maximum value to map.</p>
-</dd>
-<dt>shade<span class="classifier">bool</span></dt><dd><p>Whether to shade the facecolors. Defaults to True. Shading is
-always disabled when <em>cmap</em> is specified.</p>
-</dd>
-<dt>lightsource<span class="classifier"><cite>~matplotlib.colors.LightSource</cite></span></dt><dd><p>The lightsource to use when <em>shade</em> is True.</p>
-</dd>
-<dt><a href="#id17"><span class="problematic" id="id18">**</span></a>kwargs</dt><dd><p>All other arguments are passed on to
-<code class="xref py py-class docutils literal notranslate"><span class="pre">Poly3DCollection</span></code></p>
-</dd>
-</dl>
-<div class="versionadded">
-<p><span class="versionmodified added">New in version 1.2.0.</span></p>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D._3d_extend_contour">
-<code class="sig-name descname">_3d_extend_contour</code><span class="sig-paren">(</span><em class="sig-param">cset</em>, <em class="sig-param">stride=5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D._3d_extend_contour"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D._3d_extend_contour" title="Permalink to this definition">¶</a></dt>
-<dd><p>Extend a contour in 3D by creating</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.add_contour_set">
-<code class="sig-name descname">add_contour_set</code><span class="sig-paren">(</span><em class="sig-param">cset</em>, <em class="sig-param">extend3d=False</em>, <em class="sig-param">stride=5</em>, <em class="sig-param">zdir='z'</em>, <em class="sig-param">offset=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.add_contour_set"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.add_contour_set" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.add_contourf_set">
-<code class="sig-name descname">add_contourf_set</code><span class="sig-paren">(</span><em class="sig-param">cset</em>, <em class="sig-param">zdir='z'</em>, <em class="sig-param">offset=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.add_contourf_set"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.add_contourf_set" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.contour">
-<code class="sig-name descname">contour</code><span class="sig-paren">(</span><em class="sig-param">X</em>, <em class="sig-param">Y</em>, <em class="sig-param">Z</em>, <em class="sig-param">*args</em>, <em class="sig-param">extend3d=False</em>, <em class="sig-param">stride=5</em>, <em class="sig-param">zdir='z'</em>, <em class="sig-param">offset=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.contour"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.contour" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a 3D contour plot.</p>
-<dl class="simple">
-<dt>X, Y, Z<span class="classifier">array-likes</span></dt><dd><p>Input data.</p>
-</dd>
-<dt>extend3d<span class="classifier">bool</span></dt><dd><p>Whether to extend contour in 3D; defaults to False.</p>
-</dd>
-<dt>stride<span class="classifier">int</span></dt><dd><p>Step size for extending contour.</p>
-</dd>
-<dt>zdir<span class="classifier">{‘x’, ‘y’, ‘z’}</span></dt><dd><p>The direction to use; defaults to ‘z’.</p>
-</dd>
-<dt>offset<span class="classifier">scalar</span></dt><dd><p>If specified, plot a projection of the contour lines at this
-position in a plane normal to zdir</p>
-</dd>
-<dt><a href="#id19"><span class="problematic" id="id20">*</span></a>args, <a href="#id21"><span class="problematic" id="id22">**</span></a>kwargs</dt><dd><p>Other arguments are forwarded to <cite>matplotlib.axes.Axes.contour</cite>.</p>
-</dd>
-</dl>
-<p>matplotlib.contour.QuadContourSet</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.contour3D">
-<code class="sig-name descname">contour3D</code><span class="sig-paren">(</span><em class="sig-param">X</em>, <em class="sig-param">Y</em>, <em class="sig-param">Z</em>, <em class="sig-param">*args</em>, <em class="sig-param">extend3d=False</em>, <em class="sig-param">stride=5</em>, <em class="sig-param">zdir='z'</em>, <em class="sig-param">offset=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#luxpy.utils.Axes3D.contour3D" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a 3D contour plot.</p>
-<dl class="simple">
-<dt>X, Y, Z<span class="classifier">array-likes</span></dt><dd><p>Input data.</p>
-</dd>
-<dt>extend3d<span class="classifier">bool</span></dt><dd><p>Whether to extend contour in 3D; defaults to False.</p>
-</dd>
-<dt>stride<span class="classifier">int</span></dt><dd><p>Step size for extending contour.</p>
-</dd>
-<dt>zdir<span class="classifier">{‘x’, ‘y’, ‘z’}</span></dt><dd><p>The direction to use; defaults to ‘z’.</p>
-</dd>
-<dt>offset<span class="classifier">scalar</span></dt><dd><p>If specified, plot a projection of the contour lines at this
-position in a plane normal to zdir</p>
-</dd>
-<dt><a href="#id23"><span class="problematic" id="id24">*</span></a>args, <a href="#id25"><span class="problematic" id="id26">**</span></a>kwargs</dt><dd><p>Other arguments are forwarded to <cite>matplotlib.axes.Axes.contour</cite>.</p>
-</dd>
-</dl>
-<p>matplotlib.contour.QuadContourSet</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.tricontour">
-<code class="sig-name descname">tricontour</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">extend3d=False</em>, <em class="sig-param">stride=5</em>, <em class="sig-param">zdir='z'</em>, <em class="sig-param">offset=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.tricontour"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.tricontour" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a 3D contour plot.</p>
-<div class="versionchanged">
-<p><span class="versionmodified changed">Changed in version 1.3.0: </span>Added support for custom triangulations</p>
-</div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>This method currently produces incorrect output due to a
-longstanding bug in 3D PolyCollection rendering.</p>
-</div>
-<dl class="simple">
-<dt>X, Y, Z<span class="classifier">array-likes</span></dt><dd><p>Input data.</p>
-</dd>
-<dt>extend3d<span class="classifier">bool</span></dt><dd><p>Whether to extend contour in 3D; defaults to False.</p>
-</dd>
-<dt>stride<span class="classifier">int</span></dt><dd><p>Step size for extending contour.</p>
-</dd>
-<dt>zdir<span class="classifier">{‘x’, ‘y’, ‘z’}</span></dt><dd><p>The direction to use; defaults to ‘z’.</p>
-</dd>
-<dt>offset<span class="classifier">scalar</span></dt><dd><p>If specified, plot a projection of the contour lines at this
-position in a plane normal to zdir</p>
-</dd>
-<dt><a href="#id27"><span class="problematic" id="id28">*</span></a>args, <a href="#id29"><span class="problematic" id="id30">**</span></a>kwargs</dt><dd><p>Other arguments are forwarded to <cite>matplotlib.axes.Axes.tricontour</cite>.</p>
-</dd>
-</dl>
-<p>matplotlib.tri.tricontour.TriContourSet</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.contourf">
-<code class="sig-name descname">contourf</code><span class="sig-paren">(</span><em class="sig-param">X</em>, <em class="sig-param">Y</em>, <em class="sig-param">Z</em>, <em class="sig-param">*args</em>, <em class="sig-param">zdir='z'</em>, <em class="sig-param">offset=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.contourf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.contourf" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a 3D filled contour plot.</p>
-<dl class="simple">
-<dt>X, Y, Z<span class="classifier">array-likes</span></dt><dd><p>Input data.</p>
-</dd>
-<dt>zdir<span class="classifier">{‘x’, ‘y’, ‘z’}</span></dt><dd><p>The direction to use; defaults to ‘z’.</p>
-</dd>
-<dt>offset<span class="classifier">scalar</span></dt><dd><p>If specified, plot a projection of the contour lines at this
-position in a plane normal to zdir</p>
-</dd>
-<dt><a href="#id31"><span class="problematic" id="id32">*</span></a>args, <a href="#id33"><span class="problematic" id="id34">**</span></a>kwargs</dt><dd><p>Other arguments are forwarded to <cite>matplotlib.axes.Axes.contourf</cite>.</p>
-</dd>
-</dl>
-<p>matplotlib.contour.QuadContourSet</p>
-<div class="versionadded">
-<p><span class="versionmodified added">New in version 1.1.0: </span>The <em>zdir</em> and <em>offset</em> parameters.</p>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.contourf3D">
-<code class="sig-name descname">contourf3D</code><span class="sig-paren">(</span><em class="sig-param">X</em>, <em class="sig-param">Y</em>, <em class="sig-param">Z</em>, <em class="sig-param">*args</em>, <em class="sig-param">zdir='z'</em>, <em class="sig-param">offset=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#luxpy.utils.Axes3D.contourf3D" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a 3D filled contour plot.</p>
-<dl class="simple">
-<dt>X, Y, Z<span class="classifier">array-likes</span></dt><dd><p>Input data.</p>
-</dd>
-<dt>zdir<span class="classifier">{‘x’, ‘y’, ‘z’}</span></dt><dd><p>The direction to use; defaults to ‘z’.</p>
-</dd>
-<dt>offset<span class="classifier">scalar</span></dt><dd><p>If specified, plot a projection of the contour lines at this
-position in a plane normal to zdir</p>
-</dd>
-<dt><a href="#id35"><span class="problematic" id="id36">*</span></a>args, <a href="#id37"><span class="problematic" id="id38">**</span></a>kwargs</dt><dd><p>Other arguments are forwarded to <cite>matplotlib.axes.Axes.contourf</cite>.</p>
-</dd>
-</dl>
-<p>matplotlib.contour.QuadContourSet</p>
-<div class="versionadded">
-<p><span class="versionmodified added">New in version 1.1.0: </span>The <em>zdir</em> and <em>offset</em> parameters.</p>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.tricontourf">
-<code class="sig-name descname">tricontourf</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">zdir='z'</em>, <em class="sig-param">offset=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.tricontourf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.tricontourf" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a 3D filled contour plot.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>This method currently produces incorrect output due to a
-longstanding bug in 3D PolyCollection rendering.</p>
-</div>
-<dl class="simple">
-<dt>X, Y, Z<span class="classifier">array-likes</span></dt><dd><p>Input data.</p>
-</dd>
-<dt>zdir<span class="classifier">{‘x’, ‘y’, ‘z’}</span></dt><dd><p>The direction to use; defaults to ‘z’.</p>
-</dd>
-<dt>offset<span class="classifier">scalar</span></dt><dd><p>If specified, plot a projection of the contour lines at this
-position in a plane normal to zdir</p>
-</dd>
-<dt><a href="#id39"><span class="problematic" id="id40">*</span></a>args, <a href="#id41"><span class="problematic" id="id42">**</span></a>kwargs</dt><dd><p>Other arguments are forwarded to
-<cite>matplotlib.axes.Axes.tricontourf</cite>.</p>
-</dd>
-</dl>
-<p>matplotlib.tri.tricontour.TriContourSet</p>
-<div class="versionadded">
-<p><span class="versionmodified added">New in version 1.1.0: </span>The <em>zdir</em> and <em>offset</em> parameters.</p>
-</div>
-<div class="versionchanged">
-<p><span class="versionmodified changed">Changed in version 1.3.0: </span>Added support for custom triangulations</p>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.add_collection3d">
-<code class="sig-name descname">add_collection3d</code><span class="sig-paren">(</span><em class="sig-param">col</em>, <em class="sig-param">zs=0</em>, <em class="sig-param">zdir='z'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.add_collection3d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.add_collection3d" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add a 3D collection object to the plot.</p>
-<p>2D collection types are converted to a 3D version by
-modifying the object and adding z coordinate information.</p>
-<dl class="simple">
-<dt>Supported are:</dt><dd><ul class="simple">
-<li><p>PolyCollection</p></li>
-<li><p>LineCollection</p></li>
-<li><p>PatchCollection</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.scatter">
-<code class="sig-name descname">scatter</code><span class="sig-paren">(</span><em class="sig-param">xs</em>, <em class="sig-param">ys</em>, <em class="sig-param">zs=0</em>, <em class="sig-param">zdir='z'</em>, <em class="sig-param">s=20</em>, <em class="sig-param">c=None</em>, <em class="sig-param">depthshade=True</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.scatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.scatter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a scatter plot.</p>
-<dl>
-<dt>xs, ys<span class="classifier">array-like</span></dt><dd><p>The data positions.</p>
-</dd>
-<dt>zs<span class="classifier">float or array-like, optional, default: 0</span></dt><dd><p>The z-positions. Either an array of the same length as <em>xs</em> and
-<em>ys</em> or a single value to place all points in the same plane.</p>
-</dd>
-<dt>zdir<span class="classifier">{‘x’, ‘y’, ‘z’, ‘-x’, ‘-y’, ‘-z’}, optional, default: ‘z’</span></dt><dd><p>The axis direction for the <em>zs</em>. This is useful when plotting 2D
-data on a 3D Axes. The data must be passed as <em>xs</em>, <em>ys</em>. Setting
-<em>zdir</em> to ‘y’ then plots the data to the x-z-plane.</p>
-<p>See also <span class="xref std std-doc">/gallery/mplot3d/2dcollections3d</span>.</p>
-</dd>
-<dt>s<span class="classifier">scalar or array-like, optional, default: 20</span></dt><dd><p>The marker size in points**2. Either an array of the same length
-as <em>xs</em> and <em>ys</em> or a single value to make all markers the same
-size.</p>
-</dd>
-<dt>c<span class="classifier">color, sequence, or sequence of color, optional</span></dt><dd><p>The marker color. Possible values:</p>
-<ul class="simple">
-<li><p>A single color format string.</p></li>
-<li><p>A sequence of color specifications of length n.</p></li>
-<li><p>A sequence of n numbers to be mapped to colors using <em>cmap</em> and
-<em>norm</em>.</p></li>
-<li><p>A 2-D array in which the rows are RGB or RGBA.</p></li>
-</ul>
-<p>For more details see the <em>c</em> argument of <cite>~.axes.Axes.scatter</cite>.</p>
-</dd>
-<dt>depthshade<span class="classifier">bool, optional, default: True</span></dt><dd><p>Whether to shade the scatter markers to give the appearance of
-depth. Each call to <code class="docutils literal notranslate"><span class="pre">scatter()</span></code> will perform its depthshading
-independently.</p>
-</dd>
-<dt><a href="#id43"><span class="problematic" id="id44">**</span></a>kwargs</dt><dd><p>All other arguments are passed on to <cite>~.axes.Axes.scatter</cite>.</p>
-</dd>
-</dl>
-<p>paths : <cite>~matplotlib.collections.PathCollection</cite></p>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.scatter3D">
-<code class="sig-name descname">scatter3D</code><span class="sig-paren">(</span><em class="sig-param">xs</em>, <em class="sig-param">ys</em>, <em class="sig-param">zs=0</em>, <em class="sig-param">zdir='z'</em>, <em class="sig-param">s=20</em>, <em class="sig-param">c=None</em>, <em class="sig-param">depthshade=True</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#luxpy.utils.Axes3D.scatter3D" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a scatter plot.</p>
-<dl>
-<dt>xs, ys<span class="classifier">array-like</span></dt><dd><p>The data positions.</p>
-</dd>
-<dt>zs<span class="classifier">float or array-like, optional, default: 0</span></dt><dd><p>The z-positions. Either an array of the same length as <em>xs</em> and
-<em>ys</em> or a single value to place all points in the same plane.</p>
-</dd>
-<dt>zdir<span class="classifier">{‘x’, ‘y’, ‘z’, ‘-x’, ‘-y’, ‘-z’}, optional, default: ‘z’</span></dt><dd><p>The axis direction for the <em>zs</em>. This is useful when plotting 2D
-data on a 3D Axes. The data must be passed as <em>xs</em>, <em>ys</em>. Setting
-<em>zdir</em> to ‘y’ then plots the data to the x-z-plane.</p>
-<p>See also <span class="xref std std-doc">/gallery/mplot3d/2dcollections3d</span>.</p>
-</dd>
-<dt>s<span class="classifier">scalar or array-like, optional, default: 20</span></dt><dd><p>The marker size in points**2. Either an array of the same length
-as <em>xs</em> and <em>ys</em> or a single value to make all markers the same
-size.</p>
-</dd>
-<dt>c<span class="classifier">color, sequence, or sequence of color, optional</span></dt><dd><p>The marker color. Possible values:</p>
-<ul class="simple">
-<li><p>A single color format string.</p></li>
-<li><p>A sequence of color specifications of length n.</p></li>
-<li><p>A sequence of n numbers to be mapped to colors using <em>cmap</em> and
-<em>norm</em>.</p></li>
-<li><p>A 2-D array in which the rows are RGB or RGBA.</p></li>
-</ul>
-<p>For more details see the <em>c</em> argument of <cite>~.axes.Axes.scatter</cite>.</p>
-</dd>
-<dt>depthshade<span class="classifier">bool, optional, default: True</span></dt><dd><p>Whether to shade the scatter markers to give the appearance of
-depth. Each call to <code class="docutils literal notranslate"><span class="pre">scatter()</span></code> will perform its depthshading
-independently.</p>
-</dd>
-<dt><a href="#id45"><span class="problematic" id="id46">**</span></a>kwargs</dt><dd><p>All other arguments are passed on to <cite>~.axes.Axes.scatter</cite>.</p>
-</dd>
-</dl>
-<p>paths : <cite>~matplotlib.collections.PathCollection</cite></p>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.bar">
-<code class="sig-name descname">bar</code><span class="sig-paren">(</span><em class="sig-param">left</em>, <em class="sig-param">height</em>, <em class="sig-param">zs=0</em>, <em class="sig-param">zdir='z'</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.bar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.bar" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add 2D bar(s).</p>
-<dl class="simple">
-<dt>left<span class="classifier">1D array-like</span></dt><dd><p>The x coordinates of the left sides of the bars.</p>
-</dd>
-<dt>height<span class="classifier">1D array-like</span></dt><dd><p>The height of the bars.</p>
-</dd>
-<dt>zs<span class="classifier">scalar or 1D array-like</span></dt><dd><p>Z coordinate of bars; if a single value is specified, it will be
-used for all bars.</p>
-</dd>
-<dt>zdir<span class="classifier">{‘x’, ‘y’, ‘z’}</span></dt><dd><p>When plotting 2D data, the direction to use as z (‘x’, ‘y’ or ‘z’);
-defaults to ‘z’.</p>
-</dd>
-<dt><a href="#id47"><span class="problematic" id="id48">**</span></a>kwargs</dt><dd><p>Other arguments are forwarded to <cite>matplotlib.axes.Axes.bar</cite>.</p>
-</dd>
-</dl>
-<p>mpl_toolkits.mplot3d.art3d.Patch3DCollection</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.bar3d">
-<code class="sig-name descname">bar3d</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">y</em>, <em class="sig-param">z</em>, <em class="sig-param">dx</em>, <em class="sig-param">dy</em>, <em class="sig-param">dz</em>, <em class="sig-param">color=None</em>, <em class="sig-param">zsort='average'</em>, <em class="sig-param">shade=True</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.bar3d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.bar3d" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generate a 3D barplot.</p>
-<p>This method creates three dimensional barplot where the width,
-depth, height, and color of the bars can all be uniquely set.</p>
-<dl>
-<dt>x, y, z<span class="classifier">array-like</span></dt><dd><p>The coordinates of the anchor point of the bars.</p>
-</dd>
-<dt>dx, dy, dz<span class="classifier">scalar or array-like</span></dt><dd><p>The width, depth, and height of the bars, respectively.</p>
-</dd>
-<dt>color<span class="classifier">sequence of valid color specifications, optional</span></dt><dd><p>The color of the bars can be specified globally or
-individually. This parameter can be:</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>A single color value, to color all bars the same color.</p></li>
-<li><p>An array of colors of length N bars, to color each bar
-independently.</p></li>
-<li><p>An array of colors of length 6, to color the faces of the
-bars similarly.</p></li>
-<li><p>An array of colors of length 6 * N bars, to color each face
-independently.</p></li>
-</ul>
-</div></blockquote>
-<p>When coloring the faces of the boxes specifically, this is
-the order of the coloring:</p>
-<blockquote>
-<div><ol class="arabic simple">
-<li><p>-Z (bottom of box)</p></li>
-<li><p>+Z (top of box)</p></li>
-<li><p>-Y</p></li>
-<li><p>+Y</p></li>
-<li><p>-X</p></li>
-<li><p>+X</p></li>
-</ol>
-</div></blockquote>
-</dd>
-<dt>zsort<span class="classifier">str, optional</span></dt><dd><p>The z-axis sorting scheme passed onto <cite>~.art3d.Poly3DCollection</cite></p>
-</dd>
-<dt>shade<span class="classifier">bool, optional (default = True)</span></dt><dd><p>When true, this shades the dark sides of the bars (relative
-to the plot’s source of light).</p>
-</dd>
-<dt><a href="#id49"><span class="problematic" id="id50">**</span></a>kwargs</dt><dd><p>Any additional keyword arguments are passed onto
-<cite>~.art3d.Poly3DCollection</cite>.</p>
-</dd>
-</dl>
-<dl>
-<dt>collection<span class="classifier"><cite>~.art3d.Poly3DCollection</cite></span></dt><dd><p>A collection of three dimensional polygons representing
-the bars.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.set_title">
-<code class="sig-name descname">set_title</code><span class="sig-paren">(</span><em class="sig-param">label</em>, <em class="sig-param">fontdict=None</em>, <em class="sig-param">loc='center'</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.set_title"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.set_title" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set a title for the axes.</p>
-<p>Set one of the three available axes titles. The available titles
-are positioned above the axes in the center, flush with the left
-edge, and flush with the right edge.</p>
-<dl>
-<dt>label<span class="classifier">str</span></dt><dd><p>Text to use for the title</p>
-</dd>
-<dt>fontdict<span class="classifier">dict</span></dt><dd><p>A dictionary controlling the appearance of the title text,
-the default <cite>fontdict</cite> is:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;fontsize&#39;</span><span class="p">:</span> <span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;axes.titlesize&#39;</span><span class="p">],</span>
- <span class="s1">&#39;fontweight&#39;</span> <span class="p">:</span> <span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;axes.titleweight&#39;</span><span class="p">],</span>
- <span class="s1">&#39;verticalalignment&#39;</span><span class="p">:</span> <span class="s1">&#39;baseline&#39;</span><span class="p">,</span>
- <span class="s1">&#39;horizontalalignment&#39;</span><span class="p">:</span> <span class="n">loc</span><span class="p">}</span>
-</pre></div>
-</div>
-</dd>
-<dt>loc<span class="classifier">{‘center’, ‘left’, ‘right’}, str, optional</span></dt><dd><p>Which title to set, defaults to ‘center’</p>
-</dd>
-<dt>pad<span class="classifier">float</span></dt><dd><p>The offset of the title from the top of the axes, in points.
-Default is <code class="docutils literal notranslate"><span class="pre">None</span></code> to use rcParams[‘axes.titlepad’].</p>
-</dd>
-</dl>
-<dl>
-<dt>text<span class="classifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">Text</span></code></span></dt><dd><p>The matplotlib text instance representing the title</p>
-</dd>
-</dl>
-<dl>
-<dt><a href="#id51"><span class="problematic" id="id52">**</span></a>kwargs<span class="classifier"><cite>~matplotlib.text.Text</cite> properties</span></dt><dd><p>Other keyword arguments are text properties, see
-<code class="xref py py-class docutils literal notranslate"><span class="pre">Text</span></code> for a list of valid text
-properties.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.quiver">
-<code class="sig-name descname">quiver</code><span class="sig-paren">(</span><em class="sig-param">X</em>, <em class="sig-param">Y</em>, <em class="sig-param">Z</em>, <em class="sig-param">U</em>, <em class="sig-param">V</em>, <em class="sig-param">W</em>, <em class="sig-param">/</em>, <em class="sig-param">length=1</em>, <em class="sig-param">arrow_length_ratio=.3</em>, <em class="sig-param">pivot='tail'</em>, <em class="sig-param">normalize=False</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.quiver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.quiver" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plot a 3D field of arrows.</p>
-<p>The arguments could be array-like or scalars, so long as they
-they can be broadcast together. The arguments can also be
-masked arrays. If an element in any of argument is masked, then
-that corresponding quiver element will not be plotted.</p>
-<dl class="simple">
-<dt>X, Y, Z<span class="classifier">array-like</span></dt><dd><p>The x, y and z coordinates of the arrow locations (default is
-tail of arrow; see <em>pivot</em> kwarg)</p>
-</dd>
-<dt>U, V, W<span class="classifier">array-like</span></dt><dd><p>The x, y and z components of the arrow vectors</p>
-</dd>
-<dt>length<span class="classifier">float</span></dt><dd><p>The length of each quiver, default to 1.0, the unit is
-the same with the axes</p>
-</dd>
-<dt>arrow_length_ratio<span class="classifier">float</span></dt><dd><p>The ratio of the arrow head with respect to the quiver,
-default to 0.3</p>
-</dd>
-<dt>pivot<span class="classifier">{‘tail’, ‘middle’, ‘tip’}</span></dt><dd><p>The part of the arrow that is at the grid point; the arrow
-rotates about this point, hence the name <em>pivot</em>.
-Default is ‘tail’</p>
-</dd>
-<dt>normalize<span class="classifier">bool</span></dt><dd><p>When True, all of the arrows will be the same length. This
-defaults to False, where the arrows will be different lengths
-depending on the values of u,v,w.</p>
-</dd>
-<dt><a href="#id53"><span class="problematic" id="id54">**</span></a>kwargs</dt><dd><p>Any additional keyword arguments are delegated to
-<code class="xref py py-class docutils literal notranslate"><span class="pre">LineCollection</span></code></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.quiver3D">
-<code class="sig-name descname">quiver3D</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">length=1</em>, <em class="sig-param">arrow_length_ratio=0.3</em>, <em class="sig-param">pivot='tail'</em>, <em class="sig-param">normalize=False</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#luxpy.utils.Axes3D.quiver3D" title="Permalink to this definition">¶</a></dt>
-<dd><p>ax.quiver(X, Y, Z, U, V, W, /, length=1, arrow_length_ratio=.3, pivot=’tail’, normalize=False, <a href="#id55"><span class="problematic" id="id56">**</span></a>kwargs)</p>
-<p>Plot a 3D field of arrows.</p>
-<p>The arguments could be array-like or scalars, so long as they
-they can be broadcast together. The arguments can also be
-masked arrays. If an element in any of argument is masked, then
-that corresponding quiver element will not be plotted.</p>
-<dl class="simple">
-<dt>X, Y, Z<span class="classifier">array-like</span></dt><dd><p>The x, y and z coordinates of the arrow locations (default is
-tail of arrow; see <em>pivot</em> kwarg)</p>
-</dd>
-<dt>U, V, W<span class="classifier">array-like</span></dt><dd><p>The x, y and z components of the arrow vectors</p>
-</dd>
-<dt>length<span class="classifier">float</span></dt><dd><p>The length of each quiver, default to 1.0, the unit is
-the same with the axes</p>
-</dd>
-<dt>arrow_length_ratio<span class="classifier">float</span></dt><dd><p>The ratio of the arrow head with respect to the quiver,
-default to 0.3</p>
-</dd>
-<dt>pivot<span class="classifier">{‘tail’, ‘middle’, ‘tip’}</span></dt><dd><p>The part of the arrow that is at the grid point; the arrow
-rotates about this point, hence the name <em>pivot</em>.
-Default is ‘tail’</p>
-</dd>
-<dt>normalize<span class="classifier">bool</span></dt><dd><p>When True, all of the arrows will be the same length. This
-defaults to False, where the arrows will be different lengths
-depending on the values of u,v,w.</p>
-</dd>
-<dt><a href="#id57"><span class="problematic" id="id58">**</span></a>kwargs</dt><dd><p>Any additional keyword arguments are delegated to
-<code class="xref py py-class docutils literal notranslate"><span class="pre">LineCollection</span></code></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="luxpy.utils.Axes3D.voxels">
-<code class="sig-name descname">voxels</code><span class="sig-paren">(</span><span class="optional">[</span><em class="sig-param">x</em>, <em class="sig-param">y</em>, <em class="sig-param">z</em>, <span class="optional">]</span><em class="sig-param">/</em>, <em class="sig-param">filled</em>, <em class="sig-param">facecolors=None</em>, <em class="sig-param">edgecolors=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mpl_toolkits/mplot3d/axes3d.html#Axes3D.voxels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.Axes3D.voxels" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plot a set of filled voxels</p>
-<p>All voxels are plotted as 1x1x1 cubes on the axis, with filled[0,0,0]
-placed with its lower corner at the origin. Occluded faces are not
-plotted.</p>
-<div class="versionadded">
-<p><span class="versionmodified added">New in version 2.1.</span></p>
-</div>
-<dl>
-<dt>filled<span class="classifier">3D np.array of bool</span></dt><dd><p>A 3d array of values, with truthy values indicating which voxels
-to fill</p>
-</dd>
-<dt>x, y, z<span class="classifier">3D np.array, optional</span></dt><dd><p>The coordinates of the corners of the voxels. This should broadcast
-to a shape one larger in every dimension than the shape of
-<cite>filled</cite>.  These can be used to plot non-cubic voxels.</p>
-<p>If not specified, defaults to increasing integers along each axis,
-like those returned by <code class="xref py py-func docutils literal notranslate"><span class="pre">indices()</span></code>.
-As indicated by the <code class="docutils literal notranslate"><span class="pre">/</span></code> in the function signature, these
-arguments can only be passed positionally.</p>
-</dd>
-<dt>facecolors, edgecolors<span class="classifier">array_like, optional</span></dt><dd><p>The color to draw the faces and edges of the voxels. Can only be
-passed as keyword arguments.
-This parameter can be:</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>A single color value, to color all voxels the same color. This
-can be either a string, or a 1D rgb/rgba array</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">None</span></code>, the default, to use a single color for the faces, and
-the style default for the edges.</p></li>
-<li><p>A 3D ndarray of color names, with each item the color for the
-corresponding voxel. The size must match the voxels.</p></li>
-<li><p>A 4D ndarray of rgb/rgba data, with the components along the
-last axis.</p></li>
-</ul>
-</div></blockquote>
-</dd>
-<dt>shade<span class="classifier">bool</span></dt><dd><p>Whether to shade the facecolors. Defaults to True. Shading is
-always disabled when <em>cmap</em> is specified.</p>
-<div class="versionadded">
-<p><span class="versionmodified added">New in version 3.1.</span></p>
-</div>
-</dd>
-<dt>lightsource<span class="classifier"><cite>~matplotlib.colors.LightSource</cite></span></dt><dd><p>The lightsource to use when <em>shade</em> is True.</p>
-<div class="versionadded">
-<p><span class="versionmodified added">New in version 3.1.</span></p>
-</div>
-</dd>
-<dt><a href="#id59"><span class="problematic" id="id60">**</span></a>kwargs</dt><dd><p>Additional keyword arguments to pass onto
-<code class="xref py py-func docutils literal notranslate"><span class="pre">Poly3DCollection()</span></code></p>
-</dd>
-</dl>
-<dl class="simple">
-<dt>faces<span class="classifier">dict</span></dt><dd><p>A dictionary indexed by coordinate, where <code class="docutils literal notranslate"><span class="pre">faces[i,j,k]</span></code> is a
-<cite>Poly3DCollection</cite> of the faces drawn for the voxel
-<code class="docutils literal notranslate"><span class="pre">filled[i,j,k]</span></code>. If no faces were drawn for a given voxel, either
-because it was not asked to be drawn, or it is fully occluded, then
-<code class="docutils literal notranslate"><span class="pre">(i,j,k)</span> <span class="pre">not</span> <span class="pre">in</span> <span class="pre">faces</span></code>.</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="function">
+<dl class="py function">
 <dt id="luxpy.utils.np2d">
-<code class="sig-prename descclassname">luxpy.utils.</code><code class="sig-name descname">np2d</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#np2d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.np2d" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.utils.</code><code class="sig-name descname">np2d</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#np2d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.np2d" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make a tuple, list or numpy array at least a 2D numpy array.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -1779,9 +215,9 @@ because it was not asked to be drawn, or it is fully occluded, then
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="luxpy.utils.np3d">
-<code class="sig-prename descclassname">luxpy.utils.</code><code class="sig-name descname">np3d</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#np3d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.np3d" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.utils.</code><code class="sig-name descname">np3d</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#np3d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.np3d" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make a tuple, list or numpy array at least a 3d numpy array.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -1803,9 +239,9 @@ because it was not asked to be drawn, or it is fully occluded, then
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="luxpy.utils.np2dT">
-<code class="sig-prename descclassname">luxpy.utils.</code><code class="sig-name descname">np2dT</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#np2dT"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.np2dT" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.utils.</code><code class="sig-name descname">np2dT</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#np2dT"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.np2dT" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make a tuple, list or numpy array at least a 2D numpy array and transpose.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -1827,9 +263,9 @@ because it was not asked to be drawn, or it is fully occluded, then
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="luxpy.utils.np3dT">
-<code class="sig-prename descclassname">luxpy.utils.</code><code class="sig-name descname">np3dT</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#np3dT"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.np3dT" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.utils.</code><code class="sig-name descname">np3dT</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#np3dT"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.np3dT" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make a tuple, list or numpy array at least a 3d numpy array and transposed first 2 axes.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -1852,9 +288,9 @@ because it was not asked to be drawn, or it is fully occluded, then
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="luxpy.utils.put_args_in_db">
-<code class="sig-prename descclassname">luxpy.utils.</code><code class="sig-name descname">put_args_in_db</code><span class="sig-paren">(</span><em class="sig-param">db</em>, <em class="sig-param">args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#put_args_in_db"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.put_args_in_db" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.utils.</code><code class="sig-name descname">put_args_in_db</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">db</span></em>, <em class="sig-param"><span class="n">args</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#put_args_in_db"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.put_args_in_db" title="Permalink to this definition">¶</a></dt>
 <dd><p>Takes the args with not-None input values of a function and overwrites 
 the values of the corresponding keys in dict db.
 | (args are collected with the built-in function locals(), 
@@ -1914,9 +350,9 @@ the values of the corresponding keys in dict db.
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="luxpy.utils.vec_to_dict">
-<code class="sig-prename descclassname">luxpy.utils.</code><code class="sig-name descname">vec_to_dict</code><span class="sig-paren">(</span><em class="sig-param">vec=None</em>, <em class="sig-param">dic={}</em>, <em class="sig-param">vsize=None</em>, <em class="sig-param">keys=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#vec_to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.vec_to_dict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.utils.</code><code class="sig-name descname">vec_to_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">vec</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">dic</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">vsize</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">keys</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#vec_to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.vec_to_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert dict to vec and vice versa.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -1957,9 +393,9 @@ the values of the corresponding keys in dict db.
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="luxpy.utils.getdata">
-<code class="sig-prename descclassname">luxpy.utils.</code><code class="sig-name descname">getdata</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">kind='np'</em>, <em class="sig-param">columns=None</em>, <em class="sig-param">header=None</em>, <em class="sig-param">sep='</em>, <em class="sig-param">'</em>, <em class="sig-param">datatype='S'</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">verbosity=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#getdata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.getdata" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.utils.</code><code class="sig-name descname">getdata</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">kind</span><span class="o">=</span><span class="default_value">'np'</span></em>, <em class="sig-param"><span class="n">columns</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">header</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">sep</span><span class="o">=</span><span class="default_value">','</span></em>, <em class="sig-param"><span class="n">datatype</span><span class="o">=</span><span class="default_value">'S'</span></em>, <em class="sig-param"><span class="n">copy</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">verbosity</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#getdata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.getdata" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get data from csv-file 
 or convert between pandas dataframe and numpy 2d-array.</p>
 <dl>
@@ -2034,9 +470,9 @@ or convert between pandas dataframe and numpy 2d-array.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="luxpy.utils.dictkv">
-<code class="sig-prename descclassname">luxpy.utils.</code><code class="sig-name descname">dictkv</code><span class="sig-paren">(</span><em class="sig-param">keys=None</em>, <em class="sig-param">values=None</em>, <em class="sig-param">ordered=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#dictkv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.dictkv" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.utils.</code><code class="sig-name descname">dictkv</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">keys</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">values</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ordered</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#dictkv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.dictkv" title="Permalink to this definition">¶</a></dt>
 <dd><p>Easy input of of keys and values into dict.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -2069,9 +505,9 @@ or convert between pandas dataframe and numpy 2d-array.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="luxpy.utils.meshblock">
-<code class="sig-prename descclassname">luxpy.utils.</code><code class="sig-name descname">meshblock</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">y</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#meshblock"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.meshblock" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.utils.</code><code class="sig-name descname">meshblock</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">y</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#meshblock"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.meshblock" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a meshed block from x and y.</p>
 <div class="line-block">
 <div class="line">(Similar to meshgrid, but axis = 0 is retained).</div>
@@ -2106,9 +542,9 @@ or convert between pandas dataframe and numpy 2d-array.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="luxpy.utils.asplit">
-<code class="sig-prename descclassname">luxpy.utils.</code><code class="sig-name descname">asplit</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#asplit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.asplit" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.utils.</code><code class="sig-name descname">asplit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#asplit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.asplit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Split data on last axis</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -2133,9 +569,9 @@ or convert between pandas dataframe and numpy 2d-array.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="luxpy.utils.ajoin">
-<code class="sig-prename descclassname">luxpy.utils.</code><code class="sig-name descname">ajoin</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#ajoin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.ajoin" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.utils.</code><code class="sig-name descname">ajoin</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#ajoin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.ajoin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Join data on last axis.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -2157,9 +593,9 @@ or convert between pandas dataframe and numpy 2d-array.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="luxpy.utils.broadcast_shape">
-<code class="sig-prename descclassname">luxpy.utils.</code><code class="sig-name descname">broadcast_shape</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">target_shape=None</em>, <em class="sig-param">expand_2d_to_3d=None</em>, <em class="sig-param">axis0_repeats=None</em>, <em class="sig-param">axis1_repeats=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#broadcast_shape"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.broadcast_shape" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.utils.</code><code class="sig-name descname">broadcast_shape</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">target_shape</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">expand_2d_to_3d</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">axis0_repeats</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">axis1_repeats</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#broadcast_shape"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.broadcast_shape" title="Permalink to this definition">¶</a></dt>
 <dd><p>Broadcasts shapes of data to a target_shape.</p>
 <div class="line-block">
 <div class="line">Useful for block/vector calc. when numpy fails to broadcast correctly.</div>
@@ -2214,9 +650,9 @@ or convert between pandas dataframe and numpy 2d-array.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="luxpy.utils.todim">
-<code class="sig-prename descclassname">luxpy.utils.</code><code class="sig-name descname">todim</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">tshape</em>, <em class="sig-param">add_axis=1</em>, <em class="sig-param">equal_shape=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#todim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.todim" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.utils.</code><code class="sig-name descname">todim</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">tshape</span></em>, <em class="sig-param"><span class="n">add_axis</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">equal_shape</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#todim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.todim" title="Permalink to this definition">¶</a></dt>
 <dd><p>Expand x to dims that are broadcast-compatable with shape of another array.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -2255,9 +691,9 @@ or convert between pandas dataframe and numpy 2d-array.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="luxpy.utils.write_to_excel">
-<code class="sig-prename descclassname">luxpy.utils.</code><code class="sig-name descname">write_to_excel</code><span class="sig-paren">(</span><em class="sig-param">filename</em>, <em class="sig-param">df</em>, <em class="sig-param">sheet_name='Sheet1'</em>, <em class="sig-param">startrow=None</em>, <em class="sig-param">truncate_sheet=False</em>, <em class="sig-param">**to_excel_kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#write_to_excel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.write_to_excel" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.utils.</code><code class="sig-name descname">write_to_excel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">df</span></em>, <em class="sig-param"><span class="n">sheet_name</span><span class="o">=</span><span class="default_value">'Sheet1'</span></em>, <em class="sig-param"><span class="n">startrow</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">truncate_sheet</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">to_excel_kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#write_to_excel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.write_to_excel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Writes a DataFrame to an existing Excel file into a specified sheet.
 | If [filename] doesn’t exist, then this function will create it.</p>
 <dl>
@@ -2308,9 +744,9 @@ or convert between pandas dataframe and numpy 2d-array.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="luxpy.utils.show_luxpy_tree">
-<code class="sig-prename descclassname">luxpy.utils.</code><code class="sig-name descname">show_luxpy_tree</code><span class="sig-paren">(</span><em class="sig-param">omit=['.pyc', '__pycache__', '.txt', '.dat', '.csv', '.npz', '.png', '.jpg', '.md', '.pdf', '.ini', '.log', '.rar', 'drivers', 'SDK_', 'dll', 'bak']</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#show_luxpy_tree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.show_luxpy_tree" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.utils.</code><code class="sig-name descname">show_luxpy_tree</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">omit</span><span class="o">=</span><span class="default_value">['.pyc', '__pycache__', '.txt', '.dat', '.csv', '.npz', '.png', '.jpg', '.md', '.pdf', '.ini', '.log', '.rar', 'drivers', 'SDK_', 'dll', 'bak']</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#show_luxpy_tree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.show_luxpy_tree" title="Permalink to this definition">¶</a></dt>
 <dd><p>Show luxpy foler tree.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -2326,9 +762,9 @@ or convert between pandas dataframe and numpy 2d-array.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="luxpy.utils.is_importable">
-<code class="sig-prename descclassname">luxpy.utils.</code><code class="sig-name descname">is_importable</code><span class="sig-paren">(</span><em class="sig-param">string</em>, <em class="sig-param">try_pip_install=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#is_importable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.is_importable" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.utils.</code><code class="sig-name descname">is_importable</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">string</span></em>, <em class="sig-param"><span class="n">try_pip_install</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#is_importable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.is_importable" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check if string is importable/loadable. If it doesn’t then try to ‘pip install’ it using subprocess.
 Returns None if succesful, otherwise throws and error or outputs False.</p>
 <dl>
@@ -2357,9 +793,9 @@ Returns None if succesful, otherwise throws and error or outputs False.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="luxpy.utils.get_function_kwargs">
-<code class="sig-prename descclassname">luxpy.utils.</code><code class="sig-name descname">get_function_kwargs</code><span class="sig-paren">(</span><em class="sig-param">f</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#get_function_kwargs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.get_function_kwargs" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.utils.</code><code class="sig-name descname">get_function_kwargs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">f</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#get_function_kwargs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.get_function_kwargs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get dictionary of a function’s keyword arguments and their default values.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -2382,9 +818,9 @@ Returns None if succesful, otherwise throws and error or outputs False.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="luxpy.utils.profile_fcn">
-<code class="sig-prename descclassname">luxpy.utils.</code><code class="sig-name descname">profile_fcn</code><span class="sig-paren">(</span><em class="sig-param">fcn</em>, <em class="sig-param">profile=True</em>, <em class="sig-param">sort_stats='tottime'</em>, <em class="sig-param">output_file=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#profile_fcn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.profile_fcn" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.utils.</code><code class="sig-name descname">profile_fcn</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fcn</span></em>, <em class="sig-param"><span class="n">profile</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">sort_stats</span><span class="o">=</span><span class="default_value">'tottime'</span></em>, <em class="sig-param"><span class="n">output_file</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#profile_fcn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.utils.profile_fcn" title="Permalink to this definition">¶</a></dt>
 <dd><p>Profile or time a function fcn.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">

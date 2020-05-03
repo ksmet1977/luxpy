@@ -333,9 +333,9 @@ as a dict.</p>
 </dl>
 </div></blockquote>
 <hr class="docutils" />
-<dl class="function">
+<dl class="py function">
 <dt id="luxpy.math.minimizebnd">
-<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">minimizebnd</code><span class="sig-paren">(</span><em class="sig-param">fun</em>, <em class="sig-param">x0</em>, <em class="sig-param">args=()</em>, <em class="sig-param">method='nelder-mead'</em>, <em class="sig-param">use_bnd=True</em>, <em class="sig-param">bounds=(None</em>, <em class="sig-param">None)</em>, <em class="sig-param">options=None</em>, <em class="sig-param">x0_vsize=None</em>, <em class="sig-param">x0_keys=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/minimizebnd.html#minimizebnd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.minimizebnd" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">minimizebnd</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fun</span></em>, <em class="sig-param"><span class="n">x0</span></em>, <em class="sig-param"><span class="n">args</span><span class="o">=</span><span class="default_value">()</span></em>, <em class="sig-param"><span class="n">method</span><span class="o">=</span><span class="default_value">'nelder-mead'</span></em>, <em class="sig-param"><span class="n">use_bnd</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">bounds</span><span class="o">=</span><span class="default_value">None, None</span></em>, <em class="sig-param"><span class="n">options</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">x0_vsize</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">x0_keys</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/minimizebnd.html#minimizebnd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.minimizebnd" title="Permalink to this definition">¶</a></dt>
 <dd><div class="line-block">
 <div class="line">Minimization function that allows for bounds on any type of method in </div>
 <div class="line">SciPy’s minimize function by transforming the parameters values </div>
@@ -390,9 +390,9 @@ as a dict.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="luxpy.math.normalize_3x3_matrix">
-<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">normalize_3x3_matrix</code><span class="sig-paren">(</span><em class="sig-param">M</em>, <em class="sig-param">xyz0=array([[1.0000e+00</em>, <em class="sig-param">1.0000e+00</em>, <em class="sig-param">1.0000e+00]])</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#normalize_3x3_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.normalize_3x3_matrix" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">normalize_3x3_matrix</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">M</span></em>, <em class="sig-param"><span class="n">xyz0</span><span class="o">=</span><span class="default_value">array([[1.0, 1.0, 1.0]])</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#normalize_3x3_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.normalize_3x3_matrix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Normalize 3x3 matrix M to xyz0 – &gt; [1,1,1]</p>
 <div class="line-block">
 <div class="line">If M.shape == (1,9): M is reshaped to (3,3)</div>
@@ -422,9 +422,9 @@ as a dict.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="luxpy.math.symmM_to_posdefM">
-<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">symmM_to_posdefM</code><span class="sig-paren">(</span><em class="sig-param">A=None</em>, <em class="sig-param">atol=1e-09</em>, <em class="sig-param">rtol=1e-09</em>, <em class="sig-param">method='make'</em>, <em class="sig-param">forcesymm=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#symmM_to_posdefM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.symmM_to_posdefM" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">symmM_to_posdefM</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">A</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">atol</span><span class="o">=</span><span class="default_value">1e-09</span></em>, <em class="sig-param"><span class="n">rtol</span><span class="o">=</span><span class="default_value">1e-09</span></em>, <em class="sig-param"><span class="n">method</span><span class="o">=</span><span class="default_value">'make'</span></em>, <em class="sig-param"><span class="n">forcesymm</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#symmM_to_posdefM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.symmM_to_posdefM" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert a symmetric matrix to a positive definite one.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -478,9 +478,9 @@ MATLAB code.
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="luxpy.math.check_symmetric">
-<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">check_symmetric</code><span class="sig-paren">(</span><em class="sig-param">A</em>, <em class="sig-param">atol=1e-09</em>, <em class="sig-param">rtol=1e-09</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#check_symmetric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.check_symmetric" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">check_symmetric</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">A</span></em>, <em class="sig-param"><span class="n">atol</span><span class="o">=</span><span class="default_value">1e-09</span></em>, <em class="sig-param"><span class="n">rtol</span><span class="o">=</span><span class="default_value">1e-09</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#check_symmetric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.check_symmetric" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check if A is symmetric.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -515,9 +515,9 @@ MATLAB code.
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="luxpy.math.check_posdef">
-<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">check_posdef</code><span class="sig-paren">(</span><em class="sig-param">A</em>, <em class="sig-param">atol=1e-09</em>, <em class="sig-param">rtol=1e-09</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#check_posdef"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.check_posdef" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">check_posdef</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">A</span></em>, <em class="sig-param"><span class="n">atol</span><span class="o">=</span><span class="default_value">1e-09</span></em>, <em class="sig-param"><span class="n">rtol</span><span class="o">=</span><span class="default_value">1e-09</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#check_posdef"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.check_posdef" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checks positive definiteness of a matrix via Cholesky.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -552,9 +552,9 @@ MATLAB code.
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="luxpy.math.positive_arctan">
-<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">positive_arctan</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">y</em>, <em class="sig-param">htype='deg'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#positive_arctan"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.positive_arctan" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">positive_arctan</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">y</span></em>, <em class="sig-param"><span class="n">htype</span><span class="o">=</span><span class="default_value">'deg'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#positive_arctan"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.positive_arctan" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate positive angle (0°-360° or 0 - 2*pi rad.) from x and y.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -590,9 +590,9 @@ MATLAB code.
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="luxpy.math.line_intersect">
-<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">line_intersect</code><span class="sig-paren">(</span><em class="sig-param">a1</em>, <em class="sig-param">a2</em>, <em class="sig-param">b1</em>, <em class="sig-param">b2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#line_intersect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.line_intersect" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">line_intersect</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a1</span></em>, <em class="sig-param"><span class="n">a2</span></em>, <em class="sig-param"><span class="n">b1</span></em>, <em class="sig-param"><span class="n">b2</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#line_intersect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.line_intersect" title="Permalink to this definition">¶</a></dt>
 <dd><p>Line intersections of series of two line segments a and b.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -635,9 +635,9 @@ MATLAB code.
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="luxpy.math.erfinv">
-<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">erfinv</code><span class="sig-paren">(</span><em class="sig-param">y</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scipy/special/_basic.html#erfinv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.erfinv" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">erfinv</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">y</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scipy/special/_basic.html#erfinv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.erfinv" title="Permalink to this definition">¶</a></dt>
 <dd><p>Inverse of the error function erf.</p>
 <p>Computes the inverse of the error function.</p>
 <p>In complex domain, there is no unique complex number w satisfying erf(w)=z.
@@ -671,9 +671,9 @@ there is a unique real number satisfying erf(erfinv(x)) = x.</p>
 </div>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="luxpy.math.histogram">
-<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">histogram</code><span class="sig-paren">(</span><em class="sig-param">a</em>, <em class="sig-param">bins=10</em>, <em class="sig-param">bin_center=False</em>, <em class="sig-param">range=None</em>, <em class="sig-param">normed=False</em>, <em class="sig-param">weights=None</em>, <em class="sig-param">density=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#histogram"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.histogram" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">histogram</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">bins</span><span class="o">=</span><span class="default_value">10</span></em>, <em class="sig-param"><span class="n">bin_center</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">range</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">normed</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">weights</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">density</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#histogram"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.histogram" title="Permalink to this definition">¶</a></dt>
 <dd><p>Histogram function that can take as bins either the center (cfr. matlab hist) or bin-edges.</p>
 <dl>
 <dt>Args: </dt><dd><dl class="field-list">
@@ -707,9 +707,9 @@ there is a unique real number satisfying erf(erfinv(x)) = x.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="luxpy.math.pol2cart">
-<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">pol2cart</code><span class="sig-paren">(</span><em class="sig-param">theta</em>, <em class="sig-param">r=None</em>, <em class="sig-param">htype='deg'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#pol2cart"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.pol2cart" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">pol2cart</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">theta</span></em>, <em class="sig-param"><span class="n">r</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">htype</span><span class="o">=</span><span class="default_value">'deg'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#pol2cart"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.pol2cart" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert Cartesion to polar coordinates.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -743,9 +743,9 @@ there is a unique real number satisfying erf(erfinv(x)) = x.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="luxpy.math.cart2pol">
-<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">cart2pol</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">y=None</em>, <em class="sig-param">htype='deg'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#cart2pol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.cart2pol" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">cart2pol</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">y</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">htype</span><span class="o">=</span><span class="default_value">'deg'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#cart2pol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.cart2pol" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert Cartesion to polar coordinates.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -779,9 +779,9 @@ there is a unique real number satisfying erf(erfinv(x)) = x.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="luxpy.math.spher2cart">
-<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">spher2cart</code><span class="sig-paren">(</span><em class="sig-param">theta</em>, <em class="sig-param">phi</em>, <em class="sig-param">r=1.0</em>, <em class="sig-param">deg=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#spher2cart"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.spher2cart" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">spher2cart</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">theta</span></em>, <em class="sig-param"><span class="n">phi</span></em>, <em class="sig-param"><span class="n">r</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">deg</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#spher2cart"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.spher2cart" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert spherical to cartesian coordinates.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -818,9 +818,9 @@ there is a unique real number satisfying erf(erfinv(x)) = x.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="luxpy.math.cart2spher">
-<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">cart2spher</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">y</em>, <em class="sig-param">z</em>, <em class="sig-param">deg=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#cart2spher"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.cart2spher" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">cart2spher</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">y</span></em>, <em class="sig-param"><span class="n">z</span></em>, <em class="sig-param"><span class="n">deg</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#cart2spher"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.cart2spher" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert cartesian to spherical coordinates.</p>
 <dl>
 <dt>Args:        </dt><dd><dl class="field-list">
@@ -857,9 +857,9 @@ there is a unique real number satisfying erf(erfinv(x)) = x.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="luxpy.math.bvgpdf">
-<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">bvgpdf</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">y=None</em>, <em class="sig-param">mu=None</em>, <em class="sig-param">sigmainv=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#bvgpdf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.bvgpdf" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">bvgpdf</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">y</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">mu</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">sigmainv</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#bvgpdf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.bvgpdf" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evaluate bivariate Gaussian probability density function (BVGPDF)</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -903,9 +903,9 @@ there is a unique real number satisfying erf(erfinv(x)) = x.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="luxpy.math.mahalanobis2">
-<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">mahalanobis2</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">y=None</em>, <em class="sig-param">z=None</em>, <em class="sig-param">mu=None</em>, <em class="sig-param">sigmainv=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#mahalanobis2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.mahalanobis2" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">mahalanobis2</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">y</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">z</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">mu</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">sigmainv</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#mahalanobis2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.mahalanobis2" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evaluate the squared mahalanobis distance</p>
 <dl>
 <dt>Args: </dt><dd><dl class="field-list">
@@ -956,9 +956,9 @@ mahalanobis ellipse, optional. </div>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="luxpy.math.dot23">
-<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">dot23</code><span class="sig-paren">(</span><em class="sig-param">A</em>, <em class="sig-param">B</em>, <em class="sig-param">keepdims=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#dot23"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.dot23" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">dot23</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">A</span></em>, <em class="sig-param"><span class="n">B</span></em>, <em class="sig-param"><span class="n">keepdims</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#dot23"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.dot23" title="Permalink to this definition">¶</a></dt>
 <dd><p>Dot product of a 2-d ndarray with a (N x K x L) 3-d ndarray 
 using einsum().</p>
 <dl>
@@ -986,9 +986,9 @@ using einsum().</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="luxpy.math.rms">
-<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">rms</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">axis=0</em>, <em class="sig-param">keepdims=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#rms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.rms" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">rms</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">axis</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">keepdims</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#rms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.rms" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate root-mean-square along axis.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -1022,9 +1022,9 @@ using einsum().</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="luxpy.math.geomean">
-<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">geomean</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">axis=0</em>, <em class="sig-param">keepdims=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#geomean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.geomean" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">geomean</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">axis</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">keepdims</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#geomean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.geomean" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate geometric mean along axis.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -1058,9 +1058,9 @@ using einsum().</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="luxpy.math.polyarea">
-<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">polyarea</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">y</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#polyarea"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.polyarea" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">polyarea</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">y</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#polyarea"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.polyarea" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates area of polygon.</p>
 <div class="line-block">
 <div class="line">First coordinate should also be last.</div>
@@ -1090,9 +1090,9 @@ using einsum().</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="luxpy.math.magnitude_v">
-<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">magnitude_v</code><span class="sig-paren">(</span><em class="sig-param">v</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#magnitude_v"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.magnitude_v" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">magnitude_v</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">v</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#magnitude_v"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.magnitude_v" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates magnitude of vector.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -1114,9 +1114,9 @@ using einsum().</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="luxpy.math.angle_v1v2">
-<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">angle_v1v2</code><span class="sig-paren">(</span><em class="sig-param">v1</em>, <em class="sig-param">v2</em>, <em class="sig-param">htype='deg'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#angle_v1v2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.angle_v1v2" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">angle_v1v2</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">v1</span></em>, <em class="sig-param"><span class="n">v2</span></em>, <em class="sig-param"><span class="n">htype</span><span class="o">=</span><span class="default_value">'deg'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#angle_v1v2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.angle_v1v2" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates angle between two vectors.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -1149,9 +1149,9 @@ using einsum().</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="luxpy.math.v_to_cik">
-<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">v_to_cik</code><span class="sig-paren">(</span><em class="sig-param">v</em>, <em class="sig-param">inverse=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#v_to_cik"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.v_to_cik" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">v_to_cik</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">v</span></em>, <em class="sig-param"><span class="n">inverse</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#v_to_cik"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.v_to_cik" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate 2x2 ‘(covariance matrix)^-1’ elements cik</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -1184,9 +1184,9 @@ using einsum().</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="luxpy.math.cik_to_v">
-<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">cik_to_v</code><span class="sig-paren">(</span><em class="sig-param">cik</em>, <em class="sig-param">xyc=None</em>, <em class="sig-param">inverse=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#cik_to_v"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.cik_to_v" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">cik_to_v</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cik</span></em>, <em class="sig-param"><span class="n">xyc</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">inverse</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#cik_to_v"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.cik_to_v" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate v-format ellipse descriptor from 2x2 ‘covariance matrix’^-1 cik</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -1219,9 +1219,9 @@ using einsum().</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="luxpy.math.fmod">
-<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">fmod</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">y</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#fmod"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.fmod" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">fmod</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">y</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#fmod"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.fmod" title="Permalink to this definition">¶</a></dt>
 <dd><p>Floating point modulus</p>
 <div class="line-block">
 <div class="line">e.g., fmod(theta, np.pi * 2) would keep an angle in [0, 2pi]</div>
@@ -1249,9 +1249,9 @@ using einsum().</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="luxpy.math.remove_outliers">
-<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">remove_outliers</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">alpha=0.01</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#remove_outliers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.remove_outliers" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">remove_outliers</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">alpha</span><span class="o">=</span><span class="default_value">0.01</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#remove_outliers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.remove_outliers" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove multivariate outliers from data when outside of alpha-level confidence ellipsoid.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -1279,9 +1279,9 @@ using einsum().</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="luxpy.math.fit_ellipse">
-<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">fit_ellipse</code><span class="sig-paren">(</span><em class="sig-param">xy</em>, <em class="sig-param">center_on_mean_xy=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#fit_ellipse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.fit_ellipse" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">fit_ellipse</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xy</span></em>, <em class="sig-param"><span class="n">center_on_mean_xy</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#fit_ellipse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.fit_ellipse" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fit an ellipse to supplied data points.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -1316,9 +1316,9 @@ pp 253–257, Vienna, 1996.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="luxpy.math.fit_cov_ellipse">
-<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">fit_cov_ellipse</code><span class="sig-paren">(</span><em class="sig-param">xy</em>, <em class="sig-param">alpha=0.05</em>, <em class="sig-param">pdf='chi2'</em>, <em class="sig-param">SE=False</em>, <em class="sig-param">robust=False</em>, <em class="sig-param">robust_alpha=0.01</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#fit_cov_ellipse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.fit_cov_ellipse" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">fit_cov_ellipse</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xy</span></em>, <em class="sig-param"><span class="n">alpha</span><span class="o">=</span><span class="default_value">0.05</span></em>, <em class="sig-param"><span class="n">pdf</span><span class="o">=</span><span class="default_value">'chi2'</span></em>, <em class="sig-param"><span class="n">SE</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">robust</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">robust_alpha</span><span class="o">=</span><span class="default_value">0.01</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#fit_cov_ellipse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.fit_cov_ellipse" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fit covariance ellipse to xy data.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -1378,9 +1378,9 @@ pp 253–257, Vienna, 1996.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="luxpy.math.in_hull">
-<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">in_hull</code><span class="sig-paren">(</span><em class="sig-param">p</em>, <em class="sig-param">hull</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#in_hull"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.in_hull" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">in_hull</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">p</span></em>, <em class="sig-param"><span class="n">hull</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#in_hull"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.in_hull" title="Permalink to this definition">¶</a></dt>
 <dd><p>Test if points in <cite>p</cite> are in <cite>hull</cite></p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -1409,9 +1409,9 @@ pp 253–257, Vienna, 1996.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="luxpy.math.interp1">
-<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">interp1</code><span class="sig-paren">(</span><em class="sig-param">X, Y, Xnew, kind='linear', ext='extrapolate', w=None, bbox=[None, None], check_finite=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#interp1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.interp1" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">interp1</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">Y</span></em>, <em class="sig-param"><span class="n">Xnew</span></em>, <em class="sig-param"><span class="n">kind</span><span class="o">=</span><span class="default_value">'linear'</span></em>, <em class="sig-param"><span class="n">ext</span><span class="o">=</span><span class="default_value">'extrapolate'</span></em>, <em class="sig-param"><span class="n">w</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">bbox</span><span class="o">=</span><span class="default_value">[None, None]</span></em>, <em class="sig-param"><span class="n">check_finite</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#interp1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.interp1" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform a 1-dimensional linear interpolation (wrapper around scipy.interpolate.InterpolatedUnivariateSpline).</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -1455,9 +1455,9 @@ pp 253–257, Vienna, 1996.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="luxpy.math.ndinterp1">
-<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">ndinterp1</code><span class="sig-paren">(</span><em class="sig-param">X</em>, <em class="sig-param">Y</em>, <em class="sig-param">Xnew</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#ndinterp1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.ndinterp1" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">ndinterp1</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">Y</span></em>, <em class="sig-param"><span class="n">Xnew</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#ndinterp1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.ndinterp1" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform nd-dimensional linear interpolation using Delaunay triangulation.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -1491,9 +1491,9 @@ pp 253–257, Vienna, 1996.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="luxpy.math.ndinterp1_scipy">
-<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">ndinterp1_scipy</code><span class="sig-paren">(</span><em class="sig-param">X</em>, <em class="sig-param">Y</em>, <em class="sig-param">Xnew</em>, <em class="sig-param">fill_value=nan</em>, <em class="sig-param">rescale=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#ndinterp1_scipy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.ndinterp1_scipy" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">ndinterp1_scipy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">Y</span></em>, <em class="sig-param"><span class="n">Xnew</span></em>, <em class="sig-param"><span class="n">fill_value</span><span class="o">=</span><span class="default_value">nan</span></em>, <em class="sig-param"><span class="n">rescale</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#ndinterp1_scipy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.ndinterp1_scipy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform a n-dimensional linear interpolation (wrapper around scipy.interpolate.LinearNDInterpolator).</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -1541,9 +1541,9 @@ pp 253–257, Vienna, 1996.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="luxpy.math.box_m">
-<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">box_m</code><span class="sig-paren">(</span><em class="sig-param">*X</em>, <em class="sig-param">ni=None</em>, <em class="sig-param">verbosity=0</em>, <em class="sig-param">robust=False</em>, <em class="sig-param">robust_alpha=0.01</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#box_m"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.box_m" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">box_m</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">X</span></em>, <em class="sig-param"><span class="n">ni</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">verbosity</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">robust</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">robust_alpha</span><span class="o">=</span><span class="default_value">0.01</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#box_m"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.box_m" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform Box’s M test (p&gt;=2) to check equality of covariance matrices or Bartlett’s test (p==1) for equality of variances.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -1610,9 +1610,9 @@ pp 253–257, Vienna, 1996.</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="luxpy.math.pitman_morgan">
-<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">pitman_morgan</code><span class="sig-paren">(</span><em class="sig-param">X</em>, <em class="sig-param">Y</em>, <em class="sig-param">verbosity=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#pitman_morgan"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.pitman_morgan" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">pitman_morgan</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">Y</span></em>, <em class="sig-param"><span class="n">verbosity</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#pitman_morgan"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.pitman_morgan" title="Permalink to this definition">¶</a></dt>
 <dd><p>Pitman-Morgan Test for the difference between correlated variances with paired samples.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">

@@ -12,3 +12,4 @@ Utils sub-package
    :members:
    :undoc-members:
    :private-members:
+   :exclude-members: np, sp, plt, imageio, odict, Axes3D
