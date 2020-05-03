@@ -37,7 +37,9 @@ spdbuild/
  :py:
 	* __init__.py
 	* spdbuilder.py 
-
+	* spdbuilder2020.py
+	* spdoptimzer2020.py 	
+	
 	
  :namespace: luxpy.spdbuild/
 

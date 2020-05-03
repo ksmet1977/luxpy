@@ -203,8 +203,8 @@
 <span class="sd"> :getCatObs(): Generate cone fundamentals for categorical observers.</span>
 <span class="sd"> </span>
 <span class="sd"> :get_lms_to_xyz_matrix(): Calculate lms to xyz conversion matrix for a specific field </span>
-<span class="sd">  size determined as a weighted combination of the 2° and 10° matrices.</span>
-<span class="sd">                            </span>
+<span class="sd">                           size determined as a weighted combination of the 2° and 10° matrices.</span>
+<span class="sd"> </span>
 <span class="sd"> :lmsb_to_xyzb(): Convert from LMS cone fundamentals to XYZ CMFs using conversion</span>
 <span class="sd">                  matrix determined as a weighted combination of the 2° and 10° matrices.</span>
 <span class="sd"> </span>
@@ -224,7 +224,7 @@
 <span class="sd"> Color Res. Appl. 41, 530–539. </span>
 <span class="sd"> &lt;https://onlinelibrary.wiley.com/doi/abs/10.1002/col.21975&gt;`_</span>
 <span class="sd"> </span>
-<span class="sd"> 3. `CIE, and CIE (2006). </span>
+<span class="sd"> 3. `CIE TC1-36 (2006). </span>
 <span class="sd"> Fundamental Chromaticity Diagram with Physiological Axes - Part I </span>
 <span class="sd"> (Vienna: CIE). </span>
 <span class="sd"> &lt;https://www.cie.co.at/publications/fundamental-chromaticity-diagram-physiological-axes-part-1&gt;`_ </span>
@@ -233,7 +233,7 @@
 <span class="sd"> &lt;https://www.rit.edu/cos/colorscience/re_AsanoObserverFunctions.php&gt;`_</span>
 <span class="sd"> </span>
 <span class="sd"> 5. `CIE TC1-97 cmf functions python code developed by Ivar Farup and Jan Hendrik Wold.</span>
-<span class="sd">  &lt;https://github.com/ifarup/ciefunctions&gt;`_</span>
+<span class="sd"> &lt;https://github.com/ifarup/ciefunctions&gt;`_</span>
 <span class="sd"> </span>
 <span class="sd">Notes</span>
 <span class="sd">-----</span>
@@ -242,7 +242,8 @@
 <span class="sd">    (Accessed April 20, 2018)  </span>
 <span class="sd">    2. Adjusted/extended following CIE TC1-97 Python code (and data):</span>
 <span class="sd">    github.com/ifarup/ciefunctions (Copyright (C) 2012-2017 Ivar Farup and Jan Henrik Wold)     </span>
-<span class="sd">    (Accessed Dec 18, 2019)    </span>
+<span class="sd">    (Accessed Dec 18, 2019)</span>
+
 <span class="sd">.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="n">math</span><span class="p">,</span> <span class="n">_WL3</span><span class="p">,</span> <span class="n">_CMF</span><span class="p">,</span> <span class="n">spd</span><span class="p">,</span> <span class="n">getwlr</span><span class="p">,</span> <span class="n">getwld</span><span class="p">,</span> <span class="n">cie_interp</span><span class="p">,</span> <span class="n">spd_to_power</span><span class="p">,</span> <span class="n">xyz_to_Yxy</span><span class="p">,</span> <span class="n">spd_normalize</span>
@@ -252,7 +253,7 @@
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;_DATA&#39;</span><span class="p">,</span><span class="s1">&#39;_DSRC_STD_DEF&#39;</span><span class="p">,</span> <span class="s1">&#39;_DSRC_LMS_ODENS_DEF&#39;</span><span class="p">,</span><span class="s1">&#39;_LMS_TO_XYZ_METHOD&#39;</span><span class="p">]</span>
 <span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;load_database&#39;</span><span class="p">,</span><span class="s1">&#39;init&#39;</span><span class="p">,</span><span class="s1">&#39;query_state&#39;</span><span class="p">]</span>
 <span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;cie2006cmfsEx&#39;</span><span class="p">,</span><span class="s1">&#39;getMonteCarloParam&#39;</span><span class="p">,</span><span class="s1">&#39;genMonteCarloObs&#39;</span><span class="p">,</span><span class="s1">&#39;getCatObs&#39;</span><span class="p">]</span>
-<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;compute_cmfs&#39;</span><span class="p">,</span><span class="s1">&#39;plot_cmfs&#39;</span><span class="p">,</span><span class="s1">&#39;add_to_cmf_dict&#39;</span><span class="p">,</span><span class="s1">&#39;plot_cmfs&#39;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;compute_cmfs&#39;</span><span class="p">,</span><span class="s1">&#39;add_to_cmf_dict&#39;</span><span class="p">,</span><span class="s1">&#39;plot_cmfs&#39;</span><span class="p">]</span>
 
 
 <span class="n">_DATA_PATH</span> <span class="o">=</span> <span class="n">_PKG_PATH</span> <span class="o">+</span> <span class="n">_SEP</span> <span class="o">+</span> <span class="s1">&#39;toolboxes&#39;</span> <span class="o">+</span> <span class="n">_SEP</span> <span class="o">+</span> <span class="s1">&#39;indvcmf&#39;</span> <span class="o">+</span> <span class="n">_SEP</span> <span class="o">+</span> <span class="s1">&#39;data&#39;</span> <span class="o">+</span> <span class="n">_SEP</span>  
@@ -1664,7 +1665,7 @@
 <span class="sd">            |      (no interpolation)]</span>
 <span class="sd">            </span>
 <span class="sd">    References:</span>
-<span class="sd">         1. `Asano Y, Fairchild MD, and Blondé L (2016). </span>
+<span class="sd">         1. `Asano Y, Fairchild MD, and Blondé L, (2016), </span>
 <span class="sd">         Individual Colorimetric Observer Model. </span>
 <span class="sd">         PLoS One 11, 1–19. </span>
 <span class="sd">         &lt;http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0145671&gt;`_</span>
@@ -1674,7 +1675,7 @@
 <span class="sd">         Color Res. Appl. 41, 530–539. </span>
 <span class="sd">         &lt;https://onlinelibrary.wiley.com/doi/abs/10.1002/col.21975&gt;`_</span>
 <span class="sd">         </span>
-<span class="sd">         3. `CIE, and CIE (2006). </span>
+<span class="sd">         3. `CIE, TC1-36, (2006). </span>
 <span class="sd">         Fundamental Chromaticity Diagram with Physiological Axes - Part I </span>
 <span class="sd">         (Vienna: CIE). </span>
 <span class="sd">         &lt;http://www.cie.co.at/publications/fundamental-chromaticity-diagram-physiological-axes-part-1&gt;`_ </span>
@@ -1955,7 +1956,7 @@
 <span class="sd">            |      (no interpolation)]</span>
 <span class="sd">            </span>
 <span class="sd">    References:</span>
-<span class="sd">         1. `Asano Y, Fairchild MD, and Blondé L (2016). </span>
+<span class="sd">         1. `Asano Y, Fairchild MD, and Blondé L, (2016), </span>
 <span class="sd">         Individual Colorimetric Observer Model. </span>
 <span class="sd">         PLoS One 11, 1–19. </span>
 <span class="sd">         &lt;http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0145671&gt;`_</span>
@@ -1965,7 +1966,7 @@
 <span class="sd">         Color Res. Appl. 41, 530–539. </span>
 <span class="sd">         &lt;https://onlinelibrary.wiley.com/doi/abs/10.1002/col.21975&gt;`_</span>
 <span class="sd">         </span>
-<span class="sd">         3. `CIE, and CIE (2006). </span>
+<span class="sd">         3. `CIE TC1-36, (2006), </span>
 <span class="sd">         Fundamental Chromaticity Diagram with Physiological Axes - Part I </span>
 <span class="sd">         (Vienna: CIE). </span>
 <span class="sd">         &lt;http://www.cie.co.at/publications/fundamental-chromaticity-diagram-physiological-axes-part-1&gt;`_ </span>
@@ -2100,7 +2101,7 @@
 <span class="sd">            |   - vAll: dict with population physiological factors (see .keys()) </span>
 <span class="sd">            </span>
 <span class="sd">    References:</span>
-<span class="sd">         1. `Asano Y, Fairchild MD, and Blondé L (2016). </span>
+<span class="sd">         1. `Asano Y., Fairchild M.D., and Blondé L., (2016), </span>
 <span class="sd">         Individual Colorimetric Observer Model. </span>
 <span class="sd">         PLoS One 11, 1–19. </span>
 <span class="sd">         &lt;http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0145671&gt;`_</span>
@@ -2110,8 +2111,8 @@
 <span class="sd">         Color Res. Appl. 41, 530–539. </span>
 <span class="sd">         &lt;https://onlinelibrary.wiley.com/doi/abs/10.1002/col.21975&gt;`_</span>
 <span class="sd">         </span>
-<span class="sd">         3. `CIE, and CIE (2006). </span>
-<span class="sd">         Fundamental Chromaticity Diagram with Physiological Axes - Part I </span>
+<span class="sd">         3. `CIE TC1-36, (2006), </span>
+<span class="sd">         Fundamental Chromaticity Diagram with Physiological Axes - Part I. </span>
 <span class="sd">         (Vienna: CIE). </span>
 <span class="sd">         &lt;http://www.cie.co.at/publications/fundamental-chromaticity-diagram-physiological-axes-part-1&gt;`_ </span>
 <span class="sd">         </span>
@@ -2436,6 +2437,7 @@
     <span class="k">return</span> <span class="n">axh</span></div>
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">luxpy</span> <span class="k">as</span> <span class="nn">lx</span>
     <span class="n">init</span><span class="p">(</span><span class="n">use_my_round</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">use_sign_figs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">use_chop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">dsrc_lms_odens</span><span class="o">=</span><span class="s1">&#39;cietc197&#39;</span><span class="p">,</span><span class="n">lms_to_xyz_method</span><span class="o">=</span><span class="s1">&#39;cietc197&#39;</span><span class="p">)</span>
     <span class="n">xyz2b</span><span class="p">,</span><span class="n">M2</span> <span class="o">=</span> <span class="n">compute_cmfs</span><span class="p">(</span><span class="n">fieldsize</span><span class="o">=</span><span class="mf">2.1</span><span class="p">,</span><span class="n">age</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span><span class="n">out</span><span class="o">=</span><span class="s1">&#39;xyz,M&#39;</span><span class="p">,</span><span class="n">lms_to_xyz_method</span><span class="o">=</span><span class="s1">&#39;cietc197&#39;</span><span class="p">,</span><span class="n">norm_type</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">lx</span><span class="o">.</span><span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">lx</span><span class="o">.</span><span class="n">_CIE_E</span><span class="p">,</span><span class="n">relative</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">cieobs</span><span class="o">=</span><span class="n">xyz2b</span><span class="p">,</span><span class="n">K</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>

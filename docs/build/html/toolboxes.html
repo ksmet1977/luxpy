@@ -100,7 +100,7 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#indvcmf">indvcmf/</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#module-for-individual-observer-lms-cmfs-asano-2016">Module for Individual Observer lms-CMFs (Asano, 2016)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-for-individual-observer-lms-cmfs-asano-2016-and-cie-tc1-97">Module for Individual Observer lms-CMFs (Asano, 2016 and CIE TC1-97)</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#spdbuild">spdbuild/</a><ul>
@@ -630,36 +630,56 @@ Light. Res. Technol. 44, 516.</a></p>
 </dd>
 </dl>
 </div></blockquote>
-<span class="target" id="module-luxpy.toolboxes.indvcmf"></span><div class="section" id="module-for-individual-observer-lms-cmfs-asano-2016">
-<h3>Module for Individual Observer lms-CMFs (Asano, 2016)<a class="headerlink" href="#module-for-individual-observer-lms-cmfs-asano-2016" title="Permalink to this headline">¶</a></h3>
+<span class="target" id="module-luxpy.toolboxes.indvcmf"></span><div class="section" id="module-for-individual-observer-lms-cmfs-asano-2016-and-cie-tc1-97">
+<h3>Module for Individual Observer lms-CMFs (Asano, 2016 and CIE TC1-97)<a class="headerlink" href="#module-for-individual-observer-lms-cmfs-asano-2016-and-cie-tc1-97" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><dl class="field-list simple">
-<dt class="field-odd">_INDVCMF_DATA_PATH</dt>
+<dt class="field-odd">_DATA_PATH</dt>
 <dd class="field-odd"><p>path to data files</p>
 </dd>
-<dt class="field-even">_INDVCMF_DATA</dt>
+<dt class="field-even">_DATA</dt>
 <dd class="field-even"><p>Dict with required data</p>
 </dd>
-<dt class="field-odd">_INDVCMF_STD_DEV_ALL_PARAM</dt>
-<dd class="field-odd"><p>Dict with std. dev. model parameters</p>
+<dt class="field-odd">_DSRC_STD_DEF</dt>
+<dd class="field-odd"><p>default data source for stdev of physiological data (‘matlab’, ‘germany’)</p>
 </dd>
-<dt class="field-even">_INDVCMF_CATOBSPFCTR</dt>
-<dd class="field-even"><p>Categorical observer parameters.</p>
+<dt class="field-even">_DSRC_LMS_ODENS_DEF</dt>
+<dd class="field-even"><p>default data source for lms absorbances and optical densities (‘asano’, ‘cietc197’)</p>
 </dd>
-<dt class="field-odd">_INDVCMF_M_10d</dt>
-<dd class="field-odd"><p>xyz to 10° lms conversion matrix.</p>
+<dt class="field-odd">_LMS_TO_XYZ_METHOD</dt>
+<dd class="field-odd"><p>default method to calculate lms to xyz conversion matrix (‘asano’, ‘cietc197’)</p>
 </dd>
 <dt class="field-even">_WL_CRIT</dt>
 <dd class="field-even"><p>critical wavelength above which interpolation of S-cone data fails.</p>
 </dd>
 <dt class="field-odd">_WL</dt>
-<dd class="field-odd"><p>wavelengths of spectral data.</p>
+<dd class="field-odd"><p>default wavelengths of spectral data in INDVCMF_DATA.</p>
+</dd>
+<dt class="field-even">load_database()</dt>
+<dd class="field-even"><p>Load a database with parameters and data required by the Asano model.</p>
+</dd>
+<dt class="field-odd">init()</dt>
+<dd class="field-odd"><p>Initialize: load database required for Asano Individual Observer Model 
+into the default _DATA dict and set some options for rounding, 
+sign. figs and chopping small value to zero; for source data to use for 
+spectral data for LMS absorp. and optical densities, …</p>
+</dd>
+<dt class="field-even">query_state()</dt>
+<dd class="field-even"><p>print current settings for global variables.</p>
+</dd>
+<dt class="field-odd">compute_cmfs()</dt>
+<dd class="field-odd"><p>Generate Individual Observer CMFs (cone fundamentals) 
+based on CIE2006 cone fundamentals and published literature 
+on observer variability in color matching and 
+in physiological parameters (Use of Asano optical data and model; 
+or of CIE TC1-91 data and ‘variability’-extended model possible).</p>
 </dd>
 <dt class="field-even">cie2006cmfsEx()</dt>
 <dd class="field-even"><p>Generate Individual Observer CMFs (cone fundamentals) 
 based on CIE2006 cone fundamentals and published literature 
 on observer variability in color matching and 
-in physiological parameters.</p>
+in physiological parameters. (Use of Asano optical data and model; 
+or of CIE TC1-91 data and ‘variability’-extended model possible)</p>
 </dd>
 <dt class="field-odd">getMonteCarloParam()</dt>
 <dd class="field-odd"><p>Get dict with normally-distributed physiological 
@@ -677,37 +697,47 @@ certain age and field size.</p>
 <dd class="field-even"><p>Generate cone fundamentals for categorical observers.</p>
 </dd>
 <dt class="field-odd">get_lms_to_xyz_matrix()</dt>
-<dd class="field-odd"><p>Calculate lms to xyz conversion matrix for a 
-specific field size.</p>
+<dd class="field-odd"><p>Calculate lms to xyz conversion matrix for a specific field 
+size determined as a weighted combination of the 2° and 10° matrices.</p>
 </dd>
 <dt class="field-even">lmsb_to_xyzb()</dt>
-<dd class="field-even"><p>Convert from LMS cone fundamentals to XYZ CMF.</p>
+<dd class="field-even"><p>Convert from LMS cone fundamentals to XYZ CMFs using conversion
+matrix determined as a weighted combination of the 2° and 10° matrices.</p>
 </dd>
 <dt class="field-odd">add_to_cmf_dict()</dt>
 <dd class="field-odd"><p>Add set of cmfs to _CMF dict.</p>
+</dd>
+<dt class="field-even">plot_cmfs()</dt>
+<dd class="field-even"><p>Plot cmf set.</p>
 </dd>
 </dl>
 </div></blockquote>
 <div class="section" id="references">
 <h4>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h4>
 <blockquote>
-<div><p>1. <a class="reference external" href="http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0145671">Asano Y, Fairchild MD, and Blondé L (2016). 
+<div><p>1. <a class="reference external" href="https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0145671">Asano Y, Fairchild MD, and Blondé L (2016). 
 Individual Colorimetric Observer Model. 
 PLoS One 11, 1–19.</a></p>
 <p>2. <a class="reference external" href="https://onlinelibrary.wiley.com/doi/abs/10.1002/col.21975">Asano Y, Fairchild MD, Blondé L, and Morvan P (2016). 
 Color matching experiment for highlighting interobserver variability. 
 Color Res. Appl. 41, 530–539.</a></p>
-<p>3. <a class="reference external" href="http://www.cie.co.at/publications/fundamental-chromaticity-diagram-physiological-axes-part-1">CIE, and CIE (2006). 
+<p>3. <a class="reference external" href="https://www.cie.co.at/publications/fundamental-chromaticity-diagram-physiological-axes-part-1">CIE TC1-36 (2006). 
 Fundamental Chromaticity Diagram with Physiological Axes - Part I 
 (Vienna: CIE).</a></p>
 <p>4. <a class="reference external" href="https://www.rit.edu/cos/colorscience/re_AsanoObserverFunctions.php">Asano’s Individual Colorimetric Observer Model</a></p>
+<p>5. <a class="reference external" href="https://github.com/ifarup/ciefunctions">CIE TC1-97 cmf functions python code developed by Ivar Farup and Jan Hendrik Wold.</a></p>
 </div></blockquote>
 </div>
-<div class="section" id="note">
-<h4>Note<a class="headerlink" href="#note" title="Permalink to this headline">¶</a></h4>
-<p>Port of Matlab code from:
+<div class="section" id="notes">
+<h4>Notes<a class="headerlink" href="#notes" title="Permalink to this headline">¶</a></h4>
+<blockquote>
+<div><p>1. Port of Matlab code from: 
 <a class="reference external" href="https://www.rit.edu/cos/colorscience/re_AsanoObserverFunctions.php">https://www.rit.edu/cos/colorscience/re_AsanoObserverFunctions.php</a>
-(Accessed April 20, 2018)</p>
+(Accessed April 20, 2018)  
+2. Adjusted/extended following CIE TC1-97 Python code (and data):
+github.com/ifarup/ciefunctions (Copyright (C) 2012-2017 Ivar Farup and Jan Henrik Wold)     
+(Accessed Dec 18, 2019)</p>
+</div></blockquote>
 <dl class="py function">
 <dt id="luxpy.toolboxes.indvcmf.load_database">
 <code class="sig-prename descclassname">luxpy.toolboxes.indvcmf.</code><code class="sig-name descname">load_database</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">wl</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">dsrc_std</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">dsrc_lms_odens</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">path</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/indvcmf/individual_observer_cmf_model.html#load_database"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.indvcmf.load_database" title="Permalink to this definition">¶</a></dt>
@@ -1025,13 +1055,13 @@ on observer variability in color matching and in physiological parameters.</p>
 </dd>
 </dl>
 </dd>
-<dt>References:</dt><dd><p>1. <a class="reference external" href="http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0145671">Asano Y, Fairchild MD, and Blondé L (2016). 
+<dt>References:</dt><dd><p>1. <a class="reference external" href="http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0145671">Asano Y, Fairchild MD, and Blondé L, (2016), 
 Individual Colorimetric Observer Model. 
 PLoS One 11, 1–19.</a></p>
 <p>2. <a class="reference external" href="https://onlinelibrary.wiley.com/doi/abs/10.1002/col.21975">Asano Y, Fairchild MD, Blondé L, and Morvan P (2016). 
 Color matching experiment for highlighting interobserver variability. 
 Color Res. Appl. 41, 530–539.</a></p>
-<p>3. <a class="reference external" href="http://www.cie.co.at/publications/fundamental-chromaticity-diagram-physiological-axes-part-1">CIE, and CIE (2006). 
+<p>3. <a class="reference external" href="http://www.cie.co.at/publications/fundamental-chromaticity-diagram-physiological-axes-part-1">CIE TC1-36, (2006), 
 Fundamental Chromaticity Diagram with Physiological Axes - Part I 
 (Vienna: CIE).</a></p>
 <p>4. <a class="reference external" href="https://www.rit.edu/cos/colorscience/re_AsanoObserverFunctions.php">Asano’s Individual Colorimetric Observer Model</a></p>
@@ -1179,14 +1209,14 @@ for a population of observers.</p>
 </dd>
 </dl>
 </dd>
-<dt>References:</dt><dd><p>1. <a class="reference external" href="http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0145671">Asano Y, Fairchild MD, and Blondé L (2016). 
+<dt>References:</dt><dd><p>1. <a class="reference external" href="http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0145671">Asano Y., Fairchild M.D., and Blondé L., (2016), 
 Individual Colorimetric Observer Model. 
 PLoS One 11, 1–19.</a></p>
 <p>2. <a class="reference external" href="https://onlinelibrary.wiley.com/doi/abs/10.1002/col.21975">Asano Y, Fairchild MD, Blondé L, and Morvan P (2016). 
 Color matching experiment for highlighting interobserver variability. 
 Color Res. Appl. 41, 530–539.</a></p>
-<p>3. <a class="reference external" href="http://www.cie.co.at/publications/fundamental-chromaticity-diagram-physiological-axes-part-1">CIE, and CIE (2006). 
-Fundamental Chromaticity Diagram with Physiological Axes - Part I 
+<p>3. <a class="reference external" href="http://www.cie.co.at/publications/fundamental-chromaticity-diagram-physiological-axes-part-1">CIE TC1-36, (2006), 
+Fundamental Chromaticity Diagram with Physiological Axes - Part I. 
 (Vienna: CIE).</a></p>
 <p>4. <a class="reference external" href="https://www.rit.edu/cos/colorscience/re_AsanoObserverFunctions.php">Asano’s Individual Colorimetric Observer Model</a></p>
 </dd>
@@ -1454,13 +1484,13 @@ on observer variability in color matching and in physiological parameters.</p>
 </dd>
 </dl>
 </dd>
-<dt>References:</dt><dd><p>1. <a class="reference external" href="http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0145671">Asano Y, Fairchild MD, and Blondé L (2016). 
+<dt>References:</dt><dd><p>1. <a class="reference external" href="http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0145671">Asano Y, Fairchild MD, and Blondé L, (2016), 
 Individual Colorimetric Observer Model. 
 PLoS One 11, 1–19.</a></p>
 <p>2. <a class="reference external" href="https://onlinelibrary.wiley.com/doi/abs/10.1002/col.21975">Asano Y, Fairchild MD, Blondé L, and Morvan P (2016). 
 Color matching experiment for highlighting interobserver variability. 
 Color Res. Appl. 41, 530–539.</a></p>
-<p>3. <a class="reference external" href="http://www.cie.co.at/publications/fundamental-chromaticity-diagram-physiological-axes-part-1">CIE, and CIE (2006). 
+<p>3. <a class="reference external" href="http://www.cie.co.at/publications/fundamental-chromaticity-diagram-physiological-axes-part-1">CIE, TC1-36, (2006). 
 Fundamental Chromaticity Diagram with Physiological Axes - Part I 
 (Vienna: CIE).</a></p>
 <p>4. <a class="reference external" href="https://www.rit.edu/cos/colorscience/re_AsanoObserverFunctions.php">Asano’s Individual Colorimetric Observer Model</a></p>
@@ -1468,12 +1498,6 @@ Fundamental Chromaticity Diagram with Physiological Axes - Part I
 (by Ivar Farup and Jan Henrik Wold, (c) 2012-2017)</a></p>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="luxpy.toolboxes.indvcmf.plot_cmfs">
-<code class="sig-prename descclassname">luxpy.toolboxes.indvcmf.</code><code class="sig-name descname">plot_cmfs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cmf</span></em>, <em class="sig-param"><span class="n">axh</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/indvcmf/individual_observer_cmf_model.html#plot_cmfs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.indvcmf.plot_cmfs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plot cmf set.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -1512,8 +1536,8 @@ Fundamental Chromaticity Diagram with Physiological Axes - Part I
 </dd></dl>
 
 <dl class="py function">
-<dt id="id0">
-<code class="sig-prename descclassname">luxpy.toolboxes.indvcmf.</code><code class="sig-name descname">plot_cmfs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cmf</span></em>, <em class="sig-param"><span class="n">axh</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/indvcmf/individual_observer_cmf_model.html#plot_cmfs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#id0" title="Permalink to this definition">¶</a></dt>
+<dt id="luxpy.toolboxes.indvcmf.plot_cmfs">
+<code class="sig-prename descclassname">luxpy.toolboxes.indvcmf.</code><code class="sig-name descname">plot_cmfs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cmf</span></em>, <em class="sig-param"><span class="n">axh</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/indvcmf/individual_observer_cmf_model.html#plot_cmfs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.indvcmf.plot_cmfs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot cmf set.</p>
 </dd></dl>
 
@@ -1528,6 +1552,8 @@ Fundamental Chromaticity Diagram with Physiological Axes - Part I
 <dd class="field-odd"><ul class="simple">
 <li><p>__init__.py</p></li>
 <li><p>spdbuilder.py</p></li>
+<li><p>spdbuilder2020.py</p></li>
+<li><p>spdoptimzer2020.py</p></li>
 </ul>
 </dd>
 <dt class="field-even">namespace</dt>
@@ -1626,8 +1652,8 @@ primary constructor function. In contrast to spdbuild.py, it only supports the
 ‘3mixer’ algorithms for calculating the mixing contributions of the primaries.</p>
 </div></blockquote>
 </div></blockquote>
-<div class="section" id="id14">
-<h4>Functions<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="id13">
+<h4>Functions<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h4>
 <blockquote>
 <div><dl class="field-list simple">
 <dt class="field-odd">gaussian_prim_constructor</dt>
@@ -1650,8 +1676,8 @@ spectra or component spectrum model parameters.</p>
 </dl>
 </div></blockquote>
 </div>
-<div class="section" id="notes">
-<h4>Notes<a class="headerlink" href="#notes" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="id14">
+<h4>Notes<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h4>
 <blockquote>
 <div><ol class="arabic simple">
 <li><p>See examples below (in spdbuiler2020.’__main__’) for use.</p></li>

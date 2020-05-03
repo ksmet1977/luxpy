@@ -50,8 +50,8 @@ Module for Individual Observer lms-CMFs (Asano, 2016 and CIE TC1-97)
  :getCatObs(): Generate cone fundamentals for categorical observers.
  
  :get_lms_to_xyz_matrix(): Calculate lms to xyz conversion matrix for a specific field 
-  size determined as a weighted combination of the 2° and 10° matrices.
-                            
+                           size determined as a weighted combination of the 2° and 10° matrices.
+ 
  :lmsb_to_xyzb(): Convert from LMS cone fundamentals to XYZ CMFs using conversion
                   matrix determined as a weighted combination of the 2° and 10° matrices.
  
@@ -71,7 +71,7 @@ References
  Color Res. Appl. 41, 530–539. 
  <https://onlinelibrary.wiley.com/doi/abs/10.1002/col.21975>`_
  
- 3. `CIE, and CIE (2006). 
+ 3. `CIE TC1-36 (2006). 
  Fundamental Chromaticity Diagram with Physiological Axes - Part I 
  (Vienna: CIE). 
  <https://www.cie.co.at/publications/fundamental-chromaticity-diagram-physiological-axes-part-1>`_ 
@@ -80,7 +80,7 @@ References
  <https://www.rit.edu/cos/colorscience/re_AsanoObserverFunctions.php>`_
  
  5. `CIE TC1-97 cmf functions python code developed by Ivar Farup and Jan Hendrik Wold.
-  <https://github.com/ifarup/ciefunctions>`_
+ <https://github.com/ifarup/ciefunctions>`_
  
 Notes
 -----
@@ -89,7 +89,8 @@ Notes
     (Accessed April 20, 2018)  
     2. Adjusted/extended following CIE TC1-97 Python code (and data):
     github.com/ifarup/ciefunctions (Copyright (C) 2012-2017 Ivar Farup and Jan Henrik Wold)     
-    (Accessed Dec 18, 2019)    
+    (Accessed Dec 18, 2019)
+
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 from luxpy import math, _WL3, _CMF, spd, getwlr, getwld, cie_interp, spd_to_power, xyz_to_Yxy, spd_normalize
@@ -99,7 +100,7 @@ import warnings
 __all__ = ['_DATA','_DSRC_STD_DEF', '_DSRC_LMS_ODENS_DEF','_LMS_TO_XYZ_METHOD']
 __all__ += ['load_database','init','query_state']
 __all__ += ['cie2006cmfsEx','getMonteCarloParam','genMonteCarloObs','getCatObs']
-__all__ += ['compute_cmfs','plot_cmfs','add_to_cmf_dict','plot_cmfs']
+__all__ += ['compute_cmfs','add_to_cmf_dict','plot_cmfs']
 
 
 _DATA_PATH = _PKG_PATH + _SEP + 'toolboxes' + _SEP + 'indvcmf' + _SEP + 'data' + _SEP  
@@ -1511,7 +1512,7 @@ def compute_cmfs(fieldsize = 10, age = 32, wl = None,
             |      (no interpolation)]
             
     References:
-         1. `Asano Y, Fairchild MD, and Blondé L (2016). 
+         1. `Asano Y, Fairchild MD, and Blondé L, (2016), 
          Individual Colorimetric Observer Model. 
          PLoS One 11, 1–19. 
          <http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0145671>`_
@@ -1521,7 +1522,7 @@ def compute_cmfs(fieldsize = 10, age = 32, wl = None,
          Color Res. Appl. 41, 530–539. 
          <https://onlinelibrary.wiley.com/doi/abs/10.1002/col.21975>`_
          
-         3. `CIE, and CIE (2006). 
+         3. `CIE, TC1-36, (2006). 
          Fundamental Chromaticity Diagram with Physiological Axes - Part I 
          (Vienna: CIE). 
          <http://www.cie.co.at/publications/fundamental-chromaticity-diagram-physiological-axes-part-1>`_ 
@@ -1802,7 +1803,7 @@ def cie2006cmfsEx(age = 32,fieldsize = 10, wl = None,\
             |      (no interpolation)]
             
     References:
-         1. `Asano Y, Fairchild MD, and Blondé L (2016). 
+         1. `Asano Y, Fairchild MD, and Blondé L, (2016), 
          Individual Colorimetric Observer Model. 
          PLoS One 11, 1–19. 
          <http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0145671>`_
@@ -1812,7 +1813,7 @@ def cie2006cmfsEx(age = 32,fieldsize = 10, wl = None,\
          Color Res. Appl. 41, 530–539. 
          <https://onlinelibrary.wiley.com/doi/abs/10.1002/col.21975>`_
          
-         3. `CIE, and CIE (2006). 
+         3. `CIE TC1-36, (2006), 
          Fundamental Chromaticity Diagram with Physiological Axes - Part I 
          (Vienna: CIE). 
          <http://www.cie.co.at/publications/fundamental-chromaticity-diagram-physiological-axes-part-1>`_ 
@@ -1947,7 +1948,7 @@ def genMonteCarloObs(n_obs = 1, fieldsize = 10, list_Age = [32], wl = None,
             |   - vAll: dict with population physiological factors (see .keys()) 
             
     References:
-         1. `Asano Y, Fairchild MD, and Blondé L (2016). 
+         1. `Asano Y., Fairchild M.D., and Blondé L., (2016), 
          Individual Colorimetric Observer Model. 
          PLoS One 11, 1–19. 
          <http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0145671>`_
@@ -1957,8 +1958,8 @@ def genMonteCarloObs(n_obs = 1, fieldsize = 10, list_Age = [32], wl = None,
          Color Res. Appl. 41, 530–539. 
          <https://onlinelibrary.wiley.com/doi/abs/10.1002/col.21975>`_
          
-         3. `CIE, and CIE (2006). 
-         Fundamental Chromaticity Diagram with Physiological Axes - Part I 
+         3. `CIE TC1-36, (2006), 
+         Fundamental Chromaticity Diagram with Physiological Axes - Part I. 
          (Vienna: CIE). 
          <http://www.cie.co.at/publications/fundamental-chromaticity-diagram-physiological-axes-part-1>`_ 
          
@@ -2283,6 +2284,7 @@ def plot_cmfs(cmf,axh = None, **kwargs):
     return axh
 
 if __name__ == '__main__':
+    import luxpy as lx
     init(use_my_round=True,use_sign_figs=True,use_chop=True,dsrc_lms_odens='cietc197',lms_to_xyz_method='cietc197')
     xyz2b,M2 = compute_cmfs(fieldsize=2.1,age=32,out='xyz,M',lms_to_xyz_method='cietc197',norm_type=None)
     print(lx.spd_to_xyz(lx._CIE_E,relative=False,cieobs=xyz2b,K=1))
