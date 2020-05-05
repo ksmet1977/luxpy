@@ -325,7 +325,7 @@ def cie_interp(data,wl_new, kind = None, negative_values_allowed = False, extrap
                 #allrows_nans = False
                 if extrap_values[0] is None:
                     fill_value = (0,0)
-                elif extrap_values[0][:3] == 'ext':#(((type(extrap_values[0])==np.str_)|(type(extrap_values[0])==str)) and (extrap_values[0][:3]=='ext')):
+                elif (((type(extrap_values[0])==np.str_)|(type(extrap_values[0])==str)) and (extrap_values[0][:3]=='ext')):
                     fill_value = 'extrapolate'
                 else:
                     fill_value = (extrap_values[0],extrap_values[-1])
@@ -355,11 +355,12 @@ def cie_interp(data,wl_new, kind = None, negative_values_allowed = False, extrap
                     if extrap_values[0] is None:
                         Si_nonan[wl_new<wl_nonan[0]] = S_i_nonan[0]
                         Si_nonan[wl_new>wl_nonan[-1]] = S_i_nonan[-1]
-                    elif extrap_values[0][:3] == 'ext':#(((type(extrap_values[0])==np.str_)|(type(extrap_values[0])==str)) and (extrap_values[0][:3]=='ext')):
+                    elif (((type(extrap_values[0])==np.str_)|(type(extrap_values[0])==str)) and (extrap_values[0][:3]=='ext')):
                         pass
                     else:
                         Si_nonan[wl_new<wl_nonan[0]] = extrap_values[0]
                         Si_nonan[wl_new>wl_nonan[-1]] = extrap_values[-1]  
+                    
                     Si[i] = Si_nonan              
                 
             # No negative values allowed for spectra:    
