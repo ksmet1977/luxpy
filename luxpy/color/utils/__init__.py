@@ -19,6 +19,8 @@
 Module with functions related to plotting of color data
 =======================================================
 
+ :get_subplot_layout(): Calculate layout of multiple subplots.
+
  :plot_color_data(): Plot color data (local helper function)
 
  :plotDL(): Plot daylight locus. 
@@ -44,8 +46,20 @@ Module with functions related to plotting of color data
               <https://doi.org/10.1002/col.21793>`_
     
  :plotcircle(): Plot one or more concentric circles.
+ 
+ :plotellipse(): Plot one or more ellipses.
+     
+ :plot_chromaticity_diagram_colors(): Plot the chromaticity diagram colors.
+
+ :plot_spectrum_colors(): Plot spd with spectrum colors.
+ 
+ :plot_rfl_color_patches(): Create (and plot) an image with colored patches representing a set of reflectance spectra illuminated by a specified illuminant.
+ 
+ :plot_rgb_color_patches(): Create (and plot) an image with patches with specified rgb values.
+
 
 ===============================================================================
 """
 from .plotters import *
 __all__ = plotters.__all__
+

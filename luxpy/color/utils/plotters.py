@@ -53,14 +53,21 @@ Module with functions related to plotting of color data
 
  :plot_spectrum_colors(): Plot spd with spectrum colors.
  
+ :plot_rfl_color_patches(): Create (and plot) an image with colored patches representing a set of reflectance spectra illuminated by a specified illuminant.
+ 
+ :plot_rgb_color_patches(): Create (and plot) an image with patches with specified rgb values.
+ 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
-from luxpy import math, _CIEOBS, _CSPACE, _CSPACE_AXES, _CIE_ILLUMINANTS, _CMF, daylightlocus, colortf, Yxy_to_xyz, spd_to_xyz, cri_ref, xyz_to_srgb
+from luxpy import math, _CIEOBS, _CSPACE, _CSPACE_AXES, _CIE_ILLUMINANTS, _CMF, _CIE_D65, daylightlocus, colortf, Yxy_to_xyz, spd_to_xyz, cri_ref, xyz_to_srgb
 from luxpy.utils import np, plt,_EPS, asplit
 from matplotlib.patches import Polygon
 
-__all__ = ['get_subplot_layout','plotSL','plotDL','plotBB','plot_color_data','plotceruleanline','plotUH','plotcircle','plotellipse','plot_chromaticity_diagram_colors','plot_spectrum_colors']
+__all__ = ['get_subplot_layout','plotSL','plotDL','plotBB','plot_color_data',
+           'plotceruleanline','plotUH','plotcircle','plotellipse',
+           'plot_chromaticity_diagram_colors','plot_spectrum_colors',
+           'plot_rfl_color_patches','plot_rgb_color_patches']
 
 def get_subplot_layout(N, min_1xncols = 3):
     """
@@ -946,4 +953,86 @@ def plot_spectrum_colors(spd = None, spdmax = None,\
         return axh
     else:
         return None
+    
+#------------------------------------------------------------------------------
+def plot_rfl_color_patches(rfl, spd = None, cieobs = '1931_2', patch_shape = (100,100), patch_layout = None, ax = None, show = True):
+    """
+    Create (and plot) an image with colored patches representing a set of reflectance spectra illuminated by a specified illuminant.
+    
+    Args:
+        :rfl:
+            | ndarray with reflectance spectra
+        :spd:
+            | None, optional
+            | ndarray with illuminant spectral power distribution
+            | If None: _CIE_D65 is used.
+        :cieobs:
+            | '1931_2', optional
+            | CIE standard observer to use when converting rfl to xyz.
+        :patch_shape:
+            | (100,100), optional
+            | shape of each of the patches in the image
+        :patch_layout:
+            | None, optional
+            | If None: layout is calculated automatically to give a 'good' aspect ratio
+        :ax:
+            | None, optional
+            | Axes to plot the image in. If None: a new axes is created.
+        :show:
+            | True, optional
+            | If True: plot image in axes and return axes handle; else: return ndarray with image.
+            
+    Return:
+        :ax: or :imagae: 
+            | Axes is returned if show == True, else: ndarray with rgb image is returned.
+    """
+    if spd is None:
+        spd = _CIE_D65
+    xyz = spd_to_xyz(spd, rfl = rfl, cieobs = cieobs)[:,0,:]
+    rgb = xyz_to_srgb(xyz).astype('uint8')
+    return plot_rgb_color_patches(rgb, ax  = ax, patch_shape = patch_shape, patch_layout = patch_layout, show = show)
+
+def plot_rgb_color_patches(rgb, patch_shape = (100,100), patch_layout = None, ax = None, show = True):
+    """
+    Create (and plot) an image with patches with specified rgb values.
+    
+    Args:
+        :rgb:
+            | ndarray with rgb values for each of the patches
+        :patch_shape:
+            | (100,100), optional
+            | shape of each of the patches in the image
+        :patch_layout:
+            | None, optional
+            | If None: layout is calculated automatically to give a 'good' aspect ratio
+        :ax:
+            | None, optional
+            | Axes to plot the image in. If None: a new axes is created.
+        :show:
+            | True, optional
+            | If True: plot image in axes and return axes handle; else: return ndarray with image.
+            
+    Return:
+        :ax: or :imagae: 
+            | Axes is returned if show == True, else: ndarray with rgb image is returned.
+    """
+    if ax is None:
+        fig, ax = plt.subplots(1,1)
+        
+    if patch_layout is None:
+        patch_layout = get_subplot_layout(rgb.shape[0])
+    
+    image = np.zeros(np.hstack((np.array(patch_shape)*np.array(patch_layout),3)))
+    for i in range(rgb.shape[0]):
+        r, c = np.unravel_index(i,patch_layout)
+        R = int(r*patch_shape[0])
+        C = int(c*patch_shape[1])
+        image[R:R+patch_shape[0],C:C+patch_shape[1],:] = np.ones(np.hstack((patch_shape,3)))*rgb[i,None,:]
+
+    if show == False:
+        return image
+    else:
+        ax.imshow(image.astype('uint8'))
+        ax.axis('off')
+        return ax
 
