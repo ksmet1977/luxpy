@@ -172,12 +172,12 @@ def plot_hue_bins(hbins = 16, start_hue = 0.0, scalef = 100, \
             
             if axtype == 'polar':
                 if plot_edge_lines == True:
-                    ax.plot(edges[:,i],r[:,i]*1.2,color = 'grey',marker = 'None',linestyle = ':',linewidth = 3, markersize = 2)
+                    ax.plot(edges[:,i],r[:,i]*1.2,color = 'grey',marker = 'None',linestyle = ':',linewidth = 2, markersize = 2)
                 if plot_center_lines == True:
                     if np.mod(i,2) == 1:
-                        ax.plot(theta[:,i],r[:,i],color = c,marker = None,linestyle = '--',linewidth = 2)
+                        ax.plot(theta[:,i],r[:,i],color = c,marker = None,linestyle = '--',linewidth = 1)
                     else:
-                        ax.plot(theta[:,i],r[:,i],color = c,marker = 'o',linestyle = '-',linewidth = 3,markersize = 10)
+                        ax.plot(theta[:,i],r[:,i],color = c,marker = 'o',linestyle = '-',linewidth = 2,markersize = 10)
                 if plot_bin_colors == True:
                     bar = ax.bar(dM[i],r[1,i], width = dt[i],color = c,alpha=0.15)
                 if bin_labels is not None:
@@ -187,13 +187,13 @@ def plot_hue_bins(hbins = 16, start_hue = 0.0, scalef = 100, \
                     ax.set_yticklabels([])
             else:
                 if plot_edge_lines == True:
-                    ax.plot(hxe[:,i],hye[:,i],color = 'grey',marker = 'None',linestyle = ':',linewidth = 3, markersize = 2)
+                    ax.plot(hxe[:,i],hye[:,i],color = 'grey',marker = 'None',linestyle = ':',linewidth = 2, markersize = 2)
 
                 if plot_center_lines == True:
                     if np.mod(i,2) == 1:
-                        ax.plot(hx[:,i],hy[:,i],color = c,marker = None,linestyle = '--',linewidth = 2)
+                        ax.plot(hx[:,i],hy[:,i],color = c,marker = None,linestyle = '--',linewidth = 1)
                     else:
-                        ax.plot(hx[:,i],hy[:,i],color = c,marker = 'o',linestyle = '-',linewidth = 3,markersize = 10)
+                        ax.plot(hx[:,i],hy[:,i],color = c,marker = 'o',linestyle = '-',linewidth = 2,markersize = 10)
                 if bin_labels is not None:
                     ax.text(hxv[1,i],hyv[1,i],bin_labels[i],fontsize = 12,horizontalalignment='center',verticalalignment='center',color = np.array([1,1,1])*0.3)
                 ax.axis(1.1*np.array([hxv.min(),hxv.max(),hyv.min(),hyv.max()]))
@@ -212,7 +212,8 @@ def plot_ColorVectorGraphic(jabt, jabr, hbins = 16, start_hue = 0.0, scalef = 10
                             plot_axis_labels = False, bin_labels = None, \
                             plot_edge_lines = True, plot_center_lines = False, \
                             plot_bin_colors = True, axtype = 'polar', ax = None,\
-                            force_CVG_layout = False):
+                            force_CVG_layout = False,
+                            jabti = None, jabri = None, hbinnr = None):
     """
     Plot Color Vector Graphic (CVG).
     
@@ -258,6 +259,19 @@ def plot_ColorVectorGraphic(jabt, jabr, hbins = 16, start_hue = 0.0, scalef = 10
         :force_CVG_layout:
             | False or True, optional
             | True: Force plot of basis of CVG.
+        :jabti: 
+            | None, optional
+            | ndarray with jab data of all samples under test SPD (scaled to 'unit' circle)
+            | If not None: plot chromaticity coordinates of test samples relative to 
+            | the mean chromaticity of the samples under the reference illuminant.
+        :jabri: 
+            | None, optional
+            | ndarray with jab data of all samples under reference SPD (scaled to 'unit' circle)
+            | Must be supplied when jabti is not None!
+        :hbinnr: 
+            | None, optional
+            | ndarray with hue bin number of each sample.
+            | Must be supplied when jabti is not None!
             
     Returns:
         :returns: 
@@ -272,21 +286,35 @@ def plot_ColorVectorGraphic(jabt, jabr, hbins = 16, start_hue = 0.0, scalef = 10
     if cmap == []:
         cmap = ['k' for i in range(hbins)]
         
+        
+    # map jabti relative to center (mean) of reference:
+    if (jabti is not None) & (jabri is not None):
+        jabti = (jabri - jabti)
+        for i in range(hbins):
+            if i in hbinnr:
+                jabti[hbinnr == i,...] = jabti[hbinnr == i,...] + jabr[i,...]
+
     if axtype == 'polar':
        
         jabr_theta, jabr_r = math.cart2pol(jabr[...,1:3], htype = 'rad') 
         jabt_theta, jabt_r = math.cart2pol(jabt[...,1:3], htype = 'rad') 
+        if jabti is not None:
+            jabti_theta, jabti_r = math.cart2pol(jabti[...,1:3], htype = 'rad') 
         
         #ax.quiver(jabrtheta,jabr_r,jabt[...,1]-jabr[...,1], jabt[...,2]-jabr_binned[...,2], color = 'k', headlength=3, angles='uv', scale_units='y', scale = 2,linewidth = 0.5)
         ax.plot(jabt_theta,jabt_r, color = 'grey',linewidth = 2)
         for j in range(hbins):
             c = cmap[j]
             ax.quiver(jabr_theta[j],jabr_r[j],jabt[j,1]-jabr[j,1], jabt[j,2]-jabr[j,2], edgecolor = 'k',facecolor = c, headlength=3, angles='uv', scale_units='y', scale = 2,linewidth = 0.5)
+            if jabti is not None:
+                ax.plot(jabti_theta[hbinnr==j],jabti_r[hbinnr==j], color = cmap[j],linestyle = 'none',marker='.',markersize=3)
     else:
         #ax.quiver(jabr[...,1],jabr[...,2],jabt[...,1]-jabr[...,1], jabt[...,2]-jabr[...,2], color = 'k', headlength=3, angles='uv', scale_units='xy', scale = 1,linewidth = 0.5)
         ax.plot(jabt,jabt, color = 'grey',linewidth = 2)
         for j in range(hbins):
             ax.quiver(jabr[j,1],jabr[j,2],jabt[j,1]-jabr[j,1], jabt[j,2]-jabr[j,2], color = cmap[j], headlength=3, angles='uv', scale_units='xy', scale = 1,linewidth = 0.5)
+            if jabti is not None:
+                ax.plot(jabti[hbinnr==j,1],jabti[hbinnr==j,2], color = cmap[j],linestyle = 'none',marker='.',markersize=3)
 
     if axtype == 'cart':
         plt.xlabel("a'")

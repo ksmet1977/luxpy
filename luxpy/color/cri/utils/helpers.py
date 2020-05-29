@@ -126,6 +126,11 @@ def gamut_slicer(jab_test,jab_ref, out = 'jabt,jabr', nhbins = None, \
     binnr = jab_test[...,0].copy()
     DEi = jabt[...,0].copy()
     
+    # Store all samples (for output of potentially scaled coordinates):
+    if ('jabti' in out) | ('jabri' in out):
+        jabti = jab_test.copy()
+        jabri = jab_ref.copy()
+    
     # Loop over axis 1:
     for ii in range(jab_test.shape[1]):
           
@@ -138,7 +143,9 @@ def gamut_slicer(jab_test,jab_ref, out = 'jabt,jabr', nhbins = None, \
             jabtii = jab_test[Ir,ii,:]
             jabrii = jab_ref[Ir,ii,:]
             nhbins = (jabtii.shape[0])
+            hbins = np.arange(nhbins)
             DEi[...,ii] =  np.sqrt(np.power((jabtii - jabtii),2).sum(axis = jabtii.ndim -1))
+            
         else:
             
             #divide huecircle/data in n hue slices:
@@ -153,8 +160,16 @@ def gamut_slicer(jab_test,jab_ref, out = 'jabt,jabr', nhbins = None, \
                     jabtii[i,:] = jab_test[hbins==i,ii,:].mean(axis = 0)
                     jabrii[i,:] = jab_ref[hbins==i,ii,:].mean(axis = 0)
                     DEi[i,ii] =  np.sqrt(np.power((jab_test[hbins==i,ii,:] - jab_ref[hbins==i,ii,:]),2).sum(axis = jab_test[hbins==i,ii,:].ndim -1)).mean(axis = 0)
-
+                    
         if normalize_gamut == True:
+            
+            #renormalize jab_test, jab_ref using jabrii:
+            if ('jabti' in out) | ('jabri' in out):
+                Cti = np.sqrt(jab_test[:,ii,1]**2 + jab_test[:,ii,2]**2)
+                Cri = np.sqrt(jab_ref[:,ii,1]**2 + jab_ref[:,ii,2]**2)
+                hti = ht.copy()
+                hri = hr.copy()
+                
             #renormalize jabtii using jabrii:
             Ct = np.sqrt(jabtii[:,1]**2 + jabtii[:,2]**2)
             Cr = np.sqrt(jabrii[:,1]**2 + jabrii[:,2]**2)
@@ -169,6 +184,17 @@ def gamut_slicer(jab_test,jab_ref, out = 'jabt,jabr', nhbins = None, \
             jabtii[:,2] = C*np.sin(ht)
             jabrii[:,1] = normalized_chroma_ref*np.cos(hr)
             jabrii[:,2] = normalized_chroma_ref*np.sin(hr)
+            
+            # generate scaled coordinates for all samples:
+            if ('jabti' in out) | ('jabri' in out):
+                for i in range(nhbins):
+                    if i in hbins:
+                        Cti[hbins==i] = normalized_chroma_ref*(Cti[hbins==i]/Cr[i]) 
+                        Cri[hbins==i] = normalized_chroma_ref*(Cri[hbins==i]/Cr[i]) 
+                jabti[:,ii,1] = Cti*np.cos(hti)
+                jabti[:,ii,2] = Cti*np.sin(hti)
+                jabri[:,ii,1] = Cri*np.cos(hri)
+                jabri[:,ii,2] = Cri*np.sin(hri)
         
         if close_gamut == True:
             jabtii = np.vstack((jabtii,jabtii[0,:])) # to create closed curve when plotting
@@ -194,6 +220,10 @@ def gamut_slicer(jab_test,jab_ref, out = 'jabt,jabr', nhbins = None, \
         return jabt, jabr, DEi
     elif out == 'jabt,jabr,DEi,binnr':
         return jabt, jabr, DEi, binnr
+    elif out == 'jabt,jabr,binnr,jabti,jabri':
+        return jabt, jabr, binnr, jabti, jabri
+    elif out == 'jabt,jabr,DEi,binnr,jabti,jabri':
+        return jabt, jabr, DEi, binnr, jabti, jabri
     else:
         return eval(out)        
  
@@ -245,7 +275,7 @@ def jab_to_rg(jabt,jabr, max_scale = 100, ordered_and_sliced = False, \
     """    
     # slice, order and normalize jabt and jabr:
     if ordered_and_sliced == False: 
-        jabt, jabr, DEi = gamut_slicer(jabt,jabr, out = 'jabt,jabr,DEi', nhbins = nhbins, start_hue = start_hue, normalize_gamut = normalize_gamut, normalized_chroma_ref = normalized_chroma_ref, close_gamut = True)
+        jabt, jabr, DEi,binnrs,jabti,jabri = gamut_slicer(jabt,jabr, out = 'jabt,jabr,DEi,binnr,jabti,jabri', nhbins = nhbins, start_hue = start_hue, normalize_gamut = normalize_gamut, normalized_chroma_ref = normalized_chroma_ref, close_gamut = True)
  
     # make 3d:
     test_original_shape = jabt.shape
@@ -265,6 +295,10 @@ def jab_to_rg(jabt,jabr, max_scale = 100, ordered_and_sliced = False, \
         return Rg, jabt, jabr
     elif (out == 'Rg,jabt,jabr,DEi'):
         return Rg, jabt, jabr, DEi
+    elif (out == 'Rg,jabt,jabr,binnr,jabti,jabri'):
+        return Rg, jabt, jabr, binnrs, jabti, jabri
+    elif (out == 'Rg,jabt,jabr,DEi,binnr,jabti,jabri'):
+        return Rg, jabt, jabr, DEi,binnrs,jabti,jabri
     else:
         return eval(out)
 
@@ -935,7 +969,7 @@ def spd_to_rg(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'Rg', wl = None, \
     #rg_pars = put_args_in_db(cri_type['rg_pars'],rg_pars)#{'nhbins':nhbins,'start_hue':start_hue,'normalize_gamut':normalize_gamut}) #override with not-None input from function
     nhbins, normalize_gamut, normalized_chroma_ref, start_hue  = [rg_pars[x] for x in sorted(rg_pars.keys())]
     
-    Rg, jabt_binned, jabr_binned, DEi_binned = jab_to_rg(jabt,jabr, ordered_and_sliced = False, nhbins = nhbins, start_hue = start_hue, normalize_gamut = normalize_gamut, out = 'Rg,jabt,jabr,DEi')
+    Rg, jabt_binned, jabr_binned, DEi_binned, binnrs, jabti_binned, jabri_binned = jab_to_rg(jabt,jabr, ordered_and_sliced = False, nhbins = nhbins, start_hue = start_hue, normalize_gamut = normalize_gamut, out = 'Rg,jabt,jabr,DEi,binnr,jabti,jabri')
     Rg = np2d(Rg)
     
    
@@ -945,6 +979,8 @@ def spd_to_rg(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'Rg', wl = None, \
         return Rg, jabt_binned,jabr_binned
     elif (out == 'Rg,jabt,jabr,DEi'):
         return Rg, jabt_binned,jabr_binned,DEi_binned
+    elif (out == 'Rg,jabt,jabr,DEi,binnr,jabti,jabri'):
+        return Rg, jabt_binned,jabr_binned,DEi_binned,binnrs,jabti_binned,jabri_binned
     else:
         return eval(out)
 
@@ -1146,13 +1182,14 @@ def spd_to_cri(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'Rf', wl = None, \
     Rf = np2d(scale_fcn(avg(DEi,axis = 0),scale_factor))
     
     # C. get binned jabt jabr and DEi:
-    if ('Rg' in outlist) | ('Rfhi' in outlist) | ('Rhshi' in outlist) | ('Rcshi' in outlist):
+    if ('Rg' in outlist) | ('Rfhi' in outlist) | ('Rhshi' in outlist) | ('Rcshi' in outlist) | ('jabti_binned' in outlist) | ('jabri_binned' in outlist):
         # calculate gamut area index:
         rg_pars = cri_type['rg_pars'] 
         nhbins, normalize_gamut, normalized_chroma_ref, start_hue = [rg_pars[x] for x in sorted(rg_pars.keys())]
-        Rg, jabt_binned, jabr_binned, DEi_binned = jab_to_rg(jabt,jabr, ordered_and_sliced = False, nhbins = nhbins, start_hue = start_hue, normalize_gamut = normalize_gamut, out = 'Rg,jabt,jabr,DEi')
+        Rg, jabt_binned, jabr_binned, DEi_binned, binnrs, jabti_binned, jabri_binned = jab_to_rg(jabt,jabr, ordered_and_sliced = False, nhbins = nhbins, start_hue = start_hue, normalize_gamut = normalize_gamut, out = 'Rg,jabt,jabr,DEi,binnr,jabti,jabri')
     else:
         jabt_binned, jabr_binned, DEi_binned = None, None, None
+        binnrs, jabti_binned, jabri_binned = None, None, None
 
     # D. Calculate Rfhi, Rhshi and Rcshi:
     if ('Rfhi' in outlist) | ('Rhshi' in outlist) | ('Rcshi' in outlist):
@@ -1163,6 +1200,8 @@ def spd_to_cri(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'Rf', wl = None, \
         return Rf
     elif (out == 'Rg'):
         return Rg
+    elif (out == 'Rf,Rg'):
+        return Rf, Rg
     else:
         return eval(out)
 

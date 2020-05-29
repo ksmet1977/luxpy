@@ -78,6 +78,9 @@ def spd_to_ies_tm30_metrics(SPD, cri_type = None, \
             | - 'SPD'  : ndarray test SPDs
             | - 'bjabt': ndarray with binned jab data under test SPDs
             | - 'bjabr': ndarray with binned jab data under reference SPDs
+            | - 'jabti': ndarray with individual jab data under test SPDs (scaled such that bjabr are on a circle)
+            | - 'jabri': ndarray with individual jab data under reference SPDs (scaled such that bjabr are on a circle)
+            | - 'hbinnr': ndarray with the hue bin number the samples belong to.
             | - 'cct'  : ndarray with CCT of test SPD
             | - 'duv'  : ndarray with distance to blackbody locus of test SPD
             | - 'Rf'   : ndarray with general color fidelity indices
@@ -130,7 +133,7 @@ def spd_to_ies_tm30_metrics(SPD, cri_type = None, \
         Cr_s = (np.sqrt(bjabr[:-1,...,1]**2 + bjabr[:-1,...,2]**2)).mean(axis=0) # for rescaling vector field average reference chroma
 
     normalize_gamut = True #(for plotting)
-    bjabt, bjabr = gamut_slicer(jabt,jabr, out = 'jabt,jabr', nhbins = nhbins, start_hue = start_hue, normalize_gamut = normalize_gamut, normalized_chroma_ref = normalized_chroma_ref, close_gamut = True)
+    bjabt, bjabr, binnrs, jabti, jabri = gamut_slicer(jabt,jabr, out = 'jabt,jabr,binnr,jabti,jabri', nhbins = nhbins, start_hue = start_hue, normalize_gamut = normalize_gamut, normalized_chroma_ref = normalized_chroma_ref, close_gamut = True)
 
 
     Rfhi_vf = np.empty(Rfhi.shape)
@@ -168,6 +171,7 @@ def spd_to_ies_tm30_metrics(SPD, cri_type = None, \
 
     # Create dict with CRI info:
     data = {'SPD' : SPD, 'cct' : cct, 'duv' : duv, 'bjabt' : bjabt, 'bjabr' : bjabr,\
+            'jabti':jabti, 'jabri':jabri, 'hbinnr':binnrs,\
            'Rf' : Rf, 'Rg' : Rg, 'Rfi': Rfi, 'Rfhi' : Rfhi, 'Rcshi' : Rcshi, 'Rhshi' : Rhshi, \
            'Rt' : Rt, 'Rti' : Rti,  'Rfhi_vf' : Rfhi_vf, 'Rfcshi_vf' : Rcshi_vf, 'Rfhshi_vf' : Rhshi_vf, \
            'dataVF' : dataVF,'cri_type' : cri_type}

@@ -29,10 +29,14 @@ Module for IES color rendition graphical output
 
 from luxpy.utils import np, plt
 
-from ..utils.graphics import plot_ColorVectorGraphic
-from ..VFPX.vectorshiftmodel import  _VF_MODEL_TYPE, _VF_PCOLORSHIFT 
-from ..VFPX.VF_PX_models import plot_VF_PX_models
-from .ies_tm30_metrics import spd_to_ies_tm30_metrics
+# from ..utils.graphics import plot_ColorVectorGraphic
+# from ..VFPX.vectorshiftmodel import  _VF_MODEL_TYPE, _VF_PCOLORSHIFT 
+# from ..VFPX.VF_PX_models import plot_VF_PX_models
+# from .ies_tm30_metrics import spd_to_ies_tm30_metrics
+from luxpy.color.cri.utils.graphics import plot_ColorVectorGraphic
+from luxpy.color.cri.VFPX.vectorshiftmodel import  _VF_MODEL_TYPE, _VF_PCOLORSHIFT 
+from luxpy.color.cri.VFPX.VF_PX_models import plot_VF_PX_models
+from luxpy.color.cri.iestm30.ies_tm30_metrics import spd_to_ies_tm30_metrics
 __all__ = ['plot_cri_graphics']
 
 
@@ -45,7 +49,8 @@ def plot_cri_graphics(data, cri_type = None, hbins = 16, start_hue = 0.0, scalef
                       vf_model_type = _VF_MODEL_TYPE, vf_pcolorshift = _VF_PCOLORSHIFT, vf_color = 'k', \
                       vf_bin_labels = _VF_PCOLORSHIFT['labels'], vf_plot_bin_colors = True, \
                       scale_vf_chroma_to_sample_chroma = False,\
-                      plot_VF = True, plot_CF = False, plot_SF = False):
+                      plot_VF = True, plot_CF = False, plot_SF = False,
+                      plot_test_sample_coord = False):
     """
     Plot graphical information on color rendition properties.
     
@@ -126,7 +131,10 @@ def plot_cri_graphics(data, cri_type = None, hbins = 16, start_hue = 0.0, scalef
             | Plot vector fields.
         :plot_SF:
             | True, optional
-            | Plot sample shifts.   
+            | Plot sample shifts.  
+        :plot_test_sample_coord:
+            | Plot the coordinates of the samples under the test illuminant
+            | relative to the mean chromaticity under the reference illuminant (in the CVG plot).
             
     Returns:
         :returns: 
@@ -139,6 +147,10 @@ def plot_cri_graphics(data, cri_type = None, hbins = 16, start_hue = 0.0, scalef
             | - 'SPD'  : ndarray test SPDs
             | - 'bjabt': ndarray with binned jab data under test SPDs
             | - 'bjabr': ndarray with binned jab data under reference SPDs
+            | - 'jabti': ndarray with individual jab data under test SPDs (scaled such that bjabr are on a circle)
+            | - 'jabri': ndarray with individual jab data under reference SPDs (scaled such that bjabr are on a circle)
+            | - 'hbinnr': ndarray with the hue bin number the samples belong to.
+
             | - 'cct'  : ndarray with CCT of test SPD
             | - 'duv'  : ndarray with distance to blackbody locus of test SPD
             | - 'Rf'   : ndarray with general color fidelity indices
@@ -166,7 +178,7 @@ def plot_cri_graphics(data, cri_type = None, hbins = 16, start_hue = 0.0, scalef
     if not isinstance(data,dict):
         data = spd_to_ies_tm30_metrics(data, cri_type = cri_type, hbins = hbins, start_hue = start_hue, scalef = scalef, vf_model_type = vf_model_type, vf_pcolorshift = vf_pcolorshift, scale_vf_chroma_to_sample_chroma = scale_vf_chroma_to_sample_chroma)
 
-    Rcshi, Rf, Rfcshi_vf, Rfhi, Rfhi_vf, Rfhshi_vf, Rfi,  Rg, Rhshi, Rt, Rti, SPD, bjabr, bjabt, cct, cri_type, dataVF, duv = [data[x] for x in sorted(data.keys())]
+    Rcshi, Rf, Rfcshi_vf, Rfhi, Rfhi_vf, Rfhshi_vf, Rfi, Rg, Rhshi, Rt, Rti, SPD, bjabr, bjabt, cct, cri_type, dataVF, duv, hbinnr, jabti, jabri = [data[x] for x in sorted(data.keys())]
     hbins = cri_type['rg_pars']['nhbins']
     start_hue = cri_type['rg_pars']['start_hue']
     scalef = cri_type['rg_pars']['normalized_chroma_ref']
@@ -178,15 +190,25 @@ def plot_cri_graphics(data, cri_type = None, hbins = 16, start_hue = 0.0, scalef
     def create_subplot(layout,n, polar = False, frameon = True):
         ax = plt.subplot2grid(layout[0,0:2], layout[n,0:2], colspan = layout[n,2], rowspan = layout[n,3], polar = polar, frameon = frameon)
         return ax
-    
+               
+        
     for i in range(cct.shape[0]):
         
         fig = plt.figure(figsize=(10, 6), dpi=144)
     
         # Plot CVG:
         ax_CVG = create_subplot(layout,1, polar = True, frameon = False)
-        figCVG, ax, cmap = plot_ColorVectorGraphic(bjabt[...,i,:], bjabr[...,i,:], hbins = hbins, axtype = axtype, ax = ax_CVG, plot_center_lines = plot_center_lines, plot_edge_lines = plot_edge_lines,  plot_bin_colors = plot_bin_colors, scalef = scalef, force_CVG_layout = force_CVG_layout, bin_labels = '#')
-        
+        if plot_test_sample_coord == False:  jabti = None
+        figCVG, ax, cmap = plot_ColorVectorGraphic(bjabt[...,i,:], bjabr[...,i,:], hbins = hbins, 
+                                                   axtype = axtype, ax = ax_CVG, 
+                                                   plot_center_lines = plot_center_lines, 
+                                                   plot_edge_lines = plot_edge_lines,  
+                                                   plot_bin_colors = plot_bin_colors, 
+                                                   scalef = scalef, 
+                                                   force_CVG_layout = force_CVG_layout, 
+                                                   bin_labels = '#',
+                                                   jabti = jabti, jabri = jabri, hbinnr = hbinnr)
+                
         # Plot VF:
         ax_VF = create_subplot(layout,2, polar = True, frameon = False)
         if i == 0:
@@ -202,8 +224,8 @@ def plot_cri_graphics(data, cri_type = None, hbins = 16, start_hue = 0.0, scalef
         ax_spd.plot(SPD[0],SPD[i+1]/SPD[i+1].max(),'r-')
         ax_spd.text(730,0.9,'CCT = {:1.0f} K'.format(cct[i][0]),fontsize = 9, horizontalalignment='left',verticalalignment='center',rotation = 0, color = np.array([1,1,1])*0.3)
         ax_spd.text(730,0.8,'Duv = {:1.4f}'.format(duv[i][0]),fontsize = 9, horizontalalignment='left',verticalalignment='center',rotation = 0, color = np.array([1,1,1])*0.3)
-        ax_spd.text(730,0.7,'IES Rf = {:1.0f}'.format(Rf[:,i][0]),fontsize = 9, horizontalalignment='left',verticalalignment='center',rotation = 0, color = np.array([1,1,1])*0.3)
-        ax_spd.text(730,0.6,'IES Rg = {:1.0f}'.format(Rg[:,i][0]),fontsize = 9, horizontalalignment='left',verticalalignment='center',rotation = 0, color = np.array([1,1,1])*0.3)
+        ax_spd.text(730,0.7,'Rf = {:1.0f}'.format(Rf[:,i][0]),fontsize = 9, horizontalalignment='left',verticalalignment='center',rotation = 0, color = np.array([1,1,1])*0.3)
+        ax_spd.text(730,0.6,'Rg = {:1.0f}'.format(Rg[:,i][0]),fontsize = 9, horizontalalignment='left',verticalalignment='center',rotation = 0, color = np.array([1,1,1])*0.3)
         ax_spd.text(730,0.5,'Rt = {:1.0f}'.format(Rt[:,i][0]),fontsize = 9, horizontalalignment='left',verticalalignment='center',rotation = 0, color = np.array([1,1,1])*0.3)
         ax_spd.set_xlabel('Wavelength (nm)', fontsize = 9)
         ax_spd.set_ylabel('Rel. spectral intensity', fontsize = 9)
