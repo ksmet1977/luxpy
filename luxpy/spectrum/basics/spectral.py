@@ -474,7 +474,7 @@ def spd(data = None, interpolation = None, kind = 'np', wl = None,\
 
 
 #--------------------------------------------------------------------------------------------------
-def xyzbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, norm_type = None, norm_f = None, kind = 'np'):
+def xyzbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, kind = 'np'):
     """
     Get color matching functions.  
     
@@ -490,21 +490,6 @@ def xyzbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, norm_type = None, norm
             | None, optional
             | New wavelength range for interpolation. 
             | Defaults to wavelengths specified by luxpy._WL3.
-        :norm_type: 
-            | None, optional 
-            |       - 'lambda': make lambda in norm_f equal to 1
-            |       - 'area': area-normalization times norm_f
-            |       - 'max': max-normalization times norm_f
-            |       - 'ru': to :norm_f: radiometric units 
-            |       - 'pu': to :norm_f: photometric units 
-            |       - 'pusa': to :norm_f: photometric units (with Km corrected
-            |                             to standard air, cfr. CIE TN003-2015)
-            |       - 'qu': to :norm_f: quantal energy units
-        :norm_f:
-            | 1, optional
-            | Normalization factor that determines the size of normalization 
-            | for 'max' and 'area' 
-            | or which wavelength is normalized to 1 for 'lambda' option.
         :kind: 
             | str ['np','df'], optional 
             | Determines type(:returns:), np: ndarray, df: pandas.dataframe
@@ -526,7 +511,7 @@ def xyzbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, norm_type = None, norm
     return spd(data = dict_or_file, wl = wl_new, interpolation = 'linear', kind = kind, columns = ['wl','xb','yb','zb'])
 
 #--------------------------------------------------------------------------------------------------
-def vlbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, norm_type = None, norm_f = None, kind = 'np', out = 1):
+def vlbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, kind = 'np', out = 1):
     """
     Get Vlambda functions.  
     
@@ -545,21 +530,6 @@ def vlbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, norm_type = None, norm_
             | None, optional
             | New wavelength range for interpolation. 
             | Defaults to wavelengths specified by luxpy._WL3.
-        :norm_type: 
-            | None, optional 
-            |       - 'lambda': make lambda in norm_f equal to 1
-            |       - 'area': area-normalization times norm_f
-            |       - 'max': max-normalization times norm_f
-            |       - 'ru': to :norm_f: radiometric units 
-            |       - 'pu': to :norm_f: photometric units 
-            |       - 'pusa': to :norm_f: photometric units (with Km corrected
-            |                             to standard air, cfr. CIE TN003-2015)
-            |       - 'qu': to :norm_f: quantal energy units
-        :norm_f:
-            | 1, optional
-            | Normalization factor that determines the size of normalization 
-            | for 'max' and 'area' 
-            | or which wavelength is normalized to 1 for 'lambda' option.
         :kind: 
             | str ['np','df'], optional 
             | Determines type(:returns:), np: ndarray, df: pandas.dataframe
@@ -590,7 +560,7 @@ def vlbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, norm_type = None, norm_
         return Vl
 
 #--------------------------------------------------------------------------------------------------
-def vlbar_cie_mesopic(m = [1], wl_new = None, norm_type = None, norm_f = None, kind = 'np', out = 1,
+def vlbar_cie_mesopic(m = [1], wl_new = None, kind = 'np', out = 1,
                       Lp = None, Ls = None, SP = None):
     """
     Get CIE mesopic luminous efficiency function Vmesm according to CIE191:2010
@@ -602,21 +572,6 @@ def vlbar_cie_mesopic(m = [1], wl_new = None, norm_type = None, norm_f = None, k
             | None, optional
             | New wavelength range for interpolation. 
             | Defaults to wavelengths specified by luxpy._WL3.
-        :norm_type: 
-            | None, optional 
-            |       - 'lambda': make lambda in norm_f equal to 1
-            |       - 'area': area-normalization times norm_f
-            |       - 'max': max-normalization times norm_f
-            |       - 'ru': to :norm_f: radiometric units 
-            |       - 'pu': to :norm_f: photometric units 
-            |       - 'pusa': to :norm_f: photometric units (with Km corrected
-            |                             to standard air, cfr. CIE TN003-2015)
-            |       - 'qu': to :norm_f: quantal energy units
-        :norm_f:
-            | 1, optional
-            | Normalization factor that determines the size of normalization 
-            | for 'max' and 'area' 
-            | or which wavelength is normalized to 1 for 'lambda' option.
         :out: 
             | 1 or 2, optional
             |     1: returns Vmesm
@@ -661,7 +616,8 @@ def vlbar_cie_mesopic(m = [1], wl_new = None, norm_type = None, norm_f = None, k
             columns.append('Vmes{:0.2f}'.format(m[i,0]))
     else:
         columns = ['wl',['Vmes']*m.size]
-    Vlmes = spd(data = Vlmes, wl = wl_new, interpolation = 'linear', kind = kind, columns = columns)
+    Vlmes = spd(data = Vlmes, wl = wl_new, interpolation = 'linear', 
+                norm_type = 'max', norm_f = 1, kind = kind, columns = columns)
     if out == 2:
         return Vlmes, Kmes
     else:
