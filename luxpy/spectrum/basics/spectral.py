@@ -62,6 +62,10 @@ Module supporting basic spectral calculations.
  :xyzbar(): Get color matching functions.
         
  :vlbar(): Get Vlambda function.
+ 
+ :vlbar_cie_mesopic(): Get CIE mesopic luminous efficiency function Vmesm according to CIE191:2010
+
+ :get_cie_mesopic_adaptation(): Get the mesopic adaptation state according to CIE191:2010
 
  :spd_to_xyz(): Calculates xyz tristimulus values from spectral data. 
             
@@ -111,6 +115,7 @@ from .spectral_databases import _CIE_GLASS_ID
 from scipy import signal
 __all__ = ['_WL3','_BB','_S012_DAYLIGHTPHASE','_INTERP_TYPES','_S_INTERP_TYPE', '_R_INTERP_TYPE','_CRI_REF_TYPE',
            '_CRI_REF_TYPES', 'getwlr','getwld','spd_normalize','cie_interp','spd','xyzbar', 'vlbar', 
+           'vlbar_cie_mesopic', 'get_cie_mesopic_adaptation',
            'spd_to_xyz', 'spd_to_ler', 'spd_to_power',
            'blackbody','daylightlocus','daylightphase','cri_ref','detect_peakwl', 'spd_to_indoor']
 
@@ -584,6 +589,129 @@ def vlbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, norm_type = None, norm_
     else:
         return Vl
 
+#--------------------------------------------------------------------------------------------------
+def vlbar_cie_mesopic(m = [1], wl_new = None, norm_type = None, norm_f = None, kind = 'np', out = 1,
+                      Lp = None, Ls = None, SP = None):
+    """
+    Get CIE mesopic luminous efficiency function Vmesm according to CIE191:2010
+    
+    Args:
+        :m:
+            | float or list or ndarray with mesopic adaptation coefficients
+        :wl: 
+            | None, optional
+            | New wavelength range for interpolation. 
+            | Defaults to wavelengths specified by luxpy._WL3.
+        :norm_type: 
+            | None, optional 
+            |       - 'lambda': make lambda in norm_f equal to 1
+            |       - 'area': area-normalization times norm_f
+            |       - 'max': max-normalization times norm_f
+            |       - 'ru': to :norm_f: radiometric units 
+            |       - 'pu': to :norm_f: photometric units 
+            |       - 'pusa': to :norm_f: photometric units (with Km corrected
+            |                             to standard air, cfr. CIE TN003-2015)
+            |       - 'qu': to :norm_f: quantal energy units
+        :norm_f:
+            | 1, optional
+            | Normalization factor that determines the size of normalization 
+            | for 'max' and 'area' 
+            | or which wavelength is normalized to 1 for 'lambda' option.
+        :out: 
+            | 1 or 2, optional
+            |     1: returns Vmesm
+            |     2: returns (Vmes, Kmesm)
+        :Lp: 
+            | None, optional
+            | float or ndarray with photopic adaptation luminance
+            | If not None: use this (and SP or Ls) to calculate the 
+            | mesopic adaptation coefficient
+        :Ls: 
+            | None, optional
+            | float or ndarray with scotopic adaptation luminance
+            | If None: SP must be supplied.
+        :SP:
+            | None, optional
+            | S/P ratio
+            | If None: Ls must be supplied.
+            
+    Returns:
+        :Vmes: 
+            | ndarray with mesopic luminous efficiency function 
+            | for adaptation coefficient(s) m
+        :Kmes:
+            | ndarray with luminous efficacies of 555 nm monochromatic light
+            | for for adaptation coefficient(s) m
+    """
+    if (Lp is not None) & ((Ls is not None) | (SP is not None)):
+        Lmes, m = get_cie_mesopic_adaptation(Lp = Lp, Ls = Ls, SP = SP)
+    m = np.atleast_2d(m).T
+    m[m<0] = 0
+    m[m>1] = 1
+    Vl = vlbar(cieobs='1931_2')
+    Vlp = vlbar(cieobs='1951_20_scotopic')
+    Vlmes= m*(Vl[1:,:]) + (1-m)*(Vlp[1:,:])
+    Vlmes = Vlmes/Vlmes.max(axis=1,keepdims=True) # normalize to max = 1
+    Vlmes = np.vstack((Vl[:1,:],Vlmes))
+    Kmes = 683/Vlmes[1:,Vlmes[0,:] == 555]
+    
+    if kind == 'df':
+        columns = ['wl']
+        for i in range(m.size):
+            columns.append('Vmes{:0.2f}'.format(m[i,0]))
+    else:
+        columns = ['wl',['Vmes']*m.size]
+    Vlmes = spd(data = Vlmes, wl = wl_new, interpolation = 'linear', kind = kind, columns = columns)
+    if out == 2:
+        return Vlmes, Kmes
+    else:
+        return Vlmes
+
+def get_cie_mesopic_adaptation(Lp, Ls = None, SP = None):
+    """
+    Get the mesopic adaptation state according to CIE191:2010
+    
+    Args:
+        :Lp: 
+            | float or ndarray with photopic adaptation luminance
+        :Ls: 
+            | None, optional
+            | float or ndarray with scotopic adaptation luminance
+            | If None: SP must be supplied.
+        :SP:
+            | None, optional
+            | S/P ratio
+            | If None: Ls must be supplied.
+            
+    Returns:
+        :Lmes: 
+            | mesopic adaptation luminance
+        :m: 
+            | mesopic adaptation coefficient
+    """
+    Lp = np.array(Lp)
+    Ls = np.array(Ls)
+    SP = np.array(SP)
+    if SP is not None:
+        Ls = Lp*SP
+    elif Ls is not None:
+        SP = Ls/Lp
+    else:
+        raise Exception('Either the S/P ratio or the scotopic luminance Ls must be supplied in addition to the photopic luminance Lp')
+    m = np.ones_like(Ls)*np.nan
+    Lmes = m.copy()
+    for i in range(Lp.shape[0]):
+        mi_ = 0.5
+        fLmes = lambda m, Lp, SP: ((m*Lp) + (1-m)*SP*683/1699)/(m + (1-m)*683/1699)
+        fm = lambda m, Lp, SP: 0.767 + 0.3334*np.log10(fLmes(m, Lp, SP))
+        mi = fm(mi_, Lp[i],SP[i])
+        while True:
+            if np.isclose(mi,mi_): break
+            mi_ = mi
+            mi = fm(mi_, Lp[i],SP[i])
+        m[i] = mi
+        Lmes[i] = fLmes(mi, Lp[i],SP[i])
+    return Lmes, m
 
 #--------------------------------------------------------------------------------------------------
 def spd_to_xyz(data,  relative = True, rfl = None, cieobs = _CIEOBS, K = None, out = None, cie_std_dev_obs = None):
