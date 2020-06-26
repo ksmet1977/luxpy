@@ -42,7 +42,8 @@ _CAM18SL_PARAMETERS = {'k': [676.7, 794.0, 1461.5],
                        'ca': 0.63, 'calms':[1.0,-12/11,1/11],
                        'cb': 0.12, 'cblms': [1.0, 1.0,-2.0], 
                        'cM': 3260, 'cHK': [0.0024,1.09], 'cW': [1/11672,2.09], 
-                       'cfov': 0.271} 
+                       'cfov': 0.271,
+                       'cieobs':'2006_10'} 
                        
 _CAM18SL_SURROUND_PARAMETERS = {'surrounds': ['dark'], 'dark' : {'c': None, 'Nc':None,'F':None,'FLL':None}}
 
@@ -125,10 +126,10 @@ def cam18sl(data, datab = None, Lb = [100], fov = 10.0, inputtype = 'xyz', direc
     outin = outin.split(',')    
     
     #unpack model parameters:
-    cA, cAlms, cHK, cM, cW, ca, calms, cb, cblms, cfov, k, naka, unique_hue_data = [parameters[x] for x in sorted(parameters.keys())]
+    cA, cAlms, cHK, cM, cW, ca, calms, cb, cblms, cfov, cieobs, k, naka, unique_hue_data = [parameters[x] for x in sorted(parameters.keys())]
     
     # precomputations:
-    Mlms2xyz = np.linalg.inv(_CMF['2006_10']['M'])
+    Mlms2xyz = np.linalg.inv(_CMF[cieobs]['M'])
     MAab = np.array([cAlms,calms,cblms])
     invMAab = np.linalg.inv(MAab)    
     
@@ -137,7 +138,7 @@ def cam18sl(data, datab = None, Lb = [100], fov = 10.0, inputtype = 'xyz', direc
     # Get Lb values:
     if datab is not None:
         if inputtype != 'xyz':
-            Lb = spd_to_xyz(datab, cieobs = '2006_10', relative = False)[...,1:2]
+            Lb = spd_to_xyz(datab, cieobs = cieobs, relative = False)[...,1:2]
         else:
             Lb = datab[...,1:2]
     else:
@@ -153,7 +154,7 @@ def cam18sl(data, datab = None, Lb = [100], fov = 10.0, inputtype = 'xyz', direc
         else:
             wlr = datab[0] # use wlr of background data
     datar = np.vstack((wlr,np.ones((Lb.shape[0], wlr.shape[0])))) # create eew
-    xyzr = spd_to_xyz(datar, cieobs = '2006_10', relative = False) # get abs. tristimulus values
+    xyzr = spd_to_xyz(datar, cieobs = cieobs, relative = False) # get abs. tristimulus values
     datar[1:] = datar[1:]/xyzr[...,1:2]*Lb
 
     
@@ -162,7 +163,7 @@ def cam18sl(data, datab = None, Lb = [100], fov = 10.0, inputtype = 'xyz', direc
         if inputtype != 'xyz':
             datab = datar.copy()
         else:
-            datab = spd_to_xyz(datar, cieobs = '2006_10', relative = False)
+            datab = spd_to_xyz(datar, cieobs = cieobs, relative = False)
     
  
     # prepare data and datab for loop over backgrounds: 
@@ -171,7 +172,7 @@ def cam18sl(data, datab = None, Lb = [100], fov = 10.0, inputtype = 'xyz', direc
         data = np.expand_dims(data, axis = 1)  # add light source axis 1     
 
     if inputtype == 'xyz': 
-        datar = spd_to_xyz(datar, cieobs = '2006_10', relative = False) # convert to xyz!!
+        datar = spd_to_xyz(datar, cieobs = cieobs, relative = False) # convert to xyz!!
         if datab.shape[0] == 1: #make datab and datar have same lights source dimension (used to store different backgrounds) size as data
             datab = np.repeat(datab,data.shape[1],axis=0)  
             datar = np.repeat(datar,data.shape[1],axis=0)               
@@ -193,32 +194,31 @@ def cam18sl(data, datab = None, Lb = [100], fov = 10.0, inputtype = 'xyz', direc
         dshape[-2] = dshape[-2] - 1 # wavelength row doesn't count & only with forward can the input data be spectral
     camout = np.zeros(dshape);camout.fill(np.nan)
     
-  
     for i in range(data.shape[0]):
        
         # get rho, gamma, beta of background and reference white:
         if (inputtype != 'xyz'):
-            xyzb = spd_to_xyz(np.vstack((datab[0], datab[i+1:i+2,:])), cieobs = '2006_10', relative = False)
-            xyzr = spd_to_xyz(np.vstack((datar[0], datar[i+1:i+2,:])), cieobs = '2006_10', relative = False)
+            xyzb = spd_to_xyz(np.vstack((datab[0], datab[i+1:i+2,:])), cieobs = cieobs, relative = False)
+            xyzr = spd_to_xyz(np.vstack((datar[0], datar[i+1:i+2,:])), cieobs = cieobs, relative = False)
         else:
             xyzb = datab[i:i+1,:] 
             xyzr = datar[i:i+1,:] 
         
-        lmsb = np.dot(_CMF['2006_10']['M'],xyzb.T).T # convert to l,m,s
-        rgbb = (lmsb / _CMF['2006_10']['K']) * k # convert to rho, gamma, beta
-        #lmsr = np.dot(_CMF['2006_10']['M'],xyzr.T).T # convert to l,m,s
-        #rgbr = (lmsr / _CMF['2006_10']['K']) * k # convert to rho, gamma, beta
+        lmsb = np.dot(_CMF[cieobs]['M'],xyzb.T).T # convert to l,m,s
+        rgbb = (lmsb / _CMF[cieobs]['K']) * k # convert to rho, gamma, beta
+        #lmsr = np.dot(_CMF[cieobs]['M'],xyzr.T).T # convert to l,m,s
+        #rgbr = (lmsr / _CMF[cieobs]['K']) * k # convert to rho, gamma, beta
         #rgbr = rgbr/rgbr[...,1:2]*Lb[i] # calculated EEW cone excitations at same luminance values as background
         rgbr = np.ones(xyzr.shape)*Lb[i] # explicitely equal EEW cone excitations at same luminance values as background
 
         if direction == 'forward':
             # get rho, gamma, beta of stimulus:
             if (inputtype != 'xyz'):
-                xyz = spd_to_xyz(data[i], cieobs = '2006_10', relative = False)   
+                xyz = spd_to_xyz(data[i], cieobs = cieobs, relative = False)   
             elif (inputtype == 'xyz'):
                 xyz = data[i]
-            lms = np.dot(_CMF['2006_10']['M'],xyz.T).T # convert to l,m,s
-            rgb = (lms / _CMF['2006_10']['K']) * k # convert to rho, gamma, beta
+            lms = np.dot(_CMF[cieobs]['M'],xyz.T).T # convert to l,m,s
+            rgb = (lms / _CMF[cieobs]['K']) * k # convert to rho, gamma, beta
 
             # apply von-kries cat with D = 1:
             if (rgbb == 0).any():
@@ -338,13 +338,15 @@ def cam18sl(data, datab = None, Lb = [100], fov = 10.0, inputtype = 'xyz', direc
             rgb = np.dot(np.diag((rgbb/rgbr)[0]),rgba.T).T
 
             # convert rgb to lms to xyz:
-            lms = rgb/k*_CMF['2006_10']['K']  
+            lms = rgb/k*_CMF[cieobs]['K']  
             xyz = np.dot(Mlms2xyz,lms.T).T 
             
             camout[i] = xyz
     
-    if camout.shape[0] == 1:
-        camout = np.squeeze(camout,axis = 0)
+    camout = np.transpose(camout, axes = (1,0,2))
+    
+    if camout.shape[1] == 1:
+        camout = np.squeeze(camout,axis = 1)
     
     return camout
  
@@ -408,6 +410,13 @@ if __name__ == '__main__':
     rflM = M['R']
     cieobs = '2006_10'
     
+    parameters = _CAM18SL_PARAMETERS.copy()
+    
+    # Test use of CAM18sl with 1931_2 input xyz:
+    # cieobs = '1931_2'
+    # parameters['k'] = np.array([[7.5768e+02, 7.5770e+02, 7.5744e+02]]) # k-factors for 1931_2
+    # parameters['cieobs'] = '1931_2'
+    
     # Normalize to Lw:
     Lw = 100
     xyzw2 = spd_to_xyz(C, cieobs = cieobs, relative = False)
@@ -416,15 +425,15 @@ if __name__ == '__main__':
 
     
     xyz, xyzw = spd_to_xyz(C, cieobs = cieobs, relative = True, rfl = rflM, out = 2)
-    qab = xyz_to_qabS_cam18sl(xyzw, xyzb = None, Lb = [100], fov = 10.0)
+    qab = xyz_to_qabS_cam18sl(xyzw, xyzb = None, Lb = [100], fov = 10.0, parameters = parameters)
     print('qabS: ',qab)
-    qab2 = cam18sl(C, datab = None, Lb = [100], fov = 10.0, direction = 'forward', inputtype = 'spd', outin = 'Q,aS,bS', parameters = None)
+    qab2 = cam18sl(C, datab = None, Lb = [100], fov = 10.0, direction = 'forward', inputtype = 'spd', outin = 'Q,aS,bS',  parameters = parameters)
     print('qabS2: ',qab2)       
-    xyz_ = qabS_cam18sl_to_xyz(qab, xyzb = None, Lb = [100], fov = 10.0)
+    xyz_ = qabS_cam18sl_to_xyz(qab, xyzb = None, Lb = [100], fov = 10.0, parameters = parameters)
     print('delta: ', xyzw-xyz_)
     
     # test 2:
-    cieobs = '2006_10'
+    #cieobs = '2006_10'
     Lb = np2d([100])
     wlr = getwlr(_CAM18SL_WL3)
     EEW = np.vstack((wlr,np.ones((Lb.shape[1], wlr.shape[0])))) 
@@ -439,8 +448,16 @@ if __name__ == '__main__':
     xyz = spd_to_xyz(STIM, cieobs = cieobs, relative = False)
     
     BG = EEW
-    qab = cam18sl(EEW, datab = EEW, Lb = [100], fov = 10.0, direction = 'forward', inputtype = 'spd', outin = 'Q,aS,bS', parameters = None)
+    qab = cam18sl(EEW, datab = EEW, Lb = [100], fov = 10.0, direction = 'forward', inputtype = 'spd', outin = 'Q,aS,bS', parameters = parameters)
     print('test 2 qabS: ',qab)
+    
+    # test 3:
+    print('Test 3')
+    xyz, xyzw = spd_to_xyz(STIM, cieobs = cieobs, relative = True,  out = 2)
+    qab = xyz_to_qabS_cam18sl(xyz, xyzb = None, Lb = [100]*5, fov = 10.0, parameters = parameters)
+    print('qabS: ',qab)      
+    xyz_ = qabS_cam18sl_to_xyz(qab, xyzb = None, Lb = [100]*5, fov = 10.0, parameters = parameters)
+    print('delta: ', xyz-xyz_)
     
     
     

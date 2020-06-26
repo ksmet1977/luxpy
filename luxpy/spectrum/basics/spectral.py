@@ -104,6 +104,8 @@ References
     New York, NY: The Illuminating Engineering Society of North America. 
     <https://www.ies.org/store/technical-memoranda/ies-method-for-evaluating-light-source-color-rendition/>`_
 
+    4. `CIE 191:2010 Recommended System for Mesopic Photometry Based on Visual Performance.
+    (ISBN 978-3-901906-88-6), http://cie.co.at/publications/recommended-system-mesopic-photometry-based-visual-performance>`_
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
@@ -597,6 +599,10 @@ def vlbar_cie_mesopic(m = [1], wl_new = None, kind = 'np', out = 1,
         :Kmes:
             | ndarray with luminous efficacies of 555 nm monochromatic light
             | for for adaptation coefficient(s) m
+    
+    Reference:
+        1. `CIE 191:2010 Recommended System for Mesopic Photometry Based on Visual Performance.
+        (ISBN 978-3-901906-88-6  ), <http://cie.co.at/publications/recommended-system-mesopic-photometry-based-visual-performance>`_
     """
     if (Lp is not None) & ((Ls is not None) | (SP is not None)):
         Lmes, m = get_cie_mesopic_adaptation(Lp = Lp, Ls = Ls, SP = SP)
@@ -644,6 +650,9 @@ def get_cie_mesopic_adaptation(Lp, Ls = None, SP = None):
             | mesopic adaptation luminance
         :m: 
             | mesopic adaptation coefficient
+    Reference:
+        1. `CIE 191:2010 Recommended System for Mesopic Photometry Based on Visual Performance.
+        (ISBN 978-3-901906-88-6 ), <http://cie.co.at/publications/recommended-system-mesopic-photometry-based-visual-performance>`_
     """
     Lp = np.array(Lp)
     Ls = np.array(Ls)
