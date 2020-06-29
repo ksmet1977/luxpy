@@ -71,7 +71,7 @@ def _parse_rgbxyz_input(rgb, xyz = None, sep = ',', header=None):
     return rgb, xyz
 
 def calibrate(rgbcal, xyzcal, L_type = 'lms', tr_type = 'lut', cieobs = '1931_2', 
-              nbit = 8, cspace = 'lab', avg = lambda x: ((x**2).mean()**0.5), ensure_increasing_lut_at_low_rgb = None,
+              nbit = 8, cspace = 'lab', avg = lambda x: ((x**2).mean()**0.5), ensure_increasing_lut_at_low_rgb = 0.2,
               verbosity = 1, sep=',',header=None): 
     """
     Calculate TR parameters/lut and conversion matrices.
@@ -116,7 +116,7 @@ def calibrate(rgbcal, xyzcal, L_type = 'lms', tr_type = 'lut', cieobs = '1931_2'
             | Function used to average the color differences of the individual RGB settings
             | in the optimization of the xyz_to_rgb and rgb_to_xyz conversion matrices.
         :ensure_increasing_lut_at_low_rgb:
-            | None or float (max = 1.0), optional
+            | 0.2 or float (max = 1.0) or None, optional
             | Ensure an increasing lut by setting all values below the RGB with the maximum
             | zero-crossing of np.diff(lut) and RGB/RGB.max() values of :ensure_increasing_lut_at_low_rgb:
             | (values of 0.2 are a good rule of thumb value)
@@ -174,7 +174,8 @@ def calibrate(rgbcal, xyzcal, L_type = 'lms', tr_type = 'lut', cieobs = '1931_2'
         par = np.array([sp.optimize.curve_fit(TR, rgbcal[p_pure[i],i], L[p_pure[i],i]/L[p_pure[i],i].max(), p0=[1,0,1])[0] for i in range(3)]) # calculate parameters of each TR
         tr = par
     elif tr_type == 'lut':
-        lut = np.array([cie_interp(np.vstack((rgbcal[p_pure[i],i],L[p_pure[i],i]/L[p_pure[i],i].max())), np.arange(2**nbit), kind ='cubic')[1,:] for i in range(3)]).T
+        dac = np.arange(2**nbit)
+        lut = np.array([cie_interp(np.vstack((rgbcal[p_pure[i],i],L[p_pure[i],i]/L[p_pure[i],i].max())), dac, kind ='cubic')[1,:] for i in range(3)]).T
         
         # ensure monotonically increasing lut values for low signal:
         if ensure_increasing_lut_at_low_rgb is not None:
