@@ -71,7 +71,7 @@ def _parse_rgbxyz_input(rgb, xyz = None, sep = ',', header=None):
     return rgb, xyz
 
 def calibrate(rgbcal, xyzcal, L_type = 'lms', tr_type = 'lut', cieobs = '1931_2', 
-              nbit = 8, cspace = 'lab', avg = lambda x: ((x**2).mean()**0.5), ensure_increasing_lut_below = 0.2,
+              nbit = 8, cspace = 'lab', avg = lambda x: ((x**2).mean()**0.5), ensure_increasing_lut_at_low_rgb = None,
               verbosity = 1, sep=',',header=None): 
     """
     Calculate TR parameters/lut and conversion matrices.
@@ -115,10 +115,10 @@ def calibrate(rgbcal, xyzcal, L_type = 'lms', tr_type = 'lut', cieobs = '1931_2'
             | lambda x: ((x**2).mean()**0.5), optional
             | Function used to average the color differences of the individual RGB settings
             | in the optimization of the xyz_to_rgb and rgb_to_xyz conversion matrices.
-        :ensure_increasing_lut_below:
-            | None or float , optional
+        :ensure_increasing_lut_at_low_rgb:
+            | None or float (max = 1.0), optional
             | Ensure an increasing lut by setting all values below the RGB with the maximum
-            | zero-crossing of np.diff(lut) and RGB/RGB.max() values of :ensure_increasing_lut_below:
+            | zero-crossing of np.diff(lut) and RGB/RGB.max() values of :ensure_increasing_lut_at_low_rgb:
             | (values of 0.2 are a good rule of thumb value)
             | Non-strictly increasing lut values can be caused at low RGB values due
             | to noise and low measurement signal. 
@@ -177,10 +177,10 @@ def calibrate(rgbcal, xyzcal, L_type = 'lms', tr_type = 'lut', cieobs = '1931_2'
         lut = np.array([cie_interp(np.vstack((rgbcal[p_pure[i],i],L[p_pure[i],i]/L[p_pure[i],i].max())), np.arange(2**nbit), kind ='cubic')[1,:] for i in range(3)]).T
         
         # ensure monotonically increasing lut values for low signal:
-        if ensure_increasing_lut_below is not None:
-            #ensure_increasing_lut_below = 0.2 # anything below that has a zero-crossing for diff(lut) will be set to zero
+        if ensure_increasing_lut_at_low_rgb is not None:
+            #ensure_increasing_lut_at_low_rgb = 0.2 # anything below that has a zero-crossing for diff(lut) will be set to zero
             for i in range(3):
-                p0 = np.where((np.diff(lut[dac/dac.max() < ensure_increasing_lut_below,i])<=0))[0]
+                p0 = np.where((np.diff(lut[dac/dac.max() < ensure_increasing_lut_at_low_rgb,i])<=0))[0]
                 if p0.any():
                     p0 = range(0,p0[-1])
                     lut[p0,i] = 0
