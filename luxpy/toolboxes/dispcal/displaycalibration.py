@@ -175,8 +175,10 @@ def calibrate(rgbcal, xyzcal, L_type = 'lms', tr_type = 'lut', cieobs = '1931_2'
         tr = par
     elif tr_type == 'lut':
         dac = np.arange(2**nbit)
-        lut = np.array([cie_interp(np.vstack((rgbcal[p_pure[i],i],L[p_pure[i],i]/L[p_pure[i],i].max())), dac, kind ='cubic')[1,:] for i in range(3)]).T
-        
+        # lut = np.array([cie_interp(np.vstack((rgbcal[p_pure[i],i],L[p_pure[i],i]/L[p_pure[i],i].max())), dac, kind ='cubic')[1,:] for i in range(3)]).T
+        lut = np.array([sp.interpolate.PchipInterpolator(rgbcal[p_pure[i],i],L[p_pure[i],i]/L[p_pure[i],i].max())(dac) for i in range(3)]).T # use this one to avoid potential overshoot with cubic spline interpolation (but slightly worse performance)
+        lut[lut<0] = 0
+          
         # ensure monotonically increasing lut values for low signal:
         if ensure_increasing_lut_at_low_rgb is not None:
             #ensure_increasing_lut_at_low_rgb = 0.2 # anything below that has a zero-crossing for diff(lut) will be set to zero
@@ -553,6 +555,7 @@ class DisplayCalibration():
                  nbit = 8, 
                  cspace = 'lab', 
                  avg = lambda x: ((x**2).mean()**0.5), 
+                 ensure_increasing_lut_at_low_rgb = 0.2,
                  verbosity = 1,
                  sep = ',',
                  header = None):
@@ -563,6 +566,7 @@ class DisplayCalibration():
         M, N, tr, xyz_black, xyz_white = calibrate(rgbcal, xyzcal = xyzcal, L_type = L_type, 
                                                    cieobs = cieobs, tr_type = tr_type, nbit = nbit,
                                                    avg = avg, cspace = cspace,
+                                                   ensure_increasing_lut_at_low_rgb = ensure_increasing_lut_at_low_rgb,
                                                    verbosity = verbosity,
                                                    sep = sep, header = header) 
         self.M = M
