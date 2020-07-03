@@ -29,6 +29,7 @@ cat: Module supporting chromatic adaptation transforms (corresponding colors)
           | * 'cat02-bs':  cat02 adjusted to solve yellow-blue problem (last line = [0 0 1]): `Brill MH, SÃ¼sstrunk S. Repairing gamut problems in CIECAM02: A progress report. Color Res Appl 2008;33(5), 424â426. <http://onlinelibrary.wiley.com/doi/10.1002/col.20432/abstract>`_
           | * 'cat02-jiang': cat02 modified to solve yb-probem + purple problem: `Jun Jiang, Zhifeng Wang,M. Ronnier Luo,Manuel Melgosa,Michael H. Brill,Changjun Li, Optimum solution of the CIECAM02 yellowâblue and purple problems, Color Res Appl 2015: 40(5), 491-503. <http://onlinelibrary.wiley.com/doi/10.1002/col.21921/abstract>`_
           | * 'kries'
+          | * 'judd-1935': Judd primaries: `Judd, D.B.v (1935). A Maxwell Triangle Yielding Uniform Chromaticity Scales, JOSA A, 25(1), pp. 24-35. <https://doi.org/10.1364/JOSA.25.000024>`_
           | * 'judd-1945': from `CIE16-2004 <http://www.cie.co.at/index.php/index.php?i_ca_id=436>`_, Eq.4, a23 modified from 0.1 to 0.1020 for increased accuracy
           | * 'bfd': bradford transform :  `G. D. Finlayson and S. Susstrunk, âSpectral sharpening and the Bradford transform,â? 2000, vol. Proceeding, pp. 236â242. <https://infoscience.epfl.ch/record/34077>`_
           | * 'sharp': sharp transform:  `S. SÃ¼sstrunk, J. Holm, and G. D. Finlayson, âChromatic adaptation performance of different RGB sensors,â? IS&T/SPIE Electronic Imaging 2001: Color Imaging, vol. 4300. San Jose, CA, January, pp. 172â183, 2001. <http://proceedings.spiedigitallibrary.org/proceeding.aspx?articleid=903890>`_
@@ -85,6 +86,7 @@ _MCATS['cat02'] = np2d([[0.7328, 0.4296, -0.1624],[ -0.7036, 1.6975,  0.0061],[ 
 _MCATS['cat02-bs'] =np2d([[0.7328, 0.4296, -0.1624],[ -0.7036, 1.6975,  0.0061],[ 0.0, 0.0,  1.0]]) #Brill MH, SÃ¼sstrunk S. Repairing gamut problems in CIECAM02: A progress report. Color Res Appl 2008;33(5), 424â426.
 _MCATS['cat02-jiang-luo'] =np2d([[0.556150, 0.556150, -0.112300],[-0.507327, 1.404878, 0.102449],[0.0, 0.0, 1.0]]) # Jun Jiang, Zhifeng Wang,M. Ronnier Luo,Manuel Melgosa,Michael H. Brill,Changjun Li, Optimum solution of the CIECAM02 yellowâblue and purple problems, Color Res Appl 2015: 40(5), 491-503 
 _MCATS['kries'] = np2d([[0.40024, 0.70760, -0.08081],[-0.22630, 1.16532,  0.04570],[ 0.0,       0.0,        0.91822]])
+_MCATS['judd-1935'] = np.array([[3.1956,2.4478,-0.1434],[-2.5455,7.0942,0.9963],[0,0,1]])
 _MCATS['judd-1945'] = np2d([[0.0, 1.0, 0.0],[-0.460,1.360,0.102],[0.0,0.0,1.0]]) # from CIE16-2004, Eq.4, a23 modified from 0.1 to 0.1020 for increased accuracy
 _MCATS['bfd'] = np2d([[0.8951,0.2664,-0.1614],[-0.7502,1.7135,0.0367],[0.0389,-0.0685,1.0296]]) #also used in ciecam97s
 _MCATS['sharp'] = np2d([[1.2694,-0.0988,-0.1706],[-0.8364,1.8006,0.0357],[0.0297,-0.0315,1.0018]])
