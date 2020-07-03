@@ -80,7 +80,7 @@ _WHITE_POINT = np2d([100,100,100]) #default adopted white point
 _LA = 100.0 #cd/mÂ²
 
 _MCATS = {x : _CMF[x]['M'] for x in _CMF['types']}
-_MCATS['hpe'] = _MCATS['1931_2']
+_MCATS['hpe'] = _MCATS['1931_2'].copy()
 _MCATS['cat02'] = np2d([[0.7328, 0.4296, -0.1624],[ -0.7036, 1.6975,  0.0061],[ 0.0030, 0.0136,  0.9834]])
 _MCATS['cat02-bs'] =np2d([[0.7328, 0.4296, -0.1624],[ -0.7036, 1.6975,  0.0061],[ 0.0, 0.0,  1.0]]) #Brill MH, SÃ¼sstrunk S. Repairing gamut problems in CIECAM02: A progress report. Color Res Appl 2008;33(5), 424â426.
 _MCATS['cat02-jiang-luo'] =np2d([[0.556150, 0.556150, -0.112300],[-0.507327, 1.404878, 0.102449],[0.0, 0.0, 1.0]]) # Jun Jiang, Zhifeng Wang,M. Ronnier Luo,Manuel Melgosa,Michael H. Brill,Changjun Li, Optimum solution of the CIECAM02 yellowâblue and purple problems, Color Res Appl 2015: 40(5), 491-503 

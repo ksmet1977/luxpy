@@ -41,16 +41,22 @@ cmf.py
             in the calculation, AND are not extrapolated using the closest 
             known value, as per CIE recommendation.
 
-        2. There are no XYZ to LMS conversion matrices defined for the 
-            1964 10°, 1931 2° Judd corrected (1951) 
-            and 1931 2° Judd-Vos corrected (1978) cmf sets.
+        2. There is no XYZ to LMS conversion matrices defined for the 
+            1931 2° Judd corrected (1951) cmf sets.
             The Hunt-Pointer-Estevez conversion matrix of the 1931 2° is 
             therefore used as an approximation!
             
-        3. The K lm to Watt conversion factors for the Judd and Judd-Vos cmf 
+        3. The XYZ to LMS conversion matrix for the Judd-Vos XYZ CMFs is the one
+            that converts to the 1979 Smith-Pokorny cone fundamentals.
+            
+        4. The XYZ to LMS conversion matrix for the 1964 10° XYZ CMFs is set
+            to the one of the CIE 2006 10° cone fundamentals, as not matrix has
+            been officially defined for this CMF set.
+            
+        4. The K lm to Watt conversion factors for the Judd and Judd-Vos cmf 
             sets have been set to 683.002 lm/W (same as for standard 1931 2°).
             
-        4. The 1951 scoptopic V' function has been replicated in the 3 
+        5. The 1951 scoptopic V' function has been replicated in the 3 
             xbar, ybar, zbar columns to obtain a data format similar to the 
             photopic color matching functions. 
             This way V' can be called in exactly the same way as other V 
@@ -58,7 +64,7 @@ cmf.py
             The K value has been set to 1700.06 lm/W and the conversion matrix 
             to np.eye().
         
-        5. _CMF[x]['M'] for x equal to '2006_2' or '2006_10' is NOT 
+        6. _CMF[x]['M'] for x equal to '2006_2' or '2006_10' is NOT 
             normalized to illuminant E! These are the original matrices 
             as defined by [1] & [2].
 
@@ -92,10 +98,17 @@ _CMF_TYPES = ['1931_2','1964_10','2006_2','2006_10','1931_2_judd1951','1931_2_ju
 _CMF_K_VALUES = [683.002, 683.599, 683.358, 683.144, 683.002, 683.002, 1700.06, 0.0] 
 
 
-_CMF_M_1931_2=np.array([     # definition of 3x3 matrices to convert from xyz to lms
+_CMF_M_1931_2 = np.array([     # definition of 3x3 matrices to convert from xyz to Hunt-Pointer-Estevez lms
 [0.38971,0.68898,-0.07868],
 [-0.22981,1.1834,0.04641],
 [0.0,0.0,1.0]
+ ])
+
+
+_CMF_M_1931_2_JUDDVOS1978 = np.array([ # definition of 3x3 matrices to convert from Judd-Vos xyz to Smith-Pokorny lms
+[0.15514,0.54312,-0.03286],
+[-0.15514,0.45684,0.032386],
+[0.0,0.00801,1.0]
  ])
          
 
@@ -106,25 +119,14 @@ _CMF_M_2006_2 = np.linalg.inv(np.array([[1.94735469, -1.41445123, 0.36476327],
 _CMF_M_2006_10 = np.linalg.inv(np.array([[1.93986443, -1.34664359, 0.43044935],
                                         [0.69283932, 0.34967567, 0],
                                         [0, 0, 2.14687945]]))
-  
-# Note that for the following, no conversion has been defined, so the 1931 HPE matrix is used:    
-_CMF_M_1964_10=np.array([
-[0.38971,0.68898,-0.07868],
-[-0.22981,1.1834,0.04641],
-[0.0,0.0,1.0]
-]) 
+
+# Note that for the following, no conversion has been defined, so the 2006 10° matrix is used:          
+_CMF_M_1964_10 = _CMF_M_2006_10.copy()
+
+# Note that for the following, no conversion has been defined, so the 1931 HPE matrix is used:          
+_CMF_M_1931_2_JUDD1951 = _CMF_M_1931_2.copy()
          
-_CMF_M_1931_2_JUDD1951=np.array([
-[0.38971,0.68898,-0.07868],
-[-0.22981,1.1834,0.04641],
-[0.0,0.0,1.0]
-]) 
-         
-_CMF_M_1931_2_JUDDVOS1978=np.array([
-[0.38971,0.68898,-0.07868],
-[-0.22981,1.1834,0.04641],
-[0.0,0.0,1.0]
-]) 
+
 
 # Scotopic conversion matrix has been set as the identity matrix (V' was replicated in the Xb,Yb,Zb columns)     
 _CMF_M_1951_20_SCOTOPIC = np.eye(3)   
