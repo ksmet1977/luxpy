@@ -282,7 +282,7 @@ def plotBB(ccts = None, cieobs =_CIEOBS, cspace = _CSPACE, axh = None, cctlabels
     if show == False:
         return axh
     
-def plotSL(cieobs =_CIEOBS, cspace = _CSPACE, DL = True, BBL = True, D65 = False,\
+def plotSL(cieobs =_CIEOBS, cspace = _CSPACE, DL = False, BBL = True, D65 = False,\
            EEW = False, cctlabels = False, axh = None, show = True,\
            cspace_pars = {}, formatstr = 'k-',\
            diagram_colors = False, diagram_samples = 100, diagram_opacity = 1.0,\
@@ -349,10 +349,15 @@ def plotSL(cieobs =_CIEOBS, cspace = _CSPACE, DL = True, BBL = True, D65 = False
             |  or 
             | handle to current axes (:show: == False)
     """
-    SL = _CMF[cieobs]['bar'][1:4].T
-    SL = np.vstack((SL,SL[0]))
-    SL = 100.0*SL/SL[:,1,None]
+    if isinstance(cieobs,str):
+        SL = _CMF[cieobs]['bar'][1:4].T
+    else:
+        SL = cieobs[1:4].T
+    SL = 100.0*SL/(SL[:,1,None] + _EPS)
+    SL = SL[SL.sum(axis=1)>0,:] # avoid div by zero in xyz-to-Yxy conversion
     SL = colortf(SL, tf = cspace, tfa0 = cspace_pars)
+    plambdamax = SL[:,1].argmax()
+    SL = np.vstack((SL[:(plambdamax+1),:],SL[0])) # add lowest wavelength data and go to max of gamut in x (there is a reversal for some cmf set wavelengths >~700 nm!)
     Y,x,y = asplit(SL)
     
     showcopy = show
@@ -382,10 +387,10 @@ def plotSL(cieobs =_CIEOBS, cspace = _CSPACE, DL = True, BBL = True, D65 = False
         plotBB(ccts = None, cieobs = cieobs, cspace = cspace, axh = axh_, show = show, cspace_pars = cspace_pars, cctlabels = cctlabels, formatstr = 'k-.',  **kwargs)
     
     if D65 == True:
-        YxyD65 = colortf(spd_to_xyz(_CIE_ILLUMINANTS['D65']), tf = cspace, tfa0 = cspace_pars)
+        YxyD65 = colortf(spd_to_xyz(_CIE_ILLUMINANTS['D65'], cieobs = cieobs), tf = cspace, tfa0 = cspace_pars)
         plt.plot(YxyD65[...,1],YxyD65[...,2],'bo')
     if EEW == True:
-        YxyEEW = colortf(spd_to_xyz(_CIE_ILLUMINANTS['E']), tf = cspace, tfa0 = cspace_pars)
+        YxyEEW = colortf(spd_to_xyz(_CIE_ILLUMINANTS['E'], cieobs = cieobs), tf = cspace, tfa0 = cspace_pars)
         plt.plot(YxyEEW[...,1],YxyEEW[...,2],'ko')
     
     
@@ -436,7 +441,10 @@ def plotceruleanline(cieobs = _CIEOBS, cspace = _CSPACE, axh = None,formatstr = 
         <https://doi.org/10.1002/col.21793>`_
         (see Table II, IV)
     """
-    cmf = _CMF[cieobs]['bar']
+    if isinstance(cieobs,str):
+        cmf = _CMF[cieobs]['bar']
+    else:
+        cmf = cieobs
     p_y = cmf[0] == 577.0 #Kuehni, CRA 2013 (mean, table IV)
     p_b = cmf[0] == 472.0 #Kuehni, CRA 2013 (mean, table IV)
     xyz_y = cmf[1:,p_y].T
@@ -499,7 +507,10 @@ def plotUH(xyz0 = None, uhues = [0,1,2,3], cieobs = _CIEOBS, cspace = _CSPACE, a
         (see Table II, IV)
     """
     hues = ['yellow','blue','red','green']
-    cmf = _CMF[cieobs]['bar']
+    if isinstance(cieobs,str):
+        cmf = _CMF[cieobs]['bar']
+    else:
+        cmf = cieobs
     p_y = cmf[0] == 577.0 #unique yellow,#Kuehni, CRA 2013 (mean, table IV: spectral data)
     p_b = cmf[0] == 472.0 #unique blue,Kuehni, CRA 2013 (mean, table IV: spectral data)
     p_g = cmf[0] == 514.0 #unique green, Kuehni, CRA 2013 (mean, table II: spectral data)
@@ -765,10 +776,15 @@ def plot_chromaticity_diagram_colors(diagram_samples = 256, diagram_opacity = 1.
     ii, jj = np.meshgrid(np.linspace(offset, 1 + offset, int(diagram_samples)), np.linspace(1+offset, offset, int(diagram_samples)))
     ij = np.dstack((ii, jj))
     
-    SL =  _CMF[cieobs]['bar'][1:4].T
-    SL = np.vstack((SL,SL[0]))
-    SL = 100.0*SL/SL[:,1,None]
+    if isinstance(cieobs,str):
+        SL = _CMF[cieobs]['bar'][1:4].T
+    else:
+        SL = cieobs[1:4].T
+    SL = 100.0*SL/(SL[:,1,None] + _EPS)
+    SL = SL[SL.sum(axis=1)>0,:] # avoid div by zero in xyz-to-Yxy conversion
     SL = colortf(SL, tf = cspace, tfa0 = cspace_pars)
+    plambdamax = SL[:,1].argmax()
+    SL = np.vstack((SL[:(plambdamax+1),:],SL[0])) # add lowest wavelength data and go to max of gamut in x (there is a reversal for some cmf set wavelengths >~700 nm!)
     Y,x,y = asplit(SL)
     SL = np.vstack((x,y)).T
 
@@ -872,7 +888,11 @@ def plot_spectrum_colors(spd = None, spdmax = None,\
         
     """
     
-    cmfs = _CMF[cieobs]['bar']
+    if isinstance(cieobs,str):
+        cmfs = _CMF[cieobs]['bar']
+    else:
+        cmfs = cieobs
+    cmfs = cmfs[:,cmfs[1:].sum(axis=1)>0] # avoid div by zero in xyz-to-Yxy conversion
     
     wavs = cmfs[0:1].T
     SL =  cmfs[1:4].T    
