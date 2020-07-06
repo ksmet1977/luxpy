@@ -896,7 +896,7 @@ def plot_spectrum_colors(spd = None, spdmax = None,\
         cmfs = _CMF[cieobs]['bar']
     else:
         cmfs = cieobs
-    cmfs = cmfs[:,cmfs[1:].sum(axis=1)>0] # avoid div by zero in xyz-to-Yxy conversion
+    cmfs = cmfs[:,cmfs[1:].sum(axis=0)>0] # avoid div by zero in xyz-to-Yxy conversion
     
     wavs = cmfs[0:1].T
     SL =  cmfs[1:4].T    
