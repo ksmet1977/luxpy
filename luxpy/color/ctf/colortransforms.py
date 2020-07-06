@@ -719,7 +719,7 @@ def ipt_to_xyz(ipt, cieobs = _CIEOBS, xyzw = None, M = None, **kwargs):
     return xyz
 
 #------------------------------------------------------------------------------
-def xyz_to_Ydlep(xyz, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT, flip_axes = False, **kwargs):
+def xyz_to_Ydlep_(xyz, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT, flip_axes = False, **kwargs):
     """
     Convert XYZ tristimulus values to Y, dominant (complementary) wavelength
     and excitation purity.
@@ -761,6 +761,156 @@ def xyz_to_Ydlep(xyz, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT, fli
     SL = SL[:,SL[1:].sum(axis=0)>0] # avoid div by zero in xyz-to-Yxy conversion
     wlsl = SL[0]
     Yxysl = xyz_to_Yxy(SL[1:4].T)[:,None]
+    pmaxlambda = Yxysl[...,1].argmax()
+    maxlambda = wlsl[pmaxlambda]
+    maxlambda = 700
+    print(np.where(wlsl==maxlambda))
+    pmaxlambda = np.where(wlsl==maxlambda)[0][0]
+    Yxysl = Yxysl[:(pmaxlambda+1),:]
+    wlsl = wlsl[:(pmaxlambda+1)]
+
+    # center on xyzw:
+    Yxy = Yxy - Yxyw
+    Yxysl = Yxysl - Yxyw
+    Yxyw = Yxyw - Yxyw
+
+    #split:
+    Y, x, y = asplit(Yxy)
+    Yw,xw,yw = asplit(Yxyw)
+    Ysl,xsl,ysl = asplit(Yxysl)
+
+    # calculate hue:
+    h = math.positive_arctan(x,y, htype = 'deg')
+    print(h)
+    print('rh',h[0,0]-h[0,1])
+    print(wlsl[0],wlsl[-1])
+
+    hsl = math.positive_arctan(xsl,ysl, htype = 'deg')
+
+    hsl_max = hsl[0] # max hue angle at min wavelength
+    hsl_min = hsl[-1] # min hue angle at max wavelength
+    if hsl_min < hsl_max: hsl_min += 360
+
+    dominantwavelength = np.empty(Y.shape)
+    purity = np.empty(Y.shape)
+    print('xyz:',xyz)
+    for i in range(xyz3.shape[1]):
+            print('\ni:',i,h[:,i],hsl_max,hsl_min)
+            print(h)
+            # find index of complementary wavelengths/hues:
+            pc = np.where((h[:,i] > hsl_max) & (h[:,i] < hsl_min)) # hue's requiring complementary wavelength (purple line)
+            print('pc',(h[:,i] > hsl_max) & (h[:,i] < hsl_min))
+            h[:,i][pc] = h[:,i][pc] - np.sign(h[:,i][pc] - 180.0)*180.0 # add/subtract 180° to get positive complementary wavelength
+
+            # find 2 closest hues in sl:
+            #hslb,hib = meshblock(hsl,h[:,i:i+1])
+            hib,hslb = np.meshgrid(h[:,i:i+1],hsl)
+            dh = np.abs(hslb-hib)
+            q1 = dh.argmin(axis=0) # index of closest hue
+            dh[q1] = 1000000.0
+            q2 = dh.argmin(axis=0) # index of second closest hue
+            print('q1q2',q2,q1)
+            
+            print('wls:',h[:,i],wlsl[q1],wlsl[q2])
+            print('hsls:',hsl[q2,0] , hsl[q1,0])
+            print('d',(wlsl[q2] - wlsl[q1]),(hsl[q2,0] - hsl[q1,0]),(wlsl[q2] - wlsl[q1])/(hsl[q2,0] - hsl[q1,0]))
+            print('(h[:,i] - hsl[q1,0])',(h[:,i] - hsl[q1,0]))
+            print('div',np.divide((wlsl[q2] - wlsl[q1]),(hsl[q2,0] - hsl[q1,0])))
+            print('mult(...)',np.multiply((h[:,i] - hsl[q1,0]),np.divide((wlsl[q2] - wlsl[q1]),(hsl[q2,0] - hsl[q1,0]))))
+            dominantwavelength[:,i] = wlsl[q1] + np.multiply((h[:,i] - hsl[q1,0]),np.divide((wlsl[q2] - wlsl[q1]),(hsl[q2,0] - hsl[q1,0]))) # calculate wl corresponding to h: y = y1 + (x-x1)*(y2-y1)/(x2-x1)
+            print('dom',dominantwavelength[:,i])
+            dominantwavelength[(dominantwavelength[:,i]>max(wlsl[q1],wlsl[q2])),i] = max(wlsl[q1],wlsl[q2])
+            dominantwavelength[(dominantwavelength[:,i]<min(wlsl[q1],wlsl[q2])),i] = min(wlsl[q1],wlsl[q2])
+
+            dominantwavelength[:,i][pc] = - dominantwavelength[:,i][pc] #complementary wavelengths are specified by '-' sign
+
+            # calculate excitation purity:
+            x_dom_wl = xsl[q1,0] + (xsl[q2,0] - xsl[q1,0])*(h[:,i] - hsl[q1,0])/(hsl[q2,0] - hsl[q1,0]) # calculate x of dom. wl
+            y_dom_wl = ysl[q1,0] + (ysl[q2,0] - ysl[q1,0])*(h[:,i] - hsl[q1,0])/(hsl[q2,0] - hsl[q1,0]) # calculate y of dom. wl
+            d_wl = (x_dom_wl**2.0 + y_dom_wl**2.0)**0.5 # distance from white point to sl
+            d = (x[:,i]**2.0 + y[:,i]**2.0)**0.5 # distance from white point to test point
+            purity[:,i] = d/d_wl
+
+            # correct for those test points that have a complementary wavelength
+            # calculate intersection of line through white point and test point and purple line:
+            xy = np.vstack((x[:,i],y[:,i])).T
+            xyw = np.hstack((xw,yw))
+            xypl1 = np.hstack((xsl[0,None],ysl[0,None]))
+            xypl2 = np.hstack((xsl[-1,None],ysl[-1,None]))
+            da = (xy-xyw)
+            db = (xypl2-xypl1)
+            dp = (xyw - xypl1)
+            T = np.array([[0.0, -1.0], [1.0, 0.0]])
+            dap = np.dot(da,T)
+            denom = np.sum(dap * db,axis=1,keepdims=True)
+            num = np.sum(dap * dp,axis=1,keepdims=True)
+            xy_linecross = (num/denom) *db + xypl1
+            d_linecross = np.atleast_2d((xy_linecross[:,0]**2.0 + xy_linecross[:,1]**2.0)**0.5).T#[0]
+            purity[:,i][pc] = d[pc]/d_linecross[pc][:,0]
+    Ydlep = np.dstack((xyz3[:,:,1],dominantwavelength,purity))
+
+    if axes12flipped == True:
+        Ydlep = Ydlep.transpose((1,0,2))
+    else:
+        Ydlep = Ydlep.transpose((0,1,2))
+    return Ydlep.reshape(xyz.shape)
+
+def xyz_to_Ydlep(xyz, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT, flip_axes = False, SL_max_lambda = None, **kwargs):
+    """
+    Convert XYZ tristimulus values to Y, dominant (complementary) wavelength
+    and excitation purity.
+
+    Args:
+        :xyz:
+            | ndarray with tristimulus values
+        :xyzw:
+            | None or ndarray with tristimulus values of a single (!) native white point, optional
+            | None defaults to xyz of CIE D65 using the :cieobs: observer.
+        :cieobs:
+            | luxpy._CIEOBS, optional
+            | CMF set to use when calculating spectrum locus coordinates.
+        :flip_axes:
+            | False, optional
+            | If True: flip axis 0 and axis 1 in Ydelep to increase speed of loop in function.
+            |          (single xyzw with is not flipped!)
+        :SL_max_lambda:
+            | None or float, optional
+            | Maximum wavelength of spectrum locus before it turns back on itelf in the high wavelength range (~700 nm)
+    Returns:
+        :Ydlep: 
+            | ndarray with Y, dominant (complementary) wavelength
+            |  and excitation purity
+    """
+    
+    xyz3 = np3d(xyz).copy().astype(np.float)
+
+    # flip axis so that shortest dim is on axis0 (save time in looping):
+    if (xyz3.shape[0] < xyz3.shape[1]) & (flip_axes == True):
+        axes12flipped = True
+        xyz3 = xyz3.transpose((1,0,2))
+    else:
+        axes12flipped = False
+
+    # convert xyz to Yxy:
+    Yxy = xyz_to_Yxy(xyz3)
+    Yxyw = xyz_to_Yxy(xyzw)
+
+    # get spectrum locus Y,x,y and wavelengths:
+    SL = _CMF[cieobs]['bar']
+    SL = SL[:,SL[1:].sum(axis=0)>0] # avoid div by zero in xyz-to-Yxy conversion
+    wlsl = SL[0]
+    Yxysl = xyz_to_Yxy(SL[1:4].T)[:,None]
+    
+    # Get maximum wavelength of spectrum locus (before it turns back on itself)
+    if SL_max_lambda is None:
+        pmaxlambda = Yxysl[...,1].argmax() # lambda with largest x value
+        dwl = np.diff(Yxysl[:,0,1]) # spectrumlocus in that range should have increasing x
+        dwl[wlsl[:-1]<600] = 10000
+        pmaxlambda = np.where(dwl<=0)[0][0]  # Take first element with zero or <zero slope
+    else:
+        pmaxlambda = np.abs(wlsl - SL_max_lambda).argmin()
+    Yxysl = Yxysl[:(pmaxlambda + 1),:]
+    wlsl = wlsl[:(pmaxlambda + 1)]
 
     # center on xyzw:
     Yxy = Yxy - Yxyw
@@ -779,24 +929,35 @@ def xyz_to_Ydlep(xyz, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT, fli
 
     hsl_max = hsl[0] # max hue angle at min wavelength
     hsl_min = hsl[-1] # min hue angle at max wavelength
+    if hsl_min < hsl_max: hsl_min += 360
 
     dominantwavelength = np.empty(Y.shape)
     purity = np.empty(Y.shape)
+
     for i in range(xyz3.shape[1]):
 
             # find index of complementary wavelengths/hues:
-            pc = np.where((h[:,i] >= hsl_max) & (h[:,i] <= hsl_min + 360.0)) # hue's requiring complementary wavelength (purple line)
+            pc = np.where((h[:,i] > hsl_max) & (h[:,i] < hsl_min)) # hue's requiring complementary wavelength (purple line)
             h[:,i][pc] = h[:,i][pc] - np.sign(h[:,i][pc] - 180.0)*180.0 # add/subtract 180° to get positive complementary wavelength
 
-            # find 2 closest hues in sl:
+            # find 2 closest enclosing hues in sl:
             #hslb,hib = meshblock(hsl,h[:,i:i+1])
             hib,hslb = np.meshgrid(h[:,i:i+1],hsl)
-            dh = np.abs(hslb-hib)
-            q1 = dh.argmin(axis=0) # index of closest hue
-            dh[q1] = 1000.0
-            q2 = dh.argmin(axis=0) # index of second closest hue
-
-            dominantwavelength[:,i] = wlsl[q1] + np.divide(np.multiply((wlsl[q2] - wlsl[q1]),(h[:,i] - hsl[q1,0])),(hsl[q2,0] - hsl[q1,0])) # calculate wl corresponding to h: y = y1 + (y2-y1)*(x-x1)/(x2-x1)
+            dh = (hslb-hib)
+            q1 = np.abs(dh).argmin(axis=0) # index of closest hue
+            sign_q1 = np.sign(dh[q1])[0]
+            dh[np.sign(dh)== sign_q1] = 1000000 # set all dh on the same side as q1 to a very large value
+            q2 = np.abs(dh).argmin(axis=0) # index of second  closest (enclosing) hue
+           
+            # # Test changes to code:
+            # print('wls',i, wlsl[q1],wlsl[q2])
+            # import matplotlib.pyplot as plt
+            # plt.figure()
+            # plt.plot(wlsl[:-1],np.diff(xsl[:,0]),'k.-')
+            # plt.figure()
+            # plt.plot(x[0,i],y[0,i],'k.'); plt.plot(xsl,ysl,'r.-');plt.plot(xsl[q1],ysl[q1],'b.');plt.plot(xsl[q2],ysl[q2],'g.');plt.plot(xsl[-1],ysl[-1],'c+')
+            
+            dominantwavelength[:,i] = wlsl[q1] + np.multiply((h[:,i] - hsl[q1,0]),np.divide((wlsl[q2] - wlsl[q1]),(hsl[q2,0] - hsl[q1,0]))) # calculate wl corresponding to h: y = y1 + (x-x1)*(y2-y1)/(x2-x1)
             dominantwavelength[:,i][pc] = - dominantwavelength[:,i][pc] #complementary wavelengths are specified by '-' sign
 
             # calculate excitation purity:
@@ -831,8 +992,7 @@ def xyz_to_Ydlep(xyz, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT, fli
     return Ydlep.reshape(xyz.shape)
 
 
-
-def Ydlep_to_xyz(Ydlep, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT, flip_axes = False, **kwargs):
+def Ydlep_to_xyz(Ydlep, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT, flip_axes = False, SL_max_lambda = None, **kwargs):
     """
     Convert Y, dominant (complementary) wavelength and excitation purity to XYZ
     tristimulus values.
@@ -851,6 +1011,10 @@ def Ydlep_to_xyz(Ydlep, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT, f
             | False, optional
             | If True: flip axis 0 and axis 1 in Ydelep to increase speed of loop in function.
             |          (single xyzw with is not flipped!)
+        :SL_max_lambda:
+            | None or float, optional
+            | Maximum wavelength of spectrum locus before it turns back on itelf in the high wavelength range (~700 nm)
+
     Returns:
         :xyz: 
             | ndarray with tristimulus values
@@ -874,6 +1038,17 @@ def Ydlep_to_xyz(Ydlep, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT, f
     SL = SL[:,SL[1:].sum(axis=0)>0] # avoid div by zero in xyz-to-Yxy conversion
     wlsl = SL[0,None].T
     Yxysl = xyz_to_Yxy(SL[1:4].T)[:,None]
+    
+    # Get maximum wavelength of spectrum locus (before it turns back on itself)
+    if SL_max_lambda is None:
+        pmaxlambda = Yxysl[...,1].argmax() # lambda with largest x value
+        dwl = np.diff(Yxysl[:,0,1]) # spectrumlocus in that range should have increasing x
+        dwl[wlsl[:-1,0]<600] = 10000
+        pmaxlambda = np.where(dwl<=0)[0][0]  # Take first element with zero or <zero slope
+    else:
+        pmaxlambda = np.abs(wlsl - SL_max_lambda).argmin()
+    Yxysl = Yxysl[:(pmaxlambda+1),:]
+    wlsl = wlsl[:(pmaxlambda+1),:1]
 
     # center on xyzw:
     Yxysl = Yxysl - Yxyw
@@ -894,11 +1069,12 @@ def Ydlep_to_xyz(Ydlep, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT, f
         #wlslb,wlib = meshblock(wlsl,np.abs(dom[i,:])) #abs because dom<0--> complemtary wl
         wlib,wlslb = np.meshgrid(np.abs(dom[:,i]),wlsl)
 
-        dwl = np.abs(wlslb-wlib)
-        q1 = dwl.argmin(axis=0) # index of closest wl
-        dwl[q1] = 10000.0
-        q2 = dwl.argmin(axis=0) # index of second closest wl
-
+        dwl = wlslb-wlib
+        q1 = np.abs(dwl).argmin(axis=0) # index of closest wl
+        sign_q1 = np.sign(dwl[q1])
+        dwl[np.sign(dwl) == sign_q1] = 1000000 # set all dwl on the same side as q1 to a very large value
+        q2 = np.abs(dwl).argmin(axis=0) # index of second closest (enclosing) wl
+        
         # calculate x,y of dom:
         x_dom_wl = xsl[q1,0] + (xsl[q2,0] - xsl[q1,0])*(np.abs(dom[:,i]) - wlsl[q1,0])/(wlsl[q2,0] - wlsl[q1,0]) # calculate x of dom. wl
         y_dom_wl = ysl[q1,0] + (ysl[q2,0] - ysl[q1,0])*(np.abs(dom[:,i]) - wlsl[q1,0])/(wlsl[q2,0] - wlsl[q1,0]) # calculate y of dom. wl

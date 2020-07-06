@@ -131,26 +131,29 @@ def plot_color_data(x,y,z=None, axh=None, show = True, cieobs =_CIEOBS, \
     """
     x = np.atleast_1d(x)
     y = np.atleast_1d(y)
-    if 'grid' in kwargs.keys():
-        plt.grid(kwargs['grid']);kwargs.pop('grid')
+    
     if z is not None:
         z = np.atleast_1d(z)
         if axh is None:
             fig = plt.figure()
             axh = plt.axes(projection='3d')
+        if 'grid' in kwargs.keys():
+            axh.grid(kwargs['grid']);kwargs.pop('grid')
         axh.plot3D(x,y,z,formatstr, linewidth = 2,**kwargs)
         axh.set_zlabel(_CSPACE_AXES[cspace][0], kwargs)
     else:
-        plt.plot(x,y,formatstr,linewidth = 2,**kwargs)
+        if 'grid' in kwargs.keys():
+            axh.grid(kwargs['grid']);kwargs.pop('grid')
+        axh.plot(x,y,formatstr,linewidth = 2,**kwargs)
         
-    plt.xlabel(_CSPACE_AXES[cspace][1], kwargs)
-    plt.ylabel(_CSPACE_AXES[cspace][2], kwargs)
+    axh.set_xlabel(_CSPACE_AXES[cspace][1], kwargs)
+    axh.set_ylabel(_CSPACE_AXES[cspace][2], kwargs)
     if 'label' in kwargs.keys():
-        plt.legend()
+        axh.legend()
     if show == True:
-        plt.show()
+        axh.show()
     else:
-        return plt.gca()
+        return axh
 
 
 
@@ -275,10 +278,10 @@ def plotBB(ccts = None, cieobs =_CIEOBS, cspace = _CSPACE, axh = None, cctlabels
         for i in range(ccts1.shape[0]):
             if ccts1[i]>= 3000.0:
                 if i%2 == 0.0:
-                    plt.plot(x[i],y[i],'k+', color = '0.5')
-                    plt.text(x[i]*1.05,y[i]*0.95,'{:1.0f}K'.format(ccts1[i]), color = '0.5')
-        plt.plot(x[-1],y[-1],'k+', color = '0.5')
-        plt.text(x[-1]*1.05,y[-1]*0.95,'{:1.0e}K'.format(ccts[-1]), color = '0.5')    
+                    axh.plot(x[i],y[i],'k+', color = '0.5')
+                    axh.text(x[i]*1.05,y[i]*0.95,'{:1.0f}K'.format(ccts1[i]), color = '0.5')
+        axh.plot(x[-1],y[-1],'k+', color = '0.5')
+        axh.text(x[-1]*1.05,y[-1]*0.95,'{:1.0e}K'.format(ccts[-1]), color = '0.5')    
     if show == False:
         return axh
     
@@ -373,7 +376,7 @@ def plotSL(cieobs =_CIEOBS, cspace = _CSPACE, DL = False, BBL = True, D65 = Fals
                                                 label_fontname = None, label_fontsize = None)
     else:
         axh_ = axh
-            
+     
     axh_ = plot_color_data(x,y,axh = axh_, cieobs = cieobs, cspace = cspace, show = show, formatstr=formatstr,  **kwargs)
 
 
@@ -381,6 +384,7 @@ def plotSL(cieobs =_CIEOBS, cspace = _CSPACE, DL = False, BBL = True, D65 = Fals
         if 'label' in kwargs.keys(): # avoid label also being used for DL
             kwargs.pop('label')
         plotDL(ccts = None, cieobs = cieobs, cspace = cspace, axh = axh_, show = show, cspace_pars = cspace_pars, formatstr = 'k:',  **kwargs)
+
     if BBL == True:
         if 'label' in kwargs.keys(): # avoid label also being used for BB
             kwargs.pop('label')
@@ -388,10 +392,10 @@ def plotSL(cieobs =_CIEOBS, cspace = _CSPACE, DL = False, BBL = True, D65 = Fals
     
     if D65 == True:
         YxyD65 = colortf(spd_to_xyz(_CIE_ILLUMINANTS['D65'], cieobs = cieobs), tf = cspace, tfa0 = cspace_pars)
-        plt.plot(YxyD65[...,1],YxyD65[...,2],'bo')
+        axh.plot(YxyD65[...,1],YxyD65[...,2],'bo')
     if EEW == True:
         YxyEEW = colortf(spd_to_xyz(_CIE_ILLUMINANTS['E'], cieobs = cieobs), tf = cspace, tfa0 = cspace_pars)
-        plt.plot(YxyEEW[...,1],YxyEEW[...,2],'ko')
+        axh.plot(YxyEEW[...,1],YxyEEW[...,2],'ko')
     
     
     
@@ -814,23 +818,23 @@ def plot_chromaticity_diagram_colors(diagram_samples = 256, diagram_opacity = 1.
             clip_path=None,
             alpha=diagram_opacity)
         image.set_clip_path(polygon)
-        plt.plot(x,y, color = 'darkgray')
+        axh.plot(x,y, color = 'darkgray')
         if cspace == 'Yxy':
-            plt.xlim([0,1])
-            plt.ylim([0,1])
+            axh.set_xlim([0,1])
+            axh.set_ylim([0,1])
         elif cspace == 'Yuv':
-            plt.xlim([0,0.6])
-            plt.ylim([0,0.6])
+            axh.set_xlim([0,0.6])
+            axh.set_ylim([0,0.6])
         if (cspace is not None):
             xlabel = _CSPACE_AXES[cspace][1]
             ylabel = _CSPACE_AXES[cspace][2]
             if (label_fontname is not None) & (label_fontsize is not None):
-                plt.xlabel(xlabel, fontname = label_fontname, fontsize = label_fontsize)
-                plt.ylabel(ylabel, fontname = label_fontname, fontsize = label_fontsize)
+                axh.set_xlabel(xlabel, fontname = label_fontname, fontsize = label_fontsize)
+                axh.set_ylabel(ylabel, fontname = label_fontname, fontsize = label_fontsize)
                 
         if show_grid == True:
-            plt.grid()
-        #plt.show()
+            axh.grid()
+        #axh.show()
     
         return axh
     else:
