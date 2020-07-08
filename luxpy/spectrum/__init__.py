@@ -26,22 +26,32 @@ spectrum/cmf.py
             in the calculation, AND are not extrapolated using the closest 
             known value, as per CIE recommendation.
 
-        2. There are no XYZ to LMS conversion matrices defined for the 
-            1964 10°, 1931 2° Judd corrected (1951) 
-            and 1931 2° Judd-Vos corrected (1978) cmf sets.
+        2. There is no XYZ to LMS conversion matrices defined for the 
+            1931 2° Judd corrected (1951) cmf sets.
             The Hunt-Pointer-Estevez conversion matrix of the 1931 2° is 
             therefore used as an approximation!
             
-        3. The K lm to Watt conversion factors for the Judd and Judd-Vos cmf 
+        3. The XYZ to LMS conversion matrix for the Judd-Vos XYZ CMFs is the one
+            that converts to the 1979 Smith-Pokorny cone fundamentals.
+            
+        4. The XYZ to LMS conversion matrix for the 1964 10° XYZ CMFs is set
+            to the one of the CIE 2006 10° cone fundamentals, as not matrix has
+            been officially defined for this CMF set.
+            
+        4. The K lm to Watt conversion factors for the Judd and Judd-Vos cmf 
             sets have been set to 683.002 lm/W (same as for standard 1931 2°).
             
-        4. The 1951 scoptopic V' function has been replicated in the 3 
+        5. The 1951 scoptopic V' function has been replicated in the 3 
             xbar, ybar, zbar columns to obtain a data format similar to the 
             photopic color matching functions. 
             This way V' can be called in exactly the same way as other V 
             functions can be called from the X,Y,Z cmf sets. 
             The K value has been set to 1700.06 lm/W and the conversion matrix 
             to np.eye().
+        
+        6. _CMF[x]['M'] for x equal to '2006_2' or '2006_10' is NOT 
+            normalized to illuminant E! These are the original matrices 
+            as defined by [1] & [2].
 
 
 spectrum/spectral.py
@@ -50,22 +60,15 @@ spectrum/spectral.py
  :_WL3: Default wavelength specification in vector-3 format: 
         numpy.array([start, end, spacing])
 
- :_BB: Dict with constants for blackbody radiator calculation 
-       constant are (c1, c2, n, na, c, h, k). 
-
- :_S012_DAYLIGHTPHASE: numpy.ndarray with CIE S0,S1, S2 curves for daylight 
-        phase calculation.
-
  :_INTERP_TYPES: Dict with interpolation types associated with various types of
                  spectral data according to CIE recommendation:  
 
  :_S_INTERP_TYPE: Interpolation type for light source spectral data
 
  :_R_INTERP_TYPE: Interpolation type for reflective/transmissive spectral data
+ 
+ :_C_INTERP_TYPE: Interpolation type for CMF and cone-fundamental spectral data
 
- :_CRI_REF_TYPE: Dict with blackbody to daylight transition (mixing) ranges for
-                 various types of reference illuminants used in color rendering
-                 index calculations.
 
  :getwlr(): Get/construct a wavelength range from a (start, stop, spacing) 
             3-vector.
@@ -80,14 +83,18 @@ spectrum/spectral.py
 
  :spd(): | All-in-one function that can:
          |  1. Read spectral data from data file or take input directly as 
-            pandas.dataframe or numpy.array.
-         |  2. Convert spd-like data from numpy.array to pandas.dataframe and back.
+            pandas.dataframe or ndarray.
+         |  2. Convert spd-like data from ndarray to pandas.dataframe and back.
          |  3. Interpolate spectral data.
          |  4. Normalize spectral data.
 
  :xyzbar(): Get color matching functions.
         
  :vlbar(): Get Vlambda function.
+ 
+ :vlbar_cie_mesopic(): Get CIE mesopic luminous efficiency function Vmesm according to CIE191:2010
+
+ :get_cie_mesopic_adaptation(): Get the mesopic adaptation state according to CIE191:2010
 
  :spd_to_xyz(): Calculates xyz tristimulus values from spectral data. 
             
@@ -97,18 +104,9 @@ spectrum/spectral.py
  :spd_to_power(): Calculate power of spectral data in radiometric, photometric
                   or quantal energy units.
          
- :blackbody(): Calculate blackbody radiator spectrum.
-             
- :daylightlocus(): Calculates daylight chromaticity from cct. 
-
- :daylightphase(): Calculate daylight phase spectrum         
+ :detect_peakwl(): Detect peak wavelengths and fwhm of peaks in spectrum spd.
          
- :cri_ref(): Calculates a reference illuminant spectrum based on cct for color 
-             rendering index calculations.
-            (`CIE15:2018, “Colorimetry”, CIE, Vienna, Austria, 2018. <https://doi.org/10.25039/TR.015.2018>`_, 
-             `cie224:2017, CIE 2017 Colour Fidelity Index for accurate scientific use. (2017), ISBN 978-3-902842-61-9. <http://www.cie.co.at/index.php?i_ca_id=1027>`_,
-             `IES-TM-30-15: Method for Evaluating Light Source Color Rendition. New York, NY: The Illuminating Engineering Society of North America. <https://www.ies.org/store/technical-memoranda/ies-method-for-evaluating-light-source-color-rendition/>`_
- 
+  
 spectrum/spectral_databases.py
 ------------------------------
 
@@ -155,7 +153,45 @@ spectrum/spectral_databases.py
         |   for the specification of the colour rendering properties of light sources, CIE-20th session, Amsterdam. 
         | * the 114120 RFLs from capbone.com/spectral-reflectance-database/
     
-    
+spectrum/illuminants.py
+-----------------------
+
+ :_BB: Dict with constants for blackbody radiator calculation 
+       constant are (c1, c2, n, na, c, h, k). 
+
+ :_S012_DAYLIGHTPHASE: ndarray with CIE S0,S1, S2 curves for daylight 
+        phase calculation (linearly interpolated to 1 nm).
+        
+ :_CRI_REF_TYPES: Dict with blackbody to daylight transition (mixing) ranges for
+                 various types of reference illuminants used in color rendering
+                 index calculations.
+        
+ :blackbody(): Calculate blackbody radiator spectrum.
+ 
+:_DAYLIGHT_LOCI_PARAMETERS: dict with parameters for daylight loci for various CMF sets; used by daylightlocus().
+ 
+ :_DAYLIGHT_M12_COEFFS: dict with coefficients in weights M1 & M2 for daylight phases for various CMF sets.
+ 
+ :get_daylightloci_parameters(): Get parameters for the daylight loci functions xD(1000/CCT) and yD(xD); used by daylightlocus().
+
+ :get_daylightphase_Mi_coeffs(): Get coefficients of Mi weights of daylight phase for specific cieobs following Judd et al. (1964).
+
+ :_get_daylightphase_Mi_values(): Get daylight phase coefficients M1, M2 following Judd et al. (1964).         
+
+ :_get_daylightphase_Mi(): Get daylight phase coefficients M1, M2 following Judd et al. (1964)            
+ 
+ :daylightlocus(): Calculates daylight chromaticity from cct. 
+
+ :daylightphase(): Calculate daylight phase spectrum.
+         
+ :cri_ref(): Calculates a reference illuminant spectrum based on cct for color 
+             rendering index calculations.
+            (`CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018. <https://doi.org/10.25039/TR.015.2018>`_, 
+             `cie224:2017, CIE 2017 Colour Fidelity Index for accurate scientific use. (2017), ISBN 978-3-902842-61-9. <http://www.cie.co.at/index.php?i_ca_id=1027>`_,
+             `IES-TM-30-15: Method for Evaluating Light Source Color Rendition. New York, NY: The Illuminating Engineering Society of North America. <https://www.ies.org/store/technical-memoranda/ies-method-for-evaluating-light-source-color-rendition/>`_
+ 
+ :spd_to_indoor(): Convert spd to indoor variant by multiplying it with the CIE spectral transmission for glass. 
+
     
 References
 ----------
@@ -173,6 +209,8 @@ References
     4. `IES-TM-30-15: Method for Evaluating Light Source Color Rendition. 
     New York, NY: The Illuminating Engineering Society of North America. 
     <https://www.ies.org/store/technical-memoranda/ies-method-for-evaluating-light-source-color-rendition/>`_
+    
+    5. Judd, D. B., MacAdam, D. L., Wyszecki, G., Budde, H. W., Condit, H. R., Henderson, S. T., & Simonds, J. L. (1964). Spectral Distribution of Typical Daylight as a Function of Correlated Color Temperature. J. Opt. Soc. Am., 54(8), 1031–1040. https://doi.org/10.1364/JOSA.54.001031
 
 ===============================================================================
 """

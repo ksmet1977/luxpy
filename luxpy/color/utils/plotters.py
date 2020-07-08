@@ -142,6 +142,9 @@ def plot_color_data(x,y,z=None, axh=None, show = True, cieobs =_CIEOBS, \
         axh.plot3D(x,y,z,formatstr, linewidth = 2,**kwargs)
         axh.set_zlabel(_CSPACE_AXES[cspace][0], kwargs)
     else:
+        if axh is None:
+            fig = plt.figure()
+            axh = plt.axes()
         if 'grid' in kwargs.keys():
             axh.grid(kwargs['grid']);kwargs.pop('grid')
         axh.plot(x,y,formatstr,linewidth = 2,**kwargs)
@@ -205,7 +208,7 @@ def plotDL(ccts = None, cieobs =_CIEOBS, cspace = _CSPACE, axh = None, \
     if ccts is None:
         ccts = 10**np.linspace(np.log10(4000.0),np.log10(10.0**19.0),100)
         
-    xD,yD = daylightlocus(ccts, force_daylight_below4000K = force_daylight_below4000K)
+    xD,yD = daylightlocus(ccts, cieobs = cieobs, force_daylight_below4000K = force_daylight_below4000K)
     Y = 100*np.ones(xD.shape)
     DL =  Yxy_to_xyz(np.vstack((Y, xD,yD)).T)
     DL = colortf(DL, tf = cspace, tfa0 = cspace_pars)
