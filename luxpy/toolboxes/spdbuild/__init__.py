@@ -39,6 +39,8 @@ Functions
 
  :colormixer(): Calculate fluxes required to obtain a target chromaticity 
                 when (additively) mixing N light sources.
+                
+ :colormixer_pinv(): Additive color mixer of N primaries using using Moore-Penrose pseudo-inverse matrix.
 
  :spd_builder(): Build spectrum based on Gaussians, monochromatic 
                  and/or phophor LED-type spectra.

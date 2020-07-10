@@ -23,6 +23,8 @@ Functions
 
  :colormixer(): Calculate fluxes required to obtain a target chromaticity 
                 when (additively) mixing N light sources.
+                
+ :colormixer_pinv(): Additive color mixer of N primaries using using Moore-Penrose pseudo-inverse matrix.
 
  :spd_builder(): Build spectrum based on Gaussians, monochromatic 
                  and/or phophor LED-type spectra.
@@ -80,7 +82,8 @@ from luxpy import cri
 
 __all__ = ['gaussian_spd','butterworth_spd','lorentzian2_spd',
            'mono_led_spd','phosphor_led_spd','spd_builder',
-         'get_w_summed_spd','fitnessfcn','spd_constructor_2','color3mixer','colormixer',
+         'get_w_summed_spd','fitnessfcn','spd_constructor_2',
+         'color3mixer','colormixer','colormixer_pinv',
          'spd_constructor_3','spd_optimizer_2_3','get_optim_pars_dict',
          'initialize_spd_model_pars','initialize_spd_optim_pars','get_primary_fluxratios','spd_optimizer']
 
@@ -914,6 +917,78 @@ def colormixer(Yxyt = None, Yxyi = None, n = 4, pair_strengths = None, source_or
 
     return np.atleast_2d(M)
 
+#------------------------------------------------------------------------------
+def _get_A_b_tv(xyzt,xyzi):
+    """
+    Additive mixing using tristimulus values; solve Ax=b.
+    
+    Args:
+        :xyzt: 
+            | ndarray with target tristimulus values.
+        :xyzi:
+            | ndarray with tristimulus values of light sources i = 1 to n.
+    
+    Returns:
+        :A, b:
+            | ndarrays A (3xn) and b (nx1)
+    """
+    return xyzi.T, xyzt.T # A, b in Ax=b
+
+def _get_A_b_cc(Yxyt,Yxyi):
+    """
+    Additive mixing using chromaticity coordinates; solve Ax=b.
+    
+    Args:
+        :Yxyt: 
+            | ndarray with target chromaticity coordinates.
+        :Yxyi:
+            | ndarray with chromaticity coordinates of light sources i = 1 to n.
+    
+    Returns:
+        :A, b:
+            | ndarrays A (3xn) and b (nx1)
+    """
+    A01j = ((Yxyi[...,0:1]/Yxyi[...,2:3])*(Yxyi-Yxyt)[...,1:]).T
+    A2j = (Yxyi/Yxyt)[...,:1].T
+    return np.vstack((A01j,A2j)), np.array([[0,0,1]]).T # A, b in Ax=b
+
+def _solve_Ax_b(A,b):
+    """
+    Solve Ax=b using Moore-Penrose pseudo-inverse matrix (A.T@inv(A@A.T))
+    
+    Args:
+        :A, b:
+            | ndarrays A (3xn) and b (nx1)
+            
+    Returns:
+        :x:
+            | ndarray with x
+    """
+    return (A.T@np.linalg.inv(A@A.T))@b
+
+def colormixer_pinv(xyzt, xyzi, input_fmt = 'xyz'):
+    """
+    Additive color mixer of N primaries using using Moore-Penrose pseudo-inverse matrix.
+    
+    Args:
+        :xyzt: 
+            | ndarray with target XYZ tristimulus values or Yxy chromaticity coordinates.
+        :xyzi:
+            | ndarray with XYZ tristimulus values or Yxy chromaticity coordinates of light sources i = 1 to n.
+        :input_fmt:
+            | 'xyz', optional
+            | Format specifier of :xyzt: and :xyzi: input arguments.
+            | - options: 'xyz', 'Yxy'
+            
+    Returns:
+        :w:
+            | ndarray with fluxes (weights) of each of the primaries in the mixture.
+    """
+    if input_fmt == 'xyz':
+        A, b = _get_A_b_tv(xyzt,xyzi)
+    else:
+        A, b = _get_A_b_cc(xyzt,xyzi)
+    return _solve_Ax_b(A,b).T
 
 #------------------------------------------------------------------------------
 def get_w_summed_spd(w,spds):

@@ -7,17 +7,21 @@ spectrum: sub-package supporting basic spectral calculations
 spectrum/cmf.py
 ---------------
 
-  :luxpy._CMF: | Dict with keys 'types' and x
-               | x are dicts with keys 'bar', 'K', 'M'
- 
-     | * luxpy._CMF['types']  = ['1931_2','1964_10','2006_2','2006_10',
-                                 '1931_2_judd1951','1931_2_juddvos1978',
-                                 '1951_20_scotopic']
-     | * luxpy._CMF[x]['bar'] = numpy array with CMFs for type x 
-                                between 360 nm and 830 nm (has shape: (4,471))
-     | * luxpy._CMF[x]['K']   = Constant converting Watt to lumen for CMF type x.
-     | * luxpy._CMF[x]['M']   = XYZ to LMS conversion matrix for CMF type x.
-                                Matrix is numpy arrays with shape: (3,3)
+    :luxpy._CMF: 
+      | Dict with keys 'types' and x
+      | x are dicts with keys 'bar', 'K', 'M'
+      |
+      | * luxpy._CMF['types']  = ['1931_2','1964_10',
+      |                           '2006_2','2006_10','2015_2','2015_10',
+      |                           '1931_2_judd1951','1931_2_juddvos1978',
+      |                           '1951_20_scotopic']
+      | * luxpy._CMF[x]['bar'] = numpy array with CMFs for type x 
+      |                          between 360 nm and 830 nm (has shape: (4,471))
+      | * luxpy._CMF[x]['K']   = Constant converting Watt to lumen for CMF type x.
+      | * luxpy._CMF[x]['M']   = XYZ to LMS conversion matrix for CMF type x.
+      |                          Matrix is numpy array with shape: (3,3)
+      | * luxpy._CMF[x]['N']   = XYZ to RGB conversion matrix for CMF type x.
+      |                          Matrix is numpy array with shape: (3,3)
                             
      Notes:
          
@@ -31,7 +35,7 @@ spectrum/cmf.py
             The Hunt-Pointer-Estevez conversion matrix of the 1931 2° is 
             therefore used as an approximation!
             
-        3. The XYZ to LMS conversion matrix for the Judd-Vos XYZ CMFs is the one
+        3. The XYZ to LMS conversion matrix M for the Judd-Vos XYZ CMFs is the one
             that converts to the 1979 Smith-Pokorny cone fundamentals.
             
         4. The XYZ to LMS conversion matrix for the 1964 10° XYZ CMFs is set
@@ -47,11 +51,18 @@ spectrum/cmf.py
             This way V' can be called in exactly the same way as other V 
             functions can be called from the X,Y,Z cmf sets. 
             The K value has been set to 1700.06 lm/W and the conversion matrix 
-            to np.eye().
+            has been filled with NaN's.
+            
+        6. The '2015_x' (with x = 2 or 10) are the same XYZ-CMFs as stored in '2006_x'.
         
-        6. _CMF[x]['M'] for x equal to '2006_2' or '2006_10' is NOT 
+        7. _CMF[x]['M'] for x equal to '2006_2' (='2015_2') or '2006_10' (='2015_10') is NOT 
             normalized to illuminant E! These are the original matrices 
             as defined by [1] & [2].
+            
+        8. _CMF[x]['N'] stores known or calculated conversion matrices from
+            xyz to rgb. If not available, N has been filled with NaNs.
+
+
 
 
 spectrum/spectral.py

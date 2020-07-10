@@ -57,6 +57,8 @@ Module with functions related to plotting of color data
  
  :plot_rgb_color_patches(): Create (and plot) an image with patches with specified rgb values.
  
+ :plot_cmfs(): Plot CMFs.
+ 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
@@ -67,7 +69,7 @@ from matplotlib.patches import Polygon
 __all__ = ['get_subplot_layout','plotSL','plotDL','plotBB','plot_color_data',
            'plotceruleanline','plotUH','plotcircle','plotellipse',
            'plot_chromaticity_diagram_colors','plot_spectrum_colors',
-           'plot_rfl_color_patches','plot_rgb_color_patches']
+           'plot_rfl_color_patches','plot_rgb_color_patches','plot_cmfs']
 
 def get_subplot_layout(N, min_1xncols = 3):
     """
@@ -91,7 +93,7 @@ def get_subplot_layout(N, min_1xncols = 3):
         return int(nrows), int(ncols)
 
 def plot_color_data(x,y,z=None, axh=None, show = True, cieobs =_CIEOBS, \
-                    cspace = _CSPACE,  formatstr = 'k-', **kwargs):
+                    cspace = _CSPACE,  formatstr = 'k-', legend_loc = None, **kwargs):
     """
     Plot color data from x,y [,z].
     
@@ -114,9 +116,10 @@ def plot_color_data(x,y,z=None, axh=None, show = True, cieobs =_CIEOBS, \
             | luxpy._CIEOBS or str, optional
             | Determines CMF set to calculate spectrum locus or other.
         :cspace:
-            | luxpy._CSPACE or str, optional
+            | luxpy._CSPACE or str or None, optional
             | Determines color space / chromaticity diagram to plot data in.
             | Note that data is expected to be in specified :cspace:
+            | If None: don't do any formatting of x,y [z] axes.
         :formatstr: 
             | 'k-' or str, optional
             | Format str for plotting (see ?matplotlib.pyplot.plot)
@@ -147,14 +150,13 @@ def plot_color_data(x,y,z=None, axh=None, show = True, cieobs =_CIEOBS, \
             axh = plt.axes()
         if 'grid' in kwargs.keys():
             axh.grid(kwargs['grid']);kwargs.pop('grid')
-        axh.plot(x,y,formatstr,linewidth = 2,**kwargs)
-        
-    axh.set_xlabel(_CSPACE_AXES[cspace][1], kwargs)
-    axh.set_ylabel(_CSPACE_AXES[cspace][2], kwargs)
+        axh.plot(x,y,formatstr,linewidth = 2,**kwargs)   
+        axh.set_xlabel(_CSPACE_AXES[cspace][1], kwargs)
+        axh.set_ylabel(_CSPACE_AXES[cspace][2], kwargs)
     if 'label' in kwargs.keys():
-        axh.legend()
+        axh.legend(loc = legend_loc)
     if show == True:
-        axh.show()
+        plt.show()
     else:
         return axh
 
@@ -583,7 +585,7 @@ def plotellipse(v, cspace_in = 'Yxy', cspace_out = None, nsamples = 100, \
                 show = True, axh = None, \
                 line_color = 'darkgray', line_style = ':', line_width = 1, line_marker = '', line_markersize = 4,\
                 plot_center = False, center_marker = 'o', center_color = 'darkgray', center_markersize = 4,\
-                show_grid = True, llabel = '', label_fontname = 'Times New Roman', label_fontsize = 12,\
+                show_grid = False, llabel = '', label_fontname = 'Times New Roman', label_fontsize = 12,\
                 out = None):
     """
     Plot ellipse(s) given in v-format [Rmax,Rmin,xc,yc,theta].
@@ -638,7 +640,7 @@ def plotellipse(v, cspace_in = 'Yxy', cspace_out = None, nsamples = 100, \
             | 4, optional
             | Size of marker of ellipse center.
         :show_grid:
-            | True, optional
+            | False, optional
             | Show grid (True) or not (False)
         :llabel:
             | None,optional
@@ -719,7 +721,7 @@ def plotellipse(v, cspace_in = 'Yxy', cspace_out = None, nsamples = 100, \
             axh.set_xlabel(xlabel, fontname = label_fontname, fontsize = label_fontsize)
             axh.set_ylabel(ylabel, fontname = label_fontname, fontsize = label_fontsize)
             if show_grid == True:
-                plt.grid()
+                plt.grid(True)
             #plt.show()     
     Yxys = np.transpose(Yxys,axes=(0,2,1))       
     if out is not None:
@@ -731,7 +733,7 @@ def plotellipse(v, cspace_in = 'Yxy', cspace_out = None, nsamples = 100, \
 def plot_chromaticity_diagram_colors(diagram_samples = 256, diagram_opacity = 1.0, diagram_lightness = 0.25,\
                                       cieobs = _CIEOBS, cspace = 'Yxy', cspace_pars = {},\
                                       show = True, axh = None,\
-                                      show_grid = True, label_fontname = 'Times New Roman', label_fontsize = 12,\
+                                      show_grid = False, label_fontname = 'Times New Roman', label_fontsize = 12,\
                                       **kwargs):
     """
     Plot the chromaticity diagram colors.
@@ -765,7 +767,7 @@ def plot_chromaticity_diagram_colors(diagram_samples = 256, diagram_opacity = 1.
             | Dict with parameters required by color space specified in :cspace: 
             | (for use with luxpy.colortf())
         :show_grid:
-            | True, optional
+            | False, optional
             | Show grid (True) or not (False)
         :label_fontname: 
             | 'Times New Roman', optional
@@ -779,10 +781,7 @@ def plot_chromaticity_diagram_colors(diagram_samples = 256, diagram_opacity = 1.
     Returns:
         
     """
-    offset = _EPS
-    ii, jj = np.meshgrid(np.linspace(offset, 1 + offset, int(diagram_samples)), np.linspace(1+offset, offset, int(diagram_samples)))
-    ij = np.dstack((ii, jj))
-    
+        
     if isinstance(cieobs,str):
         SL = _CMF[cieobs]['bar'][1:4].T
     else:
@@ -794,6 +793,17 @@ def plot_chromaticity_diagram_colors(diagram_samples = 256, diagram_opacity = 1.
     SL = np.vstack((SL[:(plambdamax+1),:],SL[0])) # add lowest wavelength data and go to max of gamut in x (there is a reversal for some cmf set wavelengths >~700 nm!)
     Y,x,y = asplit(SL)
     SL = np.vstack((x,y)).T
+
+    # create grid for conversion to srgb
+    offset = _EPS
+    min_x = min(offset,x.min())
+    max_x = max(1,x.max())
+    min_y = min(offset,y.min())
+    max_y = max(1,y.max())
+    ii, jj = np.meshgrid(np.linspace(min_x - offset, max_x + offset, int(diagram_samples)), np.linspace(max_y + offset, min_y - offset, int(diagram_samples)))
+    ij = np.dstack((ii, jj))
+    ij[ij==0] = offset
+
 
     
     ij2D = ij.reshape((diagram_samples**2,2))
@@ -817,15 +827,15 @@ def plot_chromaticity_diagram_colors(diagram_samples = 256, diagram_opacity = 1.
         image = axh.imshow(
             srgb,
             interpolation='bilinear',
-            extent = (0.0, 1, -0.05, 1),
+            extent = (min_x, max_x, min_y-0.05, max_y),
             clip_path=None,
             alpha=diagram_opacity)
         image.set_clip_path(polygon)
         axh.plot(x,y, color = 'darkgray')
-        if cspace == 'Yxy':
+        if (cspace == 'Yxy') & (isinstance(cieobs,str)):
             axh.set_xlim([0,1])
             axh.set_ylim([0,1])
-        elif cspace == 'Yuv':
+        elif (cspace == 'Yuv') & (isinstance(cieobs,str)):
             axh.set_xlim([0,0.6])
             axh.set_ylim([0,0.6])
         if (cspace is not None):
@@ -836,8 +846,8 @@ def plot_chromaticity_diagram_colors(diagram_samples = 256, diagram_opacity = 1.
                 axh.set_ylabel(ylabel, fontname = label_fontname, fontsize = label_fontsize)
                 
         if show_grid == True:
-            axh.grid()
-        #axh.show()
+            axh.grid(True)
+        #plt.show()
     
         return axh
     else:
@@ -847,7 +857,7 @@ def plot_chromaticity_diagram_colors(diagram_samples = 256, diagram_opacity = 1.
 def plot_spectrum_colors(spd = None, spdmax = None,\
                          wavelength_height = -0.05, wavelength_opacity = 1.0, wavelength_lightness = 1.0,\
                          cieobs = _CIEOBS, show = True, axh = None,\
-                         show_grid = True,ylabel = 'Spectral intensity (a.u.)',xlim=None,\
+                         show_grid = False,ylabel = 'Spectral intensity (a.u.)',xlim=None,\
                          **kwargs):
     """
     Plot the spectrum colors.
@@ -880,7 +890,7 @@ def plot_spectrum_colors(spd = None, spdmax = None,\
             | luxpy._CIEOBS or str, optional
             | Determines CMF set to calculate spectrum locus or other.
         :show_grid:
-            | True, optional
+            | False, optional
             | Show grid (True) or not (False)
         :ylabel:
             | 'Spectral intensity (a.u.)' or str, optional
@@ -971,7 +981,7 @@ def plot_spectrum_colors(spd = None, spdmax = None,\
             axh.plot(spd[0:1,:].T,spd[1:,:].T, color = 'k', label = 'spd')
  
         if show_grid == True:
-            plt.grid()
+            plt.grid(True)
         axh.set_xlabel('Wavelength (nm)',kwargs)
         axh.set_ylabel(ylabel, kwargs)        
 
@@ -1063,3 +1073,60 @@ def plot_rgb_color_patches(rgb, patch_shape = (100,100), patch_layout = None, ax
         ax.axis('off')
         return ax
 
+def plot_cmfs(cmfs, cmf_symbols = ['x','y','z'], cmf_label = '', ylabel = 'Sensitivity',wavelength_bar=True, 
+              colors = ['r','g','b'], axh = None, legend = True, **kwargs):
+    """
+    Plot CMFs.
+    
+    Args:
+        :cmfs: 
+            | ndarray with a set of CMFs.
+        :cmf_symbols:
+            | ['x,'y','z], optional
+            | Symbols of the CMFs
+            | If not a list but a string, the same label will be used for all CMF
+            | and the same color will be used ('k' if colors is a list)
+        :cmf_label:
+            | '', optional
+            | Additional label that will be added in front of the cmf symbols.
+        :ylabel:
+            | 'Sensitivity', optional
+            | label for y-axis.
+        :wavelength_bar:
+            | True, optional
+            | Add a colored wavelength bar with spectral colors.
+        :colors:
+            | ['r','g','b'], optional
+            | Color for plotting each of the individual CMF.
+        :axh:
+            | None, optional
+            | Axes to plot the image in. If None: a new axes is created.
+        :kwargs:
+            | additional kwargs for plt.plot().
+            
+    Returns:
+        :axh:
+            | figure axes handle.
+    """
+    if isinstance(cmf_symbols,list):
+        cmf_symbols = ['$\overline{'+cmf_symbols[i][0]+'}'+cmf_symbols[i][1:]+'(\lambda)$' for i in range(3)]
+    else:
+        cmf_symbols = [cmf_symbols,None,None]
+        if isinstance(colors,list):
+            colors = ['k']*3
+        else:
+            colors = [colors]*3
+    if axh is None:
+        fig, axh = plt.subplots(1,1)
+
+    for i in range(3):
+        axh.plot(cmfs[0],cmfs[i+1],color = colors[i], label = cmf_label + cmf_symbols[i],**kwargs)
+    
+    if wavelength_bar == True:
+        axh = plot_spectrum_colors(spd = None,spdmax = cmfs[1:].max(), axh = axh, wavelength_height = -0.05)
+    axh.set_xlabel('Wavelength (nm)')
+    axh.set_ylabel(ylabel)    
+    if legend == True:
+        axh.legend()
+    axh.grid(False)
+    return axh

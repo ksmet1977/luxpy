@@ -78,7 +78,7 @@ def xyz_to_neutrality_smet2018(xyz10, nlocitype = 'uw', uw_model = 'Linvar'):
         G0 = lambda up,vp,a: np.exp(-0.5 * (a[0]*(up-a[2])**2 + a[1]*(vp-a[3])**2 + 2*a[4]*(up-a[2])*(vp-a[3])))
         return G0(uv[...,0:1], uv[...,1:2], _UW_NEUTRALITY_PARAMETERS_SMET2014[uw_model])
     elif nlocitype == 'ca':
-         return cat.smet2017_D(xyz10, Dmax = 1)
+         return cat.smet2017_D(xyz10, Dmax = 1).T
     else:
         raise Exception('Unrecognized nlocitype')
 

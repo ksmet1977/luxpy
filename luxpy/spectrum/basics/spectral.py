@@ -68,7 +68,7 @@ Module supporting basic spectral calculations.
  :spd_to_power(): Calculate power of spectral data in radiometric, photometric
                   or quantal energy units.
          
- :detect_peakwl(): Detect peak wavelengths and fwhm of peaks in spectrum spd.   
+ :detect_peakwl(): Detect peak wavelengths and fwhm of peaks in spectrum spd. 
 
 References
 ----------
@@ -558,15 +558,17 @@ def vlbar_cie_mesopic(m = [1], wl_new = None, kind = 'np', out = 1,
     """
     if (Lp is not None) & ((Ls is not None) | (SP is not None)):
         Lmes, m = get_cie_mesopic_adaptation(Lp = Lp, Ls = Ls, SP = SP)
+    else:
+        Lmes = None
     m = np.atleast_2d(m).T
     m[m<0] = 0
     m[m>1] = 1
     Vl = vlbar(cieobs='1931_2')
     Vlp = vlbar(cieobs='1951_20_scotopic')
     Vlmes= m*(Vl[1:,:]) + (1-m)*(Vlp[1:,:])
-    Vlmes = Vlmes/Vlmes.max(axis=1,keepdims=True) # normalize to max = 1
     Vlmes = np.vstack((Vl[:1,:],Vlmes))
     Kmes = 683/Vlmes[1:,Vlmes[0,:] == 555]
+    Vlmes[1:,:] = Vlmes[1:,:]/Vlmes[1:,:].max(axis=1,keepdims=True) # normalize to max = 1
     
     if kind == 'df':
         columns = ['wl']
@@ -576,10 +578,13 @@ def vlbar_cie_mesopic(m = [1], wl_new = None, kind = 'np', out = 1,
         columns = ['wl',['Vmes']*m.size]
     Vlmes = spd(data = Vlmes, wl = wl_new, interpolation = 'linear', 
                 norm_type = 'max', norm_f = 1, kind = kind, columns = columns)
+    
     if out == 2:
         return Vlmes, Kmes
-    else:
+    elif out == 1:
         return Vlmes
+    else:
+        return eval(out)
 
 def get_cie_mesopic_adaptation(Lp, Ls = None, SP = None):
     """
@@ -606,12 +611,12 @@ def get_cie_mesopic_adaptation(Lp, Ls = None, SP = None):
         1. `CIE 191:2010 Recommended System for Mesopic Photometry Based on Visual Performance.
         (ISBN 978-3-901906-88-6 ), <http://cie.co.at/publications/recommended-system-mesopic-photometry-based-visual-performance>`_
     """
-    Lp = np.array(Lp)
-    Ls = np.array(Ls)
-    SP = np.array(SP)
-    if SP is not None:
+    Lp = np.atleast_1d(Lp)
+    Ls = np.atleast_1d(Ls)
+    SP = np.atleast_1d(SP)
+    if not (None in SP):
         Ls = Lp*SP
-    elif Ls is not None:
+    elif not (None in Ls):
         SP = Ls/Lp
     else:
         raise Exception('Either the S/P ratio or the scotopic luminance Ls must be supplied in addition to the photopic luminance Lp')
