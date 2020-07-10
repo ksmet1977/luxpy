@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.color.cri.iestm30.ies_tm30_metrics &mdash; LuxPy 1.5.0 documentation</title>
+  <title>luxpy.color.cri.iestm30.ies_tm30_metrics &mdash; LuxPy 1.5.2 documentation</title>
   
 
   
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                1.5.0
+                1.5.2
               </div>
             
           
@@ -231,6 +231,9 @@
 <span class="sd">            | - &#39;SPD&#39;  : ndarray test SPDs</span>
 <span class="sd">            | - &#39;bjabt&#39;: ndarray with binned jab data under test SPDs</span>
 <span class="sd">            | - &#39;bjabr&#39;: ndarray with binned jab data under reference SPDs</span>
+<span class="sd">            | - &#39;jabti&#39;: ndarray with individual jab data under test SPDs (scaled such that bjabr are on a circle)</span>
+<span class="sd">            | - &#39;jabri&#39;: ndarray with individual jab data under reference SPDs (scaled such that bjabr are on a circle)</span>
+<span class="sd">            | - &#39;hbinnr&#39;: ndarray with the hue bin number the samples belong to.</span>
 <span class="sd">            | - &#39;cct&#39;  : ndarray with CCT of test SPD</span>
 <span class="sd">            | - &#39;duv&#39;  : ndarray with distance to blackbody locus of test SPD</span>
 <span class="sd">            | - &#39;Rf&#39;   : ndarray with general color fidelity indices</span>
@@ -283,7 +286,7 @@
         <span class="n">Cr_s</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">bjabr</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">bjabr</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="c1"># for rescaling vector field average reference chroma</span>
 
     <span class="n">normalize_gamut</span> <span class="o">=</span> <span class="kc">True</span> <span class="c1">#(for plotting)</span>
-    <span class="n">bjabt</span><span class="p">,</span> <span class="n">bjabr</span> <span class="o">=</span> <span class="n">gamut_slicer</span><span class="p">(</span><span class="n">jabt</span><span class="p">,</span><span class="n">jabr</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;jabt,jabr&#39;</span><span class="p">,</span> <span class="n">nhbins</span> <span class="o">=</span> <span class="n">nhbins</span><span class="p">,</span> <span class="n">start_hue</span> <span class="o">=</span> <span class="n">start_hue</span><span class="p">,</span> <span class="n">normalize_gamut</span> <span class="o">=</span> <span class="n">normalize_gamut</span><span class="p">,</span> <span class="n">normalized_chroma_ref</span> <span class="o">=</span> <span class="n">normalized_chroma_ref</span><span class="p">,</span> <span class="n">close_gamut</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">bjabt</span><span class="p">,</span> <span class="n">bjabr</span><span class="p">,</span> <span class="n">binnrs</span><span class="p">,</span> <span class="n">jabti</span><span class="p">,</span> <span class="n">jabri</span> <span class="o">=</span> <span class="n">gamut_slicer</span><span class="p">(</span><span class="n">jabt</span><span class="p">,</span><span class="n">jabr</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;jabt,jabr,binnr,jabti,jabri&#39;</span><span class="p">,</span> <span class="n">nhbins</span> <span class="o">=</span> <span class="n">nhbins</span><span class="p">,</span> <span class="n">start_hue</span> <span class="o">=</span> <span class="n">start_hue</span><span class="p">,</span> <span class="n">normalize_gamut</span> <span class="o">=</span> <span class="n">normalize_gamut</span><span class="p">,</span> <span class="n">normalized_chroma_ref</span> <span class="o">=</span> <span class="n">normalized_chroma_ref</span><span class="p">,</span> <span class="n">close_gamut</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
 
 
     <span class="n">Rfhi_vf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">Rfhi</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
@@ -321,6 +324,7 @@
 
     <span class="c1"># Create dict with CRI info:</span>
     <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;SPD&#39;</span> <span class="p">:</span> <span class="n">SPD</span><span class="p">,</span> <span class="s1">&#39;cct&#39;</span> <span class="p">:</span> <span class="n">cct</span><span class="p">,</span> <span class="s1">&#39;duv&#39;</span> <span class="p">:</span> <span class="n">duv</span><span class="p">,</span> <span class="s1">&#39;bjabt&#39;</span> <span class="p">:</span> <span class="n">bjabt</span><span class="p">,</span> <span class="s1">&#39;bjabr&#39;</span> <span class="p">:</span> <span class="n">bjabr</span><span class="p">,</span>\
+            <span class="s1">&#39;jabti&#39;</span><span class="p">:</span><span class="n">jabti</span><span class="p">,</span> <span class="s1">&#39;jabri&#39;</span><span class="p">:</span><span class="n">jabri</span><span class="p">,</span> <span class="s1">&#39;hbinnr&#39;</span><span class="p">:</span><span class="n">binnrs</span><span class="p">,</span>\
            <span class="s1">&#39;Rf&#39;</span> <span class="p">:</span> <span class="n">Rf</span><span class="p">,</span> <span class="s1">&#39;Rg&#39;</span> <span class="p">:</span> <span class="n">Rg</span><span class="p">,</span> <span class="s1">&#39;Rfi&#39;</span><span class="p">:</span> <span class="n">Rfi</span><span class="p">,</span> <span class="s1">&#39;Rfhi&#39;</span> <span class="p">:</span> <span class="n">Rfhi</span><span class="p">,</span> <span class="s1">&#39;Rcshi&#39;</span> <span class="p">:</span> <span class="n">Rcshi</span><span class="p">,</span> <span class="s1">&#39;Rhshi&#39;</span> <span class="p">:</span> <span class="n">Rhshi</span><span class="p">,</span> \
            <span class="s1">&#39;Rt&#39;</span> <span class="p">:</span> <span class="n">Rt</span><span class="p">,</span> <span class="s1">&#39;Rti&#39;</span> <span class="p">:</span> <span class="n">Rti</span><span class="p">,</span>  <span class="s1">&#39;Rfhi_vf&#39;</span> <span class="p">:</span> <span class="n">Rfhi_vf</span><span class="p">,</span> <span class="s1">&#39;Rfcshi_vf&#39;</span> <span class="p">:</span> <span class="n">Rcshi_vf</span><span class="p">,</span> <span class="s1">&#39;Rfhshi_vf&#39;</span> <span class="p">:</span> <span class="n">Rhshi_vf</span><span class="p">,</span> \
            <span class="s1">&#39;dataVF&#39;</span> <span class="p">:</span> <span class="n">dataVF</span><span class="p">,</span><span class="s1">&#39;cri_type&#39;</span> <span class="p">:</span> <span class="n">cri_type</span><span class="p">}</span>

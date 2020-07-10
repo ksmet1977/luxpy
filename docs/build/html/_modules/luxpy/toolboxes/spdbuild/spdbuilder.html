@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.toolboxes.spdbuild.spdbuilder &mdash; LuxPy 1.5.0 documentation</title>
+  <title>luxpy.toolboxes.spdbuild.spdbuilder &mdash; LuxPy 1.5.2 documentation</title>
   
 
   
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                1.5.0
+                1.5.2
               </div>
             
           
@@ -176,6 +176,8 @@
 
 <span class="sd"> :colormixer(): Calculate fluxes required to obtain a target chromaticity </span>
 <span class="sd">                when (additively) mixing N light sources.</span>
+<span class="sd">                </span>
+<span class="sd"> :colormixer_pinv(): Additive color mixer of N primaries using using Moore-Penrose pseudo-inverse matrix.</span>
 
 <span class="sd"> :spd_builder(): Build spectrum based on Gaussians, monochromatic </span>
 <span class="sd">                 and/or phophor LED-type spectra.</span>
@@ -233,7 +235,8 @@
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;gaussian_spd&#39;</span><span class="p">,</span><span class="s1">&#39;butterworth_spd&#39;</span><span class="p">,</span><span class="s1">&#39;lorentzian2_spd&#39;</span><span class="p">,</span>
            <span class="s1">&#39;mono_led_spd&#39;</span><span class="p">,</span><span class="s1">&#39;phosphor_led_spd&#39;</span><span class="p">,</span><span class="s1">&#39;spd_builder&#39;</span><span class="p">,</span>
-         <span class="s1">&#39;get_w_summed_spd&#39;</span><span class="p">,</span><span class="s1">&#39;fitnessfcn&#39;</span><span class="p">,</span><span class="s1">&#39;spd_constructor_2&#39;</span><span class="p">,</span><span class="s1">&#39;color3mixer&#39;</span><span class="p">,</span><span class="s1">&#39;colormixer&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;get_w_summed_spd&#39;</span><span class="p">,</span><span class="s1">&#39;fitnessfcn&#39;</span><span class="p">,</span><span class="s1">&#39;spd_constructor_2&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;color3mixer&#39;</span><span class="p">,</span><span class="s1">&#39;colormixer&#39;</span><span class="p">,</span><span class="s1">&#39;colormixer_pinv&#39;</span><span class="p">,</span>
          <span class="s1">&#39;spd_constructor_3&#39;</span><span class="p">,</span><span class="s1">&#39;spd_optimizer_2_3&#39;</span><span class="p">,</span><span class="s1">&#39;get_optim_pars_dict&#39;</span><span class="p">,</span>
          <span class="s1">&#39;initialize_spd_model_pars&#39;</span><span class="p">,</span><span class="s1">&#39;initialize_spd_optim_pars&#39;</span><span class="p">,</span><span class="s1">&#39;get_primary_fluxratios&#39;</span><span class="p">,</span><span class="s1">&#39;spd_optimizer&#39;</span><span class="p">]</span>
 
@@ -1067,6 +1070,78 @@
 
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">M</span><span class="p">)</span></div>
 
+<span class="c1">#------------------------------------------------------------------------------</span>
+<span class="k">def</span> <span class="nf">_get_A_b_tv</span><span class="p">(</span><span class="n">xyzt</span><span class="p">,</span><span class="n">xyzi</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Additive mixing using tristimulus values; solve Ax=b.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :xyzt: </span>
+<span class="sd">            | ndarray with target tristimulus values.</span>
+<span class="sd">        :xyzi:</span>
+<span class="sd">            | ndarray with tristimulus values of light sources i = 1 to n.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :A, b:</span>
+<span class="sd">            | ndarrays A (3xn) and b (nx1)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">xyzi</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">xyzt</span><span class="o">.</span><span class="n">T</span> <span class="c1"># A, b in Ax=b</span>
+
+<span class="k">def</span> <span class="nf">_get_A_b_cc</span><span class="p">(</span><span class="n">Yxyt</span><span class="p">,</span><span class="n">Yxyi</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Additive mixing using chromaticity coordinates; solve Ax=b.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :Yxyt: </span>
+<span class="sd">            | ndarray with target chromaticity coordinates.</span>
+<span class="sd">        :Yxyi:</span>
+<span class="sd">            | ndarray with chromaticity coordinates of light sources i = 1 to n.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :A, b:</span>
+<span class="sd">            | ndarrays A (3xn) and b (nx1)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">A01j</span> <span class="o">=</span> <span class="p">((</span><span class="n">Yxyi</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="n">Yxyi</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">:</span><span class="mi">3</span><span class="p">])</span><span class="o">*</span><span class="p">(</span><span class="n">Yxyi</span><span class="o">-</span><span class="n">Yxyt</span><span class="p">)[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">:])</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">A2j</span> <span class="o">=</span> <span class="p">(</span><span class="n">Yxyi</span><span class="o">/</span><span class="n">Yxyt</span><span class="p">)[</span><span class="o">...</span><span class="p">,:</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">T</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">A01j</span><span class="p">,</span><span class="n">A2j</span><span class="p">)),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]])</span><span class="o">.</span><span class="n">T</span> <span class="c1"># A, b in Ax=b</span>
+
+<span class="k">def</span> <span class="nf">_solve_Ax_b</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="n">b</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Solve Ax=b using Moore-Penrose pseudo-inverse matrix (A.T@inv(A@A.T))</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :A, b:</span>
+<span class="sd">            | ndarrays A (3xn) and b (nx1)</span>
+<span class="sd">            </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :x:</span>
+<span class="sd">            | ndarray with x</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">T</span><span class="nd">@np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">A</span><span class="nd">@A</span><span class="o">.</span><span class="n">T</span><span class="p">))</span><span class="nd">@b</span>
+
+<div class="viewcode-block" id="colormixer_pinv"><a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.spdbuild.colormixer_pinv">[docs]</a><span class="k">def</span> <span class="nf">colormixer_pinv</span><span class="p">(</span><span class="n">xyzt</span><span class="p">,</span> <span class="n">xyzi</span><span class="p">,</span> <span class="n">input_fmt</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Additive color mixer of N primaries using using Moore-Penrose pseudo-inverse matrix.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :xyzt: </span>
+<span class="sd">            | ndarray with target XYZ tristimulus values or Yxy chromaticity coordinates.</span>
+<span class="sd">        :xyzi:</span>
+<span class="sd">            | ndarray with XYZ tristimulus values or Yxy chromaticity coordinates of light sources i = 1 to n.</span>
+<span class="sd">        :input_fmt:</span>
+<span class="sd">            | &#39;xyz&#39;, optional</span>
+<span class="sd">            | Format specifier of :xyzt: and :xyzi: input arguments.</span>
+<span class="sd">            | - options: &#39;xyz&#39;, &#39;Yxy&#39;</span>
+<span class="sd">            </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :w:</span>
+<span class="sd">            | ndarray with fluxes (weights) of each of the primaries in the mixture.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">input_fmt</span> <span class="o">==</span> <span class="s1">&#39;xyz&#39;</span><span class="p">:</span>
+        <span class="n">A</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">_get_A_b_tv</span><span class="p">(</span><span class="n">xyzt</span><span class="p">,</span><span class="n">xyzi</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">A</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">_get_A_b_cc</span><span class="p">(</span><span class="n">xyzt</span><span class="p">,</span><span class="n">xyzi</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_solve_Ax_b</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="n">b</span><span class="p">)</span><span class="o">.</span><span class="n">T</span></div>
 
 <span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="get_w_summed_spd"><a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.spdbuild.get_w_summed_spd">[docs]</a><span class="k">def</span> <span class="nf">get_w_summed_spd</span><span class="p">(</span><span class="n">w</span><span class="p">,</span><span class="n">spds</span><span class="p">):</span>

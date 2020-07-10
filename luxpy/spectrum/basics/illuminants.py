@@ -296,7 +296,8 @@ def _get_daylightphase_Mi_values(xD,yD, Mcoeffs = None, cieobs = None, S012_dayl
         :cieobs:
             | CMF set to use when calculating coefficients in M1, M2 weights.
             | If None: Mcoeffs must be supplied.
-        :S012_daylightphase: ndarray with CIE S0, S1, S2 daylight phase component functions
+        :S012_daylightphase: 
+            | ndarray with CIE S0, S1, S2 daylight phase component functions
     
     Returns:
         :M1,M2:
@@ -385,6 +386,7 @@ def daylightphase(cct, wl3 = None, nominal_cct = False, force_daylight_below4000
 
     References:
         1. `CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018. <https://doi.org/10.25039/TR.015.2018>`_
+        
         2. `Judd, MacAdam, Wyszecki, Budde, Condit, Henderson, & Simonds (1964). 
         Spectral Distribution of Typical Daylight as a Function of Correlated Color Temperature. 
         J. Opt. Soc. Am., 54(8), 1031–1040. 

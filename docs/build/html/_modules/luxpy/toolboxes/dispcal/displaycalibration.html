@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.toolboxes.dispcal.displaycalibration &mdash; LuxPy 1.5.0 documentation</title>
+  <title>luxpy.toolboxes.dispcal.displaycalibration &mdash; LuxPy 1.5.2 documentation</title>
   
 
   
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                1.5.0
+                1.5.2
               </div>
             
           
@@ -224,7 +224,7 @@
     <span class="k">return</span> <span class="n">rgb</span><span class="p">,</span> <span class="n">xyz</span>
 
 <div class="viewcode-block" id="calibrate"><a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.dispcal.calibrate">[docs]</a><span class="k">def</span> <span class="nf">calibrate</span><span class="p">(</span><span class="n">rgbcal</span><span class="p">,</span> <span class="n">xyzcal</span><span class="p">,</span> <span class="n">L_type</span> <span class="o">=</span> <span class="s1">&#39;lms&#39;</span><span class="p">,</span> <span class="n">tr_type</span> <span class="o">=</span> <span class="s1">&#39;lut&#39;</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;1931_2&#39;</span><span class="p">,</span> 
-              <span class="n">nbit</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="n">cspace</span> <span class="o">=</span> <span class="s1">&#39;lab&#39;</span><span class="p">,</span> <span class="n">avg</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">((</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">**</span><span class="mf">0.5</span><span class="p">),</span> 
+              <span class="n">nbit</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="n">cspace</span> <span class="o">=</span> <span class="s1">&#39;lab&#39;</span><span class="p">,</span> <span class="n">avg</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">((</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">**</span><span class="mf">0.5</span><span class="p">),</span> <span class="n">ensure_increasing_lut_at_low_rgb</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span>
               <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span> 
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate TR parameters/lut and conversion matrices.</span>
@@ -268,6 +268,14 @@
 <span class="sd">            | lambda x: ((x**2).mean()**0.5), optional</span>
 <span class="sd">            | Function used to average the color differences of the individual RGB settings</span>
 <span class="sd">            | in the optimization of the xyz_to_rgb and rgb_to_xyz conversion matrices.</span>
+<span class="sd">        :ensure_increasing_lut_at_low_rgb:</span>
+<span class="sd">            | 0.2 or float (max = 1.0) or None, optional</span>
+<span class="sd">            | Ensure an increasing lut by setting all values below the RGB with the maximum</span>
+<span class="sd">            | zero-crossing of np.diff(lut) and RGB/RGB.max() values of :ensure_increasing_lut_at_low_rgb:</span>
+<span class="sd">            | (values of 0.2 are a good rule of thumb value)</span>
+<span class="sd">            | Non-strictly increasing lut values can be caused at low RGB values due</span>
+<span class="sd">            | to noise and low measurement signal. </span>
+<span class="sd">            | If None: don&#39;t force lut, but keep as is.</span>
 <span class="sd">        :verbosity:</span>
 <span class="sd">            | 1, optional</span>
 <span class="sd">            | &gt; 0: print and plot optimization results</span>
@@ -319,15 +327,21 @@
         <span class="n">par</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">sp</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">curve_fit</span><span class="p">(</span><span class="n">TR</span><span class="p">,</span> <span class="n">rgbcal</span><span class="p">[</span><span class="n">p_pure</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">i</span><span class="p">],</span> <span class="n">L</span><span class="p">[</span><span class="n">p_pure</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">i</span><span class="p">]</span><span class="o">/</span><span class="n">L</span><span class="p">[</span><span class="n">p_pure</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="n">p0</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)])</span> <span class="c1"># calculate parameters of each TR</span>
         <span class="n">tr</span> <span class="o">=</span> <span class="n">par</span>
     <span class="k">elif</span> <span class="n">tr_type</span> <span class="o">==</span> <span class="s1">&#39;lut&#39;</span><span class="p">:</span>
-        <span class="n">lut</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">cie_interp</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">rgbcal</span><span class="p">[</span><span class="n">p_pure</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">i</span><span class="p">],</span><span class="n">L</span><span class="p">[</span><span class="n">p_pure</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">i</span><span class="p">]</span><span class="o">/</span><span class="n">L</span><span class="p">[</span><span class="n">p_pure</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">())),</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="n">nbit</span><span class="p">),</span> <span class="n">kind</span> <span class="o">=</span><span class="s1">&#39;cubic&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">,:]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)])</span><span class="o">.</span><span class="n">T</span>
-        
-        <span class="c1"># ensure monotonically increasing lut values:</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
-            <span class="n">p0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">lut</span><span class="p">[:,</span><span class="n">i</span><span class="p">])</span><span class="o">&lt;=</span><span class="mi">0</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="k">if</span> <span class="n">p0</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
-                <span class="n">p0</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">p0</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-                <span class="n">lut</span><span class="p">[</span><span class="n">p0</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">dac</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="n">nbit</span><span class="p">)</span>
+        <span class="c1"># lut = np.array([cie_interp(np.vstack((rgbcal[p_pure[i],i],L[p_pure[i],i]/L[p_pure[i],i].max())), dac, kind =&#39;cubic&#39;)[1,:] for i in range(3)]).T</span>
+        <span class="n">lut</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">sp</span><span class="o">.</span><span class="n">interpolate</span><span class="o">.</span><span class="n">PchipInterpolator</span><span class="p">(</span><span class="n">rgbcal</span><span class="p">[</span><span class="n">p_pure</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">i</span><span class="p">],</span><span class="n">L</span><span class="p">[</span><span class="n">p_pure</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">i</span><span class="p">]</span><span class="o">/</span><span class="n">L</span><span class="p">[</span><span class="n">p_pure</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">())(</span><span class="n">dac</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)])</span><span class="o">.</span><span class="n">T</span> <span class="c1"># use this one to avoid potential overshoot with cubic spline interpolation (but slightly worse performance)</span>
+        <span class="n">lut</span><span class="p">[</span><span class="n">lut</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+          
+        <span class="c1"># ensure monotonically increasing lut values for low signal:</span>
+        <span class="k">if</span> <span class="n">ensure_increasing_lut_at_low_rgb</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1">#ensure_increasing_lut_at_low_rgb = 0.2 # anything below that has a zero-crossing for diff(lut) will be set to zero</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+                <span class="n">p0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">lut</span><span class="p">[</span><span class="n">dac</span><span class="o">/</span><span class="n">dac</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">ensure_increasing_lut_at_low_rgb</span><span class="p">,</span><span class="n">i</span><span class="p">])</span><span class="o">&lt;=</span><span class="mi">0</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">p0</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+                    <span class="n">p0</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">p0</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                    <span class="n">lut</span><span class="p">[</span><span class="n">p0</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">tr</span> <span class="o">=</span> <span class="n">lut</span>
+
     
     <span class="c1"># plot:</span>
     <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -694,6 +708,7 @@
                  <span class="n">nbit</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> 
                  <span class="n">cspace</span> <span class="o">=</span> <span class="s1">&#39;lab&#39;</span><span class="p">,</span> 
                  <span class="n">avg</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">((</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">**</span><span class="mf">0.5</span><span class="p">),</span> 
+                 <span class="n">ensure_increasing_lut_at_low_rgb</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span>
                  <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
                  <span class="n">sep</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="p">,</span>
                  <span class="n">header</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
@@ -704,6 +719,7 @@
         <span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">tr</span><span class="p">,</span> <span class="n">xyz_black</span><span class="p">,</span> <span class="n">xyz_white</span> <span class="o">=</span> <span class="n">calibrate</span><span class="p">(</span><span class="n">rgbcal</span><span class="p">,</span> <span class="n">xyzcal</span> <span class="o">=</span> <span class="n">xyzcal</span><span class="p">,</span> <span class="n">L_type</span> <span class="o">=</span> <span class="n">L_type</span><span class="p">,</span> 
                                                    <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">tr_type</span> <span class="o">=</span> <span class="n">tr_type</span><span class="p">,</span> <span class="n">nbit</span> <span class="o">=</span> <span class="n">nbit</span><span class="p">,</span>
                                                    <span class="n">avg</span> <span class="o">=</span> <span class="n">avg</span><span class="p">,</span> <span class="n">cspace</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">,</span>
+                                                   <span class="n">ensure_increasing_lut_at_low_rgb</span> <span class="o">=</span> <span class="n">ensure_increasing_lut_at_low_rgb</span><span class="p">,</span>
                                                    <span class="n">verbosity</span> <span class="o">=</span> <span class="n">verbosity</span><span class="p">,</span>
                                                    <span class="n">sep</span> <span class="o">=</span> <span class="n">sep</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="n">header</span><span class="p">)</span> 
         <span class="bp">self</span><span class="o">.</span><span class="n">M</span> <span class="o">=</span> <span class="n">M</span>

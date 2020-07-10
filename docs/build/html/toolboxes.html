@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Toolboxes &mdash; LuxPy 1.5.0 documentation</title>
+  <title>Toolboxes &mdash; LuxPy 1.5.2 documentation</title>
   
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                1.5.0
+                1.5.2
               </div>
             
           
@@ -1592,47 +1592,50 @@ when (additively) mixing 3 light sources.</p>
 <dd class="field-even"><p>Calculate fluxes required to obtain a target chromaticity 
 when (additively) mixing N light sources.</p>
 </dd>
-<dt class="field-odd">spd_builder()</dt>
-<dd class="field-odd"><p>Build spectrum based on Gaussians, monochromatic 
+<dt class="field-odd">colormixer_pinv()</dt>
+<dd class="field-odd"><p>Additive color mixer of N primaries using using Moore-Penrose pseudo-inverse matrix.</p>
+</dd>
+<dt class="field-even">spd_builder()</dt>
+<dd class="field-even"><p>Build spectrum based on Gaussians, monochromatic 
 and/or phophor LED-type spectra.</p>
 </dd>
-<dt class="field-even">get_w_summed_spd()</dt>
-<dd class="field-even"><p>Calculate weighted sum of spds.</p>
+<dt class="field-odd">get_w_summed_spd()</dt>
+<dd class="field-odd"><p>Calculate weighted sum of spds.</p>
 </dd>
-<dt class="field-odd">fitnessfcn()</dt>
-<dd class="field-odd"><p>Fitness function that calculates closeness of solution x to 
+<dt class="field-even">fitnessfcn()</dt>
+<dd class="field-even"><p>Fitness function that calculates closeness of solution x to 
 target values for specified objective functions.</p>
 </dd>
-<dt class="field-even">spd_constructor_2()</dt>
-<dd class="field-even"><p>Construct spd from spectral model parameters 
+<dt class="field-odd">spd_constructor_2()</dt>
+<dd class="field-odd"><p>Construct spd from spectral model parameters 
 using pairs of intermediate sources.</p>
 </dd>
-<dt class="field-odd">spd_constructor_3()</dt>
-<dd class="field-odd"><p>Construct spd from spectral model parameters 
+<dt class="field-even">spd_constructor_3()</dt>
+<dd class="field-even"><p>Construct spd from spectral model parameters 
 using trio’s of intermediate sources.</p>
 </dd>
-<dt class="field-even">spd_optimizer_2_3()</dt>
-<dd class="field-even"><p>Optimizes the weights (fluxes) of a set of component 
+<dt class="field-odd">spd_optimizer_2_3()</dt>
+<dd class="field-odd"><p>Optimizes the weights (fluxes) of a set of component 
 spectra by combining pairs (2) or trio’s (3) of 
 components to intermediate sources until only 3 remain.
 Color3mixer can then be called to calculate required 
 fluxes to obtain target chromaticity and fluxes are 
 then back-calculated.</p>
 </dd>
-<dt class="field-odd">get_optim_pars_dict()</dt>
-<dd class="field-odd"><p>Setup dict with optimization parameters.</p>
+<dt class="field-even">get_optim_pars_dict()</dt>
+<dd class="field-even"><p>Setup dict with optimization parameters.</p>
 </dd>
-<dt class="field-even">initialize_spd_model_pars()</dt>
-<dd class="field-even"><p>Initialize spd_model_pars (for spd_constructor)
+<dt class="field-odd">initialize_spd_model_pars()</dt>
+<dd class="field-odd"><p>Initialize spd_model_pars (for spd_constructor)
 based on type of component_data.</p>
 </dd>
-<dt class="field-odd">initialize_spd_optim_pars()</dt>
-<dd class="field-odd"><p>Initialize spd_optim_pars (x0, lb, ub for use
+<dt class="field-even">initialize_spd_optim_pars()</dt>
+<dd class="field-even"><p>Initialize spd_optim_pars (x0, lb, ub for use
 with math.minimizebnd) based on type 
 of component_data.</p>
 </dd>
-<dt class="field-even">spd_optimizer()</dt>
-<dd class="field-even"><p>Generate a spectrum with specified white point and optimized
+<dt class="field-odd">spd_optimizer()</dt>
+<dd class="field-odd"><p>Generate a spectrum with specified white point and optimized
 for certain objective functions from a set of component 
 spectra or component spectrum model parameters.</p>
 </dd>
@@ -2570,6 +2573,42 @@ when (additively) mixing N light sources.</p>
 <div class="line-block">
 <div class="line">from the 3 final intermediate fluxes.</div>
 </div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="luxpy.toolboxes.spdbuild.colormixer_pinv">
+<code class="sig-prename descclassname">luxpy.toolboxes.spdbuild.</code><code class="sig-name descname">colormixer_pinv</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xyzt</span></em>, <em class="sig-param"><span class="n">xyzi</span></em>, <em class="sig-param"><span class="n">input_fmt</span><span class="o">=</span><span class="default_value">'xyz'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/spdbuild/spdbuilder.html#colormixer_pinv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.spdbuild.colormixer_pinv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Additive color mixer of N primaries using using Moore-Penrose pseudo-inverse matrix.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">xyzt</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with target XYZ tristimulus values or Yxy chromaticity coordinates.</div>
+</div>
+</dd>
+<dt class="field-even">xyzi</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">ndarray with XYZ tristimulus values or Yxy chromaticity coordinates of light sources i = 1 to n.</div>
+</div>
+</dd>
+<dt class="field-odd">input_fmt</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">‘xyz’, optional</div>
+<div class="line">Format specifier of :xyzt: and :xyzi: input arguments.</div>
+<div class="line">- options: ‘xyz’, ‘Yxy’</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">w</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with fluxes (weights) of each of the primaries in the mixture.</div>
 </div>
 </dd>
 </dl>
@@ -4075,7 +4114,7 @@ or k nearest neighbour interpolation of samples from a standard reflectance set.
 </div></blockquote>
 <dl class="py function">
 <dt id="luxpy.toolboxes.dispcal.calibrate">
-<code class="sig-prename descclassname">luxpy.toolboxes.dispcal.</code><code class="sig-name descname">calibrate</code><span class="sig-paren">(</span><em class="sig-param">rgbcal</em>, <em class="sig-param">xyzcal</em>, <em class="sig-param">L_type='lms'</em>, <em class="sig-param">tr_type='lut'</em>, <em class="sig-param">cieobs='1931_2'</em>, <em class="sig-param">nbit=8</em>, <em class="sig-param">cspace='lab'</em>, <em class="sig-param">avg=&lt;function &lt;lambda&gt;&gt;</em>, <em class="sig-param">verbosity=1</em>, <em class="sig-param">sep='</em>, <em class="sig-param">'</em>, <em class="sig-param">header=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/dispcal/displaycalibration.html#calibrate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.dispcal.calibrate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.toolboxes.dispcal.</code><code class="sig-name descname">calibrate</code><span class="sig-paren">(</span><em class="sig-param">rgbcal</em>, <em class="sig-param">xyzcal</em>, <em class="sig-param">L_type='lms'</em>, <em class="sig-param">tr_type='lut'</em>, <em class="sig-param">cieobs='1931_2'</em>, <em class="sig-param">nbit=8</em>, <em class="sig-param">cspace='lab'</em>, <em class="sig-param">avg=&lt;function &lt;lambda&gt;&gt;</em>, <em class="sig-param">ensure_increasing_lut_at_low_rgb=0.2</em>, <em class="sig-param">verbosity=1</em>, <em class="sig-param">sep='</em>, <em class="sig-param">'</em>, <em class="sig-param">header=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/dispcal/displaycalibration.html#calibrate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.dispcal.calibrate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate TR parameters/lut and conversion matrices.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -4147,20 +4186,31 @@ or k nearest neighbour interpolation of samples from a standard reflectance set.
 <div class="line">in the optimization of the xyz_to_rgb and rgb_to_xyz conversion matrices.</div>
 </div>
 </dd>
-<dt class="field-odd">verbosity</dt>
+<dt class="field-odd">ensure_increasing_lut_at_low_rgb</dt>
 <dd class="field-odd"><div class="line-block">
+<div class="line">0.2 or float (max = 1.0) or None, optional</div>
+<div class="line">Ensure an increasing lut by setting all values below the RGB with the maximum</div>
+<div class="line">zero-crossing of np.diff(lut) and RGB/RGB.max() values of :ensure_increasing_lut_at_low_rgb:</div>
+<div class="line">(values of 0.2 are a good rule of thumb value)</div>
+<div class="line">Non-strictly increasing lut values can be caused at low RGB values due</div>
+<div class="line">to noise and low measurement signal. </div>
+<div class="line">If None: don’t force lut, but keep as is.</div>
+</div>
+</dd>
+<dt class="field-even">verbosity</dt>
+<dd class="field-even"><div class="line-block">
 <div class="line">1, optional</div>
 <div class="line">&gt; 0: print and plot optimization results</div>
 </div>
 </dd>
-<dt class="field-even">sep</dt>
-<dd class="field-even"><div class="line-block">
+<dt class="field-odd">sep</dt>
+<dd class="field-odd"><div class="line-block">
 <div class="line">‘,’, optional</div>
 <div class="line">separator in files with rgbcal and xyzcal data</div>
 </div>
 </dd>
-<dt class="field-odd">header</dt>
-<dd class="field-odd"><div class="line-block">
+<dt class="field-even">header</dt>
+<dd class="field-even"><div class="line-block">
 <div class="line">None, optional</div>
 <div class="line">header specifier for files with rgbcal and xyzcal data </div>
 <div class="line">(see pandas.read_csv)</div>
@@ -4447,7 +4497,7 @@ or k nearest neighbour interpolation of samples from a standard reflectance set.
 
 <dl class="py class">
 <dt id="luxpy.toolboxes.dispcal.DisplayCalibration">
-<em class="property">class </em><code class="sig-prename descclassname">luxpy.toolboxes.dispcal.</code><code class="sig-name descname">DisplayCalibration</code><span class="sig-paren">(</span><em class="sig-param">rgbcal</em>, <em class="sig-param">xyzcal=None</em>, <em class="sig-param">L_type='lms'</em>, <em class="sig-param">cieobs='1931_2'</em>, <em class="sig-param">tr_type='lut'</em>, <em class="sig-param">nbit=8</em>, <em class="sig-param">cspace='lab'</em>, <em class="sig-param">avg=&lt;function DisplayCalibration.&lt;lambda&gt;&gt;</em>, <em class="sig-param">verbosity=1</em>, <em class="sig-param">sep='</em>, <em class="sig-param">'</em>, <em class="sig-param">header=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/dispcal/displaycalibration.html#DisplayCalibration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.dispcal.DisplayCalibration" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">luxpy.toolboxes.dispcal.</code><code class="sig-name descname">DisplayCalibration</code><span class="sig-paren">(</span><em class="sig-param">rgbcal</em>, <em class="sig-param">xyzcal=None</em>, <em class="sig-param">L_type='lms'</em>, <em class="sig-param">cieobs='1931_2'</em>, <em class="sig-param">tr_type='lut'</em>, <em class="sig-param">nbit=8</em>, <em class="sig-param">cspace='lab'</em>, <em class="sig-param">avg=&lt;function DisplayCalibration.&lt;lambda&gt;&gt;</em>, <em class="sig-param">ensure_increasing_lut_at_low_rgb=0.2</em>, <em class="sig-param">verbosity=1</em>, <em class="sig-param">sep='</em>, <em class="sig-param">'</em>, <em class="sig-param">header=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/dispcal/displaycalibration.html#DisplayCalibration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.dispcal.DisplayCalibration" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class for display_calibration.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">

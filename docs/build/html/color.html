@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Color sub-package &mdash; LuxPy 1.5.0 documentation</title>
+  <title>Color sub-package &mdash; LuxPy 1.5.2 documentation</title>
   
 
   
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                1.5.0
+                1.5.2
               </div>
             
           
@@ -233,23 +233,26 @@
 <h3>Module with functions related to plotting of color data<a class="headerlink" href="#module-with-functions-related-to-plotting-of-color-data" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><dl class="field-list">
-<dt class="field-odd">plot_color_data()</dt>
-<dd class="field-odd"><p>Plot color data (local helper function)</p>
+<dt class="field-odd">get_subplot_layout()</dt>
+<dd class="field-odd"><p>Calculate layout of multiple subplots.</p>
 </dd>
-<dt class="field-even">plotDL()</dt>
-<dd class="field-even"><p>Plot daylight locus.</p>
+<dt class="field-even">plot_color_data()</dt>
+<dd class="field-even"><p>Plot color data (local helper function)</p>
 </dd>
-<dt class="field-odd">plotBB()</dt>
-<dd class="field-odd"><p>Plot blackbody locus.</p>
+<dt class="field-odd">plotDL()</dt>
+<dd class="field-odd"><p>Plot daylight locus.</p>
 </dd>
-<dt class="field-even">plotSL()</dt>
-<dd class="field-even"><div class="line-block">
+<dt class="field-even">plotBB()</dt>
+<dd class="field-even"><p>Plot blackbody locus.</p>
+</dd>
+<dt class="field-odd">plotSL()</dt>
+<dd class="field-odd"><div class="line-block">
 <div class="line">Plot spectrum locus.  </div>
 <div class="line">(plotBB() and plotDL() are also called, but can be turned off).</div>
 </div>
 </dd>
-<dt class="field-odd">plotcerulean()</dt>
-<dd class="field-odd"><div class="line-block">
+<dt class="field-even">plotcerulean()</dt>
+<dd class="field-even"><div class="line-block">
 <div class="line">Plot cerulean (yellow (577 nm) - blue (472 nm)) line </div>
 <div class="line">(Kuehni, CRA, 2014: Table II: spectral lights)</div>
 <div class="line"><a class="reference external" href="https://doi.org/10.1002/col.21793">Kuehni, R. G. (2014). 
@@ -257,8 +260,8 @@ Unique hues and their stimuli—state of the art.
 Color Research &amp; Application, 39(3), 279–287.</a></div>
 </div>
 </dd>
-<dt class="field-even">plotUH()</dt>
-<dd class="field-even"><div class="line-block">
+<dt class="field-odd">plotUH()</dt>
+<dd class="field-odd"><div class="line-block">
 <div class="line">Plot unique hue lines from color space center point xyz0. </div>
 <div class="line">(Kuehni, CRA, 2014: uY,uB,uG: Table II: spectral lights; </div>
 <div class="line">uR: Table IV: Xiao data) </div>
@@ -267,8 +270,23 @@ Unique hues and their stimuli—state of the art.
 Color Research &amp; Application, 39(3), 279–287.</a></div>
 </div>
 </dd>
-<dt class="field-odd">plotcircle()</dt>
-<dd class="field-odd"><p>Plot one or more concentric circles.</p>
+<dt class="field-even">plotcircle()</dt>
+<dd class="field-even"><p>Plot one or more concentric circles.</p>
+</dd>
+<dt class="field-odd">plotellipse()</dt>
+<dd class="field-odd"><p>Plot one or more ellipses.</p>
+</dd>
+<dt class="field-even">plot_chromaticity_diagram_colors()</dt>
+<dd class="field-even"><p>Plot the chromaticity diagram colors.</p>
+</dd>
+<dt class="field-odd">plot_spectrum_colors()</dt>
+<dd class="field-odd"><p>Plot spd with spectrum colors.</p>
+</dd>
+<dt class="field-even">plot_rfl_color_patches()</dt>
+<dd class="field-even"><p>Create (and plot) an image with colored patches representing a set of reflectance spectra illuminated by a specified illuminant.</p>
+</dd>
+<dt class="field-odd">plot_rgb_color_patches()</dt>
+<dd class="field-odd"><p>Create (and plot) an image with patches with specified rgb values.</p>
 </dd>
 </dl>
 </div></blockquote>
@@ -301,7 +319,7 @@ Color Research &amp; Application, 39(3), 279–287.</a></div>
 
 <dl class="py function">
 <dt id="luxpy.color.utils.plotSL">
-<code class="sig-prename descclassname">luxpy.color.utils.</code><code class="sig-name descname">plotSL</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">'1931_2'</span></em>, <em class="sig-param"><span class="n">cspace</span><span class="o">=</span><span class="default_value">'Yuv'</span></em>, <em class="sig-param"><span class="n">DL</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">BBL</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">D65</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">EEW</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">cctlabels</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">axh</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">show</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">cspace_pars</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">formatstr</span><span class="o">=</span><span class="default_value">'k-'</span></em>, <em class="sig-param"><span class="n">diagram_colors</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">diagram_samples</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">diagram_opacity</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">diagram_lightness</span><span class="o">=</span><span class="default_value">0.25</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/utils/plotters.html#plotSL"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.utils.plotSL" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.color.utils.</code><code class="sig-name descname">plotSL</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">'1931_2'</span></em>, <em class="sig-param"><span class="n">cspace</span><span class="o">=</span><span class="default_value">'Yuv'</span></em>, <em class="sig-param"><span class="n">DL</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">BBL</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">D65</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">EEW</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">cctlabels</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">axh</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">show</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">cspace_pars</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">formatstr</span><span class="o">=</span><span class="default_value">'k-'</span></em>, <em class="sig-param"><span class="n">diagram_colors</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">diagram_samples</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">diagram_opacity</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">diagram_lightness</span><span class="o">=</span><span class="default_value">0.25</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/utils/plotters.html#plotSL"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.utils.plotSL" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot spectrum locus for cieobs in cspace.</p>
 <dl>
 <dt>Args: </dt><dd><dl class="field-list">
@@ -588,7 +606,7 @@ Color Research &amp; Application, 39(3), 279–287.</a></div>
 
 <dl class="py function">
 <dt id="luxpy.color.utils.plot_color_data">
-<code class="sig-prename descclassname">luxpy.color.utils.</code><code class="sig-name descname">plot_color_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">y</span></em>, <em class="sig-param"><span class="n">z</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">axh</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">show</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">'1931_2'</span></em>, <em class="sig-param"><span class="n">cspace</span><span class="o">=</span><span class="default_value">'Yuv'</span></em>, <em class="sig-param"><span class="n">formatstr</span><span class="o">=</span><span class="default_value">'k-'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/utils/plotters.html#plot_color_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.utils.plot_color_data" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.color.utils.</code><code class="sig-name descname">plot_color_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">y</span></em>, <em class="sig-param"><span class="n">z</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">axh</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">show</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">'1931_2'</span></em>, <em class="sig-param"><span class="n">cspace</span><span class="o">=</span><span class="default_value">'Yuv'</span></em>, <em class="sig-param"><span class="n">formatstr</span><span class="o">=</span><span class="default_value">'k-'</span></em>, <em class="sig-param"><span class="n">legend_loc</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/utils/plotters.html#plot_color_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.utils.plot_color_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot color data from x,y [,z].</p>
 <dl>
 <dt>Args: </dt><dd><dl class="field-list">
@@ -629,9 +647,10 @@ Color Research &amp; Application, 39(3), 279–287.</a></div>
 </dd>
 <dt class="field-odd">cspace</dt>
 <dd class="field-odd"><div class="line-block">
-<div class="line">luxpy._CSPACE or str, optional</div>
+<div class="line">luxpy._CSPACE or str or None, optional</div>
 <div class="line">Determines color space / chromaticity diagram to plot data in.</div>
 <div class="line">Note that data is expected to be in specified :cspace:</div>
+<div class="line">If None: don’t do any formatting of x,y [z] axes.</div>
 </div>
 </dd>
 <dt class="field-even">formatstr</dt>
@@ -860,7 +879,7 @@ Color Research &amp; Application, 39(3), 279–287.</a>
 
 <dl class="py function">
 <dt id="luxpy.color.utils.plotellipse">
-<code class="sig-prename descclassname">luxpy.color.utils.</code><code class="sig-name descname">plotellipse</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">v</span></em>, <em class="sig-param"><span class="n">cspace_in</span><span class="o">=</span><span class="default_value">'Yxy'</span></em>, <em class="sig-param"><span class="n">cspace_out</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">nsamples</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">show</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">axh</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">line_color</span><span class="o">=</span><span class="default_value">'darkgray'</span></em>, <em class="sig-param"><span class="n">line_style</span><span class="o">=</span><span class="default_value">':'</span></em>, <em class="sig-param"><span class="n">line_width</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">line_marker</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">line_markersize</span><span class="o">=</span><span class="default_value">4</span></em>, <em class="sig-param"><span class="n">plot_center</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">center_marker</span><span class="o">=</span><span class="default_value">'o'</span></em>, <em class="sig-param"><span class="n">center_color</span><span class="o">=</span><span class="default_value">'darkgray'</span></em>, <em class="sig-param"><span class="n">center_markersize</span><span class="o">=</span><span class="default_value">4</span></em>, <em class="sig-param"><span class="n">show_grid</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">llabel</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">label_fontname</span><span class="o">=</span><span class="default_value">'Times New Roman'</span></em>, <em class="sig-param"><span class="n">label_fontsize</span><span class="o">=</span><span class="default_value">12</span></em>, <em class="sig-param"><span class="n">out</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/utils/plotters.html#plotellipse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.utils.plotellipse" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.color.utils.</code><code class="sig-name descname">plotellipse</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">v</span></em>, <em class="sig-param"><span class="n">cspace_in</span><span class="o">=</span><span class="default_value">'Yxy'</span></em>, <em class="sig-param"><span class="n">cspace_out</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">nsamples</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">show</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">axh</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">line_color</span><span class="o">=</span><span class="default_value">'darkgray'</span></em>, <em class="sig-param"><span class="n">line_style</span><span class="o">=</span><span class="default_value">':'</span></em>, <em class="sig-param"><span class="n">line_width</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">line_marker</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">line_markersize</span><span class="o">=</span><span class="default_value">4</span></em>, <em class="sig-param"><span class="n">plot_center</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">center_marker</span><span class="o">=</span><span class="default_value">'o'</span></em>, <em class="sig-param"><span class="n">center_color</span><span class="o">=</span><span class="default_value">'darkgray'</span></em>, <em class="sig-param"><span class="n">center_markersize</span><span class="o">=</span><span class="default_value">4</span></em>, <em class="sig-param"><span class="n">show_grid</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">llabel</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">label_fontname</span><span class="o">=</span><span class="default_value">'Times New Roman'</span></em>, <em class="sig-param"><span class="n">label_fontsize</span><span class="o">=</span><span class="default_value">12</span></em>, <em class="sig-param"><span class="n">out</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/utils/plotters.html#plotellipse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.utils.plotellipse" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot ellipse(s) given in v-format [Rmax,Rmin,xc,yc,theta].</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -959,7 +978,7 @@ Color Research &amp; Application, 39(3), 279–287.</a>
 </dd>
 <dt class="field-even">show_grid</dt>
 <dd class="field-even"><div class="line-block">
-<div class="line">True, optional</div>
+<div class="line">False, optional</div>
 <div class="line">Show grid (True) or not (False)</div>
 </div>
 </dd>
@@ -1007,7 +1026,7 @@ Color Research &amp; Application, 39(3), 279–287.</a>
 
 <dl class="py function">
 <dt id="luxpy.color.utils.plot_chromaticity_diagram_colors">
-<code class="sig-prename descclassname">luxpy.color.utils.</code><code class="sig-name descname">plot_chromaticity_diagram_colors</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">diagram_samples</span><span class="o">=</span><span class="default_value">256</span></em>, <em class="sig-param"><span class="n">diagram_opacity</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">diagram_lightness</span><span class="o">=</span><span class="default_value">0.25</span></em>, <em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">'1931_2'</span></em>, <em class="sig-param"><span class="n">cspace</span><span class="o">=</span><span class="default_value">'Yxy'</span></em>, <em class="sig-param"><span class="n">cspace_pars</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">show</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">axh</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">show_grid</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">label_fontname</span><span class="o">=</span><span class="default_value">'Times New Roman'</span></em>, <em class="sig-param"><span class="n">label_fontsize</span><span class="o">=</span><span class="default_value">12</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/utils/plotters.html#plot_chromaticity_diagram_colors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.utils.plot_chromaticity_diagram_colors" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.color.utils.</code><code class="sig-name descname">plot_chromaticity_diagram_colors</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">diagram_samples</span><span class="o">=</span><span class="default_value">256</span></em>, <em class="sig-param"><span class="n">diagram_opacity</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">diagram_lightness</span><span class="o">=</span><span class="default_value">0.25</span></em>, <em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">'1931_2'</span></em>, <em class="sig-param"><span class="n">cspace</span><span class="o">=</span><span class="default_value">'Yxy'</span></em>, <em class="sig-param"><span class="n">cspace_pars</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">show</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">axh</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">show_grid</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">label_fontname</span><span class="o">=</span><span class="default_value">'Times New Roman'</span></em>, <em class="sig-param"><span class="n">label_fontsize</span><span class="o">=</span><span class="default_value">12</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/utils/plotters.html#plot_chromaticity_diagram_colors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.utils.plot_chromaticity_diagram_colors" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot the chromaticity diagram colors.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -1064,7 +1083,7 @@ Color Research &amp; Application, 39(3), 279–287.</a>
 </dd>
 <dt class="field-odd">show_grid</dt>
 <dd class="field-odd"><div class="line-block">
-<div class="line">True, optional</div>
+<div class="line">False, optional</div>
 <div class="line">Show grid (True) or not (False)</div>
 </div>
 </dd>
@@ -1093,7 +1112,7 @@ Color Research &amp; Application, 39(3), 279–287.</a>
 
 <dl class="py function">
 <dt id="luxpy.color.utils.plot_spectrum_colors">
-<code class="sig-prename descclassname">luxpy.color.utils.</code><code class="sig-name descname">plot_spectrum_colors</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spd</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">spdmax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">wavelength_height</span><span class="o">=</span><span class="default_value">- 0.05</span></em>, <em class="sig-param"><span class="n">wavelength_opacity</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">wavelength_lightness</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">'1931_2'</span></em>, <em class="sig-param"><span class="n">show</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">axh</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">show_grid</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">ylabel</span><span class="o">=</span><span class="default_value">'Spectral intensity (a.u.)'</span></em>, <em class="sig-param"><span class="n">xlim</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/utils/plotters.html#plot_spectrum_colors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.utils.plot_spectrum_colors" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.color.utils.</code><code class="sig-name descname">plot_spectrum_colors</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spd</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">spdmax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">wavelength_height</span><span class="o">=</span><span class="default_value">- 0.05</span></em>, <em class="sig-param"><span class="n">wavelength_opacity</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">wavelength_lightness</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">'1931_2'</span></em>, <em class="sig-param"><span class="n">show</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">axh</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">show_grid</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">ylabel</span><span class="o">=</span><span class="default_value">'Spectral intensity (a.u.)'</span></em>, <em class="sig-param"><span class="n">xlim</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/utils/plotters.html#plot_spectrum_colors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.utils.plot_spectrum_colors" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot the spectrum colors.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -1149,7 +1168,7 @@ Color Research &amp; Application, 39(3), 279–287.</a>
 </dd>
 <dt class="field-odd">show_grid</dt>
 <dd class="field-odd"><div class="line-block">
-<div class="line">True, optional</div>
+<div class="line">False, optional</div>
 <div class="line">Show grid (True) or not (False)</div>
 </div>
 </dd>
@@ -1174,6 +1193,180 @@ Color Research &amp; Application, 39(3), 279–287.</a>
 </dd>
 </dl>
 <p>Returns:</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="luxpy.color.utils.plot_rfl_color_patches">
+<code class="sig-prename descclassname">luxpy.color.utils.</code><code class="sig-name descname">plot_rfl_color_patches</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rfl</span></em>, <em class="sig-param"><span class="n">spd</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">'1931_2'</span></em>, <em class="sig-param"><span class="n">patch_shape</span><span class="o">=</span><span class="default_value">100, 100</span></em>, <em class="sig-param"><span class="n">patch_layout</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">show</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/utils/plotters.html#plot_rfl_color_patches"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.utils.plot_rfl_color_patches" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create (and plot) an image with colored patches representing a set of reflectance spectra illuminated by a specified illuminant.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">rfl</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with reflectance spectra</div>
+</div>
+</dd>
+<dt class="field-even">spd</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">ndarray with illuminant spectral power distribution</div>
+<div class="line">If None: _CIE_D65 is used.</div>
+</div>
+</dd>
+<dt class="field-odd">cieobs</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">‘1931_2’, optional</div>
+<div class="line">CIE standard observer to use when converting rfl to xyz.</div>
+</div>
+</dd>
+<dt class="field-even">patch_shape</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">(100,100), optional</div>
+<div class="line">shape of each of the patches in the image</div>
+</div>
+</dd>
+<dt class="field-odd">patch_layout</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">If None: layout is calculated automatically to give a ‘good’ aspect ratio</div>
+</div>
+</dd>
+<dt class="field-even">ax</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">Axes to plot the image in. If None: a new axes is created.</div>
+</div>
+</dd>
+<dt class="field-odd">show</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">True, optional</div>
+<div class="line">If True: plot image in axes and return axes handle; else: return ndarray with image.</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Return:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">ax</dt>
+<dd class="field-odd"><p>or :imagae: 
+| Axes is returned if show == True, else: ndarray with rgb image is returned.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="luxpy.color.utils.plot_rgb_color_patches">
+<code class="sig-prename descclassname">luxpy.color.utils.</code><code class="sig-name descname">plot_rgb_color_patches</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rgb</span></em>, <em class="sig-param"><span class="n">patch_shape</span><span class="o">=</span><span class="default_value">100, 100</span></em>, <em class="sig-param"><span class="n">patch_layout</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">show</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/utils/plotters.html#plot_rgb_color_patches"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.utils.plot_rgb_color_patches" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create (and plot) an image with patches with specified rgb values.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">rgb</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with rgb values for each of the patches</div>
+</div>
+</dd>
+<dt class="field-even">patch_shape</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">(100,100), optional</div>
+<div class="line">shape of each of the patches in the image</div>
+</div>
+</dd>
+<dt class="field-odd">patch_layout</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">If None: layout is calculated automatically to give a ‘good’ aspect ratio</div>
+</div>
+</dd>
+<dt class="field-even">ax</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">Axes to plot the image in. If None: a new axes is created.</div>
+</div>
+</dd>
+<dt class="field-odd">show</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">True, optional</div>
+<div class="line">If True: plot image in axes and return axes handle; else: return ndarray with image.</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Return:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">ax</dt>
+<dd class="field-odd"><p>or :imagae: 
+| Axes is returned if show == True, else: ndarray with rgb image is returned.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="luxpy.color.utils.plot_cmfs">
+<code class="sig-prename descclassname">luxpy.color.utils.</code><code class="sig-name descname">plot_cmfs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cmfs</span></em>, <em class="sig-param"><span class="n">cmf_symbols</span><span class="o">=</span><span class="default_value">['x', 'y', 'z']</span></em>, <em class="sig-param"><span class="n">cmf_label</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">ylabel</span><span class="o">=</span><span class="default_value">'Sensitivity'</span></em>, <em class="sig-param"><span class="n">wavelength_bar</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">colors</span><span class="o">=</span><span class="default_value">['r', 'g', 'b']</span></em>, <em class="sig-param"><span class="n">axh</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">legend</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/utils/plotters.html#plot_cmfs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.utils.plot_cmfs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot CMFs.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">cmfs</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with a set of CMFs.</div>
+</div>
+</dd>
+<dt class="field-even">cmf_symbols</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">[‘x,’y’,’z], optional</div>
+<div class="line">Symbols of the CMFs</div>
+<div class="line">If not a list but a string, the same label will be used for all CMF</div>
+<div class="line">and the same color will be used (‘k’ if colors is a list)</div>
+</div>
+</dd>
+<dt class="field-odd">cmf_label</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">‘’, optional</div>
+<div class="line">Additional label that will be added in front of the cmf symbols.</div>
+</div>
+</dd>
+<dt class="field-even">ylabel</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">‘Sensitivity’, optional</div>
+<div class="line">label for y-axis.</div>
+</div>
+</dd>
+<dt class="field-odd">wavelength_bar</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">True, optional</div>
+<div class="line">Add a colored wavelength bar with spectral colors.</div>
+</div>
+</dd>
+<dt class="field-even">colors</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">[‘r’,’g’,’b’], optional</div>
+<div class="line">Color for plotting each of the individual CMF.</div>
+</div>
+</dd>
+<dt class="field-odd">axh</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">Axes to plot the image in. If None: a new axes is created.</div>
+</div>
+</dd>
+<dt class="field-even">kwargs</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">additional kwargs for plt.plot().</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">axh</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">figure axes handle.</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -1902,7 +2095,7 @@ In IS&amp;T 6th Color Imaging Conference, (Scottsdale, Arizona, USA), pp. 8–13
 
 <dl class="py function">
 <dt id="luxpy.color.ctf.colortransforms.xyz_to_Ydlep">
-<code class="sig-prename descclassname">luxpy.color.ctf.colortransforms.</code><code class="sig-name descname">xyz_to_Ydlep</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xyz</span></em>, <em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">'1931_2'</span></em>, <em class="sig-param"><span class="n">xyzw</span><span class="o">=</span><span class="default_value">array([[100.0, 100.0, 100.0]])</span></em>, <em class="sig-param"><span class="n">flip_axes</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/ctf/colortransforms.html#xyz_to_Ydlep"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.ctf.colortransforms.xyz_to_Ydlep" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.color.ctf.colortransforms.</code><code class="sig-name descname">xyz_to_Ydlep</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xyz</span></em>, <em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">'1931_2'</span></em>, <em class="sig-param"><span class="n">xyzw</span><span class="o">=</span><span class="default_value">array([[100.0, 100.0, 100.0]])</span></em>, <em class="sig-param"><span class="n">flip_axes</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">SL_max_lambda</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/ctf/colortransforms.html#xyz_to_Ydlep"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.ctf.colortransforms.xyz_to_Ydlep" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert XYZ tristimulus values to Y, dominant (complementary) wavelength
 and excitation purity.</p>
 <dl>
@@ -1933,6 +2126,12 @@ and excitation purity.</p>
 </div>
 </div>
 </dd>
+<dt class="field-odd">SL_max_lambda</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">None or float, optional</div>
+<div class="line">Maximum wavelength of spectrum locus before it turns back on itelf in the high wavelength range (~700 nm)</div>
+</div>
+</dd>
 </dl>
 </dd>
 <dt>Returns:</dt><dd><dl class="field-list">
@@ -1951,7 +2150,7 @@ and excitation purity.</p>
 
 <dl class="py function">
 <dt id="luxpy.color.ctf.colortransforms.Ydlep_to_xyz">
-<code class="sig-prename descclassname">luxpy.color.ctf.colortransforms.</code><code class="sig-name descname">Ydlep_to_xyz</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">Ydlep</span></em>, <em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">'1931_2'</span></em>, <em class="sig-param"><span class="n">xyzw</span><span class="o">=</span><span class="default_value">array([[100.0, 100.0, 100.0]])</span></em>, <em class="sig-param"><span class="n">flip_axes</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/ctf/colortransforms.html#Ydlep_to_xyz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.ctf.colortransforms.Ydlep_to_xyz" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.color.ctf.colortransforms.</code><code class="sig-name descname">Ydlep_to_xyz</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">Ydlep</span></em>, <em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">'1931_2'</span></em>, <em class="sig-param"><span class="n">xyzw</span><span class="o">=</span><span class="default_value">array([[100.0, 100.0, 100.0]])</span></em>, <em class="sig-param"><span class="n">flip_axes</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">SL_max_lambda</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/ctf/colortransforms.html#Ydlep_to_xyz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.ctf.colortransforms.Ydlep_to_xyz" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert Y, dominant (complementary) wavelength and excitation purity to XYZ
 tristimulus values.</p>
 <dl>
@@ -1981,6 +2180,12 @@ and excitation purity</div>
 <div class="line-block">
 <div class="line">(single xyzw with is not flipped!)</div>
 </div>
+</div>
+</dd>
+<dt class="field-odd">SL_max_lambda</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">None or float, optional</div>
+<div class="line">Maximum wavelength of spectrum locus before it turns back on itelf in the high wavelength range (~700 nm)</div>
 </div>
 </dd>
 </dl>
@@ -8566,7 +8771,7 @@ other plotting fcns)</div>
 
 <dl class="py function">
 <dt id="luxpy.color.cri.plot_ColorVectorGraphic">
-<code class="sig-prename descclassname">luxpy.color.cri.</code><code class="sig-name descname">plot_ColorVectorGraphic</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">jabt</span></em>, <em class="sig-param"><span class="n">jabr</span></em>, <em class="sig-param"><span class="n">hbins</span><span class="o">=</span><span class="default_value">16</span></em>, <em class="sig-param"><span class="n">start_hue</span><span class="o">=</span><span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">scalef</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">plot_axis_labels</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">bin_labels</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">plot_edge_lines</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">plot_center_lines</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">plot_bin_colors</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">axtype</span><span class="o">=</span><span class="default_value">'polar'</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">force_CVG_layout</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cri/utils/graphics.html#plot_ColorVectorGraphic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cri.plot_ColorVectorGraphic" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.color.cri.</code><code class="sig-name descname">plot_ColorVectorGraphic</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">jabt</span></em>, <em class="sig-param"><span class="n">jabr</span></em>, <em class="sig-param"><span class="n">hbins</span><span class="o">=</span><span class="default_value">16</span></em>, <em class="sig-param"><span class="n">start_hue</span><span class="o">=</span><span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">scalef</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">plot_axis_labels</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">bin_labels</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">plot_edge_lines</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">plot_center_lines</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">plot_bin_colors</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">axtype</span><span class="o">=</span><span class="default_value">'polar'</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">force_CVG_layout</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">jabti</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">jabri</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">hbinnr</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cri/utils/graphics.html#plot_ColorVectorGraphic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cri.plot_ColorVectorGraphic" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot Color Vector Graphic (CVG).</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -8656,6 +8861,28 @@ other plotting fcns)</div>
 <div class="line">True: Force plot of basis of CVG.</div>
 </div>
 </dd>
+<dt class="field-even">jabti</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">ndarray with jab data of all samples under test SPD (scaled to ‘unit’ circle)</div>
+<div class="line">If not None: plot chromaticity coordinates of test samples relative to </div>
+<div class="line">the mean chromaticity of the samples under the reference illuminant.</div>
+</div>
+</dd>
+<dt class="field-odd">jabri</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">ndarray with jab data of all samples under reference SPD (scaled to ‘unit’ circle)</div>
+<div class="line">Must be supplied when jabti is not None!</div>
+</div>
+</dd>
+<dt class="field-even">hbinnr</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">ndarray with hue bin number of each sample.</div>
+<div class="line">Must be supplied when jabti is not None!</div>
+</div>
+</dd>
 </dl>
 </dd>
 <dt>Returns:</dt><dd><dl class="field-list">
@@ -8735,6 +8962,9 @@ other plotting fcns)</div>
 <div class="line">- ‘SPD’  : ndarray test SPDs</div>
 <div class="line">- ‘bjabt’: ndarray with binned jab data under test SPDs</div>
 <div class="line">- ‘bjabr’: ndarray with binned jab data under reference SPDs</div>
+<div class="line">- ‘jabti’: ndarray with individual jab data under test SPDs (scaled such that bjabr are on a circle)</div>
+<div class="line">- ‘jabri’: ndarray with individual jab data under reference SPDs (scaled such that bjabr are on a circle)</div>
+<div class="line">- ‘hbinnr’: ndarray with the hue bin number the samples belong to.</div>
 <div class="line">- ‘cct’  : ndarray with CCT of test SPD</div>
 <div class="line">- ‘duv’  : ndarray with distance to blackbody locus of test SPD</div>
 <div class="line">- ‘Rf’   : ndarray with general color fidelity indices</div>
@@ -8767,7 +8997,7 @@ other plotting fcns)</div>
 
 <dl class="py function">
 <dt id="luxpy.color.cri.plot_cri_graphics">
-<code class="sig-prename descclassname">luxpy.color.cri.</code><code class="sig-name descname">plot_cri_graphics</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">cri_type</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">hbins</span><span class="o">=</span><span class="default_value">16</span></em>, <em class="sig-param"><span class="n">start_hue</span><span class="o">=</span><span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">scalef</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">plot_axis_labels</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">bin_labels</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">plot_edge_lines</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">plot_center_lines</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">plot_bin_colors</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">axtype</span><span class="o">=</span><span class="default_value">'polar'</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">force_CVG_layout</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">vf_model_type</span><span class="o">=</span><span class="default_value">'M6'</span></em>, <em class="sig-param"><span class="n">vf_pcolorshift</span><span class="o">=</span><span class="default_value">{'Cref': 40, 'href': array([3.7835, 3.3161, 2.8272, 1.9093, 5.2787, 4.3081, 0.37762, 6.2055, 1.4564, 0.88927]), 'labels': array(['5B', '5BG', '5G', '5GY', '5P', '5PB', '5R', '5RP', '5Y', '5YR'], dtype=object), 'sig': 0.3}</span></em>, <em class="sig-param"><span class="n">vf_color</span><span class="o">=</span><span class="default_value">'k'</span></em>, <em class="sig-param"><span class="n">vf_bin_labels</span><span class="o">=</span><span class="default_value">array(['5B', '5BG', '5G', '5GY', '5P', '5PB', '5R', '5RP', '5Y', '5YR'], dtype=object)</span></em>, <em class="sig-param"><span class="n">vf_plot_bin_colors</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">scale_vf_chroma_to_sample_chroma</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">plot_VF</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">plot_CF</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">plot_SF</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cri/iestm30/ies_tm30_graphics.html#plot_cri_graphics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cri.plot_cri_graphics" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.color.cri.</code><code class="sig-name descname">plot_cri_graphics</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">cri_type</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">hbins</span><span class="o">=</span><span class="default_value">16</span></em>, <em class="sig-param"><span class="n">start_hue</span><span class="o">=</span><span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">scalef</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">plot_axis_labels</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">bin_labels</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">plot_edge_lines</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">plot_center_lines</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">plot_bin_colors</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">axtype</span><span class="o">=</span><span class="default_value">'polar'</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">force_CVG_layout</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">vf_model_type</span><span class="o">=</span><span class="default_value">'M6'</span></em>, <em class="sig-param"><span class="n">vf_pcolorshift</span><span class="o">=</span><span class="default_value">{'Cref': 40, 'href': array([3.7835, 3.3161, 2.8272, 1.9093, 5.2787, 4.3081, 0.37762, 6.2055, 1.4564, 0.88927]), 'labels': array(['5B', '5BG', '5G', '5GY', '5P', '5PB', '5R', '5RP', '5Y', '5YR'], dtype=object), 'sig': 0.3}</span></em>, <em class="sig-param"><span class="n">vf_color</span><span class="o">=</span><span class="default_value">'k'</span></em>, <em class="sig-param"><span class="n">vf_bin_labels</span><span class="o">=</span><span class="default_value">array(['5B', '5BG', '5G', '5GY', '5P', '5PB', '5R', '5RP', '5Y', '5YR'], dtype=object)</span></em>, <em class="sig-param"><span class="n">vf_plot_bin_colors</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">scale_vf_chroma_to_sample_chroma</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">plot_VF</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">plot_CF</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">plot_SF</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">plot_test_sample_coord</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cri/iestm30/ies_tm30_graphics.html#plot_cri_graphics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cri.plot_cri_graphics" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot graphical information on color rendition properties.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -8917,7 +9147,13 @@ base color shift and metameric uncertainty.</div>
 <dt class="field-even">plot_SF</dt>
 <dd class="field-even"><div class="line-block">
 <div class="line">True, optional</div>
-<div class="line">Plot sample shifts.   </div>
+<div class="line">Plot sample shifts.  </div>
+</div>
+</dd>
+<dt class="field-odd">plot_test_sample_coord</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">Plot the coordinates of the samples under the test illuminant</div>
+<div class="line">relative to the mean chromaticity under the reference illuminant (in the CVG plot).</div>
 </div>
 </dd>
 </dl>
@@ -8934,6 +9170,11 @@ base color shift and metameric uncertainty.</div>
 <div class="line">- ‘SPD’  : ndarray test SPDs</div>
 <div class="line">- ‘bjabt’: ndarray with binned jab data under test SPDs</div>
 <div class="line">- ‘bjabr’: ndarray with binned jab data under reference SPDs</div>
+<div class="line">- ‘jabti’: ndarray with individual jab data under test SPDs (scaled such that bjabr are on a circle)</div>
+<div class="line">- ‘jabri’: ndarray with individual jab data under reference SPDs (scaled such that bjabr are on a circle)</div>
+<div class="line">- ‘hbinnr’: ndarray with the hue bin number the samples belong to.</div>
+</div>
+<div class="line-block">
 <div class="line">- ‘cct’  : ndarray with CCT of test SPD</div>
 <div class="line">- ‘duv’  : ndarray with distance to blackbody locus of test SPD</div>
 <div class="line">- ‘Rf’   : ndarray with general color fidelity indices</div>
