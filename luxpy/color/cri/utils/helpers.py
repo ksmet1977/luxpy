@@ -287,7 +287,14 @@ def jab_to_rg(jabt,jabr, max_scale = 100, ordered_and_sliced = False, \
     Rg = np.zeros((1,jabt.shape[1]))
 
     for ii in range(jabt.shape[1]):
-        Rg[:,ii] = max_scale*math.polyarea(jabt[:,ii,1],jabt[:,ii,2])/math.polyarea(jabr[:,ii,1],jabr[:,ii,2]) # calculate Rg =  gamut area ratio of test and ref
+        nan_t = np.isnan(jabt[:,ii,1])
+        nan_r = np.isnan(jabr[:,ii,1])
+        if (nan_t.all() | nan_r.all()):
+            Rg[:,ii] = np.nan
+        else:
+            notnan_t = np.logical_not(nan_t)
+            notnan_r = np.logical_not(nan_r)
+            Rg[:,ii] = max_scale*math.polyarea(jabt[notnan_t,ii,1],jabt[notnan_t,ii,2])/math.polyarea(jabr[notnan_r,ii,1],jabr[notnan_r,ii,2]) # calculate Rg =  gamut area ratio of test and ref (only use ab's which are not NaN's)
     
     if out == 'Rg':
         return Rg

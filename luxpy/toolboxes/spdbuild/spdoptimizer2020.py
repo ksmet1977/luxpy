@@ -622,7 +622,7 @@ class SpectralOptimizer():
         if self.obj_fcn is not None:
             if (out != 'F') | (self.verbosity > 1):
                 obj_fcn_vals = self.obj_fcn._equalize_sizes([np.nan])
-              
+    
         # Loop over all xi to get all spectra:
         for i in range(x.shape[0]):
             
@@ -653,6 +653,7 @@ class SpectralOptimizer():
         # calculate all objective functions on mass for all spectra:
         isnan_spds = np.isnan(spds[1:,:].sum(axis=1))
         if self.obj_fcn.f is not None:
+            
             notnan_spds = np.logical_not(isnan_spds)
             if (notnan_spds.sum()>0):
                 spds_tmp = np.vstack((spds[:1,:], spds[1:,:][notnan_spds,:])) # only calculate spds that are not nan
@@ -661,9 +662,16 @@ class SpectralOptimizer():
                     
                     # Calculate objective function j:
                     obj_vals_j = self.obj_fcn._calculate_fj(spds_tmp, j = j).T 
+                    
+                    # Round objective values:
+                    decimals = self.obj_fcn.decimals[j]
+                    if not isinstance(decimals,tuple): decimals = (decimals,)
+                    obj_vals_j = np.array([np.round(obj_vals_j[:,ii],int(decimals[ii])) for ii in range(len(decimals))]).T
 
-                    # Store F-results in array:
-                    F_j = (self.obj_fcn.fw[j]*(((np.round(obj_vals_j,int(self.obj_fcn.decimals[j][0])) - self.obj_fcn.ft[j] + eps)**2)/((self.obj_fcn.f_normalize[j] + eps)**2))**0.5)
+                    
+                    # Store F-results in array:              
+                    F_j = (self.obj_fcn.fw[j]*(((obj_vals_j - self.obj_fcn.ft[j] + eps)**2)/((self.obj_fcn.f_normalize[j] + eps)**2))**0.5)
+
                     if j == 0:
                         F_tmp = F_j
                     else:
@@ -753,9 +761,9 @@ class SpectralOptimizer():
   #------------------------------------------------------------------------------
 if __name__ == '__main__':  
     
-    run_example_1 = False # # class based example with pre-defined minimization methods
+    run_example_1 = True # # class based example with pre-defined minimization methods
     
-    run_example_2 = True # # class based example with pre-defined minimization methods and primary set
+    run_example_2 = False # # class based example with pre-defined minimization methods and primary set
 
     run_example_3 = False # # class based example with user-defined  minimization method   
 
