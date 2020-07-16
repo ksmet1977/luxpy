@@ -141,10 +141,10 @@ def _extract_prim_optimization_parameters(x, nprims,
     ct = 0
     for pt in types:
         if pt not in prim_constructor_parameter_defs: # extract value from x (to be optimized as not in _defs dict!)
-           pars[pt] = x[:,(ct*nprims):(ct*nprims) + nprims] 
+           pars[pt] = np.array(x[:,(ct*nprims):(ct*nprims) + nprims])
            ct+=1
         else:
-           pars[pt] = prim_constructor_parameter_defs[pt]
+           pars[pt] = np.array(prim_constructor_parameter_defs[pt])
     return pars
          
             
@@ -157,11 +157,11 @@ def gaussian_prim_constructor(x, nprims, wlr,
                               prim_constructor_parameter_types, 
                               **prim_constructor_parameter_defs):
     """
-    Construct a set of n gaussian primaries with wavelengths wlr using the input in x and in kwargs.
+    Construct a set of nprim gaussian primaries with wavelengths wlr using the input in x and in kwargs.
     
     Args:
         :x:
-            | ndarray (M x n) with optimization parameters.
+            | ndarray (M x nprim) with optimization parameters.
         :nprim:
             | number of primaries
         :wlr:
@@ -179,7 +179,7 @@ def gaussian_prim_constructor(x, nprims, wlr,
         :prim_constructor_parameters_defs:
             | Dict with constructor parameters required by prim_constructor and/or 
             | default values for parameters that are not being optimized.
-            | For example: {'fwhm':  30} will keep fwhm fixed and not optimize it.
+            | For example: {'fwhm':  [30]} will keep fwhm fixed and not optimize it.
             
     Returns:
         :spd:
@@ -197,7 +197,8 @@ def gaussian_prim_constructor(x, nprims, wlr,
         | ```    wlr = _setup_wlr(wlr)```
         | ``` ```
         | ```    # Collect parameters from pars dict:```
-        | ```    return np.vstack((wlr,np.exp(-((pars['peakwl']-wlr.T)/pars['fwhm'])**2).T))```
+        | ```    fwhm_to_sig = 1/(2*(2*np.log(2))**0.5) # conversion factor for FWHM to sigma of Gaussian ```
+        | ```    return np.vstack((wlr,np.exp(-0.5*((pars['peakwl']-wlr.T)/(pars['fwhm']*fwhm_to_sig))**2).T))```
     """
     # Extract the primary parameters from x and prim_constructor_parameter_defs:
     pars = _extract_prim_optimization_parameters(x, nprims, prim_constructor_parameter_types,
@@ -206,7 +207,8 @@ def gaussian_prim_constructor(x, nprims, wlr,
     wlr = _setup_wlr(wlr)
     
     # Collect parameters from pars dict:
-    return np.vstack((wlr,np.exp(-((pars['peakwl']-wlr.T)/pars['fwhm'])**2).T))  
+    fwhm_to_sig = 1/(2*(2*np.log(2))**0.5) # conversion factor for FWHM to sigma of Gaussian
+    return np.vstack((wlr,np.exp(-0.5*((pars['peakwl']-wlr.T)/(pars['fwhm']*fwhm_to_sig))**2).T))  
 
      
 #------------------------------------------------------------------------------
@@ -810,7 +812,7 @@ if __name__ == '__main__':
                                       prim_constructor = gaussian_prim_constructor,
                                       prim_constructor_parameter_types = ['peakwl', 'fwhm'], 
                                       prim_constructor_parameter_defs = {'peakwl_bnds':[400,700],
-                                                                         'fwhm_bnds':[5,100]},
+                                                                         'fwhm_bnds':[5,300]},
                                       obj_fcn = [(spd_to_cris,'Rf','Rg')], 
                                       obj_fcn_pars = [{}], 
                                       obj_fcn_weights = [(1,1)], obj_tar_vals = [(90,110)],
@@ -842,7 +844,7 @@ if __name__ == '__main__':
             wlr = _setup_wlr(wlr)
             
             # Collect parameters from pars dict:
-            n = 2*(2**0.5-1)**0.5
+            n = 2*(2**0.5-1)**0.5 # to ensure correct fwhm
             spd = ((1 + (n*(pars['peakwl']-wlr.T)/pars['spectral_width'])**2)**(-2)).T
             return np.vstack((wlr, spd))
         
@@ -866,7 +868,7 @@ if __name__ == '__main__':
                                       prim_constructor = user_prim_constructor2,
                                       prim_constructor_parameter_types = ['peakwl', 'spectral_width'], 
                                       prim_constructor_parameter_defs = {'peakwl_bnds':[400,700],
-                                                                         'spectral_width_bnds':[5,100]},
+                                                                         'spectral_width_bnds':[5,300]},
                                       obj_fcn = [(spd_to_cris,'Rf','Rg')], 
                                       obj_fcn_pars = [{}], 
                                       obj_fcn_weights = [(1,1)], obj_tar_vals = [(90,110)],

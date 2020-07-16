@@ -1,24 +1,22 @@
-# -*- coding: utf-8 -*-
-"""
-.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
-"""
+# # -*- coding: utf-8 -*-
+# """
+# .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
+# """
 import warnings
 from luxpy import (math, _WL3, _CIEOBS, getwlr, SPD, spd_to_xyz, 
-                   xyz_to_Yxy, colortf, xyz_to_cct)
+                    xyz_to_Yxy, colortf, xyz_to_cct)
 from luxpy.utils import sp,np, plt, _EPS, np2d
 from luxpy import cri 
 from luxpy.math.particleswarm import particleswarm
-
-from  . spdbuilder2020 import (_get_default_prim_parameters, _parse_bnds, 
+from  .spdbuilder2020 import (_get_default_prim_parameters, _parse_bnds, 
                               gaussian_prim_constructor, gaussian_prim_parameter_types,
                               _extract_prim_optimization_parameters, _setup_wlr, _triangle_mixer)
-
 __all__ = ['PrimConstructor','Minimizer','ObjFcns','SpectralOptimizer']
 
 class PrimConstructor():
     def __init__(self,f = gaussian_prim_constructor,
-                 ptypes = ['peakwl', 'fwhm'], 
-                 pdefs = {}):
+                  ptypes = ['peakwl', 'fwhm'], 
+                  pdefs = {}):
         """
         Setup instance with a constructor function f for the primaries in the light mixture.
         
@@ -49,7 +47,8 @@ class PrimConstructor():
         |    wlr = _setup_wlr(wlr)
         |
         |    # Collect parameters from pars dict:
-        |    return np.vstack((wlr,np.exp(-((pars['peakwl']-wlr.T)/pars['fwhm'])**2).T))     
+        |    fwhm_to_sig = 1/(2*(2*np.log(2))**0.5) # conversion factor for FWHM to sigma of Gaussian
+        |    return np.vstack((wlr,np.exp(-((pars['peakwl']-wlr.T)/(pars['fwhm']*fwhm_to_sig))**2).T))     
         """
         self.f = f
         self.ptypes = ptypes
@@ -66,10 +65,11 @@ class PrimConstructor():
                 | else: values for all pars should be defined in pdefs! 
                 |       (nprims is determined by number of elements in pdefs[ptypes[0]])
         """
-        if (len([1 for x in self.ptypes if x in self.pdefs]) == len(self.ptypes)): # everything needed is already in pdefs!!!
+        pdefs_present = np.array([i for i,x in enumerate(self.ptypes) if x in self.pdefs])
+        if (len(pdefs_present) == len(self.ptypes)): # everything needed is already in pdefs!!!
             return self.f([],nprim,wlr,self.ptypes,**self.pdefs)
-        elif (nprim is not None) | (self.ptypes[0] in self.pdefs):
-            if (self.ptypes[0] in self.pdefs): nprim = len(self.pdefs[self.ptypes[0]])
+        elif (nprim is not None) | (len(pdefs_present)>0):
+            if (len(pdefs_present)>0): nprim = len(self.pdefs[self.ptypes[pdefs_present[0]]])
             # random x only for free bnds:
             fixed_pars_defs,free_pars_bnds,free_pars = _get_default_prim_parameters(nprim, self.ptypes,**self.pdefs) 
             bnds = np.array([[0,1]]).T
@@ -79,6 +79,8 @@ class PrimConstructor():
             bnds = bnds[:,1:]
             x = np.array([np.random.uniform(bnds[0,i], bnds[1,i],1) for i in range(bnds.shape[1])]).T # generate random start value within bounds
             return self.f(x,nprim,wlr,self.ptypes,**self.pdefs)
+        else:
+            raise Exception('nprim = None in prim_constructor.')
         
         
        
@@ -218,7 +220,7 @@ class Minimizer():
                 | Specifies whether the output of the fitnessfcn should be the Root-Sum-of-Squares 
                 | of all weighted objective function values or not. Individual function values are
                 | required by true multi-objective optimizers (i.e. pareto == True).
-             :x0:
+              :x0:
                 | None, optional
                 | Lets the user specify an optional starting value required by 
                 | some minimizers (eg. 'nelder-mead'). It should contain only 
@@ -231,12 +233,12 @@ class Minimizer():
             
             1. Must be initialzed using class Minimizer!
             2. If not isinstance(minimizer.method, str): 
-               | then it should contain an minimization funtion with the following interface: 
-               |     results = minimizer.method(fitnessfcn, npars, args = {}, bounds = (lb, ub), verbosity = 1)
-               | With 'results' a dictionary containing various variables related to the optimization. 
-               |  - It MUST contain a key 'x_final' containing the final optimized parameters.
-               |  - bnds must be [lowerbounds, upperbounds] with x-bounds ndarrays with values for each parameter.
-               |  - args is an argument with a dictionary containing the input arguments to the fitnessfcn.         
+                | then it should contain an minimization funtion with the following interface: 
+                |     results = minimizer.method(fitnessfcn, npars, args = {}, bounds = (lb, ub), verbosity = 1)
+                | With 'results' a dictionary containing various variables related to the optimization. 
+                |  - It MUST contain a key 'x_final' containing the final optimized parameters.
+                |  - bnds must be [lowerbounds, upperbounds] with x-bounds ndarrays with values for each parameter.
+                |  - args is an argument with a dictionary containing the input arguments to the fitnessfcn.         
         """
 
         self.method = method
@@ -266,7 +268,7 @@ class Minimizer():
         if (self.opts == {}):
             if (self.method == 'particleswarm') | (self.method == 'ps'):
                 self.opts = {'iters': 100, 'n_particles': 10, 'ftol': -np.inf,
-                                 'ps_opts' : {'c1': 0.5, 'c2': 0.3, 'w':0.9}}
+                                  'ps_opts' : {'c1': 0.5, 'c2': 0.3, 'w':0.9}}
             elif (self.method == 'demo'):
                 self.opts = math.DEMO.init_options(display = display)
             elif (self.method == 'nelder-mead'):
@@ -290,8 +292,8 @@ class Minimizer():
         # Particle swarm optimization:
         if (self.method == 'particleswarm') | (self.method == 'ps'):
             results = particleswarm(fitness_fcn, npars, args = fitness_args_dict, bounds = (bounds[0],bounds[1]), 
-                                         iters = self.opts['iters'], n_particles = self.opts['n_particles'],
-                                         ftol = self.opts['ftol'], options = self.opts['ps_opts'], verbosity = verbosity)
+                                          iters = self.opts['iters'], n_particles = self.opts['n_particles'],
+                                          ftol = self.opts['ftol'], options = self.opts['ps_opts'], verbosity = verbosity)
        
         # Differential Evolutionary Multi-Objective Optimization:
         elif (self.method == 'demo'):
@@ -538,7 +540,7 @@ class SpectralOptimizer():
         self.npars = int(self.n_triangle_strengths + len(self.free_pars)*self.nprim)
         
     def update(self, nprim = None, prims = None, cieobs = None, target = None, tar_type = None, cspace_bwtf = None,
-               triangle_strengths_bnds = None, **prim_kwargs):
+                triangle_strengths_bnds = None, **prim_kwargs):
         """
         Updates all that is needed when one of the input arguments is changed.
         """
@@ -701,7 +703,7 @@ class SpectralOptimizer():
                     
         # Take Root-Sum-of-Squares of delta((val - tar)**2):
         if (self.minimizer.pareto == False) & (self.obj_fcn.f is not None):
-             F = (np.nansum(F**2,axis = 1,keepdims = True)**0.5)[:,0]
+              F = (np.nansum(F**2,axis = 1,keepdims = True)**0.5)[:,0]
 
         if (self.verbosity > 0) & (self.verbosity <=1):
             print('F:', F)
@@ -734,7 +736,7 @@ class SpectralOptimizer():
         """
         if verbosity is None: verbosity = self.verbosity
         optim_results = self.minimizer.apply(self._fitness_fcn, self.npars, {'out':'F'}, 
-                                       self.bnds, verbosity)
+                                        self.bnds, verbosity)
     
         x_final = optim_results['x_final']
         spds,primss,Ms = self._fitness_fcn(x_final, out = 'spds,primss,Ms')
@@ -748,12 +750,12 @@ class SpectralOptimizer():
 
        
       
- #------------------------------------------------------------------------------
+  #------------------------------------------------------------------------------
 if __name__ == '__main__':  
     
-    run_example_1 = True # # class based example with pre-defined minimization methods
+    run_example_1 = False # # class based example with pre-defined minimization methods
     
-    run_example_2 = False # # class based example with pre-defined minimization methods and primary set
+    run_example_2 = True # # class based example with pre-defined minimization methods and primary set
 
     run_example_3 = False # # class based example with user-defined  minimization method   
 
@@ -779,7 +781,7 @@ if __name__ == '__main__':
                               optimizer_type = '3mixer', triangle_strengths_bnds = None,
                               prim_constructor = PrimConstructor(pdefs={'fwhm':[15],
                                                                         'peakwl_bnds':[400,700],
-                                                                        'fwhm_bnds':[5,100]}), 
+                                                                        'fwhm_bnds':[5,300]}), 
                               prims = None,
                               obj_fcn = ObjFcns(f=[(spd_to_cris,'Rf','Rg')], ft = [(90,110)]),
                               minimizer = Minimizer(method='nelder-mead'),
@@ -796,16 +798,16 @@ if __name__ == '__main__':
         
         # create set of 4 primaries with fixed fwhm at 15 nm:
         prims = PrimConstructor(pdefs={'peakwl':[450,520,580,630],'fwhm':[15],
-                                       'peakwl_bnds':[400,700],
-                                       'fwhm_bnds':[5,100]}).get_spd()
+                                        'peakwl_bnds':[400,700],
+                                        'fwhm_bnds':[5,300]}).get_spd()
                     
-        # create set of 4 primaries with fixed peakwl and fwhm bounds set to [5,100]:
+        # create set of 4 primaries with fixed peakwl and fwhm bounds set to [5,300]:
         prims2 = PrimConstructor(pdefs={'peakwl':[450,520,580,630],
-                                        'fwhm_bnds':[5,100]}).get_spd()
+                                        'fwhm_bnds':[5,300]}).get_spd()
                     
-        # create set of 4 primaries with free peakwl and fwhm bounds set to [400,700] and [5,100]:
+        # create set of 4 primaries with free peakwl and fwhm bounds set to [400,700] and [5,300]:
         prims3 = PrimConstructor(pdefs={'peakwl_bnds':[400,700],
-                                        'fwhm_bnds':[5,100]}).get_spd(nprim=4)
+                                        'fwhm_bnds':[5,300]}).get_spd(nprim=4)
         
         so2 = SpectralOptimizer(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cspace_bwtf = {},
                               wlr = [360,830,1], cieobs = cieobs, 
@@ -848,10 +850,10 @@ if __name__ == '__main__':
         # Create a minimization function with the specified interface:
         def user_minim4(fitnessfcn, npars, args, bounds, verbosity = 1,**opts):
             results = particleswarm(fitnessfcn, npars, args = args, 
-                                         bounds = bounds, 
-                                         iters = 100, n_particles = 10, ftol = -np.inf,
-                                         options = {'c1': 0.5, 'c2': 0.3, 'w':0.9},
-                                         verbosity = verbosity)
+                                          bounds = bounds, 
+                                          iters = 100, n_particles = 10, ftol = -np.inf,
+                                          options = {'c1': 0.5, 'c2': 0.3, 'w':0.9},
+                                          verbosity = verbosity)
             # Note that there is already a key 'x_final' in results
             return results
         
@@ -862,9 +864,9 @@ if __name__ == '__main__':
                               out = 'spds,primss,Ms,results',
                               optimizer_type = '3mixer', triangle_strengths_bnds = None,
                               prim_constructor = PrimConstructor(f = user_prim_constructor4, 
-                                                                 ptypes=['peakwl','spectral_width'],
-                                                                 pdefs = {'peakwl_bnds':[400,700],
-                                                                          'spectral_width_bnds':[5,100]}), 
+                                                                  ptypes=['peakwl','spectral_width'],
+                                                                  pdefs = {'peakwl_bnds':[400,700],
+                                                                          'spectral_width_bnds':[5,300]}), 
                               prims = None,
                               obj_fcn = ObjFcns(f=[(spd_to_cris,'Rf','Rg')], ft = [(90,110)]),
                               minimizer = Minimizer(method=user_minim4),

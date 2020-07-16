@@ -104,7 +104,7 @@ Functions
                 
 Notes
 -----
- 1. See examples below (in spdbuiler2020.'__main__') for use.                
+ 1. See examples below (in spdbuilder2020.'__main__') for use.                
                    
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
@@ -117,3 +117,4 @@ __all__ += spdbuilder2020.__all__
 
 from .spdoptimizer2020 import *
 __all__ += spdoptimizer2020.__all__
+

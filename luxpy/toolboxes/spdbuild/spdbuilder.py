@@ -82,10 +82,11 @@ from luxpy import cri
 
 __all__ = ['gaussian_spd','butterworth_spd','lorentzian2_spd',
            'mono_led_spd','phosphor_led_spd','spd_builder',
-         'get_w_summed_spd','fitnessfcn','spd_constructor_2',
-         'color3mixer','colormixer','colormixer_pinv',
-         'spd_constructor_3','spd_optimizer_2_3','get_optim_pars_dict',
-         'initialize_spd_model_pars','initialize_spd_optim_pars','get_primary_fluxratios','spd_optimizer']
+           'get_w_summed_spd','fitnessfcn','spd_constructor_2',
+           'color3mixer','colormixer','colormixer_pinv',
+           'spd_constructor_3','spd_optimizer_2_3','get_optim_pars_dict',
+           'initialize_spd_model_pars','initialize_spd_optim_pars',
+           'get_primary_fluxratios','spd_optimizer']
 
 #------------------------------------------------------------------------------
 def gaussian_spd(peakwl = 530, fwhm = 20, wl = _WL3, with_wl = True):
@@ -111,10 +112,13 @@ def gaussian_spd(peakwl = 530, fwhm = 20, wl = _WL3, with_wl = True):
             | ndarray with spectra. 
     Note:
         | Gaussian:
-        |    g = exp(-0.5*((wl - peakwl)/fwhm)**2)
+        |    g = exp(-0.5*((wl - peakwl)/sig)**2)
+        | with sig = fwhm/(2*(2*np.log(2))**0.5) 
+
     """
     wl = np.atleast_2d(getwlr(wl)) # create wavelength range
-    spd = np.exp(-0.5*((wl.T-np.atleast_2d(peakwl))/np.atleast_2d(fwhm))**2).T
+    fwhm_to_sig = 1/(2*(2*np.log(2))**0.5) # conversion factor for FWHM to sigma of Gaussian
+    spd = np.exp(-0.5*((wl.T-np.atleast_2d(peakwl))/(np.atleast_2d(fwhm)*fwhm_to_sig))**2).T
     if with_wl == True:
         spd = np.vstack((wl, spd))
     return spd
@@ -228,7 +232,8 @@ def mono_led_spd(peakwl = 530, fwhm = 20, wl = _WL3, with_wl = True, strength_sh
     
     Note:
         | Gaussian:
-        |    g = exp(-0.5*((wl - peakwl)/fwhm)**2)
+        |    g = exp(-0.5*((wl - peakwl)/sig)**2)
+        | with sig = fwhm/(2*(2*np.log(2))**0.5) 
         |
         | Lorentzian (2nd order):
         |    lz = (1 + ((n*(wl - peakwl)/fwhm)**2))**(-2)
@@ -576,7 +581,6 @@ def spd_builder(flux = None, component_spds = None, peakwl = 450, fwhm = 20, bw_
         Opt. Express 19, 6903–6912.
         <https://www.osapublishing.org/vjbo/fulltext.cfm?uri=oe-19-7-6903&id=211315>`_
     """
-
     if component_spds is None:
         spd, component_spds = phosphor_led_spd(peakwl = peakwl, fwhm = fwhm, wl = wl, bw_order = bw_order, with_wl = False, strength_shoulder = strength_shoulder,\
                                            strength_ph = strength_ph, peakwl_ph1 = peakwl_ph1, fwhm_ph1 = fwhm_ph1, strength_ph1 = strength_ph1,\
@@ -634,7 +638,10 @@ def spd_builder(flux = None, component_spds = None, peakwl = 450, fwhm = 20, bw_
         # Calculate spectrum:
         spd = math.dot23(M,component_spds.T)
         spd = np.atleast_2d([spd[i,:,i] for i in range(N)])
-        spd = spd/spd.max(axis = 1, keepdims = True)
+        spdmax = spd.max(axis = 1, keepdims = True)
+        spdmax[spdmax==0] = np.nan # avoid division by zero
+        spd = spd/spdmax
+        spd[np.isnan(spd)] = 0
         
         
         # Mark out_of_gamut solution with NaN's:
@@ -1488,7 +1495,7 @@ def get_optim_pars_dict(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs =
               verbosity = 0,\
               pair_strengths = None,triangle_strengths = None,\
               peakwl_min = [400], peakwl_max = [700],\
-              fwhm_min = [5], fwhm_max = [300],\
+              fwhm_min = [5], fwhm_max = [600],\
               bw_order_min = [-2], bw_order_max = [100]):
     """
     Setup dict with optimization parameters.
@@ -1914,7 +1921,7 @@ def spd_optimizer(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs = _CIEO
                   verbosity = 0,\
                   pair_strengths = None,\
                   peakwl_min = [400], peakwl_max = [700],\
-                  fwhm_min = [5], fwhm_max = [300],\
+                  fwhm_min = [5], fwhm_max = [600],\
                   bw_order_min = -2, bw_order_max = 100,\
                   out = 'spds,M'):
     """
@@ -2150,7 +2157,7 @@ if __name__ == '__main__':
                           obj_fcn = obj_fcn, \
                           obj_tar_vals = obj_tar_vals,\
                           peakwl_min = [400], peakwl_max = [700],\
-                          fwhm_min = [5], fwhm_max = [100],\
+                          fwhm_min = [5], fwhm_max = [300],\
                           wl = np.array([360,830,1]),\
                           verbosity = 1)
     # Check output agrees with target:
@@ -2323,7 +2330,7 @@ if __name__ == '__main__x':
                           obj_fcn = obj_fcn, \
                           obj_tar_vals = obj_tar_vals,\
                           peakwl_min = [400], peakwl_max = [700],\
-                          fwhm_min = [3], fwhm_max = [3],\
+                          fwhm_min = [6], fwhm_max = [6],\
                           wl = np.array([360,830,1]),\
                           verbosity = 0)
     # Check output agrees with target:
