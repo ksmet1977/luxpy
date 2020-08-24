@@ -93,7 +93,7 @@ def particleswarm(objfcn, dimensions, args = {}, use_bnds = True, bounds = (None
                                         ftol = ftol,
                                         **kwargs)
 
-    cost, pos = optimizer.optimize(objfcn, iters=1000, **args)
+    cost, pos = optimizer.optimize(objfcn, iters = iters, **args)
     
     if verbosity > 0:
         # Plot cost history:
