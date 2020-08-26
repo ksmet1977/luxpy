@@ -8,7 +8,7 @@ from luxpy import (math, _WL3, _CIEOBS, getwlr, SPD, spd_to_xyz,
 from luxpy.utils import sp,np, plt, _EPS, np2d
 from luxpy import cri 
 from luxpy.math.particleswarm import particleswarm
-from  luxpy.toolboxes.spdbuild.spdbuilder2020 import (_get_default_prim_parameters, _parse_bnds, 
+from .spdbuilder2020 import (_get_default_prim_parameters, _parse_bnds, 
                               gaussian_prim_constructor, gaussian_prim_parameter_types,
                               _extract_prim_optimization_parameters, _setup_wlr, _triangle_mixer)
 __all__ = ['PrimConstructor','Minimizer','ObjFcns','SpectralOptimizer']
