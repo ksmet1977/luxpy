@@ -8,7 +8,7 @@ from luxpy import (math, _WL3, _CIEOBS, getwlr, SPD, spd_to_xyz,
 from luxpy.utils import sp,np, plt, _EPS, np2d
 from luxpy import cri 
 from luxpy.math.particleswarm import particleswarm
-from  .spdbuilder2020 import (_get_default_prim_parameters, _parse_bnds, 
+from  luxpy.toolboxes.spdbuild.spdbuilder2020 import (_get_default_prim_parameters, _parse_bnds, 
                               gaussian_prim_constructor, gaussian_prim_parameter_types,
                               _extract_prim_optimization_parameters, _setup_wlr, _triangle_mixer)
 __all__ = ['PrimConstructor','Minimizer','ObjFcns','SpectralOptimizer']
@@ -85,16 +85,16 @@ class PrimConstructor():
         
        
 class ObjFcns():
-    def __init__(self,f = None, fp = [{}], fw = [1], ft = [None],  decimals = [5]):
+    def __init__(self,f = None, fp = [{}], fw = [1], ft = [0], ft_tol = [0],  decimals = [5]):
         """
         Setup instance with objective functions, their input parameters, their respective weights and target values.
         
         Args:
             :f: 
-                | [None] or list, optional
+                | None or list, optional
                 | Function handles to objective function.
             :fp:
-                | [None] or list, optional
+                | [{}] or list, optional
                 | Parameter dicts for each obj. fcn.
             :fw:
                 | [1] or list, optional.
@@ -102,14 +102,26 @@ class ObjFcns():
             :ft:
                 | [0] or list, optional
                 | Target values for each objective function.
+            :ft_tol:
+                | [0] or list, optional
+                | Tolerance on target value.
+                | If abs(f_j(x)-ft_j) < ft_tol_j:
+                |    then objective value F_j (see notes below) 
+                |    will be set to zero.
             :decimals:
                 | [5], optional
                 | Rounding decimals of objective function values.
+                
+        Notes:
+            1. The objective value F_j for each objective function f_j is calculated as: 
+            |      F_j = (fw_j*abs((f_j(x)-ft_j)/ft_j)) 
+            2. If ft_j==0 then ft_j in the denominator is set to 1 to avoid division by zero.
         """
         self.f = f
         self.fp = self._equalize_sizes(fp)
         self.fw = self._equalize_sizes(fw)
         self.ft = self._equalize_sizes(ft)
+        self.ft_tol = self._equalize_sizes(ft_tol)
         self.decimals = self._equalize_sizes(decimals)
         self._get_normalization_factors()
         
@@ -157,7 +169,7 @@ class ObjFcns():
             self.f_normalize = []
             for j in range(len(self.f)):
                 self.ft[j] = np.array(self.ft[j])
-                if (self.ft[j] > 0).any():
+                if (self.ft[j] != 0).any():
                     f_normalize = self.ft[j].copy()
                     f_normalize[f_normalize==0] = 1
                 else:
@@ -172,7 +184,7 @@ class ObjFcns():
                 output_str_sub = '('
                 for jj in range(len(self.f[j])-1): output_str_sub = output_str_sub + self.f[j][jj+1] + ' = {:1.2f}, '
                 output_str_sub = output_str_sub[:-2] + ')'
-                print(obj_vals_ij)
+                #print(obj_vals_ij)
                 output_str_sub = output_str_sub.format(*np.squeeze(obj_vals_ij))    
                 output_str = output_str + r'Fobj_#{:1.0f}'.format(j+1) + ' = {:1.2f} ' + output_str_sub + ', '
                 output_str = output_str.format(np.nansum(np.array(F_ij)**2)**0.5)
@@ -220,7 +232,7 @@ class Minimizer():
                 | Specifies whether the output of the fitnessfcn should be the Root-Sum-of-Squares 
                 | of all weighted objective function values or not. Individual function values are
                 | required by true multi-objective optimizers (i.e. pareto == True).
-              :x0:
+            :x0:
                 | None, optional
                 | Lets the user specify an optional starting value required by 
                 | some minimizers (eg. 'nelder-mead'). It should contain only 
@@ -382,6 +394,10 @@ class SpectralOptimizer():
                 | Instance of class ObjFcns that holds objective functions, their 
                 | input arguments, target values, and relative weighting factors 
                 | (for pseudo multi-objective optimization).
+                | Notes: 
+                |       1. The objective value F_j for each objective function f_j is calculated as: 
+                |            F_j = (fw_j*abs((f_j(x)-ft_j)/ft_j)) 
+                |       2. If ft_j==0 then ft_j in the denominator is set to 1 to avoid division by zero.
             :minimizer:
                 | Minimizer(method='nelder-mead'), optional
                 | Instance of the Minimizer class.
@@ -669,9 +685,13 @@ class SpectralOptimizer():
                     obj_vals_j = np.array([np.round(obj_vals_j[:,ii],int(decimals[ii])) for ii in range(len(decimals))]).T
 
                     
-                    # Store F-results in array:              
-                    F_j = (self.obj_fcn.fw[j]*(((obj_vals_j - self.obj_fcn.ft[j] + eps)**2)/((self.obj_fcn.f_normalize[j] + eps)**2))**0.5)
-
+                    # Store F-results in array: 
+                    delta = np.abs(obj_vals_j - self.obj_fcn.ft[j] + eps)
+                    F_j = self.obj_fcn.fw[j]*delta/np.abs(self.obj_fcn.f_normalize[j] + eps)
+                    
+                    # If within tolerance on target values, set F_j to zero:
+                    F_j[delta <= self.obj_fcn.ft_tol[j]] = 0.0
+                    
                     if j == 0:
                         F_tmp = F_j
                     else:
@@ -791,7 +811,7 @@ if __name__ == '__main__':
                                                                         'peakwl_bnds':[400,700],
                                                                         'fwhm_bnds':[5,300]}), 
                               prims = None,
-                              obj_fcn = ObjFcns(f=[(spd_to_cris,'Rf','Rg')], ft = [(90,110)]),
+                              obj_fcn = ObjFcns(f=[(spd_to_cris,'Rf','Rg')], ft = [(90,110)], ft_tol = [(5,5)]),
                               minimizer = Minimizer(method='nelder-mead'),
                               verbosity = 0)
         # start optimization:
