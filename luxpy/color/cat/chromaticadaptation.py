@@ -228,7 +228,7 @@ def smet2017_D(xyzw, Dmax = None):
     """
     
     # Convert xyzw to log-compressed Macleod_Boyton coordinates:
-    Vl, rl, bl = asplit(np.log(xyz_to_Vrb_mb(xyzw, M = _CMF['1931_2']['M']))) # force use of HPE matrix (which was the one used when deriving the model parameters!!)
+    Vl, rl, bl = asplit(np.log(xyz_to_Vrb_mb(xyzw, M = _MCATS['hpe']))) # force use of HPE matrix (which was the one used when deriving the model parameters!!)
 
     # apply Dmodel (technically only for cieobs = '1964_10')
     pD = (1.0e7)*np.array([0.021081326530436, 4.751255762876845, -0.000000071025181, -0.000000063627042, -0.146952821492957, 3.117390441655821]) #D model parameters for gaussian model in log(MB)-space (july 2016) 
