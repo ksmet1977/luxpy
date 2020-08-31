@@ -350,7 +350,7 @@ def xyz_to_lab(xyz, xyzw = None, cieobs = _CIEOBS, **kwargs):
     # calculate L*, a*, b*:
     Lab = np.empty(xyz.shape)
     Lab[...,0] = 116.0*(fXYZr[...,1]) - 16.0
-    Lab[pqr[...,1],0] = 903.3*XYZr[pqr[...,1],1]
+    Lab[pqr[...,1],0] = 841/108*116*XYZr[pqr[...,1],1]
     Lab[...,1] = 500.0*(fXYZr[...,0]-fXYZr[...,1])
     Lab[...,2] = 200.0*(fXYZr[...,1]-fXYZr[...,2])
     return Lab

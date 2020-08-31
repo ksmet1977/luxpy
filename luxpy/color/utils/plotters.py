@@ -1120,7 +1120,8 @@ def plot_cmfs(cmfs, cmf_symbols = ['x','y','z'], cmf_label = '', ylabel = 'Sensi
         fig, axh = plt.subplots(1,1)
 
     for i in range(3):
-        axh.plot(cmfs[0],cmfs[i+1],color = colors[i], label = cmf_label + cmf_symbols[i],**kwargs)
+        label = cmf_label + cmf_symbols[i] if cmf_symbols[i] is not None else None
+        axh.plot(cmfs[0],cmfs[i+1],color = colors[i], label = label,**kwargs)    
     
     if wavelength_bar == True:
         axh = plot_spectrum_colors(spd = None,spdmax = cmfs[1:].max(), axh = axh, wavelength_height = -0.05)

@@ -406,7 +406,7 @@ def bvgpdf(x, y = None, mu = None, sigmainv = None):
              | ndarray with magnitude of BVGPDF(x,y)   
     
     """
-    return np.exp(-0.5*mahalanobis2(x,y = y, mu = mu, sigmainv= sigmainv))
+    return np.exp(-0.5*mahalanobis2(x, y = y, mu = mu, sigmainv = sigmainv))
 
 #------------------------------------------------------------------------------
 def mahalanobis2(x, y = None, z = None, mu = None, sigmainv = None):

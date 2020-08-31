@@ -199,23 +199,20 @@ def get_transfer_function(cattype = 'vonkries', catmode = '1>0>2', lmsw1 = None,
     return Dt     
  
 #------------------------------------------------------------------------------
-def smet2017_D(xyzw, Dmax = None, cieobs = '1964_10'):
+def smet2017_D(xyzw, Dmax = None):
     """
     Calculate the degree of adaptation based on chromaticity following 
     Smet et al. (2017) 
     
     Args:
         :xyzw: 
-            | ndarray with white point data
+            | ndarray with white point data (CIE 1964 10° XYZs!!)
         :Dmax:
             | None or float, optional
             | Defaults to 0.6539 (max D obtained under experimental conditions, 
             | but probably too low due to dark surround leading to incomplete 
             | chromatic adaptation even for neutral illuminants 
             | resulting in background luminance (fov~50Â°) of 760 cd/mÂ²))
-        :cieobs:
-            | '1964_10', optional
-            | CMF set used in deriving model in cited paper.
             
     Returns:
         :D: 
@@ -231,7 +228,7 @@ def smet2017_D(xyzw, Dmax = None, cieobs = '1964_10'):
     """
     
     # Convert xyzw to log-compressed Macleod_Boyton coordinates:
-    Vl, rl, bl = asplit(np.log(xyz_to_Vrb_mb(xyzw,cieobs = cieobs)))
+    Vl, rl, bl = asplit(np.log(xyz_to_Vrb_mb(xyzw, M = _CMF['1931_2']['M']))) # force use of HPE matrix (which was the one used when deriving the model parameters!!)
 
     # apply Dmodel (technically only for cieobs = '1964_10')
     pD = (1.0e7)*np.array([0.021081326530436, 4.751255762876845, -0.000000071025181, -0.000000063627042, -0.146952821492957, 3.117390441655821]) #D model parameters for gaussian model in log(MB)-space (july 2016) 
