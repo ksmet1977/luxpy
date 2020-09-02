@@ -139,7 +139,7 @@ def minimizebnd(fun, x0, args=(), method = 'nelder-mead', use_bnd = True, \
                 else:
                     x0u[k] = np.sqrt(UB[i] - x0[i])
             
-            elif params['BoundClass'][i] == 2:
+            elif params['BoundClass'][i] == 3:
               # lower and upper bounds
               if x0[i] <= LB[i]:
                     # infeasible starting value
