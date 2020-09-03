@@ -914,15 +914,17 @@ if __name__ == '__main__':
         prims = PrimConstructor(pdefs={'peakwl':[450,520,580,630],'fwhm':[15],
                                         'peakwl_bnds':[400,700],
                                         'fwhm_bnds':[5,300]}).get_spd()
-        # prims2 = PrimConstructor(pdefs={'peakwl':[450,520,580,630],
-        #                                 'fwhm_bnds':[5,300]}).get_spd()
+        
+        # create set of 4 primaries with fixed peakwl and fwhm bounds set to [5,300]:
+        prims2 = PrimConstructor(pdefs={'peakwl':[450,520,580,630],
+                                        'fwhm_bnds':[5,300]}).get_spd()
 
         so4 = SpectralOptimizer(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cspace_bwtf = {},
                               wlr = [360,830,1], cieobs = cieobs, 
                               out = 'spds,primss,Ms,results',
                               optimizer_type = '3mixer', triangle_strengths_bnds = None,
                               prim_constructor = None, 
-                              prims = prims,
+                              prims = prims2,
                               obj_fcn = ObjFcns(f=[(spd_to_cris,'Rf','Rg')], ft = [(90,110)]),
                               minimizer = Minimizer(method='nelder-mead'),
                               verbosity = 2)
