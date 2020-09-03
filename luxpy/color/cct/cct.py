@@ -661,7 +661,6 @@ def xyz_to_cct_search_fast(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None,
                 dT = np.multiply(ccttemp,procent_estimate) # determines range around CCTtemp (25% around estimate) or 100 K
             
             else:
-                print(cct_ranges)
                 dT = np.abs(np.diff(cct_ranges[i,:]))/2
             delta_cct = dT
         else:

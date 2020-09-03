@@ -94,6 +94,8 @@ def demo_opt(f, dimensions, args = (), xrange = None, options = {}):
           | - 'kmax': maximum number of iterations (def.: 300);
           | - 'display': 'on' to display the population while the algorithm is
           |         being executed, and 'off' to not (default: 'off');
+          | - 'plot': 'on' to plot the population while the algorithm is
+          |         being executed, and 'off' to not (default: 'off');
           | If any of the parameters is not set, the default ones are used
           | instead.
 
@@ -128,33 +130,34 @@ def demo_opt(f, dimensions, args = (), xrange = None, options = {}):
     axh = None
     while (k <= options['kmax']):
        # Plot the current population (if desired):
-       if options['display'] == True:
+       if (options['display'] == True) | (options['plot'] == True):
            P['f'][P['f']>1e308] = np.nan
-           if (k == 0) & (m < 4):
-               fig = plt.gcf()
-               fig.show()
-               fig.canvas.draw()
-           if m == 2:
-#              fig = plt.figure()
-              axh = plt.axes()
-              plt.plot(P['f'][0], P['f'][1], 'o');
-              plt.title('Objective values during the execution')
-              plt.xlabel('f_1')
-              plt.ylabel('f_2')
-              fig.canvas.draw()
-              del axh.lines[0]
-           elif m == 3:
-#              fig = plt.figure()
-              axh = plt.axes(projection='3d')
-#              print(P['f'])
-              axh.plot3D(P['f'][0], P['f'][1], P['f'][2], 'o');
-              plt.title('Objective values during the execution')
-              axh.set_xlabel('f_1')
-              axh.set_ylabel('f_2')
-              axh.set_zlabel('f_3')
-              fig.canvas.draw()
-              plt.pause(0.01)
-              del axh.lines[0]
+           if (options['plot'] == True):
+               if (k == 0) & (m < 4):
+                   fig = plt.gcf()
+                   fig.show()
+                   fig.canvas.draw()
+               if m == 2:
+    #              fig = plt.figure()
+                  axh = plt.axes()
+                  plt.plot(P['f'][0], P['f'][1], 'o');
+                  plt.title('Objective values during the execution')
+                  plt.xlabel('f_1')
+                  plt.ylabel('f_2')
+                  fig.canvas.draw()
+                  del axh.lines[0]
+               elif m == 3:
+    #              fig = plt.figure()
+                  axh = plt.axes(projection='3d')
+    #              print(P['f'])
+                  axh.plot3D(P['f'][0], P['f'][1], P['f'][2], 'o');
+                  plt.title('Objective values during the execution')
+                  axh.set_xlabel('f_1')
+                  axh.set_ylabel('f_2')
+                  axh.set_zlabel('f_3')
+                  fig.canvas.draw()
+                  plt.pause(0.01)
+                  del axh.lines[0]
  
      
        # Perform the variation operation (mutation and recombination):
@@ -252,7 +255,6 @@ def mutation(Xp, options):
     """
     # Creates a mu x mu matrix of 1:n elements on each row
     A = np.arange(options['mu']).repeat(options['mu']).reshape(options['mu'],options['mu']).T   
-
     # Now, one removes the diagonal of A, because it contains indexes that repeat 
     # the current i-th individual
     A = np.reshape(A[(np.eye(A.shape[0]))==False],(options['mu'],options['mu']-1))
@@ -392,15 +394,16 @@ def selection(P, O, options):
           Frem = R['f'][:,ispar].copy()
           Xrem = R['x'][:,ispar].copy()
           break #don't forget this to stop this infinite loop
-    
+
     # ------- Third part: truncates using crowding distance
     # If the remaining front has the exact number of points to fill the original
     # size, then just include them. If it has too many, remove some according to
     # the crowding distance (notice it cannot have too few!)
     aux = (Pnew['f'].shape[1] + Frem.shape[1]) - options['mu'] #remaining points to fill
+
     if aux == 0:
-       Pnew['x'] = Xrem.copy()
-       Pnew['f'] = Frem.copy()
+       Pnew['x'] = np.hstack((Pnew['x'], Xrem.copy())) #Xrem.copy()
+       Pnew['f'] = np.hstack((Pnew['f'], Frem.copy())) #Frem.copy()
     elif aux > 0:
        for ii in range(aux):
           cdist = crowdingdistance(Frem)
@@ -414,7 +417,7 @@ def selection(P, O, options):
 
     return Pnew
 #--------------------------------------------------------------------------#
-def init_options(options = {}, F = None, CR = None, kmax = None, mu = None, display = None):
+def init_options(options = {}, F = None, CR = None, kmax = None, mu = None, display = None, plot = None):
     """
     Initialize options dict.
     
@@ -434,7 +437,9 @@ def init_options(options = {}, F = None, CR = None, kmax = None, mu = None, disp
         :mu: 
             | population size, optional
         :display: 
-            | show or not the population during execution, optional
+            | print or not the population during execution, optional
+        :plot: 
+            | plot or not the population during execution, optional
         
     Returns:
         :options: 
@@ -442,7 +447,7 @@ def init_options(options = {}, F = None, CR = None, kmax = None, mu = None, disp
     """
     args = locals().copy()
     if bool(options)==False:
-        options = {'F': 0.5, 'CR' : 0.3, 'kmax' : 300, 'mu' : 100, 'display' : False}
+        options = {'F': 0.5, 'CR' : 0.3, 'kmax' : 300, 'mu' : 100, 'display' : False, 'plot' : False}
     return put_args_in_db(options, args)
 
 #--------------------------------------------------------------------------#
@@ -700,10 +705,10 @@ if __name__ == '__main__':
 
     # EXAMPLE USE for DTLZ2 problem:
     k = 10
-    opts = init_options(display = False)
+    opts = init_options(display = False, plot = False)
     f = lambda x: dtlz2(x,k)
     xrange = dtlz_range('dtlz2',k)
-    
+    print('xrange.shape:',xrange.shape)
     fopt, xopt = demo_opt(f, xrange.shape[0], xrange = xrange, options = opts)
     
     mu = xopt.shape[0]

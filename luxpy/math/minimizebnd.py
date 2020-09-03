@@ -151,7 +151,7 @@ def minimizebnd(fun, x0, args=(), method = 'nelder-mead', use_bnd = True, \
                 x0u[k] = 2*(x0[i] - LB[i])/(UB[i]-LB[i]) - 1
                 # shift by 2*pi to avoid problems at zero in fminsearch
                 #otherwise, the initial simplex is vanishingly small
-                x0u[k] = 2*np.pi+np.asin(np.hstack((-1,np.hstack((1,x0u[k]).min()))).max())
+                x0u[k] = 2*np.pi+np.arcsin(np.hstack((-1,np.hstack((1,x0u[k])).min())).max())
                 
             elif params['BoundClass'][i] == 0:
               # unconstrained variable. x0u(i) is set.

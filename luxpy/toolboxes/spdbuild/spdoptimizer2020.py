@@ -8,7 +8,7 @@ from luxpy import (math, _WL3, _CIEOBS, getwlr, SPD, spd_to_xyz,
 from luxpy.utils import sp,np, plt, _EPS, np2d
 from luxpy import cri 
 from luxpy.math.particleswarm import particleswarm
-from .spdbuilder2020 import (_get_default_prim_parameters, _parse_bnds, 
+from luxpy.toolboxes.spdbuild.spdbuilder2020 import (_get_default_prim_parameters, _parse_bnds, 
                               gaussian_prim_constructor, gaussian_prim_parameter_types,
                               _extract_prim_optimization_parameters, _setup_wlr, _triangle_mixer)
 __all__ = ['PrimConstructor','Minimizer','ObjFcns','SpectralOptimizer']
@@ -314,6 +314,7 @@ class Minimizer():
             else:
                 raise Exception("Minimizer: Must set bnds for the 'demo' minimizer")
             fopt, xopt = math.DEMO.demo_opt(fitness_fcn, npars, args = fitness_args_list, xrange = xrange, options = self.opts)
+            print(fopt, ' xopt: ', xopt)
             results = {'x_final': xopt,'F': fopt}
         
         # Local Simplex optimization using Nelder-Mead:
@@ -591,7 +592,7 @@ class SpectralOptimizer():
     
         """
         if x.ndim == 1: x = np.atleast_2d(x)
-    
+
         # get primary spectra:
         if self.prims is None:
             # get triangle_strengths and remove them from x, remaining x are used to construct primaries:
@@ -608,14 +609,14 @@ class SpectralOptimizer():
             
         # get primary chrom. coords.:
         Yxyi = colortf(prims,tf='spd>Yxy',bwtf={'cieobs':self.cieobs,'relative':False})
-    
+
         # Get fluxes of each primary:
         M = _triangle_mixer(self.Yxy_target, Yxyi, triangle_strengths)
-        
+
         if M.sum() > 0:
             # Scale M to have target Y:
             M = M*(self.Yxy_target[:,0]/(Yxyi[:,0]*M).sum())
-    
+
         # Calculate optimized SPD:
         spd = np.vstack((prims[0],np.dot(M,prims[1:])))
     
@@ -781,12 +782,13 @@ class SpectralOptimizer():
   #------------------------------------------------------------------------------
 if __name__ == '__main__':  
     
-    run_example_1 = True # # class based example with pre-defined minimization methods
+    run_example_1 = False # # class based example with pre-defined minimization methods
     
     run_example_2 = False # # class based example with pre-defined minimization methods and primary set
 
     run_example_3 = False # # class based example with user-defined  minimization method   
 
+    run_example_4 = True # # class based example with pre-defined primaries and demo minimization
 
     import luxpy as lx
     cieobs = '1964_10'
@@ -901,6 +903,31 @@ if __name__ == '__main__':
                               verbosity = 1)
         # start optimization:
         spd,M = so3.start(out = 'spds,Ms')
+        
+        Rf, Rg = spd_to_cris(spd)
+        print('obj_fcn1:',Rf)
+        print('obj_fcn2:',Rg)
+        
+    if run_example_4 == True:
+        
+        # create set of 4 primaries with fixed peakwl and fwhm bounds set to [5,300]:
+        prims = PrimConstructor(pdefs={'peakwl':[450,520,580,630],'fwhm':[15],
+                                        'peakwl_bnds':[400,700],
+                                        'fwhm_bnds':[5,300]}).get_spd()
+        # prims2 = PrimConstructor(pdefs={'peakwl':[450,520,580,630],
+        #                                 'fwhm_bnds':[5,300]}).get_spd()
+
+        so4 = SpectralOptimizer(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cspace_bwtf = {},
+                              wlr = [360,830,1], cieobs = cieobs, 
+                              out = 'spds,primss,Ms,results',
+                              optimizer_type = '3mixer', triangle_strengths_bnds = None,
+                              prim_constructor = None, 
+                              prims = prims,
+                              obj_fcn = ObjFcns(f=[(spd_to_cris,'Rf','Rg')], ft = [(90,110)]),
+                              minimizer = Minimizer(method='nelder-mead'),
+                              verbosity = 2)
+        # start optimization:
+        spd,M = so4.start(out = 'spds,Ms')
         
         Rf, Rg = spd_to_cris(spd)
         print('obj_fcn1:',Rf)
