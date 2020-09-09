@@ -765,11 +765,20 @@ def optimize_scale_factor(cri_type, opt_scale_factor, scale_fcn, avg) :
             | ndarray
 
     """
+
     if  np.any(opt_scale_factor):
         if 'opt_cri_type' not in cri_type['scale'].keys(): 
             opt_cri_type = _CRI_DEFAULTS['ciera'] # use CIE Ra-13.3-1995 as target
+        else:
+            if isinstance(cri_type['scale']['opt_cri_type'],str):
+                opt_cri_type = _CRI_DEFAULTS[cri_type['scale']['opt_cri_type']]
+            else: #should be dict !!
+                opt_cri_type = cri_type['scale']['opt_cri_type']
         if 'opt_spd_set' not in cri_type['scale'].keys(): 
             opt_spd_set = _IESTM3015['S']['data'][0:13] # use CIE F1-F12
+        else:
+            opt_spd_set = cri_type['scale']['opt_spd_set']
+        
         scale_fcn_opt = opt_cri_type ['scale']['fcn']
         scale_factor_opt = opt_cri_type ['scale']['cfactor']
         avg_opt = opt_cri_type ['avg']
@@ -1126,7 +1135,7 @@ def spd_to_cri(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'Rf', wl = None, \
             |                     source spds used to optimize cfactor. 
             |                     Note that if key not in :scale: dict, 
             |                     then default = 'F1-F12'.
-        :opt_scale: 
+        :opt_scale_factor: 
             | True or False, optional
             | True: optimize scaling-factor, else do nothing and use value of 
             | scaling-factor in :scale: dict.   
