@@ -817,6 +817,7 @@ def plot_tm30_report(spd, cri_type = 'ies-tm30',
                      source = '', manufacturer = '',
                      date = '', model = '', 
                      notes = '', max_len_notes_line = 40,
+                     figsize = (7,12),
                      save_fig_name = None, dpi = 300,
                      plot_report_top = True, plot_report_bottom = True,
                      suptitle = 'ANSI/IES TM-30-18 Color Rendition Report',
@@ -857,6 +858,9 @@ def plot_tm30_report(spd, cri_type = 'ies-tm30',
         :max_len_notes_line:
             | 40, optional
             | Maximum length of a single line when splitting the string.
+        :figsize:
+            | (7,12), optional
+            | Figure size of pyplot figure.
         :save_fig_name:
             | None, optional
             | Filename (+path) to which the report will be saved as an image (png).
@@ -885,7 +889,7 @@ def plot_tm30_report(spd, cri_type = 'ies-tm30',
             | dictionary with required parameters for plotting functions.      
     """
     # Set up subplots:
-    fig = plt.figure(constrained_layout=True, figsize = (7,12))  
+    fig = plt.figure(constrained_layout=True, figsize = figsize)  
     nrows = int(4 + 1*(plot_report_top) + 1*(plot_report_bottom))
     gs = fig.add_gridspec(nrows, 3,height_ratios=[0.1,0.5,0.5,0.5,0.6,0.3], width_ratios=[1,1,1.5])
     if plot_report_top == True: 
