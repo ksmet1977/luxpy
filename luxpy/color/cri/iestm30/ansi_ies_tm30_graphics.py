@@ -693,9 +693,9 @@ def plot_tm30_Rxhj(spd, cri_type = 'ies-tm30', axh = None, figsize = (6,15),
     if axh is None:
         fig, axh = plt.subplots(nrows = 3, ncols = 1, sharex = True, figsize = figsize)
     
-    plot_tm30_Rcshj(data, axh = axh[0], xlabel = False, y_offset = 0.02)
-    plot_tm30_Rhshj(data, axh = axh[1], xlabel = False, y_offset = 0.03)
-    plot_tm30_Rfhj(data, axh = axh[2], xlabel = True, y_offset = 2)
+    plot_tm30_Rcshj(data, axh = axh[0], xlabel = False, y_offset = 0.02, font_size = font_size)
+    plot_tm30_Rhshj(data, axh = axh[1], xlabel = False, y_offset = 0.03, font_size = font_size)
+    plot_tm30_Rfhj(data, axh = axh[2], xlabel = True, y_offset = 2, font_size = font_size)
     return axh
 
 def _split_notes(notes, max_len_notes_line = 40):
