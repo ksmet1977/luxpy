@@ -946,11 +946,11 @@ if __name__ == '__main__':
     spd = lx._CIE_F4
 
     plot_tm30_cvg(spd, axtype = 'cart', plot_vectors = True, gamut_line_color = 'r')
-    # plot_tm30_spd(spd)
-    # plot_tm30_Rfi(spd)
-    # plot_tm30_Rfhj(spd)
-    # plot_tm30_Rcshj(spd)
-    # plot_tm30_Rhshj(spd)
-    # plot_tm30_Rxhj(spd)
-    # plot_tm30_report(spd, source = 'test', font_size = 12,notes = 'This is a test if the note splitting actually works or not.',save_fig_name = 'testfig.png')
+    plot_tm30_spd(spd)
+    plot_tm30_Rfi(spd)
+    plot_tm30_Rfhj(spd)
+    plot_tm30_Rcshj(spd)
+    plot_tm30_Rhshj(spd)
+    plot_tm30_Rxhj(spd)
+    plot_tm30_report(spd, source = 'test', font_size = 12,notes = 'This is a test if the note splitting actually works or not.',save_fig_name = 'testfig.png')
     
