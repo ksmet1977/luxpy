@@ -50,7 +50,7 @@ from luxpy import (_CIE_D65, math, cat, xyz_to_srgb, spd_to_power,
 from luxpy.color.cri.utils.helpers import spd_to_cri
 from luxpy.color.cri.utils.graphics import plot_ColorVectorGraphic
 
-_TM30_FONT_SIZE = 9
+_TM30_FONT_SIZE = 8
 
 __all__ = ['_tm30_process_spd','plot_tm30_cvg','plot_tm30_Rfi',
            'plot_tm30_Rxhj','plot_tm30_Rcshj', 'plot_tm30_Rhshj', 
