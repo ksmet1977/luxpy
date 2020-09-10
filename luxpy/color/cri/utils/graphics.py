@@ -121,10 +121,11 @@ def plot_hue_bins(hbins = 16, start_hue = 0.0, scalef = 100, \
       
     # initializing the figure
     cmap = None
-    if (ax == None) or (ax == 'new'):
+    if (ax is None) or (ax == 'new'):
         fig = plt.figure()
         newfig = True
     else:
+        fig = plt.gcf()
         newfig = False
     rect = [0.1, 0.1, 0.8, 0.8] # setting the axis limits in [left, bottom, width, height]
 
@@ -219,10 +220,10 @@ def plot_hue_bins(hbins = 16, start_hue = 0.0, scalef = 100, \
             ax.set_xticklabels([])
             ax.set_yticklabels([])
         else:
-            plt.xlabel("a'")
-            plt.ylabel("b'")
+            ax.set_xlabel("a'")
+            ax.set_ylabel("b'")
             
-        plt.plot(0,0,color = 'grey',marker = '+',linestyle = None, markersize = 6)
+        ax.plot(0,0,color = 'grey',marker = '+',linestyle = None, markersize = 6)
         
         if (axtype != 'polar') & (plot_10_20_circles == True):
             r = np.array([0.8,0.9,1.1,1.2])*scalef # plot circles at 80, 90, 100, 110, 120 % of scale f
@@ -235,7 +236,7 @@ def plot_hue_bins(hbins = 16, start_hue = 0.0, scalef = 100, \
             ax.imshow(_CVG_BG, origin = 'upper', extent = axis_)
         
 
-    return plt.gcf(), plt.gca(), cmap
+    return fig, ax, cmap
 
 def plot_ColorVectorGraphic(jabt, jabr, hbins = 16, start_hue = 0.0, scalef = 100, \
                             plot_axis_labels = False, bin_labels = None, \
@@ -329,7 +330,8 @@ def plot_ColorVectorGraphic(jabt, jabr, hbins = 16, start_hue = 0.0, scalef = 10
                                      force_CVG_layout = force_CVG_layout, 
                                      bin_labels = bin_labels, 
                                      plot_bin_colors = plot_bin_colors,
-                                     plot_10_20_circles = plot_10_20_circles)
+                                     plot_10_20_circles = plot_10_20_circles,
+                                     plot_axis_labels = plot_axis_labels)
 
     if cmap == []:
         cmap = ['k' for i in range(hbins)]
@@ -372,9 +374,9 @@ def plot_ColorVectorGraphic(jabt, jabr, hbins = 16, start_hue = 0.0, scalef = 10
             if jabti is not None:
                 ax.plot(jabti[hbinnr==j,1],jabti[hbinnr==j,2], color = cmap[j],linestyle = 'none',marker='.',markersize=3)
 
-    if axtype == 'cart':
-        plt.xlabel("a'")
-        plt.ylabel("b'")
+    if (axtype == 'cart') & (plot_axis_labels == True):
+        ax.set_xlabel("a'")
+        ax.set_ylabel("b'")
     
-    return plt.gcf(), plt.gca(), cmap
+    return figCVG, ax, cmap
 
