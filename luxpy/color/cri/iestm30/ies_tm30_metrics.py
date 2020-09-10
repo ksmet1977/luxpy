@@ -25,6 +25,7 @@ Extension module for IES TM30 metric calculation with additional Vector Field su
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
+import copy
 from luxpy import _CRI_RFL
 from luxpy.utils import np
 
@@ -105,7 +106,7 @@ def spd_to_ies_tm30_metrics(SPD, cri_type = None, \
     #Calculate color rendering measures for SPDs in data:
     out = 'Rf,Rg,cct,duv,Rfi,jabt,jabr,Rfhi,Rcshi,Rhshi,cri_type'
     if isinstance(cri_type,str): # get dict 
-        cri_type = _CRI_DEFAULTS[cri_type].copy()
+        cri_type = copy.deepcopy(_CRI_DEFAULTS[cri_type])
     if hbins is not None:
         cri_type['rg_pars']['nhbins'] = hbins 
     if start_hue is not None:

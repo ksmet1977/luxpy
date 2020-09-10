@@ -906,12 +906,17 @@ def plot_tm30_report(spd, cri_type = 'ies-tm30',
 if __name__ == '__main__':
     import luxpy as lx
     spd = lx._CIE_F4
+    data, _, _ = lx.cri.plot_cri_graphics(spd, plot_bin_colors = False, \
+                                vf_plot_bin_colors = False,\
+                                vf_color = 'grey', plot_CF = True, 
+                                plot_test_sample_coord = True,
+                                hbins = 8)
     plot_tm30_cvg(spd, axtype = 'cart', plot_vectors = True, gamut_line_color = 'r')
-    plot_tm30_spd(spd)
-    plot_tm30_Rfi(spd)
-    plot_tm30_Rfhj(spd)
-    plot_tm30_Rcshj(spd)
-    plot_tm30_Rhshj(spd)
-    plot_tm30_Rxhj(spd)
-    plot_tm30_report(spd, source = 'test', notes = 'This is a test if the note splitting actually works or not.',save_fig_name = 'testfig.png')
+    # plot_tm30_spd(spd)
+    # plot_tm30_Rfi(spd)
+    # plot_tm30_Rfhj(spd)
+    # plot_tm30_Rcshj(spd)
+    # plot_tm30_Rhshj(spd)
+    # plot_tm30_Rxhj(spd)
+    # plot_tm30_report(spd, source = 'test', notes = 'This is a test if the note splitting actually works or not.',save_fig_name = 'testfig.png')
     
