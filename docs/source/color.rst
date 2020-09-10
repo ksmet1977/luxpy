@@ -145,6 +145,7 @@ cri/
 		* __init__.py
 		* ies_tm30_metrics.py
 		* ies_tm30_graphics.py
+		* ansi_ies_tm30_graphics.py
 	* /VFPX/
 		* __inint__.py
 		* vectorshiftmodel.py

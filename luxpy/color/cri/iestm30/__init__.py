@@ -24,6 +24,24 @@ Module for IES TM30 color rendition output
  :plot_cri_graphics(): Plots graphical information on color rendition 
                        properties based on spectral data input or dict with 
                        pre-calculated measures.
+                       
+ :_tm30_process_spd(): Calculate all required parameters for plotting from spd using cri.spd_to_cri()
+
+ :plot_tm30_cvg(): Plot TM30 Color Vector Graphic (CVG).
+ 
+ :plot_tm30_Rfi(): Plot Sample Color Fidelity values (Rfi).
+ 
+ :plot_tm30_Rxhj(): Plot Local Chroma Shifts (Rcshj), Local Hue Shifts (Rhshj) and Local Color Fidelity values (Rfhj).
+
+ :plot_tm30_Rcshj(): Plot Local Chroma Shifts (Rcshj).
+
+ :plot_tm30_Rhshj(): Plot Local Hue Shifts (Rhshj).
+
+ :plot_tm30_Rfhj(): Plot Local Color Fidelity values (Rfhj).
+
+ :plot_tm30_spd(): Plot test SPD and reference illuminant, both normalized to the same luminous power.
+
+ :plot_tm30_report():
  
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """

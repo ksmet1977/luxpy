@@ -150,11 +150,31 @@ iestm30/iestm30_metrics.py
  :spd_to_ies_tm30_metrics(): Calculates IES TM30 metrics from spectral data.
 
 
-iestm30/iestm30_graphics.py
+iestm30/ies_tm30_graphics.py
 ---------------------------
 
  :plot_cri_graphics(): Plot graphical information on color rendition properties.
 
+iestm30/ansi_ies_tm30_graphics.py
+--------------------------------
+
+ :_tm30_process_spd(): Calculate all required parameters for plotting from spd using cri.spd_to_cri()
+
+ :plot_tm30_cvg(): Plot TM30 Color Vector Graphic (CVG).
+ 
+ :plot_tm30_Rfi(): Plot Sample Color Fidelity values (Rfi).
+ 
+ :plot_tm30_Rxhj(): Plot Local Chroma Shifts (Rcshj), Local Hue Shifts (Rhshj) and Local Color Fidelity values (Rfhj).
+
+ :plot_tm30_Rcshj(): Plot Local Chroma Shifts (Rcshj).
+
+ :plot_tm30_Rhshj(): Plot Local Hue Shifts (Rhshj).
+
+ :plot_tm30_Rfhj(): Plot Local Color Fidelity values (Rfhj).
+
+ :plot_tm30_spd(): Plot test SPD and reference illuminant, both normalized to the same luminous power.
+
+ :plot_tm30_report():
 
 VFPX
 ----
@@ -175,6 +195,11 @@ from .utils.graphics import *
 from .VFPX import VF_PX_models as VFPX
 from .iestm30.ies_tm30_graphics import plot_cri_graphics
 from .iestm30.ies_tm30_metrics import spd_to_ies_tm30_metrics
+from .iestm30.ansi_ies_tm30_graphics import (_tm30_process_spd,plot_tm30_cvg,
+                                             plot_tm30_Rfi,plot_tm30_Rxhj,
+                                             plot_tm30_Rcshj, plot_tm30_Rhshj,
+                                             plot_tm30_Rfhj, plot_tm30_spd,
+                                             plot_tm30_report)
 
 # .DE_scalers:
 __all__ = ['linear_scale', 'log_scale', 'psy_scale']
@@ -206,3 +231,8 @@ __all__ += ['spd_to_ies_tm30_metrics']
 
 # .ies_tm30_graphics:
 __all__ += ['plot_cri_graphics']
+
+# .ansi_ies_tm30_graphics:
+__all__ += ['_tm30_process_spd','plot_tm30_cvg','plot_tm30_Rfi',
+           'plot_tm30_Rxhj','plot_tm30_Rcshj', 'plot_tm30_Rhshj', 
+           'plot_tm30_Rfhj', 'plot_tm30_spd','plot_tm30_report']
