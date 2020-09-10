@@ -41,7 +41,7 @@ As of May 2019, LuxPy now also has a toolbox **spectro** for **spectral measurem
 * spectro.jeti: easy installation (dll's are part of sub-package).
 * spectro.oceanoptics (under development): more tricky installation (requires manual install of **seabreeze** SDK and **python-seabreeze**, **pyusb**, ...; see [here](https://github.com/ksmet1977/luxpy/blob/master/luxpy/toolboxes/spectro/oceanoptics/oceanoptics.md) or subpackage help for more info)
 
-** NEW **: ANSI/IES-TM30-2018 graphical output (**Color Rendition Report**, **Color Vector Graphic**, ...)
+**NEW**: ANSI/IES-TM30-2018 graphical output (**Color Rendition Report**, **Color Vector Graphic**, ...)
 
 -------------------------------------------------------------------------------
 ## How to use LuxPy (basics)?
