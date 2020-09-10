@@ -260,7 +260,8 @@ def plot_tm30_cvg(spd, cri_type = 'ies-tm30',
     return axh
 
 
-def plot_tm30_spd(spd, cri_type = 'ies-tm30', axh = None, **kwargs):
+def plot_tm30_spd(spd, cri_type = 'ies-tm30', axh = None, 
+                  font_size = _TM30_FONT_SIZE, **kwargs):
     """
     Plot test SPD and reference illuminant, both normalized to the same luminous power.
     
@@ -287,6 +288,9 @@ def plot_tm30_spd(spd, cri_type = 'ies-tm30', axh = None, **kwargs):
         :axh: 
             | None, optional
             | If None: create new figure with single axes, else plot on specified axes.   
+        :font_size:
+            | _TM30_FONT_SIZE, optional
+            | Font size of text, axis labels and axis values.
         :kwargs:
             | Additional optional keyword arguments, 
             | the same as in cri.spd_to_cri()
@@ -308,16 +312,17 @@ def plot_tm30_spd(spd, cri_type = 'ies-tm30', axh = None, **kwargs):
         fig, axh = plt.subplots(nrows = 1, ncols = 1)
     axh.plot(data['Sr'][0,:], data['Sr'][1,:],'k-', label = 'Reference')
     axh.plot(data['spd'][0,:], data['spd'][1,:],'r-', label = 'Test')
-    axh.set_xlabel('Wavelength (nm)', fontsize = _TM30_FONT_SIZE)
-    axh.set_ylabel('Radiant power\n(Equal Luminous Flux)', fontsize = _TM30_FONT_SIZE)
+    axh.set_xlabel('Wavelength (nm)', fontsize = font_size)
+    axh.set_ylabel('Radiant power\n(Equal Luminous Flux)', fontsize = font_size)
     axh.set_xlim([360,830]) 
     axh.set_yticklabels([])
-    axh.legend(loc = 'upper right', fontsize = _TM30_FONT_SIZE)
+    axh.legend(loc = 'upper right', fontsize = font_size)
     
     return axh
 
 
-def plot_tm30_Rfi(spd, cri_type = 'ies-tm30', axh = None, **kwargs):
+def plot_tm30_Rfi(spd, cri_type = 'ies-tm30', axh = None, 
+                  font_size = _TM30_FONT_SIZE, **kwargs):
     """
     Plot Sample Color Fidelity values (Rfi).
     
@@ -344,6 +349,9 @@ def plot_tm30_Rfi(spd, cri_type = 'ies-tm30', axh = None, **kwargs):
         :axh: 
             | None, optional
             | If None: create new figure with single axes, else plot on specified axes.    
+        :font_size:
+            | _TM30_FONT_SIZE, optional
+            | Font size of text, axis labels and axis values.
         :kwargs:
             | Additional optional keyword arguments, 
             | the same as in cri.spd_to_cri()
@@ -375,14 +383,16 @@ def plot_tm30_Rfi(spd, cri_type = 'ies-tm30', axh = None, **kwargs):
     xticks = np.arange(0,N,step=2)
     xtickslabels = ['CES{:1.0f}'.format(ii+1) for ii in range(0,N,2)]
     axh.set_xticks(xticks)
-    axh.set_xticklabels(xtickslabels, fontsize = _TM30_FONT_SIZE, rotation = 90)
-    axh.set_ylabel(r'Color Sample Fidelity $(R_{f,CESi})$', fontsize = _TM30_FONT_SIZE)
+    axh.set_xticklabels(xtickslabels, fontsize = font_size, rotation = 90)
+    axh.set_ylabel(r'Color Sample Fidelity $(R_{f,CESi})$', fontsize = font_size)
     axh.set_ylim([0,100])
     axh.set_xlim([-0.5,N-0.5])
     
     return axh
 
-def plot_tm30_Rfhj(spd, cri_type = 'ies-tm30', axh = None, xlabel = True, y_offset = 0, **kwargs):
+def plot_tm30_Rfhj(spd, cri_type = 'ies-tm30', axh = None, 
+                   xlabel = True, y_offset = 0, 
+                   font_size = _TM30_FONT_SIZE, **kwargs):
     """
     Plot Local Color Fidelity values (Rfhj) (one for each hue-bin).
     
@@ -417,6 +427,9 @@ def plot_tm30_Rfhj(spd, cri_type = 'ies-tm30', axh = None, xlabel = True, y_offs
         :y_offset:
             | 0, optional
             | text-offset from top of bars in barplot.
+        :font_size:
+            | _TM30_FONT_SIZE, optional
+            | Font size of text, axis labels and axis values.
         :kwargs:
             | Additional optional keyword arguments, 
             | the same as in cri.spd_to_cri()
@@ -443,24 +456,26 @@ def plot_tm30_Rfhj(spd, cri_type = 'ies-tm30', axh = None, xlabel = True, y_offs
     for j in hbins:
         axh.bar(hbins[j],Rfhi[j,0], color = cmap[j], width = 1,edgecolor = 'k', alpha = 1)
         ypos = ((np.abs(Rfhi[j,0]) + 2 + y_offset))*np.sign(Rfhi[j,0])
-        axh.text(hbins[j],ypos, '{:1.0f}'.format(Rfhi[j,0]) ,fontsize = _TM30_FONT_SIZE,horizontalalignment='center',verticalalignment='center',color = np.array([1,1,1])*0.3)
+        axh.text(hbins[j],ypos, '{:1.0f}'.format(Rfhi[j,0]) ,fontsize = font_size,horizontalalignment='center',verticalalignment='center',color = np.array([1,1,1])*0.3)
     
     xticks = np.array(hbins)
     axh.set_xticks(xticks)
     if xlabel == True:
         xtickslabels = ['{:1.0f}'.format(ii+1) for ii in hbins]
-        axh.set_xlabel('Hue-Angle Bin (j)', fontsize = _TM30_FONT_SIZE)
+        axh.set_xlabel('Hue-Angle Bin (j)', fontsize = font_size)
     else:
         xtickslabels = [''.format(ii+1) for ii in hbins]
-    axh.set_xticklabels(xtickslabels, fontsize = _TM30_FONT_SIZE)
+    axh.set_xticklabels(xtickslabels, fontsize = font_size)
     axh.set_xlim([-0.5,data['nhbins']-0.5])
     
-    axh.set_ylabel(r'Local Color Fidelity $(R_{f,hj})$', fontsize = _TM30_FONT_SIZE)
+    axh.set_ylabel(r'Local Color Fidelity $(R_{f,hj})$', fontsize = font_size)
     axh.set_ylim([0,110])
 
     return axh
 
-def plot_tm30_Rcshj(spd, cri_type = 'ies-tm30', axh = None, xlabel = True, y_offset = 0, **kwargs):
+def plot_tm30_Rcshj(spd, cri_type = 'ies-tm30', axh = None, 
+                    xlabel = True, y_offset = 0, 
+                    font_size = _TM30_FONT_SIZE, **kwargs):
     """
     Plot Local Chroma Shift values (Rcshj) (one for each hue-bin).
     
@@ -495,6 +510,9 @@ def plot_tm30_Rcshj(spd, cri_type = 'ies-tm30', axh = None, xlabel = True, y_off
         :y_offset:
             | 0, optional
             | text-offset from top of bars in barplot.
+        :font_size:
+            | _TM30_FONT_SIZE, optional
+            | Font size of text, axis labels and axis values.
         :kwargs:
             | Additional optional keyword arguments, 
             | the same as in cri.spd_to_cri()
@@ -522,28 +540,30 @@ def plot_tm30_Rcshj(spd, cri_type = 'ies-tm30', axh = None, xlabel = True, y_off
     for j in hbins:
         axh.bar(hbins[j],100*Rcshi[j,0], color = cmap[j], width = 1,edgecolor = 'k', alpha = 1)
         ypos = 100*((np.abs(Rcshi[j,0]) + 0.05 + y_offset))*np.sign(Rcshi[j,0])
-        axh.text(hbins[j],ypos, '{:1.0f}%'.format(100*Rcshi[j,0]), fontsize = _TM30_FONT_SIZE,horizontalalignment='center',verticalalignment='center',color = np.array([1,1,1])*0.3, rotation = 90)
+        axh.text(hbins[j],ypos, '{:1.0f}%'.format(100*Rcshi[j,0]), fontsize = font_size,horizontalalignment='center',verticalalignment='center',color = np.array([1,1,1])*0.3, rotation = 90)
     
     xticks = np.array(hbins)
     axh.set_xticks(xticks)
     if xlabel == True:
         xtickslabels = ['{:1.0f}'.format(ii+1) for ii in hbins]
-        axh.set_xlabel('Hue-Angle Bin (j)', fontsize = _TM30_FONT_SIZE)
+        axh.set_xlabel('Hue-Angle Bin (j)', fontsize = font_size)
     else:
         xtickslabels = [''.format(ii+1) for ii in hbins]
-    axh.set_xticklabels(xtickslabels, fontsize = _TM30_FONT_SIZE)
+    axh.set_xticklabels(xtickslabels, fontsize = font_size)
     axh.set_xlim([-0.5,data['nhbins']-0.5])
     
     yticks = range(-40,50,10)
     axh.set_yticks(yticks)
     ytickslabels = ['{:1.0f}%'.format(ii) for ii in range(-40,50,10)]
-    axh.set_yticklabels(ytickslabels, fontsize = _TM30_FONT_SIZE)
-    axh.set_ylabel(r'Local Chroma Shift $(R_{cs,hj})$', fontsize = _TM30_FONT_SIZE)
+    axh.set_yticklabels(ytickslabels, fontsize = font_size)
+    axh.set_ylabel(r'Local Chroma Shift $(R_{cs,hj})$', fontsize = font_size)
     axh.set_ylim([min([-40,100*Rcshi.min()]),max([40,100*Rcshi.max()])])
     
     return axh
 
-def plot_tm30_Rhshj(spd, cri_type = 'ies-tm30', axh = None, xlabel = True, y_offset = 0, **kwargs):
+def plot_tm30_Rhshj(spd, cri_type = 'ies-tm30', axh = None, 
+                    xlabel = True, y_offset = 0, 
+                    font_size = _TM30_FONT_SIZE, **kwargs):
     """
     Plot Local Hue Shift values (Rhshj) (one for each hue-bin).
     
@@ -578,6 +598,9 @@ def plot_tm30_Rhshj(spd, cri_type = 'ies-tm30', axh = None, xlabel = True, y_off
         :y_offset:
             | 0, optional
             | text-offset from top of bars in barplot.
+        :font_size:
+            | _TM30_FONT_SIZE, optional
+            | Font size of text, axis labels and axis values.
         :kwargs:
             | Additional optional keyword arguments, 
             | the same as in cri.spd_to_cri()
@@ -605,16 +628,16 @@ def plot_tm30_Rhshj(spd, cri_type = 'ies-tm30', axh = None, xlabel = True, y_off
     for j in hbins:
         axh.bar(hbins[j],Rhshi[j,0], color = cmap[j], width = 1,edgecolor = 'k', alpha = 1)
         ypos = ((np.abs(Rhshi[j,0]) + 0.05 + y_offset))*np.sign(Rhshi[j,0])
-        axh.text(hbins[j],ypos, '{:1.2f}'.format(Rhshi[j,0]) ,fontsize = _TM30_FONT_SIZE,horizontalalignment='center',verticalalignment='center',color = np.array([1,1,1])*0.3, rotation = 90)
+        axh.text(hbins[j],ypos, '{:1.2f}'.format(Rhshi[j,0]) ,fontsize = font_size,horizontalalignment='center',verticalalignment='center',color = np.array([1,1,1])*0.3, rotation = 90)
     
     xticks = np.array(hbins)
     axh.set_xticks(xticks)
     if xlabel == True:
         xtickslabels = ['{:1.0f}'.format(ii+1) for ii in hbins]
-        axh.set_xlabel('Hue-Angle Bin (j)', fontsize = _TM30_FONT_SIZE)
+        axh.set_xlabel('Hue-Angle Bin (j)', fontsize = font_size)
     else:
         xtickslabels = [''.format(ii+1) for ii in hbins]
-    axh.set_xticklabels(xtickslabels, fontsize = _TM30_FONT_SIZE)
+    axh.set_xticklabels(xtickslabels, fontsize = font_size)
     axh.set_xlim([-0.5,data['nhbins']-0.5])
     
     axh.set_ylabel(r'Local Hue Shift $(R_{hs,hj})$', fontsize = 9)
@@ -622,7 +645,8 @@ def plot_tm30_Rhshj(spd, cri_type = 'ies-tm30', axh = None, xlabel = True, y_off
     
     return axh
 
-def plot_tm30_Rxhj(spd, cri_type = 'ies-tm30', axh = None, **kwargs):
+def plot_tm30_Rxhj(spd, cri_type = 'ies-tm30', axh = None, 
+                   font_size = _TM30_FONT_SIZE, **kwargs):
     """
     Plot Local Chroma Shifts (Rcshj), Local Hue Shifts (Rhshj) and Local Color Fidelity values (Rfhj) (one for each hue-bin).
     
@@ -649,6 +673,9 @@ def plot_tm30_Rxhj(spd, cri_type = 'ies-tm30', axh = None, **kwargs):
         :axh: 
             | None, optional
             | If None: create new figure with single axes, else plot on specified axes. 
+        :font_size:
+            | _TM30_FONT_SIZE, optional
+            | Font size of text, axis labels and axis values.
         :kwargs:
             | Additional optional keyword arguments, 
             | the same as in cri.spd_to_cri()
@@ -793,7 +820,7 @@ def plot_tm30_report(spd, cri_type = 'ies-tm30',
                      save_fig_name = None, dpi = 300,
                      plot_report_top = True, plot_report_bottom = True,
                      suptitle = 'ANSI/IES TM-30-18 Color Rendition Report',
-                     **kwargs):
+                     font_size = _TM30_FONT_SIZE, **kwargs):
     """
     Create TM30 Color Rendition Report.
     
@@ -843,7 +870,10 @@ def plot_tm30_report(spd, cri_type = 'ies-tm30',
             | execute _plot_tm30_report_bottom()
         :suptitle:
             | 'ANSI/IES TM-30-18 Color Rendition Report' or str, optional
-            | report title (input for plt.suptitle).    
+            | report title (input for plt.suptitle).  
+        :font_size:
+            | _TM30_FONT_SIZE, optional
+            | Font size of text, axis labels and axis values.
         :kwargs:
             | Additional optional keyword arguments, 
             | the same as in cri.spd_to_cri()
@@ -918,5 +948,5 @@ if __name__ == '__main__':
     # plot_tm30_Rcshj(spd)
     # plot_tm30_Rhshj(spd)
     # plot_tm30_Rxhj(spd)
-    # plot_tm30_report(spd, source = 'test', notes = 'This is a test if the note splitting actually works or not.',save_fig_name = 'testfig.png')
+    plot_tm30_report(spd, source = 'test', font_size = 12,notes = 'This is a test if the note splitting actually works or not.',save_fig_name = 'testfig.png')
     
