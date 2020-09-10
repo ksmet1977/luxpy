@@ -50,7 +50,7 @@ Module with color rendition, fidelity and gamut area helper functions
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
-
+import copy
 from luxpy import (_S_INTERP_TYPE, _CRI_RFL, _IESTM3015, math, cam, cat,
                    spd, colortf, spd_to_xyz, cri_ref, xyz_to_cct)
 from luxpy.utils import np, sp,asplit, np2d, put_args_in_db 
@@ -359,7 +359,7 @@ def jab_to_rhi(jabt, jabr, DEi, cri_type = _CRI_TYPE_DEFAULT, start_hue = None,\
         <https://www.ies.org/store/technical-memoranda/ies-method-for-evaluating-light-source-color-rendition/>`_
     """
     if isinstance(cri_type, str): 
-        args = locals().copy() # get dict with keyword input arguments to function (used to overwrite non-None input arguments present in cri_type dict)
+        args = copy.deepcopy(locals()) # get dict with keyword input arguments to function (used to overwrite non-None input arguments present in cri_type dict)
         cri_type = process_cri_type_input(cri_type, args, callerfunction = 'cri.jab_to_rhi')
     
     if jabt.ndim < 3:
@@ -540,7 +540,7 @@ def spd_to_jab_t_r(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'jabt,jabr', wl = No
     """
    
     #Override input parameters with data specified in cri_type:
-    args = locals().copy() # get dict with keyword input arguments to function (used to overwrite non-None input arguments present in cri_type dict)
+    args = copy.deepcopy(locals()) # get dict with keyword input arguments to function (used to overwrite non-None input arguments present in cri_type dict)
     cri_type = process_cri_type_input(cri_type, args, callerfunction = 'cri.spd_to_jab_t_r')
 
     avg, catf, cieobs, cri_specific_pars, cspace, ref_type, rg_pars, sampleset, scale = [cri_type[x] for x in sorted(cri_type.keys())] 
@@ -716,7 +716,7 @@ def spd_to_DEi(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'DEi', wl = None, \
 
     """
     #Override input parameters with data specified in cri_type:
-    args = locals().copy() # get dict with keyword input arguments to function (used to overwrite non-None input arguments present in cri_type dict)
+    args = copy.deepcopy(locals()) # get dict with keyword input arguments to function (used to overwrite non-None input arguments present in cri_type dict)
     
     cri_type = process_cri_type_input(cri_type, args, callerfunction = 'cri.spd_to_DEi')
 
@@ -978,7 +978,7 @@ def spd_to_rg(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'Rg', wl = None, \
         <https://www.osapublishing.org/oe/abstract.cfm?uri=oe-23-12-15888>`_
     """
     #Override input parameters with data specified in cri_type:
-    args = locals().copy() # get dict with keyword input arguments to function (used to overwrite non-None input arguments present in cri_type dict)
+    args = copy.deepcopy(locals()) # get dict with keyword input arguments to function (used to overwrite non-None input arguments present in cri_type dict)
     cri_type = process_cri_type_input(cri_type, args, callerfunction = 'cri.spd_to_rg')
 
     #avg, catf, cieobs, cieobs_cct, cri_specific_pars, cspace, cspace_pars, ref_type, rg_pars, sampleset, scale_factor, scale_fcn = [cri_type[x] for x in sorted(cri_type.keys())] 
@@ -1182,7 +1182,7 @@ def spd_to_cri(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'Rf', wl = None, \
     outlist = out.split(',')
     
     #Override input parameters with data specified in cri_type:
-    args = locals().copy() # get dict with keyword input arguments to function (used to overwrite non-None input arguments present in cri_type dict)
+    args = copy.deepcopy(locals()) # get dict with keyword input arguments to function (used to overwrite non-None input arguments present in cri_type dict)
 
     cri_type = process_cri_type_input(cri_type, args, callerfunction = 'cri.spd_to_cri')
     
