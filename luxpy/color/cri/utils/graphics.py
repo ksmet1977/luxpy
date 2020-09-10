@@ -26,15 +26,23 @@ Module for basic color rendition graphical output
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 import colorsys
+import os
+import imageio
 from luxpy import math
-from luxpy.utils import np, plt
+from luxpy.utils import np, plt, _PKG_PATH
+from luxpy.color.utils.plotters import plotcircle
 
-__all__ = [ 'plot_hue_bins','plot_ColorVectorGraphic']
+__all__ = [ 'plot_hue_bins','plot_ColorVectorGraphic','_CVG_BG']
 
+try:
+    _CVG_BG = imageio.imread(os.path.join(_PKG_PATH, 'color','cri','utils','cvg_background.jfif'))
+except:
+    _CVG_BG = None
 
 def plot_hue_bins(hbins = 16, start_hue = 0.0, scalef = 100, \
         plot_axis_labels = False, bin_labels = '#', plot_edge_lines = True, \
         plot_center_lines = False, plot_bin_colors = True, \
+        plot_10_20_circles = False,\
         axtype = 'polar', ax = None, force_CVG_layout = False):
     """
     Makes basis plot for Color Vector Graphic (CVG).
@@ -66,6 +74,10 @@ def plot_hue_bins(hbins = 16, start_hue = 0.0, scalef = 100, \
         :plot_bin_colors:
             | True, optional
             | Colorize hue bins.
+        :plot_10_20_circles:
+            | False, optional
+            | If True and :axtype: == 'cart': Plot white circles at 
+            | 80%, 90%, 100%, 110% and 120% of :scalef: 
         :axtype: 
             | 'polar' or 'cart', optional
             | Make polar or Cartesian plot.
@@ -104,6 +116,8 @@ def plot_hue_bins(hbins = 16, start_hue = 0.0, scalef = 100, \
     # Setup hbin labels:
     if bin_labels is '#':
         bin_labels = ['#{:1.0f}'.format(i+1) for i in range(nhbins)]
+    elif isinstance(bin_labels,str):
+        bin_labels = [bin_labels + '{:1.0f}'.format(i+1) for i in range(nhbins)]
       
     # initializing the figure
     cmap = None
@@ -127,7 +141,7 @@ def plot_hue_bins(hbins = 16, start_hue = 0.0, scalef = 100, \
     if (newfig == True) | (force_CVG_layout == True):
         
         # Calculate hue-bin boundaries:
-        r = np.vstack((np.zeros(hbincenters.shape),scalef*np.ones(hbincenters.shape)))
+        r = np.vstack((np.zeros(hbincenters.shape),1.*scalef*np.ones(hbincenters.shape)))
         theta = np.vstack((np.zeros(hbincenters.shape),hbincenters))
         #t = hbincenters.copy()
         dU = np.roll(hbincenters.copy(),-1)
@@ -149,21 +163,23 @@ def plot_hue_bins(hbins = 16, start_hue = 0.0, scalef = 100, \
         
         if axtype == 'cart':
             if plot_center_lines == True:
-                hx = r*np.cos(theta)
-                hy = r*np.sin(theta)
+                hx = r*np.cos(theta)*1.2
+                hy = r*np.sin(theta)*1.2
             if bin_labels is not None:
-                hxv = np.vstack((np.zeros(hbincenters.shape),1.3*scalef*np.cos(hbincenters)))
-                hyv = np.vstack((np.zeros(hbincenters.shape),1.3*scalef*np.sin(hbincenters)))
+                hxv = np.vstack((np.zeros(hbincenters.shape),1.4*scalef*np.cos(hbincenters)))
+                hyv = np.vstack((np.zeros(hbincenters.shape),1.4*scalef*np.sin(hbincenters)))
             if plot_edge_lines == True:
-                hxe = np.vstack((np.zeros(hbincenters.shape),1.2*scalef*np.cos(dL)))
-                hye = np.vstack((np.zeros(hbincenters.shape),1.2*scalef*np.sin(dL)))
+                #hxe = np.vstack((np.zeros(hbincenters.shape),1.2*scalef*np.cos(dL)))
+                #hye = np.vstack((np.zeros(hbincenters.shape),1.2*scalef*np.sin(dL)))
+                hxe = np.vstack((0.1*scalef*np.cos(dL),1.5*scalef*np.cos(dL)))
+                hye = np.vstack((0.1*scalef*np.sin(dL),1.5*scalef*np.sin(dL)))
             
         # Plot hue-bins:
         for i in range(nhbins):
             
             # Create color from hue angle:
-            c = np.abs(np.array(colorsys.hsv_to_rgb(hsv_hues[i], 0.84, 0.9)))
-            #c = [abs(c[0]),abs(c[1]),abs(c[2])] # ensure all positive elements
+            #c = np.abs(np.array(colorsys.hsv_to_rgb(hsv_hues[i], 0.75, 0.85)))
+            c = np.abs(np.array(colorsys.hls_to_rgb(hsv_hues[i], 0.45, 0.5)))
             if i == 0:
                 cmap = [c]
             else:
@@ -172,47 +188,62 @@ def plot_hue_bins(hbins = 16, start_hue = 0.0, scalef = 100, \
             
             if axtype == 'polar':
                 if plot_edge_lines == True:
-                    ax.plot(edges[:,i],r[:,i]*1.2,color = 'grey',marker = 'None',linestyle = ':',linewidth = 2, markersize = 2)
+                    ax.plot(edges[:,i],r[:,i]*1.,color = 'grey',marker = 'None',linestyle = '--',linewidth = 1, markersize = 2)
                 if plot_center_lines == True:
                     if np.mod(i,2) == 1:
                         ax.plot(theta[:,i],r[:,i],color = c,marker = None,linestyle = '--',linewidth = 1)
                     else:
-                        ax.plot(theta[:,i],r[:,i],color = c,marker = 'o',linestyle = '-',linewidth = 2,markersize = 10)
+                        ax.plot(theta[:,i],r[:,i],color = c,marker = None,linestyle = '--',linewidth = 1,markersize = 10)
                 if plot_bin_colors == True:
-                    bar = ax.bar(dM[i],r[1,i], width = dt[i],color = c,alpha=0.15)
+                    bar = ax.bar(dM[i],r[1,i], width = dt[i],color = c,alpha=0.25)
                 if bin_labels is not None:
-                    ax.text(hbincenters[i],1.3*scalef,bin_labels[i],fontsize = 12, horizontalalignment='center',verticalalignment='center',color = np.array([1,1,1])*0.3)
+                    ax.text(hbincenters[i],1.3*scalef,bin_labels[i],fontsize = 10, horizontalalignment='center',verticalalignment='center',color = np.array([1,1,1])*0.45)
                 if plot_axis_labels == False:
                     ax.set_xticklabels([])
                     ax.set_yticklabels([])
             else:
+                axis_ = 1.*np.array([-scalef*1.5, scalef*1.5, -scalef*1.5, scalef*1.5])
                 if plot_edge_lines == True:
-                    ax.plot(hxe[:,i],hye[:,i],color = 'grey',marker = 'None',linestyle = ':',linewidth = 2, markersize = 2)
+                    ax.plot(hxe[:,i],hye[:,i],color = 'grey',marker = 'None',linestyle = '--',linewidth = 1, markersize = 2)
 
                 if plot_center_lines == True:
                     if np.mod(i,2) == 1:
                         ax.plot(hx[:,i],hy[:,i],color = c,marker = None,linestyle = '--',linewidth = 1)
                     else:
-                        ax.plot(hx[:,i],hy[:,i],color = c,marker = 'o',linestyle = '-',linewidth = 2,markersize = 10)
+                        ax.plot(hx[:,i],hy[:,i],color = c,marker = None,linestyle = '--',linewidth = 1,markersize = 10)
                 if bin_labels is not None:
-                    ax.text(hxv[1,i],hyv[1,i],bin_labels[i],fontsize = 12,horizontalalignment='center',verticalalignment='center',color = np.array([1,1,1])*0.3)
-                ax.axis(1.1*np.array([hxv.min(),hxv.max(),hyv.min(),hyv.max()]))
-                if plot_axis_labels == False:
-                    ax.set_xticklabels([])
-                    ax.set_yticklabels([])
-                else:
-                    plt.xlabel("a'")
-                    plt.ylabel("b'")
+                    ax.text(hxv[1,i],hyv[1,i],bin_labels[i],fontsize = 10,horizontalalignment='center',verticalalignment='center',color = np.array([1,1,1])*0.45)
+                ax.axis(axis_)
+                    
+        if plot_axis_labels == False:
+            ax.set_xticklabels([])
+            ax.set_yticklabels([])
+        else:
+            plt.xlabel("a'")
+            plt.ylabel("b'")
+            
+        plt.plot(0,0,color = 'grey',marker = '+',linestyle = None, markersize = 6)
+        
+        if (axtype != 'polar') & (plot_10_20_circles == True):
+            r = np.array([0.8,0.9,1.1,1.2])*scalef # plot circles at 80, 90, 100, 110, 120 % of scale f
+            plotcircle(radii = r, angles = np.arange(0,365,5), color = 'w', linestyle = '-', axh = ax, linewidth = 0.5)
+            plotcircle(radii = [scalef], angles = np.arange(0,365,5), color = 'k', linestyle = '-', axh = ax, linewidth = 1)
+            ax.text(0,-0.75*scalef,'-20%',fontsize = 8,horizontalalignment='center',verticalalignment='center',color = 'w')
+            ax.text(0,-1.25*scalef,'+20%',fontsize = 8,horizontalalignment='center',verticalalignment='center',color = 'w')
 
-        plt.plot(0,0,color = 'k',marker = 'o',linestyle = None)
+        if (axtype != 'polar') & (plot_bin_colors == True) & (_CVG_BG is not None):
+            ax.imshow(_CVG_BG, origin = 'upper', extent = axis_)
+        
 
     return plt.gcf(), plt.gca(), cmap
 
 def plot_ColorVectorGraphic(jabt, jabr, hbins = 16, start_hue = 0.0, scalef = 100, \
                             plot_axis_labels = False, bin_labels = None, \
                             plot_edge_lines = True, plot_center_lines = False, \
-                            plot_bin_colors = True, axtype = 'polar', ax = None,\
-                            force_CVG_layout = False,
+                            plot_bin_colors = True, plot_10_20_circles = True,\
+                            plot_vectors = True, gamut_line_color = 'grey',\
+                            axtype = 'polar', ax = None,\
+                            force_CVG_layout = False,\
                             jabti = None, jabri = None, hbinnr = None):
     """
     Plot Color Vector Graphic (CVG).
@@ -248,6 +279,16 @@ def plot_ColorVectorGraphic(jabt, jabr, hbins = 16, start_hue = 0.0, scalef = 10
         :plot_bin_colors:
             | True, optional
             | Colorize hue-bins.
+        :plot_10_20_circles:
+            | True, optional
+            | If True and :axtype: == 'cart': Plot white circles at 
+            | 80%, 90%, 100%, 110% and 120% of :scalef: 
+        :plot_vectors:
+            | True, optional
+            | True: plot vectors from reference to test colors.
+        :gamut_line_color:
+            | 'grey', optional
+            | Color to plot the test color gamut in.
         :axtype:
             | 'polar' or 'cart', optional
             | Make polar or Cartesian plot.
@@ -281,7 +322,14 @@ def plot_ColorVectorGraphic(jabt, jabr, hbins = 16, start_hue = 0.0, scalef = 10
     """
     
     # Plot basis of CVG:
-    figCVG, ax, cmap = plot_hue_bins(hbins = hbins, start_hue = start_hue, scalef = scalef, axtype = axtype, ax = ax, plot_center_lines = plot_center_lines, plot_edge_lines = plot_edge_lines, force_CVG_layout = force_CVG_layout, bin_labels = bin_labels, plot_bin_colors = plot_bin_colors)
+    figCVG, ax, cmap = plot_hue_bins(hbins = hbins, start_hue = start_hue, scalef = scalef, 
+                                     axtype = axtype, ax = ax, 
+                                     plot_center_lines = plot_center_lines, 
+                                     plot_edge_lines = plot_edge_lines, 
+                                     force_CVG_layout = force_CVG_layout, 
+                                     bin_labels = bin_labels, 
+                                     plot_bin_colors = plot_bin_colors,
+                                     plot_10_20_circles = plot_10_20_circles)
 
     if cmap == []:
         cmap = ['k' for i in range(hbins)]
@@ -302,17 +350,25 @@ def plot_ColorVectorGraphic(jabt, jabr, hbins = 16, start_hue = 0.0, scalef = 10
             jabti_theta, jabti_r = math.cart2pol(jabti[...,1:3], htype = 'rad') 
         
         #ax.quiver(jabrtheta,jabr_r,jabt[...,1]-jabr[...,1], jabt[...,2]-jabr_binned[...,2], color = 'k', headlength=3, angles='uv', scale_units='y', scale = 2,linewidth = 0.5)
-        ax.plot(jabt_theta,jabt_r, color = 'grey',linewidth = 2)
+        if plot_vectors == True:
+            ax.plot(jabt_theta,jabt_r, color = gamut_line_color,linewidth = 2)
+        else:
+            ax.plot(jabt_theta,jabt_r, color = gamut_line_color,linewidth = 2, marker = 'o', markersize = 4)
         for j in range(hbins):
             c = cmap[j]
-            ax.quiver(jabr_theta[j],jabr_r[j],jabt[j,1]-jabr[j,1], jabt[j,2]-jabr[j,2], edgecolor = 'k',facecolor = c, headlength=3, angles='uv', scale_units='y', scale = 2,linewidth = 0.5)
+            if plot_vectors == True:
+                ax.quiver(jabr_theta[j],jabr_r[j],jabt[j,1]-jabr[j,1], jabt[j,2]-jabr[j,2], edgecolor = 'k',facecolor = c, headlength=3, angles='uv', scale_units='y', scale = 2,linewidth = 0.5)
             if jabti is not None:
                 ax.plot(jabti_theta[hbinnr==j],jabti_r[hbinnr==j], color = cmap[j],linestyle = 'none',marker='.',markersize=3)
     else:
         #ax.quiver(jabr[...,1],jabr[...,2],jabt[...,1]-jabr[...,1], jabt[...,2]-jabr[...,2], color = 'k', headlength=3, angles='uv', scale_units='xy', scale = 1,linewidth = 0.5)
-        ax.plot(jabt,jabt, color = 'grey',linewidth = 2)
+        if plot_vectors == True:
+            ax.plot(jabt[...,1],jabt[...,2], color = gamut_line_color,linewidth = 2, linestyle = '-')
+        else:
+            ax.plot(jabt[...,1],jabt[...,2], color = gamut_line_color,linewidth = 2, linestyle = '-', marker = 'o', markersize = 4)
         for j in range(hbins):
-            ax.quiver(jabr[j,1],jabr[j,2],jabt[j,1]-jabr[j,1], jabt[j,2]-jabr[j,2], color = cmap[j], headlength=3, angles='uv', scale_units='xy', scale = 1,linewidth = 0.5)
+            if plot_vectors == True:
+                ax.quiver(jabr[j,1],jabr[j,2],jabt[j,1]-jabr[j,1], jabt[j,2]-jabr[j,2], color = cmap[j], headlength=3, angles='uv', scale_units='xy', scale = 1,linewidth = 0.5)
             if jabti is not None:
                 ax.plot(jabti[hbinnr==j,1],jabti[hbinnr==j,2], color = cmap[j],linestyle = 'none',marker='.',markersize=3)
 

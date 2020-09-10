@@ -615,6 +615,10 @@ def spd_to_jab_t_r(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'jabt,jabr', wl = No
         return jabt, jabr
     elif out == 'jabt,jabr,cct,duv':
         return jabt,jabr,cct,duv
+    elif out == 'jabt,jabr,cct,duv,Sr':
+        return jabt,jabr,cct,duv,Sr
+    elif out == 'jabt,jabr,cct,duv,Sr,xyzti,xyztw,xyzri,xyzrw':
+        return jabt,jabr,cct,duv,Sr,xyzti,xyztw,xyzri,xyzrw
     else:
         eval(out)
 
@@ -717,16 +721,20 @@ def spd_to_DEi(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'DEi', wl = None, \
     cri_type = process_cri_type_input(cri_type, args, callerfunction = 'cri.spd_to_DEi')
 
     # calculate Jabt of test and Jabr of the reference illuminant corresponding to test: 
-    jabt, jabr, cct, duv = spd_to_jab_t_r(SPD, cri_type = cri_type, out = 'jabt,jabr,cct,duv', wl = wl)
+    jabt, jabr, cct, duv, Sr, xyzti, xyztw, xyzri, xyzrw = spd_to_jab_t_r(SPD, cri_type = cri_type, out = 'jabt,jabr,cct,duv,Sr,xyzti,xyztw,xyzri,xyzrw', wl = wl)
       
     # E. calculate DEi, DEa:
     DEi, DEa = jab_to_DEi(jabt,jabr, out = 'DEi,DEa', avg = cri_type['avg'])
   
      # output:
-    if (out != 'DEi'):
-        return  eval(out)
-    else:
+    if out == 'DEi,jabt,jabr,cct,duv,Sr,xyzti,xyztw,xyzri,xyzrw':
+        return DEi,jabt,jabr,cct,duv,Sr,xyzti,xyztw,xyzri,xyzrw
+    elif out == 'DEi,jabt,jabr,cct,duv,Sr':
+        return DEi,jabt,jabr,cct,duv,Sr
+    elif out == 'DEi':
         return DEi
+    else:
+        return  eval(out)
 
       
 #------------------------------------------------------------------------------
@@ -977,7 +985,7 @@ def spd_to_rg(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'Rg', wl = None, \
 
        
     # calculate Jabt of test and Jabr of the reference illuminant corresponding to test: 
-    jabt, jabr,cct,duv = spd_to_jab_t_r(SPD, cri_type = cri_type, out = 'jabt,jabr,cct,duv', wl = wl) 
+    jabt, jabr,cct,duv, Sr = spd_to_jab_t_r(SPD, cri_type = cri_type, out = 'jabt,jabr,cct,duv,Sr', wl = wl) 
 
     
     # calculate gamut area index:
@@ -1191,8 +1199,8 @@ def spd_to_cri(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'Rf', wl = None, \
         raise Exception ('Unable to optimize scale_factor.')
 
     # A. get DEi of for ciera and of requested cri metric for spds in or specified by scale_factor_optimization_spds':
-    DEi, jabt, jabr, cct, duv = spd_to_DEi(SPD, out = 'DEi,jabt,jabr,cct,duv', cri_type = cri_type)
-    
+    DEi, jabt, jabr, cct, duv, Sr, xyzti, xyztw, xyzri, xyzrw = spd_to_DEi(SPD, out = 'DEi,jabt,jabr,cct,duv,Sr,xyzti,xyztw,xyzri,xyzrw', cri_type = cri_type)
+
     # B. convert DEi to color rendering index:
     Rfi = scale_fcn(DEi,scale_factor)
     Rf = np2d(scale_fcn(avg(DEi,axis = 0),scale_factor))
@@ -1210,7 +1218,6 @@ def spd_to_cri(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'Rf', wl = None, \
     # D. Calculate Rfhi, Rhshi and Rcshi:
     if ('Rfhi' in outlist) | ('Rhshi' in outlist) | ('Rcshi' in outlist):
         Rfhi, Rcshi, Rhshi = jab_to_rhi(jabt = jabt_binned[:-1,...], jabr = jabr_binned[:-1,...], DEi = DEi_binned[:-1,...], cri_type = cri_type, scale_factor = scale_factor, scale_fcn = scale_fcn, use_bin_avg_DEi = True) # [:-1,...] removes last row from jab as this was added to close the gamut. 
-
 
     if (out == 'Rf'):
         return Rf
