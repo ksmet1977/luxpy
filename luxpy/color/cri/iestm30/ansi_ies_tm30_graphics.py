@@ -921,12 +921,12 @@ def plot_tm30_report(spd, cri_type = 'ies-tm30',
         _plot_tm30_report_bottom(f_ax_bottom, spd, 
                           notes = notes, max_len_notes_line = max_len_notes_line)
 
-    plot_tm30_spd(data, axh = f_ax_spd)
-    plot_tm30_cvg(data, axh = f_ax_cvg)
-    plot_tm30_Rfhj(data, axh = f_ax_fhj, y_offset = 2)
-    plot_tm30_Rcshj(data, axh = f_ax_cshj, xlabel = False, y_offset = 0.03)
-    plot_tm30_Rhshj(data, axh = f_ax_hshj, xlabel = False, y_offset = 0.05)
-    plot_tm30_Rfi(data, axh = f_ax_fi)
+    plot_tm30_spd(data, axh = f_ax_spd, font_size = font_size)
+    plot_tm30_cvg(data, axh = f_ax_cvg, font_size = font_size)
+    plot_tm30_Rfhj(data, axh = f_ax_fhj, y_offset = 2, font_size = font_size)
+    plot_tm30_Rcshj(data, axh = f_ax_cshj, xlabel = False, y_offset = 0.03, font_size = font_size)
+    plot_tm30_Rhshj(data, axh = f_ax_hshj, xlabel = False, y_offset = 0.05, font_size = font_size)
+    plot_tm30_Rfi(data, axh = f_ax_fi, font_size = font_size)
     fig.suptitle(suptitle, fontsize = 14, fontweight= 'bold')
     
     # Save to file:
