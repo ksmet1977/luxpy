@@ -645,7 +645,7 @@ def plot_tm30_Rhshj(spd, cri_type = 'ies-tm30', axh = None,
     
     return axh
 
-def plot_tm30_Rxhj(spd, cri_type = 'ies-tm30', axh = None, 
+def plot_tm30_Rxhj(spd, cri_type = 'ies-tm30', axh = None, figsize = (6,15),
                    font_size = _TM30_FONT_SIZE, **kwargs):
     """
     Plot Local Chroma Shifts (Rcshj), Local Hue Shifts (Rhshj) and Local Color Fidelity values (Rfhj) (one for each hue-bin).
@@ -673,6 +673,9 @@ def plot_tm30_Rxhj(spd, cri_type = 'ies-tm30', axh = None,
         :axh: 
             | None, optional
             | If None: create new figure with single axes, else plot on specified axes. 
+        :figsize:
+            | (6,15), optional
+            | Figure size of pyplot figure.
         :font_size:
             | _TM30_FONT_SIZE, optional
             | Font size of text, axis labels and axis values.
@@ -688,7 +691,7 @@ def plot_tm30_Rxhj(spd, cri_type = 'ies-tm30', axh = None,
     data = _tm30_process_spd(spd, cri_type = 'ies-tm30',**kwargs)
     
     if axh is None:
-        fig, axh = plt.subplots(nrows = 3, ncols = 1, sharex = True, figsize = (6,18))
+        fig, axh = plt.subplots(nrows = 3, ncols = 1, sharex = True, figsize = figsize)
     
     plot_tm30_Rcshj(data, axh = axh[0], xlabel = False, y_offset = 0.02)
     plot_tm30_Rhshj(data, axh = axh[1], xlabel = False, y_offset = 0.03)
@@ -951,6 +954,6 @@ if __name__ == '__main__':
     # plot_tm30_Rfhj(spd)
     # plot_tm30_Rcshj(spd)
     # plot_tm30_Rhshj(spd)
-    # plot_tm30_Rxhj(spd)
+    plot_tm30_Rxhj(spd)
     plot_tm30_report(spd, source = 'test', font_size = 12,notes = 'This is a test if the note splitting actually works or not.',save_fig_name = 'testfig.png')
     
