@@ -671,7 +671,7 @@ def xyz_to_cct_search_fast(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None,
         signduv = 1.0 
         reached_max_cct = False
 
-        rtols = np.ones((4,))*1e12
+        rtols = np.ones((5,))*1e12
         cnt = 0
         while (((delta_cct*2) >= atol) & ((delta_cct*2/ccttemp) >= rtol)) & (reached_max_cct == False):# keep converging on CCT 
 
