@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.color.cri.iestm30.ies_tm30_metrics &mdash; LuxPy 1.5.2 documentation</title>
+  <title>luxpy.color.cri.iestm30.ies_tm30_metrics &mdash; LuxPy 1.5.3 documentation</title>
   
 
   
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                1.5.2
+                1.5.3
               </div>
             
           
@@ -178,6 +178,7 @@
 
 <span class="sd">.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)</span>
 <span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="n">_CRI_RFL</span>
 <span class="kn">from</span> <span class="nn">luxpy.utils</span> <span class="kn">import</span> <span class="n">np</span>
 
@@ -258,7 +259,7 @@
     <span class="c1">#Calculate color rendering measures for SPDs in data:</span>
     <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;Rf,Rg,cct,duv,Rfi,jabt,jabr,Rfhi,Rcshi,Rhshi,cri_type&#39;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cri_type</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span> <span class="c1"># get dict </span>
-        <span class="n">cri_type</span> <span class="o">=</span> <span class="n">_CRI_DEFAULTS</span><span class="p">[</span><span class="n">cri_type</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">cri_type</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">_CRI_DEFAULTS</span><span class="p">[</span><span class="n">cri_type</span><span class="p">])</span>
     <span class="k">if</span> <span class="n">hbins</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;rg_pars&#39;</span><span class="p">][</span><span class="s1">&#39;nhbins&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hbins</span> 
     <span class="k">if</span> <span class="n">start_hue</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>

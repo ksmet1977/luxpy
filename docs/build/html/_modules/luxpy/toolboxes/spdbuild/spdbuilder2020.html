@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.toolboxes.spdbuild.spdbuilder2020 &mdash; LuxPy 1.5.2 documentation</title>
+  <title>luxpy.toolboxes.spdbuild.spdbuilder2020 &mdash; LuxPy 1.5.3 documentation</title>
   
 
   
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                1.5.2
+                1.5.3
               </div>
             
           
@@ -294,10 +294,10 @@
     <span class="n">ct</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="k">for</span> <span class="n">pt</span> <span class="ow">in</span> <span class="n">types</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">pt</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">prim_constructor_parameter_defs</span><span class="p">:</span> <span class="c1"># extract value from x (to be optimized as not in _defs dict!)</span>
-           <span class="n">pars</span><span class="p">[</span><span class="n">pt</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:,(</span><span class="n">ct</span><span class="o">*</span><span class="n">nprims</span><span class="p">):(</span><span class="n">ct</span><span class="o">*</span><span class="n">nprims</span><span class="p">)</span> <span class="o">+</span> <span class="n">nprims</span><span class="p">]</span> 
+           <span class="n">pars</span><span class="p">[</span><span class="n">pt</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">[:,(</span><span class="n">ct</span><span class="o">*</span><span class="n">nprims</span><span class="p">):(</span><span class="n">ct</span><span class="o">*</span><span class="n">nprims</span><span class="p">)</span> <span class="o">+</span> <span class="n">nprims</span><span class="p">])</span>
            <span class="n">ct</span><span class="o">+=</span><span class="mi">1</span>
         <span class="k">else</span><span class="p">:</span>
-           <span class="n">pars</span><span class="p">[</span><span class="n">pt</span><span class="p">]</span> <span class="o">=</span> <span class="n">prim_constructor_parameter_defs</span><span class="p">[</span><span class="n">pt</span><span class="p">]</span>
+           <span class="n">pars</span><span class="p">[</span><span class="n">pt</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">prim_constructor_parameter_defs</span><span class="p">[</span><span class="n">pt</span><span class="p">])</span>
     <span class="k">return</span> <span class="n">pars</span></div>
          
             
@@ -310,11 +310,11 @@
                               <span class="n">prim_constructor_parameter_types</span><span class="p">,</span> 
                               <span class="o">**</span><span class="n">prim_constructor_parameter_defs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Construct a set of n gaussian primaries with wavelengths wlr using the input in x and in kwargs.</span>
+<span class="sd">    Construct a set of nprim gaussian primaries with wavelengths wlr using the input in x and in kwargs.</span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        :x:</span>
-<span class="sd">            | ndarray (M x n) with optimization parameters.</span>
+<span class="sd">            | ndarray (M x nprim) with optimization parameters.</span>
 <span class="sd">        :nprim:</span>
 <span class="sd">            | number of primaries</span>
 <span class="sd">        :wlr:</span>
@@ -332,7 +332,7 @@
 <span class="sd">        :prim_constructor_parameters_defs:</span>
 <span class="sd">            | Dict with constructor parameters required by prim_constructor and/or </span>
 <span class="sd">            | default values for parameters that are not being optimized.</span>
-<span class="sd">            | For example: {&#39;fwhm&#39;:  30} will keep fwhm fixed and not optimize it.</span>
+<span class="sd">            | For example: {&#39;fwhm&#39;:  [30]} will keep fwhm fixed and not optimize it.</span>
 <span class="sd">            </span>
 <span class="sd">    Returns:</span>
 <span class="sd">        :spd:</span>
@@ -350,7 +350,8 @@
 <span class="sd">        | ```    wlr = _setup_wlr(wlr)```</span>
 <span class="sd">        | ``` ```</span>
 <span class="sd">        | ```    # Collect parameters from pars dict:```</span>
-<span class="sd">        | ```    return np.vstack((wlr,np.exp(-((pars[&#39;peakwl&#39;]-wlr.T)/pars[&#39;fwhm&#39;])**2).T))```</span>
+<span class="sd">        | ```    fwhm_to_sig = 1/(2*(2*np.log(2))**0.5) # conversion factor for FWHM to sigma of Gaussian ```</span>
+<span class="sd">        | ```    return np.vstack((wlr,np.exp(-0.5*((pars[&#39;peakwl&#39;]-wlr.T)/(pars[&#39;fwhm&#39;]*fwhm_to_sig))**2).T))```</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Extract the primary parameters from x and prim_constructor_parameter_defs:</span>
     <span class="n">pars</span> <span class="o">=</span> <span class="n">_extract_prim_optimization_parameters</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">nprims</span><span class="p">,</span> <span class="n">prim_constructor_parameter_types</span><span class="p">,</span>
@@ -359,7 +360,8 @@
     <span class="n">wlr</span> <span class="o">=</span> <span class="n">_setup_wlr</span><span class="p">(</span><span class="n">wlr</span><span class="p">)</span>
     
     <span class="c1"># Collect parameters from pars dict:</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">wlr</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">((</span><span class="n">pars</span><span class="p">[</span><span class="s1">&#39;peakwl&#39;</span><span class="p">]</span><span class="o">-</span><span class="n">wlr</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">/</span><span class="n">pars</span><span class="p">[</span><span class="s1">&#39;fwhm&#39;</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">))</span>  </div>
+    <span class="n">fwhm_to_sig</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span><span class="o">**</span><span class="mf">0.5</span><span class="p">)</span> <span class="c1"># conversion factor for FWHM to sigma of Gaussian</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">wlr</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="o">*</span><span class="p">((</span><span class="n">pars</span><span class="p">[</span><span class="s1">&#39;peakwl&#39;</span><span class="p">]</span><span class="o">-</span><span class="n">wlr</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">pars</span><span class="p">[</span><span class="s1">&#39;fwhm&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">fwhm_to_sig</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">))</span>  </div>
 
      
 <span class="c1">#------------------------------------------------------------------------------</span>
@@ -963,7 +965,7 @@
                                       <span class="n">prim_constructor</span> <span class="o">=</span> <span class="n">gaussian_prim_constructor</span><span class="p">,</span>
                                       <span class="n">prim_constructor_parameter_types</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;peakwl&#39;</span><span class="p">,</span> <span class="s1">&#39;fwhm&#39;</span><span class="p">],</span> 
                                       <span class="n">prim_constructor_parameter_defs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;peakwl_bnds&#39;</span><span class="p">:[</span><span class="mi">400</span><span class="p">,</span><span class="mi">700</span><span class="p">],</span>
-                                                                         <span class="s1">&#39;fwhm_bnds&#39;</span><span class="p">:[</span><span class="mi">5</span><span class="p">,</span><span class="mi">100</span><span class="p">]},</span>
+                                                                         <span class="s1">&#39;fwhm_bnds&#39;</span><span class="p">:[</span><span class="mi">5</span><span class="p">,</span><span class="mi">300</span><span class="p">]},</span>
                                       <span class="n">obj_fcn</span> <span class="o">=</span> <span class="p">[(</span><span class="n">spd_to_cris</span><span class="p">,</span><span class="s1">&#39;Rf&#39;</span><span class="p">,</span><span class="s1">&#39;Rg&#39;</span><span class="p">)],</span> 
                                       <span class="n">obj_fcn_pars</span> <span class="o">=</span> <span class="p">[{}],</span> 
                                       <span class="n">obj_fcn_weights</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)],</span> <span class="n">obj_tar_vals</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">90</span><span class="p">,</span><span class="mi">110</span><span class="p">)],</span>
@@ -995,7 +997,7 @@
             <span class="n">wlr</span> <span class="o">=</span> <span class="n">_setup_wlr</span><span class="p">(</span><span class="n">wlr</span><span class="p">)</span>
             
             <span class="c1"># Collect parameters from pars dict:</span>
-            <span class="n">n</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="mf">0.5</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="mf">0.5</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span> <span class="c1"># to ensure correct fwhm</span>
             <span class="n">spd</span> <span class="o">=</span> <span class="p">((</span><span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="n">n</span><span class="o">*</span><span class="p">(</span><span class="n">pars</span><span class="p">[</span><span class="s1">&#39;peakwl&#39;</span><span class="p">]</span><span class="o">-</span><span class="n">wlr</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">/</span><span class="n">pars</span><span class="p">[</span><span class="s1">&#39;spectral_width&#39;</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>
             <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">wlr</span><span class="p">,</span> <span class="n">spd</span><span class="p">))</span>
         
@@ -1019,7 +1021,7 @@
                                       <span class="n">prim_constructor</span> <span class="o">=</span> <span class="n">user_prim_constructor2</span><span class="p">,</span>
                                       <span class="n">prim_constructor_parameter_types</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;peakwl&#39;</span><span class="p">,</span> <span class="s1">&#39;spectral_width&#39;</span><span class="p">],</span> 
                                       <span class="n">prim_constructor_parameter_defs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;peakwl_bnds&#39;</span><span class="p">:[</span><span class="mi">400</span><span class="p">,</span><span class="mi">700</span><span class="p">],</span>
-                                                                         <span class="s1">&#39;spectral_width_bnds&#39;</span><span class="p">:[</span><span class="mi">5</span><span class="p">,</span><span class="mi">100</span><span class="p">]},</span>
+                                                                         <span class="s1">&#39;spectral_width_bnds&#39;</span><span class="p">:[</span><span class="mi">5</span><span class="p">,</span><span class="mi">300</span><span class="p">]},</span>
                                       <span class="n">obj_fcn</span> <span class="o">=</span> <span class="p">[(</span><span class="n">spd_to_cris</span><span class="p">,</span><span class="s1">&#39;Rf&#39;</span><span class="p">,</span><span class="s1">&#39;Rg&#39;</span><span class="p">)],</span> 
                                       <span class="n">obj_fcn_pars</span> <span class="o">=</span> <span class="p">[{}],</span> 
                                       <span class="n">obj_fcn_weights</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)],</span> <span class="n">obj_tar_vals</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">90</span><span class="p">,</span><span class="mi">110</span><span class="p">)],</span>

@@ -11,4 +11,4 @@ make latexpdf
 cd conda
 conda skeleton pypi luxpy
 conda-build luxpy
-anaconda upload C:\Miniconda3\envs\py37\conda-bld\win-64\luxpy-1.5.2-py37h39e3cac_0.tar.bz2
+anaconda upload C:\Miniconda3\envs\py37\conda-bld\win-64\luxpy-1.5.3-py37h39e3cac_0.tar.bz2

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.color.cri.utils.helpers &mdash; LuxPy 1.5.2 documentation</title>
+  <title>luxpy.color.cri.utils.helpers &mdash; LuxPy 1.5.3 documentation</title>
   
 
   
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                1.5.2
+                1.5.3
               </div>
             
           
@@ -203,7 +203,7 @@
 
 <span class="sd">.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)</span>
 <span class="sd">&quot;&quot;&quot;</span>
-
+<span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="p">(</span><span class="n">_S_INTERP_TYPE</span><span class="p">,</span> <span class="n">_CRI_RFL</span><span class="p">,</span> <span class="n">_IESTM3015</span><span class="p">,</span> <span class="n">math</span><span class="p">,</span> <span class="n">cam</span><span class="p">,</span> <span class="n">cat</span><span class="p">,</span>
                    <span class="n">spd</span><span class="p">,</span> <span class="n">colortf</span><span class="p">,</span> <span class="n">spd_to_xyz</span><span class="p">,</span> <span class="n">cri_ref</span><span class="p">,</span> <span class="n">xyz_to_cct</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">luxpy.utils</span> <span class="kn">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">sp</span><span class="p">,</span><span class="n">asplit</span><span class="p">,</span> <span class="n">np2d</span><span class="p">,</span> <span class="n">put_args_in_db</span> 
@@ -440,7 +440,14 @@
     <span class="n">Rg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span><span class="n">jabt</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
 
     <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">jabt</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
-        <span class="n">Rg</span><span class="p">[:,</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">max_scale</span><span class="o">*</span><span class="n">math</span><span class="o">.</span><span class="n">polyarea</span><span class="p">(</span><span class="n">jabt</span><span class="p">[:,</span><span class="n">ii</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="n">jabt</span><span class="p">[:,</span><span class="n">ii</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span><span class="o">/</span><span class="n">math</span><span class="o">.</span><span class="n">polyarea</span><span class="p">(</span><span class="n">jabr</span><span class="p">[:,</span><span class="n">ii</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="n">jabr</span><span class="p">[:,</span><span class="n">ii</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span> <span class="c1"># calculate Rg =  gamut area ratio of test and ref</span>
+        <span class="n">nan_t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">jabt</span><span class="p">[:,</span><span class="n">ii</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">nan_r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">jabr</span><span class="p">[:,</span><span class="n">ii</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">nan_t</span><span class="o">.</span><span class="n">all</span><span class="p">()</span> <span class="o">|</span> <span class="n">nan_r</span><span class="o">.</span><span class="n">all</span><span class="p">()):</span>
+            <span class="n">Rg</span><span class="p">[:,</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">notnan_t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_not</span><span class="p">(</span><span class="n">nan_t</span><span class="p">)</span>
+            <span class="n">notnan_r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_not</span><span class="p">(</span><span class="n">nan_r</span><span class="p">)</span>
+            <span class="n">Rg</span><span class="p">[:,</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">max_scale</span><span class="o">*</span><span class="n">math</span><span class="o">.</span><span class="n">polyarea</span><span class="p">(</span><span class="n">jabt</span><span class="p">[</span><span class="n">notnan_t</span><span class="p">,</span><span class="n">ii</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="n">jabt</span><span class="p">[</span><span class="n">notnan_t</span><span class="p">,</span><span class="n">ii</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span><span class="o">/</span><span class="n">math</span><span class="o">.</span><span class="n">polyarea</span><span class="p">(</span><span class="n">jabr</span><span class="p">[</span><span class="n">notnan_r</span><span class="p">,</span><span class="n">ii</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="n">jabr</span><span class="p">[</span><span class="n">notnan_r</span><span class="p">,</span><span class="n">ii</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span> <span class="c1"># calculate Rg =  gamut area ratio of test and ref (only use ab&#39;s which are not NaN&#39;s)</span>
     
     <span class="k">if</span> <span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;Rg&#39;</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">Rg</span>
@@ -505,7 +512,7 @@
 <span class="sd">        &lt;https://www.ies.org/store/technical-memoranda/ies-method-for-evaluating-light-source-color-rendition/&gt;`_</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cri_type</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span> 
-        <span class="n">args</span> <span class="o">=</span> <span class="nb">locals</span><span class="p">()</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="c1"># get dict with keyword input arguments to function (used to overwrite non-None input arguments present in cri_type dict)</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="nb">locals</span><span class="p">())</span> <span class="c1"># get dict with keyword input arguments to function (used to overwrite non-None input arguments present in cri_type dict)</span>
         <span class="n">cri_type</span> <span class="o">=</span> <span class="n">process_cri_type_input</span><span class="p">(</span><span class="n">cri_type</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">callerfunction</span> <span class="o">=</span> <span class="s1">&#39;cri.jab_to_rhi&#39;</span><span class="p">)</span>
     
     <span class="k">if</span> <span class="n">jabt</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
@@ -686,7 +693,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
    
     <span class="c1">#Override input parameters with data specified in cri_type:</span>
-    <span class="n">args</span> <span class="o">=</span> <span class="nb">locals</span><span class="p">()</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="c1"># get dict with keyword input arguments to function (used to overwrite non-None input arguments present in cri_type dict)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="nb">locals</span><span class="p">())</span> <span class="c1"># get dict with keyword input arguments to function (used to overwrite non-None input arguments present in cri_type dict)</span>
     <span class="n">cri_type</span> <span class="o">=</span> <span class="n">process_cri_type_input</span><span class="p">(</span><span class="n">cri_type</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">callerfunction</span> <span class="o">=</span> <span class="s1">&#39;cri.spd_to_jab_t_r&#39;</span><span class="p">)</span>
 
     <span class="n">avg</span><span class="p">,</span> <span class="n">catf</span><span class="p">,</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">cri_specific_pars</span><span class="p">,</span> <span class="n">cspace</span><span class="p">,</span> <span class="n">ref_type</span><span class="p">,</span> <span class="n">rg_pars</span><span class="p">,</span> <span class="n">sampleset</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="p">[</span><span class="n">cri_type</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">cri_type</span><span class="o">.</span><span class="n">keys</span><span class="p">())]</span> 
@@ -761,6 +768,10 @@
         <span class="k">return</span> <span class="n">jabt</span><span class="p">,</span> <span class="n">jabr</span>
     <span class="k">elif</span> <span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;jabt,jabr,cct,duv&#39;</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">jabt</span><span class="p">,</span><span class="n">jabr</span><span class="p">,</span><span class="n">cct</span><span class="p">,</span><span class="n">duv</span>
+    <span class="k">elif</span> <span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;jabt,jabr,cct,duv,Sr&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">jabt</span><span class="p">,</span><span class="n">jabr</span><span class="p">,</span><span class="n">cct</span><span class="p">,</span><span class="n">duv</span><span class="p">,</span><span class="n">Sr</span>
+    <span class="k">elif</span> <span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;jabt,jabr,cct,duv,Sr,xyzti,xyztw,xyzri,xyzrw&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">jabt</span><span class="p">,</span><span class="n">jabr</span><span class="p">,</span><span class="n">cct</span><span class="p">,</span><span class="n">duv</span><span class="p">,</span><span class="n">Sr</span><span class="p">,</span><span class="n">xyzti</span><span class="p">,</span><span class="n">xyztw</span><span class="p">,</span><span class="n">xyzri</span><span class="p">,</span><span class="n">xyzrw</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="nb">eval</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
 
@@ -858,21 +869,25 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1">#Override input parameters with data specified in cri_type:</span>
-    <span class="n">args</span> <span class="o">=</span> <span class="nb">locals</span><span class="p">()</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="c1"># get dict with keyword input arguments to function (used to overwrite non-None input arguments present in cri_type dict)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="nb">locals</span><span class="p">())</span> <span class="c1"># get dict with keyword input arguments to function (used to overwrite non-None input arguments present in cri_type dict)</span>
     
     <span class="n">cri_type</span> <span class="o">=</span> <span class="n">process_cri_type_input</span><span class="p">(</span><span class="n">cri_type</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">callerfunction</span> <span class="o">=</span> <span class="s1">&#39;cri.spd_to_DEi&#39;</span><span class="p">)</span>
 
     <span class="c1"># calculate Jabt of test and Jabr of the reference illuminant corresponding to test: </span>
-    <span class="n">jabt</span><span class="p">,</span> <span class="n">jabr</span><span class="p">,</span> <span class="n">cct</span><span class="p">,</span> <span class="n">duv</span> <span class="o">=</span> <span class="n">spd_to_jab_t_r</span><span class="p">(</span><span class="n">SPD</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;jabt,jabr,cct,duv&#39;</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="n">wl</span><span class="p">)</span>
+    <span class="n">jabt</span><span class="p">,</span> <span class="n">jabr</span><span class="p">,</span> <span class="n">cct</span><span class="p">,</span> <span class="n">duv</span><span class="p">,</span> <span class="n">Sr</span><span class="p">,</span> <span class="n">xyzti</span><span class="p">,</span> <span class="n">xyztw</span><span class="p">,</span> <span class="n">xyzri</span><span class="p">,</span> <span class="n">xyzrw</span> <span class="o">=</span> <span class="n">spd_to_jab_t_r</span><span class="p">(</span><span class="n">SPD</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;jabt,jabr,cct,duv,Sr,xyzti,xyztw,xyzri,xyzrw&#39;</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="n">wl</span><span class="p">)</span>
       
     <span class="c1"># E. calculate DEi, DEa:</span>
     <span class="n">DEi</span><span class="p">,</span> <span class="n">DEa</span> <span class="o">=</span> <span class="n">jab_to_DEi</span><span class="p">(</span><span class="n">jabt</span><span class="p">,</span><span class="n">jabr</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;DEi,DEa&#39;</span><span class="p">,</span> <span class="n">avg</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;avg&#39;</span><span class="p">])</span>
   
      <span class="c1"># output:</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">out</span> <span class="o">!=</span> <span class="s1">&#39;DEi&#39;</span><span class="p">):</span>
-        <span class="k">return</span>  <span class="nb">eval</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;DEi,jabt,jabr,cct,duv,Sr,xyzti,xyztw,xyzri,xyzrw&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">DEi</span><span class="p">,</span><span class="n">jabt</span><span class="p">,</span><span class="n">jabr</span><span class="p">,</span><span class="n">cct</span><span class="p">,</span><span class="n">duv</span><span class="p">,</span><span class="n">Sr</span><span class="p">,</span><span class="n">xyzti</span><span class="p">,</span><span class="n">xyztw</span><span class="p">,</span><span class="n">xyzri</span><span class="p">,</span><span class="n">xyzrw</span>
+    <span class="k">elif</span> <span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;DEi,jabt,jabr,cct,duv,Sr&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">DEi</span><span class="p">,</span><span class="n">jabt</span><span class="p">,</span><span class="n">jabr</span><span class="p">,</span><span class="n">cct</span><span class="p">,</span><span class="n">duv</span><span class="p">,</span><span class="n">Sr</span>
+    <span class="k">elif</span> <span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;DEi&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">DEi</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">DEi</span></div>
+        <span class="k">return</span>  <span class="nb">eval</span><span class="p">(</span><span class="n">out</span><span class="p">)</span></div>
 
       
 <span class="c1">#------------------------------------------------------------------------------</span>
@@ -911,11 +926,20 @@
 <span class="sd">            | ndarray</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">if</span>  <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">opt_scale_factor</span><span class="p">):</span>
         <span class="k">if</span> <span class="s1">&#39;opt_cri_type&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;scale&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span> 
             <span class="n">opt_cri_type</span> <span class="o">=</span> <span class="n">_CRI_DEFAULTS</span><span class="p">[</span><span class="s1">&#39;ciera&#39;</span><span class="p">]</span> <span class="c1"># use CIE Ra-13.3-1995 as target</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;scale&#39;</span><span class="p">][</span><span class="s1">&#39;opt_cri_type&#39;</span><span class="p">],</span><span class="nb">str</span><span class="p">):</span>
+                <span class="n">opt_cri_type</span> <span class="o">=</span> <span class="n">_CRI_DEFAULTS</span><span class="p">[</span><span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;scale&#39;</span><span class="p">][</span><span class="s1">&#39;opt_cri_type&#39;</span><span class="p">]]</span>
+            <span class="k">else</span><span class="p">:</span> <span class="c1">#should be dict !!</span>
+                <span class="n">opt_cri_type</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;scale&#39;</span><span class="p">][</span><span class="s1">&#39;opt_cri_type&#39;</span><span class="p">]</span>
         <span class="k">if</span> <span class="s1">&#39;opt_spd_set&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;scale&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span> 
             <span class="n">opt_spd_set</span> <span class="o">=</span> <span class="n">_IESTM3015</span><span class="p">[</span><span class="s1">&#39;S&#39;</span><span class="p">][</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="mi">13</span><span class="p">]</span> <span class="c1"># use CIE F1-F12</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">opt_spd_set</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;scale&#39;</span><span class="p">][</span><span class="s1">&#39;opt_spd_set&#39;</span><span class="p">]</span>
+        
         <span class="n">scale_fcn_opt</span> <span class="o">=</span> <span class="n">opt_cri_type</span> <span class="p">[</span><span class="s1">&#39;scale&#39;</span><span class="p">][</span><span class="s1">&#39;fcn&#39;</span><span class="p">]</span>
         <span class="n">scale_factor_opt</span> <span class="o">=</span> <span class="n">opt_cri_type</span> <span class="p">[</span><span class="s1">&#39;scale&#39;</span><span class="p">][</span><span class="s1">&#39;cfactor&#39;</span><span class="p">]</span>
         <span class="n">avg_opt</span> <span class="o">=</span> <span class="n">opt_cri_type</span> <span class="p">[</span><span class="s1">&#39;avg&#39;</span><span class="p">]</span>
@@ -1107,14 +1131,14 @@
 <span class="sd">        &lt;https://www.osapublishing.org/oe/abstract.cfm?uri=oe-23-12-15888&gt;`_</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1">#Override input parameters with data specified in cri_type:</span>
-    <span class="n">args</span> <span class="o">=</span> <span class="nb">locals</span><span class="p">()</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="c1"># get dict with keyword input arguments to function (used to overwrite non-None input arguments present in cri_type dict)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="nb">locals</span><span class="p">())</span> <span class="c1"># get dict with keyword input arguments to function (used to overwrite non-None input arguments present in cri_type dict)</span>
     <span class="n">cri_type</span> <span class="o">=</span> <span class="n">process_cri_type_input</span><span class="p">(</span><span class="n">cri_type</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">callerfunction</span> <span class="o">=</span> <span class="s1">&#39;cri.spd_to_rg&#39;</span><span class="p">)</span>
 
     <span class="c1">#avg, catf, cieobs, cieobs_cct, cri_specific_pars, cspace, cspace_pars, ref_type, rg_pars, sampleset, scale_factor, scale_fcn = [cri_type[x] for x in sorted(cri_type.keys())] </span>
 
        
     <span class="c1"># calculate Jabt of test and Jabr of the reference illuminant corresponding to test: </span>
-    <span class="n">jabt</span><span class="p">,</span> <span class="n">jabr</span><span class="p">,</span><span class="n">cct</span><span class="p">,</span><span class="n">duv</span> <span class="o">=</span> <span class="n">spd_to_jab_t_r</span><span class="p">(</span><span class="n">SPD</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;jabt,jabr,cct,duv&#39;</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="n">wl</span><span class="p">)</span> 
+    <span class="n">jabt</span><span class="p">,</span> <span class="n">jabr</span><span class="p">,</span><span class="n">cct</span><span class="p">,</span><span class="n">duv</span><span class="p">,</span> <span class="n">Sr</span> <span class="o">=</span> <span class="n">spd_to_jab_t_r</span><span class="p">(</span><span class="n">SPD</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;jabt,jabr,cct,duv,Sr&#39;</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="n">wl</span><span class="p">)</span> 
 
     
     <span class="c1"># calculate gamut area index:</span>
@@ -1272,7 +1296,7 @@
 <span class="sd">            |                     source spds used to optimize cfactor. </span>
 <span class="sd">            |                     Note that if key not in :scale: dict, </span>
 <span class="sd">            |                     then default = &#39;F1-F12&#39;.</span>
-<span class="sd">        :opt_scale: </span>
+<span class="sd">        :opt_scale_factor: </span>
 <span class="sd">            | True or False, optional</span>
 <span class="sd">            | True: optimize scaling-factor, else do nothing and use value of </span>
 <span class="sd">            | scaling-factor in :scale: dict.   </span>
@@ -1311,7 +1335,7 @@
     <span class="n">outlist</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
     
     <span class="c1">#Override input parameters with data specified in cri_type:</span>
-    <span class="n">args</span> <span class="o">=</span> <span class="nb">locals</span><span class="p">()</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="c1"># get dict with keyword input arguments to function (used to overwrite non-None input arguments present in cri_type dict)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="nb">locals</span><span class="p">())</span> <span class="c1"># get dict with keyword input arguments to function (used to overwrite non-None input arguments present in cri_type dict)</span>
 
     <span class="n">cri_type</span> <span class="o">=</span> <span class="n">process_cri_type_input</span><span class="p">(</span><span class="n">cri_type</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">callerfunction</span> <span class="o">=</span> <span class="s1">&#39;cri.spd_to_cri&#39;</span><span class="p">)</span>
     
@@ -1328,8 +1352,8 @@
         <span class="k">raise</span> <span class="ne">Exception</span> <span class="p">(</span><span class="s1">&#39;Unable to optimize scale_factor.&#39;</span><span class="p">)</span>
 
     <span class="c1"># A. get DEi of for ciera and of requested cri metric for spds in or specified by scale_factor_optimization_spds&#39;:</span>
-    <span class="n">DEi</span><span class="p">,</span> <span class="n">jabt</span><span class="p">,</span> <span class="n">jabr</span><span class="p">,</span> <span class="n">cct</span><span class="p">,</span> <span class="n">duv</span> <span class="o">=</span> <span class="n">spd_to_DEi</span><span class="p">(</span><span class="n">SPD</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;DEi,jabt,jabr,cct,duv&#39;</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">)</span>
-    
+    <span class="n">DEi</span><span class="p">,</span> <span class="n">jabt</span><span class="p">,</span> <span class="n">jabr</span><span class="p">,</span> <span class="n">cct</span><span class="p">,</span> <span class="n">duv</span><span class="p">,</span> <span class="n">Sr</span><span class="p">,</span> <span class="n">xyzti</span><span class="p">,</span> <span class="n">xyztw</span><span class="p">,</span> <span class="n">xyzri</span><span class="p">,</span> <span class="n">xyzrw</span> <span class="o">=</span> <span class="n">spd_to_DEi</span><span class="p">(</span><span class="n">SPD</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;DEi,jabt,jabr,cct,duv,Sr,xyzti,xyztw,xyzri,xyzrw&#39;</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">)</span>
+
     <span class="c1"># B. convert DEi to color rendering index:</span>
     <span class="n">Rfi</span> <span class="o">=</span> <span class="n">scale_fcn</span><span class="p">(</span><span class="n">DEi</span><span class="p">,</span><span class="n">scale_factor</span><span class="p">)</span>
     <span class="n">Rf</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">(</span><span class="n">scale_fcn</span><span class="p">(</span><span class="n">avg</span><span class="p">(</span><span class="n">DEi</span><span class="p">,</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">),</span><span class="n">scale_factor</span><span class="p">))</span>
@@ -1347,7 +1371,6 @@
     <span class="c1"># D. Calculate Rfhi, Rhshi and Rcshi:</span>
     <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;Rfhi&#39;</span> <span class="ow">in</span> <span class="n">outlist</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="s1">&#39;Rhshi&#39;</span> <span class="ow">in</span> <span class="n">outlist</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="s1">&#39;Rcshi&#39;</span> <span class="ow">in</span> <span class="n">outlist</span><span class="p">):</span>
         <span class="n">Rfhi</span><span class="p">,</span> <span class="n">Rcshi</span><span class="p">,</span> <span class="n">Rhshi</span> <span class="o">=</span> <span class="n">jab_to_rhi</span><span class="p">(</span><span class="n">jabt</span> <span class="o">=</span> <span class="n">jabt_binned</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">...</span><span class="p">],</span> <span class="n">jabr</span> <span class="o">=</span> <span class="n">jabr_binned</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">...</span><span class="p">],</span> <span class="n">DEi</span> <span class="o">=</span> <span class="n">DEi_binned</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">...</span><span class="p">],</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">,</span> <span class="n">scale_factor</span> <span class="o">=</span> <span class="n">scale_factor</span><span class="p">,</span> <span class="n">scale_fcn</span> <span class="o">=</span> <span class="n">scale_fcn</span><span class="p">,</span> <span class="n">use_bin_avg_DEi</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="c1"># [:-1,...] removes last row from jab as this was added to close the gamut. </span>
-
 
     <span class="k">if</span> <span class="p">(</span><span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;Rf&#39;</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">Rf</span>

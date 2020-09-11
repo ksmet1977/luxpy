@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.toolboxes.spdbuild.spdbuilder &mdash; LuxPy 1.5.2 documentation</title>
+  <title>luxpy.toolboxes.spdbuild.spdbuilder &mdash; LuxPy 1.5.3 documentation</title>
   
 
   
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                1.5.2
+                1.5.3
               </div>
             
           
@@ -235,10 +235,11 @@
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;gaussian_spd&#39;</span><span class="p">,</span><span class="s1">&#39;butterworth_spd&#39;</span><span class="p">,</span><span class="s1">&#39;lorentzian2_spd&#39;</span><span class="p">,</span>
            <span class="s1">&#39;mono_led_spd&#39;</span><span class="p">,</span><span class="s1">&#39;phosphor_led_spd&#39;</span><span class="p">,</span><span class="s1">&#39;spd_builder&#39;</span><span class="p">,</span>
-         <span class="s1">&#39;get_w_summed_spd&#39;</span><span class="p">,</span><span class="s1">&#39;fitnessfcn&#39;</span><span class="p">,</span><span class="s1">&#39;spd_constructor_2&#39;</span><span class="p">,</span>
-         <span class="s1">&#39;color3mixer&#39;</span><span class="p">,</span><span class="s1">&#39;colormixer&#39;</span><span class="p">,</span><span class="s1">&#39;colormixer_pinv&#39;</span><span class="p">,</span>
-         <span class="s1">&#39;spd_constructor_3&#39;</span><span class="p">,</span><span class="s1">&#39;spd_optimizer_2_3&#39;</span><span class="p">,</span><span class="s1">&#39;get_optim_pars_dict&#39;</span><span class="p">,</span>
-         <span class="s1">&#39;initialize_spd_model_pars&#39;</span><span class="p">,</span><span class="s1">&#39;initialize_spd_optim_pars&#39;</span><span class="p">,</span><span class="s1">&#39;get_primary_fluxratios&#39;</span><span class="p">,</span><span class="s1">&#39;spd_optimizer&#39;</span><span class="p">]</span>
+           <span class="s1">&#39;get_w_summed_spd&#39;</span><span class="p">,</span><span class="s1">&#39;fitnessfcn&#39;</span><span class="p">,</span><span class="s1">&#39;spd_constructor_2&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;color3mixer&#39;</span><span class="p">,</span><span class="s1">&#39;colormixer&#39;</span><span class="p">,</span><span class="s1">&#39;colormixer_pinv&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;spd_constructor_3&#39;</span><span class="p">,</span><span class="s1">&#39;spd_optimizer_2_3&#39;</span><span class="p">,</span><span class="s1">&#39;get_optim_pars_dict&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;initialize_spd_model_pars&#39;</span><span class="p">,</span><span class="s1">&#39;initialize_spd_optim_pars&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;get_primary_fluxratios&#39;</span><span class="p">,</span><span class="s1">&#39;spd_optimizer&#39;</span><span class="p">]</span>
 
 <span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="gaussian_spd"><a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.spdbuild.gaussian_spd">[docs]</a><span class="k">def</span> <span class="nf">gaussian_spd</span><span class="p">(</span><span class="n">peakwl</span> <span class="o">=</span> <span class="mi">530</span><span class="p">,</span> <span class="n">fwhm</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="n">_WL3</span><span class="p">,</span> <span class="n">with_wl</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
@@ -264,10 +265,13 @@
 <span class="sd">            | ndarray with spectra. </span>
 <span class="sd">    Note:</span>
 <span class="sd">        | Gaussian:</span>
-<span class="sd">        |    g = exp(-0.5*((wl - peakwl)/fwhm)**2)</span>
+<span class="sd">        |    g = exp(-0.5*((wl - peakwl)/sig)**2)</span>
+<span class="sd">        | with sig = fwhm/(2*(2*np.log(2))**0.5) </span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">wl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">getwlr</span><span class="p">(</span><span class="n">wl</span><span class="p">))</span> <span class="c1"># create wavelength range</span>
-    <span class="n">spd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="o">*</span><span class="p">((</span><span class="n">wl</span><span class="o">.</span><span class="n">T</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">peakwl</span><span class="p">))</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">fwhm</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">fwhm_to_sig</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span><span class="o">**</span><span class="mf">0.5</span><span class="p">)</span> <span class="c1"># conversion factor for FWHM to sigma of Gaussian</span>
+    <span class="n">spd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="o">*</span><span class="p">((</span><span class="n">wl</span><span class="o">.</span><span class="n">T</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">peakwl</span><span class="p">))</span><span class="o">/</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">fwhm</span><span class="p">)</span><span class="o">*</span><span class="n">fwhm_to_sig</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
     <span class="k">if</span> <span class="n">with_wl</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
         <span class="n">spd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">wl</span><span class="p">,</span> <span class="n">spd</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">spd</span></div>
@@ -381,7 +385,8 @@
 <span class="sd">    </span>
 <span class="sd">    Note:</span>
 <span class="sd">        | Gaussian:</span>
-<span class="sd">        |    g = exp(-0.5*((wl - peakwl)/fwhm)**2)</span>
+<span class="sd">        |    g = exp(-0.5*((wl - peakwl)/sig)**2)</span>
+<span class="sd">        | with sig = fwhm/(2*(2*np.log(2))**0.5) </span>
 <span class="sd">        |</span>
 <span class="sd">        | Lorentzian (2nd order):</span>
 <span class="sd">        |    lz = (1 + ((n*(wl - peakwl)/fwhm)**2))**(-2)</span>
@@ -729,7 +734,6 @@
 <span class="sd">        Opt. Express 19, 6903–6912.</span>
 <span class="sd">        &lt;https://www.osapublishing.org/vjbo/fulltext.cfm?uri=oe-19-7-6903&amp;id=211315&gt;`_</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="k">if</span> <span class="n">component_spds</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">spd</span><span class="p">,</span> <span class="n">component_spds</span> <span class="o">=</span> <span class="n">phosphor_led_spd</span><span class="p">(</span><span class="n">peakwl</span> <span class="o">=</span> <span class="n">peakwl</span><span class="p">,</span> <span class="n">fwhm</span> <span class="o">=</span> <span class="n">fwhm</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="n">wl</span><span class="p">,</span> <span class="n">bw_order</span> <span class="o">=</span> <span class="n">bw_order</span><span class="p">,</span> <span class="n">with_wl</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">strength_shoulder</span> <span class="o">=</span> <span class="n">strength_shoulder</span><span class="p">,</span>\
                                            <span class="n">strength_ph</span> <span class="o">=</span> <span class="n">strength_ph</span><span class="p">,</span> <span class="n">peakwl_ph1</span> <span class="o">=</span> <span class="n">peakwl_ph1</span><span class="p">,</span> <span class="n">fwhm_ph1</span> <span class="o">=</span> <span class="n">fwhm_ph1</span><span class="p">,</span> <span class="n">strength_ph1</span> <span class="o">=</span> <span class="n">strength_ph1</span><span class="p">,</span>\
@@ -787,7 +791,10 @@
         <span class="c1"># Calculate spectrum:</span>
         <span class="n">spd</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">dot23</span><span class="p">(</span><span class="n">M</span><span class="p">,</span><span class="n">component_spds</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
         <span class="n">spd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">([</span><span class="n">spd</span><span class="p">[</span><span class="n">i</span><span class="p">,:,</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)])</span>
-        <span class="n">spd</span> <span class="o">=</span> <span class="n">spd</span><span class="o">/</span><span class="n">spd</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">spdmax</span> <span class="o">=</span> <span class="n">spd</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">spdmax</span><span class="p">[</span><span class="n">spdmax</span><span class="o">==</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="c1"># avoid division by zero</span>
+        <span class="n">spd</span> <span class="o">=</span> <span class="n">spd</span><span class="o">/</span><span class="n">spdmax</span>
+        <span class="n">spd</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">spd</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span>
         
         
         <span class="c1"># Mark out_of_gamut solution with NaN&#39;s:</span>
@@ -1641,7 +1648,7 @@
               <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>\
               <span class="n">pair_strengths</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span><span class="n">triangle_strengths</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>\
               <span class="n">peakwl_min</span> <span class="o">=</span> <span class="p">[</span><span class="mi">400</span><span class="p">],</span> <span class="n">peakwl_max</span> <span class="o">=</span> <span class="p">[</span><span class="mi">700</span><span class="p">],</span>\
-              <span class="n">fwhm_min</span> <span class="o">=</span> <span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">fwhm_max</span> <span class="o">=</span> <span class="p">[</span><span class="mi">300</span><span class="p">],</span>\
+              <span class="n">fwhm_min</span> <span class="o">=</span> <span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">fwhm_max</span> <span class="o">=</span> <span class="p">[</span><span class="mi">600</span><span class="p">],</span>\
               <span class="n">bw_order_min</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">bw_order_max</span> <span class="o">=</span> <span class="p">[</span><span class="mi">100</span><span class="p">]):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Setup dict with optimization parameters.</span>
@@ -2067,7 +2074,7 @@
                   <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>\
                   <span class="n">pair_strengths</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>\
                   <span class="n">peakwl_min</span> <span class="o">=</span> <span class="p">[</span><span class="mi">400</span><span class="p">],</span> <span class="n">peakwl_max</span> <span class="o">=</span> <span class="p">[</span><span class="mi">700</span><span class="p">],</span>\
-                  <span class="n">fwhm_min</span> <span class="o">=</span> <span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">fwhm_max</span> <span class="o">=</span> <span class="p">[</span><span class="mi">300</span><span class="p">],</span>\
+                  <span class="n">fwhm_min</span> <span class="o">=</span> <span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">fwhm_max</span> <span class="o">=</span> <span class="p">[</span><span class="mi">600</span><span class="p">],</span>\
                   <span class="n">bw_order_min</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="n">bw_order_max</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>\
                   <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;spds,M&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -2303,7 +2310,7 @@
                           <span class="n">obj_fcn</span> <span class="o">=</span> <span class="n">obj_fcn</span><span class="p">,</span> \
                           <span class="n">obj_tar_vals</span> <span class="o">=</span> <span class="n">obj_tar_vals</span><span class="p">,</span>\
                           <span class="n">peakwl_min</span> <span class="o">=</span> <span class="p">[</span><span class="mi">400</span><span class="p">],</span> <span class="n">peakwl_max</span> <span class="o">=</span> <span class="p">[</span><span class="mi">700</span><span class="p">],</span>\
-                          <span class="n">fwhm_min</span> <span class="o">=</span> <span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">fwhm_max</span> <span class="o">=</span> <span class="p">[</span><span class="mi">100</span><span class="p">],</span>\
+                          <span class="n">fwhm_min</span> <span class="o">=</span> <span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">fwhm_max</span> <span class="o">=</span> <span class="p">[</span><span class="mi">300</span><span class="p">],</span>\
                           <span class="n">wl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">360</span><span class="p">,</span><span class="mi">830</span><span class="p">,</span><span class="mi">1</span><span class="p">]),</span>\
                           <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
     <span class="c1"># Check output agrees with target:</span>
@@ -2476,7 +2483,7 @@
                           <span class="n">obj_fcn</span> <span class="o">=</span> <span class="n">obj_fcn</span><span class="p">,</span> \
                           <span class="n">obj_tar_vals</span> <span class="o">=</span> <span class="n">obj_tar_vals</span><span class="p">,</span>\
                           <span class="n">peakwl_min</span> <span class="o">=</span> <span class="p">[</span><span class="mi">400</span><span class="p">],</span> <span class="n">peakwl_max</span> <span class="o">=</span> <span class="p">[</span><span class="mi">700</span><span class="p">],</span>\
-                          <span class="n">fwhm_min</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">fwhm_max</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">],</span>\
+                          <span class="n">fwhm_min</span> <span class="o">=</span> <span class="p">[</span><span class="mi">6</span><span class="p">],</span> <span class="n">fwhm_max</span> <span class="o">=</span> <span class="p">[</span><span class="mi">6</span><span class="p">],</span>\
                           <span class="n">wl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">360</span><span class="p">,</span><span class="mi">830</span><span class="p">,</span><span class="mi">1</span><span class="p">]),</span>\
                           <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
     <span class="c1"># Check output agrees with target:</span>

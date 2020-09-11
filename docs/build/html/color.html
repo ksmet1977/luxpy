@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Color sub-package &mdash; LuxPy 1.5.2 documentation</title>
+  <title>Color sub-package &mdash; LuxPy 1.5.3 documentation</title>
   
 
   
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                1.5.2
+                1.5.3
               </div>
             
           
@@ -3760,14 +3760,14 @@ an exception is raised.</p></li>
 
 <dl class="py function">
 <dt id="luxpy.color.cat.smet2017_D">
-<code class="sig-prename descclassname">luxpy.color.cat.</code><code class="sig-name descname">smet2017_D</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xyzw</span></em>, <em class="sig-param"><span class="n">Dmax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">'1964_10'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cat/chromaticadaptation.html#smet2017_D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cat.smet2017_D" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.color.cat.</code><code class="sig-name descname">smet2017_D</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xyzw</span></em>, <em class="sig-param"><span class="n">Dmax</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cat/chromaticadaptation.html#smet2017_D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cat.smet2017_D" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the degree of adaptation based on chromaticity following 
 Smet et al. (2017)</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
 <dt class="field-odd">xyzw</dt>
 <dd class="field-odd"><div class="line-block">
-<div class="line">ndarray with white point data</div>
+<div class="line">ndarray with white point data (CIE 1964 10° XYZs!!)</div>
 </div>
 </dd>
 <dt class="field-even">Dmax</dt>
@@ -3777,12 +3777,6 @@ Smet et al. (2017)</p>
 <div class="line">but probably too low due to dark surround leading to incomplete </div>
 <div class="line">chromatic adaptation even for neutral illuminants </div>
 <div class="line">resulting in background luminance (fov~50Â°) of 760 cd/mÂ²))</div>
-</div>
-</dd>
-<dt class="field-odd">cieobs</dt>
-<dd class="field-odd"><div class="line-block">
-<div class="line">‘1964_10’, optional</div>
-<div class="line">CMF set used in deriving model in cited paper.</div>
 </div>
 </dd>
 </dl>
@@ -6417,6 +6411,7 @@ LEUKOS, 14(2), 55–67.</a></p>
 <li><p>__init__.py</p></li>
 <li><p>ies_tm30_metrics.py</p></li>
 <li><p>ies_tm30_graphics.py</p></li>
+<li><p>ansi_ies_tm30_graphics.py</p></li>
 </ul>
 </dd>
 </dl>
@@ -7788,7 +7783,7 @@ Opt. Express, vol. 23, no. 12, pp. 15888–15906, 2015.</a></p>
 </div>
 </div>
 </dd>
-<dt class="field-even">opt_scale</dt>
+<dt class="field-even">opt_scale_factor</dt>
 <dd class="field-even"><div class="line-block">
 <div class="line">True or False, optional</div>
 <div class="line">True: optimize scaling-factor, else do nothing and use value of </div>
@@ -8675,7 +8670,7 @@ Opt. Eng., vol. 49, no. 3, pp. 33602–33616.</a></p>
 
 <dl class="py function">
 <dt id="luxpy.color.cri.plot_hue_bins">
-<code class="sig-prename descclassname">luxpy.color.cri.</code><code class="sig-name descname">plot_hue_bins</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">hbins</span><span class="o">=</span><span class="default_value">16</span></em>, <em class="sig-param"><span class="n">start_hue</span><span class="o">=</span><span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">scalef</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">plot_axis_labels</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">bin_labels</span><span class="o">=</span><span class="default_value">'#'</span></em>, <em class="sig-param"><span class="n">plot_edge_lines</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">plot_center_lines</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">plot_bin_colors</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">axtype</span><span class="o">=</span><span class="default_value">'polar'</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">force_CVG_layout</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cri/utils/graphics.html#plot_hue_bins"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cri.plot_hue_bins" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.color.cri.</code><code class="sig-name descname">plot_hue_bins</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">hbins</span><span class="o">=</span><span class="default_value">16</span></em>, <em class="sig-param"><span class="n">start_hue</span><span class="o">=</span><span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">scalef</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">plot_axis_labels</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">bin_labels</span><span class="o">=</span><span class="default_value">'#'</span></em>, <em class="sig-param"><span class="n">plot_edge_lines</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">plot_center_lines</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">plot_bin_colors</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">plot_10_20_circles</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">axtype</span><span class="o">=</span><span class="default_value">'polar'</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">force_CVG_layout</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cri/utils/graphics.html#plot_hue_bins"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cri.plot_hue_bins" title="Permalink to this definition">¶</a></dt>
 <dd><p>Makes basis plot for Color Vector Graphic (CVG).</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -8733,14 +8728,21 @@ Opt. Eng., vol. 49, no. 3, pp. 33602–33616.</a></p>
 <div class="line">Colorize hue bins.</div>
 </div>
 </dd>
-<dt class="field-odd">axtype</dt>
+<dt class="field-odd">plot_10_20_circles</dt>
 <dd class="field-odd"><div class="line-block">
+<div class="line">False, optional</div>
+<div class="line">If True and :axtype: == ‘cart’: Plot white circles at </div>
+<div class="line">80%, 90%, 100%, 110% and 120% of :scalef: </div>
+</div>
+</dd>
+<dt class="field-even">axtype</dt>
+<dd class="field-even"><div class="line-block">
 <div class="line">‘polar’ or ‘cart’, optional</div>
 <div class="line">Make polar or Cartesian plot.</div>
 </div>
 </dd>
-<dt class="field-even">ax</dt>
-<dd class="field-even"><div class="line-block">
+<dt class="field-odd">ax</dt>
+<dd class="field-odd"><div class="line-block">
 <div class="line">None or ‘new’ or ‘same’, optional</div>
 <div class="line-block">
 <div class="line">- None or ‘new’ creates new plot</div>
@@ -8749,8 +8751,8 @@ Opt. Eng., vol. 49, no. 3, pp. 33602–33616.</a></p>
 </div>
 </div>
 </dd>
-<dt class="field-odd">force_CVG_layout</dt>
-<dd class="field-odd"><div class="line-block">
+<dt class="field-even">force_CVG_layout</dt>
+<dd class="field-even"><div class="line-block">
 <div class="line">False or True, optional</div>
 <div class="line">True: Force plot of basis of CVG on first encounter.</div>
 </div>
@@ -8771,7 +8773,7 @@ other plotting fcns)</div>
 
 <dl class="py function">
 <dt id="luxpy.color.cri.plot_ColorVectorGraphic">
-<code class="sig-prename descclassname">luxpy.color.cri.</code><code class="sig-name descname">plot_ColorVectorGraphic</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">jabt</span></em>, <em class="sig-param"><span class="n">jabr</span></em>, <em class="sig-param"><span class="n">hbins</span><span class="o">=</span><span class="default_value">16</span></em>, <em class="sig-param"><span class="n">start_hue</span><span class="o">=</span><span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">scalef</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">plot_axis_labels</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">bin_labels</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">plot_edge_lines</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">plot_center_lines</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">plot_bin_colors</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">axtype</span><span class="o">=</span><span class="default_value">'polar'</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">force_CVG_layout</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">jabti</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">jabri</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">hbinnr</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cri/utils/graphics.html#plot_ColorVectorGraphic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cri.plot_ColorVectorGraphic" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.color.cri.</code><code class="sig-name descname">plot_ColorVectorGraphic</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">jabt</span></em>, <em class="sig-param"><span class="n">jabr</span></em>, <em class="sig-param"><span class="n">hbins</span><span class="o">=</span><span class="default_value">16</span></em>, <em class="sig-param"><span class="n">start_hue</span><span class="o">=</span><span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">scalef</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">plot_axis_labels</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">bin_labels</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">plot_edge_lines</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">plot_center_lines</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">plot_bin_colors</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">plot_10_20_circles</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">plot_vectors</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">gamut_line_color</span><span class="o">=</span><span class="default_value">'grey'</span></em>, <em class="sig-param"><span class="n">axtype</span><span class="o">=</span><span class="default_value">'polar'</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">force_CVG_layout</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">jabti</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">jabri</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">hbinnr</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cri/utils/graphics.html#plot_ColorVectorGraphic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cri.plot_ColorVectorGraphic" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot Color Vector Graphic (CVG).</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -8839,14 +8841,33 @@ other plotting fcns)</div>
 <div class="line">Colorize hue-bins.</div>
 </div>
 </dd>
-<dt class="field-odd">axtype</dt>
+<dt class="field-odd">plot_10_20_circles</dt>
 <dd class="field-odd"><div class="line-block">
+<div class="line">True, optional</div>
+<div class="line">If True and :axtype: == ‘cart’: Plot white circles at </div>
+<div class="line">80%, 90%, 100%, 110% and 120% of :scalef: </div>
+</div>
+</dd>
+<dt class="field-even">plot_vectors</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">True, optional</div>
+<div class="line">True: plot vectors from reference to test colors.</div>
+</div>
+</dd>
+<dt class="field-odd">gamut_line_color</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">‘grey’, optional</div>
+<div class="line">Color to plot the test color gamut in.</div>
+</div>
+</dd>
+<dt class="field-even">axtype</dt>
+<dd class="field-even"><div class="line-block">
 <div class="line">‘polar’ or ‘cart’, optional</div>
 <div class="line">Make polar or Cartesian plot.</div>
 </div>
 </dd>
-<dt class="field-even">ax</dt>
-<dd class="field-even"><div class="line-block">
+<dt class="field-odd">ax</dt>
+<dd class="field-odd"><div class="line-block">
 <div class="line">None or ‘new’ or ‘same’, optional</div>
 <div class="line-block">
 <div class="line">- None or ‘new’ creates new plot</div>
@@ -8855,29 +8876,29 @@ other plotting fcns)</div>
 </div>
 </div>
 </dd>
-<dt class="field-odd">force_CVG_layout</dt>
-<dd class="field-odd"><div class="line-block">
+<dt class="field-even">force_CVG_layout</dt>
+<dd class="field-even"><div class="line-block">
 <div class="line">False or True, optional</div>
 <div class="line">True: Force plot of basis of CVG.</div>
 </div>
 </dd>
-<dt class="field-even">jabti</dt>
-<dd class="field-even"><div class="line-block">
+<dt class="field-odd">jabti</dt>
+<dd class="field-odd"><div class="line-block">
 <div class="line">None, optional</div>
 <div class="line">ndarray with jab data of all samples under test SPD (scaled to ‘unit’ circle)</div>
 <div class="line">If not None: plot chromaticity coordinates of test samples relative to </div>
 <div class="line">the mean chromaticity of the samples under the reference illuminant.</div>
 </div>
 </dd>
-<dt class="field-odd">jabri</dt>
-<dd class="field-odd"><div class="line-block">
+<dt class="field-even">jabri</dt>
+<dd class="field-even"><div class="line-block">
 <div class="line">None, optional</div>
 <div class="line">ndarray with jab data of all samples under reference SPD (scaled to ‘unit’ circle)</div>
 <div class="line">Must be supplied when jabti is not None!</div>
 </div>
 </dd>
-<dt class="field-even">hbinnr</dt>
-<dd class="field-even"><div class="line-block">
+<dt class="field-odd">hbinnr</dt>
+<dd class="field-odd"><div class="line-block">
 <div class="line">None, optional</div>
 <div class="line">ndarray with hue bin number of each sample.</div>
 <div class="line">Must be supplied when jabti is not None!</div>
@@ -9203,6 +9224,774 @@ base color shift and metameric uncertainty.</div>
 <div class="line"><br /></div>
 <div class="line">:cmap: list with rgb colors for hue bins 
 (for use in other plotting fcns)</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="luxpy.color.cri._tm30_process_spd">
+<code class="sig-prename descclassname">luxpy.color.cri.</code><code class="sig-name descname">_tm30_process_spd</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spd</span></em>, <em class="sig-param"><span class="n">cri_type</span><span class="o">=</span><span class="default_value">'ies-tm30'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cri/iestm30/ansi_ies_tm30_graphics.html#_tm30_process_spd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cri._tm30_process_spd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate all required parameters for plotting from spd using cri.spd_to_cri()</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">spd</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray or dict</div>
+<div class="line">If ndarray: single spectral power distribution.</div>
+<div class="line">If dict: dictionary with pre-computed parameters.</div>
+<div class="line-block">
+<div class="line">required keys:</div>
+<div class="line-block">
+<div class="line">‘Rf’,’Rg’,’cct’,’duv’,’Sr’,’cri_type’,’xyzri’,’xyzrw’,</div>
+<div class="line">‘hbinnrs’,’Rfi’,’Rfhi’,’Rcshi’,’Rhshi’,</div>
+<div class="line">‘jabt_binned’,’jabr_binned’,</div>
+<div class="line">‘nhbins’,’start_hue’,’normalize_gamut’,’normalized_chroma_ref’</div>
+</div>
+</div>
+<div class="line">see cri.spd_to_cri() for more info on parameters.</div>
+</div>
+</dd>
+<dt class="field-even">cri_type</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">_CRI_TYPE_DEFAULT or str or dict, optional</div>
+<div class="line-block">
+<div class="line">-‘str: specifies dict with default cri model parameters </div>
+<div class="line-block">
+<div class="line">(for supported types, see luxpy.cri._CRI_DEFAULTS[‘cri_types’])</div>
+</div>
+<div class="line">- dict: user defined model parameters </div>
+<div class="line-block">
+<div class="line">(see e.g. luxpy.cri._CRI_DEFAULTS[‘cierf’] </div>
+<div class="line">for required structure)</div>
+</div>
+</div>
+<div class="line">Note that any non-None input arguments (in kwargs) </div>
+<div class="line">to the function will override default values in cri_type dict.</div>
+</div>
+</dd>
+<dt class="field-odd">kwargs</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">Additional optional keyword arguments, </div>
+<div class="line">the same as in cri.spd_to_cri()</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">data</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">dictionary with required parameters for plotting functions.      </div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="luxpy.color.cri.plot_tm30_cvg">
+<code class="sig-prename descclassname">luxpy.color.cri.</code><code class="sig-name descname">plot_tm30_cvg</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spd</span></em>, <em class="sig-param"><span class="n">cri_type</span><span class="o">=</span><span class="default_value">'ies-tm30'</span></em>, <em class="sig-param"><span class="n">gamut_line_color</span><span class="o">=</span><span class="default_value">'r'</span></em>, <em class="sig-param"><span class="n">plot_vectors</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">axh</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">axtype</span><span class="o">=</span><span class="default_value">'cart'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cri/iestm30/ansi_ies_tm30_graphics.html#plot_tm30_cvg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cri.plot_tm30_cvg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot TM30 Color Vector Graphic (CVG).</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">spd</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray or dict</div>
+<div class="line">If ndarray: single spectral power distribution.</div>
+<div class="line">If dict: dictionary with pre-computed parameters.</div>
+<div class="line-block">
+<div class="line">required keys:</div>
+<div class="line-block">
+<div class="line">‘Rf’,’Rg’,’cct’,’duv’,’Sr’,’cri_type’,’xyzri’,’xyzrw’,</div>
+<div class="line">‘hbinnrs’,’Rfi’,’Rfhi’,’Rcshi’,’Rhshi’,</div>
+<div class="line">‘jabt_binned’,’jabr_binned’,</div>
+<div class="line">‘nhbins’,’start_hue’,’normalize_gamut’,’normalized_chroma_ref’</div>
+</div>
+</div>
+<div class="line">see cri.spd_to_cri() for more info on parameters.</div>
+</div>
+</dd>
+<dt class="field-even">cri_type</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">_CRI_TYPE_DEFAULT or str or dict, optional</div>
+<div class="line-block">
+<div class="line">-‘str: specifies dict with default cri model parameters </div>
+<div class="line-block">
+<div class="line">(for supported types, see luxpy.cri._CRI_DEFAULTS[‘cri_types’])</div>
+</div>
+<div class="line">- dict: user defined model parameters </div>
+<div class="line-block">
+<div class="line">(see e.g. luxpy.cri._CRI_DEFAULTS[‘cierf’] </div>
+<div class="line">for required structure)</div>
+</div>
+</div>
+<div class="line">Note that any non-None input arguments (in kwargs) </div>
+<div class="line">to the function will override default values in cri_type dict.</div>
+</div>
+</dd>
+<dt class="field-odd">gamut_line_color</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">‘r’, optional</div>
+<div class="line">Plotting color for the line connecting the </div>
+<div class="line">average test chromaticity in the hue bins.</div>
+</div>
+</dd>
+<dt class="field-even">plot_vectors</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">True, optional</div>
+<div class="line">Plot color shift vectors in CVG (True) or not (False).</div>
+</div>
+</dd>
+<dt class="field-odd">axh</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">If None: create new figure with single axes, else plot on specified axes. </div>
+</div>
+</dd>
+<dt class="field-even">axtype</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">‘cart’ (or ‘polar’), optional</div>
+<div class="line">Make Cartesian (default) or polar plot.    </div>
+</div>
+</dd>
+<dt class="field-odd">kwargs</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">Additional optional keyword arguments, </div>
+<div class="line">the same as in cri.spd_to_cri()</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">data</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">dictionary with required parameters for plotting functions.      </div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="luxpy.color.cri.plot_tm30_Rfi">
+<code class="sig-prename descclassname">luxpy.color.cri.</code><code class="sig-name descname">plot_tm30_Rfi</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spd</span></em>, <em class="sig-param"><span class="n">cri_type</span><span class="o">=</span><span class="default_value">'ies-tm30'</span></em>, <em class="sig-param"><span class="n">axh</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">font_size</span><span class="o">=</span><span class="default_value">8</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cri/iestm30/ansi_ies_tm30_graphics.html#plot_tm30_Rfi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cri.plot_tm30_Rfi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot Sample Color Fidelity values (Rfi).</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">spd</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray or dict</div>
+<div class="line">If ndarray: single spectral power distribution.</div>
+<div class="line">If dict: dictionary with pre-computed parameters.</div>
+<div class="line-block">
+<div class="line">required keys:</div>
+<div class="line-block">
+<div class="line">‘Rf’,’Rg’,’cct’,’duv’,’Sr’,’cri_type’,’xyzri’,’xyzrw’,</div>
+<div class="line">‘hbinnrs’,’Rfi’,’Rfhi’,’Rcshi’,’Rhshi’,</div>
+<div class="line">‘jabt_binned’,’jabr_binned’,</div>
+<div class="line">‘nhbins’,’start_hue’,’normalize_gamut’,’normalized_chroma_ref’</div>
+</div>
+</div>
+<div class="line">see cri.spd_to_cri() for more info on parameters.</div>
+</div>
+</dd>
+<dt class="field-even">cri_type</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">_CRI_TYPE_DEFAULT or str or dict, optional</div>
+<div class="line-block">
+<div class="line">-‘str: specifies dict with default cri model parameters </div>
+<div class="line-block">
+<div class="line">(for supported types, see luxpy.cri._CRI_DEFAULTS[‘cri_types’])</div>
+</div>
+<div class="line">- dict: user defined model parameters </div>
+<div class="line-block">
+<div class="line">(see e.g. luxpy.cri._CRI_DEFAULTS[‘cierf’] </div>
+<div class="line">for required structure)</div>
+</div>
+</div>
+<div class="line">Note that any non-None input arguments (in kwargs) </div>
+<div class="line">to the function will override default values in cri_type dict.</div>
+</div>
+</dd>
+<dt class="field-odd">axh</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">If None: create new figure with single axes, else plot on specified axes.    </div>
+</div>
+</dd>
+<dt class="field-even">font_size</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">_TM30_FONT_SIZE, optional</div>
+<div class="line">Font size of text, axis labels and axis values.</div>
+</div>
+</dd>
+<dt class="field-odd">kwargs</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">Additional optional keyword arguments, </div>
+<div class="line">the same as in cri.spd_to_cri()</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">axh</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">handle to figure axes.      </div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="luxpy.color.cri.plot_tm30_Rxhj">
+<code class="sig-prename descclassname">luxpy.color.cri.</code><code class="sig-name descname">plot_tm30_Rxhj</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spd</span></em>, <em class="sig-param"><span class="n">cri_type</span><span class="o">=</span><span class="default_value">'ies-tm30'</span></em>, <em class="sig-param"><span class="n">axh</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">figsize</span><span class="o">=</span><span class="default_value">6, 15</span></em>, <em class="sig-param"><span class="n">font_size</span><span class="o">=</span><span class="default_value">8</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cri/iestm30/ansi_ies_tm30_graphics.html#plot_tm30_Rxhj"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cri.plot_tm30_Rxhj" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot Local Chroma Shifts (Rcshj), Local Hue Shifts (Rhshj) and Local Color Fidelity values (Rfhj) (one for each hue-bin).</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">spd</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray or dict</div>
+<div class="line">If ndarray: single spectral power distribution.</div>
+<div class="line">If dict: dictionary with pre-computed parameters.</div>
+<div class="line-block">
+<div class="line">required keys:</div>
+<div class="line-block">
+<div class="line">‘Rf’,’Rg’,’cct’,’duv’,’Sr’,’cri_type’,’xyzri’,’xyzrw’,</div>
+<div class="line">‘hbinnrs’,’Rfi’,’Rfhi’,’Rcshi’,’Rhshi’,</div>
+<div class="line">‘jabt_binned’,’jabr_binned’,</div>
+<div class="line">‘nhbins’,’start_hue’,’normalize_gamut’,’normalized_chroma_ref’</div>
+</div>
+</div>
+<div class="line">see cri.spd_to_cri() for more info on parameters.</div>
+</div>
+</dd>
+<dt class="field-even">cri_type</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">_CRI_TYPE_DEFAULT or str or dict, optional</div>
+<div class="line-block">
+<div class="line">-‘str: specifies dict with default cri model parameters </div>
+<div class="line-block">
+<div class="line">(for supported types, see luxpy.cri._CRI_DEFAULTS[‘cri_types’])</div>
+</div>
+<div class="line">- dict: user defined model parameters </div>
+<div class="line-block">
+<div class="line">(see e.g. luxpy.cri._CRI_DEFAULTS[‘cierf’] </div>
+<div class="line">for required structure)</div>
+</div>
+</div>
+<div class="line">Note that any non-None input arguments (in kwargs) </div>
+<div class="line">to the function will override default values in cri_type dict.</div>
+</div>
+</dd>
+<dt class="field-odd">axh</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">If None: create new figure with single axes, else plot on specified axes. </div>
+</div>
+</dd>
+<dt class="field-even">figsize</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">(6,15), optional</div>
+<div class="line">Figure size of pyplot figure.</div>
+</div>
+</dd>
+<dt class="field-odd">font_size</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">_TM30_FONT_SIZE, optional</div>
+<div class="line">Font size of text, axis labels and axis values.</div>
+</div>
+</dd>
+<dt class="field-even">kwargs</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">Additional optional keyword arguments, </div>
+<div class="line">the same as in cri.spd_to_cri()</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">axh</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">handle to figure axes.      </div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="luxpy.color.cri.plot_tm30_Rcshj">
+<code class="sig-prename descclassname">luxpy.color.cri.</code><code class="sig-name descname">plot_tm30_Rcshj</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spd</span></em>, <em class="sig-param"><span class="n">cri_type</span><span class="o">=</span><span class="default_value">'ies-tm30'</span></em>, <em class="sig-param"><span class="n">axh</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">xlabel</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">y_offset</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">font_size</span><span class="o">=</span><span class="default_value">8</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cri/iestm30/ansi_ies_tm30_graphics.html#plot_tm30_Rcshj"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cri.plot_tm30_Rcshj" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot Local Chroma Shift values (Rcshj) (one for each hue-bin).</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">spd</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray or dict</div>
+<div class="line">If ndarray: single spectral power distribution.</div>
+<div class="line">If dict: dictionary with pre-computed parameters.</div>
+<div class="line-block">
+<div class="line">required keys:</div>
+<div class="line-block">
+<div class="line">‘Rf’,’Rg’,’cct’,’duv’,’Sr’,’cri_type’,’xyzri’,’xyzrw’,</div>
+<div class="line">‘hbinnrs’,’Rfi’,’Rfhi’,’Rcshi’,’Rhshi’,</div>
+<div class="line">‘jabt_binned’,’jabr_binned’,</div>
+<div class="line">‘nhbins’,’start_hue’,’normalize_gamut’,’normalized_chroma_ref’</div>
+</div>
+</div>
+<div class="line">see cri.spd_to_cri() for more info on parameters.</div>
+</div>
+</dd>
+<dt class="field-even">cri_type</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">_CRI_TYPE_DEFAULT or str or dict, optional</div>
+<div class="line-block">
+<div class="line">-‘str: specifies dict with default cri model parameters </div>
+<div class="line-block">
+<div class="line">(for supported types, see luxpy.cri._CRI_DEFAULTS[‘cri_types’])</div>
+</div>
+<div class="line">- dict: user defined model parameters </div>
+<div class="line-block">
+<div class="line">(see e.g. luxpy.cri._CRI_DEFAULTS[‘cierf’] </div>
+<div class="line">for required structure)</div>
+</div>
+</div>
+<div class="line">Note that any non-None input arguments (in kwargs) </div>
+<div class="line">to the function will override default values in cri_type dict.</div>
+</div>
+</dd>
+<dt class="field-odd">axh</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">If None: create new figure with single axes, else plot on specified axes.  </div>
+</div>
+</dd>
+<dt class="field-even">xlabel</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">True, optional</div>
+<div class="line">If False: don’t add label and numbers to x-axis </div>
+<div class="line">(useful when plotting plotting all ‘Local Rfhi, Rcshi, Rshhi’ </div>
+<div class="line-block">
+<div class="line">values in 3x1 subplots with ‘shared x-axis’: saves vertical space)</div>
+</div>
+</div>
+</dd>
+<dt class="field-odd">y_offset</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">0, optional</div>
+<div class="line">text-offset from top of bars in barplot.</div>
+</div>
+</dd>
+<dt class="field-even">font_size</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">_TM30_FONT_SIZE, optional</div>
+<div class="line">Font size of text, axis labels and axis values.</div>
+</div>
+</dd>
+<dt class="field-odd">kwargs</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">Additional optional keyword arguments, </div>
+<div class="line">the same as in cri.spd_to_cri()</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">axh</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">handle to figure axes.      </div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="luxpy.color.cri.plot_tm30_Rhshj">
+<code class="sig-prename descclassname">luxpy.color.cri.</code><code class="sig-name descname">plot_tm30_Rhshj</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spd</span></em>, <em class="sig-param"><span class="n">cri_type</span><span class="o">=</span><span class="default_value">'ies-tm30'</span></em>, <em class="sig-param"><span class="n">axh</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">xlabel</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">y_offset</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">font_size</span><span class="o">=</span><span class="default_value">8</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cri/iestm30/ansi_ies_tm30_graphics.html#plot_tm30_Rhshj"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cri.plot_tm30_Rhshj" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot Local Hue Shift values (Rhshj) (one for each hue-bin).</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">spd</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray or dict</div>
+<div class="line">If ndarray: single spectral power distribution.</div>
+<div class="line">If dict: dictionary with pre-computed parameters.</div>
+<div class="line-block">
+<div class="line">required keys:</div>
+<div class="line-block">
+<div class="line">‘Rf’,’Rg’,’cct’,’duv’,’Sr’,’cri_type’,’xyzri’,’xyzrw’,</div>
+<div class="line">‘hbinnrs’,’Rfi’,’Rfhi’,’Rcshi’,’Rhshi’,</div>
+<div class="line">‘jabt_binned’,’jabr_binned’,</div>
+<div class="line">‘nhbins’,’start_hue’,’normalize_gamut’,’normalized_chroma_ref’</div>
+</div>
+</div>
+<div class="line">see cri.spd_to_cri() for more info on parameters.</div>
+</div>
+</dd>
+<dt class="field-even">cri_type</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">_CRI_TYPE_DEFAULT or str or dict, optional</div>
+<div class="line-block">
+<div class="line">-‘str: specifies dict with default cri model parameters </div>
+<div class="line-block">
+<div class="line">(for supported types, see luxpy.cri._CRI_DEFAULTS[‘cri_types’])</div>
+</div>
+<div class="line">- dict: user defined model parameters </div>
+<div class="line-block">
+<div class="line">(see e.g. luxpy.cri._CRI_DEFAULTS[‘cierf’] </div>
+<div class="line">for required structure)</div>
+</div>
+</div>
+<div class="line">Note that any non-None input arguments (in kwargs) </div>
+<div class="line">to the function will override default values in cri_type dict.</div>
+</div>
+</dd>
+<dt class="field-odd">axh</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">If None: create new figure with single axes, else plot on specified axes. </div>
+</div>
+</dd>
+<dt class="field-even">xlabel</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">True, optional</div>
+<div class="line">If False: don’t add label and numbers to x-axis </div>
+<div class="line">(useful when plotting plotting all ‘Local Rfhi, Rcshi, Rshhi’ </div>
+<div class="line-block">
+<div class="line">values in 3x1 subplots with ‘shared x-axis’: saves vertical space)</div>
+</div>
+</div>
+</dd>
+<dt class="field-odd">y_offset</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">0, optional</div>
+<div class="line">text-offset from top of bars in barplot.</div>
+</div>
+</dd>
+<dt class="field-even">font_size</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">_TM30_FONT_SIZE, optional</div>
+<div class="line">Font size of text, axis labels and axis values.</div>
+</div>
+</dd>
+<dt class="field-odd">kwargs</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">Additional optional keyword arguments, </div>
+<div class="line">the same as in cri.spd_to_cri()</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">axh</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">handle to figure axes.      </div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="luxpy.color.cri.plot_tm30_Rfhj">
+<code class="sig-prename descclassname">luxpy.color.cri.</code><code class="sig-name descname">plot_tm30_Rfhj</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spd</span></em>, <em class="sig-param"><span class="n">cri_type</span><span class="o">=</span><span class="default_value">'ies-tm30'</span></em>, <em class="sig-param"><span class="n">axh</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">xlabel</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">y_offset</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">font_size</span><span class="o">=</span><span class="default_value">8</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cri/iestm30/ansi_ies_tm30_graphics.html#plot_tm30_Rfhj"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cri.plot_tm30_Rfhj" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot Local Color Fidelity values (Rfhj) (one for each hue-bin).</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">spd</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray or dict</div>
+<div class="line">If ndarray: single spectral power distribution.</div>
+<div class="line">If dict: dictionary with pre-computed parameters.</div>
+<div class="line-block">
+<div class="line">required keys:</div>
+<div class="line-block">
+<div class="line">‘Rf’,’Rg’,’cct’,’duv’,’Sr’,’cri_type’,’xyzri’,’xyzrw’,</div>
+<div class="line">‘hbinnrs’,’Rfi’,’Rfhi’,’Rcshi’,’Rhshi’,</div>
+<div class="line">‘jabt_binned’,’jabr_binned’,</div>
+<div class="line">‘nhbins’,’start_hue’,’normalize_gamut’,’normalized_chroma_ref’</div>
+</div>
+</div>
+<div class="line">see cri.spd_to_cri() for more info on parameters.</div>
+</div>
+</dd>
+<dt class="field-even">cri_type</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">_CRI_TYPE_DEFAULT or str or dict, optional</div>
+<div class="line-block">
+<div class="line">-‘str: specifies dict with default cri model parameters </div>
+<div class="line-block">
+<div class="line">(for supported types, see luxpy.cri._CRI_DEFAULTS[‘cri_types’])</div>
+</div>
+<div class="line">- dict: user defined model parameters </div>
+<div class="line-block">
+<div class="line">(see e.g. luxpy.cri._CRI_DEFAULTS[‘cierf’] </div>
+<div class="line">for required structure)</div>
+</div>
+</div>
+<div class="line">Note that any non-None input arguments (in kwargs) </div>
+<div class="line">to the function will override default values in cri_type dict.</div>
+</div>
+</dd>
+<dt class="field-odd">axh</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">If None: create new figure with single axes, else plot on specified axes. </div>
+</div>
+</dd>
+<dt class="field-even">xlabel</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">True, optional</div>
+<div class="line">If False: don’t add label and numbers to x-axis </div>
+<div class="line">(useful when plotting plotting all ‘Local Rfhi, Rcshi, Rshhi’ </div>
+<div class="line-block">
+<div class="line">values in 3x1 subplots with ‘shared x-axis’: saves vertical space)</div>
+</div>
+</div>
+</dd>
+<dt class="field-odd">y_offset</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">0, optional</div>
+<div class="line">text-offset from top of bars in barplot.</div>
+</div>
+</dd>
+<dt class="field-even">font_size</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">_TM30_FONT_SIZE, optional</div>
+<div class="line">Font size of text, axis labels and axis values.</div>
+</div>
+</dd>
+<dt class="field-odd">kwargs</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">Additional optional keyword arguments, </div>
+<div class="line">the same as in cri.spd_to_cri()</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">axh</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">handle to figure axes.      </div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="luxpy.color.cri.plot_tm30_spd">
+<code class="sig-prename descclassname">luxpy.color.cri.</code><code class="sig-name descname">plot_tm30_spd</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spd</span></em>, <em class="sig-param"><span class="n">cri_type</span><span class="o">=</span><span class="default_value">'ies-tm30'</span></em>, <em class="sig-param"><span class="n">axh</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">font_size</span><span class="o">=</span><span class="default_value">8</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cri/iestm30/ansi_ies_tm30_graphics.html#plot_tm30_spd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cri.plot_tm30_spd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot test SPD and reference illuminant, both normalized to the same luminous power.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">spd</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray or dict</div>
+<div class="line">If ndarray: single spectral power distribution.</div>
+<div class="line">If dict: dictionary with pre-computed parameters.</div>
+<div class="line-block">
+<div class="line">required keys:</div>
+<div class="line-block">
+<div class="line">‘Rf’,’Rg’,’cct’,’duv’,’Sr’,’cri_type’,’xyzri’,’xyzrw’,</div>
+<div class="line">‘hbinnrs’,’Rfi’,’Rfhi’,’Rcshi’,’Rhshi’,</div>
+<div class="line">‘jabt_binned’,’jabr_binned’,</div>
+<div class="line">‘nhbins’,’start_hue’,’normalize_gamut’,’normalized_chroma_ref’</div>
+</div>
+</div>
+<div class="line">see cri.spd_to_cri() for more info on parameters.</div>
+</div>
+</dd>
+<dt class="field-even">cri_type</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">_CRI_TYPE_DEFAULT or str or dict, optional</div>
+<div class="line-block">
+<div class="line">-‘str: specifies dict with default cri model parameters </div>
+<div class="line-block">
+<div class="line">(for supported types, see luxpy.cri._CRI_DEFAULTS[‘cri_types’])</div>
+</div>
+<div class="line">- dict: user defined model parameters </div>
+<div class="line-block">
+<div class="line">(see e.g. luxpy.cri._CRI_DEFAULTS[‘cierf’] </div>
+<div class="line">for required structure)</div>
+</div>
+</div>
+<div class="line">Note that any non-None input arguments (in kwargs) </div>
+<div class="line">to the function will override default values in cri_type dict.</div>
+</div>
+</dd>
+<dt class="field-odd">axh</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">If None: create new figure with single axes, else plot on specified axes.   </div>
+</div>
+</dd>
+<dt class="field-even">font_size</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">_TM30_FONT_SIZE, optional</div>
+<div class="line">Font size of text, axis labels and axis values.</div>
+</div>
+</dd>
+<dt class="field-odd">kwargs</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">Additional optional keyword arguments, </div>
+<div class="line">the same as in cri.spd_to_cri()</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">axh</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">handle to figure axes.      </div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="luxpy.color.cri.plot_tm30_report">
+<code class="sig-prename descclassname">luxpy.color.cri.</code><code class="sig-name descname">plot_tm30_report</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spd</span></em>, <em class="sig-param"><span class="n">cri_type</span><span class="o">=</span><span class="default_value">'ies-tm30'</span></em>, <em class="sig-param"><span class="n">source</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">manufacturer</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">date</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">model</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">notes</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">max_len_notes_line</span><span class="o">=</span><span class="default_value">40</span></em>, <em class="sig-param"><span class="n">figsize</span><span class="o">=</span><span class="default_value">7, 12</span></em>, <em class="sig-param"><span class="n">save_fig_name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">dpi</span><span class="o">=</span><span class="default_value">300</span></em>, <em class="sig-param"><span class="n">plot_report_top</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">plot_report_bottom</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">suptitle</span><span class="o">=</span><span class="default_value">'ANSI/IES TM-30-18 Color Rendition Report'</span></em>, <em class="sig-param"><span class="n">font_size</span><span class="o">=</span><span class="default_value">8</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cri/iestm30/ansi_ies_tm30_graphics.html#plot_tm30_report"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cri.plot_tm30_report" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create TM30 Color Rendition Report.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">spd</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray or dict</div>
+<div class="line">If ndarray: single spectral power distribution.</div>
+<div class="line">If dict: dictionary with pre-computed parameters.</div>
+<div class="line-block">
+<div class="line">required keys:</div>
+<div class="line-block">
+<div class="line">‘Rf’,’Rg’,’cct’,’duv’,’Sr’,’cri_type’,’xyzri’,’xyzrw’,</div>
+<div class="line">‘hbinnrs’,’Rfi’,’Rfhi’,’Rcshi’,’Rhshi’,</div>
+<div class="line">‘jabt_binned’,’jabr_binned’,</div>
+<div class="line">‘nhbins’,’start_hue’,’normalize_gamut’,’normalized_chroma_ref’</div>
+</div>
+</div>
+<div class="line">see cri.spd_to_cri() for more info on parameters.</div>
+</div>
+</dd>
+<dt class="field-even">cri_type</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">_CRI_TYPE_DEFAULT or str or dict, optional</div>
+<div class="line-block">
+<div class="line">-‘str: specifies dict with default cri model parameters </div>
+<div class="line-block">
+<div class="line">(for supported types, see luxpy.cri._CRI_DEFAULTS[‘cri_types’])</div>
+</div>
+<div class="line">- dict: user defined model parameters </div>
+<div class="line-block">
+<div class="line">(see e.g. luxpy.cri._CRI_DEFAULTS[‘cierf’] </div>
+<div class="line">for required structure)</div>
+</div>
+</div>
+<div class="line">Note that any non-None input arguments (in kwargs) </div>
+<div class="line">to the function will override default values in cri_type dict.</div>
+</div>
+</dd>
+<dt class="field-odd">source</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">string with source name.</div>
+</div>
+</dd>
+<dt class="field-even">manufacturer</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">string with source manufacturer.</div>
+</div>
+</dd>
+<dt class="field-odd">model</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">string with source model.</div>
+</div>
+</dd>
+<dt class="field-even">date</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">string with source measurement date.</div>
+</div>
+</dd>
+<dt class="field-odd">notes</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">string to be split</div>
+</div>
+</dd>
+<dt class="field-even">max_len_notes_line</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">40, optional</div>
+<div class="line">Maximum length of a single line when splitting the string.</div>
+</div>
+</dd>
+<dt class="field-odd">figsize</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">(7,12), optional</div>
+<div class="line">Figure size of pyplot figure.</div>
+</div>
+</dd>
+<dt class="field-even">save_fig_name</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">Filename (+path) to which the report will be saved as an image (png).</div>
+<div class="line">If None: don’t save, just display.</div>
+</div>
+</dd>
+<dt class="field-odd">dpi</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">300, optional</div>
+<div class="line">Dots-Per-Inch of image file (PNG).</div>
+</div>
+</dd>
+<dt class="field-even">plot_report_top</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">execute _plot_tm30_report_top()</div>
+</div>
+</dd>
+<dt class="field-odd">plot_report_bottom</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">execute _plot_tm30_report_bottom()</div>
+</div>
+</dd>
+<dt class="field-even">suptitle</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">‘ANSI/IES TM-30-18 Color Rendition Report’ or str, optional</div>
+<div class="line">report title (input for plt.suptitle).  </div>
+</div>
+</dd>
+<dt class="field-odd">font_size</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">_TM30_FONT_SIZE, optional</div>
+<div class="line">Font size of text, axis labels and axis values.</div>
+</div>
+</dd>
+<dt class="field-even">kwargs</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">Additional optional keyword arguments, </div>
+<div class="line">the same as in cri.spd_to_cri()</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">axs</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">dictionary with handles to each axes.</div>
+</div>
+</dd>
+<dt class="field-even">data</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">dictionary with required parameters for plotting functions.      </div>
 </div>
 </dd>
 </dl>

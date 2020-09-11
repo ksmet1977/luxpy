@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.color.ctf.colortransforms &mdash; LuxPy 1.5.2 documentation</title>
+  <title>luxpy.color.ctf.colortransforms &mdash; LuxPy 1.5.3 documentation</title>
   
 
   
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                1.5.2
+                1.5.3
               </div>
             
           
@@ -503,7 +503,7 @@
     <span class="c1"># calculate L*, a*, b*:</span>
     <span class="n">Lab</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">xyz</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
     <span class="n">Lab</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">116.0</span><span class="o">*</span><span class="p">(</span><span class="n">fXYZr</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span> <span class="o">-</span> <span class="mf">16.0</span>
-    <span class="n">Lab</span><span class="p">[</span><span class="n">pqr</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">903.3</span><span class="o">*</span><span class="n">XYZr</span><span class="p">[</span><span class="n">pqr</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">Lab</span><span class="p">[</span><span class="n">pqr</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">841</span><span class="o">/</span><span class="mi">108</span><span class="o">*</span><span class="mi">116</span><span class="o">*</span><span class="n">XYZr</span><span class="p">[</span><span class="n">pqr</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="mi">1</span><span class="p">]</span>
     <span class="n">Lab</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">500.0</span><span class="o">*</span><span class="p">(</span><span class="n">fXYZr</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">fXYZr</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
     <span class="n">Lab</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mf">200.0</span><span class="o">*</span><span class="p">(</span><span class="n">fXYZr</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">fXYZr</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span>
     <span class="k">return</span> <span class="n">Lab</span></div>

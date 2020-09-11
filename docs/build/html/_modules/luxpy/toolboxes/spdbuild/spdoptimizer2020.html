@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.toolboxes.spdbuild.spdoptimizer2020 &mdash; LuxPy 1.5.2 documentation</title>
+  <title>luxpy.toolboxes.spdbuild.spdoptimizer2020 &mdash; LuxPy 1.5.3 documentation</title>
   
 
   
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                1.5.2
+                1.5.3
               </div>
             
           
@@ -151,27 +151,25 @@
            <div itemprop="articleBody">
             
   <h1>Source code for luxpy.toolboxes.spdbuild.spdoptimizer2020</h1><div class="highlight"><pre>
-<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="c1"># # -*- coding: utf-8 -*-</span>
+<span class="c1"># &quot;&quot;&quot;</span>
+<span class="c1"># .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)</span>
+<span class="c1"># &quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="p">(</span><span class="n">math</span><span class="p">,</span> <span class="n">_WL3</span><span class="p">,</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">getwlr</span><span class="p">,</span> <span class="n">SPD</span><span class="p">,</span> <span class="n">spd_to_xyz</span><span class="p">,</span> 
-                   <span class="n">xyz_to_Yxy</span><span class="p">,</span> <span class="n">colortf</span><span class="p">,</span> <span class="n">xyz_to_cct</span><span class="p">)</span>
+                    <span class="n">xyz_to_Yxy</span><span class="p">,</span> <span class="n">colortf</span><span class="p">,</span> <span class="n">xyz_to_cct</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">luxpy.utils</span> <span class="kn">import</span> <span class="n">sp</span><span class="p">,</span><span class="n">np</span><span class="p">,</span> <span class="n">plt</span><span class="p">,</span> <span class="n">_EPS</span><span class="p">,</span> <span class="n">np2d</span>
 <span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="n">cri</span> 
 <span class="kn">from</span> <span class="nn">luxpy.math.particleswarm</span> <span class="kn">import</span> <span class="n">particleswarm</span>
-
-<span class="kn">from</span>  <span class="nn">.</span> <span class="n">spdbuilder2020</span> <span class="kn">import</span> <span class="p">(</span><span class="n">_get_default_prim_parameters</span><span class="p">,</span> <span class="n">_parse_bnds</span><span class="p">,</span> 
+<span class="kn">from</span> <span class="nn">.spdbuilder2020</span> <span class="kn">import</span> <span class="p">(</span><span class="n">_get_default_prim_parameters</span><span class="p">,</span> <span class="n">_parse_bnds</span><span class="p">,</span> 
                               <span class="n">gaussian_prim_constructor</span><span class="p">,</span> <span class="n">gaussian_prim_parameter_types</span><span class="p">,</span>
                               <span class="n">_extract_prim_optimization_parameters</span><span class="p">,</span> <span class="n">_setup_wlr</span><span class="p">,</span> <span class="n">_triangle_mixer</span><span class="p">)</span>
-
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;PrimConstructor&#39;</span><span class="p">,</span><span class="s1">&#39;Minimizer&#39;</span><span class="p">,</span><span class="s1">&#39;ObjFcns&#39;</span><span class="p">,</span><span class="s1">&#39;SpectralOptimizer&#39;</span><span class="p">]</span>
 
 <div class="viewcode-block" id="PrimConstructor"><a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.spdbuild.PrimConstructor">[docs]</a><span class="k">class</span> <span class="nc">PrimConstructor</span><span class="p">():</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">f</span> <span class="o">=</span> <span class="n">gaussian_prim_constructor</span><span class="p">,</span>
-                 <span class="n">ptypes</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;peakwl&#39;</span><span class="p">,</span> <span class="s1">&#39;fwhm&#39;</span><span class="p">],</span> 
-                 <span class="n">pdefs</span> <span class="o">=</span> <span class="p">{}):</span>
+                  <span class="n">ptypes</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;peakwl&#39;</span><span class="p">,</span> <span class="s1">&#39;fwhm&#39;</span><span class="p">],</span> 
+                  <span class="n">pdefs</span> <span class="o">=</span> <span class="p">{}):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Setup instance with a constructor function f for the primaries in the light mixture.</span>
 <span class="sd">        </span>
@@ -202,7 +200,8 @@
 <span class="sd">        |    wlr = _setup_wlr(wlr)</span>
 <span class="sd">        |</span>
 <span class="sd">        |    # Collect parameters from pars dict:</span>
-<span class="sd">        |    return np.vstack((wlr,np.exp(-((pars[&#39;peakwl&#39;]-wlr.T)/pars[&#39;fwhm&#39;])**2).T))     </span>
+<span class="sd">        |    fwhm_to_sig = 1/(2*(2*np.log(2))**0.5) # conversion factor for FWHM to sigma of Gaussian</span>
+<span class="sd">        |    return np.vstack((wlr,np.exp(-((pars[&#39;peakwl&#39;]-wlr.T)/(pars[&#39;fwhm&#39;]*fwhm_to_sig))**2).T))     </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="n">f</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ptypes</span> <span class="o">=</span> <span class="n">ptypes</span>
@@ -219,10 +218,11 @@
 <span class="sd">                | else: values for all pars should be defined in pdefs! </span>
 <span class="sd">                |       (nprims is determined by number of elements in pdefs[ptypes[0]])</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">([</span><span class="mi">1</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ptypes</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdefs</span><span class="p">])</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ptypes</span><span class="p">)):</span> <span class="c1"># everything needed is already in pdefs!!!</span>
+        <span class="n">pdefs_present</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ptypes</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdefs</span><span class="p">])</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pdefs_present</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ptypes</span><span class="p">)):</span> <span class="c1"># everything needed is already in pdefs!!!</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="p">([],</span><span class="n">nprim</span><span class="p">,</span><span class="n">wlr</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">ptypes</span><span class="p">,</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">pdefs</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="p">(</span><span class="n">nprim</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ptypes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdefs</span><span class="p">):</span>
-            <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ptypes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdefs</span><span class="p">):</span> <span class="n">nprim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pdefs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ptypes</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="n">nprim</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pdefs_present</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">):</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pdefs_present</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">):</span> <span class="n">nprim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pdefs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ptypes</span><span class="p">[</span><span class="n">pdefs_present</span><span class="p">[</span><span class="mi">0</span><span class="p">]]])</span>
             <span class="c1"># random x only for free bnds:</span>
             <span class="n">fixed_pars_defs</span><span class="p">,</span><span class="n">free_pars_bnds</span><span class="p">,</span><span class="n">free_pars</span> <span class="o">=</span> <span class="n">_get_default_prim_parameters</span><span class="p">(</span><span class="n">nprim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ptypes</span><span class="p">,</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">pdefs</span><span class="p">)</span> 
             <span class="n">bnds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]])</span><span class="o">.</span><span class="n">T</span>
@@ -231,21 +231,23 @@
                     <span class="n">bnds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">bnds</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
             <span class="n">bnds</span> <span class="o">=</span> <span class="n">bnds</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:]</span>
             <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">bnds</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="n">i</span><span class="p">],</span> <span class="n">bnds</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">i</span><span class="p">],</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">bnds</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])])</span><span class="o">.</span><span class="n">T</span> <span class="c1"># generate random start value within bounds</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">nprim</span><span class="p">,</span><span class="n">wlr</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">ptypes</span><span class="p">,</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">pdefs</span><span class="p">)</span></div></div>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">nprim</span><span class="p">,</span><span class="n">wlr</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">ptypes</span><span class="p">,</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">pdefs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;nprim = None in prim_constructor.&#39;</span><span class="p">)</span></div></div>
         
         
        
 <div class="viewcode-block" id="ObjFcns"><a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.spdbuild.ObjFcns">[docs]</a><span class="k">class</span> <span class="nc">ObjFcns</span><span class="p">():</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">f</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fp</span> <span class="o">=</span> <span class="p">[{}],</span> <span class="n">fw</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">ft</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">],</span>  <span class="n">decimals</span> <span class="o">=</span> <span class="p">[</span><span class="mi">5</span><span class="p">]):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">f</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fp</span> <span class="o">=</span> <span class="p">[{}],</span> <span class="n">fw</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">ft</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ft_tol</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span>  <span class="n">decimals</span> <span class="o">=</span> <span class="p">[</span><span class="mi">5</span><span class="p">]):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Setup instance with objective functions, their input parameters, their respective weights and target values.</span>
 <span class="sd">        </span>
 <span class="sd">        Args:</span>
 <span class="sd">            :f: </span>
-<span class="sd">                | [None] or list, optional</span>
+<span class="sd">                | None or list, optional</span>
 <span class="sd">                | Function handles to objective function.</span>
 <span class="sd">            :fp:</span>
-<span class="sd">                | [None] or list, optional</span>
+<span class="sd">                | [{}] or list, optional</span>
 <span class="sd">                | Parameter dicts for each obj. fcn.</span>
 <span class="sd">            :fw:</span>
 <span class="sd">                | [1] or list, optional.</span>
@@ -253,14 +255,26 @@
 <span class="sd">            :ft:</span>
 <span class="sd">                | [0] or list, optional</span>
 <span class="sd">                | Target values for each objective function.</span>
+<span class="sd">            :ft_tol:</span>
+<span class="sd">                | [0] or list, optional</span>
+<span class="sd">                | Tolerance on target value.</span>
+<span class="sd">                | If abs(f_j(x)-ft_j) &lt; ft_tol_j:</span>
+<span class="sd">                |    then objective value F_j (see notes below) </span>
+<span class="sd">                |    will be set to zero.</span>
 <span class="sd">            :decimals:</span>
 <span class="sd">                | [5], optional</span>
 <span class="sd">                | Rounding decimals of objective function values.</span>
+<span class="sd">                </span>
+<span class="sd">        Notes:</span>
+<span class="sd">            1. The objective value F_j for each objective function f_j is calculated as: </span>
+<span class="sd">            |      F_j = (fw_j*abs((f_j(x)-ft_j)/ft_j)) </span>
+<span class="sd">            2. If ft_j==0 then ft_j in the denominator is set to 1 to avoid division by zero.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="n">f</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_equalize_sizes</span><span class="p">(</span><span class="n">fp</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_equalize_sizes</span><span class="p">(</span><span class="n">fw</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ft</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_equalize_sizes</span><span class="p">(</span><span class="n">ft</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ft_tol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_equalize_sizes</span><span class="p">(</span><span class="n">ft_tol</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">decimals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_equalize_sizes</span><span class="p">(</span><span class="n">decimals</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_get_normalization_factors</span><span class="p">()</span>
         
@@ -308,7 +322,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">f_normalize</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="p">)):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">ft</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ft</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
-                <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ft</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+                <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ft</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
                     <span class="n">f_normalize</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ft</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
                     <span class="n">f_normalize</span><span class="p">[</span><span class="n">f_normalize</span><span class="o">==</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
                 <span class="k">else</span><span class="p">:</span>
@@ -323,7 +337,7 @@
                 <span class="n">output_str_sub</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span>
                 <span class="k">for</span> <span class="n">jj</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="p">[</span><span class="n">j</span><span class="p">])</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span> <span class="n">output_str_sub</span> <span class="o">=</span> <span class="n">output_str_sub</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">jj</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39; = </span><span class="si">{:1.2f}</span><span class="s1">, &#39;</span>
                 <span class="n">output_str_sub</span> <span class="o">=</span> <span class="n">output_str_sub</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span>
-                <span class="nb">print</span><span class="p">(</span><span class="n">obj_vals_ij</span><span class="p">)</span>
+                <span class="c1">#print(obj_vals_ij)</span>
                 <span class="n">output_str_sub</span> <span class="o">=</span> <span class="n">output_str_sub</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">obj_vals_ij</span><span class="p">))</span>    
                 <span class="n">output_str</span> <span class="o">=</span> <span class="n">output_str</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">&#39;Fobj_#</span><span class="si">{:1.0f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; = </span><span class="si">{:1.2f}</span><span class="s1"> &#39;</span> <span class="o">+</span> <span class="n">output_str_sub</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span>
                 <span class="n">output_str</span> <span class="o">=</span> <span class="n">output_str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">F_ij</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span><span class="p">)</span>
@@ -371,7 +385,7 @@
 <span class="sd">                | Specifies whether the output of the fitnessfcn should be the Root-Sum-of-Squares </span>
 <span class="sd">                | of all weighted objective function values or not. Individual function values are</span>
 <span class="sd">                | required by true multi-objective optimizers (i.e. pareto == True).</span>
-<span class="sd">             :x0:</span>
+<span class="sd">            :x0:</span>
 <span class="sd">                | None, optional</span>
 <span class="sd">                | Lets the user specify an optional starting value required by </span>
 <span class="sd">                | some minimizers (eg. &#39;nelder-mead&#39;). It should contain only </span>
@@ -384,12 +398,12 @@
 <span class="sd">            </span>
 <span class="sd">            1. Must be initialzed using class Minimizer!</span>
 <span class="sd">            2. If not isinstance(minimizer.method, str): </span>
-<span class="sd">               | then it should contain an minimization funtion with the following interface: </span>
-<span class="sd">               |     results = minimizer.method(fitnessfcn, npars, args = {}, bounds = (lb, ub), verbosity = 1)</span>
-<span class="sd">               | With &#39;results&#39; a dictionary containing various variables related to the optimization. </span>
-<span class="sd">               |  - It MUST contain a key &#39;x_final&#39; containing the final optimized parameters.</span>
-<span class="sd">               |  - bnds must be [lowerbounds, upperbounds] with x-bounds ndarrays with values for each parameter.</span>
-<span class="sd">               |  - args is an argument with a dictionary containing the input arguments to the fitnessfcn.         </span>
+<span class="sd">                | then it should contain an minimization funtion with the following interface: </span>
+<span class="sd">                |     results = minimizer.method(fitnessfcn, npars, args = {}, bounds = (lb, ub), verbosity = 1)</span>
+<span class="sd">                | With &#39;results&#39; a dictionary containing various variables related to the optimization. </span>
+<span class="sd">                |  - It MUST contain a key &#39;x_final&#39; containing the final optimized parameters.</span>
+<span class="sd">                |  - bnds must be [lowerbounds, upperbounds] with x-bounds ndarrays with values for each parameter.</span>
+<span class="sd">                |  - args is an argument with a dictionary containing the input arguments to the fitnessfcn.         </span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="n">method</span>
@@ -419,7 +433,7 @@
         <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">opts</span> <span class="o">==</span> <span class="p">{}):</span>
             <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;particleswarm&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;ps&#39;</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">opts</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;iters&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s1">&#39;n_particles&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;ftol&#39;</span><span class="p">:</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
-                                 <span class="s1">&#39;ps_opts&#39;</span> <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;c1&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span> <span class="s1">&#39;c2&#39;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">:</span><span class="mf">0.9</span><span class="p">}}</span>
+                                  <span class="s1">&#39;ps_opts&#39;</span> <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;c1&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span> <span class="s1">&#39;c2&#39;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">:</span><span class="mf">0.9</span><span class="p">}}</span>
             <span class="k">elif</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;demo&#39;</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">opts</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">DEMO</span><span class="o">.</span><span class="n">init_options</span><span class="p">(</span><span class="n">display</span> <span class="o">=</span> <span class="n">display</span><span class="p">)</span>
             <span class="k">elif</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;nelder-mead&#39;</span><span class="p">):</span>
@@ -443,8 +457,8 @@
         <span class="c1"># Particle swarm optimization:</span>
         <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;particleswarm&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;ps&#39;</span><span class="p">):</span>
             <span class="n">results</span> <span class="o">=</span> <span class="n">particleswarm</span><span class="p">(</span><span class="n">fitness_fcn</span><span class="p">,</span> <span class="n">npars</span><span class="p">,</span> <span class="n">args</span> <span class="o">=</span> <span class="n">fitness_args_dict</span><span class="p">,</span> <span class="n">bounds</span> <span class="o">=</span> <span class="p">(</span><span class="n">bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">bounds</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> 
-                                         <span class="n">iters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s1">&#39;iters&#39;</span><span class="p">],</span> <span class="n">n_particles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s1">&#39;n_particles&#39;</span><span class="p">],</span>
-                                         <span class="n">ftol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s1">&#39;ftol&#39;</span><span class="p">],</span> <span class="n">options</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s1">&#39;ps_opts&#39;</span><span class="p">],</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="n">verbosity</span><span class="p">)</span>
+                                          <span class="n">iters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s1">&#39;iters&#39;</span><span class="p">],</span> <span class="n">n_particles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s1">&#39;n_particles&#39;</span><span class="p">],</span>
+                                          <span class="n">ftol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s1">&#39;ftol&#39;</span><span class="p">],</span> <span class="n">options</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s1">&#39;ps_opts&#39;</span><span class="p">],</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="n">verbosity</span><span class="p">)</span>
        
         <span class="c1"># Differential Evolutionary Multi-Objective Optimization:</span>
         <span class="k">elif</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;demo&#39;</span><span class="p">):</span>
@@ -453,6 +467,7 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Minimizer: Must set bnds for the &#39;demo&#39; minimizer&quot;</span><span class="p">)</span>
             <span class="n">fopt</span><span class="p">,</span> <span class="n">xopt</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">DEMO</span><span class="o">.</span><span class="n">demo_opt</span><span class="p">(</span><span class="n">fitness_fcn</span><span class="p">,</span> <span class="n">npars</span><span class="p">,</span> <span class="n">args</span> <span class="o">=</span> <span class="n">fitness_args_list</span><span class="p">,</span> <span class="n">xrange</span> <span class="o">=</span> <span class="n">xrange</span><span class="p">,</span> <span class="n">options</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">fopt</span><span class="p">,</span> <span class="s1">&#39; xopt: &#39;</span><span class="p">,</span> <span class="n">xopt</span><span class="p">)</span>
             <span class="n">results</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;x_final&#39;</span><span class="p">:</span> <span class="n">xopt</span><span class="p">,</span><span class="s1">&#39;F&#39;</span><span class="p">:</span> <span class="n">fopt</span><span class="p">}</span>
         
         <span class="c1"># Local Simplex optimization using Nelder-Mead:</span>
@@ -533,6 +548,10 @@
 <span class="sd">                | Instance of class ObjFcns that holds objective functions, their </span>
 <span class="sd">                | input arguments, target values, and relative weighting factors </span>
 <span class="sd">                | (for pseudo multi-objective optimization).</span>
+<span class="sd">                | Notes: </span>
+<span class="sd">                |       1. The objective value F_j for each objective function f_j is calculated as: </span>
+<span class="sd">                |            F_j = (fw_j*abs((f_j(x)-ft_j)/ft_j)) </span>
+<span class="sd">                |       2. If ft_j==0 then ft_j in the denominator is set to 1 to avoid division by zero.</span>
 <span class="sd">            :minimizer:</span>
 <span class="sd">                | Minimizer(method=&#39;nelder-mead&#39;), optional</span>
 <span class="sd">                | Instance of the Minimizer class.</span>
@@ -691,7 +710,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">npars</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_triangle_strengths</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">free_pars</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">nprim</span><span class="p">)</span></div>
         
 <div class="viewcode-block" id="SpectralOptimizer.update"><a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.spdbuild.SpectralOptimizer.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nprim</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">prims</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tar_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cspace_bwtf</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-               <span class="n">triangle_strengths_bnds</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">prim_kwargs</span><span class="p">):</span>
+                <span class="n">triangle_strengths_bnds</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">prim_kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Updates all that is needed when one of the input arguments is changed.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -726,7 +745,7 @@
 <span class="sd">    </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-    
+
         <span class="c1"># get primary spectra:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">prims</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># get triangle_strengths and remove them from x, remaining x are used to construct primaries:</span>
@@ -743,14 +762,14 @@
             
         <span class="c1"># get primary chrom. coords.:</span>
         <span class="n">Yxyi</span> <span class="o">=</span> <span class="n">colortf</span><span class="p">(</span><span class="n">prims</span><span class="p">,</span><span class="n">tf</span><span class="o">=</span><span class="s1">&#39;spd&gt;Yxy&#39;</span><span class="p">,</span><span class="n">bwtf</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;cieobs&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">cieobs</span><span class="p">,</span><span class="s1">&#39;relative&#39;</span><span class="p">:</span><span class="kc">False</span><span class="p">})</span>
-    
+
         <span class="c1"># Get fluxes of each primary:</span>
         <span class="n">M</span> <span class="o">=</span> <span class="n">_triangle_mixer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Yxy_target</span><span class="p">,</span> <span class="n">Yxyi</span><span class="p">,</span> <span class="n">triangle_strengths</span><span class="p">)</span>
-        
+
         <span class="k">if</span> <span class="n">M</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="c1"># Scale M to have target Y:</span>
             <span class="n">M</span> <span class="o">=</span> <span class="n">M</span><span class="o">*</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Yxy_target</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="p">(</span><span class="n">Yxyi</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">M</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
-    
+
         <span class="c1"># Calculate optimized SPD:</span>
         <span class="n">spd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">prims</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">M</span><span class="p">,</span><span class="n">prims</span><span class="p">[</span><span class="mi">1</span><span class="p">:])))</span>
     
@@ -773,7 +792,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">obj_fcn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="p">(</span><span class="n">out</span> <span class="o">!=</span> <span class="s1">&#39;F&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">verbosity</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">):</span>
                 <span class="n">obj_fcn_vals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">obj_fcn</span><span class="o">.</span><span class="n">_equalize_sizes</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">])</span>
-              
+    
         <span class="c1"># Loop over all xi to get all spectra:</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
             
@@ -804,6 +823,7 @@
         <span class="c1"># calculate all objective functions on mass for all spectra:</span>
         <span class="n">isnan_spds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">spds</span><span class="p">[</span><span class="mi">1</span><span class="p">:,:]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">obj_fcn</span><span class="o">.</span><span class="n">f</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            
             <span class="n">notnan_spds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_not</span><span class="p">(</span><span class="n">isnan_spds</span><span class="p">)</span>
             <span class="k">if</span> <span class="p">(</span><span class="n">notnan_spds</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">):</span>
                 <span class="n">spds_tmp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">spds</span><span class="p">[:</span><span class="mi">1</span><span class="p">,:],</span> <span class="n">spds</span><span class="p">[</span><span class="mi">1</span><span class="p">:,:][</span><span class="n">notnan_spds</span><span class="p">,:]))</span> <span class="c1"># only calculate spds that are not nan</span>
@@ -812,9 +832,20 @@
                     
                     <span class="c1"># Calculate objective function j:</span>
                     <span class="n">obj_vals_j</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">obj_fcn</span><span class="o">.</span><span class="n">_calculate_fj</span><span class="p">(</span><span class="n">spds_tmp</span><span class="p">,</span> <span class="n">j</span> <span class="o">=</span> <span class="n">j</span><span class="p">)</span><span class="o">.</span><span class="n">T</span> 
+                    
+                    <span class="c1"># Round objective values:</span>
+                    <span class="n">decimals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">obj_fcn</span><span class="o">.</span><span class="n">decimals</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">decimals</span><span class="p">,</span><span class="nb">tuple</span><span class="p">):</span> <span class="n">decimals</span> <span class="o">=</span> <span class="p">(</span><span class="n">decimals</span><span class="p">,)</span>
+                    <span class="n">obj_vals_j</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">obj_vals_j</span><span class="p">[:,</span><span class="n">ii</span><span class="p">],</span><span class="nb">int</span><span class="p">(</span><span class="n">decimals</span><span class="p">[</span><span class="n">ii</span><span class="p">]))</span> <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">decimals</span><span class="p">))])</span><span class="o">.</span><span class="n">T</span>
 
-                    <span class="c1"># Store F-results in array:</span>
-                    <span class="n">F_j</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obj_fcn</span><span class="o">.</span><span class="n">fw</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">*</span><span class="p">(((</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">obj_vals_j</span><span class="p">,</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obj_fcn</span><span class="o">.</span><span class="n">decimals</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="mi">0</span><span class="p">]))</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">obj_fcn</span><span class="o">.</span><span class="n">ft</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="n">eps</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">obj_fcn</span><span class="o">.</span><span class="n">f_normalize</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="n">eps</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span><span class="o">**</span><span class="mf">0.5</span><span class="p">)</span>
+                    
+                    <span class="c1"># Store F-results in array: </span>
+                    <span class="n">delta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">obj_vals_j</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">obj_fcn</span><span class="o">.</span><span class="n">ft</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="n">eps</span><span class="p">)</span>
+                    <span class="n">F_j</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">obj_fcn</span><span class="o">.</span><span class="n">fw</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">*</span><span class="n">delta</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obj_fcn</span><span class="o">.</span><span class="n">f_normalize</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="n">eps</span><span class="p">)</span>
+                    
+                    <span class="c1"># If within tolerance on target values, set F_j to zero:</span>
+                    <span class="n">F_j</span><span class="p">[</span><span class="n">delta</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">obj_fcn</span><span class="o">.</span><span class="n">ft_tol</span><span class="p">[</span><span class="n">j</span><span class="p">]]</span> <span class="o">=</span> <span class="mf">0.0</span>
+                    
                     <span class="k">if</span> <span class="n">j</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                         <span class="n">F_tmp</span> <span class="o">=</span> <span class="n">F_j</span>
                     <span class="k">else</span><span class="p">:</span>
@@ -854,7 +885,7 @@
                     
         <span class="c1"># Take Root-Sum-of-Squares of delta((val - tar)**2):</span>
         <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">minimizer</span><span class="o">.</span><span class="n">pareto</span> <span class="o">==</span> <span class="kc">False</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obj_fcn</span><span class="o">.</span><span class="n">f</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
-             <span class="n">F</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="n">F</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span><span class="n">keepdims</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span><span class="p">)[:,</span><span class="mi">0</span><span class="p">]</span>
+              <span class="n">F</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="n">F</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span><span class="n">keepdims</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span><span class="p">)[:,</span><span class="mi">0</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">verbosity</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">verbosity</span> <span class="o">&lt;=</span><span class="mi">1</span><span class="p">):</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;F:&#39;</span><span class="p">,</span> <span class="n">F</span><span class="p">)</span>
@@ -887,7 +918,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">verbosity</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbosity</span>
         <span class="n">optim_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">minimizer</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fitness_fcn</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">npars</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;out&#39;</span><span class="p">:</span><span class="s1">&#39;F&#39;</span><span class="p">},</span> 
-                                       <span class="bp">self</span><span class="o">.</span><span class="n">bnds</span><span class="p">,</span> <span class="n">verbosity</span><span class="p">)</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">bnds</span><span class="p">,</span> <span class="n">verbosity</span><span class="p">)</span>
     
         <span class="n">x_final</span> <span class="o">=</span> <span class="n">optim_results</span><span class="p">[</span><span class="s1">&#39;x_final&#39;</span><span class="p">]</span>
         <span class="n">spds</span><span class="p">,</span><span class="n">primss</span><span class="p">,</span><span class="n">Ms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fitness_fcn</span><span class="p">(</span><span class="n">x_final</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;spds,primss,Ms&#39;</span><span class="p">)</span>
@@ -901,15 +932,16 @@
 
        
       
- <span class="c1">#------------------------------------------------------------------------------</span>
+  <span class="c1">#------------------------------------------------------------------------------</span>
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>  
     
-    <span class="n">run_example_1</span> <span class="o">=</span> <span class="kc">True</span> <span class="c1"># # class based example with pre-defined minimization methods</span>
+    <span class="n">run_example_1</span> <span class="o">=</span> <span class="kc">False</span> <span class="c1"># # class based example with pre-defined minimization methods</span>
     
     <span class="n">run_example_2</span> <span class="o">=</span> <span class="kc">False</span> <span class="c1"># # class based example with pre-defined minimization methods and primary set</span>
 
     <span class="n">run_example_3</span> <span class="o">=</span> <span class="kc">False</span> <span class="c1"># # class based example with user-defined  minimization method   </span>
 
+    <span class="n">run_example_4</span> <span class="o">=</span> <span class="kc">True</span> <span class="c1"># # class based example with pre-defined primaries and demo minimization</span>
 
     <span class="kn">import</span> <span class="nn">luxpy</span> <span class="k">as</span> <span class="nn">lx</span>
     <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;1964_10&#39;</span>
@@ -932,9 +964,9 @@
                               <span class="n">optimizer_type</span> <span class="o">=</span> <span class="s1">&#39;3mixer&#39;</span><span class="p">,</span> <span class="n">triangle_strengths_bnds</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                               <span class="n">prim_constructor</span> <span class="o">=</span> <span class="n">PrimConstructor</span><span class="p">(</span><span class="n">pdefs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;fwhm&#39;</span><span class="p">:[</span><span class="mi">15</span><span class="p">],</span>
                                                                         <span class="s1">&#39;peakwl_bnds&#39;</span><span class="p">:[</span><span class="mi">400</span><span class="p">,</span><span class="mi">700</span><span class="p">],</span>
-                                                                        <span class="s1">&#39;fwhm_bnds&#39;</span><span class="p">:[</span><span class="mi">5</span><span class="p">,</span><span class="mi">100</span><span class="p">]}),</span> 
+                                                                        <span class="s1">&#39;fwhm_bnds&#39;</span><span class="p">:[</span><span class="mi">5</span><span class="p">,</span><span class="mi">300</span><span class="p">]}),</span> 
                               <span class="n">prims</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                              <span class="n">obj_fcn</span> <span class="o">=</span> <span class="n">ObjFcns</span><span class="p">(</span><span class="n">f</span><span class="o">=</span><span class="p">[(</span><span class="n">spd_to_cris</span><span class="p">,</span><span class="s1">&#39;Rf&#39;</span><span class="p">,</span><span class="s1">&#39;Rg&#39;</span><span class="p">)],</span> <span class="n">ft</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">90</span><span class="p">,</span><span class="mi">110</span><span class="p">)]),</span>
+                              <span class="n">obj_fcn</span> <span class="o">=</span> <span class="n">ObjFcns</span><span class="p">(</span><span class="n">f</span><span class="o">=</span><span class="p">[(</span><span class="n">spd_to_cris</span><span class="p">,</span><span class="s1">&#39;Rf&#39;</span><span class="p">,</span><span class="s1">&#39;Rg&#39;</span><span class="p">)],</span> <span class="n">ft</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">90</span><span class="p">,</span><span class="mi">110</span><span class="p">)],</span> <span class="n">ft_tol</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">)]),</span>
                               <span class="n">minimizer</span> <span class="o">=</span> <span class="n">Minimizer</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;nelder-mead&#39;</span><span class="p">),</span>
                               <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
         <span class="c1"># start optimization:</span>
@@ -949,16 +981,16 @@
         
         <span class="c1"># create set of 4 primaries with fixed fwhm at 15 nm:</span>
         <span class="n">prims</span> <span class="o">=</span> <span class="n">PrimConstructor</span><span class="p">(</span><span class="n">pdefs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;peakwl&#39;</span><span class="p">:[</span><span class="mi">450</span><span class="p">,</span><span class="mi">520</span><span class="p">,</span><span class="mi">580</span><span class="p">,</span><span class="mi">630</span><span class="p">],</span><span class="s1">&#39;fwhm&#39;</span><span class="p">:[</span><span class="mi">15</span><span class="p">],</span>
-                                       <span class="s1">&#39;peakwl_bnds&#39;</span><span class="p">:[</span><span class="mi">400</span><span class="p">,</span><span class="mi">700</span><span class="p">],</span>
-                                       <span class="s1">&#39;fwhm_bnds&#39;</span><span class="p">:[</span><span class="mi">5</span><span class="p">,</span><span class="mi">100</span><span class="p">]})</span><span class="o">.</span><span class="n">get_spd</span><span class="p">()</span>
+                                        <span class="s1">&#39;peakwl_bnds&#39;</span><span class="p">:[</span><span class="mi">400</span><span class="p">,</span><span class="mi">700</span><span class="p">],</span>
+                                        <span class="s1">&#39;fwhm_bnds&#39;</span><span class="p">:[</span><span class="mi">5</span><span class="p">,</span><span class="mi">300</span><span class="p">]})</span><span class="o">.</span><span class="n">get_spd</span><span class="p">()</span>
                     
-        <span class="c1"># create set of 4 primaries with fixed peakwl and fwhm bounds set to [5,100]:</span>
+        <span class="c1"># create set of 4 primaries with fixed peakwl and fwhm bounds set to [5,300]:</span>
         <span class="n">prims2</span> <span class="o">=</span> <span class="n">PrimConstructor</span><span class="p">(</span><span class="n">pdefs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;peakwl&#39;</span><span class="p">:[</span><span class="mi">450</span><span class="p">,</span><span class="mi">520</span><span class="p">,</span><span class="mi">580</span><span class="p">,</span><span class="mi">630</span><span class="p">],</span>
-                                        <span class="s1">&#39;fwhm_bnds&#39;</span><span class="p">:[</span><span class="mi">5</span><span class="p">,</span><span class="mi">100</span><span class="p">]})</span><span class="o">.</span><span class="n">get_spd</span><span class="p">()</span>
+                                        <span class="s1">&#39;fwhm_bnds&#39;</span><span class="p">:[</span><span class="mi">5</span><span class="p">,</span><span class="mi">300</span><span class="p">]})</span><span class="o">.</span><span class="n">get_spd</span><span class="p">()</span>
                     
-        <span class="c1"># create set of 4 primaries with free peakwl and fwhm bounds set to [400,700] and [5,100]:</span>
+        <span class="c1"># create set of 4 primaries with free peakwl and fwhm bounds set to [400,700] and [5,300]:</span>
         <span class="n">prims3</span> <span class="o">=</span> <span class="n">PrimConstructor</span><span class="p">(</span><span class="n">pdefs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;peakwl_bnds&#39;</span><span class="p">:[</span><span class="mi">400</span><span class="p">,</span><span class="mi">700</span><span class="p">],</span>
-                                        <span class="s1">&#39;fwhm_bnds&#39;</span><span class="p">:[</span><span class="mi">5</span><span class="p">,</span><span class="mi">100</span><span class="p">]})</span><span class="o">.</span><span class="n">get_spd</span><span class="p">(</span><span class="n">nprim</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+                                        <span class="s1">&#39;fwhm_bnds&#39;</span><span class="p">:[</span><span class="mi">5</span><span class="p">,</span><span class="mi">300</span><span class="p">]})</span><span class="o">.</span><span class="n">get_spd</span><span class="p">(</span><span class="n">nprim</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
         
         <span class="n">so2</span> <span class="o">=</span> <span class="n">SpectralOptimizer</span><span class="p">(</span><span class="n">target</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">([</span><span class="mi">100</span><span class="p">,</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">]),</span> <span class="n">tar_type</span> <span class="o">=</span> <span class="s1">&#39;Yxy&#39;</span><span class="p">,</span> <span class="n">cspace_bwtf</span> <span class="o">=</span> <span class="p">{},</span>
                               <span class="n">wlr</span> <span class="o">=</span> <span class="p">[</span><span class="mi">360</span><span class="p">,</span><span class="mi">830</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> 
@@ -1001,10 +1033,10 @@
         <span class="c1"># Create a minimization function with the specified interface:</span>
         <span class="k">def</span> <span class="nf">user_minim4</span><span class="p">(</span><span class="n">fitnessfcn</span><span class="p">,</span> <span class="n">npars</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">bounds</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span><span class="o">**</span><span class="n">opts</span><span class="p">):</span>
             <span class="n">results</span> <span class="o">=</span> <span class="n">particleswarm</span><span class="p">(</span><span class="n">fitnessfcn</span><span class="p">,</span> <span class="n">npars</span><span class="p">,</span> <span class="n">args</span> <span class="o">=</span> <span class="n">args</span><span class="p">,</span> 
-                                         <span class="n">bounds</span> <span class="o">=</span> <span class="n">bounds</span><span class="p">,</span> 
-                                         <span class="n">iters</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="n">n_particles</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">ftol</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
-                                         <span class="n">options</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;c1&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span> <span class="s1">&#39;c2&#39;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">:</span><span class="mf">0.9</span><span class="p">},</span>
-                                         <span class="n">verbosity</span> <span class="o">=</span> <span class="n">verbosity</span><span class="p">)</span>
+                                          <span class="n">bounds</span> <span class="o">=</span> <span class="n">bounds</span><span class="p">,</span> 
+                                          <span class="n">iters</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="n">n_particles</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">ftol</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
+                                          <span class="n">options</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;c1&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span> <span class="s1">&#39;c2&#39;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">:</span><span class="mf">0.9</span><span class="p">},</span>
+                                          <span class="n">verbosity</span> <span class="o">=</span> <span class="n">verbosity</span><span class="p">)</span>
             <span class="c1"># Note that there is already a key &#39;x_final&#39; in results</span>
             <span class="k">return</span> <span class="n">results</span>
         
@@ -1015,15 +1047,42 @@
                               <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;spds,primss,Ms,results&#39;</span><span class="p">,</span>
                               <span class="n">optimizer_type</span> <span class="o">=</span> <span class="s1">&#39;3mixer&#39;</span><span class="p">,</span> <span class="n">triangle_strengths_bnds</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                               <span class="n">prim_constructor</span> <span class="o">=</span> <span class="n">PrimConstructor</span><span class="p">(</span><span class="n">f</span> <span class="o">=</span> <span class="n">user_prim_constructor4</span><span class="p">,</span> 
-                                                                 <span class="n">ptypes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;peakwl&#39;</span><span class="p">,</span><span class="s1">&#39;spectral_width&#39;</span><span class="p">],</span>
-                                                                 <span class="n">pdefs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;peakwl_bnds&#39;</span><span class="p">:[</span><span class="mi">400</span><span class="p">,</span><span class="mi">700</span><span class="p">],</span>
-                                                                          <span class="s1">&#39;spectral_width_bnds&#39;</span><span class="p">:[</span><span class="mi">5</span><span class="p">,</span><span class="mi">100</span><span class="p">]}),</span> 
+                                                                  <span class="n">ptypes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;peakwl&#39;</span><span class="p">,</span><span class="s1">&#39;spectral_width&#39;</span><span class="p">],</span>
+                                                                  <span class="n">pdefs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;peakwl_bnds&#39;</span><span class="p">:[</span><span class="mi">400</span><span class="p">,</span><span class="mi">700</span><span class="p">],</span>
+                                                                          <span class="s1">&#39;spectral_width_bnds&#39;</span><span class="p">:[</span><span class="mi">5</span><span class="p">,</span><span class="mi">300</span><span class="p">]}),</span> 
                               <span class="n">prims</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                               <span class="n">obj_fcn</span> <span class="o">=</span> <span class="n">ObjFcns</span><span class="p">(</span><span class="n">f</span><span class="o">=</span><span class="p">[(</span><span class="n">spd_to_cris</span><span class="p">,</span><span class="s1">&#39;Rf&#39;</span><span class="p">,</span><span class="s1">&#39;Rg&#39;</span><span class="p">)],</span> <span class="n">ft</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">90</span><span class="p">,</span><span class="mi">110</span><span class="p">)]),</span>
                               <span class="n">minimizer</span> <span class="o">=</span> <span class="n">Minimizer</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="n">user_minim4</span><span class="p">),</span>
                               <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
         <span class="c1"># start optimization:</span>
         <span class="n">spd</span><span class="p">,</span><span class="n">M</span> <span class="o">=</span> <span class="n">so3</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;spds,Ms&#39;</span><span class="p">)</span>
+        
+        <span class="n">Rf</span><span class="p">,</span> <span class="n">Rg</span> <span class="o">=</span> <span class="n">spd_to_cris</span><span class="p">(</span><span class="n">spd</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;obj_fcn1:&#39;</span><span class="p">,</span><span class="n">Rf</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;obj_fcn2:&#39;</span><span class="p">,</span><span class="n">Rg</span><span class="p">)</span>
+        
+    <span class="k">if</span> <span class="n">run_example_4</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        
+        <span class="c1"># create set of 4 primaries with fixed peakwl and fwhm bounds set to [5,300]:</span>
+        <span class="n">prims</span> <span class="o">=</span> <span class="n">PrimConstructor</span><span class="p">(</span><span class="n">pdefs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;peakwl&#39;</span><span class="p">:[</span><span class="mi">450</span><span class="p">,</span><span class="mi">520</span><span class="p">,</span><span class="mi">580</span><span class="p">,</span><span class="mi">630</span><span class="p">],</span><span class="s1">&#39;fwhm&#39;</span><span class="p">:[</span><span class="mi">15</span><span class="p">],</span>
+                                        <span class="s1">&#39;peakwl_bnds&#39;</span><span class="p">:[</span><span class="mi">400</span><span class="p">,</span><span class="mi">700</span><span class="p">],</span>
+                                        <span class="s1">&#39;fwhm_bnds&#39;</span><span class="p">:[</span><span class="mi">5</span><span class="p">,</span><span class="mi">300</span><span class="p">]})</span><span class="o">.</span><span class="n">get_spd</span><span class="p">()</span>
+        
+        <span class="c1"># create set of 4 primaries with fixed peakwl and fwhm bounds set to [5,300]:</span>
+        <span class="n">prims2</span> <span class="o">=</span> <span class="n">PrimConstructor</span><span class="p">(</span><span class="n">pdefs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;peakwl&#39;</span><span class="p">:[</span><span class="mi">450</span><span class="p">,</span><span class="mi">520</span><span class="p">,</span><span class="mi">580</span><span class="p">,</span><span class="mi">630</span><span class="p">],</span>
+                                        <span class="s1">&#39;fwhm_bnds&#39;</span><span class="p">:[</span><span class="mi">5</span><span class="p">,</span><span class="mi">300</span><span class="p">]})</span><span class="o">.</span><span class="n">get_spd</span><span class="p">()</span>
+
+        <span class="n">so4</span> <span class="o">=</span> <span class="n">SpectralOptimizer</span><span class="p">(</span><span class="n">target</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">([</span><span class="mi">100</span><span class="p">,</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">]),</span> <span class="n">tar_type</span> <span class="o">=</span> <span class="s1">&#39;Yxy&#39;</span><span class="p">,</span> <span class="n">cspace_bwtf</span> <span class="o">=</span> <span class="p">{},</span>
+                              <span class="n">wlr</span> <span class="o">=</span> <span class="p">[</span><span class="mi">360</span><span class="p">,</span><span class="mi">830</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> 
+                              <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;spds,primss,Ms,results&#39;</span><span class="p">,</span>
+                              <span class="n">optimizer_type</span> <span class="o">=</span> <span class="s1">&#39;3mixer&#39;</span><span class="p">,</span> <span class="n">triangle_strengths_bnds</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                              <span class="n">prim_constructor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+                              <span class="n">prims</span> <span class="o">=</span> <span class="n">prims2</span><span class="p">,</span>
+                              <span class="n">obj_fcn</span> <span class="o">=</span> <span class="n">ObjFcns</span><span class="p">(</span><span class="n">f</span><span class="o">=</span><span class="p">[(</span><span class="n">spd_to_cris</span><span class="p">,</span><span class="s1">&#39;Rf&#39;</span><span class="p">,</span><span class="s1">&#39;Rg&#39;</span><span class="p">)],</span> <span class="n">ft</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">90</span><span class="p">,</span><span class="mi">110</span><span class="p">)]),</span>
+                              <span class="n">minimizer</span> <span class="o">=</span> <span class="n">Minimizer</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;nelder-mead&#39;</span><span class="p">),</span>
+                              <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="c1"># start optimization:</span>
+        <span class="n">spd</span><span class="p">,</span><span class="n">M</span> <span class="o">=</span> <span class="n">so4</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;spds,Ms&#39;</span><span class="p">)</span>
         
         <span class="n">Rf</span><span class="p">,</span> <span class="n">Rg</span> <span class="o">=</span> <span class="n">spd_to_cris</span><span class="p">(</span><span class="n">spd</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;obj_fcn1:&#39;</span><span class="p">,</span><span class="n">Rf</span><span class="p">)</span>

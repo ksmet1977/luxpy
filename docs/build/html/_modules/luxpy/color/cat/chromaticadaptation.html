@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.color.cat.chromaticadaptation &mdash; LuxPy 1.5.2 documentation</title>
+  <title>luxpy.color.cat.chromaticadaptation &mdash; LuxPy 1.5.3 documentation</title>
   
 
   
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                1.5.2
+                1.5.3
               </div>
             
           
@@ -352,23 +352,20 @@
     <span class="k">return</span> <span class="n">Dt</span>     </div>
  
 <span class="c1">#------------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="smet2017_D"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cat.smet2017_D">[docs]</a><span class="k">def</span> <span class="nf">smet2017_D</span><span class="p">(</span><span class="n">xyzw</span><span class="p">,</span> <span class="n">Dmax</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;1964_10&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="smet2017_D"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cat.smet2017_D">[docs]</a><span class="k">def</span> <span class="nf">smet2017_D</span><span class="p">(</span><span class="n">xyzw</span><span class="p">,</span> <span class="n">Dmax</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the degree of adaptation based on chromaticity following </span>
 <span class="sd">    Smet et al. (2017) </span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        :xyzw: </span>
-<span class="sd">            | ndarray with white point data</span>
+<span class="sd">            | ndarray with white point data (CIE 1964 10° XYZs!!)</span>
 <span class="sd">        :Dmax:</span>
 <span class="sd">            | None or float, optional</span>
 <span class="sd">            | Defaults to 0.6539 (max D obtained under experimental conditions, </span>
 <span class="sd">            | but probably too low due to dark surround leading to incomplete </span>
 <span class="sd">            | chromatic adaptation even for neutral illuminants </span>
 <span class="sd">            | resulting in background luminance (fov~50Â°) of 760 cd/mÂ²))</span>
-<span class="sd">        :cieobs:</span>
-<span class="sd">            | &#39;1964_10&#39;, optional</span>
-<span class="sd">            | CMF set used in deriving model in cited paper.</span>
 <span class="sd">            </span>
 <span class="sd">    Returns:</span>
 <span class="sd">        :D: </span>
@@ -384,7 +381,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     
     <span class="c1"># Convert xyzw to log-compressed Macleod_Boyton coordinates:</span>
-    <span class="n">Vl</span><span class="p">,</span> <span class="n">rl</span><span class="p">,</span> <span class="n">bl</span> <span class="o">=</span> <span class="n">asplit</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">xyz_to_Vrb_mb</span><span class="p">(</span><span class="n">xyzw</span><span class="p">,</span><span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">)))</span>
+    <span class="n">Vl</span><span class="p">,</span> <span class="n">rl</span><span class="p">,</span> <span class="n">bl</span> <span class="o">=</span> <span class="n">asplit</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">xyz_to_Vrb_mb</span><span class="p">(</span><span class="n">xyzw</span><span class="p">,</span> <span class="n">M</span> <span class="o">=</span> <span class="n">_MCATS</span><span class="p">[</span><span class="s1">&#39;hpe&#39;</span><span class="p">])))</span> <span class="c1"># force use of HPE matrix (which was the one used when deriving the model parameters!!)</span>
 
     <span class="c1"># apply Dmodel (technically only for cieobs = &#39;1964_10&#39;)</span>
     <span class="n">pD</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0e7</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.021081326530436</span><span class="p">,</span> <span class="mf">4.751255762876845</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.000000071025181</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.000000063627042</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.146952821492957</span><span class="p">,</span> <span class="mf">3.117390441655821</span><span class="p">])</span> <span class="c1">#D model parameters for gaussian model in log(MB)-space (july 2016) </span>
