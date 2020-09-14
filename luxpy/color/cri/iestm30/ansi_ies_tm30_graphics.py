@@ -175,6 +175,7 @@ def plot_tm30_cvg(spd, cri_type = 'ies-tm30',
                   gamut_line_color = 'r',
                   gamut_line_style = '-',
                   gamut_line_marker = 'o',
+                  gamut_line_label = None,
                   plot_vectors = True,
                   plot_index_values = True,
                   axh = None, axtype = 'cart',
@@ -214,6 +215,9 @@ def plot_tm30_cvg(spd, cri_type = 'ies-tm30',
             | '-', optional
             | Markers to plot the test color gamut points for each hue bin in 
             | (only used when plot_vectors = False).
+        :gamut_line_label:
+            | None, optional
+            | Label for gamut line. (only used when plot_vectors = False).
         :plot_vectors:
             | True, optional
             | Plot color shift vectors in CVG (True) or not (False).
@@ -259,6 +263,7 @@ def plot_tm30_cvg(spd, cri_type = 'ies-tm30',
                                         gamut_line_color = gamut_line_color,
                                         gamut_line_style = gamut_line_style,
                                         gamut_line_marker = gamut_line_marker,
+                                        gamut_line_label = gamut_line_label,
                                         plot_vectors = plot_vectors,
                                         ax = axh, axtype = axtype,
                                         force_CVG_layout = True,

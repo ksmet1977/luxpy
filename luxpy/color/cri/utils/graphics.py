@@ -298,6 +298,9 @@ def plot_ColorVectorGraphic(jabt, jabr, hbins = 16, start_hue = 0.0, scalef = 10
             | 'o', optional
             | Markers to plot the test color gamut points for each hue bin in 
             | (only used when plot_vectors = False).
+        :gamut_line_label:
+            | None, optional
+            | Label for gamut line. (only used when plot_vectors = False).
         :axtype:
             | 'polar' or 'cart', optional
             | Make polar or Cartesian plot.
@@ -363,7 +366,7 @@ def plot_ColorVectorGraphic(jabt, jabr, hbins = 16, start_hue = 0.0, scalef = 10
         if plot_vectors == True:
             ax.plot(jabt_theta,jabt_r, color = gamut_line_color, linestyle = gamut_line_style, linewidth = 2)
         else:
-            ax.plot(jabt_theta,jabt_r, color = gamut_line_color, linestyle = gamut_line_style, linewidth = 2, marker = gamut_line_marker, markersize = 4)
+            ax.plot(jabt_theta,jabt_r, color = gamut_line_color, linestyle = gamut_line_style, linewidth = 2, marker = gamut_line_marker, markersize = 4, label = gamut_line_label)
         for j in range(hbins):
             c = cmap[j]
             if plot_vectors == True:
@@ -375,7 +378,7 @@ def plot_ColorVectorGraphic(jabt, jabr, hbins = 16, start_hue = 0.0, scalef = 10
         if plot_vectors == True:
             ax.plot(jabt[...,1],jabt[...,2], color = gamut_line_color, linestyle = gamut_line_style, linewidth = 2)
         else:
-            ax.plot(jabt[...,1],jabt[...,2], color = gamut_line_color, linestyle = gamut_line_style, linewidth = 2, marker = gamut_line_marker, markersize = 4)
+            ax.plot(jabt[...,1],jabt[...,2], color = gamut_line_color, linestyle = gamut_line_style, linewidth = 2, marker = gamut_line_marker, markersize = 4, label = gamut_line_label)
         for j in range(hbins):
             if plot_vectors == True:
                 ax.quiver(jabr[j,1],jabr[j,2],jabt[j,1]-jabr[j,1], jabt[j,2]-jabr[j,2], color = cmap[j], headlength=3, angles='uv', scale_units='xy', scale = 1,linewidth = 0.5)
