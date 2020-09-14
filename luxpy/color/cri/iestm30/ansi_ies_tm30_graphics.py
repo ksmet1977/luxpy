@@ -54,7 +54,7 @@ _TM30_FONT_SIZE = 8
 
 __all__ = ['_tm30_process_spd','plot_tm30_cvg','plot_tm30_Rfi',
            'plot_tm30_Rxhj','plot_tm30_Rcshj', 'plot_tm30_Rhshj', 
-           'plot_tm30_Rfhj', 'plot_tm30_spd','plot_tm30_report']
+           'plot_tm30_Rfhj', 'plot_tm30_spd','plot_tm30_report', 'spd_to_tm30_report']
 
 def _tm30_process_spd(spd, cri_type = 'ies-tm30',**kwargs):
     """
@@ -174,6 +174,7 @@ def _get_hue_map(hbins = 16, start_hue = 0.0,
 def plot_tm30_cvg(spd, cri_type = 'ies-tm30',  
                   gamut_line_color = 'r',
                   plot_vectors = True,
+                  plot_index_values = True,
                   axh = None, axtype = 'cart',
                   **kwargs):
     """
@@ -206,6 +207,9 @@ def plot_tm30_cvg(spd, cri_type = 'ies-tm30',
         :plot_vectors:
             | True, optional
             | Plot color shift vectors in CVG (True) or not (False).
+        :plot_index_values:
+            | True, optional
+            | Print Rf, Rg, CCT and Duv in corners of CVG (True) or not (False).
         :axh: 
             | None, optional
             | If None: create new figure with single axes, else plot on specified axes. 
@@ -217,8 +221,10 @@ def plot_tm30_cvg(spd, cri_type = 'ies-tm30',
             | the same as in cri.spd_to_cri()
             
     Returns:
+        :axh: 
+            | handle to figure axes.
         :data:
-            | dictionary with required parameters for plotting functions.      
+            | dictionary with required parameters for plotting functions. 
     """
 
     data = _tm30_process_spd(spd, cri_type = 'ies-tm30',**kwargs)
@@ -247,18 +253,19 @@ def plot_tm30_cvg(spd, cri_type = 'ies-tm30',
                                         plot_axis_labels = False)
     
     # Print Rf, Rg, CCT and Duv in plot:
-    Rf, Rg, cct, duv = data['Rf'], data['Rg'], data['cct'], data['duv']
-    axh.text(-1.30*scalef,1.30*scalef,'{:1.0f}'.format(Rf[0,0]),fontsize = 15, fontweight='bold', horizontalalignment='center',verticalalignment='center',color = 'k')
-    axh.text(-1.33*scalef,1.12*scalef,'$R_f$',fontsize = 13, style='italic', horizontalalignment='center',verticalalignment='center',color = 'k')
-    axh.text(1.30*scalef,1.30*scalef,'{:1.0f}'.format(Rg[0,0]),fontsize = 15, fontweight='bold', horizontalalignment='center',verticalalignment='center',color = 'k')
-    axh.text(1.33*scalef,1.12*scalef,'$R_g$',fontsize = 13, style='italic', horizontalalignment='center',verticalalignment='center',color = 'k')
-    axh.text(-1.43*scalef,-1.45*scalef,'{:1.0f}'.format(cct[0,0]),fontsize = 15, fontweight='bold', horizontalalignment='left',verticalalignment='bottom',color = 'k')
-    axh.text(-1.43*scalef,-1.25*scalef,'$CCT$',fontsize = 13, style='italic', horizontalalignment='left',verticalalignment='bottom',color = 'k')
-    axh.text(1.43*scalef,-1.45*scalef,'{:1.4f}'.format(duv[0,0]),fontsize = 15, fontweight='bold', horizontalalignment='right',verticalalignment='bottom',color = 'k')
-    axh.text(1.43*scalef,-1.25*scalef,'$D_{uv}$',fontsize = 13, style='italic', horizontalalignment='right',verticalalignment='bottom',color = 'k')
+    if plot_index_values == True:
+        Rf, Rg, cct, duv = data['Rf'], data['Rg'], data['cct'], data['duv']
+        axh.text(-1.30*scalef,1.30*scalef,'{:1.0f}'.format(Rf[0,0]),fontsize = 15, fontweight='bold', horizontalalignment='center',verticalalignment='center',color = 'k')
+        axh.text(-1.33*scalef,1.12*scalef,'$R_f$',fontsize = 13, style='italic', horizontalalignment='center',verticalalignment='center',color = 'k')
+        axh.text(1.30*scalef,1.30*scalef,'{:1.0f}'.format(Rg[0,0]),fontsize = 15, fontweight='bold', horizontalalignment='center',verticalalignment='center',color = 'k')
+        axh.text(1.33*scalef,1.12*scalef,'$R_g$',fontsize = 13, style='italic', horizontalalignment='center',verticalalignment='center',color = 'k')
+        axh.text(-1.43*scalef,-1.45*scalef,'{:1.0f}'.format(cct[0,0]),fontsize = 15, fontweight='bold', horizontalalignment='left',verticalalignment='bottom',color = 'k')
+        axh.text(-1.43*scalef,-1.25*scalef,'$CCT$',fontsize = 13, style='italic', horizontalalignment='left',verticalalignment='bottom',color = 'k')
+        axh.text(1.43*scalef,-1.45*scalef,'{:1.4f}'.format(duv[0,0]),fontsize = 15, fontweight='bold', horizontalalignment='right',verticalalignment='bottom',color = 'k')
+        axh.text(1.43*scalef,-1.25*scalef,'$D_{uv}$',fontsize = 13, style='italic', horizontalalignment='right',verticalalignment='bottom',color = 'k')
     axh.set_xticks([])
     axh.set_yticks([])
-    return axh
+    return axh, data 
 
 
 def plot_tm30_spd(spd, cri_type = 'ies-tm30', axh = None, 
@@ -297,8 +304,11 @@ def plot_tm30_spd(spd, cri_type = 'ies-tm30', axh = None,
             | the same as in cri.spd_to_cri()
             
     Returns:
-        :axh:
-            | handle to figure axes.      
+        :axh: 
+            | handle to figure axes.
+        :data:
+            | dictionary with required parameters for plotting functions.  
+  
     """
 
     data = _tm30_process_spd(spd, cri_type = 'ies-tm30',**kwargs)
@@ -319,7 +329,7 @@ def plot_tm30_spd(spd, cri_type = 'ies-tm30', axh = None,
     axh.set_yticklabels([])
     axh.legend(loc = 'upper right', fontsize = font_size)
     
-    return axh
+    return axh, data
 
 
 def plot_tm30_Rfi(spd, cri_type = 'ies-tm30', axh = None, 
@@ -358,8 +368,10 @@ def plot_tm30_Rfi(spd, cri_type = 'ies-tm30', axh = None,
             | the same as in cri.spd_to_cri()
             
     Returns:
-        :axh:
-            | handle to figure axes.      
+        :axh: 
+            | handle to figure axes.
+        :data:
+            | dictionary with required parameters for plotting functions.     
     """
     data = _tm30_process_spd(spd, cri_type = 'ies-tm30',**kwargs)
     Rfi = data['Rfi']
@@ -389,7 +401,7 @@ def plot_tm30_Rfi(spd, cri_type = 'ies-tm30', axh = None,
     axh.set_ylim([0,100])
     axh.set_xlim([-0.5,N-0.5])
     
-    return axh
+    return axh, data
 
 def plot_tm30_Rfhj(spd, cri_type = 'ies-tm30', axh = None, 
                    xlabel = True, y_offset = 0, 
@@ -436,8 +448,10 @@ def plot_tm30_Rfhj(spd, cri_type = 'ies-tm30', axh = None,
             | the same as in cri.spd_to_cri()
             
     Returns:
-        :axh:
-            | handle to figure axes.      
+        :axh: 
+            | handle to figure axes.
+        :data:
+            | dictionary with required parameters for plotting functions.     
     """
     
     data = _tm30_process_spd(spd, cri_type = 'ies-tm30',**kwargs)
@@ -472,7 +486,7 @@ def plot_tm30_Rfhj(spd, cri_type = 'ies-tm30', axh = None,
     axh.set_ylabel(r'Local Color Fidelity $(R_{f,hj})$', fontsize = font_size)
     axh.set_ylim([0,110])
 
-    return axh
+    return axh, data
 
 def plot_tm30_Rcshj(spd, cri_type = 'ies-tm30', axh = None, 
                     xlabel = True, y_offset = 0, 
@@ -519,8 +533,10 @@ def plot_tm30_Rcshj(spd, cri_type = 'ies-tm30', axh = None,
             | the same as in cri.spd_to_cri()
             
     Returns:
-        :axh:
-            | handle to figure axes.      
+        :axh: 
+            | handle to figure axes.
+        :data:
+            | dictionary with required parameters for plotting functions.   
     """
 
     
@@ -560,7 +576,7 @@ def plot_tm30_Rcshj(spd, cri_type = 'ies-tm30', axh = None,
     axh.set_ylabel(r'Local Chroma Shift $(R_{cs,hj})$', fontsize = font_size)
     axh.set_ylim([min([-40,100*Rcshi.min()]),max([40,100*Rcshi.max()])])
     
-    return axh
+    return axh, data
 
 def plot_tm30_Rhshj(spd, cri_type = 'ies-tm30', axh = None, 
                     xlabel = True, y_offset = 0, 
@@ -607,8 +623,10 @@ def plot_tm30_Rhshj(spd, cri_type = 'ies-tm30', axh = None,
             | the same as in cri.spd_to_cri()
             
     Returns:
-        :axh:
-            | handle to figure axes.      
+        :axh: 
+            | handle to figure axes.
+        :data:
+            | dictionary with required parameters for plotting functions.     
     """
 
     
@@ -644,7 +662,7 @@ def plot_tm30_Rhshj(spd, cri_type = 'ies-tm30', axh = None,
     axh.set_ylabel(r'Local Hue Shift $(R_{hs,hj})$', fontsize = 9)
     axh.set_ylim([min([-0.5,Rhshi.min()]),max([0.5,Rhshi.max()])])
     
-    return axh
+    return axh, data
 
 def plot_tm30_Rxhj(spd, cri_type = 'ies-tm30', axh = None, figsize = (6,15),
                    font_size = _TM30_FONT_SIZE, **kwargs):
@@ -685,8 +703,10 @@ def plot_tm30_Rxhj(spd, cri_type = 'ies-tm30', axh = None, figsize = (6,15),
             | the same as in cri.spd_to_cri()
             
     Returns:
-        :axh:
-            | handle to figure axes.      
+        :axh: 
+            | handle to figure axes.
+        :data:
+            | dictionary with required parameters for plotting functions.     
     """
 
     data = _tm30_process_spd(spd, cri_type = 'ies-tm30',**kwargs)
@@ -697,7 +717,7 @@ def plot_tm30_Rxhj(spd, cri_type = 'ies-tm30', axh = None, figsize = (6,15),
     plot_tm30_Rcshj(data, axh = axh[0], xlabel = False, y_offset = 0.02, font_size = font_size)
     plot_tm30_Rhshj(data, axh = axh[1], xlabel = False, y_offset = 0.03, font_size = font_size)
     plot_tm30_Rfhj(data, axh = axh[2], xlabel = True, y_offset = 2, font_size = font_size)
-    return axh
+    return axh, data
 
 def _split_notes(notes, max_len_notes_line = 40):
     """
@@ -761,6 +781,7 @@ def _plot_tm30_report_top(axh, source = '', manufacturer = '', date = '', model 
     axh.text(0,0, '   Date: ' + date, fontsize = 10, horizontalalignment='left',verticalalignment='center',color = 'k')
     axh.text(5,1, 'Manufacturer: ' + manufacturer, fontsize = 10, horizontalalignment='left',verticalalignment='center',color = 'k')
     axh.text(5,0, 'Model: ' + model, fontsize = 10, horizontalalignment='left',verticalalignment='center',color = 'k')
+    return axh
 
 def _plot_tm30_report_bottom(axh, spd, notes = '', max_len_notes_line = 40):
     """
@@ -940,6 +961,7 @@ def plot_tm30_report(spd, cri_type = 'ies-tm30',
     
     return axs, data
         
+spd_to_tm30_report = plot_tm30_report
     
 if __name__ == '__main__':
     import luxpy as lx

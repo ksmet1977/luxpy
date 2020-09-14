@@ -174,7 +174,7 @@ iestm30/ansi_ies_tm30_graphics.py
 
  :plot_tm30_spd(): Plot test SPD and reference illuminant, both normalized to the same luminous power.
 
- :plot_tm30_report():
+ :plot_tm30_report(): Create ANSI/IES-TM-30-2018 report.
 
 VFPX
 ----
@@ -199,7 +199,7 @@ from .iestm30.ansi_ies_tm30_graphics import (_tm30_process_spd,plot_tm30_cvg,
                                              plot_tm30_Rfi,plot_tm30_Rxhj,
                                              plot_tm30_Rcshj, plot_tm30_Rhshj,
                                              plot_tm30_Rfhj, plot_tm30_spd,
-                                             plot_tm30_report)
+                                             plot_tm30_report, spd_to_tm30_report)
 
 # .DE_scalers:
 __all__ = ['linear_scale', 'log_scale', 'psy_scale']
@@ -235,4 +235,4 @@ __all__ += ['plot_cri_graphics']
 # .ansi_ies_tm30_graphics:
 __all__ += ['_tm30_process_spd','plot_tm30_cvg','plot_tm30_Rfi',
            'plot_tm30_Rxhj','plot_tm30_Rcshj', 'plot_tm30_Rhshj', 
-           'plot_tm30_Rfhj', 'plot_tm30_spd','plot_tm30_report']
+           'plot_tm30_Rfhj', 'plot_tm30_spd','plot_tm30_report','spd_to_tm30_report']
