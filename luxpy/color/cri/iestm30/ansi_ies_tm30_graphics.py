@@ -173,6 +173,8 @@ def _get_hue_map(hbins = 16, start_hue = 0.0,
 
 def plot_tm30_cvg(spd, cri_type = 'ies-tm30',  
                   gamut_line_color = 'r',
+                  gamut_line_style = '-',
+                  gamut_line_marker = 'o',
                   plot_vectors = True,
                   plot_index_values = True,
                   axh = None, axtype = 'cart',
@@ -202,8 +204,16 @@ def plot_tm30_cvg(spd, cri_type = 'ies-tm30',
             | to the function will override default values in cri_type dict.
         :gamut_line_color:
             | 'r', optional
+            | Plotting line style for the line connecting the 
+            | average test chromaticity in the hue bins.
+        :gamut_line_style:
+            | 'r', optional
             | Plotting color for the line connecting the 
             | average test chromaticity in the hue bins.
+        :gamut_line_marker:
+            | '-', optional
+            | Markers to plot the test color gamut points for each hue bin in 
+            | (only used when plot_vectors = False).
         :plot_vectors:
             | True, optional
             | Plot color shift vectors in CVG (True) or not (False).
@@ -247,6 +257,8 @@ def plot_tm30_cvg(spd, cri_type = 'ies-tm30',
                                         hbins = data['nhbins'], start_hue = data['start_hue'], 
                                         bin_labels = '',
                                         gamut_line_color = gamut_line_color,
+                                        gamut_line_style = gamut_line_style,
+                                        gamut_line_marker = gamut_line_marker,
                                         plot_vectors = plot_vectors,
                                         ax = axh, axtype = axtype,
                                         force_CVG_layout = True,

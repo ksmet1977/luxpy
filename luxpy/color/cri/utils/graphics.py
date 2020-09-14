@@ -242,7 +242,8 @@ def plot_ColorVectorGraphic(jabt, jabr, hbins = 16, start_hue = 0.0, scalef = 10
                             plot_axis_labels = False, bin_labels = None, \
                             plot_edge_lines = True, plot_center_lines = False, \
                             plot_bin_colors = True, plot_10_20_circles = True,\
-                            plot_vectors = True, gamut_line_color = 'grey',\
+                            plot_vectors = True, 
+                            gamut_line_color = 'grey',gamut_line_style = '-',gamut_line_marker = 'o',\
                             axtype = 'polar', ax = None,\
                             force_CVG_layout = False,\
                             jabti = None, jabri = None, hbinnr = None):
@@ -290,6 +291,13 @@ def plot_ColorVectorGraphic(jabt, jabr, hbins = 16, start_hue = 0.0, scalef = 10
         :gamut_line_color:
             | 'grey', optional
             | Color to plot the test color gamut in.
+        :gamut_line_style:
+            | '-', optional
+            | Line style to plot the test color gamut in.
+        :gamut_line_marker:
+            | 'o', optional
+            | Markers to plot the test color gamut points for each hue bin in 
+            | (only used when plot_vectors = False).
         :axtype:
             | 'polar' or 'cart', optional
             | Make polar or Cartesian plot.
@@ -353,9 +361,9 @@ def plot_ColorVectorGraphic(jabt, jabr, hbins = 16, start_hue = 0.0, scalef = 10
         
         #ax.quiver(jabrtheta,jabr_r,jabt[...,1]-jabr[...,1], jabt[...,2]-jabr_binned[...,2], color = 'k', headlength=3, angles='uv', scale_units='y', scale = 2,linewidth = 0.5)
         if plot_vectors == True:
-            ax.plot(jabt_theta,jabt_r, color = gamut_line_color,linewidth = 2)
+            ax.plot(jabt_theta,jabt_r, color = gamut_line_color, linestyle = gamut_line_style, linewidth = 2)
         else:
-            ax.plot(jabt_theta,jabt_r, color = gamut_line_color,linewidth = 2, marker = 'o', markersize = 4)
+            ax.plot(jabt_theta,jabt_r, color = gamut_line_color, linestyle = gamut_line_style, linewidth = 2, marker = gamut_line_marker, markersize = 4)
         for j in range(hbins):
             c = cmap[j]
             if plot_vectors == True:
@@ -365,9 +373,9 @@ def plot_ColorVectorGraphic(jabt, jabr, hbins = 16, start_hue = 0.0, scalef = 10
     else:
         #ax.quiver(jabr[...,1],jabr[...,2],jabt[...,1]-jabr[...,1], jabt[...,2]-jabr[...,2], color = 'k', headlength=3, angles='uv', scale_units='xy', scale = 1,linewidth = 0.5)
         if plot_vectors == True:
-            ax.plot(jabt[...,1],jabt[...,2], color = gamut_line_color,linewidth = 2, linestyle = '-')
+            ax.plot(jabt[...,1],jabt[...,2], color = gamut_line_color, linestyle = gamut_line_style, linewidth = 2)
         else:
-            ax.plot(jabt[...,1],jabt[...,2], color = gamut_line_color,linewidth = 2, linestyle = '-', marker = 'o', markersize = 4)
+            ax.plot(jabt[...,1],jabt[...,2], color = gamut_line_color, linestyle = gamut_line_style, linewidth = 2, marker = gamut_line_marker, markersize = 4)
         for j in range(hbins):
             if plot_vectors == True:
                 ax.quiver(jabr[j,1],jabr[j,2],jabt[j,1]-jabr[j,1], jabt[j,2]-jabr[j,2], color = cmap[j], headlength=3, angles='uv', scale_units='xy', scale = 1,linewidth = 0.5)
