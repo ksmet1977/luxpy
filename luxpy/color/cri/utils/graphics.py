@@ -243,7 +243,8 @@ def plot_ColorVectorGraphic(jabt, jabr, hbins = 16, start_hue = 0.0, scalef = 10
                             plot_edge_lines = True, plot_center_lines = False, \
                             plot_bin_colors = True, plot_10_20_circles = True,\
                             plot_vectors = True, 
-                            gamut_line_color = 'grey',gamut_line_style = '-',gamut_line_marker = 'o',\
+                            gamut_line_color = 'grey',gamut_line_style = '-',
+                            gamut_line_marker = 'o', gamut_line_label = None,\
                             axtype = 'polar', ax = None,\
                             force_CVG_layout = False,\
                             jabti = None, jabri = None, hbinnr = None):
@@ -388,6 +389,9 @@ def plot_ColorVectorGraphic(jabt, jabr, hbins = 16, start_hue = 0.0, scalef = 10
     if (axtype == 'cart') & (plot_axis_labels == True):
         ax.set_xlabel("a'")
         ax.set_ylabel("b'")
+    
+    if gamut_line_label is not None:
+        ax.legend()
     
     return figCVG, ax, cmap
 
