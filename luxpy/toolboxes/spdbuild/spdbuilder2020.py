@@ -461,7 +461,7 @@ def _get_minimize_options_and_pareto(minimize_method, minimize_opts = {}, n = No
     """
     Set default options if not provided, as well as pareto (False: output Root-Sum-Squares of Fi in _fitnessfcn)
     """
-    if (minimize_method == 'particleswarm') | (minimize_method == 'ps') | (minimize_method == 'nelder-mead'):
+    if (minimize_method == 'particleswarm') | (minimize_method == 'ps') | (minimize_method.lower() == 'nelder-mead'):
         pareto = False
     elif (minimize_method == 'demo'):
         pareto = True # must be output per objective function!!
@@ -477,7 +477,8 @@ def _get_minimize_options_and_pareto(minimize_method, minimize_opts = {}, n = No
                              'ps_opts' : {'c1': 0.5, 'c2': 0.3, 'w':0.9}}
         elif (minimize_method == 'demo'):
             minimize_opts = math.DEMO.init_options(display = True)
-        elif (minimize_method == 'nelder-mead'):
+        elif (minimize_method.lower() == 'nelder-mead'):
+            minimize_method = 'Nelder-Mead'
             if n is None: n = 10
             minimize_opts = {'xtol': 1e-5, 'disp': True, 'maxiter' : 1000*n, 'maxfev' : 1000*n,'fatol': 0.01}
         else:
@@ -495,7 +496,7 @@ def _start_optimization_tri(_fitnessfcn, n, fargs_dict, bnds, par_opt_types,
     Start optimization of _fitnessfcn for n primaries using the specified minimize_method.
     
     Notes on minimize_method:
-        1. Implemented: 'particleswarm', 'demo', 'nelder-mead'
+        1. Implemented: 'particleswarm', 'demo', 'Nelder-Mead'
         2. if not isinstance(minimize_method, str): 
             | then it should contain an optimizer funtion with the following interface: 
             | results = minimize_method(fitnessfcn, Nparameters, args = {}, 
@@ -532,7 +533,8 @@ def _start_optimization_tri(_fitnessfcn, n, fargs_dict, bnds, par_opt_types,
         results = {'x_final': xopt,'F': fopt}
     
     # Local Simplex optimization using Nelder-Mead:
-    elif (minimize_method == 'nelder-mead'):
+    elif (minimize_method.lower() == 'nelder-mead'):
+        minimize_method = 'Nelder-Mead'
         if x0 is None:
             x0 = np.array([np.random.uniform(bnds[0,i], bnds[1,i],1) for i in range(bnds.shape[1])]).T # generate random start value within bounds
         else:
@@ -662,10 +664,10 @@ def spd_optimizer2(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cspace_bwtf =
             | [0] or list, optional
             | Target values for each objective function.
         :minimize_method:
-            | 'nelder-mead', optional
+            | 'Nelder-Mead', optional
             | Optimization method used by minimize function.
             | options: 
-            |   - 'nelder-mead': Nelder-Mead simplex local optimization 
+            |   - 'Nelder-Mead': Nelder-Mead simplex local optimization 
             |                    using the luxpy.math.minimizebnd wrapper
             |                    with method set to 'Nelder-Mead'.
             |   - 'particleswarm': Pseudo-global optimizer using particle swarms
@@ -817,7 +819,7 @@ if __name__ == '__main__':
                                       obj_fcn_pars = [{}], 
                                       obj_fcn_weights = [(1,1)], obj_tar_vals = [(90,110)],
                                       triangle_strengths_bnds = None,
-                                      minimize_method = 'nelder-mead',
+                                      minimize_method = 'Nelder-Mead',
                                       minimize_opts = {},
                                       verbosity = 1)
         Rf, Rg = spd_to_cris(spd)

@@ -199,7 +199,7 @@ class ObjFcns():
         
         
 class Minimizer():
-    def __init__(self, method = 'nelder-mead', opts = {}, x0 = None, pareto = False, display = True):
+    def __init__(self, method = 'Nelder-Mead', opts = {}, x0 = None, pareto = False, display = True):
         """
         Initialize minimization method.
         
@@ -208,7 +208,7 @@ class Minimizer():
                 | 'nelder-mead', optional
                 | Optimization method used by minimize function.
                 | options: 
-                |   - 'nelder-mead': Nelder-Mead simplex local optimization 
+                |   - 'Nelder-Mead': Nelder-Mead simplex local optimization 
                 |                    using the luxpy.math.minimizebnd wrapper
                 |                    with method set to 'Nelder-Mead'.
                 |   - 'particleswarm': Pseudo-global optimizer using particle swarms
@@ -235,7 +235,7 @@ class Minimizer():
             :x0:
                 | None, optional
                 | Lets the user specify an optional starting value required by 
-                | some minimizers (eg. 'nelder-mead'). It should contain only 
+                | some minimizers (eg. 'Nelder-Mead'). It should contain only 
                 | values for the free parameters in the primary constructor.
             :display:
                 | True, optional
@@ -269,7 +269,7 @@ class Minimizer():
         """
         if display is None: display = self.display
         self.display = display
-        if (self.method == 'particleswarm') | (self.method == 'ps') | (self.method == 'nelder-mead'):
+        if (self.method == 'particleswarm') | (self.method == 'ps') | (self.method.lower() == 'nelder-mead'):
             self.pareto = False
         elif (self.method == 'demo'):
             self.pareto = True # must be output per objective function!!
@@ -283,7 +283,8 @@ class Minimizer():
                                   'ps_opts' : {'c1': 0.5, 'c2': 0.3, 'w':0.9}}
             elif (self.method == 'demo'):
                 self.opts = math.DEMO.init_options(display = display)
-            elif (self.method == 'nelder-mead'):
+            elif (self.method.lower() == 'nelder-mead'):
+                self.method = 'Nelder-Mead'
                 npar = 10 if x0 is None else x0[0].size
                 self.opts = {'xtol': 1e-5, 'disp': display, 'maxiter' : 1000*npar, 'maxfev' : 1000*npar,'fatol': 0.01}
             else:
@@ -318,7 +319,8 @@ class Minimizer():
             results = {'x_final': xopt,'F': fopt}
         
         # Local Simplex optimization using Nelder-Mead:
-        elif (self.method == 'nelder-mead'):
+        elif (self.method.lower() == 'nelder-mead'):
+            self.method = 'Nelder-Mead'
             if self.x0 is None:
                 x0 = np.array([np.random.uniform(bounds[0,i], bounds[1,i],1) for i in range(bounds.shape[1])]).T # generate random start value within bounds
             else:
@@ -345,7 +347,7 @@ class SpectralOptimizer():
                   optimizer_type = '3mixer', triangle_strengths_bnds = None,
                   prim_constructor = PrimConstructor(), prims = None,
                   obj_fcn = ObjFcns(),
-                  minimizer = Minimizer(method='nelder-mead'),
+                  minimizer = Minimizer(method='Nelder-Mead'),
                   verbosity = 1):
         
         """
@@ -400,7 +402,7 @@ class SpectralOptimizer():
                 |            F_j = (fw_j*abs((f_j(x)-ft_j)/ft_j)) 
                 |       2. If ft_j==0 then ft_j in the denominator is set to 1 to avoid division by zero.
             :minimizer:
-                | Minimizer(method='nelder-mead'), optional
+                | Minimizer(method='Nelder-Mead'), optional
                 | Instance of the Minimizer class.
                 | See Minimizer.__docstring__ for more info.
             :verbosity:
@@ -814,7 +816,7 @@ if __name__ == '__main__':
                                                                         'fwhm_bnds':[5,300]}), 
                               prims = None,
                               obj_fcn = ObjFcns(f=[(spd_to_cris,'Rf','Rg')], ft = [(90,110)], ft_tol = [(5,5)]),
-                              minimizer = Minimizer(method='nelder-mead'),
+                              minimizer = Minimizer(method='Nelder-Mead'),
                               verbosity = 0)
         # start optimization:
         spd,M = so1.start(out = 'spds,Ms')
@@ -846,7 +848,7 @@ if __name__ == '__main__':
                               prim_constructor = None, 
                               prims = prims,
                               obj_fcn = ObjFcns(f=[(spd_to_cris,'Rf','Rg')], ft = [(90,110)]),
-                              minimizer = Minimizer(method='nelder-mead'),
+                              minimizer = Minimizer(method='Nelder-Mead'),
                               verbosity = 2)
 #        # start optimization:
         spd,M = so2.start(out = 'spds,Ms')
@@ -926,7 +928,7 @@ if __name__ == '__main__':
                               prim_constructor = None, 
                               prims = prims2,
                               obj_fcn = ObjFcns(f=[(spd_to_cris,'Rf','Rg')], ft = [(90,110)]),
-                              minimizer = Minimizer(method='nelder-mead'),
+                              minimizer = Minimizer(method='Nelder-Mead'),
                               verbosity = 2)
         # start optimization:
         spd,M = so4.start(out = 'spds,Ms')

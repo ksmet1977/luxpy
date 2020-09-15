@@ -1314,7 +1314,7 @@ def spd_optimizer_2_3(optimizer_type = '2mixer', \
                     Yxy_target = np2d([100,1/3,1/3]), cieobs = _CIEOBS,\
                     obj_fcn = [None], obj_fcn_pars = [{}], obj_fcn_weights = [1],\
                     obj_tar_vals = [0], decimals = [5], \
-                    minimize_method = 'nelder-mead', minimize_opts = None, F_rss = True,\
+                    minimize_method = 'Nelder-Mead', minimize_opts = None, F_rss = True,\
                     verbosity = 0,**kwargs):
     """
     | Optimizes the weights (fluxes) of a set of component spectra by combining 
@@ -1389,7 +1389,7 @@ def spd_optimizer_2_3(optimizer_type = '2mixer', \
             | [0] or list, optional
             | Target values for each objective function.
         :minimize_method:
-            | 'nelder-mead', optional
+            | 'Nelder-Mead', optional
             | Optimization method used by minimize function.
         :minimize_opts: 
             | None, optional
@@ -1485,7 +1485,7 @@ def get_optim_pars_dict(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs =
               component_spds = None, N_components = None,\
               obj_fcn = [None], obj_fcn_pars = [{}], obj_fcn_weights = [1],\
               obj_tar_vals = [0], decimals = [5], \
-              minimize_method = 'nelder-mead', minimize_opts = None, F_rss = True,\
+              minimize_method = 'Nelder-Mead', minimize_opts = None, F_rss = True,\
               peakwl = [450,530,610], fwhm = [20,20,20], \
               allow_nongaussianbased_mono_spds = False, bw_order = [-1],\
               wl = _WL3, with_wl = True, strength_shoulder = 2,\
@@ -1911,7 +1911,7 @@ def spd_optimizer(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs = _CIEO
                   component_spds = None, N_components = None,\
                   obj_fcn = [None], obj_fcn_pars = [{}], obj_fcn_weights = [1],\
                   obj_tar_vals = [0], decimals = [5], \
-                  minimize_method = 'nelder-mead', minimize_opts = None, F_rss = True,\
+                  minimize_method = 'Nelder-Mead', minimize_opts = None, F_rss = True,\
                   peakwl = [450,530,610], fwhm = [20,20,20], \
                   allow_nongaussianbased_mono_spds = False, bw_order = [-1],\
                   wl = _WL3, with_wl = True, strength_shoulder = 2,\
@@ -2006,7 +2006,7 @@ def spd_optimizer(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs = _CIEO
             | [0] or list, optional
             | Target values for each objective function.
         :minimize_method:
-            | 'nelder-mead', optional
+            | 'Nelder-Mead', optional
             | Optimization method used by minimize function.
         :minimize_opts:
             | None, optional

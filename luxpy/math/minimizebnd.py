@@ -15,7 +15,7 @@ from luxpy.utils import np, sp, vec_to_dict
 
 __all__ = ['minimizebnd']
 
-def minimizebnd(fun, x0, args=(), method = 'nelder-mead', use_bnd = True, \
+def minimizebnd(fun, x0, args=(), method = 'Nelder-Mead', use_bnd = True, \
                 bounds = (None,None) , options = None, \
                 x0_vsize = None, x0_keys = None, **kwargs):
     """
@@ -55,7 +55,7 @@ def minimizebnd(fun, x0, args=(), method = 'nelder-mead', use_bnd = True, \
         x0, vsize = vec_to_dict(dic = x0, vsize = x0_vsize, keys = x0_keys)
     
     if use_bnd == False:
-        res = sp.optimize.minimize(fun, x0, args = args, options = options, **kwargs)
+        res = sp.optimize.minimize(fun, x0, args = args, method = method, options = options, **kwargs)
         res['fval'] = fun(res['x'], *args)
         if x0_keys is None:
             res['x_final'] = res['x']
