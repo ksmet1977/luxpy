@@ -444,7 +444,7 @@ class SpectralOptimizer():
 
         self.nprim = nprim
         self.wlr = getwlr(wlr)
-        self._update_target(target, tar_type, cspace_bwtf = {})
+        self._update_target(target, tar_type, cspace_bwtf = cspace_bwtf)
         self.cieobs = cieobs
         self.out = out
         self.optimizer_type = optimizer_type
