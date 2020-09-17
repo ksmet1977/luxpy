@@ -450,7 +450,8 @@ class SpectralOptimizer():
             Spectrum is created as weighted sum of primaries. Any desired target 
             chromaticity should be specified as part of the objective functions.
         """
-
+        self.target = target
+        self.tar_type = tar_type
         self.nprim = nprim
         self.wlr = getwlr(wlr)
         self._update_target(target, tar_type, cspace_bwtf = cspace_bwtf)
@@ -793,7 +794,11 @@ class SpectralOptimizer():
         # Print output:
         if self.verbosity > 1:
             for i in range(x.shape[0]):
-                output_str = 'spdi = {:1.0f}/{:1.0f}, chrom. = E({:1.1f},{:1.4f},{:1.4f})/T({:1.1f},{:1.4f},{:1.4f}), '.format(i+1,x.shape[0],Yxy_ests[i,0],Yxy_ests[i,1],Yxy_ests[i,2],self.Yxy_target[0,0],self.Yxy_target[0,1],self.Yxy_target[0,2])    
+                if self.Yxy_target is not None:
+                    output_str = 'spdi = {:1.0f}/{:1.0f}, chrom. = E({:1.1f},{:1.4f},{:1.4f})/T({:1.1f},{:1.4f},{:1.4f}), '.format(i+1,x.shape[0],Yxy_ests[i,0],Yxy_ests[i,1],Yxy_ests[i,2],self.Yxy_target[0,0],self.Yxy_target[0,1],self.Yxy_target[0,2])    
+                else:
+                    output_str = 'spdi = {:1.0f}/{:1.0f}, chrom. = E({:1.1f},{:1.4f},{:1.4f})/T(not specified), '.format(i+1,x.shape[0],Yxy_ests[i,0],Yxy_ests[i,1],Yxy_ests[i,2])    
+
                 if self.obj_fcn.f is not None:
                     # create output_str for spdi and print:
                     for j in range(len(self.obj_fcn.f)):

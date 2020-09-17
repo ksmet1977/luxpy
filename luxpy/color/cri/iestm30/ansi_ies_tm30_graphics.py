@@ -96,6 +96,29 @@ def _tm30_process_spd(spd, cri_type = 'ies-tm30',**kwargs):
             if key == 'normalized_chroma_ref': key = 'scalef' # rename
             if key == 'binnrs': key = 'hbinnrs' # rename
             data[key] = tpl[i]
+            
+        # Normalize chroma to scalef and fit ellipse to gamut:
+        scalef = data['scalef']
+        jabt = data['jabt_binned'].copy()
+        jabr = data['jabr_binned'].copy()
+        Cr = (jabr[...,1]**2 + jabr[...,2]**2)**0.5
+        Ct = ((jabt[...,1]**2 + jabt[...,2]**2)**0.5)/Cr*scalef
+        ht = math.positive_arctan(jabt[...,1],jabt[...,2], htype = 'rad')
+        hr = math.positive_arctan(jabr[...,1],jabr[...,2], htype = 'rad')
+        jabt[...,1] = Ct*np.cos(ht)
+        jabt[...,2] = Ct*np.sin(ht)
+        jabr[...,1] = scalef*np.cos(hr)
+        jabr[...,2] = scalef*np.sin(hr) 
+        ecc = np.ones((1,jabt.shape[1]))*np.nan
+        theta = np.ones((1,jabt.shape[1]))*np.nan
+        v = np.ones((jabt.shape[1],5))*np.nan
+        for i in range(jabt.shape[1]):
+            v[i,:] = math.fit_ellipse(jabt[:,i,1:])
+            a,b = v[i,0], v[i,1] # major and minor ellipse axes
+            ecc[0,i] = a/b
+            theta[0,i] = np.rad2deg(v[i,4]) # orientation angle
+            if theta[0,i]>180: theta[0,i] -= 180
+        data['gamut_ellipse_fit'] = {'v':v, 'a/b':ecc,'thetad': theta}
     else:
         data = spd
     return data
