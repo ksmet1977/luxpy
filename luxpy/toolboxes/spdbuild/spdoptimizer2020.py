@@ -378,6 +378,7 @@ class SpectralOptimizer():
             :optimizer_type:
                 | '3mixer',  optional
                 | Specifies type of chromaticity optimization 
+                | options: '3mixer', 'no-mixer'
                 | For help on '3mixer' algorithm, see notes below.
             :prims:
                 | ndarray of predefined primary spectra.
@@ -438,6 +439,10 @@ class SpectralOptimizer():
             intermediate sources remain. Color3mixer is then used to calculate 
             the fluxes for the remaining 3 sources, after which the fluxes of 
             all components are back-calculated.
+            
+            3. 'no-mixer':
+            Spectrum is created as weighted sum of primaries. Any desired target 
+            chromaticity should be specified as part of the objective functions.
         """
 
         self.nprim = nprim
@@ -505,7 +510,10 @@ class SpectralOptimizer():
         if target is None: target = self.target
         if tar_type is None: tar_type = self.tar_type
         if cspace_bwtf is None: cspace_bwtf = self.cspace_bwtf
-        self.Yxy_target = colortf(target, tf = tar_type+'>Yxy', cspace_bwtf = cspace_bwtf)
+        if target is not None:
+            self.Yxy_target = colortf(target, tf = tar_type+'>Yxy', cspace_bwtf = cspace_bwtf)
+        else:
+            self.Yxy_target = None
         self.target = target
         self.tar_type = tar_type
         self.cspace_bwtf = cspace_bwtf
@@ -625,6 +633,58 @@ class SpectralOptimizer():
             spd[1:,:] = np.nan
         
         return spd, prims, M
+    
+    def _spd_constructor_nomixer(self, x):
+        """
+        Construct a mixture spectrum composed of n primaries using no mixer algorithm (just simple weighted sum of primaries).
+        
+        Args:
+            :x:
+                | optimization parameters, first n are the strengths of individual primaries.
+                           
+        Returns:
+            :spd, prims, M:
+                | - spd: spectrum resulting from x
+                | - spds: primary spds
+                | - M: fluxes of all primaries
+                
+        Notes:
+            1. 'no-mixer' - simple weighted sum of primaries.
+        """
+        if x.ndim == 1: x = np.atleast_2d(x)
+
+        # get primary spectra:
+        if self.prims is None:
+            # get prim_strengths and remove them from x, remaining x are used to construct primaries:
+            prim_strengths = x[:,:self.nprim].T
+            
+            prims = self.prim_constructor.f(x[:,self.nprim:], 
+                                            self.nprim, 
+                                            self.wlr,
+                                            self.prim_constructor.ptypes,
+                                            **self.prim_constructor.pdefs)
+        else:
+            prim_strengths = x.T
+            prims = self.prims
+            
+        # get primary chrom. coords.:
+        Yxyi = colortf(prims,tf='spd>Yxy',bwtf={'cieobs':self.cieobs,'relative':False})
+
+        # Get fluxes of each primary:
+        M = prim_strengths
+
+        if M.sum() > 0:
+            # Scale M to have target Y:
+            M = M*(self.Yxy_target[:,0]/(Yxyi[:,0]*M).sum())
+
+        # Calculate optimized SPD:
+        spd = np.vstack((prims[0],np.dot(M,prims[1:])))
+    
+        # When all out-of-gamut: set spd to NaN's:
+        if M.sum() == 0:
+            spd[1:,:] = np.nan
+        
+        return spd, prims, M
 
     def _fitness_fcn(self, x, out = 'F'):
         """
@@ -648,8 +708,10 @@ class SpectralOptimizer():
     
             if self.optimizer_type == '3mixer':
                 spdi, primsi, Mi = self._spd_constructor_tri(xi)
+            elif self.optimizer_type == 'no-mixer':
+                spdi, primsi, Mi = self._spd_constructor_nomixer(xi)
             else:
-                raise Exception("Only the '3mixer' optimizer type has been implemented so far (April 10, 2020)")
+                raise Exception("Only the '3mixer' and 'nomixer' optimizer type has been implemented so far (September 17, 2020)")
             
             if i == 0:
                 spds = spdi
