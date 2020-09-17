@@ -461,7 +461,7 @@ def _get_minimize_options_and_pareto(minimize_method, minimize_opts = {}, n = No
     """
     Set default options if not provided, as well as pareto (False: output Root-Sum-Squares of Fi in _fitnessfcn)
     """
-    if (minimize_method == 'particleswarm') | (minimize_method == 'ps') | (minimize_method.lower() == 'nelder-mead'):
+    if (minimize_method == 'particleswarm') | (minimize_method == 'ps') | (minimize_method == 'Nelder-Mead'):
         pareto = False
     elif (minimize_method == 'demo'):
         pareto = True # must be output per objective function!!
@@ -477,8 +477,7 @@ def _get_minimize_options_and_pareto(minimize_method, minimize_opts = {}, n = No
                              'ps_opts' : {'c1': 0.5, 'c2': 0.3, 'w':0.9}}
         elif (minimize_method == 'demo'):
             minimize_opts = math.DEMO.init_options(display = True)
-        elif (minimize_method.lower() == 'nelder-mead'):
-            minimize_method = 'Nelder-Mead'
+        elif (minimize_method == 'Nelder-Mead'):
             if n is None: n = 10
             minimize_opts = {'xtol': 1e-5, 'disp': True, 'maxiter' : 1000*n, 'maxfev' : 1000*n,'fatol': 0.01}
         else:
@@ -533,8 +532,7 @@ def _start_optimization_tri(_fitnessfcn, n, fargs_dict, bnds, par_opt_types,
         results = {'x_final': xopt,'F': fopt}
     
     # Local Simplex optimization using Nelder-Mead:
-    elif (minimize_method.lower() == 'nelder-mead'):
-        minimize_method = 'Nelder-Mead'
+    elif (minimize_method.lower() == 'Nelder-Mead'):
         if x0 is None:
             x0 = np.array([np.random.uniform(bnds[0,i], bnds[1,i],1) for i in range(bnds.shape[1])]).T # generate random start value within bounds
         else:

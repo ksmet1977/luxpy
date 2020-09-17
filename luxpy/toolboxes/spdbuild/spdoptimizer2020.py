@@ -205,7 +205,7 @@ class Minimizer():
         
         Args:
             :method:
-                | 'nelder-mead', optional
+                | 'Nelder-Mead', optional
                 | Optimization method used by minimize function.
                 | options: 
                 |   - 'Nelder-Mead': Nelder-Mead simplex local optimization 
@@ -269,7 +269,7 @@ class Minimizer():
         """
         if display is None: display = self.display
         self.display = display
-        if (self.method == 'particleswarm') | (self.method == 'ps') | (self.method.lower() == 'nelder-mead'):
+        if (self.method == 'particleswarm') | (self.method == 'ps') | (self.method == 'Nelder-Mead'):
             self.pareto = False
         elif (self.method == 'demo'):
             self.pareto = True # must be output per objective function!!
@@ -283,8 +283,7 @@ class Minimizer():
                                   'ps_opts' : {'c1': 0.5, 'c2': 0.3, 'w':0.9}}
             elif (self.method == 'demo'):
                 self.opts = math.DEMO.init_options(display = display)
-            elif (self.method.lower() == 'nelder-mead'):
-                self.method = 'Nelder-Mead'
+            elif (self.method == 'Nelder-Mead'):
                 npar = 10 if x0 is None else x0[0].size
                 self.opts = {'xtol': 1e-5, 'disp': display, 'maxiter' : 1000*npar, 'maxfev' : 1000*npar,'fatol': 0.01}
             else:
@@ -319,8 +318,7 @@ class Minimizer():
             results = {'x_final': xopt,'F': fopt}
         
         # Local Simplex optimization using Nelder-Mead:
-        elif (self.method.lower() == 'nelder-mead'):
-            self.method = 'Nelder-Mead'
+        elif (self.method == 'Nelder-Mead'):
             if self.x0 is None:
                 x0 = np.array([np.random.uniform(bounds[0,i], bounds[1,i],1) for i in range(bounds.shape[1])]).T # generate random start value within bounds
             else:
