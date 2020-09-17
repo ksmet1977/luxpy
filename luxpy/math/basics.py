@@ -889,7 +889,7 @@ def fit_ellipse(xy, center_on_mean_xy = False):
             
     Returns:
         :v:
-            | vector with ellipse parameters [Rmax,Rmin, xc,yc, theta]
+            | vector with ellipse parameters [Rmax,Rmin, xc,yc, theta (rad.)]
             
     Reference:
         1. Fitzgibbon, A.W., Pilu, M., and Fischer R.B., 
@@ -988,7 +988,7 @@ def fit_cov_ellipse(xy, alpha = 0.05, pdf = 'chi2', SE = False,
             
     Returns:
         :v:
-            | vector with ellipse parameters [Rmax,Rmin, xc,yc, theta]
+            | vector with ellipse parameters [Rmax,Rmin, xc,yc, theta (rad.)]
     """
 
     # delete outliers:    
