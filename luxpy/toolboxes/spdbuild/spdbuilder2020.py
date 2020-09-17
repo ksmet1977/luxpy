@@ -532,7 +532,7 @@ def _start_optimization_tri(_fitnessfcn, n, fargs_dict, bnds, par_opt_types,
         results = {'x_final': xopt,'F': fopt}
     
     # Local Simplex optimization using Nelder-Mead:
-    elif (minimize_method.lower() == 'Nelder-Mead'):
+    elif (minimize_method == 'Nelder-Mead'):
         if x0 is None:
             x0 = np.array([np.random.uniform(bnds[0,i], bnds[1,i],1) for i in range(bnds.shape[1])]).T # generate random start value within bounds
         else:
