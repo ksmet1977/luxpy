@@ -498,8 +498,9 @@ class SpectralOptimizer():
             self.prims = prims
             self.nprim = nprim
             self.wlr = prims[:1,:]
-        if self.nprim < 3:
-            raise Exception("nprim-error: number of primaries for optimizer_type == '3mixer' should be minimum 3!")
+        if self.optimizer_type == '3mixer':
+            if self.nprim < 3:
+                raise Exception("nprim-error: number of primaries for optimizer_type == '3mixer' should be minimum 3!")
         
         
 
@@ -671,7 +672,7 @@ class SpectralOptimizer():
         Yxyi = colortf(prims,tf='spd>Yxy',bwtf={'cieobs':self.cieobs,'relative':False})
 
         # Get fluxes of each primary:
-        M = prim_strengths
+        M = prim_strengths.T
 
         if M.sum() > 0:
             # Scale M to have target Y:
