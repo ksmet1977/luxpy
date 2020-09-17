@@ -179,20 +179,21 @@ class ObjFcns():
     def _get_fj_output_str(self, j, obj_vals_ij, F_ij = np.nan, verbosity = 1):
         """ get output string for objective function fj """
         output_str = ''
+
         if verbosity > 0:
             if isinstance(self.f[j],tuple):
                 output_str_sub = '('
-                for jj in range(len(self.f[j])-1): output_str_sub = output_str_sub + self.f[j][jj+1] + ' = {:1.2f}, '
+                for jj in range(len(self.f[j])-1): output_str_sub = output_str_sub + self.f[j][jj+1] + ' = {:1.' + '{:1.0f}'.format(self.decimals[j][jj]) + 'f}, '
                 output_str_sub = output_str_sub[:-2] + ')'
-                #print(obj_vals_ij)
                 output_str_sub = output_str_sub.format(*np.squeeze(obj_vals_ij))    
-                output_str = output_str + r'Fobj_#{:1.0f}'.format(j+1) + ' = {:1.2f} ' + output_str_sub + ', '
+                output_str = output_str + r'Fobj_#{:1.0f}'.format(j+1) + ' = {:1.3f} ' + output_str_sub + ', '
                 output_str = output_str.format(np.nansum(np.array(F_ij)**2)**0.5)
             else:
                 fmt = 'E{:1.2f}(T{:1.2f}), '*len(obj_vals_ij)
                 fmt_values = []
-                for k in range(len(obj_vals_ij)): fmt_values = fmt_values + [obj_vals_ij[k]] + [self.ft[j][k]]
-                output_str = output_str + 'obj{:1.0f} = '.format(j+1) + fmt.format(*fmt_values)
+                targetvals = [self.ft[j]] if not (isinstance(self.ft[j],list)) else self.ft[j]
+                for k in range(len(obj_vals_ij)): fmt_values = fmt_values + [obj_vals_ij[k]] + [targetvals[k]]
+                output_str = output_str + r'Fobj_#{:1.0f} = '.format(j+1) + fmt.format(*fmt_values)
         
         return output_str
             
@@ -380,6 +381,11 @@ class SpectralOptimizer():
                 | Specifies type of chromaticity optimization 
                 | options: '3mixer', 'no-mixer'
                 | For help on '3mixer' algorithm, see notes below.
+            :triangle_strengths_bnds:
+                | None, optional
+                | Bounds for the strengths of the triangle contributions ('3mixer')
+                | or individual primary contributions ('no-mixer').
+                | If None: bounds are set between [0,1].
             :prims:
                 | ndarray of predefined primary spectra.
                 | If None: they are built from optimization parameters using the 
@@ -548,9 +554,13 @@ class SpectralOptimizer():
         Update bounds of triangle_strengths for for an nprim primary mixture.
         """
         if nprim is not None: self.nprim = nprim
-        self.n_triangle_strengths = int(sp.special.factorial(self.nprim)/(sp.special.factorial(self.nprim-3)*sp.special.factorial(3)))
-        self.triangle_strengths_bnds = _parse_bnds(triangle_strengths_bnds, self.n_triangle_strengths, min_ = 0, max_ = 1)
-    
+        if self.optimizer_type == '3mixer':
+            self.n_triangle_strengths = int(sp.special.factorial(self.nprim)/(sp.special.factorial(self.nprim-3)*sp.special.factorial(3)))
+            self.triangle_strengths_bnds = _parse_bnds(triangle_strengths_bnds, self.n_triangle_strengths, min_ = 0, max_ = 1)
+            
+        elif self.optimizer_type == 'no-mixer': # use triangle_strengths to store info on primary strengths in case of 'no-mixer'
+            self.n_triangle_strengths = self.nprim
+            self.triangle_strengths_bnds = _parse_bnds(triangle_strengths_bnds, self.n_triangle_strengths, min_ = 0, max_ = 1)
     
     def _update_bnds(self, nprim = None, triangle_strengths_bnds = None, **prim_kwargs): 
         """
@@ -676,7 +686,8 @@ class SpectralOptimizer():
 
         if M.sum() > 0:
             # Scale M to have target Y:
-            M = M*(self.Yxy_target[:,0]/(Yxyi[:,0]*M).sum())
+            #M = M*(self.Yxy_target[:,0]/(Yxyi[:,0]*M).sum())
+            M = M/M.max() # no target available!
 
         # Calculate optimized SPD:
         spd = np.vstack((prims[0],np.dot(M,prims[1:])))
@@ -791,7 +802,7 @@ class SpectralOptimizer():
                         else:
                             obj_fcn_vals_ij = obj_fcn_vals[j][i]
                         output_str = output_str + self.obj_fcn._get_fj_output_str(j, obj_fcn_vals_ij, F_ij =  F[i,j], verbosity = 1)
-                    print(output_str)
+                    print(output_str,'\n')
                     
         # Take Root-Sum-of-Squares of delta((val - tar)**2):
         if (self.minimizer.pareto == False) & (self.obj_fcn.f is not None):
