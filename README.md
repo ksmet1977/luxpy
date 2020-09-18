@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="300" height="100" src="https://github.com/ksmet1977/luxpy/blob/master/docs/images/LUXPY_logo_new_small.png">
+  <img width="300" height="100" src="https://github.com/ksmet1977/luxpy/blob/master/docs/images/LUXPY_logo_new.png">
 </p>
 
 # Python toolbox for lighting and color science
