@@ -452,6 +452,7 @@ class SpectralOptimizer():
         """
         self.target = target
         self.tar_type = tar_type
+        self.cspace_bwtf = cspace_bwtf
         self.nprim = nprim
         self.wlr = getwlr(wlr)
         self._update_target(target, tar_type, cspace_bwtf = cspace_bwtf)
