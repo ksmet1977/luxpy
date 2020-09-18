@@ -1,7 +1,7 @@
 # Python toolbox for lighting and color science
 ![alt text][logo]
 
-[logo]: https://github.com/ksmet1977/luxpy/blob/master/docs/images/LUXPY__logo.jpg
+[logo]: https://github.com/ksmet1977/luxpy/blob/master/docs/images/LUXPY_logo_new.jpg
 
 * Author: Kevin A.G. Smet (ksmet1977 at gmail.com)
 * Version: 1.5.3
