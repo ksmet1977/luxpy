@@ -3,6 +3,10 @@
 
 [logo]: https://github.com/ksmet1977/luxpy/blob/master/docs/images/LUXPY_logo_new.png
 
+<p align="center">
+  <img width="600" height="200" src="https://github.com/ksmet1977/luxpy/blob/master/docs/images/LUXPY_logo_new.png">
+</p>
+
 * Author: Kevin A.G. Smet (ksmet1977 at gmail.com)
 * Version: 1.5.3
 * Date: Sep 12, 2020
