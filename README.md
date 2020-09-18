@@ -1,7 +1,6 @@
 <p align="center">
-  <img width="400" height="150" src="https://github.com/ksmet1977/luxpy/blob/master/docs/images/LUXPY_logo_new.png">
+  <img width="300" height="100" src="https://github.com/ksmet1977/luxpy/blob/master/docs/images/LUXPY_logo_new.png">
 </p>
--------------------------------------------------------------------------------
 
 # Python toolbox for lighting and color science
 * Author: Kevin A.G. Smet (ksmet1977 at gmail.com)
