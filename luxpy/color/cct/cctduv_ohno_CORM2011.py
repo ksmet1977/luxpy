@@ -71,6 +71,7 @@ def xyz_to_cct_ohno2011(xyz):
     dTc1[a>=2.54] = 1/np.polyval(_KIJ[4,:],a[a>=2.54])*(Lbb[a>=2.54] + 0.01)/Lfp[a>=2.54]*Duv[a>=2.54]/0.01
     T2 = T1 - dTc1
     c = np.log10(T2)
+    c[T2==0] = -np.inf
     dTc2 = np.polyval(_KIJ[5,:],c)
     dTc2[Duv<0] = np.polyval(_KIJ[6,:],c[Duv<0])*np.abs(Duv[Duv<0]/0.03)**2
     Tfinal = T2 - dTc2
