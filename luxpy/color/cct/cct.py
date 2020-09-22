@@ -941,27 +941,28 @@ def xyz_to_cct_ohno(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, rtol = 1e-5,
         Tx_corrected_triangular = Tx*0.99991
         signDuv = np.sign(uv[i][1]-vBB)
         Duv_triangular = signDuv*np.atleast_1d(((delta_uv_m1**2.0) - (x**2.0))**0.5)
+
                                 
-        # Parabolic solution:   
-        a = delta_uv_m1/((cct_m1 - cct_0 )*(cct_m1 - cct_p1) + _EPS)
-        b = delta_uv_0/((cct_0 - cct_m1 )*(cct_0 - cct_p1 ) + _EPS)
-        c = delta_uv_p1/((cct_p1 - cct_0 )*(cct_p1 - cct_m1) + _EPS)
-        A = a + b + c
-        B = -(a*(cct_p1 + cct_0) + b*(cct_p1 + cct_m1) + c*(cct_0 + cct_m1))
-        C = (a*cct_p1*cct_0) + (b*cct_p1*cct_m1) + (c*cct_0*cct_m1)
-        Tx = -B/(2*A + _EPS)
-        Tx_corrected_parabolic = Tx*0.99991
-        Duv_parabolic = signDuv*(A*np.power(Tx_corrected_parabolic,2) + B*Tx_corrected_parabolic + C)
+        # Parabolic solution (only when Duv_triangular above Threshold or when two ccts are equal)
         Threshold = 0.002
-        if Duv_parabolic >= Threshold:
-            CCT[i] = Tx_corrected_parabolic
-            Duv[i] = Duv_parabolic
-        else:
+        if ((cct_0 == cct_p1) | (cct_0 == cct_m1)) | (np.abs(Duv_triangular) < Threshold):
             CCT[i] = Tx_corrected_triangular
             Duv[i] = Duv_triangular
+        else:
+            a = delta_uv_m1/((cct_m1 - cct_0 )*(cct_m1 - cct_p1) + _EPS)
+            b = delta_uv_0/((cct_0 - cct_m1 )*(cct_0 - cct_p1 ) + _EPS)
+            c = delta_uv_p1/((cct_p1 - cct_m1 )*(cct_p1 - cct_0) + _EPS)
+            A = a + b + c
+            B = -(a*(cct_p1 + cct_0) + b*(cct_p1 + cct_m1) + c*(cct_0 + cct_m1))
+            C = (a*cct_p1*cct_0) + (b*cct_p1*cct_m1) + (c*cct_0*cct_m1)
+            Tx = -B/(2*A + _EPS)
+            Tx_corrected_parabolic = Tx*0.99991
+            Duv_parabolic = signDuv*(A*np.power(Tx_corrected_parabolic,2) + B*Tx_corrected_parabolic + C)
 
-    
-    
+            CCT[i] = Tx_corrected_parabolic
+            Duv[i] = Duv_parabolic
+            
+
     # Regulate output:
     if (out == 'cct') | (out == 1):
         return np2dT(CCT)
