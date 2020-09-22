@@ -113,11 +113,16 @@ def _tm30_process_spd(spd, cri_type = 'ies-tm30',**kwargs):
         theta = np.ones((1,jabt.shape[1]))*np.nan
         v = np.ones((jabt.shape[1],5))*np.nan
         for i in range(jabt.shape[1]):
-            v[i,:] = math.fit_ellipse(jabt[:,i,1:])
-            a,b = v[i,0], v[i,1] # major and minor ellipse axes
-            ecc[0,i] = a/b
-            theta[0,i] = np.rad2deg(v[i,4]) # orientation angle
-            if theta[0,i]>180: theta[0,i] -= 180
+            try:
+                v[i,:] = math.fit_ellipse(jabt[:,i,1:])
+                a,b = v[i,0], v[i,1] # major and minor ellipse axes
+                ecc[0,i] = a/b
+                theta[0,i] = np.rad2deg(v[i,4]) # orientation angle
+                if theta[0,i]>180: theta[0,i] -= 180
+            except:
+                v[i,:] = np.nan*np.ones((1,5))
+                ecc[0,i] = np.nan
+                theta[0,i] = np.nan # orientation angle
         data['gamut_ellipse_fit'] = {'v':v, 'a/b':ecc,'thetad': theta}
     else:
         data = spd
