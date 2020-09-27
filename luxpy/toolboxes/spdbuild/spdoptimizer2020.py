@@ -106,6 +106,8 @@ def _init_wlr(wlr):
         wlr = getwlr(wlr)
     if wlr.ndim == 1:
         wlr = wlr[None,None,:]
+    elif wlr.ndim == 2:
+        wlr = wlr[None,:]
     return wlr.T
 
 def _extract_prim_optimization_parameters(x, nprims, 
