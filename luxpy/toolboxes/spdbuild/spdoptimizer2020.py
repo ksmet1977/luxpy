@@ -11,48 +11,51 @@ from luxpy import cri
 
 from luxpy.math.particleswarm import particleswarm
 
-
+from luxpy.toolboxes.spdbuild.spdbuilder2020 import (_color3mixer,
+                                                     _parse_bnds,
+                                                     _extract_prim_optimization_parameters,
+                                                     _get_default_prim_parameters)
 
 __all__ = ['PrimConstructor','Minimizer','ObjFcns','SpectralOptimizer',
            '_extract_prim_optimization_parameters',
            '_stack_wlr_spd','_init_wlr']
 
 #------------------------------------------------------------------------------
-def _color3mixer(Yxyt,Yxy1,Yxy2,Yxy3):
-    """
-    Calculate fluxes required to obtain a target chromaticity 
-    when (additively) mixing 3 light sources.
+# def _color3mixer(Yxyt,Yxy1,Yxy2,Yxy3):
+#     """
+#     Calculate fluxes required to obtain a target chromaticity 
+#     when (additively) mixing 3 light sources.
     
-    Args:
-        :Yxyt: 
-            | ndarray with target Yxy chromaticities.
-        :Yxy1: 
-            | ndarray with Yxy chromaticities of light sources 1.
-        :Yxy2:
-            | ndarray with Yxy chromaticities of light sources 2.
-        :Yxy3:
-            | ndarray with Yxy chromaticities of light sources 3.
+#     Args:
+#         :Yxyt: 
+#             | ndarray with target Yxy chromaticities.
+#         :Yxy1: 
+#             | ndarray with Yxy chromaticities of light sources 1.
+#         :Yxy2:
+#             | ndarray with Yxy chromaticities of light sources 2.
+#         :Yxy3:
+#             | ndarray with Yxy chromaticities of light sources 3.
         
-    Returns:
-        :M: 
-            | ndarray with fluxes.
+#     Returns:
+#         :M: 
+#             | ndarray with fluxes.
         
-    Note:
-        Yxyt, Yxy1, ... can contain multiple rows, referring to single mixture.
-    """
-    Y1, x1, y1 = Yxy1[...,0], Yxy1[...,1], Yxy1[...,2]
-    Y2, x2, y2 = Yxy2[...,0], Yxy2[...,1], Yxy2[...,2]
-    Y3, x3, y3 = Yxy3[...,0], Yxy3[...,1], Yxy3[...,2]
-    Yt, xt, yt = Yxyt[...,0], Yxyt[...,1], Yxyt[...,2]
-    m1 = y1*((xt-x3)*y2-(yt-y3)*x2+x3*yt-xt*y3)/(yt*((x3-x2)*y1+(x2-x1)*y3+(x1-x3)*y2))
-    m2 = -y2*((xt-x3)*y1-(yt-y3)*x1+x3*yt-xt*y3)/(yt*((x3-x2)*y1+(x2-x1)*y3+(x1-x3)*y2))
-    m3 = y3*((x2-x1)*yt-(y2-y1)*xt+x1*y2-x2*y1)/(yt*((x2-x1)*y3-(y2-y1)*x3+x1*y2-x2*y1))
+#     Note:
+#         Yxyt, Yxy1, ... can contain multiple rows, referring to single mixture.
+#     """
+#     Y1, x1, y1 = Yxy1[...,0], Yxy1[...,1], Yxy1[...,2]
+#     Y2, x2, y2 = Yxy2[...,0], Yxy2[...,1], Yxy2[...,2]
+#     Y3, x3, y3 = Yxy3[...,0], Yxy3[...,1], Yxy3[...,2]
+#     Yt, xt, yt = Yxyt[...,0], Yxyt[...,1], Yxyt[...,2]
+#     m1 = y1*((xt-x3)*y2-(yt-y3)*x2+x3*yt-xt*y3)/(yt*((x3-x2)*y1+(x2-x1)*y3+(x1-x3)*y2))
+#     m2 = -y2*((xt-x3)*y1-(yt-y3)*x1+x3*yt-xt*y3)/(yt*((x3-x2)*y1+(x2-x1)*y3+(x1-x3)*y2))
+#     m3 = y3*((x2-x1)*yt-(y2-y1)*xt+x1*y2-x2*y1)/(yt*((x2-x1)*y3-(y2-y1)*x3+x1*y2-x2*y1))
     
-    if Yxy1.ndim == 2:
-        M = Yt*np.vstack((m1/Y1,m2/Y2,m3/Y3)).T
-    else:
-        M = Yt*np.dstack((m1/Y1,m2/Y2,m3/Y3))
-    return M
+#     if Yxy1.ndim == 2:
+#         M = Yt*np.vstack((m1/Y1,m2/Y2,m3/Y3)).T
+#     else:
+#         M = Yt*np.dstack((m1/Y1,m2/Y2,m3/Y3))
+#     return M
 
 def _triangle_mixer(Yxy_target, Yxyi, triangle_strengths):
     """
@@ -72,7 +75,7 @@ def _triangle_mixer(Yxy_target, Yxyi, triangle_strengths):
     # Get rid of out-of-gamut solutions:
     is_out_of_gamut =  (((M3<0).sum(axis=-1))>0)
     n_in_gamut = Nc - is_out_of_gamut.sum(axis=-1)
-    n_in_gamut[n_in_gamut == 0] = 1 # void div by zero
+    n_in_gamut[n_in_gamut == 0] = 1.0 # avoid div by zero
 
     M3[is_out_of_gamut] = np.nan
     if Nc > 1:
@@ -110,67 +113,67 @@ def _init_wlr(wlr):
         wlr = wlr[None,:]
     return wlr.T
 
-def _extract_prim_optimization_parameters(x, nprims, 
-                                          prim_constructor_parameter_types, 
-                                          prim_constructor_parameter_defs):
-    """
-    Extact the primary parameters from the optimization vector x and the prim_constructor_parameter_defs dict.
-    """
-    types = prim_constructor_parameter_types
-    pars = {}
-    ct = 0
-    for pt in types:
-        if pt not in prim_constructor_parameter_defs: # extract value from x (to be optimized as not in _defs dict!)
-           pars[pt] = np.array(x[:,(ct*nprims):(ct*nprims) + nprims])
-           ct+=1
-        else:
-           pars[pt] = np.array(prim_constructor_parameter_defs[pt])
-    return pars
+# def _extract_prim_optimization_parameters(x, nprims, 
+#                                           prim_constructor_parameter_types, 
+#                                           prim_constructor_parameter_defs):
+#     """
+#     Extact the primary parameters from the optimization vector x and the prim_constructor_parameter_defs dict.
+#     """
+#     types = prim_constructor_parameter_types
+#     pars = {}
+#     ct = 0
+#     for pt in types:
+#         if pt not in prim_constructor_parameter_defs: # extract value from x (to be optimized as not in _defs dict!)
+#            pars[pt] = np.array(x[:,(ct*nprims):(ct*nprims) + nprims])
+#            ct+=1
+#         else:
+#            pars[pt] = np.array(prim_constructor_parameter_defs[pt])
+#     return pars
          
             
-def _get_default_prim_parameters(nprims, parameter_types = ['peakwl', 'fwhm'], **kwargs):
-    """
-    Get dict with default primary parameters, dict with parameter bounds and a list with parameters to be optimized.
-    """
-    keys = list(kwargs.keys())
-    parameter_to_be_optimized = []
-    parameter_defaults = {}
-    parameter_bnds = {}
-    for pt in parameter_types:
-        # set up default parameter values (when not optimized):
-        if pt not in keys:
-            parameter_to_be_optimized.append(pt)
-        else:
-            pdefs = kwargs.pop(pt)
-            if (isinstance(pdefs,int) | isinstance(pdefs,float)): pdefs = [pdefs]*nprims
-            parameter_defaults[pt] = pdefs
-        # Create bnds for parameters to be optimized:
-        if pt not in keys:
-            if pt+'_bnds' not in keys:
-                parameter_bnds[pt+'_bnds'] = None
-            else:
-                parameter_bnds[pt+'_bnds'] = kwargs.pop(pt+'_bnds')
-            parameter_bnds[pt+'_bnds'] = _parse_bnds(parameter_bnds[pt+'_bnds'], nprims) # parse temporary bnds to final ones
-    parameter_defaults.update(kwargs) # add remaining parameters to dict with defaults for unpacking in prim_constructor function
-    return parameter_defaults, parameter_bnds, parameter_to_be_optimized
+# def _get_default_prim_parameters(nprims, parameter_types = ['peakwl', 'fwhm'], **kwargs):
+#     """
+#     Get dict with default primary parameters, dict with parameter bounds and a list with parameters to be optimized.
+#     """
+#     keys = list(kwargs.keys())
+#     parameter_to_be_optimized = []
+#     parameter_defaults = {}
+#     parameter_bnds = {}
+#     for pt in parameter_types:
+#         # set up default parameter values (when not optimized):
+#         if pt not in keys:
+#             parameter_to_be_optimized.append(pt)
+#         else:
+#             pdefs = kwargs.pop(pt)
+#             if (isinstance(pdefs,int) | isinstance(pdefs,float)): pdefs = [pdefs]*nprims
+#             parameter_defaults[pt] = pdefs
+#         # Create bnds for parameters to be optimized:
+#         if pt not in keys:
+#             if pt+'_bnds' not in keys:
+#                 parameter_bnds[pt+'_bnds'] = None
+#             else:
+#                 parameter_bnds[pt+'_bnds'] = kwargs.pop(pt+'_bnds')
+#             parameter_bnds[pt+'_bnds'] = _parse_bnds(parameter_bnds[pt+'_bnds'], nprims) # parse temporary bnds to final ones
+#     parameter_defaults.update(kwargs) # add remaining parameters to dict with defaults for unpacking in prim_constructor function
+#     return parameter_defaults, parameter_bnds, parameter_to_be_optimized
 
 
-def _parse_bnds(bnds,n, min_ = -1e100, max_ = 1e100):
-    """
-    Setup the lower- and upper-bounds for n primary mixtures.
-    """
-    if bnds is None:
-        lb = min_*np.ones((1,n))
-        ub = max_*np.ones((1,n))
-    else:
-        if bnds[0] is None:
-            lb = min_*np.ones((1,n))
-        if bnds[1] is None:
-            ub = max_*np.ones((1,n))
+# def _parse_bnds(bnds,n, min_ = -1e100, max_ = 1e100):
+#     """
+#     Setup the lower- and upper-bounds for n primary mixtures.
+#     """
+#     if bnds is None:
+#         lb = min_*np.ones((1,n))
+#         ub = max_*np.ones((1,n))
+#     else:
+#         if bnds[0] is None:
+#             lb = min_*np.ones((1,n))
+#         if bnds[1] is None:
+#             ub = max_*np.ones((1,n))
         
-        lb = bnds[0]*np.ones((1,n)) if (isinstance(bnds[0],int) | isinstance(bnds[0],float)) else bnds[0]
-        ub = bnds[1]*np.ones((1,n)) if (isinstance(bnds[1],int) | isinstance(bnds[1],float)) else bnds[1]
-    return np.vstack((lb,ub))
+#         lb = bnds[0]*np.ones((1,n)) if (isinstance(bnds[0],int) | isinstance(bnds[0],float)) else bnds[0]
+#         ub = bnds[1]*np.ones((1,n)) if (isinstance(bnds[1],int) | isinstance(bnds[1],float)) else bnds[1]
+#     return np.vstack((lb,ub))
 
 
 #------------------------------------------------------------------------------

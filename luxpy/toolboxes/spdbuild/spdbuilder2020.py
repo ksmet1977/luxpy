@@ -79,11 +79,12 @@ def _color3mixer(Yxyt,Yxy1,Yxy2,Yxy3):
     m1 = y1*((xt-x3)*y2-(yt-y3)*x2+x3*yt-xt*y3)/(yt*((x3-x2)*y1+(x2-x1)*y3+(x1-x3)*y2))
     m2 = -y2*((xt-x3)*y1-(yt-y3)*x1+x3*yt-xt*y3)/(yt*((x3-x2)*y1+(x2-x1)*y3+(x1-x3)*y2))
     m3 = y3*((x2-x1)*yt-(y2-y1)*xt+x1*y2-x2*y1)/(yt*((x2-x1)*y3-(y2-y1)*x3+x1*y2-x2*y1))
-    M = Yt*np.vstack((m1/Y1,m2/Y2,m3/Y3))
+    
     if Yxy1.ndim == 2:
         M = Yt*np.vstack((m1/Y1,m2/Y2,m3/Y3)).T
     else:
         M = Yt*np.dstack((m1/Y1,m2/Y2,m3/Y3))
+
     return M
 
            
