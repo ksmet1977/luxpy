@@ -8,8 +8,9 @@ from luxpy import (math, _WL3, _CIEOBS, getwlr, SPD, spd_to_xyz,
                     xyz_to_Yxy, colortf, xyz_to_cct)
 from luxpy.utils import sp,np, plt, _EPS, np2d
 from luxpy import cri 
+
 from luxpy.math.particleswarm import particleswarm
-from luxpy.math.pymoo_nsga_ii import nsga_ii
+
 
 
 __all__ = ['PrimConstructor','Minimizer','ObjFcns','SpectralOptimizer',
@@ -564,8 +565,12 @@ class Minimizer():
         
         # Run user defined optimization algorithm:
         elif not isinstance(self.method, str):
-            results = self.method(fitness_fcn, npars, args = fitness_args_dict, bounds = bounds, 
-                                  verbosity = verbosity, **self.opts)
+            results = self.method(fitness_fcn, 
+                                  npars, 
+                                  args = fitness_args_dict, 
+                                  bounds = bounds, 
+                                  verbosity = verbosity, 
+                                  **self.opts)
         else:
             raise Exception ('Unsupported minimization method.')
         
@@ -1135,6 +1140,7 @@ class SpectralOptimizer():
   #------------------------------------------------------------------------------
 if __name__ == '__main__':  
     
+    
     run_example_1 = False # # class based example with pre-defined minimization methods
     
     run_example_2 = False # # class based example with pre-defined minimization methods and primary set
@@ -1241,6 +1247,7 @@ if __name__ == '__main__':
             # Note that there is already a key 'x_final' in results
             return results
         
+        from luxpy.math.pymoo_nsga_ii import nsga_ii
         def user_minim_ga(fitnessfcn, npars, args, bounds, verbosity = 1,**opts):
             results = nsga_ii(fitnessfcn, npars, args = args, 
                               bounds = bounds, n_objectives = -1,
