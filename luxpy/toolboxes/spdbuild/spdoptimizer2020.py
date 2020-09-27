@@ -15,7 +15,7 @@ Functions
 ---------
  :gaussian_prim_constructor(): constructs a gaussian based primary set.
  
- :_init_wlr(): Initialize the wavelength range for use with PrimConstructor.
+ :_setup_wlr(): Initialize the wavelength range for use with PrimConstructor.
  
  :_extract_prim_optimization_parameters(): Extract the primary parameters from the optimization vector x and the pdefs dict for use with PrimConstructor.
 
@@ -28,6 +28,11 @@ Functions
  :ObjFcns: class to specify one or more objective functions for minimization
  
  :SpectralOptimizer: class for spectral optimization (initialization and run)
+ 
+ :spd_optimizer2(): Generate a spectrum with specified white point and optimized
+                   for certain objective functions from a set of component 
+                   spectra or component spectrum model parameters 
+                   (functional wrapper around SpectralOptimizer class).
 
                 
 Notes
@@ -46,51 +51,47 @@ from luxpy import cri
 
 from luxpy.math.particleswarm import particleswarm
 
-from luxpy.toolboxes.spdbuild.spdbuilder2020 import (_color3mixer,
-                                                     _parse_bnds,
-                                                     _extract_prim_optimization_parameters,
-                                                     _get_default_prim_parameters)
 
 __all__ = ['PrimConstructor','Minimizer','ObjFcns','SpectralOptimizer',
            '_extract_prim_optimization_parameters',
-           '_stack_wlr_spd','_init_wlr']
+           '_stack_wlr_spd','_setup_wlr']
 
 #------------------------------------------------------------------------------
-# def _color3mixer(Yxyt,Yxy1,Yxy2,Yxy3):
-#     """
-#     Calculate fluxes required to obtain a target chromaticity 
-#     when (additively) mixing 3 light sources.
+def _color3mixer(Yxyt,Yxy1,Yxy2,Yxy3):
+    """
+    Calculate fluxes required to obtain a target chromaticity 
+    when (additively) mixing 3 light sources.
     
-#     Args:
-#         :Yxyt: 
-#             | ndarray with target Yxy chromaticities.
-#         :Yxy1: 
-#             | ndarray with Yxy chromaticities of light sources 1.
-#         :Yxy2:
-#             | ndarray with Yxy chromaticities of light sources 2.
-#         :Yxy3:
-#             | ndarray with Yxy chromaticities of light sources 3.
+    Args:
+        :Yxyt: 
+            | ndarray with target Yxy chromaticities.
+        :Yxy1: 
+            | ndarray with Yxy chromaticities of light sources 1.
+        :Yxy2:
+            | ndarray with Yxy chromaticities of light sources 2.
+        :Yxy3:
+            | ndarray with Yxy chromaticities of light sources 3.
         
-#     Returns:
-#         :M: 
-#             | ndarray with fluxes.
+    Returns:
+        :M: 
+            | ndarray with fluxes.
         
-#     Note:
-#         Yxyt, Yxy1, ... can contain multiple rows, referring to single mixture.
-#     """
-#     Y1, x1, y1 = Yxy1[...,0], Yxy1[...,1], Yxy1[...,2]
-#     Y2, x2, y2 = Yxy2[...,0], Yxy2[...,1], Yxy2[...,2]
-#     Y3, x3, y3 = Yxy3[...,0], Yxy3[...,1], Yxy3[...,2]
-#     Yt, xt, yt = Yxyt[...,0], Yxyt[...,1], Yxyt[...,2]
-#     m1 = y1*((xt-x3)*y2-(yt-y3)*x2+x3*yt-xt*y3)/(yt*((x3-x2)*y1+(x2-x1)*y3+(x1-x3)*y2))
-#     m2 = -y2*((xt-x3)*y1-(yt-y3)*x1+x3*yt-xt*y3)/(yt*((x3-x2)*y1+(x2-x1)*y3+(x1-x3)*y2))
-#     m3 = y3*((x2-x1)*yt-(y2-y1)*xt+x1*y2-x2*y1)/(yt*((x2-x1)*y3-(y2-y1)*x3+x1*y2-x2*y1))
+    Note:
+        Yxyt, Yxy1, ... can contain multiple rows, referring to single mixture.
+    """
+    Y1, x1, y1 = Yxy1[...,0], Yxy1[...,1], Yxy1[...,2]
+    Y2, x2, y2 = Yxy2[...,0], Yxy2[...,1], Yxy2[...,2]
+    Y3, x3, y3 = Yxy3[...,0], Yxy3[...,1], Yxy3[...,2]
+    Yt, xt, yt = Yxyt[...,0], Yxyt[...,1], Yxyt[...,2]
+    m1 = y1*((xt-x3)*y2-(yt-y3)*x2+x3*yt-xt*y3)/(yt*((x3-x2)*y1+(x2-x1)*y3+(x1-x3)*y2))
+    m2 = -y2*((xt-x3)*y1-(yt-y3)*x1+x3*yt-xt*y3)/(yt*((x3-x2)*y1+(x2-x1)*y3+(x1-x3)*y2))
+    m3 = y3*((x2-x1)*yt-(y2-y1)*xt+x1*y2-x2*y1)/(yt*((x2-x1)*y3-(y2-y1)*x3+x1*y2-x2*y1))
     
-#     if Yxy1.ndim == 2:
-#         M = Yt*np.vstack((m1/Y1,m2/Y2,m3/Y3)).T
-#     else:
-#         M = Yt*np.dstack((m1/Y1,m2/Y2,m3/Y3))
-#     return M
+    if Yxy1.ndim == 2:
+        M = Yt*np.vstack((m1/Y1,m2/Y2,m3/Y3)).T
+    else:
+        M = Yt*np.dstack((m1/Y1,m2/Y2,m3/Y3))
+    return M
 
 def _triangle_mixer(Yxy_target, Yxyi, triangle_strengths):
     """
@@ -135,7 +136,7 @@ def _stack_wlr_spd(wlr,spd):
     else:
         return spd
 
-def _init_wlr(wlr):
+def _setup_wlr(wlr):
     """
     Setup the wavelength range for use with PrimConstructor.
     """
@@ -147,67 +148,67 @@ def _init_wlr(wlr):
         wlr = wlr[None,:]
     return wlr.T
 
-# def _extract_prim_optimization_parameters(x, nprims, 
-#                                           prim_constructor_parameter_types, 
-#                                           prim_constructor_parameter_defs):
-#     """
-#     Extract the primary parameters from the optimization vector x and the prim_constructor_parameter_defs dict, for use with PrimConstructor..
-#     """
-#     types = prim_constructor_parameter_types
-#     pars = {}
-#     ct = 0
-#     for pt in types:
-#         if pt not in prim_constructor_parameter_defs: # extract value from x (to be optimized as not in _defs dict!)
-#            pars[pt] = np.array(x[:,(ct*nprims):(ct*nprims) + nprims])
-#            ct+=1
-#         else:
-#            pars[pt] = np.array(prim_constructor_parameter_defs[pt])
-#     return pars
+def _extract_prim_optimization_parameters(x, nprims, 
+                                          prim_constructor_parameter_types, 
+                                          prim_constructor_parameter_defs):
+    """
+    Extract the primary parameters from the optimization vector x and the prim_constructor_parameter_defs dict, for use with PrimConstructor..
+    """
+    types = prim_constructor_parameter_types
+    pars = {}
+    ct = 0
+    for pt in types:
+        if pt not in prim_constructor_parameter_defs: # extract value from x (to be optimized as not in _defs dict!)
+            pars[pt] = np.array(x[:,(ct*nprims):(ct*nprims) + nprims])
+            ct+=1
+        else:
+            pars[pt] = np.array(prim_constructor_parameter_defs[pt])
+    return pars
          
             
-# def _get_default_prim_parameters(nprims, parameter_types = ['peakwl', 'fwhm'], **kwargs):
-#     """
-#     Get dict with default primary parameters, dict with parameter bounds and a list with parameters to be optimized.
-#     """
-#     keys = list(kwargs.keys())
-#     parameter_to_be_optimized = []
-#     parameter_defaults = {}
-#     parameter_bnds = {}
-#     for pt in parameter_types:
-#         # set up default parameter values (when not optimized):
-#         if pt not in keys:
-#             parameter_to_be_optimized.append(pt)
-#         else:
-#             pdefs = kwargs.pop(pt)
-#             if (isinstance(pdefs,int) | isinstance(pdefs,float)): pdefs = [pdefs]*nprims
-#             parameter_defaults[pt] = pdefs
-#         # Create bnds for parameters to be optimized:
-#         if pt not in keys:
-#             if pt+'_bnds' not in keys:
-#                 parameter_bnds[pt+'_bnds'] = None
-#             else:
-#                 parameter_bnds[pt+'_bnds'] = kwargs.pop(pt+'_bnds')
-#             parameter_bnds[pt+'_bnds'] = _parse_bnds(parameter_bnds[pt+'_bnds'], nprims) # parse temporary bnds to final ones
-#     parameter_defaults.update(kwargs) # add remaining parameters to dict with defaults for unpacking in prim_constructor function
-#     return parameter_defaults, parameter_bnds, parameter_to_be_optimized
+def _get_default_prim_parameters(nprims, parameter_types = ['peakwl', 'fwhm'], **kwargs):
+    """
+    Get dict with default primary parameters, dict with parameter bounds and a list with parameters to be optimized.
+    """
+    keys = list(kwargs.keys())
+    parameter_to_be_optimized = []
+    parameter_defaults = {}
+    parameter_bnds = {}
+    for pt in parameter_types:
+        # set up default parameter values (when not optimized):
+        if pt not in keys:
+            parameter_to_be_optimized.append(pt)
+        else:
+            pdefs = kwargs.pop(pt)
+            if (isinstance(pdefs,int) | isinstance(pdefs,float)): pdefs = [pdefs]*nprims
+            parameter_defaults[pt] = pdefs
+        # Create bnds for parameters to be optimized:
+        if pt not in keys:
+            if pt+'_bnds' not in keys:
+                parameter_bnds[pt+'_bnds'] = None
+            else:
+                parameter_bnds[pt+'_bnds'] = kwargs.pop(pt+'_bnds')
+            parameter_bnds[pt+'_bnds'] = _parse_bnds(parameter_bnds[pt+'_bnds'], nprims) # parse temporary bnds to final ones
+    parameter_defaults.update(kwargs) # add remaining parameters to dict with defaults for unpacking in prim_constructor function
+    return parameter_defaults, parameter_bnds, parameter_to_be_optimized
 
 
-# def _parse_bnds(bnds,n, min_ = -1e100, max_ = 1e100):
-#     """
-#     Setup the lower- and upper-bounds for n primary mixtures.
-#     """
-#     if bnds is None:
-#         lb = min_*np.ones((1,n))
-#         ub = max_*np.ones((1,n))
-#     else:
-#         if bnds[0] is None:
-#             lb = min_*np.ones((1,n))
-#         if bnds[1] is None:
-#             ub = max_*np.ones((1,n))
+def _parse_bnds(bnds,n, min_ = -1e100, max_ = 1e100):
+    """
+    Setup the lower- and upper-bounds for n primary mixtures.
+    """
+    if bnds is None:
+        lb = min_*np.ones((1,n))
+        ub = max_*np.ones((1,n))
+    else:
+        if bnds[0] is None:
+            lb = min_*np.ones((1,n))
+        if bnds[1] is None:
+            ub = max_*np.ones((1,n))
         
-#         lb = bnds[0]*np.ones((1,n)) if (isinstance(bnds[0],int) | isinstance(bnds[0],float)) else bnds[0]
-#         ub = bnds[1]*np.ones((1,n)) if (isinstance(bnds[1],int) | isinstance(bnds[1],float)) else bnds[1]
-#     return np.vstack((lb,ub))
+        lb = bnds[0]*np.ones((1,n)) if (isinstance(bnds[0],int) | isinstance(bnds[0],float)) else bnds[0]
+        ub = bnds[1]*np.ones((1,n)) if (isinstance(bnds[1],int) | isinstance(bnds[1],float)) else bnds[1]
+    return np.vstack((lb,ub))
 
 
 #------------------------------------------------------------------------------
@@ -251,7 +252,7 @@ def gaussian_prim_constructor(x, nprims, wlr, ptypes, **pdefs):
         | ```    pars = _extract_prim_optimization_parameters(x, nprims, ptypes, pdefs)```
         | ``` ```
         | ```    # Setup wavelengths:```
-        | ```    wlr = _init_wlr(wlr)```
+        | ```    wlr = _setup_wlr(wlr)```
         | ``` ```
         | ```    # Conversion factor for FWHM to sigma of Gaussian:```
         | ```    fwhm_to_sig = 1/(2*(2*np.log(2))**0.5) ```
@@ -268,7 +269,7 @@ def gaussian_prim_constructor(x, nprims, wlr, ptypes, **pdefs):
     pars = _extract_prim_optimization_parameters(x, nprims, ptypes, pdefs)
     
     # setup wavelengths:
-    wlr = _init_wlr(wlr)
+    wlr = _setup_wlr(wlr)
     
     # Collect parameters from pars dict:
     fwhm_to_sig = 1/(2*(2*np.log(2))**0.5) # conversion factor for FWHM to sigma of Gaussian
@@ -306,7 +307,7 @@ class PrimConstructor():
                 | ```    pars = _extract_prim_optimization_parameters(x, nprims, ptypes, pdefs)```
                 | ``` ```
                 | ```    # Setup wavelengths:```
-                | ```    wlr = _init_wlr(wlr)```
+                | ```    wlr = _setup_wlr(wlr)```
                 | ``` ```
                 | ```    # Conversion factor for FWHM to sigma of Gaussian:```
                 | ```    fwhm_to_sig = 1/(2*(2*np.log(2))**0.5) ```
@@ -1170,19 +1171,208 @@ class SpectralOptimizer():
             return eval(out)
 
        
+def spd_optimizer2(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cspace_bwtf = {},
+                  n = 4, wlr = [360,830,1], prims = None,
+                  cieobs = _CIEOBS, out = 'spds,primss,Ms,results',
+                  optimizer_type = '3mixer',
+                  prim_constructor = gaussian_prim_constructor,
+                  prim_constructor_parameter_types = ['peakwl', 'fwhm'], 
+                  prim_constructor_parameter_defs = {},
+                  obj_fcn = None, 
+                  obj_fcn_pars = [{}], 
+                  obj_fcn_weights = [1], 
+                  obj_tar_vals = [0], 
+                  obj_tar_tols = [0],
+                  decimals = [5], 
+                  triangle_strengths_bnds = None,
+                  minimize_method = 'Nelder-Mead', minimize_opts = {},
+                  x0 = None, pareto = False, display = False,
+                  verbosity = 1):
+    """
+    | Generate a spectrum with specified white point and optimized for certain objective 
+    | functions from a set of primary spectra or primary spectrum model parameters.
+    
+    Args:
+        :target: 
+            | np2d([100,1/3,1/3]), optional
+            | ndarray with Yxy chromaticity of target.
+        :tar_type:
+            | 'Yxy' or str, optional
+            | Specifies the input type in :target: (e.g. 'Yxy' or 'cct')
+        :cspace_bwtf:
+            | {}, optional
+            | Backward (cspace_to_xyz) transform parameters 
+            | (see colortf()) to go from :tar_type: to 'Yxy').
+        :n:
+            | 4, optional
+            | Number of primaries in light mixture.
+        :wl: 
+            | [360,830,1], optional
+            | Wavelengths used in optimization when :prims: is not an
+              ndarray with spectral data.
+        :cieobs:
+            | _CIEOBS, optional
+            | CIE CMF set used to calculate chromaticity values, if not provided 
+            | in :Yxyi:.
+        :optimizer_type:
+            | '3mixer',  optional
+            | Specifies type of chromaticity optimization 
+            | For help on '3mixer' algorithm, see notes below.
+        :prims:
+            | ndarray of predefined primary spectra.
+            | If None: they are built from optimization parameters using the 
+            | function in :prim_constructor:
+        :prim_constructor:
+            | function that constructs the primaries from the optimization parameters
+            | Should have the form: 
+            |   ``prim_constructor(x, n, wl, prim_constructor_parameter_types, **prim_constructor_parameter_defs)``
+        :prim_constructor_parameter_types:
+            | gaussian_prim_parameter_types ['peakwl', 'fwhm'], optional
+            | List with strings of the parameters used by prim_constructor() to
+            | calculate the primary spd. All parameters listed and that do not
+            | have default values (one for each prim!!!) in prim_constructor_parameters_defs 
+            | will be optimized.
+        :prim_constructor_parameters_defs:
+            | {}, optional
+            | Dict with constructor parameters required by prim_constructor and/or 
+            | default values for parameters that are not being optimized.
+            | For example: {'fwhm':  30} will keep fwhm fixed and not optimize it.
+        :obj_fcn: 
+            | [None] or list, optional
+            | Function handles to objective function.
+        :obj_fcn_weights:
+            | [1] or list, optional.
+            | Weigths for each obj. fcn
+        :obj_fcn_pars:
+            | [{}] or list, optional
+            | Parameter dicts for each obj. fcn.
+        :obj_tar_vals:
+            | [0] or list, optional
+            | Target values for each objective function.
+        :obj_tar_tols:
+            | [0] or list, optional
+            | Tolerance of objective function values with target values.
+        :decimals:
+            | [5], optional
+            | Rounding decimals of objective function values.
+        :minimize_method:
+            | 'Nelder-Mead', optional
+            | Optimization method used by minimize function.
+            | options: 
+            |   - 'Nelder-Mead': Nelder-Mead simplex local optimization 
+            |                    using the luxpy.math.minimizebnd wrapper
+            |                    with method set to 'Nelder-Mead'.
+            |   - 'particleswarm': Pseudo-global optimizer using particle swarms
+            |                      (using wrapper luxpy.math.particleswarm)
+            |   - 'demo' :  Differential Evolutionary Multiobjective Optimizatizer
+            |               (using math.DEMO.demo_opt)
+            |   - A user-defined minimization function (see _start_optimization_tri? for 
+            |       info on the requirements of this function)
+        :minimize_opts:
+            | None, optional
+            | Dict with minimization options. 
+            | None defaults to the options depending on choice of minimize_method
+            |  - 'Nelder-Mead'   : {'xtol': 1e-5, 'disp': True, 'maxiter': 1000*Nc,
+            |                       'maxfev' : 1000*Nc,'fatol': 0.01}
+            |  - 'particleswarm' : {'iters': 100, 'n_particles': 10, 'ftol': -np.inf,
+            |                       'ps_opts' : {'c1': 0.5, 'c2': 0.3, 'w':0.9}}
+            |  - 'demo' :          {'F': 0.5, 'CR': 0.3, 'kmax': 300, 'mu': 100, 'display': True}
+            |  - dict with options for user-defined minimization method.
+        :triangle_strength_bnds:
+            | (None,None)
+            | Specifies lower- and upper-bounds for the strengths of each of the primary
+            | combinations that will be made during the optimization using '3mixer'.
+        :x0:
+            | None, optional
+            | If None: a random starting value will be generated for the Nelder-Mead
+            | minimization algorithm, else the user defined starting value will be used.
+            | Note that it should only contain a value for each peakwl and/or fwhm that
+            | is set to be optimized. The triangle_strengths are added automatically.
+        :pareto:
+            | False, optional
+            | Specifies whether the output of the fitnessfcn should be the Root-Sum-of-Squares 
+            | of all weighted objective function values or not. Individual function values are
+            | required by true multi-objective optimizers (i.e. pareto == True).
+        :display:
+            | True, optional
+            | Turn native display options of minimizers on (True) or off (False).
+
+        :verbosity:
+            | 0, optional
+            | If > 0: print intermediate results.
+        :out:
+            | 'spds,primss,Ms,results', optional
+            | Determines output of function (see :returns:).
+            
+    Returns:
+        :returns: 
+            | spds, primss,Ms,results
+            | - 'spds': optimized spectrum (or spectra: for particleswarm and demo minimization methods)
+            | - 'primss': primary spectra of each optimized spectrum
+            | - 'Ms' : ndarrays with fluxes of each primary
+            | - 'results': dict with optimization results
+
+    Notes on the optimization algorithms:
+        
+        1. '3mixer': The triangle/trio method creates for all possible 
+        combinations of 3 primary component spectra a spectrum that results in 
+        the target chromaticity using color3mixer() and then optimizes the 
+        weights of each of the latter spectra such that adding them 
+        (additive mixing) results in obj_vals as close as possible to the 
+        target values.
+       
+        2. '2mixer': APRIL 2020, NOT YET IMPLEMENTED!!
+        Pairs (odd,even) of components are selected and combined using 
+        'pair_strength'. This process is continued until only 3 (combined)
+        intermediate sources remain. Color3mixer is then used to calculate 
+        the fluxes for the remaining 3 sources, after which the fluxes of 
+        all components are back-calculated.
+    """
+    
+    so = SpectralOptimizer(target = target, tar_type = tar_type, cspace_bwtf = cspace_bwtf,
+                            nprim = n, wlr = wlr, cieobs = cieobs, 
+                            out = 'spds,primss,Ms,results',
+                            optimizer_type = optimizer_type,
+                            triangle_strengths_bnds = triangle_strengths_bnds,
+                            prim_constructor = PrimConstructor(f = prim_constructor, 
+                                                               ptypes = prim_constructor_parameter_types,
+                                                               pdefs = prim_constructor_parameter_defs), 
+                            prims = prims,
+                            obj_fcn = ObjFcns(f = obj_fcn,
+                                              fp = obj_fcn_pars,
+                                              fw = obj_fcn_weights,
+                                              ft = obj_tar_vals,
+                                              ft_tol = obj_tar_tols,
+                                              decimals = decimals),
+                            minimizer = Minimizer(method = minimize_method,
+                                                  opts = minimize_opts,
+                                                  x0 = x0,
+                                                  pareto = pareto,
+                                                  display = display),
+                            verbosity = verbosity)
+    # start optimization:
+    return so.start(out = out)
+
       
   #------------------------------------------------------------------------------
 if __name__ == '__main__':  
     
     
-    run_example_1 = False # # class based example with pre-defined minimization methods
+    run_example_class_1 = False # # class based example with pre-defined minimization methods
     
-    run_example_2 = False # # class based example with pre-defined minimization methods and primary set
+    run_example_class_2 = False # # class based example with pre-defined minimization methods and primary set
 
-    run_example_3 = True # # class based example with user-defined  minimization method   
+    run_example_class_3 = False # # class based example with user-defined  minimization method   
 
-    run_example_4 = False # # class based example with pre-defined primaries and demo minimization
+    run_example_class_4 = True # # class based example with pre-defined primaries and demo minimization
 
+    
+    run_example_fcn_1 = False # function based example: use pre-defined minimization methods (spd_optimize2())
+
+    run_example_fcn_2 = False # function based example: use user-defined  minimization method (spd_optimizer2()) 
+    
+    
+    #--------------------------------------------------------------------------
     import luxpy as lx
     cieobs = '1964_10'
     
@@ -1196,7 +1386,8 @@ if __name__ == '__main__':
         xyz = lx.spd_to_xyz(spd,cieobs=cieobs)
         return xyz_to_cct(xyz,cieobs=cieobs,out='cct,duv')[0]
     
-    if run_example_1 == True:
+    #--------------------------------------------------------------------------
+    if run_example_class_1 == True:
         
         so1 = SpectralOptimizer(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cspace_bwtf = {},
                               nprim = 4, wlr = [360,830,1], cieobs = cieobs, 
@@ -1216,8 +1407,8 @@ if __name__ == '__main__':
         print('obj_fcn1:',Rf)
         print('obj_fcn2:',Rg)
         
-        
-    if run_example_2 == True:
+    #--------------------------------------------------------------------------
+    if run_example_class_2 == True:
         
         # create set of 4 primaries with fixed fwhm at 15 nm:
         prims = PrimConstructor(pdefs={'peakwl':[450,520,580,630],'fwhm':[15],
@@ -1249,7 +1440,8 @@ if __name__ == '__main__':
         print('obj_fcn2:',Rg)
 
     
-    if run_example_3 == True:
+    #--------------------------------------------------------------------------
+    if run_example_class_3 == True:
         
         
         def user_prim_constructor4(x, nprims, wlr, 
@@ -1261,7 +1453,7 @@ if __name__ == '__main__':
             # Extract the primary parameters from x and prim_constructor_parameter_defs:
             pars = _extract_prim_optimization_parameters(x, nprims, ptypes, pdefs)
             # setup wavelengths:
-            wlr = _init_wlr(wlr)
+            wlr = _setup_wlr(wlr)
             
             # Collect parameters from pars dict:
             n = 2*(2**0.5-1)**0.5
@@ -1313,7 +1505,9 @@ if __name__ == '__main__':
         print('obj_fcn1:',Rf)
         print('obj_fcn2:',Rg)
         
-    if run_example_4 == True:
+        
+    #--------------------------------------------------------------------------
+    if run_example_class_4 == True:
         
         # create set of 4 primaries with fixed peakwl and fwhm bounds set to [5,300]:
         prims = PrimConstructor(pdefs={'peakwl':[450,520,580,630],'fwhm':[15],
@@ -1341,13 +1535,82 @@ if __name__ == '__main__':
         print('obj_fcn1:',Rf)
         print('obj_fcn2:',Rg)
         
-    def test_new(so,n=100):
-        RfRg = np.zeros((n,2))
+    
+    #--------------------------------------------------------------------------
+    if run_example_fcn_1 == True:
+
+        # start optimization:
+        spd, prims, M = spd_optimizer2(np2d([100,1/3,1/3]), tar_type = 'Yxy', cspace_bwtf = {},
+                                      n = 4, wlr = [360,830,1], prims = None,
+                                      cieobs = cieobs, out = 'spds,primss,Ms', 
+                                      prim_constructor = gaussian_prim_constructor,
+                                      prim_constructor_parameter_types = ['peakwl', 'fwhm'], 
+                                      prim_constructor_parameter_defs = {'peakwl_bnds':[400,700],
+                                                                         'fwhm_bnds':[5,300]},
+                                      obj_fcn = [(spd_to_cris,'Rf','Rg')], 
+                                      obj_fcn_pars = [{}], 
+                                      obj_fcn_weights = [(1,1)], 
+                                      obj_tar_vals = [(90,110)],
+                                      triangle_strengths_bnds = None,
+                                      minimize_method = 'Nelder-Mead',
+                                      minimize_opts = {},
+                                      verbosity = 2)
+        Rf, Rg = spd_to_cris(spd)
+        print('obj_fcn1:',Rf)
+        print('obj_fcn2:',Rg)
+
+
+    #-------------------------------------------------------------------------- 
+    if run_example_fcn_2 == True:
+                
+        def user_prim_constructor2(x, nprims, wlr, 
+                                   ptypes = ['peakwl','spectral_width'], 
+                                   **pdefs):
+            """
+            User defined prim constructor: lorenztian 2e order profile.
+            """
+            # Extract the primary parameters from x and prim_constructor_parameter_defs:
+            pars = _extract_prim_optimization_parameters(x, nprims, ptypes, pdefs)
+            
+            # setup wavelengths:
+            wlr = _setup_wlr(wlr)
+            
+            # Collect parameters from pars dict:
+            n = 2*(2**0.5-1)**0.5 # to ensure correct fwhm
+            spd = ((1 + (n*(pars['peakwl']-wlr)/pars['spectral_width'])**2)**(-2))
+            return _stack_wlr_spd(wlr, spd)
         
-        for i in range(n):
-            print('Loop {:1.0f}'.format(i))
-            spd,M = so.start(out = 'spds,Ms')
-            Rf, Rg = spd_to_cris(spd)
-            print('  Rf = {:1.2f}, Rg = {:1.2f}'.format(Rf[0],Rg[0]))
-            RfRg[i,:] = np.hstack((Rf, Rg))
-        return RfRg
+        
+        # Create a minimization function with the specified interface:
+        def user_minim2(fitnessfcn, Nparameters, args, bounds, verbosity = 1,
+                       **minimize_opts):
+            results = particleswarm(fitnessfcn, Nparameters, args = args, 
+                                         bounds = bounds, 
+                                         iters = 100, n_particles = 10, ftol = -np.inf,
+                                         options = {'c1': 0.5, 'c2': 0.3, 'w':0.9},
+                                         verbosity = verbosity)
+            # Note that there is already a key 'x_final' in results
+            return results
+        
+        
+        # start optimization:
+        spd, prims, M = spd_optimizer2(np2d([100,1/3,1/3]), tar_type = 'Yxy', cspace_bwtf = {},
+                                      n = 4, wlr = [360,830,1], prims = None,
+                                      cieobs = cieobs, out = 'spds,primss,Ms', 
+                                      prim_constructor = user_prim_constructor2,
+                                      prim_constructor_parameter_types = ['peakwl', 'spectral_width'], 
+                                      prim_constructor_parameter_defs = {'peakwl_bnds':[400,700],
+                                                                         'spectral_width_bnds':[5,300]},
+                                      obj_fcn = [(spd_to_cris,'Rf','Rg')], 
+                                      obj_fcn_pars = [{}], 
+                                      obj_fcn_weights = [(1,1)], obj_tar_vals = [(90,110)],
+                                      triangle_strengths_bnds = None,
+                                      minimize_method = user_minim2,
+                                      minimize_opts = {'pareto':False},
+                                      verbosity = 2)
+        
+        Rf, Rg = spd_to_cris(spd)
+        print('obj_fcn1:',Rf)
+        print('obj_fcn2:',Rg)
+  
+

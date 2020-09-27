@@ -103,10 +103,46 @@ Functions
  :spd_optimizer2(): Generate a spectrum with specified white point and optimized
                     for certain objective functions from a set of component 
                     spectra or component spectrum model parameters.
+                    
+                    
+Module for building and optimizing SPDs (2)
+===========================================
+
+This module implements a class based spectral optimizer. It differs from 
+the spdoptimizer function in spdbuild.py, in that it can use several 
+different minimization algorithms, as well as a user defined method. 
+It is also written such that the user can easily write his own
+primary constructor function. It supports the '3mixer' algorithm 
+(but no '2mixer') and a 'no-mixer' algorithm (chromaticity as part of the list
+of objectives) for calculating the mixing contributions of the primaries.
+
+Functions
+---------
+ :gaussian_prim_constructor(): constructs a gaussian based primary set.
+ 
+ :_setup_wlr(): Initialize the wavelength range for use with PrimConstructor.
+ 
+ :_extract_prim_optimization_parameters(): Extract the primary parameters from the optimization vector x and the pdefs dict for use with PrimConstructor.
+
+ :_stack_wlr_spd():  Stack the wavelength range 'on top' of the spd values for use with PrimConstructor.
+ 
+ :PrimConstructor: class for primary (spectral) construction
+     
+ :Minimizer: class for minimization of fitness of each of the objective functions
+ 
+ :ObjFcns: class to specify one or more objective functions for minimization
+ 
+ :SpectralOptimizer: class for spectral optimization (initialization and run)
+ 
+ :spd_optimizer2(): Generate a spectrum with specified white point and optimized
+                   for certain objective functions from a set of component 
+                   spectra or component spectrum model parameters 
+                   (functional wrapper around SpectralOptimizer class).
+
                 
 Notes
 -----
- 1. See examples below (in spdbuilder2020.'__main__') for use.                
+ 1. See examples below (in spdoptimizer2020.'__main__') for use.                
                    
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
