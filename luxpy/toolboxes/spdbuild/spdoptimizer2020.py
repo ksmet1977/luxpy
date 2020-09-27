@@ -882,6 +882,7 @@ class SpectralOptimizer():
         # Scale M to have target Y:
         isnan = np.isnan(M.sum(axis=-1))
         notnan = np.logical_not(isnan)
+
         if self.Yxy_target is not None:
             if notnan.any():
                 M[notnan,:] = M[notnan,:]*(self.Yxy_target[...,0]/(Yxyi[notnan,:,0]*M[notnan,:]).sum(axis=-1,keepdims=True))
@@ -949,9 +950,12 @@ class SpectralOptimizer():
         # Scale M to have target Y:
         isnan = np.isnan(M.sum(axis=-1))
         notnan = np.logical_not(isnan)
-        if notnan.any():
-            M[notnan,:] = M[notnan,:]*(self.Yxy_target[...,0]/(Yxyi[notnan,:,0]*M[notnan,:]).sum(axis=-1,keepdims=True))
-
+        if self.Yxy_target is not None:
+            if notnan.any():
+                M[notnan,:] = M[notnan,:]*(self.Yxy_target[...,0]/(Yxyi[notnan,:,0]*M[notnan,:]).sum(axis=-1,keepdims=True))
+        else:
+            M[notnan,:] = M[notnan,:]/M[notnan,:].max()
+            
         # Calculate optimized SPD:
         spd = np.vstack((wlr_,np.einsum('ij,ijk->ik',M,prims[:,1:,:])))
 
