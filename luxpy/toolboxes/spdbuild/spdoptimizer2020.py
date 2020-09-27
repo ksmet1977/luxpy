@@ -17,7 +17,7 @@ Functions
  
  :_init_wlr(): Initialize the wavelength range for use with PrimConstructor.
  
- :_extract_prim_optimization_parameters(): Extract the primary parameters from the optimization vector x and the prim_constructor_parameter_defs dict for use with PrimConstructor.
+ :_extract_prim_optimization_parameters(): Extract the primary parameters from the optimization vector x and the pdefs dict for use with PrimConstructor.
 
  :_stack_wlr_spd():  Stack the wavelength range 'on top' of the spd values for use with PrimConstructor.
  
@@ -214,9 +214,7 @@ def _init_wlr(wlr):
 # Example code for a primiary constructor function:
 gaussian_prim_parameter_types = ['peakwl', 'fwhm']
 
-def gaussian_prim_constructor(x, nprims, wlr, 
-                              prim_constructor_parameter_types, 
-                              **prim_constructor_parameter_defs):
+def gaussian_prim_constructor(x, nprims, wlr, ptypes, **pdefs):
     """
     Construct a set of nprim gaussian primaries with wavelengths wlr using the input in x and in kwargs.
     
@@ -230,15 +228,14 @@ def gaussian_prim_constructor(x, nprims, wlr,
         :prim_constructor:
             | function that constructs the primaries from the optimization parameters
             | Should have the form: 
-            |   prim_constructor(x, n, wl, prim_constructor_parameter_types, prim_constructor_parameter_defs)
-        :prim_constructor_parameter_types:
+            |   prim_constructor(x, n, wl, ptypes, pdefs)
+        :ptypes:
             | gaussian_prim_parameter_types ['peakwl', 'fwhm'], optional
-            | List with strings of the parameters used by prim_constructor() to
+            | List with strings of the parameters used by PrimConstructor()) to
             | calculate the primary spd. All parameters listed and that do not
-            | have default values (one for each prim!!!) in prim_constructor_parameters_defs 
-            | will be optimized.
-        :prim_constructor_parameters_defs:
-            | Dict with constructor parameters required by prim_constructor and/or 
+            | have default values (one for each prim!!!) in pdefs will be optimized.
+        :pdefs:
+            | Dict with constructor parameters required by PrimConstructor and/or 
             | default values for parameters that are not being optimized.
             | For example: {'fwhm':  [30]} will keep fwhm fixed and not optimize it.
             
@@ -248,29 +245,28 @@ def gaussian_prim_constructor(x, nprims, wlr,
             
             
     Example on how to create constructor:
-        | ```def gaussian_prim_constructor(x, nprims, wlr,```
-        | ```                     prim_constructor_parameter_types,``` 
-        | ```                     **prim_constructor_parameter_defs):```
+        | ```def gaussian_prim_constructor(x, nprims, wlr, ptypes, **pdefs):```
         | ``` ```
-        | ```    # Extract the primary parameters from x and prim_constructor_parameter_defs:```
-        | ```    pars = _extract_prim_optimization_parameters(x, nprims, prim_constructor_parameter_types, prim_constructor_parameter_defs)```
-        | ```    # setup wavelengths:```
+        | ```    # Extract the primary parameters from x and pdefs:```
+        | ```    pars = _extract_prim_optimization_parameters(x, nprims, ptypes, pdefs)```
+        | ``` ```
+        | ```    # Setup wavelengths:```
         | ```    wlr = _init_wlr(wlr)```
         | ``` ```
-        | ```    # Collect parameters from pars dict:```
-        | ```    fwhm_to_sig = 1/(2*(2*np.log(2))**0.5) # conversion factor for FWHM to sigma of Gaussian ```
+        | ```    # Conversion factor for FWHM to sigma of Gaussian:```
+        | ```    fwhm_to_sig = 1/(2*(2*np.log(2))**0.5) ```
         | ``` ```
-        | ```    # create spectral profile function: ```
+        | ```    # Create spectral profile function: ```
         | ```    spd = np.exp(-0.5*((pars['peakwl']-wlr)/(pars['fwhm']*fwhm_to_sig))**2)```
         | ``` ```
-        | ```    # stack wlr and spd together: ```
+        | ```    # Stack wlr and spd together: ```
         | ```    return _stack_wlr_spd(wlr,spd)``` 
         
     """
     
     # Extract the primary parameters from x and prim_constructor_parameter_defs:
-    pars = _extract_prim_optimization_parameters(x, nprims, prim_constructor_parameter_types,
-                                                 prim_constructor_parameter_defs)
+    pars = _extract_prim_optimization_parameters(x, nprims, ptypes, pdefs)
+    
     # setup wavelengths:
     wlr = _init_wlr(wlr)
     
@@ -302,25 +298,23 @@ class PrimConstructor():
                 | eg. {'peakwl_bnds':[400,700]} sets 400 and 700 as the lower and
                 | upper bounds of the 'peakwl' variable.
             
-        Example on how to create a constructor:
         
             Example on how to create constructor:
-                | ```def gaussian_prim_constructor(x, nprims, wlr,```
-                | ```                     prim_constructor_parameter_types,``` 
-                | ```                     **prim_constructor_parameter_defs):```
+                | ```def gaussian_prim_constructor(x, nprims, wlr, ptypes, **pdefs):```
                 | ``` ```
-                | ```    # Extract the primary parameters from x and prim_constructor_parameter_defs:```
-                | ```    pars = _extract_prim_optimization_parameters(x, nprims, prim_constructor_parameter_types, prim_constructor_parameter_defs)```
-                | ```    # setup wavelengths:```
+                | ```    # Extract the primary parameters from x and pdefs:```
+                | ```    pars = _extract_prim_optimization_parameters(x, nprims, ptypes, pdefs)```
+                | ``` ```
+                | ```    # Setup wavelengths:```
                 | ```    wlr = _init_wlr(wlr)```
                 | ``` ```
-                | ```    # Collect parameters from pars dict:```
-                | ```    fwhm_to_sig = 1/(2*(2*np.log(2))**0.5) # conversion factor for FWHM to sigma of Gaussian ```
+                | ```    # Conversion factor for FWHM to sigma of Gaussian:```
+                | ```    fwhm_to_sig = 1/(2*(2*np.log(2))**0.5) ```
                 | ``` ```
-                | ```    # create spectral profile function: ```
+                | ```    # Create spectral profile function: ```
                 | ```    spd = np.exp(-0.5*((pars['peakwl']-wlr)/(pars['fwhm']*fwhm_to_sig))**2)```
                 | ``` ```
-                | ```    # stack wlr and spd together: ```
+                | ```    # Stack wlr and spd together: ```
                 | ```    return _stack_wlr_spd(wlr,spd)``` 
         
         """
@@ -657,7 +651,8 @@ class SpectralOptimizer():
                 | '3mixer',  optional
                 | Specifies type of chromaticity optimization 
                 | options: '3mixer', 'no-mixer'
-                | For help on '3mixer' algorithm, see notes below.
+                | For a short description of '3mixer' and 'no-mixer algorithms,
+                | see notes below.
             :triangle_strengths_bnds:
                 | None, optional
                 | Bounds for the strengths of the triangle contributions ('3mixer')
