@@ -53,8 +53,8 @@ from luxpy.math.particleswarm import particleswarm
 
 
 __all__ = ['PrimConstructor','Minimizer','ObjFcns','SpectralOptimizer',
-           '_extract_prim_optimization_parameters',
-           '_stack_wlr_spd','_setup_wlr']
+           '_extract_prim_optimization_parameters', '_stack_wlr_spd','_setup_wlr',
+           'spd_optimizer2', 'gaussian_prim_constructor', 'gaussian_prim_parameter_types']
 
 #------------------------------------------------------------------------------
 def _color3mixer(Yxyt,Yxy1,Yxy2,Yxy3):
