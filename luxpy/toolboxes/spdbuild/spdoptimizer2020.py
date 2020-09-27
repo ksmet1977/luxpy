@@ -1,7 +1,42 @@
 # # -*- coding: utf-8 -*-
-# """
-# .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
-# """
+"""
+Module for building and optimizing SPDs (2)
+===========================================
+
+This module implements a class based spectral optimizer. It differs from 
+the spdoptimizer function in spdbuild.py, in that it can use several 
+different minimization algorithms, as well as a user defined method. 
+It is also written such that the user can easily write his own
+primary constructor function. It supports the '3mixer' algorithm 
+(but no '2mixer') and a 'no-mixer' algorithm (chromaticity as part of the list
+of objectives) for calculating the mixing contributions of the primaries.
+
+Functions
+---------
+ :gaussian_prim_constructor(): constructs a gaussian based primary set.
+ 
+ :_init_wlr(): Initialize the wavelength range for use with PrimConstructor.
+ 
+ :_extract_prim_optimization_parameters(): Extract the primary parameters from the optimization vector x and the prim_constructor_parameter_defs dict for use with PrimConstructor.
+
+ :_stack_wlr_spd():  Stack the wavelength range 'on top' of the spd values for use with PrimConstructor.
+ 
+ :PrimConstructor: class for primary (spectral) construction
+     
+ :Minimizer: class for minimization of fitness of each of the objective functions
+ 
+ :ObjFcns: class to specify one or more objective functions for minimization
+ 
+ :SpectralOptimizer: class for spectral optimization (initialization and run)
+
+                
+Notes
+-----
+ 1. See examples below (in '__main__') for use.
+
+
+.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
+"""
 import warnings
 import itertools
 from luxpy import (math, _WL3, _CIEOBS, getwlr, SPD, spd_to_xyz, 
@@ -62,10 +97,9 @@ def _triangle_mixer(Yxy_target, Yxyi, triangle_strengths):
     Calculates the fluxes of each of the primaries to realize the target chromaticity Yxy_target given the triangle_strengths.
     """
     n = triangle_strengths.shape[0]
+    N = Yxyi.shape[1]
     
     # Generate all possible 3-channel combinations (component triangles):
-    N = Yxyi.shape[1]
-
     combos = np.array(list(itertools.combinations(range(N), 3))) 
     Nc = combos.shape[0]
     
@@ -93,7 +127,7 @@ def _triangle_mixer(Yxy_target, Yxyi, triangle_strengths):
 #------------------------------------------------------------------------------
 def _stack_wlr_spd(wlr,spd):
     """
-    Stack the wavelength range on top of the spd values for use in prim_constructor.
+    Stack the wavelength range on top of the spd values for use with PrimConstructor.
     """
     spd = np.moveaxis(np.dstack((np.repeat(wlr,spd.shape[1],axis=1),spd)),0,-1)
     if spd.shape[0] == 1:
@@ -103,7 +137,7 @@ def _stack_wlr_spd(wlr,spd):
 
 def _init_wlr(wlr):
     """
-    Setup the wavelength range for use in prim_constructor.
+    Setup the wavelength range for use with PrimConstructor.
     """
     if len(wlr) == 3:
         wlr = getwlr(wlr)
@@ -117,7 +151,7 @@ def _init_wlr(wlr):
 #                                           prim_constructor_parameter_types, 
 #                                           prim_constructor_parameter_defs):
 #     """
-#     Extact the primary parameters from the optimization vector x and the prim_constructor_parameter_defs dict.
+#     Extract the primary parameters from the optimization vector x and the prim_constructor_parameter_defs dict, for use with PrimConstructor..
 #     """
 #     types = prim_constructor_parameter_types
 #     pars = {}

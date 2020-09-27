@@ -3,7 +3,7 @@
 Module for building and optimizing SPDs (2)
 ===========================================
 
-This module differs from spdbuild.py in the spdoptimizer function,
+This module differs from the spdoptimizer function in spdbuild.py,
 that can use several different minimization algorithms, as well as a user defined
 method. It is also written such that the user can easily write his own
 primary constructor function. In contrast to spdbuild.py, it only supports the
@@ -11,13 +11,13 @@ primary constructor function. In contrast to spdbuild.py, it only supports the
 
 Functions
 ---------
- :gaussian_prim_constructor: constructs a gaussian based primary set.
+ :gaussian_prim_constructor(): constructs a gaussian based primary set.
  
- :_setup_wlr: Setup the wavelength range for use in prim_constructor.
+ :_setup_wlr(): Setup the wavelength range for use in prim_constructor.
  
- :_extract_prim_optimization_parameters: Extact the primary parameters from the optimization vector x and the prim_constructor_parameter_defs dict.
+ :_extract_prim_optimization_parameters(): Extact the primary parameters from the optimization vector x and the prim_constructor_parameter_defs dict.
 
- :_start_optimization_tri: Start optimization of _fitnessfcn for n primaries using the specified minimize_method. (see notes in docstring on specifications for the  user-defined minimization fcn) 
+ :_start_optimization_tri(): Start optimization of _fitnessfcn for n primaries using the specified minimize_method. (see notes in docstring on specifications for the  user-defined minimization fcn) 
    
  :spd_optimizer2(): Generate a spectrum with specified white point and optimized
                    for certain objective functions from a set of component 
