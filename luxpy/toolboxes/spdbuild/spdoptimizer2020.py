@@ -872,7 +872,6 @@ class SpectralOptimizer():
         
         # reshape (N,nprims,3):
         Yxyi = Yxyi.reshape(prims.shape[0],prims.shape[1]-1,3)
-        xyzi = lx.Yxy_to_xyz(Yxyi)
 
         # Get fluxes of each primary:
         M = _triangle_mixer(self.Yxy_target, Yxyi, triangle_strengths)
