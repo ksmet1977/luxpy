@@ -13,7 +13,7 @@ Functions
 ---------
  :gaussian_prim_constructor: constructs a gaussian based primary set.
  
- :_setup_wlr: Setup the wavelength range for use in prim_constructor.
+ :_init_wlr: Initialize the wavelength range for use in prim_constructor.
  
  :_extract_prim_optimization_parameters: Extact the primary parameters from the optimization vector x and the prim_constructor_parameter_defs dict.
 
@@ -43,8 +43,9 @@ from luxpy import (math, cri, _WL3, _CIEOBS, getwlr, SPD, spd_to_power,
 from luxpy.utils import sp, np, plt, _EPS, np2d, vec_to_dict
 from luxpy.math.particleswarm import particleswarm
 
-__all__ = ['spd_optimizer2','gaussian_prim_constructor','gaussian_prim_parameter_types',
-           '_color3mixer','_setup_wlr','_extract_prim_optimization_parameters',
+__all__ = ['spd_optimizer2',
+           'gaussian_prim_constructor','gaussian_prim_parameter_types',
+           '_color3mixer','_init_wlr','_extract_prim_optimization_parameters',
            '_start_optimization_tri']
 
 
@@ -79,7 +80,11 @@ def _color3mixer(Yxyt,Yxy1,Yxy2,Yxy3):
     m2 = -y2*((xt-x3)*y1-(yt-y3)*x1+x3*yt-xt*y3)/(yt*((x3-x2)*y1+(x2-x1)*y3+(x1-x3)*y2))
     m3 = y3*((x2-x1)*yt-(y2-y1)*xt+x1*y2-x2*y1)/(yt*((x2-x1)*y3-(y2-y1)*x3+x1*y2-x2*y1))
     M = Yt*np.vstack((m1/Y1,m2/Y2,m3/Y3))
-    return M.T
+    if Yxy1.ndim == 2:
+        M = Yt*np.vstack((m1/Y1,m2/Y2,m3/Y3)).T
+    else:
+        M = Yt*np.dstack((m1/Y1,m2/Y2,m3/Y3))
+    return M
 
            
 #------------------------------------------------------------------------------
@@ -120,7 +125,7 @@ def _triangle_mixer(Yxy_target, Yxyi, triangle_strengths):
     return M
 
 #------------------------------------------------------------------------------
-def _setup_wlr(wlr):
+def _init_wlr(wlr):
     """
     Setup the wavelength range for use in prim_constructor.
     """
@@ -194,7 +199,7 @@ def gaussian_prim_constructor(x, nprims, wlr,
         | ```    # Extract the primary parameters from x and prim_constructor_parameter_defs:```
         | ```    pars = _extract_prim_optimization_parameters(x, nprims, prim_constructor_parameter_types, prim_constructor_parameter_defs)```
         | ```    # setup wavelengths:```
-        | ```    wlr = _setup_wlr(wlr)```
+        | ```    wlr = _init_wlr(wlr)```
         | ``` ```
         | ```    # Collect parameters from pars dict:```
         | ```    fwhm_to_sig = 1/(2*(2*np.log(2))**0.5) # conversion factor for FWHM to sigma of Gaussian ```
@@ -204,7 +209,7 @@ def gaussian_prim_constructor(x, nprims, wlr,
     pars = _extract_prim_optimization_parameters(x, nprims, prim_constructor_parameter_types,
                                                  prim_constructor_parameter_defs)
     # setup wavelengths:
-    wlr = _setup_wlr(wlr)
+    wlr = _init_wlr(wlr)
     
     # Collect parameters from pars dict:
     fwhm_to_sig = 1/(2*(2*np.log(2))**0.5) # conversion factor for FWHM to sigma of Gaussian
@@ -841,7 +846,7 @@ if __name__ == '__main__':
             pars = _extract_prim_optimization_parameters(x, nprims, prim_constructor_parameter_types,
                                                          prim_constructor_parameter_defs)
             # setup wavelengths:
-            wlr = _setup_wlr(wlr)
+            wlr = _init_wlr(wlr)
             
             # Collect parameters from pars dict:
             n = 2*(2**0.5-1)**0.5 # to ensure correct fwhm
