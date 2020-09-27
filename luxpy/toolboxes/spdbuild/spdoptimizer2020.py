@@ -83,7 +83,7 @@ def _triangle_mixer(Yxy_target, Yxyi, triangle_strengths):
             M[:,i] = np.nansum(np.nansum(M_final*(combos == i)[None,...],axis=1),axis=-1)/n_in_gamut
     else:
         M = M3
-
+    M[M.sum(axis=-1)==0] = np.nan
     return M
 
 #------------------------------------------------------------------------------
@@ -883,7 +883,7 @@ class SpectralOptimizer():
         isnan = np.isnan(M.sum(axis=-1))
         notnan = np.logical_not(isnan)
         if notnan.any():
-            M[notnan] = M[notnan,:]*(self.Yxy_target[...,0]/(Yxyi[notnan,:,0]*M[notnan,:]).sum(axis=-1,keepdims=True))
+            M[notnan,:] = M[notnan,:]*(self.Yxy_target[...,0]/(Yxyi[notnan,:,0]*M[notnan,:]).sum(axis=-1,keepdims=True))
 
         # Calculate optimized SPD:
         spd = np.vstack((wlr_,np.einsum('ij,ijk->ik',M,prims[:,1:,:])))
