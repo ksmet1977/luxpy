@@ -36,6 +36,7 @@ References
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
+raise Exception('Module is obsolete and will be removed in future, same functionality is now supported by the spdoptimizer2020 module.')
 import itertools
 import warnings
 from luxpy import (math, cri, _WL3, _CIEOBS, getwlr, SPD, spd_to_power,
