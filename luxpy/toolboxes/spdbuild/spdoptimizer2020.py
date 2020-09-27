@@ -14,44 +14,44 @@ from luxpy.math.pymoo_nsga_ii import nsga_ii
 
 __all__ = ['PrimConstructor','Minimizer','ObjFcns','SpectralOptimizer',
            '_extract_prim_optimization_parameters',
-           '_stack_wlr_spd','_setup_wlr']
+           '_stack_wlr_spd','_init_wlr']
 
 #------------------------------------------------------------------------------
-# def _color3mixer(Yxyt,Yxy1,Yxy2,Yxy3):
-#     """
-#     Calculate fluxes required to obtain a target chromaticity 
-#     when (additively) mixing 3 light sources.
+def _color3mixer(Yxyt,Yxy1,Yxy2,Yxy3):
+    """
+    Calculate fluxes required to obtain a target chromaticity 
+    when (additively) mixing 3 light sources.
     
-#     Args:
-#         :Yxyt: 
-#             | ndarray with target Yxy chromaticities.
-#         :Yxy1: 
-#             | ndarray with Yxy chromaticities of light sources 1.
-#         :Yxy2:
-#             | ndarray with Yxy chromaticities of light sources 2.
-#         :Yxy3:
-#             | ndarray with Yxy chromaticities of light sources 3.
+    Args:
+        :Yxyt: 
+            | ndarray with target Yxy chromaticities.
+        :Yxy1: 
+            | ndarray with Yxy chromaticities of light sources 1.
+        :Yxy2:
+            | ndarray with Yxy chromaticities of light sources 2.
+        :Yxy3:
+            | ndarray with Yxy chromaticities of light sources 3.
         
-#     Returns:
-#         :M: 
-#             | ndarray with fluxes.
+    Returns:
+        :M: 
+            | ndarray with fluxes.
         
-#     Note:
-#         Yxyt, Yxy1, ... can contain multiple rows, referring to single mixture.
-#     """
-#     Y1, x1, y1 = Yxy1[...,0], Yxy1[...,1], Yxy1[...,2]
-#     Y2, x2, y2 = Yxy2[...,0], Yxy2[...,1], Yxy2[...,2]
-#     Y3, x3, y3 = Yxy3[...,0], Yxy3[...,1], Yxy3[...,2]
-#     Yt, xt, yt = Yxyt[...,0], Yxyt[...,1], Yxyt[...,2]
-#     m1 = y1*((xt-x3)*y2-(yt-y3)*x2+x3*yt-xt*y3)/(yt*((x3-x2)*y1+(x2-x1)*y3+(x1-x3)*y2))
-#     m2 = -y2*((xt-x3)*y1-(yt-y3)*x1+x3*yt-xt*y3)/(yt*((x3-x2)*y1+(x2-x1)*y3+(x1-x3)*y2))
-#     m3 = y3*((x2-x1)*yt-(y2-y1)*xt+x1*y2-x2*y1)/(yt*((x2-x1)*y3-(y2-y1)*x3+x1*y2-x2*y1))
+    Note:
+        Yxyt, Yxy1, ... can contain multiple rows, referring to single mixture.
+    """
+    Y1, x1, y1 = Yxy1[...,0], Yxy1[...,1], Yxy1[...,2]
+    Y2, x2, y2 = Yxy2[...,0], Yxy2[...,1], Yxy2[...,2]
+    Y3, x3, y3 = Yxy3[...,0], Yxy3[...,1], Yxy3[...,2]
+    Yt, xt, yt = Yxyt[...,0], Yxyt[...,1], Yxyt[...,2]
+    m1 = y1*((xt-x3)*y2-(yt-y3)*x2+x3*yt-xt*y3)/(yt*((x3-x2)*y1+(x2-x1)*y3+(x1-x3)*y2))
+    m2 = -y2*((xt-x3)*y1-(yt-y3)*x1+x3*yt-xt*y3)/(yt*((x3-x2)*y1+(x2-x1)*y3+(x1-x3)*y2))
+    m3 = y3*((x2-x1)*yt-(y2-y1)*xt+x1*y2-x2*y1)/(yt*((x2-x1)*y3-(y2-y1)*x3+x1*y2-x2*y1))
     
-#     if Yxy1.ndim == 2:
-#         M = Yt*np.vstack((m1/Y1,m2/Y2,m3/Y3)).T
-#     else:
-#         M = Yt*np.dstack((m1/Y1,m2/Y2,m3/Y3))
-#     return M
+    if Yxy1.ndim == 2:
+        M = Yt*np.vstack((m1/Y1,m2/Y2,m3/Y3)).T
+    else:
+        M = Yt*np.dstack((m1/Y1,m2/Y2,m3/Y3))
+    return M
 
 def _triangle_mixer(Yxy_target, Yxyi, triangle_strengths):
     """
@@ -96,7 +96,7 @@ def _stack_wlr_spd(wlr,spd):
     else:
         return spd
 
-def _setup_wlr(wlr):
+def _init_wlr(wlr):
     """
     Setup the wavelength range for use in prim_constructor.
     """
@@ -214,7 +214,7 @@ def gaussian_prim_constructor(x, nprims, wlr,
         | ```    # Extract the primary parameters from x and prim_constructor_parameter_defs:```
         | ```    pars = _extract_prim_optimization_parameters(x, nprims, prim_constructor_parameter_types, prim_constructor_parameter_defs)```
         | ```    # setup wavelengths:```
-        | ```    wlr = _setup_wlr(wlr)```
+        | ```    wlr = _init_wlr(wlr)```
         | ``` ```
         | ```    # Collect parameters from pars dict:```
         | ```    fwhm_to_sig = 1/(2*(2*np.log(2))**0.5) # conversion factor for FWHM to sigma of Gaussian ```
@@ -231,7 +231,7 @@ def gaussian_prim_constructor(x, nprims, wlr,
     pars = _extract_prim_optimization_parameters(x, nprims, prim_constructor_parameter_types,
                                                  prim_constructor_parameter_defs)
     # setup wavelengths:
-    wlr = _setup_wlr(wlr)
+    wlr = _init_wlr(wlr)
     
     # Collect parameters from pars dict:
     fwhm_to_sig = 1/(2*(2*np.log(2))**0.5) # conversion factor for FWHM to sigma of Gaussian
@@ -271,7 +271,7 @@ class PrimConstructor():
                 | ```    # Extract the primary parameters from x and prim_constructor_parameter_defs:```
                 | ```    pars = _extract_prim_optimization_parameters(x, nprims, prim_constructor_parameter_types, prim_constructor_parameter_defs)```
                 | ```    # setup wavelengths:```
-                | ```    wlr = _setup_wlr(wlr)```
+                | ```    wlr = _init_wlr(wlr)```
                 | ``` ```
                 | ```    # Collect parameters from pars dict:```
                 | ```    fwhm_to_sig = 1/(2*(2*np.log(2))**0.5) # conversion factor for FWHM to sigma of Gaussian ```
@@ -1213,7 +1213,7 @@ if __name__ == '__main__':
             # Extract the primary parameters from x and prim_constructor_parameter_defs:
             pars = _extract_prim_optimization_parameters(x, nprims, ptypes, pdefs)
             # setup wavelengths:
-            wlr = _setup_wlr(wlr)
+            wlr = _init_wlr(wlr)
             
             # Collect parameters from pars dict:
             n = 2*(2**0.5-1)**0.5

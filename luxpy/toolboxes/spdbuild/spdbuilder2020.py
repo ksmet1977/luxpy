@@ -13,7 +13,7 @@ Functions
 ---------
  :gaussian_prim_constructor: constructs a gaussian based primary set.
  
- :_init_wlr: Initialize the wavelength range for use in prim_constructor.
+ :_setup_wlr: Setup the wavelength range for use in prim_constructor.
  
  :_extract_prim_optimization_parameters: Extact the primary parameters from the optimization vector x and the prim_constructor_parameter_defs dict.
 
@@ -45,7 +45,7 @@ from luxpy.math.particleswarm import particleswarm
 
 __all__ = ['spd_optimizer2',
            'gaussian_prim_constructor','gaussian_prim_parameter_types',
-           '_color3mixer','_init_wlr','_extract_prim_optimization_parameters',
+           '_color3mixer','_setup_wlr','_extract_prim_optimization_parameters',
            '_start_optimization_tri']
 
 
@@ -125,7 +125,7 @@ def _triangle_mixer(Yxy_target, Yxyi, triangle_strengths):
     return M
 
 #------------------------------------------------------------------------------
-def _init_wlr(wlr):
+def _setup_wlr(wlr):
     """
     Setup the wavelength range for use in prim_constructor.
     """
@@ -199,7 +199,7 @@ def gaussian_prim_constructor(x, nprims, wlr,
         | ```    # Extract the primary parameters from x and prim_constructor_parameter_defs:```
         | ```    pars = _extract_prim_optimization_parameters(x, nprims, prim_constructor_parameter_types, prim_constructor_parameter_defs)```
         | ```    # setup wavelengths:```
-        | ```    wlr = _init_wlr(wlr)```
+        | ```    wlr = _setup_wlr(wlr)```
         | ``` ```
         | ```    # Collect parameters from pars dict:```
         | ```    fwhm_to_sig = 1/(2*(2*np.log(2))**0.5) # conversion factor for FWHM to sigma of Gaussian ```
@@ -209,7 +209,7 @@ def gaussian_prim_constructor(x, nprims, wlr,
     pars = _extract_prim_optimization_parameters(x, nprims, prim_constructor_parameter_types,
                                                  prim_constructor_parameter_defs)
     # setup wavelengths:
-    wlr = _init_wlr(wlr)
+    wlr = _setup_wlr(wlr)
     
     # Collect parameters from pars dict:
     fwhm_to_sig = 1/(2*(2*np.log(2))**0.5) # conversion factor for FWHM to sigma of Gaussian
@@ -846,7 +846,7 @@ if __name__ == '__main__':
             pars = _extract_prim_optimization_parameters(x, nprims, prim_constructor_parameter_types,
                                                          prim_constructor_parameter_defs)
             # setup wavelengths:
-            wlr = _init_wlr(wlr)
+            wlr = _setup_wlr(wlr)
             
             # Collect parameters from pars dict:
             n = 2*(2**0.5-1)**0.5 # to ensure correct fwhm
