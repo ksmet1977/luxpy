@@ -71,6 +71,7 @@ def _triangle_mixer(Yxy_target, Yxyi, triangle_strengths):
     # Get rid of out-of-gamut solutions:
     is_out_of_gamut =  (((M3<0).sum(axis=-1))>0)
     n_in_gamut = Nc - is_out_of_gamut.sum(axis=-1)
+    n_in_gamut[n_in_gamut == 0] = 1 # void div by zero
 
     M3[is_out_of_gamut] = np.nan
     if Nc > 1:
