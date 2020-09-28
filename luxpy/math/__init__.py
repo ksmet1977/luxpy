@@ -103,10 +103,16 @@ Module with useful math functions
  
  :pitman_morgan(): Pitman-Morgan Test for the difference between correlated variances with paired samples.
     
- :mupolymod: Module for Multivariate Polynomial Model Optimization (2D, 3D)   
+ :mupolymod: Module for Multivariate Polynomial Model Optimization (2D, 3D) 
+ 
 
- :particleswarm: Module with particleswarm() function for global minimization using particle swarms (wrapper around pyswarms.single.GlobalBestPSO; module is uninmported to minimize dependencies))
-         
+NOT IMPORTED in math-namespace (to minimize dependencies)
+---------------------------------------------------------  
+
+ :pyswarms_particleswarm: Module with particleswarm() function for global minimization using particle swarms (wrapper around pyswarms.single.GlobalBestPSO))
+   
+ :pymoo_nsga_ii: Module with nsga_ii() function for pareto-optimal boundary minimization using Non-Dominated-Sort-Genetic-Algorithm NSGA-II (wrapper around pymoo.NSGAII))      
+
 ===============================================================================
 """
 from .basics import *
@@ -124,8 +130,7 @@ __all__ += ['vec3']
 from . import mupolymodel as mupolymodel
 __all__ += ['mupolymodel']
 
-#from .particleswarm import particleswarm # (don't import here to minimize explicit dependencies)
-#__all__ += ['particleswarm']
+
 
 
 

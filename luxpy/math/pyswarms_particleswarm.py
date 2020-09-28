@@ -1,10 +1,17 @@
 # -*- coding: utf-8 -*-
 """
-    Wrapper around pyswarms.
+Functional wrapper for pyswarms's single.GlobalBestPSO class based optimizer.
+=============================================================================
+
+ :particleswarm(): global minimization using particle swarms.
+
+Notes:
+------
+
+ * An import will try and install the pswarms package using pip install. 
+    
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
-
-__all__ = ['particleswarm']
 
 # Import modules
 import subprocess

@@ -1,6 +1,16 @@
 # -*- coding: utf-8 -*-
 """
-    Wrapper for pymoo's NSGA-II class based optimizer.
+Wrapper for pymoo's NSGA-II class based optimizer.
+==================================================
+
+ :nsga_ii(): pareto multi-objective optimization using NSGA-II genetic algorithm.
+
+Notes:
+------
+
+ * An import will try and install the pymoo package using pip install. 
+
+    
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
@@ -24,7 +34,9 @@ __all__ = ['nsga_ii']
 
 
 class PymooProblem(Problem):
-    
+    """
+    Problem class for pymoo's NSGA2 algorithm.
+    """
     def __init__(self, 
                  n_var, 
                  n_obj, 
@@ -67,7 +79,7 @@ def nsga_ii(fitnessfcn, n_variables, n_objectives, args = {}, use_bnds = True, b
             pm_algorithm = None,
             **pm_kwargs):
     """
-    Global minimization function using NSGA-II from pymoo.
+    Pareto multi-objective minimization function using NSGA-II (NSGA2) from pymoo.
     
     Args:
         :fitnessfcn:
