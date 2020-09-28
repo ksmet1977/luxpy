@@ -489,10 +489,12 @@ class Minimizer():
                 |   - 'Nelder-Mead': Nelder-Mead simplex local optimization 
                 |                    using the luxpy.math.minimizebnd wrapper
                 |                    with method set to 'Nelder-Mead'.
-                |   - 'particleswarm': Pseudo-global optimizer using particle swarms
-                |                      (using wrapper luxpy.math.particleswarm)
                 |   - 'demo' :  Differential Evolutionary Multiobjective Optimizatizer
                 |               (using math.DEMO.demo_opt)
+                |   - 'particleswarm': Pseudo-global optimizer using particle swarms
+                |                      (from pyswarm wrapper module luxpy.math.pyswarms_particleswarm)
+                |   - 'nsga_ii': Pareto multiobjective optimizer using the NSGA-II genetic algorithm
+                |                      (from pymoo wrapper module luxpy.math.pymoo_nsga_ii)
                 |   - A user-defined minimization function (see minimizer.apply? for 
                 |       info on the requirements of this function)
             :opts:
@@ -501,9 +503,14 @@ class Minimizer():
                 | None defaults to the options depending on choice of method
                 |  - 'Nelder-Mead'   : {'xtol': 1e-5, 'disp': True, 'maxiter': 1000*Nc,
                 |                       'maxfev' : 1000*Nc,'fatol': 0.01}
+                |  - 'demo' :          {'F': 0.5, 'CR': 0.3, 'kmax': 300, 'mu': 100, 'display': True}
                 |  - 'particleswarm' : {'iters': 100, 'n_particles': 10, 'ftol': -np.inf,
                 |                       'ps_opts' : {'c1': 0.5, 'c2': 0.3, 'w':0.9}}
-                |  - 'demo' :          {'F': 0.5, 'CR': 0.3, 'kmax': 300, 'mu': 100, 'display': True}
+                |  - 'nsga_ii' : {'n_gen' : 40, 'n_pop' : 400, 'n_offsprings' : None,
+                |                 'termination' : ('n_gen' , 40), 'seed' : 1,
+                |                 'ga_opts' : {'sampling'  : ("real_random",{}),
+                |                              'crossover' : ("real_sbx", {'prob' : 0.9, 'eta' : 15}),
+                |                              'mutation'  : ("real_pm",  {'eta' : 20})}}
                 |  - dict with options for user-defined minimization method.
             :pareto:
                 | False, optional
@@ -529,6 +536,13 @@ class Minimizer():
                 |  - It MUST contain a key 'x_final' containing the final optimized parameters.
                 |  - bnds must be [lowerbounds, upperbounds] with x-bounds ndarrays with values for each parameter.
                 |  - args is an argument with a dictionary containing the input arguments to the fitnessfcn.         
+            3. Minimizer built-in options 'particleswarm' and 'nsga_ii' require
+            pyswarms and pymoo packages to be installed. To minimize the dependency list 
+            of luxpy on 'specialized' packages, these are not automatically installed
+            along with luxpy. However, an attempt will be made to pip install them
+            on first import (so please be patient when running these options for the first
+            time). If the pip install fails, try a manual install using either pip or conda.
+
         """
 
         self.method = method
@@ -549,28 +563,43 @@ class Minimizer():
         self.display = display
         if (self.method == 'particleswarm') | (self.method == 'ps') | (self.method == 'Nelder-Mead'):
             self.pareto = False
-        elif (self.method == 'demo'):
+        elif (self.method == 'demo') | (self.method == 'nsga_ii'):
             self.pareto = True # must be output per objective function!!
         else:
             if 'pareto' in self.opts:
                 self.pareto = self.opts['pareto']
     
-        if (self.opts == {}):
-            if (self.method == 'particleswarm') | (self.method == 'ps'):
-                self.opts = {'iters': 100, 'n_particles': 10, 'ftol': -np.inf,
-                                  'ps_opts' : {'c1': 0.5, 'c2': 0.3, 'w':0.9}}
-            elif (self.method == 'demo'):
-                self.opts = math.DEMO.init_options(display = display)
-            elif (self.method == 'Nelder-Mead'):
-                npar = 10 if x0 is None else x0[0].size
-                self.opts = {'xtol': 1e-5, 'disp': display, 'maxiter' : 1000*npar, 'maxfev' : 1000*npar,'fatol': 0.01}
+        # create dictionary with defaults options
+        if (self.method == 'Nelder-Mead'):
+            npar = 10 if x0 is None else x0[0].size
+            tmp_opts = {'xtol': 1e-5, 'disp': display, 'maxiter' : 1000*npar, 'maxfev' : 1000*npar,'fatol': 0.01}
+
+        elif (self.method == 'demo'):
+            tmp_opts = math.DEMO.init_options(display = display)
+            
+        elif (self.method == 'particleswarm') | (self.method == 'ps'):
+            tmp_opts = {'iters': 100, 'n_particles': 10, 'ftol': -np.inf,
+                              'ps_opts' : {'c1': 0.5, 'c2': 0.3, 'w':0.9}}
+            
+        elif (self.method == 'nsga_ii'):
+            tmp_opts = {'n_gen' : 40, 'n_pop' : 400, 'n_offsprings' : None,
+                          'termination' : ('n_gen' , 40), 'seed' : 1,
+                          'ga_opts' : {'sampling' : ("real_random",{}),
+                                      'crossover': ("real_sbx", {'prob': 0.9, 'eta' : 15}),
+                                      'mutation' : ("real_pm",  {'eta' : 20})}}
+        
+        else:
+            if not isinstance(self.method, str):
+                tmp_opts = {'type':'user-defined, specified as part of opt. function definition'}
+                print('User-Defined minimizer: user should (have) set the optimization options when defining minimizer!')
             else:
-                if not isinstance(self.method, str):
-                    self.opts = {'type':'user-defined, specified as part of opt. function definition'}
-                    print('User-Defined minimizer: user should (have) set the optimization options when defining minimizer!')
-                else:
-                    raise Exception ('Unsupported minimization method.')   
-                    
+                raise Exception ('Unsupported minimization method.')   
+
+        # Update defaults with user entries:
+        tmp_opts.update(self.opts)
+        
+        # overwrite existing self.opts with new entries
+        self.opts = tmp_opts                      
                     
     def apply(self, fitness_fcn, npars, fitness_args_dict, bounds, verbosity = 1):
         """
@@ -578,9 +607,29 @@ class Minimizer():
         """
         fitness_args_list = [v for k,v in fitness_args_dict.items()] 
         self.opts['display'] = np.array(verbosity).astype(bool)
-                
+         
+        # Local Simplex optimization using Nelder-Mead:
+        if (self.method == 'Nelder-Mead'):
+            if self.x0 is None:
+                x0 = np.array([np.random.uniform(bounds[0,i], bounds[1,i],1) for i in range(bounds.shape[1])]).T # generate random start value within bounds
+            else:
+                x0_triangle_strengths = np.ones((1,npars - len(self.x0)))#np.array([np.random.uniform(bnds[0,i+2*n], bnds[1,i+2*n],1) for i in range(n_triangle_strengths)]).T
+                x0 = np.hstack((x0_triangle_strengths, np.atleast_2d(self.x0)))
+            self.x0_with_triangle_strengths = x0
+            self.opts['disp'] = self.opts.pop('display')
+            results = math.minimizebnd(fitness_fcn, x0, args = tuple(fitness_args_list), method = self.method, use_bnd = True, bounds = bounds, options = self.opts)
+
+        # Differential Evolutionary Multi-Objective Optimization:
+        elif (self.method == 'demo'):
+            if (bounds[0] is not None) & (bounds[1] is not None): 
+                xrange = np.hstack((bounds[0][:,None],bounds[1][:,None])).T
+            else:
+                raise Exception("Minimizer: Must set bnds for the 'demo' minimizer")
+            fopt, xopt = math.DEMO.demo_opt(fitness_fcn, npars, args = fitness_args_list, xrange = xrange, options = self.opts)
+            results = {'x_final': xopt,'F': fopt}
+        
         # Particle swarm optimization:
-        if (self.method == 'particleswarm') | (self.method == 'ps'):
+        elif (self.method == 'particleswarm') | (self.method == 'ps'):
             
             # import required minimizer function:
             try:
@@ -593,26 +642,24 @@ class Minimizer():
                                     iters = self.opts['iters'], n_particles = self.opts['n_particles'],
                                     ftol = self.opts['ftol'], options = self.opts['ps_opts'], verbosity = verbosity)
        
-        # Differential Evolutionary Multi-Objective Optimization:
-        elif (self.method == 'demo'):
-            if (bounds[0] is not None) & (bounds[1] is not None): 
-                xrange = np.hstack((bounds[0][:,None],bounds[1][:,None])).T
-            else:
-                raise Exception("Minimizer: Must set bnds for the 'demo' minimizer")
-            fopt, xopt = math.DEMO.demo_opt(fitness_fcn, npars, args = fitness_args_list, xrange = xrange, options = self.opts)
-            results = {'x_final': xopt,'F': fopt}
-        
-        # Local Simplex optimization using Nelder-Mead:
-        elif (self.method == 'Nelder-Mead'):
-            if self.x0 is None:
-                x0 = np.array([np.random.uniform(bounds[0,i], bounds[1,i],1) for i in range(bounds.shape[1])]).T # generate random start value within bounds
-            else:
-                x0_triangle_strengths = np.ones((1,npars - len(self.x0)))#np.array([np.random.uniform(bnds[0,i+2*n], bnds[1,i+2*n],1) for i in range(n_triangle_strengths)]).T
-                x0 = np.hstack((x0_triangle_strengths, np.atleast_2d(self.x0)))
-            self.x0_with_triangle_strengths = x0
-            self.opts['disp'] = self.opts.pop('display')
-            results = math.minimizebnd(fitness_fcn, x0, args = tuple(fitness_args_list), method = self.method, use_bnd = True, bounds = bounds, options = self.opts)
-        
+        # NSGA-II optimization:
+        elif (self.method == 'nsga_ii'):
+            
+            # import required minimizer function:
+            try:
+                from luxpy.math.pymoo_nsga_ii import nsga_ii
+            except:
+                raise Exception("Could not import nsga_ii(), try a manual install of the 'pymoo' package")
+            
+            # run minimizer:
+            results = nsga_ii(fitness_fcn, npars, None, args = fitness_args_dict, bounds = (bounds[0],bounds[1]), 
+                              verbosity = verbosity, pm_seed = self.opts['seed'],
+                              pm_n_gen = self.opts['n_gen'], pm_n_pop = self.opts['n_pop'], 
+                              pm_n_offsprings = self.opts['n_offsprings'],
+                              pm_options = self.opts['ga_opts'],
+                              pm_termination = self.opts['termination'])    
+
+                
         # Run user defined optimization algorithm:
         elif not isinstance(self.method, str):
             results = self.method(fitness_fcn, 
@@ -710,7 +757,7 @@ class SpectralOptimizer():
         Returns:
             :returns: 
                 | spds, primss,Ms,results
-                | - 'spds': optimized spectrum (or spectra: for particleswarm and demo minimization methods)
+                | - 'spds': optimized spectrum (or spectra: for demo, particleswarm and nsga_ii minimization methods)
                 | - 'primss': primary spectra of each optimized spectrum
                 | - 'Ms' : ndarrays with fluxes of each primary
                 | - 'results': dict with optimization results
@@ -1278,10 +1325,12 @@ def spd_optimizer2(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cspace_bwtf =
             |   - 'Nelder-Mead': Nelder-Mead simplex local optimization 
             |                    using the luxpy.math.minimizebnd wrapper
             |                    with method set to 'Nelder-Mead'.
-            |   - 'particleswarm': Pseudo-global optimizer using particle swarms
-            |                      (using wrapper luxpy.math.particleswarm)
             |   - 'demo' :  Differential Evolutionary Multiobjective Optimizatizer
             |               (using math.DEMO.demo_opt)
+            |   - 'particleswarm': Pseudo-global optimizer using particle swarms
+            |                      (from pyswarm wrapper module luxpy.math.pyswarms_particleswarm)
+            |   - 'nsga_ii': Pareto multiobjective optimizer using the NSGA-II genetic algorithm
+            |                      (from pymoo wrapper module luxpy.math.pymoo_nsga_ii)
             |   - A user-defined minimization function (see _start_optimization_tri? for 
             |       info on the requirements of this function)
         :minimize_opts:
@@ -1290,9 +1339,14 @@ def spd_optimizer2(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cspace_bwtf =
             | None defaults to the options depending on choice of minimize_method
             |  - 'Nelder-Mead'   : {'xtol': 1e-5, 'disp': True, 'maxiter': 1000*Nc,
             |                       'maxfev' : 1000*Nc,'fatol': 0.01}
+            |  - 'demo' :          {'F': 0.5, 'CR': 0.3, 'kmax': 300, 'mu': 100, 'display': True}
             |  - 'particleswarm' : {'iters': 100, 'n_particles': 10, 'ftol': -np.inf,
             |                       'ps_opts' : {'c1': 0.5, 'c2': 0.3, 'w':0.9}}
-            |  - 'demo' :          {'F': 0.5, 'CR': 0.3, 'kmax': 300, 'mu': 100, 'display': True}
+            |  - 'nsga_ii' : {'n_gen' : 40, 'n_pop' : 400, 'n_offsprings' : None,
+            |                 'termination' : ('n_gen' , 40), 'seed' : 1,
+            |                 'ga_opts' : {'sampling'  : ("real_random",{}),
+            |                              'crossover' : ("real_sbx", {'prob' : 0.9, 'eta' : 15}),
+            |                              'mutation'  : ("real_pm",  {'eta' : 20})}}
             |  - dict with options for user-defined minimization method.
         :triangle_strength_bnds:
             | (None,None)
@@ -1323,7 +1377,7 @@ def spd_optimizer2(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cspace_bwtf =
     Returns:
         :returns: 
             | spds, primss,Ms,results
-            | - 'spds': optimized spectrum (or spectra: for particleswarm and demo minimization methods)
+            | - 'spds': optimized spectrum (or spectra: for demo, particleswarm and nsga_ii minimization methods)
             | - 'primss': primary spectra of each optimized spectrum
             | - 'Ms' : ndarrays with fluxes of each primary
             | - 'results': dict with optimization results
@@ -1543,7 +1597,8 @@ if __name__ == '__main__':
                               prims = prims2,
                               obj_fcn = ObjFcns(f=[(spd_to_cris,'Rf','Rg')], 
                                                 ft = [(90,110)]),
-                              minimizer = Minimizer(method='ps'),
+                              minimizer = Minimizer(method='ps',
+                                                    opts={'iters':50}),
                               verbosity = 2)
         # start optimization:
         spd,M = so4.start(out = 'spds,Ms')
