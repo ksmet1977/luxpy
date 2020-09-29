@@ -467,7 +467,7 @@ def _hue_bin_data_to_rf(hue_bin_data = None, cri_type = _CRI_TYPE_DEFAULT,
             avg = cri_type['avg'] 
     
     # Color fidelity, Rfi:
-    DEa = avg(hue_bin_data['DEi'], axis = 0)
+    DEa = np2d(avg(hue_bin_data['DEi'], axis = 0))
     Rf = np2d(scale_fcn(DEa, scale_factor = scale_factor))
   
     # output:
@@ -768,7 +768,7 @@ def spd_to_DEi(St, cri_type = _CRI_TYPE_DEFAULT, out = 'DEi', wl = None, \
       
     # E. calculate DEi, DEa:
     DEi = ((jabt - jabr)**2).sum(axis = -1)**0.5
-    DEa = cri_type['avg'](DEi, axis = 0, keepdims = True)
+    DEa = np2d(cri_type['avg'](DEi, axis = 0))
   
      # output:
     if out == 'DEi,DEa,jabt,jabr,xyzti,xyztw,xyzri,xyzrw,xyztw_cct,cct,duv,St,Sr':
@@ -1307,7 +1307,7 @@ def spd_to_cri(St, cri_type = _CRI_TYPE_DEFAULT, out = 'Rf', wl = None, \
 
     # E. calculate DEi, DEa:
     DEi = ((jabt - jabr)**2).sum(axis = -1)**0.5
-    DEa = avg(DEi,axis=0,keepdims=True)
+    DEa = np2d(avg(DEi,axis=0))
     
     # B. convert DEi to color rendering index:
     Rfi = scale_fcn(DEi, scale_factor)
