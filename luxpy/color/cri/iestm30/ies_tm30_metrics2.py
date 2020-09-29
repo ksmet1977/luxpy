@@ -115,8 +115,6 @@ def spd_to_ies_tm30_metrics(St, cri_type = None, \
             |                           (same as above)
             |           - 'hue_bin_data': dict with output from _get_hue_bin_data() for vectorfield coordinates
             |           - 'dataVF': dictionary with output of cri.VFPX.VF_colorshift_model()
-            
-            
     """
     if cri_type is None:
         cri_type = 'iesrf'
@@ -210,6 +208,7 @@ def spd_to_ies_tm30_metrics(St, cri_type = None, \
     return data
 
 if __name__ == '__main__':
+    # for testing:
     import luxpy as lx
     F4 = lx.cie_interp(lx._CIE_F4,wl_new=[360,830,1],kind='spd')
     D65 = lx.cie_interp(lx._CIE_D65,wl_new=[360,830,1],kind='spd')
