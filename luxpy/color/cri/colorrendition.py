@@ -175,12 +175,27 @@ iestm30/ansi_ies_tm30_graphics.py
  :plot_tm30_spd(): Plot test SPD and reference illuminant, both normalized to the same luminous power.
 
  :plot_tm30_report(): Create ANSI/IES-TM-30-2018 report.
+ 
+ 
+iestm30/ansi_ies_tm30_metrics_fast.py
+-------------------------------------
+ 
+ :spd_to_tm30(): Fast calculator for ANSI/IES-TM30 measures (exposed as cri.spd_to_tm30_fast()).
+ 
+ :_cri_ref(): Fast color rendering reference illuminant creator (exposed as cri.cri_ref_fast())
+  
+ :_xyz_to_jab_cam02ucs(): Fast CAM02-UCS calculator (exposed as cri.xyz_to_jab_cam02ucs_fast()).
+ 
+ 
+ * Created for faster spectral optimization based on ANSI/IES-TM30 measures
 
+ 
 VFPX
 ----
 
  :Module_for_VectorField_and_Pixelation_CRI models.
-  * see ?luxpy.cri.VFPX
+  
+ * see ?luxpy.cri.VFPX
 
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
@@ -191,8 +206,11 @@ from .utils.helpers import (gamut_slicer,jab_to_rg, jab_to_rhi, jab_to_DEi,
                       spd_to_DEi, spd_to_rg, spd_to_cri)
 
 from .indices.indices import *
+
 from .utils.graphics import *
+
 from .VFPX import VF_PX_models as VFPX
+
 from .iestm30.ies_tm30_graphics import plot_cri_graphics
 from .iestm30.ies_tm30_metrics import spd_to_ies_tm30_metrics
 from .iestm30.ansi_ies_tm30_graphics import (_tm30_process_spd,plot_tm30_cvg,
@@ -200,6 +218,11 @@ from .iestm30.ansi_ies_tm30_graphics import (_tm30_process_spd,plot_tm30_cvg,
                                              plot_tm30_Rcshj, plot_tm30_Rhshj,
                                              plot_tm30_Rfhj, plot_tm30_spd,
                                              plot_tm30_report, spd_to_tm30_report)
+
+from .iestm30.ansi_ies_tm30_metrics_fast import spd_to_tm30 as spd_to_tm30_fast
+from .iestm30.ansi_ies_tm30_metrics_fast import _cri_ref as cri_ref_fast
+from .iestm30.ansi_ies_tm30_metrics_fast import _xyz_to_jab_cam02ucs as xyz_to_jab_cam02ucs_fast
+
 
 # .DE_scalers:
 __all__ = ['linear_scale', 'log_scale', 'psy_scale']
@@ -236,3 +259,6 @@ __all__ += ['plot_cri_graphics']
 __all__ += ['_tm30_process_spd','plot_tm30_cvg','plot_tm30_Rfi',
            'plot_tm30_Rxhj','plot_tm30_Rcshj', 'plot_tm30_Rhshj', 
            'plot_tm30_Rfhj', 'plot_tm30_spd','plot_tm30_report','spd_to_tm30_report']
+
+# .ansi_ies_tm30_metrics_fast:
+__all__ += ['spd_to_tm30_fast','cri_ref_fast','xyz_to_jab_cam02ucs_fast']

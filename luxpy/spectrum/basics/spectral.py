@@ -646,7 +646,7 @@ def spd_to_xyz(data,  relative = True, rfl = None, cieobs = _CIEOBS, K = None, o
             | (.shape = (number of spectra + 1, number of wavelengths))
             | Note that :data: is never interpolated, only CMFs and RFLs. 
             | This way interpolation errors due to peaky spectra are avoided. 
-              Conform CIE15-2018.
+            | Conform CIE15-2018.
         :relative: 
             | True or False, optional
             | Calculate relative XYZ (Yw = 100) or absolute XYZ (Y = Luminance)
@@ -656,7 +656,7 @@ def spd_to_xyz(data,  relative = True, rfl = None, cieobs = _CIEOBS, K = None, o
         :cieobs:
             | luxpy._CIEOBS or str, optional
             | Determines the color matching functions to be used in the 
-              calculation of XYZ.
+            | calculation of XYZ.
         :K: 
             | None, optional
             |   e.g.  K  = 683 lm/W for '1931_2' (relative == False) 

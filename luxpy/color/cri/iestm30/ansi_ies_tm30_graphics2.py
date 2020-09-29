@@ -47,7 +47,7 @@ import numpy as np
 
 from luxpy import (_CIE_D65, math, cat, xyz_to_srgb, spd_to_power, 
                    spd_normalize, spd_to_xyz, xyz_to_Yxy, xyz_to_Yuv)
-from luxpy.color.cri.utils.helpers import spd_to_cri
+from luxpy.color.cri.utils.helpers2 import spd_to_cri
 from luxpy.color.cri.utils.graphics import plot_ColorVectorGraphic
 
 _TM30_FONT_SIZE = 8
@@ -66,10 +66,10 @@ def _tm30_process_spd(spd, cri_type = 'ies-tm30',**kwargs):
             | If ndarray: single spectral power distribution.
             | If dict: dictionary with pre-computed parameters.
             |  required keys:
-            |   'Rf','Rg','cct','duv','Sr','cri_type','xyzri','xyzrw',
-            |   'hbinnrs','Rfi','Rfhi','Rcshi','Rhshi',
-            |   'jabt_binned','jabr_binned',
-            |   'nhbins','start_hue','normalize_gamut','normalized_chroma_ref'
+            |   dict_keys(['St', 'Sr', 'xyztw_cct', 'cct', 'duv', 
+            |               'xyzti', 'xyztw', 'xyzri', 'xyzrw', 
+            |               'DEi', 'DEa', 'Rf', 'Rg', 
+            |               'Rcshj', 'Rhshj', 'Rfhj', 'hue_bin_data'])
             | see cri.spd_to_cri() for more info on parameters.
         :cri_type:
             | _CRI_TYPE_DEFAULT or str or dict, optional
@@ -88,44 +88,10 @@ def _tm30_process_spd(spd, cri_type = 'ies-tm30',**kwargs):
         :data:
             | dictionary with required parameters for plotting functions.      
     """
-    out = 'Rf,Rg,cct,duv,Sr,cri_type,xyzri,xyzrw,binnrs,Rfi,Rfhi,Rcshi,Rhshi,jabt_binned,jabr_binned,nhbins,start_hue,normalize_gamut,normalized_chroma_ref'
+
     if not isinstance(spd,dict):
-        tpl = spd_to_cri(spd, cri_type = cri_type, out = out, **kwargs)
-        data = {'spd':spd}
-        for i,key in enumerate(out.split(',')):
-            if key == 'normalized_chroma_ref': key = 'scalef' # rename
-            if key == 'binnrs': key = 'hbinnrs' # rename
-            data[key] = tpl[i]
-            
-        # Normalize chroma to scalef and fit ellipse to gamut:
-        scalef = data['scalef']
-        jabt = data['jabt_binned'].copy()
-        jabr = data['jabr_binned'].copy()
-        Cr = (jabr[...,1]**2 + jabr[...,2]**2)**0.5
-        Ct = ((jabt[...,1]**2 + jabt[...,2]**2)**0.5)/Cr*scalef
-        ht = math.positive_arctan(jabt[...,1],jabt[...,2], htype = 'rad')
-        hr = math.positive_arctan(jabr[...,1],jabr[...,2], htype = 'rad')
-        jabt[...,1] = Ct*np.cos(ht)
-        jabt[...,2] = Ct*np.sin(ht)
-        jabr[...,1] = scalef*np.cos(hr)
-        jabr[...,2] = scalef*np.sin(hr) 
-        ecc = np.ones((1,jabt.shape[1]))*np.nan
-        theta = np.ones((1,jabt.shape[1]))*np.nan
-        v = np.ones((jabt.shape[1],5))*np.nan
-        data['hue_bin_data'] = {'jabt_hj_closed':data['jabt_binned'],'jabr_hj_closed':data['jabr_binned'],
-                                'jabtn_hj_closed':jabt,'jabrn_hj_closed':jabr}
-        for i in range(jabt.shape[1]):
-            try:
-                v[i,:] = math.fit_ellipse(jabt[:,i,1:])
-                a,b = v[i,0], v[i,1] # major and minor ellipse axes
-                ecc[0,i] = a/b
-                theta[0,i] = np.rad2deg(v[i,4]) # orientation angle
-                if theta[0,i]>180: theta[0,i] -= 180
-            except:
-                v[i,:] = np.nan*np.ones((1,5))
-                ecc[0,i] = np.nan
-                theta[0,i] = np.nan # orientation angle
-        data['gamut_ellipse_fit'] = {'v':v, 'a/b':ecc,'thetad': theta}
+        data = spd_to_cri(spd, cri_type = cri_type, out = 'data', 
+                          fit_gamut_ellipse = True, **kwargs)
     else:
         data = spd
     return data
@@ -219,10 +185,10 @@ def plot_tm30_cvg(spd, cri_type = 'ies-tm30',
             | If ndarray: single spectral power distribution.
             | If dict: dictionary with pre-computed parameters (using _tm30_process_spd()).
             |  required keys:
-            |   'Rf','Rg','cct','duv','Sr','cri_type','xyzri','xyzrw',
-            |   'hbinnrs','Rfi','Rfhi','Rcshi','Rhshi',
-            |   'jabt_binned','jabr_binned',
-            |   'nhbins','start_hue','normalize_gamut','normalized_chroma_ref'
+            |   dict_keys(['St', 'Sr', 'xyztw_cct', 'cct', 'duv', 
+            |               'xyzti', 'xyztw', 'xyzri', 'xyzrw', 
+            |               'DEi', 'DEa', 'Rf', 'Rg', 
+            |               'Rcshj', 'Rhshj', 'Rfhj', 'hue_bin_data'])
             | see cri.spd_to_cri() for more info on parameters.
         :cri_type:
             | _CRI_TYPE_DEFAULT or str or dict, optional
@@ -271,24 +237,17 @@ def plot_tm30_cvg(spd, cri_type = 'ies-tm30',
             | dictionary with required parameters for plotting functions. 
     """
 
-    data = _tm30_process_spd(spd, cri_type = 'ies-tm30',**kwargs)
+    data = _tm30_process_spd(spd, cri_type = 'ies-tm30', **kwargs)
+    hdata = data['hue_bin_data']
     
-    # Normalize chroma to scalef:
-    scalef = data['scalef']
-    jabt = data['jabt_binned'][:,0,:]
-    jabr = data['jabr_binned'][:,0,:]
-    Cr = (jabr[...,1]**2 + jabr[...,2]**2)**0.5
-    Ct = ((jabt[...,1]**2 + jabt[...,2]**2)**0.5)/Cr*scalef
-    ht = math.positive_arctan(jabt[...,1],jabt[...,2], htype = 'rad')
-    hr = math.positive_arctan(jabr[...,1],jabr[...,2], htype = 'rad')
-    jabt[...,1] = Ct*np.cos(ht)
-    jabt[...,2] = Ct*np.sin(ht)
-    jabr[...,1] = scalef*np.cos(hr)
-    jabr[...,2] = scalef*np.sin(hr)
+    # Normalized chroma (closed gamut):
+    jabt = hdata['jabtn_hj_closed'][:,0,:]
+    jabr = hdata['jabrn_hj_closed'][:,0,:]
     
     # Plot color vector graphic
     _, axh, _ = plot_ColorVectorGraphic(jabt = jabt, jabr = jabr, 
-                                        hbins = data['nhbins'], start_hue = data['start_hue'], 
+                                        hbins = hdata['nhbins'], 
+                                        start_hue = hdata['start_hue'], 
                                         bin_labels = '',
                                         gamut_line_color = gamut_line_color,
                                         gamut_line_style = gamut_line_style,
@@ -302,6 +261,7 @@ def plot_tm30_cvg(spd, cri_type = 'ies-tm30',
     # Print Rf, Rg, CCT and Duv in plot:
     if plot_index_values == True:
         Rf, Rg, cct, duv = data['Rf'], data['Rg'], data['cct'], data['duv']
+        scalef = data['hue_bin_data']['normalized_chroma_ref']
         axh.text(-1.30*scalef,1.30*scalef,'{:1.0f}'.format(Rf[0,0]),fontsize = 15, fontweight='bold', horizontalalignment='center',verticalalignment='center',color = 'k')
         axh.text(-1.33*scalef,1.12*scalef,'$R_f$',fontsize = 13, style='italic', horizontalalignment='center',verticalalignment='center',color = 'k')
         axh.text(1.30*scalef,1.30*scalef,'{:1.0f}'.format(Rg[0,0]),fontsize = 15, fontweight='bold', horizontalalignment='center',verticalalignment='center',color = 'k')
@@ -326,10 +286,10 @@ def plot_tm30_spd(spd, cri_type = 'ies-tm30', axh = None,
             | If ndarray: single spectral power distribution.
             | If dict: dictionary with pre-computed parameters (using _tm30_process_spd()).
             |  required keys:
-            |   'Rf','Rg','cct','duv','Sr','cri_type','xyzri','xyzrw',
-            |   'hbinnrs','Rfi','Rfhi','Rcshi','Rhshi',
-            |   'jabt_binned','jabr_binned',
-            |   'nhbins','start_hue','normalize_gamut','normalized_chroma_ref'
+            |   dict_keys(['St', 'Sr', 'xyztw_cct', 'cct', 'duv', 
+            |               'xyzti', 'xyztw', 'xyzri', 'xyzrw', 
+            |               'DEi', 'DEa', 'Rf', 'Rg', 
+            |               'Rcshj', 'Rhshj', 'Rfhj', 'hue_bin_data'])
             | see cri.spd_to_cri() for more info on parameters.
         :cri_type:
             | _CRI_TYPE_DEFAULT or str or dict, optional
@@ -361,7 +321,7 @@ def plot_tm30_spd(spd, cri_type = 'ies-tm30', axh = None,
     data = _tm30_process_spd(spd, cri_type = 'ies-tm30',**kwargs)
     
     # Normalize Sr to same luminous power as spd:
-    Phiv_spd = spd_to_power(data['spd'], ptype = 'pu', cieobs = data['cri_type']['cieobs']['cct'])
+    Phiv_spd = spd_to_power(data['St'], ptype = 'pu', cieobs = data['cri_type']['cieobs']['cct'])
     #Phiv_Sr = spd_to_power(data['Sr'], ptype = 'pu', cieobs = data['cri_type']['cieobs']['cct'])
     data['Sr'] = spd_normalize(data['Sr'], norm_type = 'pu', norm_f = Phiv_spd, cieobs = data['cri_type']['cieobs']['cct'])
     
@@ -369,7 +329,7 @@ def plot_tm30_spd(spd, cri_type = 'ies-tm30', axh = None,
     if axh is None:
         fig, axh = plt.subplots(nrows = 1, ncols = 1)
     axh.plot(data['Sr'][0,:], data['Sr'][1,:],'k-', label = 'Reference')
-    axh.plot(data['spd'][0,:], data['spd'][1,:],'r-', label = 'Test')
+    axh.plot(data['St'][0,:], data['St'][1,:],'r-', label = 'Test')
     axh.set_xlabel('Wavelength (nm)', fontsize = font_size)
     axh.set_ylabel('Radiant power\n(Equal Luminous Flux)', fontsize = font_size)
     axh.set_xlim([360,830]) 
@@ -390,10 +350,10 @@ def plot_tm30_Rfi(spd, cri_type = 'ies-tm30', axh = None,
             | If ndarray: single spectral power distribution.
             | If dict: dictionary with pre-computed parameters (using _tm30_process_spd()).
             |  required keys:
-            |   'Rf','Rg','cct','duv','Sr','cri_type','xyzri','xyzrw',
-            |   'hbinnrs','Rfi','Rfhi','Rcshi','Rhshi',
-            |   'jabt_binned','jabr_binned',
-            |   'nhbins','start_hue','normalize_gamut','normalized_chroma_ref'
+            |   dict_keys(['St', 'Sr', 'xyztw_cct', 'cct', 'duv', 
+            |               'xyzti', 'xyztw', 'xyzri', 'xyzrw', 
+            |               'DEi', 'DEa', 'Rf', 'Rg', 
+            |               'Rcshj', 'Rhshj', 'Rfhj', 'hue_bin_data'])
             | see cri.spd_to_cri() for more info on parameters.
         :cri_type:
             | _CRI_TYPE_DEFAULT or str or dict, optional
@@ -421,6 +381,7 @@ def plot_tm30_Rfi(spd, cri_type = 'ies-tm30', axh = None,
             | dictionary with required parameters for plotting functions.     
     """
     data = _tm30_process_spd(spd, cri_type = 'ies-tm30',**kwargs)
+
     Rfi = data['Rfi']
     
     # get rgb values representing each sample:
@@ -462,10 +423,10 @@ def plot_tm30_Rfhj(spd, cri_type = 'ies-tm30', axh = None,
             | If ndarray: single spectral power distribution.
             | If dict: dictionary with pre-computed parameters (using _tm30_process_spd()).
             |  required keys:
-            |   'Rf','Rg','cct','duv','Sr','cri_type','xyzri','xyzrw',
-            |   'hbinnrs','Rfi','Rfhi','Rcshi','Rhshi',
-            |   'jabt_binned','jabr_binned',
-            |   'nhbins','start_hue','normalize_gamut','normalized_chroma_ref'
+            |   dict_keys(['St', 'Sr', 'xyztw_cct', 'cct', 'duv', 
+            |               'xyzti', 'xyztw', 'xyzri', 'xyzrw', 
+            |               'DEi', 'DEa', 'Rf', 'Rg', 
+            |               'Rcshj', 'Rhshj', 'Rfhj', 'hue_bin_data'])
             | see cri.spd_to_cri() for more info on parameters.
         :cri_type:
             | _CRI_TYPE_DEFAULT or str or dict, optional
@@ -502,23 +463,24 @@ def plot_tm30_Rfhj(spd, cri_type = 'ies-tm30', axh = None,
     """
     
     data = _tm30_process_spd(spd, cri_type = 'ies-tm30',**kwargs)
-    Rfhi = data['Rfhi']
+    hdata = data['hue_bin_data']
+    Rfhj = data['Rfhj']
         
     # Get color map based on sample colors:
-    cmap = _get_hue_map(hbins = data['nhbins'], start_hue = data['start_hue'], 
-                        hbinnrs = data['hbinnrs'], 
+    cmap = _get_hue_map(hbins = hdata['nhbins'], start_hue = hdata['start_hue'], 
+                        hbinnrs = hdata['hbinnrs'], 
                         xyzri = data['xyzri'], 
                         xyzrw = data['xyzrw'], 
                         cri_type = data['cri_type'])
 
-    # Plot local color fidelity, Rfhi:
-    hbins = range(data['nhbins'])
+    # Plot local color fidelity, Rfhj:
+    hbins = range(hdata['nhbins'])
     if axh is None:
         fig, axh = plt.subplots(nrows = 1, ncols = 1)
     for j in hbins:
-        axh.bar(hbins[j],Rfhi[j,0], color = cmap[j], width = 1,edgecolor = 'k', alpha = 1)
-        ypos = ((np.abs(Rfhi[j,0]) + 2 + y_offset))*np.sign(Rfhi[j,0])
-        axh.text(hbins[j],ypos, '{:1.0f}'.format(Rfhi[j,0]) ,fontsize = font_size,horizontalalignment='center',verticalalignment='center',color = np.array([1,1,1])*0.3)
+        axh.bar(hbins[j],Rfhj[j,0], color = cmap[j], width = 1,edgecolor = 'k', alpha = 1)
+        ypos = ((np.abs(Rfhj[j,0]) + 2 + y_offset))*np.sign(Rfhj[j,0])
+        axh.text(hbins[j],ypos, '{:1.0f}'.format(Rfhj[j,0]) ,fontsize = font_size,horizontalalignment='center',verticalalignment='center',color = np.array([1,1,1])*0.3)
     
     xticks = np.array(hbins)
     axh.set_xticks(xticks)
@@ -528,7 +490,7 @@ def plot_tm30_Rfhj(spd, cri_type = 'ies-tm30', axh = None,
     else:
         xtickslabels = [''.format(ii+1) for ii in hbins]
     axh.set_xticklabels(xtickslabels, fontsize = font_size)
-    axh.set_xlim([-0.5,data['nhbins']-0.5])
+    axh.set_xlim([-0.5,hdata['nhbins']-0.5])
     
     axh.set_ylabel(r'Local Color Fidelity $(R_{f,hj})$', fontsize = font_size)
     axh.set_ylim([0,110])
@@ -547,10 +509,10 @@ def plot_tm30_Rcshj(spd, cri_type = 'ies-tm30', axh = None,
             | If ndarray: single spectral power distribution.
             | If dict: dictionary with pre-computed parameters (using _tm30_process_spd()).
             |  required keys:
-            |   'Rf','Rg','cct','duv','Sr','cri_type','xyzri','xyzrw',
-            |   'hbinnrs','Rfi','Rfhi','Rcshi','Rhshi',
-            |   'jabt_binned','jabr_binned',
-            |   'nhbins','start_hue','normalize_gamut','normalized_chroma_ref'
+            |   dict_keys(['St', 'Sr', 'xyztw_cct', 'cct', 'duv', 
+            |               'xyzti', 'xyztw', 'xyzri', 'xyzrw', 
+            |               'DEi', 'DEa', 'Rf', 'Rg', 
+            |               'Rcshj', 'Rhshj', 'Rfhj', 'hue_bin_data'])
             | see cri.spd_to_cri() for more info on parameters.
         :cri_type:
             | _CRI_TYPE_DEFAULT or str or dict, optional
@@ -588,23 +550,24 @@ def plot_tm30_Rcshj(spd, cri_type = 'ies-tm30', axh = None,
 
     
     data = _tm30_process_spd(spd, cri_type = 'ies-tm30',**kwargs)
-    Rcshi = data['Rcshi']
+    hdata = data['hue_bin_data']
+    Rcshj = data['Rcshj']
     
     # Get color map based on sample colors:
-    cmap = _get_hue_map(hbins = data['nhbins'], start_hue = data['start_hue'], 
-                        hbinnrs = data['hbinnrs'], 
+    cmap = _get_hue_map(hbins = hdata['nhbins'], start_hue = hdata['start_hue'], 
+                        hbinnrs = hdata['hbinnrs'], 
                         xyzri = data['xyzri'], 
                         xyzrw = data['xyzrw'], 
                         cri_type = data['cri_type'])
     
-    # Plot local chroma shift, Rcshi:
-    hbins = range(data['nhbins'])
+    # Plot local chroma shift, Rcshj:
+    hbins = range(hdata['nhbins'])
     if axh is None:
         fig, axh = plt.subplots(nrows = 1, ncols = 1)
     for j in hbins:
-        axh.bar(hbins[j],100*Rcshi[j,0], color = cmap[j], width = 1,edgecolor = 'k', alpha = 1)
-        ypos = 100*((np.abs(Rcshi[j,0]) + 0.05 + y_offset))*np.sign(Rcshi[j,0])
-        axh.text(hbins[j],ypos, '{:1.0f}%'.format(100*Rcshi[j,0]), fontsize = font_size,horizontalalignment='center',verticalalignment='center',color = np.array([1,1,1])*0.3, rotation = 90)
+        axh.bar(hbins[j],100*Rcshj[j,0], color = cmap[j], width = 1,edgecolor = 'k', alpha = 1)
+        ypos = 100*((np.abs(Rcshj[j,0]) + 0.05 + y_offset))*np.sign(Rcshj[j,0])
+        axh.text(hbins[j],ypos, '{:1.0f}%'.format(100*Rcshj[j,0]), fontsize = font_size,horizontalalignment='center',verticalalignment='center',color = np.array([1,1,1])*0.3, rotation = 90)
     
     xticks = np.array(hbins)
     axh.set_xticks(xticks)
@@ -614,14 +577,14 @@ def plot_tm30_Rcshj(spd, cri_type = 'ies-tm30', axh = None,
     else:
         xtickslabels = [''.format(ii+1) for ii in hbins]
     axh.set_xticklabels(xtickslabels, fontsize = font_size)
-    axh.set_xlim([-0.5,data['nhbins']-0.5])
+    axh.set_xlim([-0.5,hdata['nhbins']-0.5])
     
     yticks = range(-40,50,10)
     axh.set_yticks(yticks)
     ytickslabels = ['{:1.0f}%'.format(ii) for ii in range(-40,50,10)]
     axh.set_yticklabels(ytickslabels, fontsize = font_size)
     axh.set_ylabel(r'Local Chroma Shift $(R_{cs,hj})$', fontsize = font_size)
-    axh.set_ylim([min([-40,100*Rcshi.min()]),max([40,100*Rcshi.max()])])
+    axh.set_ylim([min([-40,100*Rcshj.min()]),max([40,100*Rcshj.max()])])
     
     return axh, data
 
@@ -637,10 +600,10 @@ def plot_tm30_Rhshj(spd, cri_type = 'ies-tm30', axh = None,
             | If ndarray: single spectral power distribution.
             | If dict: dictionary with pre-computed parameters (using _tm30_process_spd()).
             |  required keys:
-            |   'Rf','Rg','cct','duv','Sr','cri_type','xyzri','xyzrw',
-            |   'hbinnrs','Rfi','Rfhi','Rcshi','Rhshi',
-            |   'jabt_binned','jabr_binned',
-            |   'nhbins','start_hue','normalize_gamut','normalized_chroma_ref'
+            |   dict_keys(['St', 'Sr', 'xyztw_cct', 'cct', 'duv', 
+            |               'xyzti', 'xyztw', 'xyzri', 'xyzrw', 
+            |               'DEi', 'DEa', 'Rf', 'Rg', 
+            |               'Rcshj', 'Rhshj', 'Rfhj', 'hue_bin_data'])
             | see cri.spd_to_cri() for more info on parameters.
         :cri_type:
             | _CRI_TYPE_DEFAULT or str or dict, optional
@@ -678,23 +641,24 @@ def plot_tm30_Rhshj(spd, cri_type = 'ies-tm30', axh = None,
 
     
     data = _tm30_process_spd(spd, cri_type = 'ies-tm30',**kwargs)
-    Rhshi = data['Rhshi']
+    hdata = data['hue_bin_data']
+    Rhshj = data['Rhshj']
 
     # Get color map based on sample colors:
-    cmap = _get_hue_map(hbins = data['nhbins'], start_hue = data['start_hue'], 
-                        hbinnrs = data['hbinnrs'], 
+    cmap = _get_hue_map(hbins = hdata['nhbins'], start_hue = hdata['start_hue'], 
+                        hbinnrs = hdata['hbinnrs'], 
                         xyzri = data['xyzri'], 
                         xyzrw = data['xyzrw'], 
                         cri_type = data['cri_type'])
     
-    # Plot local hue shift, Rhshi:
-    hbins = range(data['nhbins'])
+    # Plot local hue shift, Rhshj:
+    hbins = range(hdata['nhbins'])
     if axh is None:
         fig, axh = plt.subplots(nrows = 1, ncols = 1)
     for j in hbins:
-        axh.bar(hbins[j],Rhshi[j,0], color = cmap[j], width = 1,edgecolor = 'k', alpha = 1)
-        ypos = ((np.abs(Rhshi[j,0]) + 0.05 + y_offset))*np.sign(Rhshi[j,0])
-        axh.text(hbins[j],ypos, '{:1.2f}'.format(Rhshi[j,0]) ,fontsize = font_size,horizontalalignment='center',verticalalignment='center',color = np.array([1,1,1])*0.3, rotation = 90)
+        axh.bar(hbins[j],Rhshj[j,0], color = cmap[j], width = 1,edgecolor = 'k', alpha = 1)
+        ypos = ((np.abs(Rhshj[j,0]) + 0.05 + y_offset))*np.sign(Rhshj[j,0])
+        axh.text(hbins[j],ypos, '{:1.2f}'.format(Rhshj[j,0]) ,fontsize = font_size,horizontalalignment='center',verticalalignment='center',color = np.array([1,1,1])*0.3, rotation = 90)
     
     xticks = np.array(hbins)
     axh.set_xticks(xticks)
@@ -704,10 +668,10 @@ def plot_tm30_Rhshj(spd, cri_type = 'ies-tm30', axh = None,
     else:
         xtickslabels = [''.format(ii+1) for ii in hbins]
     axh.set_xticklabels(xtickslabels, fontsize = font_size)
-    axh.set_xlim([-0.5,data['nhbins']-0.5])
+    axh.set_xlim([-0.5,hdata['nhbins']-0.5])
     
     axh.set_ylabel(r'Local Hue Shift $(R_{hs,hj})$', fontsize = 9)
-    axh.set_ylim([min([-0.5,Rhshi.min()]),max([0.5,Rhshi.max()])])
+    axh.set_ylim([min([-0.5,Rhshj.min()]),max([0.5,Rhshj.max()])])
     
     return axh, data
 
@@ -722,10 +686,10 @@ def plot_tm30_Rxhj(spd, cri_type = 'ies-tm30', axh = None, figsize = (6,15),
             | If ndarray: single spectral power distribution.
             | If dict: dictionary with pre-computed parameters (using _tm30_process_spd()).
             |  required keys:
-            |   'Rf','Rg','cct','duv','Sr','cri_type','xyzri','xyzrw',
-            |   'hbinnrs','Rfi','Rfhi','Rcshi','Rhshi',
-            |   'jabt_binned','jabr_binned',
-            |   'nhbins','start_hue','normalize_gamut','normalized_chroma_ref'
+            |   dict_keys(['St', 'Sr', 'xyztw_cct', 'cct', 'duv', 
+            |               'xyzti', 'xyztw', 'xyzri', 'xyzrw', 
+            |               'DEi', 'DEa', 'Rf', 'Rg', 
+            |               'Rcshj', 'Rhshj', 'Rfhj', 'hue_bin_data'])
             | see cri.spd_to_cri() for more info on parameters.
         :cri_type:
             | _CRI_TYPE_DEFAULT or str or dict, optional
@@ -851,7 +815,7 @@ def _plot_tm30_report_bottom(axh, spd, notes = '', max_len_notes_line = 40):
         :axh:
             | handle to figure axes.    
     """
-    ciera = spd_to_cri(spd, cri_type = 'ciera')
+    ciera = spd_to_cri(spd, cri_type = 'ciera', out = 'Rf')
     cierai = spd_to_cri(spd, cri_type = 'ciera-14', out = 'Rfi')
     xyzw = spd_to_xyz(spd, cieobs = '1931_2', relative = True)
     Yxyw = xyz_to_Yxy(xyzw)
@@ -903,10 +867,10 @@ def plot_tm30_report(spd, cri_type = 'ies-tm30',
             | If ndarray: single spectral power distribution.
             | If dict: dictionary with pre-computed parameters (using _tm30_process_spd()).
             |  required keys:
-            |   'Rf','Rg','cct','duv','Sr','cri_type','xyzri','xyzrw',
-            |   'hbinnrs','Rfi','Rfhi','Rcshi','Rhshi',
-            |   'jabt_binned','jabr_binned',
-            |   'nhbins','start_hue','normalize_gamut','normalized_chroma_ref'
+            |   dict_keys(['St', 'Sr', 'xyztw_cct', 'cct', 'duv', 
+            |               'xyzti', 'xyztw', 'xyzri', 'xyzrw', 
+            |               'DEi', 'DEa', 'Rf', 'Rg', 
+            |               'Rcshj', 'Rhshj', 'Rfhj', 'hue_bin_data'])
             | see cri.spd_to_cri() for more info on parameters.
         :cri_type:
             | _CRI_TYPE_DEFAULT or str or dict, optional
@@ -980,7 +944,7 @@ def plot_tm30_report(spd, cri_type = 'ies-tm30',
     f_ax_fi = fig.add_subplot(gs[int(3 + 1*(plot_report_top)),:])
     
     # Get required parameter values from spd:
-    data = _tm30_process_spd(spd, cri_type = cri_type,**kwargs)
+    data = _tm30_process_spd(spd, cri_type = cri_type, **kwargs)
     
     # Create all subplots:
     if plot_report_top == True:
@@ -1023,4 +987,3 @@ if __name__ == '__main__':
     plot_tm30_Rxhj(spd)
     plot_tm30_report(spd, source = 'test', font_size = 12,notes = 'This is a test if the note splitting actually works or not.',save_fig_name = 'testfig.png')
     
-   

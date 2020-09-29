@@ -19,15 +19,13 @@
 Module with color rendition, fidelity and gamut area helper functions
 =====================================================================
 
- :gamut_slicer(): Slices the gamut in nhbins slices and provides normalization 
-                  of test gamut to reference gamut.
+ :_get_hue_bin_data(): Slice gamut spanned by the sample jabt, jabr and calculate hue-bin data.
 
- :jab_to_rg(): Calculates gamut area index, Rg.
+ :_hue_bin_data_to_rxhj(): Calculate hue bin measures: Rcshj, Rhshj, Rfhj, DEhj
+     
+ :_hue_bin_data_to_rfi(): Get sample color differences DEi and calculate color fidelity values Rfi.
 
- :jab_to_rhi(): | Calculate hue bin measures: 
-                |   Rfhi (local (hue bin) color fidelity)
-                |   Rcshi (local chroma shift) 
-                |   Rhshi (local hue shift)
+ :_hue_bin_data_to_rg():  Calculates gamut area index, Rg.
 
  :spd_to_jab_t_r(): Calculates jab color values for a sample set illuminated
                     with test source and its reference illuminant.
@@ -52,298 +50,205 @@ Module with color rendition, fidelity and gamut area helper functions
 """
 import copy
 from luxpy import (_S_INTERP_TYPE, _CRI_RFL, _IESTM3015, math, cam, cat,
-                   spd, colortf, spd_to_xyz, cri_ref, xyz_to_cct, cie_interp)
-from luxpy.utils import np, sp,asplit, np2d, put_args_in_db 
+                   spd, colortf, spd_to_xyz, cie_interp, cri_ref, xyz_to_cct)
+from luxpy.utils import np, sp,plt,asplit, np2d, put_args_in_db 
 from luxpy.color.cri.utils.DE_scalers import linear_scale, log_scale, psy_scale
 
 from luxpy.color.cri.utils.init_cri_defaults_database import _CRI_TYPE_DEFAULT, _CRI_DEFAULTS, process_cri_type_input
 
-__all__ = ['gamut_slicer','jab_to_rg', 'jab_to_rhi', 'jab_to_DEi',
-           'spd_to_DEi', 'spd_to_rg', 'spd_to_cri']
-
+__all__ = ['_get_hue_bin_data','spd_to_jab_t_r','spd_to_rg', 'spd_to_DEi', 
+           'optimize_scale_factor','spd_to_cri',
+           '_hue_bin_data_to_rxhj', '_hue_bin_data_to_rfi', '_hue_bin_data_to_rg']
 
 #------------------------------------------------------------------------------
-def gamut_slicer(jab_test,jab_ref, out = 'jabt,jabr', nhbins = None, \
-                 start_hue = 0.0, normalize_gamut = True, \
-                 normalized_chroma_ref = 100, close_gamut = False):
+def _get_hue_bin_data(jabt, jabr, start_hue = 0, nhbins = 16,
+                      normalized_chroma_ref = 100):
     """
-    Slices the gamut in hue bins.
+    Slice gamut spanned by the sample jabt, jabr and calculate hue-bin data.
     
     Args:
-        :jab_test: 
-            | ndarray with Cartesian color coordinates (e.g. Jab) 
-              of the samples under the test SPD
-        :jab_ref:
-            | ndarray with Cartesian color coordinates (e.g. Jab) 
-            | of the samples under the reference SPD
-        :out: 
-            | 'jabt,jabr' or str, optional
-            | Specifies which variables to output as ndarray
+        :jabt: 
+            | ndarray with jab sample data under test illuminant
+        :jabr: 
+            | ndarray with jab sample data under reference illuminant
+        :start_hue:
+            | 0.0 or float, optional
+            | Hue angle to start bin slicing
         :nhbins:
             | None or int, optional
             |   - None: defaults to using the sample hues themselves as 'bins'. 
             |           In other words, the number of bins will be equal to the 
             |           number of samples.
             |   - float: number of bins to slice the sample gamut in.
-        :start_hue:
-            | 0.0 or float, optional
-            | Hue angle to start bin slicing
-        :normalize_gamut:
-            | True or False, optional
-            | True normalizes the gamut of test to that of ref.
-            |  (perfect agreement results in circle).
         :normalized_chroma_ref:
             | 100.0 or float, optional
             | Controls the size (chroma/radius) of the normalization circle/gamut.
-        :close_gamut:
-            | False or True, optional
-            | True appends the first jab coordinates to the end of the output 
-            |  (for plotting closed gamuts)
     
     Returns:
-        :returns:
-            | ndarray with average jabt,jabr of each hue bin. 
-            |  (.shape = (number of hue bins, 3))
+        :dict:
+            | Dictionary with keys:
             | 
-            |  (or outputs whatever is specified in :out:) 
+            | - 'jabt', 'jabr': ndarrays with jab sample data under test & ref. illuminants
+            | - 'DEi': ndarray with sample jab color difference between test and ref.
+            | - 'Ct', 'Cr': chroma for each sample under test and ref.
+            | - 'ht', 'hr': hue angles (rad.) for each sample under test and ref.
+            | - 'ht_idx', 'hr_idx': hue bin indices for each sample under test and ref.
+            | - 'jabt_hj', 'jabr_hj': ndarrays with hue-bin averaged jab's under test & ref. illuminants
+            | - 'DE_hj' : ndarray with average  sample DE in each hue bin
+            | - 'jabt_hj_closed', 'jabr_hj_closed': ndarrays with hue-bin averaged jab's under test & ref. illuminants (closed gamut: 1st == last)
+            | - 'jabtn_hj', 'jabrn_hj': ndarrays with hue-bin averaged and normalized jab's under test & ref. illuminants 
+            | - 'jabtn_hj_closed', 'jabrn_hj_closed': ndarrays with hue-bin and normalized averaged jab's under test & ref. illuminants (closed gamut: 1st == last)
+            | - 'ht_hj', 'hr_hj': hues (rad.) for each hue bin for test and ref.
+            | - 'Ct_hj', 'Cr_hj': chroma for each hue bin for test and ref.
+            | - 'Ctn_hj' : normalized chroma for each hue bin for test (ref = normalized_chroma_ref)
+            | - 'nhbins': number of hue bins
+            | - 'start_hue' : start hue for bin slicing
+            | - 'normalized_chroma_ref': normalized chroma value for ref.
+            | - 'dh': hue-angle arcs (°)
+            | - 'hue_bin_edges': hue bin edge (rad)
+            | - 'hbinnrs':  hue bin indices for each sample under ref. (= hr_idx)
     """
-
-    # make 3d for easy looping:
-    test_original_shape = jab_test.shape
-
-    if len(test_original_shape)<3:
-        jab_test = jab_test[:,None]
-        jab_ref = jab_ref[:,None]
+    # calculate hue-bin width, edges:
+    dh = 360/nhbins 
+    hue_bin_edges = np.arange(start_hue, 360 + 1, dh)*np.pi/180
     
-    #initialize Jabt, Jabr, binnr, DEi;
-    test_shape = list(jab_test.shape)
-    if nhbins is not None:
-        nhbins = np.int(nhbins)
-        test_shape[0] = nhbins + close_gamut*1
-    else:
-        test_shape[0] = test_shape[0] + close_gamut*1
-    jabt = np.zeros(test_shape)
-    jabr = jabt.copy()
-    binnr = jab_test[...,0].copy()
-    DEi = jabt[...,0].copy()
+    # get hues of jabt, jabr:
+    ht = cam.hue_angle(jabt[...,1], jabt[...,2], htype = 'rad')
+    hr = cam.hue_angle(jabr[...,1], jabr[...,2], htype = 'rad')
     
-    # Store all samples (for output of potentially scaled coordinates):
-    if ('jabti' in out) | ('jabri' in out):
-        jabti = jab_test.copy()
-        jabri = jab_ref.copy()
     
-    # Loop over axis 1:
-    for ii in range(jab_test.shape[1]):
-          
-        # calculate hue angles:
-        ht = cam.hue_angle(jab_test[:,ii,1],jab_test[:,ii,2], htype='rad')
-        hr = cam.hue_angle(jab_ref[:,ii,1],jab_ref[:,ii,2], htype='rad')
-        
-        import matplotlib.pyplot as plt
-        hue_bin_edges = np.arange(start_hue, 360 + 1, 360/nhbins)*np.pi/180
-        
-        if nhbins is None:
-            Ir = np.argsort(hr)
-            jabtii = jab_test[Ir,ii,:]
-            jabrii = jab_ref[Ir,ii,:]
-            nhbins = (jabtii.shape[0])
-            hbins = np.arange(nhbins)
-            DEi[...,ii] =  np.sqrt(np.power((jabtii - jabtii),2).sum(axis = jabtii.ndim -1))
-            
-        else:
-            
-            #divide huecircle/data in n hue slices:
-            hbins = np.floor(((hr - start_hue*np.pi/180)/2/np.pi) * nhbins) # because of start_hue bin range can be different from 0 : n-1
-            hbins[hbins>=nhbins] = hbins[hbins>=nhbins] - nhbins # reset binnumbers to 0 : n-1 range
-            hbins[hbins < 0] = (nhbins - 2) - hbins[hbins < 0] # reset binnumbers to 0 : n-1 range
+    # Get chroma of jabt, jabr:
+    Ct = ((jabt[...,1]**2 + jabt[...,2]**2))**0.5
+    Cr = ((jabr[...,1]**2 + jabr[...,2]**2))**0.5
+    
+    # Calculate DEi between jabt, jabr:
+    DEi = ((jabt - jabr)**2).sum(axis = -1, keepdims = True)**0.5
 
-            jabtii = np.zeros((nhbins,3))
-            jabrii = np.zeros((nhbins,3))
-            for i in range(nhbins):
-                if i in hbins:
-                    jabtii[i,:] = jab_test[hbins==i,ii,:].mean(axis = 0)
-                    jabrii[i,:] = jab_ref[hbins==i,ii,:].mean(axis = 0)
-                    DEi[i,ii] =  np.sqrt(np.power((jab_test[hbins==i,ii,:] - jab_ref[hbins==i,ii,:]),2).sum(axis = jab_test[hbins==i,ii,:].ndim -1)).mean(axis = 0)
-        
-        if normalize_gamut == True:
-            
-            #renormalize jab_test, jab_ref using jabrii:
-            if ('jabti' in out) | ('jabri' in out):
-                Cti = np.sqrt(jab_test[:,ii,1]**2 + jab_test[:,ii,2]**2)
-                Cri = np.sqrt(jab_ref[:,ii,1]**2 + jab_ref[:,ii,2]**2)
-                hti = ht.copy()
-                hri = hr.copy()
-                
-            #renormalize jabtii using jabrii:
-            Ct = np.sqrt(jabtii[:,1]**2 + jabtii[:,2]**2)
-            Cr = np.sqrt(jabrii[:,1]**2 + jabrii[:,2]**2)
-            ht = cam.hue_angle(jabtii[:,1],jabtii[:,2], htype = 'rad')
-            hr = cam.hue_angle(jabrii[:,1],jabrii[:,2], htype = 'rad')
-        
-            # calculate rescaled chroma of test:
-            C = normalized_chroma_ref*(Ct/Cr) 
-        
-            # calculate normalized cart. co.: 
-            jabtii[:,1] = C*np.cos(ht)
-            jabtii[:,2] = C*np.sin(ht)
-            jabrii[:,1] = normalized_chroma_ref*np.cos(hr)
-            jabrii[:,2] = normalized_chroma_ref*np.sin(hr)
-            
-            # generate scaled coordinates for all samples:
-            if ('jabti' in out) | ('jabri' in out):
-                for i in range(nhbins):
-                    if i in hbins:
-                        Cti[hbins==i] = normalized_chroma_ref*(Cti[hbins==i]/Cr[i]) 
-                        Cri[hbins==i] = normalized_chroma_ref*(Cri[hbins==i]/Cr[i]) 
-                jabti[:,ii,1] = Cti*np.cos(hti)
-                jabti[:,ii,2] = Cti*np.sin(hti)
-                jabri[:,ii,1] = Cri*np.cos(hri)
-                jabri[:,ii,2] = Cri*np.sin(hri)
-        
-        if close_gamut == True:
-            jabtii = np.vstack((jabtii,jabtii[0,:])) # to create closed curve when plotting
-            jabrii = np.vstack((jabrii,jabrii[0,:])) # to create closed curve when plotting
+    # calculate hue-bin averages for jabt, jabr:
+    jabt_hj = np.ones((nhbins,ht.shape[1],3))*np.nan
+    jabr_hj = np.ones((nhbins,hr.shape[1],3))*np.nan
+    DE_hj = np.ones((nhbins,hr.shape[1]))*np.nan
+    ht_idx = np.ones_like((ht))*np.nan
+    hr_idx = np.ones_like((hr))*np.nan
+    n = hr_idx.shape[-1]
 
-        jabt[:,ii,:] = jabtii
-        jabr[:,ii,:] = jabrii
-        binnr[:,ii] = hbins
+    for j in range(nhbins):
+        cndt_hj = (ht>=hue_bin_edges[j]) & (ht<hue_bin_edges[j+1])
+        cndr_hj = (hr>=hue_bin_edges[j]) & (hr<hue_bin_edges[j+1])
 
-    # circle coordinates for plotting:
-    hc = np.arange(360.0)*np.pi/180.0
-    jabc = np.ones((hc.shape[0],3))*100
-    jabc[:,1] = normalized_chroma_ref*np.cos(hc)
-    jabc[:,2] = normalized_chroma_ref*np.sin(hc)
+        ht_idx[cndt_hj] = j # store hue bin indices for all samples
+        hr_idx[cndr_hj] = j
+        #wt = np.sum(cndt_hj,axis=0,keepdims=True).astype(np.float)
+        wr = np.nansum(cndr_hj,axis=0,keepdims=True).astype(np.float)
 
-    if len(test_original_shape) == 2:
-        jabt = jabt[:,0]
-        jabr = jabr[:,0]
+        #wt[wt==0] = np.nan
+        wr[wr==0] = np.nan
 
-    if out == 'jabt,jabr':
-        return jabt, jabr
-    elif out == 'jabt,jabr,DEi':
-        return jabt, jabr, DEi
-    elif out == 'jabt,jabr,DEi,binnr':
-        return jabt, jabr, DEi, binnr
-    elif out == 'jabt,jabr,binnr,jabti,jabri':
-        return jabt, jabr, binnr, jabti, jabri
-    elif out == 'jabt,jabr,DEi,binnr,jabti,jabri':
-        return jabt, jabr, DEi, binnr, jabti, jabri
-    else:
-        return eval(out)        
- 
+        jabt_hj[j,...] = np.sum((jabt * cndr_hj[...,None]), axis=0)/wr.T # must use ref. bins !!!
+        jabr_hj[j,...] = np.sum((jabr * cndr_hj[...,None]), axis=0)/wr.T
+        DE_hj[j,...] = np.nansum((DEi * cndr_hj[...,None])/wr.T, axis = 0).T # local color difference is average of DEi per hue bin !!
+    # print('jabt',jabt_hj)   
+    # calculate normalized hue-bin averages for jabt, jabr:
+    ht_hj = np.arctan2(jabt_hj[...,2],jabt_hj[...,1])
+    hr_hj = np.arctan2(jabr_hj[...,2],jabr_hj[...,1])
+    Ct_hj = ((jabt_hj[...,1]**2 + jabt_hj[...,2]**2))**0.5
+    Cr_hj = ((jabr_hj[...,1]**2 + jabr_hj[...,2]**2))**0.5
+    Ctn_hj = normalized_chroma_ref*Ct_hj/(Cr_hj + 1e-308) # calculate normalized chroma for samples under test
+    Ctn_hj[Cr_hj == 0.0] = np.inf
+    jabtn_hj = jabt_hj.copy()
+    jabrn_hj = jabr_hj.copy()
+    jabtn_hj[...,1] = Ctn_hj*np.cos(ht_hj)
+    jabtn_hj[...,2] = Ctn_hj*np.sin(ht_hj)
+    jabrn_hj[...,1] = normalized_chroma_ref*np.cos(hr_hj)
+    jabrn_hj[...,2] = normalized_chroma_ref*np.sin(hr_hj)
+    
+    # closed jabt_hj, jabr_hj for Rg:
+    jabt_hj_closed = np.vstack((jabt_hj,jabt_hj[:1,...]))
+    jabr_hj_closed = np.vstack((jabr_hj,jabr_hj[:1,...]))
+    
+    # closed jabtn_hj, jabrn_hj for plotting:
+    jabtn_hj_closed = np.vstack((jabtn_hj,jabtn_hj[:1,...]))
+    jabrn_hj_closed = np.vstack((jabrn_hj,jabrn_hj[:1,...]))
+
+    
+    return {'jabt' : jabt, 'jabr' : jabr, 'DEi' : DEi[...,0], 
+            'Ct' : Ct, 'Cr': Cr, 'ht' : ht, 'hr' : hr, 
+            'ht_idx' : ht_idx, 'hr_idx' : hr_idx,
+            'jabt_hj' : jabt_hj, 'jabr_hj' : jabr_hj, 'DE_hj' : DE_hj,
+            'jabt_hj_closed' : jabt_hj_closed, 'jabr_hj_closed' : jabr_hj_closed,
+            'jabtn_hj' : jabtn_hj, 'jabrn_hj' : jabrn_hj,
+            'jabtn_hj_closed' : jabtn_hj_closed, 'jabrn_hj_closed' : jabrn_hj_closed,
+            'ht_hj' : ht_hj, 'hr_hj' : hr_hj, 
+            'Ct_hj': Ct_hj, 'Cr_hj' : Cr_hj, 'Ctn_hj': Ctn_hj,
+            'nhbins' : nhbins, 'start_hue' : start_hue, 
+            'normalized_chroma_ref' : normalized_chroma_ref, 
+            'dh' : dh, 'hue_bin_edges' : hue_bin_edges, 
+            'hbinnrs' : hr_idx}
+
 #------------------------------------------------------------------------------
-def jab_to_rg(jabt,jabr, max_scale = 100, ordered_and_sliced = False, \
-              nhbins = None, start_hue = 0.0, normalize_gamut = True, \
-              normalized_chroma_ref = 100, out = 'Rg,jabt,jabr'):
+def _polyarea(x,y):
+    """
+    Calculate area of polygon with coordinates (x,y).
+    """
+    return 0.5*np.abs(np.dot(x,np.roll(y,1,axis=0))-np.dot(y,np.roll(x,1,axis=0)))
+
+#------------------------------------------------------------------------------
+def _hue_bin_data_to_rg(hue_bin_data, max_scale = 100, normalize_gamut = False):
     """
     Calculates gamut area index, Rg.
     
     Args:
-        :jabt:  
-            | ndarray with Cartesian color coordinates (e.g. Jab) 
-            | of the samples under the test SPD
-        :jabr:
-            | ndarray with Cartesian color coordinates (e.g. Jab) 
-            | of the samples under the reference SPD
+        :hue_bin_data:
+            | Dict with hue bin data obtained with _get_hue_bin_data().
         :max_scale:
             | 100.0, optional
             | Value of Rg when Rf = max_scale (i.e. DEavg = 0)
-        :ordered_and_sliced: 
-            | False or True, optional
-            |   - False: Hue ordering will be done with lux.cri.gamut_slicer().
-            |   - True: user is responsible for hue-ordering and closing gamut 
-            |     (i.e. first element in :jab: equals the last).
-        :nhbins: 
-            | None or int, optional
-            |   - None: defaults to using the sample hues themselves as 'bins'. 
-            |           In other words, the number of bins will be equal to the 
-            |           number of samples.
-            |   - float: number of bins to slice the sample gamut in.
-        :start_hue:
-            | 0.0 or float, optional
-            | Hue angle to start bin slicing
         :normalize_gamut:
-            | True or False, optional
+            | False, optional
             | True normalizes the gamut of test to that of ref.
             | (perfect agreement results in circle).
-        :normalized_chroma_ref:
-            | 100.0 or float, optional
-            | Controls the size (chroma/radius) of the normalization circle/gamut
         :out: 
-            | 'Rg,jabt,jabr' or str, optional
+            | 'Rg', optional
             | Specifies which variables to output as ndarray
 
     Returns: 
         :Rg: 
             | float or ndarray with gamut area indices Rg.
-    """    
-    # slice, order and normalize jabt and jabr:
-    if ordered_and_sliced == False: 
-        jabt, jabr, DEi,binnrs,jabti,jabri = gamut_slicer(jabt,jabr, out = 'jabt,jabr,DEi,binnr,jabti,jabri', nhbins = nhbins, start_hue = start_hue, normalize_gamut = normalize_gamut, normalized_chroma_ref = normalized_chroma_ref, close_gamut = True)
- 
-    # make 3d:
-    test_original_shape = jabt.shape
-    if len(test_original_shape)<3:
-        jabt = jabt[None] # expand 2-array to 3-array by adding '0'-axis
-        jabr = jabt[None] # expand 2-array to 3-array by adding '0'-axis
-    
-    # calculate Rg for each spd:
-    Rg = np.zeros((1,jabt.shape[1]))
-
-    for ii in range(jabt.shape[1]):
-        nan_t = np.isnan(jabt[:,ii,1])
-        nan_r = np.isnan(jabr[:,ii,1])
-        if (nan_t.all() | nan_r.all()):
-            Rg[:,ii] = np.nan
-        else:
-            notnan_t = np.logical_not(nan_t)
-            notnan_r = np.logical_not(nan_r)
-            Rg[:,ii] = max_scale*math.polyarea(jabt[notnan_t,ii,1],jabt[notnan_t,ii,2])/math.polyarea(jabr[notnan_r,ii,1],jabr[notnan_r,ii,2]) # calculate Rg =  gamut area ratio of test and ref (only use ab's which are not NaN's)
-    
-    if out == 'Rg':
-        return Rg
-    elif (out == 'Rg,jabt,jabr'):
-        return Rg, jabt, jabr
-    elif (out == 'Rg,jabt,jabr,DEi'):
-        return Rg, jabt, jabr, DEi
-    elif (out == 'Rg,jabt,jabr,binnr,jabti,jabri'):
-        return Rg, jabt, jabr, binnrs, jabti, jabri
-    elif (out == 'Rg,jabt,jabr,DEi,binnr,jabti,jabri'):
-        return Rg, jabt, jabr, DEi,binnrs,jabti,jabri
+    """ 
+    if normalize_gamut == False:
+        jabt_hj, jabr_hj = hue_bin_data['jabt_hj_closed'], hue_bin_data['jabr_hj_closed']
     else:
-        return eval(out)
+        jabt_hj, jabr_hj = hue_bin_data['jabtn_hj_closed'], hue_bin_data['jabrn_hj_closed']
 
+    notnan_t = np.logical_not(np.isnan(jabt_hj[...,1])) # avoid NaN's (i.e. empty hue-bins)
+    notnan_r = np.logical_not(np.isnan(jabr_hj[...,1]))
+    
+    Rg = np.array([[max_scale*_polyarea(jabt_hj[notnan_t[:,i],i,1],jabt_hj[notnan_t[:,i],i,2]) / _polyarea(jabr_hj[notnan_r[:,i],i,1],jabr_hj[notnan_r[:,i],i,2]) for i in range(notnan_r.shape[-1])]])
+    
+    return Rg
 
 #------------------------------------------------------------------------------
-def jab_to_rhi(jabt, jabr, DEi, cri_type = _CRI_TYPE_DEFAULT, start_hue = None,\
-               nhbins = None, scale_factor = None, scale_fcn = None, \
-               use_bin_avg_DEi = True):
+def _hue_bin_data_to_rxhj(hue_bin_data, cri_type = _CRI_TYPE_DEFAULT,
+                             scale_factor = None, scale_fcn = None,
+                             use_bin_avg_DEi = True):
     """
-    Calculate hue bin measures: Rfhi, Rcshi and Rhshi.
-    
-    |   Rfhi: local (hue bin) color fidelity  
-    |   Rcshi: local chroma shift
-    |   Rhshi: local hue shift
+    Calculate hue bin measures: Rcshj, Rhshj, Rfhj, DEhj.
+     
+    |   Rcshj: local chroma shift
+    |   Rhshj: local hue shift
+    |   Rfhj: local (hue bin) color fidelity  
+    |   DEhj: local (hue bin) color differences 
     |
     |   (See IES TM30)
     
     Args:
-        :jabt: 
-            | ndarray with jab coordinates under test SPD
-        :jabr: 
-            | ndarray with jab coordinates under reference SPD
-        :DEi: 
-            | ndarray with DEi (from gamut_slicer()).
+        :hue_bin_data:
+            | Dict with hue bin data obtained with _get_hue_bin_data().
         :use_bin_avg_DEi: 
             | True, optional
             | Note that following IES-TM30 DEi from gamut_slicer() is obtained by
             | averaging the DEi per hue bin (True), and NOT by averaging the 
             | jabt and jabr per hue  bin and then calculating the DEi (False).
-        :nhbins:
-            | int, number of hue bins to slice gamut 
-            | (None use the one specified in :cri_type: dict).
-        :start_hue: 
-            | float (°), hue at which to start slicing
         :scale_fcn:
             | function handle to type of cri scale, 
             | e.g. 
@@ -355,109 +260,215 @@ def jab_to_rhi(jabt, jabr, DEi, cri_type = _CRI_TYPE_DEFAULT, start_hue = None,\
         
     Returns:
         :returns: 
-            | ndarrays of Rfhi, Rcshi and Rhshi
+            | ndarrays of Rcshj, Rhshj, Rfhj, DEhj 
         
     References:
         1. `IES TM30, Method for Evaluating Light Source Color Rendition. 
         New York, NY: The Illuminating Engineering Society of North America.
         <https://www.ies.org/store/technical-memoranda/ies-method-for-evaluating-light-source-color-rendition/>`_
     """
-    if isinstance(cri_type, str): 
-        args = copy.deepcopy(locals()) # get dict with keyword input arguments to function (used to overwrite non-None input arguments present in cri_type dict)
-        cri_type = process_cri_type_input(cri_type, args, callerfunction = 'cri.jab_to_rhi')
     
-    if jabt.ndim < 3:
-        jabt = jabt[:,None,:]
-    if jabr.ndim < 3:
-        jabr = jabr[:,None,:]
+    if (scale_factor is None) | (scale_fcn is None):
+        if isinstance(cri_type, str): 
+           args = copy.deepcopy(locals()) # get dict with keyword input arguments to function (used to overwrite non-None input arguments present in cri_type dict)
+           cri_type = process_cri_type_input(cri_type, args, callerfunction = 'cri._hue_bin_data_to_Ri')
+        
+        # Get scale factor and function:
+        if (scale_factor is None):
+            scale_factor = cri_type['scale']['cfactor']
+        
+        if (scale_fcn is None):
+            scale_fcn = cri_type['scale']['fcn']    
+        
 
-    # Get scale factor and function:
-    if (scale_factor is None):
-        scale_factor = cri_type['scale']['cfactor']
-    if (scale_fcn is None):
-        scale_fcn = cri_type['scale']['fcn']
-    if (start_hue is None):
-        start_hue = cri_type['rg_pars']['start_hue']
-    if (nhbins is None):
-        nhbins = cri_type['rg_pars']['nhbins']
-     
-    # A. Local Color Fidelity, Rfhi:
-    if use_bin_avg_DEi == False:
-        DEi = np.power((jabt - jabr), 2).sum(axis = len(jabt.shape)-1,keepdims = False)**0.5
-    Rfhi = scale_fcn(DEi,scale_factor)
+    nhbins = hue_bin_data['nhbins']
+    start_hue = hue_bin_data['start_hue']
+    
+    # A. Local color fidelity, Rfhj:
+    if use_bin_avg_DEi:
+        DEhj = hue_bin_data['DE_hj']
+    else:
+        DEhj = ((hue_bin_data['jabt_hj']-hue_bin_data['jabr_hj'])**2).sum(axis=-1)**0.5
+    Rfhj = scale_fcn(DEhj, scale_factor = scale_factor)
     
     # B.Local chroma shift and hue shift, [Rcshi, Rhshi]:
     # B.1 relative paths:
-    Cr = np.sqrt((jabr[...,1:3]**2).sum(axis = jabr[...,1:3].ndim-1))
-    da = np.atleast_2d((jabt[...,1] - jabr[...,1])/Cr)
-    db = np.atleast_2d((jabt[...,2] - jabr[...,2])/Cr)
+    dab = (hue_bin_data['jabt_hj']- hue_bin_data['jabr_hj'])[...,1:]/(hue_bin_data['Cr_hj'][...,None] + 1e-308)
 
     # B.2 Reference unit circle:
-    dhbins = 2*np.pi/nhbins
-    
-    hbincenters = np.arange(start_hue + dhbins/2, 2*np.pi, dhbins)[...,None]
+    hbincenters = np.arange(start_hue + np.pi/nhbins, 2*np.pi, 2*np.pi/nhbins)[...,None]
     arc = np.cos(hbincenters)
     brc = np.sin(hbincenters)
 
     # B.3 calculate local chroma shift, Rcshi:
-    Rcshi = da * arc + db * brc
+    Rcshj = dab[...,0] * arc + dab[...,1] * brc
     
     # B.4 calculate local hue shift, Rcshi:
-    Rhshi = db * arc - da * brc
+    Rhshj = dab[...,1] * arc - dab[...,0] * brc
     
-    return Rfhi, Rcshi, Rhshi 
-
+    return Rcshj, Rhshj, Rfhj, DEhj 
 
 #------------------------------------------------------------------------------
-def jab_to_DEi(jabt, jabr, out = 'DEi', avg = None):
+def _hue_bin_data_to_ellipsefit(hue_bin_data):
     """
-    Calculates color differences (~fidelity), DEi, of Jab input.
+    Fit ellipse to normalized color gamut,
+    and calculate orientation angle (°) and eccentricity (ellipse a-axis / ellipse b-axis)
     
     Args:
-        :jabt: 
-            | ndarray with Cartesian color coordinates (e.g. Jab) 
-            | of the samples under the test SPD
-        :jabr:
-            | ndarray with Cartesian color coordinates (e.g. Jab) 
-            | of the samples under the reference SPD
-        :avg: 
-            | None, optional
-            | If None: don't calculate average, else: avg must be function handle
-        :out: 
-            | 'DEi' or str, optional
-            | Specifies requested output (e.g. 'DEi,DEa') 
-
+        :hue_bin_data:
+            | Dict with hue bin data obtained with _get_hue_bin_data().
+    
     Returns:
-        :returns:
-            | float or ndarray with DEi for :out: 'DEi'
-            | Other output is also possible by changing the :out: str value.
+        dict:
+            | {'v':v, 'a/b': ecc,'thetad': theta}
+            | v is an ndarray with [a,b, xc, yc, theta(rad)] describing the ellipse
+            | 'a/b' is the eccentricity
+            | 'thetad' is the angle in degrees, [0°,180°]
     """
-      
-    # E. calculate DEi
-    DEi = np.power((jabt - jabr),2).sum(axis = len(jabt.shape)-1,keepdims = False)**0.5
-    if avg is not None:
-        DEa = avg(DEi, axis = 0) 
-        DEa = np2d(DEa)
-    else:
-        out = 'DEi' #override any requested output if avg is not supplied and DEa has not been calculated.
-  
-     # output:
-    if (out == 'DEi,DEa'):
-        return DEi, DEa
-    else:
-        return  DEi
+    # use get chroma-normalized jabtn_hj:
+    jabt = hue_bin_data['jabtn_hj']
+    ecc = np.ones((1,jabt.shape[1]))*np.nan
+    theta = np.ones((1,jabt.shape[1]))*np.nan
+    v = np.ones((jabt.shape[1],5))*np.nan
+    for i in range(jabt.shape[1]):
+        try:
+            v[i,:] = math.fit_ellipse(jabt[:,i,1:])
+            a,b = v[i,0], v[i,1] # major and minor ellipse axes
+            ecc[0,i] = a/b
+            theta[0,i] = np.rad2deg(v[i,4]) # orientation angle
+            if theta[0,i]>180: theta[0,i] = theta[0,i] - 180
+        except:
+            v[i,:] = np.nan*np.ones((1,5))
+            ecc[0,i] = np.nan
+            theta[0,i] = np.nan # orientation angle
+    return {'v':v, 'a/b':ecc,'thetad': theta}
 
 
 #------------------------------------------------------------------------------
-def spd_to_jab_t_r(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'jabt,jabr', wl = None,\
-                   sampleset = None, ref_type = None, cieobs  = None, cspace = None,\
-                   catf = None, cri_specific_pars = None):
+def _hue_bin_data_to_rfi(hue_bin_data = None, cri_type = _CRI_TYPE_DEFAULT,
+                        scale_factor = None, scale_fcn = None):
+    """
+    Get sample color differences DEi and calculate color fidelity values Rfi.
+     
+    |   Rfi: Sample color fidelity  
+    |   DEi: Sample color differences 
+    |
+    |   (See IES TM30)
+    
+    Args:
+        :hue_bin_data:
+            | Dict with hue bin data obtained with _get_hue_bin_data().
+        :scale_fcn:
+            | function handle to type of cri scale, 
+            | e.g. 
+            |   * linear()_scale --> (100 - scale_factor*DEi), 
+            |   * log_scale --> (cfr. Ohno's CQS), 
+            |   * psy_scale (Smet et al.'s cri2012,See: LRT 2013)
+        :scale_factor:
+            | factors used in scaling function
+        
+    Returns:
+        :returns: 
+            | ndarrays of Rfi, DEi 
+        
+    References:
+        1. `IES TM30, Method for Evaluating Light Source Color Rendition. 
+        New York, NY: The Illuminating Engineering Society of North America.
+        <https://www.ies.org/store/technical-memoranda/ies-method-for-evaluating-light-source-color-rendition/>`_
+    """
+    if (scale_factor is None) | (scale_fcn is None):
+        if isinstance(cri_type, str): 
+           args = copy.deepcopy(locals()) # get dict with keyword input arguments to function (used to overwrite non-None input arguments present in cri_type dict)
+           cri_type = process_cri_type_input(cri_type, args, callerfunction = 'cri._hue_bin_data_to_Rfi')
+        
+        # Get scale factor and function:
+        if (scale_factor is None):
+            scale_factor = cri_type['scale']['cfactor']
+        
+        if (scale_fcn is None):
+            scale_fcn = cri_type['scale']['fcn']   
+    
+    # Color fidelity, Rfi:
+    DEi = hue_bin_data['DEi']
+    Rfi = scale_fcn(DEi, scale_factor = scale_factor)
+    
+    return Rfi, DEi
+
+#------------------------------------------------------------------------------
+def _hue_bin_data_to_rf(hue_bin_data = None, cri_type = _CRI_TYPE_DEFAULT,
+                        scale_factor = None, scale_fcn = None, avg = None,
+                        out = 'Rf,DEa'):
+    """
+    Get average sample color difference DEa and calculate color fidelity index Rf.
+     
+    |   Rf: color fidelity index
+    |   DEa: average color difference 
+    |
+    |   (See IES TM30)
+    
+    Args:
+        :hue_bin_data:
+            | Dict with hue bin data obtained with _get_hue_bin_data().
+        :scale_fcn:
+            | function handle to type of cri scale, 
+            | e.g. 
+            |   * linear()_scale --> (100 - scale_factor*DEi), 
+            |   * log_scale --> (cfr. Ohno's CQS), 
+            |   * psy_scale (Smet et al.'s cri2012,See: LRT 2013)
+        :scale_factor:
+            | factors used in scaling function
+        :avg:
+            | Averaging function for DEi -> DEa.
+        :out: 
+            | 'Rf,DEa' or str, optional
+            | Specifies requested output  
+        
+    Returns:
+        :returns: 
+            | ndarrays of Rf, DEa
+        
+    References:
+        1. `IES TM30, Method for Evaluating Light Source Color Rendition. 
+        New York, NY: The Illuminating Engineering Society of North America.
+        <https://www.ies.org/store/technical-memoranda/ies-method-for-evaluating-light-source-color-rendition/>`_
+    """
+    if (scale_factor is None) | (scale_fcn is None) | (avg is None):
+        if isinstance(cri_type, str): 
+           args = copy.deepcopy(locals()) # get dict with keyword input arguments to function (used to overwrite non-None input arguments present in cri_type dict)
+           cri_type = process_cri_type_input(cri_type, args, callerfunction = 'cri._hue_bin_data_to_Rfi')
+        
+        # Get scale factor and function:
+        if (scale_factor is None):
+            scale_factor = cri_type['scale']['cfactor']
+        
+        if (scale_fcn is None):
+            scale_fcn = cri_type['scale']['fcn'] 
+            
+        # Get averaging function:
+            avg = cri_type['avg'] 
+    
+    # Color fidelity, Rfi:
+    DEa = avg(hue_bin_data['DEi'], axis = 0)
+    Rf = np2d(scale_fcn(DEa, scale_factor = scale_factor))
+  
+    # output:
+    if out == 'Rf,DEa':
+        return Rf, DEa
+    elif out == 'Rf':
+        return  Rf
+    elif out == 'DEa':
+        return DEa
+
+def spd_to_jab_t_r(St, cri_type = _CRI_TYPE_DEFAULT, out = 'jabt,jabr', 
+                   wl = None, sampleset = None, ref_type = None, 
+                   cieobs  = None, cspace = None, catf = None, 
+                   cri_specific_pars = None):
     """
     Calculates jab color values for a sample set illuminated with test source 
     SPD and its reference illuminant.
         
     Args:
-        :SPD: 
+        :St: 
             | ndarray with spectral data 
             | (can be multiple SPDs, first axis are the wavelengths)
         :out: 
@@ -465,7 +476,7 @@ def spd_to_jab_t_r(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'jabt,jabr', wl = No
             | Specifies requested output (e.g.'jabt,jabr' or 'jabt,jabr,cct,duv') 
         :wl: 
             | None, optional
-            | Wavelengths (or [start, end, spacing]) to interpolate the SPDs to. 
+            | Wavelengths (or [start, end, spacing]) to interpolate the spds in St to. 
             | None: default to no interpolation
         :cri_type:
             | _CRI_TYPE_DEFAULT or str or dict, optional
@@ -546,14 +557,15 @@ def spd_to_jab_t_r(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'jabt,jabr', wl = No
     #Override input parameters with data specified in cri_type:
     args = copy.deepcopy(locals()) # get dict with keyword input arguments to function (used to overwrite non-None input arguments present in cri_type dict)
     cri_type = process_cri_type_input(cri_type, args, callerfunction = 'cri.spd_to_jab_t_r')
+    
+    # unpack and update dict with parameters:
+    (avg, catf, cieobs,
+     cri_specific_pars, cspace, 
+     ref_type, rg_pars, sampleset, scale) = [cri_type[x] for x in sorted(cri_type.keys())] 
 
-    avg, catf, cieobs, cri_specific_pars, cspace, ref_type, rg_pars, sampleset, scale = [cri_type[x] for x in sorted(cri_type.keys())] 
-
-    # make SPD atleast_2d:
-    SPD = np2d(SPD)
-
+    # pre-interpolate SPD:
     if wl is not None: 
-        SPD = spd(data = SPD, interpolation = _S_INTERP_TYPE, kind = 'np', wl = wl)
+        St = cie_interp(St, wl_new = wl, kind = _S_INTERP_TYPE)
       
     # obtain sampleset:
     if isinstance(sampleset,str):
@@ -561,21 +573,24 @@ def spd_to_jab_t_r(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'jabt,jabr', wl = No
     
     # A. calculate reference illuminant:
     # A.a. get xyzw:
-    xyztw = spd_to_xyz(SPD, cieobs = cieobs['cct'], rfl = None, out = 1)
+    xyztw_cct = spd_to_xyz(St, cieobs = cieobs['cct'], rfl = None, out = 1)
 
     # A.b. get cct:
-    cct, duv = xyz_to_cct(xyztw, cieobs = cieobs['cct'], out = 'cct,duv',mode = 'lut')
+    cct, duv = xyz_to_cct(xyztw_cct, cieobs = cieobs['cct'], out = 'cct,duv',mode = 'lut')
     
     # A.c. get reference ill.:
     if isinstance(ref_type,np.ndarray):
-        Sr = cri_ref(ref_type, ref_type = 'spd', cieobs = cieobs['cct'], wl3 = SPD[0])
+        Sr = cri_ref(ref_type, ref_type = 'spd', cieobs = cieobs['cct'], wl3 = St[0])
     else:
-        Sr = cri_ref(cct, ref_type = ref_type, cieobs = cieobs['cct'], wl3 = SPD[0])
+        Sr = cri_ref(cct, ref_type = ref_type, cieobs = cieobs['cct'], wl3 = St[0])
 
-    # B. calculate xyz and xyzw of data (spds) and Sr:
-    xyzti, xyztw = spd_to_xyz(SPD, cieobs = cieobs['xyz'], rfl = sampleset, out = 2)
+    # B. calculate xyz and xyzw of SPD and Sr (stack for speed):
+    xyzi, xyzw = spd_to_xyz(np.vstack((St,Sr[1:])), cieobs = cieobs['xyz'], rfl = sampleset, out = 2)
     xyzri, xyzrw = spd_to_xyz(Sr, cieobs = cieobs['xyz'], rfl = sampleset, out = 2)
-
+    N = St.shape[0]-1
+    xyzti, xyzri =  xyzi[:,:N,:], xyzi[:,N:,:]
+    xyztw, xyzrw =  xyzw[:N,:], xyzw[N:,:]
+    
     # C. apply chromatic adaptation for non-cam/lab cspaces:
     if catf is not None:
         D_cat, Dtype_cat, La_cat, catmode_cat, cattype_cat, mcat_cat, xyzw_cat = [catf[x] for x in sorted(catf.keys())]
@@ -615,27 +630,27 @@ def spd_to_jab_t_r(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'jabt,jabr', wl = No
 
 
     # E. Regulate output:
-    if out == 'jabt,jabr':
-        return jabt, jabr
-    elif out == 'jabt,jabr,cct,duv':
-        return jabt,jabr,cct,duv
+    if out == 'jabt,jabr,xyzti,xyztw,xyzri,xyzrw,xyztw_cct,cct,duv,St,Sr':
+        return jabt,jabr,xyzti,xyztw,xyzri,xyzrw,xyztw_cct,cct,duv,St,Sr
     elif out == 'jabt,jabr,cct,duv,Sr':
         return jabt,jabr,cct,duv,Sr
-    elif out == 'jabt,jabr,cct,duv,Sr,xyzti,xyztw,xyzri,xyzrw':
-        return jabt,jabr,cct,duv,Sr,xyzti,xyztw,xyzri,xyzrw
+    elif out == 'jabt,jabr,cct,duv':
+        return jabt,jabr,cct,duv
+    elif out == 'jabt,jabr':
+        return jabt, jabr
     else:
         eval(out)
 
 
 #------------------------------------------------------------------------------
-def spd_to_DEi(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'DEi', wl = None, \
+def spd_to_DEi(St, cri_type = _CRI_TYPE_DEFAULT, out = 'DEi', wl = None, \
                sampleset = None, ref_type = None, cieobs = None, avg = None, \
                cspace = None, catf = None, cri_specific_pars = None):
     """
     Calculates color differences (~fidelity), DEi, of spectral data.
     
     Args:
-        :SPD: 
+        :St: 
             | ndarray with spectral data 
             | (can be multiple SPDs, first axis are the wavelengths)
         :out: 
@@ -643,7 +658,7 @@ def spd_to_DEi(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'DEi', wl = None, \
             | Specifies requested output (e.g. 'DEi,DEa,cct,duv') 
         :wl: 
             | None, optional
-            | Wavelengths (or [start, end, spacing]) to interpolate the SPDs to. 
+            | Wavelengths (or [start, end, spacing]) to interpolate the spds in St to. 
             | None: default to no interpolation
         :cri_type:
             | _CRI_TYPE_DEFAULT or str or dict, optional
@@ -725,22 +740,34 @@ def spd_to_DEi(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'DEi', wl = None, \
     cri_type = process_cri_type_input(cri_type, args, callerfunction = 'cri.spd_to_DEi')
 
     # calculate Jabt of test and Jabr of the reference illuminant corresponding to test: 
-    jabt, jabr, cct, duv, Sr, xyzti, xyztw, xyzri, xyzrw = spd_to_jab_t_r(SPD, cri_type = cri_type, out = 'jabt,jabr,cct,duv,Sr,xyzti,xyztw,xyzri,xyzrw', wl = wl)
+    (jabt, jabr, 
+     xyzti, xyztw, 
+     xyzri, xyzrw,
+     xyztw_cct,
+     cct, duv, St, Sr) = spd_to_jab_t_r(St, wl = wl, cri_type = cri_type, 
+                                        out = 'jabt,jabr,xyzti,xyztw,xyzri,xyzrw,xyztw_cct,cct,duv,St,Sr')
       
     # E. calculate DEi, DEa:
-    DEi, DEa = jab_to_DEi(jabt,jabr, out = 'DEi,DEa', avg = cri_type['avg'])
+    DEi = ((jabt - jabr)**2).sum(axis = -1)**0.5
+    DEa = cri_type['avg'](DEi, axis = 0, keepdims = True)
   
      # output:
-    if out == 'DEi,jabt,jabr,cct,duv,Sr,xyzti,xyztw,xyzri,xyzrw':
-        return DEi,jabt,jabr,cct,duv,Sr,xyzti,xyztw,xyzri,xyzrw
-    elif out == 'DEi,jabt,jabr,cct,duv,Sr':
-        return DEi,jabt,jabr,cct,duv,Sr
+    if out == 'DEi,DEa,jabt,jabr,xyzti,xyztw,xyzri,xyzrw,xyztw_cct,cct,duv,St,Sr':
+        return DEi,DEa,jabt,jabr,xyzti,xyztw,xyzri,xyzrw,xyztw_cct,cct,duv,St,Sr
+    elif out == 'DEa':
+        return DEa
     elif out == 'DEi':
         return DEi
+    elif out == 'DEi,DEa':
+        return DEi,DEa
+    elif out == 'DEa,DEi':
+        return DEa,DEi
+    elif out == 'DEi,DEa,jabt,jabr,cct,duv,Sr':
+        return DEi,DEa,jabt,jabr,cct,duv,Sr
     else:
         return  eval(out)
 
-      
+
 #------------------------------------------------------------------------------
 def optimize_scale_factor(cri_type, opt_scale_factor, scale_fcn, avg) :
     """
@@ -778,7 +805,7 @@ def optimize_scale_factor(cri_type, opt_scale_factor, scale_fcn, avg) :
 
     """
 
-    if  np.any(opt_scale_factor):
+    if np.any(opt_scale_factor):
         if 'opt_cri_type' not in cri_type['scale'].keys(): 
             opt_cri_type = _CRI_DEFAULTS['ciera'] # use CIE Ra-13.3-1995 as target
         else:
@@ -832,16 +859,16 @@ def optimize_scale_factor(cri_type, opt_scale_factor, scale_fcn, avg) :
         scale_factor = cri_type['scale']['cfactor']
     return scale_factor
 
-
 #------------------------------------------------------------------------------
-def spd_to_rg(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'Rg', wl = None, \
+def spd_to_rg(St, cri_type = _CRI_TYPE_DEFAULT, out = 'Rg', wl = None, \
               sampleset = None, ref_type = None, cieobs  = None, avg = None, \
-              cspace = None, catf = None, cri_specific_pars = None, rg_pars = None):
+              cspace = None, catf = None, cri_specific_pars = None, rg_pars = None,
+              fit_gamut_ellipse = False):
     """
     Calculates the color gamut index, Rg, of spectral data. 
     
     Args:
-        :SPD: 
+        :St: 
             | ndarray with spectral data 
             | (can be multiple SPDs, first axis are the wavelengths)
         :out: 
@@ -965,11 +992,18 @@ def spd_to_rg(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'Rg', wl = None, \
             |                     source spds used to optimize cfactor. 
             |                     Note that if key not in :scale: dict, 
             |                     then default = 'F1-F12'.
+        :fit_gamut_ellipse:
+            | fit ellipse to normalized color gamut 
+            | (extract from function using out; also stored in hue_bin_data['gamut_ellipse_fit'])
 
     Returns:
         :returns:
             | float or ndarray with Rg for :out: 'Rg'
             | Other output is also possible by changing the :out: str value.
+            | E.g. out == 'Rg,data' would output an ndarray with Rg values 
+            |               and a dictionary :data: with keys:
+            |                   'St', 'Sr', 'cct', 'duv', 'hue_bin_data' 
+            |                   'xyzti', xyzti, 'xyztw', 'xyzri', 'xyzrw'
             
     References:
         1. `IES TM30, Method for Evaluating Light Source Color Rendition. 
@@ -989,41 +1023,60 @@ def spd_to_rg(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'Rg', wl = None, \
 
        
     # calculate Jabt of test and Jabr of the reference illuminant corresponding to test: 
-    jabt, jabr,cct,duv, Sr = spd_to_jab_t_r(SPD, cri_type = cri_type, out = 'jabt,jabr,cct,duv,Sr', wl = wl) 
+    (jabt,jabr,
+     xyzti,xyztw,
+     xyzri,xyzrw,
+     xyztw_cct,
+     cct,duv,St,Sr) = spd_to_jab_t_r(St, wl = wl, cri_type = cri_type, 
+                                          out = 'jabt,jabr,xyzti,xyztw,xyzri,xyzrw,xyztw_cct,cct,duv,St,Sr') 
 
-    
     # calculate gamut area index:
     rg_pars = cri_type['rg_pars']
-    #rg_pars = put_args_in_db(cri_type['rg_pars'],rg_pars)#{'nhbins':nhbins,'start_hue':start_hue,'normalize_gamut':normalize_gamut}) #override with not-None input from function
     nhbins, normalize_gamut, normalized_chroma_ref, start_hue  = [rg_pars[x] for x in sorted(rg_pars.keys())]
     
-    Rg, jabt_binned, jabr_binned, DEi_binned, binnrs, jabti_binned, jabri_binned = jab_to_rg(jabt,jabr, ordered_and_sliced = False, nhbins = nhbins, start_hue = start_hue, normalize_gamut = normalize_gamut, out = 'Rg,jabt,jabr,DEi,binnr,jabti,jabri')
-    Rg = np2d(Rg)
+    # get hue_bin_data:
+    hue_bin_data = _get_hue_bin_data(jabt, jabr, 
+                                    start_hue = start_hue, nhbins = nhbins,
+                                    normalized_chroma_ref = normalized_chroma_ref)
     
-   
+    Rg = _hue_bin_data_to_rg(hue_bin_data, normalize_gamut = normalize_gamut)
+    
+    if fit_gamut_ellipse:
+        gamut_ellipse_fit = _hue_bin_data_to_ellipsefit(hue_bin_data)
+        hue_bin_data['gamut_ellipse_fit'] = gamut_ellipse_fit
+    else:
+        gamut_ellipse_fit = {}
+    
+    if 'data' in out:
+        data = {'St' : St, 'Sr' : Sr, 'xyztw_cct' : xyztw_cct, 
+                'cct' : cct, 'duv' : duv,
+                'xyzti' : xyzti, 'xyztw' : xyztw, 
+                'xyzri' : xyzri, 'xyzrw' : xyzrw,
+                'Rg' : Rg, 
+                'hue_bin_data' : hue_bin_data,
+                'cri_type' : cri_type}
+
     if (out == 'Rg'):
         return Rg
-    elif (out == 'Rg,jabt,jabr'):
-        return Rg, jabt_binned,jabr_binned
-    elif (out == 'Rg,jabt,jabr,DEi'):
-        return Rg, jabt_binned,jabr_binned,DEi_binned
-    elif (out == 'Rg,jabt,jabr,DEi,binnr,jabti,jabri'):
-        return Rg, jabt_binned,jabr_binned,DEi_binned,binnrs,jabti_binned,jabri_binned
+    elif (out == 'Rg,data'):
+        return Rg, data
+    elif (out == 'data'):
+        return data
+    elif (out == 'Rg,jabt,jabr,xyzti,xyztw,xyzri,xyzrw,xyztw_cct,cct,duv,St,Sr'):
+        return Rg,jabt,jabr,xyzti,xyztw,xyzri,xyzrw,xyztw_cct,cct,duv,St,Sr
     else:
         return eval(out)
-
-
-
+    
 #------------------------------------------------------------------------------
-def spd_to_cri(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'Rf', wl = None, \
+def spd_to_cri(St, cri_type = _CRI_TYPE_DEFAULT, out = 'Rf', wl = None, \
                sampleset = None, ref_type = None, cieobs = None, avg = None, \
                scale = None, opt_scale_factor = False, cspace = None, catf = None,\
-               cri_specific_pars = None, rg_pars = None):
+               cri_specific_pars = None, rg_pars = None, fit_gamut_ellipse = False):
     """
     Calculates the color rendering fidelity index, Rf, of spectral data. 
     
     Args:
-        :SPD: 
+        :St: 
             | ndarray with spectral data 
             | (can be multiple SPDs, first axis are the wavelengths)
         :out: 
@@ -1151,11 +1204,18 @@ def spd_to_cri(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'Rf', wl = None, \
             | True or False, optional
             | True: optimize scaling-factor, else do nothing and use value of 
             | scaling-factor in :scale: dict.   
+        :fit_gamut_ellipse:
+            | fit ellipse to normalized color gamut 
+            | (extract from function using out; also stored in hue_bin_data['gamut_ellipse_fit'])
     
     Returns:
         :returns: 
             | float or ndarray with Rf for :out: 'Rf'
             | Other output is also possible by changing the :out: str value.
+            | E.g. out == 'Rg,data' would output an ndarray with Rf values 
+            |               and a dictionary :data: with keys:
+            |                   'St', 'Sr', 'cct', 'duv', 'hue_bin_data' 
+            |                   'xyzti', xyzti, 'xyztw', 'xyzri', 'xyzrw'
             
     References:
         1. `IES TM30, Method for Evaluating Light Source Color Rendition. 
@@ -1203,38 +1263,86 @@ def spd_to_cri(SPD, cri_type = _CRI_TYPE_DEFAULT, out = 'Rf', wl = None, \
         raise Exception ('Unable to optimize scale_factor.')
 
     # A. get DEi of for ciera and of requested cri metric for spds in or specified by scale_factor_optimization_spds':
-    DEi, jabt, jabr, cct, duv, Sr, xyzti, xyztw, xyzri, xyzrw = spd_to_DEi(SPD, out = 'DEi,jabt,jabr,cct,duv,Sr,xyzti,xyztw,xyzri,xyzrw', cri_type = cri_type)
+    # calculate Jabt of test and Jabr of the reference illuminant corresponding to test: 
+    (jabt,jabr,
+     xyzti,xyztw,
+     xyzri,xyzrw,
+     xyztw_cct,
+     cct,duv,St,Sr) = spd_to_jab_t_r(St, wl = wl, cri_type = cri_type, 
+                                          out = 'jabt,jabr,xyzti,xyztw,xyzri,xyzrw,xyztw_cct,cct,duv,St,Sr') 
 
+    # E. calculate DEi, DEa:
+    DEi = ((jabt - jabr)**2).sum(axis = -1)**0.5
+    DEa = avg(DEi,axis=0,keepdims=True)
+    
     # B. convert DEi to color rendering index:
-    Rfi = scale_fcn(DEi,scale_factor)
-    Rf = np2d(scale_fcn(avg(DEi,axis = 0),scale_factor))
+    Rfi = scale_fcn(DEi, scale_factor)
+    Rf = np2d(scale_fcn(DEa, scale_factor))
     
     # C. get binned jabt jabr and DEi:
-    if ('Rg' in outlist) | ('Rfhi' in outlist) | ('Rhshi' in outlist) | ('Rcshi' in outlist) | ('jabti_binned' in outlist) | ('jabri_binned' in outlist):
-        # calculate gamut area index:
+    if ('Rg' in outlist) | ('Rfhj' in outlist) | ('DEhj' in outlist) | \
+       ('Rhshj' in outlist) | ('Rcshj' in outlist) | ('hue_bin_data' in outlist) |\
+       (fit_gamut_ellipse == True):
+        
         rg_pars = cri_type['rg_pars'] 
-        nhbins, normalize_gamut, normalized_chroma_ref, start_hue = [rg_pars[x] for x in sorted(rg_pars.keys())]
-        Rg, jabt_binned, jabr_binned, DEi_binned, binnrs, jabti_binned, jabri_binned = jab_to_rg(jabt,jabr, ordered_and_sliced = False, nhbins = nhbins, start_hue = start_hue, normalize_gamut = normalize_gamut, out = 'Rg,jabt,jabr,DEi,binnr,jabti,jabri')
-    else:
-        jabt_binned, jabr_binned, DEi_binned = None, None, None
-        binnrs, jabti_binned, jabri_binned = None, None, None
+        nhbins, normalize_gamut, normalized_chroma_ref, start_hue  = [rg_pars[x] for x in sorted(rg_pars.keys())]
 
-    # D. Calculate Rfhi, Rhshi and Rcshi:
-    if ('Rfhi' in outlist) | ('Rhshi' in outlist) | ('Rcshi' in outlist):
-        Rfhi, Rcshi, Rhshi = jab_to_rhi(jabt = jabt_binned[:-1,...], jabr = jabr_binned[:-1,...], DEi = DEi_binned[:-1,...], cri_type = cri_type, scale_factor = scale_factor, scale_fcn = scale_fcn, use_bin_avg_DEi = True) # [:-1,...] removes last row from jab as this was added to close the gamut. 
+        
+        # get hue_bin_data:
+        hue_bin_data = _get_hue_bin_data(jabt, jabr, 
+                                    start_hue = start_hue, nhbins = nhbins,
+                                    normalized_chroma_ref = normalized_chroma_ref)
+        # Calculate color gamut area index, Rg:
+        Rg = _hue_bin_data_to_rg(hue_bin_data, normalize_gamut = normalize_gamut)
+        
+        # Fit an ellipse to the normalized color gamut:
+        if fit_gamut_ellipse:
+            gamut_ellipse_fit = _hue_bin_data_to_ellipsefit(hue_bin_data)
+            hue_bin_data['gamut_ellipse_fit'] = gamut_ellipse_fit
+        else:
+            gamut_ellipse_fit = {}
+        
+    else:
+        Rg, hue_bin_data = None, None
+
+
+    # D. # Calculate local fidelity, chroma shifts and hue shifts:
+    if hue_bin_data is not None:
+        Rcshj, Rhshj, Rfhj, DEhj = _hue_bin_data_to_rxhj(hue_bin_data)
+
+
+    if 'data' in out:
+        data = {'St' : St, 'Sr' : Sr, 'xyztw_cct' : xyztw_cct,
+                'cct' : cct, 'duv' : duv,
+                'xyzti' : xyzti, 'xyztw' : xyztw, 
+                'xyzri' : xyzri, 'xyzrw' : xyzrw,
+                'DEi' : DEi, 'DEa' : DEa,
+                'Rf' : Rf, 'Rg' : Rg, 'Rfi' : Rfi,
+                'Rcshj' : Rcshj, 'Rhshj' : Rhshj, 'Rfhj' : Rfhj,
+                'hue_bin_data' : hue_bin_data,
+                'cri_type' : cri_type}
 
     if (out == 'Rf'):
         return Rf
-    elif (out == 'Rg'):
-        return Rg
     elif (out == 'Rf,Rg'):
         return Rf, Rg
+    elif (out == 'Rf,data'):
+        return Rf, data
+    elif (out == 'data'):
+        return data
+    elif (out == 'Rf,Rg,jabt,jabr,xyzti,xyztw,xyzri,xyzrw,cct,duv,St,Sr'):
+        return Rf,Rg,jabt,jabr,xyzti,xyztw,xyzri,xyzrw,cct,duv,St,Sr
     else:
         return eval(out)
 
+# For testing:
+# from luxpy import _CIE_F4, _CIE_D65, _IESTM3018
 
-from luxpy import _CIE_F4, _CIE_D65
-F4 = cie_interp(_CIE_F4, wl_new=[360,830,1], kind = 'spd')
-D65 = cie_interp(_CIE_D65, wl_new=[360,830,1], kind = 'spd')
-# out = spd_to_cri(np.vstack((F4,D65[1:])), out = 'Rf,Rg')
-out = spd_to_cri(F4, out = 'Rf,Rg')
+# F4 = cie_interp(_CIE_F4, wl_new=[360,830,1], kind = 'spd')
+# D65 = cie_interp(_CIE_D65, wl_new=[360,830,1], kind = 'spd')
+# out = spd_to_cri(np.vstack((F4,D65[1:])), out = 'Rf,Rg,data') #, 
+#                  # opt_scale_factor = True, 
+#                  # scale = {'fcn':log_scale, 
+#                  #          'cfactor':[None],
+#                  #          'opt_spd_set' : _IESTM3018['S']['data'][:100,:].copy() })
+# print(out[:2])
