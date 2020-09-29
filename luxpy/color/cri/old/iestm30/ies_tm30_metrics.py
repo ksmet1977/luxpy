@@ -115,7 +115,6 @@ def spd_to_ies_tm30_metrics(SPD, cri_type = None, \
         cri_type['rg_pars']['normalized_chroma_ref'] = scalef
     Rf,Rg,cct,duv,Rfi,jabt,jabr,Rfhi,Rcshi,Rhshi,cri_type = spd_to_cri(SPD, cri_type = cri_type, out = out)
     rg_pars = cri_type['rg_pars']
-
     
     #Calculate Metameric uncertainty and base color shifts:
     dataVF = VF_colorshift_model(SPD, cri_type = cri_type, model_type = vf_model_type, cspace = cri_type['cspace'], sampleset = eval(cri_type['sampleset']), pool = False, pcolorshift = vf_pcolorshift, vfcolor = 0)
@@ -175,5 +174,7 @@ def spd_to_ies_tm30_metrics(SPD, cri_type = None, \
             'jabti':jabti, 'jabri':jabri, 'hbinnr':binnrs,\
            'Rf' : Rf, 'Rg' : Rg, 'Rfi': Rfi, 'Rfhi' : Rfhi, 'Rcshi' : Rcshi, 'Rhshi' : Rhshi, \
            'Rt' : Rt, 'Rti' : Rti,  'Rfhi_vf' : Rfhi_vf, 'Rfcshi_vf' : Rcshi_vf, 'Rfhshi_vf' : Rhshi_vf, \
-           'dataVF' : dataVF,'cri_type' : cri_type}
+           'dataVF' : dataVF,'cri_type' : cri_type,
+           # 'jabt_':jabt_,'jabr_':jabr_
+           }
     return data

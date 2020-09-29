@@ -6,8 +6,9 @@ Math sub-package
 	* basics.py
 	* minimizebnd.py
 	* mupolymodel.py
-	* particleswarm.py
-	
+	* Pyswarms_particleswarm.py
+    * pymoo_nsga_ii.py
+    	
  :namespace: luxpy.math
 
 .. automodule:: luxpy.math

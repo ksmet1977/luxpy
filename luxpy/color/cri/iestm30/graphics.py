@@ -17,7 +17,7 @@
 #########################################################################
 
 """
-Module 2 for IES color rendition graphical output
+Module for IES color rendition graphical output
 =================================================
 
  :_tm30_process_spd(): Calculate all required parameters for plotting from spd using cri.spd_to_cri()
@@ -36,7 +36,14 @@ Module 2 for IES color rendition graphical output
 
  :plot_tm30_spd(): Plot test SPD and reference illuminant, both normalized to the same luminous power.
 
- :plot_tm30_report():
+ :plot_tm30_report(): Plot a figure with an ANSI/IES-TM30 color rendition report.
+ 
+ 
+ :plot_cri_graphics(): Plots graphical information on color rendition 
+                       properties based on spectral data input or dict with 
+                       pre-calculated measures (cusom design). 
+                       Includes Metameric uncertainty index Rt and vector-fields
+                       of color rendition shifts.
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
@@ -47,14 +54,21 @@ import numpy as np
 
 from luxpy import (_CIE_D65, math, cat, xyz_to_srgb, spd_to_power, 
                    spd_normalize, spd_to_xyz, xyz_to_Yxy, xyz_to_Yuv)
-from luxpy.color.cri.utils.helpers2 import spd_to_cri
+from luxpy.color.cri.utils.helpers import spd_to_cri
 from luxpy.color.cri.utils.graphics import plot_ColorVectorGraphic
+
+from luxpy.color.cri.utils.graphics import plot_ColorVectorGraphic
+from luxpy.color.cri.VFPX.vectorshiftmodel import  _VF_MODEL_TYPE, _VF_PCOLORSHIFT 
+from luxpy.color.cri.VFPX.VF_PX_models import plot_VF_PX_models
+from luxpy.color.cri.iestm30.metrics import spd_to_ies_tm30_metrics
 
 _TM30_FONT_SIZE = 8
 
 __all__ = ['_tm30_process_spd','plot_tm30_cvg','plot_tm30_Rfi',
            'plot_tm30_Rxhj','plot_tm30_Rcshj', 'plot_tm30_Rhshj', 
-           'plot_tm30_Rfhj', 'plot_tm30_spd','plot_tm30_report', 'spd_to_tm30_report']
+           'plot_tm30_Rfhj', 'plot_tm30_spd','plot_tm30_report', 
+           'spd_to_tm30_report',
+           'plot_cri_graphics']
 
 def _tm30_process_spd(spd, cri_type = 'ies-tm30',**kwargs):
     """
@@ -973,11 +987,319 @@ def plot_tm30_report(spd, cri_type = 'ies-tm30',
     return axs, data
         
 spd_to_tm30_report = plot_tm30_report
+
+
+
+
+
+#==================================================================================
+def plot_cri_graphics(data, cri_type = None, hbins = 16, start_hue = 0.0, scalef = 100, \
+                      plot_axis_labels = False, bin_labels = None, plot_edge_lines = True, \
+                      plot_center_lines = False, plot_bin_colors = True, \
+                      axtype = 'polar', ax = None, force_CVG_layout = True,
+                      vf_model_type = _VF_MODEL_TYPE, vf_pcolorshift = _VF_PCOLORSHIFT, vf_color = 'k', \
+                      vf_bin_labels = _VF_PCOLORSHIFT['labels'], vf_plot_bin_colors = True, \
+                      scale_vf_chroma_to_sample_chroma = False,\
+                      plot_VF = True, plot_CF = False, plot_SF = False,
+                      plot_test_sample_coord = False):
+    """
+    Plot graphical information on color rendition properties (custom design).
+    
+    Args:
+        :data: 
+            | ndarray with spectral data or dict with pre-computed metrics.
+        :cri_type:
+            | None, optional
+            | If None: defaults to cri_type = 'iesrf'.
+            | :hbins:, :start_hue: and :scalef: are ignored if cri_type not None 
+            | and values are replaced by those in cri_type['rg_pars']
+        :hbins:
+            | 16 or ndarray with sorted hue bin centers (°), optional
+        :start_hue: 
+            | 0.0, optional
+        :scalef:
+            | 100, optional
+            | Scale factor for graphic.
+        :plot_axis_labels:
+            | False, optional
+            | Turns axis ticks on/off (True/False).
+        :bin_labels: 
+            | None or list[str] or '#', optional
+            | Plots labels at the bin center hues.
+            |   - None: don't plot.
+            |   - list[str]: list with str for each bin. 
+            |                (len(:bin_labels:) = :nhbins:)
+            |   - '#': plots number.
+        :plot_edge_lines:
+            | True or False, optional
+            | Plot grey bin edge lines with '--'.
+        :plot_center_lines:
+            | False or True, optional
+            | Plot colored lines at 'center' of hue bin.
+        :plot_bin_colors: 
+            | True, optional
+            | Colorize hue bins.
+        :axtype: 
+            | 'polar' or 'cart', optional
+            | Make polar or Cartesian plot.
+        :ax: 
+            | None or 'new' or 'same', optional
+            |   - None or 'new' creates new plot
+            |   - 'same': continue plot on same axes.
+            |   - axes handle: plot on specified axes.
+        :force_CVG_layout: 
+            | True, optional
+            | True: Force plot of basis of CVG.
+        :vf_model_type: 
+            | _VF_MODEL_TYPE or 'M6' or 'M5', optional
+            | Type of polynomial vector field model to use for the calculation of
+              base color shift and metameric uncertainty.
+        :vf_pcolorshift:
+            | _VF_PCOLORSHIFT or user defined dict, optional
+            | The polynomial models of degree 5 and 6 can be fully specified or 
+            | summarized by the model parameters themselved OR by calculating the
+            | dCoverC and dH at resp. 5 and 6 hues. :VF_pcolorshift: specifies 
+            | these hues and chroma level.
+        :vf_color:
+            | 'k', optional
+            | For plotting the vector fields.
+        :vf_plot_bin_colors: 
+            | True, optional
+            | Colorize hue bins of VF graph.
+        :scale_vf_chroma_to_sample_chroma:
+            | False, optional
+            | Scale chroma of reference and test vf fields such that average of 
+            | binned reference chroma equals that of the binned sample chroma
+            | before calculating hue bin metrics.
+        :vf_bin_labels:
+            | see :bin_labels:
+            | Set VF model hue-bin labels.
+        :plot_CF:
+            | False, optional
+            | Plot circle fields.
+        :plot_VF:
+            | True, optional
+            | Plot vector fields.
+        :plot_SF:
+            | True, optional
+            | Plot sample shifts.  
+        :plot_test_sample_coord:
+            | Plot the coordinates of the samples under the test illuminant
+            | relative to the mean chromaticity under the reference illuminant (in the CVG plot).
+            
+    Returns:
+        :returns: 
+            | (data, 
+            | [plt.gcf(),ax_spd, ax_CVG, ax_locC, ax_locH, ax_VF], 
+            | cmap )
+            | 
+            | :data: is a dictionary with color rendering data
+            | with keys:
+            | - 'St, Sr'  : ndarray of test SPDs and corresponding ref. illuminants.
+            | - 'xyz_cct': xyz of white point calculate with cieobs defined for cct calculations in cri_type['cieobs']
+            | - 'cct, duv': CCT and Duv obtained with cieobs in cri_type['cieobs']['cct']
+            | - 'xyzti, xyzri': ndarray tristimulus values of test and ref. samples (obtained with with cieobs in cri_type['cieobs']['xyz'])
+            | - 'xyztw, xyzrw': ndarray tristimulus values of test and ref. white points (obtained with with cieobs in cri_type['cieobs']['xyz'])
+            | - 'DEi, DEa': ndarray with individual sample color differences DEi and average DEa between test and ref.       
+            | - 'Rf'  : ndarray with general color fidelity index values
+            | - 'Rg'  : ndarray with color gamut area index values
+            | - 'Rfi'  : ndarray with specific (sample) color fidelity indices
+            | - 'Rfhj' : ndarray with local (hue binned) fidelity indices
+            | - 'DEhj' : ndarray with local (hue binned) color differences
+            | - 'Rcshj': ndarray with local chroma shifts indices
+            | - 'Rhshj': ndarray with local hue shifts indices
+            | - 'hue_bin_data': dict with output from _get_hue_bin_data() [see its help for more info]
+            | - 'cri_type': same as input (for reference purposes)
+            | - 'vf' : dictionary with vector field measures and data.
+            |         Keys:
+            |           - 'Rt'  : ndarray with general metameric uncertainty index Rt
+            |           - 'Rti' : ndarray with specific metameric uncertainty indices Rti
+            |           - 'Rfhj' : ndarray with local (hue binned) fidelity indices 
+            |                            obtained from VF model predictions at color space
+            |                            pixel coordinates
+            |           - 'DEhj' : ndarray with local (hue binned) color differences
+            |                           (same as above)
+            |           - 'Rcshj': ndarray with local chroma shifts indices for vectorfield coordinates
+            |                           (same as above)
+            |           - 'Rhshj': ndarray with local hue shifts indicesfor vectorfield coordinates
+            |                           (same as above)
+            |           - 'Rfi': ndarray with sample fidelity indices for vectorfield coordinates
+            |                           (same as above)
+            |           - 'DEi': ndarray with sample color differences for vectorfield coordinates
+            |                           (same as above)
+            |           - 'hue_bin_data': dict with output from _get_hue_bin_data() for vectorfield coordinates
+            |           - 'dataVF': dictionary with output of cri.VFPX.VF_colorshift_model()
+            |    
+            | :[...]: list with handles to current figure and 5 axes.
+            |
+            | :cmap: list with rgb colors for hue bins 
+                    (for use in other plotting fcns)
+        
+    """
+    if not isinstance(data,dict):
+        data = spd_to_ies_tm30_metrics(data, 
+                                       cri_type = cri_type, 
+                                       hbins = hbins, 
+                                       start_hue = start_hue, 
+                                       scalef = scalef, 
+                                       vf_model_type = vf_model_type, 
+                                       vf_pcolorshift = vf_pcolorshift, 
+                                       scale_vf_chroma_to_sample_chroma = scale_vf_chroma_to_sample_chroma)
+
+    # Unpack data dictionary:
+    (DEa, DEi, Rcshj, Rf,
+     Rfhj, Rfi, Rg, Rhshj, 
+     Sr, St, cct, cri_type, 
+     duv, hue_bin_data, vf,
+     xyzri, xyzrw, xyzti, 
+     xyztw, xyztw_cct) = [data[x] for x in sorted(data.keys())]
+    
+    
+    # Get some variables from hue_bin_data:
+    nhbins = hue_bin_data['nhbins']
+    start_hue = hue_bin_data['start_hue']
+    scalef = hue_bin_data['normalized_chroma_ref']
+    hbinnr = hue_bin_data['hbinnrs']
+    
+
+    jabti = hue_bin_data['jabtn']
+    jabri = hue_bin_data['jabrn']
+
+    
+    #layout = np.array([[3,3,0,0],[1,0,2,2],[0,0,2,1],[2,2,1,1],[0,2,1,1],[1,2,1,1]])
+    #layout = np.array([[6,6,0,0],[0,3,3,3],[3,3,3,3],[0,0,3,2],[2,2,2,2],[2,0,2,2],[4,0,2,2]])
+    layout = np.array([[6,7,0,0],[0,4,3,3],[3,4,3,3],[0,0,4,2],[2,0,2,2],[4,2,2,2],[4,0,2,2],[2,2,2,2]])
+    
+    def create_subplot(layout,n, polar = False, frameon = True):
+        ax = plt.subplot2grid(layout[0,0:2], layout[n,0:2], 
+                              colspan = layout[n,2], 
+                              rowspan = layout[n,3], 
+                              polar = polar, 
+                              frameon = frameon)
+        return ax
+               
+        
+    for i in range(cct.shape[0]):
+ 
+        
+        fig = plt.figure(figsize=(10, 6), dpi=144)
+    
+        # Plot CVG:
+        ax_CVG = create_subplot(layout,1, polar = True, frameon = False)
+        if plot_test_sample_coord == False:  
+            jabti = None
+            jabri = None
+        else:
+            jabti_i = jabti[...,i:i+1,:]
+            jabri_i = jabri[...,i:i+1,:]
+
+        figCVG, ax, cmap = plot_ColorVectorGraphic(data['hue_bin_data']['jabtn_hj_closed'][...,i,:], 
+                                                   data['hue_bin_data']['jabrn_hj_closed'][...,i,:], 
+                                                   hbins = nhbins, 
+                                                   axtype = axtype, 
+                                                   ax = ax_CVG, 
+                                                   plot_center_lines = plot_center_lines, 
+                                                   plot_edge_lines = plot_edge_lines,  
+                                                   plot_bin_colors = plot_bin_colors, 
+                                                   scalef = scalef, 
+                                                   force_CVG_layout = force_CVG_layout, 
+                                                   bin_labels = '#',
+                                                   jabti = jabti, 
+                                                   jabri = jabri, 
+                                                   hbinnr = hbinnr)
+                
+        # Plot VF:
+        ax_VF = create_subplot(layout,2, polar = True, frameon = False)
+        if i == 0:
+            hbin_cmap = None
+    
+        ax_VF, hbin_cmap = plot_VF_PX_models([vf['dataVF'][i]], 
+                                             dataPX = None, 
+                                             plot_VF = plot_VF, 
+                                             plot_PX = None, 
+                                             axtype = 'polar', 
+                                             ax = ax_VF,
+                                             plot_circle_field = plot_CF, 
+                                             plot_sample_shifts = plot_SF, 
+                                             plot_bin_colors = vf_plot_bin_colors,
+                                             plot_samples_shifts_at_pixel_center = False, 
+                                             jabp_sampled = None,
+                                             plot_VF_colors = [vf_color], 
+                                             plot_PX_colors = ['r'], 
+                                             hbin_cmap = hbin_cmap, 
+                                             force_CVG_layout = True, 
+                                             bin_labels = vf_bin_labels)
+    
+        # Plot test SPD:
+        ax_spd = create_subplot(layout,3)
+        ax_spd.plot(St[0],St[i+1]/St[i+1].max(),'r-')
+        ax_spd.text(730,0.9,'CCT = {:1.0f} K'.format(cct[i][0]),fontsize = 9, horizontalalignment='left',verticalalignment='center',rotation = 0, color = np.array([1,1,1])*0.3)
+        ax_spd.text(730,0.8,'Duv = {:1.4f}'.format(duv[i][0]),fontsize = 9, horizontalalignment='left',verticalalignment='center',rotation = 0, color = np.array([1,1,1])*0.3)
+        ax_spd.text(730,0.7,'Rf = {:1.0f}'.format(Rf[:,i][0]),fontsize = 9, horizontalalignment='left',verticalalignment='center',rotation = 0, color = np.array([1,1,1])*0.3)
+        ax_spd.text(730,0.6,'Rg = {:1.0f}'.format(Rg[:,i][0]),fontsize = 9, horizontalalignment='left',verticalalignment='center',rotation = 0, color = np.array([1,1,1])*0.3)
+        ax_spd.text(730,0.5,'Rt = {:1.0f}'.format(vf['Rt'][:,i][0]),fontsize = 9, horizontalalignment='left',verticalalignment='center',rotation = 0, color = np.array([1,1,1])*0.3)
+        ax_spd.set_xlabel('Wavelength (nm)', fontsize = 9)
+        ax_spd.set_ylabel('Rel. spectral intensity', fontsize = 9)
+        ax_spd.set_xlim([360,830])
+        
+        # Plot local color fidelity, Rfhi:
+        ax_Rfi = create_subplot(layout,4)
+        for j in range(nhbins):
+            ax_Rfi.bar(range(nhbins)[j],Rfhj[j,i], color = cmap[j], width = 1,edgecolor = 'k', alpha = 0.4)
+            ax_Rfi.text(range(nhbins)[j],Rfhj[j,i]*1.1, '{:1.0f}'.format(Rfhj[j,i]) ,fontsize = 9,horizontalalignment='center',verticalalignment='center',color = np.array([1,1,1])*0.3)
+        ax_Rfi.set_ylim([0,120])
+        xticks = np.arange(nhbins)
+        xtickslabels = ['{:1.0f}'.format(ii+1) for ii in range(nhbins)]
+        ax_Rfi.set_xticks(xticks)
+        ax_Rfi.set_xticklabels(xtickslabels, fontsize = 8)
+        ax_Rfi.set_ylabel(r'Local color fidelity $R_{f,hi}$')
+        ax_Rfi.set_xlabel('Hue bin #')
+        
+        # Plot local chroma shift, Rcshi:
+        ax_locC = create_subplot(layout,5)
+        for j in range(nhbins):
+            ax_locC.bar(range(nhbins)[j],Rcshj[j,i], color = cmap[j], width = 1,edgecolor = 'k', alpha = 0.4)
+            ax_locC.text(range(nhbins)[j],-np.sign(Rcshj[j,i])*0.1, '{:1.0f}%'.format(100*Rcshj[j,i]) ,fontsize = 9,horizontalalignment='center',verticalalignment='center',rotation = 90, color = np.array([1,1,1])*0.3)
+        ylim = np.array([np.abs(Rcshj.min()),np.abs(Rcshj.min()),0.2]).max()*1.5
+        ax_locC.set_ylim([-ylim,ylim])
+        ax_locC.set_ylabel(r'Local chroma shift, $R_{cs,hi}$')
+        ax_locC.set_xticklabels([])
+        ax_locC.set_yticklabels(['{:1.2f}'.format(ii) for ii in ax_locC.set_ylim()], color = 'white')
+        
+        # Plot local hue shift, Rhshi:
+        ax_locH = create_subplot(layout,6)
+        for j in range(nhbins):
+            ax_locH.bar(range(nhbins)[j],Rhshj[j,i], color = cmap[j], width = 1,edgecolor = 'k', alpha = 0.4)
+            ax_locH.text(range(nhbins)[j],-np.sign(Rhshj[j,i])*0.2, '{:1.3f}'.format(Rhshj[j,i]) ,fontsize = 9,horizontalalignment='center',verticalalignment='center',rotation = 90, color = np.array([1,1,1])*0.3)
+        ylim = np.array([np.abs(Rhshj.min()),np.abs(Rhshj.min()),0.2]).max()*1.5
+        ax_locH.set_ylim([-ylim,ylim])
+        ax_locH.set_ylabel(r'Local hue shift, $R_{hs,hi}$')
+        ax_locH.set_xticklabels([])
+        ax_locH.set_yticklabels(['{:1.2f}'.format(ii) for ii in ax_locH.set_ylim()], color = 'white')
+              
+        # Plot local color fidelity of VF, vfRfhi:
+        ax_vfRfi = create_subplot(layout,7)
+        for j in range(nhbins):
+            ax_vfRfi.bar(range(nhbins)[j],vf['Rfhj'][j,i], color = cmap[j], width = 1,edgecolor = 'k', alpha = 0.4)
+            ax_vfRfi.text(range(nhbins)[j],vf['Rfhj'][j,i]*1.1, '{:1.0f}'.format(vf['Rfhj'][j,i]) ,fontsize = 9,horizontalalignment='center',verticalalignment='center',color = np.array([1,1,1])*0.3)
+        ax_vfRfi.set_ylim([0,120])
+        xticks = np.arange(hbins)
+        xtickslabels = ['{:1.0f}'.format(ii+1) for ii in range(nhbins)]
+        ax_vfRfi.set_xticks(xticks)
+        ax_vfRfi.set_xticklabels(xtickslabels, fontsize = 8)
+        ax_vfRfi.set_ylabel(r'Local VF color fidelity $vfR_{f,hi}$')
+        ax_vfRfi.set_xlabel('Hue bin #')
+       
+        plt.tight_layout()
+        
+    return  data,  [plt.gcf(),ax_spd, ax_CVG, ax_locC, ax_locH, ax_VF], cmap
+
     
 if __name__ == '__main__':
     import luxpy as lx
     spd = lx._CIE_F4
 
+    # illustration of ANSI/IES TM30 plots:
     plot_tm30_cvg(spd, axtype = 'cart', plot_vectors = True, gamut_line_color = 'r')
     plot_tm30_spd(spd)
     plot_tm30_Rfi(spd)
@@ -987,3 +1309,19 @@ if __name__ == '__main__':
     plot_tm30_Rxhj(spd)
     plot_tm30_report(spd, source = 'test', font_size = 12,notes = 'This is a test if the note splitting actually works or not.',save_fig_name = 'testfig.png')
     
+    
+    # Illustration of custom plotter:
+    data2 = plot_cri_graphics(spd, 
+                             cri_type = 'iesrf', 
+                             plot_VF = True,             # cartesian vector fields
+                             plot_CF = True,             # circular vector fields
+                             plot_SF = False,            # sample shifts
+                             plot_bin_colors = True,     # bin colors for CVG
+                             vf_plot_bin_colors = False, # bin colors for vector field graph 
+                             axtype = 'polar',           # use polar plots
+                             ax = None,                  # axes to plot figure in (None: create new)
+                             plot_center_lines = False,  # plot lines at center of hue bin
+                             plot_edge_lines = True,     # plot edges of hue bins
+                             plot_test_sample_coord = False) # plot normalized test sample coordinates (cfr. CIE224:2017)
+                
+    plt.show()

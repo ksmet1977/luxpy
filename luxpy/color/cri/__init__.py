@@ -63,15 +63,13 @@ utils/DE_scalers.py
 utils/helpers.py
 ----------------
 
- :gamut_slicer(): Slices the gamut in nhbins slices and provides normalization 
-                  of test gamut to reference gamut.
+ :_get_hue_bin_data(): Slice gamut spanned by the sample jabt, jabr and calculate hue-bin data.
 
- :jab_to_rg(): Calculates gamut area index, Rg.
+ :_hue_bin_data_to_rxhj(): Calculate hue bin measures: Rcshj, Rhshj, Rfhj, DEhj
+     
+ :_hue_bin_data_to_rfi(): Get sample color differences DEi and calculate color fidelity values Rfi.
 
- :jab_to_rhi(): | Calculate hue bin measures: 
-                |   Rfhi (local (hue bin) color fidelity)
-                |   Rcshi (local chroma shift) 
-                |   Rhshi (local hue shift)
+ :_hue_bin_data_to_rg():  Calculates gamut area index, Rg.
 
  :spd_to_jab_t_r(): Calculates jab color values for a sample set illuminated
                     with test source and its reference illuminant.
@@ -144,23 +142,65 @@ indices/cqs.py
                 | Opt. Eng., vol. 49, no. 3, pp. 33602–33616.
 
 
-iestm30/iestm30_metrics.py
--------------------------- 
+iestm30/graphics.py
+-------------------
+                       
+ :spd_to_ies_tm30_metrics(): Calculates IES TM30 metrics from spectral data
+ 
+ :plot_cri_graphics(): Plots graphical information on color rendition 
+                       properties based on spectral data input or dict with 
+                       pre-calculated measures.
+                       
+ :_tm30_process_spd(): Calculate all required parameters for plotting from spd using cri.spd_to_cri()
 
- :spd_to_ies_tm30_metrics(): Calculates IES TM30 metrics from spectral data.
+ :plot_tm30_cvg(): Plot TM30 Color Vector Graphic (CVG).
+ 
+ :plot_tm30_Rfi(): Plot Sample Color Fidelity values (Rfi).
+ 
+ :plot_tm30_Rxhj(): Plot Local Chroma Shifts (Rcshj), Local Hue Shifts (Rhshj) and Local Color Fidelity values (Rfhj).
+
+ :plot_tm30_Rcshj(): Plot Local Chroma Shifts (Rcshj).
+
+ :plot_tm30_Rhshj(): Plot Local Hue Shifts (Rhshj).
+
+ :plot_tm30_Rfhj(): Plot Local Color Fidelity values (Rfhj).
+
+ :plot_tm30_spd(): Plot test SPD and reference illuminant, both normalized to the same luminous power.
+
+ :plot_tm30_report(): Plot a figure with an ANSI/IES-TM30 color rendition report.
+ 
+ 
+ :plot_cri_graphics(): Plots graphical information on color rendition 
+                       properties based on spectral data input or dict with 
+                       pre-calculated measures (cusom design). 
+                       Includes Metameric uncertainty index Rt and vector-fields
+                       of color rendition shifts.
 
 
-iestm30/iestm30_graphics.py
----------------------------
+iestm30/metrics.py
+------------------
 
- :plot_cri_graphics(): Plot graphical information on color rendition properties.
+:spd_to_ies_tm30_metrics(): Calculates IES TM30 metrics from spectral data + Metameric Uncertainty + Vector Fields
 
 
+iestm30/metrics_fast.py
+-----------------------
+
+ :_cri_ref(): Calculate multiple reference illuminant spectra based on ccts for color rendering index calculations.
+
+ :_xyz_to_jab_cam02ucs(): Calculate CAM02-UCS J'a'b' coordinates from xyz tristimulus values of sample and white point.
+
+ :spd_tom_tm30(): Calculate tm30 measures from spd.
+ 
+ * Created for faster spectral optimization based on ANSI/IES-TM30 measures
+
+ 
 VFPX
 ----
 
  :Module_for_VectorField_and_Pixelation_CRI models.
-  * see ?luxpy.cri.VFPX
+  
+ * see ?luxpy.cri.VFPX
 
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)

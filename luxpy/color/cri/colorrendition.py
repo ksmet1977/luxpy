@@ -63,15 +63,13 @@ utils/DE_scalers.py
 utils/helpers.py
 ----------------
 
- :gamut_slicer(): Slices the gamut in nhbins slices and provides normalization 
-                  of test gamut to reference gamut.
+ :_get_hue_bin_data(): Slice gamut spanned by the sample jabt, jabr and calculate hue-bin data.
 
- :jab_to_rg(): Calculates gamut area index, Rg.
+ :_hue_bin_data_to_rxhj(): Calculate hue bin measures: Rcshj, Rhshj, Rfhj, DEhj
+     
+ :_hue_bin_data_to_rfi(): Get sample color differences DEi and calculate color fidelity values Rfi.
 
- :jab_to_rhi(): | Calculate hue bin measures: 
-                |   Rfhi (local (hue bin) color fidelity)
-                |   Rcshi (local chroma shift) 
-                |   Rhshi (local hue shift)
+ :_hue_bin_data_to_rg():  Calculates gamut area index, Rg.
 
  :spd_to_jab_t_r(): Calculates jab color values for a sample set illuminated
                     with test source and its reference illuminant.
@@ -144,20 +142,15 @@ indices/cqs.py
                 | Opt. Eng., vol. 49, no. 3, pp. 33602–33616.
 
 
-iestm30/iestm30_metrics.py
--------------------------- 
-
- :spd_to_ies_tm30_metrics(): Calculates IES TM30 metrics from spectral data.
-
-
-iestm30/ies_tm30_graphics.py
----------------------------
-
- :plot_cri_graphics(): Plot graphical information on color rendition properties.
-
-iestm30/ansi_ies_tm30_graphics.py
---------------------------------
-
+iestm30/graphics.py
+-------------------
+                       
+ :spd_to_ies_tm30_metrics(): Calculates IES TM30 metrics from spectral data
+ 
+ :plot_cri_graphics(): Plots graphical information on color rendition 
+                       properties based on spectral data input or dict with 
+                       pre-calculated measures.
+                       
  :_tm30_process_spd(): Calculate all required parameters for plotting from spd using cri.spd_to_cri()
 
  :plot_tm30_cvg(): Plot TM30 Color Vector Graphic (CVG).
@@ -174,18 +167,30 @@ iestm30/ansi_ies_tm30_graphics.py
 
  :plot_tm30_spd(): Plot test SPD and reference illuminant, both normalized to the same luminous power.
 
- :plot_tm30_report(): Create ANSI/IES-TM-30-2018 report.
+ :plot_tm30_report(): Plot a figure with an ANSI/IES-TM30 color rendition report.
  
  
-iestm30/ansi_ies_tm30_metrics_fast.py
--------------------------------------
- 
- :spd_to_tm30(): Fast calculator for ANSI/IES-TM30 measures (exposed as cri.spd_to_tm30_fast()).
- 
- :_cri_ref(): Fast color rendering reference illuminant creator (exposed as cri.cri_ref_fast())
-  
- :_xyz_to_jab_cam02ucs(): Fast CAM02-UCS calculator (exposed as cri.xyz_to_jab_cam02ucs_fast()).
- 
+ :plot_cri_graphics(): Plots graphical information on color rendition 
+                       properties based on spectral data input or dict with 
+                       pre-calculated measures (cusom design). 
+                       Includes Metameric uncertainty index Rt and vector-fields
+                       of color rendition shifts.
+
+
+iestm30/metrics.py
+------------------
+
+:spd_to_ies_tm30_metrics(): Calculates IES TM30 metrics from spectral data + Metameric Uncertainty + Vector Fields
+
+
+iestm30/metrics_fast.py
+-----------------------
+
+ :_cri_ref(): Calculate multiple reference illuminant spectra based on ccts for color rendering index calculations.
+
+ :_xyz_to_jab_cam02ucs(): Calculate CAM02-UCS J'a'b' coordinates from xyz tristimulus values of sample and white point.
+
+ :spd_tom_tm30(): Calculate tm30 measures from spd.
  
  * Created for faster spectral optimization based on ANSI/IES-TM30 measures
 
@@ -202,8 +207,10 @@ VFPX
 """
 from .utils.DE_scalers import linear_scale, log_scale, psy_scale
 
-from .utils.helpers import (gamut_slicer,jab_to_rg, jab_to_rhi, jab_to_DEi,
-                      spd_to_DEi, spd_to_rg, spd_to_cri)
+from .utils.helpers import (_get_hue_bin_data, spd_to_jab_t_r, spd_to_rg,
+                            spd_to_DEi, optimize_scale_factor, spd_to_cri,
+                            _hue_bin_data_to_rxhj, _hue_bin_data_to_rfi, 
+                            _hue_bin_data_to_rg)
 
 from .indices.indices import *
 
@@ -211,27 +218,30 @@ from .utils.graphics import *
 
 from .VFPX import VF_PX_models as VFPX
 
-from .iestm30.ies_tm30_graphics import plot_cri_graphics
-from .iestm30.ies_tm30_metrics import spd_to_ies_tm30_metrics
-from .iestm30.ansi_ies_tm30_graphics import (_tm30_process_spd,plot_tm30_cvg,
+
+from .iestm30.metrics import spd_to_ies_tm30_metrics
+from .iestm30.graphics import (_tm30_process_spd,plot_tm30_cvg,
                                              plot_tm30_Rfi,plot_tm30_Rxhj,
                                              plot_tm30_Rcshj, plot_tm30_Rhshj,
                                              plot_tm30_Rfhj, plot_tm30_spd,
-                                             plot_tm30_report, spd_to_tm30_report)
+                                             plot_tm30_report,spd_to_tm30_report,
+                                             plot_cri_graphics)
+from .iestm30.metrics_fast import spd_to_tm30 as spd_to_tm30_fast
+from .iestm30.metrics_fast import _cri_ref as cri_ref_fast
+from .iestm30.metrics_fast import _xyz_to_jab_cam02ucs as xyz_to_jab_cam02ucs_fast
 
-from .iestm30.ansi_ies_tm30_metrics_fast import spd_to_tm30 as spd_to_tm30_fast
-from .iestm30.ansi_ies_tm30_metrics_fast import _cri_ref as cri_ref_fast
-from .iestm30.ansi_ies_tm30_metrics_fast import _xyz_to_jab_cam02ucs as xyz_to_jab_cam02ucs_fast
 
-
-# .DE_scalers:
+# .utils/DE_scalers:
 __all__ = ['linear_scale', 'log_scale', 'psy_scale']
 
-# .helpers:
-__all__ += ['gamut_slicer','jab_to_rg', 'jab_to_rhi', 'jab_to_DEi',
-           'spd_to_DEi', 'spd_to_rg', 'spd_to_cri']
 
-# .indices:
+# .utils/helpers:
+__all__ += ['_get_hue_bin_data','spd_to_jab_t_r','spd_to_rg', 'spd_to_DEi', 
+           'optimize_scale_factor','spd_to_cri',
+           '_hue_bin_data_to_rxhj', '_hue_bin_data_to_rfi', '_hue_bin_data_to_rg']
+
+
+# .utils/indices:
 __all__ += ['spd_to_ciera', 'spd_to_cierf',
            'spd_to_ciera_133_1995','spd_to_cierf_224_2017']
 __all__ += ['spd_to_iesrf','spd_to_iesrg',
@@ -243,22 +253,23 @@ __all__ += ['spd_to_mcri']
 __all__ += ['spd_to_cqs']
 
 
-# .graphics:
+# .utils/graphics:
 __all__ += ['plot_hue_bins','plot_ColorVectorGraphic']
+
 
 # VF_PX_models:
 __all__ += ['VFPX']
 
-# .ies_tm30_metrics:
+
+# .iestm30/metrics:
 __all__ += ['spd_to_ies_tm30_metrics']
 
-# .ies_tm30_graphics:
-__all__ += ['plot_cri_graphics']
-
-# .ansi_ies_tm30_graphics:
+# .iestm30/graphics:
 __all__ += ['_tm30_process_spd','plot_tm30_cvg','plot_tm30_Rfi',
            'plot_tm30_Rxhj','plot_tm30_Rcshj', 'plot_tm30_Rhshj', 
-           'plot_tm30_Rfhj', 'plot_tm30_spd','plot_tm30_report','spd_to_tm30_report']
+           'plot_tm30_Rfhj', 'plot_tm30_spd',
+           'plot_tm30_report','spd_to_tm30_report',
+           'plot_cri_graphics']
 
-# .ansi_ies_tm30_metrics_fast:
+# .iestm30/metrics_fast:
 __all__ += ['spd_to_tm30_fast','cri_ref_fast','xyz_to_jab_cam02ucs_fast']

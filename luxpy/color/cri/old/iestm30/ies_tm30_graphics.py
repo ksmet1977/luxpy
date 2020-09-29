@@ -176,13 +176,26 @@ def plot_cri_graphics(data, cri_type = None, hbins = 16, start_hue = 0.0, scalef
         
     """
     if not isinstance(data,dict):
-        data = spd_to_ies_tm30_metrics(data, cri_type = cri_type, hbins = hbins, start_hue = start_hue, scalef = scalef, vf_model_type = vf_model_type, vf_pcolorshift = vf_pcolorshift, scale_vf_chroma_to_sample_chroma = scale_vf_chroma_to_sample_chroma)
+        data = spd_to_ies_tm30_metrics(data, 
+                                       cri_type = cri_type, 
+                                       hbins = hbins, 
+                                       start_hue = start_hue, 
+                                       scalef = scalef, 
+                                       vf_model_type = vf_model_type, 
+                                       vf_pcolorshift = vf_pcolorshift, 
+                                       scale_vf_chroma_to_sample_chroma = scale_vf_chroma_to_sample_chroma)
 
-    Rcshi, Rf, Rfcshi_vf, Rfhi, Rfhi_vf, Rfhshi_vf, Rfi, Rg, Rhshi, Rt, Rti, SPD, bjabr, bjabt, cct, cri_type, dataVF, duv, hbinnr, jabti, jabri = [data[x] for x in sorted(data.keys())]
+    (Rcshi, Rf, Rfcshi_vf, 
+     Rfhi, Rfhi_vf, Rfhshi_vf, 
+     Rfi, Rg, Rhshi, Rt, Rti, 
+     SPD, bjabr, bjabt, cct, 
+     cri_type, dataVF, duv, 
+     hbinnr, jabri, jabti) = [data[x] for x in sorted(data.keys())]
+
     hbins = cri_type['rg_pars']['nhbins']
     start_hue = cri_type['rg_pars']['start_hue']
     scalef = cri_type['rg_pars']['normalized_chroma_ref']
-        
+   
     #layout = np.array([[3,3,0,0],[1,0,2,2],[0,0,2,1],[2,2,1,1],[0,2,1,1],[1,2,1,1]])
     #layout = np.array([[6,6,0,0],[0,3,3,3],[3,3,3,3],[0,0,3,2],[2,2,2,2],[2,0,2,2],[4,0,2,2]])
     layout = np.array([[6,7,0,0],[0,4,3,3],[3,4,3,3],[0,0,4,2],[2,0,2,2],[4,2,2,2],[4,0,2,2],[2,2,2,2]])
@@ -190,7 +203,7 @@ def plot_cri_graphics(data, cri_type = None, hbins = 16, start_hue = 0.0, scalef
     def create_subplot(layout,n, polar = False, frameon = True):
         ax = plt.subplot2grid(layout[0,0:2], layout[n,0:2], colspan = layout[n,2], rowspan = layout[n,3], polar = polar, frameon = frameon)
         return ax
-               
+
         
     for i in range(cct.shape[0]):
         
@@ -198,16 +211,26 @@ def plot_cri_graphics(data, cri_type = None, hbins = 16, start_hue = 0.0, scalef
     
         # Plot CVG:
         ax_CVG = create_subplot(layout,1, polar = True, frameon = False)
-        if plot_test_sample_coord == False:  jabti = None
-        figCVG, ax, cmap = plot_ColorVectorGraphic(bjabt[...,i,:], bjabr[...,i,:], hbins = hbins, 
-                                                   axtype = axtype, ax = ax_CVG, 
+        if plot_test_sample_coord == False:  
+            jabti = None
+            jabri = None
+        else:
+            jabti_i = jabti[...,i:i+1,:]
+            jabri_i = jabri[...,i:i+1,:]
+
+        figCVG, ax, cmap = plot_ColorVectorGraphic(bjabt[...,i,:], 
+                                                   bjabr[...,i,:], hbins = hbins, 
+                                                   axtype = axtype, 
+                                                   ax = ax_CVG, 
                                                    plot_center_lines = plot_center_lines, 
                                                    plot_edge_lines = plot_edge_lines,  
                                                    plot_bin_colors = plot_bin_colors, 
                                                    scalef = scalef, 
                                                    force_CVG_layout = force_CVG_layout, 
                                                    bin_labels = '#',
-                                                   jabti = jabti, jabri = jabri, hbinnr = hbinnr)
+                                                   jabti = jabti_i, 
+                                                   jabri = jabri_i, 
+                                                   hbinnr = hbinnr)
                 
         # Plot VF:
         ax_VF = create_subplot(layout,2, polar = True, frameon = False)

@@ -27,7 +27,7 @@ Reference
 from luxpy import cat, math, _CRI_RFL, _S_INTERP_TYPE, spd, spd_to_xyz, xyz_to_ipt, xyz_to_cct
 from luxpy.utils import np, np2d, asplit
 from ..utils.DE_scalers import psy_scale
-from ..utils.helpers import _get_hue_bin_data
+from ..utils.helpers import jab_to_rg
 
 
 _MCRI_DEFAULTS = {'sampleset': "_CRI_RFL['mcri']", 
@@ -167,10 +167,8 @@ def spd_to_mcri(SPD, D = 0.9, E = None, Yb = 20.0, out = 'Rm', wl = None):
         ipt_mc = np.concatenate((I,a12),axis=2)
         nhbins, normalize_gamut, normalized_chroma_ref, start_hue  = [rg_pars[x] for x in sorted(rg_pars.keys())]
     
-        hue_bin_data = _get_hue_bin_data(ipt, ipt_me, 
-                                         start_hue = start_hue, nhbins = nhbins,
-                                         normalized_chroma_ref = normalized_chroma_ref)
-        Rg = _hue_bin_data_to_rg(hue_bin_data)
+        Rg = jab_to_rg(ipt,ipt_mc, ordered_and_sliced = False, nhbins = nhbins, start_hue = start_hue, normalize_gamut = normalize_gamut)
+
 
     if (out != 'Rm'):
         return  eval(out)

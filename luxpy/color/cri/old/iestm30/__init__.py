@@ -17,10 +17,7 @@
 #########################################################################
 """
 Module for IES TM30 color rendition output
-==========================================
-
-iestm30/graphics.py
--------------------
+===============================================
                        
  :spd_to_ies_tm30_metrics(): Calculates IES TM30 metrics from spectral data
  
@@ -44,32 +41,7 @@ iestm30/graphics.py
 
  :plot_tm30_spd(): Plot test SPD and reference illuminant, both normalized to the same luminous power.
 
- :plot_tm30_report(): Plot a figure with an ANSI/IES-TM30 color rendition report.
+ :plot_tm30_report():
  
- 
- :plot_cri_graphics(): Plots graphical information on color rendition 
-                       properties based on spectral data input or dict with 
-                       pre-calculated measures (cusom design). 
-                       Includes Metameric uncertainty index Rt and vector-fields
-                       of color rendition shifts.
-
-
-iestm30/metrics.py
-------------------
-
-:spd_to_ies_tm30_metrics(): Calculates IES TM30 metrics from spectral data + Metameric Uncertainty + Vector Fields
-
-
-iestm30/metrics_fast.py
------------------------
-
- :_cri_ref(): Calculate multiple reference illuminant spectra based on ccts for color rendering index calculations.
-
- :_xyz_to_jab_cam02ucs(): Calculate CAM02-UCS J'a'b' coordinates from xyz tristimulus values of sample and white point.
-
- :spd_tom_tm30(): Calculate tm30 measures from spd.
- 
- * for increased speed in spectral optmizations.
-
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """

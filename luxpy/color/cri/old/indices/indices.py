@@ -144,10 +144,8 @@ from ..utils.DE_scalers import linear_scale, log_scale, psy_scale
 
 from ..utils.init_cri_defaults_database import _CRI_TYPE_DEFAULT, _CRI_DEFAULTS, process_cri_type_input
 
-from ..utils.helpers import (_get_hue_bin_data, spd_to_jab_t_r, spd_to_rg,
-                            spd_to_DEi, optimize_scale_factor, spd_to_cri,
-                            _hue_bin_data_to_rxhj, _hue_bin_data_to_rfi, 
-                            _hue_bin_data_to_rg)
+from ..utils.helpers import (gamut_slicer,jab_to_rg, jab_to_rhi, jab_to_DEi,
+                      spd_to_DEi, spd_to_rg, spd_to_cri)
 from .cie_wrappers import (spd_to_ciera, spd_to_cierf, 
                          spd_to_ciera_133_1995, spd_to_cierf_224_2017)
 from .iestm30_wrappers import (spd_to_iesrf, spd_to_iesrg, 
@@ -161,9 +159,8 @@ from .cqs import _CQS_DEFAULTS, spd_to_cqs
 
 __all__  = ['_CRI_RFL','_CRI_TYPE_DEFAULT','_CRI_DEFAULTS']
 
-__all__ += ['_get_hue_bin_data','spd_to_jab_t_r','spd_to_rg', 'spd_to_DEi', 
-           'optimize_scale_factor','spd_to_cri',
-           '_hue_bin_data_to_rxhj', '_hue_bin_data_to_rfi', '_hue_bin_data_to_rg']
+__all__ += ['gamut_slicer','jab_to_rg', 'jab_to_rhi', 'jab_to_DEi',
+           'spd_to_DEi', 'spd_to_rg', 'spd_to_cri']
 
 __all__ += ['spd_to_ciera', 'spd_to_cierf',
            'spd_to_ciera_133_1995','spd_to_cierf_224_2017']

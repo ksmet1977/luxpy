@@ -16,8 +16,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #########################################################################
 """
-Module for color rendition and color quality metrics
-====================================================
+cri: sub-package suppporting color rendition calculations (colorrendition.py)
+=============================================================================
 
 utils/init_cri_defaults_database.py
 -----------------------------------
@@ -46,7 +46,7 @@ utils/init_cri_defaults_database.py
  :process_cri_type_input(): load a cri_type dict but overwrites any keys that 
                             have a non-None input in calling function.
 
-            
+
 utils/DE_scalers.py
 -------------------
 
@@ -73,7 +73,7 @@ utils/helpers.py
                 |   Rcshi (local chroma shift) 
                 |   Rhshi (local hue shift)
 
- :spd_to_jab_t_r(): Calculates jab color values for a sample set illuminated 
+ :spd_to_jab_t_r(): Calculates jab color values for a sample set illuminated
                     with test source and its reference illuminant.
 
  :spd_to_rg(): Calculates the color gamut index of spectral data 
@@ -92,9 +92,17 @@ utils/helpers.py
                 (CIE Ra, CIE Rf, IES Rf, CRI2012 Rf) of spectral data. 
                 Can also output Rg, Rfhi, Rcshi, Rhshi, cct, duv, ...
 
-            
-indices/ciewrappers.py & ieswrappers.py
----------------------------------------  
+
+utils/graphics.py
+-----------------
+
+ :plot_hue_bins(): Makes basis plot for Color Vector Graphic (CVG).
+
+ :plot_ColorVectorGraphic(): Plots Color Vector Graphic (see IES TM30).
+
+
+indices/indices.py
+------------------
 
  :wrapper_functions_for_fidelity_type_metrics:
       | spd_to_ciera(): CIE 13.3 1995 version 
@@ -135,59 +143,28 @@ indices/cqs.py
                 | “Color quality scale,” (2010), 
                 | Opt. Eng., vol. 49, no. 3, pp. 33602–33616.
 
+
+iestm30/iestm30_metrics.py
+-------------------------- 
+
+ :spd_to_ies_tm30_metrics(): Calculates IES TM30 metrics from spectral data.
+
+
+iestm30/iestm30_graphics.py
+---------------------------
+
+ :plot_cri_graphics(): Plot graphical information on color rendition properties.
+
+
+VFPX
+----
+
+ :Module_for_VectorField_and_Pixelation_CRI models.
+  * see ?luxpy.cri.VFPX
+
+
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
-from luxpy import _CRI_RFL
-
-from ..utils.DE_scalers import linear_scale, log_scale, psy_scale
-
-from ..utils.init_cri_defaults_database import _CRI_TYPE_DEFAULT, _CRI_DEFAULTS, process_cri_type_input
-
-from ..utils.helpers import (_get_hue_bin_data, spd_to_jab_t_r, spd_to_rg,
-                            spd_to_DEi, optimize_scale_factor, spd_to_cri,
-                            _hue_bin_data_to_rxhj, _hue_bin_data_to_rfi, 
-                            _hue_bin_data_to_rg)
-from .cie_wrappers import (spd_to_ciera, spd_to_cierf, 
-                         spd_to_ciera_133_1995, spd_to_cierf_224_2017)
-from .iestm30_wrappers import (spd_to_iesrf, spd_to_iesrg, 
-                         spd_to_iesrf_tm30, spd_to_iesrg_tm30,
-                         spd_to_iesrf_tm30_15, spd_to_iesrg_tm30_15, 
-                         spd_to_iesrf_tm30_18, spd_to_iesrg_tm30_18)
-from .cri2012 import spd_to_cri2012, spd_to_cri2012_hl17, spd_to_cri2012_hl1000, spd_to_cri2012_real210
-from .mcri import _MCRI_DEFAULTS, spd_to_mcri
-from .cqs import _CQS_DEFAULTS, spd_to_cqs
-
-
-__all__  = ['_CRI_RFL','_CRI_TYPE_DEFAULT','_CRI_DEFAULTS']
-
-__all__ += ['_get_hue_bin_data','spd_to_jab_t_r','spd_to_rg', 'spd_to_DEi', 
-           'optimize_scale_factor','spd_to_cri',
-           '_hue_bin_data_to_rxhj', '_hue_bin_data_to_rfi', '_hue_bin_data_to_rg']
-
-__all__ += ['spd_to_ciera', 'spd_to_cierf',
-           'spd_to_ciera_133_1995','spd_to_cierf_224_2017']
-
-__all__ += ['spd_to_iesrf','spd_to_iesrg',
-           'spd_to_iesrf_tm30','spd_to_iesrg_tm30',
-           'spd_to_iesrf_tm30_15','spd_to_iesrg_tm30_15',
-           'spd_to_iesrf_tm30_18','spd_to_iesrg_tm30_18']
-
-__all__ += ['spd_to_cri2012','spd_to_cri2012_hl17','spd_to_cri2012_hl1000','spd_to_cri2012_real210']
-
-__all__ += ['spd_to_mcri']
-
-__all__ += ['spd_to_cqs']
-
-
-# Update _CRI_DEFAULTS from .init_cri_defaults_database (already filled with cie/ies Rf and Rg type metric defaults):
-_CRI_DEFAULTS['cqs-v7.5'] = _CQS_DEFAULTS['cqs-v7.5']
-_CRI_DEFAULTS['cri_types'].append('cqs-v7.5')
-_CRI_DEFAULTS['cqs-v9.0'] = _CQS_DEFAULTS['cqs-v9.0']
-_CRI_DEFAULTS['cri_types'].append('cqs-v9.0')
-
-_CRI_DEFAULTS['mcri'] = _MCRI_DEFAULTS
-_CRI_DEFAULTS['cri_types'].append('mcri')
-
-   
-
+from .colorrendition import *
+__all__ = colorrendition.__all__

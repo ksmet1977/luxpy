@@ -20,7 +20,7 @@
 Extension module for IES TM30 metric calculation with additional Vector Field support
 =====================================================================================
 
- :spd_to_ies_tm30_metrics(): Calculates IES TM30 metrics from spectral data
+ :spd_to_ies_tm30_metrics(): Calculates IES TM30 metrics from spectral data + Metameric Uncertainty + Vector Fields
 
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
@@ -30,7 +30,7 @@ from luxpy import _CRI_RFL
 from luxpy.utils import np
 
 
-from luxpy.color.cri.utils.helpers2 import (_get_hue_bin_data, 
+from luxpy.color.cri.utils.helpers import (_get_hue_bin_data, 
                                             _hue_bin_data_to_rxhj, 
                                             _hue_bin_data_to_rfi,
                                             spd_to_cri)
@@ -208,6 +208,7 @@ def spd_to_ies_tm30_metrics(St, cri_type = None, \
     return data
 
 if __name__ == '__main__':
+    
     # for testing:
     import luxpy as lx
     F4 = lx.cie_interp(lx._CIE_F4,wl_new=[360,830,1],kind='spd')

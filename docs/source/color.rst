@@ -143,9 +143,9 @@ cri/
 		* cqs.py	
 	* /iestm30/
 		* __init__.py
-		* ies_tm30_metrics.py
-		* ies_tm30_graphics.py
-		* ansi_ies_tm30_graphics.py
+		* metrics.py
+		* graphics.py
+		* metrics_fast.py
 	* /VFPX/
 		* __inint__.py
 		* vectorshiftmodel.py

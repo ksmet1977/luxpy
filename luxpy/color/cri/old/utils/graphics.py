@@ -348,7 +348,7 @@ def plot_ColorVectorGraphic(jabt, jabr, hbins = 16, start_hue = 0.0, scalef = 10
     if cmap == []:
         cmap = ['k' for i in range(hbins)]
         
-            
+        
     # map jabti relative to center (mean) of reference:
     if (jabti is not None) & (jabri is not None):
         jabti = (jabti - jabri)
@@ -356,7 +356,6 @@ def plot_ColorVectorGraphic(jabt, jabr, hbins = 16, start_hue = 0.0, scalef = 10
             if i in hbinnr:
                 jabti[hbinnr == i,...] = jabti[hbinnr == i,...] + jabr[i,...]
 
-    
     if axtype == 'polar':
        
         jabr_theta, jabr_r = math.cart2pol(jabr[...,1:3], htype = 'rad') 

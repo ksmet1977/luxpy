@@ -26,11 +26,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 import colorsys
 
+from luxpy.color.cri.iestm30.ies_tm30_graphics import plot_cri_graphics
+from luxpy.color.cri.iestm30.ies_tm30_metrics import spd_to_ies_tm30_metrics
+
 plot_iestm30_output = True
 
 SPDs = lx._IESTM3015['S']['data']
 
-SPD = SPDs[:3]
+SPD = SPDs[:2]
+SPD = lx._CIE_F4
 
 plot_CF = True
 plot_VF = False
@@ -55,6 +59,19 @@ if plot_iestm30_output == True:
     # plot graphic output for SPD:
     axtype ='polar'
     normalized_chroma_ref = 100
-    data = lx.cri.plot_cri_graphics(SPD, cri_type = 'iesrf', plot_VF = plot_VF, plot_CF = plot_CF, plot_SF = plot_SF, plot_bin_colors = plot_bin_colors, vf_plot_bin_colors = vf_plot_bin_colors, axtype = axtype, ax = None, plot_center_lines = False, plot_edge_lines = True, scalef = normalized_chroma_ref*1, force_CVG_layout = True)
+    data = plot_cri_graphics(SPD, 
+                            cri_type = 'iesrf', 
+                            plot_VF = plot_VF, 
+                            plot_CF = plot_CF, 
+                            plot_SF = plot_SF, 
+                            plot_bin_colors = plot_bin_colors, 
+                            vf_plot_bin_colors = vf_plot_bin_colors, 
+                            axtype = axtype, 
+                            ax = None, 
+                            plot_center_lines = False, 
+                            plot_edge_lines = True, 
+                            scalef = normalized_chroma_ref, 
+                            force_CVG_layout = True,
+                            plot_test_sample_coord = True)
                 
     plt.show()
