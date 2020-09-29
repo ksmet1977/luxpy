@@ -79,30 +79,44 @@ def spd_to_ies_tm30_metrics(St, cri_type = None, \
             
     Returns:
         :data: 
-            | dict with color rendering data:
-            | - 'St'  : ndarray test SPDs
-            | - 'jabt_hj': ndarray with hue-binned jab data under test SPDs
-            | - 'jabr_hj': ndarray with hue-binned jab data under reference SPDs
-            | - 'jabtn': ndarray with normalized sample jab data under test SPDs (scaled such that jabr_hj are on a circle)
-            | - 'jabrn': ndarray with normalized sample jab data under reference SPDs (scaled such that jabr_hj are on a circle)
-            | - 'hbinnr': ndarray with the hue bin number (cfr. ref. ill.) the samples belong to.
-            | - 'cct'  : ndarray with CCT of test SPD
-            | - 'duv'  : ndarray with distance to blackbody locus of test SPD
-            | - 'Rf'   : ndarray with general color fidelity indices
-            | - 'Rg'   : ndarray with gamut area indices
-            | - 'Rfi'  : ndarray with specific color fidelity indices
+            | Dictionary with color rendering data:
+            | 
+            | - 'St, Sr'  : ndarray of test SPDs and corresponding ref. illuminants.
+            | - 'xyz_cct': xyz of white point calculate with cieobs defined for cct calculations in cri_type['cieobs']
+            | - 'cct, duv': CCT and Duv obtained with cieobs in cri_type['cieobs']['cct']
+            | - 'xyzti, xyzri': ndarray tristimulus values of test and ref. samples (obtained with with cieobs in cri_type['cieobs']['xyz'])
+            | - 'xyztw, xyzrw': ndarray tristimulus values of test and ref. white points (obtained with with cieobs in cri_type['cieobs']['xyz'])
+            | - 'DEi, DEa': ndarray with individual sample color differences DEi and average DEa between test and ref.       
+            | - 'Rf'  : ndarray with general color fidelity index values
+            | - 'Rg'  : ndarray with color gamut area index values
+            | - 'Rfi'  : ndarray with specific (sample) color fidelity indices
             | - 'Rfhj' : ndarray with local (hue binned) fidelity indices
+            | - 'DEhj' : ndarray with local (hue binned) color differences
             | - 'Rcshj': ndarray with local chroma shifts indices
             | - 'Rhshj': ndarray with local hue shifts indices
-            | - 'Rt'  : ndarray with general metameric uncertainty index Rt
-            | - 'Rti' : ndarray with specific metameric uncertainty indices Rti
-            | - 'Rfhj_vf' : ndarray with local (hue binned) fidelity indices 
-            |               obtained from VF model predictions at color space
-            |               pixel coordinates
-            | - 'Rcshj_vf': ndarray with local chroma shifts indices 
-            |               (same as above)
-            | - 'Rhshj_vf': ndarray with local hue shifts indices 
-            |               (same as above)
+            | - 'hue_bin_data': dict with output from _get_hue_bin_data() [see its help for more info]
+            | - 'cri_type': same as input (for reference purposes)
+            | - 'vf' : dictionary with vector field measures and data.
+            |         Keys:
+            |           - 'Rt'  : ndarray with general metameric uncertainty index Rt
+            |           - 'Rti' : ndarray with specific metameric uncertainty indices Rti
+            |           - 'Rfhj' : ndarray with local (hue binned) fidelity indices 
+            |                            obtained from VF model predictions at color space
+            |                            pixel coordinates
+            |           - 'DEhj' : ndarray with local (hue binned) color differences
+            |                           (same as above)
+            |           - 'Rcshj': ndarray with local chroma shifts indices for vectorfield coordinates
+            |                           (same as above)
+            |           - 'Rhshj': ndarray with local hue shifts indicesfor vectorfield coordinates
+            |                           (same as above)
+            |           - 'Rfi': ndarray with sample fidelity indices for vectorfield coordinates
+            |                           (same as above)
+            |           - 'DEi': ndarray with sample color differences for vectorfield coordinates
+            |                           (same as above)
+            |           - 'hue_bin_data': dict with output from _get_hue_bin_data() for vectorfield coordinates
+            |           - 'dataVF': dictionary with output of cri.VFPX.VF_colorshift_model()
+            
+            
     """
     if cri_type is None:
         cri_type = 'iesrf'
@@ -208,5 +222,5 @@ if __name__ == '__main__':
                                 scalef = 100, \
                                 vf_model_type = _VF_MODEL_TYPE, \
                                 vf_pcolorshift = _VF_PCOLORSHIFT,\
-                                scale_vf_chroma_to_sample_chroma = True)
+                                scale_vf_chroma_to_sample_chroma = False)
     

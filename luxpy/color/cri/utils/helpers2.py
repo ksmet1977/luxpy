@@ -1213,9 +1213,24 @@ def spd_to_cri(St, cri_type = _CRI_TYPE_DEFAULT, out = 'Rf', wl = None, \
             | float or ndarray with Rf for :out: 'Rf'
             | Other output is also possible by changing the :out: str value.
             | E.g. out == 'Rg,data' would output an ndarray with Rf values 
-            |               and a dictionary :data: with keys:
-            |                   'St', 'Sr', 'cct', 'duv', 'hue_bin_data' 
-            |                   'xyzti', xyzti, 'xyztw', 'xyzri', 'xyzrw'
+            | 
+            | and a dictionary :data: with keys:
+            | 
+            | - 'St, Sr'  : ndarray of test SPDs and corresponding ref. illuminants.
+            | - 'xyz_cct': xyz of white point calculate with cieobs defined for cct calculations in cri_type['cieobs']
+            | - 'cct, duv': CCT and Duv obtained with cieobs in cri_type['cieobs']['cct']
+            | - 'xyzti, xyzri': ndarray tristimulus values of test and ref. samples (obtained with with cieobs in cri_type['cieobs']['xyz'])
+            | - 'xyztw, xyzrw': ndarray tristimulus values of test and ref. white points (obtained with with cieobs in cri_type['cieobs']['xyz'])
+            | - 'DEi, DEa': ndarray with individual sample color differences DEi and average DEa between test and ref.       
+            | - 'Rf'  : ndarray with general color fidelity index values
+            | - 'Rg'  : ndarray with color gamut area index values
+            | - 'Rfi'  : ndarray with specific (sample) color fidelity indices
+            | - 'Rfhj' : ndarray with local (hue binned) fidelity indices
+            | - 'DEhj' : ndarray with local (hue binned) color differences
+            | - 'Rcshj': ndarray with local chroma shifts indices
+            | - 'Rhshj': ndarray with local hue shifts indices
+            | - 'hue_bin_data': dict with output from _get_hue_bin_data() [see its help for more info]
+            | - 'cri_type': same as input (for reference purposes)
             
     References:
         1. `IES TM30, Method for Evaluating Light Source Color Rendition. 

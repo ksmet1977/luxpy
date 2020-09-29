@@ -29,11 +29,11 @@ import copy
 from luxpy import _CRI_RFL
 from luxpy.utils import np
 
-from ..utils.helpers import gamut_slicer, spd_to_cri, jab_to_rhi
-from ..utils.init_cri_defaults_database import _CRI_DEFAULTS
+from luxpy.color.cri.utils.helpers import gamut_slicer, spd_to_cri, jab_to_rhi
+from luxpy.color.cri.utils.init_cri_defaults_database import _CRI_DEFAULTS
 
-from ..VFPX.vectorshiftmodel import  _VF_MODEL_TYPE, _VF_PCOLORSHIFT, VF_colorshift_model
-from ..VFPX.VF_PX_models import plot_VF_PX_models
+from luxpy.color.cri.VFPX.vectorshiftmodel import  _VF_MODEL_TYPE, _VF_PCOLORSHIFT, VF_colorshift_model
+from luxpy.color.cri.VFPX.VF_PX_models import plot_VF_PX_models
 
 __all__ = ['spd_to_ies_tm30_metrics']
 
