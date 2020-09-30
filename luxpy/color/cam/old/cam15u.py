@@ -9,7 +9,8 @@ Module with CAM15u color appearance model
  :_CAM15U_PARAMETERS: database with CAM15u model parameters.
  
  :_CAM15U_UNIQUE_HUE_DATA: database of unique hues with corresponding 
-                           Hue quadratures and eccentricity factors                            
+                           Hue quadratures and eccentricity factors 
+                           for ciecam02, cam16, ciecam97s, cam15u)
 
  :_CAM15U_SURROUND_PARAMETERS: database of surround param. c, Nc, F and FLL 
                                for cam15u.

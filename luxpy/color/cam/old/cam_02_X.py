@@ -110,6 +110,7 @@ cam_02_X: Module with CIECAM02-type color appearance models
 
 from luxpy import  math, cat, _CIEOBS, _CIE_ILLUMINANTS, spd_to_xyz 
 from luxpy.utils import np, np2d, np2dT, np3d, put_args_in_db, asplit, ajoin
+from luxpy.color.cam.utils import hue_angle, naka_rushton, deltaH, hue_quadrature
 
 __all__ = ['_CAM_02_X_AXES', '_CAM_02_X_UNIQUE_HUE_DATA','_CAM_02_X_SURROUND_PARAMETERS','_CAM_02_X_NAKA_RUSHTON_PARAMETERS','_CAM_02_X_UCS_PARAMETERS']
 __all__ += ['_CAM_02_X_DEFAULT_TYPE','_CAM_02_X_DEFAULT_WHITE_POINT','_CAM_02_X_DEFAULT_MCAT', '_CAM_02_X_DEFAULT_CONDITIONS']
@@ -166,168 +167,9 @@ _CAM_02_X_DEFAULT_WHITE_POINT = np2d([100.0, 100.0, 100.0]) # ill. E white point
 _CAM_02_X_DEFAULT_CONDITIONS = {'La': 100.0, 'Yb': 20.0, 'surround': 'avg','D': 1.0, 'Dtype':None}
 _CAM_02_X_DEFAULT_MCAT = 'cat02'
 
-def naka_rushton(data, sig = 2.0, n = 0.73, scaling = 1.0, noise = 0.0, cam = None, direction = 'forward'):
-    """
-    Apply a Naka-Rushton response compression (n) and an adaptive shift (sig).
-    
-    | NK(x) = sign(x) * scaling * ((abs(x)**n) / ((abs(x)**n) + (sig**n))) + noise
-    
-    Args:
-        :data:
-            | float or ndarray
-        :sig: 
-            | 2.0, optional
-            | Semi-saturation constant. Value for which NK(:data:) is 1/2
-        :n: 
-            | 0.73, optional
-            | Compression power.
-        :scaling:
-            | 1.0, optional
-            | Maximum value of NK-function.
-        :noise:
-            | 0.0, optional
-            | Cone excitation noise.
-        :cam: 
-            | None or str, optional
-            | Use NK parameters values specific to the color appearance model.
-            | See .cam._NAKA_RUSHTON_PARAMETERS['models'] for supported types.
-        :direction:
-            | 'forward' or 'inverse', optional
-            | Perform either NK(x) or NK(x)**(-1).
-    
-    Returns:
-        :returns: 
-            | float or ndarray with NK-(de)compressed input :x:        
-    """
-    if cam is not None: #override input
-        n = _NAKA_RUSHTON_PARAMETERS[cam]['n']
-        sig = _NAKA_RUSHTON_PARAMETERS[cam]['sig']
-        scaling = _NAKA_RUSHTON_PARAMETERS[cam]['scaling']
-        noise = _NAKA_RUSHTON_PARAMETERS[cam]['noise']
-        
-    if direction == 'forward':
-        return np.sign(data)*scaling * ((np.abs(data)**n) / ((np.abs(data)**n) + (sig**n))) + noise
-    elif direction =='inverse':
-        Ip =  sig*(((np.abs(np.abs(data)-noise))/(scaling-np.abs(np.abs(data)-noise))))**(1/n)
-        if not np.isscalar(Ip):
-            p = np.where(np.abs(data) < noise)
-            Ip[p] = -Ip[p]
-        else:
-            if np.abs(data) < noise:
-                Ip = -Ip
-        return Ip
 
-def hue_angle(a,b, htype = 'deg'):
-    """
-    Calculate positive hue angle (0°-360° or 0 - 2*pi rad.) 
-    from opponent signals a and b.
-    
-    Args:
-        :a: 
-            | ndarray of a-coordinates
-        :b: 
-            | ndarray of b-coordinates
-        :htype: 
-            | 'deg' or 'rad', optional
-            |   - 'deg': hue angle between 0° and 360°
-            |   - 'rad': hue angle between 0 and 2pi radians
-    Returns:
-        :returns:
-            | ndarray of positive hue angles.
-    """
-    return math.positive_arctan(a,b, htype = htype)
 
-def hue_quadrature(h, unique_hue_data = None):
-    """
-    Get hue quadrature H from h.
-    
-    Args:
-        :h: 
-            | float or ndarray [(N,) or (N,1)] with hue data in degrees (!).
-        :unique_hue data:
-            | None or str or dict, optional
-            |   - None: H = h.
-            |   - str: CAM specifier that gets parameters from .cam._UNIQUE_HUE_DATA
-            |          (For supported models, see .cam._UNIQUE_HUE_DATA['models'])
-            |   - dict: user specified unique hue data 
-            |          (see luxpy.cam._UNIQUE_HUE_DATA for expected structure)
-    
-    Returns:
-        :H: 
-            | ndarray of Hue quadrature value(s).
-    """
-    if unique_hue_data is None:
-        return h
-    elif isinstance(unique_hue_data,str):
-        unique_hue_data = _UNIQUE_HUE_DATA[unique_hue_data]
-    
-    changed_number_to_array = False
-    if isinstance(h,float) | isinstance(h,int):
-       h = np.atleast_1d(h)
-       changed_number_to_array = True
-    
-    squeezed = False
-    if h.ndim > 1:
-        if (h.shape[0] == 1):
-            h = np.squeeze(h,axis = 0)
-            squeezed = True
 
-    
-    hi = unique_hue_data['hi']
-    Hi = unique_hue_data['Hi']
-    ei = unique_hue_data['ei']
-    h[h<hi[0]] += 360.0
-    h_tmp = np.atleast_2d(h)
-    if h_tmp.shape[0] == 1:
-        h_tmp = h_tmp.T
-    h_hi = np.repeat(h_tmp,repeats=len(hi),axis = 1)
-    hi_h = np.repeat(np.atleast_2d(hi),repeats=h.shape[0],axis = 0)
-    d = (h_hi-hi_h)
-    d[d<0] = 1000.0
-    p = d.argmin(axis=1)
-    p[p==(len(hi)-1)] = 0 # make sure last unique hue data is not selected
-    H = np.array([Hi[pi] + (100.0*(h[i]-hi[pi])/ei[pi])/((h[i]-hi[pi])/ei[pi] + (hi[pi+1] - h[i])/ei[pi+1]) for (i,pi) in enumerate(p)])
-    if changed_number_to_array:
-        H = H[0]
-    if squeezed:
-        H = np.expand_dims(H,axis=0)
-    return H
-
-def deltaH(h1, C1, h2 = None, C2 = None, htype = 'deg'):
-    """
-    Compute a hue difference, dH = 2*C1*C2*sin(dh/2)
-    
-    Args:
-        :h1:
-            | hue for sample 1 (or hue difference if h2 is None)
-        :C1: 
-            | chroma of sample 1 (or prod C1*C2 if C2 is None)
-        :h2: 
-            | hue angle of sample 2 (if None, then h1 contains a hue difference)
-        :C2: 
-            | chroma of sample 2
-        :htype: 
-            | 'deg' or 'rad', optional
-            |   - 'deg': hue angle between 0° and 360°
-            |   - 'rad': hue angle between 0 and 2pi radians
-    
-    Returns:
-        :returns:
-            | ndarray of deltaH values.
-    """
-    if htype == 'deg':
-        r2d = np.pi/180
-    else:
-        r2d = 1.0
-    if h2 is not None:
-        deltah = h1 - h2
-    else:
-        deltah = h1
-    if C2 is not None:
-        Cprod = C1 * C2
-    else:
-        Cprod = C1
-    return 2*(Cprod)**0.5*np.sin(r2d*deltah/2)
 
 
 def cam_structure_ciecam02_cam16(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, \
@@ -411,6 +253,7 @@ def cam_structure_ciecam02_cam16(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, \
 
     """
     outin = outin.split(',')
+    forward = (direction == 'forward') 
       
     #initialize data, xyzw, conditions and camout:
     data = np2d(data)
@@ -459,6 +302,8 @@ def cam_structure_ciecam02_cam16(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, \
         mhpe_x_invmcat = np.dot(mhpe,invmcat)
         if direction == 'inverse':
             mcat_x_invmhpe = np.dot(mcat,np.linalg.inv(mhpe))
+        naka_rushton_pars = _NAKA_RUSHTON_PARAMETERS[camtype]
+        unique_hue_data = _UNIQUE_HUE_DATA[camtype]
     elif camtype =='cam16':
         if mcat is None:
             mcat = cat._MCATS['cat16']
@@ -466,8 +311,10 @@ def cam_structure_ciecam02_cam16(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, \
             mcat = cat._MCATS[mcat]
             
         invmcat = np.linalg.inv(mcat)
+        naka_rushton_pars = _NAKA_RUSHTON_PARAMETERS[camtype]
+        unique_hue_data = _UNIQUE_HUE_DATA[camtype]
     else:
-            raise Exception('.cam.cam_structure_ciecam02_cam16(): Unrecognized camtype')
+        raise Exception('.cam.cam_structure_ciecam02_cam16(): Unrecognized camtype')
     
     # loop through all xyzw:
     for i in range(xyzw.shape[1]):
@@ -512,8 +359,8 @@ def cam_structure_ciecam02_cam16(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, \
             rgbwp[pw]=0.0
         
         # apply repsonse compression to white:
-        rgbwpa = naka_rushton(FL*rgbwp/100.0, cam = camtype)
-        rgbwpa[pw] = 0.1 - (naka_rushton(FL*np.abs(rgbwp[pw])/100.0, cam = camtype) - 0.1)
+        rgbwpa = naka_rushton(FL*rgbwp/100.0, forward = True,**naka_rushton_pars)
+        rgbwpa[pw] = 0.1 - (naka_rushton(FL*np.abs(rgbwp[pw])/100.0, forward = True, **naka_rushton_pars) - 0.1)
 
         # split white into separate cone signals:
         rwpa, gwpa, bwpa = asplit(rgbwpa)
@@ -524,6 +371,7 @@ def cam_structure_ciecam02_cam16(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, \
         if (direction == 'forward'):
         
             # calculate stimuli:
+            print(data.shape)
             xyzi = Yw[i]*data[:,i]/yw # normalize xyzw
 
             # transform from xyz to cat02 sensor space:
@@ -543,8 +391,8 @@ def cam_structure_ciecam02_cam16(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, \
                 rgbp[p]=0.0
 
             # apply repsonse compression:
-            rgbpa = naka_rushton(FL*rgbp/100.0, cam = camtype)
-            rgbpa[p] = 0.1 - (naka_rushton(FL*np.abs(rgbp[p])/100.0, cam = camtype) - 0.1)
+            rgbpa = naka_rushton(FL*rgbp/100.0,forward = True, **naka_rushton_pars)
+            rgbpa[p] = 0.1 - (naka_rushton(FL*np.abs(rgbp[p])/100.0, forward = True, **naka_rushton_pars) - 0.1)
 
             # split into separate cone signals:
             rpa, gpa, bpa = asplit(rgbpa)
@@ -561,7 +409,7 @@ def cam_structure_ciecam02_cam16(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, \
             
             # calculate Hue quadrature (if requested in 'out'):
             if 'H' in outin:    
-                H = hue_quadrature(h, unique_hue_data = camtype)
+                H = hue_quadrature(h, unique_hue_data = unique_hue_data)
             else:
                 H = None
             
@@ -674,7 +522,7 @@ def cam_structure_ciecam02_cam16(data, xyzw = _CAM_02_X_DEFAULT_WHITE_POINT, \
             rgbpa = ajoin((rpa,gpa,bpa))
 
             # decompress signals:
-            rgbp = (100.0/FL)*naka_rushton(rgbpa, cam = camtype, direction = 'inverse')
+            rgbp = (100.0/FL)*naka_rushton(rgbpa, forward = False, **naka_rushton_pars)
            
             if (yellowbluepurplecorrect == 'brill-suss') & (camtype == 'ciecam02'): # Brill & Susstrunck approach, for purple line problem
                 p = np.where(rgbp<0.0)

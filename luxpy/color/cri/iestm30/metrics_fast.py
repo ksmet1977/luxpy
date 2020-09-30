@@ -22,8 +22,6 @@ import matplotlib.pyplot as plt
 from luxpy import (math, spd_to_xyz, xyz_to_cct, getwld, getwlr, _CMF, blackbody, daylightphase, 
                    _CRI_RFL, _CRI_REF_TYPES, _CRI_REF_TYPE,_CIEOBS, xyzbar, cie_interp)
 
-from luxpy.color.cam import (xyz_to_jab_cam02ucs, hue_angle)
-
 from luxpy.color.cri.utils.DE_scalers import log_scale
 from luxpy.color.cri.utils.helpers import _get_hue_bin_data 
 
@@ -98,7 +96,7 @@ def _cri_ref(ccts, wl3 = _WL, ref_type = 'iestm30', mix_range = [4000,5000],
     return Srs  
 
 
-def _xyz_to_jab_cam02ucs(xyz, xyzw, conditions = None):
+def _xyz_to_jab_cam02ucs(xyz, xyzw, ucs = True, conditions = None):
     """ 
     Calculate CAM02-UCS J'a'b' coordinates from xyz tristimulus values of sample and white point.
     
@@ -171,14 +169,14 @@ def _xyz_to_jab_cam02ucs(xyz, xyzw, conditions = None):
     
     #--------------------------------------------  
     # apply von Kries cat:
-    rgbc = ((D*Yw/rgbw)[...,None] + (1 - D))*rgb # factor 100 from ciecam02 is replaced with Yw[i] in cam16, but see 'note' in Fairchild's "Color Appearance Models" (p291 ni 3ed.)
-    rgbwc = ((D*Yw/rgbw) + (1 - D))*rgbw # factor 100 from ciecam02 is replaced with Yw[i] in cam16, but see 'note' in Fairchild's "Color Appearance Models" (p291 ni 3ed.)
- 
+    rgbc = ((D*Yw/rgbw)[...,None] + (1 - D))*rgb # factor 100 from ciecam02 is replaced with Yw[i] in ciecam16, but see 'note' in Fairchild's "Color Appearance Models" (p291 ni 3ed.)
+    rgbwc = ((D*Yw/rgbw) + (1 - D))*rgbw # factor 100 from ciecam02 is replaced with Yw[i] in ciecam16, but see 'note' in Fairchild's "Color Appearance Models" (p291 ni 3ed.)
+    
     #--------------------------------------------
     # convert from cat02 sensor space to cone sensors (hpe):
     rgbp = math.dot23(mhpe_x_invmcat,rgbc).T
     rgbwp = (mhpe_x_invmcat @ rgbwc).T
-
+    
     #--------------------------------------------
     # apply Naka_rushton repsonse compression:
     naka_rushton = lambda x: 400*x**0.42/(x**0.42 + 27.13) + 0.1
@@ -200,12 +198,12 @@ def _xyz_to_jab_cam02ucs(xyz, xyzw, conditions = None):
     # calculate initial opponent channels:
     a = rgbpa[...,0] - 12.0*rgbpa[...,1]/11.0 + rgbpa[...,2]/11.0
     b = (1.0/9.0)*(rgbpa[...,0] + rgbpa[...,1] - 2.0*rgbpa[...,2])
-        
+       
     #--------------------------------------------
     # calculate hue h and eccentricity factor, et:
     h = np.arctan2(b,a)
     et = (1.0/4.0)*(np.cos(h + 2.0) + 3.8)
-    
+
     #--------------------------------------------
     # calculate lightness, J:
     J = 100.0* (A / Aw)**(c*z)
@@ -221,9 +219,13 @@ def _xyz_to_jab_cam02ucs(xyz, xyzw, conditions = None):
         
     #--------------------------------------------
     # convert to cam02ucs J', aM', bM':
-    KL, c1, c2 =  1.0, 0.007, 0.0228
-    Jp = (1.0 + 100.0*c1)*J / (1.0 + c1*J)
-    Mp = (1.0/c2) * np.log(1.0 + c2*M)
+    if ucs == True:
+        KL, c1, c2 =  1.0, 0.007, 0.0228
+        Jp = (1.0 + 100.0*c1)*J / (1.0 + c1*J)
+        Mp = (1.0/c2) * np.log(1.0 + c2*M)
+    else:
+        Jp = J
+        Mp = M
     aMp = Mp * np.cos(h)
     bMp = Mp * np.sin(h)
     

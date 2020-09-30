@@ -26,7 +26,7 @@ cat: Module supporting chromatic adaptation transforms (corresponding colors)
  :_MCATS: | default chromatic adaptation sensor spaces
           | * 'hpe': Hunt-Pointer-Estevez: R. W. G. Hunt, The Reproduction of Colour: Sixth Edition, 6th ed. Chichester, UK: John Wiley & Sons Ltd, 2004.
           | * 'cat02': from ciecam02: `CIE159-2004, âA Colour Apperance Model for Color Management System: CIECAM02,â? CIE, Vienna, 2004. <http://onlinelibrary.wiley.com/doi/10.1002/col.20198/abstract>`_
-          | * 'cat02-bs':  cat02 adjusted to solve yellow-blue problem (last line = [0 0 1]): `Brill MH, SÃ¼sstrunk S. Repairing gamut problems in CIECAM02: A progress report. Color Res Appl 2008;33(5), 424â426. <http://onlinelibrary.wiley.com/doi/10.1002/col.20432/abstract>`_
+          | * 'cat02-bs':  cat02 adjusted to solve yellow-blue problem (last line = [0 0 1]): `Brill MH, Süsstrunk S. Repairing gamut problems in CIECAM02: A progress report. Color Res Appl 2008;33(5), 424â426. <http://onlinelibrary.wiley.com/doi/10.1002/col.20432/abstract>`_
           | * 'cat02-jiang': cat02 modified to solve yb-probem + purple problem: `Jun Jiang, Zhifeng Wang,M. Ronnier Luo,Manuel Melgosa,Michael H. Brill,Changjun Li, Optimum solution of the CIECAM02 yellowâblue and purple problems, Color Res Appl 2015: 40(5), 491-503. <http://onlinelibrary.wiley.com/doi/10.1002/col.21921/abstract>`_
           | * 'kries'
           | * 'judd-1935': Judd primaries: `Judd, D.B.v (1935). A Maxwell Triangle Yielding Uniform Chromaticity Scales, JOSA A, 25(1), pp. 24-35. <https://doi.org/10.1364/JOSA.25.000024>`_

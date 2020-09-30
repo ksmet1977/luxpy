@@ -148,8 +148,8 @@ def _xyz_to_jab_cam02ucs(xyz, xyzw, conditions = None):
     
     #--------------------------------------------  
     # apply von Kries cat:
-    rgbc = ((D*Yw/rgbw)[...,None] + (1 - D))*rgb # factor 100 from ciecam02 is replaced with Yw[i] in cam16, but see 'note' in Fairchild's "Color Appearance Models" (p291 ni 3ed.)
-    rgbwc = ((D*Yw/rgbw) + (1 - D))*rgbw # factor 100 from ciecam02 is replaced with Yw[i] in cam16, but see 'note' in Fairchild's "Color Appearance Models" (p291 ni 3ed.)
+    rgbc = ((D*Yw/rgbw)[...,None] + (1 - D))*rgb # factor 100 from ciecam02 is replaced with Yw[i] in ciecam16, but see 'note' in Fairchild's "Color Appearance Models" (p291 ni 3ed.)
+    rgbwc = ((D*Yw/rgbw) + (1 - D))*rgbw # factor 100 from ciecam02 is replaced with Yw[i] in ciecam16, but see 'note' in Fairchild's "Color Appearance Models" (p291 ni 3ed.)
  
     #--------------------------------------------
     # convert from cat02 sensor space to cone sensors (hpe):

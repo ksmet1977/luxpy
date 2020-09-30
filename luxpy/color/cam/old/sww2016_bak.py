@@ -19,10 +19,8 @@ References:
     .. 
 """
 
-from luxpy import (math, _CIE_ILLUMINANTS, _MUNSELL, _CMF, spd_to_xyz, 
-                   getwlr, cie_interp)
-from luxpy.utils import np, asplit, ajoin
-from luxpy.color.cam.helpers import *
+from luxpy import math, _CIE_ILLUMINANTS, _MUNSELL, _CMF, spd_to_xyz, getwlr, cie_interp
+from luxpy.utils import np, np2d, put_args_in_db, asplit, ajoin
 
 _CAM_SWW16_AXES = {'lab_cam_sww16' : ["L (lab_cam_sww16)", "a (lab_cam_sww16)", "b (lab_cam_sww16)"]}
 
@@ -30,15 +28,237 @@ _CAM_SWW16_PARAMETERS = {'JOSA': {'cLMS': [1.0,1.0,1.0], 'lms0': [4985.0,5032.0,
 _CAM_SWW16_PARAMETERS['best-fit-JOSA'] = {'cLMS': [1.0,1.0,1.0], 'lms0': [4208.0,  4447.0,  4199.0] , 'Cc': 0.243, 'Cf': -0.269, 'clambda': [0.5, 0.5, 0.0], 'calpha': [1.0, -1.0, 0.0], 'cbeta': [0.5, 0.5, -1.0], 'cga1': [22.38, 26.42], 'cgb1': [5.36, 9.61], 'cga2': [0.668], 'cgb2': [-1.214], 'cl_int': [15.0, 1.04], 'cab_int': [5.85,65.86], 'cab_out' : [-1.008,-1.037], 'Ccwb': 0.80, 'Mxyz2lms': [[ 0.21701045,  0.83573367, -0.0435106 ],[-0.42997951,  1.2038895 ,  0.08621089],[ 0.,  0.,  0.46579234]]}
 _CAM_SWW16_PARAMETERS['best-fit-all-Munsell'] = {'cLMS': [1.0,1.0,1.0], 'lms0': [5405.0, 5617.0,  5520.0] , 'Cc': 0.206, 'Cf': -0.128, 'clambda': [0.5, 0.5, 0.0], 'calpha': [1.0, -1.0, 0.0], 'cbeta': [0.5, 0.5, -1.0], 'cga1': [38.26, 43.35], 'cgb1': [8.97, 16.18], 'cga2': [0.512], 'cgb2': [-0.896], 'cl_int': [19.3, 0.99], 'cab_int': [5.87,63.24], 'cab_out' : [-0.545,-0.978], 'Ccwb': 0.736, 'Mxyz2lms': [[ 0.21701045,  0.83573367, -0.0435106 ],[-0.42997951,  1.2038895 ,  0.08621089],[ 0.,  0.,  0.46579234]]}
 
-
 __all__ = ['_CAM_SWW16_AXES','_CAM_SWW16_PARAMETERS','cam_sww16','xyz_to_lab_cam_sww16','lab_cam_sww16_to_xyz']
 
+
+def _update_parameter_dict(args, parameters = None, cieobs = '2006_10', 
+                          match_to_conversionmatrix_to_cieobs = True):
+    """
+    Get parameter dict and update with values in args dict. 
+    Also replace the xyz-to-lms conversion matrix with the one corresponding 
+    to cieobs and normalize it to illuminant E.
+    """
+    if parameters is None:
+        parameters = _CAM_SWW16_PARAMETERS['JOSA']
+    if isinstance(parameters,str):
+        parameters = _CAM_SWW16_PARAMETERS[parameters]
+    parameters = put_args_in_db(parameters,args)  #overwrite parameters with other (not-None) args input 
+    if match_to_conversionmatrix_to_cieobs == True:
+        parameters['Mxyz2lms'] = _CMF[cieobs]['M'].copy()
+    parameters['Mxyz2lms'] = math.normalize_3x3_matrix(parameters['Mxyz2lms'], np.array([[1.0, 1.0, 1.0]])) # normalize matrix for xyz-> lms conversion to ill. E
+    return parameters
+
+
+def _setup_default_adaptation_field(dataw = None, Lw = 400,
+                                   inputtype = 'xyz', relative = True,
+                                   cieobs = '2006_10'):
+    """
+    Setup theh default illuminant C adaptation field with Lw = 400 cd/m² for selected CIE observer.
+    
+    Args:
+        :dataw: 
+            | None or ndarray, optional
+            | Input tristimulus values or spectral data of white point.
+            | None defaults to the use of CIE illuminant C.
+        :Lw:
+            | 400.0, optional
+            | Luminance (cd/m²) of white point.
+        :inputtype:
+            | 'xyz' or 'spd', optional
+            | Specifies the type of input: 
+            |     tristimulus values or spectral data for the forward mode.
+        :relative:
+            | True or False, optional
+            | True: xyz tristimulus values are relative (Yw = 100)
+        :cieobs:
+            | '2006_10', optional
+            | CMF set to use to perform calculations where spectral data 
+              is involved (inputtype == 'spd'; dataw = None)
+            | Other options: see luxpy._CMF['types']
+    
+    Returns:
+        :dataw:
+            | Ndarray with default adaptation field data (spectral or xyz)
+    """
+    if (dataw is None):
+        dataw = _CIE_ILLUMINANTS['C'].copy() # get illuminant C
+        xyzw = spd_to_xyz(dataw, cieobs = cieobs,relative=False) # get abs. tristimulus values
+        if relative == False: #input is expected to be absolute
+            dataw[1:] = Lw*dataw[1:]/xyzw[:,1:2] # dataw = Lw*dataw # make absolute
+        else:
+            dataw = dataw # make relative (Y=100)
+        if inputtype == 'xyz':
+            dataw = spd_to_xyz(dataw, cieobs = cieobs, relative = relative)
+    return dataw
+
+def _massage_input_and_init_output(data, dataw, 
+                                  inputtype = 'xyz', direction = 'forward'):
+    """
+    Redimension input data to ensure most they have the appropriate sizes for easy and efficient looping.
+    |
+    | 1. Convert data and dataw to atleast_2d ndarrays
+    | 2. Make axis 1 of dataw have 'same' dimensions as data
+    | 3. Make dataw have same lights source axis size as data
+    | 4. Flip light source axis to axis=0 for efficient looping
+    | 5. Initialize output array camout to 'same' shape as data
+    
+    Args:
+        :data: 
+            | ndarray with input tristimulus values 
+            | or spectral data 
+            | or input color appearance correlates
+            | Can be of shape: (N [, xM], x 3), whereby: 
+            | N refers to samples and M refers to light sources.
+            | Note that for spectral input shape is (N x (M+1) x wl) 
+        :dataw: 
+            | None or ndarray, optional
+            | Input tristimulus values or spectral data of white point.
+            | None defaults to the use of CIE illuminant C.
+        :inputtype:
+            | 'xyz' or 'spd', optional
+            | Specifies the type of input: 
+            |     tristimulus values or spectral data for the forward mode.
+        :direction:
+            | 'forward' or 'inverse', optional
+            |   -'forward': xyz -> cam
+            |   -'inverse': cam -> xyz 
+    """
+    # Convert data and dataw to atleast_2d ndarrays:
+    data = np2d(data).copy() # stimulus data (can be upto NxMx3 for xyz, or [N x (M+1) x wl] for spd))
+    dataw = np2d(dataw).copy() # white point (can be upto Nx3 for xyz, or [(N+1) x wl] for spd)
+    originalshape = data.shape # to restore output to same shape
+
+    # Make axis 1 of dataw have 'same' dimensions as data:         
+    if (data.ndim == 2): 
+        data = np.expand_dims(data, axis = 1)  # add light source axis 1 
+    
+    # Flip light source dim to axis 0:
+    data = np.transpose(data, axes = (1,0,2))
+    
+    dataw = np.expand_dims(dataw, axis = 1)  # add extra axis to move light source to axis 0 
+
+    # Make dataw have same lights source dimension size as data:
+    if inputtype == 'xyz': 
+        if dataw.shape[0] == 1: 
+            dataw = np.repeat(dataw,data.shape[0],axis=0)     
+        if (data.shape[0] == 1) & (dataw.shape[0]>1): 
+            data = np.repeat(data,dataw.shape[0],axis=0)     
+    else:
+        dataw = np.array([np.vstack((dataw[:1,0,:],dataw[i+1:i+2,0,:])) for i in range(dataw.shape[0]-1)])
+        if (data.shape[0] == 1) & (dataw.shape[0]>1):
+            data = np.repeat(data,dataw.shape[0],axis=0) 
+        
+    # Initialize output array:
+    dshape = list((data).shape)
+    dshape[-1] = 3 # requested number of correlates: l_int, a_int, b_int
+    if (inputtype != 'xyz') & (direction == 'forward'):
+        dshape[-2] = dshape[-2] - 1 # wavelength row doesn't count & only with forward can the input data be spectral
+    camout = np.zeros(dshape);camout.fill(np.nan)
+    return data, dataw, camout, originalshape
+
+
+def _massage_output_data_to_original_shape(camout, originalshape):
+    """
+    Massage output data to restore original shape of input.
+    """
+    # Flip light source dim back to axis 1:
+    camout = np.transpose(camout, axes = (1,0,2))
+
+    if len(originalshape) < 3:
+        if camout.shape[1] == 1:
+            camout = np.squeeze(camout,axis = 1)
+
+    return camout
+
+def _get_absolute_xyz_xyzw(data, dataw, i = 0, Lw= 400, direction = 'forward', 
+                          cieobs = '2006_10', inputtype = 'xyz', relative = True):
+    """
+    Calculate absolute xyz tristimulus values of stimulus and white point 
+    from spectral input or convert relative xyz values to absolute ones.
+    
+    Args:
+        :data: 
+            | ndarray with input tristimulus values 
+            | or spectral data 
+            | or input color appearance correlates
+            | Can be of shape: (N [, xM], x 3), whereby: 
+            | N refers to samples and M refers to light sources.
+            | Note that for spectral input shape is (N x (M+1) x wl) 
+        :dataw: 
+            | None or ndarray, optional
+            | Input tristimulus values or spectral data of white point.
+            | None defaults to the use of CIE illuminant C.
+        :i:
+            | 0, optional
+            | row number in data and dataw ndarrays.
+        :Lw:
+            | 400.0, optional
+            | Luminance (cd/m²) of white point.
+        :inputtype:
+            | 'xyz' or 'spd', optional
+            | Specifies the type of input: 
+            |     tristimulus values or spectral data for the forward mode.
+        :direction:
+            | 'forward' or 'inverse', optional
+            |   -'forward': xyz -> cam
+            |   -'inverse': cam -> xyz 
+        :relative:
+            | True or False, optional
+            | True: xyz tristimulus values are relative (Yw = 100)
+        :cieobs:
+            | '2006_10', optional
+            | CMF set to use to perform calculations where spectral data 
+              is involved (inputtype == 'spd'; dataw = None)
+            | Other options: see luxpy._CMF['types']
+    """
+    xyzw_abs = None
+    
+    # Spectral input:
+    if (inputtype != 'xyz'):    
+        
+        # make spectral data in `dataw` absolute:        
+        if relative == True:
+            xyzw_abs = spd_to_xyz(dataw[i], cieobs = cieobs, relative = False)
+            dataw[i,1:,:] = Lw*dataw[i,1:,:]/xyzw_abs[0,1] 
+        
+        # Calculate absolute xyzw:
+        xyzwi = spd_to_xyz(dataw[i], cieobs = cieobs, relative = False)
+
+        # make spectral data in `data` absolute:
+        if (direction == 'forward'): # no xyz data or spectra in data if == 'inverse'!!!
+            if relative == True:
+                data[i,1:,:] = Lw*data[i,1:,:]/xyzw_abs[0,1]
+                
+            # Calculate absolute xyz of test field:    
+            xyzti = spd_to_xyz(data[i,...], cieobs = cieobs, relative = False) 
+            
+        else:
+            xyzti = None
+        
+    # XYZ input:
+    elif (inputtype == 'xyz'):
+
+        # make xyz data in `dataw` absolute: 
+        if relative == True: 
+            xyzw_abs = dataw[i].copy()
+            dataw[i] = Lw*dataw[i]/xyzw_abs[:,1]   
+        xyzwi = dataw[i]
+
+        if (direction == 'forward'):
+            if relative == True:
+                # make xyz data in `data` absolute: 
+                data[i] = Lw*data[i]/xyzw_abs[:,1] # make absolute
+            xyzti = data[i]
+        else:
+            xyzti = None # not needed in inverse model
+        
+    return xyzti, xyzwi, xyzw_abs
  
 
 def cam_sww16(data, dataw = None, Yb = 20.0, Lw = 400.0, Ccwb = None,
               relative = True,  inputtype = 'xyz', direction = 'forward',
-              parameters = 'JOSA', cieobs = '2006_10',
-              match_conversionmatrix_to_cieobs = True):
+              parameters = None, cieobs = '2006_10',
+              match_to_conversionmatrix_to_cieobs = True):
     """
     A simple principled color appearance model based on a mapping of 
     the Munsell color system.
@@ -71,9 +291,10 @@ def cam_sww16(data, dataw = None, Yb = 20.0, Lw = 400.0, Ccwb = None,
             | True or False, optional
             | True: xyz tristimulus values are relative (Yw = 100)
         :parameters:
-            | 'JOSA' or str or dict, optional
+            | None or str or dict, optional
             | Dict with model parameters.
-            |    - str: 'JOSA','best-fit-JOSA' or 'best-fit-all-Munsell'
+            |    - None: defaults to luxpy.cam._CAM_SWW_2016_PARAMETERS['JOSA']
+            |    - str: 'best-fit-JOSA' or 'best-fit-all-Munsell'
             |    - dict: user defined model parameters 
             |            (dict should have same structure)
         :inputtype:
@@ -89,8 +310,8 @@ def cam_sww16(data, dataw = None, Yb = 20.0, Lw = 400.0, Ccwb = None,
             | CMF set to use to perform calculations where spectral data 
             | is involved (inputtype == 'spd'; dataw = None)
             | Other options: see luxpy._CMF['types']
-        :match_conversionmatrix_to_cieobs:
-            | When changing to a different CIE observer, change the xyz_to_lms
+        :match_to_conversionmatrix_to_cieobs:
+            | When channging to a different CIE observer, change the xyz-to_lms
             | matrix to the one corresponding to that observer. If False: use 
             | the one set in parameters or _CAM_SWW16_PARAMETERS
     
@@ -124,42 +345,27 @@ def cam_sww16(data, dataw = None, Yb = 20.0, Lw = 400.0, Ccwb = None,
     # Get model parameters:
     #--------------------------------------------------------------------------
     args = locals().copy() 
-
-    if isinstance(parameters,str): parameters = _CAM_SWW16_PARAMETERS[parameters]
-    parameters = _update_parameter_dict(args, 
-                                        parameters = parameters,
-                                        cieobs = cieobs,
-                                        match_conversionmatrix_to_cieobs = match_conversionmatrix_to_cieobs)
+    parameters = _update_parameter_dict(args, parameters = parameters,
+                                       match_to_conversionmatrix_to_cieobs = match_to_conversionmatrix_to_cieobs)
       
     #unpack model parameters:
-    (Cc, Ccwb, Cf, 
-     Mxyz2lms, cLMS, 
-     cab_int, cab_out, 
-     calpha, cbeta,
-     cga1, cga2, cgb1, cgb2, 
-     cl_int, clambda, lms0)  = [parameters[x] for x in sorted(parameters.keys())]
+    Cc, Ccwb, Cf, Mxyz2lms, cLMS, cab_int, cab_out, calpha, cbeta,cga1, cga2, cgb1, cgb2, cl_int, clambda, lms0  = [parameters[x] for x in sorted(parameters.keys())]
 
 
     #--------------------------------------------------------------------------
-    # Setup default white point / adaptation field:   
+    # Setup default adaptation field:   
     #--------------------------------------------------------------------------
-    dataw = _setup_default_adaptation_field(dataw = dataw, 
-                                            Lw = Lw,
-                                            cie_illuminant = 'C',
-                                            inputtype = inputtype, 
-                                            relative = relative,
-                                            cieobs = cieobs)
+    dataw = _setup_default_adaptation_field(dataw = dataw, Lw = Lw,
+                                           inputtype = inputtype, relative = relative,
+                                           cieobs = cieobs)
 
     #--------------------------------------------------------------------------
     # Redimension input data to ensure most appropriate sizes 
     # for easy and efficient looping and initialize output array:
     #--------------------------------------------------------------------------
-    (data, dataw, 
-     camout, originalshape) = _massage_input_and_init_output(data, 
-                                                             dataw, 
-                                                             inputtype = inputtype, 
-                                                             direction = direction,
-                                                             n_out = 3)
+    data, dataw, camout, originalshape = _massage_input_and_init_output(data, dataw, 
+                                                                       inputtype = inputtype, 
+                                                                       direction = direction)
     
     
     #--------------------------------------------------------------------------
@@ -185,14 +391,8 @@ def cam_sww16(data, dataw = None, Yb = 20.0, Lw = 400.0, Ccwb = None,
         #-----------------------------------------------------------------------------
         # Get absolute tristimulus values for stimulus field and white point for row i:
         #-----------------------------------------------------------------------------
-        xyzt, xyzw, xyzw_abs = _get_absolute_xyz_xyzw(data, 
-                                                      dataw,
-                                                      i = i, 
-                                                      Lw = Lw, 
-                                                      direction = direction, 
-                                                      cieobs = cieobs, 
-                                                      inputtype = inputtype, 
-                                                      relative = relative)
+        xyzt, xyzw, xyzw_abs = _get_absolute_xyz_xyzw(data, dataw, i = i, Lw = Lw, direction = direction, 
+                                           cieobs = cieobs, inputtype = inputtype, relative = relative)
         
 
         #-----------------------------------------------------------------------------
@@ -360,7 +560,7 @@ def cam_sww16(data, dataw = None, Yb = 20.0, Lw = 400.0, Ccwb = None,
         
 #------------------------------------------------------------------------------
 def xyz_to_lab_cam_sww16(xyz, xyzw = None, Yb = 20.0, Lw = 400.0, Ccwb = None, relative = True,\
-                         parameters = 'JOSA', inputtype = 'xyz', cieobs = '2006_10', **kwargs):
+                         parameters = None, inputtype = 'xyz', cieobs = '2006_10', **kwargs):
     """
     Wrapper function for cam_sww16 forward mode with 'xyz' input.
     
@@ -369,7 +569,7 @@ def xyz_to_lab_cam_sww16(xyz, xyzw = None, Yb = 20.0, Lw = 400.0, Ccwb = None, r
     return cam_sww16(xyz, dataw = xyzw, Yb = Yb, Lw = Lw, relative = relative, parameters = parameters, inputtype = 'xyz', direction = 'forward', cieobs = cieobs)
                 
 def lab_cam_sww16_to_xyz(lab, xyzw = None, Yb = 20.0, Lw = 400.0, Ccwb = None, relative = True, \
-                         parameters = 'JOSA', inputtype = 'xyz', cieobs = '2006_10', **kwargs):
+                         parameters = None, inputtype = 'xyz', cieobs = '2006_10', **kwargs):
     """
     Wrapper function for cam_sww16 inverse mode with 'xyz' input.
     
@@ -493,25 +693,25 @@ if __name__ == '__main__':
 
     print('xyz in:')
     lab = cam_sww16(xyz, dataw = xyzw, Yb = Yb, Lw = Lw, Ccwb = 1, relative = True, \
-              parameters = 'JOSA', inputtype = 'xyz', direction = 'forward', \
+              parameters = None, inputtype = 'xyz', direction = 'forward', \
               cieobs = cieobs)
     print(lab)
     
     print('spd in:')
     lab2 = cam_sww16(CM, dataw = C[:2,:], Yb = Yb, Lw = Lw, Ccwb = 1, relative = True, \
-              parameters = 'JOSA', inputtype = 'spd', direction = 'forward', \
+              parameters = None, inputtype = 'spd', direction = 'forward', \
               cieobs = cieobs)
     print(lab2)
     
     print('inverse xyz in')
     xyz_ = cam_sww16(lab, dataw = xyzw, Yb = Yb, Lw = Lw, Ccwb = 1, relative = True, \
-              parameters = 'JOSA', inputtype = 'xyz', direction = 'inverse', \
+              parameters = None, inputtype = 'xyz', direction = 'inverse', \
               cieobs = cieobs)
     print(xyz_)
     
     print('inverse spd in')
     xyz_2 = cam_sww16(lab2, dataw = C[:2,:], Yb = Yb, Lw = Lw, Ccwb = 1, relative = True, \
-              parameters = 'JOSA', inputtype = 'spd', direction = 'inverse', \
+              parameters = None, inputtype = 'spd', direction = 'inverse', \
               cieobs = cieobs)
     print(xyz_2)
     

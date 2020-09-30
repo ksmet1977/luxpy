@@ -629,8 +629,8 @@ def spd_to_jab_t_r(St, cri_type = _CRI_TYPE_DEFAULT, out = 'jabt,jabr',
 
     # D. convert xyz to colorspace, cam or chromaticity co. lab (i.e. lab, ipt, Yuv, jab, wuv,..):
     # D.a. broadcast xyzw to shape of xyzi:
-    xyztw = xyztw[None] 
-    xyzrw = xyzrw[None] 
+    # xyztw = xyztw[None] 
+    # xyzrw = xyzrw[None] 
 
     cspace_pars = cspace.copy()
     cspace_pars.pop('type')

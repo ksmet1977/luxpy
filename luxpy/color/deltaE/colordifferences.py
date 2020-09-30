@@ -107,10 +107,10 @@ def _process_DEi(DEi, DEtype = 'jab', avg = None, avg_axis = 0, out = 'DEi'):
 
 
 def DE_camucs(xyzt, xyzr, DEtype = 'jab', avg = None, avg_axis = 0, out = 'DEi',
-              xyzwt = cam._CAM_02_X_DEFAULT_WHITE_POINT, xyzwr = cam._CAM_02_X_DEFAULT_WHITE_POINT, \
-              Ywt = None, conditionst = cam._CAM_02_X_DEFAULT_CONDITIONS,\
-              Ywr = None, conditionsr = cam._CAM_02_X_DEFAULT_CONDITIONS,\
-              camtype = cam._CAM_02_X_DEFAULT_TYPE, ucstype = 'ucs', mcat = None, \
+              xyzwt = cam._CAM_DEFAULT_WHITE_POINT, xyzwr = cam._CAM_DEFAULT_WHITE_POINT, \
+              Ywt = None, conditionst = cam._CAM_DEFAULT_CONDITIONS,\
+              Ywr = None, conditionsr = cam._CAM_DEFAULT_CONDITIONS,\
+              camtype = cam._CAM_DEFAULT_TYPE, ucstype = 'ucs', mcat = None, \
               outin = 'J,aM,bM', yellowbluepurplecorrect = False, **kwargs):
     
     """
@@ -140,12 +140,12 @@ def DE_camucs(xyzt, xyzr, DEtype = 'jab', avg = None, avg_axis = 0, out = 'DEi',
             | 'DEi' or str, optional
             | Requested output.
         :camtype: 
-            | luxpy.cam._CAM_02_X_DEFAULT_TYPE, optional
-            | Str specifier for CAM type to use, options: 'ciecam02' or 'cam16'.
+            | luxpy.cam._CAM_DEFAULT_TYPE, optional
+            | Str specifier for CAM type to use, options: 'ciecam02' or 'ciecam16'.
         :ucstype:
             | 'ucs' or 'lcd' or 'scd', optional
             | Str specifier for which type of color attribute compression 
-              parameters to use:
+            |  parameters to use:
             |   -'ucs': uniform color space, 
             |   -'lcd': large color differences, 
             |   -'scd': small color differences
@@ -159,16 +159,16 @@ def DE_camucs(xyzt, xyzr, DEtype = 'jab', avg = None, avg_axis = 0, out = 'DEi',
     """
     
     
-    jabt = cam.camucs_structure(xyzt, xyzw = xyzwt, Yw = Ywt, conditions = conditionst,\
-                                 camtype = camtype, ucstype = ucstype, mcat = mcat, direction = 'forward', \
-                                 outin = outin, yellowbluepurplecorrect = yellowbluepurplecorrect)
+    jabt = cam.camXucs(xyzt, xyzw = xyzwt, Yw = Ywt, conditions = conditionst,\
+                       camtype = camtype, ucstype = ucstype, mcat = mcat, forward = True, \
+                       outin = outin, yellowbluepurplecorrect = yellowbluepurplecorrect)
     
-    jabr = cam.camucs_structure(xyzr, xyzw = xyzwr, Yw = Ywr, conditions = conditionsr,\
-                                 camtype = camtype, ucstype = ucstype, mcat = mcat, direction = 'forward', \
-                                 outin = outin, yellowbluepurplecorrect = yellowbluepurplecorrect)
+    jabr = cam.camXucs(xyzr, xyzw = xyzwr, Yw = Ywr, conditions = conditionsr,\
+                       camtype = camtype, ucstype = ucstype, mcat = mcat, forward = True, \
+                       outin = outin, yellowbluepurplecorrect = yellowbluepurplecorrect)
     
     
-    KL, c1, c2 = [cam._CAM_02_X_UCS_PARAMETERS[camtype][ucstype][x] for x in sorted(cam._CAM_02_X_UCS_PARAMETERS[camtype][ucstype].keys())]
+    KL, c1, c2 = [cam._CAM_UCS_PARAMETERS[camtype][ucstype][x] for x in sorted(cam._CAM_UCS_PARAMETERS[camtype][ucstype].keys())]
 
     # Calculate color difference and take account of KL:
     DEi = ((((jabt[...,0:1]-jabr[...,0:1])/KL)**2).sum(axis = jabt[...,0:1].ndim - 1, keepdims = True),\
@@ -318,7 +318,7 @@ def DE2000(xyzt, xyzr, dtype = 'xyz', DEtype = 'jab', avg = None, avg_axis = 0, 
 
 def DE_cspace(xyzt, xyzr, dtype = 'xyz', tf = _CSPACE, DEtype = 'jab', avg = None, avg_axis = 0, out = 'DEi',
               xyzwt = None, xyzwr = None, fwtft = {}, fwtfr = {}, KLCH = None,\
-              camtype = cam._CAM_02_X_DEFAULT_TYPE, ucstype = 'ucs'):
+              camtype = cam._CAM_DEFAULT_TYPE, ucstype = 'ucs'):
     
     """
     Calculate color difference DE in specific color space.
@@ -376,8 +376,8 @@ def DE_cspace(xyzt, xyzr, dtype = 'xyz', tf = _CSPACE, DEtype = 'jab', avg = Non
             | 'DEi' or str, optional
             | Requested output.
         :camtype: 
-            | luxpy.cam._CAM_02_X_DEFAULT_TYPE, optional
-            | Str specifier for CAM type to use, options: 'ciecam02' or 'cam16'.
+            | luxpy.cam._CAM_DEFAULT_TYPE, optional
+            | Str specifier for CAM type to use, options: 'ciecam02' or 'ciecam16'.
             | Only when DEtype == 'camucs'.
         :ucstype:
             | 'ucs' or 'lcd' or 'scd', optional
@@ -415,15 +415,15 @@ def DE_cspace(xyzt, xyzr, dtype = 'xyz', tf = _CSPACE, DEtype = 'jab', avg = Non
                 fwtfr['xyzw'] = cam._CAM_DEFAULT_WHITE_POINT
             if fwtft['xyzw'] is None:
                 fwtft['xyzw'] = cam._CAM_DEFAULT_WHITE_POINT
-            jabt = cam.camucs_structure(xyzt, camtype = camtype, ucstype = ucstype, **fwtft)
-            jabr = cam.camucs_structure(xyzr, camtype = camtype, ucstype = ucstype, **fwtfr)
+            jabt = cam.camXucs(xyzt, camtype = camtype, ucstype = ucstype, **fwtft)
+            jabr = cam.camXucs(xyzr, camtype = camtype, ucstype = ucstype, **fwtfr)
 
         
         else:
             jabt = xyzt
             jabr = xyzr
             
-        KL, c1, c2 = [cam._CAM_02_X_UCS_PARAMETERS[camtype][ucstype][x] for x in sorted(cam._CAM_02_X_UCS_PARAMETERS[camtype][ucstype].keys())]
+        KL, c1, c2 = [cam._CAM_UCS_PARAMETERS[camtype][ucstype][x] for x in sorted(cam._CAM_UCS_PARAMETERS[camtype][ucstype].keys())]
 
         # Calculate color difference and take account of KL:
         DEi = ((((jabt[...,0:1]-jabr[...,0:1])/KL)**2).sum(axis = jabt[...,0:1].ndim - 1, keepdims = True),\
