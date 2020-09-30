@@ -79,7 +79,12 @@ cam/
  :py:
 	* __init__.py
 	* colorappearancemodels.py
-	* cam_02_X.py
+	* helpers.py
+	* utils.py
+	* ciecam02.py
+	* cam02ucs.py
+	* ciecam16.py
+	* cam16ucs.py
 	* cam15u
 	* sww2016.py
 	* cam18sl.py
