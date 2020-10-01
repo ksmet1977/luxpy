@@ -31,6 +31,11 @@ References
     Perceptually uniform color space for image signals including high dynamic range and wide gamut.
     Opt. Express, vol. 25, no. 13, pp. 15131–15151, Jun. 2017. 
     <https://www.opticsexpress.org/abstract.cfm?URI=oe-25-13-15131>`_
+    
+    2. `Safdar, M., Hardeberg, J., Cui, G., Kim, Y. J., and Luo, M. R. (2018).
+    A Colour Appearance Model based on Jzazbz Colour Space, 
+    26th Color and Imaging Conference (2018), Vancouver, Canada, November 12-16, 2018, pp96-101.
+    <https://doi.org/10.2352/ISSN.2169-2629.2018.26.96>`_
 
 
 Created on Wed Sep 30 21:58:11 2020
@@ -257,6 +262,17 @@ def run(data, xyzw = None, outin = 'J,aM,bM',
             | ndarray with color appearance correlates (forward mode) 
             |  or 
             | XYZ tristimulus values (inverse mode)
+     
+    References:
+        1. `Safdar, M., Cui, G., Kim,Y. J., and  Luo, M. R.(2017).
+        Perceptually uniform color space for image signals including high dynamic range and wide gamut.
+        Opt. Express, vol. 25, no. 13, pp. 15131–15151, Jun. 2017. 
+        <https://www.opticsexpress.org/abstract.cfm?URI=oe-25-13-15131>`_
+    
+        2. `Safdar, M., Hardeberg, J., Cui, G., Kim, Y. J., and Luo, M. R.(2018).
+        A Colour Appearance Model based on Jzazbz Colour Space, 
+        26th Color and Imaging Conference (2018), Vancouver, Canada, November 12-16, 2018, pp96-101.
+        <https://doi.org/10.2352/ISSN.2169-2629.2018.26.96>`_
     """
     outin = outin.split(',') if isinstance(outin,str) else outin
     
