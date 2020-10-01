@@ -727,10 +727,10 @@ def apply_vonkries2(xyz, xyzw1, xyzw2, xyzw0 = None, D = 1, mcat = None, invmcat
     rgbc = (D[0]*vk_w_ratio10 + (1 - D[0]))*rgb 
     
     #--------------------------------------------  
-    # apply 1-step von Kries cat from 0->2:
-    vk_w_ratio02 = rgbw2/rgbw0
-    if rgbc.ndim == 3: vk_w_ratio02 = vk_w_ratio02[...,None]
-    rgbc = (D[1]*vk_w_ratio02 + (1 - D[1]))*rgbc
+    # apply inverse 1-step von Kries cat from 2->0:
+    vk_w_ratio20 = rgbw0/rgbw2
+    if rgbc.ndim == 3: vk_w_ratio20 = vk_w_ratio20[...,None]
+    rgbc = ((D[1]*vk_w_ratio20 + (1 - D[1]))**(-1))*rgbc
 
     #--------------------------------------------
     # convert from cat16 sensor space to xyz:
