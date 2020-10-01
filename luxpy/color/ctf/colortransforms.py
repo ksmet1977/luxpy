@@ -49,7 +49,7 @@ Supported chromaticity / colorspace functions:
   | * xyz_to_Ydlep(), Ydlep_to_xyz(): (X,Y,Z) <-> (Y,dl, ep); 
   |                   Y, dominant wavelength (dl) and excitation purity (ep)
   | * xyz_to_srgb(), srgb_to_xyz(): (X,Y,Z) <-> sRGB; (IEC:61966 sRGB)
-  | * xyz_to_jabz(), jabz_to_xyz(): (X,Y,Z) <-> (Jz,az,bz) [Safdar et al, 2017]
+
 
 References
 ----------
@@ -63,10 +63,7 @@ References
     Chromaticity diagram showing cone excitation by stimuli of equal luminance.
     J. Opt. Soc. Am. 69, 1183–1186. 
     <https://www.osapublishing.org/josa/abstract.cfm?uri=josa-69-8-1183>`_
-    4. `Safdar, M., Cui, G., Kim,Y. J., and  Luo, M. R. (2017).
-    Perceptually uniform color space for image signals including high dynamic range and wide gamut.
-    Opt. Express, vol. 25, no. 13, pp. 15131–15151, Jun. 2017. 
-    <https://www.opticsexpress.org/abstract.cfm?URI=oe-25-13-15131>`_
+    
     
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
@@ -76,8 +73,7 @@ from luxpy.utils import np, np2d, np2dT, np3d, todim, asplit, ajoin
 
 __all__ = ['_CSPACE_AXES', '_IPT_M','xyz_to_Yxy','Yxy_to_xyz','xyz_to_Yuv','Yuv_to_xyz',
            'xyz_to_wuv','wuv_to_xyz','xyz_to_xyz','xyz_to_lms', 'lms_to_xyz','xyz_to_lab','lab_to_xyz','xyz_to_luv','luv_to_xyz',
-           'xyz_to_Vrb_mb','Vrb_mb_to_xyz','xyz_to_ipt','ipt_to_xyz','xyz_to_Ydlep','Ydlep_to_xyz','xyz_to_srgb','srgb_to_xyz',
-           'xyz_to_jabz','jabz_to_xyz']
+           'xyz_to_Vrb_mb','Vrb_mb_to_xyz','xyz_to_ipt','ipt_to_xyz','xyz_to_Ydlep','Ydlep_to_xyz','xyz_to_srgb','srgb_to_xyz']
 
 #------------------------------------------------------------------------------
 # Database with cspace-axis strings (for plotting):
@@ -1208,134 +1204,3 @@ def srgb_to_xyz(rgb, gamma = 2.4, **kwargs):
         xyz = np.einsum('ij,lj->li', M, srgb)*100
     return xyz
 
-def xyz_to_jabz(xyz, **kwargs):
-    """
-    Convert XYZ tristimulus values to Jz,az,bz color coordinates.
-
-    Args:
-        :xyz: 
-            | ndarray with absolute tristimulus values (Y in cd/m²!)
-
-    Returns:
-        :jabz: 
-            | ndarray with Jz,az,bz color coordinates
-
-    Notes:
-     | 1. :xyz: is assumed to be under D65 viewing conditions! If necessary perform chromatic adaptation!
-     |
-     | 2a. Jz represents the 'lightness' relative to a D65 white with luminance = 10000 cd/m² 
-     |      (note that Jz that not exactly equal 1 for this high value, but rather for 102900 cd/m2)
-     | 2b. az, bz represent respectively a red-green and a yellow-blue opponent axis 
-     |      (but note that a D65 shows a small offset from (0,0))
-
-    Reference:
-        1. `Safdar, M., Cui, G., Kim,Y. J., and Luo, M. R. (2017).
-        Perceptually uniform color space for image signals including high dynamic range and wide gamut.
-        Opt. Express, vol. 25, no. 13, pp. 15131–15151, June 2017. 
-        <http://www.opticsexpress.org/abstract.cfm?URI=oe-25-13-15131>`_
-    """
-    xyz = np2d(xyz)
-    
-    # Setup X,Y,Z to X',Y',Z' transform as matrix:
-    b = 1.15
-    g = 0.66
-    M_to_xyzp = np.array([[b, 0, 1 - b],[1 - g, g, 0],[0, 0, 1]])
-
-    # Define X',Y',Z' to L,M,S conversion matrix:
-    M_to_lms = np.array([[0.41478972, 0.579999, 0.0146480,],
-                  [-0.2015100, 1.120649, 0.0531008],
-                  [-0.0166008, 0.264800, 0.6684799]])
-    
-    # Premultiply M_to_xyzp and M_to_lms:
-    M =  M_to_lms @ M_to_xyzp
-    
-    # Transform X,Y,Z to L,M,S:
-    if len(xyz.shape) == 3:
-        lms = np.einsum('ij,klj->kli', M, xyz)
-    else:
-        lms = np.einsum('ij,lj->li', M, xyz)
-    
-    # response compression: lms to lms'
-    lmsp = ((3424/(2**12) + (2413/(2**7))*(lms/10000)**(2610/(2**14)))/(1 + (2392/(2**7))*((lms/10000)**(2610/(2**14)))))**(1.7*2523/(2**5))
-
-    # Transform L',M',S' to Iabz:
-    M = np.array([[0.5, 0.5, 0],
-                  [3.524000, -4.066708, 0.542708],
-                  [0.199076, 1.096799, -1.295875]])
-    if len(lms.shape) == 3:
-        Iabz = np.einsum('ij,klj->kli', M, lmsp)
-    else:
-        Iabz = np.einsum('ij,lj->li', M, lmsp)
-
-    # convert Iabz' to Jabz coordinates:
-
-    Iabz[...,0] = ((1-0.56)*Iabz[...,0]/(1-0.56*Iabz[...,0])) - 1.6295499532821566e-11
-    return Iabz
-
-def jabz_to_xyz(jabz, **kwargs):
-    """
-    Convert Jz,az,bz color coordinates to XYZ tristimulus values.
-
-    Args:
-        :jabz: 
-            | ndarray with Jz,az,bz color coordinates
-            
-    Returns:
-        :xyz: 
-            | ndarray with tristimulus values
-
-    Note:
-     | 1. :xyz: is assumed to be under D65 viewing conditions! If necessary perform chromatic adaptation!
-     |
-     | 2a. Jz represents the 'lightness' relative to a D65 white with luminance = 10000 cd/m² 
-     |      (note that Jz that not exactly equal 1 for this high value, but rather for 102900 cd/m2)
-     | 2b.  az, bz represent respectively a red-green and a yellow-blue opponent axis 
-     |      (but note that a D65 shows a small offset from (0,0))
-
-    Reference:
-        1. `Safdar, M., Cui, G., Kim,Y. J., and Luo, M. R. (2017).
-        Perceptually uniform color space for image signals including high dynamic range and wide gamut.
-        Opt. Express, vol. 25, no. 13, pp. 15131–15151, June, 2017.
-        <http://www.opticsexpress.org/abstract.cfm?URI=oe-25-13-15131>`_
-    """
-    jabz = np2d(jabz)
-    
-    # Convert Jz to Iz:
-    jabz[...,0] = (jabz[...,0] + 1.6295499532821566e-11)/(1 - 0.56*(1 - (jabz[...,0] + 1.6295499532821566e-11)))
-
-    # Convert Iabz to lmsp:
-    M = np.linalg.inv(np.array([[0.5, 0.5, 0],
-                  [3.524000, -4.066708, 0.542708],
-                  [0.199076, 1.096799, -1.295875]]))
-    
-    if len(jabz.shape) == 3:
-        lmsp = np.einsum('ij,klj->kli', M, jabz)
-    else:
-        lmsp = np.einsum('ij,lj->li', M, jabz)
-        
-    # Convert lmsp to lms:
-
-    lms = 10000*(((3424/2**12) - lmsp**(1/(1.7*2523/2**5))) / (((2392/2**7)*lmsp**(1/(1.7*2523/2**5))) - (2413/2**7)))**(1/(2610/(2**14)))
-    
-    # Convert lms to xyz:
-    # Setup X',Y',Z' from X,Y,Z transform as matrix:
-    b = 1.15
-    g = 0.66
-    M_to_xyzp = np.array([[b, 0, 1 - b],[1 - g, g, 0],[0, 0, 1]])
-    
-    # Define X',Y',Z' to L,M,S conversion matrix:
-    M_to_lms = np.array([[0.41478972, 0.579999, 0.0146480],
-                  [-0.2015100, 1.120649, 0.0531008],
-                  [-0.0166008, 0.264800, 0.6684799]])
-    
-    # Premultiply M_to_xyzp and M_to_lms and invert:
-    M = M_to_lms @ M_to_xyzp
-    M = np.linalg.inv(M)
-    
-    # Transform L,M,S to X,Y,Z:
-    if len(jabz.shape) == 3:
-        xyz = np.einsum('ij,klj->kli', M, lms)
-    else:
-        xyz = np.einsum('ij,lj->li', M, lms)
-        
-    return xyz

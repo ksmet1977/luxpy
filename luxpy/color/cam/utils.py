@@ -10,16 +10,17 @@ Module with color utility functions
  :naka_rushton(): Apply a Naka-Rushton response compression (n) and an adaptive shift (sig)
  
  :hue_quadrature(): Get hue quadrature H from hue h.
+ 
      
 Created on Wed Sep 30 15:43:49 2020
 
 @author: ksmet1977 at gmail.com
 """
 
-import numpy as np
 from luxpy import math
+from luxpy.utils import np
 
-__all__ = ['naka_rushton', 'hue_angle']
+__all__ = ['naka_rushton', 'hue_angle', 'deltaH', 'hue_quadrature']
 
 
 def hue_angle(a,b, htype = 'deg'):
@@ -182,3 +183,5 @@ def hue_quadrature(h, unique_hue_data = None):
     # if squeezed:
     #     H = np.expand_dims(H, axis=0)
     # return H
+    
+

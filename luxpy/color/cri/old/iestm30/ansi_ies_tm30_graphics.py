@@ -41,12 +41,11 @@ Module 2 for IES color rendition graphical output
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 import colorsys
-import matplotlib.pyplot as plt
 import matplotlib.patches as patches
-import numpy as np
 
-from luxpy import (_CIE_D65, math, cat, xyz_to_srgb, spd_to_power, 
+from luxpy import (math, cat, _CIE_D65, xyz_to_srgb, spd_to_power, 
                    spd_normalize, spd_to_xyz, xyz_to_Yxy, xyz_to_Yuv)
+from luxpy.utils import np, plt
 from luxpy.color.cri.utils.helpers import spd_to_cri
 from luxpy.color.cri.utils.graphics import plot_ColorVectorGraphic
 

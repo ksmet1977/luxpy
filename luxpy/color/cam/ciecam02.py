@@ -15,7 +15,7 @@ CIECAM02 color appearance model
 
  :_DEFAULT_CONDITIONS: Default CAM model parameters 
 
- :_X_AXES: dict with list[str,str,str] containing axis labels of defined cspaces.
+ :_AXES: dict with list[str,str,str] containing axis labels of defined cspaces.
 
  :run(): Run the CIECAM02 color appearance model in forward or backward modes.
  
@@ -31,10 +31,10 @@ Created on Wed Sep 30 14:17:02 2020
 @author: ksmet1977 at gmail.com
 """
 
-import numpy as np
+
 
 from luxpy import math
-from luxpy.utils import asplit, ajoin
+from luxpy.utils import np, asplit, ajoin
 from luxpy import cat
 from luxpy.color.cam.utils import hue_angle, hue_quadrature, naka_rushton
 
@@ -343,105 +343,109 @@ def run(data, xyzw = _DEFAULT_WHITE_POINT, Yw = None, outin = 'J,aM,bM',
     elif forward == False:
 
                        
-            #--------------------------------------------
-            # Get Lightness J from data:
-            if ('J' in outin):
-                J = data[...,0].copy()
-            elif ('Q' in outin):
-                Q = data[...,0].copy()
-                J = 100.0*(Q / ((Aw + 4.0)*(FL**0.25)*(4.0/c)))**2.0
-            else:
-                raise Exception('No lightness or brightness values in data. Inverse CAM-transform not possible!')
-                
-                
-            #--------------------------------------------
+        #--------------------------------------------
+        # Get Lightness J from data:
+        if ('J' in outin[0]):
+            J = data[...,0].copy()
+        elif ('Q' in outin[0]):
+            Q = data[...,0].copy()
+            J = 100.0*(Q / ((Aw + 4.0)*(FL**0.25)*(4.0/c)))**2.0
+        else:
+            raise Exception('No lightness or brightness values in data. Inverse CAM-transform not possible!')
+            
+            
+        #--------------------------------------------    
+        if 'a' in outin[1]: 
             # calculate hue h:
             h = hue_angle(data[...,1],data[...,2], htype = 'deg')
-            
+        
             #--------------------------------------------
             # calculate Colorfulness M or Chroma C or Saturation s from a,b:
-            MCs = (data[...,1]**2.0 + data[...,2]**2.0)**0.5    
+            MCs = (data[...,1]**2.0 + data[...,2]**2.0)**0.5   
+        else:
+            h = data[...,2]
+            MCs = data[...,1]  
+        
+        
+        if ('S' in outin[1]):
+            Q = (4.0/c)* ((J/100.0)**0.5) * (Aw + 4.0)*(FL**0.25)
+            M = Q*(MCs/100.0)**2.0 
+            C = M/(FL**0.25)
+         
+        if ('M' in outin[1]): # convert M to C:
+            C = MCs/(FL**0.25)
+        
+        if ('C' in outin[1]):
+            C = MCs
             
-            
-            if ('aS' in outin):
-                Q = (4.0/c)* ((J/100.0)**0.5) * (Aw + 4.0)*(FL**0.25)
-                M = Q*(MCs/100.0)**2.0 
-                C = M/(FL**0.25)
-             
-            if ('aM' in outin): # convert M to C:
-                C = MCs/(FL**0.25)
-            
-            if ('aC' in outin):
-                C = MCs
-                
-            #--------------------------------------------
-            # calculate t from J, C:
-            t = (C / ((J/100.0)**(1.0/2.0) * (1.64 - 0.29**n)**0.73))**(1.0/0.9)
+        #--------------------------------------------
+        # calculate t from J, C:
+        t = (C / ((J/100.0)**(1.0/2.0) * (1.64 - 0.29**n)**0.73))**(1.0/0.9)
 
-            #--------------------------------------------
-            # calculate eccentricity factor, et:
-            et = (np.cos(h*np.pi/180.0 + 2.0) + 3.8) / 4.0
-            
-            #--------------------------------------------
-            # calculate achromatic signal, A:
-            A = Aw*(J/100.0)**(1.0/(c*z))
+        #--------------------------------------------
+        # calculate eccentricity factor, et:
+        et = (np.cos(h*np.pi/180.0 + 2.0) + 3.8) / 4.0
+        
+        #--------------------------------------------
+        # calculate achromatic signal, A:
+        A = Aw*(J/100.0)**(1.0/(c*z))
 
-            #--------------------------------------------
-            # calculate temporary cart. co. at, bt and p1,p2,p3,p4,p5:
-            at = np.cos(h*np.pi/180.0)
-            bt = np.sin(h*np.pi/180.0)
-            p1 = (50000.0/13.0)*Nc*Ncb*et/t
-            p2 = A/Nbb + 0.305
-            p3 = 21.0/20.0
-            p4 = p1/bt
-            p5 = p1/at
+        #--------------------------------------------
+        # calculate temporary cart. co. at, bt and p1,p2,p3,p4,p5:
+        at = np.cos(h*np.pi/180.0)
+        bt = np.sin(h*np.pi/180.0)
+        p1 = (50000.0/13.0)*Nc*Ncb*et/t
+        p2 = A/Nbb + 0.305
+        p3 = 21.0/20.0
+        p4 = p1/bt
+        p5 = p1/at
 
-            #--------------------------------------------
-            #q = np.where(np.abs(bt) < np.abs(at))[0]
-            q = (np.abs(bt) < np.abs(at))
+        #--------------------------------------------
+        #q = np.where(np.abs(bt) < np.abs(at))[0]
+        q = (np.abs(bt) < np.abs(at))
 
-            b = p2*(2.0 + p3) * (460.0/1403.0) / (p4 + (2.0 + p3) * (220.0/1403.0) * (at/bt) - (27.0/1403.0) + p3*(6300.0/1403.0))
-            a = b * (at/bt)
-            
-            a[q] = p2[q]*(2.0 + p3) * (460.0/1403.0) / (p5[q] + (2.0 + p3) * (220.0/1403.0) - ((27.0/1403.0) - p3*(6300.0/1403.0)) * (bt[q]/at[q]))
-            b[q] = a[q] * (bt[q]/at[q])
-            
-            #--------------------------------------------
-            # calculate post-adaptation values
-            rpa = (460.0*p2 + 451.0*a + 288.0*b) / 1403.0
-            gpa = (460.0*p2 - 891.0*a - 261.0*b) / 1403.0
-            bpa = (460.0*p2 - 220.0*a - 6300.0*b) / 1403.0
-            
-            #--------------------------------------------
-            # join values:
-            rgbpa = ajoin((rpa,gpa,bpa))
+        b = p2*(2.0 + p3) * (460.0/1403.0) / (p4 + (2.0 + p3) * (220.0/1403.0) * (at/bt) - (27.0/1403.0) + p3*(6300.0/1403.0))
+        a = b * (at/bt)
+        
+        a[q] = p2[q]*(2.0 + p3) * (460.0/1403.0) / (p5[q] + (2.0 + p3) * (220.0/1403.0) - ((27.0/1403.0) - p3*(6300.0/1403.0)) * (bt[q]/at[q]))
+        b[q] = a[q] * (bt[q]/at[q])
+        
+        #--------------------------------------------
+        # calculate post-adaptation values
+        rpa = (460.0*p2 + 451.0*a + 288.0*b) / 1403.0
+        gpa = (460.0*p2 - 891.0*a - 261.0*b) / 1403.0
+        bpa = (460.0*p2 - 220.0*a - 6300.0*b) / 1403.0
+        
+        #--------------------------------------------
+        # join values:
+        rgbpa = ajoin((rpa,gpa,bpa))
 
-            #--------------------------------------------
-            # decompress signals:
-            rgbp = (100.0/FL)*NK(rgbpa, forward)
+        #--------------------------------------------
+        # decompress signals:
+        rgbp = (100.0/FL)*NK(rgbpa, forward)
 
-            # apply yellow-blue correction:
-            if (yellowbluepurplecorrect == 'brill-suss'): # Brill & Susstrunck approach, for purple line problem
-                p = np.where(rgbp<0.0)
-                rgbp[p]=0.0
+        # apply yellow-blue correction:
+        if (yellowbluepurplecorrect == 'brill-suss'): # Brill & Susstrunck approach, for purple line problem
+            p = np.where(rgbp<0.0)
+            rgbp[p]=0.0
 
-            #--------------------------------------------
-            # convert from to cone sensors (hpe) cat02 sensor space:
-            rgbc = math.dot23(mcat_x_invmhpe,rgbp.T)
-                            
-            #--------------------------------------------
-            # apply inverse von Kries cat:
-            rgb = rgbc / ((D*Yw/rgbw)[...,None] + (1.0 - D))
-            
-            #--------------------------------------------
-            # transform from cat sensor space to xyz:
-            xyz = math.dot23(invmcat,rgb)
-            
-            #--------------------------------------------
-            # unnormalize xyz:
-            xyz = ((yw/Yw)[...,None]*xyz).T 
-            
-            return xyz
+        #--------------------------------------------
+        # convert from to cone sensors (hpe) cat02 sensor space:
+        rgbc = math.dot23(mcat_x_invmhpe,rgbp.T)
+                        
+        #--------------------------------------------
+        # apply inverse von Kries cat:
+        rgb = rgbc / ((D*Yw/rgbw)[...,None] + (1.0 - D))
+        
+        #--------------------------------------------
+        # transform from cat sensor space to xyz:
+        xyz = math.dot23(invmcat,rgb)
+        
+        #--------------------------------------------
+        # unnormalize xyz:
+        xyz = ((yw/Yw)[...,None]*xyz).T 
+        
+        return xyz
   
 #------------------------------------------------------------------------------
 # wrapper functions for use with colortf():
@@ -502,7 +506,7 @@ if __name__ == '__main__':
     _cam = run
     
     import luxpy as lx
-    import numpy as np
+    from luxpy.utils import np, plt
     
     # Prepare some illuminant data:
     C = lx._CIE_ILLUMINANTS['C'].copy()

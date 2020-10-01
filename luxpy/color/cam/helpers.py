@@ -564,7 +564,7 @@ if __name__ == '__main__':
     #--------------------------------------------------------------------------
     
     import luxpy as lx
-    import numpy as np
+    from luxpy.utils import np, plt
     
     # Prepare some illuminant data:
     C = _CIE_ILLUMINANTS['C'].copy()

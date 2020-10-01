@@ -19,6 +19,8 @@
 cam: sub-package with color appearance models
 =============================================
 
+ : _AVAILABLE_MODELS: List with available color appearance models.
+
  :_UNIQUE_HUE_DATA: | database of unique hues with corresponding 
                     | Hue quadratures and eccentricity factors 
                     | for ciecam02, ciecam16, ciecam97s, cam15u, cam18sl)
@@ -114,6 +116,9 @@ cam: sub-package with color appearance models
       | 'xyz_to_jabC_ciecam02', 'jabC_ciecam02_to_xyz',
       | 'xyz_to_jabM_ciecam16', 'jabM_ciecam16_to_xyz',
       | 'xyz_to_jabC_ciecam16', 'jabC_ciecam16_to_xyz',
+      | 'xyz_to_jabz',          'jabz_to_xyz',
+      | 'xyz_to_jabM_camjabz', 'jabM_camjabz_to_xyz', 
+      | 'xyz_to_jabC_camjabz', 'jabC_camjabz_to_xyz']
       | 'xyz_to_jab_cam02ucs', 'jab_cam02ucs_to_xyz', 
       | 'xyz_to_jab_cam02lcd', 'jab_cam02lcd_to_xyz',
       | 'xyz_to_jab_cam02scd', 'jab_cam02scd_to_xyz', 
@@ -142,10 +147,17 @@ cam: sub-package with color appearance models
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 #------------------------------------------------------------------------------
+# List available CAMs:
+_AVAILABLE_MODELS = ['ciecam02','cam02ucs','ciecam16','cam16ucs',
+                     'camjabz','cam15u','cam18sl','cam_sww16']
+
+__all__ = ['_AVAILABLE_MODELS']
+
+#------------------------------------------------------------------------------
 # Utility imports:
 from .utils import hue_angle, naka_rushton, deltaH, hue_quadrature
 
-__all__ = ['hue_angle', 'naka_rushton', 'deltaH', 'hue_quadrature']
+__all__ += ['hue_angle', 'naka_rushton', 'deltaH', 'hue_quadrature']
 
 #------------------------------------------------------------------------------
 # Helper functions imports:
@@ -251,6 +263,29 @@ __all__ += ['xyz_to_jab_cam16ucs', 'jab_cam16ucs_to_xyz',
             'xyz_to_jab_cam16scd', 'jab_cam16scd_to_xyz']  
 
 
+
+#------------------------------------------------------------------------------
+# camjabz imports:
+# import camjabz as _camjabz
+from .camjabz import run as camjabz
+from .camjabz import _AXES as _CAMJABZ_AXES
+from .camjabz import _UNIQUE_HUE_DATA as _CAMJABZ_UNIQUE_HUE_DATA
+from .camjabz import _SURROUND_PARAMETERS as _CAMJABZ_SURROUND_PARAMETERS
+from .camjabz import _DEFAULT_WHITE_POINT as _CAMJABZ_DEFAULT_WHITE_POINT
+from .camjabz import _DEFAULT_CONDITIONS as _CAMJABZ_DEFAULT_CONDITIONS
+from .camjabz import (xyz_to_jabz, jabz_to_xyz,
+                      xyz_to_jabM_camjabz, jabM_camjabz_to_xyz, 
+                      xyz_to_jabC_camjabz, jabC_camjabz_to_xyz)
+
+__all__ += ['camjabz'] 
+
+
+__all__ += ['xyz_to_jabz', 'jabz_to_xyz',
+            'xyz_to_jabM_camjabz', 'jabM_camjabz_to_xyz', 
+            'xyz_to_jabC_camjabz', 'jabC_camjabz_to_xyz']
+
+
+
 #------------------------------------------------------------------------------
 # cam15 imports:
 from .cam15u import  (cam15u, _CAM15U_AXES, _CAM15U_UNIQUE_HUE_DATA, _CAM15U_PARAMETERS,
@@ -294,6 +329,9 @@ __all__ += ['_CAM15U_PARAMETERS','_CAM_SWW16_PARAMETERS','_CAM18SL_PARAMETERS']
 _CAM_AXES = {}
 _CAM_AXES.update(_CIECAM02_AXES)
 _CAM_AXES.update(_CAM02UCS_AXES)
+_CAM_AXES.update(_CIECAM16_AXES)
+_CAM_AXES.update(_CAM16UCS_AXES)
+_CAM_AXES.update(_CAMJABZ_AXES)
 _CAM_AXES['qabW_cam15u'] = _CAM15U_AXES 
 _CAM_AXES['lab_cam_sww16'] = _CAM_SWW16_AXES
 _CAM_AXES['qabW_cam18sl'] = _CAM18SL_AXES 
@@ -302,11 +340,13 @@ __all__ += ['_CAM_AXES']
 
 # --- unique hue data ---
 _UNIQUE_HUE_DATA = {'models' : ['ciecam02', 'cam02ucs', 
-                                'ciecam16', 'cam16ucs'],
-                    'ciecam02' : _CIECAM02_NAKA_RUSHTON_PARAMETERS,
-                    'cam02ucs' : _CIECAM02_NAKA_RUSHTON_PARAMETERS,
-                    'ciecam16' : _CIECAM16_NAKA_RUSHTON_PARAMETERS,
-                    'cam16ucs' : _CIECAM16_NAKA_RUSHTON_PARAMETERS,
+                                'ciecam16', 'cam16ucs',
+                                'camjabz'],
+                    'ciecam02' : _CIECAM02_UNIQUE_HUE_DATA,
+                    'cam02ucs' : _CIECAM02_UNIQUE_HUE_DATA,
+                    'ciecam16' : _CIECAM16_UNIQUE_HUE_DATA,
+                    'cam16ucs' : _CIECAM16_UNIQUE_HUE_DATA,
+                    'camjabz' : _CAMJABZ_UNIQUE_HUE_DATA,
                     }
 _UNIQUE_HUE_DATA['cam15u'] = _CAM15U_UNIQUE_HUE_DATA
 _UNIQUE_HUE_DATA['models'].append('cam15u')
@@ -319,7 +359,8 @@ __all__ += ['_UNIQUE_HUE_DATA']
 _SURROUND_PARAMETERS = {'ciecam02' : _CIECAM02_SURROUND_PARAMETERS,
                         'cam02ucs' : _CIECAM02_SURROUND_PARAMETERS,
                         'ciecam16' : _CIECAM16_SURROUND_PARAMETERS,
-                        'cam16ucs' : _CIECAM16_SURROUND_PARAMETERS
+                        'cam16ucs' : _CIECAM16_SURROUND_PARAMETERS,
+                        'camjabz'  : _CAMJABZ_SURROUND_PARAMETERS
                         }
 _SURROUND_PARAMETERS['cam15u'] = _CAM15U_SURROUND_PARAMETERS
 _SURROUND_PARAMETERS['cam_sww16'] = {} 
@@ -390,6 +431,9 @@ def camXucs(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = None, outin = 'J,aM,bM',
     
     elif ((camtype == 'cam16ucs') | (camtype == 'ciecam16')) & (ucstype is not None):
         return cam16ucs(data, xyzw = xyzw, Yw = Yw, ucstype = ucstype, 
+                        conditions = conditions, forward = forward, mcat = mcat)
+    elif ((camtype == 'camjabz')):
+        return camjabz(data, xyzw = xyzw, Yw = Yw, outin = outin,  
                         conditions = conditions, forward = forward, mcat = mcat)
 
 __all__ +=['camXucs'] 

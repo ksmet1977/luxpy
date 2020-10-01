@@ -4,9 +4,9 @@ Created on Tue Sep 29 14:11:05 2020
 
 @author: u0032318
 """
-import numpy as np
 
-from luxpy import cam
+
+from luxpy import np, cam
 from luxpy.color.cri.utils.helpers import gamut_slicer
 from luxpy.color.cri.iestm30.ies_tm30_metrics import spd_to_ies_tm30_metrics as s
 from luxpy.color.cri2.utils.helpers import _get_hue_bin_data

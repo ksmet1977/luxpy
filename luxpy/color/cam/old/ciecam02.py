@@ -10,9 +10,8 @@ Created on Wed Sep 30 14:17:02 2020
 @author: u0032318
 """
 
-import numpy as np
 
-from luxpy import math
+from luxpy import math, np
 from luxpy.utils import asplit, ajoin
 from luxpy.color.cam.utils import hue_angle, hue_quadrature, naka_rushton
 
@@ -333,7 +332,7 @@ if __name__ == '__main__':
     _cam = run
     
     import luxpy as lx
-    import numpy as np
+    from luxpy import np
     
     # Prepare some illuminant data:
     C = lx._CIE_ILLUMINANTS['C'].copy()

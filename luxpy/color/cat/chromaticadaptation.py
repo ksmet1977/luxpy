@@ -66,6 +66,10 @@ cat: Module supporting chromatic adaptation transforms (corresponding colors)
            adaptation transform (CAT), i.e. independent rescaling of 
            'sensor sensitivity' to data to adapt from current adaptation 
            conditions (1) to the new conditions (2). 
+           
+ :apply_vonkries1(): Apply a 1-step von kries chromatic adaptation transform.
+ 
+ :apply_vonkries2(): Apply a 2-step von kries chromatic adaptation transform.
 
 ===============================================================================
 """
@@ -75,7 +79,8 @@ from luxpy.utils import np, np2d, asplit, ajoin, _EPS
 
 __all__ = ['_WHITE_POINT','_LA', '_MCATS',
            'check_dimensions','get_transfer_function','get_degree_of_adaptation',
-           'smet2017_D','parse_x1x2_parameters','apply']
+           'smet2017_D','parse_x1x2_parameters','apply',
+           'apply_vonkries1','apply_vonkries2']
 
 _WHITE_POINT = np2d([100,100,100]) #default adopted white point
 _LA = 100.0 #cd/mÂ²
@@ -571,3 +576,165 @@ def apply(data, catmode = '1>0>2', cattype = 'vonkries', xyzw1 = None, xyzw2 = N
             xyzc = xyzc[0]
    
         return xyzc
+    
+def apply_vonkries1(xyz, xyzw1, xyzw2, D = 1, mcat = None, invmcat = None, in_ = 'xyz', out_ = 'xyz'):
+    """ 
+    Apply a 1-step von kries chromatic adaptation transform.
+    
+    Args:
+        :xyz:
+            | ndarray with sample tristimulus or cat-sensor values
+        :xyzw1:
+            | ndarray with white point tristimulus or cat-sensor values of illuminant 1
+        :xyzw2:
+            | ndarray with white point tristimulus or cat-sensor values of illuminant 2
+        :D:
+            | 1, optional
+            | Degree of chromatic adaptation
+        :mcat:
+            | None, optional
+            | Specifies CAT sensor space.
+            | - options:
+            |    - None defaults to 'cat16'
+            |    - str: see see luxpy.cat._MCATS.keys() for options 
+            |         (details on type, ?luxpy.cat)
+            |    - ndarray: matrix with sensor primaries
+        :invmcat:
+            | None,optional
+            | Pre-calculated inverse mcat.
+            | If None: calculate inverse of mcat.
+        :in_:
+            | 'xyz', optional
+            | Input type ('xyz', 'rgb') of data in xyz, xyzw1, xyzw2
+        :out_:
+            | 'xyz', optional
+            | Output type ('xyz', 'rgb') of corresponding colors
+
+    Returns:
+        :xyzc:
+            | ndarray with corresponding colors.
+    """
+    # Define cone/chromatic adaptation sensor space: 
+    if (in_ == 'xyz') | (out_ == 'xyz'):
+        if not isinstance(mcat,np.ndarray):
+            if (mcat is None) or (mcat == 'cat16'):
+                mcat = _MCATS['cat16']
+            elif isinstance(mcat,str):
+                mcat = _MCATS[mcat]
+    if invmcat is None:
+        invmcat = np.linalg.inv(mcat)
+    
+    #--------------------------------------------
+    # transform from xyz to cat sensor space:
+    if in_ == 'xyz':
+        rgb = math.dot23(mcat, xyz.T)
+        rgbw1 = math.dot23(mcat, xyzw1.T)
+        rgbw2 = math.dot23(mcat, xyzw2.T)
+    else:
+        rgb = xyz
+        rgbw1 = xyzw1
+        rgbw2 = xyzw2
+        
+    
+    #--------------------------------------------  
+    # apply 1-step von Kries cat:
+    vk_w_ratio = rgbw2/rgbw1
+    if rgb.ndim == 3: vk_w_ratio = vk_w_ratio[...,None]
+    rgbc = (D*vk_w_ratio + (1 - D))*rgb 
+
+    #--------------------------------------------
+    # convert from cat16 sensor space to xyz:
+    if out_ == 'xyz':
+        return math.dot23(invmcat, rgbc).T
+    else: 
+        return rgbc.T
+
+def apply_vonkries2(xyz, xyzw1, xyzw2, xyzw0 = None, D = 1, mcat = None, invmcat = None, in_ = 'xyz', out_ = 'xyz'):
+    """ 
+    Apply a 2-step von kries chromatic adaptation transform.
+    
+    Args:
+        :xyz:
+            | ndarray with sample tristimulus or cat-sensor values
+        :xyzw1:
+            | ndarray with white point tristimulus or cat-sensor values of illuminant 1
+        :xyzw2:
+            | ndarray with white point tristimulus or cat-sensor values of illuminant 2
+        :xyzw0:
+            | None, optional
+            | ndarray with white point tristimulus or cat-sensor values of baseline illuminant 0
+            | None: defaults to EEW.
+        :D:
+            | [1,1], optional
+            | Degree of chromatic adaptations (Ill.1-->Ill.0, Ill.2.-->Ill.0)
+        :mcat:
+            | None, optional
+            | Specifies CAT sensor space.
+            | - options:
+            |    - None defaults to 'cat16'
+            |    - str: see see luxpy.cat._MCATS.keys() for options 
+            |         (details on type, ?luxpy.cat)
+            |    - ndarray: matrix with sensor primaries
+        :invmcat:
+            | None,optional
+            | Pre-calculated inverse mcat.
+            | If None: calculate inverse of mcat.
+        :in_:
+            | 'xyz', optional
+            | Input type ('xyz', 'rgb') of data in xyz, xyzw1, xyzw2
+        :out_:
+            | 'xyz', optional
+            | Output type ('xyz', 'rgb') of corresponding colors
+
+    Returns:
+        :xyzc:
+            | ndarray with corresponding colors.
+    """
+    # Define cone/chromatic adaptation sensor space: 
+    if (in_ == 'xyz') | (out_ == 'xyz'):
+        if not isinstance(mcat,np.ndarray):
+            if (mcat is None) or (mcat == 'cat16'):
+                mcat = _MCATS['cat16']
+            elif isinstance(mcat,str):
+                mcat = _MCATS[mcat]
+    if invmcat is None:
+        invmcat = np.linalg.inv(mcat)
+    
+    D = D*np.ones((2,))  # ensure there are two D's available!  
+        
+    #--------------------------------------------
+    # Define default baseline illuminant:
+    if xyzw0 is None:
+        xyzw0 = np.array([[100.,100.,100.]])
+    
+    #--------------------------------------------
+    # transform from xyz to cat sensor space:
+    if in_ == 'xyz':
+        rgb = math.dot23(mcat, xyz.T)
+        rgbw1 = math.dot23(mcat, xyzw1.T)
+        rgbw2 = math.dot23(mcat, xyzw2.T)
+        rgbw0 = math.dot23(mcat, xyzw0.T)
+    else:
+        rgb = xyz
+        rgbw1 = xyzw1
+        rgbw2 = xyzw2
+        rgbw0 = xyzw0
+        
+    #--------------------------------------------  
+    # apply 1-step von Kries cat from 1->0:
+    vk_w_ratio10 = rgbw0/rgbw1
+    if rgb.ndim == 3: vk_w_ratio10 = vk_w_ratio10[...,None]
+    rgbc = (D[0]*vk_w_ratio10 + (1 - D[0]))*rgb 
+    
+    #--------------------------------------------  
+    # apply 1-step von Kries cat from 0->2:
+    vk_w_ratio02 = rgbw2/rgbw0
+    if rgbc.ndim == 3: vk_w_ratio02 = vk_w_ratio02[...,None]
+    rgbc = (D[1]*vk_w_ratio02 + (1 - D[1]))*rgbc
+
+    #--------------------------------------------
+    # convert from cat16 sensor space to xyz:
+    if out_ == 'xyz':
+        return math.dot23(invmcat, rgbc).T
+    else: 
+        return rgbc.T

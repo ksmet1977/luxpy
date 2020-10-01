@@ -16,12 +16,10 @@ Created on Mon Sep 28 16:34:14 2020
 
 
 import copy
-import numpy as np
-import matplotlib.pyplot as plt
 
 from luxpy import (math, spd_to_xyz, xyz_to_cct, getwld, getwlr, _CMF, blackbody, daylightphase, 
                    _CRI_RFL, _CRI_REF_TYPES, _CRI_REF_TYPE,_CIEOBS, xyzbar, cie_interp)
-
+from luxpy.utils import np, plt
 from luxpy.color.cri.utils.DE_scalers import log_scale
 from luxpy.color.cri.utils.helpers import _get_hue_bin_data 
 

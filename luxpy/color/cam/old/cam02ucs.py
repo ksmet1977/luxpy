@@ -9,9 +9,8 @@ Created on Wed Sep 30 14:35:05 2020
 
 @author: ksmet1977 at gmail.com
 """
-from luxpy.utils import asplit, ajoin
+from luxpy.utils import np, asplit, ajoin
 from luxpy.color.cam.ciecam02 import run as ciecam02
-import numpy as np
 
 def run(data, xyzw, conditions = None, ucs_type = 'ucs', forward = True):
     """ 
@@ -102,7 +101,7 @@ if __name__ == '__main__':
     _cam = run
     
     import luxpy as lx
-    import numpy as np
+    from luxpy.utils import np, plt
     
     # Prepare some illuminant data:
     C = lx._CIE_ILLUMINANTS['C'].copy()
