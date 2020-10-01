@@ -46,7 +46,7 @@ __all__ += ['xyz_to_jabM_ciecam16', 'jabM_ciecam16_to_xyz',
             'xyz_to_jabC_ciecam16', 'jabC_ciecam16_to_xyz']
 
 _UNIQUE_HUE_DATA = {'hues': 'red yellow green blue red'.split(), 
-                    'i': np.arange(5.0), 
+                    'i': [0,1,2,3,4], 
                     'hi':[20.14, 90.0, 164.25,237.53,380.14],
                     'ei':[0.8,0.7,1.0,1.2,0.8],
                     'Hi':[0.0,100.0,200.0,300.0,400.0]}
@@ -265,7 +265,7 @@ def run(data, xyzw = _DEFAULT_WHITE_POINT, Yw = None, outin = 'J,aM,bM',
         #-------------------------------------------- 
         # calculate Hue quadrature (if requested in 'out'):
         if 'H' in outin:    
-            H = hue_quadrature(h, unique_hue_data = 'ciecam16')
+            H = hue_quadrature(h, unique_hue_data = _UNIQUE_HUE_DATA)
         else:
             H = None
         

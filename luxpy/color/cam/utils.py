@@ -142,40 +142,43 @@ def hue_quadrature(h, unique_hue_data = None):
         :H: 
             | ndarray of Hue quadrature value(s).
     """
+    
     if unique_hue_data is None:
         unique_hue_data = {'hues': 'red yellow green blue red'.split(), 
-                           'i': np.arange(5.0), 
+                           'i': [0,1,2,3,4], 
                            'hi':[20.14, 90.0, 164.25,237.53,380.14],
                            'ei':[0.8,0.7,1.0,1.2,0.8],
                            'Hi':[0.0,100.0,200.0,300.0,400.0]}
     
-    changed_number_to_array = False
-    if isinstance(h,float) | isinstance(h,int):
-       h = np.atleast_1d(h)
-       changed_number_to_array = True
-    
-    squeezed = False
-    if h.ndim > 1:
-        if (h.shape[0] == 1):
-            h = np.squeeze(h, axis = 0)
-            squeezed = True
+    ndim = np.array(h).ndim
 
     hi = unique_hue_data['hi']
     Hi = unique_hue_data['Hi']
     ei = unique_hue_data['ei']
+    
+    h = np.atleast_2d(h)
     h[h<hi[0]] += 360.0
-    h_tmp = np.atleast_2d(h)
-    if h_tmp.shape[0] == 1:
-        h_tmp = h_tmp.T
-    h_hi = np.repeat(h_tmp, repeats = len(hi),axis = 1)
-    hi_h = np.repeat(np.atleast_2d(hi),repeats = h.shape[0], axis = 0)
-    d = (h_hi - hi_h)
-    d[d<0] = 1000.0
-    p = d.argmin(axis = 1)
-    p[p == (len(hi)-1)] = 0 # make sure last unique hue data is not selected
-    H = np.array([Hi[pi] + (100.0*(h[i]-hi[pi])/ei[pi])/((h[i]-hi[pi])/ei[pi] + (hi[pi+1] - h[i])/ei[pi+1]) for (i,pi) in enumerate(p)])
-    if changed_number_to_array:
-        H = H[0]
-    if squeezed:
-        H = np.expand_dims(H, axis=0)
-    return H
+    if h.shape[0] == 1:
+        h = h.T
+
+    H = np.zeros_like(h)
+    for j in range(h.shape[1]):
+        h_j = h[...,j:j+1]
+        h_hi = np.repeat(h_j, repeats = len(hi), axis = 1)
+        hi_h = np.repeat(np.atleast_2d(hi),repeats = h.shape[0], axis = 0)
+        d = (h_hi - hi_h)
+        d[d<0] = 1000.0
+        p = d.argmin(axis = 1)
+        p[p == (len(hi)-1)] = 0 # make sure last unique hue data is not selected
+        H_j = np.array([Hi[pi] + (100.0*(h_j[i]-hi[pi])/ei[pi])/((h_j[i]-hi[pi])/ei[pi] + (hi[pi+1] - h_j[i])/ei[pi+1]) for (i,pi) in enumerate(p)])
+        H[...,j:j+1] = H_j
+
+    if ndim == 0:
+        return H[0][0]
+    elif ndim == 1:
+        return H[:,0]
+    else:
+        return H
+    # if squeezed:
+    #     H = np.expand_dims(H, axis=0)
+    # return H
