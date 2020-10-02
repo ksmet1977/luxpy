@@ -74,16 +74,21 @@ cat: Module supporting chromatic adaptation transforms (corresponding colors)
  :apply_vonkries2(): Apply a 2-step von kries chromatic adaptation transform.
 
  :apply_vonkries(): Apply a 1-step or 2-step von kries chromatic adaptation transform.
+
+ :apply_ciecat94(): | Calculate corresponding color tristimulus values using the CIECAT94 chromatic adaptation transform.
+                    | "CIE160-2004. (2004). A review of chromatic adaptation transforms (Vols. CIE160-200). CIE.
+
 ===============================================================================
 """
        
-from luxpy import _CMF, math, xyz_to_Vrb_mb
+from luxpy import _CMF, math, xyz_to_Vrb_mb, xyz_to_Yxy, xyz_to_lab
 from luxpy.utils import np, np2d, asplit, ajoin, _EPS
 
 __all__ = ['_WHITE_POINT','_LA', '_MCATS',
            'check_dimensions','get_transfer_function','get_degree_of_adaptation',
            'smet2017_D','parse_x1x2_parameters','apply',
-           'apply_vonkries1','apply_vonkries2','apply_vonkries']
+           'apply_vonkries1','apply_vonkries2','apply_vonkries',
+           'apply_ciecat94']
 
 _WHITE_POINT = np2d([100,100,100]) #default adopted white point
 _LA = 100.0 #cd/mÂ²
@@ -646,8 +651,8 @@ def apply_vonkries1(xyz, xyzw1, xyzw2, D = 1, mcat = None, invmcat = None, in_ =
                 mcat = _MCATS[_MCAT_DEFAULT]
             elif isinstance(mcat,str):
                 mcat = _MCATS[mcat]
-    if invmcat is None:
-        invmcat = np.linalg.inv(mcat)
+        if invmcat is None:
+            invmcat = np.linalg.inv(mcat)
     
     #--------------------------------------------
     # transform from xyz to cat sensor space:
@@ -728,8 +733,8 @@ def apply_vonkries2(xyz, xyzw1, xyzw2, xyzw0 = None, D = 1, mcat = None, invmcat
                 mcat = _MCATS[_MCAT_DEFAULT]
             elif isinstance(mcat,str):
                 mcat = _MCATS[mcat]
-    if invmcat is None:
-        invmcat = np.linalg.inv(mcat)
+        if invmcat is None:
+            invmcat = np.linalg.inv(mcat)
     
     D = D*np.ones((2,))  # ensure there are two D's available!  
         
@@ -853,4 +858,133 @@ def apply_vonkries(xyz, xyzw1, xyzw2, xyzw0 = None, D = 1, n_step = 2, catmode =
     else:
         raise Exception('cat.apply(n_step = {:1.0f}, catmode = {:s}): Unknown requested n-step CAT mode !'.format(n_step, catmode))
 
+def apply_ciecat94(xyz, xyzw, xyzwr = None, 
+                   E = 1000, Er = 1000, 
+                   Yb = 20, D = 1, cat94_old = True):
+    """ 
+    Calculate corresponding color tristimulus values using the CIECAT94 chromatic adaptation transform.
+    
+    Args:
+        :xyz:
+            | ndarray with sample 1931 2° XYZ tristimulus values under the test illuminant
+        :xyzw:
+            | ndarray with white point tristimulus values of the test illuminant
+        :xyzwr:
+            | None, optional
+            | ndarray with white point tristimulus values of the reference illuminant
+            | None defaults to D65.
+        :E:
+            | 100, optional
+            | Illuminance (lx) of test illumination
+        :Er:
+            | 63.66, optional
+            | Illuminance (lx) of the reference illumination
+        :Yb:
+            | 20, optional
+            | Relative luminance of the adaptation field (background) 
+        :D:
+            | 1, optional
+            | Degree of chromatic adaptation.
+            | For object colours D = 1,  
+            | and for luminous colours (typically displays) D=0
+            
+    Returns:
+        :xyzc:
+            | ndarray with corresponding tristimlus values.
+
+    Reference:
+        1. CIE160-2004. (2004). A review of chromatic adaptation transforms (Vols. CIE160-200). CIE.
+    """
+    #--------------------------------------------
+    # Define cone/chromatic adaptation sensor space: 
+    mcat = _MCATS['kries']
+    invmcat = np.linalg.inv(mcat)
+    
+    #--------------------------------------------
+    # Define default ref. white point: 
+    if xyzwr is None:
+        xyzwr = np.array([[9.5047e+01, 1.0000e+02, 1.0888e+02]]) #spd_to_xyz(_CIE_D65, cieobs = '1931_2', relative = True, rfl = None)
+    
+    #--------------------------------------------
+    # Calculate Y,x,y of white:
+    Yxyw = xyz_to_Yxy(xyzw)
+    Yxywr = xyz_to_Yxy(xyzwr)
+    
+    
+    #--------------------------------------------
+    # Calculate La, Lar:
+    La = Yb*E/np.pi/100
+    Lar = Yb*Er/np.pi/100
+    
+    #--------------------------------------------
+    # Calculate CIELAB L* of samples:
+    Lstar = xyz_to_lab(xyz,xyzw)[...,0]
+
+    #--------------------------------------------
+    # Define xi_, eta_ and zeta_ functions:
+    xi_   = lambda Yxy: (0.48105*Yxy[...,1] + 0.78841*Yxy[...,2] - 0.080811)/Yxy[...,2]
+    eta_  = lambda Yxy: (-0.27200*Yxy[...,1] + 1.11962*Yxy[...,2] + 0.04570)/Yxy[...,2]
+    zeta_ = lambda Yxy: 0.91822*(1 - Yxy[...,1] - Yxy[...,2])/Yxy[...,2]
+    
+    #--------------------------------------------
+    # Calculate intermediate values for test and ref. illuminants:
+    xit, etat, zetat = xi_(Yxyw), eta_(Yxyw), zeta_(Yxyw)
+    xir, etar, zetar = xi_(Yxywr), eta_(Yxywr), zeta_(Yxywr)
+
+    #--------------------------------------------
+    # Calculate alpha:
+    if cat94_old == False:
+        alpha = 0.1151*np.log10(La) + 0.0025*(Lstar - 50) + (0.22*D + 0.510)
+        alpha[alpha>1] = 1
+    else: 
+        alpha = 1
+
+    #--------------------------------------------
+    # Calculate adapted intermediate xip, etap zetap:
+    xip = alpha*xit - (1-alpha)*xir
+    etap = alpha*etat - (1-alpha)*etar
+    zetap = alpha*zetat - (1-alpha)*zetar
+    
+
+    #--------------------------------------------
+    # Calculate effective adapting response Rw, Gw, Bw and Rwr, Gwr, Bwr:
+    #Rw, Gw, Bw = La*xit, La*etat, La*zetat # according to westland's book: Computational Colour Science wirg Matlab
+    Rw, Gw, Bw = La*xip, La*etap, La*zetap # according to CIE160-2004
+    Rwr, Gwr, Bwr = Lar*xir, Lar*etar, Lar*zetar
+    
+    #--------------------------------------------
+    # Calculate beta1_ and beta2_ exponents for (R,G) and B:
+    beta1_ = lambda x: (6.469 + 6.362*x**0.4495)/(6.469 + x**0.4495)
+    beta2_ = lambda x: 0.7844*(8.414 + 8.091*x**0.5128)/(8.414 + x**0.5128)
+    b1Rw, b1Rwr, b1Gw, b1Gwr = beta1_(Rw), beta1_(Rwr), beta1_(Gw), beta1_(Gwr)
+    b2Bw, b2Bwr = beta2_(Bw), beta2_(Bwr) 
+    
+    #--------------------------------------------
+    # Noise term:
+    n = 1 if cat94_old else 0.1 
+    
+    #--------------------------------------------
+    # K factor = p/q (for correcting the difference between
+    # the illuminance of the test and references conditions)
+    # calculate q:
+    p = ((Yb*xip + n)/(20*xip + n))**(2/3*b1Rw) * ((Yb*etap + n)/(20*etap + n))**(1/3*b1Gw)
+    q = ((Yb*xir + n)/(20*xir + n))**(2/3*b1Rwr) * ((Yb*etar + n)/(20*etar + n))**(1/3*b1Gwr)
+    K = p/q
+    
+
+    #--------------------------------------------
+    # transform sample xyz to cat sensor space:
+    rgb = math.dot23(mcat, xyz.T).T
+
+    #--------------------------------------------
+    # Calculate corresponding colors:
+    Rc =  (Yb*xir + n)*K**(1/b1Rwr)*((rgb[...,0] + n)/(Yb*xip + n))**(b1Rw/b1Rwr) - n
+    Gc =  (Yb*etar + n)*K**(1/b1Gwr)*((rgb[...,1] + n)/(Yb*etap + n))**(b1Gw/b1Gwr) - n
+    Bc =  (Yb*zetar + n)*K**(1/b2Bwr)*((rgb[...,2] + n)/(Yb*zetap + n))**(b2Bw/b2Bwr) - n
+
+    #--------------------------------------------
+    # transform to xyz and return:
+    xyzc = math.dot23(invmcat, ajoin((Rc,Gc,Bc)).T).T
+
+    return xyzc
     

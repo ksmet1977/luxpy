@@ -42,6 +42,8 @@ utils/init_cri_defaults_database.py
                     * 'cri2012','cri2012-hl17','cri2012-hl1000','cri2012-real210',
                     * 'mcri',
                     * 'cqs-v7.5','cqs-v9.0'
+                    * 'fci'
+                    * 'thornton_cpi'
 
  :process_cri_type_input(): load a cri_type dict but overwrites any keys that 
                             have a non-None input in calling function.

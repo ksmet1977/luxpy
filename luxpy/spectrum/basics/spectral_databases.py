@@ -193,6 +193,11 @@ _CQS['v9.0'] =  getdata(_R_PATH + 'CQSv9dot0.dat',kind='np').T
 
 
 #------------------------------------------------------------------------------
+# FCI (Feeling of Contrast Index) sampleset:
+_FCI= {'R' : getdata(_R_PATH + 'FCI_RFL4.csv',kind='np').T}
+
+
+#------------------------------------------------------------------------------
 # collect in one dict:
 _CRI_RFL = {'cie-13.3-1995': _CIE133_1995}
 _CRI_RFL['cie-224-2017'] = _CIE224_2017
@@ -202,6 +207,7 @@ _CRI_RFL['ies-tm30-18'] = _IESTM3018['R']
 _CRI_RFL['ies-tm30'] = _IESTM3018['R']
 _CRI_RFL['mcri'] = _MCRI['R']
 _CRI_RFL['cqs'] = _CQS
+_CRI_RFL['fci'] = _FCI['R']
 
 #------------------------------------------------------------------------------
 # 1269 Munsell spectral reflectance functions:

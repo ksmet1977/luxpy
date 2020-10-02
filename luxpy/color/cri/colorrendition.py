@@ -41,7 +41,8 @@ utils/init_cri_defaults_database.py
                     * 'iesrf','iesrf-tm30-15','iesrf-tm30-18',
                     * 'cri2012','cri2012-hl17','cri2012-hl1000','cri2012-real210',
                     * 'mcri',
-                    * 'cqs-v7.5','cqs-v9.0'
+                    * 'cqs-v7.5','cqs-v9.0',
+                    * 'fci'
 
  :process_cri_type_input(): load a cri_type dict but overwrites any keys that 
                             have a non-None input in calling function.
@@ -141,6 +142,22 @@ indices/cqs.py
                 | “Color quality scale,” (2010), 
                 | Opt. Eng., vol. 49, no. 3, pp. 33602–33616.
 
+indices/fci.py
+--------------
+
+ :spd_to_fci(): | Calculates the Feeling of Contrast Index, FCI:  
+                | Hashimoto, K., Yano, T., Shimizu, M., & Nayatani, Y. (2007). 
+                | New method for specifying color-rendering properties of light sources 
+                | based on feeling of contrast. 
+                | Color Research and Application, 32(5), 361–371. 
+                
+indices/thorntoncpi.py
+----------------------
+
+ :spd_to_thornton_cpi(): | Calculates Thornton's Color Preference Index, CPI:  
+                         | Thornton, W. A. (1974). A Validation of the Color-Preference Index.
+                         | Journal of the Illuminating Engineering Society, 4(1), 48–52. 
+        
 
 iestm30/graphics.py
 -------------------
@@ -251,6 +268,8 @@ __all__ += ['spd_to_iesrf','spd_to_iesrg',
 __all__ += ['spd_to_cri2012','spd_to_cri2012_hl17','spd_to_cri2012_hl1000','spd_to_cri2012_real210']
 __all__ += ['spd_to_mcri']
 __all__ += ['spd_to_cqs']
+__all__ += ['spd_to_fci']
+__all__ += ['spd_to_thornton_cpi']
 
 
 # .utils/graphics:

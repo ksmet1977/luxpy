@@ -42,6 +42,8 @@ utils/init_cri_defaults_database.py
                     * 'cri2012','cri2012-hl17','cri2012-hl1000','cri2012-real210',
                     * 'mcri',
                     * 'cqs-v7.5','cqs-v9.0'
+                    * 'fci'
+                    * 'thornton_cpi'
 
  :process_cri_type_input(): load a cri_type dict but overwrites any keys that 
                             have a non-None input in calling function.
@@ -134,6 +136,23 @@ indices/cqs.py
                 | W. Davis and Y. Ohno, 
                 | “Color quality scale,” (2010), 
                 | Opt. Eng., vol. 49, no. 3, pp. 33602–33616.
+                            
+indices/fci.py
+--------------
+
+ :spd_to_fci(): | Calculates the Feeling of Contrast Index, FCI:  
+                | Hashimoto, K., Yano, T., Shimizu, M., & Nayatani, Y. (2007). 
+                | New method for specifying color-rendering properties of light sources 
+                | based on feeling of contrast. 
+                | Color Research and Application, 32(5), 361–371. 
+                
+indices/thorntoncpi.py
+----------------------
+
+ :spd_to_thornton_cpi(): | Calculates Thornton's Color Preference Index, CPI:  
+                         | Thornton, W. A. (1974). A Validation of the Color-Preference Index.
+                         | Journal of the Illuminating Engineering Society, 4(1), 48–52. 
+        
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
@@ -157,6 +176,9 @@ from .iestm30_wrappers import (spd_to_iesrf, spd_to_iesrg,
 from .cri2012 import spd_to_cri2012, spd_to_cri2012_hl17, spd_to_cri2012_hl1000, spd_to_cri2012_real210
 from .mcri import _MCRI_DEFAULTS, spd_to_mcri
 from .cqs import _CQS_DEFAULTS, spd_to_cqs
+from .fci import spd_to_fci
+from .thorntoncpi import spd_to_thornton_cpi
+
 
 
 __all__  = ['_CRI_RFL','_CRI_TYPE_DEFAULT','_CRI_DEFAULTS']
@@ -179,6 +201,10 @@ __all__ += ['spd_to_mcri']
 
 __all__ += ['spd_to_cqs']
 
+__all__ += ['spd_to_fci']
+
+__all__ += ['spd_to_thornton_cpi']
+
 
 # Update _CRI_DEFAULTS from .init_cri_defaults_database (already filled with cie/ies Rf and Rg type metric defaults):
 _CRI_DEFAULTS['cqs-v7.5'] = _CQS_DEFAULTS['cqs-v7.5']
@@ -188,6 +214,12 @@ _CRI_DEFAULTS['cri_types'].append('cqs-v9.0')
 
 _CRI_DEFAULTS['mcri'] = _MCRI_DEFAULTS
 _CRI_DEFAULTS['cri_types'].append('mcri')
+
+_CRI_DEFAULTS['fci'] = {'sampleset' : "_CRI_RFL['fci']['R']"}
+_CRI_DEFAULTS['cri_types'].append('fci')
+
+_CRI_DEFAULTS['thornton_cpi'] = {'sampleset' : "_CRI_RFL['cie-13.3-1995']['8']"}
+_CRI_DEFAULTS['cri_types'].append('thornton_cpi')
 
    
 
