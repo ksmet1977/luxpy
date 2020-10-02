@@ -79,7 +79,12 @@ cam/
  :py:
 	* __init__.py
 	* colorappearancemodels.py
-	* cam_02_X.py
+	* helpers.py
+	* utils.py
+	* ciecam02.py
+	* cam02ucs.py
+	* ciecam16.py
+	* cam16ucs.py
 	* cam15u
 	* sww2016.py
 	* cam18sl.py
@@ -143,9 +148,9 @@ cri/
 		* cqs.py	
 	* /iestm30/
 		* __init__.py
-		* ies_tm30_metrics.py
-		* ies_tm30_graphics.py
-		* ansi_ies_tm30_graphics.py
+		* metrics.py
+		* graphics.py
+		* metrics_fast.py
 	* /VFPX/
 		* __inint__.py
 		* vectorshiftmodel.py

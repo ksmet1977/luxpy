@@ -1,0 +1,634 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>luxpy.color.cam.colorappearancemodels &mdash; LuxPy 1.6.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> LuxPy
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.6.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../license.html">License: GPLv3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../required_packages.html">Imported (required) packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../luxpy_structure.html">Luxpy package structure</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">LuxPy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>luxpy.color.cam.colorappearancemodels</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for luxpy.color.cam.colorappearancemodels</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1">########################################################################</span>
+<span class="c1"># &lt;LUXPY: a Python package for lighting and color science.&gt;</span>
+<span class="c1"># Copyright (C) &lt;2017&gt;  &lt;Kevin A.G. Smet&gt; (ksmet1977 at gmail.com)</span>
+<span class="c1">#</span>
+<span class="c1"># This program is free software: you can redistribute it and/or modify</span>
+<span class="c1"># it under the terms of the GNU General Public License as published by</span>
+<span class="c1"># the Free Software Foundation, either version 3 of the License.</span>
+<span class="c1">#</span>
+<span class="c1"># This program is distributed in the hope that it will be useful,</span>
+<span class="c1"># but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="c1"># MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="c1"># GNU General Public License for more details.</span>
+<span class="c1">#</span>
+<span class="c1"># You should have received a copy of the GNU General Public License</span>
+<span class="c1"># along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<span class="c1">#########################################################################</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">cam: sub-package with color appearance models</span>
+<span class="sd">=============================================</span>
+
+<span class="sd"> : _AVAILABLE_MODELS: List with available color appearance models.</span>
+
+<span class="sd"> :_UNIQUE_HUE_DATA: | database of unique hues with corresponding </span>
+<span class="sd">                    | Hue quadratures and eccentricity factors </span>
+<span class="sd">                    | for ciecam02, ciecam16, ciecam97s, cam15u, cam18sl)</span>
+
+<span class="sd"> :_SURROUND_PARAMETERS: | database of surround param. c, Nc, F and FLL </span>
+<span class="sd">                        | for ciecam02, ciecam16, ciecam97s and cam15u.</span>
+
+<span class="sd"> :_NAKA_RUSHTON_PARAMETERS: | database with parameters (n, sig, scaling and noise) </span>
+<span class="sd">                            | for the Naka-Rushton function: </span>
+<span class="sd">                            | NK(x) = sign(x) * scaling * ((abs(x)**n) / ((abs(x)**n) + (sig**n))) + noise</span>
+
+<span class="sd"> :_CAM_UCS_PARAMETERS: | database with parameters specifying the conversion </span>
+<span class="sd">                       |  from ciecamX to:</span>
+<span class="sd">                       |    camXucs (uniform color space), </span>
+<span class="sd">                       |    camXlcd (large color diff.), </span>
+<span class="sd">                       |    camXscd (small color diff).</span>
+<span class="sd">                            </span>
+<span class="sd"> :_CAM15U_PARAMETERS: database with CAM15u model parameters.</span>
+<span class="sd"> </span>
+<span class="sd"> :_CAM_SWW16_PARAMETERS: cam_sww16 model parameters.</span>
+<span class="sd"> </span>
+<span class="sd"> :_CAM18SL_PARAMETERS: database with CAM18sl model parameters</span>
+
+<span class="sd"> :_CAM_DEFAULT_WHITE_POINT: Default internal reference white point (xyz)</span>
+
+<span class="sd"> :_CAM_DEFAULT_CONDITIONS: Default CAM model parameters for model.</span>
+<span class="sd"> </span>
+<span class="sd"> :_CAM_DEFAULT_TYPE: Default CAM (string) [for use in other modules].</span>
+
+<span class="sd"> :_CAM_AXES: dict with list[str,str,str] containing axis labels of defined cspaces.</span>
+<span class="sd">                  </span>
+<span class="sd"> :deltaH(): Compute a hue difference, dH = 2*C1*C2*sin(dh/2).</span>
+
+<span class="sd"> :naka_rushton(): applies a Naka-Rushton function to the input</span>
+<span class="sd"> </span>
+<span class="sd"> :hue_angle(): calculates a positive hue angle</span>
+
+<span class="sd"> :hue_quadrature(): calculates the Hue quadrature from the hue.</span>
+
+<span class="sd"> </span>
+<span class="sd"> :ciecam02(): | calculates ciecam02 output </span>
+<span class="sd">              | `N. Moroney, M. D. Fairchild, R. W. G. Hunt, C. Li, M. R. Luo, and T. Newman, </span>
+<span class="sd">                “The CIECAM02 color appearance model,” </span>
+<span class="sd">                IS&amp;T/SID Tenth Color Imaging Conference. p. 23, 2002. &lt;http://rit-mcsl.org/fairchild/PDFs/PRO19.pdf&gt;`_</span>
+
+<span class="sd"> :cam16(): | calculates cam16 output </span>
+<span class="sd">           | `C. Li, Z. Li, Z. Wang, Y. Xu, M. R. Luo, G. Cui, M. Melgosa, M. H. Brill, and M. Pointer, </span>
+<span class="sd">             “Comprehensive color solutions: CAM16, CAT16, and CAM16-UCS,” </span>
+<span class="sd">             Color Res. Appl., p. n/a–n/a. &lt;http://onlinelibrary.wiley.com/doi/10.1002/col.22131/abstract&gt;`_</span>
+<span class="sd">           </span>
+
+<span class="sd"> :cam02ucs(): | calculates ucs (or lcd, scd) output based on ciecam02 </span>
+<span class="sd">              |  (forward + inverse available)</span>
+<span class="sd">              |  `M. R. Luo, G. Cui, and C. Li, </span>
+<span class="sd">                 “Uniform colour spaces based on CIECAM02 colour appearance model,” </span>
+<span class="sd">                 Color Res. Appl., vol. 31, no. 4, pp. 320–330, 2006.</span>
+<span class="sd">                 &lt;http://onlinelibrary.wiley.com/doi/10.1002/col.20227/abstract&gt;`_</span>
+
+<span class="sd"> :cam16ucs(): | calculates ucs (or lcd, scd) output based on cam16 </span>
+<span class="sd">              |  (forward + inverse available)</span>
+<span class="sd">              | `C. Li, Z. Li, Z. Wang, Y. Xu, M. R. Luo, G. Cui, M. Melgosa, M. H. Brill, and M. Pointer, </span>
+<span class="sd">                “Comprehensive color solutions: CAM16, CAT16, and CAM16-UCS,” </span>
+<span class="sd">                Color Res. Appl., p. n/a–n/a. &lt;http://onlinelibrary.wiley.com/doi/10.1002/col.22131/abstract&gt;`_</span>
+
+<span class="sd"> :cam15u(): | calculates the output for the CAM15u model for self-luminous unrelated stimuli. </span>
+<span class="sd">            | `M. Withouck, K. A. G. Smet, W. R. Ryckaert, and P. Hanselaer, </span>
+<span class="sd">              “Experimental driven modelling of the color appearance of </span>
+<span class="sd">              unrelated self-luminous stimuli: CAM15u,” </span>
+<span class="sd">              Opt. Express, vol. 23, no. 9, pp. 12045–12064, 2015.</span>
+<span class="sd">              &lt;https://www.osapublishing.org/oe/abstract.cfm?uri=oe-23-9-12045&amp;origin=search&gt;`_</span>
+<span class="sd">            | `M. Withouck, K. A. G. Smet, and P. Hanselaer, (2015), </span>
+<span class="sd">            “Brightness prediction of different sized unrelated self-luminous stimuli,” </span>
+<span class="sd">            Opt. Express, vol. 23, no. 10, pp. 13455–13466. </span>
+<span class="sd">            &lt;https://www.osapublishing.org/oe/abstract.cfm?uri=oe-23-10-13455&amp;origin=search&gt;`_</span>
+<span class="sd">            </span>
+<span class="sd"> :cam_sww16(): | A simple principled color appearance model based on a mapping </span>
+<span class="sd">                 of the Munsell color system.</span>
+<span class="sd">               | `Smet, K. A. G., Webster, M. A., &amp; Whitehead, L. A. (2016). </span>
+<span class="sd">                   A simple principled approach for modeling and understanding uniform color metrics. </span>
+<span class="sd">                   Journal of the Optical Society of America A, 33(3), A319–A331. </span>
+<span class="sd">                   &lt;https://doi.org/10.1364/JOSAA.33.00A319&gt;`_</span>
+<span class="sd">               </span>
+<span class="sd"> :cam18sl(): | calculates the output for the CAM18sl model for self-luminous related stimuli. </span>
+<span class="sd">             | `Hermans, S., Smet, K. A. G., &amp; Hanselaer, P. (2018). </span>
+<span class="sd">               &quot;Color appearance model for self-luminous stimuli.&quot;</span>
+<span class="sd">               Journal of the Optical Society of America A, 35(12), 2000–2009. </span>
+<span class="sd">               &lt;https://doi.org/10.1364/JOSAA.35.002000&gt;`_       </span>
+<span class="sd">               </span>
+<span class="sd"> :camXucs(): Wraps ciecam02(), ciecam16(), cam02ucs(), cam16ucs().</span>
+
+<span class="sd"> :specific_wrappers_in_the_&#39;xyz_to_cspace()&#39; and &#39;cpsace_to_xyz()&#39; format:</span>
+<span class="sd">      | &#39;xyz_to_jabM_ciecam02&#39;, &#39;jabM_ciecam02_to_xyz&#39;,</span>
+<span class="sd">      | &#39;xyz_to_jabC_ciecam02&#39;, &#39;jabC_ciecam02_to_xyz&#39;,</span>
+<span class="sd">      | &#39;xyz_to_jabM_ciecam16&#39;, &#39;jabM_ciecam16_to_xyz&#39;,</span>
+<span class="sd">      | &#39;xyz_to_jabC_ciecam16&#39;, &#39;jabC_ciecam16_to_xyz&#39;,</span>
+<span class="sd">      | &#39;xyz_to_jabz&#39;,          &#39;jabz_to_xyz&#39;,</span>
+<span class="sd">      | &#39;xyz_to_jabM_camjabz&#39;, &#39;jabM_camjabz_to_xyz&#39;, </span>
+<span class="sd">      | &#39;xyz_to_jabC_camjabz&#39;, &#39;jabC_camjabz_to_xyz&#39;]</span>
+<span class="sd">      | &#39;xyz_to_jab_cam02ucs&#39;, &#39;jab_cam02ucs_to_xyz&#39;, </span>
+<span class="sd">      | &#39;xyz_to_jab_cam02lcd&#39;, &#39;jab_cam02lcd_to_xyz&#39;,</span>
+<span class="sd">      | &#39;xyz_to_jab_cam02scd&#39;, &#39;jab_cam02scd_to_xyz&#39;, </span>
+<span class="sd">      | &#39;xyz_to_jab_cam16ucs&#39;, &#39;jab_cam16ucs_to_xyz&#39;,</span>
+<span class="sd">      | &#39;xyz_to_jab_cam16lcd&#39;, &#39;jab_cam16lcd_to_xyz&#39;,</span>
+<span class="sd">      | &#39;xyz_to_jab_cam16scd&#39;, &#39;jab_cam16scd_to_xyz&#39;,</span>
+<span class="sd">      | &#39;xyz_to_qabW_cam15u&#39;, &#39;qabW_cam15u_to_xyz&#39;,</span>
+<span class="sd">      | &#39;xyz_to_lab_cam_sww16&#39;, &#39;lab_cam_sww16_to_xyz&#39;,</span>
+<span class="sd">      | &#39;xyz_to_qabM_cam18sl&#39;, &#39;qabM_cam18sl_to_xyz&#39;,</span>
+<span class="sd">      | &#39;xyz_to_qabS_cam18sl&#39;, &#39;qabS_cam18sl_to_xyz&#39;,</span>
+<span class="sd">      </span>
+
+<span class="sd"> :_update_parameter_dict(): Get parameter dict and update with values in args dict</span>
+
+<span class="sd"> :_setup_default_adaptation_field(): Setup a default illuminant adaptation field with Lw = 100 cd/m² for selected CIE observer.</span>
+
+<span class="sd"> :_massage_input_and_init_output(): Redimension input data to ensure most they have the appropriate sizes for easy and efficient looping.</span>
+
+<span class="sd"> :_massage_output_data_to_original_shape(): Massage output data to restore original shape of original CAM input.</span>
+<span class="sd"> </span>
+<span class="sd"> :_get_absolute_xyz_xyzw(): Calculate absolute xyz tristimulus values of stimulus and white point from spectral input or convert relative xyz values to absolute ones.</span>
+<span class="sd"> </span>
+<span class="sd"> :_simple_cam(): An example CAM illustration the usage of the functions in luxpy.cam.helpers </span>
+
+
+<span class="sd">.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="c1">#------------------------------------------------------------------------------</span>
+<span class="c1"># List available CAMs:</span>
+<span class="n">_AVAILABLE_MODELS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ciecam02&#39;</span><span class="p">,</span><span class="s1">&#39;cam02ucs&#39;</span><span class="p">,</span><span class="s1">&#39;ciecam16&#39;</span><span class="p">,</span><span class="s1">&#39;cam16ucs&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;camjabz&#39;</span><span class="p">,</span><span class="s1">&#39;cam15u&#39;</span><span class="p">,</span><span class="s1">&#39;cam18sl&#39;</span><span class="p">,</span><span class="s1">&#39;cam_sww16&#39;</span><span class="p">]</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;_AVAILABLE_MODELS&#39;</span><span class="p">]</span>
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+<span class="c1"># Utility imports:</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">hue_angle</span><span class="p">,</span> <span class="n">naka_rushton</span><span class="p">,</span> <span class="n">deltaH</span><span class="p">,</span> <span class="n">hue_quadrature</span>
+
+<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;hue_angle&#39;</span><span class="p">,</span> <span class="s1">&#39;naka_rushton&#39;</span><span class="p">,</span> <span class="s1">&#39;deltaH&#39;</span><span class="p">,</span> <span class="s1">&#39;hue_quadrature&#39;</span><span class="p">]</span>
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+<span class="c1"># Helper functions imports:</span>
+<span class="kn">from</span> <span class="nn">.helpers</span> <span class="kn">import</span> <span class="p">(</span><span class="n">_update_parameter_dict</span><span class="p">,</span><span class="n">_setup_default_adaptation_field</span><span class="p">,</span>
+                      <span class="n">_massage_input_and_init_output</span><span class="p">,</span><span class="n">_massage_output_data_to_original_shape</span><span class="p">,</span>
+                      <span class="n">_get_absolute_xyz_xyzw</span><span class="p">,</span><span class="n">_simple_cam</span><span class="p">)</span>
+
+<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;_update_parameter_dict&#39;</span><span class="p">,</span><span class="s1">&#39;_setup_default_adaptation_field&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;_massage_input_and_init_output&#39;</span><span class="p">,</span><span class="s1">&#39;_massage_output_data_to_original_shape&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;_get_absolute_xyz_xyzw&#39;</span><span class="p">,</span><span class="s1">&#39;_simple_cam&#39;</span><span class="p">]</span>
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+<span class="c1"># ciecam02 imports:</span>
+<span class="c1"># import ciecam02 as _ciecam02</span>
+<span class="kn">from</span> <span class="nn">.ciecam02</span> <span class="kn">import</span> <span class="n">run</span> <span class="k">as</span> <span class="n">ciecam02</span>
+<span class="kn">from</span> <span class="nn">.ciecam02</span> <span class="kn">import</span> <span class="n">_AXES</span> <span class="k">as</span> <span class="n">_CIECAM02_AXES</span>
+<span class="kn">from</span> <span class="nn">.ciecam02</span> <span class="kn">import</span> <span class="n">_UNIQUE_HUE_DATA</span> <span class="k">as</span> <span class="n">_CIECAM02_UNIQUE_HUE_DATA</span>
+<span class="kn">from</span> <span class="nn">.ciecam02</span> <span class="kn">import</span> <span class="n">_SURROUND_PARAMETERS</span> <span class="k">as</span> <span class="n">_CIECAM02_SURROUND_PARAMETERS</span>
+<span class="kn">from</span> <span class="nn">.ciecam02</span> <span class="kn">import</span> <span class="n">_NAKA_RUSHTON_PARAMETERS</span> <span class="k">as</span> <span class="n">_CIECAM02_NAKA_RUSHTON_PARAMETERS</span>
+<span class="kn">from</span> <span class="nn">.ciecam02</span> <span class="kn">import</span> <span class="n">_DEFAULT_WHITE_POINT</span> <span class="k">as</span> <span class="n">_CIECAM02_DEFAULT_WHITE_POINT</span>
+<span class="kn">from</span> <span class="nn">.ciecam02</span> <span class="kn">import</span> <span class="n">_DEFAULT_CONDITIONS</span> <span class="k">as</span> <span class="n">_CIECAM02_DEFAULT_CONDITIONS</span>
+<span class="kn">from</span> <span class="nn">.ciecam02</span> <span class="kn">import</span> <span class="p">(</span><span class="n">xyz_to_jabM_ciecam02</span><span class="p">,</span> <span class="n">jabM_ciecam02_to_xyz</span><span class="p">,</span> 
+                       <span class="n">xyz_to_jabC_ciecam02</span><span class="p">,</span> <span class="n">jabC_ciecam02_to_xyz</span><span class="p">)</span>
+
+<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;ciecam02&#39;</span><span class="p">]</span> 
+
+<span class="c1"># __all__ += [&#39;_CIECAM02_AXES&#39;,</span>
+<span class="c1">#             &#39;_CIECAM02_UNIQUE_HUE_DATA&#39;,</span>
+<span class="c1">#             &#39;_CIECAM02_DEFAULT_WHITE_POINT&#39;,</span>
+<span class="c1">#             &#39;_CIECAM02_SURROUND_PARAMETERS&#39;, </span>
+<span class="c1">#             &#39;_CIECAM02_NAKA_RUSHTON_PARAMETERS&#39;]</span>
+
+<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;xyz_to_jabM_ciecam02&#39;</span><span class="p">,</span> <span class="s1">&#39;jabM_ciecam02_to_xyz&#39;</span><span class="p">,</span> 
+            <span class="s1">&#39;xyz_to_jabC_ciecam02&#39;</span><span class="p">,</span> <span class="s1">&#39;jabC_ciecam02_to_xyz&#39;</span><span class="p">]</span>
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+<span class="c1"># cam02ucs imports:</span>
+<span class="c1"># import cam02ucs as _cam02ucs</span>
+<span class="kn">from</span> <span class="nn">.cam02ucs</span> <span class="kn">import</span> <span class="n">run</span> <span class="k">as</span> <span class="n">cam02ucs</span>
+<span class="kn">from</span> <span class="nn">.cam02ucs</span> <span class="kn">import</span> <span class="n">_AXES</span> <span class="k">as</span> <span class="n">_CAM02UCS_AXES</span>
+<span class="kn">from</span> <span class="nn">.cam02ucs</span> <span class="kn">import</span> <span class="n">_CAM_UCS_PARAMETERS</span> <span class="k">as</span> <span class="n">_CAM02UCS_UCS_PARAMETERS</span>
+<span class="kn">from</span> <span class="nn">.cam02ucs</span> <span class="kn">import</span> <span class="n">_DEFAULT_WHITE_POINT</span> <span class="k">as</span> <span class="n">_CAM02UCS_DEFAULT_WHITE_POINT</span>
+<span class="kn">from</span> <span class="nn">.cam02ucs</span> <span class="kn">import</span> <span class="n">_DEFAULT_CONDITIONS</span> <span class="k">as</span> <span class="n">_CAM02UCS_DEFAULT_CONDITIONS</span>
+<span class="kn">from</span> <span class="nn">.cam02ucs</span> <span class="kn">import</span> <span class="p">(</span><span class="n">xyz_to_jab_cam02ucs</span><span class="p">,</span> <span class="n">jab_cam02ucs_to_xyz</span><span class="p">,</span> 
+                       <span class="n">xyz_to_jab_cam02lcd</span><span class="p">,</span> <span class="n">jab_cam02lcd_to_xyz</span><span class="p">,</span>
+                       <span class="n">xyz_to_jab_cam02scd</span><span class="p">,</span> <span class="n">jab_cam02scd_to_xyz</span><span class="p">)</span>
+
+<span class="n">__all__</span>  <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;cam02ucs&#39;</span><span class="p">]</span> 
+
+<span class="c1"># __all__ += [&#39;_CAM02UCS_AXES&#39;,</span>
+<span class="c1">#             &#39;_CAM02UCS_UCS_PARAMETERS&#39;,</span>
+<span class="c1">#             &#39;_CAM02UCS_DEFAULT_WHITE_POINT&#39;]</span>
+
+<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;xyz_to_jab_cam02ucs&#39;</span><span class="p">,</span> <span class="s1">&#39;jab_cam02ucs_to_xyz&#39;</span><span class="p">,</span> 
+            <span class="s1">&#39;xyz_to_jab_cam02lcd&#39;</span><span class="p">,</span> <span class="s1">&#39;jab_cam02lcd_to_xyz&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;xyz_to_jab_cam02scd&#39;</span><span class="p">,</span> <span class="s1">&#39;jab_cam02scd_to_xyz&#39;</span><span class="p">]</span>
+
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+<span class="c1"># ciecam16 imports:</span>
+<span class="c1"># import ciecam16 as _ciecam16</span>
+<span class="kn">from</span> <span class="nn">.ciecam16</span> <span class="kn">import</span> <span class="n">run</span> <span class="k">as</span> <span class="n">ciecam16</span>
+<span class="kn">from</span> <span class="nn">.ciecam16</span> <span class="kn">import</span> <span class="n">_AXES</span> <span class="k">as</span> <span class="n">_CIECAM16_AXES</span>
+<span class="kn">from</span> <span class="nn">.ciecam16</span> <span class="kn">import</span> <span class="n">_UNIQUE_HUE_DATA</span> <span class="k">as</span> <span class="n">_CIECAM16_UNIQUE_HUE_DATA</span>
+<span class="kn">from</span> <span class="nn">.ciecam16</span> <span class="kn">import</span> <span class="n">_SURROUND_PARAMETERS</span> <span class="k">as</span> <span class="n">_CIECAM16_SURROUND_PARAMETERS</span>
+<span class="kn">from</span> <span class="nn">.ciecam16</span> <span class="kn">import</span> <span class="n">_NAKA_RUSHTON_PARAMETERS</span> <span class="k">as</span> <span class="n">_CIECAM16_NAKA_RUSHTON_PARAMETERS</span>
+<span class="kn">from</span> <span class="nn">.ciecam16</span> <span class="kn">import</span> <span class="n">_DEFAULT_WHITE_POINT</span> <span class="k">as</span> <span class="n">_CIECAM16_DEFAULT_WHITE_POINT</span>
+<span class="kn">from</span> <span class="nn">.ciecam16</span> <span class="kn">import</span> <span class="n">_DEFAULT_CONDITIONS</span> <span class="k">as</span> <span class="n">_CIECAM16_DEFAULT_CONDITIONS</span>
+<span class="kn">from</span> <span class="nn">.ciecam16</span> <span class="kn">import</span> <span class="p">(</span><span class="n">xyz_to_jabM_ciecam16</span><span class="p">,</span> <span class="n">jabM_ciecam16_to_xyz</span><span class="p">,</span> 
+                       <span class="n">xyz_to_jabC_ciecam16</span><span class="p">,</span> <span class="n">jabC_ciecam16_to_xyz</span><span class="p">)</span>
+
+<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;ciecam16&#39;</span><span class="p">]</span> 
+
+<span class="c1"># __all__ += [&#39;_CIECAM16_AXES&#39;,</span>
+<span class="c1">#             &#39;_CIECAM16_UNIQUE_HUE_DATA&#39;,</span>
+<span class="c1">#             &#39;_CIECAM16_DEFAULT_WHITE_POINT&#39;,</span>
+<span class="c1">#             &#39;_CIECAM16_SURROUND_PARAMETERS&#39;, </span>
+<span class="c1">#             &#39;_CIECAM16_NAKA_RUSHTON_PARAMETERS&#39;]</span>
+
+<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;xyz_to_jabM_ciecam16&#39;</span><span class="p">,</span> <span class="s1">&#39;jabM_ciecam16_to_xyz&#39;</span><span class="p">,</span> 
+            <span class="s1">&#39;xyz_to_jabC_ciecam16&#39;</span><span class="p">,</span> <span class="s1">&#39;jabC_ciecam16_to_xyz&#39;</span><span class="p">]</span>
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+<span class="c1"># cam16ucs imports:</span>
+<span class="c1"># import cam16ucs as _cam16ucs</span>
+<span class="kn">from</span> <span class="nn">.cam16ucs</span> <span class="kn">import</span> <span class="n">run</span> <span class="k">as</span> <span class="n">cam16ucs</span>
+<span class="kn">from</span> <span class="nn">.cam16ucs</span> <span class="kn">import</span> <span class="n">_AXES</span> <span class="k">as</span> <span class="n">_CAM16UCS_AXES</span>
+<span class="kn">from</span> <span class="nn">.cam16ucs</span> <span class="kn">import</span> <span class="n">_CAM_UCS_PARAMETERS</span> <span class="k">as</span> <span class="n">_CAM16UCS_UCS_PARAMETERS</span>
+<span class="kn">from</span> <span class="nn">.cam16ucs</span> <span class="kn">import</span> <span class="n">_DEFAULT_WHITE_POINT</span> <span class="k">as</span> <span class="n">_CAM16UCS_DEFAULT_WHITE_POINT</span>
+<span class="kn">from</span> <span class="nn">.cam16ucs</span> <span class="kn">import</span> <span class="n">_DEFAULT_CONDITIONS</span> <span class="k">as</span> <span class="n">_CAM16UCS_DEFAULT_CONDITIONS</span>
+<span class="kn">from</span> <span class="nn">.cam16ucs</span> <span class="kn">import</span> <span class="p">(</span><span class="n">xyz_to_jab_cam16ucs</span><span class="p">,</span> <span class="n">jab_cam16ucs_to_xyz</span><span class="p">,</span> 
+                       <span class="n">xyz_to_jab_cam16lcd</span><span class="p">,</span> <span class="n">jab_cam16lcd_to_xyz</span><span class="p">,</span>
+                       <span class="n">xyz_to_jab_cam16scd</span><span class="p">,</span> <span class="n">jab_cam16scd_to_xyz</span><span class="p">)</span>
+
+<span class="n">__all__</span>  <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;cam16ucs&#39;</span><span class="p">]</span> 
+
+<span class="c1"># __all__ += [&#39;_CAM16UCS_AXES&#39;,</span>
+<span class="c1">#             &#39;_CAM16UCS_UCS_PARAMETERS&#39;,</span>
+<span class="c1">#             &#39;_CAM16UCS_DEFAULT_WHITE_POINT&#39;]</span>
+
+<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;xyz_to_jab_cam16ucs&#39;</span><span class="p">,</span> <span class="s1">&#39;jab_cam16ucs_to_xyz&#39;</span><span class="p">,</span> 
+            <span class="s1">&#39;xyz_to_jab_cam16lcd&#39;</span><span class="p">,</span> <span class="s1">&#39;jab_cam16lcd_to_xyz&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;xyz_to_jab_cam16scd&#39;</span><span class="p">,</span> <span class="s1">&#39;jab_cam16scd_to_xyz&#39;</span><span class="p">]</span>  
+
+
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+<span class="c1"># camjabz imports:</span>
+<span class="c1"># import camjabz as _camjabz</span>
+<span class="kn">from</span> <span class="nn">.camjabz</span> <span class="kn">import</span> <span class="n">run</span> <span class="k">as</span> <span class="n">camjabz</span>
+<span class="kn">from</span> <span class="nn">.camjabz</span> <span class="kn">import</span> <span class="n">_AXES</span> <span class="k">as</span> <span class="n">_CAMJABZ_AXES</span>
+<span class="kn">from</span> <span class="nn">.camjabz</span> <span class="kn">import</span> <span class="n">_UNIQUE_HUE_DATA</span> <span class="k">as</span> <span class="n">_CAMJABZ_UNIQUE_HUE_DATA</span>
+<span class="kn">from</span> <span class="nn">.camjabz</span> <span class="kn">import</span> <span class="n">_SURROUND_PARAMETERS</span> <span class="k">as</span> <span class="n">_CAMJABZ_SURROUND_PARAMETERS</span>
+<span class="kn">from</span> <span class="nn">.camjabz</span> <span class="kn">import</span> <span class="n">_DEFAULT_WHITE_POINT</span> <span class="k">as</span> <span class="n">_CAMJABZ_DEFAULT_WHITE_POINT</span>
+<span class="kn">from</span> <span class="nn">.camjabz</span> <span class="kn">import</span> <span class="n">_DEFAULT_CONDITIONS</span> <span class="k">as</span> <span class="n">_CAMJABZ_DEFAULT_CONDITIONS</span>
+<span class="kn">from</span> <span class="nn">.camjabz</span> <span class="kn">import</span> <span class="p">(</span><span class="n">xyz_to_jabz</span><span class="p">,</span> <span class="n">jabz_to_xyz</span><span class="p">,</span>
+                      <span class="n">xyz_to_jabM_camjabz</span><span class="p">,</span> <span class="n">jabM_camjabz_to_xyz</span><span class="p">,</span> 
+                      <span class="n">xyz_to_jabC_camjabz</span><span class="p">,</span> <span class="n">jabC_camjabz_to_xyz</span><span class="p">)</span>
+
+<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;camjabz&#39;</span><span class="p">]</span> 
+
+
+<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;xyz_to_jabz&#39;</span><span class="p">,</span> <span class="s1">&#39;jabz_to_xyz&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;xyz_to_jabM_camjabz&#39;</span><span class="p">,</span> <span class="s1">&#39;jabM_camjabz_to_xyz&#39;</span><span class="p">,</span> 
+            <span class="s1">&#39;xyz_to_jabC_camjabz&#39;</span><span class="p">,</span> <span class="s1">&#39;jabC_camjabz_to_xyz&#39;</span><span class="p">]</span>
+
+
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+<span class="c1"># cam15 imports:</span>
+<span class="kn">from</span> <span class="nn">.cam15u</span> <span class="kn">import</span>  <span class="p">(</span><span class="n">cam15u</span><span class="p">,</span> <span class="n">_CAM15U_AXES</span><span class="p">,</span> <span class="n">_CAM15U_UNIQUE_HUE_DATA</span><span class="p">,</span> <span class="n">_CAM15U_PARAMETERS</span><span class="p">,</span>
+                      <span class="n">_CAM15U_NAKA_RUSHTON_PARAMETERS</span><span class="p">,</span> <span class="n">_CAM15U_SURROUND_PARAMETERS</span><span class="p">,</span>
+                      <span class="n">xyz_to_qabW_cam15u</span><span class="p">,</span> <span class="n">qabW_cam15u_to_xyz</span><span class="p">)</span>
+
+<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;cam15u&#39;</span><span class="p">,</span> <span class="s1">&#39;xyz_to_qabW_cam15u&#39;</span><span class="p">,</span> <span class="s1">&#39;qabW_cam15u_to_xyz&#39;</span><span class="p">]</span>
+
+
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+<span class="c1"># sww2016 cam imports:</span>
+<span class="kn">from</span> <span class="nn">.sww2016</span> <span class="kn">import</span> <span class="p">(</span><span class="n">cam_sww16</span><span class="p">,</span> <span class="n">_CAM_SWW16_AXES</span><span class="p">,</span> <span class="n">_CAM_SWW16_PARAMETERS</span><span class="p">,</span>
+                      <span class="n">xyz_to_lab_cam_sww16</span><span class="p">,</span> <span class="n">lab_cam_sww16_to_xyz</span><span class="p">)</span>
+
+<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;cam_sww16&#39;</span><span class="p">,</span> <span class="s1">&#39;xyz_to_lab_cam_sww16&#39;</span><span class="p">,</span> <span class="s1">&#39;lab_cam_sww16_to_xyz&#39;</span><span class="p">]</span>
+
+
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+<span class="c1"># cam18sl imports:</span>
+<span class="kn">from</span> <span class="nn">.cam18sl</span> <span class="kn">import</span>  <span class="p">(</span><span class="n">cam18sl</span><span class="p">,</span> <span class="n">_CAM18SL_AXES</span><span class="p">,</span> <span class="n">_CAM18SL_UNIQUE_HUE_DATA</span><span class="p">,</span> 
+                       <span class="n">_CAM18SL_PARAMETERS</span><span class="p">,</span><span class="n">_CAM18SL_NAKA_RUSHTON_PARAMETERS</span><span class="p">,</span> 
+                      <span class="n">xyz_to_qabM_cam18sl</span><span class="p">,</span> <span class="n">qabM_cam18sl_to_xyz</span><span class="p">,</span> 
+                      <span class="n">xyz_to_qabS_cam18sl</span><span class="p">,</span> <span class="n">qabS_cam18sl_to_xyz</span><span class="p">)</span>
+
+<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;xyz_to_qabM_cam18sl&#39;</span><span class="p">,</span> <span class="s1">&#39;qabM_cam18sl_to_xyz&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;xyz_to_qabS_cam18sl&#39;</span><span class="p">,</span> <span class="s1">&#39;qabS_cam18sl_to_xyz&#39;</span><span class="p">]</span>
+
+
+<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;_CAM_AXES&#39;</span><span class="p">,</span> <span class="s1">&#39;_UNIQUE_HUE_DATA&#39;</span><span class="p">,</span><span class="s1">&#39;_SURROUND_PARAMETERS&#39;</span><span class="p">,</span><span class="s1">&#39;_NAKA_RUSHTON_PARAMETERS&#39;</span><span class="p">]</span>
+
+
+<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;_CAM15U_PARAMETERS&#39;</span><span class="p">,</span><span class="s1">&#39;_CAM_SWW16_PARAMETERS&#39;</span><span class="p">,</span><span class="s1">&#39;_CAM18SL_PARAMETERS&#39;</span><span class="p">]</span>
+
+
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+<span class="c1"># Create some dictionaries that group databases of different models: </span>
+<span class="c1"># --- cam axes list of strings for ploting ---</span>
+<span class="n">_CAM_AXES</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">_CAM_AXES</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">_CIECAM02_AXES</span><span class="p">)</span>
+<span class="n">_CAM_AXES</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">_CAM02UCS_AXES</span><span class="p">)</span>
+<span class="n">_CAM_AXES</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">_CIECAM16_AXES</span><span class="p">)</span>
+<span class="n">_CAM_AXES</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">_CAM16UCS_AXES</span><span class="p">)</span>
+<span class="n">_CAM_AXES</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">_CAMJABZ_AXES</span><span class="p">)</span>
+<span class="n">_CAM_AXES</span><span class="p">[</span><span class="s1">&#39;qabW_cam15u&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_CAM15U_AXES</span> 
+<span class="n">_CAM_AXES</span><span class="p">[</span><span class="s1">&#39;lab_cam_sww16&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_CAM_SWW16_AXES</span>
+<span class="n">_CAM_AXES</span><span class="p">[</span><span class="s1">&#39;qabW_cam18sl&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_CAM18SL_AXES</span> 
+
+<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;_CAM_AXES&#39;</span><span class="p">]</span>
+
+<span class="c1"># --- unique hue data ---</span>
+<span class="n">_UNIQUE_HUE_DATA</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;models&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="s1">&#39;ciecam02&#39;</span><span class="p">,</span> <span class="s1">&#39;cam02ucs&#39;</span><span class="p">,</span> 
+                                <span class="s1">&#39;ciecam16&#39;</span><span class="p">,</span> <span class="s1">&#39;cam16ucs&#39;</span><span class="p">,</span>
+                                <span class="s1">&#39;camjabz&#39;</span><span class="p">],</span>
+                    <span class="s1">&#39;ciecam02&#39;</span> <span class="p">:</span> <span class="n">_CIECAM02_UNIQUE_HUE_DATA</span><span class="p">,</span>
+                    <span class="s1">&#39;cam02ucs&#39;</span> <span class="p">:</span> <span class="n">_CIECAM02_UNIQUE_HUE_DATA</span><span class="p">,</span>
+                    <span class="s1">&#39;ciecam16&#39;</span> <span class="p">:</span> <span class="n">_CIECAM16_UNIQUE_HUE_DATA</span><span class="p">,</span>
+                    <span class="s1">&#39;cam16ucs&#39;</span> <span class="p">:</span> <span class="n">_CIECAM16_UNIQUE_HUE_DATA</span><span class="p">,</span>
+                    <span class="s1">&#39;camjabz&#39;</span> <span class="p">:</span> <span class="n">_CAMJABZ_UNIQUE_HUE_DATA</span><span class="p">,</span>
+                    <span class="p">}</span>
+<span class="n">_UNIQUE_HUE_DATA</span><span class="p">[</span><span class="s1">&#39;cam15u&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_CAM15U_UNIQUE_HUE_DATA</span>
+<span class="n">_UNIQUE_HUE_DATA</span><span class="p">[</span><span class="s1">&#39;models&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;cam15u&#39;</span><span class="p">)</span>
+<span class="n">_UNIQUE_HUE_DATA</span><span class="p">[</span><span class="s1">&#39;cam18sl&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_CAM18SL_UNIQUE_HUE_DATA</span>
+<span class="n">_UNIQUE_HUE_DATA</span><span class="p">[</span><span class="s1">&#39;models&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;cam18sl&#39;</span><span class="p">)</span>
+
+<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;_UNIQUE_HUE_DATA&#39;</span><span class="p">]</span>
+
+<span class="c1"># --- surround parameter data ---</span>
+<span class="n">_SURROUND_PARAMETERS</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;ciecam02&#39;</span> <span class="p">:</span> <span class="n">_CIECAM02_SURROUND_PARAMETERS</span><span class="p">,</span>
+                        <span class="s1">&#39;cam02ucs&#39;</span> <span class="p">:</span> <span class="n">_CIECAM02_SURROUND_PARAMETERS</span><span class="p">,</span>
+                        <span class="s1">&#39;ciecam16&#39;</span> <span class="p">:</span> <span class="n">_CIECAM16_SURROUND_PARAMETERS</span><span class="p">,</span>
+                        <span class="s1">&#39;cam16ucs&#39;</span> <span class="p">:</span> <span class="n">_CIECAM16_SURROUND_PARAMETERS</span><span class="p">,</span>
+                        <span class="s1">&#39;camjabz&#39;</span>  <span class="p">:</span> <span class="n">_CAMJABZ_SURROUND_PARAMETERS</span>
+                        <span class="p">}</span>
+<span class="n">_SURROUND_PARAMETERS</span><span class="p">[</span><span class="s1">&#39;cam15u&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_CAM15U_SURROUND_PARAMETERS</span>
+<span class="n">_SURROUND_PARAMETERS</span><span class="p">[</span><span class="s1">&#39;cam_sww16&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span> 
+<span class="n">_SURROUND_PARAMETERS</span><span class="p">[</span><span class="s1">&#39;cam18sl&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;_SURROUND_PARAMETERS&#39;</span><span class="p">]</span>
+
+<span class="c1"># --- Naka-Rushton function parameter data ---</span>
+<span class="n">_NAKA_RUSHTON_PARAMETERS</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;ciecam02&#39;</span> <span class="p">:</span> <span class="n">_CIECAM02_NAKA_RUSHTON_PARAMETERS</span><span class="p">,</span>
+                            <span class="s1">&#39;cam02ucs&#39;</span> <span class="p">:</span> <span class="n">_CIECAM02_NAKA_RUSHTON_PARAMETERS</span><span class="p">,</span>
+                            <span class="s1">&#39;ciecam16&#39;</span> <span class="p">:</span> <span class="n">_CIECAM16_NAKA_RUSHTON_PARAMETERS</span><span class="p">,</span>
+                            <span class="s1">&#39;cam16ucs&#39;</span> <span class="p">:</span> <span class="n">_CIECAM16_NAKA_RUSHTON_PARAMETERS</span><span class="p">,</span>
+                            <span class="p">}</span>
+<span class="n">_NAKA_RUSHTON_PARAMETERS</span><span class="p">[</span><span class="s1">&#39;cam15u&#39;</span><span class="p">]</span> <span class="o">=</span>  <span class="n">_CAM15U_NAKA_RUSHTON_PARAMETERS</span>
+<span class="n">_NAKA_RUSHTON_PARAMETERS</span><span class="p">[</span><span class="s1">&#39;cam18sl&#39;</span><span class="p">]</span> <span class="o">=</span>  <span class="n">_CAM18SL_NAKA_RUSHTON_PARAMETERS</span>
+
+<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;_NAKA_RUSHTON_PARAMETERS&#39;</span><span class="p">]</span>
+
+
+<span class="c1"># ---- UCS parameters ---</span>
+<span class="n">_CAM_UCS_PARAMETERS</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;ciecam02&#39;</span> <span class="p">:</span> <span class="n">_CAM02UCS_UCS_PARAMETERS</span><span class="p">,</span>
+                       <span class="s1">&#39;cam02ucs&#39;</span> <span class="p">:</span> <span class="n">_CAM02UCS_UCS_PARAMETERS</span><span class="p">,</span>
+                       <span class="s1">&#39;ciecam16&#39;</span> <span class="p">:</span> <span class="n">_CAM16UCS_UCS_PARAMETERS</span><span class="p">,</span>
+                       <span class="s1">&#39;cam16ucs&#39;</span> <span class="p">:</span> <span class="n">_CAM16UCS_UCS_PARAMETERS</span><span class="p">}</span>
+
+<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;_CAM_UCS_PARAMETERS&#39;</span><span class="p">]</span>
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+<span class="c1">#Set some defaults:</span>
+<span class="n">_CAM_DEFAULT_TYPE</span> <span class="o">=</span> <span class="s1">&#39;ciecam02&#39;</span>
+<span class="n">_CAM_DEFAULT_WHITE_POINT</span> <span class="o">=</span> <span class="n">_CIECAM02_DEFAULT_WHITE_POINT</span>
+<span class="n">_CAM_DEFAULT_CONDITIONS</span> <span class="o">=</span> <span class="n">_CIECAM02_DEFAULT_CONDITIONS</span>
+<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;_CAM_DEFAULT_TYPE&#39;</span><span class="p">,</span> <span class="s1">&#39;_CAM_DEFAULT_WHITE_POINT&#39;</span><span class="p">,</span><span class="s1">&#39;_CAM_DEFAULT_CONDITIONS&#39;</span><span class="p">]</span>
+
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+<span class="c1"># Define some extra functions:</span>
+
+<div class="viewcode-block" id="camXucs"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.camXucs">[docs]</a><span class="k">def</span> <span class="nf">camXucs</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">outin</span> <span class="o">=</span> <span class="s1">&#39;J,aM,bM&#39;</span><span class="p">,</span> 
+            <span class="n">conditions</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">forward</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">ucstype</span> <span class="o">=</span> <span class="s1">&#39;ucs&#39;</span><span class="p">,</span>
+            <span class="n">yellowbluepurplecorrect</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+            <span class="n">camtype</span> <span class="o">=</span> <span class="n">_CAM_DEFAULT_TYPE</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wraps ciecam02(), ciecam16(), cam02ucs(), cam16ucs().</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :camtype:</span>
+<span class="sd">            | _DEFAULT_TYPE, optional</span>
+<span class="sd">            | String specifying the cam-model.</span>
+<span class="sd">            </span>
+<span class="sd">    Notes:</span>
+<span class="sd">        1. To call ciecam02() or ciecam16(): set ucstype to None !!!</span>
+<span class="sd">        2. For more info on other input arguments, see doc-strings of those functions.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">camtype</span> <span class="o">==</span> <span class="s1">&#39;ciecam02&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">ucstype</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">ciecam02</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="n">Yw</span><span class="p">,</span> <span class="n">outin</span> <span class="o">=</span> <span class="n">outin</span><span class="p">,</span>  
+                        <span class="n">conditions</span> <span class="o">=</span> <span class="n">conditions</span><span class="p">,</span> <span class="n">forward</span> <span class="o">=</span> <span class="n">forward</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="n">mcat</span><span class="p">,</span>
+                        <span class="n">yellowbluepurplecorrect</span> <span class="o">=</span> <span class="n">yellowbluepurplecorrect</span><span class="p">)</span>
+    
+    <span class="k">elif</span> <span class="p">((</span><span class="n">camtype</span> <span class="o">==</span> <span class="s1">&#39;cam02ucs&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">camtype</span> <span class="o">==</span> <span class="s1">&#39;ciecam02&#39;</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">ucstype</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">cam02ucs</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="n">Yw</span><span class="p">,</span> <span class="n">ucstype</span> <span class="o">=</span> <span class="n">ucstype</span><span class="p">,</span> 
+                        <span class="n">conditions</span> <span class="o">=</span> <span class="n">conditions</span><span class="p">,</span> <span class="n">forward</span> <span class="o">=</span> <span class="n">forward</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="n">mcat</span><span class="p">,</span>
+                        <span class="n">yellowbluepurplecorrect</span> <span class="o">=</span> <span class="n">yellowbluepurplecorrect</span><span class="p">)</span>
+    
+    <span class="k">elif</span> <span class="p">(</span><span class="n">camtype</span> <span class="o">==</span> <span class="s1">&#39;ciecam16&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">ucstype</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">ciecam16</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="n">Yw</span><span class="p">,</span> <span class="n">outin</span> <span class="o">=</span> <span class="n">outin</span><span class="p">,</span>  
+                        <span class="n">conditions</span> <span class="o">=</span> <span class="n">conditions</span><span class="p">,</span> <span class="n">forward</span> <span class="o">=</span> <span class="n">forward</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="n">mcat</span><span class="p">)</span>
+    
+    <span class="k">elif</span> <span class="p">((</span><span class="n">camtype</span> <span class="o">==</span> <span class="s1">&#39;cam16ucs&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">camtype</span> <span class="o">==</span> <span class="s1">&#39;ciecam16&#39;</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">ucstype</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">cam16ucs</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="n">Yw</span><span class="p">,</span> <span class="n">ucstype</span> <span class="o">=</span> <span class="n">ucstype</span><span class="p">,</span> 
+                        <span class="n">conditions</span> <span class="o">=</span> <span class="n">conditions</span><span class="p">,</span> <span class="n">forward</span> <span class="o">=</span> <span class="n">forward</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="n">mcat</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="p">((</span><span class="n">camtype</span> <span class="o">==</span> <span class="s1">&#39;camjabz&#39;</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="n">camjabz</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="n">Yw</span><span class="p">,</span> <span class="n">outin</span> <span class="o">=</span> <span class="n">outin</span><span class="p">,</span>  
+                        <span class="n">conditions</span> <span class="o">=</span> <span class="n">conditions</span><span class="p">,</span> <span class="n">forward</span> <span class="o">=</span> <span class="n">forward</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="n">mcat</span><span class="p">)</span></div>
+
+<span class="n">__all__</span> <span class="o">+=</span><span class="p">[</span><span class="s1">&#39;camXucs&#39;</span><span class="p">]</span> 
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Kevin A.G. Smet
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.color.ctf.colortransforms &mdash; LuxPy 1.5.3 documentation</title>
+  <title>luxpy.color.ctf.colortransforms &mdash; LuxPy 1.6.0 documentation</title>
   
 
   
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                1.5.3
+                1.6.0
               </div>
             
           
@@ -202,7 +202,7 @@
 <span class="sd">  | * xyz_to_Ydlep(), Ydlep_to_xyz(): (X,Y,Z) &lt;-&gt; (Y,dl, ep); </span>
 <span class="sd">  |                   Y, dominant wavelength (dl) and excitation purity (ep)</span>
 <span class="sd">  | * xyz_to_srgb(), srgb_to_xyz(): (X,Y,Z) &lt;-&gt; sRGB; (IEC:61966 sRGB)</span>
-<span class="sd">  | * xyz_to_jabz(), jabz_to_xyz(): (X,Y,Z) &lt;-&gt; (Jz,az,bz) [Safdar et al, 2017]</span>
+
 
 <span class="sd">References</span>
 <span class="sd">----------</span>
@@ -216,10 +216,7 @@
 <span class="sd">    Chromaticity diagram showing cone excitation by stimuli of equal luminance.</span>
 <span class="sd">    J. Opt. Soc. Am. 69, 1183–1186. </span>
 <span class="sd">    &lt;https://www.osapublishing.org/josa/abstract.cfm?uri=josa-69-8-1183&gt;`_</span>
-<span class="sd">    4. `Safdar, M., Cui, G., Kim,Y. J., and  Luo, M. R. (2017).</span>
-<span class="sd">    Perceptually uniform color space for image signals including high dynamic range and wide gamut.</span>
-<span class="sd">    Opt. Express, vol. 25, no. 13, pp. 15131–15151, Jun. 2017. </span>
-<span class="sd">    &lt;https://www.opticsexpress.org/abstract.cfm?URI=oe-25-13-15131&gt;`_</span>
+<span class="sd">    </span>
 <span class="sd">    </span>
 <span class="sd">.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)</span>
 <span class="sd">&quot;&quot;&quot;</span>
@@ -229,8 +226,7 @@
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;_CSPACE_AXES&#39;</span><span class="p">,</span> <span class="s1">&#39;_IPT_M&#39;</span><span class="p">,</span><span class="s1">&#39;xyz_to_Yxy&#39;</span><span class="p">,</span><span class="s1">&#39;Yxy_to_xyz&#39;</span><span class="p">,</span><span class="s1">&#39;xyz_to_Yuv&#39;</span><span class="p">,</span><span class="s1">&#39;Yuv_to_xyz&#39;</span><span class="p">,</span>
            <span class="s1">&#39;xyz_to_wuv&#39;</span><span class="p">,</span><span class="s1">&#39;wuv_to_xyz&#39;</span><span class="p">,</span><span class="s1">&#39;xyz_to_xyz&#39;</span><span class="p">,</span><span class="s1">&#39;xyz_to_lms&#39;</span><span class="p">,</span> <span class="s1">&#39;lms_to_xyz&#39;</span><span class="p">,</span><span class="s1">&#39;xyz_to_lab&#39;</span><span class="p">,</span><span class="s1">&#39;lab_to_xyz&#39;</span><span class="p">,</span><span class="s1">&#39;xyz_to_luv&#39;</span><span class="p">,</span><span class="s1">&#39;luv_to_xyz&#39;</span><span class="p">,</span>
-           <span class="s1">&#39;xyz_to_Vrb_mb&#39;</span><span class="p">,</span><span class="s1">&#39;Vrb_mb_to_xyz&#39;</span><span class="p">,</span><span class="s1">&#39;xyz_to_ipt&#39;</span><span class="p">,</span><span class="s1">&#39;ipt_to_xyz&#39;</span><span class="p">,</span><span class="s1">&#39;xyz_to_Ydlep&#39;</span><span class="p">,</span><span class="s1">&#39;Ydlep_to_xyz&#39;</span><span class="p">,</span><span class="s1">&#39;xyz_to_srgb&#39;</span><span class="p">,</span><span class="s1">&#39;srgb_to_xyz&#39;</span><span class="p">,</span>
-           <span class="s1">&#39;xyz_to_jabz&#39;</span><span class="p">,</span><span class="s1">&#39;jabz_to_xyz&#39;</span><span class="p">]</span>
+           <span class="s1">&#39;xyz_to_Vrb_mb&#39;</span><span class="p">,</span><span class="s1">&#39;Vrb_mb_to_xyz&#39;</span><span class="p">,</span><span class="s1">&#39;xyz_to_ipt&#39;</span><span class="p">,</span><span class="s1">&#39;ipt_to_xyz&#39;</span><span class="p">,</span><span class="s1">&#39;xyz_to_Ydlep&#39;</span><span class="p">,</span><span class="s1">&#39;Ydlep_to_xyz&#39;</span><span class="p">,</span><span class="s1">&#39;xyz_to_srgb&#39;</span><span class="p">,</span><span class="s1">&#39;srgb_to_xyz&#39;</span><span class="p">]</span>
 
 <span class="c1">#------------------------------------------------------------------------------</span>
 <span class="c1"># Database with cspace-axis strings (for plotting):</span>
@@ -1361,137 +1357,6 @@
         <span class="n">xyz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;ij,lj-&gt;li&#39;</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">srgb</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span>
     <span class="k">return</span> <span class="n">xyz</span></div>
 
-<div class="viewcode-block" id="xyz_to_jabz"><a class="viewcode-back" href="../../../../color.html#luxpy.color.ctf.colortransforms.xyz_to_jabz">[docs]</a><span class="k">def</span> <span class="nf">xyz_to_jabz</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Convert XYZ tristimulus values to Jz,az,bz color coordinates.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        :xyz: </span>
-<span class="sd">            | ndarray with absolute tristimulus values (Y in cd/m²!)</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        :jabz: </span>
-<span class="sd">            | ndarray with Jz,az,bz color coordinates</span>
-
-<span class="sd">    Notes:</span>
-<span class="sd">     | 1. :xyz: is assumed to be under D65 viewing conditions! If necessary perform chromatic adaptation!</span>
-<span class="sd">     |</span>
-<span class="sd">     | 2a. Jz represents the &#39;lightness&#39; relative to a D65 white with luminance = 10000 cd/m² </span>
-<span class="sd">     |      (note that Jz that not exactly equal 1 for this high value, but rather for 102900 cd/m2)</span>
-<span class="sd">     | 2b. az, bz represent respectively a red-green and a yellow-blue opponent axis </span>
-<span class="sd">     |      (but note that a D65 shows a small offset from (0,0))</span>
-
-<span class="sd">    Reference:</span>
-<span class="sd">        1. `Safdar, M., Cui, G., Kim,Y. J., and Luo, M. R. (2017).</span>
-<span class="sd">        Perceptually uniform color space for image signals including high dynamic range and wide gamut.</span>
-<span class="sd">        Opt. Express, vol. 25, no. 13, pp. 15131–15151, June 2017. </span>
-<span class="sd">        &lt;http://www.opticsexpress.org/abstract.cfm?URI=oe-25-13-15131&gt;`_</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">xyz</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">(</span><span class="n">xyz</span><span class="p">)</span>
-    
-    <span class="c1"># Setup X,Y,Z to X&#39;,Y&#39;,Z&#39; transform as matrix:</span>
-    <span class="n">b</span> <span class="o">=</span> <span class="mf">1.15</span>
-    <span class="n">g</span> <span class="o">=</span> <span class="mf">0.66</span>
-    <span class="n">M_to_xyzp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">b</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">b</span><span class="p">],[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">g</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
-
-    <span class="c1"># Define X&#39;,Y&#39;,Z&#39; to L,M,S conversion matrix:</span>
-    <span class="n">M_to_lms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.41478972</span><span class="p">,</span> <span class="mf">0.579999</span><span class="p">,</span> <span class="mf">0.0146480</span><span class="p">,],</span>
-                  <span class="p">[</span><span class="o">-</span><span class="mf">0.2015100</span><span class="p">,</span> <span class="mf">1.120649</span><span class="p">,</span> <span class="mf">0.0531008</span><span class="p">],</span>
-                  <span class="p">[</span><span class="o">-</span><span class="mf">0.0166008</span><span class="p">,</span> <span class="mf">0.264800</span><span class="p">,</span> <span class="mf">0.6684799</span><span class="p">]])</span>
-    
-    <span class="c1"># Premultiply M_to_xyzp and M_to_lms:</span>
-    <span class="n">M</span> <span class="o">=</span>  <span class="n">M_to_lms</span> <span class="o">@</span> <span class="n">M_to_xyzp</span>
-    
-    <span class="c1"># Transform X,Y,Z to L,M,S:</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">xyz</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
-        <span class="n">lms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;ij,klj-&gt;kli&#39;</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">xyz</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">lms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;ij,lj-&gt;li&#39;</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">xyz</span><span class="p">)</span>
-    
-    <span class="c1"># response compression: lms to lms&#39;</span>
-    <span class="n">lmsp</span> <span class="o">=</span> <span class="p">((</span><span class="mi">3424</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="mi">12</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">2413</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="mi">7</span><span class="p">))</span><span class="o">*</span><span class="p">(</span><span class="n">lms</span><span class="o">/</span><span class="mi">10000</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="mi">2610</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="mi">14</span><span class="p">)))</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="mi">2392</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="mi">7</span><span class="p">))</span><span class="o">*</span><span class="p">((</span><span class="n">lms</span><span class="o">/</span><span class="mi">10000</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="mi">2610</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="mi">14</span><span class="p">)))))</span><span class="o">**</span><span class="p">(</span><span class="mf">1.7</span><span class="o">*</span><span class="mi">2523</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="mi">5</span><span class="p">))</span>
-
-    <span class="c1"># Transform L&#39;,M&#39;,S&#39; to Iabz:</span>
-    <span class="n">M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-                  <span class="p">[</span><span class="mf">3.524000</span><span class="p">,</span> <span class="o">-</span><span class="mf">4.066708</span><span class="p">,</span> <span class="mf">0.542708</span><span class="p">],</span>
-                  <span class="p">[</span><span class="mf">0.199076</span><span class="p">,</span> <span class="mf">1.096799</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.295875</span><span class="p">]])</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">lms</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
-        <span class="n">Iabz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;ij,klj-&gt;kli&#39;</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">lmsp</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">Iabz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;ij,lj-&gt;li&#39;</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">lmsp</span><span class="p">)</span>
-
-    <span class="c1"># convert Iabz&#39; to Jabz coordinates:</span>
-
-    <span class="n">Iabz</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">((</span><span class="mi">1</span><span class="o">-</span><span class="mf">0.56</span><span class="p">)</span><span class="o">*</span><span class="n">Iabz</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="mf">0.56</span><span class="o">*</span><span class="n">Iabz</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">]))</span> <span class="o">-</span> <span class="mf">1.6295499532821566e-11</span>
-    <span class="k">return</span> <span class="n">Iabz</span></div>
-
-<div class="viewcode-block" id="jabz_to_xyz"><a class="viewcode-back" href="../../../../color.html#luxpy.color.ctf.colortransforms.jabz_to_xyz">[docs]</a><span class="k">def</span> <span class="nf">jabz_to_xyz</span><span class="p">(</span><span class="n">jabz</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Convert Jz,az,bz color coordinates to XYZ tristimulus values.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        :jabz: </span>
-<span class="sd">            | ndarray with Jz,az,bz color coordinates</span>
-<span class="sd">            </span>
-<span class="sd">    Returns:</span>
-<span class="sd">        :xyz: </span>
-<span class="sd">            | ndarray with tristimulus values</span>
-
-<span class="sd">    Note:</span>
-<span class="sd">     | 1. :xyz: is assumed to be under D65 viewing conditions! If necessary perform chromatic adaptation!</span>
-<span class="sd">     |</span>
-<span class="sd">     | 2a. Jz represents the &#39;lightness&#39; relative to a D65 white with luminance = 10000 cd/m² </span>
-<span class="sd">     |      (note that Jz that not exactly equal 1 for this high value, but rather for 102900 cd/m2)</span>
-<span class="sd">     | 2b.  az, bz represent respectively a red-green and a yellow-blue opponent axis </span>
-<span class="sd">     |      (but note that a D65 shows a small offset from (0,0))</span>
-
-<span class="sd">    Reference:</span>
-<span class="sd">        1. `Safdar, M., Cui, G., Kim,Y. J., and Luo, M. R. (2017).</span>
-<span class="sd">        Perceptually uniform color space for image signals including high dynamic range and wide gamut.</span>
-<span class="sd">        Opt. Express, vol. 25, no. 13, pp. 15131–15151, June, 2017.</span>
-<span class="sd">        &lt;http://www.opticsexpress.org/abstract.cfm?URI=oe-25-13-15131&gt;`_</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">jabz</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">(</span><span class="n">jabz</span><span class="p">)</span>
-    
-    <span class="c1"># Convert Jz to Iz:</span>
-    <span class="n">jabz</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">jabz</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mf">1.6295499532821566e-11</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mf">0.56</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="n">jabz</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mf">1.6295499532821566e-11</span><span class="p">)))</span>
-
-    <span class="c1"># Convert Iabz to lmsp:</span>
-    <span class="n">M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-                  <span class="p">[</span><span class="mf">3.524000</span><span class="p">,</span> <span class="o">-</span><span class="mf">4.066708</span><span class="p">,</span> <span class="mf">0.542708</span><span class="p">],</span>
-                  <span class="p">[</span><span class="mf">0.199076</span><span class="p">,</span> <span class="mf">1.096799</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.295875</span><span class="p">]]))</span>
-    
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">jabz</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
-        <span class="n">lmsp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;ij,klj-&gt;kli&#39;</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">jabz</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">lmsp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;ij,lj-&gt;li&#39;</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">jabz</span><span class="p">)</span>
-        
-    <span class="c1"># Convert lmsp to lms:</span>
-
-    <span class="n">lms</span> <span class="o">=</span> <span class="mi">10000</span><span class="o">*</span><span class="p">(((</span><span class="mi">3424</span><span class="o">/</span><span class="mi">2</span><span class="o">**</span><span class="mi">12</span><span class="p">)</span> <span class="o">-</span> <span class="n">lmsp</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="mf">1.7</span><span class="o">*</span><span class="mi">2523</span><span class="o">/</span><span class="mi">2</span><span class="o">**</span><span class="mi">5</span><span class="p">)))</span> <span class="o">/</span> <span class="p">(((</span><span class="mi">2392</span><span class="o">/</span><span class="mi">2</span><span class="o">**</span><span class="mi">7</span><span class="p">)</span><span class="o">*</span><span class="n">lmsp</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="mf">1.7</span><span class="o">*</span><span class="mi">2523</span><span class="o">/</span><span class="mi">2</span><span class="o">**</span><span class="mi">5</span><span class="p">)))</span> <span class="o">-</span> <span class="p">(</span><span class="mi">2413</span><span class="o">/</span><span class="mi">2</span><span class="o">**</span><span class="mi">7</span><span class="p">)))</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="mi">2610</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="mi">14</span><span class="p">)))</span>
-    
-    <span class="c1"># Convert lms to xyz:</span>
-    <span class="c1"># Setup X&#39;,Y&#39;,Z&#39; from X,Y,Z transform as matrix:</span>
-    <span class="n">b</span> <span class="o">=</span> <span class="mf">1.15</span>
-    <span class="n">g</span> <span class="o">=</span> <span class="mf">0.66</span>
-    <span class="n">M_to_xyzp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">b</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">b</span><span class="p">],[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">g</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
-    
-    <span class="c1"># Define X&#39;,Y&#39;,Z&#39; to L,M,S conversion matrix:</span>
-    <span class="n">M_to_lms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.41478972</span><span class="p">,</span> <span class="mf">0.579999</span><span class="p">,</span> <span class="mf">0.0146480</span><span class="p">],</span>
-                  <span class="p">[</span><span class="o">-</span><span class="mf">0.2015100</span><span class="p">,</span> <span class="mf">1.120649</span><span class="p">,</span> <span class="mf">0.0531008</span><span class="p">],</span>
-                  <span class="p">[</span><span class="o">-</span><span class="mf">0.0166008</span><span class="p">,</span> <span class="mf">0.264800</span><span class="p">,</span> <span class="mf">0.6684799</span><span class="p">]])</span>
-    
-    <span class="c1"># Premultiply M_to_xyzp and M_to_lms and invert:</span>
-    <span class="n">M</span> <span class="o">=</span> <span class="n">M_to_lms</span> <span class="o">@</span> <span class="n">M_to_xyzp</span>
-    <span class="n">M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">M</span><span class="p">)</span>
-    
-    <span class="c1"># Transform L,M,S to X,Y,Z:</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">jabz</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
-        <span class="n">xyz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;ij,klj-&gt;kli&#39;</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">lms</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">xyz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;ij,lj-&gt;li&#39;</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">lms</span><span class="p">)</span>
-        
-    <span class="k">return</span> <span class="n">xyz</span></div>
 </pre></div>
 
            </div>

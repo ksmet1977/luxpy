@@ -35,11 +35,11 @@ cam: sub-package with color appearance models
                        |    camXucs (uniform color space), 
                        |    camXlcd (large color diff.), 
                        |    camXscd (small color diff).
-                            
+
  :_CAM15U_PARAMETERS: database with CAM15u model parameters.
- 
+
  :_CAM_SWW16_PARAMETERS: cam_sww16 model parameters.
- 
+
  :_CAM18SL_PARAMETERS: database with CAM18sl model parameters
 
  :_CAM_DEFAULT_WHITE_POINT: Default internal reference white point (xyz)
@@ -47,16 +47,16 @@ cam: sub-package with color appearance models
  :_CAM_DEFAULT_CONDITIONS: Default CAM model parameters for model.
 
  :_CAM_AXES: dict with list[str,str,str] containing axis labels of defined cspaces.
-                  
+
  :deltaH(): Compute a hue difference, dH = 2*C1*C2*sin(dh/2).
 
  :naka_rushton(): applies a Naka-Rushton function to the input
- 
+
  :hue_angle(): calculates a positive hue angle
 
  :hue_quadrature(): calculates the Hue quadrature from the hue.
 
- 
+
  :ciecam02(): | calculates ciecam02 output 
               | `N. Moroney, M. D. Fairchild, R. W. G. Hunt, C. Li, M. R. Luo, and T. Newman, 
                 “The CIECAM02 color appearance model,” 
@@ -66,20 +66,19 @@ cam: sub-package with color appearance models
            | `C. Li, Z. Li, Z. Wang, Y. Xu, M. R. Luo, G. Cui, M. Melgosa, M. H. Brill, and M. Pointer, 
              “Comprehensive color solutions: CAM16, CAT16, and CAM16-UCS,” 
              Color Res. Appl., p. n/a–n/a. <http://onlinelibrary.wiley.com/doi/10.1002/col.22131/abstract>`_
-           
 
  :cam02ucs(): | calculates ucs (or lcd, scd) output based on ciecam02 
-              |  (forward + inverse available)
-              |  `M. R. Luo, G. Cui, and C. Li, 
-                 “Uniform colour spaces based on CIECAM02 colour appearance model,” 
-                 Color Res. Appl., vol. 31, no. 4, pp. 320–330, 2006.
-                 <http://onlinelibrary.wiley.com/doi/10.1002/col.20227/abstract>`_
+              | (forward + inverse available)
+              | `M. R. Luo, G. Cui, and C. Li, 
+                “Uniform colour spaces based on CIECAM02 colour appearance model,” 
+                Color Res. Appl., vol. 31, no. 4, pp. 320–330, 2006.
+                <http://onlinelibrary.wiley.com/doi/10.1002/col.20227/abstract>`_
 
  :cam16ucs(): | calculates ucs (or lcd, scd) output based on cam16 
               |  (forward + inverse available)
               | `C. Li, Z. Li, Z. Wang, Y. Xu, M. R. Luo, G. Cui, M. Melgosa, M. H. Brill, and M. Pointer, 
                 “Comprehensive color solutions: CAM16, CAT16, and CAM16-UCS,” 
-                Color Res. Appl., p. n/a–n/a. <http://onlinelibrary.wiley.com/doi/10.1002/col.22131/abstract>`_
+                Color Res. Appl. <http://onlinelibrary.wiley.com/doi/10.1002/col.22131/abstract>`_
 
  :cam15u(): | calculates the output for the CAM15u model for self-luminous unrelated stimuli. 
             | `M. Withouck, K. A. G. Smet, W. R. Ryckaert, and P. Hanselaer, 
@@ -88,38 +87,40 @@ cam: sub-package with color appearance models
               Opt. Express, vol. 23, no. 9, pp. 12045–12064, 2015.
               <https://www.osapublishing.org/oe/abstract.cfm?uri=oe-23-9-12045&origin=search>`_
             | `M. Withouck, K. A. G. Smet, and P. Hanselaer, (2015), 
-            “Brightness prediction of different sized unrelated self-luminous stimuli,” 
-            Opt. Express, vol. 23, no. 10, pp. 13455–13466. 
-            <https://www.osapublishing.org/oe/abstract.cfm?uri=oe-23-10-13455&origin=search>`_
-            
- :cam_sww16(): | A simple principled color appearance model based on a mapping 
-                 of the Munsell color system.
+              “Brightness prediction of different sized unrelated self-luminous stimuli,” 
+              Opt. Express, vol. 23, no. 10, pp. 13455–13466. 
+              <https://www.osapublishing.org/oe/abstract.cfm?uri=oe-23-10-13455&origin=search>`_
+
+ :cam_sww16(): | A simple principled color appearance model based on a mapping of the Munsell color system.
                | `Smet, K. A. G., Webster, M. A., & Whitehead, L. A. (2016). 
-                   A simple principled approach for modeling and understanding uniform color metrics. 
-                   Journal of the Optical Society of America A, 33(3), A319–A331. 
-                   <https://doi.org/10.1364/JOSAA.33.00A319>`_
-               
+                 “A simple principled approach for modeling and understanding uniform color metrics.” 
+                 Journal of the Optical Society of America A, 33(3), A319–A331. 
+                 <https://doi.org/10.1364/JOSAA.33.00A319>`_
+
  :cam18sl(): | calculates the output for the CAM18sl model for self-luminous related stimuli. 
              | `Hermans, S., Smet, K. A. G., & Hanselaer, P. (2018). 
-               "Color appearance model for self-luminous stimuli."
+               “Color appearance model for self-luminous stimuli.“
                Journal of the Optical Society of America A, 35(12), 2000–2009. 
                <https://doi.org/10.1364/JOSAA.35.002000>`_           
 
  :camXucs(): Wraps ciecam02(), ciecam16(), cam02ucs(), cam16ucs().
 
- :specific_wrappers_in_the_'xyz_to_cspace()' and 'cpsace_to_xyz()' format:
+ :specific wrappers in the 'xyz_to_cspace()' and 'cpsace_to_xyz()' format:
       | 'xyz_to_jabM_ciecam02', 'jabM_ciecam02_to_xyz',
       | 'xyz_to_jabC_ciecam02', 'jabC_ciecam02_to_xyz',
       | 'xyz_to_jabM_ciecam16', 'jabM_ciecam16_to_xyz',
       | 'xyz_to_jabC_ciecam16', 'jabC_ciecam16_to_xyz',
+      | 'xyz_to_jabz',          'jabz_to_xyz',
+      | 'xyz_to_jabM_camjabz', 'jabM_camjabz_to_xyz',
+      | 'xyz_to_jabC_camjabz', 'jabC_camjabz_to_xyz',
       | 'xyz_to_jab_cam02ucs', 'jab_cam02ucs_to_xyz', 
       | 'xyz_to_jab_cam02lcd', 'jab_cam02lcd_to_xyz',
       | 'xyz_to_jab_cam02scd', 'jab_cam02scd_to_xyz', 
       | 'xyz_to_jab_cam16ucs', 'jab_cam16ucs_to_xyz',
       | 'xyz_to_jab_cam16lcd', 'jab_cam16lcd_to_xyz',
       | 'xyz_to_jab_cam16scd', 'jab_cam16scd_to_xyz',
-      | 'xyz_to_qabW_cam15u', 'qabW_cam15u_to_xyz',
-      | 'xyz_to_lab_cam_sww16', 'lab_cam_sww16_to_xyz',
+      | 'xyz_to_qabW_cam15u',  'qabW_cam15u_to_xyz',
+      | 'xyz_to_lab_cam_sww16','lab_cam_sww16_to_xyz',
       | 'xyz_to_qabM_cam18sl', 'qabM_cam18sl_to_xyz',
       | 'xyz_to_qabS_cam18sl', 'qabS_cam18sl_to_xyz',
       
@@ -131,14 +132,15 @@ cam: sub-package with color appearance models
  :_massage_input_and_init_output(): Redimension input data to ensure most they have the appropriate sizes for easy and efficient looping.
 
  :_massage_output_data_to_original_shape(): Massage output data to restore original shape of original CAM input.
- 
+
  :_get_absolute_xyz_xyzw(): Calculate absolute xyz tristimulus values of stimulus and white point from spectral input or convert relative xyz values to absolute ones.
- 
+
  :_simple_cam(): An example CAM illustration the usage of the functions in luxpy.cam.helpers 
 
 
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
+
 from .colorappearancemodels import *
 __all__ = colorappearancemodels.__all__

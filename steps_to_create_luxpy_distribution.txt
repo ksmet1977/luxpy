@@ -1,14 +1,15 @@
-# Make source distribution and wheel:
-python setup.py sdist bdist_wheel
-twine upload dist/luxpy-1.5.*
-
 # Make documentation:
 cd docs
 make html
 make latexpdf
 
+# Make source distribution and wheel:
+python setup.py sdist bdist_wheel
+twine upload dist/luxpy-1.6.*
+
+
 # Build conda version:
 cd conda
 conda skeleton pypi luxpy
 conda-build luxpy
-anaconda upload C:\Miniconda3\envs\py37\conda-bld\win-64\luxpy-1.5.3-py37h39e3cac_0.tar.bz2
+anaconda upload C:\Miniconda3\envs\py37\conda-bld\win-64\luxpy-1.6.0-py37h39e3cac_0.tar.bz2

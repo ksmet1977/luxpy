@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.color.cri.indices.mcri &mdash; LuxPy 1.5.3 documentation</title>
+  <title>luxpy.color.cri.indices.mcri &mdash; LuxPy 1.6.0 documentation</title>
   
 
   
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                1.5.3
+                1.6.0
               </div>
             
           
@@ -180,7 +180,7 @@
 <span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="n">cat</span><span class="p">,</span> <span class="n">math</span><span class="p">,</span> <span class="n">_CRI_RFL</span><span class="p">,</span> <span class="n">_S_INTERP_TYPE</span><span class="p">,</span> <span class="n">spd</span><span class="p">,</span> <span class="n">spd_to_xyz</span><span class="p">,</span> <span class="n">xyz_to_ipt</span><span class="p">,</span> <span class="n">xyz_to_cct</span>
 <span class="kn">from</span> <span class="nn">luxpy.utils</span> <span class="kn">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">np2d</span><span class="p">,</span> <span class="n">asplit</span>
 <span class="kn">from</span> <span class="nn">..utils.DE_scalers</span> <span class="kn">import</span> <span class="n">psy_scale</span>
-<span class="kn">from</span> <span class="nn">..utils.helpers</span> <span class="kn">import</span> <span class="n">jab_to_rg</span>
+<span class="kn">from</span> <span class="nn">..utils.helpers</span> <span class="kn">import</span> <span class="n">_get_hue_bin_data</span>
 
 
 <span class="n">_MCRI_DEFAULTS</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;sampleset&#39;</span><span class="p">:</span> <span class="s2">&quot;_CRI_RFL[&#39;mcri&#39;]&quot;</span><span class="p">,</span> 
@@ -320,8 +320,10 @@
         <span class="n">ipt_mc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">I</span><span class="p">,</span><span class="n">a12</span><span class="p">),</span><span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
         <span class="n">nhbins</span><span class="p">,</span> <span class="n">normalize_gamut</span><span class="p">,</span> <span class="n">normalized_chroma_ref</span><span class="p">,</span> <span class="n">start_hue</span>  <span class="o">=</span> <span class="p">[</span><span class="n">rg_pars</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">rg_pars</span><span class="o">.</span><span class="n">keys</span><span class="p">())]</span>
     
-        <span class="n">Rg</span> <span class="o">=</span> <span class="n">jab_to_rg</span><span class="p">(</span><span class="n">ipt</span><span class="p">,</span><span class="n">ipt_mc</span><span class="p">,</span> <span class="n">ordered_and_sliced</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">nhbins</span> <span class="o">=</span> <span class="n">nhbins</span><span class="p">,</span> <span class="n">start_hue</span> <span class="o">=</span> <span class="n">start_hue</span><span class="p">,</span> <span class="n">normalize_gamut</span> <span class="o">=</span> <span class="n">normalize_gamut</span><span class="p">)</span>
-
+        <span class="n">hue_bin_data</span> <span class="o">=</span> <span class="n">_get_hue_bin_data</span><span class="p">(</span><span class="n">ipt</span><span class="p">,</span> <span class="n">ipt_me</span><span class="p">,</span> 
+                                         <span class="n">start_hue</span> <span class="o">=</span> <span class="n">start_hue</span><span class="p">,</span> <span class="n">nhbins</span> <span class="o">=</span> <span class="n">nhbins</span><span class="p">,</span>
+                                         <span class="n">normalized_chroma_ref</span> <span class="o">=</span> <span class="n">normalized_chroma_ref</span><span class="p">)</span>
+        <span class="n">Rg</span> <span class="o">=</span> <span class="n">_hue_bin_data_to_rg</span><span class="p">(</span><span class="n">hue_bin_data</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="n">out</span> <span class="o">!=</span> <span class="s1">&#39;Rm&#39;</span><span class="p">):</span>
         <span class="k">return</span>  <span class="nb">eval</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>

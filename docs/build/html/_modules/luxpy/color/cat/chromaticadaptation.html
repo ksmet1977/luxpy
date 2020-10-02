@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.color.cat.chromaticadaptation &mdash; LuxPy 1.5.3 documentation</title>
+  <title>luxpy.color.cat.chromaticadaptation &mdash; LuxPy 1.6.0 documentation</title>
   
 
   
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                1.5.3
+                1.6.0
               </div>
             
           
@@ -173,13 +173,15 @@
 <span class="sd">=============================================================================</span>
 
 <span class="sd"> :_WHITE_POINT: default adopted white point</span>
+<span class="sd"> </span>
+<span class="sd"> :_MCAT_DEFAULT: default mcat sensor matrix.</span>
 
 <span class="sd"> :_LA:  default luminance of the adaptation field</span>
 
 <span class="sd"> :_MCATS: | default chromatic adaptation sensor spaces</span>
 <span class="sd">          | * &#39;hpe&#39;: Hunt-Pointer-Estevez: R. W. G. Hunt, The Reproduction of Colour: Sixth Edition, 6th ed. Chichester, UK: John Wiley &amp; Sons Ltd, 2004.</span>
 <span class="sd">          | * &#39;cat02&#39;: from ciecam02: `CIE159-2004, âA Colour Apperance Model for Color Management System: CIECAM02,â? CIE, Vienna, 2004. &lt;http://onlinelibrary.wiley.com/doi/10.1002/col.20198/abstract&gt;`_</span>
-<span class="sd">          | * &#39;cat02-bs&#39;:  cat02 adjusted to solve yellow-blue problem (last line = [0 0 1]): `Brill MH, SÃ¼sstrunk S. Repairing gamut problems in CIECAM02: A progress report. Color Res Appl 2008;33(5), 424â426. &lt;http://onlinelibrary.wiley.com/doi/10.1002/col.20432/abstract&gt;`_</span>
+<span class="sd">          | * &#39;cat02-bs&#39;:  cat02 adjusted to solve yellow-blue problem (last line = [0 0 1]): `Brill MH, Süsstrunk S. Repairing gamut problems in CIECAM02: A progress report. Color Res Appl 2008;33(5), 424â426. &lt;http://onlinelibrary.wiley.com/doi/10.1002/col.20432/abstract&gt;`_</span>
 <span class="sd">          | * &#39;cat02-jiang&#39;: cat02 modified to solve yb-probem + purple problem: `Jun Jiang, Zhifeng Wang,M. Ronnier Luo,Manuel Melgosa,Michael H. Brill,Changjun Li, Optimum solution of the CIECAM02 yellowâblue and purple problems, Color Res Appl 2015: 40(5), 491-503. &lt;http://onlinelibrary.wiley.com/doi/10.1002/col.21921/abstract&gt;`_</span>
 <span class="sd">          | * &#39;kries&#39;</span>
 <span class="sd">          | * &#39;judd-1935&#39;: Judd primaries: `Judd, D.B.v (1935). A Maxwell Triangle Yielding Uniform Chromaticity Scales, JOSA A, 25(1), pp. 24-35. &lt;https://doi.org/10.1364/JOSA.25.000024&gt;`_</span>
@@ -219,7 +221,12 @@
 <span class="sd">           adaptation transform (CAT), i.e. independent rescaling of </span>
 <span class="sd">           &#39;sensor sensitivity&#39; to data to adapt from current adaptation </span>
 <span class="sd">           conditions (1) to the new conditions (2). </span>
+<span class="sd">           </span>
+<span class="sd"> :apply_vonkries1(): Apply a 1-step von kries chromatic adaptation transform.</span>
+<span class="sd"> </span>
+<span class="sd"> :apply_vonkries2(): Apply a 2-step von kries chromatic adaptation transform.</span>
 
+<span class="sd"> :apply_vonkries(): Apply a 1-step or 2-step von kries chromatic adaptation transform.</span>
 <span class="sd">===============================================================================</span>
 <span class="sd">&quot;&quot;&quot;</span>
        
@@ -228,7 +235,8 @@
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;_WHITE_POINT&#39;</span><span class="p">,</span><span class="s1">&#39;_LA&#39;</span><span class="p">,</span> <span class="s1">&#39;_MCATS&#39;</span><span class="p">,</span>
            <span class="s1">&#39;check_dimensions&#39;</span><span class="p">,</span><span class="s1">&#39;get_transfer_function&#39;</span><span class="p">,</span><span class="s1">&#39;get_degree_of_adaptation&#39;</span><span class="p">,</span>
-           <span class="s1">&#39;smet2017_D&#39;</span><span class="p">,</span><span class="s1">&#39;parse_x1x2_parameters&#39;</span><span class="p">,</span><span class="s1">&#39;apply&#39;</span><span class="p">]</span>
+           <span class="s1">&#39;smet2017_D&#39;</span><span class="p">,</span><span class="s1">&#39;parse_x1x2_parameters&#39;</span><span class="p">,</span><span class="s1">&#39;apply&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;apply_vonkries1&#39;</span><span class="p">,</span><span class="s1">&#39;apply_vonkries2&#39;</span><span class="p">,</span><span class="s1">&#39;apply_vonkries&#39;</span><span class="p">]</span>
 
 <span class="n">_WHITE_POINT</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">([</span><span class="mi">100</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mi">100</span><span class="p">])</span> <span class="c1">#default adopted white point</span>
 <span class="n">_LA</span> <span class="o">=</span> <span class="mf">100.0</span> <span class="c1">#cd/mÂ²</span>
@@ -250,6 +258,7 @@
 <span class="n">_MCATS</span><span class="p">[</span><span class="s1">&#39;biaco-pc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">([[</span><span class="mf">0.6489</span><span class="p">,</span> <span class="mf">0.3915</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0404</span><span class="p">],[</span><span class="o">-</span><span class="mf">0.3775</span><span class="p">,</span> <span class="mf">1.3055</span><span class="p">,</span>  <span class="mf">0.0720</span><span class="p">],[</span><span class="o">-</span><span class="mf">0.0271</span><span class="p">,</span> <span class="mf">0.0888</span><span class="p">,</span> <span class="mf">0.9383</span><span class="p">]])</span>
 <span class="n">_MCATS</span><span class="p">[</span><span class="s1">&#39;cat16&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">([[</span><span class="mf">0.401288</span><span class="p">,</span> <span class="mf">0.650173</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.051461</span><span class="p">],[</span><span class="o">-</span><span class="mf">0.250268</span><span class="p">,</span> <span class="mf">1.204414</span><span class="p">,</span> <span class="mf">0.045854</span><span class="p">],[</span><span class="o">-</span><span class="mf">0.002079</span><span class="p">,</span> <span class="mf">0.048952</span><span class="p">,</span> <span class="mf">0.953127</span><span class="p">]])</span>
 
+<span class="n">_MCAT_DEFAULT</span> <span class="o">=</span> <span class="s1">&#39;cat02&#39;</span>
 
 <div class="viewcode-block" id="check_dimensions"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cat.check_dimensions">[docs]</a><span class="k">def</span> <span class="nf">check_dimensions</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">xyzw</span><span class="p">,</span> <span class="n">caller</span> <span class="o">=</span> <span class="s1">&#39;cat.apply()&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -538,8 +547,8 @@
    <span class="k">return</span> <span class="n">x10</span><span class="p">,</span> <span class="n">x20</span></div>
 
 <span class="c1">#------------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="apply"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cat.apply">[docs]</a><span class="k">def</span> <span class="nf">apply</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">catmode</span> <span class="o">=</span> <span class="s1">&#39;1&gt;0&gt;2&#39;</span><span class="p">,</span> <span class="n">cattype</span> <span class="o">=</span> <span class="s1">&#39;vonkries&#39;</span><span class="p">,</span> <span class="n">xyzw1</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">xyzw2</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">xyzw0</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>\
-          <span class="n">D</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;cat02&#39;</span><span class="p">],</span> <span class="n">normxyz0</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">outtype</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">La</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">F</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Dtype</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="apply"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cat.apply">[docs]</a><span class="k">def</span> <span class="nf">apply</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">n_step</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">catmode</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cattype</span> <span class="o">=</span> <span class="s1">&#39;vonkries&#39;</span><span class="p">,</span> <span class="n">xyzw1</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">xyzw2</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">xyzw0</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>\
+          <span class="n">D</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="p">[</span><span class="n">_MCAT_DEFAULT</span><span class="p">],</span> <span class="n">normxyz0</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">outtype</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">La</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">F</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Dtype</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate corresponding colors by applying a von Kries chromatic adaptation</span>
 <span class="sd">    transform (CAT), i.e. independent rescaling of &#39;sensor sensitivity&#39; to data</span>
@@ -548,10 +557,16 @@
 <span class="sd">    Args:</span>
 <span class="sd">        :data: </span>
 <span class="sd">            | ndarray of tristimulus values (can be NxMx3)</span>
+<span class="sd">        :n_step:</span>
+<span class="sd">            | 2, optional</span>
+<span class="sd">            | Number of step in CAT (1: 1-step, 2: 2-step)</span>
 <span class="sd">        :catmode: </span>
-<span class="sd">            | &#39;1&gt;0&gt;2, optional</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            |    - None: use :n_step: to set mode: 1 = &#39;1&gt;2&#39;, 2:&#39;1&gt;0&gt;2&#39;</span>
 <span class="sd">            |    -&#39;1&gt;0&gt;2&#39;: Two-step CAT </span>
 <span class="sd">            |      from illuminant 1 to baseline illuminant 0 to illuminant 2.</span>
+<span class="sd">            |    -&#39;1&gt;2&#39;: One-step CAT</span>
+<span class="sd">            |      from illuminant 1 to illuminant 2.</span>
 <span class="sd">            |    -&#39;1&gt;0&#39;: One-step CAT </span>
 <span class="sd">            |      from illuminant 1 to baseline illuminant 0.</span>
 <span class="sd">            |    -&#39;0&gt;2&#39;: One-step CAT </span>
@@ -582,7 +597,7 @@
 <span class="sd">            | Type of degree of adaptation function from literature</span>
 <span class="sd">            | See luxpy.cat.get_degree_of_adaptation()</span>
 <span class="sd">        :mcat:</span>
-<span class="sd">            | [&#39;cat02&#39;], optional</span>
+<span class="sd">            | [_MCAT_DEFAULT], optional</span>
 <span class="sd">            | List[str] or List[ndarray] of sensor space matrices for each </span>
 <span class="sd">            |  condition pair. If len(:mcat:) == 1, the same matrix is used.</span>
 <span class="sd">        :normxyz0: </span>
@@ -597,12 +612,27 @@
 <span class="sd">    Returns:</span>
 <span class="sd">          :returns: </span>
 <span class="sd">              | ndarray with corresponding colors</span>
+<span class="sd">        </span>
+<span class="sd">    Reference:</span>
+<span class="sd">        1. `Smet, K. A. G., &amp; Ma, S. (2020). </span>
+<span class="sd">        Some concerns regarding the CAT16 chromatic adaptation transform. </span>
+<span class="sd">        Color Research &amp; Application, 45(1), 172–177. </span>
+<span class="sd">        &lt;https://doi.org/10.1002/col.22457&gt;`_</span>
 <span class="sd">    &quot;&quot;&quot;</span>
         
     <span class="k">if</span> <span class="p">(</span><span class="n">xyzw1</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">xyzw2</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">data</span> <span class="c1"># do nothing</span>
     
     <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Set catmode:</span>
+        <span class="k">if</span> <span class="n">catmode</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">n_step</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">catmode</span> <span class="o">=</span> <span class="s1">&#39;1&gt;0&gt;2&#39;</span>
+            <span class="k">elif</span> <span class="n">n_step</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">catmode</span> <span class="o">=</span> <span class="s1">&#39;1&gt;2&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;cat.apply(n_step = </span><span class="si">{:1.0f}</span><span class="s1">, catmode = None): Unknown requested n-step CAT mode !&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n_step</span><span class="p">))</span>
+        
         
         <span class="c1"># Make data 2d:</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
@@ -724,6 +754,259 @@
             <span class="n">xyzc</span> <span class="o">=</span> <span class="n">xyzc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
    
         <span class="k">return</span> <span class="n">xyzc</span></div>
+    
+<div class="viewcode-block" id="apply_vonkries1"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cat.apply_vonkries1">[docs]</a><span class="k">def</span> <span class="nf">apply_vonkries1</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">xyzw1</span><span class="p">,</span> <span class="n">xyzw2</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">invmcat</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">in_</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">out_</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Apply a 1-step von kries chromatic adaptation transform.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :xyz:</span>
+<span class="sd">            | ndarray with sample tristimulus or cat-sensor values</span>
+<span class="sd">        :xyzw1:</span>
+<span class="sd">            | ndarray with white point tristimulus or cat-sensor values of illuminant 1</span>
+<span class="sd">        :xyzw2:</span>
+<span class="sd">            | ndarray with white point tristimulus or cat-sensor values of illuminant 2</span>
+<span class="sd">        :D:</span>
+<span class="sd">            | 1, optional</span>
+<span class="sd">            | Degree of chromatic adaptation</span>
+<span class="sd">        :mcat:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | Specifies CAT sensor space.</span>
+<span class="sd">            | - options:</span>
+<span class="sd">            |    - None defaults to luxpy.cat._MCAT_DEFAULT</span>
+<span class="sd">            |    - str: see see luxpy.cat._MCATS.keys() for options </span>
+<span class="sd">            |         (details on type, ?luxpy.cat)</span>
+<span class="sd">            |    - ndarray: matrix with sensor primaries</span>
+<span class="sd">        :invmcat:</span>
+<span class="sd">            | None,optional</span>
+<span class="sd">            | Pre-calculated inverse mcat.</span>
+<span class="sd">            | If None: calculate inverse of mcat.</span>
+<span class="sd">        :in_:</span>
+<span class="sd">            | &#39;xyz&#39;, optional</span>
+<span class="sd">            | Input type (&#39;xyz&#39;, &#39;rgb&#39;) of data in xyz, xyzw1, xyzw2</span>
+<span class="sd">        :out_:</span>
+<span class="sd">            | &#39;xyz&#39;, optional</span>
+<span class="sd">            | Output type (&#39;xyz&#39;, &#39;rgb&#39;) of corresponding colors</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :xyzc:</span>
+<span class="sd">            | ndarray with corresponding colors.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Define cone/chromatic adaptation sensor space: </span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">in_</span> <span class="o">==</span> <span class="s1">&#39;xyz&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">out_</span> <span class="o">==</span> <span class="s1">&#39;xyz&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mcat</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">mcat</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+                <span class="n">mcat</span> <span class="o">=</span> <span class="n">_MCATS</span><span class="p">[</span><span class="n">_MCAT_DEFAULT</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mcat</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
+                <span class="n">mcat</span> <span class="o">=</span> <span class="n">_MCATS</span><span class="p">[</span><span class="n">mcat</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">invmcat</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">invmcat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">mcat</span><span class="p">)</span>
+    
+    <span class="c1">#--------------------------------------------</span>
+    <span class="c1"># transform from xyz to cat sensor space:</span>
+    <span class="k">if</span> <span class="n">in_</span> <span class="o">==</span> <span class="s1">&#39;xyz&#39;</span><span class="p">:</span>
+        <span class="n">rgb</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">dot23</span><span class="p">(</span><span class="n">mcat</span><span class="p">,</span> <span class="n">xyz</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+        <span class="n">rgbw1</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">dot23</span><span class="p">(</span><span class="n">mcat</span><span class="p">,</span> <span class="n">xyzw1</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+        <span class="n">rgbw2</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">dot23</span><span class="p">(</span><span class="n">mcat</span><span class="p">,</span> <span class="n">xyzw2</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">rgb</span> <span class="o">=</span> <span class="n">xyz</span>
+        <span class="n">rgbw1</span> <span class="o">=</span> <span class="n">xyzw1</span>
+        <span class="n">rgbw2</span> <span class="o">=</span> <span class="n">xyzw2</span>
+        
+    
+    <span class="c1">#--------------------------------------------  </span>
+    <span class="c1"># apply 1-step von Kries cat:</span>
+    <span class="n">vk_w_ratio</span> <span class="o">=</span> <span class="n">rgbw2</span><span class="o">/</span><span class="n">rgbw1</span>
+    <span class="k">if</span> <span class="n">rgb</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span> <span class="n">vk_w_ratio</span> <span class="o">=</span> <span class="n">vk_w_ratio</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="kc">None</span><span class="p">]</span>
+    <span class="n">rgbc</span> <span class="o">=</span> <span class="p">(</span><span class="n">D</span><span class="o">*</span><span class="n">vk_w_ratio</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">D</span><span class="p">))</span><span class="o">*</span><span class="n">rgb</span> 
+
+    <span class="c1">#--------------------------------------------</span>
+    <span class="c1"># convert from cat16 sensor space to xyz:</span>
+    <span class="k">if</span> <span class="n">out_</span> <span class="o">==</span> <span class="s1">&#39;xyz&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">dot23</span><span class="p">(</span><span class="n">invmcat</span><span class="p">,</span> <span class="n">rgbc</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+    <span class="k">else</span><span class="p">:</span> 
+        <span class="k">return</span> <span class="n">rgbc</span><span class="o">.</span><span class="n">T</span></div>
+
+<div class="viewcode-block" id="apply_vonkries2"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cat.apply_vonkries2">[docs]</a><span class="k">def</span> <span class="nf">apply_vonkries2</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">xyzw1</span><span class="p">,</span> <span class="n">xyzw2</span><span class="p">,</span> <span class="n">xyzw0</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">invmcat</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">in_</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">out_</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Apply a 2-step von kries chromatic adaptation transform.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :xyz:</span>
+<span class="sd">            | ndarray with sample tristimulus or cat-sensor values</span>
+<span class="sd">        :xyzw1:</span>
+<span class="sd">            | ndarray with white point tristimulus or cat-sensor values of illuminant 1</span>
+<span class="sd">        :xyzw2:</span>
+<span class="sd">            | ndarray with white point tristimulus or cat-sensor values of illuminant 2</span>
+<span class="sd">        :xyzw0:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | ndarray with white point tristimulus or cat-sensor values of baseline illuminant 0</span>
+<span class="sd">            | None: defaults to EEW.</span>
+<span class="sd">        :D:</span>
+<span class="sd">            | [1,1], optional</span>
+<span class="sd">            | Degree of chromatic adaptations (Ill.1--&gt;Ill.0, Ill.2.--&gt;Ill.0)</span>
+<span class="sd">        :mcat:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | Specifies CAT sensor space.</span>
+<span class="sd">            | - options:</span>
+<span class="sd">            |    - None defaults to luxpy.cat._MCAT_DEFAULT</span>
+<span class="sd">            |    - str: see see luxpy.cat._MCATS.keys() for options </span>
+<span class="sd">            |         (details on type, ?luxpy.cat)</span>
+<span class="sd">            |    - ndarray: matrix with sensor primaries</span>
+<span class="sd">        :invmcat:</span>
+<span class="sd">            | None,optional</span>
+<span class="sd">            | Pre-calculated inverse mcat.</span>
+<span class="sd">            | If None: calculate inverse of mcat.</span>
+<span class="sd">        :in_:</span>
+<span class="sd">            | &#39;xyz&#39;, optional</span>
+<span class="sd">            | Input type (&#39;xyz&#39;, &#39;rgb&#39;) of data in xyz, xyzw1, xyzw2</span>
+<span class="sd">        :out_:</span>
+<span class="sd">            | &#39;xyz&#39;, optional</span>
+<span class="sd">            | Output type (&#39;xyz&#39;, &#39;rgb&#39;) of corresponding colors</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :xyzc:</span>
+<span class="sd">            | ndarray with corresponding colors.</span>
+<span class="sd">            </span>
+<span class="sd">    Reference:</span>
+<span class="sd">        1. `Smet, K. A. G., &amp; Ma, S. (2020). </span>
+<span class="sd">        Some concerns regarding the CAT16 chromatic adaptation transform. </span>
+<span class="sd">        Color Research &amp; Application, 45(1), 172–177. </span>
+<span class="sd">        &lt;https://doi.org/10.1002/col.22457&gt;`_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Define cone/chromatic adaptation sensor space: </span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">in_</span> <span class="o">==</span> <span class="s1">&#39;xyz&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">out_</span> <span class="o">==</span> <span class="s1">&#39;xyz&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mcat</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">mcat</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+                <span class="n">mcat</span> <span class="o">=</span> <span class="n">_MCATS</span><span class="p">[</span><span class="n">_MCAT_DEFAULT</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mcat</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
+                <span class="n">mcat</span> <span class="o">=</span> <span class="n">_MCATS</span><span class="p">[</span><span class="n">mcat</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">invmcat</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">invmcat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">mcat</span><span class="p">)</span>
+    
+    <span class="n">D</span> <span class="o">=</span> <span class="n">D</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">2</span><span class="p">,))</span>  <span class="c1"># ensure there are two D&#39;s available!  </span>
+        
+    <span class="c1">#--------------------------------------------</span>
+    <span class="c1"># Define default baseline illuminant:</span>
+    <span class="k">if</span> <span class="n">xyzw0</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">xyzw0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">100.</span><span class="p">,</span><span class="mf">100.</span><span class="p">,</span><span class="mf">100.</span><span class="p">]])</span>
+    
+    <span class="c1">#--------------------------------------------</span>
+    <span class="c1"># transform from xyz to cat sensor space:</span>
+    <span class="k">if</span> <span class="n">in_</span> <span class="o">==</span> <span class="s1">&#39;xyz&#39;</span><span class="p">:</span>
+        <span class="n">rgb</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">dot23</span><span class="p">(</span><span class="n">mcat</span><span class="p">,</span> <span class="n">xyz</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+        <span class="n">rgbw1</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">dot23</span><span class="p">(</span><span class="n">mcat</span><span class="p">,</span> <span class="n">xyzw1</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+        <span class="n">rgbw2</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">dot23</span><span class="p">(</span><span class="n">mcat</span><span class="p">,</span> <span class="n">xyzw2</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+        <span class="n">rgbw0</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">dot23</span><span class="p">(</span><span class="n">mcat</span><span class="p">,</span> <span class="n">xyzw0</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">rgb</span> <span class="o">=</span> <span class="n">xyz</span>
+        <span class="n">rgbw1</span> <span class="o">=</span> <span class="n">xyzw1</span>
+        <span class="n">rgbw2</span> <span class="o">=</span> <span class="n">xyzw2</span>
+        <span class="n">rgbw0</span> <span class="o">=</span> <span class="n">xyzw0</span>
+        
+    <span class="c1">#--------------------------------------------  </span>
+    <span class="c1"># apply 1-step von Kries cat from 1-&gt;0:</span>
+    <span class="n">vk_w_ratio10</span> <span class="o">=</span> <span class="n">rgbw0</span><span class="o">/</span><span class="n">rgbw1</span>
+    <span class="k">if</span> <span class="n">rgb</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span> <span class="n">vk_w_ratio10</span> <span class="o">=</span> <span class="n">vk_w_ratio10</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="kc">None</span><span class="p">]</span>
+    <span class="n">rgbc</span> <span class="o">=</span> <span class="p">(</span><span class="n">D</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">vk_w_ratio10</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">D</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span><span class="o">*</span><span class="n">rgb</span> 
+    
+    <span class="c1">#--------------------------------------------  </span>
+    <span class="c1"># apply inverse 1-step von Kries cat from 2-&gt;0:</span>
+    <span class="n">vk_w_ratio20</span> <span class="o">=</span> <span class="n">rgbw0</span><span class="o">/</span><span class="n">rgbw2</span>
+    <span class="k">if</span> <span class="n">rgbc</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span> <span class="n">vk_w_ratio20</span> <span class="o">=</span> <span class="n">vk_w_ratio20</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="kc">None</span><span class="p">]</span>
+    <span class="n">rgbc</span> <span class="o">=</span> <span class="p">((</span><span class="n">D</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">vk_w_ratio20</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">D</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span><span class="o">*</span><span class="n">rgbc</span>
+
+    <span class="c1">#--------------------------------------------</span>
+    <span class="c1"># convert from cat16 sensor space to xyz:</span>
+    <span class="k">if</span> <span class="n">out_</span> <span class="o">==</span> <span class="s1">&#39;xyz&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">dot23</span><span class="p">(</span><span class="n">invmcat</span><span class="p">,</span> <span class="n">rgbc</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+    <span class="k">else</span><span class="p">:</span> 
+        <span class="k">return</span> <span class="n">rgbc</span><span class="o">.</span><span class="n">T</span></div>
+    
+<div class="viewcode-block" id="apply_vonkries"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cat.apply_vonkries">[docs]</a><span class="k">def</span> <span class="nf">apply_vonkries</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">xyzw1</span><span class="p">,</span> <span class="n">xyzw2</span><span class="p">,</span> <span class="n">xyzw0</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n_step</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">catmode</span> <span class="o">=</span> <span class="s1">&#39;1&gt;0&gt;2&#39;</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">invmcat</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">in_</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">out_</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Apply a 1-step or 2-step von kries chromatic adaptation transform.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :xyz:</span>
+<span class="sd">            | ndarray with sample tristimulus or cat-sensor values</span>
+<span class="sd">        :xyzw1:</span>
+<span class="sd">            | ndarray with white point tristimulus or cat-sensor values of illuminant 1</span>
+<span class="sd">        :xyzw2:</span>
+<span class="sd">            | ndarray with white point tristimulus or cat-sensor values of illuminant 2</span>
+<span class="sd">        :xyzw0:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | ndarray with white point tristimulus or cat-sensor values of baseline illuminant 0</span>
+<span class="sd">            | None: defaults to EEW.</span>
+<span class="sd">        :D:</span>
+<span class="sd">            | [1,1], optional</span>
+<span class="sd">            | Degree of chromatic adaptations (Ill.1--&gt;Ill.0, Ill.2.--&gt;Ill.0)</span>
+<span class="sd">        :n_step:</span>
+<span class="sd">            | 2, optional</span>
+<span class="sd">            | Number of step in CAT (1: 1-step, 2: 2-step)</span>
+<span class="sd">        :catmode: </span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            |    - None: use :n_step: to set mode: 1 = &#39;1&gt;2&#39;, 2:&#39;1&gt;0&gt;2&#39;</span>
+<span class="sd">            |    -&#39;1&gt;0&gt;2&#39;: Two-step CAT </span>
+<span class="sd">            |      from illuminant 1 to baseline illuminant 0 to illuminant 2.</span>
+<span class="sd">            |    -&#39;1&gt;2&#39;: One-step CAT</span>
+<span class="sd">            |      from illuminant 1 to illuminant 2.</span>
+<span class="sd">            |    -&#39;1&gt;0&#39;: One-step CAT </span>
+<span class="sd">            |      from illuminant 1 to baseline illuminant 0.</span>
+<span class="sd">            |    -&#39;0&gt;2&#39;: One-step CAT </span>
+<span class="sd">            |      from baseline illuminant 0 to illuminant 2. </span>
+<span class="sd">        :mcat:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | Specifies CAT sensor space.</span>
+<span class="sd">            | - options:</span>
+<span class="sd">            |    - None defaults to luxpy.cat._MCAT_DEFAULT</span>
+<span class="sd">            |    - str: see see luxpy.cat._MCATS.keys() for options </span>
+<span class="sd">            |         (details on type, ?luxpy.cat)</span>
+<span class="sd">            |    - ndarray: matrix with sensor primaries</span>
+<span class="sd">        :invmcat:</span>
+<span class="sd">            | None,optional</span>
+<span class="sd">            | Pre-calculated inverse mcat.</span>
+<span class="sd">            | If None: calculate inverse of mcat.</span>
+<span class="sd">        :in_:</span>
+<span class="sd">            | &#39;xyz&#39;, optional</span>
+<span class="sd">            | Input type (&#39;xyz&#39;, &#39;rgb&#39;) of data in xyz, xyzw1, xyzw2</span>
+<span class="sd">        :out_:</span>
+<span class="sd">            | &#39;xyz&#39;, optional</span>
+<span class="sd">            | Output type (&#39;xyz&#39;, &#39;rgb&#39;) of corresponding colors</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :xyzc:</span>
+<span class="sd">            | ndarray with corresponding colors.</span>
+<span class="sd">            </span>
+<span class="sd">    Reference:</span>
+<span class="sd">        1. `Smet, K. A. G., &amp; Ma, S. (2020). </span>
+<span class="sd">        Some concerns regarding the CAT16 chromatic adaptation transform. </span>
+<span class="sd">        Color Research &amp; Application, 45(1), 172–177. </span>
+<span class="sd">        &lt;https://doi.org/10.1002/col.22457&gt;`_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Set catmode:</span>
+    <span class="k">if</span> <span class="n">catmode</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">n_step</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">catmode</span> <span class="o">=</span> <span class="s1">&#39;1&gt;0&gt;2&#39;</span>
+        <span class="k">elif</span> <span class="n">n_step</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">catmode</span> <span class="o">=</span> <span class="s1">&#39;1&gt;2&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;cat.apply(n_step = </span><span class="si">{:1.0f}</span><span class="s1">, catmode = None): Unknown requested n-step CAT mode !&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n_step</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">catmode</span> <span class="o">==</span> <span class="s1">&#39;1&gt;0&gt;2&#39;</span><span class="p">:</span>
+        <span class="n">n_step</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="k">return</span> <span class="n">apply_vonkries2</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">xyzw1</span><span class="p">,</span> <span class="n">xyzw2</span><span class="p">,</span> <span class="n">xyzw0</span> <span class="o">=</span> <span class="n">xyzw0</span><span class="p">,</span> 
+                               <span class="n">D</span> <span class="o">=</span> <span class="n">D</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="n">mcat</span><span class="p">,</span> <span class="n">invmcat</span> <span class="o">=</span> <span class="n">invmcat</span><span class="p">,</span> 
+                               <span class="n">in_</span> <span class="o">=</span> <span class="n">in_</span><span class="p">,</span> <span class="n">out_</span> <span class="o">=</span> <span class="n">out_</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">catmode</span> <span class="o">==</span> <span class="s1">&#39;1&gt;2&#39;</span><span class="p">:</span>
+        <span class="n">n_step</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">apply_vonkries1</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">xyzw1</span><span class="p">,</span> <span class="n">xyzw2</span><span class="p">,</span> 
+                               <span class="n">D</span> <span class="o">=</span> <span class="n">D</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="n">mcat</span><span class="p">,</span> <span class="n">invmcat</span> <span class="o">=</span> <span class="n">invmcat</span><span class="p">,</span> 
+                               <span class="n">in_</span> <span class="o">=</span> <span class="n">in_</span><span class="p">,</span> <span class="n">out_</span> <span class="o">=</span> <span class="n">out_</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;cat.apply(n_step = </span><span class="si">{:1.0f}</span><span class="s1">, catmode = </span><span class="si">{:s}</span><span class="s1">): Unknown requested n-step CAT mode !&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n_step</span><span class="p">,</span> <span class="n">catmode</span><span class="p">))</span></div>
+
+    
 </pre></div>
 
            </div>

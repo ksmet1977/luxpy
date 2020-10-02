@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.color.cri.utils.graphics &mdash; LuxPy 1.5.3 documentation</title>
+  <title>luxpy.color.cri.utils.graphics &mdash; LuxPy 1.6.0 documentation</title>
   
 
   
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                1.5.3
+                1.6.0
               </div>
             
           
@@ -395,7 +395,9 @@
                             <span class="n">plot_axis_labels</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">bin_labels</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> \
                             <span class="n">plot_edge_lines</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">plot_center_lines</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> \
                             <span class="n">plot_bin_colors</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">plot_10_20_circles</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>\
-                            <span class="n">plot_vectors</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">gamut_line_color</span> <span class="o">=</span> <span class="s1">&#39;grey&#39;</span><span class="p">,</span>\
+                            <span class="n">plot_vectors</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
+                            <span class="n">gamut_line_color</span> <span class="o">=</span> <span class="s1">&#39;grey&#39;</span><span class="p">,</span><span class="n">gamut_line_style</span> <span class="o">=</span> <span class="s1">&#39;-&#39;</span><span class="p">,</span>
+                            <span class="n">gamut_line_marker</span> <span class="o">=</span> <span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">gamut_line_label</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>\
                             <span class="n">axtype</span> <span class="o">=</span> <span class="s1">&#39;polar&#39;</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>\
                             <span class="n">force_CVG_layout</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>\
                             <span class="n">jabti</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">jabri</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">hbinnr</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
@@ -443,6 +445,16 @@
 <span class="sd">        :gamut_line_color:</span>
 <span class="sd">            | &#39;grey&#39;, optional</span>
 <span class="sd">            | Color to plot the test color gamut in.</span>
+<span class="sd">        :gamut_line_style:</span>
+<span class="sd">            | &#39;-&#39;, optional</span>
+<span class="sd">            | Line style to plot the test color gamut in.</span>
+<span class="sd">        :gamut_line_marker:</span>
+<span class="sd">            | &#39;o&#39;, optional</span>
+<span class="sd">            | Markers to plot the test color gamut points for each hue bin in </span>
+<span class="sd">            | (only used when plot_vectors = False).</span>
+<span class="sd">        :gamut_line_label:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | Label for gamut line. (only used when plot_vectors = False).</span>
 <span class="sd">        :axtype:</span>
 <span class="sd">            | &#39;polar&#39; or &#39;cart&#39;, optional</span>
 <span class="sd">            | Make polar or Cartesian plot.</span>
@@ -489,14 +501,15 @@
     <span class="k">if</span> <span class="n">cmap</span> <span class="o">==</span> <span class="p">[]:</span>
         <span class="n">cmap</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;k&#39;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">hbins</span><span class="p">)]</span>
         
-        
+            
     <span class="c1"># map jabti relative to center (mean) of reference:</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">jabti</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">jabri</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="n">jabti</span> <span class="o">=</span> <span class="p">(</span><span class="n">jabri</span> <span class="o">-</span> <span class="n">jabti</span><span class="p">)</span>
+        <span class="n">jabti</span> <span class="o">=</span> <span class="p">(</span><span class="n">jabti</span> <span class="o">-</span> <span class="n">jabri</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">hbins</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">hbinnr</span><span class="p">:</span>
                 <span class="n">jabti</span><span class="p">[</span><span class="n">hbinnr</span> <span class="o">==</span> <span class="n">i</span><span class="p">,</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">jabti</span><span class="p">[</span><span class="n">hbinnr</span> <span class="o">==</span> <span class="n">i</span><span class="p">,</span><span class="o">...</span><span class="p">]</span> <span class="o">+</span> <span class="n">jabr</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="o">...</span><span class="p">]</span>
 
+    
     <span class="k">if</span> <span class="n">axtype</span> <span class="o">==</span> <span class="s1">&#39;polar&#39;</span><span class="p">:</span>
        
         <span class="n">jabr_theta</span><span class="p">,</span> <span class="n">jabr_r</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">cart2pol</span><span class="p">(</span><span class="n">jabr</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">],</span> <span class="n">htype</span> <span class="o">=</span> <span class="s1">&#39;rad&#39;</span><span class="p">)</span> 
@@ -506,9 +519,9 @@
         
         <span class="c1">#ax.quiver(jabrtheta,jabr_r,jabt[...,1]-jabr[...,1], jabt[...,2]-jabr_binned[...,2], color = &#39;k&#39;, headlength=3, angles=&#39;uv&#39;, scale_units=&#39;y&#39;, scale = 2,linewidth = 0.5)</span>
         <span class="k">if</span> <span class="n">plot_vectors</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
-            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">jabt_theta</span><span class="p">,</span><span class="n">jabt_r</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="n">gamut_line_color</span><span class="p">,</span><span class="n">linewidth</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">jabt_theta</span><span class="p">,</span><span class="n">jabt_r</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="n">gamut_line_color</span><span class="p">,</span> <span class="n">linestyle</span> <span class="o">=</span> <span class="n">gamut_line_style</span><span class="p">,</span> <span class="n">linewidth</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">jabt_theta</span><span class="p">,</span><span class="n">jabt_r</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="n">gamut_line_color</span><span class="p">,</span><span class="n">linewidth</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">marker</span> <span class="o">=</span> <span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">markersize</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">jabt_theta</span><span class="p">,</span><span class="n">jabt_r</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="n">gamut_line_color</span><span class="p">,</span> <span class="n">linestyle</span> <span class="o">=</span> <span class="n">gamut_line_style</span><span class="p">,</span> <span class="n">linewidth</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">marker</span> <span class="o">=</span> <span class="n">gamut_line_marker</span><span class="p">,</span> <span class="n">markersize</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="n">gamut_line_label</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">hbins</span><span class="p">):</span>
             <span class="n">c</span> <span class="o">=</span> <span class="n">cmap</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">plot_vectors</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
@@ -518,9 +531,9 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="c1">#ax.quiver(jabr[...,1],jabr[...,2],jabt[...,1]-jabr[...,1], jabt[...,2]-jabr[...,2], color = &#39;k&#39;, headlength=3, angles=&#39;uv&#39;, scale_units=&#39;xy&#39;, scale = 1,linewidth = 0.5)</span>
         <span class="k">if</span> <span class="n">plot_vectors</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
-            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">jabt</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="n">jabt</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="n">color</span> <span class="o">=</span> <span class="n">gamut_line_color</span><span class="p">,</span><span class="n">linewidth</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">linestyle</span> <span class="o">=</span> <span class="s1">&#39;-&#39;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">jabt</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="n">jabt</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="n">color</span> <span class="o">=</span> <span class="n">gamut_line_color</span><span class="p">,</span> <span class="n">linestyle</span> <span class="o">=</span> <span class="n">gamut_line_style</span><span class="p">,</span> <span class="n">linewidth</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">jabt</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="n">jabt</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="n">color</span> <span class="o">=</span> <span class="n">gamut_line_color</span><span class="p">,</span><span class="n">linewidth</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">linestyle</span> <span class="o">=</span> <span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">marker</span> <span class="o">=</span> <span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">markersize</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">jabt</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="n">jabt</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="n">color</span> <span class="o">=</span> <span class="n">gamut_line_color</span><span class="p">,</span> <span class="n">linestyle</span> <span class="o">=</span> <span class="n">gamut_line_style</span><span class="p">,</span> <span class="n">linewidth</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">marker</span> <span class="o">=</span> <span class="n">gamut_line_marker</span><span class="p">,</span> <span class="n">markersize</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="n">gamut_line_label</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">hbins</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">plot_vectors</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
                 <span class="n">ax</span><span class="o">.</span><span class="n">quiver</span><span class="p">(</span><span class="n">jabr</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="n">jabr</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="n">jabt</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">jabr</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">jabt</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span><span class="o">-</span><span class="n">jabr</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="n">color</span> <span class="o">=</span> <span class="n">cmap</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">headlength</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">angles</span><span class="o">=</span><span class="s1">&#39;uv&#39;</span><span class="p">,</span> <span class="n">scale_units</span><span class="o">=</span><span class="s1">&#39;xy&#39;</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span><span class="n">linewidth</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">)</span>
@@ -530,6 +543,9 @@
     <span class="k">if</span> <span class="p">(</span><span class="n">axtype</span> <span class="o">==</span> <span class="s1">&#39;cart&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">plot_axis_labels</span> <span class="o">==</span> <span class="kc">True</span><span class="p">):</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;a&#39;&quot;</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;b&#39;&quot;</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">gamut_line_label</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
     
     <span class="k">return</span> <span class="n">figCVG</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">cmap</span></div>
 

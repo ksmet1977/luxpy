@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Math sub-package &mdash; LuxPy 1.5.3 documentation</title>
+  <title>Math sub-package &mdash; LuxPy 1.6.0 documentation</title>
   
 
   
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                1.5.3
+                1.6.0
               </div>
             
           
@@ -92,7 +92,10 @@
 <li class="toctree-l1 current"><a class="reference internal" href="luxpy_structure.html">Luxpy package structure</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="utils.html">Utils sub-package</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Math sub-package</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#module-with-useful-math-functions">Module with useful math functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-with-useful-math-functions">Module with useful math functions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#not-imported-in-math-namespace-to-minimize-dependencies">NOT IMPORTED in math-namespace (to minimize dependencies)</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="#vec3">vec3/</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#demo">DEMO/</a></li>
 </ul>
@@ -178,7 +181,8 @@
 <li><p>basics.py</p></li>
 <li><p>minimizebnd.py</p></li>
 <li><p>mupolymodel.py</p></li>
-<li><p>particleswarm.py</p></li>
+<li><p>Pyswarms_particleswarm.py</p></li>
+<li><p>pymoo_nsga_ii.py</p></li>
 </ul>
 </dd>
 <dt class="field-even">namespace</dt>
@@ -327,15 +331,24 @@ as a dict.</p>
 <dt class="field-even">mupolymod</dt>
 <dd class="field-even"><p>Module for Multivariate Polynomial Model Optimization (2D, 3D)</p>
 </dd>
-<dt class="field-odd">particleswarm</dt>
-<dd class="field-odd"><p>Module with particleswarm() function for global minimization using particle swarms (wrapper around pyswarms.single.GlobalBestPSO; module is uninmported to minimize dependencies))</p>
+</dl>
+</div></blockquote>
+<div class="section" id="not-imported-in-math-namespace-to-minimize-dependencies">
+<h3>NOT IMPORTED in math-namespace (to minimize dependencies)<a class="headerlink" href="#not-imported-in-math-namespace-to-minimize-dependencies" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><dl class="field-list simple">
+<dt class="field-odd">pyswarms_particleswarm</dt>
+<dd class="field-odd"><p>Module with particleswarm() function for global minimization using particle swarms (wrapper around pyswarms.single.GlobalBestPSO))</p>
+</dd>
+<dt class="field-even">pymoo_nsga_ii</dt>
+<dd class="field-even"><p>Module with nsga_ii() function for pareto-optimal boundary minimization using Non-Dominated-Sort-Genetic-Algorithm NSGA-II (wrapper around pymoo.NSGAII))</p>
 </dd>
 </dl>
 </div></blockquote>
 <hr class="docutils" />
 <dl class="py function">
 <dt id="luxpy.math.minimizebnd">
-<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">minimizebnd</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fun</span></em>, <em class="sig-param"><span class="n">x0</span></em>, <em class="sig-param"><span class="n">args</span><span class="o">=</span><span class="default_value">()</span></em>, <em class="sig-param"><span class="n">method</span><span class="o">=</span><span class="default_value">'nelder-mead'</span></em>, <em class="sig-param"><span class="n">use_bnd</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">bounds</span><span class="o">=</span><span class="default_value">None, None</span></em>, <em class="sig-param"><span class="n">options</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">x0_vsize</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">x0_keys</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/minimizebnd.html#minimizebnd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.minimizebnd" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">minimizebnd</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fun</span></em>, <em class="sig-param"><span class="n">x0</span></em>, <em class="sig-param"><span class="n">args</span><span class="o">=</span><span class="default_value">()</span></em>, <em class="sig-param"><span class="n">method</span><span class="o">=</span><span class="default_value">'Nelder-Mead'</span></em>, <em class="sig-param"><span class="n">use_bnd</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">bounds</span><span class="o">=</span><span class="default_value">None, None</span></em>, <em class="sig-param"><span class="n">options</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">x0_vsize</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">x0_keys</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/minimizebnd.html#minimizebnd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.minimizebnd" title="Permalink to this definition">¶</a></dt>
 <dd><div class="line-block">
 <div class="line">Minimization function that allows for bounds on any type of method in </div>
 <div class="line">SciPy’s minimize function by transforming the parameters values </div>
@@ -1303,7 +1316,7 @@ using einsum().</p>
 <dt>Returns:</dt><dd><dl class="field-list">
 <dt class="field-odd">v</dt>
 <dd class="field-odd"><div class="line-block">
-<div class="line">vector with ellipse parameters [Rmax,Rmin, xc,yc, theta]</div>
+<div class="line">vector with ellipse parameters [Rmax,Rmin, xc,yc, theta (rad.)]</div>
 </div>
 </dd>
 </dl>
@@ -1370,7 +1383,7 @@ pp 253–257, Vienna, 1996.</p>
 <dt>Returns:</dt><dd><dl class="field-list">
 <dt class="field-odd">v</dt>
 <dd class="field-odd"><div class="line-block">
-<div class="line">vector with ellipse parameters [Rmax,Rmin, xc,yc, theta]</div>
+<div class="line">vector with ellipse parameters [Rmax,Rmin, xc,yc, theta (rad.)]</div>
 </div>
 </dd>
 </dl>
@@ -1660,6 +1673,7 @@ pp 253–257, Vienna, 1996.</p>
 </dl>
 </dd></dl>
 
+</div>
 </div>
 <div class="section" id="vec3">
 <h2>vec3/<a class="headerlink" href="#vec3" title="Permalink to this headline">¶</a></h2>

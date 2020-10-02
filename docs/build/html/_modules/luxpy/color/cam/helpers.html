@@ -1,0 +1,847 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>luxpy.color.cam.helpers &mdash; LuxPy 1.6.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> LuxPy
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.6.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../license.html">License: GPLv3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../required_packages.html">Imported (required) packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../luxpy_structure.html">Luxpy package structure</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">LuxPy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>luxpy.color.cam.helpers</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for luxpy.color.cam.helpers</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd"># Helper fcns for CAM (absolute/relative, spd/xyz, lamp included, etc.)</span>
+<span class="sd">=======================================================================</span>
+
+<span class="sd"> :_update_parameter_dict(): Get parameter dict and update with values in args dict</span>
+
+<span class="sd"> :_setup_default_adaptation_field(): Setup a default illuminant adaptation field with Lw = 100 cd/m² for selected CIE observer.</span>
+
+<span class="sd"> :_massage_input_and_init_output(): Redimension input data to ensure most they have the appropriate sizes for easy and efficient looping.</span>
+
+<span class="sd"> :_massage_output_data_to_original_shape(): Massage output data to restore original shape of original CAM input.</span>
+<span class="sd"> </span>
+<span class="sd"> :_get_absolute_xyz_xyzw(): Calculate absolute xyz tristimulus values of stimulus and white point from spectral input or convert relative xyz values to absolute ones.</span>
+<span class="sd"> </span>
+<span class="sd"> :_simple_cam(): An example CAM illustration the usage of the functions in luxpy.cam.helpers </span>
+<span class="sd">     </span>
+
+<span class="sd">Notes:</span>
+<span class="sd">    1. These functions help take care of some recurring steps in building </span>
+<span class="sd">    a CAM that allows for both xyz or spectral input, input that is eihter</span>
+<span class="sd">    absolute or relative, or that has multiple inputs for the whitepoints.</span>
+<span class="sd">    2. For example usage, see the code of _simple_cam() by typing:</span>
+<span class="sd">    luxpy.cam._simple_cam??</span>
+
+<span class="sd">Created on Wed Sep 30 09:35:37 2020</span>
+
+<span class="sd">@author: ksmet1977@gmail.com</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="p">(</span><span class="n">math</span><span class="p">,</span> <span class="n">_CIE_ILLUMINANTS</span><span class="p">,</span> <span class="n">_CMF</span><span class="p">,</span> <span class="n">spd_to_xyz</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">luxpy.utils</span> <span class="kn">import</span> <span class="p">(</span><span class="n">np</span><span class="p">,</span> <span class="n">np2d</span><span class="p">,</span> <span class="n">put_args_in_db</span><span class="p">)</span>
+
+<span class="n">_CAM_DEFAULT_CIEOBS</span> <span class="o">=</span> <span class="s1">&#39;2006_10&#39;</span> <span class="c1"># place holder for real deal in calling module</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;_update_parameter_dict&#39;</span><span class="p">,</span><span class="s1">&#39;_setup_default_adaptation_field&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;_massage_input_and_init_output&#39;</span><span class="p">,</span><span class="s1">&#39;_massage_output_data_to_original_shape&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;_get_absolute_xyz_xyzw&#39;</span><span class="p">,</span><span class="s1">&#39;_simple_cam&#39;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="_update_parameter_dict"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam._update_parameter_dict">[docs]</a><span class="k">def</span> <span class="nf">_update_parameter_dict</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> 
+                           <span class="n">parameters</span> <span class="o">=</span> <span class="p">{},</span>
+                           <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CAM_DEFAULT_CIEOBS</span><span class="p">,</span> 
+                           <span class="n">match_conversionmatrix_to_cieobs</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                           <span class="n">Mxyz2lms_whitepoint</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get parameter dict and update with values in args dict. </span>
+<span class="sd">     | Also replace the xyz-to-lms conversion matrix with the one corresponding </span>
+<span class="sd">     | to cieobs and normalize it to illuminant E.</span>
+<span class="sd">     </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :args: </span>
+<span class="sd">            | dictionary with updated values. </span>
+<span class="sd">            | (get by placing &#39;args = locals().copy()&#39; immediately after the start</span>
+<span class="sd">            | of the function from which the update is called, </span>
+<span class="sd">            | see _simple_cam() code for an example.)</span>
+<span class="sd">        :parameters:</span>
+<span class="sd">            | dictionary with all (adjustable) parameter values used by the model   </span>
+<span class="sd">        :cieobs: </span>
+<span class="sd">            | String with the CIE observer CMFs (one of _CMF[&#39;types&#39;] of the input data</span>
+<span class="sd">            | Is used to get the Mxyz2lms matrix when  match_conversionmatrix_to_cieobs == True)</span>
+<span class="sd">        :match_conversionmatrix_to_cieobs:</span>
+<span class="sd">            | False, optional</span>
+<span class="sd">            | If False: keep the Mxyz2lms in the parameters dict</span>
+<span class="sd">        :Mxyz2lms_whitepoint:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | If not None: update the Mxyz2lms key in the parameters dict</span>
+<span class="sd">            | so that the conversion matrix is the one in _CMF[cieobs][&#39;M&#39;], </span>
+<span class="sd">            | in other such that it matches the cieobs of the input data.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :parameters:</span>
+<span class="sd">            | updated dictionary with model parameters for further use in the CAM.</span>
+<span class="sd">            </span>
+<span class="sd">    Notes:</span>
+<span class="sd">        For an example on the use, see code _simple_cam() (type: _simple_cam??)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parameters</span> <span class="o">=</span> <span class="n">put_args_in_db</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span><span class="n">args</span><span class="p">)</span>  <span class="c1">#overwrite parameters with other (not-None) args input </span>
+    <span class="k">if</span> <span class="n">match_conversionmatrix_to_cieobs</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">parameters</span><span class="p">[</span><span class="s1">&#39;Mxyz2lms&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_CMF</span><span class="p">[</span><span class="n">cieobs</span><span class="p">][</span><span class="s1">&#39;M&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">Mxyz2lms_whitepoint</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">Mxyz2lms_whitepoint</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]])</span>
+    <span class="n">parameters</span><span class="p">[</span><span class="s1">&#39;Mxyz2lms&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">normalize_3x3_matrix</span><span class="p">(</span><span class="n">parameters</span><span class="p">[</span><span class="s1">&#39;Mxyz2lms&#39;</span><span class="p">],</span> 
+                                                       <span class="n">Mxyz2lms_whitepoint</span><span class="p">)</span> <span class="c1"># normalize matrix for xyz-&gt; lms conversion to ill. E</span>
+    <span class="k">return</span> <span class="n">parameters</span></div>
+
+
+<div class="viewcode-block" id="_setup_default_adaptation_field"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam._setup_default_adaptation_field">[docs]</a><span class="k">def</span> <span class="nf">_setup_default_adaptation_field</span><span class="p">(</span><span class="n">dataw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Lw</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> 
+                                    <span class="n">cie_illuminant</span> <span class="o">=</span> <span class="s1">&#39;D65&#39;</span><span class="p">,</span>
+                                    <span class="n">inputtype</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                                    <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CAM_DEFAULT_CIEOBS</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Setup a default illuminant adaptation field with Lw = 100 cd/m² for selected CIE observer.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :dataw: </span>
+<span class="sd">            | None or ndarray, optional</span>
+<span class="sd">            | Input tristimulus values or spectral data of white point.</span>
+<span class="sd">            | None defaults to the use of the illuminant specified in :cie_illuminant:.</span>
+<span class="sd">        :cie_illuminant:</span>
+<span class="sd">            | &#39;D65&#39;, optional</span>
+<span class="sd">            | String corresponding to one of the illuminants (keys) </span>
+<span class="sd">            | in luxpy._CIE_ILLUMINANT</span>
+<span class="sd">            | If ndarray, then use this one.</span>
+<span class="sd">            | This is ONLY USED WHEN dataw is NONE !!!</span>
+<span class="sd">        :Lw:</span>
+<span class="sd">            | 100.0, optional</span>
+<span class="sd">            | Luminance (cd/m²) of white point.</span>
+<span class="sd">        :inputtype:</span>
+<span class="sd">            | &#39;xyz&#39; or &#39;spd&#39;, optional</span>
+<span class="sd">            | Specifies the type of input: </span>
+<span class="sd">            |     tristimulus values or spectral data for the forward mode.</span>
+<span class="sd">        :relative:</span>
+<span class="sd">            | True or False, optional</span>
+<span class="sd">            | True: xyz tristimulus values are relative (Yw = 100)</span>
+<span class="sd">        :cieobs:</span>
+<span class="sd">            | _CAM_DEFAULT_CIEOBS, optional</span>
+<span class="sd">            | CMF set to use to perform calculations where spectral data </span>
+<span class="sd">            | is involved (inputtype == &#39;spd&#39;; dataw = None)</span>
+<span class="sd">            | Other options: see luxpy._CMF[&#39;types&#39;]</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :dataw:</span>
+<span class="sd">            | Ndarray with default adaptation field data (spectral or xyz)</span>
+<span class="sd">            </span>
+<span class="sd">    Notes:</span>
+<span class="sd">        For an example on the use, see code _simple_cam() (type: _simple_cam??)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">dataw</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">cie_illuminant</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">cie_illuminant</span> <span class="o">=</span> <span class="s1">&#39;D65&#39;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cie_illuminant</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
+            <span class="n">cie_illuminant</span> <span class="o">=</span> <span class="n">_CIE_ILLUMINANTS</span><span class="p">[</span><span class="n">cie_illuminant</span><span class="p">]</span>
+        <span class="n">dataw</span> <span class="o">=</span> <span class="n">cie_illuminant</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="c1"># get illuminant </span>
+        <span class="n">xyzw</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">dataw</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span><span class="n">relative</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="c1"># get abs. tristimulus values</span>
+        <span class="k">if</span> <span class="n">relative</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span> <span class="c1">#input is expected to be absolute</span>
+            <span class="n">dataw</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">=</span> <span class="n">Lw</span><span class="o">*</span><span class="n">dataw</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">/</span><span class="n">xyzw</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="c1"># dataw = Lw*dataw # make absolute</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dataw</span> <span class="o">=</span> <span class="n">dataw</span> <span class="c1"># make relative (Y=100)</span>
+        <span class="k">if</span> <span class="n">inputtype</span> <span class="o">==</span> <span class="s1">&#39;xyz&#39;</span><span class="p">:</span>
+            <span class="n">dataw</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">dataw</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="n">relative</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">dataw</span></div>
+
+<div class="viewcode-block" id="_massage_input_and_init_output"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam._massage_input_and_init_output">[docs]</a><span class="k">def</span> <span class="nf">_massage_input_and_init_output</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dataw</span><span class="p">,</span> 
+                                   <span class="n">inputtype</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> 
+                                   <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;forward&#39;</span><span class="p">,</span>
+                                   <span class="n">n_out</span> <span class="o">=</span> <span class="mi">3</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Redimension input data to ensure most they have the appropriate sizes for easy and efficient looping.</span>
+<span class="sd">    |</span>
+<span class="sd">    | 1. Convert data and dataw to atleast_2d ndarrays</span>
+<span class="sd">    | 2. Make axis 1 of dataw have &#39;same&#39; dimensions as data</span>
+<span class="sd">    | 3. Make dataw have same lights source axis size as data</span>
+<span class="sd">    | 4. Flip light source axis to axis=0 for efficient looping</span>
+<span class="sd">    | 5. Initialize output array camout to &#39;same&#39; shape as data but with camout.shape[-1] == n_out</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :data: </span>
+<span class="sd">            | ndarray with input tristimulus values </span>
+<span class="sd">            | or spectral data </span>
+<span class="sd">            | or input color appearance correlates</span>
+<span class="sd">            | Can be of shape: (N [, xM], x 3), whereby: </span>
+<span class="sd">            | N refers to samples and M refers to light sources.</span>
+<span class="sd">            | Note that for spectral input shape is (N x (M+1) x wl) </span>
+<span class="sd">        :dataw: </span>
+<span class="sd">            | None or ndarray, optional</span>
+<span class="sd">            | Input tristimulus values or spectral data of white point.</span>
+<span class="sd">            | None defaults to the use of CIE illuminant C.</span>
+<span class="sd">        :inputtype:</span>
+<span class="sd">            | &#39;xyz&#39; or &#39;spd&#39;, optional</span>
+<span class="sd">            | Specifies the type of input: </span>
+<span class="sd">            |     tristimulus values or spectral data for the forward mode.</span>
+<span class="sd">        :direction:</span>
+<span class="sd">            | &#39;forward&#39; or &#39;inverse&#39;, optional</span>
+<span class="sd">            |   -&#39;forward&#39;: xyz -&gt; cam</span>
+<span class="sd">            |   -&#39;inverse&#39;: cam -&gt; xyz </span>
+<span class="sd">        :n_out:</span>
+<span class="sd">            | 3, optional</span>
+<span class="sd">            | output size of last dimension of camout </span>
+<span class="sd">            | (e.g. n_out=3 for j,a,b output or n_out = 5 for J,M,h,a,b output)</span>
+<span class="sd">            </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :data:</span>
+<span class="sd">            | ndarray with reshaped data</span>
+<span class="sd">        :dataw:</span>
+<span class="sd">            | ndarray with reshaped dataw</span>
+<span class="sd">        :camout:</span>
+<span class="sd">            | NaN filled ndarray for output of CAMv (camout.shape[-1] == Nout) </span>
+<span class="sd">        :originalshape:</span>
+<span class="sd">            | original shape of data</span>
+<span class="sd">            </span>
+<span class="sd">    Notes:</span>
+<span class="sd">        For an example on the use, see code _simple_cam() (type: _simple_cam??)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Convert data and dataw to atleast_2d ndarrays:</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="c1"># stimulus data (can be upto NxMx3 for xyz, or [N x (M+1) x wl] for spd))</span>
+    <span class="n">dataw</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">(</span><span class="n">dataw</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="c1"># white point (can be upto Nx3 for xyz, or [(N+1) x wl] for spd)</span>
+    <span class="n">originalshape</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span> <span class="c1"># to restore output to same shape</span>
+
+    <span class="c1"># Make axis 1 of dataw have &#39;same&#39; dimensions as data:         </span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">):</span> 
+        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># add light source axis 1 </span>
+    
+    <span class="c1"># Flip light source dim to axis 0:</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+    
+    <span class="n">dataw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">dataw</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># add extra axis to move light source to axis 0 </span>
+
+    <span class="c1"># Make dataw have same lights source dimension size as data:</span>
+    <span class="k">if</span> <span class="n">inputtype</span> <span class="o">==</span> <span class="s1">&#39;xyz&#39;</span><span class="p">:</span> 
+        <span class="k">if</span> <span class="n">dataw</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> 
+            <span class="n">dataw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">dataw</span><span class="p">,</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>     
+        <span class="k">if</span> <span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">dataw</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">):</span> 
+            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">dataw</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>     
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dataw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">dataw</span><span class="p">[:</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,:],</span><span class="n">dataw</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">,:]))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">dataw</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">)])</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">dataw</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">dataw</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> 
+        
+    <span class="c1"># Initialize output array:</span>
+    <span class="k">if</span> <span class="n">n_out</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">dshape</span> <span class="o">=</span> <span class="nb">list</span><span class="p">((</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="n">dshape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">n_out</span> <span class="c1"># requested number of correlates: e.g. j,a,b</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">inputtype</span> <span class="o">!=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">direction</span> <span class="o">==</span> <span class="s1">&#39;forward&#39;</span><span class="p">):</span>
+            <span class="n">dshape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">dshape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span> <span class="c1"># wavelength row doesn&#39;t count &amp; only with forward can the input data be spectral</span>
+        <span class="n">camout</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">dshape</span><span class="p">);</span>
+        <span class="n">camout</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">camout</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">data</span><span class="p">,</span> <span class="n">dataw</span><span class="p">,</span> <span class="n">camout</span><span class="p">,</span> <span class="n">originalshape</span></div>
+
+
+<div class="viewcode-block" id="_massage_output_data_to_original_shape"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam._massage_output_data_to_original_shape">[docs]</a><span class="k">def</span> <span class="nf">_massage_output_data_to_original_shape</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">originalshape</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Massage output data to restore original shape of original CAM input.</span>
+<span class="sd">    </span>
+<span class="sd">    Notes:</span>
+<span class="sd">        For an example on the use, see code _simple_cam() (type: _simple_cam??)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Flip light source dim back to axis 1:</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">originalshape</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">data</span></div>
+
+<div class="viewcode-block" id="_get_absolute_xyz_xyzw"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam._get_absolute_xyz_xyzw">[docs]</a><span class="k">def</span> <span class="nf">_get_absolute_xyz_xyzw</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dataw</span><span class="p">,</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">Lw</span><span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;forward&#39;</span><span class="p">,</span> 
+                          <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CAM_DEFAULT_CIEOBS</span><span class="p">,</span> <span class="n">inputtype</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> 
+                          <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate absolute xyz tristimulus values of stimulus and white point </span>
+<span class="sd">    from spectral input or convert relative xyz values to absolute ones.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :data: </span>
+<span class="sd">            | ndarray with input tristimulus values </span>
+<span class="sd">            | or spectral data </span>
+<span class="sd">            | or input color appearance correlates</span>
+<span class="sd">            | Can be of shape: (N [, xM], x 3), whereby: </span>
+<span class="sd">            | N refers to samples and M refers to light sources.</span>
+<span class="sd">            | Note that for spectral input shape is (N x (M+1) x wl) </span>
+<span class="sd">        :dataw: </span>
+<span class="sd">            | None or ndarray, optional</span>
+<span class="sd">            | Input tristimulus values or spectral data of white point.</span>
+<span class="sd">            | None defaults to the use of CIE illuminant C.</span>
+<span class="sd">        :i:</span>
+<span class="sd">            | 0, optional</span>
+<span class="sd">            | row number in data and dataw ndarrays </span>
+<span class="sd">            | (for loops across illuminant dimension after dimension reshape</span>
+<span class="sd">            | with _massage_output_data_to_original_shape).</span>
+<span class="sd">        :Lw:</span>
+<span class="sd">            | 100.0, optional</span>
+<span class="sd">            | Luminance (cd/m²) of white point.</span>
+<span class="sd">        :inputtype:</span>
+<span class="sd">            | &#39;xyz&#39; or &#39;spd&#39;, optional</span>
+<span class="sd">            | Specifies the type of input: </span>
+<span class="sd">            |     tristimulus values or spectral data for the forward mode.</span>
+<span class="sd">        :direction:</span>
+<span class="sd">            | &#39;forward&#39; or &#39;inverse&#39;, optional</span>
+<span class="sd">            |   -&#39;forward&#39;: xyz -&gt; cam</span>
+<span class="sd">            |   -&#39;inverse&#39;: cam -&gt; xyz </span>
+<span class="sd">        :relative:</span>
+<span class="sd">            | True or False, optional</span>
+<span class="sd">            | True: xyz tristimulus values are relative (Yw = 100)</span>
+<span class="sd">        :cieobs:</span>
+<span class="sd">            | _CAM_DEFAULT_CIEOBS, optional</span>
+<span class="sd">            | CMF set to use to perform calculations where spectral data </span>
+<span class="sd">              is involved (inputtype == &#39;spd&#39;; dataw = None)</span>
+<span class="sd">            | Other options: see luxpy._CMF[&#39;types&#39;]</span>
+<span class="sd">          </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :xyzti:</span>
+<span class="sd">            | in forward mode : ndarray with relative or absolute sample xyz for data[i] </span>
+<span class="sd">            | in inverse mode: None</span>
+<span class="sd">        :xyzwi:</span>
+<span class="sd">            | ndarray with relative or absolute white point for dataw[i]</span>
+<span class="sd">        :xyzw_abs:</span>
+<span class="sd">            | ndarray with absolute xyz for white point for dataw[i]</span>
+<span class="sd">            </span>
+<span class="sd">    Notes:</span>
+<span class="sd">        For an example on the use, see code _simple_cam() (type: _simple_cam??)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">xyzw_abs</span> <span class="o">=</span> <span class="kc">None</span>
+    
+    <span class="c1"># Spectral input:</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">inputtype</span> <span class="o">!=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">):</span>    
+        
+        <span class="c1"># make spectral data in `dataw` absolute:        </span>
+        <span class="k">if</span> <span class="n">relative</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">xyzw_abs</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">dataw</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+            <span class="n">dataw</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">:,:]</span> <span class="o">=</span> <span class="n">Lw</span><span class="o">*</span><span class="n">dataw</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">:,:]</span><span class="o">/</span><span class="n">xyzw_abs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> 
+        
+        <span class="c1"># Calculate absolute xyzw:</span>
+        <span class="n">xyzwi</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">dataw</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+
+        <span class="c1"># make spectral data in `data` absolute:</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">direction</span> <span class="o">==</span> <span class="s1">&#39;forward&#39;</span><span class="p">):</span> <span class="c1"># no xyz data or spectra in data if == &#39;inverse&#39;!!!</span>
+            <span class="k">if</span> <span class="n">relative</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">:,:]</span> <span class="o">=</span> <span class="n">Lw</span><span class="o">*</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">:,:]</span><span class="o">/</span><span class="n">xyzw_abs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+                
+            <span class="c1"># Calculate absolute xyz of test field:    </span>
+            <span class="n">xyzti</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="o">...</span><span class="p">],</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> 
+            
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">xyzti</span> <span class="o">=</span> <span class="kc">None</span>
+        
+    <span class="c1"># XYZ input:</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="n">inputtype</span> <span class="o">==</span> <span class="s1">&#39;xyz&#39;</span><span class="p">):</span>
+
+        <span class="c1"># make xyz data in `dataw` absolute: </span>
+        <span class="k">if</span> <span class="n">relative</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span> 
+            <span class="n">xyzw_abs</span> <span class="o">=</span> <span class="n">dataw</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">dataw</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">Lw</span><span class="o">*</span><span class="n">dataw</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">/</span><span class="n">xyzw_abs</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span>   
+        <span class="n">xyzwi</span> <span class="o">=</span> <span class="n">dataw</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">direction</span> <span class="o">==</span> <span class="s1">&#39;forward&#39;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">relative</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="c1"># make xyz data in `data` absolute: </span>
+                <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">Lw</span><span class="o">*</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">/</span><span class="n">xyzw_abs</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># make absolute</span>
+            <span class="n">xyzti</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">xyzti</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># not needed in inverse model</span>
+        
+    <span class="k">return</span> <span class="n">xyzti</span><span class="p">,</span> <span class="n">xyzwi</span><span class="p">,</span> <span class="n">xyzw_abs</span></div>
+
+<div class="viewcode-block" id="_simple_cam"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam._simple_cam">[docs]</a><span class="k">def</span> <span class="nf">_simple_cam</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dataw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Lw</span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
+         <span class="n">inputtype</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;forward&#39;</span><span class="p">,</span> <span class="n">cie_illuminant</span> <span class="o">=</span> <span class="s1">&#39;D65&#39;</span><span class="p">,</span>
+         <span class="n">parameters</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;cA&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                       <span class="s1">&#39;ca&#39;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]),</span>
+                       <span class="s1">&#39;cb&#39;</span><span class="p">:(</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span>
+                       <span class="s1">&#39;n&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span> 
+                       <span class="s1">&#39;Mxyz2lms&#39;</span><span class="p">:</span> <span class="n">_CMF</span><span class="p">[</span><span class="s1">&#39;1931_2&#39;</span><span class="p">][</span><span class="s1">&#39;M&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()},</span>
+         <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;2006_10&#39;</span><span class="p">,</span> <span class="n">match_to_conversionmatrix_to_cieobs</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An example CAM illustration the usage of the functions in luxpy.cam.helpers </span>
+<span class="sd">    </span>
+<span class="sd">    | Note that this example uses NO chromatic adaptation </span>
+<span class="sd">    | and SIMPLE compression, opponent and correlate processing.</span>
+<span class="sd">    | THIS IS ONLY FOR ILLUSTRATION PURPOSES !!!</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        :data: </span>
+<span class="sd">            | ndarray with input:</span>
+<span class="sd">            |  - tristimulus values </span>
+<span class="sd">            | or</span>
+<span class="sd">            |  - spectral data </span>
+<span class="sd">            | or </span>
+<span class="sd">            |  - input color appearance correlates</span>
+<span class="sd">            | Can be of shape: (N [, xM], x 3), whereby: </span>
+<span class="sd">            | N refers to samples and M refers to light sources.</span>
+<span class="sd">            | Note that for spectral input shape is (N x (M+1) x wl) </span>
+<span class="sd">        :dataw: </span>
+<span class="sd">            | None or ndarray, optional</span>
+<span class="sd">            | Input tristimulus values or spectral data of white point.</span>
+<span class="sd">            | None defaults to the use of :cie_illuminant:</span>
+<span class="sd">        :cie_illuminant:</span>
+<span class="sd">            | &#39;D65&#39;, optional</span>
+<span class="sd">            | String corresponding to one of the illuminants (keys) </span>
+<span class="sd">            | in luxpy._CIE_ILLUMINANT</span>
+<span class="sd">            | If ndarray, then use this one.</span>
+<span class="sd">            | This is ONLY USED WHEN dataw is NONE !!!</span>
+<span class="sd">        :Lw:</span>
+<span class="sd">            | 100.0, optional</span>
+<span class="sd">            | Luminance (cd/m²) of white point.</span>
+<span class="sd">        :relative:</span>
+<span class="sd">            | True or False, optional</span>
+<span class="sd">            | True: data and dataw input is relative (i.e. Yw = 100)</span>
+<span class="sd">        :parameters:</span>
+<span class="sd">            | {&#39;cA&#39;: 1, &#39;ca&#39;:np.array([1,-1,0]), &#39;cb&#39;:(1/3)*np.array([0.5,0.5,-1]),</span>
+<span class="sd">            |  &#39;n&#39;: 1/3, &#39;Mxyz2lms&#39;: _CMF[&#39;1931_2&#39;][&#39;M&#39;].copy()}</span>
+<span class="sd">            | Dict with model parameters </span>
+<span class="sd">            | (For illustration purposes of match_conversionmatrix_to_cieobs, </span>
+<span class="sd">            |  the conversion matrix luxpy._CMF[&#39;1931_2&#39;][&#39;M&#39;] does NOT match</span>
+<span class="sd">            |  the default observer specification of the input data in :cieobs: !!!)</span>
+<span class="sd">        :inputtype:</span>
+<span class="sd">            | &#39;xyz&#39; or &#39;spd&#39;, optional</span>
+<span class="sd">            | Specifies the type of input: </span>
+<span class="sd">            |     tristimulus values or spectral data for the forward mode.</span>
+<span class="sd">        :direction:</span>
+<span class="sd">            | &#39;forward&#39; or &#39;inverse&#39;, optional</span>
+<span class="sd">            |   -&#39;forward&#39;: xyz -&gt; cam</span>
+<span class="sd">            |   -&#39;inverse&#39;: cam -&gt; xyz </span>
+<span class="sd">        :cieobs:</span>
+<span class="sd">            | &#39;2006_10&#39;, optional</span>
+<span class="sd">            | CMF set to use to perform calculations where spectral data </span>
+<span class="sd">            | is involved (inputtype == &#39;spd&#39;; dataw = None)</span>
+<span class="sd">            | Other options: see luxpy._CMF[&#39;types&#39;]</span>
+<span class="sd">        :match_conversionmatrix_to_cieobs:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | When changing to a different CIE observer, change the xyz_to_lms</span>
+<span class="sd">            | matrix to the one corresponding to that observer. </span>
+<span class="sd">            | Set to False to keep the one in the parameter dict!</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :returns: </span>
+<span class="sd">            | ndarray with:</span>
+<span class="sd">            | - color appearance correlates (:direction: == &#39;forward&#39;)</span>
+<span class="sd">            |  or </span>
+<span class="sd">            | - XYZ tristimulus values (:direction: == &#39;inverse&#39;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1">#--------------------------------------------------------------------------</span>
+    <span class="c1"># Get model parameters:</span>
+    <span class="c1">#--------------------------------------------------------------------------</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="nb">locals</span><span class="p">()</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="c1"># gets all local variables (i.e. the function arguments)</span>
+
+    <span class="n">parameters</span> <span class="o">=</span> <span class="n">_update_parameter_dict</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> 
+                                        <span class="n">parameters</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">,</span>
+                                        <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span>
+                                        <span class="n">match_conversionmatrix_to_cieobs</span> <span class="o">=</span> <span class="n">match_to_conversionmatrix_to_cieobs</span><span class="p">,</span>
+                                        <span class="n">Mxyz2lms_whitepoint</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]]))</span>
+      
+    <span class="c1">#unpack model parameters:</span>
+    <span class="p">(</span><span class="n">Mxyz2lms</span><span class="p">,</span><span class="n">cA</span><span class="p">,</span> <span class="n">ca</span><span class="p">,</span> <span class="n">cb</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>  <span class="o">=</span> <span class="p">[</span><span class="n">parameters</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">())]</span>
+
+
+    <span class="c1">#--------------------------------------------------------------------------</span>
+    <span class="c1"># Setup default white point / adaptation field:   </span>
+    <span class="c1">#--------------------------------------------------------------------------</span>
+    <span class="n">dataw</span> <span class="o">=</span> <span class="n">_setup_default_adaptation_field</span><span class="p">(</span><span class="n">dataw</span> <span class="o">=</span> <span class="n">dataw</span><span class="p">,</span> 
+                                            <span class="n">Lw</span> <span class="o">=</span> <span class="n">Lw</span><span class="p">,</span>
+                                            <span class="n">cie_illuminant</span> <span class="o">=</span> <span class="s1">&#39;C&#39;</span><span class="p">,</span>
+                                            <span class="n">inputtype</span> <span class="o">=</span> <span class="n">inputtype</span><span class="p">,</span> 
+                                            <span class="n">relative</span> <span class="o">=</span> <span class="n">relative</span><span class="p">,</span>
+                                            <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">)</span>
+
+    <span class="c1">#--------------------------------------------------------------------------</span>
+    <span class="c1"># Redimension input data to ensure most appropriate sizes </span>
+    <span class="c1"># for easy and efficient looping and initialize output array:</span>
+    <span class="c1">#--------------------------------------------------------------------------</span>
+    <span class="n">n_out</span> <span class="o">=</span> <span class="mi">5</span> <span class="c1"># this example outputs 5 &#39;correlates&#39;: J, a, b, C, h</span>
+    <span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dataw</span><span class="p">,</span> 
+     <span class="n">camout</span><span class="p">,</span> <span class="n">originalshape</span><span class="p">)</span> <span class="o">=</span> <span class="n">_massage_input_and_init_output</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> 
+                                                             <span class="n">dataw</span><span class="p">,</span> 
+                                                             <span class="n">inputtype</span> <span class="o">=</span> <span class="n">inputtype</span><span class="p">,</span> 
+                                                             <span class="n">direction</span> <span class="o">=</span> <span class="n">direction</span><span class="p">,</span>
+                                                             <span class="n">n_out</span> <span class="o">=</span> <span class="n">n_out</span><span class="p">)</span>
+    
+    
+    <span class="c1">#--------------------------------------------------------------------------</span>
+    <span class="c1"># Do precomputations needed for both the forward and inverse model,</span>
+    <span class="c1"># and which do not depend on sample or light source data:</span>
+    <span class="c1">#--------------------------------------------------------------------------</span>
+    <span class="c1"># Create matrix with scale factors for L, M, S </span>
+    <span class="c1"># for quick matrix multiplications to obtain neural signals:</span>
+    <span class="n">MAab</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">cA</span><span class="p">,</span><span class="n">cA</span><span class="p">,</span><span class="n">cA</span><span class="p">],</span><span class="n">ca</span><span class="p">,</span><span class="n">cb</span><span class="p">])</span> 
+    
+    <span class="k">if</span> <span class="n">direction</span> <span class="o">==</span> <span class="s1">&#39;inverse&#39;</span><span class="p">:</span>
+        <span class="n">invMxyz2lms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">Mxyz2lms</span><span class="p">)</span> <span class="c1"># Calculate the inverse lms-to-xyz conversion matrix</span>
+        <span class="n">invMAab</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">MAab</span><span class="p">)</span> <span class="c1"># Pre-calculate its inverse to avoid repeat in loop.</span>
+
+    <span class="c1">#--------------------------------------------------------------------------</span>
+    <span class="c1"># Apply forward/inverse model by looping over each row (=light source dim.)</span>
+    <span class="c1"># in data:</span>
+    <span class="c1">#--------------------------------------------------------------------------</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
+        <span class="c1">#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++</span>
+        <span class="c1">#  START FORWARD MODE and common part of inverse mode</span>
+        <span class="c1">#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++</span>
+        
+        <span class="c1">#-----------------------------------------------------------------------------</span>
+        <span class="c1"># Get tristimulus values for stimulus field and white point for row i:</span>
+        <span class="c1">#-----------------------------------------------------------------------------</span>
+        <span class="c1"># Note that xyzt will contain a None in case of inverse mode !!!</span>
+        <span class="n">xyzt</span><span class="p">,</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">xyzw_abs</span> <span class="o">=</span> <span class="n">_get_absolute_xyz_xyzw</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> 
+                                                      <span class="n">dataw</span><span class="p">,</span>
+                                                      <span class="n">i</span> <span class="o">=</span> <span class="n">i</span><span class="p">,</span> 
+                                                      <span class="n">Lw</span> <span class="o">=</span> <span class="n">Lw</span><span class="p">,</span> 
+                                                      <span class="n">direction</span> <span class="o">=</span> <span class="n">direction</span><span class="p">,</span> 
+                                                      <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> 
+                                                      <span class="n">inputtype</span> <span class="o">=</span> <span class="n">inputtype</span><span class="p">,</span> 
+                                                      <span class="n">relative</span> <span class="o">=</span> <span class="n">relative</span><span class="p">)</span>
+        
+        <span class="c1">#---------------------------------------------------------------------</span>
+        <span class="c1"># stage 1 (white point): calculate lms values of white:</span>
+        <span class="c1">#----------------------------------------------------------------------</span>
+        <span class="n">lmsw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Mxyz2lms</span><span class="p">,</span> <span class="n">xyzw</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">T</span> 
+        
+        <span class="c1">#------------------------------------------------------------------</span>
+        <span class="c1"># stage 2 (white): apply simple chromatic adaptation:</span>
+        <span class="c1">#------------------------------------------------------------------</span>
+        <span class="n">lmsw_a</span> <span class="o">=</span> <span class="n">lmsw</span><span class="o">/</span><span class="n">lmsw</span>
+        
+        <span class="c1">#----------------------------------------------------------------------</span>
+        <span class="c1"># stage 3 (white point): apply simple compression to lms values</span>
+        <span class="c1">#----------------------------------------------------------------------</span>
+        <span class="n">lmsw_ac</span> <span class="o">=</span> <span class="n">lmsw_a</span><span class="o">**</span><span class="n">n</span>
+        
+        <span class="c1">#----------------------------------------------------------------------</span>
+        <span class="c1"># stage 4 (white point): calculate achromatic A, and opponent signals a,b):</span>
+        <span class="c1">#----------------------------------------------------------------------</span>
+        <span class="n">Aabw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">MAab</span><span class="p">,</span> <span class="n">lmsw_ac</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+
+        <span class="c1">#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++</span>
+        <span class="c1"># SPLIT CALCULATION STEPS IN FORWARD AND INVERSE MODES:</span>
+        <span class="c1">#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++</span>
+        
+        <span class="k">if</span> <span class="n">direction</span> <span class="o">==</span> <span class="s1">&#39;forward&#39;</span><span class="p">:</span>
+            <span class="c1">#------------------------------------------------------------------</span>
+            <span class="c1"># stage 1 (stimulus): calculate lms values </span>
+            <span class="c1">#------------------------------------------------------------------</span>
+            <span class="n">lms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Mxyz2lms</span><span class="p">,</span> <span class="n">xyzt</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">T</span> 
+            
+            <span class="c1">#------------------------------------------------------------------</span>
+            <span class="c1"># stage 2 (stimulus): apply simple chromatic adaptation:</span>
+            <span class="c1">#------------------------------------------------------------------</span>
+            <span class="n">lms_a</span> <span class="o">=</span> <span class="n">lms</span><span class="o">/</span><span class="n">lmsw</span>
+        
+            <span class="c1">#------------------------------------------------------------------</span>
+            <span class="c1"># stage 3 (stimulus): apply simple compression to lms values </span>
+            <span class="c1">#------------------------------------------------------------------</span>
+            <span class="n">lms_ac</span> <span class="o">=</span> <span class="n">lms_a</span><span class="o">**</span><span class="n">n</span>
+            
+            <span class="c1">#------------------------------------------------------------------</span>
+            <span class="c1"># stage 3 (stimulus): calculate achromatic A, and opponent signals a,b:</span>
+            <span class="c1">#------------------------------------------------------------------</span>
+            <span class="n">Aab</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">MAab</span><span class="p">,</span> <span class="n">lms_ac</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+
+            <span class="c1">#------------------------------------------------------------------</span>
+            <span class="c1"># stage 4 (stimulus): calculate J, C, h</span>
+            <span class="c1">#------------------------------------------------------------------</span>
+            <span class="n">J</span> <span class="o">=</span> <span class="n">Aab</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="n">Aabw</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">C</span> <span class="o">=</span> <span class="p">(</span><span class="n">Aab</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">Aab</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
+            <span class="n">h</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">positive_arctan</span><span class="p">(</span><span class="n">Aab</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="n">Aab</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span>
+            
+            <span class="c1"># # stack together:</span>
+            <span class="n">camout</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">J</span><span class="p">,</span> <span class="n">Aab</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">Aab</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="n">C</span><span class="p">,</span> <span class="n">h</span><span class="p">))</span><span class="o">.</span><span class="n">T</span> 
+        
+        <span class="c1">#--------------------------------------</span>
+        <span class="c1"># INVERSE MODE FROM PERCEPTUAL SIGNALS:</span>
+        <span class="c1">#--------------------------------------    </span>
+        <span class="k">elif</span> <span class="n">direction</span> <span class="o">==</span> <span class="s1">&#39;inverse&#39;</span><span class="p">:</span>
+            <span class="k">pass</span>
+        
+    <span class="k">return</span> <span class="n">_massage_output_data_to_original_shape</span><span class="p">(</span><span class="n">camout</span><span class="p">,</span> <span class="n">originalshape</span><span class="p">)</span></div>
+    
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    
+    <span class="c1">#--------------------------------------------------------------------------</span>
+    <span class="c1"># Code test</span>
+    <span class="c1">#--------------------------------------------------------------------------</span>
+    
+    <span class="kn">import</span> <span class="nn">luxpy</span> <span class="k">as</span> <span class="nn">lx</span>
+    <span class="kn">from</span> <span class="nn">luxpy.utils</span> <span class="kn">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">plt</span>
+    
+    <span class="c1"># Prepare some illuminant data:</span>
+    <span class="n">C</span> <span class="o">=</span> <span class="n">_CIE_ILLUMINANTS</span><span class="p">[</span><span class="s1">&#39;C&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">Ill1</span> <span class="o">=</span> <span class="n">C</span>
+    <span class="n">Ill2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">C</span><span class="p">,</span><span class="n">lx</span><span class="o">.</span><span class="n">cie_interp</span><span class="p">(</span><span class="n">_CIE_ILLUMINANTS</span><span class="p">[</span><span class="s1">&#39;D65&#39;</span><span class="p">],</span><span class="n">C</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;spd&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:],</span><span class="n">C</span><span class="p">[</span><span class="mi">1</span><span class="p">:,:]</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span><span class="n">C</span><span class="p">[</span><span class="mi">1</span><span class="p">:,:]</span><span class="o">*</span><span class="mi">3</span><span class="p">))</span>
+    
+    <span class="c1"># Prepare some sample data:</span>
+    <span class="n">rflM</span> <span class="o">=</span> <span class="n">lx</span><span class="o">.</span><span class="n">_MUNSELL</span><span class="p">[</span><span class="s1">&#39;R&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">rflM</span> <span class="o">=</span> <span class="n">lx</span><span class="o">.</span><span class="n">cie_interp</span><span class="p">(</span><span class="n">rflM</span><span class="p">,</span><span class="n">C</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;rfl&#39;</span><span class="p">)</span>
+    
+    <span class="c1"># Setup some model parameters:</span>
+    <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;2006_10&#39;</span>
+    <span class="n">Lw</span> <span class="o">=</span> <span class="mi">400</span>
+    
+    <span class="c1"># Create Lw normalized data:</span>
+    <span class="c1"># Normalize to Lw:</span>
+    <span class="k">def</span> <span class="nf">normalize_to_Lw</span><span class="p">(</span><span class="n">Ill</span><span class="p">,</span> <span class="n">Lw</span><span class="p">,</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">rflM</span><span class="p">):</span>
+        <span class="n">xyzw</span> <span class="o">=</span> <span class="n">lx</span><span class="o">.</span><span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">Ill</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Ill</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">Ill</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">Lw</span><span class="o">*</span><span class="n">Ill</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="n">xyzw</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">IllM</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Ill</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">IllM</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">Ill1</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">Ill</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">rflM</span><span class="p">[</span><span class="mi">1</span><span class="p">:,:])))</span>
+        <span class="n">IllM</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">IllM</span><span class="p">),(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">Ill</span><span class="p">,</span> <span class="n">IllM</span>
+    <span class="n">Ill1</span><span class="p">,</span> <span class="n">Ill1M</span> <span class="o">=</span> <span class="n">normalize_to_Lw</span><span class="p">(</span><span class="n">Ill1</span><span class="p">,</span> <span class="n">Lw</span><span class="p">,</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">rflM</span><span class="p">)</span>
+    <span class="n">Ill2</span><span class="p">,</span> <span class="n">Ill2M</span> <span class="o">=</span> <span class="n">normalize_to_Lw</span><span class="p">(</span><span class="n">Ill2</span><span class="p">,</span> <span class="n">Lw</span><span class="p">,</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">rflM</span><span class="p">)</span>
+    
+    <span class="n">n</span> <span class="o">=</span> <span class="mi">6</span>
+    <span class="n">xyz1</span><span class="p">,</span> <span class="n">xyzw1</span> <span class="o">=</span> <span class="n">lx</span><span class="o">.</span><span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">Ill1</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">rfl</span> <span class="o">=</span> <span class="n">rflM</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">xyz1</span> <span class="o">=</span> <span class="n">xyz1</span><span class="p">[:</span><span class="n">n</span><span class="p">,</span><span class="mi">0</span><span class="p">,:]</span>
+    <span class="n">Ill1M</span> <span class="o">=</span> <span class="n">Ill1M</span><span class="p">[:(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span><span class="mi">0</span><span class="p">,:]</span>
+    
+    <span class="n">xyz2</span><span class="p">,</span> <span class="n">xyzw2</span> <span class="o">=</span> <span class="n">lx</span><span class="o">.</span><span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">Ill2</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">rfl</span> <span class="o">=</span> <span class="n">rflM</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">xyz2</span> <span class="o">=</span> <span class="n">xyz2</span><span class="p">[:</span><span class="n">n</span><span class="p">,:,:]</span>
+    <span class="n">Ill2M</span> <span class="o">=</span> <span class="n">Ill2M</span><span class="p">[:(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">),:,:]</span>
+
+    <span class="c1"># Single data for sample and illuminant:</span>
+    <span class="c1"># test input to _simple_cam():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">1: xyz in:&#39;</span><span class="p">)</span>
+    <span class="n">jabch1_a</span> <span class="o">=</span> <span class="n">_simple_cam</span><span class="p">(</span><span class="n">xyz1</span><span class="p">,</span> <span class="n">dataw</span> <span class="o">=</span> <span class="n">xyzw1</span><span class="p">,</span> <span class="n">Lw</span> <span class="o">=</span> <span class="n">Lw</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> \
+                 <span class="n">inputtype</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;forward&#39;</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">jabch1_a</span><span class="p">)</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;1: spd in:&#39;</span><span class="p">)</span>
+    <span class="n">jabch1_b</span> <span class="o">=</span> <span class="n">_simple_cam</span><span class="p">(</span><span class="n">Ill1M</span><span class="p">,</span> <span class="n">dataw</span> <span class="o">=</span> <span class="n">Ill1</span><span class="p">,</span> <span class="n">Lw</span> <span class="o">=</span> <span class="n">Lw</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> \
+                  <span class="n">inputtype</span> <span class="o">=</span> <span class="s1">&#39;spd&#39;</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;forward&#39;</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">jabch1_b</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;DELTA(xyz,spd): Single, Single: &#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">jabch1_a</span><span class="o">-</span><span class="n">jabch1_b</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+    
+    
+    
+    <span class="c1"># Multiple data for sample and illuminants:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">2: xyz in:&#39;</span><span class="p">)</span>
+    <span class="n">jabch2_a</span> <span class="o">=</span> <span class="n">_simple_cam</span><span class="p">(</span><span class="n">xyz2</span><span class="p">,</span> <span class="n">dataw</span> <span class="o">=</span> <span class="n">xyzw2</span><span class="p">,</span> <span class="n">Lw</span> <span class="o">=</span> <span class="n">Lw</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> \
+                 <span class="n">inputtype</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;forward&#39;</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">jabch2_a</span><span class="p">)</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;2: spd in:&#39;</span><span class="p">)</span>
+    <span class="n">jabch2_b</span> <span class="o">=</span> <span class="n">_simple_cam</span><span class="p">(</span><span class="n">Ill2M</span><span class="p">,</span> <span class="n">dataw</span> <span class="o">=</span> <span class="n">Ill2</span><span class="p">,</span> <span class="n">Lw</span> <span class="o">=</span> <span class="n">Lw</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> \
+                  <span class="n">inputtype</span> <span class="o">=</span> <span class="s1">&#39;spd&#39;</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;forward&#39;</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">jabch2_b</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;DELTA(xyz,spd): Multi, Multi: &#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">jabch2_a</span><span class="o">-</span><span class="n">jabch2_b</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+    
+    
+    <span class="c1"># Single data for sample, multiple illuminants:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">3: xyz in:&#39;</span><span class="p">)</span>
+    <span class="n">jabch3_a</span> <span class="o">=</span> <span class="n">_simple_cam</span><span class="p">(</span><span class="n">xyz1</span><span class="p">,</span> <span class="n">dataw</span> <span class="o">=</span> <span class="n">xyzw2</span><span class="p">,</span> <span class="n">Lw</span> <span class="o">=</span> <span class="n">Lw</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> \
+                 <span class="n">inputtype</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;forward&#39;</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">jabch3_a</span><span class="p">)</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;3: spd in:&#39;</span><span class="p">)</span>
+    <span class="n">jabch3_b</span> <span class="o">=</span> <span class="n">_simple_cam</span><span class="p">(</span><span class="n">Ill1M</span><span class="p">,</span> <span class="n">dataw</span> <span class="o">=</span> <span class="n">Ill2</span><span class="p">,</span> <span class="n">Lw</span> <span class="o">=</span> <span class="n">Lw</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> \
+                  <span class="n">inputtype</span> <span class="o">=</span> <span class="s1">&#39;spd&#39;</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;forward&#39;</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">jabch3_b</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;DELTA(xyz,spd): Single, Multi: &#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">jabch3_a</span><span class="o">-</span><span class="n">jabch3_b</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+
+    <span class="c1"># Module output plot:</span>
+    <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+    <span class="n">xyz</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">lx</span><span class="o">.</span><span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">Ill1</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">rfl</span> <span class="o">=</span> <span class="n">rflM</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">jabch</span> <span class="o">=</span> <span class="n">_simple_cam</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">dataw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">Lw</span> <span class="o">=</span> <span class="n">Lw</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> \
+                 <span class="n">inputtype</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;forward&#39;</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">jabch</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="n">jabch</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="s1">&#39;b.&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;equal&#39;</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Kevin A.G. Smet
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

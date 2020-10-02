@@ -1,0 +1,421 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>luxpy.color.cri.iestm30.metrics &mdash; LuxPy 1.6.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
+        <script src="../../../../../_static/jquery.js"></script>
+        <script src="../../../../../_static/underscore.js"></script>
+        <script src="../../../../../_static/doctools.js"></script>
+        <script src="../../../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../../../index.html" class="icon icon-home"> LuxPy
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.6.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../license.html">License: GPLv3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../required_packages.html">Imported (required) packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../luxpy_structure.html">Luxpy package structure</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">LuxPy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>luxpy.color.cri.iestm30.metrics</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for luxpy.color.cri.iestm30.metrics</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1">########################################################################</span>
+<span class="c1"># &lt;LUXPY: a Python package for lighting and color science.&gt;</span>
+<span class="c1"># Copyright (C) &lt;2017&gt;  &lt;Kevin A.G. Smet&gt; (ksmet1977 at gmail.com)</span>
+<span class="c1">#</span>
+<span class="c1"># This program is free software: you can redistribute it and/or modify</span>
+<span class="c1"># it under the terms of the GNU General Public License as published by</span>
+<span class="c1"># the Free Software Foundation, either version 3 of the License.</span>
+<span class="c1">#</span>
+<span class="c1"># This program is distributed in the hope that it will be useful,</span>
+<span class="c1"># but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="c1"># MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="c1"># GNU General Public License for more details.</span>
+<span class="c1">#</span>
+<span class="c1"># You should have received a copy of the GNU General Public License</span>
+<span class="c1"># along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<span class="c1">#########################################################################</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">Extension module for IES TM30 metric calculation with additional Vector Field support</span>
+<span class="sd">=====================================================================================</span>
+
+<span class="sd"> :spd_to_ies_tm30_metrics(): Calculates IES TM30 metrics from spectral data + Metameric Uncertainty + Vector Fields</span>
+
+
+<span class="sd">.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="n">_CRI_RFL</span>
+<span class="kn">from</span> <span class="nn">luxpy.utils</span> <span class="kn">import</span> <span class="n">np</span>
+
+
+<span class="kn">from</span> <span class="nn">luxpy.color.cri.utils.helpers</span> <span class="kn">import</span> <span class="p">(</span><span class="n">_get_hue_bin_data</span><span class="p">,</span> 
+                                            <span class="n">_hue_bin_data_to_rxhj</span><span class="p">,</span> 
+                                            <span class="n">_hue_bin_data_to_rfi</span><span class="p">,</span>
+                                            <span class="n">spd_to_cri</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">luxpy.color.cri.utils.init_cri_defaults_database</span> <span class="kn">import</span> <span class="n">_CRI_DEFAULTS</span>
+
+<span class="kn">from</span> <span class="nn">luxpy.color.cri.VFPX.vectorshiftmodel</span> <span class="kn">import</span>  <span class="n">_VF_MODEL_TYPE</span><span class="p">,</span> <span class="n">_VF_PCOLORSHIFT</span><span class="p">,</span> <span class="n">VF_colorshift_model</span>
+<span class="kn">from</span> <span class="nn">luxpy.color.cri.VFPX.VF_PX_models</span> <span class="kn">import</span> <span class="n">plot_VF_PX_models</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;spd_to_ies_tm30_metrics&#39;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="spd_to_ies_tm30_metrics"><a class="viewcode-back" href="../../../../../color.html#luxpy.color.cri.spd_to_ies_tm30_metrics">[docs]</a><span class="k">def</span> <span class="nf">spd_to_ies_tm30_metrics</span><span class="p">(</span><span class="n">St</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> \
+                            <span class="n">hbins</span> <span class="o">=</span> <span class="mi">16</span><span class="p">,</span> <span class="n">start_hue</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>\
+                            <span class="n">scalef</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> \
+                            <span class="n">vf_model_type</span> <span class="o">=</span> <span class="n">_VF_MODEL_TYPE</span><span class="p">,</span> \
+                            <span class="n">vf_pcolorshift</span> <span class="o">=</span> <span class="n">_VF_PCOLORSHIFT</span><span class="p">,</span>\
+                            <span class="n">scale_vf_chroma_to_sample_chroma</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculates IES TM30 metrics from spectral data.      </span>
+<span class="sd">      </span>
+<span class="sd">      Args:</span>
+<span class="sd">        :St:</span>
+<span class="sd">            | numpy.ndarray with spectral data </span>
+<span class="sd">        :cri_type:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | If None: defaults to cri_type = &#39;iesrf&#39;.</span>
+<span class="sd">            | Not none values of :hbins:, :start_hue: and :scalef: overwrite </span>
+<span class="sd">            | input in cri_type[&#39;rg_pars&#39;] </span>
+<span class="sd">        :hbins:</span>
+<span class="sd">            | None or numpy.ndarray with sorted hue bin centers (°), optional</span>
+<span class="sd">        :start_hue: </span>
+<span class="sd">            | None, optional</span>
+<span class="sd">        :scalef:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | Scale factor for reference circle.</span>
+<span class="sd">        :vf_pcolorshift:</span>
+<span class="sd">            | _VF_PCOLORSHIFT or user defined dict, optional</span>
+<span class="sd">            | The polynomial models of degree 5 and 6 can be fully specified or </span>
+<span class="sd">            | summarized by the model parameters themselved OR by calculating the</span>
+<span class="sd">            | dCoverC and dH at resp. 5 and 6 hues. :VF_pcolorshift: specifies </span>
+<span class="sd">            | these hues and chroma level.</span>
+<span class="sd">        :scale_vf_chroma_to_sample_chroma: </span>
+<span class="sd">            | False, optional</span>
+<span class="sd">            | Scale chroma of reference and test vf fields such that average of </span>
+<span class="sd">            | binned reference chroma equals that of the binned sample chroma</span>
+<span class="sd">            | before calculating hue bin metrics.</span>
+<span class="sd">            </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :data: </span>
+<span class="sd">            | Dictionary with color rendering data:</span>
+<span class="sd">            | </span>
+<span class="sd">            | - &#39;St, Sr&#39;  : ndarray of test SPDs and corresponding ref. illuminants.</span>
+<span class="sd">            | - &#39;xyz_cct&#39;: xyz of white point calculate with cieobs defined for cct calculations in cri_type[&#39;cieobs&#39;]</span>
+<span class="sd">            | - &#39;cct, duv&#39;: CCT and Duv obtained with cieobs in cri_type[&#39;cieobs&#39;][&#39;cct&#39;]</span>
+<span class="sd">            | - &#39;xyzti, xyzri&#39;: ndarray tristimulus values of test and ref. samples (obtained with with cieobs in cri_type[&#39;cieobs&#39;][&#39;xyz&#39;])</span>
+<span class="sd">            | - &#39;xyztw, xyzrw&#39;: ndarray tristimulus values of test and ref. white points (obtained with with cieobs in cri_type[&#39;cieobs&#39;][&#39;xyz&#39;])</span>
+<span class="sd">            | - &#39;DEi, DEa&#39;: ndarray with individual sample color differences DEi and average DEa between test and ref.       </span>
+<span class="sd">            | - &#39;Rf&#39;  : ndarray with general color fidelity index values</span>
+<span class="sd">            | - &#39;Rg&#39;  : ndarray with color gamut area index values</span>
+<span class="sd">            | - &#39;Rfi&#39;  : ndarray with specific (sample) color fidelity indices</span>
+<span class="sd">            | - &#39;Rfhj&#39; : ndarray with local (hue binned) fidelity indices</span>
+<span class="sd">            | - &#39;DEhj&#39; : ndarray with local (hue binned) color differences</span>
+<span class="sd">            | - &#39;Rcshj&#39;: ndarray with local chroma shifts indices</span>
+<span class="sd">            | - &#39;Rhshj&#39;: ndarray with local hue shifts indices</span>
+<span class="sd">            | - &#39;hue_bin_data&#39;: dict with output from _get_hue_bin_data() [see its help for more info]</span>
+<span class="sd">            | - &#39;cri_type&#39;: same as input (for reference purposes)</span>
+<span class="sd">            | - &#39;vf&#39; : dictionary with vector field measures and data.</span>
+<span class="sd">            |         Keys:</span>
+<span class="sd">            |           - &#39;Rt&#39;  : ndarray with general metameric uncertainty index Rt</span>
+<span class="sd">            |           - &#39;Rti&#39; : ndarray with specific metameric uncertainty indices Rti</span>
+<span class="sd">            |           - &#39;Rfhj&#39; : ndarray with local (hue binned) fidelity indices </span>
+<span class="sd">            |                            obtained from VF model predictions at color space</span>
+<span class="sd">            |                            pixel coordinates</span>
+<span class="sd">            |           - &#39;DEhj&#39; : ndarray with local (hue binned) color differences</span>
+<span class="sd">            |                           (same as above)</span>
+<span class="sd">            |           - &#39;Rcshj&#39;: ndarray with local chroma shifts indices for vectorfield coordinates</span>
+<span class="sd">            |                           (same as above)</span>
+<span class="sd">            |           - &#39;Rhshj&#39;: ndarray with local hue shifts indicesfor vectorfield coordinates</span>
+<span class="sd">            |                           (same as above)</span>
+<span class="sd">            |           - &#39;Rfi&#39;: ndarray with sample fidelity indices for vectorfield coordinates</span>
+<span class="sd">            |                           (same as above)</span>
+<span class="sd">            |           - &#39;DEi&#39;: ndarray with sample color differences for vectorfield coordinates</span>
+<span class="sd">            |                           (same as above)</span>
+<span class="sd">            |           - &#39;hue_bin_data&#39;: dict with output from _get_hue_bin_data() for vectorfield coordinates</span>
+<span class="sd">            |           - &#39;dataVF&#39;: dictionary with output of cri.VFPX.VF_colorshift_model()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">cri_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">cri_type</span> <span class="o">=</span> <span class="s1">&#39;iesrf&#39;</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cri_type</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span> <span class="c1"># get dict </span>
+        <span class="n">cri_type</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">_CRI_DEFAULTS</span><span class="p">[</span><span class="n">cri_type</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">hbins</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;rg_pars&#39;</span><span class="p">][</span><span class="s1">&#39;nhbins&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hbins</span> 
+    <span class="k">if</span> <span class="n">start_hue</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;rg_pars&#39;</span><span class="p">][</span><span class="s1">&#39;start_hue&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">start_hue</span>
+    <span class="k">if</span> <span class="n">scalef</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;rg_pars&#39;</span><span class="p">][</span><span class="s1">&#39;normalized_chroma_ref&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">scalef</span>
+    
+    <span class="c1">#Calculate color rendering measures for SPDs in St:      </span>
+    <span class="n">data</span><span class="p">,</span><span class="n">_</span> <span class="o">=</span> <span class="n">spd_to_cri</span><span class="p">(</span><span class="n">St</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;data,hue_bin_data&#39;</span><span class="p">,</span> 
+                        <span class="n">fit_gamut_ellipse</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">hdata</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;hue_bin_data&#39;</span><span class="p">]</span>
+    <span class="n">Rfhj</span><span class="p">,</span> <span class="n">Rcshj</span><span class="p">,</span> <span class="n">Rhshj</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Rfhj&#39;</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Rcshj&#39;</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Rhshj&#39;</span><span class="p">]</span>
+    <span class="n">cct</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;cct&#39;</span><span class="p">]</span>
+    
+    <span class="c1">#Calculate Metameric uncertainty and base color shifts:</span>
+    <span class="n">dataVF</span> <span class="o">=</span> <span class="n">VF_colorshift_model</span><span class="p">(</span><span class="n">St</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">,</span> 
+                                 <span class="n">model_type</span> <span class="o">=</span> <span class="n">vf_model_type</span><span class="p">,</span> 
+                                 <span class="n">cspace</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;cspace&#39;</span><span class="p">],</span> 
+                                 <span class="n">sampleset</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;sampleset&#39;</span><span class="p">]),</span> 
+                                 <span class="n">pool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> 
+                                 <span class="n">pcolorshift</span> <span class="o">=</span> <span class="n">vf_pcolorshift</span><span class="p">,</span> 
+                                 <span class="n">vfcolor</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">Rf_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">dataVF</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;metrics&#39;</span><span class="p">][</span><span class="s1">&#39;Rf&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dataVF</span><span class="p">))])</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">Rt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">dataVF</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;metrics&#39;</span><span class="p">][</span><span class="s1">&#39;Rt&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dataVF</span><span class="p">))])</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">Rti</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">dataVF</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;metrics&#39;</span><span class="p">][</span><span class="s1">&#39;Rti&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dataVF</span><span class="p">))][</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">_data_vf</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Rt&#39;</span> <span class="p">:</span> <span class="n">Rt</span><span class="p">,</span> <span class="s1">&#39;Rti&#39;</span> <span class="p">:</span> <span class="n">Rti</span><span class="p">,</span> <span class="s1">&#39;Rf_&#39;</span> <span class="p">:</span> <span class="n">Rf_</span><span class="p">}</span> <span class="c1"># add to dict for output</span>
+
+    <span class="c1"># Get normalized and sliced hue-bin _hj data for plotting:</span>
+    <span class="n">rg_pars</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;rg_pars&#39;</span><span class="p">]</span>
+    <span class="n">nhbins</span><span class="p">,</span> <span class="n">normalize_gamut</span><span class="p">,</span> <span class="n">normalized_chroma_ref</span><span class="p">,</span> <span class="n">start_hue</span> <span class="o">=</span> <span class="p">[</span><span class="n">rg_pars</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">rg_pars</span><span class="o">.</span><span class="n">keys</span><span class="p">())]</span>
+    
+    <span class="c1"># Get chroma of samples:    </span>
+    <span class="k">if</span> <span class="n">scale_vf_chroma_to_sample_chroma</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">jabt_hj_closed</span><span class="p">,</span> <span class="n">jabr_hj_closed</span> <span class="o">=</span> <span class="n">hdata</span><span class="p">[</span><span class="s1">&#39;jabt_hj_closed&#39;</span><span class="p">],</span> <span class="n">hdata</span><span class="p">[</span><span class="s1">&#39;jabr_hj_closed&#39;</span><span class="p">]</span>
+        <span class="n">Cr_hj_s</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">jabr_hj_closed</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">jabr_hj_closed</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="c1"># for rescaling vector field average reference chroma</span>
+
+    <span class="c1">#jabtn_hj_closed, jabrn_hj_closed = hdata[&#39;jabtn_hj_closed&#39;], hdata[&#39;jabrn_hj_closed&#39;]</span>
+    
+    <span class="c1"># get vector field data for each source (must be on 2nd dim)</span>
+    <span class="n">jabt_vf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">dataVF</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;fielddata&#39;</span><span class="p">][</span><span class="s1">&#39;vectorfield&#39;</span><span class="p">][</span><span class="s1">&#39;axt&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span><span class="n">dataVF</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;fielddata&#39;</span><span class="p">][</span><span class="s1">&#39;vectorfield&#39;</span><span class="p">][</span><span class="s1">&#39;axt&#39;</span><span class="p">],</span><span class="n">dataVF</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;fielddata&#39;</span><span class="p">][</span><span class="s1">&#39;vectorfield&#39;</span><span class="p">][</span><span class="s1">&#39;bxt&#39;</span><span class="p">]))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cct</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])]),(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+    <span class="n">jabr_vf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">dataVF</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;fielddata&#39;</span><span class="p">][</span><span class="s1">&#39;vectorfield&#39;</span><span class="p">][</span><span class="s1">&#39;axr&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span><span class="n">dataVF</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;fielddata&#39;</span><span class="p">][</span><span class="s1">&#39;vectorfield&#39;</span><span class="p">][</span><span class="s1">&#39;axr&#39;</span><span class="p">],</span><span class="n">dataVF</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;fielddata&#39;</span><span class="p">][</span><span class="s1">&#39;vectorfield&#39;</span><span class="p">][</span><span class="s1">&#39;bxr&#39;</span><span class="p">]))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cct</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])]),(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+    
+    <span class="c1"># Get hue bin data for vector field data:</span>
+    <span class="n">hue_bin_data_vf</span> <span class="o">=</span> <span class="n">_get_hue_bin_data</span><span class="p">(</span><span class="n">jabt_vf</span><span class="p">,</span> <span class="n">jabr_vf</span><span class="p">,</span> 
+                                        <span class="n">start_hue</span> <span class="o">=</span> <span class="n">start_hue</span><span class="p">,</span> <span class="n">nhbins</span> <span class="o">=</span> <span class="n">nhbins</span><span class="p">,</span>
+                                        <span class="n">normalized_chroma_ref</span> <span class="o">=</span> <span class="n">normalized_chroma_ref</span> <span class="p">)</span>
+    
+    <span class="c1"># Rescale chroma of vector field such that it is on average equal to that of the binned samples:</span>
+    <span class="k">if</span> <span class="n">scale_vf_chroma_to_sample_chroma</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">Cr_vf_hj</span><span class="p">,</span> <span class="n">Cr_vf</span><span class="p">,</span> <span class="n">Ct_vf</span> <span class="o">=</span> <span class="n">hue_bin_data_vf</span><span class="p">[</span><span class="s1">&#39;Cr_hj&#39;</span><span class="p">],</span> <span class="n">hue_bin_data_vf</span><span class="p">[</span><span class="s1">&#39;Cr&#39;</span><span class="p">],</span> <span class="n">hue_bin_data_vf</span><span class="p">[</span><span class="s1">&#39;Ct&#39;</span><span class="p">]</span>
+        <span class="n">hr_vf</span><span class="p">,</span> <span class="n">ht_vf</span> <span class="o">=</span> <span class="n">hue_bin_data_vf</span><span class="p">[</span><span class="s1">&#39;hr&#39;</span><span class="p">],</span> <span class="n">hue_bin_data_vf</span><span class="p">[</span><span class="s1">&#39;ht&#39;</span><span class="p">]</span>
+        <span class="n">fC</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">Cr_hj_s</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">Cr_vf_hj</span><span class="p">)</span>
+        <span class="n">jabr_vf</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">jabr_vf</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">fC</span> <span class="o">*</span> <span class="n">Cr_vf</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">hr_vf</span><span class="p">),</span> <span class="n">fC</span> <span class="o">*</span> <span class="n">Cr_vf</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">hr_vf</span><span class="p">)</span>
+        <span class="n">jabt_vf</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">jabt_vf</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">fC</span> <span class="o">*</span> <span class="n">Ct_vf</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">ht_vf</span><span class="p">),</span> <span class="n">fC</span> <span class="o">*</span> <span class="n">Ct_vf</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">ht_vf</span><span class="p">)</span>
+        
+        <span class="c1"># Get new hue bin data for rescaled vector field data:</span>
+        <span class="n">hue_bin_data_vf</span> <span class="o">=</span> <span class="n">_get_hue_bin_data</span><span class="p">(</span><span class="n">jabt_vf</span><span class="p">,</span> <span class="n">jabr_vf</span><span class="p">,</span> 
+                                            <span class="n">start_hue</span> <span class="o">=</span> <span class="n">start_hue</span><span class="p">,</span> <span class="n">nhbins</span> <span class="o">=</span> <span class="n">nhbins</span><span class="p">,</span>
+                                            <span class="n">normalized_chroma_ref</span> <span class="o">=</span> <span class="n">normalized_chroma_ref</span> <span class="p">)</span>
+    
+    <span class="c1"># Get scale factor and scaling function for Rfx:</span>
+    <span class="n">scale_factor</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;scale&#39;</span><span class="p">][</span><span class="s1">&#39;cfactor&#39;</span><span class="p">]</span>
+    <span class="n">scale_fcn</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;scale&#39;</span><span class="p">][</span><span class="s1">&#39;fcn&#39;</span><span class="p">]</span>
+
+    <span class="c1"># Calculate Local color fidelity, chroma and hue shifts for vector field data:</span>
+    <span class="p">(</span><span class="n">Rcshj_vf</span><span class="p">,</span> <span class="n">Rhshj_vf</span><span class="p">,</span>
+     <span class="n">Rfhj_vf</span><span class="p">,</span> <span class="n">DEhj_vf</span><span class="p">)</span> <span class="o">=</span> <span class="n">_hue_bin_data_to_rxhj</span><span class="p">(</span><span class="n">hue_bin_data_vf</span><span class="p">,</span> 
+                                               <span class="n">cri_type</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">,</span>
+                                               <span class="n">scale_factor</span> <span class="o">=</span> <span class="n">scale_factor</span><span class="p">,</span>
+                                               <span class="n">scale_fcn</span> <span class="o">=</span> <span class="n">scale_fcn</span><span class="p">)</span> 
+                                               
+    <span class="c1"># Get sample color fidelity for vector field data:</span>
+    <span class="p">(</span><span class="n">Rfi_vf</span><span class="p">,</span> <span class="n">DEi_vf</span><span class="p">)</span> <span class="o">=</span> <span class="n">_hue_bin_data_to_rfi</span><span class="p">(</span><span class="n">hue_bin_data_vf</span><span class="p">,</span> 
+                                            <span class="n">cri_type</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">,</span>
+                                            <span class="n">scale_factor</span> <span class="o">=</span> <span class="n">scale_factor</span><span class="p">,</span>
+                                            <span class="n">scale_fcn</span> <span class="o">=</span> <span class="n">scale_fcn</span><span class="p">)</span>
+    <span class="c1"># Store in dict:</span>
+    <span class="n">_data_vf</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;Rfi&#39;</span> <span class="p">:</span> <span class="n">Rfi_vf</span><span class="p">,</span> <span class="s1">&#39;DEi&#39;</span> <span class="p">:</span> <span class="n">DEi_vf</span><span class="p">,</span>
+                     <span class="s1">&#39;Rcshj&#39;</span> <span class="p">:</span> <span class="n">Rcshj_vf</span><span class="p">,</span> <span class="s1">&#39;Rhshj&#39;</span> <span class="p">:</span> <span class="n">Rhshj_vf</span><span class="p">,</span>
+                     <span class="s1">&#39;Rfhj&#39;</span> <span class="p">:</span> <span class="n">Rfhj_vf</span><span class="p">,</span> <span class="s1">&#39;DEhj&#39;</span><span class="p">:</span> <span class="n">DEhj_vf</span><span class="p">,</span>
+                     <span class="s1">&#39;dataVF&#39;</span> <span class="p">:</span> <span class="n">dataVF</span><span class="p">,</span> <span class="s1">&#39;hue_bin_data&#39;</span> <span class="p">:</span> <span class="n">hue_bin_data_vf</span><span class="p">})</span>
+    
+    <span class="c1"># Add to main dictionary:</span>
+    <span class="n">data</span><span class="p">[</span><span class="s1">&#39;vf&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_data_vf</span>
+    <span class="k">return</span> <span class="n">data</span></div>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    
+    <span class="c1"># for testing:</span>
+    <span class="kn">import</span> <span class="nn">luxpy</span> <span class="k">as</span> <span class="nn">lx</span>
+    <span class="n">F4</span> <span class="o">=</span> <span class="n">lx</span><span class="o">.</span><span class="n">cie_interp</span><span class="p">(</span><span class="n">lx</span><span class="o">.</span><span class="n">_CIE_F4</span><span class="p">,</span><span class="n">wl_new</span><span class="o">=</span><span class="p">[</span><span class="mi">360</span><span class="p">,</span><span class="mi">830</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;spd&#39;</span><span class="p">)</span>
+    <span class="n">D65</span> <span class="o">=</span> <span class="n">lx</span><span class="o">.</span><span class="n">cie_interp</span><span class="p">(</span><span class="n">lx</span><span class="o">.</span><span class="n">_CIE_D65</span><span class="p">,</span><span class="n">wl_new</span><span class="o">=</span><span class="p">[</span><span class="mi">360</span><span class="p">,</span><span class="mi">830</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;spd&#39;</span><span class="p">)</span>
+    <span class="n">spds</span> <span class="o">=</span> <span class="n">lx</span><span class="o">.</span><span class="n">_IESTM3018</span><span class="p">[</span><span class="s1">&#39;S&#39;</span><span class="p">][</span><span class="s1">&#39;data&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">spds</span> <span class="o">=</span> <span class="n">lx</span><span class="o">.</span><span class="n">cie_interp</span><span class="p">(</span><span class="n">spds</span><span class="p">,</span><span class="n">wl_new</span> <span class="o">=</span> <span class="p">[</span><span class="mi">360</span><span class="p">,</span><span class="mi">830</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;spd&#39;</span><span class="p">)</span>
+    
+    <span class="n">spd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">F4</span><span class="p">,</span><span class="n">D65</span><span class="p">[</span><span class="mi">1</span><span class="p">:]))</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">spd_to_ies_tm30_metrics</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> \
+                                <span class="n">hbins</span> <span class="o">=</span> <span class="mi">16</span><span class="p">,</span> <span class="n">start_hue</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>\
+                                <span class="n">scalef</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> \
+                                <span class="n">vf_model_type</span> <span class="o">=</span> <span class="n">_VF_MODEL_TYPE</span><span class="p">,</span> \
+                                <span class="n">vf_pcolorshift</span> <span class="o">=</span> <span class="n">_VF_PCOLORSHIFT</span><span class="p">,</span>\
+                                <span class="n">scale_vf_chroma_to_sample_chroma</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+    
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Kevin A.G. Smet
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

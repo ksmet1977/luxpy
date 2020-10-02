@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.color.cam.cam18sl &mdash; LuxPy 1.5.3 documentation</title>
+  <title>luxpy.color.cam.cam18sl &mdash; LuxPy 1.6.0 documentation</title>
   
 
   
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                1.5.3
+                1.6.0
               </div>
             
           
@@ -200,10 +200,14 @@
                        
 <span class="n">_CAM18SL_SURROUND_PARAMETERS</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;surrounds&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;dark&#39;</span><span class="p">],</span> <span class="s1">&#39;dark&#39;</span> <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;Nc&#39;</span><span class="p">:</span><span class="kc">None</span><span class="p">,</span><span class="s1">&#39;F&#39;</span><span class="p">:</span><span class="kc">None</span><span class="p">,</span><span class="s1">&#39;FLL&#39;</span><span class="p">:</span><span class="kc">None</span><span class="p">}}</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;cam18sl&#39;</span><span class="p">,</span><span class="s1">&#39;_CAM18SL_AXES&#39;</span><span class="p">,</span><span class="s1">&#39;_CAM18SL_UNIQUE_HUE_DATA&#39;</span><span class="p">,</span> <span class="s1">&#39;_CAM18SL_PARAMETERS&#39;</span><span class="p">,</span><span class="s1">&#39;_CAM18SL_NAKA_RUSHTON_PARAMETERS&#39;</span><span class="p">,</span> <span class="s1">&#39;_CAM18SL_SURROUND_PARAMETERS&#39;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;cam18sl&#39;</span><span class="p">,</span><span class="s1">&#39;_CAM18SL_AXES&#39;</span><span class="p">,</span><span class="s1">&#39;_CAM18SL_UNIQUE_HUE_DATA&#39;</span><span class="p">,</span> 
+           <span class="s1">&#39;_CAM18SL_PARAMETERS&#39;</span><span class="p">,</span><span class="s1">&#39;_CAM18SL_NAKA_RUSHTON_PARAMETERS&#39;</span><span class="p">,</span> 
+           <span class="s1">&#39;_CAM18SL_SURROUND_PARAMETERS&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;xyz_to_qabM_cam18sl&#39;</span><span class="p">,</span><span class="s1">&#39;qabM_cam18sl_to_xyz&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;xyz_to_qabS_cam18sl&#39;</span><span class="p">,</span><span class="s1">&#39;qabS_cam18sl_to_xyz&#39;</span><span class="p">]</span>
 
 <span class="c1">#------------------------------------------------------------------------------------------------------------------------------------------------------------------------------            </span>
-<div class="viewcode-block" id="cam18sl"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.cam18sl">[docs]</a><span class="k">def</span> <span class="nf">cam18sl</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">datab</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Lb</span> <span class="o">=</span> <span class="p">[</span><span class="mi">100</span><span class="p">],</span> <span class="n">fov</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span> <span class="n">inputtype</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;forward&#39;</span><span class="p">,</span> <span class="n">outin</span> <span class="o">=</span> <span class="s1">&#39;Q,aS,bS&#39;</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">cam18sl</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">datab</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Lb</span> <span class="o">=</span> <span class="p">[</span><span class="mi">100</span><span class="p">],</span> <span class="n">fov</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span> <span class="n">inputtype</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;forward&#39;</span><span class="p">,</span> <span class="n">outin</span> <span class="o">=</span> <span class="s1">&#39;Q,aS,bS&#39;</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert between CIE 2006 10°  XYZ tristimulus values (or spectral data) </span>
 <span class="sd">    and CAM18sl color appearance correlates.</span>
@@ -501,26 +505,26 @@
     <span class="k">if</span> <span class="n">camout</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">camout</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">camout</span><span class="p">,</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
     
-    <span class="k">return</span> <span class="n">camout</span></div>
+    <span class="k">return</span> <span class="n">camout</span>
  
 <span class="c1">#------------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="xyz_to_qabW_cam18sl"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.xyz_to_qabW_cam18sl">[docs]</a><span class="k">def</span> <span class="nf">xyz_to_qabW_cam18sl</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">xyzb</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Lb</span> <span class="o">=</span> <span class="p">[</span><span class="mi">100</span><span class="p">],</span> <span class="n">fov</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Wrapper function for cam18sl forward mode with &#39;Q,aW,bW&#39; output.</span>
-<span class="sd">    (Note that &#39;Q,aW,bW&#39; is a Cartesian a,b-coordinate system centered at (1,0))</span>
-<span class="sd">    </span>
-<span class="sd">    | For help on parameter details: ?luxpy.cam.cam18sl</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">cam18sl</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">datab</span> <span class="o">=</span> <span class="n">xyzb</span><span class="p">,</span> <span class="n">Lb</span> <span class="o">=</span> <span class="n">Lb</span><span class="p">,</span> <span class="n">fov</span> <span class="o">=</span> <span class="n">fov</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;forward&#39;</span><span class="p">,</span> <span class="n">inputtype</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">outin</span> <span class="o">=</span> <span class="s1">&#39;Q,aW,bW&#39;</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">)</span></div>
+<span class="c1"># def xyz_to_qabW_cam18sl(xyz, xyzb = None, Lb = [100], fov = 10.0, parameters = None, **kwargs):</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     Wrapper function for cam18sl forward mode with &#39;Q,aW,bW&#39; output.</span>
+<span class="c1">#     (Note that &#39;Q,aW,bW&#39; is a Cartesian a,b-coordinate system centered at (1,0))</span>
+    
+<span class="c1">#     | For help on parameter details: ?luxpy.cam.cam18sl</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     return cam18sl(xyz, datab = xyzb, Lb = Lb, fov = fov, direction = &#39;forward&#39;, inputtype = &#39;xyz&#39;, outin = &#39;Q,aW,bW&#39;, parameters = parameters)</span>
                 
-<div class="viewcode-block" id="qabW_cam18sl_to_xyz"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.qabW_cam18sl_to_xyz">[docs]</a><span class="k">def</span> <span class="nf">qabW_cam18sl_to_xyz</span><span class="p">(</span><span class="n">qab</span><span class="p">,</span> <span class="n">xyzb</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Lb</span> <span class="o">=</span> <span class="p">[</span><span class="mi">100</span><span class="p">],</span> <span class="n">fov</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Wrapper function for cam18sl inverse mode with &#39;Q,aW,bW&#39; input.</span>
-<span class="sd">    (Note that &#39;Q,aW,bW&#39; is a Cartesian a,b-coordinate system centered at (1,0))</span>
-<span class="sd">    </span>
-<span class="sd">    | For help on parameter details: ?luxpy.cam.cam18sl</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">cam18sl</span><span class="p">(</span><span class="n">qab</span><span class="p">,</span> <span class="n">datab</span> <span class="o">=</span> <span class="n">xyzb</span><span class="p">,</span> <span class="n">Lb</span> <span class="o">=</span> <span class="n">Lb</span><span class="p">,</span> <span class="n">fov</span> <span class="o">=</span> <span class="n">fov</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;inverse&#39;</span><span class="p">,</span> <span class="n">inputtype</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">outin</span> <span class="o">=</span> <span class="s1">&#39;Q,aW,bW&#39;</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">)</span></div>
+<span class="c1"># def qabW_cam18sl_to_xyz(qab, xyzb = None, Lb = [100], fov = 10.0, parameters = None, **kwargs):</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     Wrapper function for cam18sl inverse mode with &#39;Q,aW,bW&#39; input.</span>
+<span class="c1">#     (Note that &#39;Q,aW,bW&#39; is a Cartesian a,b-coordinate system centered at (1,0))</span>
+    
+<span class="c1">#     | For help on parameter details: ?luxpy.cam.cam18sl</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     return cam18sl(qab, datab = xyzb, Lb = Lb, fov = fov, direction = &#39;inverse&#39;, inputtype = &#39;xyz&#39;, outin = &#39;Q,aW,bW&#39;, parameters = parameters)</span>
 
 <div class="viewcode-block" id="xyz_to_qabM_cam18sl"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.xyz_to_qabM_cam18sl">[docs]</a><span class="k">def</span> <span class="nf">xyz_to_qabM_cam18sl</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">xyzb</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Lb</span> <span class="o">=</span> <span class="p">[</span><span class="mi">100</span><span class="p">],</span> <span class="n">fov</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
