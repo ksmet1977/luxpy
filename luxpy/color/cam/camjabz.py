@@ -283,7 +283,7 @@ def run(data, xyzw = None, outin = 'J,aM,bM', cieobs = _CIEOBS,
     # Get condition parameters:
     if conditions is None:
         conditions = _DEFAULT_CONDITIONS
-    print(conditions)
+
     D, Dtype, La, Yb, surround = (conditions[x] for x in sorted(conditions.keys()))
     
     surround_parameters =  _SURROUND_PARAMETERS
@@ -610,29 +610,29 @@ if __name__ == '__main__':
     
     
      
-    user_conditions = {'D': 1, 'Dtype': None,\
-                   'La': 500.0, 'Yb': 20.0, 'surround': 'avg'}
+    # user_conditions = {'D': 1, 'Dtype': None,\
+    #                'La': 500.0, 'Yb': 20.0, 'surround': 'avg'}
 
-    jabM_camjabz = lx.xyz_to_jabM_camjabz(xyz[:,0,:], xyzw = xyzw)
-    jabC_camjabz = lx.xyz_to_jabC_camjabz(xyz[:,0,:], xyzw = xyzw)
-    print("JabM_camjabz (default viewing conditions) = ", jabM_camjabz)
+    # jabM_camjabz = lx.xyz_to_jabM_camjabz(xyz[:,0,:], xyzw = xyzw)
+    # jabC_camjabz = lx.xyz_to_jabC_camjabz(xyz[:,0,:], xyzw = xyzw)
+    # print("JabM_camjabz (default viewing conditions) = ", jabM_camjabz)
     
-    jabM_camjabz_user_vc = lx.xyz_to_jabM_camjabz(xyz[:,0,:], xyzw = xyzw, conditions = user_conditions)
-    jabC_camjabz_user_vc = lx.xyz_to_jabC_camjabz(xyz[:,0,:], xyzw = xyzw, conditions = user_conditions)
+    # jabM_camjabz_user_vc = lx.xyz_to_jabM_camjabz(xyz[:,0,:], xyzw = xyzw, conditions = user_conditions)
+    # jabC_camjabz_user_vc = lx.xyz_to_jabC_camjabz(xyz[:,0,:], xyzw = xyzw, conditions = user_conditions)
 
-    print("JabM_camjabz (user defined viewing conditions) = ", jabM_camjabz_user_vc)    
+    # print("JabM_camjabz (user defined viewing conditions) = ", jabM_camjabz_user_vc)    
         
-     
-    fig, axs = plt.subplots(1,2,figsize=(12,6));
-
-    axs[0].plot(jabM_camjabz[...,1:2],jabM_camjabz[...,2:3],'b.', label = 'camjabz')
-    axs[0].plot(jabM_camjabz_user_vc[...,1:2],jabM_camjabz_user_vc[...,2:3],'g.', label = 'camjabz (user cond.)')
-    axs[0].set_xlabel('azM (camjabz)')
-    axs[0].set_ylabel('bzM (camjabz)')
     
-    axs[1].plot(jabC_camjabz[...,1:2],jabC_camjabz[...,2:3],'rx', label = 'camjabz')
-    axs[1].plot(jabC_camjabz_user_vc[...,1:2],jabC_camjabz_user_vc[...,2:3],'c.', label = 'camjabz (user cond.)')
-    axs[1].set_xlabel('azC (camjabz)')
-    axs[1].set_ylabel('bzC (camjabz)')
+    # fig, axs = plt.subplots(1,2,figsize=(12,6));
+
+    # axs[0].plot(jabM_camjabz[...,1:2],jabM_camjabz[...,2:3],'b.', label = 'camjabz')
+    # axs[0].plot(jabM_camjabz_user_vc[...,1:2],jabM_camjabz_user_vc[...,2:3],'g.', label = 'camjabz (user cond.)')
+    # axs[0].set_xlabel('azM (camjabz)')
+    # axs[0].set_ylabel('bzM (camjabz)')
+    
+    # axs[1].plot(jabC_camjabz[...,1:2],jabC_camjabz[...,2:3],'rx', label = 'camjabz')
+    # axs[1].plot(jabC_camjabz_user_vc[...,1:2],jabC_camjabz_user_vc[...,2:3],'c.', label = 'camjabz (user cond.)')
+    # axs[1].set_xlabel('azC (camjabz)')
+    # axs[1].set_ylabel('bzC (camjabz)')
     
     
