@@ -76,7 +76,9 @@ def spd_to_fci(spd, use_cielab = True):
     
     if use_cielab:
         # apply ciecat94 chromatic adaptation transform:
-        xyzc = cat.apply_ciecat94(xyz, xyzw = xyzw, E = 1000, Yb = 20, D = D)
+        xyzc = cat.apply_ciecat94(xyz, xyzw = xyzw, 
+                                  E = 1000, Yb = 20, D = D,
+                                  cat94_old = True) # there is apparently an updated version with an alpha incomplete adaptation factor and noise = 0.1; However, FCI doesn't use that version. 
         
         # convert to cielab:
         lab = xyz_to_lab(xyzc, xyzw = _XYZW_D65_REF)
