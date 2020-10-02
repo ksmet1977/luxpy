@@ -218,7 +218,7 @@ def jabz_to_xyz(jabz, ztype = 'jabz', **kwargs):
     return xyz
 
 
-def run(data, xyzw = None, outin = 'J,aM,bM', 
+def run(data, xyzw = None, outin = 'J,aM,bM', cieobs = _CIEOBS,
             conditions = None, forward = True, mcat = 'cat16', **kwargs):
     """ 
     Run the Jz,az,bz based color appearance model in forward or backward modes.
@@ -229,6 +229,9 @@ def run(data, xyzw = None, outin = 'J,aM,bM',
         :xyzw:
             | ndarray with relative white point tristimulus values
             | None defaults to D65
+        :cieobs:
+            | _CIEOBS, optional
+            | CMF set to use when calculating :xyzw: if this is None.
         :conditions:
             | None, optional
             | Dictionary with viewing condition parameters for:
@@ -280,13 +283,14 @@ def run(data, xyzw = None, outin = 'J,aM,bM',
     # Get condition parameters:
     if conditions is None:
         conditions = _DEFAULT_CONDITIONS
-    D, Dtype, La, Yb, surround = (_DEFAULT_CONDITIONS[x] for x in sorted(_DEFAULT_CONDITIONS.keys()))
-
+    print(conditions)
+    D, Dtype, La, Yb, surround = (conditions[x] for x in sorted(conditions.keys()))
+    
     surround_parameters =  _SURROUND_PARAMETERS
     if isinstance(surround, str):
         surround = surround_parameters[conditions['surround']]
     F, FLL, Nc, c = [surround[x] for x in sorted(surround.keys())]
-      
+ 
     # Define cone/chromatic adaptation sensor space:  
     if (mcat is None) | (mcat == 'cat16'):
         mcat = cat._MCATS['cat16']
@@ -318,7 +322,7 @@ def run(data, xyzw = None, outin = 'J,aM,bM',
     # Calculate degree of chromatic adaptation:
     if D is None:
         D = F*(1.0-(1.0/3.6)*np.exp((-La-42.0)/92.0))
-        
+  
     #===================================================================
     # WHITE POINT transformations (common to forward and inverse modes):   
   
@@ -481,45 +485,45 @@ def run(data, xyzw = None, outin = 'J,aM,bM',
 # wrapper functions for use with colortf():
 #------------------------------------------------------------------------------
 camjabz = run
-def xyz_to_jabM_camjabz(data, xyzw = _DEFAULT_WHITE_POINT,
+def xyz_to_jabM_camjabz(data, xyzw = _DEFAULT_WHITE_POINT, cieobs = _CIEOBS,
                          conditions = None, mcat = 'cat16', **kwargs):
     """
     Wrapper function for camjabz forward mode with J,aM,bM output.
     
     | For help on parameter details: ?luxpy.cam.camjabz 
     """
-    return camjabz(data, xyzw = xyzw, conditions = conditions, forward = True, outin = 'J,aM,bM', mcat = mcat)
+    return camjabz(data, xyzw = xyzw, cieobs = cieobs, conditions = conditions, forward = True, outin = 'J,aM,bM', mcat = mcat)
    
 
-def jabM_camjabz_to_xyz(data, xyzw = _DEFAULT_WHITE_POINT,
+def jabM_camjabz_to_xyz(data, xyzw = _DEFAULT_WHITE_POINT, cieobs = _CIEOBS,
                          conditions = None, mcat = 'cat16', **kwargs):
     """
     Wrapper function for camjabz inverse mode with J,aM,bM input.
     
     | For help on parameter details: ?luxpy.cam.camjabz 
     """
-    return camjabz(data, xyzw = xyzw, conditions = conditions, forward = False, outin = 'J,aM,bM', mcat = mcat)
+    return camjabz(data, xyzw = xyzw, cieobs = cieobs, conditions = conditions, forward = False, outin = 'J,aM,bM', mcat = mcat)
 
 
 
-def xyz_to_jabC_camjabz(data, xyzw = _DEFAULT_WHITE_POINT,
+def xyz_to_jabC_camjabz(data, xyzw = _DEFAULT_WHITE_POINT, cieobs = _CIEOBS,
                          conditions = None, mcat = 'cat16', **kwargs):
     """
     Wrapper function for camjabz forward mode with J,aC,bC output.
     
     | For help on parameter details: ?luxpy.cam.camjabz 
     """
-    return camjabz(data, xyzw = xyzw, conditions = conditions, forward = True, outin = 'J,aC,bC', mcat = mcat)
+    return camjabz(data, xyzw = xyzw, cieobs = cieobs, conditions = conditions, forward = True, outin = 'J,aC,bC', mcat = mcat)
  
 
-def jabC_camjabz_to_xyz(data, xyzw = _DEFAULT_WHITE_POINT,
+def jabC_camjabz_to_xyz(data, xyzw = _DEFAULT_WHITE_POINT, cieobs = _CIEOBS,
                          conditions = None, mcat = 'cat16', **kwargs):
     """
     Wrapper function for camjabz inverse mode with J,aC,bC input.
     
     | For help on parameter details: ?luxpy.cam.camjabz 
     """
-    return camjabz(data, xyzw = xyzw, conditions = conditions, forward = False, outin = 'J,aC,bC', mcat = mcat)
+    return camjabz(data, xyzw = xyzw, cieobs = cieobs, conditions = conditions, forward = False, outin = 'J,aC,bC', mcat = mcat)
     
   
 #==============================================================================  
@@ -606,9 +610,29 @@ if __name__ == '__main__':
     
     
      
-        
+    user_conditions = {'D': 1, 'Dtype': None,\
+                   'La': 500.0, 'Yb': 20.0, 'surround': 'avg'}
+
+    jabM_camjabz = lx.xyz_to_jabM_camjabz(xyz[:,0,:], xyzw = xyzw)
+    jabC_camjabz = lx.xyz_to_jabC_camjabz(xyz[:,0,:], xyzw = xyzw)
+    print("JabM_camjabz (default viewing conditions) = ", jabM_camjabz)
+    
+    jabM_camjabz_user_vc = lx.xyz_to_jabM_camjabz(xyz[:,0,:], xyzw = xyzw, conditions = user_conditions)
+    jabC_camjabz_user_vc = lx.xyz_to_jabC_camjabz(xyz[:,0,:], xyzw = xyzw, conditions = user_conditions)
+
+    print("JabM_camjabz (user defined viewing conditions) = ", jabM_camjabz_user_vc)    
         
      
+    fig, axs = plt.subplots(1,2,figsize=(12,6));
+
+    axs[0].plot(jabM_camjabz[...,1:2],jabM_camjabz[...,2:3],'b.', label = 'camjabz')
+    axs[0].plot(jabM_camjabz_user_vc[...,1:2],jabM_camjabz_user_vc[...,2:3],'g.', label = 'camjabz (user cond.)')
+    axs[0].set_xlabel('azM (camjabz)')
+    axs[0].set_ylabel('bzM (camjabz)')
     
+    axs[1].plot(jabC_camjabz[...,1:2],jabC_camjabz[...,2:3],'rx', label = 'camjabz')
+    axs[1].plot(jabC_camjabz_user_vc[...,1:2],jabC_camjabz_user_vc[...,2:3],'c.', label = 'camjabz (user cond.)')
+    axs[1].set_xlabel('azC (camjabz)')
+    axs[1].set_ylabel('bzC (camjabz)')
     
     

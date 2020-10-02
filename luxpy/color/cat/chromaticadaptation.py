@@ -73,6 +73,7 @@ cat: Module supporting chromatic adaptation transforms (corresponding colors)
  
  :apply_vonkries2(): Apply a 2-step von kries chromatic adaptation transform.
 
+ :apply_vonkries(): Apply a 1-step or 2-step von kries chromatic adaptation transform.
 ===============================================================================
 """
        
@@ -82,7 +83,7 @@ from luxpy.utils import np, np2d, asplit, ajoin, _EPS
 __all__ = ['_WHITE_POINT','_LA', '_MCATS',
            'check_dimensions','get_transfer_function','get_degree_of_adaptation',
            'smet2017_D','parse_x1x2_parameters','apply',
-           'apply_vonkries1','apply_vonkries2']
+           'apply_vonkries1','apply_vonkries2','apply_vonkries']
 
 _WHITE_POINT = np2d([100,100,100]) #default adopted white point
 _LA = 100.0 #cd/mÂ²
@@ -393,7 +394,7 @@ def parse_x1x2_parameters(x,target_shape, catmode, expand_2d_to_3d = None, defau
    return x10, x20
 
 #------------------------------------------------------------------------------
-def apply(data, catmode = '1>0>2', cattype = 'vonkries', xyzw1 = None, xyzw2 = None, xyzw0 = None,\
+def apply(data, n_step = 2, catmode = None, cattype = 'vonkries', xyzw1 = None, xyzw2 = None, xyzw0 = None,\
           D = None, mcat = [_MCAT_DEFAULT], normxyz0 = None, outtype = 'xyz', La = None, F = None, Dtype = None):
     """
     Calculate corresponding colors by applying a von Kries chromatic adaptation
@@ -403,10 +404,16 @@ def apply(data, catmode = '1>0>2', cattype = 'vonkries', xyzw1 = None, xyzw2 = N
     Args:
         :data: 
             | ndarray of tristimulus values (can be NxMx3)
+        :n_step:
+            | 2, optional
+            | Number of step in CAT (1: 1-step, 2: 2-step)
         :catmode: 
-            | '1>0>2, optional
+            | None, optional
+            |    - None: use :n_step: to set mode: 1 = '1>2', 2:'1>0>2'
             |    -'1>0>2': Two-step CAT 
             |      from illuminant 1 to baseline illuminant 0 to illuminant 2.
+            |    -'1>2': One-step CAT
+            |      from illuminant 1 to illuminant 2.
             |    -'1>0': One-step CAT 
             |      from illuminant 1 to baseline illuminant 0.
             |    -'0>2': One-step CAT 
@@ -452,12 +459,27 @@ def apply(data, catmode = '1>0>2', cattype = 'vonkries', xyzw1 = None, xyzw2 = N
     Returns:
           :returns: 
               | ndarray with corresponding colors
+        
+    Reference:
+        1. `Smet, K. A. G., & Ma, S. (2020). 
+        Some concerns regarding the CAT16 chromatic adaptation transform. 
+        Color Research & Application, 45(1), 172–177. 
+        <https://doi.org/10.1002/col.22457>`_
     """
         
     if (xyzw1 is None) & (xyzw2 is None):
         return data # do nothing
     
     else:
+        # Set catmode:
+        if catmode is None:
+            if n_step == 2:
+                catmode = '1>0>2'
+            elif n_step == 1:
+                catmode = '1>2'
+            else:
+                raise Exception('cat.apply(n_step = {:1.0f}, catmode = None): Unknown requested n-step CAT mode !'.format(n_step))
+        
         
         # Make data 2d:
         data = np2d(data)
@@ -692,6 +714,12 @@ def apply_vonkries2(xyz, xyzw1, xyzw2, xyzw0 = None, D = 1, mcat = None, invmcat
     Returns:
         :xyzc:
             | ndarray with corresponding colors.
+            
+    Reference:
+        1. `Smet, K. A. G., & Ma, S. (2020). 
+        Some concerns regarding the CAT16 chromatic adaptation transform. 
+        Color Research & Application, 45(1), 172–177. 
+        <https://doi.org/10.1002/col.22457>`_
     """
     # Define cone/chromatic adaptation sensor space: 
     if (in_ == 'xyz') | (out_ == 'xyz'):
@@ -741,3 +769,88 @@ def apply_vonkries2(xyz, xyzw1, xyzw2, xyzw0 = None, D = 1, mcat = None, invmcat
         return math.dot23(invmcat, rgbc).T
     else: 
         return rgbc.T
+    
+def apply_vonkries(xyz, xyzw1, xyzw2, xyzw0 = None, D = 1, n_step = 2, catmode = '1>0>2', mcat = None, invmcat = None, in_ = 'xyz', out_ = 'xyz'):
+    """ 
+    Apply a 1-step or 2-step von kries chromatic adaptation transform.
+    
+    Args:
+        :xyz:
+            | ndarray with sample tristimulus or cat-sensor values
+        :xyzw1:
+            | ndarray with white point tristimulus or cat-sensor values of illuminant 1
+        :xyzw2:
+            | ndarray with white point tristimulus or cat-sensor values of illuminant 2
+        :xyzw0:
+            | None, optional
+            | ndarray with white point tristimulus or cat-sensor values of baseline illuminant 0
+            | None: defaults to EEW.
+        :D:
+            | [1,1], optional
+            | Degree of chromatic adaptations (Ill.1-->Ill.0, Ill.2.-->Ill.0)
+        :n_step:
+            | 2, optional
+            | Number of step in CAT (1: 1-step, 2: 2-step)
+        :catmode: 
+            | None, optional
+            |    - None: use :n_step: to set mode: 1 = '1>2', 2:'1>0>2'
+            |    -'1>0>2': Two-step CAT 
+            |      from illuminant 1 to baseline illuminant 0 to illuminant 2.
+            |    -'1>2': One-step CAT
+            |      from illuminant 1 to illuminant 2.
+            |    -'1>0': One-step CAT 
+            |      from illuminant 1 to baseline illuminant 0.
+            |    -'0>2': One-step CAT 
+            |      from baseline illuminant 0 to illuminant 2. 
+        :mcat:
+            | None, optional
+            | Specifies CAT sensor space.
+            | - options:
+            |    - None defaults to luxpy.cat._MCAT_DEFAULT
+            |    - str: see see luxpy.cat._MCATS.keys() for options 
+            |         (details on type, ?luxpy.cat)
+            |    - ndarray: matrix with sensor primaries
+        :invmcat:
+            | None,optional
+            | Pre-calculated inverse mcat.
+            | If None: calculate inverse of mcat.
+        :in_:
+            | 'xyz', optional
+            | Input type ('xyz', 'rgb') of data in xyz, xyzw1, xyzw2
+        :out_:
+            | 'xyz', optional
+            | Output type ('xyz', 'rgb') of corresponding colors
+
+    Returns:
+        :xyzc:
+            | ndarray with corresponding colors.
+            
+    Reference:
+        1. `Smet, K. A. G., & Ma, S. (2020). 
+        Some concerns regarding the CAT16 chromatic adaptation transform. 
+        Color Research & Application, 45(1), 172–177. 
+        <https://doi.org/10.1002/col.22457>`_
+    """
+    # Set catmode:
+    if catmode is None:
+        if n_step == 2:
+            catmode = '1>0>2'
+        elif n_step == 1:
+            catmode = '1>2'
+        else:
+            raise Exception('cat.apply(n_step = {:1.0f}, catmode = None): Unknown requested n-step CAT mode !'.format(n_step))
+
+    if catmode == '1>0>2':
+        n_step = 2
+        return apply_vonkries2(xyz, xyzw1, xyzw2, xyzw0 = xyzw0, 
+                               D = D, mcat = mcat, invmcat = invmcat, 
+                               in_ = in_, out_ = out_)
+    elif catmode == '1>2':
+        n_step = 1
+        return apply_vonkries1(xyz, xyzw1, xyzw2, 
+                               D = D, mcat = mcat, invmcat = invmcat, 
+                               in_ = in_, out_ = out_)
+    else:
+        raise Exception('cat.apply(n_step = {:1.0f}, catmode = {:s}): Unknown requested n-step CAT mode !'.format(n_step, catmode))
+
+    

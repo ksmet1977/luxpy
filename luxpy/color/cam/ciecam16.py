@@ -136,7 +136,7 @@ def run(data, xyzw = _DEFAULT_WHITE_POINT, Yw = None, outin = 'J,aM,bM',
     # Get condition parameters:
     if conditions is None:
         conditions = _DEFAULT_CONDITIONS
-    D, Dtype, La, Yb, surround = (_DEFAULT_CONDITIONS[x] for x in sorted(_DEFAULT_CONDITIONS.keys()))
+    D, Dtype, La, Yb, surround = (conditions[x] for x in sorted(conditions.keys()))
 
     surround_parameters =  _SURROUND_PARAMETERS
     if isinstance(surround, str):
