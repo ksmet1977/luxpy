@@ -20,6 +20,8 @@ cat: Module supporting chromatic adaptation transforms (corresponding colors)
 =============================================================================
 
  :_WHITE_POINT: default adopted white point
+ 
+ :_MCAT_DEFAULT: default mcat sensor matrix.
 
  :_LA:  default luminance of the adaptation field
 
@@ -102,6 +104,7 @@ _MCATS['bianco'] = np2d([[0.8752, 0.2787, -0.1539],[-0.8904, 1.8709, 0.0195],[-0
 _MCATS['biaco-pc'] = np2d([[0.6489, 0.3915, -0.0404],[-0.3775, 1.3055,  0.0720],[-0.0271, 0.0888, 0.9383]])
 _MCATS['cat16'] = np2d([[0.401288, 0.650173, -0.051461],[-0.250268, 1.204414, 0.045854],[-0.002079, 0.048952, 0.953127]])
 
+_MCAT_DEFAULT = 'cat02'
 
 def check_dimensions(data,xyzw, caller = 'cat.apply()'):
     """
@@ -391,7 +394,7 @@ def parse_x1x2_parameters(x,target_shape, catmode, expand_2d_to_3d = None, defau
 
 #------------------------------------------------------------------------------
 def apply(data, catmode = '1>0>2', cattype = 'vonkries', xyzw1 = None, xyzw2 = None, xyzw0 = None,\
-          D = None, mcat = ['cat02'], normxyz0 = None, outtype = 'xyz', La = None, F = None, Dtype = None):
+          D = None, mcat = [_MCAT_DEFAULT], normxyz0 = None, outtype = 'xyz', La = None, F = None, Dtype = None):
     """
     Calculate corresponding colors by applying a von Kries chromatic adaptation
     transform (CAT), i.e. independent rescaling of 'sensor sensitivity' to data
@@ -434,7 +437,7 @@ def apply(data, catmode = '1>0>2', cattype = 'vonkries', xyzw1 = None, xyzw2 = N
             | Type of degree of adaptation function from literature
             | See luxpy.cat.get_degree_of_adaptation()
         :mcat:
-            | ['cat02'], optional
+            | [_MCAT_DEFAULT], optional
             | List[str] or List[ndarray] of sensor space matrices for each 
             |  condition pair. If len(:mcat:) == 1, the same matrix is used.
         :normxyz0: 
@@ -595,7 +598,7 @@ def apply_vonkries1(xyz, xyzw1, xyzw2, D = 1, mcat = None, invmcat = None, in_ =
             | None, optional
             | Specifies CAT sensor space.
             | - options:
-            |    - None defaults to 'cat16'
+            |    - None defaults to luxpy.cat._MCAT_DEFAULT
             |    - str: see see luxpy.cat._MCATS.keys() for options 
             |         (details on type, ?luxpy.cat)
             |    - ndarray: matrix with sensor primaries
@@ -617,8 +620,8 @@ def apply_vonkries1(xyz, xyzw1, xyzw2, D = 1, mcat = None, invmcat = None, in_ =
     # Define cone/chromatic adaptation sensor space: 
     if (in_ == 'xyz') | (out_ == 'xyz'):
         if not isinstance(mcat,np.ndarray):
-            if (mcat is None) or (mcat == 'cat16'):
-                mcat = _MCATS['cat16']
+            if (mcat is None):
+                mcat = _MCATS[_MCAT_DEFAULT]
             elif isinstance(mcat,str):
                 mcat = _MCATS[mcat]
     if invmcat is None:
@@ -671,7 +674,7 @@ def apply_vonkries2(xyz, xyzw1, xyzw2, xyzw0 = None, D = 1, mcat = None, invmcat
             | None, optional
             | Specifies CAT sensor space.
             | - options:
-            |    - None defaults to 'cat16'
+            |    - None defaults to luxpy.cat._MCAT_DEFAULT
             |    - str: see see luxpy.cat._MCATS.keys() for options 
             |         (details on type, ?luxpy.cat)
             |    - ndarray: matrix with sensor primaries
@@ -693,8 +696,8 @@ def apply_vonkries2(xyz, xyzw1, xyzw2, xyzw0 = None, D = 1, mcat = None, invmcat
     # Define cone/chromatic adaptation sensor space: 
     if (in_ == 'xyz') | (out_ == 'xyz'):
         if not isinstance(mcat,np.ndarray):
-            if (mcat is None) or (mcat == 'cat16'):
-                mcat = _MCATS['cat16']
+            if (mcat is None):
+                mcat = _MCATS[_MCAT_DEFAULT]
             elif isinstance(mcat,str):
                 mcat = _MCATS[mcat]
     if invmcat is None:
