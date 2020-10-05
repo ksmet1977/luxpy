@@ -29,7 +29,7 @@ from luxpy.color.cam.colorappearancemodels import hue_angle, hue_quadrature, nak
 
 _CAM18SL_WL3 = [390,830,1]
 
-_CAM18SL_AXES = {'qabW_cam18sl' : ["Q (cam18sl)", "aW (cam18sl)", "bW (cam18sl)"]} 
+_CAM18SL_AXES = {'qabS_cam18sl' : ["Q (cam18sl)", "aS (cam18sl)", "bS (cam18sl)"]} 
 
 _CAM18SL_UNIQUE_HUE_DATA = {'hues': 'red yellow green blue red'.split(), 'i': np.arange(5.0), 'hi':[20.14, 90.0, 164.25,237.53,380.14],'ei':[0.8,0.7,1.0,1.2,0.8],'Hi':[0.0,100.0,200.0,300.0,400.0]}
 
@@ -51,7 +51,7 @@ __all__ = ['cam18sl','_CAM18SL_AXES','_CAM18SL_UNIQUE_HUE_DATA',
            '_CAM18SL_PARAMETERS','_CAM18SL_NAKA_RUSHTON_PARAMETERS', 
            '_CAM18SL_SURROUND_PARAMETERS',
            'xyz_to_qabM_cam18sl','qabM_cam18sl_to_xyz',
-           'xyz_to_qabS_cam18sl','qabS_cam18sl_to_xyz']
+           'xyz_to_qabs_cam18sl','qabs_cam18sl_to_xyz']
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------            
 def cam18sl(data, datab = None, Lb = [100], fov = 10.0, inputtype = 'xyz', direction = 'forward', outin = 'Q,aS,bS', parameters = None):
@@ -250,6 +250,7 @@ def cam18sl(data, datab = None, Lb = [100], fov = 10.0, inputtype = 'xyz', direc
 
             # calculate saturation, s:
             s = M / Q
+            S = s # make extra variable, jsut in case 'S' is called
 
             # calculate amount of white, W:
             W = 1 / (1.0 + cW[0]*(s**cW[1]))
@@ -277,7 +278,7 @@ def cam18sl(data, datab = None, Lb = [100], fov = 10.0, inputtype = 'xyz', direc
                 aW = W*np.cos(h*np.pi/180.0)
                 bW = W*np.sin(h*np.pi/180.0)
 
-            if (outin != ['Q','aS','bS']):
+            if (outin != ['Q','as','bs']):
                 camout[i] =  eval('ajoin(('+','.join(outin)+'))')
             else:
                 camout[i] = ajoin((Q,aS,bS))

@@ -138,7 +138,7 @@ from luxpy import (xyz_to_Yxy, xyz_to_Yuv, xyz_to_wuv, xyz_to_lab, xyz_to_luv, x
                    Yxy_to_xyz, Yuv_to_xyz, lab_to_xyz, luv_to_xyz, Vrb_mb_to_xyz, ipt_to_xyz, Ydlep_to_xyz, lms_to_xyz, 
                    xyz_to_jabM_ciecam02, jabM_ciecam02_to_xyz, xyz_to_jabC_ciecam02, jabC_ciecam02_to_xyz, 
                    xyz_to_jabM_ciecam16, jabM_ciecam16_to_xyz, xyz_to_jabC_ciecam16, jabC_ciecam16_to_xyz, 
-                   xyz_to_jabz, jabz_to_xyz, xyz_to_jabM_camjabz, jabM_camjabz_to_xyz, xyz_to_jabC_camjabz, jabC_camjabz_to_xyz, 
+                   xyz_to_jabz, jabz_to_xyz, xyz_to_jabM_zcam, jabM_zcam_to_xyz, xyz_to_jabC_zcam, jabC_zcam_to_xyz, 
                    xyz_to_jab_cam02ucs, jab_cam02ucs_to_xyz, xyz_to_jab_cam02lcd, jab_cam02lcd_to_xyz, xyz_to_jab_cam02scd, jab_cam02scd_to_xyz,
                    xyz_to_jab_cam16ucs, jab_cam16ucs_to_xyz, xyz_to_jab_cam16lcd, jab_cam16lcd_to_xyz, xyz_to_jab_cam16scd, jab_cam16scd_to_xyz, 
                    xyz_to_qabW_cam15u, qabW_cam15u_to_xyz, 
@@ -746,21 +746,21 @@ class XYZ(CDATA):
         return LAB(value = value, relative = self.relative, cieobs = self.cieobs, dtype = 'jab_cam16scd', xyzw = xyzw, Yw = Yw, conditions = conditions, mcat = mcat)
 
     #------------------------------------------------------------------------------
-    def to_jabM_cam_jabz(self, xyzw = None,  conditions = _CAM_DEFAULT_CONDITIONS,  mcat = 'cat16'):
+    def to_jabM_zcam(self, xyzw = None,  conditions = _CAM_DEFAULT_CONDITIONS,  mcat = 'cat16'):
         """
-        See ?luxpy.xyz_to_jabM_camjabz
+        See ?luxpy.xyz_to_jabM_zcam
         """
-        value = xyz_to_jabM_camjabz(self.value, xyzw = xyzw, cieobs = self.cieobs,  conditions = conditions, mcat = mcat)
-        return LAB(value = value, relative = self.relative, cieobs = self.cieobs, dtype = 'jabM_camjabz', xyzw = xyzw, conditions = conditions, mcat = mcat)
+        value = xyz_to_jabM_zcam(self.value, xyzw = xyzw, cieobs = self.cieobs,  conditions = conditions, mcat = mcat)
+        return LAB(value = value, relative = self.relative, cieobs = self.cieobs, dtype = 'jabM_zcam', xyzw = xyzw, conditions = conditions, mcat = mcat)
 
 
 
-    def to_jabC_camjabz6(self, xyzw = _CAM_DEFAULT_WHITE_POINT, conditions = _CAM_DEFAULT_CONDITIONS, mcat = 'cat16'):
+    def to_jabC_zcam(self, xyzw = _CAM_DEFAULT_WHITE_POINT, conditions = _CAM_DEFAULT_CONDITIONS, mcat = 'cat16'):
         """
-        See ?luxpy.xyz_to_jabC_camjabz
+        See ?luxpy.xyz_to_jabC_zcam
         """
-        value = xyz_to_jabC_camjabz(self.value, xyzw = xyzw, cieobs = self.cieobs, conditions = conditions, mcat = mcat)
-        return LAB(value = value, relative = self.relative, cieobs = self.cieobs, dtype = 'jabC_camjabz', xyzw = xyzw, conditions = conditions, mcat = mcat)
+        value = xyz_to_jabC_zcam(self.value, xyzw = xyzw, cieobs = self.cieobs, conditions = conditions, mcat = mcat)
+        return LAB(value = value, relative = self.relative, cieobs = self.cieobs, dtype = 'jabC_zcam', xyzw = xyzw, conditions = conditions, mcat = mcat)
 
    
     #--------------------------------------------------------------------------

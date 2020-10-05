@@ -260,29 +260,25 @@ def run(data, xyzw = _DEFAULT_WHITE_POINT, Yw = None, outin = 'J,aM,bM',
         
         #--------------------------------------------   
         # calculate lightness, J:
-        if ('J' in outin) | ('Q' in outin) | ('C' in outin) | ('M' in outin) | ('s' in outin) | ('aS' in outin) | ('aC' in outin) | ('aM' in outin):
-            J = 100.0* (A / Aw)**(c*z)
+        J = 100.0* (A / Aw)**(c*z)
          
         #-------------------------------------------- 
         # calculate brightness, Q:
-        if ('Q' in outin) | ('s' in outin) | ('aS' in outin):
-            Q = (4.0/c)* ((J/100.0)**0.5) * (Aw + 4.0)*(FL**0.25)
+        Q = (4.0/c)* ((J/100.0)**0.5) * (Aw + 4.0)*(FL**0.25)
           
         #-------------------------------------------- 
         # calculate chroma, C:
-        if ('C' in outin) | ('M' in outin) | ('s' in outin) | ('aS' in outin) | ('aC' in outin) | ('aM' in outin):
-            t = ((50000.0/13.0)*Nc*Ncb*et*((a**2.0 + b**2.0)**0.5)) / (rgbpa[...,0] + rgbpa[...,1] + (21.0/20.0*rgbpa[...,2]))
-            C = (t**0.9)*((J/100.0)**0.5) * (1.64 - 0.29**n)**0.73
+        t = ((50000.0/13.0)*Nc*Ncb*et*((a**2.0 + b**2.0)**0.5)) / (rgbpa[...,0] + rgbpa[...,1] + (21.0/20.0*rgbpa[...,2]))
+        C = (t**0.9)*((J/100.0)**0.5) * (1.64 - 0.29**n)**0.73
                
         #-------------------------------------------- 
         # calculate colorfulness, M:
-        if ('M' in outin) | ('s' in outin) | ('aM' in outin) | ('aS' in outin):
-            M = C*FL**0.25
+        M = C*FL**0.25
         
         #--------------------------------------------         
         # calculate saturation, s:
-        if ('s' in outin) | ('aS' in outin):
-            s = 100.0* (M/Q)**0.5
+        s = 100.0* (M/Q)**0.5
+        S = s # make extra variable, jsut in case 'S' is called
         
         #--------------------------------------------            
         # calculate cartesian coordinates:

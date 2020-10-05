@@ -117,8 +117,8 @@ cam: sub-package with color appearance models
       | 'xyz_to_jabM_ciecam16', 'jabM_ciecam16_to_xyz',
       | 'xyz_to_jabC_ciecam16', 'jabC_ciecam16_to_xyz',
       | 'xyz_to_jabz',          'jabz_to_xyz',
-      | 'xyz_to_jabM_camjabz', 'jabM_camjabz_to_xyz', 
-      | 'xyz_to_jabC_camjabz', 'jabC_camjabz_to_xyz']
+      | 'xyz_to_jabM_zcam',     'jabM_zcam_to_xyz', 
+      | 'xyz_to_jabC_zcam',     'jabC_zcam_to_xyz']
       | 'xyz_to_jab_cam02ucs', 'jab_cam02ucs_to_xyz', 
       | 'xyz_to_jab_cam02lcd', 'jab_cam02lcd_to_xyz',
       | 'xyz_to_jab_cam02scd', 'jab_cam02scd_to_xyz', 
@@ -128,7 +128,7 @@ cam: sub-package with color appearance models
       | 'xyz_to_qabW_cam15u', 'qabW_cam15u_to_xyz',
       | 'xyz_to_lab_cam_sww16', 'lab_cam_sww16_to_xyz',
       | 'xyz_to_qabM_cam18sl', 'qabM_cam18sl_to_xyz',
-      | 'xyz_to_qabS_cam18sl', 'qabS_cam18sl_to_xyz',
+      | 'xyz_to_qabs_cam18sl', 'qabs_cam18sl_to_xyz',
       
 
  :_update_parameter_dict(): Get parameter dict and update with values in args dict
@@ -149,7 +149,7 @@ cam: sub-package with color appearance models
 #------------------------------------------------------------------------------
 # List available CAMs:
 _AVAILABLE_MODELS = ['ciecam02','cam02ucs','ciecam16','cam16ucs',
-                     'camjabz','cam15u','cam18sl','cam_sww16']
+                     'zcam','cam15u','cam18sl','cam_sww16']
 
 __all__ = ['_AVAILABLE_MODELS']
 
@@ -265,24 +265,24 @@ __all__ += ['xyz_to_jab_cam16ucs', 'jab_cam16ucs_to_xyz',
 
 
 #------------------------------------------------------------------------------
-# camjabz imports:
-# import camjabz as _camjabz
-from .camjabz import run as camjabz
-from .camjabz import _AXES as _CAMJABZ_AXES
-from .camjabz import _UNIQUE_HUE_DATA as _CAMJABZ_UNIQUE_HUE_DATA
-from .camjabz import _SURROUND_PARAMETERS as _CAMJABZ_SURROUND_PARAMETERS
-from .camjabz import _DEFAULT_WHITE_POINT as _CAMJABZ_DEFAULT_WHITE_POINT
-from .camjabz import _DEFAULT_CONDITIONS as _CAMJABZ_DEFAULT_CONDITIONS
-from .camjabz import (xyz_to_jabz, jabz_to_xyz,
-                      xyz_to_jabM_camjabz, jabM_camjabz_to_xyz, 
-                      xyz_to_jabC_camjabz, jabC_camjabz_to_xyz)
+# zcam imports:
+# import zcam as _zcam
+from .zcam import run as zcam
+from .zcam import _AXES as _ZCAM_AXES
+from .zcam import _UNIQUE_HUE_DATA as _ZCAM_UNIQUE_HUE_DATA
+from .zcam import _SURROUND_PARAMETERS as _ZCAM_SURROUND_PARAMETERS
+from .zcam import _DEFAULT_WHITE_POINT as _ZCAM_DEFAULT_WHITE_POINT
+from .zcam import _DEFAULT_CONDITIONS as _ZCAM_DEFAULT_CONDITIONS
+from .zcam import (xyz_to_jabz, jabz_to_xyz,
+                   xyz_to_jabM_zcam, jabM_zcam_to_xyz, 
+                   xyz_to_jabC_zcam, jabC_zcam_to_xyz)
 
-__all__ += ['camjabz'] 
+__all__ += ['zcam'] 
 
 
 __all__ += ['xyz_to_jabz', 'jabz_to_xyz',
-            'xyz_to_jabM_camjabz', 'jabM_camjabz_to_xyz', 
-            'xyz_to_jabC_camjabz', 'jabC_camjabz_to_xyz']
+            'xyz_to_jabM_zcam', 'jabM_zcam_to_xyz', 
+            'xyz_to_jabC_zcam', 'jabC_zcam_to_xyz']
 
 
 
@@ -331,22 +331,22 @@ _CAM_AXES.update(_CIECAM02_AXES)
 _CAM_AXES.update(_CAM02UCS_AXES)
 _CAM_AXES.update(_CIECAM16_AXES)
 _CAM_AXES.update(_CAM16UCS_AXES)
-_CAM_AXES.update(_CAMJABZ_AXES)
+_CAM_AXES.update(_ZCAM_AXES)
 _CAM_AXES['qabW_cam15u'] = _CAM15U_AXES 
 _CAM_AXES['lab_cam_sww16'] = _CAM_SWW16_AXES
-_CAM_AXES['qabW_cam18sl'] = _CAM18SL_AXES 
+_CAM_AXES['qabS_cam18sl'] = _CAM18SL_AXES 
 
 __all__ += ['_CAM_AXES']
 
 # --- unique hue data ---
 _UNIQUE_HUE_DATA = {'models' : ['ciecam02', 'cam02ucs', 
                                 'ciecam16', 'cam16ucs',
-                                'camjabz'],
+                                'zcam'],
                     'ciecam02' : _CIECAM02_UNIQUE_HUE_DATA,
                     'cam02ucs' : _CIECAM02_UNIQUE_HUE_DATA,
                     'ciecam16' : _CIECAM16_UNIQUE_HUE_DATA,
                     'cam16ucs' : _CIECAM16_UNIQUE_HUE_DATA,
-                    'camjabz' : _CAMJABZ_UNIQUE_HUE_DATA,
+                    'zcam' : _ZCAM_UNIQUE_HUE_DATA,
                     }
 _UNIQUE_HUE_DATA['cam15u'] = _CAM15U_UNIQUE_HUE_DATA
 _UNIQUE_HUE_DATA['models'].append('cam15u')
@@ -360,7 +360,7 @@ _SURROUND_PARAMETERS = {'ciecam02' : _CIECAM02_SURROUND_PARAMETERS,
                         'cam02ucs' : _CIECAM02_SURROUND_PARAMETERS,
                         'ciecam16' : _CIECAM16_SURROUND_PARAMETERS,
                         'cam16ucs' : _CIECAM16_SURROUND_PARAMETERS,
-                        'camjabz'  : _CAMJABZ_SURROUND_PARAMETERS
+                        'zcam'  : _ZCAM_SURROUND_PARAMETERS
                         }
 _SURROUND_PARAMETERS['cam15u'] = _CAM15U_SURROUND_PARAMETERS
 _SURROUND_PARAMETERS['cam_sww16'] = {} 
@@ -432,8 +432,8 @@ def camXucs(data, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = None, outin = 'J,aM,bM',
     elif ((camtype == 'cam16ucs') | (camtype == 'ciecam16')) & (ucstype is not None):
         return cam16ucs(data, xyzw = xyzw, Yw = Yw, ucstype = ucstype, 
                         conditions = conditions, forward = forward, mcat = mcat)
-    elif ((camtype == 'camjabz')):
-        return camjabz(data, xyzw = xyzw, Yw = Yw, outin = outin,  
+    elif ((camtype == 'zcam')):
+        return zcam(data, xyzw = xyzw, Yw = Yw, outin = outin,  
                         conditions = conditions, forward = forward, mcat = mcat)
 
 __all__ +=['camXucs'] 

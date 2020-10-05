@@ -607,7 +607,10 @@ def apply(data, n_step = 2, catmode = None, cattype = 'vonkries', xyzw1 = None, 
    
         return xyzc
     
-def apply_vonkries1(xyz, xyzw1, xyzw2, D = 1, mcat = None, invmcat = None, in_ = 'xyz', out_ = 'xyz'):
+def apply_vonkries1(xyz, xyzw1, xyzw2, D = 1, 
+                    mcat = None, invmcat = None, 
+                    in_ = 'xyz', out_ = 'xyz',
+                    use_Yw = False):
     """ 
     Apply a 1-step von kries chromatic adaptation transform.
     
@@ -639,10 +642,20 @@ def apply_vonkries1(xyz, xyzw1, xyzw2, D = 1, mcat = None, invmcat = None, in_ =
         :out_:
             | 'xyz', optional
             | Output type ('xyz', 'rgb') of corresponding colors
+        :use_Yw:
+            | False, optional
+            | Use CAT version with Yw factors included (but this results in 
+            | potential wrong predictions, see Smet & Ma (2020)).
 
     Returns:
         :xyzc:
             | ndarray with corresponding colors.
+            
+    Reference:
+        1. `Smet, K. A. G., & Ma, S.  (2020). 
+        Some concerns regarding the CAT16 chromatic adaptation transform. 
+        Color Research & Application, 45(1), 172–177. 
+        <https://doi.org/10.1002/col.22457>`_
     """
     # Define cone/chromatic adaptation sensor space: 
     if (in_ == 'xyz') | (out_ == 'xyz'):
@@ -660,17 +673,21 @@ def apply_vonkries1(xyz, xyzw1, xyzw2, D = 1, mcat = None, invmcat = None, in_ =
         rgb = math.dot23(mcat, xyz.T)
         rgbw1 = math.dot23(mcat, xyzw1.T)
         rgbw2 = math.dot23(mcat, xyzw2.T)
-    else:
+    elif (in_ == 'xyz') & (use_Yw == False):
         rgb = xyz
         rgbw1 = xyzw1
         rgbw2 = xyzw2
-        
-    
+    else:
+        raise Exception('Use of Yw requires xyz input.')
+            
     #--------------------------------------------  
     # apply 1-step von Kries cat:
     vk_w_ratio = rgbw2/rgbw1
-    if rgb.ndim == 3: vk_w_ratio = vk_w_ratio[...,None]
-    rgbc = (D*vk_w_ratio + (1 - D))*rgb 
+    yw_ratio = 1.0 if use_Yw == False else xyzw1[...,1]/xyzw2[...,1]
+    if rgb.ndim == 3: 
+        vk_w_ratio = vk_w_ratio[...,None]
+        if use_Yw: yw_ratio = yw_ratio[...,None]
+    rgbc = (D*yw_ratio*vk_w_ratio + (1 - D))*rgb 
 
     #--------------------------------------------
     # convert from cat16 sensor space to xyz:
@@ -679,7 +696,10 @@ def apply_vonkries1(xyz, xyzw1, xyzw2, D = 1, mcat = None, invmcat = None, in_ =
     else: 
         return rgbc.T
 
-def apply_vonkries2(xyz, xyzw1, xyzw2, xyzw0 = None, D = 1, mcat = None, invmcat = None, in_ = 'xyz', out_ = 'xyz'):
+def apply_vonkries2(xyz, xyzw1, xyzw2, xyzw0 = None, D = 1, 
+                    mcat = None, invmcat = None, 
+                    in_ = 'xyz', out_ = 'xyz',
+                    use_Yw = False):
     """ 
     Apply a 2-step von kries chromatic adaptation transform.
     
@@ -715,6 +735,10 @@ def apply_vonkries2(xyz, xyzw1, xyzw2, xyzw0 = None, D = 1, mcat = None, invmcat
         :out_:
             | 'xyz', optional
             | Output type ('xyz', 'rgb') of corresponding colors
+        :use_Yw:
+            | False, optional
+            | Use CAT version with Yw factors included (but this results in 
+            | potential wrong predictions, see Smet & Ma (2020)).
 
     Returns:
         :xyzc:
@@ -750,23 +774,31 @@ def apply_vonkries2(xyz, xyzw1, xyzw2, xyzw0 = None, D = 1, mcat = None, invmcat
         rgbw1 = math.dot23(mcat, xyzw1.T)
         rgbw2 = math.dot23(mcat, xyzw2.T)
         rgbw0 = math.dot23(mcat, xyzw0.T)
-    else:
+    elif (in_ == 'xyz') & (use_Yw == False):
         rgb = xyz
         rgbw1 = xyzw1
         rgbw2 = xyzw2
         rgbw0 = xyzw0
+    else:
+        raise Exception('Use of Yw requires xyz input.')
         
     #--------------------------------------------  
     # apply 1-step von Kries cat from 1->0:
     vk_w_ratio10 = rgbw0/rgbw1
-    if rgb.ndim == 3: vk_w_ratio10 = vk_w_ratio10[...,None]
-    rgbc = (D[0]*vk_w_ratio10 + (1 - D[0]))*rgb 
+    yw_ratio10 = 1.0 if use_Yw == False else xyzw1[...,1]/xyzw0[...,1]
+    if rgb.ndim == 3: 
+        vk_w_ratio10 = vk_w_ratio10[...,None]
+        if use_Yw: yw_ratio10 = yw_ratio10[...,None]
+    rgbc = (D[0]*yw_ratio10*vk_w_ratio10 + (1 - D[0]))*rgb 
     
     #--------------------------------------------  
     # apply inverse 1-step von Kries cat from 2->0:
     vk_w_ratio20 = rgbw0/rgbw2
-    if rgbc.ndim == 3: vk_w_ratio20 = vk_w_ratio20[...,None]
-    rgbc = ((D[1]*vk_w_ratio20 + (1 - D[1]))**(-1))*rgbc
+    yw_ratio20 = 1.0 if use_Yw == False else xyzw2[...,1]/xyzw0[...,1]
+    if rgbc.ndim == 3: 
+        vk_w_ratio20 = vk_w_ratio20[...,None]
+        if use_Yw: yw_ratio20 = yw_ratio20[...,None]
+    rgbc = ((D[1]*yw_ratio20*vk_w_ratio20 + (1 - D[1]))**(-1))*rgbc
 
     #--------------------------------------------
     # convert from cat16 sensor space to xyz:
@@ -775,7 +807,9 @@ def apply_vonkries2(xyz, xyzw1, xyzw2, xyzw0 = None, D = 1, mcat = None, invmcat
     else: 
         return rgbc.T
     
-def apply_vonkries(xyz, xyzw1, xyzw2, xyzw0 = None, D = 1, n_step = 2, catmode = '1>0>2', mcat = None, invmcat = None, in_ = 'xyz', out_ = 'xyz'):
+def apply_vonkries(xyz, xyzw1, xyzw2, xyzw0 = None, D = 1, n_step = 2, 
+                   catmode = '1>0>2', mcat = None, invmcat = None, 
+                   in_ = 'xyz', out_ = 'xyz', use_Yw = False):
     """ 
     Apply a 1-step or 2-step von kries chromatic adaptation transform.
     
@@ -825,6 +859,10 @@ def apply_vonkries(xyz, xyzw1, xyzw2, xyzw0 = None, D = 1, n_step = 2, catmode =
         :out_:
             | 'xyz', optional
             | Output type ('xyz', 'rgb') of corresponding colors
+        :use_Yw:
+            | False, optional
+            | Use CAT version with Yw factors included (but this results in 
+            | potential wrong predictions, see Smet & Ma (2020)). 
 
     Returns:
         :xyzc:
@@ -849,12 +887,12 @@ def apply_vonkries(xyz, xyzw1, xyzw2, xyzw0 = None, D = 1, n_step = 2, catmode =
         n_step = 2
         return apply_vonkries2(xyz, xyzw1, xyzw2, xyzw0 = xyzw0, 
                                D = D, mcat = mcat, invmcat = invmcat, 
-                               in_ = in_, out_ = out_)
+                               in_ = in_, out_ = out_, use_Yw = use_Yw)
     elif catmode == '1>2':
         n_step = 1
         return apply_vonkries1(xyz, xyzw1, xyzw2, 
                                D = D, mcat = mcat, invmcat = invmcat, 
-                               in_ = in_, out_ = out_)
+                               in_ = in_, out_ = out_, use_Yw = use_Yw)
     else:
         raise Exception('cat.apply(n_step = {:1.0f}, catmode = {:s}): Unknown requested n-step CAT mode !'.format(n_step, catmode))
 
