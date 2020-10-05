@@ -107,11 +107,14 @@ def run(data, xyzw = _DEFAULT_WHITE_POINT, Yw = None, outin = 'J,aM,bM',
         :outin:
             | 'J,aM,bM', optional
             | String with requested output (e.g. "J,aM,bM,M,h") [Forward mode]
-            | String with inputs in data. 
+            | - attributes: 'J': lightness,'Q': brightness,
+            |               'M': colorfulness,'C': chroma, 's': saturation,
+            |               'h': hue angle, 'H': hue quadrature/composition,
+            | String with inputs in data [inverse mode]. 
             | Input must have data.shape[-1]==3 and last dim of data must have 
-            | the following structure: 
+            | the following structure for inverse mode: 
             |  * data[...,0] = J or Q,
-            |  * data[...,1:] = (aM,bM) or (aC,bC) or (aS,bS)
+            |  * data[...,1:] = (aM,bM) or (aC,bC) or (aS,bS) or (M,h) or (C, h), ...
         :yellowbluepurplecorrect:
             | False, optional
             | If False: don't correct for yellow-blue and purple problems in ciecam02. 

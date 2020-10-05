@@ -287,16 +287,20 @@ def run(data, xyzw = None, outin = 'J,aM,bM', cieobs = _CIEOBS,
         :outin:
             | 'J,aM,bM', optional
             | String with requested output (e.g. "J,aM,bM,M,h") [Forward mode]
-            | String with inputs in data. 
+            | - attributes: 'J': lightness,'Q': brightness,
+            |               'M': colorfulness,'C': chroma, 's': saturation,
+            |               'h': hue angle, 'H': hue quadrature/composition,
+            |               'Wz': whiteness, 'Kz':blackness, 'Sz': saturation, 'V': vividness
+            | String with inputs in data [inverse mode]. 
             | Input must have data.shape[-1]==3 and last dim of data must have 
-            | the following structure: 
+            | the following structure for inverse mode: 
             |  * data[...,0] = J or Q,
-            |  * data[...,1:] = (aM,bM) or (aC,bC) or (aS,bS)
+            |  * data[...,1:] = (aM,bM) or (aC,bC) or (aS,bS) or (M,h) or (C, h), ...
         :mcat:
-            | 'cat16', optional
+            | 'cat02', optional
             | Specifies CAT sensor space.
             | - options:
-            |    - None defaults to 'cat16'
+            |    - None defaults to 'cat02'
             |    - str: see see luxpy.cat._MCATS.keys() for options 
             |         (details on type, ?luxpy.cat)
             |    - ndarray: matrix with sensor primaries
