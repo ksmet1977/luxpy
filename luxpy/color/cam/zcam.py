@@ -325,6 +325,7 @@ def run(data, xyzw = None, outin = 'J,aM,bM', cieobs = _CIEOBS,
         "ZCAM, a psychophysical model for colour appearance prediction", 
         Optics Express.
     """
+    print("WARNING: Z-CAM is as yet unpublished and under development, so parameter values might change! (07 Oct, 2020")
     outin = outin.split(',') if isinstance(outin,str) else outin
     
     #--------------------------------------------
@@ -348,7 +349,7 @@ def run(data, xyzw = None, outin = 'J,aM,bM', cieobs = _CIEOBS,
     
     #--------------------------------------------
     # Get white point of D65 fro chromatic adaptation transform (CAT)
-    xyzw_d65 = np.array([[9.5047e+01, 1.0000e+02, 1.0888e+02]]) if cieobs == '1931_2'  else  spd_to_xyz(_CIE_D65, cieobs = cieobs)
+    xyzw_d65 = np.array([[9.5047e+01, 1.0000e+02, 1.08883e+02]]) if cieobs == '1931_2'  else  spd_to_xyz(_CIE_D65, cieobs = cieobs)
     
     
     #--------------------------------------------
@@ -518,7 +519,7 @@ def run(data, xyzw = None, outin = 'J,aM,bM', cieobs = _CIEOBS,
             MCs = data[...,1]   
         
 
-        if ('as' in outin) | ('s' in outin):
+        if ('aS' in outin) | ('S' in outin):
             Q = Qw*(J/100)**(1/(Fs*Fb))
             M = Q*(MCs/100.0)
             C = 100*M/Qw
@@ -530,17 +531,17 @@ def run(data, xyzw = None, outin = 'J,aM,bM', cieobs = _CIEOBS,
             C = MCs
             
         
-        if ('W' in outin): #whiteness
-            C = ((100/68*(100-W))**2 - (J - 100)**2)**0.5
+        if ('Wz' in outin) | ('aWz' in outin): #whiteness
+            C = ((100/68*(100-MCs))**2 - (J - 100)**2)**0.5
         
-        if ('K' in outin): # blackness
-            C = ((100/82*(100-K))**2 - (J)**2)**0.5
+        if ('Kz' in outin) | ('aKz' in outin): # blackness
+            C = ((100/82*(100-MCs))**2 - (J)**2)**0.5
             
-        if ('S' in outin):  # saturation
-            C = ((10/5*(S - 8))**2 - (J - 55)**2)**0.5
+        if ('Sz' in outin) | ('aSz' in outin):  # saturation
+            C = ((10/5*(MCs - 8))**2 - (J - 55)**2)**0.5
             
-        if ('V' in outin):  # vividness
-            C = ((10/4*(S - 8))**2 - (J - 70)**2)**0.5
+        if ('Vz' in outin) | ('aVz' in outin):  # vividness
+            C = ((10/4*(MCs - 8))**2 - (J - 70)**2)**0.5
             
                 
         #--------------------------------------------

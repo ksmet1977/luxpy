@@ -111,7 +111,7 @@ _CIE_HP_SERIES_dict = {'HP{:1.0f}'.format(i+1):np.vstack((_CIE_HP_SERIES[0],_CIE
 
 _CIE_LED_SERIES = getdata(_S_PATH + 'CIE_LED_B1toB5_BH1_RGB1_V1_V2.csv',kind='np').T
 _CIE_LED_types = ['B1','B2','B3','B4','B5','BH1','RGB1','V1','V2']
-_CIE_LED_SERIES_dict = {'_CIE_LED_SERIES'.format(i):np.vstack((_CIE_LED_SERIES[0],_CIE_LED_SERIES[i+1])) for i in range(len(_CIE_LED_types))}
+_CIE_LED_SERIES_dict = {'LED_{:s}'.format(_CIE_LED_types[i]):np.vstack((_CIE_LED_SERIES[0],_CIE_LED_SERIES[i+1])) for i in range(len(_CIE_LED_types))}
 
 _CIE_ILLUMINANTS = {'E':E,'D65':D65,'A':A,'B':B,'C':C,'F4':_CIE_F4}
 _CIE_ILLUMINANTS.update(_CIE_F_SERIES_dict)

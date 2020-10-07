@@ -493,7 +493,11 @@ def plot_tm30_Rfhj(spd, cri_type = 'ies-tm30', axh = None,
     for j in hbins:
         axh.bar(hbins[j],Rfhj[j,0], color = cmap[j], width = 1,edgecolor = 'k', alpha = 1)
         ypos = ((np.abs(Rfhj[j,0]) + 2 + y_offset))*np.sign(Rfhj[j,0])
-        axh.text(hbins[j],ypos, '{:1.0f}'.format(Rfhj[j,0]) ,fontsize = font_size,horizontalalignment='center',verticalalignment='center',color = np.array([1,1,1])*0.3)
+        axh.text(hbins[j],ypos, '{:1.0f}'.format(Rfhj[j,0]),
+                 fontsize = font_size,
+                 horizontalalignment='center',
+                 verticalalignment='center',
+                 color = np.array([1,1,1])*0.3)
     
     xticks = np.array(hbins)
     axh.set_xticks(xticks)
@@ -501,7 +505,7 @@ def plot_tm30_Rfhj(spd, cri_type = 'ies-tm30', axh = None,
         xtickslabels = ['{:1.0f}'.format(ii+1) for ii in hbins]
         axh.set_xlabel('Hue-Angle Bin (j)', fontsize = font_size)
     else:
-        xtickslabels = [''.format(ii+1) for ii in hbins]
+        xtickslabels = ['' for ii in hbins]
     axh.set_xticklabels(xtickslabels, fontsize = font_size)
     axh.set_xlim([-0.5,hdata['nhbins']-0.5])
     
@@ -580,7 +584,11 @@ def plot_tm30_Rcshj(spd, cri_type = 'ies-tm30', axh = None,
     for j in hbins:
         axh.bar(hbins[j],100*Rcshj[j,0], color = cmap[j], width = 1,edgecolor = 'k', alpha = 1)
         ypos = 100*((np.abs(Rcshj[j,0]) + 0.05 + y_offset))*np.sign(Rcshj[j,0])
-        axh.text(hbins[j],ypos, '{:1.0f}%'.format(100*Rcshj[j,0]), fontsize = font_size,horizontalalignment='center',verticalalignment='center',color = np.array([1,1,1])*0.3, rotation = 90)
+        axh.text(hbins[j]+0.05,ypos, '{:1.0f}%'.format(100*Rcshj[j,0]), 
+                 fontsize = font_size,horizontalalignment='center',
+                 verticalalignment='center',
+                 color = np.array([1,1,1])*0.3, 
+                 rotation = 90)
     
     xticks = np.array(hbins)
     axh.set_xticks(xticks)
@@ -588,7 +596,7 @@ def plot_tm30_Rcshj(spd, cri_type = 'ies-tm30', axh = None,
         xtickslabels = ['{:1.0f}'.format(ii+1) for ii in hbins]
         axh.set_xlabel('Hue-Angle Bin (j)', fontsize = font_size)
     else:
-        xtickslabels = [''.format(ii+1) for ii in hbins]
+        xtickslabels = ['' for ii in hbins]
     axh.set_xticklabels(xtickslabels, fontsize = font_size)
     axh.set_xlim([-0.5,hdata['nhbins']-0.5])
     
@@ -597,7 +605,7 @@ def plot_tm30_Rcshj(spd, cri_type = 'ies-tm30', axh = None,
     ytickslabels = ['{:1.0f}%'.format(ii) for ii in range(-40,50,10)]
     axh.set_yticklabels(ytickslabels, fontsize = font_size)
     axh.set_ylabel(r'Local Chroma Shift $(R_{cs,hj})$', fontsize = font_size)
-    axh.set_ylim([min([-40,100*Rcshj.min()]),max([40,100*Rcshj.max()])])
+    axh.set_ylim([min([-50,100*Rcshj.min()]),max([50,100*Rcshj.max()])])
     
     return axh, data
 
@@ -671,7 +679,12 @@ def plot_tm30_Rhshj(spd, cri_type = 'ies-tm30', axh = None,
     for j in hbins:
         axh.bar(hbins[j],Rhshj[j,0], color = cmap[j], width = 1,edgecolor = 'k', alpha = 1)
         ypos = ((np.abs(Rhshj[j,0]) + 0.05 + y_offset))*np.sign(Rhshj[j,0])
-        axh.text(hbins[j],ypos, '{:1.2f}'.format(Rhshj[j,0]) ,fontsize = font_size,horizontalalignment='center',verticalalignment='center',color = np.array([1,1,1])*0.3, rotation = 90)
+        axh.text(hbins[j]+0.05,ypos, '{:1.2f}'.format(Rhshj[j,0]),
+                 fontsize = font_size,
+                 horizontalalignment='center',
+                 verticalalignment='center',
+                 color = np.array([1,1,1])*0.3, 
+                 rotation = 90)
     
     xticks = np.array(hbins)
     axh.set_xticks(xticks)
@@ -679,12 +692,12 @@ def plot_tm30_Rhshj(spd, cri_type = 'ies-tm30', axh = None,
         xtickslabels = ['{:1.0f}'.format(ii+1) for ii in hbins]
         axh.set_xlabel('Hue-Angle Bin (j)', fontsize = font_size)
     else:
-        xtickslabels = [''.format(ii+1) for ii in hbins]
+        xtickslabels = ['' for ii in hbins]
     axh.set_xticklabels(xtickslabels, fontsize = font_size)
     axh.set_xlim([-0.5,hdata['nhbins']-0.5])
     
-    axh.set_ylabel(r'Local Hue Shift $(R_{hs,hj})$', fontsize = 9)
-    axh.set_ylim([min([-0.5,Rhshj.min()]),max([0.5,Rhshj.max()])])
+    axh.set_ylabel(r'Local Hue Shift $(R_{hs,hj})$', fontsize = font_size)
+    axh.set_ylim([min([-0.55,Rhshj.min()]),max([0.55,Rhshj.max()])])
     
     return axh, data
 
@@ -758,8 +771,8 @@ def _split_notes(notes, max_len_notes_line = 40):
         :notes_:
             | string with '\n' added at the right places to not exceed a certain width.
     """
-    l = len(notes)
-    n = l//max_len_notes_line + 1
+    #l = len(notes)
+    #n = l//max_len_notes_line + 1
     notes = notes.split()
     line = ''
     notes_ = ''
@@ -797,7 +810,7 @@ def _plot_tm30_report_top(axh, source = '', manufacturer = '', date = '', model 
     axh.set_xticks(np.arange(10))
     axh.set_xticklabels(['' for i in np.arange(10)])
     axh.set_yticks(np.arange(2))
-    axh.set_yticklabels(['' for i in np.arange(4)])
+    axh.set_yticklabels(['' for i in np.arange(2)])
     axh.set_axis_off()
     axh.set_xlabel([])
     
@@ -970,8 +983,8 @@ def plot_tm30_report(spd, cri_type = 'ies-tm30',
     plot_tm30_spd(data, axh = f_ax_spd, font_size = font_size)
     plot_tm30_cvg(data, axh = f_ax_cvg, font_size = font_size)
     plot_tm30_Rfhj(data, axh = f_ax_fhj, y_offset = 2, font_size = font_size)
-    plot_tm30_Rcshj(data, axh = f_ax_cshj, xlabel = False, y_offset = 0.03, font_size = font_size)
-    plot_tm30_Rhshj(data, axh = f_ax_hshj, xlabel = False, y_offset = 0.05, font_size = font_size)
+    plot_tm30_Rcshj(data, axh = f_ax_cshj, xlabel = False, y_offset = 0.06, font_size = font_size)
+    plot_tm30_Rhshj(data, axh = f_ax_hshj, xlabel = False, y_offset = 0.06, font_size = font_size)
     plot_tm30_Rfi(data, axh = f_ax_fi, font_size = font_size)
     fig.suptitle(suptitle, fontsize = 14, fontweight= 'bold')
     
@@ -1262,8 +1275,11 @@ def plot_cri_graphics(data, cri_type = None, hbins = 16, start_hue = 0.0, scalef
         ylim = np.array([np.abs(Rcshj.min()),np.abs(Rcshj.min()),0.2]).max()*1.5
         ax_locC.set_ylim([-ylim,ylim])
         ax_locC.set_ylabel(r'Local chroma shift, $R_{cs,hi}$')
+        #ax_locC.set_xticks(ax_locC.get_xticks().tolist()) # to avoid warning from matplotlib
         ax_locC.set_xticklabels([])
-        ax_locC.set_yticklabels(['{:1.2f}'.format(ii) for ii in ax_locC.set_ylim()], color = 'white')
+        ax_locC.set_yticks(ax_locC.get_yticks().tolist()) # to avoid warning from matplotlib
+        ax_locC.set_yticklabels(['{:1.2f}'.format(ii) for ii in ax_locC.get_yticks().tolist()], color = 'white')
+        ax_locC.set_ylim([-ylim,ylim])
         
         # Plot local hue shift, Rhshi:
         ax_locH = create_subplot(layout,6)
@@ -1273,9 +1289,12 @@ def plot_cri_graphics(data, cri_type = None, hbins = 16, start_hue = 0.0, scalef
         ylim = np.array([np.abs(Rhshj.min()),np.abs(Rhshj.min()),0.2]).max()*1.5
         ax_locH.set_ylim([-ylim,ylim])
         ax_locH.set_ylabel(r'Local hue shift, $R_{hs,hi}$')
+        #ax_locH.set_xticks(ax_locH.get_xticks().tolist()) # to avoid warning from matplotlib
         ax_locH.set_xticklabels([])
-        ax_locH.set_yticklabels(['{:1.2f}'.format(ii) for ii in ax_locH.set_ylim()], color = 'white')
-              
+        ax_locH.set_yticks(ax_locH.get_yticks().tolist()) # to avoid warning from matplotlib
+        ax_locH.set_yticklabels(['{:1.2f}'.format(ii) for ii in ax_locH.get_yticks().tolist()], color = 'white')
+        ax_locH.set_ylim([-ylim,ylim])  
+        
         # Plot local color fidelity of VF, vfRfhi:
         ax_vfRfi = create_subplot(layout,7)
         for j in range(nhbins):

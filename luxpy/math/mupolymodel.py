@@ -406,7 +406,7 @@ def generate_vector_field(pmodel = None, xyzr = None, xyzt = None, diff_model = 
         :color:
             | None, optional
             | For plotting the vector field.
-            | If :color: == 0, no plot will be generated.
+            | If :color: == False, no plot will be generated.
             | If None: plot shifts in colors related to the hue of the ref coordinates.
         :axh:
             | None, optional
@@ -455,7 +455,7 @@ def generate_vector_field(pmodel = None, xyzr = None, xyzt = None, diff_model = 
         xyzt, (RTt, RTr) = apply_poly_model_at_x(xyzr, pmodel, diff_model = diff_model, polar_coord = True)
 
     # plot vector field:
-    if (color != 0):
+    if (color is not False):
         if (xyzt is not None):
             if xyzr.shape != xyzt.shape:
                 raise Exception("xyzr.shape != xyzt.shape: make sure you're not generating a reference grid, while xyzt is not None!")
@@ -472,15 +472,15 @@ def generate_vector_field(pmodel = None, xyzr = None, xyzt = None, diff_model = 
 def plot_vector_field(xyzRTt, xyzRTr, color = 'k', axh = None, title = None, axtype = 'polar',
                       nTbins = 32, Tbins_start_angle = 0, use_plt_quiver = True):
     """
-    Makes a plot of a vector field (if color != 0). 
+    Makes a plot of a vector field (if color is not False). 
     
     | For more info on input parameters, see generate_vector_field?
     
     Returns:
-        None if color == 0 else axes handle
+        None if color == False else axes handle
     """
     # Plot vectorfield:
-    if color is not 0: 
+    if color is not False: 
         # unpack vector field data input:
         xyzr, RTr = xyzRTr
         xyzt, RTt = xyzRTt

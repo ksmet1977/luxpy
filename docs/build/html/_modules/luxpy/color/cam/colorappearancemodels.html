@@ -1,15 +1,18 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.color.cam.colorappearancemodels &mdash; LuxPy 1.6.1 documentation</title>
+  <title>luxpy.color.cam.colorappearancemodels &mdash; LuxPy 1.6.2 documentation</title>
   
+
+  
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
 
   
   
@@ -17,7 +20,9 @@
   
 
   
-  <script type="text/javascript" src="../../../../_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
@@ -29,10 +34,6 @@
     <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
 </head>
@@ -48,7 +49,7 @@
           
 
           
-            <a href="../../../../index.html" class="icon icon-home"> LuxPy
+            <a href="../../../../index.html" class="icon icon-home" alt="Documentation Home"> LuxPy
           
 
           
@@ -58,7 +59,7 @@
             
             
               <div class="version">
-                1.6.1
+                1.6.2
               </div>
             
           
@@ -75,6 +76,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -93,6 +95,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -131,7 +134,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
         
           <li><a href="../../../index.html">Module code</a> &raquo;</li>
         
@@ -270,8 +273,8 @@
 <span class="sd">      | &#39;xyz_to_jabM_ciecam16&#39;, &#39;jabM_ciecam16_to_xyz&#39;,</span>
 <span class="sd">      | &#39;xyz_to_jabC_ciecam16&#39;, &#39;jabC_ciecam16_to_xyz&#39;,</span>
 <span class="sd">      | &#39;xyz_to_jabz&#39;,          &#39;jabz_to_xyz&#39;,</span>
-<span class="sd">      | &#39;xyz_to_jabM_camjabz&#39;, &#39;jabM_camjabz_to_xyz&#39;, </span>
-<span class="sd">      | &#39;xyz_to_jabC_camjabz&#39;, &#39;jabC_camjabz_to_xyz&#39;]</span>
+<span class="sd">      | &#39;xyz_to_jabM_zcam&#39;,     &#39;jabM_zcam_to_xyz&#39;, </span>
+<span class="sd">      | &#39;xyz_to_jabC_zcam&#39;,     &#39;jabC_zcam_to_xyz&#39;]</span>
 <span class="sd">      | &#39;xyz_to_jab_cam02ucs&#39;, &#39;jab_cam02ucs_to_xyz&#39;, </span>
 <span class="sd">      | &#39;xyz_to_jab_cam02lcd&#39;, &#39;jab_cam02lcd_to_xyz&#39;,</span>
 <span class="sd">      | &#39;xyz_to_jab_cam02scd&#39;, &#39;jab_cam02scd_to_xyz&#39;, </span>
@@ -281,7 +284,7 @@
 <span class="sd">      | &#39;xyz_to_qabW_cam15u&#39;, &#39;qabW_cam15u_to_xyz&#39;,</span>
 <span class="sd">      | &#39;xyz_to_lab_cam_sww16&#39;, &#39;lab_cam_sww16_to_xyz&#39;,</span>
 <span class="sd">      | &#39;xyz_to_qabM_cam18sl&#39;, &#39;qabM_cam18sl_to_xyz&#39;,</span>
-<span class="sd">      | &#39;xyz_to_qabS_cam18sl&#39;, &#39;qabS_cam18sl_to_xyz&#39;,</span>
+<span class="sd">      | &#39;xyz_to_qabs_cam18sl&#39;, &#39;qabs_cam18sl_to_xyz&#39;,</span>
 <span class="sd">      </span>
 
 <span class="sd"> :_update_parameter_dict(): Get parameter dict and update with values in args dict</span>
@@ -302,7 +305,7 @@
 <span class="c1">#------------------------------------------------------------------------------</span>
 <span class="c1"># List available CAMs:</span>
 <span class="n">_AVAILABLE_MODELS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ciecam02&#39;</span><span class="p">,</span><span class="s1">&#39;cam02ucs&#39;</span><span class="p">,</span><span class="s1">&#39;ciecam16&#39;</span><span class="p">,</span><span class="s1">&#39;cam16ucs&#39;</span><span class="p">,</span>
-                     <span class="s1">&#39;camjabz&#39;</span><span class="p">,</span><span class="s1">&#39;cam15u&#39;</span><span class="p">,</span><span class="s1">&#39;cam18sl&#39;</span><span class="p">,</span><span class="s1">&#39;cam_sww16&#39;</span><span class="p">]</span>
+                     <span class="s1">&#39;zcam&#39;</span><span class="p">,</span><span class="s1">&#39;cam15u&#39;</span><span class="p">,</span><span class="s1">&#39;cam18sl&#39;</span><span class="p">,</span><span class="s1">&#39;cam_sww16&#39;</span><span class="p">]</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;_AVAILABLE_MODELS&#39;</span><span class="p">]</span>
 
@@ -418,24 +421,24 @@
 
 
 <span class="c1">#------------------------------------------------------------------------------</span>
-<span class="c1"># camjabz imports:</span>
-<span class="c1"># import camjabz as _camjabz</span>
-<span class="kn">from</span> <span class="nn">.camjabz</span> <span class="kn">import</span> <span class="n">run</span> <span class="k">as</span> <span class="n">camjabz</span>
-<span class="kn">from</span> <span class="nn">.camjabz</span> <span class="kn">import</span> <span class="n">_AXES</span> <span class="k">as</span> <span class="n">_CAMJABZ_AXES</span>
-<span class="kn">from</span> <span class="nn">.camjabz</span> <span class="kn">import</span> <span class="n">_UNIQUE_HUE_DATA</span> <span class="k">as</span> <span class="n">_CAMJABZ_UNIQUE_HUE_DATA</span>
-<span class="kn">from</span> <span class="nn">.camjabz</span> <span class="kn">import</span> <span class="n">_SURROUND_PARAMETERS</span> <span class="k">as</span> <span class="n">_CAMJABZ_SURROUND_PARAMETERS</span>
-<span class="kn">from</span> <span class="nn">.camjabz</span> <span class="kn">import</span> <span class="n">_DEFAULT_WHITE_POINT</span> <span class="k">as</span> <span class="n">_CAMJABZ_DEFAULT_WHITE_POINT</span>
-<span class="kn">from</span> <span class="nn">.camjabz</span> <span class="kn">import</span> <span class="n">_DEFAULT_CONDITIONS</span> <span class="k">as</span> <span class="n">_CAMJABZ_DEFAULT_CONDITIONS</span>
-<span class="kn">from</span> <span class="nn">.camjabz</span> <span class="kn">import</span> <span class="p">(</span><span class="n">xyz_to_jabz</span><span class="p">,</span> <span class="n">jabz_to_xyz</span><span class="p">,</span>
-                      <span class="n">xyz_to_jabM_camjabz</span><span class="p">,</span> <span class="n">jabM_camjabz_to_xyz</span><span class="p">,</span> 
-                      <span class="n">xyz_to_jabC_camjabz</span><span class="p">,</span> <span class="n">jabC_camjabz_to_xyz</span><span class="p">)</span>
+<span class="c1"># zcam imports:</span>
+<span class="c1"># import zcam as _zcam</span>
+<span class="kn">from</span> <span class="nn">.zcam</span> <span class="kn">import</span> <span class="n">run</span> <span class="k">as</span> <span class="n">zcam</span>
+<span class="kn">from</span> <span class="nn">.zcam</span> <span class="kn">import</span> <span class="n">_AXES</span> <span class="k">as</span> <span class="n">_ZCAM_AXES</span>
+<span class="kn">from</span> <span class="nn">.zcam</span> <span class="kn">import</span> <span class="n">_UNIQUE_HUE_DATA</span> <span class="k">as</span> <span class="n">_ZCAM_UNIQUE_HUE_DATA</span>
+<span class="kn">from</span> <span class="nn">.zcam</span> <span class="kn">import</span> <span class="n">_SURROUND_PARAMETERS</span> <span class="k">as</span> <span class="n">_ZCAM_SURROUND_PARAMETERS</span>
+<span class="kn">from</span> <span class="nn">.zcam</span> <span class="kn">import</span> <span class="n">_DEFAULT_WHITE_POINT</span> <span class="k">as</span> <span class="n">_ZCAM_DEFAULT_WHITE_POINT</span>
+<span class="kn">from</span> <span class="nn">.zcam</span> <span class="kn">import</span> <span class="n">_DEFAULT_CONDITIONS</span> <span class="k">as</span> <span class="n">_ZCAM_DEFAULT_CONDITIONS</span>
+<span class="kn">from</span> <span class="nn">.zcam</span> <span class="kn">import</span> <span class="p">(</span><span class="n">xyz_to_jabz</span><span class="p">,</span> <span class="n">jabz_to_xyz</span><span class="p">,</span>
+                   <span class="n">xyz_to_jabM_zcam</span><span class="p">,</span> <span class="n">jabM_zcam_to_xyz</span><span class="p">,</span> 
+                   <span class="n">xyz_to_jabC_zcam</span><span class="p">,</span> <span class="n">jabC_zcam_to_xyz</span><span class="p">)</span>
 
-<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;camjabz&#39;</span><span class="p">]</span> 
+<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;zcam&#39;</span><span class="p">]</span> 
 
 
 <span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;xyz_to_jabz&#39;</span><span class="p">,</span> <span class="s1">&#39;jabz_to_xyz&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;xyz_to_jabM_camjabz&#39;</span><span class="p">,</span> <span class="s1">&#39;jabM_camjabz_to_xyz&#39;</span><span class="p">,</span> 
-            <span class="s1">&#39;xyz_to_jabC_camjabz&#39;</span><span class="p">,</span> <span class="s1">&#39;jabC_camjabz_to_xyz&#39;</span><span class="p">]</span>
+            <span class="s1">&#39;xyz_to_jabM_zcam&#39;</span><span class="p">,</span> <span class="s1">&#39;jabM_zcam_to_xyz&#39;</span><span class="p">,</span> 
+            <span class="s1">&#39;xyz_to_jabC_zcam&#39;</span><span class="p">,</span> <span class="s1">&#39;jabC_zcam_to_xyz&#39;</span><span class="p">]</span>
 
 
 
@@ -484,22 +487,22 @@
 <span class="n">_CAM_AXES</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">_CAM02UCS_AXES</span><span class="p">)</span>
 <span class="n">_CAM_AXES</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">_CIECAM16_AXES</span><span class="p">)</span>
 <span class="n">_CAM_AXES</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">_CAM16UCS_AXES</span><span class="p">)</span>
-<span class="n">_CAM_AXES</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">_CAMJABZ_AXES</span><span class="p">)</span>
+<span class="n">_CAM_AXES</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">_ZCAM_AXES</span><span class="p">)</span>
 <span class="n">_CAM_AXES</span><span class="p">[</span><span class="s1">&#39;qabW_cam15u&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_CAM15U_AXES</span> 
 <span class="n">_CAM_AXES</span><span class="p">[</span><span class="s1">&#39;lab_cam_sww16&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_CAM_SWW16_AXES</span>
-<span class="n">_CAM_AXES</span><span class="p">[</span><span class="s1">&#39;qabW_cam18sl&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_CAM18SL_AXES</span> 
+<span class="n">_CAM_AXES</span><span class="p">[</span><span class="s1">&#39;qabS_cam18sl&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_CAM18SL_AXES</span> 
 
 <span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;_CAM_AXES&#39;</span><span class="p">]</span>
 
 <span class="c1"># --- unique hue data ---</span>
 <span class="n">_UNIQUE_HUE_DATA</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;models&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="s1">&#39;ciecam02&#39;</span><span class="p">,</span> <span class="s1">&#39;cam02ucs&#39;</span><span class="p">,</span> 
                                 <span class="s1">&#39;ciecam16&#39;</span><span class="p">,</span> <span class="s1">&#39;cam16ucs&#39;</span><span class="p">,</span>
-                                <span class="s1">&#39;camjabz&#39;</span><span class="p">],</span>
+                                <span class="s1">&#39;zcam&#39;</span><span class="p">],</span>
                     <span class="s1">&#39;ciecam02&#39;</span> <span class="p">:</span> <span class="n">_CIECAM02_UNIQUE_HUE_DATA</span><span class="p">,</span>
                     <span class="s1">&#39;cam02ucs&#39;</span> <span class="p">:</span> <span class="n">_CIECAM02_UNIQUE_HUE_DATA</span><span class="p">,</span>
                     <span class="s1">&#39;ciecam16&#39;</span> <span class="p">:</span> <span class="n">_CIECAM16_UNIQUE_HUE_DATA</span><span class="p">,</span>
                     <span class="s1">&#39;cam16ucs&#39;</span> <span class="p">:</span> <span class="n">_CIECAM16_UNIQUE_HUE_DATA</span><span class="p">,</span>
-                    <span class="s1">&#39;camjabz&#39;</span> <span class="p">:</span> <span class="n">_CAMJABZ_UNIQUE_HUE_DATA</span><span class="p">,</span>
+                    <span class="s1">&#39;zcam&#39;</span> <span class="p">:</span> <span class="n">_ZCAM_UNIQUE_HUE_DATA</span><span class="p">,</span>
                     <span class="p">}</span>
 <span class="n">_UNIQUE_HUE_DATA</span><span class="p">[</span><span class="s1">&#39;cam15u&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_CAM15U_UNIQUE_HUE_DATA</span>
 <span class="n">_UNIQUE_HUE_DATA</span><span class="p">[</span><span class="s1">&#39;models&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;cam15u&#39;</span><span class="p">)</span>
@@ -513,7 +516,7 @@
                         <span class="s1">&#39;cam02ucs&#39;</span> <span class="p">:</span> <span class="n">_CIECAM02_SURROUND_PARAMETERS</span><span class="p">,</span>
                         <span class="s1">&#39;ciecam16&#39;</span> <span class="p">:</span> <span class="n">_CIECAM16_SURROUND_PARAMETERS</span><span class="p">,</span>
                         <span class="s1">&#39;cam16ucs&#39;</span> <span class="p">:</span> <span class="n">_CIECAM16_SURROUND_PARAMETERS</span><span class="p">,</span>
-                        <span class="s1">&#39;camjabz&#39;</span>  <span class="p">:</span> <span class="n">_CAMJABZ_SURROUND_PARAMETERS</span>
+                        <span class="s1">&#39;zcam&#39;</span>  <span class="p">:</span> <span class="n">_ZCAM_SURROUND_PARAMETERS</span>
                         <span class="p">}</span>
 <span class="n">_SURROUND_PARAMETERS</span><span class="p">[</span><span class="s1">&#39;cam15u&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_CAM15U_SURROUND_PARAMETERS</span>
 <span class="n">_SURROUND_PARAMETERS</span><span class="p">[</span><span class="s1">&#39;cam_sww16&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span> 
@@ -585,8 +588,8 @@
     <span class="k">elif</span> <span class="p">((</span><span class="n">camtype</span> <span class="o">==</span> <span class="s1">&#39;cam16ucs&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">camtype</span> <span class="o">==</span> <span class="s1">&#39;ciecam16&#39;</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">ucstype</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">cam16ucs</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="n">Yw</span><span class="p">,</span> <span class="n">ucstype</span> <span class="o">=</span> <span class="n">ucstype</span><span class="p">,</span> 
                         <span class="n">conditions</span> <span class="o">=</span> <span class="n">conditions</span><span class="p">,</span> <span class="n">forward</span> <span class="o">=</span> <span class="n">forward</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="n">mcat</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="p">((</span><span class="n">camtype</span> <span class="o">==</span> <span class="s1">&#39;camjabz&#39;</span><span class="p">)):</span>
-        <span class="k">return</span> <span class="n">camjabz</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="n">Yw</span><span class="p">,</span> <span class="n">outin</span> <span class="o">=</span> <span class="n">outin</span><span class="p">,</span>  
+    <span class="k">elif</span> <span class="p">((</span><span class="n">camtype</span> <span class="o">==</span> <span class="s1">&#39;zcam&#39;</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="n">zcam</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="n">Yw</span><span class="p">,</span> <span class="n">outin</span> <span class="o">=</span> <span class="n">outin</span><span class="p">,</span>  
                         <span class="n">conditions</span> <span class="o">=</span> <span class="n">conditions</span><span class="p">,</span> <span class="n">forward</span> <span class="o">=</span> <span class="n">forward</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="n">mcat</span><span class="p">)</span></div>
 
 <span class="n">__all__</span> <span class="o">+=</span><span class="p">[</span><span class="s1">&#39;camXucs&#39;</span><span class="p">]</span> 
@@ -602,11 +605,19 @@
 
   <div role="contentinfo">
     <p>
+        
         &copy; Copyright 2020, Kevin A.G. Smet
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -617,7 +628,6 @@
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

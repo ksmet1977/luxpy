@@ -1,15 +1,18 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Color sub-package &mdash; LuxPy 1.6.1 documentation</title>
+  <title>Color sub-package &mdash; LuxPy 1.6.2 documentation</title>
   
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
 
   
   
@@ -17,7 +20,9 @@
   
 
   
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -29,10 +34,6 @@
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Toolboxes" href="toolboxes.html" />
@@ -50,7 +51,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> LuxPy
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> LuxPy
           
 
           
@@ -60,7 +61,7 @@
             
             
               <div class="version">
-                1.6.1
+                1.6.2
               </div>
             
           
@@ -77,6 +78,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -138,6 +140,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -176,7 +179,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html">Docs</a> &raquo;</li>
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
           <li><a href="luxpy_structure.html">Luxpy package structure</a> &raquo;</li>
         
@@ -3917,7 +3920,7 @@ Color Research &amp; Application, 45(1), 172–177.</a></p>
 
 <dl class="py function">
 <dt id="luxpy.color.cat.apply_vonkries1">
-<code class="sig-prename descclassname">luxpy.color.cat.</code><code class="sig-name descname">apply_vonkries1</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xyz</span></em>, <em class="sig-param"><span class="n">xyzw1</span></em>, <em class="sig-param"><span class="n">xyzw2</span></em>, <em class="sig-param"><span class="n">D</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">mcat</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">invmcat</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">in_</span><span class="o">=</span><span class="default_value">'xyz'</span></em>, <em class="sig-param"><span class="n">out_</span><span class="o">=</span><span class="default_value">'xyz'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cat/chromaticadaptation.html#apply_vonkries1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cat.apply_vonkries1" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.color.cat.</code><code class="sig-name descname">apply_vonkries1</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xyz</span></em>, <em class="sig-param"><span class="n">xyzw1</span></em>, <em class="sig-param"><span class="n">xyzw2</span></em>, <em class="sig-param"><span class="n">D</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">mcat</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">invmcat</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">in_</span><span class="o">=</span><span class="default_value">'xyz'</span></em>, <em class="sig-param"><span class="n">out_</span><span class="o">=</span><span class="default_value">'xyz'</span></em>, <em class="sig-param"><span class="n">use_Yw</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cat/chromaticadaptation.html#apply_vonkries1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cat.apply_vonkries1" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply a 1-step von kries chromatic adaptation transform.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -3964,16 +3967,23 @@ Color Research &amp; Application, 45(1), 172–177.</a></p>
 <div class="line">If None: calculate inverse of mcat.</div>
 </div>
 </dd>
-<dt class="field-odd"><a href="#id61"><span class="problematic" id="id62">in_</span></a></dt>
+<dt class="field-odd"><a href="#id62"><span class="problematic" id="id63">in_</span></a></dt>
 <dd class="field-odd"><div class="line-block">
 <div class="line">‘xyz’, optional</div>
 <div class="line">Input type (‘xyz’, ‘rgb’) of data in xyz, xyzw1, xyzw2</div>
 </div>
 </dd>
-<dt class="field-even"><a href="#id63"><span class="problematic" id="id64">out_</span></a></dt>
+<dt class="field-even"><a href="#id64"><span class="problematic" id="id65">out_</span></a></dt>
 <dd class="field-even"><div class="line-block">
 <div class="line">‘xyz’, optional</div>
 <div class="line">Output type (‘xyz’, ‘rgb’) of corresponding colors</div>
+</div>
+</dd>
+<dt class="field-odd">use_Yw</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">False, optional</div>
+<div class="line">Use CAT version with Yw factors included (but this results in </div>
+<div class="line">potential wrong predictions, see Smet &amp; Ma (2020)).</div>
 </div>
 </dd>
 </dl>
@@ -3986,12 +3996,16 @@ Color Research &amp; Application, 45(1), 172–177.</a></p>
 </dd>
 </dl>
 </dd>
+<dt>Reference:</dt><dd><p>1. <a class="reference external" href="https://doi.org/10.1002/col.22457">Smet, K. A. G., &amp; Ma, S.  (2020). 
+Some concerns regarding the CAT16 chromatic adaptation transform. 
+Color Research &amp; Application, 45(1), 172–177.</a></p>
+</dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt id="luxpy.color.cat.apply_vonkries2">
-<code class="sig-prename descclassname">luxpy.color.cat.</code><code class="sig-name descname">apply_vonkries2</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xyz</span></em>, <em class="sig-param"><span class="n">xyzw1</span></em>, <em class="sig-param"><span class="n">xyzw2</span></em>, <em class="sig-param"><span class="n">xyzw0</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">D</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">mcat</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">invmcat</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">in_</span><span class="o">=</span><span class="default_value">'xyz'</span></em>, <em class="sig-param"><span class="n">out_</span><span class="o">=</span><span class="default_value">'xyz'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cat/chromaticadaptation.html#apply_vonkries2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cat.apply_vonkries2" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.color.cat.</code><code class="sig-name descname">apply_vonkries2</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xyz</span></em>, <em class="sig-param"><span class="n">xyzw1</span></em>, <em class="sig-param"><span class="n">xyzw2</span></em>, <em class="sig-param"><span class="n">xyzw0</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">D</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">mcat</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">invmcat</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">in_</span><span class="o">=</span><span class="default_value">'xyz'</span></em>, <em class="sig-param"><span class="n">out_</span><span class="o">=</span><span class="default_value">'xyz'</span></em>, <em class="sig-param"><span class="n">use_Yw</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cat/chromaticadaptation.html#apply_vonkries2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cat.apply_vonkries2" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply a 2-step von kries chromatic adaptation transform.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -4045,16 +4059,23 @@ Color Research &amp; Application, 45(1), 172–177.</a></p>
 <div class="line">If None: calculate inverse of mcat.</div>
 </div>
 </dd>
-<dt class="field-even"><a href="#id65"><span class="problematic" id="id66">in_</span></a></dt>
+<dt class="field-even"><a href="#id66"><span class="problematic" id="id67">in_</span></a></dt>
 <dd class="field-even"><div class="line-block">
 <div class="line">‘xyz’, optional</div>
 <div class="line">Input type (‘xyz’, ‘rgb’) of data in xyz, xyzw1, xyzw2</div>
 </div>
 </dd>
-<dt class="field-odd"><a href="#id67"><span class="problematic" id="id68">out_</span></a></dt>
+<dt class="field-odd"><a href="#id68"><span class="problematic" id="id69">out_</span></a></dt>
 <dd class="field-odd"><div class="line-block">
 <div class="line">‘xyz’, optional</div>
 <div class="line">Output type (‘xyz’, ‘rgb’) of corresponding colors</div>
+</div>
+</dd>
+<dt class="field-even">use_Yw</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">False, optional</div>
+<div class="line">Use CAT version with Yw factors included (but this results in </div>
+<div class="line">potential wrong predictions, see Smet &amp; Ma (2020)).</div>
 </div>
 </dd>
 </dl>
@@ -4076,7 +4097,7 @@ Color Research &amp; Application, 45(1), 172–177.</a></p>
 
 <dl class="py function">
 <dt id="luxpy.color.cat.apply_vonkries">
-<code class="sig-prename descclassname">luxpy.color.cat.</code><code class="sig-name descname">apply_vonkries</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xyz</span></em>, <em class="sig-param"><span class="n">xyzw1</span></em>, <em class="sig-param"><span class="n">xyzw2</span></em>, <em class="sig-param"><span class="n">xyzw0</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">D</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">n_step</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">catmode</span><span class="o">=</span><span class="default_value">'1&gt;0&gt;2'</span></em>, <em class="sig-param"><span class="n">mcat</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">invmcat</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">in_</span><span class="o">=</span><span class="default_value">'xyz'</span></em>, <em class="sig-param"><span class="n">out_</span><span class="o">=</span><span class="default_value">'xyz'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cat/chromaticadaptation.html#apply_vonkries"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cat.apply_vonkries" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.color.cat.</code><code class="sig-name descname">apply_vonkries</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xyz</span></em>, <em class="sig-param"><span class="n">xyzw1</span></em>, <em class="sig-param"><span class="n">xyzw2</span></em>, <em class="sig-param"><span class="n">xyzw0</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">D</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">n_step</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">catmode</span><span class="o">=</span><span class="default_value">'1&gt;0&gt;2'</span></em>, <em class="sig-param"><span class="n">mcat</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">invmcat</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">in_</span><span class="o">=</span><span class="default_value">'xyz'</span></em>, <em class="sig-param"><span class="n">out_</span><span class="o">=</span><span class="default_value">'xyz'</span></em>, <em class="sig-param"><span class="n">use_Yw</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cat/chromaticadaptation.html#apply_vonkries"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cat.apply_vonkries" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply a 1-step or 2-step von kries chromatic adaptation transform.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -4160,16 +4181,23 @@ Color Research &amp; Application, 45(1), 172–177.</a></p>
 <div class="line">If None: calculate inverse of mcat.</div>
 </div>
 </dd>
-<dt class="field-even"><a href="#id69"><span class="problematic" id="id70">in_</span></a></dt>
+<dt class="field-even"><a href="#id70"><span class="problematic" id="id71">in_</span></a></dt>
 <dd class="field-even"><div class="line-block">
 <div class="line">‘xyz’, optional</div>
 <div class="line">Input type (‘xyz’, ‘rgb’) of data in xyz, xyzw1, xyzw2</div>
 </div>
 </dd>
-<dt class="field-odd"><a href="#id71"><span class="problematic" id="id72">out_</span></a></dt>
+<dt class="field-odd"><a href="#id72"><span class="problematic" id="id73">out_</span></a></dt>
 <dd class="field-odd"><div class="line-block">
 <div class="line">‘xyz’, optional</div>
 <div class="line">Output type (‘xyz’, ‘rgb’) of corresponding colors</div>
+</div>
+</dd>
+<dt class="field-even">use_Yw</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">False, optional</div>
+<div class="line">Use CAT version with Yw factors included (but this results in </div>
+<div class="line">potential wrong predictions, see Smet &amp; Ma (2020)). </div>
 </div>
 </dd>
 </dl>
@@ -4185,6 +4213,72 @@ Color Research &amp; Application, 45(1), 172–177.</a></p>
 <dt>Reference:</dt><dd><p>1. <a class="reference external" href="https://doi.org/10.1002/col.22457">Smet, K. A. G., &amp; Ma, S. (2020). 
 Some concerns regarding the CAT16 chromatic adaptation transform. 
 Color Research &amp; Application, 45(1), 172–177.</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="luxpy.color.cat.apply_ciecat94">
+<code class="sig-prename descclassname">luxpy.color.cat.</code><code class="sig-name descname">apply_ciecat94</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xyz</span></em>, <em class="sig-param"><span class="n">xyzw</span></em>, <em class="sig-param"><span class="n">xyzwr</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">E</span><span class="o">=</span><span class="default_value">1000</span></em>, <em class="sig-param"><span class="n">Er</span><span class="o">=</span><span class="default_value">1000</span></em>, <em class="sig-param"><span class="n">Yb</span><span class="o">=</span><span class="default_value">20</span></em>, <em class="sig-param"><span class="n">D</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">cat94_old</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cat/chromaticadaptation.html#apply_ciecat94"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cat.apply_ciecat94" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate corresponding color tristimulus values using the CIECAT94 chromatic adaptation transform.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">xyz</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with sample 1931 2° XYZ tristimulus values under the test illuminant</div>
+</div>
+</dd>
+<dt class="field-even">xyzw</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">ndarray with white point tristimulus values of the test illuminant</div>
+</div>
+</dd>
+<dt class="field-odd">xyzwr</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">ndarray with white point tristimulus values of the reference illuminant</div>
+<div class="line">None defaults to D65.</div>
+</div>
+</dd>
+<dt class="field-even">E</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">100, optional</div>
+<div class="line">Illuminance (lx) of test illumination</div>
+</div>
+</dd>
+<dt class="field-odd">Er</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">63.66, optional</div>
+<div class="line">Illuminance (lx) of the reference illumination</div>
+</div>
+</dd>
+<dt class="field-even">Yb</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">20, optional</div>
+<div class="line">Relative luminance of the adaptation field (background) </div>
+</div>
+</dd>
+<dt class="field-odd">D</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">1, optional</div>
+<div class="line">Degree of chromatic adaptation.</div>
+<div class="line">For object colours D = 1,  </div>
+<div class="line">and for luminous colours (typically displays) D=0</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">xyzc</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with corresponding tristimlus values.</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Reference:</dt><dd><ol class="arabic simple">
+<li><p>CIE160-2004. (2004). A review of chromatic adaptation transforms (Vols. CIE160-200). CIE.</p></li>
+</ol>
 </dd>
 </dl>
 </dd></dl>
@@ -5084,12 +5178,17 @@ is involved (inputtype == ‘spd’; dataw = None)</div>
 <dd class="field-even"><div class="line-block">
 <div class="line">‘J,aM,bM’, optional</div>
 <div class="line">String with requested output (e.g. “J,aM,bM,M,h”) [Forward mode]</div>
-<div class="line">String with inputs in data. </div>
+<div class="line">- attributes: ‘J’: lightness,’Q’: brightness,</div>
+<div class="line-block">
+<div class="line">‘M’: colorfulness,’C’: chroma, ‘s’: saturation,</div>
+<div class="line">‘h’: hue angle, ‘H’: hue quadrature/composition,</div>
+</div>
+<div class="line">String with inputs in data [inverse mode]. </div>
 <div class="line">Input must have data.shape[-1]==3 and last dim of data must have </div>
-<div class="line">the following structure: </div>
+<div class="line">the following structure for inverse mode: </div>
 <div class="line-block">
 <div class="line">* data[…,0] = J or Q,</div>
-<div class="line">* data[…,1:] = (aM,bM) or (aC,bC) or (aS,bS)</div>
+<div class="line">* data[…,1:] = (aM,bM) or (aC,bC) or (aS,bS) or (M,h) or (C, h), …</div>
 </div>
 </div>
 </dd>
@@ -5412,12 +5511,17 @@ Color Res. Appl., vol. 31, no. 4, pp. 320–330, 2006.</a></p>
 <dd class="field-even"><div class="line-block">
 <div class="line">‘J,aM,bM’, optional</div>
 <div class="line">String with requested output (e.g. “J,aM,bM,M,h”) [Forward mode]</div>
-<div class="line">String with inputs in data. </div>
+<div class="line">- attributes: ‘J’: lightness,’Q’: brightness,</div>
+<div class="line-block">
+<div class="line">‘M’: colorfulness,’C’: chroma, ‘s’: saturation,</div>
+<div class="line">‘h’: hue angle, ‘H’: hue quadrature/composition,</div>
+</div>
+<div class="line">String with inputs in data [inverse mode]. </div>
 <div class="line">Input must have data.shape[-1]==3 and last dim of data must have </div>
-<div class="line">the following structure: </div>
+<div class="line">the following structure for inverse mode: </div>
 <div class="line-block">
 <div class="line">* data[…,0] = J or Q,</div>
-<div class="line">* data[…,1:] = (aM,bM) or (aC,bC) or (aS,bS)</div>
+<div class="line">* data[…,1:] = (aM,bM) or (aC,bC) or (aS,bS) or (M,h) or (C, h), …</div>
 </div>
 </div>
 </dd>
@@ -5624,8 +5728,8 @@ Color Res. Appl., vol. 31, no. 4, pp. 320–330, 2006.</a></p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="luxpy.color.cam.camjabz">
-<code class="sig-prename descclassname">luxpy.color.cam.</code><code class="sig-name descname">camjabz</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">xyzw</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">outin</span><span class="o">=</span><span class="default_value">'J,aM,bM'</span></em>, <em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">'1931_2'</span></em>, <em class="sig-param"><span class="n">conditions</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">forward</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">mcat</span><span class="o">=</span><span class="default_value">'cat16'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#luxpy.color.cam.camjabz" title="Permalink to this definition">¶</a></dt>
+<dt id="luxpy.color.cam.zcam">
+<code class="sig-prename descclassname">luxpy.color.cam.</code><code class="sig-name descname">zcam</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">xyzw</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">outin</span><span class="o">=</span><span class="default_value">'J,aM,bM'</span></em>, <em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">'1931_2'</span></em>, <em class="sig-param"><span class="n">conditions</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">forward</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">mcat</span><span class="o">=</span><span class="default_value">'cat02'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#luxpy.color.cam.zcam" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run the Jz,az,bz based color appearance model in forward or backward modes.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -5676,22 +5780,28 @@ Color Res. Appl., vol. 31, no. 4, pp. 320–330, 2006.</a></p>
 <dd class="field-even"><div class="line-block">
 <div class="line">‘J,aM,bM’, optional</div>
 <div class="line">String with requested output (e.g. “J,aM,bM,M,h”) [Forward mode]</div>
-<div class="line">String with inputs in data. </div>
+<div class="line">- attributes: ‘J’: lightness,’Q’: brightness,</div>
+<div class="line-block">
+<div class="line">‘M’: colorfulness,’C’: chroma, ‘s’: saturation,</div>
+<div class="line">‘h’: hue angle, ‘H’: hue quadrature/composition,</div>
+<div class="line">‘Wz’: whiteness, ‘Kz’:blackness, ‘Sz’: saturation, ‘V’: vividness</div>
+</div>
+<div class="line">String with inputs in data [inverse mode]. </div>
 <div class="line">Input must have data.shape[-1]==3 and last dim of data must have </div>
-<div class="line">the following structure: </div>
+<div class="line">the following structure for inverse mode: </div>
 <div class="line-block">
 <div class="line">* data[…,0] = J or Q,</div>
-<div class="line">* data[…,1:] = (aM,bM) or (aC,bC) or (aS,bS)</div>
+<div class="line">* data[…,1:] = (aM,bM) or (aC,bC) or (aS,bS) or (M,h) or (C, h), …</div>
 </div>
 </div>
 </dd>
 <dt class="field-odd">mcat</dt>
 <dd class="field-odd"><div class="line-block">
-<div class="line">‘cat16’, optional</div>
+<div class="line">‘cat02’, optional</div>
 <div class="line">Specifies CAT sensor space.</div>
 <div class="line">- options:</div>
 <div class="line-block">
-<div class="line">- None defaults to ‘cat16’</div>
+<div class="line">- None defaults to ‘cat02’</div>
 <div class="line">- str: see see luxpy.cat._MCATS.keys() for options </div>
 <div class="line-block">
 <div class="line">(details on type, ?luxpy.cat)</div>
@@ -5720,13 +5830,16 @@ Opt. Express, vol. 25, no. 13, pp. 15131–15151, Jun. 2017.</a></p>
 <p>2. <a class="reference external" href="https://doi.org/10.2352/ISSN.2169-2629.2018.26.96">Safdar, M., Hardeberg, J., Cui, G., Kim, Y. J., and Luo, M. R.(2018).
 A Colour Appearance Model based on Jzazbz Colour Space, 
 26th Color and Imaging Conference (2018), Vancouver, Canada, November 12-16, 2018, pp96-101.</a></p>
+<p>3. Safdar, M., Hardeberg, J.Y., Luo, M.R. (2021) 
+“ZCAM, a psychophysical model for colour appearance prediction”, 
+Optics Express.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt id="luxpy.color.cam.xyz_to_jabz">
-<code class="sig-prename descclassname">luxpy.color.cam.</code><code class="sig-name descname">xyz_to_jabz</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xyz</span></em>, <em class="sig-param"><span class="n">ztype</span><span class="o">=</span><span class="default_value">'jabz'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cam/camjabz.html#xyz_to_jabz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cam.xyz_to_jabz" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.color.cam.</code><code class="sig-name descname">xyz_to_jabz</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xyz</span></em>, <em class="sig-param"><span class="n">ztype</span><span class="o">=</span><span class="default_value">'jabz'</span></em>, <em class="sig-param"><span class="n">use_zcam_parameters</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cam/zcam.html#xyz_to_jabz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cam.xyz_to_jabz" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert XYZ tristimulus values to Jz,az,bz color coordinates.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -5740,6 +5853,12 @@ A Colour Appearance Model based on Jzazbz Colour Space,
 <div class="line">‘jabz’, optional</div>
 <div class="line">String with requested return:</div>
 <div class="line">Options: ‘jabz’, ‘iabz’</div>
+</div>
+</dd>
+<dt class="field-odd">use_zcam_parameters</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">False, optional</div>
+<div class="line">ZCAM uses a slightly different values (see notes)</div>
 </div>
 </dd>
 </dl>
@@ -5763,18 +5882,25 @@ A Colour Appearance Model based on Jzazbz Colour Space,
 <div class="line-block">
 <div class="line">(but note that a D65 shows a small offset from (0,0))</div>
 </div>
+<div class="line">3. ZCAM: uses a slightly different value for b (=0.7 instead of 0.66)</div>
+<div class="line-block">
+<div class="line">and calculates Iz as M’ -epsilon (instead L’/2 + M’/2).</div>
+</div>
 </div>
 </dd>
 <dt>Reference:</dt><dd><p>1. <a class="reference external" href="http://www.opticsexpress.org/abstract.cfm?URI=oe-25-13-15131">Safdar, M., Cui, G., Kim,Y. J., and Luo, M. R. (2017).
 Perceptually uniform color space for image signals including high dynamic range and wide gamut.
 Opt. Express, vol. 25, no. 13, pp. 15131–15151, June 2017.</a></p>
+<p>2. Safdar, M., Hardeberg, J.Y., Luo, M.R. (2021) 
+“ZCAM, a psychophysical model for colour appearance prediction”, 
+Optics Express.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt id="luxpy.color.cam.jabz_to_xyz">
-<code class="sig-prename descclassname">luxpy.color.cam.</code><code class="sig-name descname">jabz_to_xyz</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">jabz</span></em>, <em class="sig-param"><span class="n">ztype</span><span class="o">=</span><span class="default_value">'jabz'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cam/camjabz.html#jabz_to_xyz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cam.jabz_to_xyz" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.color.cam.</code><code class="sig-name descname">jabz_to_xyz</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">jabz</span></em>, <em class="sig-param"><span class="n">ztype</span><span class="o">=</span><span class="default_value">'jabz'</span></em>, <em class="sig-param"><span class="n">use_zcam_parameters</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cam/zcam.html#jabz_to_xyz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cam.jabz_to_xyz" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert Jz,az,bz color coordinates to XYZ tristimulus values.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -5788,6 +5914,12 @@ Opt. Express, vol. 25, no. 13, pp. 15131–15151, June 2017.</a></p>
 <div class="line">‘jabz’, optional</div>
 <div class="line">String with requested return:</div>
 <div class="line">Options: ‘jabz’, ‘iabz’</div>
+</div>
+</dd>
+<dt class="field-odd">use_zcam_parameters</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">False, optional</div>
+<div class="line">ZCAM uses a slightly different values (see notes)</div>
 </div>
 </dd>
 </dl>
@@ -5811,48 +5943,55 @@ Opt. Express, vol. 25, no. 13, pp. 15131–15151, June 2017.</a></p>
 <div class="line-block">
 <div class="line">(but note that a D65 shows a small offset from (0,0))</div>
 </div>
+<div class="line">3. ZCAM: uses a slightly different value for b (=0.7 instead of 0.66)</div>
+<div class="line-block">
+<div class="line">and calculates Iz as M’ -epsilon (instead L’/2 + M’/2).</div>
+</div>
 </div>
 </dd>
 <dt>Reference:</dt><dd><p>1. <a class="reference external" href="http://www.opticsexpress.org/abstract.cfm?URI=oe-25-13-15131">Safdar, M., Cui, G., Kim,Y. J., and Luo, M. R. (2017).
 Perceptually uniform color space for image signals including high dynamic range and wide gamut.
 Opt. Express, vol. 25, no. 13, pp. 15131–15151, June, 2017.</a></p>
+<p>2. Safdar, M., Hardeberg, J.Y., Luo, M.R. (2021) 
+“ZCAM, a psychophysical model for colour appearance prediction”, 
+Optics Express.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
-<dt id="luxpy.color.cam.xyz_to_jabM_camjabz">
-<code class="sig-prename descclassname">luxpy.color.cam.</code><code class="sig-name descname">xyz_to_jabM_camjabz</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">xyzw</span><span class="o">=</span><span class="default_value">'_CIE_D65'</span></em>, <em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">'1931_2'</span></em>, <em class="sig-param"><span class="n">conditions</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">mcat</span><span class="o">=</span><span class="default_value">'cat16'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cam/camjabz.html#xyz_to_jabM_camjabz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cam.xyz_to_jabM_camjabz" title="Permalink to this definition">¶</a></dt>
-<dd><p>Wrapper function for camjabz forward mode with J,aM,bM output.</p>
+<dt id="luxpy.color.cam.xyz_to_jabM_zcam">
+<code class="sig-prename descclassname">luxpy.color.cam.</code><code class="sig-name descname">xyz_to_jabM_zcam</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">xyzw</span><span class="o">=</span><span class="default_value">'_CIE_D65'</span></em>, <em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">'1931_2'</span></em>, <em class="sig-param"><span class="n">conditions</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">mcat</span><span class="o">=</span><span class="default_value">'cat02'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cam/zcam.html#xyz_to_jabM_zcam"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cam.xyz_to_jabM_zcam" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper function for zcam forward mode with J,aM,bM output.</p>
 <div class="line-block">
-<div class="line">For help on parameter details: ?luxpy.cam.camjabz </div>
+<div class="line">For help on parameter details: ?luxpy.cam.zcam </div>
 </div>
 </dd></dl>
 
 <dl class="py function">
-<dt id="luxpy.color.cam.jabM_camjabz_to_xyz">
-<code class="sig-prename descclassname">luxpy.color.cam.</code><code class="sig-name descname">jabM_camjabz_to_xyz</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">xyzw</span><span class="o">=</span><span class="default_value">'_CIE_D65'</span></em>, <em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">'1931_2'</span></em>, <em class="sig-param"><span class="n">conditions</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">mcat</span><span class="o">=</span><span class="default_value">'cat16'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cam/camjabz.html#jabM_camjabz_to_xyz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cam.jabM_camjabz_to_xyz" title="Permalink to this definition">¶</a></dt>
-<dd><p>Wrapper function for camjabz inverse mode with J,aM,bM input.</p>
+<dt id="luxpy.color.cam.jabM_zcam_to_xyz">
+<code class="sig-prename descclassname">luxpy.color.cam.</code><code class="sig-name descname">jabM_zcam_to_xyz</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">xyzw</span><span class="o">=</span><span class="default_value">'_CIE_D65'</span></em>, <em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">'1931_2'</span></em>, <em class="sig-param"><span class="n">conditions</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">mcat</span><span class="o">=</span><span class="default_value">'cat02'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cam/zcam.html#jabM_zcam_to_xyz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cam.jabM_zcam_to_xyz" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper function for zcam inverse mode with J,aM,bM input.</p>
 <div class="line-block">
-<div class="line">For help on parameter details: ?luxpy.cam.camjabz </div>
+<div class="line">For help on parameter details: ?luxpy.cam.zcam </div>
 </div>
 </dd></dl>
 
 <dl class="py function">
-<dt id="luxpy.color.cam.xyz_to_jabC_camjabz">
-<code class="sig-prename descclassname">luxpy.color.cam.</code><code class="sig-name descname">xyz_to_jabC_camjabz</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">xyzw</span><span class="o">=</span><span class="default_value">'_CIE_D65'</span></em>, <em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">'1931_2'</span></em>, <em class="sig-param"><span class="n">conditions</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">mcat</span><span class="o">=</span><span class="default_value">'cat16'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cam/camjabz.html#xyz_to_jabC_camjabz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cam.xyz_to_jabC_camjabz" title="Permalink to this definition">¶</a></dt>
-<dd><p>Wrapper function for camjabz forward mode with J,aC,bC output.</p>
+<dt id="luxpy.color.cam.xyz_to_jabC_zcam">
+<code class="sig-prename descclassname">luxpy.color.cam.</code><code class="sig-name descname">xyz_to_jabC_zcam</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">xyzw</span><span class="o">=</span><span class="default_value">'_CIE_D65'</span></em>, <em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">'1931_2'</span></em>, <em class="sig-param"><span class="n">conditions</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">mcat</span><span class="o">=</span><span class="default_value">'cat02'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cam/zcam.html#xyz_to_jabC_zcam"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cam.xyz_to_jabC_zcam" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper function for zcam forward mode with J,aC,bC output.</p>
 <div class="line-block">
-<div class="line">For help on parameter details: ?luxpy.cam.camjabz </div>
+<div class="line">For help on parameter details: ?luxpy.cam.zcam </div>
 </div>
 </dd></dl>
 
 <dl class="py function">
-<dt id="luxpy.color.cam.jabC_camjabz_to_xyz">
-<code class="sig-prename descclassname">luxpy.color.cam.</code><code class="sig-name descname">jabC_camjabz_to_xyz</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">xyzw</span><span class="o">=</span><span class="default_value">'_CIE_D65'</span></em>, <em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">'1931_2'</span></em>, <em class="sig-param"><span class="n">conditions</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">mcat</span><span class="o">=</span><span class="default_value">'cat16'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cam/camjabz.html#jabC_camjabz_to_xyz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cam.jabC_camjabz_to_xyz" title="Permalink to this definition">¶</a></dt>
-<dd><p>Wrapper function for camjabz inverse mode with J,aC,bC input.</p>
+<dt id="luxpy.color.cam.jabC_zcam_to_xyz">
+<code class="sig-prename descclassname">luxpy.color.cam.</code><code class="sig-name descname">jabC_zcam_to_xyz</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">xyzw</span><span class="o">=</span><span class="default_value">'_CIE_D65'</span></em>, <em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">'1931_2'</span></em>, <em class="sig-param"><span class="n">conditions</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">mcat</span><span class="o">=</span><span class="default_value">'cat02'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cam/zcam.html#jabC_zcam_to_xyz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cam.jabC_zcam_to_xyz" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper function for zcam inverse mode with J,aC,bC input.</p>
 <div class="line-block">
-<div class="line">For help on parameter details: ?luxpy.cam.camjabz </div>
+<div class="line">For help on parameter details: ?luxpy.cam.zcam </div>
 </div>
 </dd></dl>
 
@@ -6947,8 +7086,8 @@ is determined using the FMC-1 or FMC-2 equations (see refs. 1 &amp; 2).
 </dd>
 </dl>
 </div></blockquote>
-<div class="section" id="id20">
-<h4>References<a class="headerlink" href="#id20" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="id21">
+<h4>References<a class="headerlink" href="#id21" title="Permalink to this headline">¶</a></h4>
 <blockquote>
 <div><p>1. <a class="reference external" href="https://doi.org/10.1080/15502724.2017.1385400">Smet, K. A. G. (2018). 
 Two Neutral White Illumination Loci Based on Unique White Rating and Degree of Chromatic Adaptation. 
@@ -7152,6 +7291,8 @@ cri_specific_pars [dict])</p>
 <li><p>‘cri2012’,’cri2012-hl17’,’cri2012-hl1000’,’cri2012-real210’,</p></li>
 <li><p>‘mcri’,</p></li>
 <li><p>‘cqs-v7.5’,’cqs-v9.0’</p></li>
+<li><p>‘fci’</p></li>
+<li><p>‘thornton_cpi’</p></li>
 </ul>
 </dd>
 </dl>
@@ -9612,6 +9753,73 @@ Energy Build., vol. 49, no. C, pp. 216–225.</a></p>
 <dt>References:</dt><dd><p>1. <a class="reference external" href="http://spie.org/Publications/Journal/10.1117/1.3360335">W. Davis and Y. Ohno, 
 “Color quality scale,” (2010), 
 Opt. Eng., vol. 49, no. 3, pp. 33602–33616.</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="luxpy.color.cri.spd_to_fci">
+<code class="sig-prename descclassname">luxpy.color.cri.</code><code class="sig-name descname">spd_to_fci</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spd</span></em>, <em class="sig-param"><span class="n">use_cielab</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cri/indices/fci.html#spd_to_fci"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cri.spd_to_fci" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate Feeling of Contrast Index (FCI).</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">spd</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with spectral power distribution(s) of the test light source(s).</div>
+</div>
+</dd>
+<dt class="field-even">use_cielab</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line-block">
+<div class="line">True, optional</div>
+</div>
+<div class="line">True: use original formulation of FCI, which adopts a CIECAT94 </div>
+<div class="line">chromatic adaptation transform followed by a conversion to </div>
+<div class="line">CIELAB coordinates before calculating the gamuts.</div>
+<div class="line">False: use CIECAM02 coordinates and embedded CAT02 transform.</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">fci</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with FCI values.</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>References:</dt><dd><p>1. <a class="reference external" href="http://dx.doi.org/10.1002/col.20338">Hashimoto, K., Yano, T., Shimizu, M., &amp; Nayatani, Y. (2007). 
+New method for specifying color-rendering properties of light sources 
+based on feeling of contrast. 
+Color Research and Application, 32(5), 361–371.</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="luxpy.color.cri.spd_to_thornton_cpi">
+<code class="sig-prename descclassname">luxpy.color.cri.</code><code class="sig-name descname">spd_to_thornton_cpi</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spd</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cri/indices/thorntoncpi.html#spd_to_thornton_cpi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cri.spd_to_thornton_cpi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate Thornton’s Color Preference Index (CPI).</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">spd</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">nd array with spectral power distribution(s) of the test light source(s).</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">cpi</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with CPI values.</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Reference:</dt><dd><p>1. <a class="reference external" href="https://doi.org/10.1080/00994480.1974.10732288">Thornton, W. A. (1974). A Validation of the Color-Preference Index.
+Journal of the Illuminating Engineering Society, 4(1), 48–52.</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -12516,11 +12724,19 @@ ab-coordinates of the reference illuminant.</div>
 
   <div role="contentinfo">
     <p>
+        
         &copy; Copyright 2020, Kevin A.G. Smet
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -12531,7 +12747,6 @@ ab-coordinates of the reference illuminant.</div>
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

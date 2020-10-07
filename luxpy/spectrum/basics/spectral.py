@@ -83,9 +83,10 @@ References
 #--------------------------------------------------------------------------------------------------
 from luxpy import  _CIEOBS, math
 from luxpy.utils import np, pd, sp, plt, _PKG_PATH, _SEP, np2d, getdata
+
 from .cmf import _CMF
 from scipy import signal
-__all__ = ['_WL3','_INTERP_TYPES','_S_INTERP_TYPE', '_R_INTERP_TYPE','_C_INTERP_TYPE',
+__all__ = ['_BB','_WL3','_INTERP_TYPES','_S_INTERP_TYPE', '_R_INTERP_TYPE','_C_INTERP_TYPE',
            'getwlr','getwld','spd_normalize','cie_interp','spd','xyzbar', 'vlbar', 
            'vlbar_cie_mesopic', 'get_cie_mesopic_adaptation',
            'spd_to_xyz', 'spd_to_ler', 'spd_to_power', 'detect_peakwl']
@@ -95,6 +96,10 @@ __all__ = ['_WL3','_INTERP_TYPES','_S_INTERP_TYPE', '_R_INTERP_TYPE','_C_INTERP_
 # set standard SPD wavelength interval interval and spacing
 _WL3 = [360.0,830.0,1.0]
     
+#--------------------------------------------------------------------------------------------------
+# set coefficients for blackbody radiators:
+_BB = {'c1' : 3.74183e-16, 'c2' : 1.4388*0.01,'n': 1.000, 'na': 1.00028, 'c' : 299792458, 'h' : 6.626070040e-34, 'k' : 1.38064852e-23} # blackbody c1,c2 & n standard values
+
 
 #--------------------------------------------------------------------------------------------------
 # Define interpolation types (conform CIE15:20xx): 
@@ -456,9 +461,9 @@ def xyzbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, kind = 'np'):
     References:
         1. `CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018. <https://doi.org/10.25039/TR.015.2018>`_
     """
-    if scr is 'file':
+    if scr == 'file':
         dict_or_file = _PKG_PATH + _SEP + 'data' + _SEP + 'cmfs' + _SEP + 'ciexyz_' + cieobs + '.dat'
-    elif scr is 'dict':
+    elif scr == 'dict':
         dict_or_file = _CMF[cieobs]['bar']
     elif scr == 'cieobs':
         dict_or_file = cieobs #can be file or data itself
@@ -500,10 +505,10 @@ def vlbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, kind = 'np', out = 1):
     References:
         1. `CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018. <https://doi.org/10.25039/TR.015.2018>`_
     """
-    if scr is 'dict':
+    if scr == 'dict':
         dict_or_file = _CMF[cieobs]['bar'][[0,2],:] 
         K = _CMF[cieobs]['K']
-    elif scr is 'vltype':
+    elif scr == 'vltype':
         dict_or_file = cieobs #can be file or data itself
         K = 1
     Vl = spd(data = dict_or_file, wl = wl_new, interpolation = 'linear', kind = kind, columns = ['wl','Vl'])

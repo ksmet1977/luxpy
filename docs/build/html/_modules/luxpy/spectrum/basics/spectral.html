@@ -1,15 +1,18 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>luxpy.spectrum.basics.spectral &mdash; LuxPy 1.6.1 documentation</title>
+  <title>luxpy.spectrum.basics.spectral &mdash; LuxPy 1.6.2 documentation</title>
   
+
+  
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
 
   
   
@@ -17,7 +20,9 @@
   
 
   
-  <script type="text/javascript" src="../../../../_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
@@ -29,10 +34,6 @@
     <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
 </head>
@@ -48,7 +49,7 @@
           
 
           
-            <a href="../../../../index.html" class="icon icon-home"> LuxPy
+            <a href="../../../../index.html" class="icon icon-home" alt="Documentation Home"> LuxPy
           
 
           
@@ -58,7 +59,7 @@
             
             
               <div class="version">
-                1.6.1
+                1.6.2
               </div>
             
           
@@ -75,6 +76,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -93,6 +95,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -131,7 +134,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
         
           <li><a href="../../../index.html">Module code</a> &raquo;</li>
         
@@ -236,9 +239,10 @@
 <span class="c1">#--------------------------------------------------------------------------------------------------</span>
 <span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span>  <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">math</span>
 <span class="kn">from</span> <span class="nn">luxpy.utils</span> <span class="kn">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">pd</span><span class="p">,</span> <span class="n">sp</span><span class="p">,</span> <span class="n">plt</span><span class="p">,</span> <span class="n">_PKG_PATH</span><span class="p">,</span> <span class="n">_SEP</span><span class="p">,</span> <span class="n">np2d</span><span class="p">,</span> <span class="n">getdata</span>
+
 <span class="kn">from</span> <span class="nn">.cmf</span> <span class="kn">import</span> <span class="n">_CMF</span>
 <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">signal</span>
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;_WL3&#39;</span><span class="p">,</span><span class="s1">&#39;_INTERP_TYPES&#39;</span><span class="p">,</span><span class="s1">&#39;_S_INTERP_TYPE&#39;</span><span class="p">,</span> <span class="s1">&#39;_R_INTERP_TYPE&#39;</span><span class="p">,</span><span class="s1">&#39;_C_INTERP_TYPE&#39;</span><span class="p">,</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;_BB&#39;</span><span class="p">,</span><span class="s1">&#39;_WL3&#39;</span><span class="p">,</span><span class="s1">&#39;_INTERP_TYPES&#39;</span><span class="p">,</span><span class="s1">&#39;_S_INTERP_TYPE&#39;</span><span class="p">,</span> <span class="s1">&#39;_R_INTERP_TYPE&#39;</span><span class="p">,</span><span class="s1">&#39;_C_INTERP_TYPE&#39;</span><span class="p">,</span>
            <span class="s1">&#39;getwlr&#39;</span><span class="p">,</span><span class="s1">&#39;getwld&#39;</span><span class="p">,</span><span class="s1">&#39;spd_normalize&#39;</span><span class="p">,</span><span class="s1">&#39;cie_interp&#39;</span><span class="p">,</span><span class="s1">&#39;spd&#39;</span><span class="p">,</span><span class="s1">&#39;xyzbar&#39;</span><span class="p">,</span> <span class="s1">&#39;vlbar&#39;</span><span class="p">,</span> 
            <span class="s1">&#39;vlbar_cie_mesopic&#39;</span><span class="p">,</span> <span class="s1">&#39;get_cie_mesopic_adaptation&#39;</span><span class="p">,</span>
            <span class="s1">&#39;spd_to_xyz&#39;</span><span class="p">,</span> <span class="s1">&#39;spd_to_ler&#39;</span><span class="p">,</span> <span class="s1">&#39;spd_to_power&#39;</span><span class="p">,</span> <span class="s1">&#39;detect_peakwl&#39;</span><span class="p">]</span>
@@ -248,6 +252,10 @@
 <span class="c1"># set standard SPD wavelength interval interval and spacing</span>
 <span class="n">_WL3</span> <span class="o">=</span> <span class="p">[</span><span class="mf">360.0</span><span class="p">,</span><span class="mf">830.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">]</span>
     
+<span class="c1">#--------------------------------------------------------------------------------------------------</span>
+<span class="c1"># set coefficients for blackbody radiators:</span>
+<span class="n">_BB</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;c1&#39;</span> <span class="p">:</span> <span class="mf">3.74183e-16</span><span class="p">,</span> <span class="s1">&#39;c2&#39;</span> <span class="p">:</span> <span class="mf">1.4388</span><span class="o">*</span><span class="mf">0.01</span><span class="p">,</span><span class="s1">&#39;n&#39;</span><span class="p">:</span> <span class="mf">1.000</span><span class="p">,</span> <span class="s1">&#39;na&#39;</span><span class="p">:</span> <span class="mf">1.00028</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span> <span class="p">:</span> <span class="mi">299792458</span><span class="p">,</span> <span class="s1">&#39;h&#39;</span> <span class="p">:</span> <span class="mf">6.626070040e-34</span><span class="p">,</span> <span class="s1">&#39;k&#39;</span> <span class="p">:</span> <span class="mf">1.38064852e-23</span><span class="p">}</span> <span class="c1"># blackbody c1,c2 &amp; n standard values</span>
+
 
 <span class="c1">#--------------------------------------------------------------------------------------------------</span>
 <span class="c1"># Define interpolation types (conform CIE15:20xx): </span>
@@ -609,9 +617,9 @@
 <span class="sd">    References:</span>
 <span class="sd">        1. `CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018. &lt;https://doi.org/10.25039/TR.015.2018&gt;`_</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">scr</span> <span class="ow">is</span> <span class="s1">&#39;file&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">scr</span> <span class="o">==</span> <span class="s1">&#39;file&#39;</span><span class="p">:</span>
         <span class="n">dict_or_file</span> <span class="o">=</span> <span class="n">_PKG_PATH</span> <span class="o">+</span> <span class="n">_SEP</span> <span class="o">+</span> <span class="s1">&#39;data&#39;</span> <span class="o">+</span> <span class="n">_SEP</span> <span class="o">+</span> <span class="s1">&#39;cmfs&#39;</span> <span class="o">+</span> <span class="n">_SEP</span> <span class="o">+</span> <span class="s1">&#39;ciexyz_&#39;</span> <span class="o">+</span> <span class="n">cieobs</span> <span class="o">+</span> <span class="s1">&#39;.dat&#39;</span>
-    <span class="k">elif</span> <span class="n">scr</span> <span class="ow">is</span> <span class="s1">&#39;dict&#39;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">scr</span> <span class="o">==</span> <span class="s1">&#39;dict&#39;</span><span class="p">:</span>
         <span class="n">dict_or_file</span> <span class="o">=</span> <span class="n">_CMF</span><span class="p">[</span><span class="n">cieobs</span><span class="p">][</span><span class="s1">&#39;bar&#39;</span><span class="p">]</span>
     <span class="k">elif</span> <span class="n">scr</span> <span class="o">==</span> <span class="s1">&#39;cieobs&#39;</span><span class="p">:</span>
         <span class="n">dict_or_file</span> <span class="o">=</span> <span class="n">cieobs</span> <span class="c1">#can be file or data itself</span>
@@ -653,10 +661,10 @@
 <span class="sd">    References:</span>
 <span class="sd">        1. `CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018. &lt;https://doi.org/10.25039/TR.015.2018&gt;`_</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">scr</span> <span class="ow">is</span> <span class="s1">&#39;dict&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">scr</span> <span class="o">==</span> <span class="s1">&#39;dict&#39;</span><span class="p">:</span>
         <span class="n">dict_or_file</span> <span class="o">=</span> <span class="n">_CMF</span><span class="p">[</span><span class="n">cieobs</span><span class="p">][</span><span class="s1">&#39;bar&#39;</span><span class="p">][[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">],:]</span> 
         <span class="n">K</span> <span class="o">=</span> <span class="n">_CMF</span><span class="p">[</span><span class="n">cieobs</span><span class="p">][</span><span class="s1">&#39;K&#39;</span><span class="p">]</span>
-    <span class="k">elif</span> <span class="n">scr</span> <span class="ow">is</span> <span class="s1">&#39;vltype&#39;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">scr</span> <span class="o">==</span> <span class="s1">&#39;vltype&#39;</span><span class="p">:</span>
         <span class="n">dict_or_file</span> <span class="o">=</span> <span class="n">cieobs</span> <span class="c1">#can be file or data itself</span>
         <span class="n">K</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">Vl</span> <span class="o">=</span> <span class="n">spd</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="n">dict_or_file</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="n">wl_new</span><span class="p">,</span> <span class="n">interpolation</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="n">kind</span><span class="p">,</span> <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;wl&#39;</span><span class="p">,</span><span class="s1">&#39;Vl&#39;</span><span class="p">])</span>
@@ -1061,11 +1069,19 @@
 
   <div role="contentinfo">
     <p>
+        
         &copy; Copyright 2020, Kevin A.G. Smet
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -1076,7 +1092,6 @@
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

@@ -370,7 +370,7 @@ def generate_vector_field(poly_model, pmodel, \
     axt,bxt,Cxt,hxt,axr,bxr,Cxr,hxr = apply_poly_model_at_x(poly_model, pmodel,axr,bxr)
     
     # Plot vectorfield:
-    if color is not 0: 
+    if color is not False: 
         #plt.plot(axr, bxr,'ro',markersize=2)
         plt.quiver(axr, bxr, axt-axr, bxt-bxr, headlength=1,color = color)
         plt.xlabel("a'")
@@ -539,8 +539,8 @@ def VF_colorshift_model(S, cri_type = _VF_CRI_DEFAULT, model_type = _VF_MODEL_TY
         Rf_deshifted_rms = scale_fcn(rms(DEim),scale_factor)
     
         # Generate vector field:
-        vfaxt,vfbxt,vfaxr,vfbxr = generate_vector_field(poly_model, pmodel,axr = np.arange(-_VF_MAXR,_VF_MAXR+_VF_DELTAR,_VF_DELTAR), bxr = np.arange(-_VF_MAXR,_VF_MAXR+_VF_DELTAR,_VF_DELTAR), limit_grid_radius = _VF_MAXR,color = 0)
-        vfaxt,vfbxt,vfaxr,vfbxr = generate_vector_field(poly_model, pmodel,axr = np.arange(-_VF_MAXR,_VF_MAXR+_VF_DELTAR,_VF_DELTAR), bxr = np.arange(-_VF_MAXR,_VF_MAXR+_VF_DELTAR,_VF_DELTAR), limit_grid_radius = _VF_MAXR,color = 0)
+        vfaxt,vfbxt,vfaxr,vfbxr = generate_vector_field(poly_model, pmodel,axr = np.arange(-_VF_MAXR,_VF_MAXR+_VF_DELTAR,_VF_DELTAR), bxr = np.arange(-_VF_MAXR,_VF_MAXR+_VF_DELTAR,_VF_DELTAR), limit_grid_radius = _VF_MAXR,color = False)
+        vfaxt,vfbxt,vfaxr,vfbxr = generate_vector_field(poly_model, pmodel,axr = np.arange(-_VF_MAXR,_VF_MAXR+_VF_DELTAR,_VF_DELTAR), bxr = np.arange(-_VF_MAXR,_VF_MAXR+_VF_DELTAR,_VF_DELTAR), limit_grid_radius = _VF_MAXR,color = False)
 
         # Calculate ab-shift vectors of samples and VF model predictions:
         vshift_ab_s = calculate_shiftvectors(Jabt_i, Jabr_i, average = False, vtype = 'ab')[:,0,0:3]
@@ -553,7 +553,7 @@ def VF_colorshift_model(S, cri_type = _VF_CRI_DEFAULT, model_type = _VF_MODEL_TY
 
         # Generate circle field:
         x,y = plotcircle(radii = np.arange(0,_VF_MAXR+_VF_DELTAR,10), angles = np.arange(0,359,1), out = 'x,y')
-        cfaxt,cfbxt,cfaxr,cfbxr = generate_vector_field(poly_model, pmodel,make_grid = False,axr = x[:,None], bxr = y[:,None], limit_grid_radius = _VF_MAXR,color = 0)
+        cfaxt,cfbxt,cfaxr,cfbxr = generate_vector_field(poly_model, pmodel,make_grid = False,axr = x[:,None], bxr = y[:,None], limit_grid_radius = _VF_MAXR,color = False)
 
         out[i] = {'Source' : {'S' : S, 'cct' : cct[i] , 'duv': duv[i]},
                'metrics' : {'Rf':Rf[:,i], 'Rt': Rf_deshifted, 'Rt_rms' : Rf_deshifted_rms, 'Rfi':Rfi[:,i], 'Rti': Rfi_deshifted, 'cri_type' : cri_type_str},

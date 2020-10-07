@@ -1,15 +1,18 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Math sub-package &mdash; LuxPy 1.6.1 documentation</title>
+  <title>Math sub-package &mdash; LuxPy 1.6.2 documentation</title>
   
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
 
   
   
@@ -17,7 +20,9 @@
   
 
   
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -29,10 +34,6 @@
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Spectrum sub-package" href="spectrum.html" />
@@ -50,7 +51,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> LuxPy
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> LuxPy
           
 
           
@@ -60,7 +61,7 @@
             
             
               <div class="version">
-                1.6.1
+                1.6.2
               </div>
             
           
@@ -77,6 +78,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -110,6 +112,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -148,7 +151,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html">Docs</a> &raquo;</li>
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
           <li><a href="luxpy_structure.html">Luxpy package structure</a> &raquo;</li>
         
@@ -346,63 +349,6 @@ as a dict.</p>
 </dl>
 </div></blockquote>
 <hr class="docutils" />
-<dl class="py function">
-<dt id="luxpy.math.minimizebnd">
-<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">minimizebnd</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fun</span></em>, <em class="sig-param"><span class="n">x0</span></em>, <em class="sig-param"><span class="n">args</span><span class="o">=</span><span class="default_value">()</span></em>, <em class="sig-param"><span class="n">method</span><span class="o">=</span><span class="default_value">'Nelder-Mead'</span></em>, <em class="sig-param"><span class="n">use_bnd</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">bounds</span><span class="o">=</span><span class="default_value">None, None</span></em>, <em class="sig-param"><span class="n">options</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">x0_vsize</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">x0_keys</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/minimizebnd.html#minimizebnd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.minimizebnd" title="Permalink to this definition">¶</a></dt>
-<dd><div class="line-block">
-<div class="line">Minimization function that allows for bounds on any type of method in </div>
-<div class="line">SciPy’s minimize function by transforming the parameters values </div>
-<div class="line">(see Matlab’s fminsearchbnd). </div>
-<div class="line">Starting values, and lower and upper bounds can also be provided as a dict.</div>
-</div>
-<dl>
-<dt>Args:</dt><dd><dl class="field-list">
-<dt class="field-odd">x0</dt>
-<dd class="field-odd"><div class="line-block">
-<div class="line">parameter starting values</div>
-<div class="line">If x0_keys is None then :x0: is vector else, :x0: is dict and</div>
-<div class="line">x0_size should be provided with length/size of values for each of </div>
-<div class="line-block">
-<div class="line">the keys in :x0: to convert it to a vector.                </div>
-</div>
-</div>
-</dd>
-<dt class="field-even">use_bnd</dt>
-<dd class="field-even"><div class="line-block">
-<div class="line">True, optional</div>
-<div class="line">False: omits bounds and defaults to regular minimize function.</div>
-</div>
-</dd>
-<dt class="field-odd">bounds</dt>
-<dd class="field-odd"><div class="line-block">
-<div class="line">(lower, upper), optional</div>
-<div class="line">Tuple of lists or dicts (x0_keys is None) of lower and upper bounds </div>
-<div class="line">for each of the parameters values.</div>
-</div>
-</dd>
-<dt class="field-even">kwargs</dt>
-<dd class="field-even"><div class="line-block">
-<div class="line">allows input for other type of arguments (e.g. in OutputFcn)</div>
-</div>
-</dd>
-</dl>
-</dd>
-<dt>Note:</dt><dd><p>For other input arguments, see ?scipy.optimize.minimize()</p>
-</dd>
-<dt>Returns:</dt><dd><dl class="field-list">
-<dt class="field-odd">res</dt>
-<dd class="field-odd"><div class="line-block">
-<div class="line">dict with minimize() output. </div>
-<div class="line">Additionally, function value, fval, of solution is also in :res:,</div>
-<div class="line">as well as a vector or dict (if x0 was dict) </div>
-<div class="line">with final solutions (res[‘x’])</div>
-</div>
-</dd>
-</dl>
-</dd>
-</dl>
-</dd></dl>
-
 <dl class="py function">
 <dt id="luxpy.math.normalize_3x3_matrix">
 <code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">normalize_3x3_matrix</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">M</span></em>, <em class="sig-param"><span class="n">xyz0</span><span class="o">=</span><span class="default_value">array([[1.0, 1.0, 1.0]])</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#normalize_3x3_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.normalize_3x3_matrix" title="Permalink to this definition">¶</a></dt>
@@ -646,42 +592,6 @@ MATLAB code.
 </ol>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="luxpy.math.erfinv">
-<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">erfinv</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">y</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scipy/special/_basic.html#erfinv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.erfinv" title="Permalink to this definition">¶</a></dt>
-<dd><p>Inverse of the error function erf.</p>
-<p>Computes the inverse of the error function.</p>
-<p>In complex domain, there is no unique complex number w satisfying erf(w)=z.
-This indicates a true inverse function would have multi-value. When the domain restricts to the real, -1 &lt; x &lt; 1,
-there is a unique real number satisfying erf(erfinv(x)) = x.</p>
-<dl class="simple">
-<dt>y<span class="classifier">ndarray</span></dt><dd><p>Argument at which to evaluate. Domain: [-1, 1]</p>
-</dd>
-</dl>
-<dl class="simple">
-<dt>erfinv<span class="classifier">ndarray</span></dt><dd><p>The inverse of erf of y, element-wise</p>
-</dd>
-</dl>
-<ol class="arabic simple">
-<li><p>evaluating a float number</p></li>
-</ol>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">special</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">special</span><span class="o">.</span><span class="n">erfinv</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
-<span class="go">0.4769362762044698</span>
-</pre></div>
-</div>
-<ol class="arabic simple" start="2">
-<li><p>evaluating a ndarray</p></li>
-</ol>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">special</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">special</span><span class="o">.</span><span class="n">erfinv</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
-<span class="go">array([       -inf, -0.86312307, -0.5407314 , -0.30457019, -0.0987901 ,</span>
-<span class="go">        0.0987901 ,  0.30457019,  0.5407314 ,  0.86312307,         inf])</span>
-</pre></div>
-</div>
 </dd></dl>
 
 <dl class="py function">
@@ -1673,6 +1583,63 @@ pp 253–257, Vienna, 1996.</p>
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt id="luxpy.math.minimizebnd">
+<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">minimizebnd</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fun</span></em>, <em class="sig-param"><span class="n">x0</span></em>, <em class="sig-param"><span class="n">args</span><span class="o">=</span><span class="default_value">()</span></em>, <em class="sig-param"><span class="n">method</span><span class="o">=</span><span class="default_value">'Nelder-Mead'</span></em>, <em class="sig-param"><span class="n">use_bnd</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">bounds</span><span class="o">=</span><span class="default_value">None, None</span></em>, <em class="sig-param"><span class="n">options</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">x0_vsize</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">x0_keys</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/minimizebnd.html#minimizebnd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.minimizebnd" title="Permalink to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Minimization function that allows for bounds on any type of method in </div>
+<div class="line">SciPy’s minimize function by transforming the parameters values </div>
+<div class="line">(see Matlab’s fminsearchbnd). </div>
+<div class="line">Starting values, and lower and upper bounds can also be provided as a dict.</div>
+</div>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">x0</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">parameter starting values</div>
+<div class="line">If x0_keys is None then :x0: is vector else, :x0: is dict and</div>
+<div class="line">x0_size should be provided with length/size of values for each of </div>
+<div class="line-block">
+<div class="line">the keys in :x0: to convert it to a vector.                </div>
+</div>
+</div>
+</dd>
+<dt class="field-even">use_bnd</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">True, optional</div>
+<div class="line">False: omits bounds and defaults to regular minimize function.</div>
+</div>
+</dd>
+<dt class="field-odd">bounds</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">(lower, upper), optional</div>
+<div class="line">Tuple of lists or dicts (x0_keys is None) of lower and upper bounds </div>
+<div class="line">for each of the parameters values.</div>
+</div>
+</dd>
+<dt class="field-even">kwargs</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">allows input for other type of arguments (e.g. in OutputFcn)</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Note:</dt><dd><p>For other input arguments, see ?scipy.optimize.minimize()</p>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">res</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">dict with minimize() output. </div>
+<div class="line">Additionally, function value, fval, of solution is also in :res:,</div>
+<div class="line">as well as a vector or dict (if x0 was dict) </div>
+<div class="line">with final solutions (res[‘x’])</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
 </div>
 </div>
 <div class="section" id="vec3">
@@ -1730,11 +1697,19 @@ pp 253–257, Vienna, 1996.</p>
 
   <div role="contentinfo">
     <p>
+        
         &copy; Copyright 2020, Kevin A.G. Smet
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -1745,7 +1720,6 @@ pp 253–257, Vienna, 1996.</p>
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {
