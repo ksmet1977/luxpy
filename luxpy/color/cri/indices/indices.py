@@ -65,17 +65,15 @@ utils/DE_scalers.py
 utils/helpers.py
 ----------------
 
- :gamut_slicer(): Slices the gamut in nhbins slices and provides normalization 
-                  of test gamut to reference gamut.
+ :_get_hue_bin_data(): Slice gamut spanned by the sample jabt, jabr and calculate hue-bin data.
 
- :jab_to_rg(): Calculates gamut area index, Rg.
+ :_hue_bin_data_to_rxhj(): Calculate hue bin measures: Rcshj, Rhshj, Rfhj, DEhj
+     
+ :_hue_bin_data_to_rfi(): Get sample color differences DEi and calculate color fidelity values Rfi.
 
- :jab_to_rhi(): | Calculate hue bin measures: 
-                |   Rfhi (local (hue bin) color fidelity)
-                |   Rcshi (local chroma shift) 
-                |   Rhshi (local hue shift)
+ :_hue_bin_data_to_rg():  Calculates gamut area index, Rg.
 
- :spd_to_jab_t_r(): Calculates jab color values for a sample set illuminated 
+ :spd_to_jab_t_r(): Calculates jab color values for a sample set illuminated
                     with test source and its reference illuminant.
 
  :spd_to_rg(): Calculates the color gamut index of spectral data 
@@ -93,6 +91,7 @@ utils/helpers.py
  :spd_to_cri(): Calculates the color rendering fidelity index 
                 (CIE Ra, CIE Rf, IES Rf, CRI2012 Rf) of spectral data. 
                 Can also output Rg, Rfhi, Rcshi, Rhshi, cct, duv, ...
+
 
             
 indices/ciewrappers.py & ieswrappers.py
