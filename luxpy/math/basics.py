@@ -95,6 +95,8 @@ Module with useful basic math functions
  
  :pitman_morgan(): Pitman-Morgan Test for the difference between correlated variances with paired samples.
      
+ :stress(): Calculate STandardize-Residual-Sum-of-Squares (STRESS)
+ 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 ===============================================================================
 """
@@ -109,7 +111,7 @@ __all__ += ['bvgpdf','mahalanobis2','dot23', 'rms','geomean','polyarea']
 __all__ += ['magnitude_v','angle_v1v2']
 __all__ += ['v_to_cik', 'cik_to_v', 'fmod', 'remove_outliers','fit_ellipse','fit_cov_ellipse']
 __all__ += ['in_hull','interp1', 'ndinterp1','ndinterp1_scipy']
-__all__ += ['box_m','pitman_morgan']
+__all__ += ['box_m','pitman_morgan', 'stress']
 
 
 #------------------------------------------------------------------------------
@@ -1302,3 +1304,31 @@ def pitman_morgan(X,Y, verbosity = 0):
         print('tval = {:1.4f}, df = {:1.1f}, p = {:1.4f}'.format(tval,df, p))
 
     return tval, p, df, ratio
+
+def stress(DE,DV, axis = 0, max_scale = 100):
+    """
+    Calculate STandardize-Residual-Sum-of-Squares (STRESS).
+    
+    Args:
+        :DE, DV: 
+            | ndarrays of data to be compared.
+        :axis:
+            | 0, optional
+            | axis with samples
+        :max_scale:
+            | 100, optional
+            | Maximum of scale.
+            
+    Returns:
+        :stress:
+            | nadarray with stress value(s).
+    
+    Reference:
+        1. `Melgosa, M., García, P. A., Gómez-Robledo, L., Shamey, R., Hinks, D., Cui, G., & Luo, M. R. (2011). 
+        Notes on the application of the standardized residual sum of squares index 
+        for the assessment of intra- and inter-observer variability in color-difference experiments. 
+        Journal of the Optical Society of America A, 28(5), 949–953. 
+        <https://doi.org/10.1364/JOSAA.28.000949>`_
+    """
+    F = (DE**2).sum(axis = axis, keepdims = True)/(DE*DV).sum(axis = axis, keepdims = True)
+    return max_scale*(((DE - F*DV)**2).sum(axis = axis, keepdims = True)/(F**2*DV**2).sum(axis = axis, keepdims = True))**0.5
