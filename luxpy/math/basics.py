@@ -97,6 +97,8 @@ Module with useful basic math functions
      
  :stress(): Calculate STandardize-Residual-Sum-of-Squares (STRESS)
  
+ :stress_F_test(): Perform F-test on significance of difference between STRESS A and STRESS B.
+ 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 ===============================================================================
 """
@@ -111,7 +113,7 @@ __all__ += ['bvgpdf','mahalanobis2','dot23', 'rms','geomean','polyarea']
 __all__ += ['magnitude_v','angle_v1v2']
 __all__ += ['v_to_cik', 'cik_to_v', 'fmod', 'remove_outliers','fit_ellipse','fit_cov_ellipse']
 __all__ += ['in_hull','interp1', 'ndinterp1','ndinterp1_scipy']
-__all__ += ['box_m','pitman_morgan', 'stress']
+__all__ += ['box_m','pitman_morgan', 'stress','stress_F_test']
 
 
 #------------------------------------------------------------------------------
@@ -1332,3 +1334,50 @@ def stress(DE,DV, axis = 0, max_scale = 100):
     """
     F = (DE**2).sum(axis = axis, keepdims = True)/(DE*DV).sum(axis = axis, keepdims = True)
     return max_scale*(((DE - F*DV)**2).sum(axis = axis, keepdims = True)/(F**2*DV**2).sum(axis = axis, keepdims = True))**0.5
+
+def stress_F_test(stressA, stressB, N, alpha = 0.05):
+    """ 
+    Perform F-test on significance of difference between STRESS A and STRESS B.
+    
+    Args:
+        :stressA, stressB:
+            | ndarray with stress(es) values for A and B
+        :N:
+            | int or ndarray with number of samples used to determine stress values.
+        :alpha:
+            | 0.05, optional
+            | significance level
+            
+    Returns:
+        :Fstats:
+            | Dictionary with keys:
+            | - 'p': p-values
+            | - 'F':  F-values
+            | - 'Fc': critcal values
+            | - 'H': string reporting on significance of A compared to B.
+    """
+    N = N*np.ones(stressA.shape[0])
+    Fvs = np.nan*np.ones_like(stressA)
+    ps = Fvs.copy()
+    Fcs = Fvs.copy()
+    H = []
+    i = 0
+    for stA, stB in zip(stressA,stressB):
+        Ni = N[i]
+        Fvs[i] = stA**2/stB**2
+        ps[i] = stats.f.sf(Fvs[i], Ni-1, Ni-1)
+        Fcs[i] = stats.f.ppf(q = alpha/2, dfn = Ni - 1, dfd = Ni-1)
+        if Fvs[i] < Fcs[i]:
+            H_ = "A significantly better than B"
+        elif Fvs[i] > 1/Fcs[i]:
+            H_ = "A significantly poorer than B"
+        elif (Fcs[i] <= Fvs[i]) & (Fvs[i] < 1):
+            H_ = "A insignificantly better than B"
+        elif (1 < Fvs[i]) & (Fvs[i] <= 1/Fcs[i]):
+            H_ = "A insignificanty poorer than B"
+        elif (Fvs[i] == 1):
+            H_ = "A equals B"
+        H.append(H_)
+        i+=1
+    Fstats = {'p': ps, 'F': Fvs, 'Fc': Fcs, 'H': H}
+    return Fstats
