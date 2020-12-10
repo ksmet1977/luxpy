@@ -2002,20 +2002,29 @@ def genMonteCarloObs(n_obs = 1, fieldsize = 10, list_Age = [32], wl = None,
         raise Exception("Must request either 'lms' or 'xyz' in :out:.")
         
     LMS_All = np.zeros((3+1, wl.shape[0],n_obs)); LMS_All.fill(np.nan)
-    
+    if 'M' in out.split(','):
+        out_ = out_+',M'
+        M_All = np.zeros((3, 3,n_obs)); M_All.fill(np.nan)
     for k in range(n_obs):
-        t_LMS, t_trans_lens, t_trans_macula, t_sens_photopig = cie2006cmfsEx(age = var_age[k], fieldsize = fieldsize, wl = wl,\
-                                                                          var_od_lens = vAll['od_lens'][k], var_od_macula = vAll['od_macula'][k], \
-                                                                          var_od_L = vAll['od_L'][k], var_od_M = vAll['od_M'][k], var_od_S = vAll['od_S'][k],\
-                                                                          var_shft_L = vAll['shft_L'][k], var_shft_M = vAll['shft_M'][k], var_shft_S = vAll['shft_S'][k],\
-                                                                          out = out_+',trans_lens,trans_macula,sens_photopig',
-                                                                          norm_type = norm_type,  base = base, \
-                                                                          strategy_2 = strategy_2, odata0 = odata,\
-                                                                          lms_to_xyz_method = lms_to_xyz_method, allow_negative_values = allow_negative_values)
+        returned = cie2006cmfsEx(age = var_age[k], fieldsize = fieldsize, wl = wl,\
+                                var_od_lens = vAll['od_lens'][k], var_od_macula = vAll['od_macula'][k], \
+                                var_od_L = vAll['od_L'][k], var_od_M = vAll['od_M'][k], var_od_S = vAll['od_S'][k],\
+                                var_shft_L = vAll['shft_L'][k], var_shft_M = vAll['shft_M'][k], var_shft_S = vAll['shft_S'][k],\
+                                out = out_+',trans_lens,trans_macula,sens_photopig',
+                                norm_type = norm_type,  base = base, \
+                                strategy_2 = strategy_2, odata0 = odata,\
+                                lms_to_xyz_method = lms_to_xyz_method, allow_negative_values = allow_negative_values)
+        if 'M' not in out.split(','):
+            t_LMS, t_trans_lens, t_trans_macula, t_sens_photopig = returned
+        else:
+            t_LMS, t_M, t_trans_lens, t_trans_macula, t_sens_photopig = returned
+            M_All[:,:,k] = t_M
         LMS_All[:,:,k] = t_LMS
         
     if n_obs == 1:
         LMS_All = np.squeeze(LMS_All, axis = 2)
+        if 'M' in out.split(','): 
+            M_All = np.squeeze(M_All, axis = 2)
     
     if ('xyz' in out.lower().split(',')):
         out = out.replace('xyz','LMS').replace('XYZ','LMS')
@@ -2024,8 +2033,12 @@ def genMonteCarloObs(n_obs = 1, fieldsize = 10, list_Age = [32], wl = None,
 
     if (out == 'LMS'):
         return LMS_All
+    elif (out == 'LMS,M'):
+        return LMS_All,M_All
     elif (out == 'LMS,var_age,vAll'):
         return LMS_All, var_age, vAll 
+    elif (out == 'LMS,M,var_age,vAll'):
+        return LMS_All, M_All, var_age, vAll 
     else:
         return eval(out)
 
@@ -2133,8 +2146,11 @@ def getCatObs(n_cat = 10, fieldsize = 2,  wl = None,
         raise Exception("Must request either 'lms' or 'xyz' in :out:.")
 
     LMS_All = np.zeros((3+1,wl.shape[0],n_cat)); LMS_All.fill(np.nan)
+    if 'M' in out.split(','):
+        out_ = out_+',M'
+        M_All = np.zeros((3, 3,n_cat)); M_All.fill(np.nan)
     for k in range(n_cat):
-        t_LMS = cie2006cmfsEx(age = var_age[k],fieldsize = fieldsize, wl = wl,\
+        returned = cie2006cmfsEx(age = var_age[k],fieldsize = fieldsize, wl = wl,\
                               var_od_lens = vAll['od_lens'][k],\
                               var_od_macula = vAll['od_macula'][k],\
                               var_od_L = vAll['od_L'][k],\
@@ -2148,7 +2164,10 @@ def getCatObs(n_cat = 10, fieldsize = 2,  wl = None,
                               strategy_2 = strategy_2, odata0 = odata,\
                               lms_to_xyz_method = lms_to_xyz_method, \
                               allow_negative_values = allow_negative_values)
-        
+        if 'M' in out.split(','):
+            t_LMS, t_M = returned
+        else:
+            t_LMS = returned
         LMS_All[:,:,k] = t_LMS 
     
     LMS_All[np.where(LMS_All < 0)] = 0
@@ -2163,11 +2182,14 @@ def getCatObs(n_cat = 10, fieldsize = 2,  wl = None,
         
     if (out == 'LMS'):
         return LMS_All
+    elif (out == 'LMS,M'):
+        return LMS_All,M_All
     elif (out == 'LMS,var_age,vAll'):
         return LMS_All,var_age,vAll 
+    elif (out == 'LMS,M,var_age,vAll'):
+        return LMS_All,M_All,var_age,vAll 
     else:
         return eval(out)
-
 def get_lms_to_xyz_matrix(fieldsize = 10):
     """
     Get the lms to xyz conversion matrix for specific fieldsize using Asano's method 
@@ -2192,7 +2214,7 @@ def get_lms_to_xyz_matrix(fieldsize = 10):
     elif fieldsize > 10:
         fieldsize = 10 
     a = (10-fieldsize)/8     
-    M = _DATA['M']['2d']*(1 - a) + a*_DATA['M']['10d']
+    M = _DATA['M']['2d']*a + _DATA['M']['10d']*(1-a)
     return M
 
 def lmsb_to_xyzb(lms, fieldsize = 10, out = 'xyz', allow_negative_values = False):
