@@ -198,6 +198,42 @@ def butterworth_spd(peakwl = 530, fwhm = 20, bw_order = 1, wl = _WL3, with_wl = 
     return spd
 
 #------------------------------------------------------------------------------
+def butterworth_spd(peakwl = 530, fwhm = 20, bw_order = 1, wl = _WL3, with_wl = True):
+    """
+    Generate Butterworth based spectrum.
+    
+    Args:
+        :peakw: 
+            | int or float or list or ndarray, optional
+            | Peak wavelength
+        :fwhm:
+            | int or float or list or ndarray, optional
+            | Full-Width-Half-Maximum of butterworth.
+        :bw_order: 
+            | 1, optional
+            | Order of the butterworth function.
+        :wl:
+            | _WL3, optional 
+            | Wavelength range.
+        :with_wl:
+            | True, optional
+            | True outputs a ndarray with first row wavelengths.
+    
+    Returns:
+        :returns:
+            | ndarray with spectra.    
+            
+    Note:
+        | Butterworth :
+        |    bw = 1 / (1 + ((2*(wl - peakwl)/fwhm)**2))
+    """
+    wl = np.atleast_2d(getwlr(wl)) # create wavelength range
+    spd = (1 / (1 + np.abs(2*(wl.T-np.atleast_2d(peakwl))/np.atleast_2d(fwhm))**(2*np.atleast_2d(bw_order)))).T
+    if with_wl == True:
+        spd = np.vstack((wl, spd))
+    return spd
+
+#------------------------------------------------------------------------------
 def roundedtriangle_spd(peakwl = 530, fwhm = 100, rounding = 0.5, wl = _WL3, with_wl = True,
                         min_ = 0.0, max_ = 1.0,
                         fw = 100, rw = 100):
@@ -245,16 +281,20 @@ def roundedtriangle_spd(peakwl = 530, fwhm = 100, rounding = 0.5, wl = _WL3, wit
         fw = np.abs(np.atleast_2d(fw))
         rw = np.abs(np.atleast_2d(rw))
     else:
-        width = fwhm/(rounding/4 + 1)
+        width = np.abs(np.atleast_2d(fwhm))/(rounding/4 + 1)
         fw = width
         rw = width
-    
+
     wl = np.atleast_2d(getwlr(wl))
     wlp = (wl-peakwl.T)
     
-    x = wlp/rw
+    # expand for slicing later on:
+    fw = np.repeat(fw.T,wlp.shape[-1],axis=-1)
+    rounding = np.repeat(rounding.T,wlp.shape[-1],axis=-1)
+    
+    x = (wlp/rw.T)
     c = np.where(wlp<0)
-    x[c] = wlp[c]/fw 
+    x[c] = wlp[c]/fw[c] 
     
     # setup various conditions:
     c0 = np.abs(x) >= rounding/2
@@ -267,7 +307,7 @@ def roundedtriangle_spd(peakwl = 530, fwhm = 100, rounding = 0.5, wl = _WL3, wit
     rounding[rounding == 0.0] = 1e-308 # avoid division by zero
     Rraw = 1 - rounding/4 - 1/rounding*x**2
     Rraw[c1] = 1.0 - np.abs(x[c1])
-    Rraw[c2] = 1.0/2.0/rounding*((np.abs(x[c2]) - (1.0 + rounding/2.0))**2)
+    Rraw[c2] = 1.0/2.0/rounding[c2]*((np.abs(x[c2]) - (1.0 + rounding[c2]/2.0))**2)
     Rraw[c3] = 0.0
     
     spd = min_ + (max_ - min_)*Rraw/(1-rounding/4)
