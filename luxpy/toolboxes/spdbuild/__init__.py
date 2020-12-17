@@ -27,6 +27,10 @@ Functions
  :gaussian_spd(): Generate Gaussian spectrum.
 
  :butterworth_spd(): Generate Butterworth based spectrum.
+ 
+ :lorentzian2_spd(): Generate 2nd order Lorentzian based spectrum.
+ 
+ :roundedtriangle_spd(): Generate a rounded triangle based spectrum.
 
  :mono_led_spd(): Generate monochromatic LED spectrum based on a Gaussian 
                   or butterworth profile or according to Ohno (Opt. Eng. 2005).

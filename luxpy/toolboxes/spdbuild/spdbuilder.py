@@ -11,6 +11,8 @@ Functions
  :butterworth_spd(): Generate Butterworth based spectrum.
  
  :lorentzian2_spd(): Generate 2nd order Lorentzian based spectrum.
+ 
+ :roundedtriangle_spd(): Generate a rounded triangle based spectrum.
 
  :mono_led_spd(): Generate monochromatic LED spectrum based on a Gaussian 
                   or butterworth profile or according to Ohno (Opt. Eng. 2005).
@@ -80,7 +82,7 @@ from luxpy import cri
 
 #np.set_printoptions(formatter={'float': lambda x: "{0:0.2e}".format(x)})
 
-__all__ = ['gaussian_spd','butterworth_spd','lorentzian2_spd',
+__all__ = ['gaussian_spd','butterworth_spd','lorentzian2_spd','roundedtriangle_spd',
            'mono_led_spd','phosphor_led_spd','spd_builder',
            'get_w_summed_spd','fitnessfcn','spd_constructor_2',
            'color3mixer','colormixer','colormixer_pinv',
@@ -191,6 +193,84 @@ def butterworth_spd(peakwl = 530, fwhm = 20, bw_order = 1, wl = _WL3, with_wl = 
     """
     wl = np.atleast_2d(getwlr(wl)) # create wavelength range
     spd = (1 / (1 + np.abs(2*(wl.T-np.atleast_2d(peakwl))/np.atleast_2d(fwhm))**(2*np.atleast_2d(bw_order)))).T
+    if with_wl == True:
+        spd = np.vstack((wl, spd))
+    return spd
+
+#------------------------------------------------------------------------------
+def roundedtriangle_spd(peakwl = 530, fwhm = 100, rounding = 0.5, wl = _WL3, with_wl = True,
+                        min_ = 0.0, max_ = 1.0,
+                        fw = 100, rw = 100):
+
+    """
+    Generate rounded triangle spectrum.
+    
+    Args:
+        :peakw: 
+            | int or float or list or ndarray, optional
+            | Peak wavelength
+        :fwhm:
+            | int or float or list or ndarray, optional
+            | Full-Width-Half-Maximum of rounded triangle.
+        :rounding:
+            | int or float or list or ndarray, optional
+            | Amount of rounding of triangle corners (top, bottom-left, bottom-right)
+        :wl: 
+            | _WL3, optional 
+            | Wavelength range.
+        :with_wl:
+            | True, optional
+            | True outputs a ndarray with first row wavelengths.
+        :min_, max_:
+            | 0.0, 1.0, optional
+            | Minimum and maximum of spd.
+        :fw:
+            | 100, optional
+            | front width of triangle.
+            | Only used when fwhm is set to None.
+        :rw:
+            | 100, optional
+            | rear width of triangle.
+            | Only used when fwhm is set to None.
+    
+    Returns:
+        :returns:
+            | ndarray with spectra. 
+    """
+    peakwl = np.abs(np.atleast_2d(peakwl))
+    rounding = np.abs(np.atleast_2d(rounding))
+    max_ = np.abs(np.atleast_2d(max_))
+    min_ = np.abs(np.atleast_2d(min_))
+    if fwhm is None:
+        fw = np.abs(np.atleast_2d(fw))
+        rw = np.abs(np.atleast_2d(rw))
+    else:
+        width = fwhm/(rounding/4 + 1)
+        fw = width
+        rw = width
+    
+    wl = np.atleast_2d(getwlr(wl))
+    wlp = (wl-peakwl.T)
+    
+    x = wlp/rw
+    c = np.where(wlp<0)
+    x[c] = wlp[c]/fw 
+    
+    # setup various conditions:
+    c0 = np.abs(x) >= rounding/2
+    c1 = c0 & (np.abs(x) < (1 - rounding/2))
+    _c2, cc = c0 & np.logical_not(c1), (np.abs(x)<1+rounding/2)
+    c2 = np.where(_c2 & cc)
+    c3 = np.where(_c2 & np.logical_not(cc))
+    
+    # apply conditional transformations:
+    rounding[rounding == 0.0] = 1e-308 # avoid division by zero
+    Rraw = 1 - rounding/4 - 1/rounding*x**2
+    Rraw[c1] = 1.0 - np.abs(x[c1])
+    Rraw[c2] = 1.0/2.0/rounding*((np.abs(x[c2]) - (1.0 + rounding/2.0))**2)
+    Rraw[c3] = 0.0
+    
+    spd = min_ + (max_ - min_)*Rraw/(1-rounding/4)
     if with_wl == True:
         spd = np.vstack((wl, spd))
     return spd
