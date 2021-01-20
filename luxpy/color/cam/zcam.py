@@ -62,7 +62,7 @@ __all__ += ['xyz_to_jabz', 'jabz_to_xyz',
 
 _UNIQUE_HUE_DATA = {'hues': 'red yellow green blue red'.split(), 
                     'i': [0,1,2,3,4], 
-                    'hi':[33.34, 89.29, 146.30,238.36,393.44],
+                    'hi':[33.44, 89.29, 146.30,238.36,393.44],
                     'ei':[0.68,0.64,1.52,0.77,0.68],
                     'Hi':[0.0,100.0,200.0,300.0,400.0]}
 
@@ -124,8 +124,8 @@ def xyz_to_jabz(xyz, ztype = 'jabz', use_zcam_parameters = False, **kwargs):
      |      (note that Jz that not exactly equal 1 for this high value, but rather for 102900 cd/m2)
      | 2b. az, bz represent respectively a red-green and a yellow-blue opponent axis 
      |      (but note that a D65 shows a small offset from (0,0))
-     | 3. ZCAM: uses a slightly different value for b (=0.7 instead of 0.66)
-     |      and calculates Iz as M' -epsilon (instead L'/2 + M'/2).
+     | 3. ZCAM: uses a slightly different value for b (= 1.16 instead of 1.15)
+     |      and calculates Iz as M' - epsilon (instead L'/2 + M'/2 as in Iz,az,bz color space!).
 
     Reference:
         1. `Safdar, M., Cui, G., Kim,Y. J., and Luo, M. R. (2017).
@@ -140,7 +140,7 @@ def xyz_to_jabz(xyz, ztype = 'jabz', use_zcam_parameters = False, **kwargs):
     xyz = np2d(xyz)
     
     # Setup X,Y,Z to X',Y',Z' transform as matrix:
-    b = 1.15
+    b = 1.15 if not use_zcam_parameters else 1.16
     g = 0.66
     M_to_xyzp = np.array([[b, 0, 1 - b],[1 - g, g, 0],[0, 0, 1]])
     
@@ -203,8 +203,8 @@ def jabz_to_xyz(jabz, ztype = 'jabz', use_zcam_parameters = False, **kwargs):
      |      (note that Jz that not exactly equal 1 for this high value, but rather for 102900 cd/m2)
      | 2b.  az, bz represent respectively a red-green and a yellow-blue opponent axis 
      |      (but note that a D65 shows a small offset from (0,0))
-     | 3. ZCAM: uses a slightly different value for b (=0.7 instead of 0.66)
-     |      and calculates Iz as M' -epsilon (instead L'/2 + M'/2).
+     | 3. ZCAM: uses a slightly different value for b (= 1.16 instead of 1.15)
+     |      and calculates Iz as M' - epsilon (instead L'/2 + M'/2 as in Iz,az,bz color space!).
 
     Reference:
         1. `Safdar, M., Cui, G., Kim,Y. J., and Luo, M. R. (2017).
@@ -242,7 +242,7 @@ def jabz_to_xyz(jabz, ztype = 'jabz', use_zcam_parameters = False, **kwargs):
     
     # Convert lms to xyz:
     # Setup X',Y',Z' from X,Y,Z transform as matrix:
-    b = 1.15
+    b = 1.15 if not use_zcam_parameters else 1.16
     g = 0.66 
     M_to_xyzp = np.array([[b, 0, 1 - b],[1 - g, g, 0],[0, 0, 1]])
     
@@ -439,28 +439,28 @@ def run(data, xyzw = None, outin = 'J,aM,bM', cieobs = _CIEOBS,
         #--------------------------------------------         
         # calculate saturation, s:
         s = 100.0* (M/Q)
-        S = s # make extra variable, jsut in case 'S' is called
+        S = s # make extra variable, just in case 'S' is called
         
         
         #--------------------------------------------         
         # calculate whiteness, W:
         if ('Wz' in outin) | ('aWz' in outin):
-            Wz = 100 - 0.68*((100-J)**2 + C**2)**0.5
+            Wz = 100 - ((100-J)**2 + C**2)**0.5
         
         #--------------------------------------------         
         # calculate blackness, K:
         if ('Kz' in outin) | ('aKz' in outin):
-            Kz = 100 - 0.82*(J**2 + C**2)**0.5
+            Kz = 100 - (J**2 + C**2)**0.5
             
         #--------------------------------------------         
         # calculate saturation, S:
         if ('Sz' in outin) | ('aSz' in outin):
-            Sz = 8 + 0.5 *((J - 55)**2 + C**2)**0.5
+            Sz = ((J - 55)**2 + C**2)**0.5
             
         #--------------------------------------------         
         # calculate vividness, V:
         if ('Vz' in outin) | ('aVz' in outin):
-            Sz = 8 + 0.4 *((J - 70)**2 + C**2)**0.5
+            Vz = ((J - 70)**2 + C**2)**0.5
         
         
         
@@ -532,16 +532,16 @@ def run(data, xyzw = None, outin = 'J,aM,bM', cieobs = _CIEOBS,
             
         
         if ('Wz' in outin) | ('aWz' in outin): #whiteness
-            C = ((100/68*(100-MCs))**2 - (J - 100)**2)**0.5
+            C = (((100-MCs))**2 - (J - 100)**2)**0.5
         
         if ('Kz' in outin) | ('aKz' in outin): # blackness
-            C = ((100/82*(100-MCs))**2 - (J)**2)**0.5
+            C = ((100-MCs)**2 - (J)**2)**0.5
             
         if ('Sz' in outin) | ('aSz' in outin):  # saturation
-            C = ((10/5*(MCs - 8))**2 - (J - 55)**2)**0.5
+            C = (MCs**2 - (J - 55)**2)**0.5
             
         if ('Vz' in outin) | ('aVz' in outin):  # vividness
-            C = ((10/4*(MCs - 8))**2 - (J - 70)**2)**0.5
+            C = (MCs**2 - (J - 70)**2)**0.5
             
                 
         #--------------------------------------------
