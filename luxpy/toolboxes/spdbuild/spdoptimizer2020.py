@@ -121,13 +121,15 @@ def _triangle_mixer(Yxy_target, Yxyi, triangle_strengths):
     n_in_gamut[n_in_gamut == 0] = 1.0 # avoid div by zero
 
     M3[is_out_of_gamut] = np.nan
+    triangle_strengths[is_out_of_gamut] = np.nan
     if Nc > 1:
         M = np.zeros((n,N))
         
         # Calulate fluxes of all components from M3 and x_final:
+        triangle_strengths = triangle_strengths/np.nansum(triangle_strengths,axis=-1,keepdims=True) # normalize to sum to 1
         M_final = triangle_strengths[...,None]*M3
         for i in range(N):
-            M[:,i] = np.nansum(np.nansum(M_final*(combos == i)[None,...],axis=1),axis=-1)/n_in_gamut
+            M[:,i] = np.nansum(np.nansum(M_final*(combos == i)[None,...],axis=1),axis=-1)#/n_in_gamut
     else:
         M = M3
     M[M.sum(axis=-1)==0] = np.nan
@@ -987,8 +989,7 @@ class SpectralOptimizer():
         notnan = np.logical_not(isnan)
 
         if self.Yxy_target is not None:
-            if notnan.any():
-                M[notnan,:] = M[notnan,:]*(self.Yxy_target[...,0]/(Yxyi[notnan,:,0]*M[notnan,:]).sum(axis=-1,keepdims=True))
+            pass #if notnan.any(): M[notnan,:] = M[notnan,:]*(self.Yxy_target[...,0]/(Yxyi[notnan,:,0]*M[notnan,:]).sum(axis=-1,keepdims=True))
         else:
             M[notnan,:] = M[notnan,:]/M[notnan,:].max()
             
@@ -1589,7 +1590,7 @@ if __name__ == '__main__':
         prims2 = PrimConstructor(pdefs={'peakwl':[450,520,580,630],
                                         'fwhm_bnds':[5,300]}).get_spd()
 
-        so4 = SpectralOptimizer(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cspace_bwtf = {},
+        so4 = SpectralOptimizer(target = np2d([50,1/3,1/3]), tar_type = 'Yxy', cspace_bwtf = {},
                               wlr = [360,830,1], cieobs = cieobs, 
                               out = 'spds,primss,Ms,results',
                               optimizer_type = '3mixer', triangle_strengths_bnds = None,
