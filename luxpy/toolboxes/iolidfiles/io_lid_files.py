@@ -790,7 +790,7 @@ def draw_lid(LID, grid_interp_method = 'linear', theta_min = 0, angle_res = 1,
 if __name__ == '__main__':
     
     # Read lamp data from IES file:
-    IES = read_lamp_data('./data/111621PN.ies', verbosity = 1)
+    IES = read_lamp_data('./data/luxpy_test_lid_file.ies', verbosity = 1)
     
     # Generate uv-map for rendering / ray-tracing (eg by wrapping this around 
     # a point light source to attenuate the luminous intensity in different directions):

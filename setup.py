@@ -43,7 +43,9 @@ setup(
                           'luxpy/toolboxes/spectro/jeti/dll/win32/*.dll',
                           'luxpy/toolboxes/spectro/jeti/dll/win64/*.dll',
                           'luxpy/toolboxes/spectro/oceanoptics/data/*.dat',
-                          'luxpy/toolboxes/dispcal/data/*.csv'
+                          'luxpy/toolboxes/dispcal/data/*.csv',
+                          'luxpy/toolboxes/iolidfiles/data/*.ies',
+                          'luxpy/toolboxes/iolidfiles/data/*.ldt'
                           ]},
   include_package_data = True,
   classifiers=[
