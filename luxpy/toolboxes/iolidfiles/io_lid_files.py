@@ -19,20 +19,36 @@
 Module for reading / writing LID data from IES and LDT files.
 =============================================================
 
- :read_lamp_data: Read in light intensity distribution and other lamp data from LDT or IES files.
+ :read_lamp_data(): Read in light intensity distribution and other lamp data from LDT or IES files.
+
+ :get_uv_texture(): Create a uv-texture map for use in renderings.
+ 
+ :save_texture(): Save 16 bit grayscale PNG image of uv-texture.
+ 
+ :draw_lid(): Draw 3D light intensity distribution.
 
     Notes:
-        1.Only basic support. Writing is not yet implemented.
-        2.Reading IES files is based on Blender's ies2cycles.py
-        3.This was implemented to build some uv-texture maps for rendering and only tested for a few files.
+        1. Only basic support. Writing is not yet implemented.
+        2. Reading IES files is based on Blender's ies2cycles.py
+        3. This was implemented to build some uv-texture maps for rendering and only tested for a few files.
         4. Use at own risk. No warranties.
      
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 import os
-from luxpy.utils import np 
+from luxpy.utils import np
+from luxpy.utils import plt, Axes3D 
 
-__all__ =['read_lamp_data']
+from numpy import matlib
+import scipy.interpolate as interp
+import matplotlib
+from matplotlib import cm
+
+import imageio
+imageio.plugins.freeimage.download()
+# from skimage import exposure, img_as_uint
+
+__all__ =['read_lamp_data','get_uv_texture','save_texture','draw_lid']
 
 
 def read_lamp_data(filename, multiplier = 1.0, verbosity = 0, normalize = 'I0', only_common_keys = False):
@@ -284,6 +300,7 @@ def read_IES_lamp_data(filename, multiplier = 1.0, verbosity = 0, normalize = 'I
     IES['v_same'] = v_same
     IES['h_same'] = h_same
     IES['intensity'] = intensity
+    IES['map'] = {}
     
     # normalize candela values to max = 1 or I0 = 1:
     IES = _normalize_candela_2d(IES, normalize = normalize, multiplier = multiplier)
@@ -301,10 +318,10 @@ def _complete_ies_lid(IES, lamp_h_type = 'TYPE90'):
     # Create full theta (0-180) and phi (0-360) sets
     IES['theta'] = IES['v_angs']
     if IES['lamp_h_type'] == 'TYPE90':
-        IES['values'] = np.matlib.repmat(IES['candela_2d'],4,1)
+        IES['values'] = matlib.repmat(IES['candela_2d'],4,1)
         IES['phi'] = np.hstack((IES['h_angs'], IES['h_angs'] + 90, IES['h_angs'] + 180, IES['h_angs']+270))
     elif IES['lamp_h_type'] == 'TYPE180':
-        IES['values'] = np.matlib.repmat(IES['candela_2d'],2,1)
+        IES['values'] = matlib.repmat(IES['candela_2d'],2,1)
         IES['phi'] = np.hstack((IES['h_angs'], IES['h_angs'] + 180))
     else:
         IES['values'] = IES['candela_2d']
@@ -474,3 +491,326 @@ def _normalize_candela_2d(LID, normalize = 'I0', multiplier = 1):
     LID['candela_2d'] = candela_2d
     LID['intensity'] = intensity
     return LID
+
+
+#------------------------------------------------------------------------------
+# Texture creation and saving
+#------------------------------------------------------------------------------
+
+def _spher2cart(theta, phi, r = 1., deg = True):
+    """
+    Convert spherical to cartesian coordinates.
+    
+    Args:
+        :theta:
+            | Float, int or ndarray
+            | Angle with positive z-axis.
+        :phi:
+            | Float, int or ndarray
+            | Angle around positive z-axis starting from x-axis.
+        :r:
+            | 1, optional
+            | Float, int or ndarray
+            | radius
+            
+    Returns:
+        :x, y, z:
+            | tuple of floats, ints or ndarrays
+            | Cartesian coordinates
+    """
+    if deg == True:
+        theta = np.deg2rad(theta)
+        phi = np.deg2rad(phi)
+    x= r*np.sin(theta)*np.cos(phi)
+    y= r*np.sin(theta)*np.sin(phi)
+    z= r*np.cos(theta)
+    return x,y,z
+
+
+
+def get_uv_texture(theta, phi = None, values = None, input_types = ('array','array'),\
+                   method = 'linear', theta_min = 0, angle_res = 1, close_phi = False,\
+                   deg = True, r = 1, show = True, out = 'values_map'):
+    """
+    Create a uv-texture map.
+    | with specified angular resolution (°) and with positive z-axis as normal.
+    |   u corresponds to phi [0° - 360°]
+    |   v corresponds to theta [0° - 180°], (or [-90° - 90°])
+    
+    Args:
+        :theta:
+            | Float, int or ndarray
+            | Angle with positive z-axis.
+            | Values corresponding to 0 and 180° must be specified!
+        :phi:
+            | None, optional
+            | Float, int or ndarray
+            | Angle around positive z-axis starting from x-axis.
+            | If not None: values corresponding to 0 and 360° must be specified!
+        :values:
+            | None
+            | ndarray or mesh of values at (theta, phi) locations. 
+        :input_types:
+            | ('array','array'), optional
+            | Specification of type of input of (angles,values)
+        :method:
+            | 'linear', optional
+            | Interpolation method.
+            | (supported scipy.interpolate.griddata methods: 
+            |  'nearest', 'linear', 'cubic')
+        :theta_min:
+            | 0, optional
+            | If 0: [0, 180]; If -90: theta range = [-90,90]
+        :close_phi:
+            | False, optional
+            | Make phi angles array closed (full circle).
+        :angle_res:
+            | 1, optional
+            | Resolution in degrees.
+        :deg: 
+            | True, optional
+            | Type of angle input (True: degrees, False: radians).
+        :r:
+            | 1, optional
+            | Float, int or ndarray
+            | radius
+        :show:
+            | True, optional
+            | Plot results.
+        :out:
+            | 'values_map', optional
+            | Specifies output: "return eval(out)"
+        
+    Returns:
+        :returns: as specified by :out:.
+    """
+    
+    # Create uv base map:
+    #--------------------
+    
+    # set up uv_map angles:
+    theta_map = np.arange(0, 180 + angle_res, angle_res)
+    phi_map = np.arange(0, 360 + (close_phi)*angle_res, angle_res)
+    
+    # create angle base mesh:
+    thetam_map, phim_map = np.meshgrid(theta_map, phi_map)
+    
+    # convert input angles to uv coordinates:
+    um_map, vm_map = 0.5*phim_map/180, thetam_map/180
+    
+    
+    # Create uv map from input:
+    #-------------------------
+    if phi is not None:
+        if (phi==0.0).all(): phi = None  # if phi = 0: assume rotational symmetry
+        
+    # When only (theta,values) data is given--> assume rotational symmetry:
+    if phi is None:
+        phi = phi_map
+        values = np.matlib.repmat(values,np.int(360*(1/angle_res)),1) # assume rotational symmetry, values must be array!
+        input_types = (input_types[0],'mesh') 
+
+    # convert radians to degrees:
+    if deg == False:
+        theta = np.rad2deg(theta)
+        phi = np.rad2deg(phi)
+    
+    if (input_types[0] == 'array') & (input_types[1] == 'mesh'):
+        # create angle input mesh:
+        thetam_in, phim_in = np.meshgrid(theta, phi)
+    elif (input_types[0] == 'array') & (input_types[1] == 'array'):
+        thetam_in, phim_in = theta, phi # work with array data
+    
+    # convert input angles to uv coordinates:
+    um_in, vm_in = 0.5*phim_in/180, thetam_in/180
+    
+    # Interpolate values for uv_in to values for uv_map:
+    values_map = interp.griddata(np.array([um_in.ravel(),vm_in.ravel()]).T, values.ravel(), (um_map,vm_map), method = method)
+    
+    if show == True:
+        xm_map, ym_map, zm_map = _spher2cart(thetam_map,phim_map, r = 1, deg = True)
+        xm_in, ym_in, zm_in = _spher2cart(thetam_in,phim_in, r = r, deg = True)
+        
+        fig = plt.figure()
+        ax1 = fig.add_subplot(121, projection = '3d')
+        ax1.plot(xm_map.ravel(), ym_map.ravel(), zm_map.ravel(),'bo', label = 'Output map')
+        ax1.plot(xm_in.ravel(), ym_in.ravel(), zm_in.ravel(),'r.', label = 'Input map')
+        ax1.set_xlabel('x')
+        ax1.set_ylabel('y')
+        ax1.set_zlabel('z')
+        ax1.set_title('Cartesian map coordinates')
+        
+  
+        ax2 = fig.add_subplot(122,projection = '3d')
+        ax2.plot(um_map.ravel(), vm_map.ravel(), values_map.ravel(), 'bo', label = 'Output')
+        ax2.plot(um_in.ravel(), vm_in.ravel(), values.ravel(), 'r.', label = 'Input')
+        ax2.set_xlabel('u')
+        ax2.set_ylabel('v')
+        ax2.set_title('uv texture map')
+        ax2.legend(loc = 'upper right')
+    
+    if theta_min == -90:
+        values_map = np.roll(values_map, np.int(np.abs(theta_min)/angle_res), axis = 1)
+        theta_map = theta_map + theta_min
+        
+    return eval(out)
+
+def save_texture(filename, tex, bits = 16, transpose = True):
+    """
+    Save 16 bit grayscale PNG image of uv-texture.
+    
+    Args:
+        :filename:
+            | Filename of output image.
+        :tex: 
+            | ndarray float uv-texture.
+        :transpose:
+            | True, optional
+            | If True: transpose tex (u,v) to set u as columns and v as rows 
+            | in texture image.
+            
+    Returns:
+        :None:
+            
+    Note:
+        | Texture is rescaled to max = 1 and saved as uint16.
+        | --> Before using uv_map: rescale back to set 'normal' to 1.
+    """
+    #im = exposure.rescale_intensity(tex, out_range='float')
+    im = (((2**bits-1)*tex/tex.max()).astype("uint16")) #
+    #im = img_as_uint(im)
+    if transpose == True:
+        im = im.T
+    imageio.imsave(filename, im)
+  
+#------------------------------------------------------------------------------
+# Make plot of LID
+#------------------------------------------------------------------------------
+
+def draw_lid(LID, grid_interp_method = 'linear', theta_min = 0, angle_res = 1,
+             ax = None, use_scatter_plot = False, plot_colorbar = True, legend_on = False, 
+             plot_luminaire_position = True, out = 'ax', **plottingkwargs):
+    """
+    Draw the light intensity distribution.
+    
+    Args:
+        :LID:
+            | dict with IES or LDT file data. 
+            | (obtained with iolidfiles.read_lamp_data())
+        :grid_interp_method:
+            | 'linear', optional
+            | Interpolation method for (theta,phi)-grid of normalized luminous intensity values.
+            | (supported scipy.interpolate.griddata methods: 
+            |  'nearest', 'linear', 'cubic')
+        :theta_min:
+            | 0, optional
+            | If 0: [0, 180]; If -90: theta range = [-90,90]
+        :angle_res:
+            | 1, optional
+            | Resolution in degrees.
+        :ax:
+            | None, optional
+            | If None: create new 3D-axes for plotting.
+        :use_scatter_plot:
+            | False, optional
+            | If True: use plt.scatter for plotting intensity values.
+            | If False: use plt.plot_surface for plotting.
+        :plot_colorbar:
+            | True, optional
+            | Plot colorbar representing the normalized luminous intensity values in the LID.
+        :legend_on:
+            | False, optional
+            | plot legend.
+        :plot_luminaire_position:
+            | True, optional
+            | Plot the position of the luminaire (0,0,0) in the graph as a red diamond.
+        :out:
+            | 'ax', optional
+            | string with variable to return
+            | default: ax handle to plot.
+        
+    Returns:
+        :returns:
+            | Whatever requested as determined by the string in :out:
+                
+    """
+    values_map,phim_map,thetam_map = get_uv_texture(theta = LID['theta'], 
+                                                    phi = LID['phi'], 
+                                                    values = LID['values'], 
+                                                    input_types = ('array','mesh'), 
+                                                    method = grid_interp_method, 
+                                                    theta_min = theta_min, 
+                                                    angle_res = angle_res, 
+                                                    deg = True, 
+                                                    r = 1, 
+                                                    show = False,
+                                                    out='values_map,phim_map,thetam_map')
+    values_map[np.isnan(values_map)] = 0
+    
+    # get cartesian coordinates:
+    #r = values_map/values_map.max() if normalize_intensity_to_max else values_map
+    xm_map,ym_map,zm_map=_spher2cart(thetam_map,phim_map, r = values_map, deg = True)
+    
+    # make plot:
+    if ax is None:
+        fig = plt.figure()
+        ax = fig.add_subplot(111,projection='3d')
+    V = values_map
+    norm = matplotlib.colors.Normalize(vmin=V.min().min(), vmax=V.max().max())
+    if use_scatter_plot:
+        ax.scatter(xm_map.ravel(),ym_map.ravel(),-zm_map.ravel(), 
+                   c = values_map.ravel(), cmap = 'jet', alpha = 0.5, label = 'Normalized luminous intensity', **plottingkwargs)
+    else:
+        ax.plot_surface(xm_map,ym_map,-zm_map, facecolors = plt.cm.jet(norm(V)), label = 'Normalized luminous intensity', **plottingkwargs)
+    
+    if plot_colorbar:
+        m = cm.ScalarMappable(cmap=plt.cm.jet, norm=norm)
+        m.set_array([])
+        cbar = plt.colorbar(m)
+        cbar.set_label('Normalized luminous intensity ($I_0 = 1$)')
+    
+    if plot_luminaire_position:
+        ax.plot(0,0,0,color='r',marker='d', markersize = 16, alpha = 0.7, label = 'Luminaire equivalent position')
+    
+    # calculate aspect ratio:
+    xyzlim = np.array([ax.get_xlim3d(),ax.get_ylim3d(),ax.get_zlim3d()]).T
+    d = np.diff(xyzlim,axis=0)
+    r = d/d.max()
+    r = r/r.min()
+    ax.set_box_aspect(tuple(r[0]))
+    
+    ax.set_xlabel('x')
+    ax.set_ylabel('y')
+    ax.set_zlabel('z')
+    if legend_on: ax.legend()
+    
+    
+    return eval(out)
+
+if __name__ == '__main__':
+    
+    # Read lamp data from IES file:
+    IES = read_lamp_data('./data/111621PN.ies', verbosity = 1)
+    
+    # Generate uv-map for rendering / ray-tracing (eg by wrapping this around 
+    # a point light source to attenuate the luminous intensity in different directions):
+    uv_map = get_uv_texture(theta = IES['theta'], 
+                             phi = IES['phi'], 
+                             values = IES['values'], 
+                             input_types = ('array','mesh'), 
+                             method = 'linear', 
+                             theta_min = 0, angle_res = 1,
+                             deg = True, r = 1, 
+                             show = True)
+    plt.figure()
+    plt.imshow(uv_map)
+    
+    # draw LID:
+    draw_lid(IES)
+    
+    
+
+        
+    
+        
+  
