@@ -26,12 +26,14 @@ Module for reading / writing LID data from IES and LDT files.
  :save_texture(): Save 16 bit grayscale PNG image of uv-texture.
  
  :draw_lid(): Draw 3D light intensity distribution.
+ 
+ :render_lid(): Render a light intensity distribution.
 
     Notes:
-        1. Only basic support. Writing is not yet implemented.
+        1. Only basic support (reading / visualization). Writing is not yet implemented.
         2. Reading IES files is based on Blender's ies2cycles.py
         3. This was implemented to build some uv-texture maps for rendering and only tested for a few files.
-        4. Use at own risk. No warranties.
+        4. Use at own risk. No warranties. Still under test.
      
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
@@ -48,7 +50,7 @@ import imageio
 imageio.plugins.freeimage.download()
 # from skimage import exposure, img_as_uint
 
-__all__ =['read_lamp_data','get_uv_texture','save_texture','draw_lid']
+__all__ =['read_lamp_data','get_uv_texture','save_texture','draw_lid','render_lid']
 
 
 def read_lamp_data(filename, multiplier = 1.0, verbosity = 0, normalize = 'I0', only_common_keys = False):
