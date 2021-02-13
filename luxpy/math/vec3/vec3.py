@@ -157,7 +157,7 @@ class vec3:
         zdr = np.asarray(z/r)
         zdr[zdr>1.0] = 1.0
         zdr[zdr<-1.0] = -1.0
-        theta = np.arccos(z/r)
+        theta = np.arccos(zdr)
         phi = np.arctan2(y, x)
         phi[phi<0.0] = phi[phi<0.0] + 2*np.pi
         phi[r<self._TINY] = 0.0
