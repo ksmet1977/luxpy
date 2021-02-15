@@ -966,7 +966,7 @@ def _get_line_plane_intersection(l0,dl, p0, n, corners):
     # d. fill rays which miss rectangles with nan's:
     l[np.logical_not(in_rectangle)] = np.nan
     
-    return l
+    return l, u
     
 def _plot_plane_edges(corners, ax, color = 'r', marker = 'o'):
     corners = np.vstack((corners,corners[0]))
@@ -1010,13 +1010,13 @@ def _get_luminaire_illuminance_at_plane(plum, nlum, pplane, lid, xyzm_maps):
     
     # illuminance at point pplane:
     Ev = Iv*np.cos(np.deg2rad(theta))/r**2
-    return Ev, u, nlum, xyzm_maps
+    return Ev, u0, nlum, r, xyzm_maps
 
 def _get_plane_luminance(plum, nlum, lid, pplane, nplane, psensor, rho, xyzm_maps):
-    Ev, u, nlum, xyzm_maps = _get_luminaire_illuminance_at_plane(plum, nlum, pplane, lid, xyzm_maps) 
+    Ev, u, nlum, dist_source, xyzm_maps = _get_luminaire_illuminance_at_plane(plum, nlum, pplane, lid, xyzm_maps) 
     
-    v = -u*nplane # check whether rays are pointing in opposite direction as surface normal of plane
-    v = v/_norm(v)
+    v = -u # check whether rays are pointing in opposite direction as surface normal of plane
+    v = v/_norm(v,axis=1)
     reflect = np.dot(v,nplane[...,None])[:,0]
     Ev[reflect<0] = np.nan # when normal is not pointing toward incident rays--> no reflection (black backside of plane)
     
@@ -1024,9 +1024,9 @@ def _get_plane_luminance(plum, nlum, lid, pplane, nplane, psensor, rho, xyzm_map
     Ev[reflect>0] = np.nan
     
     if xyzm_maps is None:
-        return Ev*rho/np.pi,nlum, xyzm_maps # assume Lambertian reflector
+        return Ev*rho/np.pi,nlum, dist_source, xyzm_maps # assume Lambertian reflector
     else:
-        return Ev*rho/np.pi,nlum, xyzm_maps.T # assume Lambertian reflector
+        return Ev*rho/np.pi,nlum, dist_source, xyzm_maps.T # assume Lambertian reflector
         
 # def map_3D_to_2D(pplane,Lv, fov = (90,90), Fd = 1, res = 100, method = 'linear'):
 #     fov = np.array(fov)
@@ -1188,21 +1188,30 @@ def render_lid(LID = './data/luxpy_test_lid_file.ies',
 
     # Trace rays from viewpoint (0,0,0) through camera pixels and calculate
     # the intersection points with the wall(s) and floor:
-    intersectionpoints_wall = _get_line_plane_intersection(sensor_position,drays, wall_center, wall_n, wall_corners)
-    intersectionpoints_floor = _get_line_plane_intersection(sensor_position,drays, floor_center, floor_n, floor_corners)
+    intersectionpoints_wall, dist_sensor_wall = _get_line_plane_intersection(sensor_position,drays, wall_center, wall_n, wall_corners)
+    intersectionpoints_floor, dist_sensor_floor = _get_line_plane_intersection(sensor_position,drays, floor_center, floor_n, floor_corners)
 
     # Get luminance values for wall and floor:
-    L_wall,luminaire_n_, (xm_map_r,ym_map_r,zm_map_r) = _get_plane_luminance(plum = luminaire_position, nlum = luminaire_n, lid = LID, pplane = intersectionpoints_wall, nplane = wall_n, psensor = sensor_position, rho = wall_rho, xyzm_maps=(xm_map,ym_map,zm_map))
-    L_floor,_,_ = _get_plane_luminance(plum = luminaire_position, nlum = luminaire_n, lid = LID, pplane = intersectionpoints_floor, nplane = floor_n, psensor = sensor_position, rho = floor_rho, xyzm_maps = None)
+    L_wall,luminaire_n_, dist_source_wall, (xm_map_r,ym_map_r,zm_map_r) = _get_plane_luminance(plum = luminaire_position, nlum = luminaire_n, lid = LID, pplane = intersectionpoints_wall, nplane = wall_n, psensor = sensor_position, rho = wall_rho, xyzm_maps=(xm_map,ym_map,zm_map))
+    L_floor, _, dist_source_floor, _ = _get_plane_luminance(plum = luminaire_position, nlum = luminaire_n, lid = LID, pplane = intersectionpoints_floor, nplane = floor_n, psensor = sensor_position, rho = floor_rho, xyzm_maps = None)
 
     # Pool wall and floor intersection points and luminance values:
     intersectionpoints = intersectionpoints_wall.copy()  
     Lvs = L_wall.copy()
-    cond = np.logical_not(np.isnan(intersectionpoints_floor[:,0]))
+    
+    cond = np.logical_not(np.isnan(intersectionpoints_floor[:,0])) & (dist_sensor_floor <= dist_sensor_wall)
     intersectionpoints[cond,:] = intersectionpoints_floor[cond,:]
     Lvs[cond] = L_floor[cond]
+    
+    # check occlusion of floor by wall with respect to source:
+    cond = np.isnan(intersectionpoints_wall[:,0]) & (dist_source_floor > dist_source_wall)  # also check distance to source
+    intersectionpoints[cond,:] = np.nan
+    Lvs[cond] = 0
+        
     Lvs[np.isnan(Lvs)] = 0 # were non-intersecting or blocked rays (only 1 bounce !!!)
+    maxL = Lvs.max()
     Lv2D = np.flipud(np.reshape(Lvs,(res,res)).T)
+    
 
     # Make plots:
     if ax3D is None:
@@ -1287,15 +1296,16 @@ def render_lid(LID = './data/luxpy_test_lid_file.ies',
             ax3D.plot(np.vstack((floor_center[0],floor_center[0]+dv*floor_n[0]))[:,0],
                       np.vstack((floor_center[1],floor_center[1]+dv*floor_n[1]))[:,0],
                       np.vstack((floor_center[2],floor_center[2]+dv*floor_n[2]))[:,0],'m-',linewidth = 3)
+        
         if plot_wall_luminance:
-            ax3D.scatter(intersectionpoints_wall[:,0],intersectionpoints_wall[:,1],intersectionpoints_wall[:,2], c = L_wall,cmap='gray')
+            ax3D.scatter(intersectionpoints_wall[:,0],intersectionpoints_wall[:,1],intersectionpoints_wall[:,2], c = L_wall,cmap='gray',vmin = 0, vmax=maxL)
         if plot_floor_luminance:
-            ax3D.scatter(intersectionpoints_floor[:,0],intersectionpoints_floor[:,1],intersectionpoints_floor[:,2], c = L_floor,cmap='gray')
+            ax3D.scatter(intersectionpoints_floor[:,0],intersectionpoints_floor[:,1],intersectionpoints_floor[:,2], c = L_floor,cmap='gray',vmin = 0, vmax=maxL)
         if legend_on:
             ax3D.legend()
         
     if ax2D != False:
-        ax2D.imshow(Lv2D, cmap='gray')
+        ax2D.imshow(Lv2D, cmap='gray',vmin = 0, vmax = maxL)
         ax2D.set_xticks([])
         ax2D.set_yticks([])
         
