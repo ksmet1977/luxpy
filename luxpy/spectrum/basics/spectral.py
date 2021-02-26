@@ -334,7 +334,7 @@ def cie_interp(data,wl_new, kind = None, negative_values_allowed = False, extrap
             # Add wavelengths to data array: 
             return np.vstack((wl_new,Si))  
     
-    return data
+    return data.copy()
 
 
 #--------------------------------------------------------------------------------------------------

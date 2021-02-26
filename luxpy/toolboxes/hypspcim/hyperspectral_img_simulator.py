@@ -18,7 +18,7 @@ Module for hyper spectral image simulation
 """
 
 from luxpy import (cat, colortf, _CIEOBS, _CIE_ILLUMINANTS, _CRI_RFL, 
-                   spd_to_xyz, plot_color_data, math)
+                   spd_to_xyz, plot_color_data, math, cie_interp)
 from luxpy.utils import np, plt, sp, _PKG_PATH, _SEP, _EPS 
 from luxpy.toolboxes.spdbuild import spdbuilder as spb
 
@@ -85,11 +85,13 @@ def xyz_to_rfl(xyz, rfl = None, out = 'rfl_est', \
     # get rfl set:
     if rfl is None: # use IESTM30['4880'] set 
         rfl = _CRI_RFL['ies-tm30']['4880']['5nm']
-        
+    
+    wlr = rfl[0]
+    
     # get Ref spd:
     if refspd is None:
         refspd = _CIE_ILLUMINANTS['D65'].copy()
-
+    refspd = cie_interp(refspd, wlr, kind = 'linear') # force spd to same wavelength range as rfl
         
     # Calculate lab-type coordinates of standard rfl set under refspd:
     xyz_rr, xyz_wr = spd_to_xyz(refspd, relative = True, rfl = rfl, cieobs = cieobs, out = 2)
@@ -183,6 +185,7 @@ def render_image(img = None, spd = None, rfl = None, out = 'img_hyp', \
         :spd: 
             | ndarray, optional
             | Light source spectrum for rendering
+            | If None: use CIE illuminant F4
         :rfl: 
             | ndarray, optional
             | Reflectance set for color coordinate to rfl mapping.
@@ -263,10 +266,16 @@ def render_image(img = None, spd = None, rfl = None, out = 'img_hyp', \
     # Get unique rgb values and positions:
     rgb_u, rgb_indices = np.unique(rgb, return_inverse=True, axis = 0)
 
+    # get rfl set:
+    if rfl is None: # use IESTM30['4880'] set 
+        rfl = _CRI_RFL['ies-tm30']['4880']['5nm']
+    wlr = rfl[0] # spectral reflectance set determines wavelength range for estimation (xyz_to_rfl())
         
     # get Ref spd:
     if refspd is None:
         refspd = _CIE_ILLUMINANTS['D65'].copy()
+    refspd = cie_interp(refspd, wlr, kind = 'linear') # force spd to same wavelength range as rfl
+
 
     # Convert rgb_u to xyz and lab-type values under assumed refspd:
     xyz_wr = spd_to_xyz(refspd, cieobs = cieobs, relative = True)
@@ -278,8 +287,7 @@ def render_image(img = None, spd = None, rfl = None, out = 'img_hyp', \
                  cspace = cspace, cspace_tf = cspace_tf,\
                  interp_type = interp_type, k_neighbours = k_neighbours, verbosity = verbosity)
     
-    
-    
+
     # Get default test spd if none supplied:
     if spd is None:
         spd = _CIE_ILLUMINANTS['F4']

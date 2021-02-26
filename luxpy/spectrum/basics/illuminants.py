@@ -99,7 +99,7 @@ _DAYLIGHT_LOCI_PARAMETERS = None # temporary initialization
 #---CIE illuminant functions---------------------------------------------------
 #------------------------------------------------------------------------------
 
-def blackbody(cct, wl3 = None, n = None):
+def blackbody(cct, wl3 = None, n = None, relative = True):
     """
     Calculate blackbody radiator spectrum for correlated color temperature (cct).
     
@@ -115,6 +115,11 @@ def blackbody(cct, wl3 = None, n = None):
             | None, optional
             | Refractive index.
             | If None: use the one stored in _BB['n']
+        :relative:
+            | False, optional
+            | True: return relative spectrum normalized to 560 nm
+            | False: return absolute spectral radiance (Planck's law; W/(sr.m².nm)) 
+            
 
     Returns:
         :returns:
@@ -130,7 +135,10 @@ def blackbody(cct, wl3 = None, n = None):
     wl = getwlr(wl3)
     def fSr(x):
         return (1/np.pi)*_BB['c1']*((x*1.0e-9)**(-5))*(n**(-2.0))*(np.exp(_BB['c2']*((n*x*1.0e-9*(cct+_EPS))**(-1.0)))-1.0)**(-1.0)
-    return np.vstack((wl,(fSr(wl)/fSr(560.0))))
+    if relative:
+        return np.vstack((wl,(fSr(wl)/fSr(560.0))))
+    else:
+        return np.vstack((wl,fSr(wl)))
 
 #------------------------------------------------------------------------------
 def _get_daylightlocus_parameters(ccts, spds, cieobs):
