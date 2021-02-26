@@ -34,7 +34,7 @@ import warnings
 from imageio import imsave
 
 __all__ =['_HYPSPCIM_PATH','_HYPSPCIM_DEFAULT_IMAGE','render_image','xyz_to_rfl',
-          'get_superresolution_hsi']             
+          'get_superresolution_hsi','hsi_to_rgb','rfl_to_rgb']             
 
 _HYPSPCIM_PATH = _PKG_PATH + _SEP + 'hypspcim' + _SEP
 _HYPSPCIM_DEFAULT_IMAGE = _PKG_PATH + _SEP + 'toolboxes' + _SEP + 'hypspcim' +  _SEP + 'data' + _SEP + 'testimage1.jpg'
