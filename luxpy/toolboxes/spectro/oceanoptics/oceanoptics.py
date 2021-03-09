@@ -21,13 +21,9 @@ Module for spectral measurements using OceanOptics spectrometers
 
 Installation:
 -------------
-    1. Download and install the seabreeze installer from sourceforge:
-    https://sourceforge.net/projects/seabreeze/files/SeaBreeze/installers/
+    1. Install oceanoptics drivers (OMNISPAM or OCEANVIEW / SPECTRASUITE software, etc.)
     2. Install python API for seabreeze: conda install -c conda-forge seabreeze
-    3. Windows: Force the spectrometer to use a libusb driver via Zadig 
-    (http://zadig.akeo.ie/)
-    4. Install pyusb ("import usb.core", "usb.core.find()" should work before proceeding)
-    5. Ready to go!
+    3. Ready to go!
     
 Functions:
 ----------
@@ -57,16 +53,9 @@ Default parameters (not exported):
     
 Notes:
 ------
-    1. Changed read_eeprom_slot() in eeprom.py in **pyseabreeze** because the 
-    ubs output used ',' as decimal separator instead of '.' (probably because
-    of the use of a french keyboard, despite having system set to use '.' as separator):  
-    line 20 in eeprom.py: "return data.rstrip('\x00')" was changed to
-    "return data.rstrip('\x00').replace(',','.')"
+    1. More info on: https://github.com/ap--/python-seabreeze
     
-    2. More info on: https://github.com/ap--/python-seabreeze
-    
-   
-    3. Due to the way ocean optics firmware/drivers are implemented, 
+    2. Due to the way ocean optics firmware/drivers are implemented, 
     most spectrometers do not support an abort mode of the standard 'free running mode', 
     which causes spectra to be continuously stored in a FIFO array. 
     This first-in-first-out (FIFO) causes a very unpractical behavior of the spectrometers,
@@ -74,10 +63,16 @@ Notes:
     sent to the device, one is forced to call the spec.intensities() function twice! 
     This means a simple measurements now takes twice as long, resulting in a sub-optimal efficiency. 
     
-    4. Hopefully, at Ocean Optics, they will, at some point in time, listen to their customers 
+    3. Hopefully, at Ocean Optics, they will, at some point in time, listen to their customers 
     and implement a simple, logical operation of their devices: one that just reads a spectrum 
     at the desired integration time the momemt the function is called and which puts the 
     spectrometer in idle mode when no spectrum is requested.
+    
+    4. When using pyseabreeze backend: change read_eeprom_slot() in eeprom.py in **pyseabreeze** because the 
+    ubs output used ',' as decimal separator instead of '.' (probably because
+    of the use of a french keyboard, despite having system set to use '.' as separator):  
+    line 20 in eeprom.py: "return data.rstrip('\x00')" was changed to
+    "return data.rstrip('\x00').replace(',','.')"
     
 Last updated for seabreeze v1.3.0 (sep 2020) on March 9, 2021.
     
@@ -104,8 +99,8 @@ __all__ = ['dvc_open','dvc_close', 'get_spd','create_dark_model','estimate_dark_
 # Init default parameters
 _TINT = 0.5 # default integration time
 _TINT_MAX = None
-_CORRECT_DARK_COUNTS = False # automatic dark count correction supported by some spectrometers
-_CORRECT_NONLINEARITY = False # automatic non-linearity correction
+_CORRECT_DARK_COUNTS = True # automatic dark count correction supported by some spectrometers
+_CORRECT_NONLINEARITY = True # automatic non-linearity correction
 _TARGET_MAX_CNTS_RATIO = 0.8 # aim for 80% of max number of counts
 _IT_RATIO_INCREASE = 1.2 # first stage: increase Tint by this fraction
 _MAX_NUMBER_OF_RATIO_INCREASES = 4 # number of times to apply ration increase before estimating using lin. regr.
@@ -1299,7 +1294,7 @@ def get_spd(dvc = 0, Tint = _TINT, autoTint_max = _TINT_MAX, \
         else:
             raise Exception("Requested output error.")
 
-def plot_spd(ax, spd, Tint, sum_cnts = 0, max_cnts = 0):
+def plot_spd(ax, spd, Tint, sum_cnts = 0, max_cnts = 0, units = 'cnts/s'):
     """
     Make a spectrum plot.
     
@@ -1314,13 +1309,17 @@ def plot_spd(ax, spd, Tint, sum_cnts = 0, max_cnts = 0):
         :max_cnts:
             | 0 or int, optional
             | max of all counts in spectrum.
+        :units:
+            | 'cnts/s', optional
+            | Output spectrum is :units:  (used for setting y-label)
+
     Returns:
         :None:        
     """
     ax.clear()
     ax.plot(spd[0],spd[1],'b')
     ax.set_xlabel('Wavelength (nm)')
-    ax.set_ylabel('counts/s')
+    ax.set_ylabel(units)
     ax.set_title("integration time = {:1.3f}s, sum_cnts = {:1.0f}, max_cnts = {:1.0f}".format(Tint, sum_cnts,max_cnts))
     plt.pause(0.1)
     return None
