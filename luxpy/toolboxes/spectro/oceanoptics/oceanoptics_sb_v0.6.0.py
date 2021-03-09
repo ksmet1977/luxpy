@@ -23,7 +23,7 @@ Installation:
 -------------
     1. Download and install the seabreeze installer from sourceforge:
     https://sourceforge.net/projects/seabreeze/files/SeaBreeze/installers/
-    2. Install python API for seabreeze: conda install -c conda-forge seabreeze
+    2. Install python-seabreeze: conda install -c conda-forge seabreeze
     3. Windows: Force the spectrometer to use a libusb driver via Zadig 
     (http://zadig.akeo.ie/)
     4. Install pyusb ("import usb.core", "usb.core.find()" should work before proceeding)
@@ -65,8 +65,9 @@ Notes:
     
     2. More info on: https://github.com/ap--/python-seabreeze
     
-   
-    3. Due to the way ocean optics firmware/drivers are implemented, 
+    3. Cooling for supported spectrometers not yet implemented/tested (May 2, 2019).
+ 
+    4. Due to the way ocean optics firmware/drivers are implemented, 
     most spectrometers do not support an abort mode of the standard 'free running mode', 
     which causes spectra to be continuously stored in a FIFO array. 
     This first-in-first-out (FIFO) causes a very unpractical behavior of the spectrometers,
@@ -74,12 +75,11 @@ Notes:
     sent to the device, one is forced to call the spec.intensities() function twice! 
     This means a simple measurements now takes twice as long, resulting in a sub-optimal efficiency. 
     
-    4. Hopefully, at Ocean Optics, they will, at some point in time, listen to their customers 
+    5. Hopefully, at Ocean Optics, they will, at some point in time, listen to their customers 
     and implement a simple, logical operation of their devices: one that just reads a spectrum 
     at the desired integration time the momemt the function is called and which puts the 
     spectrometer in idle mode when no spectrum is requested.
     
-Last updated for seabreeze v1.3.0 (sep 2020) on March 9, 2021.
     
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
@@ -94,10 +94,9 @@ from luxpy import cie_interp, getwlr
 from luxpy.utils import np, pd, plt, _EPS
 
 import seabreeze
-# seabreeze.use("pyseabreeze") # pre 09-March-2021 (use of seabreeze v.0.6.0)
-seabreeze.use("cseabreeze") # 9-March-2021: changed as with new v1.3.0 of seabreeze the C++ backend supports thermo-electric features, while the python backend does not
-plt.pause(5) # give some time for cseabreeze backend to load !
+seabreeze.use("pyseabreeze")
 import seabreeze.spectrometers as sb
+
 
 __all__ = ['dvc_open','dvc_close', 'get_spd','create_dark_model','estimate_dark_from_model','plot_spd', 'get_temperature', 'set_temperature']
 
@@ -116,54 +115,6 @@ _VERBOSITY = 1 # verbosity (0: nothing, 1: text, 2: text + graphs)
 _DARK_MODEL_PATH = os.path.join(os.path.dirname(__file__),'data','dark_model.dat')
 _ERROR = None # Error value (for some cases, NaN is used anyway!)
 _TEMPC = -20.0 # default value of temperature (°C) to cool TEC supporting devices.
-_SEABREEZESPECTROMETER_CLASS = seabreeze.spectrometers.Spectrometer
-
-def parse_device_struct(dvc):
-    """ 
-    Update dvc with often used methods and attributes. 
-    (To keep any changes in seabreeze API more easily manageable)
-    
-    Args:
-        :dvc:
-            | Device handle.
-            
-    Returns:
-        :dvc: updated device handle
-    """
-    # Add other info to dvc struct:
-    dvc._tint_min = dvc.integration_time_micros_limits[0]/1e6
-    dvc._tint_max = dvc.integration_time_micros_limits[1]/1e6
-    dvc._integration_time_micros = dvc.integration_time_micros
-    
-    # add _has_dark_pixels & _has_non_linearity_coeffs:
-    dvc._has_dark_pixels = len(dvc.f.spectrometer.get_electric_dark_pixel_indices())> 0
-    dvc._has_nonlinearity_coeffs = len(dvc.f.nonlinearity_coefficients.get_nonlinearity_coefficients()) > 0
-    
-    if dvc._has_nonlinearity_coeffs:
-        if (np.abs(np.array(dvc._nc))>0).all(): # avoid problems with division by zero by messed up coefficients.
-            dvc._nc[0] = 1 # spectrum becomes ones
-       
-    # add wavelengths:
-    dvc._wavelengths = dvc.wavelengths()
-    
-    # Add maximum pixel value:
-    dvc._max_pixel_value = dvc.max_intensity
-    dvc._intensities = dvc.intensities
-
-    # check for tec feature:
-    try:
-        dvc.tec_set_enable(True)
-        dvc._has_tec = True
-        dvc._tec_set_temperature_C = dvc.tec_set_temperature_C
-        dvc._tec_get_temperature_C = dvc.tec_get_temperature_C
-    except:
-        dvc._has_tec = False
-        def tmp(set_point_C): pass # dont do anything
-        dvc._tec_set_temperature_C = tmp
-        dvc._tec_get_temperature_C = lambda : np.nan
-    
-    return dvc
-
 
 def dvc_open(dvc = 0, N = 10, Errors = {}, out = "dvc,Errors", verbosity = _VERBOSITY):
     """
@@ -215,9 +166,20 @@ def dvc_open(dvc = 0, N = 10, Errors = {}, out = "dvc,Errors", verbosity = _VERB
                 dvc = sb.Spectrometer(devices[dvc])
                 time.sleep(1)
             
-                #Update dvc with often used methods and attributes. 
-                # (To keep any changes in seabreeze API more easily manageable):
-                dvc = parse_device_struct(dvc)
+                # Add other info to dvc struct:
+                dvc._tint_min = dvc._dev.interface._INTEGRATION_TIME_MIN/1e6
+                dvc._tint_max = dvc._dev.interface._INTEGRATION_TIME_MAX/1e6
+            
+                if dvc._has_nonlinearity_coeffs:
+                    if sum(dvc._nc) == 0: # avoid problems with division by zero by messed up coefficients.
+                        dvc._nc[0] = 1.0
+                   
+                # check for tec feature:
+                try:
+                    dvc.tec_set_enable(True)
+                    dvc._has_tec = True
+                except:
+                    dvc._has_tec = False
                 
                 # Set global variable _TINT_MAX to device dependent value
                 global _TINT_MAX
@@ -227,7 +189,7 @@ def dvc_open(dvc = 0, N = 10, Errors = {}, out = "dvc,Errors", verbosity = _VERB
             else:
                 dvc = _ERROR
                 Errors["OpenDevice"] = 'dvc_open() could not detect any device, even after {:1.0f} tries. Make sure you have set the usb driver for your spectrometer to libusb using e.g. Zadig!'.format(N)
-                
+            
     except:
         Errors["OpenDevice"] = 'dvc_open() fails.'
         dvc = _ERROR 
@@ -328,7 +290,7 @@ def _getOOcounts(dvc, Tint = _TINT, \
         which causes spectra to be continuously stored in a FIFO array. 
         This first-in-first-out (FIFO) causes a very unpractical behavior of the spectrometers,
         such that, to ensure one gets a spectrum corresponding to the latest integration time 
-        sent to the device, one is forced to call the dvc._intensities() function twice! 
+        sent to the device, one is forced to call the dvc.intensities() function twice! 
         This means a simple measurements now takes twice as long, resulting in a sub-optimal efficiency. 
     
         2. Hopefully, at Ocean Optics, they will, at some point in time, listen to their customers 
@@ -339,7 +301,7 @@ def _getOOcounts(dvc, Tint = _TINT, \
     out = out.replace(' ','')
     try:
         Errors['MeasureCnts'] = None
-        dvc._integration_time_micros(int(Tint*1e6)) # expects micro secs.
+        dvc.integration_time_micros(Tint*1e6) # expects micro secs.
         
         # Turn off features some devices do not support.
         if not dvc._has_dark_pixels:
@@ -347,8 +309,8 @@ def _getOOcounts(dvc, Tint = _TINT, \
         if not dvc._has_nonlinearity_coeffs:
             correct_nonlinearity = False
             
-        cnts = dvc._intensities(correct_dark_counts = correct_dark_counts, correct_nonlinearity = correct_nonlinearity)
-        cnts = dvc._intensities(correct_dark_counts = correct_dark_counts, correct_nonlinearity = correct_nonlinearity) # double call to avoid ending up with wrong buffer values due to poor programming of ocean optics api
+        cnts = dvc.intensities(correct_dark_counts = correct_dark_counts, correct_nonlinearity = correct_nonlinearity)
+        cnts = dvc.intensities(correct_dark_counts = correct_dark_counts, correct_nonlinearity = correct_nonlinearity) # double call to avoid ending up with wrong buffer values due to poor programming of ocean optics api
         Errors['MeasureCnts'] = 0
     except:
         Errors['MeasureCnts'] = '_getOOcounts () fails'
@@ -444,7 +406,7 @@ def create_dark_model(dvc, dark_model_Tints = _DARK_MODEL_TINTS, \
             if isinstance(savgol_window,int):
                 savgol_window = (savgol_window % 2==0) + savgol_window # ensure odd window length
             else:
-                savgol_window = np.int(2*np.round(dvc._wavelengths.shape[0]*savgol_window)+1) # if not int, 1/.. ratio
+                savgol_window = np.int(2*np.round(dvc.wavelengths().shape[0]*savgol_window)+1) # if not int, 1/.. ratio
         
         # prepare graphic output:
         if verbosity > 1:
@@ -464,12 +426,12 @@ def create_dark_model(dvc, dark_model_Tints = _DARK_MODEL_TINTS, \
                 ax1.set_xlabel('Wavelength (nm)')
                 ax1.set_ylabel('Counts')
                 ax1.set_title('Dark Measurements (raw)')
-                ax1.plot(dvc._wavelengths, dark_cnts,'.')
+                ax1.plot(dvc.wavelengths(), dark_cnts,'.')
              
                 ax2.set_xlabel('Wavelength (nm)')
                 ax2.set_ylabel('Counts')
                 ax2.set_title('Dark Measurements (smoothed)')
-                ax2.plot(dvc._wavelengths, dark_cnts_s,'.')
+                ax2.plot(dvc.wavelengths(), dark_cnts_s,'.')
                 plt.show()
                 plt.pause(0.1)
       
@@ -505,10 +467,10 @@ def create_dark_model(dvc, dark_model_Tints = _DARK_MODEL_TINTS, \
         # Store integration times and dark counts in nd-array:
         if savgol_window > 0: # use smoothed dark measurements
             dark_model = np.hstack((np.vstack((0,dark_its_arr[:,None])),\
-                                np.vstack((dvc._wavelengths,dark_cnts_s_arr))))
+                                np.vstack((dvc.wavelengths(),dark_cnts_s_arr))))
         else: # use non-smoothed dark measurements
             dark_model = np.hstack((np.vstack((0,dark_its_arr[:,None])),\
-                                np.vstack((dvc._wavelengths,dark_cnts_arr))))
+                                np.vstack((dvc.wavelengths(),dark_cnts_arr))))
             
         dvc, Errors = dvc_close(dvc, Errors = Errors, close_device = close_device, verbosity = verbosity)
         Errors["create_dark_model"] = 0
@@ -701,7 +663,7 @@ def _correct_for_dark(dvc, cnts, Tint, method = 'dark_model.dat', \
                     if isinstance(savgol_window,int):
                         savgol_window = (savgol_window % 2==0) + savgol_window # ensure odd window length
                     else:
-                        savgol_window = np.int(2*np.round(dvc._wavelengths.shape[0]*savgol_window)+1) # if not int, 1/.. ratio
+                        savgol_window = np.int(2*np.round(dvc.wavelengths().shape[0]*savgol_window)+1) # if not int, 1/.. ratio
             
                 # Ask user response:
                 root = tkinter.Tk() #hide tkinter main window
@@ -787,7 +749,7 @@ def _find_opt_Tint(dvc, Tint, autoTint_max = _TINT_MAX, \
     out = out.replace(' ','')
     try:
         # Get max pixel value and min. integration time:
-        max_value = dvc._max_pixel_value
+        max_value = dvc._dev.interface._MAX_PIXEL_VALUE
         Tint_min = dvc._tint_min
                     
         # Limit max integration time:
@@ -1002,7 +964,7 @@ def set_temperature(dvc=0, tempC = _TEMPC, repeat_get_temp = 2, Errors = {}, out
             | Temperature (°C) to cool device to.
         :repeat_get_temp:
             | 2 or int, optional
-            | Number of times to repeat dvc._tec_get_temperature_C() to get temp (min. twice due to firmware error.)
+            | Number of times to repeat dvc.tec_get_temperature_C() to get temp (min. twice due to firmware error.)
         :Errors:
             | Dict with error messages, optional
         :out:
@@ -1018,7 +980,7 @@ def set_temperature(dvc=0, tempC = _TEMPC, repeat_get_temp = 2, Errors = {}, out
     out = out.replace(' ','')
     if isinstance(dvc,int):
         was_closed = True
-    elif isinstance(dvc,_SEABREEZESPECTROMETER_CLASS):
+    elif isinstance(dvc,seabreeze.spectrometers.Spectrometer):
         was_closed = False
     else:
         was_closed = True
@@ -1029,9 +991,9 @@ def set_temperature(dvc=0, tempC = _TEMPC, repeat_get_temp = 2, Errors = {}, out
             was_closed = True
         
         tempC_meas = np.nan 
-        if isinstance(dvc,_SEABREEZESPECTROMETER_CLASS): 
+        if isinstance(dvc,seabreeze.spectrometers.Spectrometer): 
             if dvc._has_tec:
-                dvc._tec_set_temperature_C(set_point_C = tempC)
+                dvc.tec_set_temperature_C(set_point_C = tempC)
                 time.sleep(0.5)
                 if ('tempC_meas' in out.split(',')) | (verbosity > 0):
                     tempC_meas, Errors = get_temperature(dvc=dvc, repeat_get_temp = repeat_get_temp, Errors = Errors, out = 'tempC,Errors', verbosity = verbosity)
@@ -1062,7 +1024,7 @@ def get_temperature(dvc=0, repeat_get_temp = 2, Errors = {}, out = 'tempC,Errors
             | If int: device will be opened before and closed after getting the temperature.
         :repeat_get_temp:
             | 2 or int, optional
-            | Number of times to repeat dvc._tec_get_temperature_C() to get temp (min. twice due to firmware error.)
+            | Number of times to repeat dvc.tec_get_temperature_C() to get temp (min. twice due to firmware error.)
         :Errors:
             | Dict with error messages, optional
         :out:
@@ -1078,7 +1040,7 @@ def get_temperature(dvc=0, repeat_get_temp = 2, Errors = {}, out = 'tempC,Errors
     out = out.replace(' ','')
     if isinstance(dvc,int):
         was_closed = True
-    elif isinstance(dvc,_SEABREEZESPECTROMETER_CLASS):
+    elif isinstance(dvc,seabreeze.spectrometers.Spectrometer):
         was_closed = False
     else:
         was_closed = True
@@ -1087,10 +1049,10 @@ def get_temperature(dvc=0, repeat_get_temp = 2, Errors = {}, out = 'tempC,Errors
         if isinstance(dvc,int):
             dvc,Errors = dvc_open(dvc=dvc,Errors=Errors,verbosity=verbosity)
         
-        if isinstance(dvc,_SEABREEZESPECTROMETER_CLASS): 
+        if isinstance(dvc,seabreeze.spectrometers.Spectrometer): 
             if dvc._has_tec:
                 for i in range(min(2,int(repeat_get_temp))):
-                    tempC = dvc._tec_get_temperature_C()# repeat it a few times (due to error in firmware!)
+                    tempC = dvc.tec_get_temperature_C()# repeat it a few times (due to error in firmware!)
                     time.sleep(0.01)
                 if verbosity > 0:
                     print("Device temperature = {:1.1f}°C".format(tempC))     
@@ -1146,7 +1108,7 @@ def get_spd(dvc = 0, Tint = _TINT, autoTint_max = _TINT_MAX, \
             | Set board temperature on TEC supported spectrometers.
         :repeat_get_temp:
             | 2 or int, optional
-            | Number of times to repeat dvc._tec_get_temperature_C() to get temp (min. twice due to firmware error.)
+            | Number of times to repeat dvc.tec_get_temperature_C() to get temp (min. twice due to firmware error.)
         :dark_cnts:
             | 'dark_model.dat' or str or ndarray, optional
             | If str: 
@@ -1212,7 +1174,7 @@ def get_spd(dvc = 0, Tint = _TINT, autoTint_max = _TINT_MAX, \
         in a FIFO array. This first-in-first-out (FIFO) causes a very 
         unpractical behavior of the spectrometers, such that, to ensure one 
         gets a spectrum corresponding to the latest integration time sent to 
-        the device, one is forced to call the dvc._intensities() function twice! 
+        the device, one is forced to call the dvc.intensities() function twice! 
         This means a simple measurements now takes twice as long, 
         resulting in a sub-optimal efficiency. 
         
@@ -1248,10 +1210,10 @@ def get_spd(dvc = 0, Tint = _TINT, autoTint_max = _TINT_MAX, \
         cnts,Errors = _correct_for_dark(dvc, cnts, Tint, method = dark_cnts, savgol_window = savgol_window, correct_dark_counts = correct_dark_counts, correct_nonlinearity = correct_nonlinearity, verbosity = verbosity, Errors = Errors, out = 'cnts,Errors')
         
         # Reset integration time to min. value for fast new measurement (see notes on crappy ocean optics software):
-        dvc._integration_time_micros(dvc._tint_min*1e6)
+        dvc.integration_time_micros(dvc._tint_min*1e6)
         
         # Add wavelengths to spd:
-        spd = np.vstack((dvc._wavelengths,cnts))
+        spd = np.vstack((dvc.wavelengths(),cnts))
         
         # Interpolate to requested wavelength range and stepsize:
         if (wlstep is not None) & (wlstart is not None) & (wlend is not None):
@@ -1280,7 +1242,7 @@ def get_spd(dvc = 0, Tint = _TINT, autoTint_max = _TINT_MAX, \
     finally:
         #Close device if requested.
         dvc, Errors = dvc_close(dvc, close_device = close_device, verbosity = verbosity, Errors = Errors, out = 'dvc,Errors')
-    
+        
         # Generate requested return:
         if out == "spd":
             return spd
