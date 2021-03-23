@@ -645,7 +645,7 @@ def get_uv_texture(theta, phi = None, values = None, input_types = ('array','arr
     # When only (theta,values) data is given--> assume rotational symmetry:
     if phi is None:
         phi = phi_map
-        values = np.matlib.repmat(values,np.int(360*(1/angle_res)),1) # assume rotational symmetry, values must be array!
+        values = matlib.repmat(values,np.int(360*(1/angle_res)),1) # assume rotational symmetry, values must be array!
         input_types = (input_types[0],'mesh') 
 
     # convert radians to degrees:
