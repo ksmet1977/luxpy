@@ -487,6 +487,8 @@ def _normalize_candela_2d(LID, normalize = 'I0', multiplier = 1):
     elif normalize == 'I0': # normalize candela values to I0 = 1 
         I0 = candela_2d[LID['h_angs']==0.0, LID['v_angs']==0.0]
         norm = I0[0]
+    else:
+        raise Exception("Unsupported normalize option (valid string options are 'max', 'I0')")
     candela_2d = candela_2d/norm
     candela_mult = LID['candela_mult']
     intensity = norm * multiplier * candela_mult
