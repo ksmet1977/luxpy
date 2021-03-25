@@ -35,7 +35,7 @@ If you use the package, please cite the following **tutorial paper** published i
 * modelling of individual observer color matching functions (Asano, 2016)
 * calculation of CIEOP06 (cfr. CIE TC1-97) color matching functions and cone-fundamentals
 * display characterization
-* reading and visualizing IES and LDT photometric files
+* reading and visualizing IES and LDT photometric files (vizualizations: 2D polar plots, 3D plots, single-bounce physical-based rendering)
 * ...
 
 As of May 2019, LuxPy now also has a toolbox **spectro** for **spectral measurements** with **JETI** and **OceanOptics** spectrometers:
