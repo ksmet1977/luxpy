@@ -38,6 +38,7 @@ Module for reading / writing LID data from IES and LDT files.
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 import os
+import warnings
 from luxpy.utils import np
 from luxpy.utils import plt, Axes3D 
 
@@ -88,6 +89,7 @@ def read_lamp_data(filename, multiplier = 1.0, verbosity = 0, normalize = 'I0', 
             | 'future_use', 'input_watts', 'v_angs', 'h_angs', 'lamp_cone_type',
             | 'lamp_h_type', 'candela_values', 'candela_2d', 'v_same', 'h_same',
             | 'intensity', 'theta', 'values', 'phi', 'map','Iv0']
+            |)
             |
             | If file_ext == 'ldt':
             |    dict_keys(
@@ -98,6 +100,12 @@ def read_lamp_data(filename, multiplier = 1.0, verbosity = 0, normalize = 'I0', 
             | 'intensity', 'theta', 'values', 'phi', 'map', 'Iv0']
             | )
             
+    Notes:
+        1. if only_common_keys: output is dictionary with keys: ['filename', 'version', 'intensity', 'theta', 'phi', \
+        'values', 'map', 'Iv0', 'candela_values', 'candela_2d'] 
+        2. 'theta','phi', 'values' (='candela_2d') contain the original theta angles, phi angles and normalized candelas as specified in file.
+        3. 'map' contains a dicionary with keys 'thetas', 'phis', 'values'. This data has been complete to full angle ranges thetas: [0,180]; phis: [0,360]   
+        4. LDT map completion only supported for Isymm == 4 (31/10/2018), Map will be filled with original 'theta', 'phi' and normalized 'candela_2d' values !
     """
     common_keys = ['filename', 'version', 'intensity', 'theta', 'phi', \
                    'values', 'map', 'Iv0', 'candela_values', 'candela_2d']
@@ -313,24 +321,33 @@ def read_IES_lamp_data(filename, multiplier = 1.0, verbosity = 0, normalize = 'I
     IES['Iv0'] = IES['intensity']/1000*IES['lumens_per_lamp'] #lid in cd/klm 
     return IES
     
-def _complete_ies_lid(IES, lamp_h_type = 'TYPE90'):
+def _complete_ies_lid(IES, lamp_h_type = 'TYPE90', complete = True):
     """
     Convert IES LID map with lamp_h_type symmetry to a 'full' map with phi: [0,360] and theta: [0,180].
     """    
     # Create full theta (0-180) and phi (0-360) sets
-    IES['theta'] = IES['v_angs']
-    if IES['lamp_h_type'] == 'TYPE90':
-        IES['values'] = matlib.repmat(IES['candela_2d'],4,1)
-        IES['phi'] = np.hstack((IES['h_angs'], IES['h_angs'] + 90, IES['h_angs'] + 180, IES['h_angs']+270))
-    elif IES['lamp_h_type'] == 'TYPE180':
-        IES['values'] = matlib.repmat(IES['candela_2d'],2,1)
-        IES['phi'] = np.hstack((IES['h_angs'], IES['h_angs'] + 180))
+    if (IES['lamp_h_type'] == 'TYPE90') & (complete == True):
+        candela_2d = matlib.repmat(IES['candela_2d'],4,1)
+        phis = np.hstack((IES['h_angs'], IES['h_angs'] + 90, IES['h_angs'] + 180, IES['h_angs']+270))
+        make_map = True
+    elif (IES['lamp_h_type'] == 'TYPE180') & (complete == True):
+        candela_2d = matlib.repmat(IES['candela_2d'],2,1)
+        phis = np.hstack((IES['h_angs'], IES['h_angs'] + 180))
+        make_map = True
     else:
-        IES['values'] = IES['candela_2d']
-        IES['phi'] = IES['h_angs']
-    IES['map']['thetas'] =  IES['theta']
-    IES['map']['phis'] = IES['phi']
-    IES['map']['values'] = IES['values']
+        make_map = False
+    if make_map:
+        IES['map']['thetas'] =  IES['v_angs']
+        IES['map']['phis'] = phis
+        IES['map']['values'] = candela_2d
+    else:
+        IES['map']['thetas'] =  IES['v_angs']
+        IES['map']['phis'] = IES['h_angs']
+        IES['map']['values'] = IES['candela_2d']
+    
+    IES['theta'] = IES['v_angs']
+    IES['phi'] = IES['h_angs']
+    IES['values'] = IES['candela_2d']
     return IES
   
 
@@ -419,14 +436,14 @@ def read_ldt_lamp_data(filename, multiplier = 1.0, normalize = 'I0'):
             elif (c >= (42 + LDT['Mc'] + LDT['Ng'])) & (c <= (42 + LDT['Mc'] + LDT['Ng'] + LDT['Mc']*LDT['Ng'] - 1)):
                 candela_values.append(np.float(line))
             c += 1
-            
+         
         candela_values = np.array(candela_values)
         LDT['candela_values'] = np.array(candela_values)
         candela_2d = np.array(candela_values).reshape((-1,np.int(LDT['Ng'])))
         LDT['h_angs'] = np.array(cangles)[:candela_2d.shape[0]]
         LDT['v_angs'] = np.array(tangles)
         LDT['candela_2d'] = np.array(candela_2d)
-        
+
         # normalize candela values to max = 1 or I0 = 1:
         LDT = _normalize_candela_2d(LDT, normalize = normalize, multiplier = multiplier)
 
@@ -437,14 +454,14 @@ def read_ldt_lamp_data(filename, multiplier = 1.0, normalize = 'I0'):
         return LDT
 
     
-def _complete_ldt_lid(LDT, Isym = 4):
+def _complete_ldt_lid(LDT, Isym = 4, complete = True):
     """
     Convert LDT LID map with Isym symmetry to a 'full' map with phi: [0,360] and theta: [0,180].
     """
     cangles = LDT['h_angs']
     tangles = LDT['v_angs']
     candela_2d = LDT['candela_2d']
-    if Isym == 4:
+    if (Isym == 4) & (complete == True):
         # complete cangles:
         a = candela_2d.copy().T
         b = np.hstack((a,a[:,(a.shape[1]-2)::-1]))
@@ -456,7 +473,8 @@ def _complete_ldt_lid(LDT, Isym = 4):
         b = np.vstack((a,np.zeros(a.shape)[1:,:]))
         tangles = np.hstack((tangles, tangles[1:] + 90))
         candela_2d = b
-    elif Isym == -4:
+        make_map = True
+    elif (Isym == -4) & (complete == True):
         # complete cangles:
         a = candela_2d.copy().T
         b = np.hstack((a,a[:,(a.shape[1]-2)::-1]))
@@ -470,12 +488,25 @@ def _complete_ldt_lid(LDT, Isym = 4):
         b = np.vstack((a,np.zeros(a.shape)[1:,:]))
         tangles = np.hstack((tangles, -tangles[(tangles.shape[0]-2)::-1] + 180))
         candela_2d = b
+        make_map = True
     else:
-        raise Exception ('complete_ldt_lid(): Other "Isym" than "4", not yet implemented (31/10/2018).')
+        warnings.warn('\n######################\ncomplete_ldt_lid(): Other "Isym" than "4", not yet implemented (31/10/2018). Creating map dictionary filled with original uncompleted values!\n######################\n')
+        make_map = False
     
-    LDT['map'] = {'thetas': tangles}
-    LDT['map']['phis'] = cangles
-    LDT['map']['values'] = candela_2d.T
+    if make_map:
+        LDT['map'] = {'thetas': tangles}
+        LDT['map']['phis'] = cangles
+        LDT['map']['values'] = candela_2d.T
+        LDT['map']['full'] = True
+    else:
+        LDT['map'] = {'thetas': LDT['v_angs']}
+        LDT['map']['phis'] = LDT['h_angs']
+        LDT['map']['values'] = LDT['candela_2d']
+        LDT['map']['full'] = False
+    
+    LDT['theta'] = LDT['v_angs']
+    LDT['phi'] = LDT['h_angs']
+    LDT['values'] = LDT['candela_2d']
     return LDT         
 
 def _normalize_candela_2d(LID, normalize = 'I0', multiplier = 1):
@@ -487,8 +518,10 @@ def _normalize_candela_2d(LID, normalize = 'I0', multiplier = 1):
     elif normalize == 'I0': # normalize candela values to I0 = 1 
         I0 = candela_2d[LID['h_angs']==0.0, LID['v_angs']==0.0]
         norm = I0[0]
+    elif (normalize is None) | (normalize == 'none'):
+        norm = 1.0
     else:
-        raise Exception("Unsupported normalize option (valid string options are 'max', 'I0')")
+        raise Exception("Unsupported normalize option (valid string options are 'max', 'I0', 'none')")
     candela_2d = candela_2d/norm
     candela_mult = LID['candela_mult']
     intensity = norm * multiplier * candela_mult
@@ -726,9 +759,9 @@ def save_texture(filename, tex, bits = 16, transpose = True):
 #------------------------------------------------------------------------------
 
 def get_cart_lid_map(LID,grid_interp_method = 'linear', theta_min = 0, angle_res = 1,):
-    values_map,phim_map,thetam_map = get_uv_texture(theta = LID['theta'], 
-                                                    phi = LID['phi'], 
-                                                    values = LID['values'], 
+    values_map,phim_map,thetam_map = get_uv_texture(theta = LID['map']['thetas'], 
+                                                    phi = LID['map']['phis'], 
+                                                    values = LID['map']['values'], 
                                                     input_types = ('array','mesh'), 
                                                     method = grid_interp_method, 
                                                     theta_min = theta_min, 
@@ -980,8 +1013,8 @@ def _plot_plane_edges(corners, ax, color = 'r', marker = 'o'):
 
 def _read_luminous_intensity(thetas, phis, LID, method = 'linear'):
     # Interpolate values for uv_in to values for uv_map:
-    thetam_in, phim_in = np.meshgrid(LID['theta'], LID['phi'])
-    Iv = LID['values']
+    thetam_in, phim_in = np.meshgrid(LID['map']['thetas'], LID['map']['phis'])
+    Iv = LID['map']['values']
     Ivs = interp.griddata(np.array([phim_in.ravel(),thetam_in.ravel()]).T, Iv.ravel(), (phis,thetas), method = method)
     return Ivs
 
@@ -1317,13 +1350,13 @@ def render_lid(LID = './data/luxpy_test_lid_file.ies',
 if __name__ == '__main__':
     
     # Read lamp data from IES file:
-    IES = read_lamp_data('./data/luxpy_test_lid_file2.ies', verbosity = 1)
+    IES = read_lamp_data('./data/luxpy_test_lid_file.ldt', verbosity = 1)
     
     # # Generate uv-map for rendering / ray-tracing (eg by wrapping this around 
     # # a point light source to attenuate the luminous intensity in different directions):
-    # uv_map = get_uv_texture(theta = IES['theta'], 
-    #                           phi = IES['phi'], 
-    #                           values = IES['values'], 
+    # uv_map = get_uv_texture(theta = IES['map']['theta'], 
+    #                           phi = IES['map']['phi'], 
+    #                           values = IES['map']['values'], 
     #                           input_types = ('array','mesh'), 
     #                           method = 'linear', 
     #                           theta_min = 0, angle_res = 1,
