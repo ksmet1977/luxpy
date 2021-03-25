@@ -25,7 +25,7 @@ Module for reading / writing LID data from IES and LDT files.
  
  :save_texture(): Save 16 bit grayscale PNG image of uv-texture.
  
- :draw_lid(): Draw 3D light intensity distribution.
+ :draw_lid(): Draw 2D polar plots or 3D light intensity distribution.
  
  :render_lid(): Render a light intensity distribution.
 
@@ -39,7 +39,7 @@ Module for reading / writing LID data from IES and LDT files.
 """
 import os
 import warnings
-from luxpy.utils import np
+from luxpy.utils import np, _PKG_PATH, _SEP
 from luxpy.utils import plt, Axes3D 
 
 from numpy import matlib
@@ -51,7 +51,9 @@ import imageio
 imageio.plugins.freeimage.download()
 # from skimage import exposure, img_as_uint
 
-__all__ =['read_lamp_data','get_uv_texture','save_texture','draw_lid','render_lid']
+_PATH_DATA = os.path.join(_PKG_PATH, 'toolboxes','iolidfiles','data') + _SEP
+
+__all__ =['_PATH_DATA', 'read_lamp_data','get_uv_texture','save_texture','draw_lid','render_lid']
 
 
 def read_lamp_data(filename, multiplier = 1.0, verbosity = 0, normalize = 'I0', only_common_keys = False):
@@ -778,7 +780,8 @@ def get_cart_lid_map(LID,grid_interp_method = 'linear', theta_min = 0, angle_res
     return xm_map,ym_map,zm_map,phim_map,thetam_map,values_map
 
 def draw_lid(LID, grid_interp_method = 'linear', theta_min = 0, angle_res = 1,
-             ax = None, use_scatter_plot = False, plot_colorbar = True, legend_on = False, 
+             ax = None, projection = '2d', polar_plot_Cx_planes = [0,90], 
+             use_scatter_plot = False, plot_colorbar = True, legend_on = True, 
              plot_luminaire_position = True, out = 'ax', **plottingkwargs):
     """
     Draw the light intensity distribution.
@@ -801,19 +804,26 @@ def draw_lid(LID, grid_interp_method = 'linear', theta_min = 0, angle_res = 1,
         :ax:
             | None, optional
             | If None: create new 3D-axes for plotting.
+        :projection:
+            | '2d', optional
+            | If '3d' make 3 plot
+            | If '2d': make polar plot(s). [not yet implemented (25/03/2021)]
+        :polar_plot_Cx_planes:
+            | [0,90], optional
+            | Plot (Cx)-(Cx+180) planes; eg. [0,90] will plot C0-C180 and C90-C270 planes in 2D polar plot.
         :use_scatter_plot:
             | False, optional
-            | If True: use plt.scatter for plotting intensity values.
-            | If False: use plt.plot_surface for plotting.
+            | If True: use plt.scatter for plotting intensity values in 3D plot.
+            | If False: use plt.plot_surface for plotting in 3D plot.
         :plot_colorbar:
             | True, optional
-            | Plot colorbar representing the normalized luminous intensity values in the LID.
+            | Plot colorbar representing the normalized luminous intensity values in the LID 3D plot.
         :legend_on:
-            | False, optional
-            | plot legend.
+            | True, optional
+            | If True: plot legend on polar plot (no legend for 3D plot!).
         :plot_luminaire_position:
             | True, optional
-            | Plot the position of the luminaire (0,0,0) in the graph as a red diamond.
+            | Plot the position of the luminaire (0,0,0) in the 3D graph as a red diamond.
         :out:
             | 'ax', optional
             | string with variable to return
@@ -833,7 +843,28 @@ def draw_lid(LID, grid_interp_method = 'linear', theta_min = 0, angle_res = 1,
     # make plot:
     if ax is None:
         fig = plt.figure()
-        ax = fig.add_subplot(111,projection='3d')
+        if projection == '3d':
+            ax = fig.add_subplot(111, projection = '3d')
+        else:
+            ax = fig.add_subplot(111, polar = True)
+    
+    if projection  == '3d':
+        ax = _make_3D_lid_plot(xm_map, ym_map, zm_map, values_map, plot_luminaire_position,
+                               ax, use_scatter_plot, plot_colorbar,**plottingkwargs)
+        
+    else:
+        ax = _make_2D_lid_plot_polar(phim_map, thetam_map, values_map, 
+                               ax, polar_plot_Cx_planes = polar_plot_Cx_planes, **plottingkwargs)
+        ax.set_theta_zero_location("S")
+        ax.set_thetamin(-90)
+        ax.set_thetamax(90)
+        
+    if (legend_on) & (projection == '2d'): ax.legend(loc = 'best')#bbox_to_anchor=(1.07, 0.8))
+    
+    return eval(out)
+
+def _make_3D_lid_plot(xm_map, ym_map, zm_map, values_map, plot_luminaire_position,
+                      ax, use_scatter_plot, plot_colorbar,**plottingkwargs):
     V = values_map
     norm = matplotlib.colors.Normalize(vmin=V.min().min(), vmax=V.max().max())
     if use_scatter_plot:
@@ -862,10 +893,26 @@ def draw_lid(LID, grid_interp_method = 'linear', theta_min = 0, angle_res = 1,
     ax.set_xlabel('x')
     ax.set_ylabel('y')
     ax.set_zlabel('z')
-    if legend_on: ax.legend()
+    return ax
+
+def _make_2D_lid_plot_polar(phim_map, thetam_map, values_map,  
+                      ax, polar_plot_Cx_planes = [0, 90], **plottingkwargs):
     
-    
-    return eval(out)
+    def get_tr(phi):
+        pp = (phim_map == phi)
+        s = (1*(phim_map[pp]<180) - 1*(phim_map[pp] >= 180)) 
+        t, r = np.deg2rad(thetam_map[pp])*s, values_map[pp]
+        return t, r
+    colors = ['b','r','g','y','c','m','k','k','m','c','y','g','r','b'] * 2
+    linestyles = ['-','--','-.',':']*7
+    for i, phi in enumerate(polar_plot_Cx_planes):
+        phio = phi + 180 # phi on opposite side
+        t,r = get_tr(phi)
+        ax.plot(t,r, color = colors[i], linestyle = linestyles[i], label = 'C{:1.0f}-C{:1.0f}'.format(phi,phio),**plottingkwargs)
+        t,r = get_tr(phio)
+        ax.plot(t,r, color = colors[i], linestyle = linestyles[i], **plottingkwargs)
+    return ax
+
 
 #------------------------------------------------------------------------------
 # Render LID image
@@ -1365,17 +1412,24 @@ if __name__ == '__main__':
     # plt.figure()
     # plt.imshow(uv_map)
     
-        
-    # draw LID:
+    
+    # draw 2D polar plot of C0-C180 and C90-C270 planes::
     draw_lid(IES)
     
-    # # Render LID
+    # draw 2D polar plot of C0-C180, C45-C225 and C90-C270 planes::
+    draw_lid(IES, projection = '2d', polar_plot_Cx_planes = [0,45,90])
+
+
+    # draw 3D LID:
+    draw_lid(IES, projection = '3d')    
+
+    # # # Render LID
     # Lv2D = render_lid(IES, sensor_resolution = 40,
     #                     sensor_position = [0,-1,0.8], sensor_n = [0,1,-0.2], fov = (90,90), Fd = 2,
     #                     luminaire_position = [0,1.3,2], luminaire_n = [0,0,-1],
     #                     wall_center = [0,2,1], wall_n = [0,-1,0], wall_width = 4, wall_height = 2, wall_rho = 1,
     #                     floor_center = [0,1,0], floor_n = [0,0,1], floor_width = 4, floor_height = 2, floor_rho = 1,
-    #                     ax3D = axs[1], ax2D = axs[2], join_axes = False, 
+    #                     ax3D = None, ax2D = None, join_axes = False, 
     #                     plot_luminaire_position = True, plot_lumiaire_rays = False, plot_luminaire_lid = True,
     #                     plot_sensor_position = True, plot_sensor_pixels = False, plot_sensor_rays = False, 
     #                     plot_wall_edges = True, plot_wall_luminance = True, plot_wall_intersections = False,
@@ -1383,21 +1437,26 @@ if __name__ == '__main__':
     #                     out = 'Lv2D')
     
     # or combine draw and render (but use only 2D image):
-    fig = plt.figure(figsize=[14,7])
-    axs = [fig.add_subplot(131,projection='3d'), fig.add_subplot(132,projection='3d'),fig.add_subplot(133)]
+    fig = plt.figure(figsize=[14,14])
+    axs = [fig.add_subplot(221, projection = 'polar'),
+           fig.add_subplot(222, projection = '3d'), 
+           fig.add_subplot(223, projection = '3d'),
+           fig.add_subplot(224)]
     draw_lid(IES, ax = axs[0])
+    draw_lid(IES, ax = axs[2], projection = '3d')
     Lv2D = render_lid(IES, sensor_resolution = 100,
-                       sensor_position = [0,-1,0.8], sensor_n = [0,1,-0.2], fov = (90,90), Fd = 2,
-                       luminaire_position = [0,1.3,2], luminaire_n = [0,0,-1],
-                       wall_center = [0,2,1], wall_n = [0,-1,0], wall_width = 4, wall_height = 2, wall_rho = 1,
-                       floor_center = [0,1,0], floor_n = [0,0,1], floor_width = 4, floor_height = 2, floor_rho = 1,
-                       ax3D = axs[1], ax2D = axs[2], join_axes = False, 
-                       plot_luminaire_position = True, plot_lumiaire_rays = False, plot_luminaire_lid = True,
-                       plot_sensor_position = True, plot_sensor_pixels = False, plot_sensor_rays = False, 
-                       plot_wall_edges = True, plot_wall_luminance = True, plot_wall_intersections = False,
-                       plot_floor_edges = True, plot_floor_luminance = True, plot_floor_intersections = False,
-                       out = 'Lv2D')
-
+                        sensor_position = [0,-1,0.8], sensor_n = [0,1,-0.2], fov = (90,90), Fd = 2,
+                        luminaire_position = [0,1.3,2], luminaire_n = [0,0,-1],
+                        wall_center = [0,2,1], wall_n = [0,-1,0], wall_width = 4, wall_height = 2, wall_rho = 1,
+                        floor_center = [0,1,0], floor_n = [0,0,1], floor_width = 4, floor_height = 2, floor_rho = 1,
+                        ax3D = axs[1], ax2D = axs[3], join_axes = False, 
+                        plot_luminaire_position = True, plot_lumiaire_rays = False, plot_luminaire_lid = True,
+                        plot_sensor_position = True, plot_sensor_pixels = False, plot_sensor_rays = False, 
+                        plot_wall_edges = True, plot_wall_luminance = True, plot_wall_intersections = False,
+                        plot_floor_edges = True, plot_floor_luminance = True, plot_floor_intersections = False,
+                        out = 'Lv2D')
+    
+    
     
     
 
