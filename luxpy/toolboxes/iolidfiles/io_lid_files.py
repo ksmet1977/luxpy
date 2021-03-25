@@ -1397,13 +1397,13 @@ def render_lid(LID = './data/luxpy_test_lid_file.ies',
 if __name__ == '__main__':
     
     # Read lamp data from IES file:
-    IES = read_lamp_data('./data/luxpy_test_lid_file.ldt', verbosity = 1)
+    LID = read_lamp_data('./data/luxpy_test_lid_file.ldt', verbosity = 1)
     
     # # Generate uv-map for rendering / ray-tracing (eg by wrapping this around 
     # # a point light source to attenuate the luminous intensity in different directions):
-    # uv_map = get_uv_texture(theta = IES['map']['theta'], 
-    #                           phi = IES['map']['phi'], 
-    #                           values = IES['map']['values'], 
+    # uv_map = get_uv_texture(theta = LID['map']['theta'], 
+    #                           phi = LID['map']['phi'], 
+    #                           values = LID['map']['values'], 
     #                           input_types = ('array','mesh'), 
     #                           method = 'linear', 
     #                           theta_min = 0, angle_res = 1,
@@ -1414,17 +1414,17 @@ if __name__ == '__main__':
     
     
     # draw 2D polar plot of C0-C180 and C90-C270 planes::
-    draw_lid(IES)
+    draw_lid(LID)
     
     # draw 2D polar plot of C0-C180, C45-C225 and C90-C270 planes::
-    draw_lid(IES, projection = '2d', polar_plot_Cx_planes = [0,45,90])
+    draw_lid(LID, projection = '2d', polar_plot_Cx_planes = [0,45,90])
 
 
     # draw 3D LID:
-    draw_lid(IES, projection = '3d')    
+    draw_lid(LID, projection = '3d')    
 
     # # # Render LID
-    # Lv2D = render_lid(IES, sensor_resolution = 40,
+    # Lv2D = render_lid(LID, sensor_resolution = 40,
     #                     sensor_position = [0,-1,0.8], sensor_n = [0,1,-0.2], fov = (90,90), Fd = 2,
     #                     luminaire_position = [0,1.3,2], luminaire_n = [0,0,-1],
     #                     wall_center = [0,2,1], wall_n = [0,-1,0], wall_width = 4, wall_height = 2, wall_rho = 1,
@@ -1442,9 +1442,9 @@ if __name__ == '__main__':
            fig.add_subplot(222, projection = '3d'), 
            fig.add_subplot(223, projection = '3d'),
            fig.add_subplot(224)]
-    draw_lid(IES, ax = axs[0])
-    draw_lid(IES, ax = axs[2], projection = '3d')
-    Lv2D = render_lid(IES, sensor_resolution = 100,
+    draw_lid(LID, ax = axs[0])
+    draw_lid(LID, ax = axs[2], projection = '3d')
+    Lv2D = render_lid(LID, sensor_resolution = 100,
                         sensor_position = [0,-1,0.8], sensor_n = [0,1,-0.2], fov = (90,90), Fd = 2,
                         luminaire_position = [0,1.3,2], luminaire_n = [0,0,-1],
                         wall_center = [0,2,1], wall_n = [0,-1,0], wall_width = 4, wall_height = 2, wall_rho = 1,
