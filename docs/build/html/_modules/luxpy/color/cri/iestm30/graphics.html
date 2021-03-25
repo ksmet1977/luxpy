@@ -3,11 +3,11 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>luxpy.color.cri.iestm30.graphics &mdash; LuxPy 1.6.2 documentation</title>
+  <title>luxpy.color.cri.iestm30.graphics &mdash; LuxPy 1.6.3 documentation</title>
   
 
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -29,7 +32,6 @@
         <script src="../../../../../_static/jquery.js"></script>
         <script src="../../../../../_static/underscore.js"></script>
         <script src="../../../../../_static/doctools.js"></script>
-        <script src="../../../../../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../../../../../_static/js/theme.js"></script>
 
@@ -49,7 +51,7 @@
           
 
           
-            <a href="../../../../../index.html" class="icon icon-home" alt="Documentation Home"> LuxPy
+            <a href="../../../../../index.html" class="icon icon-home"> LuxPy
           
 
           
@@ -59,7 +61,7 @@
             
             
               <div class="version">
-                1.6.2
+                1.6.3
               </div>
             
           
@@ -115,6 +117,8 @@
         <div class="rst-content">
         
           
+
+
 
 
 
@@ -649,7 +653,11 @@
     <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">hbins</span><span class="p">:</span>
         <span class="n">axh</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">hbins</span><span class="p">[</span><span class="n">j</span><span class="p">],</span><span class="n">Rfhj</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">color</span> <span class="o">=</span> <span class="n">cmap</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">width</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span><span class="n">edgecolor</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
         <span class="n">ypos</span> <span class="o">=</span> <span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">Rfhj</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">y_offset</span><span class="p">))</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">Rfhj</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
-        <span class="n">axh</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">hbins</span><span class="p">[</span><span class="n">j</span><span class="p">],</span><span class="n">ypos</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:1.0f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">Rfhj</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span> <span class="p">,</span><span class="n">fontsize</span> <span class="o">=</span> <span class="n">font_size</span><span class="p">,</span><span class="n">horizontalalignment</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span><span class="n">verticalalignment</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span><span class="o">*</span><span class="mf">0.3</span><span class="p">)</span>
+        <span class="n">axh</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">hbins</span><span class="p">[</span><span class="n">j</span><span class="p">],</span><span class="n">ypos</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:1.0f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">Rfhj</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="mi">0</span><span class="p">]),</span>
+                 <span class="n">fontsize</span> <span class="o">=</span> <span class="n">font_size</span><span class="p">,</span>
+                 <span class="n">horizontalalignment</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span>
+                 <span class="n">verticalalignment</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span>
+                 <span class="n">color</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span><span class="o">*</span><span class="mf">0.3</span><span class="p">)</span>
     
     <span class="n">xticks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">hbins</span><span class="p">)</span>
     <span class="n">axh</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="n">xticks</span><span class="p">)</span>
@@ -736,7 +744,11 @@
     <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">hbins</span><span class="p">:</span>
         <span class="n">axh</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">hbins</span><span class="p">[</span><span class="n">j</span><span class="p">],</span><span class="mi">100</span><span class="o">*</span><span class="n">Rcshj</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">color</span> <span class="o">=</span> <span class="n">cmap</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">width</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span><span class="n">edgecolor</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
         <span class="n">ypos</span> <span class="o">=</span> <span class="mi">100</span><span class="o">*</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">Rcshj</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="mf">0.05</span> <span class="o">+</span> <span class="n">y_offset</span><span class="p">))</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">Rcshj</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
-        <span class="n">axh</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">hbins</span><span class="p">[</span><span class="n">j</span><span class="p">],</span><span class="n">ypos</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:1.0f}</span><span class="s1">%&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">Rcshj</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="mi">0</span><span class="p">]),</span> <span class="n">fontsize</span> <span class="o">=</span> <span class="n">font_size</span><span class="p">,</span><span class="n">horizontalalignment</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span><span class="n">verticalalignment</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span><span class="o">*</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">rotation</span> <span class="o">=</span> <span class="mi">90</span><span class="p">)</span>
+        <span class="n">axh</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">hbins</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">+</span><span class="mf">0.05</span><span class="p">,</span><span class="n">ypos</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:1.0f}</span><span class="s1">%&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">Rcshj</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="mi">0</span><span class="p">]),</span> 
+                 <span class="n">fontsize</span> <span class="o">=</span> <span class="n">font_size</span><span class="p">,</span><span class="n">horizontalalignment</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span>
+                 <span class="n">verticalalignment</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span>
+                 <span class="n">color</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span><span class="o">*</span><span class="mf">0.3</span><span class="p">,</span> 
+                 <span class="n">rotation</span> <span class="o">=</span> <span class="mi">90</span><span class="p">)</span>
     
     <span class="n">xticks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">hbins</span><span class="p">)</span>
     <span class="n">axh</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="n">xticks</span><span class="p">)</span>
@@ -827,7 +839,12 @@
     <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">hbins</span><span class="p">:</span>
         <span class="n">axh</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">hbins</span><span class="p">[</span><span class="n">j</span><span class="p">],</span><span class="n">Rhshj</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">color</span> <span class="o">=</span> <span class="n">cmap</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">width</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span><span class="n">edgecolor</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
         <span class="n">ypos</span> <span class="o">=</span> <span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">Rhshj</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="mf">0.05</span> <span class="o">+</span> <span class="n">y_offset</span><span class="p">))</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">Rhshj</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
-        <span class="n">axh</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">hbins</span><span class="p">[</span><span class="n">j</span><span class="p">],</span><span class="n">ypos</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:1.2f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">Rhshj</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span> <span class="p">,</span><span class="n">fontsize</span> <span class="o">=</span> <span class="n">font_size</span><span class="p">,</span><span class="n">horizontalalignment</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span><span class="n">verticalalignment</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span><span class="o">*</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">rotation</span> <span class="o">=</span> <span class="mi">90</span><span class="p">)</span>
+        <span class="n">axh</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">hbins</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">+</span><span class="mf">0.05</span><span class="p">,</span><span class="n">ypos</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:1.2f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">Rhshj</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="mi">0</span><span class="p">]),</span>
+                 <span class="n">fontsize</span> <span class="o">=</span> <span class="n">font_size</span><span class="p">,</span>
+                 <span class="n">horizontalalignment</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span>
+                 <span class="n">verticalalignment</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span>
+                 <span class="n">color</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span><span class="o">*</span><span class="mf">0.3</span><span class="p">,</span> 
+                 <span class="n">rotation</span> <span class="o">=</span> <span class="mi">90</span><span class="p">)</span>
     
     <span class="n">xticks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">hbins</span><span class="p">)</span>
     <span class="n">axh</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="n">xticks</span><span class="p">)</span>
@@ -1492,28 +1509,25 @@
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2020, Kevin A.G. Smet
+        &#169; Copyright 2021, Kevin A.G. Smet.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 

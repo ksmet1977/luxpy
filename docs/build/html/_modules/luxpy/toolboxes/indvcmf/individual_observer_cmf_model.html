@@ -3,11 +3,11 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>luxpy.toolboxes.indvcmf.individual_observer_cmf_model &mdash; LuxPy 1.6.2 documentation</title>
+  <title>luxpy.toolboxes.indvcmf.individual_observer_cmf_model &mdash; LuxPy 1.6.3 documentation</title>
   
 
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -29,7 +32,6 @@
         <script src="../../../../_static/jquery.js"></script>
         <script src="../../../../_static/underscore.js"></script>
         <script src="../../../../_static/doctools.js"></script>
-        <script src="../../../../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
 
@@ -49,7 +51,7 @@
           
 
           
-            <a href="../../../../index.html" class="icon icon-home" alt="Documentation Home"> LuxPy
+            <a href="../../../../index.html" class="icon icon-home"> LuxPy
           
 
           
@@ -59,7 +61,7 @@
             
             
               <div class="version">
-                1.6.2
+                1.6.3
               </div>
             
           
@@ -115,6 +117,8 @@
         <div class="rst-content">
         
           
+
+
 
 
 
@@ -2158,20 +2162,29 @@
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Must request either &#39;lms&#39; or &#39;xyz&#39; in :out:.&quot;</span><span class="p">)</span>
         
     <span class="n">LMS_All</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">wl</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">n_obs</span><span class="p">));</span> <span class="n">LMS_All</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
-    
+    <span class="k">if</span> <span class="s1">&#39;M&#39;</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">):</span>
+        <span class="n">out_</span> <span class="o">=</span> <span class="n">out_</span><span class="o">+</span><span class="s1">&#39;,M&#39;</span>
+        <span class="n">M_All</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span><span class="n">n_obs</span><span class="p">));</span> <span class="n">M_All</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_obs</span><span class="p">):</span>
-        <span class="n">t_LMS</span><span class="p">,</span> <span class="n">t_trans_lens</span><span class="p">,</span> <span class="n">t_trans_macula</span><span class="p">,</span> <span class="n">t_sens_photopig</span> <span class="o">=</span> <span class="n">cie2006cmfsEx</span><span class="p">(</span><span class="n">age</span> <span class="o">=</span> <span class="n">var_age</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">fieldsize</span> <span class="o">=</span> <span class="n">fieldsize</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="n">wl</span><span class="p">,</span>\
-                                                                          <span class="n">var_od_lens</span> <span class="o">=</span> <span class="n">vAll</span><span class="p">[</span><span class="s1">&#39;od_lens&#39;</span><span class="p">][</span><span class="n">k</span><span class="p">],</span> <span class="n">var_od_macula</span> <span class="o">=</span> <span class="n">vAll</span><span class="p">[</span><span class="s1">&#39;od_macula&#39;</span><span class="p">][</span><span class="n">k</span><span class="p">],</span> \
-                                                                          <span class="n">var_od_L</span> <span class="o">=</span> <span class="n">vAll</span><span class="p">[</span><span class="s1">&#39;od_L&#39;</span><span class="p">][</span><span class="n">k</span><span class="p">],</span> <span class="n">var_od_M</span> <span class="o">=</span> <span class="n">vAll</span><span class="p">[</span><span class="s1">&#39;od_M&#39;</span><span class="p">][</span><span class="n">k</span><span class="p">],</span> <span class="n">var_od_S</span> <span class="o">=</span> <span class="n">vAll</span><span class="p">[</span><span class="s1">&#39;od_S&#39;</span><span class="p">][</span><span class="n">k</span><span class="p">],</span>\
-                                                                          <span class="n">var_shft_L</span> <span class="o">=</span> <span class="n">vAll</span><span class="p">[</span><span class="s1">&#39;shft_L&#39;</span><span class="p">][</span><span class="n">k</span><span class="p">],</span> <span class="n">var_shft_M</span> <span class="o">=</span> <span class="n">vAll</span><span class="p">[</span><span class="s1">&#39;shft_M&#39;</span><span class="p">][</span><span class="n">k</span><span class="p">],</span> <span class="n">var_shft_S</span> <span class="o">=</span> <span class="n">vAll</span><span class="p">[</span><span class="s1">&#39;shft_S&#39;</span><span class="p">][</span><span class="n">k</span><span class="p">],</span>\
-                                                                          <span class="n">out</span> <span class="o">=</span> <span class="n">out_</span><span class="o">+</span><span class="s1">&#39;,trans_lens,trans_macula,sens_photopig&#39;</span><span class="p">,</span>
-                                                                          <span class="n">norm_type</span> <span class="o">=</span> <span class="n">norm_type</span><span class="p">,</span>  <span class="n">base</span> <span class="o">=</span> <span class="n">base</span><span class="p">,</span> \
-                                                                          <span class="n">strategy_2</span> <span class="o">=</span> <span class="n">strategy_2</span><span class="p">,</span> <span class="n">odata0</span> <span class="o">=</span> <span class="n">odata</span><span class="p">,</span>\
-                                                                          <span class="n">lms_to_xyz_method</span> <span class="o">=</span> <span class="n">lms_to_xyz_method</span><span class="p">,</span> <span class="n">allow_negative_values</span> <span class="o">=</span> <span class="n">allow_negative_values</span><span class="p">)</span>
+        <span class="n">returned</span> <span class="o">=</span> <span class="n">cie2006cmfsEx</span><span class="p">(</span><span class="n">age</span> <span class="o">=</span> <span class="n">var_age</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">fieldsize</span> <span class="o">=</span> <span class="n">fieldsize</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="n">wl</span><span class="p">,</span>\
+                                <span class="n">var_od_lens</span> <span class="o">=</span> <span class="n">vAll</span><span class="p">[</span><span class="s1">&#39;od_lens&#39;</span><span class="p">][</span><span class="n">k</span><span class="p">],</span> <span class="n">var_od_macula</span> <span class="o">=</span> <span class="n">vAll</span><span class="p">[</span><span class="s1">&#39;od_macula&#39;</span><span class="p">][</span><span class="n">k</span><span class="p">],</span> \
+                                <span class="n">var_od_L</span> <span class="o">=</span> <span class="n">vAll</span><span class="p">[</span><span class="s1">&#39;od_L&#39;</span><span class="p">][</span><span class="n">k</span><span class="p">],</span> <span class="n">var_od_M</span> <span class="o">=</span> <span class="n">vAll</span><span class="p">[</span><span class="s1">&#39;od_M&#39;</span><span class="p">][</span><span class="n">k</span><span class="p">],</span> <span class="n">var_od_S</span> <span class="o">=</span> <span class="n">vAll</span><span class="p">[</span><span class="s1">&#39;od_S&#39;</span><span class="p">][</span><span class="n">k</span><span class="p">],</span>\
+                                <span class="n">var_shft_L</span> <span class="o">=</span> <span class="n">vAll</span><span class="p">[</span><span class="s1">&#39;shft_L&#39;</span><span class="p">][</span><span class="n">k</span><span class="p">],</span> <span class="n">var_shft_M</span> <span class="o">=</span> <span class="n">vAll</span><span class="p">[</span><span class="s1">&#39;shft_M&#39;</span><span class="p">][</span><span class="n">k</span><span class="p">],</span> <span class="n">var_shft_S</span> <span class="o">=</span> <span class="n">vAll</span><span class="p">[</span><span class="s1">&#39;shft_S&#39;</span><span class="p">][</span><span class="n">k</span><span class="p">],</span>\
+                                <span class="n">out</span> <span class="o">=</span> <span class="n">out_</span><span class="o">+</span><span class="s1">&#39;,trans_lens,trans_macula,sens_photopig&#39;</span><span class="p">,</span>
+                                <span class="n">norm_type</span> <span class="o">=</span> <span class="n">norm_type</span><span class="p">,</span>  <span class="n">base</span> <span class="o">=</span> <span class="n">base</span><span class="p">,</span> \
+                                <span class="n">strategy_2</span> <span class="o">=</span> <span class="n">strategy_2</span><span class="p">,</span> <span class="n">odata0</span> <span class="o">=</span> <span class="n">odata</span><span class="p">,</span>\
+                                <span class="n">lms_to_xyz_method</span> <span class="o">=</span> <span class="n">lms_to_xyz_method</span><span class="p">,</span> <span class="n">allow_negative_values</span> <span class="o">=</span> <span class="n">allow_negative_values</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;M&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">):</span>
+            <span class="n">t_LMS</span><span class="p">,</span> <span class="n">t_trans_lens</span><span class="p">,</span> <span class="n">t_trans_macula</span><span class="p">,</span> <span class="n">t_sens_photopig</span> <span class="o">=</span> <span class="n">returned</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">t_LMS</span><span class="p">,</span> <span class="n">t_M</span><span class="p">,</span> <span class="n">t_trans_lens</span><span class="p">,</span> <span class="n">t_trans_macula</span><span class="p">,</span> <span class="n">t_sens_photopig</span> <span class="o">=</span> <span class="n">returned</span>
+            <span class="n">M_All</span><span class="p">[:,:,</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">t_M</span>
         <span class="n">LMS_All</span><span class="p">[:,:,</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">t_LMS</span>
         
     <span class="k">if</span> <span class="n">n_obs</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">LMS_All</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">LMS_All</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;M&#39;</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">):</span> 
+            <span class="n">M_All</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">M_All</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
     
     <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;xyz&#39;</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)):</span>
         <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;xyz&#39;</span><span class="p">,</span><span class="s1">&#39;LMS&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;XYZ&#39;</span><span class="p">,</span><span class="s1">&#39;LMS&#39;</span><span class="p">)</span>
@@ -2180,8 +2193,12 @@
 
     <span class="k">if</span> <span class="p">(</span><span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;LMS&#39;</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">LMS_All</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;LMS,M&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">LMS_All</span><span class="p">,</span><span class="n">M_All</span>
     <span class="k">elif</span> <span class="p">(</span><span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;LMS,var_age,vAll&#39;</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">LMS_All</span><span class="p">,</span> <span class="n">var_age</span><span class="p">,</span> <span class="n">vAll</span> 
+    <span class="k">elif</span> <span class="p">(</span><span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;LMS,M,var_age,vAll&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">LMS_All</span><span class="p">,</span> <span class="n">M_All</span><span class="p">,</span> <span class="n">var_age</span><span class="p">,</span> <span class="n">vAll</span> 
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">eval</span><span class="p">(</span><span class="n">out</span><span class="p">)</span></div>
 
@@ -2289,8 +2306,11 @@
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Must request either &#39;lms&#39; or &#39;xyz&#39; in :out:.&quot;</span><span class="p">)</span>
 
     <span class="n">LMS_All</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">wl</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">n_cat</span><span class="p">));</span> <span class="n">LMS_All</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s1">&#39;M&#39;</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">):</span>
+        <span class="n">out_</span> <span class="o">=</span> <span class="n">out_</span><span class="o">+</span><span class="s1">&#39;,M&#39;</span>
+        <span class="n">M_All</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span><span class="n">n_cat</span><span class="p">));</span> <span class="n">M_All</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_cat</span><span class="p">):</span>
-        <span class="n">t_LMS</span> <span class="o">=</span> <span class="n">cie2006cmfsEx</span><span class="p">(</span><span class="n">age</span> <span class="o">=</span> <span class="n">var_age</span><span class="p">[</span><span class="n">k</span><span class="p">],</span><span class="n">fieldsize</span> <span class="o">=</span> <span class="n">fieldsize</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="n">wl</span><span class="p">,</span>\
+        <span class="n">returned</span> <span class="o">=</span> <span class="n">cie2006cmfsEx</span><span class="p">(</span><span class="n">age</span> <span class="o">=</span> <span class="n">var_age</span><span class="p">[</span><span class="n">k</span><span class="p">],</span><span class="n">fieldsize</span> <span class="o">=</span> <span class="n">fieldsize</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="n">wl</span><span class="p">,</span>\
                               <span class="n">var_od_lens</span> <span class="o">=</span> <span class="n">vAll</span><span class="p">[</span><span class="s1">&#39;od_lens&#39;</span><span class="p">][</span><span class="n">k</span><span class="p">],</span>\
                               <span class="n">var_od_macula</span> <span class="o">=</span> <span class="n">vAll</span><span class="p">[</span><span class="s1">&#39;od_macula&#39;</span><span class="p">][</span><span class="n">k</span><span class="p">],</span>\
                               <span class="n">var_od_L</span> <span class="o">=</span> <span class="n">vAll</span><span class="p">[</span><span class="s1">&#39;od_L&#39;</span><span class="p">][</span><span class="n">k</span><span class="p">],</span>\
@@ -2304,7 +2324,10 @@
                               <span class="n">strategy_2</span> <span class="o">=</span> <span class="n">strategy_2</span><span class="p">,</span> <span class="n">odata0</span> <span class="o">=</span> <span class="n">odata</span><span class="p">,</span>\
                               <span class="n">lms_to_xyz_method</span> <span class="o">=</span> <span class="n">lms_to_xyz_method</span><span class="p">,</span> \
                               <span class="n">allow_negative_values</span> <span class="o">=</span> <span class="n">allow_negative_values</span><span class="p">)</span>
-        
+        <span class="k">if</span> <span class="s1">&#39;M&#39;</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">):</span>
+            <span class="n">t_LMS</span><span class="p">,</span> <span class="n">t_M</span> <span class="o">=</span> <span class="n">returned</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">t_LMS</span> <span class="o">=</span> <span class="n">returned</span>
         <span class="n">LMS_All</span><span class="p">[:,:,</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">t_LMS</span> 
     
     <span class="n">LMS_All</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">LMS_All</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span>
@@ -2319,11 +2342,14 @@
         
     <span class="k">if</span> <span class="p">(</span><span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;LMS&#39;</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">LMS_All</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;LMS,M&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">LMS_All</span><span class="p">,</span><span class="n">M_All</span>
     <span class="k">elif</span> <span class="p">(</span><span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;LMS,var_age,vAll&#39;</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">LMS_All</span><span class="p">,</span><span class="n">var_age</span><span class="p">,</span><span class="n">vAll</span> 
+    <span class="k">elif</span> <span class="p">(</span><span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;LMS,M,var_age,vAll&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">LMS_All</span><span class="p">,</span><span class="n">M_All</span><span class="p">,</span><span class="n">var_age</span><span class="p">,</span><span class="n">vAll</span> 
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">eval</span><span class="p">(</span><span class="n">out</span><span class="p">)</span></div>
-
 <span class="k">def</span> <span class="nf">get_lms_to_xyz_matrix</span><span class="p">(</span><span class="n">fieldsize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get the lms to xyz conversion matrix for specific fieldsize using Asano&#39;s method </span>
@@ -2348,7 +2374,7 @@
     <span class="k">elif</span> <span class="n">fieldsize</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">:</span>
         <span class="n">fieldsize</span> <span class="o">=</span> <span class="mi">10</span> 
     <span class="n">a</span> <span class="o">=</span> <span class="p">(</span><span class="mi">10</span><span class="o">-</span><span class="n">fieldsize</span><span class="p">)</span><span class="o">/</span><span class="mi">8</span>     
-    <span class="n">M</span> <span class="o">=</span> <span class="n">_DATA</span><span class="p">[</span><span class="s1">&#39;M&#39;</span><span class="p">][</span><span class="s1">&#39;2d&#39;</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">a</span><span class="p">)</span> <span class="o">+</span> <span class="n">a</span><span class="o">*</span><span class="n">_DATA</span><span class="p">[</span><span class="s1">&#39;M&#39;</span><span class="p">][</span><span class="s1">&#39;10d&#39;</span><span class="p">]</span>
+    <span class="n">M</span> <span class="o">=</span> <span class="n">_DATA</span><span class="p">[</span><span class="s1">&#39;M&#39;</span><span class="p">][</span><span class="s1">&#39;2d&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">a</span> <span class="o">+</span> <span class="n">_DATA</span><span class="p">[</span><span class="s1">&#39;M&#39;</span><span class="p">][</span><span class="s1">&#39;10d&#39;</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">a</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">M</span>
 
 <span class="k">def</span> <span class="nf">lmsb_to_xyzb</span><span class="p">(</span><span class="n">lms</span><span class="p">,</span> <span class="n">fieldsize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">allow_negative_values</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
@@ -2523,28 +2549,25 @@
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2020, Kevin A.G. Smet
+        &#169; Copyright 2021, Kevin A.G. Smet.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 

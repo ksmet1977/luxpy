@@ -3,11 +3,11 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Spectrum sub-package &mdash; LuxPy 1.6.2 documentation</title>
+  <title>Spectrum sub-package &mdash; LuxPy 1.6.3 documentation</title>
   
 
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -29,7 +32,6 @@
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
-        <script src="_static/language_data.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -51,7 +53,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home" alt="Documentation Home"> LuxPy
+            <a href="index.html" class="icon icon-home"> LuxPy
           
 
           
@@ -61,7 +63,7 @@
             
             
               <div class="version">
-                1.6.2
+                1.6.3
               </div>
             
           
@@ -150,6 +152,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -163,7 +167,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="_sources/spectrum.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -1401,7 +1405,7 @@ than the ones in _CRI_REF_TYPES.</p>
 
 <dl class="py function">
 <dt id="luxpy.spectrum.blackbody">
-<code class="sig-prename descclassname">luxpy.spectrum.</code><code class="sig-name descname">blackbody</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cct</span></em>, <em class="sig-param"><span class="n">wl3</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">n</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/basics/illuminants.html#blackbody"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.spectrum.blackbody" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.spectrum.</code><code class="sig-name descname">blackbody</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cct</span></em>, <em class="sig-param"><span class="n">wl3</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">n</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">relative</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/basics/illuminants.html#blackbody"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.spectrum.blackbody" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate blackbody radiator spectrum for correlated color temperature (cct).</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -1423,6 +1427,13 @@ than the ones in _CRI_REF_TYPES.</p>
 <div class="line">None, optional</div>
 <div class="line">Refractive index.</div>
 <div class="line">If None: use the one stored in _BB[‘n’]</div>
+</div>
+</dd>
+<dt class="field-even">relative</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">False, optional</div>
+<div class="line">True: return relative spectrum normalized to 560 nm</div>
+<div class="line">False: return absolute spectral radiance (Planck’s law; W/(sr.m².nm)) </div>
 </div>
 </dd>
 </dl>
@@ -2591,7 +2602,7 @@ than the ones in _CRI_REF_TYPES.</p>
 
 <dl class="py function">
 <dt id="luxpy.spectrum.basics.blackbody">
-<code class="sig-prename descclassname">luxpy.spectrum.basics.</code><code class="sig-name descname">blackbody</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cct</span></em>, <em class="sig-param"><span class="n">wl3</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">n</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/basics/illuminants.html#blackbody"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.spectrum.basics.blackbody" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.spectrum.basics.</code><code class="sig-name descname">blackbody</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cct</span></em>, <em class="sig-param"><span class="n">wl3</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">n</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">relative</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/basics/illuminants.html#blackbody"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.spectrum.basics.blackbody" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate blackbody radiator spectrum for correlated color temperature (cct).</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -2613,6 +2624,13 @@ than the ones in _CRI_REF_TYPES.</p>
 <div class="line">None, optional</div>
 <div class="line">Refractive index.</div>
 <div class="line">If None: use the one stored in _BB[‘n’]</div>
+</div>
+</dd>
+<dt class="field-even">relative</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">False, optional</div>
+<div class="line">True: return relative spectrum normalized to 560 nm</div>
+<div class="line">False: return absolute spectral radiance (Planck’s law; W/(sr.m².nm)) </div>
 </div>
 </dd>
 </dl>
@@ -2883,37 +2901,29 @@ J. Opt. Soc. Am., 54(8), 1031–1040.</a></p>
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="color.html" class="btn btn-neutral float-right" title="Color sub-package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="math.html" class="btn btn-neutral float-left" title="Math sub-package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="color.html" class="btn btn-neutral float-right" title="Color sub-package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="math.html" class="btn btn-neutral float-left" title="Math sub-package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2020, Kevin A.G. Smet
+        &#169; Copyright 2021, Kevin A.G. Smet.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 

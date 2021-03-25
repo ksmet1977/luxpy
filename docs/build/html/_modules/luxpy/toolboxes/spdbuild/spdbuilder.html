@@ -3,11 +3,11 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>luxpy.toolboxes.spdbuild.spdbuilder &mdash; LuxPy 1.6.2 documentation</title>
+  <title>luxpy.toolboxes.spdbuild.spdbuilder &mdash; LuxPy 1.6.3 documentation</title>
   
 
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -29,7 +32,6 @@
         <script src="../../../../_static/jquery.js"></script>
         <script src="../../../../_static/underscore.js"></script>
         <script src="../../../../_static/doctools.js"></script>
-        <script src="../../../../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
 
@@ -49,7 +51,7 @@
           
 
           
-            <a href="../../../../index.html" class="icon icon-home" alt="Documentation Home"> LuxPy
+            <a href="../../../../index.html" class="icon icon-home"> LuxPy
           
 
           
@@ -59,7 +61,7 @@
             
             
               <div class="version">
-                1.6.2
+                1.6.3
               </div>
             
           
@@ -130,6 +132,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -167,6 +171,8 @@
 <span class="sd"> :butterworth_spd(): Generate Butterworth based spectrum.</span>
 <span class="sd"> </span>
 <span class="sd"> :lorentzian2_spd(): Generate 2nd order Lorentzian based spectrum.</span>
+<span class="sd"> </span>
+<span class="sd"> :roundedtriangle_spd(): Generate a rounded triangle based spectrum.</span>
 
 <span class="sd"> :mono_led_spd(): Generate monochromatic LED spectrum based on a Gaussian </span>
 <span class="sd">                  or butterworth profile or according to Ohno (Opt. Eng. 2005).</span>
@@ -236,7 +242,7 @@
 
 <span class="c1">#np.set_printoptions(formatter={&#39;float&#39;: lambda x: &quot;{0:0.2e}&quot;.format(x)})</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;gaussian_spd&#39;</span><span class="p">,</span><span class="s1">&#39;butterworth_spd&#39;</span><span class="p">,</span><span class="s1">&#39;lorentzian2_spd&#39;</span><span class="p">,</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;gaussian_spd&#39;</span><span class="p">,</span><span class="s1">&#39;butterworth_spd&#39;</span><span class="p">,</span><span class="s1">&#39;lorentzian2_spd&#39;</span><span class="p">,</span><span class="s1">&#39;roundedtriangle_spd&#39;</span><span class="p">,</span>
            <span class="s1">&#39;mono_led_spd&#39;</span><span class="p">,</span><span class="s1">&#39;phosphor_led_spd&#39;</span><span class="p">,</span><span class="s1">&#39;spd_builder&#39;</span><span class="p">,</span>
            <span class="s1">&#39;get_w_summed_spd&#39;</span><span class="p">,</span><span class="s1">&#39;fitnessfcn&#39;</span><span class="p">,</span><span class="s1">&#39;spd_constructor_2&#39;</span><span class="p">,</span>
            <span class="s1">&#39;color3mixer&#39;</span><span class="p">,</span><span class="s1">&#39;colormixer&#39;</span><span class="p">,</span><span class="s1">&#39;colormixer_pinv&#39;</span><span class="p">,</span>
@@ -316,6 +322,42 @@
 
 
 <span class="c1">#------------------------------------------------------------------------------</span>
+<span class="k">def</span> <span class="nf">butterworth_spd</span><span class="p">(</span><span class="n">peakwl</span> <span class="o">=</span> <span class="mi">530</span><span class="p">,</span> <span class="n">fwhm</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="n">bw_order</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="n">_WL3</span><span class="p">,</span> <span class="n">with_wl</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate Butterworth based spectrum.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :peakw: </span>
+<span class="sd">            | int or float or list or ndarray, optional</span>
+<span class="sd">            | Peak wavelength</span>
+<span class="sd">        :fwhm:</span>
+<span class="sd">            | int or float or list or ndarray, optional</span>
+<span class="sd">            | Full-Width-Half-Maximum of butterworth.</span>
+<span class="sd">        :bw_order: </span>
+<span class="sd">            | 1, optional</span>
+<span class="sd">            | Order of the butterworth function.</span>
+<span class="sd">        :wl:</span>
+<span class="sd">            | _WL3, optional </span>
+<span class="sd">            | Wavelength range.</span>
+<span class="sd">        :with_wl:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | True outputs a ndarray with first row wavelengths.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :returns:</span>
+<span class="sd">            | ndarray with spectra.    </span>
+<span class="sd">            </span>
+<span class="sd">    Note:</span>
+<span class="sd">        | Butterworth :</span>
+<span class="sd">        |    bw = 1 / (1 + ((2*(wl - peakwl)/fwhm)**2))</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">wl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">getwlr</span><span class="p">(</span><span class="n">wl</span><span class="p">))</span> <span class="c1"># create wavelength range</span>
+    <span class="n">spd</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="n">wl</span><span class="o">.</span><span class="n">T</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">peakwl</span><span class="p">))</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">fwhm</span><span class="p">))</span><span class="o">**</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">bw_order</span><span class="p">))))</span><span class="o">.</span><span class="n">T</span>
+    <span class="k">if</span> <span class="n">with_wl</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">spd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">wl</span><span class="p">,</span> <span class="n">spd</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">spd</span>
+
+<span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="butterworth_spd"><a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.spdbuild.butterworth_spd">[docs]</a><span class="k">def</span> <span class="nf">butterworth_spd</span><span class="p">(</span><span class="n">peakwl</span> <span class="o">=</span> <span class="mi">530</span><span class="p">,</span> <span class="n">fwhm</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="n">bw_order</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="n">_WL3</span><span class="p">,</span> <span class="n">with_wl</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generate Butterworth based spectrum.</span>
@@ -347,6 +389,88 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">wl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">getwlr</span><span class="p">(</span><span class="n">wl</span><span class="p">))</span> <span class="c1"># create wavelength range</span>
     <span class="n">spd</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="n">wl</span><span class="o">.</span><span class="n">T</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">peakwl</span><span class="p">))</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">fwhm</span><span class="p">))</span><span class="o">**</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">bw_order</span><span class="p">))))</span><span class="o">.</span><span class="n">T</span>
+    <span class="k">if</span> <span class="n">with_wl</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">spd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">wl</span><span class="p">,</span> <span class="n">spd</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">spd</span></div>
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="roundedtriangle_spd"><a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.spdbuild.roundedtriangle_spd">[docs]</a><span class="k">def</span> <span class="nf">roundedtriangle_spd</span><span class="p">(</span><span class="n">peakwl</span> <span class="o">=</span> <span class="mi">530</span><span class="p">,</span> <span class="n">fwhm</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="n">rounding</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="n">_WL3</span><span class="p">,</span> <span class="n">with_wl</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                        <span class="n">min_</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">max_</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+                        <span class="n">fw</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="n">rw</span> <span class="o">=</span> <span class="mi">100</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate rounded triangle spectrum.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :peakw: </span>
+<span class="sd">            | int or float or list or ndarray, optional</span>
+<span class="sd">            | Peak wavelength</span>
+<span class="sd">        :fwhm:</span>
+<span class="sd">            | int or float or list or ndarray, optional</span>
+<span class="sd">            | Full-Width-Half-Maximum of rounded triangle.</span>
+<span class="sd">        :rounding:</span>
+<span class="sd">            | int or float or list or ndarray, optional</span>
+<span class="sd">            | Amount of rounding of triangle corners (top, bottom-left, bottom-right)</span>
+<span class="sd">        :wl: </span>
+<span class="sd">            | _WL3, optional </span>
+<span class="sd">            | Wavelength range.</span>
+<span class="sd">        :with_wl:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | True outputs a ndarray with first row wavelengths.</span>
+<span class="sd">        :min_, max_:</span>
+<span class="sd">            | 0.0, 1.0, optional</span>
+<span class="sd">            | Minimum and maximum of spd.</span>
+<span class="sd">        :fw:</span>
+<span class="sd">            | 100, optional</span>
+<span class="sd">            | front width of triangle.</span>
+<span class="sd">            | Only used when fwhm is set to None.</span>
+<span class="sd">        :rw:</span>
+<span class="sd">            | 100, optional</span>
+<span class="sd">            | rear width of triangle.</span>
+<span class="sd">            | Only used when fwhm is set to None.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :returns:</span>
+<span class="sd">            | ndarray with spectra. </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">peakwl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">peakwl</span><span class="p">))</span>
+    <span class="n">rounding</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">rounding</span><span class="p">))</span>
+    <span class="n">max_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">max_</span><span class="p">))</span>
+    <span class="n">min_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">min_</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">fwhm</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">fw</span><span class="p">))</span>
+        <span class="n">rw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">rw</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">width</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">fwhm</span><span class="p">))</span><span class="o">/</span><span class="p">(</span><span class="n">rounding</span><span class="o">/</span><span class="mi">4</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">fw</span> <span class="o">=</span> <span class="n">width</span>
+        <span class="n">rw</span> <span class="o">=</span> <span class="n">width</span>
+
+    <span class="n">wl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">getwlr</span><span class="p">(</span><span class="n">wl</span><span class="p">))</span>
+    <span class="n">wlp</span> <span class="o">=</span> <span class="p">(</span><span class="n">wl</span><span class="o">-</span><span class="n">peakwl</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+    
+    <span class="c1"># expand for slicing later on:</span>
+    <span class="n">fw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">fw</span><span class="o">.</span><span class="n">T</span><span class="p">,</span><span class="n">wlp</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">rounding</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">rounding</span><span class="o">.</span><span class="n">T</span><span class="p">,</span><span class="n">wlp</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    
+    <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">wlp</span><span class="o">/</span><span class="n">rw</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">wlp</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">x</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="n">wlp</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">/</span><span class="n">fw</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> 
+    
+    <span class="c1"># setup various conditions:</span>
+    <span class="n">c0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">rounding</span><span class="o">/</span><span class="mi">2</span>
+    <span class="n">c1</span> <span class="o">=</span> <span class="n">c0</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">rounding</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span>
+    <span class="n">_c2</span><span class="p">,</span> <span class="n">cc</span> <span class="o">=</span> <span class="n">c0</span> <span class="o">&amp;</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_not</span><span class="p">(</span><span class="n">c1</span><span class="p">),</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">1</span><span class="o">+</span><span class="n">rounding</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">c2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">_c2</span> <span class="o">&amp;</span> <span class="n">cc</span><span class="p">)</span>
+    <span class="n">c3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">_c2</span> <span class="o">&amp;</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_not</span><span class="p">(</span><span class="n">cc</span><span class="p">))</span>
+    
+    <span class="c1"># apply conditional transformations:</span>
+    <span class="n">rounding</span><span class="p">[</span><span class="n">rounding</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1e-308</span> <span class="c1"># avoid division by zero</span>
+    <span class="n">Rraw</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">rounding</span><span class="o">/</span><span class="mi">4</span> <span class="o">-</span> <span class="mi">1</span><span class="o">/</span><span class="n">rounding</span><span class="o">*</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">Rraw</span><span class="p">[</span><span class="n">c1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">c1</span><span class="p">])</span>
+    <span class="n">Rraw</span><span class="p">[</span><span class="n">c2</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span><span class="o">/</span><span class="mf">2.0</span><span class="o">/</span><span class="n">rounding</span><span class="p">[</span><span class="n">c2</span><span class="p">]</span><span class="o">*</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">c2</span><span class="p">])</span> <span class="o">-</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">rounding</span><span class="p">[</span><span class="n">c2</span><span class="p">]</span><span class="o">/</span><span class="mf">2.0</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">Rraw</span><span class="p">[</span><span class="n">c3</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+    
+    <span class="n">spd</span> <span class="o">=</span> <span class="n">min_</span> <span class="o">+</span> <span class="p">(</span><span class="n">max_</span> <span class="o">-</span> <span class="n">min_</span><span class="p">)</span><span class="o">*</span><span class="n">Rraw</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">rounding</span><span class="o">/</span><span class="mi">4</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">with_wl</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
         <span class="n">spd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">wl</span><span class="p">,</span> <span class="n">spd</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">spd</span></div>
@@ -2508,28 +2632,25 @@
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2020, Kevin A.G. Smet
+        &#169; Copyright 2021, Kevin A.G. Smet.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 

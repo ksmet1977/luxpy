@@ -3,11 +3,11 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>luxpy.spectrum.basics.illuminants &mdash; LuxPy 1.6.2 documentation</title>
+  <title>luxpy.spectrum.basics.illuminants &mdash; LuxPy 1.6.3 documentation</title>
   
 
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -29,7 +32,6 @@
         <script src="../../../../_static/jquery.js"></script>
         <script src="../../../../_static/underscore.js"></script>
         <script src="../../../../_static/doctools.js"></script>
-        <script src="../../../../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
 
@@ -49,7 +51,7 @@
           
 
           
-            <a href="../../../../index.html" class="icon icon-home" alt="Documentation Home"> LuxPy
+            <a href="../../../../index.html" class="icon icon-home"> LuxPy
           
 
           
@@ -59,7 +61,7 @@
             
             
               <div class="version">
-                1.6.2
+                1.6.3
               </div>
             
           
@@ -115,6 +117,8 @@
         <div class="rst-content">
         
           
+
+
 
 
 
@@ -255,7 +259,7 @@
 <span class="c1">#---CIE illuminant functions---------------------------------------------------</span>
 <span class="c1">#------------------------------------------------------------------------------</span>
 
-<div class="viewcode-block" id="blackbody"><a class="viewcode-back" href="../../../../spectrum.html#luxpy.spectrum.blackbody">[docs]</a><span class="k">def</span> <span class="nf">blackbody</span><span class="p">(</span><span class="n">cct</span><span class="p">,</span> <span class="n">wl3</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="blackbody"><a class="viewcode-back" href="../../../../spectrum.html#luxpy.spectrum.blackbody">[docs]</a><span class="k">def</span> <span class="nf">blackbody</span><span class="p">(</span><span class="n">cct</span><span class="p">,</span> <span class="n">wl3</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate blackbody radiator spectrum for correlated color temperature (cct).</span>
 <span class="sd">    </span>
@@ -271,6 +275,11 @@
 <span class="sd">            | None, optional</span>
 <span class="sd">            | Refractive index.</span>
 <span class="sd">            | If None: use the one stored in _BB[&#39;n&#39;]</span>
+<span class="sd">        :relative:</span>
+<span class="sd">            | False, optional</span>
+<span class="sd">            | True: return relative spectrum normalized to 560 nm</span>
+<span class="sd">            | False: return absolute spectral radiance (Planck&#39;s law; W/(sr.m².nm)) </span>
+<span class="sd">            </span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        :returns:</span>
@@ -286,7 +295,10 @@
     <span class="n">wl</span> <span class="o">=</span> <span class="n">getwlr</span><span class="p">(</span><span class="n">wl3</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">fSr</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span><span class="o">*</span><span class="n">_BB</span><span class="p">[</span><span class="s1">&#39;c1&#39;</span><span class="p">]</span><span class="o">*</span><span class="p">((</span><span class="n">x</span><span class="o">*</span><span class="mf">1.0e-9</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">))</span><span class="o">*</span><span class="p">(</span><span class="n">n</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mf">2.0</span><span class="p">))</span><span class="o">*</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">_BB</span><span class="p">[</span><span class="s1">&#39;c2&#39;</span><span class="p">]</span><span class="o">*</span><span class="p">((</span><span class="n">n</span><span class="o">*</span><span class="n">x</span><span class="o">*</span><span class="mf">1.0e-9</span><span class="o">*</span><span class="p">(</span><span class="n">cct</span><span class="o">+</span><span class="n">_EPS</span><span class="p">))</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">)))</span><span class="o">-</span><span class="mf">1.0</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">wl</span><span class="p">,(</span><span class="n">fSr</span><span class="p">(</span><span class="n">wl</span><span class="p">)</span><span class="o">/</span><span class="n">fSr</span><span class="p">(</span><span class="mf">560.0</span><span class="p">))))</span></div>
+    <span class="k">if</span> <span class="n">relative</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">wl</span><span class="p">,(</span><span class="n">fSr</span><span class="p">(</span><span class="n">wl</span><span class="p">)</span><span class="o">/</span><span class="n">fSr</span><span class="p">(</span><span class="mf">560.0</span><span class="p">))))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">wl</span><span class="p">,</span><span class="n">fSr</span><span class="p">(</span><span class="n">wl</span><span class="p">)))</span></div>
 
 <span class="c1">#------------------------------------------------------------------------------</span>
 <span class="k">def</span> <span class="nf">_get_daylightlocus_parameters</span><span class="p">(</span><span class="n">ccts</span><span class="p">,</span> <span class="n">spds</span><span class="p">,</span> <span class="n">cieobs</span><span class="p">):</span>
@@ -851,28 +863,25 @@
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2020, Kevin A.G. Smet
+        &#169; Copyright 2021, Kevin A.G. Smet.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 

@@ -91,7 +91,7 @@ def read_lamp_data(filename, multiplier = 1.0, verbosity = 0, normalize = 'I0', 
             | 'future_use', 'input_watts', 'v_angs', 'h_angs', 'lamp_cone_type',
             | 'lamp_h_type', 'candela_values', 'candela_2d', 'v_same', 'h_same',
             | 'intensity', 'theta', 'values', 'phi', 'map','Iv0']
-            |)
+            | )
             |
             | If file_ext == 'ldt':
             |    dict_keys(

@@ -3,11 +3,11 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>luxpy.math.basics &mdash; LuxPy 1.6.2 documentation</title>
+  <title>luxpy.math.basics &mdash; LuxPy 1.6.3 documentation</title>
   
 
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -29,7 +32,6 @@
         <script src="../../../_static/jquery.js"></script>
         <script src="../../../_static/underscore.js"></script>
         <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
@@ -49,7 +51,7 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> LuxPy
+            <a href="../../../index.html" class="icon icon-home"> LuxPy
           
 
           
@@ -59,7 +61,7 @@
             
             
               <div class="version">
-                1.6.2
+                1.6.3
               </div>
             
           
@@ -115,6 +117,8 @@
         <div class="rst-content">
         
           
+
+
 
 
 
@@ -251,6 +255,10 @@
 <span class="sd"> </span>
 <span class="sd"> :pitman_morgan(): Pitman-Morgan Test for the difference between correlated variances with paired samples.</span>
 <span class="sd">     </span>
+<span class="sd"> :stress(): Calculate STandardize-Residual-Sum-of-Squares (STRESS)</span>
+<span class="sd"> </span>
+<span class="sd"> :stress_F_test(): Perform F-test on significance of difference between STRESS A and STRESS B.</span>
+<span class="sd"> </span>
 <span class="sd">.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)</span>
 <span class="sd">===============================================================================</span>
 <span class="sd">&quot;&quot;&quot;</span>
@@ -265,7 +273,7 @@
 <span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;magnitude_v&#39;</span><span class="p">,</span><span class="s1">&#39;angle_v1v2&#39;</span><span class="p">]</span>
 <span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;v_to_cik&#39;</span><span class="p">,</span> <span class="s1">&#39;cik_to_v&#39;</span><span class="p">,</span> <span class="s1">&#39;fmod&#39;</span><span class="p">,</span> <span class="s1">&#39;remove_outliers&#39;</span><span class="p">,</span><span class="s1">&#39;fit_ellipse&#39;</span><span class="p">,</span><span class="s1">&#39;fit_cov_ellipse&#39;</span><span class="p">]</span>
 <span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;in_hull&#39;</span><span class="p">,</span><span class="s1">&#39;interp1&#39;</span><span class="p">,</span> <span class="s1">&#39;ndinterp1&#39;</span><span class="p">,</span><span class="s1">&#39;ndinterp1_scipy&#39;</span><span class="p">]</span>
-<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;box_m&#39;</span><span class="p">,</span><span class="s1">&#39;pitman_morgan&#39;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;box_m&#39;</span><span class="p">,</span><span class="s1">&#39;pitman_morgan&#39;</span><span class="p">,</span> <span class="s1">&#39;stress&#39;</span><span class="p">,</span><span class="s1">&#39;stress_F_test&#39;</span><span class="p">]</span>
 
 
 <span class="c1">#------------------------------------------------------------------------------</span>
@@ -1458,34 +1466,106 @@
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;tval = </span><span class="si">{:1.4f}</span><span class="s1">, df = </span><span class="si">{:1.1f}</span><span class="s1">, p = </span><span class="si">{:1.4f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tval</span><span class="p">,</span><span class="n">df</span><span class="p">,</span> <span class="n">p</span><span class="p">))</span>
 
     <span class="k">return</span> <span class="n">tval</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">ratio</span></div>
+
+<div class="viewcode-block" id="stress"><a class="viewcode-back" href="../../../math.html#luxpy.math.stress">[docs]</a><span class="k">def</span> <span class="nf">stress</span><span class="p">(</span><span class="n">DE</span><span class="p">,</span><span class="n">DV</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">max_scale</span> <span class="o">=</span> <span class="mi">100</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate STandardize-Residual-Sum-of-Squares (STRESS).</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :DE, DV: </span>
+<span class="sd">            | ndarrays of data to be compared.</span>
+<span class="sd">        :axis:</span>
+<span class="sd">            | 0, optional</span>
+<span class="sd">            | axis with samples</span>
+<span class="sd">        :max_scale:</span>
+<span class="sd">            | 100, optional</span>
+<span class="sd">            | Maximum of scale.</span>
+<span class="sd">            </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :stress:</span>
+<span class="sd">            | nadarray with stress value(s).</span>
+<span class="sd">    </span>
+<span class="sd">    Reference:</span>
+<span class="sd">        1. `Melgosa, M., García, P. A., Gómez-Robledo, L., Shamey, R., Hinks, D., Cui, G., &amp; Luo, M. R. (2011). </span>
+<span class="sd">        Notes on the application of the standardized residual sum of squares index </span>
+<span class="sd">        for the assessment of intra- and inter-observer variability in color-difference experiments. </span>
+<span class="sd">        Journal of the Optical Society of America A, 28(5), 949–953. </span>
+<span class="sd">        &lt;https://doi.org/10.1364/JOSAA.28.000949&gt;`_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">F</span> <span class="o">=</span> <span class="p">(</span><span class="n">DE</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span> <span class="o">=</span> <span class="n">axis</span><span class="p">,</span> <span class="n">keepdims</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">DE</span><span class="o">*</span><span class="n">DV</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span> <span class="o">=</span> <span class="n">axis</span><span class="p">,</span> <span class="n">keepdims</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">max_scale</span><span class="o">*</span><span class="p">(((</span><span class="n">DE</span> <span class="o">-</span> <span class="n">F</span><span class="o">*</span><span class="n">DV</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span> <span class="o">=</span> <span class="n">axis</span><span class="p">,</span> <span class="n">keepdims</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">F</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="n">DV</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span> <span class="o">=</span> <span class="n">axis</span><span class="p">,</span> <span class="n">keepdims</span> <span class="o">=</span> <span class="kc">True</span><span class="p">))</span><span class="o">**</span><span class="mf">0.5</span></div>
+
+<div class="viewcode-block" id="stress_F_test"><a class="viewcode-back" href="../../../math.html#luxpy.math.stress_F_test">[docs]</a><span class="k">def</span> <span class="nf">stress_F_test</span><span class="p">(</span><span class="n">stressA</span><span class="p">,</span> <span class="n">stressB</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Perform F-test on significance of difference between STRESS A and STRESS B.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :stressA, stressB:</span>
+<span class="sd">            | ndarray with stress(es) values for A and B</span>
+<span class="sd">        :N:</span>
+<span class="sd">            | int or ndarray with number of samples used to determine stress values.</span>
+<span class="sd">        :alpha:</span>
+<span class="sd">            | 0.05, optional</span>
+<span class="sd">            | significance level</span>
+<span class="sd">            </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :Fstats:</span>
+<span class="sd">            | Dictionary with keys:</span>
+<span class="sd">            | - &#39;p&#39;: p-values</span>
+<span class="sd">            | - &#39;F&#39;:  F-values</span>
+<span class="sd">            | - &#39;Fc&#39;: critcal values</span>
+<span class="sd">            | - &#39;H&#39;: string reporting on significance of A compared to B.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="n">N</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">stressA</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">Fvs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">stressA</span><span class="p">)</span>
+    <span class="n">ps</span> <span class="o">=</span> <span class="n">Fvs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">Fcs</span> <span class="o">=</span> <span class="n">Fvs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">H</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">stA</span><span class="p">,</span> <span class="n">stB</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">stressA</span><span class="p">,</span><span class="n">stressB</span><span class="p">):</span>
+        <span class="n">Ni</span> <span class="o">=</span> <span class="n">N</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">Fvs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">stA</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="n">stB</span><span class="o">**</span><span class="mi">2</span>
+        <span class="n">ps</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">f</span><span class="o">.</span><span class="n">sf</span><span class="p">(</span><span class="n">Fvs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">Ni</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">Ni</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">Fcs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">f</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">q</span> <span class="o">=</span> <span class="n">alpha</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">dfn</span> <span class="o">=</span> <span class="n">Ni</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dfd</span> <span class="o">=</span> <span class="n">Ni</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">Fvs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">Fcs</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+            <span class="n">H_</span> <span class="o">=</span> <span class="s2">&quot;A significantly better than B&quot;</span>
+        <span class="k">elif</span> <span class="n">Fvs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="o">/</span><span class="n">Fcs</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+            <span class="n">H_</span> <span class="o">=</span> <span class="s2">&quot;A significantly poorer than B&quot;</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="n">Fcs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">Fvs</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Fvs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">H_</span> <span class="o">=</span> <span class="s2">&quot;A insignificantly better than B&quot;</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;</span> <span class="n">Fvs</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Fvs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="o">/</span><span class="n">Fcs</span><span class="p">[</span><span class="n">i</span><span class="p">]):</span>
+            <span class="n">H_</span> <span class="o">=</span> <span class="s2">&quot;A insignificanty poorer than B&quot;</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="n">Fvs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">H_</span> <span class="o">=</span> <span class="s2">&quot;A equals B&quot;</span>
+        <span class="n">H</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">H_</span><span class="p">)</span>
+        <span class="n">i</span><span class="o">+=</span><span class="mi">1</span>
+    <span class="n">Fstats</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;p&#39;</span><span class="p">:</span> <span class="n">ps</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">:</span> <span class="n">Fvs</span><span class="p">,</span> <span class="s1">&#39;Fc&#39;</span><span class="p">:</span> <span class="n">Fcs</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">:</span> <span class="n">H</span><span class="p">}</span>
+    <span class="k">return</span> <span class="n">Fstats</span></div>
 </pre></div>
 
            </div>
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2020, Kevin A.G. Smet
+        &#169; Copyright 2021, Kevin A.G. Smet.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 

@@ -3,11 +3,11 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Math sub-package &mdash; LuxPy 1.6.2 documentation</title>
+  <title>Math sub-package &mdash; LuxPy 1.6.3 documentation</title>
   
 
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -29,7 +32,6 @@
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
-        <script src="_static/language_data.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -51,7 +53,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home" alt="Documentation Home"> LuxPy
+            <a href="index.html" class="icon icon-home"> LuxPy
           
 
           
@@ -61,7 +63,7 @@
             
             
               <div class="version">
-                1.6.2
+                1.6.3
               </div>
             
           
@@ -147,6 +149,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -160,7 +164,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="_sources/math.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -1584,8 +1588,88 @@ pp 253–257, Vienna, 1996.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt id="luxpy.math.stress">
+<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">stress</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">DE</span></em>, <em class="sig-param"><span class="n">DV</span></em>, <em class="sig-param"><span class="n">axis</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">max_scale</span><span class="o">=</span><span class="default_value">100</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#stress"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.stress" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate STandardize-Residual-Sum-of-Squares (STRESS).</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">DE, DV</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarrays of data to be compared.</div>
+</div>
+</dd>
+<dt class="field-even">axis</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">0, optional</div>
+<div class="line">axis with samples</div>
+</div>
+</dd>
+<dt class="field-odd">max_scale</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">100, optional</div>
+<div class="line">Maximum of scale.</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">stress</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">nadarray with stress value(s).</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Reference:</dt><dd><p>1. <a class="reference external" href="https://doi.org/10.1364/JOSAA.28.000949">Melgosa, M., García, P. A., Gómez-Robledo, L., Shamey, R., Hinks, D., Cui, G., &amp; Luo, M. R. (2011). 
+Notes on the application of the standardized residual sum of squares index 
+for the assessment of intra- and inter-observer variability in color-difference experiments. 
+Journal of the Optical Society of America A, 28(5), 949–953.</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="luxpy.math.stress_F_test">
+<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">stress_F_test</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">stressA</span></em>, <em class="sig-param"><span class="n">stressB</span></em>, <em class="sig-param"><span class="n">N</span></em>, <em class="sig-param"><span class="n">alpha</span><span class="o">=</span><span class="default_value">0.05</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#stress_F_test"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.stress_F_test" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform F-test on significance of difference between STRESS A and STRESS B.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">stressA, stressB</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with stress(es) values for A and B</div>
+</div>
+</dd>
+<dt class="field-even">N</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">int or ndarray with number of samples used to determine stress values.</div>
+</div>
+</dd>
+<dt class="field-odd">alpha</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">0.05, optional</div>
+<div class="line">significance level</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">Fstats</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">Dictionary with keys:</div>
+<div class="line">- ‘p’: p-values</div>
+<div class="line">- ‘F’:  F-values</div>
+<div class="line">- ‘Fc’: critcal values</div>
+<div class="line">- ‘H’: string reporting on significance of A compared to B.</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt id="luxpy.math.minimizebnd">
-<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">minimizebnd</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fun</span></em>, <em class="sig-param"><span class="n">x0</span></em>, <em class="sig-param"><span class="n">args</span><span class="o">=</span><span class="default_value">()</span></em>, <em class="sig-param"><span class="n">method</span><span class="o">=</span><span class="default_value">'Nelder-Mead'</span></em>, <em class="sig-param"><span class="n">use_bnd</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">bounds</span><span class="o">=</span><span class="default_value">None, None</span></em>, <em class="sig-param"><span class="n">options</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">x0_vsize</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">x0_keys</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/minimizebnd.html#minimizebnd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.minimizebnd" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.math.</code><code class="sig-name descname">minimizebnd</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fun</span></em>, <em class="sig-param"><span class="n">x0</span></em>, <em class="sig-param"><span class="n">args</span><span class="o">=</span><span class="default_value">()</span></em>, <em class="sig-param"><span class="n">method</span><span class="o">=</span><span class="default_value">'Nelder-Mead'</span></em>, <em class="sig-param"><span class="n">use_bnd</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">bounds</span><span class="o">=</span><span class="default_value">(None, None)</span></em>, <em class="sig-param"><span class="n">options</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">x0_vsize</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">x0_keys</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/minimizebnd.html#minimizebnd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.minimizebnd" title="Permalink to this definition">¶</a></dt>
 <dd><div class="line-block">
 <div class="line">Minimization function that allows for bounds on any type of method in </div>
 <div class="line">SciPy’s minimize function by transforming the parameters values </div>
@@ -1682,37 +1766,29 @@ pp 253–257, Vienna, 1996.</p>
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="spectrum.html" class="btn btn-neutral float-right" title="Spectrum sub-package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="utils.html" class="btn btn-neutral float-left" title="Utils sub-package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="spectrum.html" class="btn btn-neutral float-right" title="Spectrum sub-package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="utils.html" class="btn btn-neutral float-left" title="Utils sub-package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2020, Kevin A.G. Smet
+        &#169; Copyright 2021, Kevin A.G. Smet.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 

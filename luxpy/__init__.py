@@ -4,8 +4,8 @@ LuxPy: a package for lighting and color science
 ===============================================
 
     * Author: K. A.G. Smet (ksmet1977 at gmail.com)
-    * Version: 1.6.2
-    * Date: Oct 7, 2020
+    * Version: 1.6.3
+    * Date: March 26, 2021
     * License: GPLv3
 
     * DOI: https://doi.org/10.5281/zenodo.1298963
@@ -68,8 +68,9 @@ E.g.:
 # Initialze LuxPy
 ###############################################################################
 # Package info:
-__VERSION__ = 'v1.6.2'; """Current version"""
-__DATE__ = '07-Oct-2020'; """release date"""
+__VERSION__ = 'v1.6.3'; """Current version"""
+__version__ = __VERSION__
+__DATE__ = '25-Mar-2021'; """release date"""
 
 __COPYRIGHT__ = 'Copyright (C) 2017-2020 - Kevin A.G. Smet'; """copyright info"""
 
@@ -79,7 +80,7 @@ __URL__ = 'github.com/ksmet1977/luxpy/'; """package url"""
 __LICENSE__ = 'GPLv3'; """ License """
 __DOI__ = ['https://doi.org/10.5281/zenodo.1298963', 'https://doi.org/10.1080/15502724.2018.1518717']; """ DOIs: zenodo, Leukos """
 __CITE__ = '`Smet, K. A. G. (2019). Tutorial: The LuxPy Python Toolbox for Lighting and Color Science. LEUKOS, 1–23. DOI: 10.1080/15502724.2018.1518717 <https://www.tandfonline.com/doi/full/10.1080/15502724.2018.1518717>`_'; """ Citation info """ 
-__all__ = ['__VERSION__','__AUTHOR__','__EMAIL__', '__URL__','__DATE__',
+__all__ = ['__version__','__VERSION__','__AUTHOR__','__EMAIL__', '__URL__','__DATE__',
            '__COPYRIGHT__','__LICENSE__','__DOI__','__CITE__']
 
 #==============================================================================

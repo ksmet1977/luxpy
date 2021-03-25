@@ -3,11 +3,11 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Toolboxes &mdash; LuxPy 1.6.2 documentation</title>
+  <title>Toolboxes &mdash; LuxPy 1.6.3 documentation</title>
   
 
   
@@ -16,7 +16,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -29,7 +32,6 @@
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
-        <script src="_static/language_data.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -50,7 +52,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home" alt="Documentation Home"> LuxPy
+            <a href="index.html" class="icon icon-home"> LuxPy
           
 
           
@@ -60,7 +62,7 @@
             
             
               <div class="version">
-                1.6.2
+                1.6.3
               </div>
             
           
@@ -171,6 +173,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -184,7 +188,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="_sources/toolboxes.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -1579,6 +1583,12 @@ Fundamental Chromaticity Diagram with Physiological Axes - Part I
 <dt class="field-even">butterworth_spd()</dt>
 <dd class="field-even"><p>Generate Butterworth based spectrum.</p>
 </dd>
+<dt class="field-odd">lorentzian2_spd()</dt>
+<dd class="field-odd"><p>Generate 2nd order Lorentzian based spectrum.</p>
+</dd>
+<dt class="field-even">roundedtriangle_spd()</dt>
+<dd class="field-even"><p>Generate a rounded triangle based spectrum.</p>
+</dd>
 <dt class="field-odd">mono_led_spd()</dt>
 <dd class="field-odd"><p>Generate monochromatic LED spectrum based on a Gaussian 
 or butterworth profile or according to Ohno (Opt. Eng. 2005).</p>
@@ -1855,6 +1865,75 @@ spectra or component spectrum model parameters
 </div>
 </div>
 </div>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="luxpy.toolboxes.spdbuild.roundedtriangle_spd">
+<code class="sig-prename descclassname">luxpy.toolboxes.spdbuild.</code><code class="sig-name descname">roundedtriangle_spd</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">peakwl</span><span class="o">=</span><span class="default_value">530</span></em>, <em class="sig-param"><span class="n">fwhm</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">rounding</span><span class="o">=</span><span class="default_value">0.5</span></em>, <em class="sig-param"><span class="n">wl</span><span class="o">=</span><span class="default_value">[360.0, 830.0, 1.0]</span></em>, <em class="sig-param"><span class="n">with_wl</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">min_</span><span class="o">=</span><span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">max_</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">fw</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">rw</span><span class="o">=</span><span class="default_value">100</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/spdbuild/spdbuilder.html#roundedtriangle_spd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.spdbuild.roundedtriangle_spd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate rounded triangle spectrum.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">peakw</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">int or float or list or ndarray, optional</div>
+<div class="line">Peak wavelength</div>
+</div>
+</dd>
+<dt class="field-even">fwhm</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">int or float or list or ndarray, optional</div>
+<div class="line">Full-Width-Half-Maximum of rounded triangle.</div>
+</div>
+</dd>
+<dt class="field-odd">rounding</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">int or float or list or ndarray, optional</div>
+<div class="line">Amount of rounding of triangle corners (top, bottom-left, bottom-right)</div>
+</div>
+</dd>
+<dt class="field-even">wl</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">_WL3, optional </div>
+<div class="line">Wavelength range.</div>
+</div>
+</dd>
+<dt class="field-odd">with_wl</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">True, optional</div>
+<div class="line">True outputs a ndarray with first row wavelengths.</div>
+</div>
+</dd>
+<dt class="field-even"><a href="#id19"><span class="problematic" id="id20">min_</span></a>, <a href="#id21"><span class="problematic" id="id22">max_</span></a></dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">0.0, 1.0, optional</div>
+<div class="line">Minimum and maximum of spd.</div>
+</div>
+</dd>
+<dt class="field-odd">fw</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">100, optional</div>
+<div class="line">front width of triangle.</div>
+<div class="line">Only used when fwhm is set to None.</div>
+</div>
+</dd>
+<dt class="field-even">rw</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">100, optional</div>
+<div class="line">rear width of triangle.</div>
+<div class="line">Only used when fwhm is set to None.</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">returns</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with spectra. </div>
+</div>
+</dd>
+</dl>
 </dd>
 </dl>
 </dd></dl>
@@ -3905,13 +3984,13 @@ set.</p>
 </div></blockquote>
 <dl class="py function">
 <dt id="luxpy.toolboxes.hypspcim.render_image">
-<code class="sig-prename descclassname">luxpy.toolboxes.hypspcim.</code><code class="sig-name descname">render_image</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">img</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">spd</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">rfl</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">out</span><span class="o">=</span><span class="default_value">'img_hyp'</span></em>, <em class="sig-param"><span class="n">refspd</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">D</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">'1931_2'</span></em>, <em class="sig-param"><span class="n">cspace</span><span class="o">=</span><span class="default_value">'xyz'</span></em>, <em class="sig-param"><span class="n">cspace_tf</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">interp_type</span><span class="o">=</span><span class="default_value">'nd'</span></em>, <em class="sig-param"><span class="n">k_neighbours</span><span class="o">=</span><span class="default_value">4</span></em>, <em class="sig-param"><span class="n">show</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">verbosity</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">show_ref_img</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">stack_test_ref</span><span class="o">=</span><span class="default_value">12</span></em>, <em class="sig-param"><span class="n">write_to_file</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/hypspcim/hyperspectral_img_simulator.html#render_image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.hypspcim.render_image" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.toolboxes.hypspcim.</code><code class="sig-name descname">render_image</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">img</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">spd</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">rfl</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">out</span><span class="o">=</span><span class="default_value">'img_hyp'</span></em>, <em class="sig-param"><span class="n">refspd</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">D</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">'1931_2'</span></em>, <em class="sig-param"><span class="n">cspace</span><span class="o">=</span><span class="default_value">'xyz'</span></em>, <em class="sig-param"><span class="n">cspace_tf</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">CSF</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">interp_type</span><span class="o">=</span><span class="default_value">'nd'</span></em>, <em class="sig-param"><span class="n">k_neighbours</span><span class="o">=</span><span class="default_value">4</span></em>, <em class="sig-param"><span class="n">show</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">verbosity</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">show_ref_img</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">stack_test_ref</span><span class="o">=</span><span class="default_value">12</span></em>, <em class="sig-param"><span class="n">write_to_file</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/hypspcim/hyperspectral_img_simulator.html#render_image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.hypspcim.render_image" title="Permalink to this definition">¶</a></dt>
 <dd><p>Render image under specified light source spd.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
 <dt class="field-odd">img</dt>
 <dd class="field-odd"><div class="line-block">
-<div class="line">None or str or ndarray with uint8 rgb image.</div>
+<div class="line">None or str or ndarray with float (max = 1) rgb image.</div>
 <div class="line">None load a default image.</div>
 </div>
 </dd>
@@ -3919,6 +3998,7 @@ set.</p>
 <dd class="field-even"><div class="line-block">
 <div class="line">ndarray, optional</div>
 <div class="line">Light source spectrum for rendering</div>
+<div class="line">If None: use CIE illuminant F4</div>
 </div>
 </dd>
 <dt class="field-odd">rfl</dt>
@@ -3970,38 +4050,46 @@ set.</p>
 <div class="line">Dict with parameters for xyz_to_cspace and cspace_to_xyz transform.</div>
 </div>
 </dd>
-<dt class="field-even">interp_type</dt>
+<dt class="field-even">CSF</dt>
 <dd class="field-even"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">RGB camera response functions.</div>
+<div class="line">If None: input :xyz: contains raw rgb values. Override :cspace:</div>
+<div class="line">argument and perform estimation directly in raw rgb space!!!</div>
+</div>
+</dd>
+<dt class="field-odd">interp_type</dt>
+<dd class="field-odd"><div class="line-block">
 <div class="line">‘nd’, optional</div>
 <div class="line">Options:</div>
 <div class="line">- ‘nd’: perform n-dimensional linear interpolation using Delaunay triangulation.</div>
 <div class="line">- ‘nearest’: perform nearest neighbour interpolation. </div>
 </div>
 </dd>
-<dt class="field-odd">k_neighbours</dt>
-<dd class="field-odd"><div class="line-block">
+<dt class="field-even">k_neighbours</dt>
+<dd class="field-even"><div class="line-block">
 <div class="line">4 or int, optional</div>
 <div class="line">Number of nearest neighbours for reflectance spectrum interpolation.</div>
 <div class="line">Neighbours are found using scipy.spatial.cKDTree</div>
 </div>
 </dd>
-<dt class="field-even">show</dt>
-<dd class="field-even"><div class="line-block">
+<dt class="field-odd">show</dt>
+<dd class="field-odd"><div class="line-block">
 <div class="line">True, optional</div>
 <div class="line-block">
 <div class="line">Show images.</div>
 </div>
 </div>
 </dd>
-<dt class="field-odd">verbosity</dt>
-<dd class="field-odd"><div class="line-block">
+<dt class="field-even">verbosity</dt>
+<dd class="field-even"><div class="line-block">
 <div class="line">0, optional</div>
 <div class="line">If &gt; 0: make a plot of the color coordinates of original and 
 rendered image pixels.</div>
 </div>
 </dd>
-<dt class="field-even">show_ref_img</dt>
-<dd class="field-even"><div class="line-block">
+<dt class="field-odd">show_ref_img</dt>
+<dd class="field-odd"><div class="line-block">
 <div class="line">True, optional</div>
 <div class="line">True: shows rendered image under reference spd. False: shows</div>
 <div class="line-block">
@@ -4009,14 +4097,14 @@ rendered image pixels.</div>
 </div>
 </div>
 </dd>
-<dt class="field-odd">write_to_file</dt>
-<dd class="field-odd"><div class="line-block">
+<dt class="field-even">write_to_file</dt>
+<dd class="field-even"><div class="line-block">
 <div class="line">None, optional</div>
 <div class="line">None: do nothing, else: write to filename(+path) in :write_to_file:</div>
 </div>
 </dd>
-<dt class="field-even">stack_test_ref</dt>
-<dd class="field-even"><div class="line-block">
+<dt class="field-odd">stack_test_ref</dt>
+<dd class="field-odd"><div class="line-block">
 <div class="line">12, optional</div>
 <div class="line-block">
 <div class="line">- 12: left (test), right (ref) format for show and imwrite</div>
@@ -4033,7 +4121,7 @@ rendered image pixels.</div>
 <dt class="field-odd">returns</dt>
 <dd class="field-odd"><div class="line-block">
 <div class="line">img_hyp, img_ren, </div>
-<div class="line">ndarrays with hyperspectral image and rendered images </div>
+<div class="line">ndarrays with float hyperspectral image and rendered images </div>
 </div>
 </dd>
 </dl>
@@ -4043,42 +4131,50 @@ rendered image pixels.</div>
 
 <dl class="py function">
 <dt id="luxpy.toolboxes.hypspcim.xyz_to_rfl">
-<code class="sig-prename descclassname">luxpy.toolboxes.hypspcim.</code><code class="sig-name descname">xyz_to_rfl</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xyz</span></em>, <em class="sig-param"><span class="n">rfl</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">out</span><span class="o">=</span><span class="default_value">'rfl_est'</span></em>, <em class="sig-param"><span class="n">refspd</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">D</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">'1931_2'</span></em>, <em class="sig-param"><span class="n">cspace</span><span class="o">=</span><span class="default_value">'xyz'</span></em>, <em class="sig-param"><span class="n">cspace_tf</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">interp_type</span><span class="o">=</span><span class="default_value">'nd'</span></em>, <em class="sig-param"><span class="n">k_neighbours</span><span class="o">=</span><span class="default_value">4</span></em>, <em class="sig-param"><span class="n">verbosity</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/hypspcim/hyperspectral_img_simulator.html#xyz_to_rfl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.hypspcim.xyz_to_rfl" title="Permalink to this definition">¶</a></dt>
-<dd><p>Approximate spectral reflectance of xyz based on nd-dimensional linear interpolation 
+<code class="sig-prename descclassname">luxpy.toolboxes.hypspcim.</code><code class="sig-name descname">xyz_to_rfl</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xyz</span></em>, <em class="sig-param"><span class="n">CSF</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">rfl</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">out</span><span class="o">=</span><span class="default_value">'rfl_est'</span></em>, <em class="sig-param"><span class="n">refspd</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">D</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">'1931_2'</span></em>, <em class="sig-param"><span class="n">cspace</span><span class="o">=</span><span class="default_value">'xyz'</span></em>, <em class="sig-param"><span class="n">cspace_tf</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">interp_type</span><span class="o">=</span><span class="default_value">'nd'</span></em>, <em class="sig-param"><span class="n">k_neighbours</span><span class="o">=</span><span class="default_value">4</span></em>, <em class="sig-param"><span class="n">verbosity</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/hypspcim/hyperspectral_img_simulator.html#xyz_to_rfl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.hypspcim.xyz_to_rfl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Approximate spectral reflectance of xyz values based on nd-dimensional linear interpolation 
 or k nearest neighbour interpolation of samples from a standard reflectance set.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
 <dt class="field-odd">xyz</dt>
 <dd class="field-odd"><div class="line-block">
-<div class="line">ndarray with tristimulus values of target points.</div>
+<div class="line">ndarray with xyz values of target points.</div>
 </div>
 </dd>
-<dt class="field-even">rfl</dt>
+<dt class="field-even">CSF</dt>
 <dd class="field-even"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">RGB camera response functions.</div>
+<div class="line">If None: input :xyz: contains raw rgb (float) values. Override :cspace:</div>
+<div class="line">argument and perform estimation directly in raw rgb space!!!</div>
+</div>
+</dd>
+<dt class="field-odd">rfl</dt>
+<dd class="field-odd"><div class="line-block">
 <div class="line">ndarray, optional</div>
 <div class="line">Reflectance set for color coordinate to rfl mapping.</div>
 </div>
 </dd>
-<dt class="field-odd">out</dt>
-<dd class="field-odd"><div class="line-block">
+<dt class="field-even">out</dt>
+<dd class="field-even"><div class="line-block">
 <div class="line">‘rfl_est’ or str, optional</div>
 </div>
 </dd>
-<dt class="field-even">refspd</dt>
-<dd class="field-even"><div class="line-block">
+<dt class="field-odd">refspd</dt>
+<dd class="field-odd"><div class="line-block">
 <div class="line">None, optional</div>
 <div class="line">Refer ence spectrum for color coordinate to rfl mapping.</div>
 <div class="line">None defaults to D65.</div>
 </div>
 </dd>
-<dt class="field-odd">cieobs</dt>
-<dd class="field-odd"><div class="line-block">
+<dt class="field-even">cieobs</dt>
+<dd class="field-even"><div class="line-block">
 <div class="line">_CIEOBS, optional</div>
 <div class="line">CMF set used for calculation of xyz from spectral data.</div>
 </div>
 </dd>
-<dt class="field-even">cspace</dt>
-<dd class="field-even"><div class="line-block">
+<dt class="field-odd">cspace</dt>
+<dd class="field-odd"><div class="line-block">
 <div class="line">‘xyz’,  optional</div>
 <div class="line">Color space for color coordinate to rfl mapping.</div>
 <div class="line">Tip: Use linear space (e.g. ‘xyz’, ‘Yuv’,…) for (interp_type == ‘nd’),</div>
@@ -4087,29 +4183,29 @@ or k nearest neighbour interpolation of samples from a standard reflectance set.
 </div>
 </div>
 </dd>
-<dt class="field-odd">cspace_tf</dt>
-<dd class="field-odd"><div class="line-block">
+<dt class="field-even">cspace_tf</dt>
+<dd class="field-even"><div class="line-block">
 <div class="line">{}, optional</div>
 <div class="line">Dict with parameters for xyz_to_cspace and cspace_to_xyz transform.</div>
 </div>
 </dd>
-<dt class="field-even">interp_type</dt>
-<dd class="field-even"><div class="line-block">
+<dt class="field-odd">interp_type</dt>
+<dd class="field-odd"><div class="line-block">
 <div class="line">‘nd’, optional</div>
 <div class="line">Options:</div>
 <div class="line">- ‘nd’: perform n-dimensional linear interpolation using Delaunay triangulation.</div>
 <div class="line">- ‘nearest’: perform nearest neighbour interpolation. </div>
 </div>
 </dd>
-<dt class="field-odd">k_neighbours</dt>
-<dd class="field-odd"><div class="line-block">
+<dt class="field-even">k_neighbours</dt>
+<dd class="field-even"><div class="line-block">
 <div class="line">4 or int, optional</div>
 <div class="line">Number of nearest neighbours for reflectance spectrum interpolation.</div>
 <div class="line">Neighbours are found using scipy.spatial.cKDTree</div>
 </div>
 </dd>
-<dt class="field-even">verbosity</dt>
-<dd class="field-even"><div class="line-block">
+<dt class="field-odd">verbosity</dt>
+<dd class="field-odd"><div class="line-block">
 <div class="line">0, optional</div>
 <div class="line">If &gt; 0: make a plot of the color coordinates of original and </div>
 <div class="line">rendered image pixels.</div>
@@ -4122,6 +4218,184 @@ or k nearest neighbour interpolation of samples from a standard reflectance set.
 <dd class="field-odd"><div class="line-block">
 <div class="line">:rfl_est:</div>
 <div class="line">ndarrays with estimated reflectance spectra.</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="luxpy.toolboxes.hypspcim.get_superresolution_hsi">
+<code class="sig-prename descclassname">luxpy.toolboxes.hypspcim.</code><code class="sig-name descname">get_superresolution_hsi</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lrhsi</span></em>, <em class="sig-param"><span class="n">hrci</span></em>, <em class="sig-param"><span class="n">CSF</span></em>, <em class="sig-param"><span class="n">wl</span><span class="o">=</span><span class="default_value">[380, 780, 1]</span></em>, <em class="sig-param"><span class="n">interp_type</span><span class="o">=</span><span class="default_value">'nd'</span></em>, <em class="sig-param"><span class="n">k_neighbours</span><span class="o">=</span><span class="default_value">4</span></em>, <em class="sig-param"><span class="n">verbosity</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/hypspcim/hyperspectral_img_simulator.html#get_superresolution_hsi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.hypspcim.get_superresolution_hsi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a HighResolution HyperSpectral Image (super-resolution HSI) based on a LowResolution HSI and a HighResolution Color Image.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">lrhsi</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with LowResolution HSI [m,m,L].</div>
+</div>
+</dd>
+<dt class="field-even">hrci</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">ndarray with HighResolution HSI [M,N,3].</div>
+</div>
+</dd>
+<dt class="field-odd">CSF</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">ndarray with camera sensitivity functions </div>
+<div class="line">If None: use Nikon D700</div>
+</div>
+</dd>
+<dt class="field-even">wl</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">[380,780,1], optional</div>
+<div class="line">Wavelength range and spacing or ndarray with wavelengths of HSI image.</div>
+</div>
+</dd>
+<dt class="field-odd">interp_type</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">‘nd’, optional</div>
+<div class="line">Options:</div>
+<div class="line">- ‘nd’: perform n-dimensional linear interpolation using Delaunay triangulation.</div>
+<div class="line">- ‘nearest’: perform nearest neighbour interpolation. </div>
+</div>
+</dd>
+<dt class="field-even">k_neighbours</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">4 or int, optional</div>
+<div class="line">Number of nearest neighbours for reflectance spectrum interpolation.</div>
+<div class="line">Neighbours are found using scipy.spatial.cKDTree</div>
+</div>
+</dd>
+<dt class="field-odd">verbosity</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">0, optional</div>
+<div class="line">Verbosity level for sub-call to render_image().</div>
+<div class="line">If &gt; 0: make a plot of the color coordinates of original and </div>
+<div class="line">rendered image pixels.</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">hrhsi</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with HighResolution HSI [M,N,L].</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Procedure:</dt><dd><div class="line-block">
+<div class="line">Call render_image(hrci, rfl = lrhsi_2, CSF = …) to estimate a hyperspectral image</div>
+<div class="line">from the high-resolution color image hrci with the reflectance spectra </div>
+<div class="line">in the low-resolution hyper-spectral image as database for the estimation.</div>
+<div class="line">Estimation is done in raw RGB space with the lrhsi converted using the</div>
+<div class="line">camera sensitivity functions in CSF.</div>
+</div>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="luxpy.toolboxes.hypspcim.hsi_to_rgb">
+<code class="sig-prename descclassname">luxpy.toolboxes.hypspcim.</code><code class="sig-name descname">hsi_to_rgb</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">hsi</span></em>, <em class="sig-param"><span class="n">spd</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">'1931_2'</span></em>, <em class="sig-param"><span class="n">srgb</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">linear_rgb</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">CSF</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">wl</span><span class="o">=</span><span class="default_value">[380, 780, 1]</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/hypspcim/hyperspectral_img_simulator.html#hsi_to_rgb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.hypspcim.hsi_to_rgb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert HyperSpectral Image to rgb.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">hsi</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with hyperspectral image [M,N,L]</div>
+</div>
+</dd>
+<dt class="field-even">spd</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">ndarray with illumination spectrum</div>
+</div>
+</dd>
+<dt class="field-odd">cieobs</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">_CIEOBS, optional</div>
+<div class="line">CMF set to convert spectral data to xyz tristimulus values.</div>
+</div>
+</dd>
+<dt class="field-even">srgb</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">False, optional</div>
+<div class="line">If False: Use xyz_to_srgb(spd_to_xyz(…)) to convert to srgb values</div>
+<div class="line">If True: use camera sensitivity functions.</div>
+</div>
+</dd>
+<dt class="field-odd">linear_rgb</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">False, optional</div>
+<div class="line">If False: use gamma = 2.4 in xyz_to_srgb, if False: use gamma = 1.</div>
+</div>
+</dd>
+<dt class="field-even">CSF</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">ndarray with camera sensitivity functions </div>
+<div class="line">If None: use Nikon D700</div>
+</div>
+</dd>
+<dt class="field-odd">wl</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">[380,780,1], optional</div>
+<div class="line">Wavelength range and spacing or ndarray with wavelengths of HSI image.</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">rgb</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with rgb image [M,N,3]</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="luxpy.toolboxes.hypspcim.rfl_to_rgb">
+<code class="sig-prename descclassname">luxpy.toolboxes.hypspcim.</code><code class="sig-name descname">rfl_to_rgb</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rfl</span></em>, <em class="sig-param"><span class="n">spd</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">CSF</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">wl</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">normalize_to_white</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/hypspcim/hyperspectral_img_simulator.html#rfl_to_rgb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.hypspcim.rfl_to_rgb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert spectral reflectance functions (illuminated by spd) to Camera Sensitivity Functions.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">rfl</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with spectral reflectance functions (1st row is wavelengths if wl is None).</div>
+</div>
+</dd>
+<dt class="field-even">spd</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">ndarray with illumination spectrum</div>
+</div>
+</dd>
+<dt class="field-odd">CSF</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">ndarray with camera sensitivity functions </div>
+<div class="line">If None: use Nikon D700</div>
+</div>
+</dd>
+<dt class="field-even">normalize_to_white</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">True, optional</div>
+<div class="line">If True: white-balance output rgb to a perfect white diffuser.</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">rgb</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with rgb values for each spectral reflectance functions</div>
 </div>
 </dd>
 </dl>
@@ -4996,6 +5270,7 @@ or k nearest neighbour interpolation of samples from a standard reflectance set.
 | ‘future_use’, ‘input_watts’, ‘v_angs’, ‘h_angs’, ‘lamp_cone_type’,
 | ‘lamp_h_type’, ‘candela_values’, ‘candela_2d’, ‘v_same’, ‘h_same’,
 | ‘intensity’, ‘theta’, ‘values’, ‘phi’, ‘map’,’Iv0’]
+| )
 |
 | If file_ext == ‘ldt’:
 |    dict_keys(
@@ -5005,6 +5280,434 @@ or k nearest neighbour interpolation of samples from a standard reflectance set.
 | ‘cangles’, ‘tangles’,’candela_values’, ‘candela_2d’,
 | ‘intensity’, ‘theta’, ‘values’, ‘phi’, ‘map’, ‘Iv0’]
 | )</p>
+</dd>
+</dl>
+</dd>
+<dt>Notes:</dt><dd><ol class="arabic simple">
+<li><p>if only_common_keys: output is dictionary with keys: [‘filename’, ‘version’, ‘intensity’, ‘theta’, ‘phi’,         ‘values’, ‘map’, ‘Iv0’, ‘candela_values’, ‘candela_2d’]</p></li>
+<li><p>‘theta’,’phi’, ‘values’ (=’candela_2d’) contain the original theta angles, phi angles and normalized candelas as specified in file.</p></li>
+<li><p>‘map’ contains a dicionary with keys ‘thetas’, ‘phis’, ‘values’. This data has been complete to full angle ranges thetas: [0,180]; phis: [0,360]</p></li>
+<li><p>LDT map completion only supported for Isymm == 4 (31/10/2018), Map will be filled with original ‘theta’, ‘phi’ and normalized ‘candela_2d’ values !</p></li>
+</ol>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="luxpy.toolboxes.iolidfiles.get_uv_texture">
+<code class="sig-prename descclassname">luxpy.toolboxes.iolidfiles.</code><code class="sig-name descname">get_uv_texture</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">theta</span></em>, <em class="sig-param"><span class="n">phi</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">values</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">input_types</span><span class="o">=</span><span class="default_value">('array', 'array')</span></em>, <em class="sig-param"><span class="n">method</span><span class="o">=</span><span class="default_value">'linear'</span></em>, <em class="sig-param"><span class="n">theta_min</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">angle_res</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">close_phi</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">deg</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">r</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">show</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">out</span><span class="o">=</span><span class="default_value">'values_map'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/iolidfiles/io_lid_files.html#get_uv_texture"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.iolidfiles.get_uv_texture" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a uv-texture map.
+| with specified angular resolution (°) and with positive z-axis as normal.
+|   u corresponds to phi [0° - 360°]
+|   v corresponds to theta [0° - 180°], (or [-90° - 90°])</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">theta</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">Float, int or ndarray</div>
+<div class="line">Angle with positive z-axis.</div>
+<div class="line">Values corresponding to 0 and 180° must be specified!</div>
+</div>
+</dd>
+<dt class="field-even">phi</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">Float, int or ndarray</div>
+<div class="line">Angle around positive z-axis starting from x-axis.</div>
+<div class="line">If not None: values corresponding to 0 and 360° must be specified!</div>
+</div>
+</dd>
+<dt class="field-odd">values</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">None</div>
+<div class="line">ndarray or mesh of values at (theta, phi) locations. </div>
+</div>
+</dd>
+<dt class="field-even">input_types</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">(‘array’,’array’), optional</div>
+<div class="line">Specification of type of input of (angles,values)</div>
+</div>
+</dd>
+<dt class="field-odd">method</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">‘linear’, optional</div>
+<div class="line">Interpolation method.</div>
+<div class="line">(supported scipy.interpolate.griddata methods: </div>
+<div class="line-block">
+<div class="line">‘nearest’, ‘linear’, ‘cubic’)</div>
+</div>
+</div>
+</dd>
+<dt class="field-even">theta_min</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">0, optional</div>
+<div class="line">If 0: [0, 180]; If -90: theta range = [-90,90]</div>
+</div>
+</dd>
+<dt class="field-odd">close_phi</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">False, optional</div>
+<div class="line">Make phi angles array closed (full circle).</div>
+</div>
+</dd>
+<dt class="field-even">angle_res</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">1, optional</div>
+<div class="line">Resolution in degrees.</div>
+</div>
+</dd>
+<dt class="field-odd">deg</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">True, optional</div>
+<div class="line">Type of angle input (True: degrees, False: radians).</div>
+</div>
+</dd>
+<dt class="field-even">r</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">1, optional</div>
+<div class="line">Float, int or ndarray</div>
+<div class="line">radius</div>
+</div>
+</dd>
+<dt class="field-odd">show</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">True, optional</div>
+<div class="line">Plot results.</div>
+</div>
+</dd>
+<dt class="field-even">out</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">‘values_map’, optional</div>
+<div class="line">Specifies output: “return eval(out)”</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">returns</dt>
+<dd class="field-odd"><p>as specified by :out:.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="luxpy.toolboxes.iolidfiles.save_texture">
+<code class="sig-prename descclassname">luxpy.toolboxes.iolidfiles.</code><code class="sig-name descname">save_texture</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">tex</span></em>, <em class="sig-param"><span class="n">bits</span><span class="o">=</span><span class="default_value">16</span></em>, <em class="sig-param"><span class="n">transpose</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/iolidfiles/io_lid_files.html#save_texture"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.iolidfiles.save_texture" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save 16 bit grayscale PNG image of uv-texture.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">filename</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">Filename of output image.</div>
+</div>
+</dd>
+<dt class="field-even">tex</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">ndarray float uv-texture.</div>
+</div>
+</dd>
+<dt class="field-odd">transpose</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">True, optional</div>
+<div class="line">If True: transpose tex (u,v) to set u as columns and v as rows </div>
+<div class="line">in texture image.</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">None</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+</dd>
+<dt>Note:</dt><dd><div class="line-block">
+<div class="line">Texture is rescaled to max = 1 and saved as uint16.</div>
+<div class="line">–&gt; Before using uv_map: rescale back to set ‘normal’ to 1.</div>
+</div>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="luxpy.toolboxes.iolidfiles.draw_lid">
+<code class="sig-prename descclassname">luxpy.toolboxes.iolidfiles.</code><code class="sig-name descname">draw_lid</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">LID</span></em>, <em class="sig-param"><span class="n">grid_interp_method</span><span class="o">=</span><span class="default_value">'linear'</span></em>, <em class="sig-param"><span class="n">theta_min</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">angle_res</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">projection</span><span class="o">=</span><span class="default_value">'2d'</span></em>, <em class="sig-param"><span class="n">polar_plot_Cx_planes</span><span class="o">=</span><span class="default_value">[0, 90]</span></em>, <em class="sig-param"><span class="n">use_scatter_plot</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">plot_colorbar</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">legend_on</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">plot_luminaire_position</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">out</span><span class="o">=</span><span class="default_value">'ax'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">plottingkwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/iolidfiles/io_lid_files.html#draw_lid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.iolidfiles.draw_lid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draw the light intensity distribution.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">LID</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">dict with IES or LDT file data. </div>
+<div class="line">(obtained with iolidfiles.read_lamp_data())</div>
+</div>
+</dd>
+<dt class="field-even">grid_interp_method</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">‘linear’, optional</div>
+<div class="line">Interpolation method for (theta,phi)-grid of normalized luminous intensity values.</div>
+<div class="line">(supported scipy.interpolate.griddata methods: </div>
+<div class="line-block">
+<div class="line">‘nearest’, ‘linear’, ‘cubic’)</div>
+</div>
+</div>
+</dd>
+<dt class="field-odd">theta_min</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">0, optional</div>
+<div class="line">If 0: [0, 180]; If -90: theta range = [-90,90]</div>
+</div>
+</dd>
+<dt class="field-even">angle_res</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">1, optional</div>
+<div class="line">Resolution in degrees.</div>
+</div>
+</dd>
+<dt class="field-odd">ax</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">If None: create new 3D-axes for plotting.</div>
+</div>
+</dd>
+<dt class="field-even">projection</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">‘2d’, optional</div>
+<div class="line">If ‘3d’ make 3 plot</div>
+<div class="line">If ‘2d’: make polar plot(s). [not yet implemented (25/03/2021)]</div>
+</div>
+</dd>
+<dt class="field-odd">polar_plot_Cx_planes</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">[0,90], optional</div>
+<div class="line">Plot (Cx)-(Cx+180) planes; eg. [0,90] will plot C0-C180 and C90-C270 planes in 2D polar plot.</div>
+</div>
+</dd>
+<dt class="field-even">use_scatter_plot</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">False, optional</div>
+<div class="line">If True: use plt.scatter for plotting intensity values in 3D plot.</div>
+<div class="line">If False: use plt.plot_surface for plotting in 3D plot.</div>
+</div>
+</dd>
+<dt class="field-odd">plot_colorbar</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">True, optional</div>
+<div class="line">Plot colorbar representing the normalized luminous intensity values in the LID 3D plot.</div>
+</div>
+</dd>
+<dt class="field-even">legend_on</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">True, optional</div>
+<div class="line">If True: plot legend on polar plot (no legend for 3D plot!).</div>
+</div>
+</dd>
+<dt class="field-odd">plot_luminaire_position</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">True, optional</div>
+<div class="line">Plot the position of the luminaire (0,0,0) in the 3D graph as a red diamond.</div>
+</div>
+</dd>
+<dt class="field-even">out</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">‘ax’, optional</div>
+<div class="line">string with variable to return</div>
+<div class="line">default: ax handle to plot.</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">returns</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">Whatever requested as determined by the string in :out:</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="luxpy.toolboxes.iolidfiles.render_lid">
+<code class="sig-prename descclassname">luxpy.toolboxes.iolidfiles.</code><code class="sig-name descname">render_lid</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">LID</span><span class="o">=</span><span class="default_value">'./data/luxpy_test_lid_file.ies'</span></em>, <em class="sig-param"><span class="n">sensor_resolution</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">sensor_position</span><span class="o">=</span><span class="default_value">[0, - 1, 0.8]</span></em>, <em class="sig-param"><span class="n">sensor_n</span><span class="o">=</span><span class="default_value">[0, 1, - 0.2]</span></em>, <em class="sig-param"><span class="n">fov</span><span class="o">=</span><span class="default_value">(90, 90)</span></em>, <em class="sig-param"><span class="n">Fd</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">luminaire_position</span><span class="o">=</span><span class="default_value">[0, 1.3, 2]</span></em>, <em class="sig-param"><span class="n">luminaire_n</span><span class="o">=</span><span class="default_value">[0, 0, - 1]</span></em>, <em class="sig-param"><span class="n">wall_center</span><span class="o">=</span><span class="default_value">[0, 2, 1]</span></em>, <em class="sig-param"><span class="n">wall_n</span><span class="o">=</span><span class="default_value">[0, - 1, 0]</span></em>, <em class="sig-param"><span class="n">wall_width</span><span class="o">=</span><span class="default_value">4</span></em>, <em class="sig-param"><span class="n">wall_height</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">wall_rho</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">floor_center</span><span class="o">=</span><span class="default_value">[0, 1, 0]</span></em>, <em class="sig-param"><span class="n">floor_n</span><span class="o">=</span><span class="default_value">[0, 0, 1]</span></em>, <em class="sig-param"><span class="n">floor_width</span><span class="o">=</span><span class="default_value">4</span></em>, <em class="sig-param"><span class="n">floor_height</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">floor_rho</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">grid_interp_method</span><span class="o">=</span><span class="default_value">'linear'</span></em>, <em class="sig-param"><span class="n">angle_res</span><span class="o">=</span><span class="default_value">5</span></em>, <em class="sig-param"><span class="n">theta_min</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">ax3D</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ax2D</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">join_axes</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">legend_on</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">plot_luminaire_position</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">plot_lumiaire_rays</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">plot_luminaire_lid</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">plot_sensor_position</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">plot_sensor_pixels</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">plot_sensor_rays</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">plot_wall_edges</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">plot_wall_luminance</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">plot_wall_intersections</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">plot_floor_edges</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">plot_floor_luminance</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">plot_floor_intersections</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">out</span><span class="o">=</span><span class="default_value">'Lv2D'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/iolidfiles/io_lid_files.html#render_lid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.iolidfiles.render_lid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Render a light intensity distribution.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">LID</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">dict with IES or LDT file data or string with path/filename. </div>
+<div class="line">(dict should be obtained with iolidfiles.read_lamp_data())</div>
+</div>
+</dd>
+<dt class="field-even">sensor_resolution</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">100, optional</div>
+<div class="line">Number of sensor ‘pixels’ along each dimension.</div>
+</div>
+</dd>
+<dt class="field-odd">sensor_position</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">[0,-1,0.8], optional</div>
+<div class="line">x,y,z position of the sensor ‘focal’ point (is located Fd meters behind actual sensor plane)</div>
+</div>
+</dd>
+<dt class="field-even">sensor_n</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">[0,1,-0.2], optional</div>
+<div class="line">Sensor plane surface normal</div>
+</div>
+</dd>
+<dt class="field-odd">fov</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">(90,90), optional</div>
+<div class="line">Field of view of sensor image in degrees.</div>
+</div>
+</dd>
+<dt class="field-even">Fd</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">2, optional</div>
+<div class="line">‘Focal’ distance in meter. Sensor center is located Fd meter away from</div>
+<div class="line">:sensor_position:</div>
+</div>
+</dd>
+<dt class="field-odd">luminaire_position</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">[0,1.3,2], optional</div>
+<div class="line">x,y,z position of the photometric equivalent point source</div>
+</div>
+</dd>
+<dt class="field-even">luminaire_n</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">[0,0,-1], optional</div>
+<div class="line">Orientation of lumaire LID (default points downward along z-axis away from source)</div>
+</div>
+</dd>
+<dt class="field-odd">wall_center</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">[0,2,1], optiona</div>
+<div class="line">x,y,z position of the back wall</div>
+</div>
+</dd>
+<dt class="field-even">wall_n</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">[0,-1,0], optional</div>
+<div class="line">surface normal of wall</div>
+</div>
+</dd>
+<dt class="field-odd">wall_width</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">4, optional</div>
+<div class="line">width of wall (m)</div>
+</div>
+</dd>
+<dt class="field-even">wall_height</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">2, optional</div>
+<div class="line">height of wall (m)</div>
+</div>
+</dd>
+<dt class="field-odd">wall_rho</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">1, optional</div>
+<div class="line">Diffuse (Lambertian) reflectance of wall.</div>
+</div>
+</dd>
+<dt class="field-even">floor_center</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">[0,1,0], optiona</div>
+<div class="line">x,y,z position of the floor</div>
+</div>
+</dd>
+<dt class="field-odd">floor_n</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">[0,0,1], optional</div>
+<div class="line">surface normal of floor</div>
+</div>
+</dd>
+<dt class="field-even">floor_width</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">4, optional</div>
+<div class="line">width of floor (m)</div>
+</div>
+</dd>
+<dt class="field-odd">floor_height</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">2, optional</div>
+<div class="line">height of floor (m)</div>
+</div>
+</dd>
+<dt class="field-even">floor_rho</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">1, optional</div>
+<div class="line">Diffuse (Lambertian) reflectance of floor.</div>
+</div>
+</dd>
+<dt class="field-odd">grid_interp_method</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">‘linear’, optional</div>
+<div class="line">Interpolation method for (theta,phi)-grid of normalized luminous intensity values.</div>
+<div class="line">(supported scipy.interpolate.griddata methods: </div>
+<div class="line-block">
+<div class="line">‘nearest’, ‘linear’, ‘cubic’)</div>
+</div>
+</div>
+</dd>
+<dt class="field-even">theta_min</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">0, optional</div>
+<div class="line">If 0: [0, 180]; If -90: theta range = [-90,90]</div>
+<div class="line">Only used when generating a plot of the LID in the 3D graphs.</div>
+</div>
+</dd>
+<dt class="field-odd">angle_res</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">1, optional</div>
+<div class="line">Angle resolution in degrees of LID sampling.</div>
+<div class="line">Only used when generating a plot of the LID in the 3D graphs.</div>
+</div>
+</dd>
+<dt class="field-even">ax3D,ax2D</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">If None: create new 3D- or 2D- axes for plotting.</div>
+<div class="line">If join_axes == True: try and combine two axes on same figure.</div>
+</div>
+</dd>
+<dt class="field-odd">legend_on</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">False, optional</div>
+<div class="line">plot legend.</div>
+</div>
+</dd>
+<dt class="field-even">plot_luminaire_position</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">True, optional</div>
+<div class="line">Plot the position of the luminaire (0,0,0) in the graph as a red diamond.</div>
+</div>
+</dd>
+<dt class="field-odd"><a href="#id23"><span class="problematic" id="id24">plot_X_</span></a>…</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">VArious options to customize plotting. Mainly allows for plotting of</div>
+<div class="line">additional info such as plane-ray intersection points, sensor pixels,</div>
+<div class="line">sensor-to-plane rays, plane-to-luminaire rays, 3D plot of LID, etc.</div>
+</div>
+</dd>
+<dt class="field-even">out</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">‘Lv2D’, optional</div>
+<div class="line">string with variable to return</div>
+<div class="line">default: variable storing an grayscale image of the rendered LID.</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">returns</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">Whatever requested as determined by the string in :out:</div>
+</div>
 </dd>
 </dl>
 </dd>
@@ -5144,35 +5847,28 @@ or k nearest neighbour interpolation of samples from a standard reflectance set.
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-      
-        <a href="color.html" class="btn btn-neutral float-left" title="Color sub-package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="color.html" class="btn btn-neutral float-left" title="Color sub-package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2020, Kevin A.G. Smet
+        &#169; Copyright 2021, Kevin A.G. Smet.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 
