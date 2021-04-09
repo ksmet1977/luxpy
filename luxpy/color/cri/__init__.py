@@ -192,7 +192,7 @@ iestm30/metrics_fast.py
 
  :_xyz_to_jab_cam02ucs(): Calculate CAM02-UCS J'a'b' coordinates from xyz tristimulus values of sample and white point.
 
- :spd_tom_tm30(): Calculate tm30 measures from spd.
+ :spd_to_tm30(): Calculate tm30 measures from spd.
  
  * Created for faster spectral optimization based on ANSI/IES-TM30 measures
 

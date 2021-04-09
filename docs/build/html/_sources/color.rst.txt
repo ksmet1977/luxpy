@@ -88,6 +88,8 @@ cam/
 	* cam15u
 	* sww2016.py
 	* cam18sl.py
+	* camjabz.py
+	* zcam.py
 	
  :namespace: luxpy.cam
 
@@ -141,11 +143,13 @@ cri/
 	* /indices/
 		* __init__.py
 		* indices.py
-		* ciewrappers.py
-		* ieswrappers.py
+		* cie_wrappers.py
+		* iestm30_wrappers.py
 		* cri2012.py
 		* mcri.py
-		* cqs.py	
+		* cqs.py
+		* fci.py
+		* thorntoncpi.py	
 	* /iestm30/
 		* __init__.py
 		* metrics.py

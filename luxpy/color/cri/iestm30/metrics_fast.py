@@ -7,7 +7,7 @@ Module for fast ANSI/IES-TM30 calculations
 
  :_xyz_to_jab_cam02ucs(): Calculate CAM02-UCS J'a'b' coordinates from xyz tristimulus values of sample and white point.
 
- :spd_tom_tm30(): Calculate tm30 measures from spd.
+ :spd_to_tm30(): Calculate tm30 measures from spd.
 
 Created on Mon Sep 28 16:34:14 2020
 
