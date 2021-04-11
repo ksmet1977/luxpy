@@ -63,8 +63,8 @@ Notes:
     sent to the device, one is forced to call the spec.intensities() function twice! 
     This means a simple measurements now takes twice as long, resulting in a sub-optimal efficiency. 
     
-    3. Hopefully, at Ocean Optics, they will, at some point in time, listen to their customers 
-    and implement a simple, logical operation of their devices: one that just reads a spectrum 
+    3. Hopefully, Ocean Optics will at some point implement a more simple and 
+    more logical operation of their devices: one that just reads a spectrum 
     at the desired integration time the momemt the function is called and which puts the 
     spectrometer in idle mode when no spectrum is requested.
     
@@ -326,8 +326,8 @@ def _getOOcounts(dvc, Tint = _TINT, \
         sent to the device, one is forced to call the dvc._intensities() function twice! 
         This means a simple measurements now takes twice as long, resulting in a sub-optimal efficiency. 
     
-        2. Hopefully, at Ocean Optics, they will, at some point in time, listen to their customers 
-        and implement a simple, logical operation of their devices: one that just reads a spectrum 
+        2. Hopefully, Ocean Optics will at some point implement a more simple and 
+        more logical operation of their devices: one that just reads a spectrum 
         at the desired integration time the momemt the function is called and which puts the 
         spectrometer in idle mode when no spectrum is requested.
     """
@@ -1211,10 +1211,9 @@ def get_spd(dvc = 0, Tint = _TINT, autoTint_max = _TINT_MAX, \
         This means a simple measurements now takes twice as long, 
         resulting in a sub-optimal efficiency. 
         
-        2. Hopefully, at Ocean Optics, they will, at some point in time, 
-        listen to their customers and implement a simple, logical operation 
-        of their devices: one that just reads a spectrum at the desired 
-        integration time the momemt the function is called and which puts the 
+        2. Hopefully, Ocean Optics will at some point implement a more simple and 
+        more logical operation of their devices: one that just reads a spectrum 
+        at the desired integration time the momemt the function is called and which puts the 
         spectrometer in idle mode when no spectrum is requested.
     """
     Errors = {} 
