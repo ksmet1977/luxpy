@@ -170,11 +170,11 @@ def spd_to_aopicE(sid, Ee = None, E = None, Q = None, cieobs = _CIEOBS, sid_unit
     
     # Normalize sid to Ee:
     if Ee is not None:
-        sid = spd_normalize(sid, norm_type = 'ru', norm_f = Ee)  
+        sid = spd_normalize(sid.copy(), norm_type = 'ru', norm_f = Ee)  
     elif E is not None:
-        sid = spd_normalize(sid, norm_type = 'pusa', norm_f = E) 
+        sid = spd_normalize(sid.copy(), norm_type = 'pusa', norm_f = E) 
     elif Q is not None:
-        sid = spd_normalize(sid, norm_type = 'qu', norm_f = Q) 
+        sid = spd_normalize(sid.copy(), norm_type = 'qu', norm_f = Q) 
     
     
     # Get sid irradiance (W/m²):
@@ -238,7 +238,7 @@ def spd_to_aopicEDI(sid, Ee = None, E = None, Q = None,
             | Note that E is calculate using a Km factor corrected to standard air.
         :Q: 
             | None, optional
-            | If not None: nNormalize :sid: to a quantal energy of :Q:
+            | If not None: Normalize :sid: to a quantal energy of :Q:
         :cieobs:
             | _CIEOBS or str, optional
             | Type of cmf set to use for photometric units.
@@ -252,7 +252,7 @@ def spd_to_aopicEDI(sid, Ee = None, E = None, Q = None,
             | for the l-cone, m-cone, s-cone, rod and iprgc photoreceptors
             | of all spectra in :sid: in SI-units. 
     """
-    Eeas = spd_to_aopicE(sid, cieobs = cieobs)[0] # calculate all alpha-opic values and select last one (melanopic)
+    Eeas = spd_to_aopicE(sid, cieobs = cieobs, Ee = Ee, E = E, Q = Q, sid_units = sid_units)[0] # calculate all alpha-opic values and select last one (melanopic)
     D65 = cie_interp(_CIE_D65, wl_new = sid[0], kind = 'spd')
     Eeas_D65 = spd_to_aopicE(D65, cieobs = cieobs)[0] # calculate all alpha-opic values for D65 and select last one (melanopic)
     Ev_D65 = spd_to_power(D65, ptype = 'pusa', cieobs = cieobs)[:,0] # calculate photometric (illuminance) value for D65
