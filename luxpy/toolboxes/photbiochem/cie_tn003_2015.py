@@ -19,21 +19,21 @@
 """
 Module for calculating CIE (TN003:2015) photobiological quantities
 ==================================================================
-(Eesc, Eemc, Eelc, Eez, Eer and Esc, Emc, Elc, Ez, Er)
+(Eelc, Eemc, Eesc, Eer, Eez, and Elc, Emc, Esc, Er, Ez)
 
 +---------------+----------------+---------------------+---------------------+----------+-------------+
 | Photoreceptor |  Photopigment  | Spectral efficiency | Quantity            | Q-symbol | Unit symbol |
 |               |  (label, α)    | sα(λ)               | (α-opic irradiance) | (Ee,α)   |             |
 +===============+================+=====================+=====================+==========+=============+
-|    s-cone     | photopsin (sc) |       cyanolabe     |      cyanopic       |   Ee,sc  |    W.m−2    |
+|    l-cone     | photopsin (lc) |       erythrolabe   |      erythropic     |   Ee,lc  |    W.m−2    |
 +---------------+----------------+---------------------+---------------------+----------+-------------+
 |    m-cone     | photopsin (mc) |       chlorolabe    |      chloropic      |   Ee,mc  |    W.m−2    |
 +---------------+----------------+---------------------+---------------------+----------+-------------+
-|    l-cone     | photopsin (lc) |       erythrolabe   |      erythropic     |   Ee,lc  |    W.m−2    |
-+---------------+----------------+---------------------+---------------------+----------+-------------+
-|    ipRGC      | melanopsin (z) |       melanopic     |      melanopic      |   Ee,z   |    W.m−2    |
+|    s-cone     | photopsin (sc) |       cyanolabe     |      cyanopic       |   Ee,sc  |    W.m−2    |
 +---------------+----------------+---------------------+---------------------+----------+-------------+
 |    rod        | rhodopsin (r)  |       rhodopic      |      rhodopic       |   Ee,r   |    W.m−2    |
++---------------+----------------+---------------------+---------------------+----------+-------------+
+|    ipRGC      | melanopsin (z) |       melanopic     |      melanopic      |   Ee,z   |    W.m−2    |
 +---------------+----------------+---------------------+---------------------+----------+-------------+
 
 
@@ -74,6 +74,12 @@ Module for calculating CIE (TN003:2015) photobiological quantities
                    luminance (Eα) values for the l-cone, m-cone, s-cone, 
                    rod and iprgc (α) photoreceptor cells following 
                    CIE technical note TN 003:2015.
+                   
+                   
+ :spd_to_aopicEDI(): Calculate alpha-opic equivalent daylight (D65) illuminance (lx)
+                     for the l-cone, m-cone, s-cone, rod and iprgc (α) photoreceptor cells.
+
+     
 References:
       1. `CIE-TN003:2015 (2015). 
       Report on the first international workshop on 
@@ -85,7 +91,7 @@ References:
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
-from luxpy import _CIEOBS, _BB, spd, getwld, vlbar, spd_to_power, spd_normalize
+from luxpy import _CIEOBS, _BB, spd, getwld, vlbar, spd_to_power, spd_normalize, cie_interp
 from luxpy.utils import np, _PKG_PATH, _SEP, getdata
 
 __all__ = ['_PHOTORECEPTORS','_QUANTITIES', '_ACTIONSPECTRA','Km_correction_factor',
@@ -131,7 +137,7 @@ def spd_to_aopicE(sid, Ee = None, E = None, Q = None, cieobs = _CIEOBS, sid_unit
             | Note that E is calculate using a Km factor corrected to standard air.
         :Q: 
             | None, optional
-            | If not None: nNormalize :sid: to a quantal energy of :Q:
+            | If not None: Normalize :sid: to a quantal energy of :Q:
         :cieobs:
             | _CIEOBS or str, optional
             | Type of cmf set to use for photometric units.
@@ -206,3 +212,52 @@ def spd_to_aopicE(sid, Ee = None, E = None, Q = None, cieobs = _CIEOBS, sid_unit
         return Eas
     else:
         eval(out)
+        
+        
+#------------------------------------------------------------------------------
+__all__ += ['spd_to_aopicEDI']
+
+
+from luxpy import _CIE_D65, spd_to_power
+def spd_to_aopicEDI(sid, Ee = None, E = None, Q = None, 
+                    cieobs = _CIEOBS, sid_units = 'W/m2'):
+    """
+    Calculate alpha-opic equivalent daylight (D65) illuminance (lx)
+    for the l-cone, m-cone, s-cone, rod and iprgc (α) photoreceptor cells.
+    
+    Args:
+        :sid: 
+            | numpy.ndarray with retinal spectral irradiance in :sid_units: 
+            | (if 'uW/cm2', sid will be converted to SI units 'W/m2')
+        :Ee: 
+            | None, optional
+            | If not None: normalize :sid: to an irradiance of :Ee:
+        :E: 
+            | None, optional
+            | If not None: normalize :sid: to an illuminance of :E:
+            | Note that E is calculate using a Km factor corrected to standard air.
+        :Q: 
+            | None, optional
+            | If not None: nNormalize :sid: to a quantal energy of :Q:
+        :cieobs:
+            | _CIEOBS or str, optional
+            | Type of cmf set to use for photometric units.
+        :sid_units:
+            | 'W/m2', optional
+            | Other option 'uW/m2', input units of :sid:
+            
+    Returns:
+        :returns: 
+            | ndarray with the α-opic Equivalent Daylight Illuminance with the 
+            | for the l-cone, m-cone, s-cone, rod and iprgc photoreceptors
+            | of all spectra in :sid: in SI-units. 
+    """
+    Eeas = spd_to_aopicE(sid, cieobs = cieobs)[0] # calculate all alpha-opic values and select last one (melanopic)
+    D65 = cie_interp(_CIE_D65, wl_new = sid[0], kind = 'spd')
+    Eeas_D65 = spd_to_aopicE(D65, cieobs = cieobs)[0] # calculate all alpha-opic values for D65 and select last one (melanopic)
+    Ev_D65 = spd_to_power(D65, ptype = 'pusa', cieobs = cieobs)[:,0] # calculate photometric (illuminance) value for D65
+    a_edi = Eeas * (Ev_D65/Eeas_D65) # calculate MEDI
+    return a_edi
+
+        
+    

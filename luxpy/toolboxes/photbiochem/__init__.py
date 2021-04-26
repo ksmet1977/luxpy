@@ -19,21 +19,21 @@
 """
 Module for calculating CIE (TN003:2015) photobiological quantities
 ==================================================================
-(Eesc, Eemc, Eelc, Eez, Eer and Esc, Emc, Elc, Ez, Er)
+(Eelc, Eemc, Eesc, Eer, Eez, and Elc, Emc, Esc, Er, Ez)
 
 +---------------+----------------+---------------------+---------------------+----------+-------------+
 | Photoreceptor |  Photopigment  | Spectral efficiency | Quantity            | Q-symbol | Unit symbol |
 |               |  (label, α)    | sα(λ)               | (α-opic irradiance) | (Ee,α)   |             |
 +===============+================+=====================+=====================+==========+=============+
-|    s-cone     | photopsin (sc) |       cyanolabe     |      cyanopic       |   Ee,sc  |    W.m−2    |
+|    l-cone     | photopsin (lc) |       erythrolabe   |      erythropic     |   Ee,lc  |    W.m−2    |
 +---------------+----------------+---------------------+---------------------+----------+-------------+
 |    m-cone     | photopsin (mc) |       chlorolabe    |      chloropic      |   Ee,mc  |    W.m−2    |
 +---------------+----------------+---------------------+---------------------+----------+-------------+
-|    l-cone     | photopsin (lc) |       erythrolabe   |      erythropic     |   Ee,lc  |    W.m−2    |
-+---------------+----------------+---------------------+---------------------+----------+-------------+
-|    ipRGC      | melanopsin (z) |       melanopic     |      melanopic      |   Ee,z   |    W.m−2    |
+|    s-cone     | photopsin (sc) |       cyanolabe     |      cyanopic       |   Ee,sc  |    W.m−2    |
 +---------------+----------------+---------------------+---------------------+----------+-------------+
 |    rod        | rhodopsin (r)  |       rhodopic      |      rhodopic       |   Ee,r   |    W.m−2    |
++---------------+----------------+---------------------+---------------------+----------+-------------+
+|    ipRGC      | melanopsin (z) |       melanopic     |      melanopic      |   Ee,z   |    W.m−2    |
 +---------------+----------------+---------------------+---------------------+----------+-------------+
 
 
@@ -74,6 +74,10 @@ Module for calculating CIE (TN003:2015) photobiological quantities
                    luminance (Eα) values for the l-cone, m-cone, s-cone, 
                    rod and iprgc (α) photoreceptor cells following 
                    CIE technical note TN 003:2015.
+                   
+ :spd_to_aopicEDI(): Calculate alpha-opic equivalent daylight (D65) illuminance (lx)
+                     for the l-cone, m-cone, s-cone, rod and iprgc (α) photoreceptor cells.
+
 
 References:
       1. `CIE-TN003:2015 (2015). 
@@ -107,3 +111,5 @@ __all__ += ASNZS_1680_2_5_1997_COI.__all__
 
 from .circadian_CS_CLa_lrc import *
 __all__ += circadian_CS_CLa_lrc.__all__
+
+
