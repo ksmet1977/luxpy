@@ -98,8 +98,25 @@ Module for calculation of cyanosis index (AS/NZS 1680.2.5:1997)
  :spd_to_COI_ASNZS1680: Calculate the Cyanosis Observartion Index (COI) 
                         [ASNZS 1680.2.5-1995] 
 
+
 Reference:
     AS/NZS1680.2.5 (1997). INTERIOR LIGHTING PART 2.5: HOSPITAL AND MEDICAL TASKS.
+
+
+
+Module for Blue light hazard calculations
+=========================================
+
+ :_BLH: Blue Light Hazard function
+ 
+ :spd_to_blh_eff(): Calculate Blue Light Hazard efficacy (K) or efficiency (eta) of radiation.
+
+
+References:
+        1. IEC 62471:2006, 2006, Photobiological safety of lamps and lamp systems.
+        2. IEC TR 62778, 2014, Application of IEC 62471 for the assessment of blue light hazard to light sources and luminaires.
+
+
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
@@ -111,5 +128,8 @@ __all__ += ASNZS_1680_2_5_1997_COI.__all__
 
 from .circadian_CS_CLa_lrc import *
 __all__ += circadian_CS_CLa_lrc.__all__
+
+from .blue_light_hazard_IEC62471_IECTR62778 import *
+__all__ += blue_light_hazard_IEC62471_IECTR62778.__all__
 
 
