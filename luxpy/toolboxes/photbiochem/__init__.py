@@ -15,9 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #########################################################################
-
 """
-Module for calculating CIE (TN003:2015) photobiological quantities
+Module for calculating CIE (S026:2018) photobiological quantities
 ==================================================================
 (Eelc, Eemc, Eesc, Eer, Eez, and Elc, Emc, Esc, Er, Ez)
 
@@ -68,25 +67,26 @@ Module for calculating CIE (TN003:2015) photobiological quantities
                |  'melanopic'] 
  
  :_ACTIONSPECTRA: ndarray with alpha-actinic action spectra. (stored in file:
-                  './data/cie_tn003_2015_SI_action_spectra.dat')
+                  './data/cie_S026_2018_SI_action_spectra_CIEToolBox_v1.049.dat')
 
  :spd_to_aopicE(): Calculate alpha-opic irradiance (Ee,α) and equivalent 
                    luminance (Eα) values for the l-cone, m-cone, s-cone, 
                    rod and iprgc (α) photoreceptor cells following 
-                   CIE technical note TN 003:2015.
+                   CIE S026:2018.
+                   
                    
  :spd_to_aopicEDI(): Calculate alpha-opic equivalent daylight (D65) illuminance (lx)
                      for the l-cone, m-cone, s-cone, rod and iprgc (α) photoreceptor cells.
 
-
+     
 References:
-      1. `CIE-TN003:2015 (2015). 
-      Report on the first international workshop on 
-      circadian and neurophysiological photometry, 2013 
+      1. `CIE-S026:E2018 (2018). 
+      CIE System for Metrology of Optical Radiation for ipRGC-Influenced Responses to Light 
       (Vienna, Austria).
-      <http://www.cie.co.at/publications/report-first-international-workshop-circadian-and-neurophysiological-photometry-2013>`_
-      (http://files.cie.co.at/785_CIE_TN_003-2015.pdf)
-      
+      <https://cie.co.at/publications/cie-system-metrology-optical-radiation-iprgc-influenced-responses-light-0>`_
+      (https://files.cie.co.at/CIE%20S%20026%20alpha-opic%20Toolbox%20User%20Guide.pdf)
+
+     
 
 Module for calculation of cyanosis index (AS/NZS 1680.2.5:1997)
 ===============================================================
@@ -103,8 +103,8 @@ Reference:
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
-from .cie_tn003_2015 import *
-__all__ = cie_tn003_2015.__all__
+from .cie_s026_2018 import *
+__all__ = cie_s026_2018.__all__
 
 from .ASNZS_1680_2_5_1997_COI import *
 __all__ += ASNZS_1680_2_5_1997_COI.__all__
