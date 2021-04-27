@@ -27,7 +27,7 @@ If you use the package, please cite the following **tutorial paper** published i
 * chromatic adaptation transforms 
 * color appearance models 
 * color rendition indices 
-* calculation of photobiological quantities
+* calculation of photobiological quantities (eg melanopic irradiance, MEDI, CS, ...)
 * multi-component spectrum creation and optimization
 * hyper-spectral image simulation and rendering
 * MacAdam ellipses
