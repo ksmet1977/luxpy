@@ -176,7 +176,7 @@ from luxpy.color.whiteness.smet_white_loci import *
 __all__ += color.whiteness.smet_white_loci.__all__
 
 #   Load color appearance model module:
-from luxpy.color.cam import colorappearancemodels as cam
+from luxpy.color import cam 
 __all__ += ['cam']
 
 

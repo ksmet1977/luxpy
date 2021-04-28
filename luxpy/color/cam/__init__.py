@@ -138,9 +138,29 @@ cam: sub-package with color appearance models
  :_simple_cam(): An example CAM illustration the usage of the functions in luxpy.cam.helpers 
 
 
+Module for CAM "front-end" cmf adaptation
+=========================================
+
+ :translate_cmfI_to_cmfS(): | Using smooth RGB primaries, translate input data (spectral or tristimlus)
+                            | for an indivual observer to the expected tristimulus values for a standard observer. 
+
+ :get_conversion_matrix():  | Using smooth RGB primaries, get the 'translator' matrix to convert 
+                            | tristimulus values calculated using an individual observer's 
+                            | color matching functions (cmfs) to those calculated using the cmfs of 
+                            | a standard observer.
+                            
+ :get_rgb_smooth_prims(): Get smooth R, G, B primaries with specified wavelength range
+ 
+ :_R,_G,_B: precalculated smooth primaries with [360,830,1] wavelength range.
+ 
+
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
+from . import cmf_translator_sww2021 as cmftranslator
+__all__ = ['cmftranslator']
 
 from .colorappearancemodels import *
-__all__ = colorappearancemodels.__all__
+__all__ += colorappearancemodels.__all__
+
+
