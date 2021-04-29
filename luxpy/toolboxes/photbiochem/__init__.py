@@ -66,25 +66,31 @@ Module for calculating CIE (S026:2018 & TN003:2015) photobiological quantities
                |  'rhodopic',
                |  'melanopic'] 
  
- :_ACTIONSPECTRA: ndarray with default CIE-S026:2018 alpha-actinic action spectra. (stored in file:
-                  './data/cie_S026_2018_SI_action_spectra_CIEToolBox_v1.049.dat')
+ :_ACTIONSPECTRA: | ndarray with default CIE-S026:2018 alpha-actinic action spectra. (stored in file:
+                  | './data/cie_S026_2018_SI_action_spectra_CIEToolBox_v1.049.dat')
      
- :_ACTIONSPECTRA_CIES026: ndarray with alpha-actinic action spectra. (stored in file:
-                  './data/cie_S026_2018_SI_action_spectra_CIEToolBox_v1.049.dat')
+ :_ACTIONSPECTRA_CIES026: | ndarray with alpha-actinic action spectra. (stored in file:
+                          | './data/cie_S026_2018_SI_action_spectra_CIEToolBox_v1.049.dat')
 
- :_ACTIONSPECTRA_CIETN003: ndarray with CIE-TN003:2015 alpha-actinic action spectra. (stored in file:
-                  './data/cie_tn003_2015_SI_action_spectra.dat')
-     
- :spd_to_aopicE(): Calculate alpha-opic irradiance (Ee,α) and equivalent 
-                   luminance (Eα) values for the l-cone, m-cone, s-cone, 
-                   rod and iprgc (α) photoreceptor cells following 
-                   CIE S026:2018 (= default actionspectra) or CIE TN003:2015.
+ :_ACTIONSPECTRA_CIETN003: | ndarray with CIE-TN003:2015 alpha-actinic action spectra. (stored in file:
+                           | './data/cie_tn003_2015_SI_action_spectra.dat')
+
+
+ :spd_to_aopicE(): | Calculate alpha-opic irradiance (Ee,α) and equivalent 
+                   | luminance (Eα) values for the l-cone, m-cone, s-cone, 
+                   | rod and iprgc (α) photoreceptor cells following 
+                   | CIE S026:2018 (= default actionspectra) or CIE TN003:2015.
                    
                    
- :spd_to_aopicEDI(): Calculate alpha-opic equivalent daylight (D65) illuminance (lx)
-                     for the l-cone, m-cone, s-cone, rod and iprgc (α) photoreceptor cells.
+ :spd_to_aopicEDI(): | Calculate alpha-opic equivalent daylight (D65) illuminance (lx)
+                     | for the l-cone, m-cone, s-cone, rod and iprgc (α) photoreceptor cells.
 
-     
+ :spd_to_aopicDER(): | Calculate α-opic Daylight (D65) Efficacy Ratio
+                     | for the l-cone, m-cone, s-cone, rod and iprgc (α) photoreceptor cells.
+
+ :spd_to_aopicELR(): | Calculate α-opic Efficacy of Luminous Radiation
+                     | for the l-cone, m-cone, s-cone, rod and iprgc (α) photoreceptor cells.
+
 References:
       1. `CIE-S026:E2018 (2018). 
       CIE System for Metrology of Optical Radiation for ipRGC-Influenced Responses to Light 

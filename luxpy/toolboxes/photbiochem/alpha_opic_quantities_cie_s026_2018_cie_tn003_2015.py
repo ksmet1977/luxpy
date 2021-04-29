@@ -67,26 +67,32 @@ Module for calculating CIE (S026:2018 & TN003:2015) photobiological quantities
                |  'rhodopic',
                |  'melanopic'] 
  
- :_ACTIONSPECTRA: ndarray with default CIE-S026:2018 alpha-actinic action spectra. (stored in file:
-                  './data/cie_S026_2018_SI_action_spectra_CIEToolBox_v1.049.dat')
+ :_ACTIONSPECTRA: | ndarray with default CIE-S026:2018 alpha-actinic action spectra. (stored in file:
+                  | './data/cie_S026_2018_SI_action_spectra_CIEToolBox_v1.049.dat')
      
- :_ACTIONSPECTRA_CIES026: ndarray with alpha-actinic action spectra. (stored in file:
-                  './data/cie_S026_2018_SI_action_spectra_CIEToolBox_v1.049.dat')
+ :_ACTIONSPECTRA_CIES026: | ndarray with alpha-actinic action spectra. (stored in file:
+                          | './data/cie_S026_2018_SI_action_spectra_CIEToolBox_v1.049.dat')
 
- :_ACTIONSPECTRA_CIETN003: ndarray with CIE-TN003:2015 alpha-actinic action spectra. (stored in file:
-                  './data/cie_tn003_2015_SI_action_spectra.dat')
+ :_ACTIONSPECTRA_CIETN003: | ndarray with CIE-TN003:2015 alpha-actinic action spectra. (stored in file:
+                           | './data/cie_tn003_2015_SI_action_spectra.dat')
 
 
- :spd_to_aopicE(): Calculate alpha-opic irradiance (Ee,α) and equivalent 
-                   luminance (Eα) values for the l-cone, m-cone, s-cone, 
-                   rod and iprgc (α) photoreceptor cells following 
-                   CIE S026:2018 (= default actionspectra) or CIE TN003:2015.
+ :spd_to_aopicE(): | Calculate alpha-opic irradiance (Ee,α) and equivalent 
+                   | luminance (Eα) values for the l-cone, m-cone, s-cone, 
+                   | rod and iprgc (α) photoreceptor cells following 
+                   | CIE S026:2018 (= default actionspectra) or CIE TN003:2015.
                    
                    
- :spd_to_aopicEDI(): Calculate alpha-opic equivalent daylight (D65) illuminance (lx)
-                     for the l-cone, m-cone, s-cone, rod and iprgc (α) photoreceptor cells.
+ :spd_to_aopicEDI(): | Calculate alpha-opic equivalent daylight (D65) illuminance (lx)
+                     | for the l-cone, m-cone, s-cone, rod and iprgc (α) photoreceptor cells.
 
-     
+ :spd_to_aopicDER(): | Calculate α-opic Daylight (D65) Efficacy Ratio
+                     | for the l-cone, m-cone, s-cone, rod and iprgc (α) photoreceptor cells.
+
+ :spd_to_aopicELR(): | Calculate α-opic Efficacy of Luminous Radiation
+                     | for the l-cone, m-cone, s-cone, rod and iprgc (α) photoreceptor cells.
+
+
 References:
       1. `CIE-S026:E2018 (2018). 
       CIE System for Metrology of Optical Radiation for ipRGC-Influenced Responses to Light 
@@ -104,7 +110,7 @@ References:
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
-from luxpy import _CIEOBS, _CIE_D65, _BB, spd, getwld, vlbar, spd_to_power, spd_normalize, cie_interp
+from luxpy import _CIEOBS, _CIE_D65, _CIE_E, _BB, spd, getwld, vlbar, spd_to_power, spd_normalize, cie_interp
 from luxpy.utils import np, _PKG_PATH, _SEP, getdata
 
 __all__ = ['_PHOTORECEPTORS','_QUANTITIES', 
@@ -112,7 +118,7 @@ __all__ = ['_PHOTORECEPTORS','_QUANTITIES',
            'Km_correction_factor',
            '_Ee_SYMBOLS', '_E_SYMBOLS', '_Q_SYMBOLS', 
            '_Ee_UNITS', '_E_UNITS', '_Q_UNITS', 
-           'spd_to_aopicE','spd_to_aopicEDI']
+           'spd_to_aopicE','spd_to_aopicEDI','spd_to_aopicDER','spd_to_aopicELR']
 
 
 _PHOTORECEPTORS = ['l-cone', 'm-cone','s-cone', 'rod', 'iprgc']
@@ -135,11 +141,10 @@ lambdad = c/(na*54*1e13)/(1e-9) # 555 nm lambda in standard air
 Km_correction_factor = 1/(1 - (1 - 0.9998567)*(lambdad - 555)) # correction factor for Km in standard air
 
 
-def spd_to_aopicE(sid, Ee = None, E = None, Q = None, cieobs = _CIEOBS, sid_units = 'W/m2', out = 'Eeas,Eas', actionspectra = 'CIE-S026'):
+def spd_to_aopicE(sid, Ee = None, E = None, Q = None, cieobs = _CIEOBS, sid_units = 'W/m2', out = 'Eeas', actionspectra = 'CIE-S026'):
     """
-    Calculate alpha-opic irradiance (Ee,α) and equivalent luminance (Eα) values
-    for the l-cone, m-cone, s-cone, rod and iprgc (α) photoreceptor cells 
-    following CIE S026:2018.
+    Calculate alpha-opic irradiance (Ee,α) values (W/m²) for the l-cone, m-cone, 
+    s-cone, rod and iprgc (α) photoreceptor cells following CIE S026:2018.
     
     Args:
         :sid: 
@@ -162,17 +167,20 @@ def spd_to_aopicE(sid, Ee = None, E = None, Q = None, cieobs = _CIEOBS, sid_unit
             | 'W/m2', optional
             | Other option 'uW/m2', input units of :sid:
         :out: 
-            | 'Eeas, Eas' or str, optional
-            | Determines values to return.
+            | 'Eeas' or str, optional
+            | Determines values to return. 
+            | (to get also get equivalent illuminance Eα set :out: to 'Eeas,Eas')
         :actionspectra:
             | 'CIES026', optional
-            | Actionspectra to use in calculation (options: 'CIE-S026', 'CIE-TN003')
+            | Actionspectra to use in calculation 
+            | options: 
+            | - 'CIE-S026': will use action spectra as defined in CIE S026 
+            | - 'CIE-TN003': will use action spectra as defined in CIE TN003
             
     Returns:
         :returns: 
-            | (Eeas, Eas) with Eeas and Eas resp. numpy.ndarrays with the 
-            | α-opic irradiance and equivalent illuminance values 
-            | of all spectra in :sid: in SI-units. 
+            | Eeas a numpy.ndarray with the α-opic irradiance
+            | of all spectra in :sid: in SI-units (W/m²). 
             |
             | (other choice can be set using :out:)
             
@@ -243,10 +251,14 @@ def spd_to_aopicE(sid, Ee = None, E = None, Q = None, cieobs = _CIEOBS, sid_unit
     Eas = Km*Km_correction_factor*Eeas*(Vl[1].sum()/sa[1:].sum(axis = 1))
 
     #Prepare output:
-    if out == 'Eeas,Eas':
-        return Eeas,Eas
-    elif out == 'Eeas':
+    if out == 'Eeas':
         return Eeas
+    elif out == 'Eeas,E':
+        return Eeas,E
+    elif out == 'Eeas,Eas':
+        return Eeas,Eas
+    elif out == 'Eeas,Eas,E':
+        return Eeas,Eas,E
     elif out == 'Eas':
         return Eas
     else:
@@ -257,9 +269,10 @@ def spd_to_aopicE(sid, Ee = None, E = None, Q = None, cieobs = _CIEOBS, sid_unit
 
 def spd_to_aopicEDI(sid, Ee = None, E = None, Q = None, 
                     cieobs = _CIEOBS, sid_units = 'W/m2',
-                    actionspectra = 'CIE-S026'):
+                    actionspectra = 'CIE-S026', ref = 'D65', 
+                    out = 'a_edi'):
     """
-    Calculate alpha-opic equivalent daylight (D65) illuminance (lx)
+    Calculate alpha-opic equivalent daylight (D65) illuminance (lux)
     for the l-cone, m-cone, s-cone, rod and iprgc (α) photoreceptor cells.
     
     Args:
@@ -284,21 +297,111 @@ def spd_to_aopicEDI(sid, Ee = None, E = None, Q = None,
             | Other option 'uW/m2', input units of :sid:
         :actionspectra:
             | 'CIES026', optional
-            | Actionspectra to use in calculation (options: 'CIE-S026', 'CIE-TN003')
-
+            | Actionspectra to use in calculation 
+            | options: 
+            | - 'CIE-S026': will use action spectra as defined in CIE S026 
+            | - 'CIE-TN003': will use action spectra as defined in CIE TN003
+        :ref:
+            | 'D65', optional
+            | Reference (daylight) spectrum to use. ('D65' or 'E' or ndarray)
+        :out: 
+            | 'Eeas, Eas' or str, optional
+            | Determines values to return.
             
     Returns:
         :returns: 
-            | ndarray with the α-opic Equivalent Daylight Illuminance with the 
+            | ndarray with the α-opic Equivalent Daylight Illuminance (lux) with the 
             | for the l-cone, m-cone, s-cone, rod and iprgc photoreceptors
             | of all spectra in :sid: in SI-units. 
     """
-    Eeas = spd_to_aopicE(sid, cieobs = cieobs, Ee = Ee, E = E, Q = Q, sid_units = sid_units, actionspectra = actionspectra)[0] # calculate all alpha-opic values and select last one (melanopic)
-    D65 = cie_interp(_CIE_D65, wl_new = sid[0], kind = 'spd')
-    Eeas_D65 = spd_to_aopicE(D65, cieobs = cieobs, actionspectra = actionspectra)[0] # calculate all alpha-opic values for D65 and select last one (melanopic)
-    Ev_D65 = spd_to_power(D65, ptype = 'pusa', cieobs = cieobs)[:,0] # calculate photometric (illuminance) value for D65
-    a_edi = Eeas * (Ev_D65/Eeas_D65) # calculate MEDI
-    return a_edi
+    Eeas, Ev = spd_to_aopicE(sid, cieobs = cieobs, Ee = Ee, E = E, Q = Q, sid_units = sid_units, out = 'Eeas,E', actionspectra = actionspectra) # calculate all alpha-opic values 
+    if isinstance(ref,str):
+        ref = _CIE_D65 if (ref == 'D65') else _CIE_E
+    ref = cie_interp(ref, wl_new = sid[0], kind = 'spd')
+    Eeas_ref = spd_to_aopicE(ref, cieobs = cieobs, out = 'Eeas', actionspectra = actionspectra) # calculate all alpha-opic values for  ref spectrum (= D65 for CIE S026) 
+    Ev_ref = spd_to_power(ref, ptype = 'pusa', cieobs = cieobs)[:,0] # calculate photometric (illuminance) value for ref spectrum (= D65 for CIE S026)
+    a_edi = Eeas * (Ev_ref/Eeas_ref) # calculate MEDI
+    if out == 'a_edi':
+        return a_edi
+    elif out == 'a_edi,Ev':
+        return a_edi, Ev
+    else:
+        return eval(out)
+
+def spd_to_aopicDER(sid, cieobs = _CIEOBS, sid_units = 'W/m2',
+                    actionspectra = 'CIE-S026', ref = 'D65'):
+    """
+    Calculate α-opic Daylight (D65) Efficacy Ratio (= α-opic Daylight (D65) Efficiency)
+    for the l-cone, m-cone, s-cone, rod and iprgc (α) photoreceptor cells.
+    
+    Args:
+        :sid: 
+            | numpy.ndarray with retinal spectral irradiance in :sid_units: 
+            | (if 'uW/cm2', sid will be converted to SI units 'W/m2')
+        :cieobs:
+            | _CIEOBS or str, optional
+            | Type of cmf set to use for photometric units.
+        :sid_units:
+            | 'W/m2', optional
+            | Other option 'uW/m2', input units of :sid:
+        :actionspectra:
+            | 'CIES026', optional
+            | Actionspectra to use in calculation 
+            | options: 
+            | - 'CIE-S026': will use action spectra as defined in CIE S026 
+            | - 'CIE-TN003': will use action spectra as defined in CIE TN003
+        :ref:
+            | 'D65', optional
+            | Reference (daylight) spectrum to use. ('D65' or 'E' or ndarray)
+            
+    Returns:
+        :returns: 
+            | ndarray with the α-opic Daylight Efficacy Ratio with the 
+            | for the l-cone, m-cone, s-cone, rod and iprgc photoreceptors
+            | of all spectra in :sid: in SI-units. 
+    """
+    a_edi, Ev = spd_to_aopicEDI(sid, cieobs = cieobs, sid_units = sid_units,
+                                actionspectra = actionspectra, ref = ref,
+                                out = 'a_edi,Ev')   
+    a_der = a_edi / Ev # calculate alpha-DER 
+    return a_der
+
+def spd_to_aopicELR(sid, cieobs = _CIEOBS, sid_units = 'W/m2',
+                    actionspectra = 'CIE-S026', ref = 'D65'):
+    """
+    Calculate α-opic Efficacy of Luminous Radiation (W/lm)
+    for the l-cone, m-cone, s-cone, rod and iprgc (α) photoreceptor cells.
+    
+    Args:
+        :sid: 
+            | numpy.ndarray with retinal spectral irradiance in :sid_units: 
+            | (if 'uW/cm2', sid will be converted to SI units 'W/m2')
+        :cieobs:
+            | _CIEOBS or str, optional
+            | Type of cmf set to use for photometric units.
+        :sid_units:
+            | 'W/m2', optional
+            | Other option 'uW/m2', input units of :sid:
+        :actionspectra:
+            | 'CIES026', optional
+            | Actionspectra to use in calculation 
+            | options: 
+            | - 'CIE-S026': will use action spectra as defined in CIE S026 
+            | - 'CIE-TN003': will use action spectra as defined in CIE TN003
+        :ref:
+            | 'D65', optional
+            | Reference (daylight) spectrum to use. ('D65' or 'E' or ndarray)
+            
+    Returns:
+        :returns: 
+            | ndarray with the α-opic Efficacy of Luminous Radiation (W/lm) with the 
+            | for the l-cone, m-cone, s-cone, rod and iprgc photoreceptors
+            | of all spectra in :sid: in SI-units. 
+    """
+    Eeas, Ev = spd_to_aopicE(sid, cieobs = cieobs, sid_units = sid_units, out = 'Eeas,E', actionspectra = actionspectra) # calculate all alpha-opic values 
+    return Eeas / Ev # calculate alpha-ELR 
+
+
 
         
     
