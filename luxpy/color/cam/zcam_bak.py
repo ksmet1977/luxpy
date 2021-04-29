@@ -124,7 +124,8 @@ def xyz_to_jabz(xyz, ztype = 'jabz', use_zcam_parameters = False, **kwargs):
      |      (note that Jz that not exactly equal 1 for this high value, but rather for 102900 cd/m2)
      | 2b. az, bz represent respectively a red-green and a yellow-blue opponent axis 
      |      (but note that a D65 shows a small offset from (0,0))
-     | 3. ZCAM: calculates Iz as M' - epsilon (instead L'/2 + M'/2 as in Iz,az,bz color space!).
+     | 3. ZCAM: uses a slightly different value for b (= 1.16 instead of 1.15)
+     |      and calculates Iz as M' - epsilon (instead L'/2 + M'/2 as in Iz,az,bz color space!).
 
     Reference:
         1. `Safdar, M., Cui, G., Kim,Y. J., and Luo, M. R. (2017).
@@ -139,9 +140,8 @@ def xyz_to_jabz(xyz, ztype = 'jabz', use_zcam_parameters = False, **kwargs):
     xyz = np2d(xyz)
     
     # Setup X,Y,Z to X',Y',Z' transform as matrix:
-    b = 1.15 
+    b = 1.15 if not use_zcam_parameters else 1.16
     g = 0.66
-
     M_to_xyzp = np.array([[b, 0, 1 - b],[1 - g, g, 0],[0, 0, 1]])
     
     # Premultiply _M_XYZP_TO_LMS and M_to_lms:
@@ -152,7 +152,7 @@ def xyz_to_jabz(xyz, ztype = 'jabz', use_zcam_parameters = False, **kwargs):
         lms = np.einsum('ij,klj->kli', M, xyz)
     else:
         lms = np.einsum('ij,lj->li', M, xyz)
-
+    
     # response compression: lms to lms'
     c1, c2, c3, n, p = [_PQ_PARAMETERS[x] for x in sorted(_PQ_PARAMETERS.keys())]
     lmsp = ((c1 + c2*(lms/10000)**n)/(1 + c3*(lms/10000)**n))**p
@@ -203,7 +203,8 @@ def jabz_to_xyz(jabz, ztype = 'jabz', use_zcam_parameters = False, **kwargs):
      |      (note that Jz that not exactly equal 1 for this high value, but rather for 102900 cd/m2)
      | 2b.  az, bz represent respectively a red-green and a yellow-blue opponent axis 
      |      (but note that a D65 shows a small offset from (0,0))
-     | 3. ZCAM: calculates Iz as M' - epsilon (instead L'/2 + M'/2 as in Iz,az,bz color space!).
+     | 3. ZCAM: uses a slightly different value for b (= 1.16 instead of 1.15)
+     |      and calculates Iz as M' - epsilon (instead L'/2 + M'/2 as in Iz,az,bz color space!).
 
     Reference:
         1. `Safdar, M., Cui, G., Kim,Y. J., and Luo, M. R. (2017).
@@ -211,9 +212,9 @@ def jabz_to_xyz(jabz, ztype = 'jabz', use_zcam_parameters = False, **kwargs):
         Opt. Express, vol. 25, no. 13, pp. 15131–15151, June, 2017.
         <http://www.opticsexpress.org/abstract.cfm?URI=oe-25-13-15131>`_
         
-        2. Safdar,  M., Hardeberg, J.Y., Luo, M.R. (2021) 
-        ZCAM, a psychophysical model for colour appearance prediction, 
-        Optics Express. 29(4), 6036-6052, <https://doi.org/10.1364/OE.413659>`_
+        2. Safdar, M., Hardeberg, J.Y., Luo, M.R. (2021) 
+        "ZCAM, a psychophysical model for colour appearance prediction", 
+        Optics Express.
     """
     jabz = np2d(jabz)
     
@@ -241,7 +242,7 @@ def jabz_to_xyz(jabz, ztype = 'jabz', use_zcam_parameters = False, **kwargs):
     
     # Convert lms to xyz:
     # Setup X',Y',Z' from X,Y,Z transform as matrix:
-    b = 1.15 
+    b = 1.15 if not use_zcam_parameters else 1.16
     g = 0.66 
     M_to_xyzp = np.array([[b, 0, 1 - b],[1 - g, g, 0],[0, 0, 1]])
     
@@ -320,11 +321,11 @@ def run(data, xyzw = None, outin = 'J,aM,bM', cieobs = _CIEOBS,
         26th Color and Imaging Conference (2018), Vancouver, Canada, November 12-16, 2018, pp96-101.
         <https://doi.org/10.2352/ISSN.2169-2629.2018.26.96>`_
         
-        3. Safdar, M.,  Hardeberg, J.Y., Luo, M.R. (2021) 
-        ZCAM, a psychophysical model for colour appearance prediction, 
-        Optics Express. 29(4), 6036-6052, <https://doi.org/10.1364/OE.413659>`_
+        3. Safdar, M., Hardeberg, J.Y., Luo, M.R. (2021) 
+        "ZCAM, a psychophysical model for colour appearance prediction", 
+        Optics Express.
     """
-    #print("WARNING: Z-CAM is as yet unpublished and under development, so parameter values might change! (07 Oct, 2020")
+    print("WARNING: Z-CAM is as yet unpublished and under development, so parameter values might change! (07 Oct, 2020")
     outin = outin.split(',') if isinstance(outin,str) else outin
     
     #--------------------------------------------
@@ -350,7 +351,6 @@ def run(data, xyzw = None, outin = 'J,aM,bM', cieobs = _CIEOBS,
     # Get white point of D65 fro chromatic adaptation transform (CAT)
     xyzw_d65 = np.array([[9.5047e+01, 1.0000e+02, 1.08883e+02]]) if cieobs == '1931_2'  else  spd_to_xyz(_CIE_D65, cieobs = cieobs)
     
-    xyzw = xyzw_d65
     
     #--------------------------------------------
     # Get default white point:
@@ -362,22 +362,22 @@ def run(data, xyzw = None, outin = 'J,aM,bM', cieobs = _CIEOBS,
     # calculate condition dependent parameters:
     Yw = xyzw[...,1].T
     FL = 0.171 * La**(1/3) * (1 - np.exp(-48/9*La)) # luminance adaptation factor
-    
     n = Yb/Yw 
-    Fb = n**0.5 # background factor
+    Fb = 1.045 + 1.46*n**0.5 # background factor
     Fs = c # surround factor 
+     
     #--------------------------------------------
     # Calculate degree of chromatic adaptation:
     if D is None:
         D = F*(1.0-(1.0/3.6)*np.exp((-La-42.0)/92.0))
-
+  
     #===================================================================
     # WHITE POINT transformations (common to forward and inverse modes):   
   
     
     #--------------------------------------------
     # Apply CAT to white point:
-    xyzwc = cat.apply_vonkries1(xyzw, xyzw1 = xyzw, xyzw2 = xyzw_d65, 
+    xyzwc = cat.apply_vonkries2(xyzw, xyzw1 = xyzw, xyzw2 = xyzw_d65, 
                                 D = D, mcat = mcat, invmcat = invmcat,
                                 use_Yw = True)
     
@@ -387,7 +387,7 @@ def run(data, xyzw = None, outin = 'J,aM,bM', cieobs = _CIEOBS,
     iabzw = xyz_to_jabz(xyzwc, ztype = 'iabz', use_zcam_parameters = True)
     
     # Get brightness of white point:
-    Qw = 2700 * (iabzw[...,0]**(1.6*Fs/Fb**0.12)) * ((Fs)**2.2) * ((Fb)**0.5) * ((FL)**0.2)
+    Qw = 925 * iabzw[...,0]**1.17 * (FL/Fs)**0.5
     
     #===================================================================
     # STIMULUS transformations:
@@ -399,18 +399,18 @@ def run(data, xyzw = None, outin = 'J,aM,bM', cieobs = _CIEOBS,
     
     if forward:
         # Apply CAT to D65:
-        xyzc =  cat.apply_vonkries1(data, xyzw1 = xyzw, xyzw2 = xyzw_d65, 
+        xyzc =  cat.apply_vonkries2(data, xyzw1 = xyzw, xyzw2 = xyzw_d65, 
                                     D = D, mcat = mcat, invmcat = invmcat,
                                     use_Yw = True)
- 
+
         # Get Iz,az,bz coordinates:
         iabz = xyz_to_jabz(xyzc, ztype = 'iabz', use_zcam_parameters = True)
 
         #--------------------------------------------
         # calculate hue h and eccentricity factor, et:
         h = hue_angle(iabz[...,1],iabz[...,2], htype = 'deg')
-        ez = 1.015 + np.cos((h + 89.038)*np.pi/180)
-
+        ez = 1.014 + np.cos((h + 89.038)*np.pi/180)
+        # ez = 1.014 + np.cos((h*np.pi/180) + 89.038)
         
         #-------------------------------------------- 
         # calculate Hue quadrature (if requested in 'out'):
@@ -421,15 +421,16 @@ def run(data, xyzw = None, outin = 'J,aM,bM', cieobs = _CIEOBS,
             
         #-------------------------------------------- 
         # calculate brightness, Q:
-        Q = 2700 * (iabz[...,0]**(1.6*Fs/Fb**0.12)) * ((Fs)**2.2) * ((Fb)**0.5) * ((FL)**0.2)
+        Q = 925 * iabz[...,0]**1.17 * (FL/Fs)**0.5
+        
             
         #--------------------------------------------   
         # calculate lightness, J:
-        J = 100.0 * (Q/Qw)
+        J = 100.0* (Q/Qw)**(Fs*Fb)
          
         #-------------------------------------------- 
         # calculate colorfulness, M:
-        M = 100*((iabz[...,1]**2.0 + iabz[...,2]**2.0)**0.37)*(ez**0.068)*(FL**0.2) / ((iabzw[...,0]**0.78) * (Fb**0.1))
+        M = 50*((iabz[...,1]**2.0 + iabz[...,2]**2.0)**0.368)*(ez**0.068)*(FL**0.2) / ((iabzw[...,0]**2.52) * (Fb**0.3))
 
         #-------------------------------------------- 
         # calculate chroma, C:
@@ -437,7 +438,7 @@ def run(data, xyzw = None, outin = 'J,aM,bM', cieobs = _CIEOBS,
 
         #--------------------------------------------         
         # calculate saturation, s:
-        s = 100.0* ((M/Q)**0.5) * (FL)**0.6
+        s = 100.0* (M/Q)
         S = s # make extra variable, just in case 'S' is called
         
         
@@ -449,17 +450,17 @@ def run(data, xyzw = None, outin = 'J,aM,bM', cieobs = _CIEOBS,
         #--------------------------------------------         
         # calculate blackness, K:
         if ('Kz' in outin) | ('aKz' in outin):
-            Kz = 100 - 0.8*(J**2 + 8*C**2)**0.5
+            Kz = 100 - (J**2 + C**2)**0.5
             
         #--------------------------------------------         
         # calculate saturation, S:
         if ('Sz' in outin) | ('aSz' in outin):
-            Sz = S
+            Sz = ((J - 55)**2 + C**2)**0.5
             
         #--------------------------------------------         
         # calculate vividness, V:
         if ('Vz' in outin) | ('aVz' in outin):
-            Vz = ((J - 58)**2 + 3.4*C**2)**0.5
+            Vz = ((J - 70)**2 + C**2)**0.5
         
         
         
@@ -494,16 +495,16 @@ def run(data, xyzw = None, outin = 'J,aM,bM', cieobs = _CIEOBS,
         # Get Lightness J and brightness Q from data:
         if ('J' in outin[0]):
             J = data[...,0].copy()
-            Q = Qw*(J/100)
+            Q = Qw*(J/100)**(1/(Fs*Fb))
         elif ('Q' in outin[0]):
             Q = data[...,0].copy()
-            J = 100.0* (Q/Qw)
+            J = 100.0* (Q/Qw)**(Fs*Fb)
         else:
             raise Exception('No lightness or brightness values in data[...,0]. Inverse CAM-transform not possible!')
             
         #--------------------------------------------
         # calculate achromatic signal, Iz:
-        Iz = (Q/(2700*(Fs**2.2)*(Fb**0.5)*(FL**0.2)))**((Fb**0.12)/(1.6*Fs))
+        Iz = (Qw/925*((J/100)**(1/(Fs*Fb)))*(Fs/FL)**0.5)**(1/1.17)
             
         #--------------------------------------------    
         if 'a' in outin[1]: 
@@ -519,41 +520,42 @@ def run(data, xyzw = None, outin = 'J,aM,bM', cieobs = _CIEOBS,
         
 
         if ('aS' in outin) | ('S' in outin):
-            M = Q * (MCs / FL**0.6 / 100)**2 
+            Q = Qw*(J/100)**(1/(Fs*Fb))
+            M = Q*(MCs/100.0)
             C = 100*M/Qw
          
         if ('aM' in outin) | ('M' in outin): 
             C = 100*MCs/Qw
-            
+        
         if ('aC' in outin) | ('C' in outin): # convert C to M:
             C = MCs
             
         
         if ('Wz' in outin) | ('aWz' in outin): #whiteness
-            C = (((100-MCs))**2 - (100 - J)**2)**0.5
+            C = (((100-MCs))**2 - (J - 100)**2)**0.5
         
         if ('Kz' in outin) | ('aKz' in outin): # blackness
-            C = ((1/8)*(((100-MCs)/0.8)**2 - J**2))**0.5
+            C = ((100-MCs)**2 - (J)**2)**0.5
             
         if ('Sz' in outin) | ('aSz' in outin):  # saturation
-            C = (Q / Qw) * MCs**2 / FL**1.2 / 100 
+            C = (MCs**2 - (J - 55)**2)**0.5
             
         if ('Vz' in outin) | ('aVz' in outin):  # vividness
-            C = ((MCs**2 - (J - 58)**2)/3.4)**0.5
+            C = (MCs**2 - (J - 70)**2)**0.5
             
                 
         #--------------------------------------------
         # Calculate colorfulness, M:
-        M = Qw * C / 100
+        M = Qw*C/100
         
         #--------------------------------------------    
         # calculate eccentricity factor, et:
         # ez = 1.014 + np.cos(h*np.pi/180 + 89.038)
-        ez = 1.015 + np.cos((h + 89.038)*np.pi/180)
+        ez = 1.014 + np.cos((h + 89.038)*np.pi/180)
         
         #--------------------------------------------
         # calculate t (=sqrt(a**2+b**2)) from M:
-        t = (((M/100) * (iabzw[...,0]**0.78) * (Fb**0.1))/((ez**0.068)*(FL**0.2)))**(1/0.37/2)
+        t = (((M/50) * (iabzw[...,0]**2.52) * (Fb**0.3))/((ez**0.068)*(FL**0.2)))**(1/0.368/2)
 
         #--------------------------------------------
         # Calculate az, bz:
@@ -567,7 +569,7 @@ def run(data, xyzw = None, outin = 'J,aM,bM', cieobs = _CIEOBS,
 
         #-------------------------------------------
         # Apply CAT from D65:
-        xyz =  cat.apply_vonkries1(xyzc, xyzw_d65, xyzw, D = D, 
+        xyz =  cat.apply_vonkries2(xyzc, xyzw_d65, xyzw, D = D, 
                                    mcat = mcat, invmcat = invmcat,
                                    use_Yw = True)
 
@@ -701,12 +703,8 @@ if __name__ == '__main__':
     xyz_3 = _cam(out_3[...,:3], xyzw = xyzw2, forward = False, outin = out[:3])
     print((xyz1 - xyz_3[:,0,:]).sum())
     
-    # test of origin of space:
-    xyzw_d65 = lx.spd_to_xyz(lx._CIE_D65, cieobs='1931_2')
-    # xyzw_d65 = np.array([[95.047, 100.0, 108.888]])
-    out_d65 = run(xyzw_d65,xyzw=xyzw_d65,outin='h,Q,J,M,C,Sz,Vz,Kz,Wz',conditions={'La':264,'Yb':100,'D':1,'Dtype':None,'surround':'avg'},mcat='cat02')
-    print('origin test', out_d65)
-    print('Origin is not at az=bz=0 !!!')
+    
+     
     # user_conditions = {'D': 1, 'Dtype': None,\
     #                'La': 500.0, 'Yb': 20.0, 'surround': 'avg'}
 
@@ -733,21 +731,14 @@ if __name__ == '__main__':
     # axs[1].set_ylabel('bzC (zcam)')
     
     # Test code with examples in Table of supplement to paper:
-    xyzt =np.array([[185,206,163]])
-    xyzw =np.array([[256,264,202]])
-    out1 = run(xyzt,xyzw=xyzw,outin='h,Q,J,M,C,Sz,Vz,Kz,Wz',conditions={'La':264,'Yb':100,'D':1,'Dtype':None,'surround':'avg'},mcat='cat02')
-    print('out1', out1)
+    xyzw =np.array([[95.047,100,108.883]])
+    xyzt =np.array([[90.042,100,110.88]])
+    run(xyzt,xyzw=xyzw,conditions={'La':64,'Yb':20,'D':1,'Dtype':None,'surround':'avg'},mcat='cat02')
     
-    xyzt =np.array([[89,96,120]])
-    xyzw =np.array([[256,264,202]])
-    out2 = run(xyzt,xyzw=xyzw,outin='h,Q,J,M,C,Sz,Vz,Kz,Wz',conditions={'La':264,'Yb':100,'D':1,'Dtype':None,'surround':'avg'},mcat='cat02')
-    print('out2', out2)
     
-    print('\n !!!! REMARK !!!!')
-    print('Output does not match perfectly with example in supplementary material of paper Safdar et al (2021).')
-    print('Differences start with output for jz,az,bz; especially b seems to be a bit more off.')
-    print('Parameters in model are as in paper, so differences are likely caused by CAT, in particular the exact whitepoint of D65')
-    print("Using close but off values for the xyz of D65 gets the results closer.")
-
+    xyzw =np.array([[95.047,100,108.883]])
+    xyzt =np.array([[54.33,50,14.33]])
+    run(xyzt,xyzw=xyzw,conditions={'La':40,'Yb':20,'D':1,'Dtype':None,'surround':'avg'},mcat='cat02')
+    
     
   
