@@ -16,8 +16,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #########################################################################
 """
-Module for calculating CIE (S026:2018) photobiological quantities
-==================================================================
+Module for calculating CIE (S026:2018 & TN003:2015) photobiological quantities
+==============================================================================
 (Eelc, Eemc, Eesc, Eer, Eez, and Elc, Emc, Esc, Er, Ez)
 
 +---------------+----------------+---------------------+---------------------+----------+-------------+
@@ -66,13 +66,19 @@ Module for calculating CIE (S026:2018) photobiological quantities
                |  'rhodopic',
                |  'melanopic'] 
  
- :_ACTIONSPECTRA: ndarray with alpha-actinic action spectra. (stored in file:
+ :_ACTIONSPECTRA: ndarray with default CIE-S026:2018 alpha-actinic action spectra. (stored in file:
+                  './data/cie_S026_2018_SI_action_spectra_CIEToolBox_v1.049.dat')
+     
+ :_ACTIONSPECTRA_CIES026: ndarray with alpha-actinic action spectra. (stored in file:
                   './data/cie_S026_2018_SI_action_spectra_CIEToolBox_v1.049.dat')
 
+ :_ACTIONSPECTRA_CIETN003: ndarray with CIE-TN003:2015 alpha-actinic action spectra. (stored in file:
+                  './data/cie_tn003_2015_SI_action_spectra.dat')
+     
  :spd_to_aopicE(): Calculate alpha-opic irradiance (Ee,α) and equivalent 
                    luminance (Eα) values for the l-cone, m-cone, s-cone, 
                    rod and iprgc (α) photoreceptor cells following 
-                   CIE S026:2018.
+                   CIE S026:2018 (= default actionspectra) or CIE TN003:2015.
                    
                    
  :spd_to_aopicEDI(): Calculate alpha-opic equivalent daylight (D65) illuminance (lx)
@@ -86,7 +92,14 @@ References:
       <https://cie.co.at/publications/cie-system-metrology-optical-radiation-iprgc-influenced-responses-light-0>`_
       (https://files.cie.co.at/CIE%20S%20026%20alpha-opic%20Toolbox%20User%20Guide.pdf)
 
-     
+      2. `CIE-TN003:2015 (2015). 
+      Report on the first international workshop on 
+      circadian and neurophysiological photometry, 2013 
+      (Vienna, Austria).
+      <http://www.cie.co.at/publications/report-first-international-workshop-circadian-and-neurophysiological-photometry-2013>`_
+      (http://files.cie.co.at/785_CIE_TN_003-2015.pdf)
+
+   
 
 Module for calculation of cyanosis index (AS/NZS 1680.2.5:1997)
 ===============================================================
@@ -117,11 +130,10 @@ References:
         2. IEC TR 62778, 2014, Application of IEC 62471 for the assessment of blue light hazard to light sources and luminaires.
 
 
-
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
-from .cie_s026_2018 import *
-__all__ = cie_s026_2018.__all__
+from .alpha_opic_quantities_cie_s026_2018_cie_tn003_2015 import *
+__all__ = alpha_opic_quantities_cie_s026_2018_cie_tn003_2015.__all__
 
 from .ASNZS_1680_2_5_1997_COI import *
 __all__ += ASNZS_1680_2_5_1997_COI.__all__

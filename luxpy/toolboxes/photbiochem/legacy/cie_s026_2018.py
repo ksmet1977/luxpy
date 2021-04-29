@@ -90,13 +90,13 @@ References:
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
-from luxpy import _CIEOBS, _CIE_D65, _BB, spd, getwld, vlbar, spd_to_power, spd_normalize, cie_interp
+from luxpy import _CIEOBS, _BB, spd, getwld, vlbar, spd_to_power, spd_normalize, cie_interp
 from luxpy.utils import np, _PKG_PATH, _SEP, getdata
 
 __all__ = ['_PHOTORECEPTORS','_QUANTITIES', '_ACTIONSPECTRA','Km_correction_factor',
            '_Ee_SYMBOLS', '_E_SYMBOLS', '_Q_SYMBOLS', 
            '_Ee_UNITS', '_E_UNITS', '_Q_UNITS', 
-           'spd_to_aopicE','spd_to_aopicEDI']
+           'spd_to_aopicE']
 
 
 _PHOTORECEPTORS = ['l-cone', 'm-cone','s-cone', 'rod', 'iprgc']
@@ -214,7 +214,10 @@ def spd_to_aopicE(sid, Ee = None, E = None, Q = None, cieobs = _CIEOBS, sid_unit
         
         
 #------------------------------------------------------------------------------
+__all__ += ['spd_to_aopicEDI']
 
+
+from luxpy import _CIE_D65, spd_to_power
 def spd_to_aopicEDI(sid, Ee = None, E = None, Q = None, 
                     cieobs = _CIEOBS, sid_units = 'W/m2'):
     """
