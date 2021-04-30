@@ -350,8 +350,7 @@ def run(data, xyzw = None, outin = 'J,aM,bM', cieobs = _CIEOBS,
     # Get white point of D65 fro chromatic adaptation transform (CAT)
     xyzw_d65 = np.array([[9.5047e+01, 1.0000e+02, 1.08883e+02]]) if cieobs == '1931_2'  else  spd_to_xyz(_CIE_D65, cieobs = cieobs)
     
-    xyzw = xyzw_d65
-    
+   
     #--------------------------------------------
     # Get default white point:
     if xyzw is None:
