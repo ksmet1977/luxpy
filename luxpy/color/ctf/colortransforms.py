@@ -1110,7 +1110,7 @@ def Ydlep_to_xyz(Ydlep, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT, f
     return Yxy_to_xyz(Yxy).reshape(Ydlep.shape)
 
 
-def xyz_to_srgb(xyz, gamma = 2.4, **kwargs):
+def xyz_to_srgb(xyz, gamma = 2.4, offset = -0.055, use_linear_part = True, **kwargs):
     """
     Calculates IEC:61966 sRGB values from xyz.
 
@@ -1119,11 +1119,22 @@ def xyz_to_srgb(xyz, gamma = 2.4, **kwargs):
             | ndarray with relative tristimulus values.
         :gamma: 
             | 2.4, optional
-            | compression in sRGB
+            | Gamma compression in gamma-function gf(x): see notes
+        :offset:
+            | -0.055, optional
+            | Offset in gamma-function gf(x): see notes
+        :use_linear_part:
+            | True, optional
+            | If False: omit linear part at low RGB values and use gamma function throughout
 
     Returns:
         :rgb: 
             | ndarray with R,G,B values (uint8).
+            
+    Notes:
+        1. Gamma-function: gf(x) = ((1-offset)*x**gamma + offset)*255
+        2. dark values use linear function: lf(x) = x[dark] * 12.92 * 255
+        3. To use a pure gamma function, set offset to zero and use_linear_part to False.
     """
 
     xyz = np2d(xyz)
@@ -1142,19 +1153,19 @@ def xyz_to_srgb(xyz, gamma = 2.4, **kwargs):
     srgb[np.where(srgb>1)] = 1
     srgb[np.where(srgb<0)] = 0
 
-    # test for the dark colours in the non-linear part of the function:
-    dark = np.where(srgb <=  0.0031308)
 
     # apply gamma function:
     g = 1/gamma
 
     # and scale to range 0-255:
     rgb = srgb.copy()
-    rgb = (1.055*rgb**g - 0.055) * 255
+    rgb = ((1.0-offset)*rgb**g + offset) * 255
 
-    # non-linear bit for dark colours
-    rgb[dark]  = (srgb[dark].copy() * 12.92) * 255
-
+    # linear bit for dark colours
+    if use_linear_part:
+        # test for the dark colours:
+        dark = np.where(srgb <=  0.0031308)
+        rgb[dark]  = (srgb[dark].copy() * 12.92) * 255
 
     # clip to range:
     rgb[rgb>255] = 255
@@ -1163,7 +1174,7 @@ def xyz_to_srgb(xyz, gamma = 2.4, **kwargs):
     return rgb
 
 
-def srgb_to_xyz(rgb, gamma = 2.4, **kwargs):
+def srgb_to_xyz(rgb, gamma = 2.4, offset = -0.055, use_linear_part = True, **kwargs):
     """
     Calculates xyz from IEC:61966 sRGB values.
 
@@ -1172,12 +1183,22 @@ def srgb_to_xyz(rgb, gamma = 2.4, **kwargs):
             | ndarray with srgb values (uint8).
         :gamma: 
             | 2.4, optional
-            | compression in sRGB
-            
+            | Gamma compression in gamma-function gf(x): see notes
+        :offset:
+            | -0.055, optional
+            | Offset in gamma-function gf(x): see notes
+        :use_linear_part:
+            | True, optional
+            | If False: omit linear part at low RGB values and use gamma function throughout
+
     Returns:
         :xyz: 
-            | ndarray with relative tristimulus values.
-
+            | ndarray with xyz tristimulus values.
+            
+    Notes:
+        1. Gamma-function: gf(x) = ((1-offset)*x**gamma + offset)*255
+        2. dark values use linear function: lf(x) = x[dark] * 12.92 * 255
+        3. To use a pure gamma function, set offset to zero and use_linear_part to False.
     """
     rgb = np2d(rgb)
     
@@ -1189,14 +1210,14 @@ def srgb_to_xyz(rgb, gamma = 2.4, **kwargs):
     # scale device coordinates:
     sRGB = rgb/255
 
-    # test for non-linear part of conversion
-    nonlin = np.where((rgb/255) <  0.0031308)#0.03928)
-
     # apply gamma function to convert to sRGB
     srgb = sRGB.copy()
-    srgb = ((srgb + 0.055)/1.055)**gamma
+    srgb = ((srgb - offset)/(1 - offset))**gamma
 
-    srgb[nonlin] = sRGB[nonlin]/12.92
+    if use_linear_part: 
+        # test for linear part of conversion
+        dark = np.where((srgb/255) <  0.0031308)
+        srgb[dark] = sRGB[dark]/12.92
 
     if len(srgb.shape) == 3:
         xyz = np.einsum('ij,klj->kli', M, srgb)*100
