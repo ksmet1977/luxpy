@@ -1110,7 +1110,7 @@ def Ydlep_to_xyz(Ydlep, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT, f
     return Yxy_to_xyz(Yxy).reshape(Ydlep.shape)
 
 
-def xyz_to_srgb(xyz, gamma = 2.4, offset = -0.055, use_linear_part = True, **kwargs):
+def xyz_to_srgb(xyz, gamma = 2.4, offset = -0.055, use_linear_part = True, M = None, **kwargs):
     """
     Calculates IEC:61966 sRGB values from xyz.
 
@@ -1126,7 +1126,10 @@ def xyz_to_srgb(xyz, gamma = 2.4, offset = -0.055, use_linear_part = True, **kwa
         :use_linear_part:
             | True, optional
             | If False: omit linear part at low RGB values and use gamma function throughout
-
+        :M:
+            | None, optional
+            | xyz to linear srgb conversion matrix.
+            | If None: use predefined matrix
     Returns:
         :rgb: 
             | ndarray with R,G,B values (uint8).
@@ -1140,9 +1143,10 @@ def xyz_to_srgb(xyz, gamma = 2.4, offset = -0.055, use_linear_part = True, **kwa
     xyz = np2d(xyz)
 
     # define 3x3 matrix
-    M = np.array([[3.2404542, -1.5371385, -0.4985314],
-                  [-0.9692660,  1.8760108,  0.0415560],
-                  [0.0556434, -0.2040259,  1.0572252]])
+    if M is None:
+        M = np.array([[3.2404542, -1.5371385, -0.4985314],
+                      [-0.9692660,  1.8760108,  0.0415560],
+                      [0.0556434, -0.2040259,  1.0572252]])
 
     if len(xyz.shape) == 3:
         srgb = np.einsum('ij,klj->kli', M, xyz/100)
@@ -1174,7 +1178,7 @@ def xyz_to_srgb(xyz, gamma = 2.4, offset = -0.055, use_linear_part = True, **kwa
     return rgb
 
 
-def srgb_to_xyz(rgb, gamma = 2.4, offset = -0.055, use_linear_part = True, **kwargs):
+def srgb_to_xyz(rgb, gamma = 2.4, offset = -0.055, use_linear_part = True, M = None, **kwargs):
     """
     Calculates xyz from IEC:61966 sRGB values.
 
@@ -1190,7 +1194,11 @@ def srgb_to_xyz(rgb, gamma = 2.4, offset = -0.055, use_linear_part = True, **kwa
         :use_linear_part:
             | True, optional
             | If False: omit linear part at low RGB values and use gamma function throughout
-
+        :M:
+            | None, optional
+            | xyz to linear srgb conversion matrix 
+            | (!!! Don't give inverse matrix as input, function will take inverse of input to M!!!).
+            | If None: use predefined inverse matrix
     Returns:
         :xyz: 
             | ndarray with xyz tristimulus values.
@@ -1203,10 +1211,16 @@ def srgb_to_xyz(rgb, gamma = 2.4, offset = -0.055, use_linear_part = True, **kwa
     rgb = np2d(rgb)
     
     # define 3x3 matrix
-    M = np.array([[0.4124564,  0.3575761,  0.1804375],
-                  [0.2126729,  0.7151522,  0.0721750],
-                  [0.0193339,  0.1191920,  0.9503041]])
-
+    # M = np.array([[0.4124564,  0.3575761,  0.1804375],
+    #               [0.2126729,  0.7151522,  0.0721750],
+    #               [0.0193339,  0.1191920,  0.9503041]])
+    if M is not None:
+        M = np.linalg.inv(M)
+    else:
+        M = np.array([[0.4124564,  0.3575761,  0.1804375],
+                      [0.2126729,  0.7151522,  0.0721750],
+                      [0.0193339,  0.1191920,  0.9503041]]) # use pre-defined inverse for efficiency
+        
     # scale device coordinates:
     sRGB = rgb/255
 
