@@ -971,6 +971,7 @@ def plot_tm30_report(spd, cri_type = 'ies-tm30',
     
     # Get required parameter values from spd:
     data = _tm30_process_spd(spd, cri_type = cri_type, **kwargs)
+    spd  = data['St']
     
     # Create all subplots:
     if plot_report_top == True:
