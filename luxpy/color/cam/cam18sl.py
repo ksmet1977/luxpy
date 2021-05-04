@@ -306,8 +306,12 @@ def cam18sl(data, datab = None, Lb = [100], fov = 10.0, inputtype = 'xyz', direc
                 s = (a**2.0 + b**2.0)**0.5
                 M = s*Q
                       
-            if 'h' in outin:
+            if ('h' in outin) | ('H' in outin):
                 Q, WsM, h = asplit(data[i])
+                
+                if ('H' in outin):
+                    h = hue_quadrature(h, unique_hue_data = unique_hue_data, forward = False)
+                
                 Q = Q / ((fov/10.0)**cfov) #adjust Q for size (fov) of stimulus back to that 10° ref
                 if 'W' in outin:
                      s = (((1.0 / WsM) - 1.0)/cW[0])**(1.0/cW[1])

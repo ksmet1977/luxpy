@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>luxpy.color.cam.utils &mdash; LuxPy 1.6.5 documentation</title>
+  <title>luxpy.color.cam.utils &mdash; LuxPy 1.6.6 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                1.6.5
+                1.6.6
               </div>
             
           
@@ -281,13 +281,15 @@
         <span class="n">Cprod</span> <span class="o">=</span> <span class="n">C1</span>
     <span class="k">return</span> <span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="n">Cprod</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">r2d</span><span class="o">*</span><span class="n">deltah</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>   </div>
 
-<div class="viewcode-block" id="hue_quadrature"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.hue_quadrature">[docs]</a><span class="k">def</span> <span class="nf">hue_quadrature</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">unique_hue_data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="hue_quadrature"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.hue_quadrature">[docs]</a><span class="k">def</span> <span class="nf">hue_quadrature</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">unique_hue_data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">forward</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get hue quadrature H from hue h.</span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        :h: </span>
-<span class="sd">            | float or ndarray [(N,) or (N,1)] with hue data in degrees (!).</span>
+<span class="sd">            | float or ndarray [(N,) or (N,1)] with: </span>
+<span class="sd">            |   - hue angle data in degrees (!) if forward == True.</span>
+<span class="sd">            |   - Hue quadrature data if forward = False</span>
 <span class="sd">        :unique_hue data:</span>
 <span class="sd">            | None or dict, optional</span>
 <span class="sd">            |   - None: defaults to:</span>
@@ -298,10 +300,13 @@
 <span class="sd">            |        &#39;Hi&#39;:[0.0,100.0,200.0,300.0,400.0]}</span>
 <span class="sd">            |   - dict: user specified unique hue data  </span>
 <span class="sd">            |           (same structure as above)</span>
+<span class="sd">        :forward:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | If true: input h is hue angle, else it is Hue quadrature</span>
 <span class="sd">    </span>
 <span class="sd">    Returns:</span>
 <span class="sd">        :H: </span>
-<span class="sd">            | ndarray of Hue quadrature value(s).</span>
+<span class="sd">            | ndarray of Hue quadrature value(s) (forward == True) or of hue angle values(s) (foward == False).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
     <span class="k">if</span> <span class="n">unique_hue_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -317,34 +322,68 @@
     <span class="n">Hi</span> <span class="o">=</span> <span class="n">unique_hue_data</span><span class="p">[</span><span class="s1">&#39;Hi&#39;</span><span class="p">]</span>
     <span class="n">ei</span> <span class="o">=</span> <span class="n">unique_hue_data</span><span class="p">[</span><span class="s1">&#39;ei&#39;</span><span class="p">]</span>
     
-    <span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
-    <span class="n">h</span><span class="p">[</span><span class="n">h</span><span class="o">&lt;</span><span class="n">hi</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">+=</span> <span class="mf">360.0</span>
-    <span class="k">if</span> <span class="n">h</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="n">h</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">T</span>
-
-    <span class="n">H</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">h</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
-        <span class="n">h_j</span> <span class="o">=</span> <span class="n">h</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">j</span><span class="p">:</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
-        <span class="n">h_hi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">h_j</span><span class="p">,</span> <span class="n">repeats</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">hi</span><span class="p">),</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="n">hi_h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">hi</span><span class="p">),</span><span class="n">repeats</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
-        <span class="n">d</span> <span class="o">=</span> <span class="p">(</span><span class="n">h_hi</span> <span class="o">-</span> <span class="n">hi_h</span><span class="p">)</span>
-        <span class="n">d</span><span class="p">[</span><span class="n">d</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1000.0</span>
-        <span class="n">p</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="n">p</span><span class="p">[</span><span class="n">p</span> <span class="o">==</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">hi</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># make sure last unique hue data is not selected</span>
-        <span class="n">H_j</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">Hi</span><span class="p">[</span><span class="n">pi</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="mf">100.0</span><span class="o">*</span><span class="p">(</span><span class="n">h_j</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="n">hi</span><span class="p">[</span><span class="n">pi</span><span class="p">])</span><span class="o">/</span><span class="n">ei</span><span class="p">[</span><span class="n">pi</span><span class="p">])</span><span class="o">/</span><span class="p">((</span><span class="n">h_j</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="n">hi</span><span class="p">[</span><span class="n">pi</span><span class="p">])</span><span class="o">/</span><span class="n">ei</span><span class="p">[</span><span class="n">pi</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">hi</span><span class="p">[</span><span class="n">pi</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">h_j</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">/</span><span class="n">ei</span><span class="p">[</span><span class="n">pi</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">pi</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">p</span><span class="p">)])</span>
-        <span class="n">H</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">j</span><span class="p">:</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">H_j</span>
-
-    <span class="k">if</span> <span class="n">ndim</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">H</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-    <span class="k">elif</span> <span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">H</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">H</span></div>
-    <span class="c1"># if squeezed:</span>
-    <span class="c1">#     H = np.expand_dims(H, axis=0)</span>
-    <span class="c1"># return H</span>
     
+    
+    <span class="k">if</span> <span class="n">forward</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+        <span class="n">h</span><span class="p">[</span><span class="n">h</span><span class="o">&gt;</span><span class="mi">360</span><span class="p">]</span> <span class="o">-=</span> <span class="mf">360.0</span>
+        <span class="n">h</span><span class="p">[</span><span class="n">h</span><span class="o">&lt;</span><span class="n">hi</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">+=</span> <span class="mf">360.0</span>
+        <span class="k">if</span> <span class="n">h</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">h</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">T</span>
+    
+        <span class="n">H</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">h</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+            <span class="n">h_j</span> <span class="o">=</span> <span class="n">h</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">j</span><span class="p">:</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">h_hi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">h_j</span><span class="p">,</span> <span class="n">repeats</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">hi</span><span class="p">),</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">hi_h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">hi</span><span class="p">),</span><span class="n">repeats</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="p">(</span><span class="n">h_hi</span> <span class="o">-</span> <span class="n">hi_h</span><span class="p">)</span>
+            <span class="n">d</span><span class="p">[</span><span class="n">d</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1000.0</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">p</span><span class="p">[</span><span class="n">p</span> <span class="o">==</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">hi</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># make sure last unique hue data is not selected</span>
+            <span class="n">H_j</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">Hi</span><span class="p">[</span><span class="n">pi</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="mf">100.0</span><span class="o">*</span><span class="p">(</span><span class="n">h_j</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="n">hi</span><span class="p">[</span><span class="n">pi</span><span class="p">])</span><span class="o">/</span><span class="n">ei</span><span class="p">[</span><span class="n">pi</span><span class="p">])</span><span class="o">/</span><span class="p">((</span><span class="n">h_j</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="n">hi</span><span class="p">[</span><span class="n">pi</span><span class="p">])</span><span class="o">/</span><span class="n">ei</span><span class="p">[</span><span class="n">pi</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">hi</span><span class="p">[</span><span class="n">pi</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">h_j</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">/</span><span class="n">ei</span><span class="p">[</span><span class="n">pi</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">pi</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">p</span><span class="p">)])</span>
+            <span class="n">H</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">j</span><span class="p">:</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">H_j</span>
+    
+        <span class="k">if</span> <span class="n">ndim</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">H</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">H</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">H</span>
 
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">H</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">H</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">H</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">H</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+            <span class="n">H_j</span> <span class="o">=</span> <span class="n">H</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">j</span><span class="p">:</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">H_Hi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">H_j</span><span class="p">,</span> <span class="n">repeats</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">Hi</span><span class="p">),</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">Hi_H</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">Hi</span><span class="p">),</span><span class="n">repeats</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="p">(</span><span class="n">H_Hi</span> <span class="o">-</span> <span class="n">Hi_H</span><span class="p">)</span>
+            <span class="n">d</span><span class="p">[</span><span class="n">d</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1000.0</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">p</span><span class="p">[</span><span class="n">p</span> <span class="o">==</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">Hi</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># make sure last unique hue data is not selected</span>
+            <span class="n">h_j</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([((</span><span class="n">H_j</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">Hi</span><span class="p">[</span><span class="n">pi</span><span class="p">])</span><span class="o">*</span><span class="p">(</span><span class="n">ei</span><span class="p">[</span><span class="n">pi</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">hi</span><span class="p">[</span><span class="n">pi</span><span class="p">]</span> <span class="o">-</span> <span class="n">ei</span><span class="p">[</span><span class="n">pi</span><span class="p">]</span><span class="o">*</span><span class="n">hi</span><span class="p">[</span><span class="n">pi</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span> <span class="o">-</span> <span class="mi">100</span><span class="o">*</span><span class="n">ei</span><span class="p">[</span><span class="n">pi</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">hi</span><span class="p">[</span><span class="n">pi</span><span class="p">])</span><span class="o">/</span><span class="p">((</span><span class="n">H_j</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">Hi</span><span class="p">[</span><span class="n">pi</span><span class="p">])</span><span class="o">*</span><span class="p">(</span><span class="n">ei</span><span class="p">[</span><span class="n">pi</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">ei</span><span class="p">[</span><span class="n">pi</span><span class="p">])</span> <span class="o">-</span> <span class="mi">100</span><span class="o">*</span><span class="n">ei</span><span class="p">[</span><span class="n">pi</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">pi</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">p</span><span class="p">)])</span>
+            <span class="n">h</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">j</span><span class="p">:</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">h_j</span>
+        <span class="n">h</span><span class="p">[</span><span class="n">h</span> <span class="o">&gt;</span> <span class="mi">360</span> <span class="o">-</span> <span class="n">hi</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">1</span><span class="p">]</span> <span class="o">-=</span> <span class="mf">360.0</span>
+    
+        <span class="k">if</span> <span class="n">ndim</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">h</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">h</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">h</span></div>
+        
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">10.0</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">110</span><span class="p">,</span><span class="mi">280</span><span class="p">,</span><span class="mi">370</span><span class="p">,</span><span class="mi">390</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;h&#39;</span><span class="p">,</span><span class="n">h</span><span class="p">)</span>
+    <span class="n">H</span> <span class="o">=</span> <span class="n">hue_quadrature</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">unique_hue_data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">forward</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;H&#39;</span><span class="p">,</span><span class="n">H</span><span class="p">)</span>
+    <span class="n">h2</span> <span class="o">=</span> <span class="n">hue_quadrature</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">unique_hue_data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">forward</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;h2&#39;</span><span class="p">,</span><span class="n">h2</span><span class="p">)</span>
+    <span class="n">H2</span> <span class="o">=</span> <span class="n">hue_quadrature</span><span class="p">(</span><span class="n">h2</span><span class="p">,</span> <span class="n">unique_hue_data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">forward</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;H2&#39;</span><span class="p">,</span><span class="n">H2</span><span class="p">)</span>
+    
 </pre></div>
 
            </div>

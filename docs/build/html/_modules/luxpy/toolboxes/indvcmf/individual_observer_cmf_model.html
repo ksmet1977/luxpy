@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>luxpy.toolboxes.indvcmf.individual_observer_cmf_model &mdash; LuxPy 1.6.5 documentation</title>
+  <title>luxpy.toolboxes.indvcmf.individual_observer_cmf_model &mdash; LuxPy 1.6.6 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                1.6.5
+                1.6.6
               </div>
             
           
@@ -2129,8 +2129,9 @@
     <span class="c1"># Get Normally-distributed Physiological Factors:</span>
     <span class="n">vAll</span> <span class="o">=</span> <span class="n">getMonteCarloParam</span><span class="p">(</span><span class="n">n_obs</span> <span class="o">=</span> <span class="n">n_obs</span><span class="p">)</span> 
      
-    <span class="k">if</span> <span class="n">list_Age</span> <span class="ow">is</span> <span class="s1">&#39;us_census&#39;</span><span class="p">:</span>
-        <span class="n">list_Age</span> <span class="o">=</span> <span class="n">getUSCensusAgeDist</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">list_Age</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span> 
+        <span class="k">if</span> <span class="n">list_Age</span> <span class="o">==</span> <span class="s1">&#39;us_census&#39;</span><span class="p">:</span>
+            <span class="n">list_Age</span> <span class="o">=</span> <span class="n">getUSCensusAgeDist</span><span class="p">()</span>
     
     <span class="c1"># Generate Random Ages with the same probability density distribution </span>
     <span class="c1"># as color matching experiment:</span>

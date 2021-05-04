@@ -379,7 +379,7 @@ def plot_VF_PX_models(dataVF = None, dataPX = None, plot_VF = True, plot_PX = Tr
     
     for Snr in range(len(dataVF)):  
         if bin_labels is not None:
-            if (bin_labels is 'pcolorshift') & (dataVF is not None):
+            if ('pcolorshift' in bin_labels) & (dataVF is not None):
                 hbins = dataVF[Snr]['modeldata']['pcolorshift']['href']*180/np.pi
                 start_hue = 0
                 scalef0 = dataVF[Snr]['modeldata']['pcolorshift']['Cref']

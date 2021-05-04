@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>luxpy.color.cri.VFPX.VF_PX_models &mdash; LuxPy 1.6.5 documentation</title>
+  <title>luxpy.color.cri.VFPX.VF_PX_models &mdash; LuxPy 1.6.6 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                1.6.5
+                1.6.6
               </div>
             
           
@@ -539,7 +539,7 @@
     
     <span class="k">for</span> <span class="n">Snr</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dataVF</span><span class="p">)):</span>  
         <span class="k">if</span> <span class="n">bin_labels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="p">(</span><span class="n">bin_labels</span> <span class="ow">is</span> <span class="s1">&#39;pcolorshift&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">dataVF</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;pcolorshift&#39;</span> <span class="ow">in</span> <span class="n">bin_labels</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">dataVF</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
                 <span class="n">hbins</span> <span class="o">=</span> <span class="n">dataVF</span><span class="p">[</span><span class="n">Snr</span><span class="p">][</span><span class="s1">&#39;modeldata&#39;</span><span class="p">][</span><span class="s1">&#39;pcolorshift&#39;</span><span class="p">][</span><span class="s1">&#39;href&#39;</span><span class="p">]</span><span class="o">*</span><span class="mi">180</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span>
                 <span class="n">start_hue</span> <span class="o">=</span> <span class="mi">0</span>
                 <span class="n">scalef0</span> <span class="o">=</span> <span class="n">dataVF</span><span class="p">[</span><span class="n">Snr</span><span class="p">][</span><span class="s1">&#39;modeldata&#39;</span><span class="p">][</span><span class="s1">&#39;pcolorshift&#39;</span><span class="p">][</span><span class="s1">&#39;Cref&#39;</span><span class="p">]</span>

@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>luxpy.color.cam.zcam &mdash; LuxPy 1.6.5 documentation</title>
+  <title>luxpy.color.cam.zcam &mdash; LuxPy 1.6.6 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                1.6.5
+                1.6.6
               </div>
             
           
@@ -199,7 +199,7 @@
 
 <span class="sd">    3. Safdar, M., Hardeberg, J.Y., Luo, M.R. (2021) </span>
 <span class="sd">    &quot;ZCAM, a psychophysical model for colour appearance prediction&quot;, </span>
-<span class="sd">    Optics Express.</span>
+<span class="sd">    Optics Express. 29(4), 6036-6052, &lt;https://doi.org/10.1364/OE.413659&gt;`_</span>
 <span class="sd">    </span>
 <span class="sd">Created on Wed Sep 30 21:58:11 2020</span>
 
@@ -284,8 +284,7 @@
 <span class="sd">     |      (note that Jz that not exactly equal 1 for this high value, but rather for 102900 cd/m2)</span>
 <span class="sd">     | 2b. az, bz represent respectively a red-green and a yellow-blue opponent axis </span>
 <span class="sd">     |      (but note that a D65 shows a small offset from (0,0))</span>
-<span class="sd">     | 3. ZCAM: uses a slightly different value for b (= 1.16 instead of 1.15)</span>
-<span class="sd">     |      and calculates Iz as M&#39; - epsilon (instead L&#39;/2 + M&#39;/2 as in Iz,az,bz color space!).</span>
+<span class="sd">     | 3. ZCAM: calculates Iz as M&#39; - epsilon (instead L&#39;/2 + M&#39;/2 as in Iz,az,bz color space!).</span>
 
 <span class="sd">    Reference:</span>
 <span class="sd">        1. `Safdar, M., Cui, G., Kim,Y. J., and Luo, M. R. (2017).</span>
@@ -294,14 +293,15 @@
 <span class="sd">        &lt;http://www.opticsexpress.org/abstract.cfm?URI=oe-25-13-15131&gt;`_</span>
 <span class="sd">        </span>
 <span class="sd">        2. Safdar, M., Hardeberg, J.Y., Luo, M.R. (2021) </span>
-<span class="sd">        &quot;ZCAM, a psychophysical model for colour appearance prediction&quot;, </span>
-<span class="sd">        Optics Express.</span>
+<span class="sd">        ZCAM, a psychophysical model for colour appearance prediction, </span>
+<span class="sd">        Optics Express. 29(4), 6036-6052, &lt;https://doi.org/10.1364/OE.413659&gt;`_</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">xyz</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">(</span><span class="n">xyz</span><span class="p">)</span>
     
     <span class="c1"># Setup X,Y,Z to X&#39;,Y&#39;,Z&#39; transform as matrix:</span>
-    <span class="n">b</span> <span class="o">=</span> <span class="mf">1.15</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">use_zcam_parameters</span> <span class="k">else</span> <span class="mf">1.16</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="mf">1.15</span> 
     <span class="n">g</span> <span class="o">=</span> <span class="mf">0.66</span>
+
     <span class="n">M_to_xyzp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">b</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">b</span><span class="p">],[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">g</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
     
     <span class="c1"># Premultiply _M_XYZP_TO_LMS and M_to_lms:</span>
@@ -312,7 +312,7 @@
         <span class="n">lms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;ij,klj-&gt;kli&#39;</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">xyz</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">lms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;ij,lj-&gt;li&#39;</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">xyz</span><span class="p">)</span>
-    
+
     <span class="c1"># response compression: lms to lms&#39;</span>
     <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">,</span> <span class="n">c3</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="p">[</span><span class="n">_PQ_PARAMETERS</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">_PQ_PARAMETERS</span><span class="o">.</span><span class="n">keys</span><span class="p">())]</span>
     <span class="n">lmsp</span> <span class="o">=</span> <span class="p">((</span><span class="n">c1</span> <span class="o">+</span> <span class="n">c2</span><span class="o">*</span><span class="p">(</span><span class="n">lms</span><span class="o">/</span><span class="mi">10000</span><span class="p">)</span><span class="o">**</span><span class="n">n</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">c3</span><span class="o">*</span><span class="p">(</span><span class="n">lms</span><span class="o">/</span><span class="mi">10000</span><span class="p">)</span><span class="o">**</span><span class="n">n</span><span class="p">))</span><span class="o">**</span><span class="n">p</span>
@@ -363,8 +363,7 @@
 <span class="sd">     |      (note that Jz that not exactly equal 1 for this high value, but rather for 102900 cd/m2)</span>
 <span class="sd">     | 2b.  az, bz represent respectively a red-green and a yellow-blue opponent axis </span>
 <span class="sd">     |      (but note that a D65 shows a small offset from (0,0))</span>
-<span class="sd">     | 3. ZCAM: uses a slightly different value for b (= 1.16 instead of 1.15)</span>
-<span class="sd">     |      and calculates Iz as M&#39; - epsilon (instead L&#39;/2 + M&#39;/2 as in Iz,az,bz color space!).</span>
+<span class="sd">     | 3. ZCAM: calculates Iz as M&#39; - epsilon (instead L&#39;/2 + M&#39;/2 as in Iz,az,bz color space!).</span>
 
 <span class="sd">    Reference:</span>
 <span class="sd">        1. `Safdar, M., Cui, G., Kim,Y. J., and Luo, M. R. (2017).</span>
@@ -372,9 +371,9 @@
 <span class="sd">        Opt. Express, vol. 25, no. 13, pp. 15131–15151, June, 2017.</span>
 <span class="sd">        &lt;http://www.opticsexpress.org/abstract.cfm?URI=oe-25-13-15131&gt;`_</span>
 <span class="sd">        </span>
-<span class="sd">        2. Safdar, M., Hardeberg, J.Y., Luo, M.R. (2021) </span>
-<span class="sd">        &quot;ZCAM, a psychophysical model for colour appearance prediction&quot;, </span>
-<span class="sd">        Optics Express.</span>
+<span class="sd">        2. Safdar,  M., Hardeberg, J.Y., Luo, M.R. (2021) </span>
+<span class="sd">        ZCAM, a psychophysical model for colour appearance prediction, </span>
+<span class="sd">        Optics Express. 29(4), 6036-6052, &lt;https://doi.org/10.1364/OE.413659&gt;`_</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">jabz</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">(</span><span class="n">jabz</span><span class="p">)</span>
     
@@ -402,7 +401,7 @@
     
     <span class="c1"># Convert lms to xyz:</span>
     <span class="c1"># Setup X&#39;,Y&#39;,Z&#39; from X,Y,Z transform as matrix:</span>
-    <span class="n">b</span> <span class="o">=</span> <span class="mf">1.15</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">use_zcam_parameters</span> <span class="k">else</span> <span class="mf">1.16</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="mf">1.15</span> 
     <span class="n">g</span> <span class="o">=</span> <span class="mf">0.66</span> 
     <span class="n">M_to_xyzp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">b</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">b</span><span class="p">],[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">g</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
     
@@ -481,11 +480,11 @@
 <span class="sd">        26th Color and Imaging Conference (2018), Vancouver, Canada, November 12-16, 2018, pp96-101.</span>
 <span class="sd">        &lt;https://doi.org/10.2352/ISSN.2169-2629.2018.26.96&gt;`_</span>
 <span class="sd">        </span>
-<span class="sd">        3. Safdar, M., Hardeberg, J.Y., Luo, M.R. (2021) </span>
-<span class="sd">        &quot;ZCAM, a psychophysical model for colour appearance prediction&quot;, </span>
-<span class="sd">        Optics Express.</span>
+<span class="sd">        3. Safdar, M.,  Hardeberg, J.Y., Luo, M.R. (2021) </span>
+<span class="sd">        ZCAM, a psychophysical model for colour appearance prediction, </span>
+<span class="sd">        Optics Express. 29(4), 6036-6052, &lt;https://doi.org/10.1364/OE.413659&gt;`_</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;WARNING: Z-CAM is as yet unpublished and under development, so parameter values might change! (07 Oct, 2020&quot;</span><span class="p">)</span>
+    <span class="c1">#print(&quot;WARNING: Z-CAM is as yet unpublished and under development, so parameter values might change! (07 Oct, 2020&quot;)</span>
     <span class="n">outin</span> <span class="o">=</span> <span class="n">outin</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">outin</span><span class="p">,</span><span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">outin</span>
     
     <span class="c1">#--------------------------------------------</span>
@@ -511,7 +510,7 @@
     <span class="c1"># Get white point of D65 fro chromatic adaptation transform (CAT)</span>
     <span class="n">xyzw_d65</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">9.5047e+01</span><span class="p">,</span> <span class="mf">1.0000e+02</span><span class="p">,</span> <span class="mf">1.08883e+02</span><span class="p">]])</span> <span class="k">if</span> <span class="n">cieobs</span> <span class="o">==</span> <span class="s1">&#39;1931_2&#39;</span>  <span class="k">else</span>  <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">_CIE_D65</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">)</span>
     
-    
+   
     <span class="c1">#--------------------------------------------</span>
     <span class="c1"># Get default white point:</span>
     <span class="k">if</span> <span class="n">xyzw</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -522,22 +521,22 @@
     <span class="c1"># calculate condition dependent parameters:</span>
     <span class="n">Yw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">T</span>
     <span class="n">FL</span> <span class="o">=</span> <span class="mf">0.171</span> <span class="o">*</span> <span class="n">La</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">48</span><span class="o">/</span><span class="mi">9</span><span class="o">*</span><span class="n">La</span><span class="p">))</span> <span class="c1"># luminance adaptation factor</span>
+    
     <span class="n">n</span> <span class="o">=</span> <span class="n">Yb</span><span class="o">/</span><span class="n">Yw</span> 
-    <span class="n">Fb</span> <span class="o">=</span> <span class="mf">1.045</span> <span class="o">+</span> <span class="mf">1.46</span><span class="o">*</span><span class="n">n</span><span class="o">**</span><span class="mf">0.5</span> <span class="c1"># background factor</span>
+    <span class="n">Fb</span> <span class="o">=</span> <span class="n">n</span><span class="o">**</span><span class="mf">0.5</span> <span class="c1"># background factor</span>
     <span class="n">Fs</span> <span class="o">=</span> <span class="n">c</span> <span class="c1"># surround factor </span>
-     
     <span class="c1">#--------------------------------------------</span>
     <span class="c1"># Calculate degree of chromatic adaptation:</span>
     <span class="k">if</span> <span class="n">D</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">D</span> <span class="o">=</span> <span class="n">F</span><span class="o">*</span><span class="p">(</span><span class="mf">1.0</span><span class="o">-</span><span class="p">(</span><span class="mf">1.0</span><span class="o">/</span><span class="mf">3.6</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">((</span><span class="o">-</span><span class="n">La</span><span class="o">-</span><span class="mf">42.0</span><span class="p">)</span><span class="o">/</span><span class="mf">92.0</span><span class="p">))</span>
-  
+
     <span class="c1">#===================================================================</span>
     <span class="c1"># WHITE POINT transformations (common to forward and inverse modes):   </span>
   
     
     <span class="c1">#--------------------------------------------</span>
     <span class="c1"># Apply CAT to white point:</span>
-    <span class="n">xyzwc</span> <span class="o">=</span> <span class="n">cat</span><span class="o">.</span><span class="n">apply_vonkries2</span><span class="p">(</span><span class="n">xyzw</span><span class="p">,</span> <span class="n">xyzw1</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">xyzw2</span> <span class="o">=</span> <span class="n">xyzw_d65</span><span class="p">,</span> 
+    <span class="n">xyzwc</span> <span class="o">=</span> <span class="n">cat</span><span class="o">.</span><span class="n">apply_vonkries1</span><span class="p">(</span><span class="n">xyzw</span><span class="p">,</span> <span class="n">xyzw1</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">xyzw2</span> <span class="o">=</span> <span class="n">xyzw_d65</span><span class="p">,</span> 
                                 <span class="n">D</span> <span class="o">=</span> <span class="n">D</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="n">mcat</span><span class="p">,</span> <span class="n">invmcat</span> <span class="o">=</span> <span class="n">invmcat</span><span class="p">,</span>
                                 <span class="n">use_Yw</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
     
@@ -547,7 +546,7 @@
     <span class="n">iabzw</span> <span class="o">=</span> <span class="n">xyz_to_jabz</span><span class="p">(</span><span class="n">xyzwc</span><span class="p">,</span> <span class="n">ztype</span> <span class="o">=</span> <span class="s1">&#39;iabz&#39;</span><span class="p">,</span> <span class="n">use_zcam_parameters</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
     
     <span class="c1"># Get brightness of white point:</span>
-    <span class="n">Qw</span> <span class="o">=</span> <span class="mi">925</span> <span class="o">*</span> <span class="n">iabzw</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="mf">1.17</span> <span class="o">*</span> <span class="p">(</span><span class="n">FL</span><span class="o">/</span><span class="n">Fs</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
+    <span class="n">Qw</span> <span class="o">=</span> <span class="mi">2700</span> <span class="o">*</span> <span class="p">(</span><span class="n">iabzw</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="p">(</span><span class="mf">1.6</span><span class="o">*</span><span class="n">Fs</span><span class="o">/</span><span class="n">Fb</span><span class="o">**</span><span class="mf">0.12</span><span class="p">))</span> <span class="o">*</span> <span class="p">((</span><span class="n">Fs</span><span class="p">)</span><span class="o">**</span><span class="mf">2.2</span><span class="p">)</span> <span class="o">*</span> <span class="p">((</span><span class="n">Fb</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span><span class="p">)</span> <span class="o">*</span> <span class="p">((</span><span class="n">FL</span><span class="p">)</span><span class="o">**</span><span class="mf">0.2</span><span class="p">)</span>
     
     <span class="c1">#===================================================================</span>
     <span class="c1"># STIMULUS transformations:</span>
@@ -559,18 +558,18 @@
     
     <span class="k">if</span> <span class="n">forward</span><span class="p">:</span>
         <span class="c1"># Apply CAT to D65:</span>
-        <span class="n">xyzc</span> <span class="o">=</span>  <span class="n">cat</span><span class="o">.</span><span class="n">apply_vonkries2</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw1</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">xyzw2</span> <span class="o">=</span> <span class="n">xyzw_d65</span><span class="p">,</span> 
+        <span class="n">xyzc</span> <span class="o">=</span>  <span class="n">cat</span><span class="o">.</span><span class="n">apply_vonkries1</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw1</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">xyzw2</span> <span class="o">=</span> <span class="n">xyzw_d65</span><span class="p">,</span> 
                                     <span class="n">D</span> <span class="o">=</span> <span class="n">D</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="n">mcat</span><span class="p">,</span> <span class="n">invmcat</span> <span class="o">=</span> <span class="n">invmcat</span><span class="p">,</span>
                                     <span class="n">use_Yw</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
-
+ 
         <span class="c1"># Get Iz,az,bz coordinates:</span>
         <span class="n">iabz</span> <span class="o">=</span> <span class="n">xyz_to_jabz</span><span class="p">(</span><span class="n">xyzc</span><span class="p">,</span> <span class="n">ztype</span> <span class="o">=</span> <span class="s1">&#39;iabz&#39;</span><span class="p">,</span> <span class="n">use_zcam_parameters</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
 
         <span class="c1">#--------------------------------------------</span>
         <span class="c1"># calculate hue h and eccentricity factor, et:</span>
         <span class="n">h</span> <span class="o">=</span> <span class="n">hue_angle</span><span class="p">(</span><span class="n">iabz</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="n">iabz</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="n">htype</span> <span class="o">=</span> <span class="s1">&#39;deg&#39;</span><span class="p">)</span>
-        <span class="n">ez</span> <span class="o">=</span> <span class="mf">1.014</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">((</span><span class="n">h</span> <span class="o">+</span> <span class="mf">89.038</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">180</span><span class="p">)</span>
-        <span class="c1"># ez = 1.014 + np.cos((h*np.pi/180) + 89.038)</span>
+        <span class="n">ez</span> <span class="o">=</span> <span class="mf">1.015</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">((</span><span class="n">h</span> <span class="o">+</span> <span class="mf">89.038</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">180</span><span class="p">)</span>
+
         
         <span class="c1">#-------------------------------------------- </span>
         <span class="c1"># calculate Hue quadrature (if requested in &#39;out&#39;):</span>
@@ -581,16 +580,15 @@
             
         <span class="c1">#-------------------------------------------- </span>
         <span class="c1"># calculate brightness, Q:</span>
-        <span class="n">Q</span> <span class="o">=</span> <span class="mi">925</span> <span class="o">*</span> <span class="n">iabz</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="mf">1.17</span> <span class="o">*</span> <span class="p">(</span><span class="n">FL</span><span class="o">/</span><span class="n">Fs</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
-        
+        <span class="n">Q</span> <span class="o">=</span> <span class="mi">2700</span> <span class="o">*</span> <span class="p">(</span><span class="n">iabz</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="p">(</span><span class="mf">1.6</span><span class="o">*</span><span class="n">Fs</span><span class="o">/</span><span class="n">Fb</span><span class="o">**</span><span class="mf">0.12</span><span class="p">))</span> <span class="o">*</span> <span class="p">((</span><span class="n">Fs</span><span class="p">)</span><span class="o">**</span><span class="mf">2.2</span><span class="p">)</span> <span class="o">*</span> <span class="p">((</span><span class="n">Fb</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span><span class="p">)</span> <span class="o">*</span> <span class="p">((</span><span class="n">FL</span><span class="p">)</span><span class="o">**</span><span class="mf">0.2</span><span class="p">)</span>
             
         <span class="c1">#--------------------------------------------   </span>
         <span class="c1"># calculate lightness, J:</span>
-        <span class="n">J</span> <span class="o">=</span> <span class="mf">100.0</span><span class="o">*</span> <span class="p">(</span><span class="n">Q</span><span class="o">/</span><span class="n">Qw</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="n">Fs</span><span class="o">*</span><span class="n">Fb</span><span class="p">)</span>
+        <span class="n">J</span> <span class="o">=</span> <span class="mf">100.0</span> <span class="o">*</span> <span class="p">(</span><span class="n">Q</span><span class="o">/</span><span class="n">Qw</span><span class="p">)</span>
          
         <span class="c1">#-------------------------------------------- </span>
         <span class="c1"># calculate colorfulness, M:</span>
-        <span class="n">M</span> <span class="o">=</span> <span class="mi">50</span><span class="o">*</span><span class="p">((</span><span class="n">iabz</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mf">2.0</span> <span class="o">+</span> <span class="n">iabz</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span><span class="o">**</span><span class="mf">2.0</span><span class="p">)</span><span class="o">**</span><span class="mf">0.368</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">ez</span><span class="o">**</span><span class="mf">0.068</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">FL</span><span class="o">**</span><span class="mf">0.2</span><span class="p">)</span> <span class="o">/</span> <span class="p">((</span><span class="n">iabzw</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="mf">2.52</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">Fb</span><span class="o">**</span><span class="mf">0.3</span><span class="p">))</span>
+        <span class="n">M</span> <span class="o">=</span> <span class="mi">100</span><span class="o">*</span><span class="p">((</span><span class="n">iabz</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mf">2.0</span> <span class="o">+</span> <span class="n">iabz</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span><span class="o">**</span><span class="mf">2.0</span><span class="p">)</span><span class="o">**</span><span class="mf">0.37</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">ez</span><span class="o">**</span><span class="mf">0.068</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">FL</span><span class="o">**</span><span class="mf">0.2</span><span class="p">)</span> <span class="o">/</span> <span class="p">((</span><span class="n">iabzw</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="mf">0.78</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">Fb</span><span class="o">**</span><span class="mf">0.1</span><span class="p">))</span>
 
         <span class="c1">#-------------------------------------------- </span>
         <span class="c1"># calculate chroma, C:</span>
@@ -598,7 +596,7 @@
 
         <span class="c1">#--------------------------------------------         </span>
         <span class="c1"># calculate saturation, s:</span>
-        <span class="n">s</span> <span class="o">=</span> <span class="mf">100.0</span><span class="o">*</span> <span class="p">(</span><span class="n">M</span><span class="o">/</span><span class="n">Q</span><span class="p">)</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="mf">100.0</span><span class="o">*</span> <span class="p">((</span><span class="n">M</span><span class="o">/</span><span class="n">Q</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">FL</span><span class="p">)</span><span class="o">**</span><span class="mf">0.6</span>
         <span class="n">S</span> <span class="o">=</span> <span class="n">s</span> <span class="c1"># make extra variable, just in case &#39;S&#39; is called</span>
         
         
@@ -610,17 +608,17 @@
         <span class="c1">#--------------------------------------------         </span>
         <span class="c1"># calculate blackness, K:</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;Kz&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="s1">&#39;aKz&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">):</span>
-            <span class="n">Kz</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">-</span> <span class="p">(</span><span class="n">J</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">C</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
+            <span class="n">Kz</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">-</span> <span class="mf">0.8</span><span class="o">*</span><span class="p">(</span><span class="n">J</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">8</span><span class="o">*</span><span class="n">C</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
             
         <span class="c1">#--------------------------------------------         </span>
         <span class="c1"># calculate saturation, S:</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;Sz&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="s1">&#39;aSz&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">):</span>
-            <span class="n">Sz</span> <span class="o">=</span> <span class="p">((</span><span class="n">J</span> <span class="o">-</span> <span class="mi">55</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">C</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
+            <span class="n">Sz</span> <span class="o">=</span> <span class="n">S</span>
             
         <span class="c1">#--------------------------------------------         </span>
         <span class="c1"># calculate vividness, V:</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;Vz&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="s1">&#39;aVz&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">):</span>
-            <span class="n">Vz</span> <span class="o">=</span> <span class="p">((</span><span class="n">J</span> <span class="o">-</span> <span class="mi">70</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">C</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
+            <span class="n">Vz</span> <span class="o">=</span> <span class="p">((</span><span class="n">J</span> <span class="o">-</span> <span class="mi">58</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mf">3.4</span><span class="o">*</span><span class="n">C</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
         
         
         
@@ -655,17 +653,24 @@
         <span class="c1"># Get Lightness J and brightness Q from data:</span>
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;J&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
             <span class="n">J</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-            <span class="n">Q</span> <span class="o">=</span> <span class="n">Qw</span><span class="o">*</span><span class="p">(</span><span class="n">J</span><span class="o">/</span><span class="mi">100</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="n">Fs</span><span class="o">*</span><span class="n">Fb</span><span class="p">))</span>
+            <span class="n">Q</span> <span class="o">=</span> <span class="n">Qw</span><span class="o">*</span><span class="p">(</span><span class="n">J</span><span class="o">/</span><span class="mi">100</span><span class="p">)</span>
         <span class="k">elif</span> <span class="p">(</span><span class="s1">&#39;Q&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
             <span class="n">Q</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-            <span class="n">J</span> <span class="o">=</span> <span class="mf">100.0</span><span class="o">*</span> <span class="p">(</span><span class="n">Q</span><span class="o">/</span><span class="n">Qw</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="n">Fs</span><span class="o">*</span><span class="n">Fb</span><span class="p">)</span>
+            <span class="n">J</span> <span class="o">=</span> <span class="mf">100.0</span><span class="o">*</span> <span class="p">(</span><span class="n">Q</span><span class="o">/</span><span class="n">Qw</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;No lightness or brightness values in data[...,0]. Inverse CAM-transform not possible!&#39;</span><span class="p">)</span>
             
         <span class="c1">#--------------------------------------------</span>
         <span class="c1"># calculate achromatic signal, Iz:</span>
-        <span class="n">Iz</span> <span class="o">=</span> <span class="p">(</span><span class="n">Qw</span><span class="o">/</span><span class="mi">925</span><span class="o">*</span><span class="p">((</span><span class="n">J</span><span class="o">/</span><span class="mi">100</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="n">Fs</span><span class="o">*</span><span class="n">Fb</span><span class="p">)))</span><span class="o">*</span><span class="p">(</span><span class="n">Fs</span><span class="o">/</span><span class="n">FL</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mf">1.17</span><span class="p">)</span>
+        <span class="n">Iz</span> <span class="o">=</span> <span class="p">(</span><span class="n">Q</span><span class="o">/</span><span class="p">(</span><span class="mi">2700</span><span class="o">*</span><span class="p">(</span><span class="n">Fs</span><span class="o">**</span><span class="mf">2.2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">Fb</span><span class="o">**</span><span class="mf">0.5</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">FL</span><span class="o">**</span><span class="mf">0.2</span><span class="p">)))</span><span class="o">**</span><span class="p">((</span><span class="n">Fb</span><span class="o">**</span><span class="mf">0.12</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mf">1.6</span><span class="o">*</span><span class="n">Fs</span><span class="p">))</span>
             
+        
+        <span class="c1">#-------------------------------------------- </span>
+        <span class="c1"># calculate Hue quadrature (if requested in &#39;out&#39;):</span>
+        <span class="k">if</span> <span class="s1">&#39;H&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">:</span>    
+            <span class="n">h</span> <span class="o">=</span> <span class="n">hue_quadrature</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">outin</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;H&#39;</span><span class="p">)],</span> <span class="n">unique_hue_data</span> <span class="o">=</span> <span class="n">_UNIQUE_HUE_DATA</span><span class="p">,</span> <span class="n">forward</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+        
+        
         <span class="c1">#--------------------------------------------    </span>
         <span class="k">if</span> <span class="s1">&#39;a&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span> 
             <span class="c1"># calculate hue h:</span>
@@ -673,49 +678,53 @@
         
             <span class="c1">#--------------------------------------------</span>
             <span class="c1"># calculate Colorfulness M or Chroma C or Saturation s from a,b:</span>
-            <span class="n">MCs</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mf">2.0</span> <span class="o">+</span> <span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span><span class="o">**</span><span class="mf">2.0</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>   
-        <span class="k">else</span><span class="p">:</span>
+            <span class="n">MCs</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mf">2.0</span> <span class="o">+</span> <span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span><span class="o">**</span><span class="mf">2.0</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>  
+        <span class="k">elif</span> <span class="s1">&#39;H&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">:</span>    
+            <span class="n">h</span> <span class="o">=</span> <span class="n">hue_quadrature</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">outin</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;H&#39;</span><span class="p">)],</span> <span class="n">unique_hue_data</span> <span class="o">=</span> <span class="n">_UNIQUE_HUE_DATA</span><span class="p">,</span> <span class="n">forward</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+            <span class="n">MCs</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> 
+        <span class="k">elif</span> <span class="s1">&#39;h&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">:</span>
             <span class="n">h</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span>
-            <span class="n">MCs</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>   
+            <span class="n">MCs</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>  
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;No (a,b) or hue angle or Hue quadrature data in input!&#39;</span><span class="p">)</span>
         
 
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;aS&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="s1">&#39;S&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">):</span>
-            <span class="n">Q</span> <span class="o">=</span> <span class="n">Qw</span><span class="o">*</span><span class="p">(</span><span class="n">J</span><span class="o">/</span><span class="mi">100</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="n">Fs</span><span class="o">*</span><span class="n">Fb</span><span class="p">))</span>
-            <span class="n">M</span> <span class="o">=</span> <span class="n">Q</span><span class="o">*</span><span class="p">(</span><span class="n">MCs</span><span class="o">/</span><span class="mf">100.0</span><span class="p">)</span>
+            <span class="n">M</span> <span class="o">=</span> <span class="n">Q</span> <span class="o">*</span> <span class="p">(</span><span class="n">MCs</span> <span class="o">/</span> <span class="n">FL</span><span class="o">**</span><span class="mf">0.6</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> 
             <span class="n">C</span> <span class="o">=</span> <span class="mi">100</span><span class="o">*</span><span class="n">M</span><span class="o">/</span><span class="n">Qw</span>
          
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;aM&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="s1">&#39;M&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">):</span> 
             <span class="n">C</span> <span class="o">=</span> <span class="mi">100</span><span class="o">*</span><span class="n">MCs</span><span class="o">/</span><span class="n">Qw</span>
-        
+            
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;aC&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="s1">&#39;C&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">):</span> <span class="c1"># convert C to M:</span>
             <span class="n">C</span> <span class="o">=</span> <span class="n">MCs</span>
             
         
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;Wz&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="s1">&#39;aWz&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">):</span> <span class="c1">#whiteness</span>
-            <span class="n">C</span> <span class="o">=</span> <span class="p">(((</span><span class="mi">100</span><span class="o">-</span><span class="n">MCs</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="p">(</span><span class="n">J</span> <span class="o">-</span> <span class="mi">100</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
+            <span class="n">C</span> <span class="o">=</span> <span class="p">(((</span><span class="mi">100</span><span class="o">-</span><span class="n">MCs</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="p">(</span><span class="mi">100</span> <span class="o">-</span> <span class="n">J</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
         
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;Kz&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="s1">&#39;aKz&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">):</span> <span class="c1"># blackness</span>
-            <span class="n">C</span> <span class="o">=</span> <span class="p">((</span><span class="mi">100</span><span class="o">-</span><span class="n">MCs</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="p">(</span><span class="n">J</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
+            <span class="n">C</span> <span class="o">=</span> <span class="p">((</span><span class="mi">1</span><span class="o">/</span><span class="mi">8</span><span class="p">)</span><span class="o">*</span><span class="p">(((</span><span class="mi">100</span><span class="o">-</span><span class="n">MCs</span><span class="p">)</span><span class="o">/</span><span class="mf">0.8</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">J</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span><span class="o">**</span><span class="mf">0.5</span>
             
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;Sz&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="s1">&#39;aSz&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">):</span>  <span class="c1"># saturation</span>
-            <span class="n">C</span> <span class="o">=</span> <span class="p">(</span><span class="n">MCs</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="p">(</span><span class="n">J</span> <span class="o">-</span> <span class="mi">55</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
+            <span class="n">C</span> <span class="o">=</span> <span class="p">(</span><span class="n">Q</span> <span class="o">/</span> <span class="n">Qw</span><span class="p">)</span> <span class="o">*</span> <span class="n">MCs</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="n">FL</span><span class="o">**</span><span class="mf">1.2</span> <span class="o">/</span> <span class="mi">100</span> 
             
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;Vz&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="s1">&#39;aVz&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">):</span>  <span class="c1"># vividness</span>
-            <span class="n">C</span> <span class="o">=</span> <span class="p">(</span><span class="n">MCs</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="p">(</span><span class="n">J</span> <span class="o">-</span> <span class="mi">70</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
+            <span class="n">C</span> <span class="o">=</span> <span class="p">((</span><span class="n">MCs</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="p">(</span><span class="n">J</span> <span class="o">-</span> <span class="mi">58</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="mf">3.4</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
             
                 
         <span class="c1">#--------------------------------------------</span>
         <span class="c1"># Calculate colorfulness, M:</span>
-        <span class="n">M</span> <span class="o">=</span> <span class="n">Qw</span><span class="o">*</span><span class="n">C</span><span class="o">/</span><span class="mi">100</span>
+        <span class="n">M</span> <span class="o">=</span> <span class="n">Qw</span> <span class="o">*</span> <span class="n">C</span> <span class="o">/</span> <span class="mi">100</span>
         
         <span class="c1">#--------------------------------------------    </span>
         <span class="c1"># calculate eccentricity factor, et:</span>
         <span class="c1"># ez = 1.014 + np.cos(h*np.pi/180 + 89.038)</span>
-        <span class="n">ez</span> <span class="o">=</span> <span class="mf">1.014</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">((</span><span class="n">h</span> <span class="o">+</span> <span class="mf">89.038</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">180</span><span class="p">)</span>
+        <span class="n">ez</span> <span class="o">=</span> <span class="mf">1.015</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">((</span><span class="n">h</span> <span class="o">+</span> <span class="mf">89.038</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">180</span><span class="p">)</span>
         
         <span class="c1">#--------------------------------------------</span>
         <span class="c1"># calculate t (=sqrt(a**2+b**2)) from M:</span>
-        <span class="n">t</span> <span class="o">=</span> <span class="p">(((</span><span class="n">M</span><span class="o">/</span><span class="mi">50</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">iabzw</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="mf">2.52</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">Fb</span><span class="o">**</span><span class="mf">0.3</span><span class="p">))</span><span class="o">/</span><span class="p">((</span><span class="n">ez</span><span class="o">**</span><span class="mf">0.068</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">FL</span><span class="o">**</span><span class="mf">0.2</span><span class="p">)))</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mf">0.368</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="p">(((</span><span class="n">M</span><span class="o">/</span><span class="mi">100</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">iabzw</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="mf">0.78</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">Fb</span><span class="o">**</span><span class="mf">0.1</span><span class="p">))</span><span class="o">/</span><span class="p">((</span><span class="n">ez</span><span class="o">**</span><span class="mf">0.068</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">FL</span><span class="o">**</span><span class="mf">0.2</span><span class="p">)))</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mf">0.37</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
 
         <span class="c1">#--------------------------------------------</span>
         <span class="c1"># Calculate az, bz:</span>
@@ -729,7 +738,7 @@
 
         <span class="c1">#-------------------------------------------</span>
         <span class="c1"># Apply CAT from D65:</span>
-        <span class="n">xyz</span> <span class="o">=</span>  <span class="n">cat</span><span class="o">.</span><span class="n">apply_vonkries2</span><span class="p">(</span><span class="n">xyzc</span><span class="p">,</span> <span class="n">xyzw_d65</span><span class="p">,</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="n">D</span><span class="p">,</span> 
+        <span class="n">xyz</span> <span class="o">=</span>  <span class="n">cat</span><span class="o">.</span><span class="n">apply_vonkries1</span><span class="p">(</span><span class="n">xyzc</span><span class="p">,</span> <span class="n">xyzw_d65</span><span class="p">,</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="n">D</span><span class="p">,</span> 
                                    <span class="n">mcat</span> <span class="o">=</span> <span class="n">mcat</span><span class="p">,</span> <span class="n">invmcat</span> <span class="o">=</span> <span class="n">invmcat</span><span class="p">,</span>
                                    <span class="n">use_Yw</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
 
@@ -863,8 +872,12 @@
     <span class="n">xyz_3</span> <span class="o">=</span> <span class="n">_cam</span><span class="p">(</span><span class="n">out_3</span><span class="p">[</span><span class="o">...</span><span class="p">,:</span><span class="mi">3</span><span class="p">],</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw2</span><span class="p">,</span> <span class="n">forward</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">outin</span> <span class="o">=</span> <span class="n">out</span><span class="p">[:</span><span class="mi">3</span><span class="p">])</span>
     <span class="nb">print</span><span class="p">((</span><span class="n">xyz1</span> <span class="o">-</span> <span class="n">xyz_3</span><span class="p">[:,</span><span class="mi">0</span><span class="p">,:])</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
     
-    
-     
+    <span class="c1"># test of origin of space:</span>
+    <span class="n">xyzw_d65</span> <span class="o">=</span> <span class="n">lx</span><span class="o">.</span><span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">lx</span><span class="o">.</span><span class="n">_CIE_D65</span><span class="p">,</span> <span class="n">cieobs</span><span class="o">=</span><span class="s1">&#39;1931_2&#39;</span><span class="p">)</span>
+    <span class="c1"># xyzw_d65 = np.array([[95.047, 100.0, 108.888]])</span>
+    <span class="n">out_d65</span> <span class="o">=</span> <span class="n">run</span><span class="p">(</span><span class="n">xyzw_d65</span><span class="p">,</span><span class="n">xyzw</span><span class="o">=</span><span class="n">xyzw_d65</span><span class="p">,</span><span class="n">outin</span><span class="o">=</span><span class="s1">&#39;h,Q,J,M,C,Sz,Vz,Kz,Wz&#39;</span><span class="p">,</span><span class="n">conditions</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;La&#39;</span><span class="p">:</span><span class="mi">264</span><span class="p">,</span><span class="s1">&#39;Yb&#39;</span><span class="p">:</span><span class="mi">100</span><span class="p">,</span><span class="s1">&#39;D&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;Dtype&#39;</span><span class="p">:</span><span class="kc">None</span><span class="p">,</span><span class="s1">&#39;surround&#39;</span><span class="p">:</span><span class="s1">&#39;avg&#39;</span><span class="p">},</span><span class="n">mcat</span><span class="o">=</span><span class="s1">&#39;cat02&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;origin test&#39;</span><span class="p">,</span> <span class="n">out_d65</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Origin is not at az=bz=0 !!!&#39;</span><span class="p">)</span>
     <span class="c1"># user_conditions = {&#39;D&#39;: 1, &#39;Dtype&#39;: None,\</span>
     <span class="c1">#                &#39;La&#39;: 500.0, &#39;Yb&#39;: 20.0, &#39;surround&#39;: &#39;avg&#39;}</span>
 
@@ -891,16 +904,23 @@
     <span class="c1"># axs[1].set_ylabel(&#39;bzC (zcam)&#39;)</span>
     
     <span class="c1"># Test code with examples in Table of supplement to paper:</span>
-    <span class="n">xyzw</span> <span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">95.047</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mf">108.883</span><span class="p">]])</span>
-    <span class="n">xyzt</span> <span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">90.042</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mf">110.88</span><span class="p">]])</span>
-    <span class="n">run</span><span class="p">(</span><span class="n">xyzt</span><span class="p">,</span><span class="n">xyzw</span><span class="o">=</span><span class="n">xyzw</span><span class="p">,</span><span class="n">conditions</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;La&#39;</span><span class="p">:</span><span class="mi">64</span><span class="p">,</span><span class="s1">&#39;Yb&#39;</span><span class="p">:</span><span class="mi">20</span><span class="p">,</span><span class="s1">&#39;D&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;Dtype&#39;</span><span class="p">:</span><span class="kc">None</span><span class="p">,</span><span class="s1">&#39;surround&#39;</span><span class="p">:</span><span class="s1">&#39;avg&#39;</span><span class="p">},</span><span class="n">mcat</span><span class="o">=</span><span class="s1">&#39;cat02&#39;</span><span class="p">)</span>
+    <span class="n">xyzt</span> <span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">185</span><span class="p">,</span><span class="mi">206</span><span class="p">,</span><span class="mi">163</span><span class="p">]])</span>
+    <span class="n">xyzw</span> <span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">256</span><span class="p">,</span><span class="mi">264</span><span class="p">,</span><span class="mi">202</span><span class="p">]])</span>
+    <span class="n">out1</span> <span class="o">=</span> <span class="n">run</span><span class="p">(</span><span class="n">xyzt</span><span class="p">,</span><span class="n">xyzw</span><span class="o">=</span><span class="n">xyzw</span><span class="p">,</span><span class="n">outin</span><span class="o">=</span><span class="s1">&#39;h,Q,J,M,C,Sz,Vz,Kz,Wz&#39;</span><span class="p">,</span><span class="n">conditions</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;La&#39;</span><span class="p">:</span><span class="mi">264</span><span class="p">,</span><span class="s1">&#39;Yb&#39;</span><span class="p">:</span><span class="mi">100</span><span class="p">,</span><span class="s1">&#39;D&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;Dtype&#39;</span><span class="p">:</span><span class="kc">None</span><span class="p">,</span><span class="s1">&#39;surround&#39;</span><span class="p">:</span><span class="s1">&#39;avg&#39;</span><span class="p">},</span><span class="n">mcat</span><span class="o">=</span><span class="s1">&#39;cat02&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;out1&#39;</span><span class="p">,</span> <span class="n">out1</span><span class="p">)</span>
     
+    <span class="n">xyzt</span> <span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">89</span><span class="p">,</span><span class="mi">96</span><span class="p">,</span><span class="mi">120</span><span class="p">]])</span>
+    <span class="n">xyzw</span> <span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">256</span><span class="p">,</span><span class="mi">264</span><span class="p">,</span><span class="mi">202</span><span class="p">]])</span>
+    <span class="n">out2</span> <span class="o">=</span> <span class="n">run</span><span class="p">(</span><span class="n">xyzt</span><span class="p">,</span><span class="n">xyzw</span><span class="o">=</span><span class="n">xyzw</span><span class="p">,</span><span class="n">outin</span><span class="o">=</span><span class="s1">&#39;h,Q,J,M,C,Sz,Vz,Kz,Wz&#39;</span><span class="p">,</span><span class="n">conditions</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;La&#39;</span><span class="p">:</span><span class="mi">264</span><span class="p">,</span><span class="s1">&#39;Yb&#39;</span><span class="p">:</span><span class="mi">100</span><span class="p">,</span><span class="s1">&#39;D&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;Dtype&#39;</span><span class="p">:</span><span class="kc">None</span><span class="p">,</span><span class="s1">&#39;surround&#39;</span><span class="p">:</span><span class="s1">&#39;avg&#39;</span><span class="p">},</span><span class="n">mcat</span><span class="o">=</span><span class="s1">&#39;cat02&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;out2&#39;</span><span class="p">,</span> <span class="n">out2</span><span class="p">)</span>
     
-    <span class="n">xyzw</span> <span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">95.047</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mf">108.883</span><span class="p">]])</span>
-    <span class="n">xyzt</span> <span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">54.33</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mf">14.33</span><span class="p">]])</span>
-    <span class="n">run</span><span class="p">(</span><span class="n">xyzt</span><span class="p">,</span><span class="n">xyzw</span><span class="o">=</span><span class="n">xyzw</span><span class="p">,</span><span class="n">conditions</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;La&#39;</span><span class="p">:</span><span class="mi">40</span><span class="p">,</span><span class="s1">&#39;Yb&#39;</span><span class="p">:</span><span class="mi">20</span><span class="p">,</span><span class="s1">&#39;D&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;Dtype&#39;</span><span class="p">:</span><span class="kc">None</span><span class="p">,</span><span class="s1">&#39;surround&#39;</span><span class="p">:</span><span class="s1">&#39;avg&#39;</span><span class="p">},</span><span class="n">mcat</span><span class="o">=</span><span class="s1">&#39;cat02&#39;</span><span class="p">)</span>
-    
-    
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1"> !!!! REMARK !!!!&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Output does not match perfectly with example in supplementary material of paper Safdar et al (2021).&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Differences start with output for jz,az,bz; especially b seems to be a bit more off.&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Parameters in model are as in paper, so differences are likely caused by CAT, in particular the exact whitepoint of D65&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Using close but off values for the xyz of D65 gets the results closer.&quot;</span><span class="p">)</span>
+
+    <span class="c1">#print(run(run(np.array([[50, 10, 100]]), outin = &quot;J,C,H&quot;, forward = True), outin = &quot;J,C,H&quot;, forward = False))</span>
   
 </pre></div>
 

@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>luxpy.color.cam.ciecam02 &mdash; LuxPy 1.6.5 documentation</title>
+  <title>luxpy.color.cam.ciecam02 &mdash; LuxPy 1.6.6 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                1.6.5
+                1.6.6
               </div>
             
           
@@ -512,6 +512,11 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;No lightness or brightness values in data. Inverse CAM-transform not possible!&#39;</span><span class="p">)</span>
             
+        <span class="c1">#-------------------------------------------- </span>
+        <span class="c1"># calculate Hue quadrature (if requested in &#39;out&#39;):</span>
+        <span class="k">if</span> <span class="s1">&#39;H&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">:</span>    
+            <span class="n">h</span> <span class="o">=</span> <span class="n">hue_quadrature</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">outin</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;H&#39;</span><span class="p">)],</span> <span class="n">unique_hue_data</span> <span class="o">=</span> <span class="n">_UNIQUE_HUE_DATA</span><span class="p">,</span> <span class="n">forward</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+
             
         <span class="c1">#--------------------------------------------    </span>
         <span class="k">if</span> <span class="s1">&#39;a&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span> 
@@ -521,9 +526,14 @@
             <span class="c1">#--------------------------------------------</span>
             <span class="c1"># calculate Colorfulness M or Chroma C or Saturation s from a,b:</span>
             <span class="n">MCs</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mf">2.0</span> <span class="o">+</span> <span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span><span class="o">**</span><span class="mf">2.0</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>   
-        <span class="k">else</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="s1">&#39;H&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">:</span>    
+            <span class="n">h</span> <span class="o">=</span> <span class="n">hue_quadrature</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">outin</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;H&#39;</span><span class="p">)],</span> <span class="n">unique_hue_data</span> <span class="o">=</span> <span class="n">_UNIQUE_HUE_DATA</span><span class="p">,</span> <span class="n">forward</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+            <span class="n">MCs</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> 
+        <span class="k">elif</span> <span class="s1">&#39;h&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">:</span>
             <span class="n">h</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span>
             <span class="n">MCs</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>  
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;No (a,b) or hue angle or Hue quadrature data in input!&#39;</span><span class="p">)</span>
         
         
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;S&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>

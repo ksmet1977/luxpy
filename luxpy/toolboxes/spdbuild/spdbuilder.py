@@ -781,9 +781,14 @@ def spd_builder(flux = None, component_spds = None, peakwl = 450, fwhm = 20, bw_
             plt.figure()
             if component_spds_plot.shape[0] == 3:
                 plt.plot(wl,component_spds_plot[i,:,0],'b--', label = 'Component 1')
-                if (strength_ph is not None) & (strength_ph is not 0):
-                    plt.plot(wl,component_spds_plot[i,:,1],'g:', label = 'Component 2')
-                    plt.plot(wl,component_spds_plot[i,:,2],'y:', label = 'Component 3')
+                
+                # if (strength_ph is not None) & (strength_ph is not 0): # raises SyntaxWarning: "is" with a literal. Did you mean "=="?
+                if (strength_ph is not None) & isinstance(strength_ph,int):
+                    if strength_ph != 0:
+                        
+                        plt.plot(wl,component_spds_plot[i,:,1],'g:', label = 'Component 2')
+                        plt.plot(wl,component_spds_plot[i,:,2],'y:', label = 'Component 3')
+            
             plt.plot(wl,spd[i],'k-', label = 'Output spd')
             plt.xlabel('Wavelengths (nm)')
             plt.ylabel('Normalized spectral intensity (max = 1)')

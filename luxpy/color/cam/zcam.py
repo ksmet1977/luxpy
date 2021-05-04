@@ -504,6 +504,13 @@ def run(data, xyzw = None, outin = 'J,aM,bM', cieobs = _CIEOBS,
         # calculate achromatic signal, Iz:
         Iz = (Q/(2700*(Fs**2.2)*(Fb**0.5)*(FL**0.2)))**((Fb**0.12)/(1.6*Fs))
             
+        
+        #-------------------------------------------- 
+        # calculate Hue quadrature (if requested in 'out'):
+        if 'H' in outin:    
+            h = hue_quadrature(data[...,outin.index('H')], unique_hue_data = _UNIQUE_HUE_DATA, forward = False)
+        
+        
         #--------------------------------------------    
         if 'a' in outin[1]: 
             # calculate hue h:
@@ -511,10 +518,15 @@ def run(data, xyzw = None, outin = 'J,aM,bM', cieobs = _CIEOBS,
         
             #--------------------------------------------
             # calculate Colorfulness M or Chroma C or Saturation s from a,b:
-            MCs = (data[...,1]**2.0 + data[...,2]**2.0)**0.5   
-        else:
+            MCs = (data[...,1]**2.0 + data[...,2]**2.0)**0.5  
+        elif 'H' in outin:    
+            h = hue_quadrature(data[...,outin.index('H')], unique_hue_data = _UNIQUE_HUE_DATA, forward = False)
+            MCs = data[...,1] 
+        elif 'h' in outin:
             h = data[...,2]
-            MCs = data[...,1]   
+            MCs = data[...,1]  
+        else:
+            raise Exception('No (a,b) or hue angle or Hue quadrature data in input!')
         
 
         if ('aS' in outin) | ('S' in outin):
@@ -748,5 +760,5 @@ if __name__ == '__main__':
     print('Parameters in model are as in paper, so differences are likely caused by CAT, in particular the exact whitepoint of D65')
     print("Using close but off values for the xyz of D65 gets the results closer.")
 
-    
+    #print(run(run(np.array([[50, 10, 100]]), outin = "J,C,H", forward = True), outin = "J,C,H", forward = False))
   

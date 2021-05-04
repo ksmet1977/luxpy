@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>luxpy.color.cam.cam18sl &mdash; LuxPy 1.6.5 documentation</title>
+  <title>luxpy.color.cam.cam18sl &mdash; LuxPy 1.6.6 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                1.6.5
+                1.6.6
               </div>
             
           
@@ -466,8 +466,12 @@
                 <span class="n">s</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span><span class="o">**</span><span class="mf">2.0</span> <span class="o">+</span> <span class="n">b</span><span class="o">**</span><span class="mf">2.0</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
                 <span class="n">M</span> <span class="o">=</span> <span class="n">s</span><span class="o">*</span><span class="n">Q</span>
                       
-            <span class="k">if</span> <span class="s1">&#39;h&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;h&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="s1">&#39;H&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">):</span>
                 <span class="n">Q</span><span class="p">,</span> <span class="n">WsM</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">asplit</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                
+                <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;H&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">):</span>
+                    <span class="n">h</span> <span class="o">=</span> <span class="n">hue_quadrature</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">unique_hue_data</span> <span class="o">=</span> <span class="n">unique_hue_data</span><span class="p">,</span> <span class="n">forward</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+                
                 <span class="n">Q</span> <span class="o">=</span> <span class="n">Q</span> <span class="o">/</span> <span class="p">((</span><span class="n">fov</span><span class="o">/</span><span class="mf">10.0</span><span class="p">)</span><span class="o">**</span><span class="n">cfov</span><span class="p">)</span> <span class="c1">#adjust Q for size (fov) of stimulus back to that 10° ref</span>
                 <span class="k">if</span> <span class="s1">&#39;W&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">:</span>
                      <span class="n">s</span> <span class="o">=</span> <span class="p">(((</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">WsM</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span><span class="o">/</span><span class="n">cW</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">**</span><span class="p">(</span><span class="mf">1.0</span><span class="o">/</span><span class="n">cW</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>

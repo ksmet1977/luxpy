@@ -121,13 +121,15 @@ def deltaH(h1, C1, h2 = None, C2 = None, htype = 'deg'):
         Cprod = C1
     return 2*(Cprod)**0.5*np.sin(r2d*deltah/2)   
 
-def hue_quadrature(h, unique_hue_data = None):
+def hue_quadrature(h, unique_hue_data = None, forward = True):
     """
     Get hue quadrature H from hue h.
     
     Args:
         :h: 
-            | float or ndarray [(N,) or (N,1)] with hue data in degrees (!).
+            | float or ndarray [(N,) or (N,1)] with: 
+            |   - hue angle data in degrees (!) if forward == True.
+            |   - Hue quadrature data if forward = False
         :unique_hue data:
             | None or dict, optional
             |   - None: defaults to:
@@ -138,10 +140,13 @@ def hue_quadrature(h, unique_hue_data = None):
             |        'Hi':[0.0,100.0,200.0,300.0,400.0]}
             |   - dict: user specified unique hue data  
             |           (same structure as above)
+        :forward:
+            | True, optional
+            | If true: input h is hue angle, else it is Hue quadrature
     
     Returns:
         :H: 
-            | ndarray of Hue quadrature value(s).
+            | ndarray of Hue quadrature value(s) (forward == True) or of hue angle values(s) (foward == False).
     """
     
     if unique_hue_data is None:
@@ -157,31 +162,65 @@ def hue_quadrature(h, unique_hue_data = None):
     Hi = unique_hue_data['Hi']
     ei = unique_hue_data['ei']
     
-    h = np.atleast_2d(h)
-    h[h<hi[0]] += 360.0
-    if h.shape[0] == 1:
-        h = h.T
-
-    H = np.zeros_like(h)
-    for j in range(h.shape[1]):
-        h_j = h[...,j:j+1]
-        h_hi = np.repeat(h_j, repeats = len(hi), axis = 1)
-        hi_h = np.repeat(np.atleast_2d(hi),repeats = h.shape[0], axis = 0)
-        d = (h_hi - hi_h)
-        d[d<0] = 1000.0
-        p = d.argmin(axis = 1)
-        p[p == (len(hi)-1)] = 0 # make sure last unique hue data is not selected
-        H_j = np.array([Hi[pi] + (100.0*(h_j[i]-hi[pi])/ei[pi])/((h_j[i]-hi[pi])/ei[pi] + (hi[pi+1] - h_j[i])/ei[pi+1]) for (i,pi) in enumerate(p)])
-        H[...,j:j+1] = H_j
-
-    if ndim == 0:
-        return H[0][0]
-    elif ndim == 1:
-        return H[:,0]
-    else:
-        return H
-    # if squeezed:
-    #     H = np.expand_dims(H, axis=0)
-    # return H
     
+    
+    if forward == True:
+        h = np.atleast_2d(h)
+        h[h>360] -= 360.0
+        h[h<hi[0]] += 360.0
+        if h.shape[0] == 1:
+            h = h.T
+    
+        H = np.zeros_like(h)
+        for j in range(h.shape[1]):
+            h_j = h[...,j:j+1]
+            h_hi = np.repeat(h_j, repeats = len(hi), axis = 1)
+            hi_h = np.repeat(np.atleast_2d(hi),repeats = h.shape[0], axis = 0)
+            d = (h_hi - hi_h)
+            d[d<0] = 1000.0
+            p = d.argmin(axis = 1)
+            p[p == (len(hi)-1)] = 0 # make sure last unique hue data is not selected
+            H_j = np.array([Hi[pi] + (100.0*(h_j[i]-hi[pi])/ei[pi])/((h_j[i]-hi[pi])/ei[pi] + (hi[pi+1] - h_j[i])/ei[pi+1]) for (i,pi) in enumerate(p)])
+            H[...,j:j+1] = H_j
+    
+        if ndim == 0:
+            return H[0][0]
+        elif ndim == 1:
+            return H[:,0]
+        else:
+            return H
 
+    else:
+        H = np.atleast_2d(h)
+        if H.shape[0] == 1:
+            H = H.T
+        h = np.zeros_like(H)
+        for j in range(H.shape[1]):
+            H_j = H[...,j:j+1]
+            H_Hi = np.repeat(H_j, repeats = len(Hi), axis = 1)
+            Hi_H = np.repeat(np.atleast_2d(Hi),repeats = H.shape[0], axis = 0)
+            d = (H_Hi - Hi_H)
+            d[d<0] = 1000.0
+            p = d.argmin(axis = 1)
+            p[p == (len(Hi)-1)] = 0 # make sure last unique hue data is not selected
+            h_j = np.array([((H_j[i] - Hi[pi])*(ei[pi+1]*hi[pi] - ei[pi]*hi[pi+1]) - 100*ei[pi+1]*hi[pi])/((H_j[i] - Hi[pi])*(ei[pi+1] - ei[pi]) - 100*ei[pi+1]) for (i,pi) in enumerate(p)])
+            h[...,j:j+1] = h_j
+        h[h > 360 - hi[0]*1] -= 360.0
+    
+        if ndim == 0:
+            return h[0][0]
+        elif ndim == 1:
+            return h[:,0]
+        else:
+            return h
+        
+if __name__ == '__main__':
+    h = np.array([10.0,30,110,280,370,390])
+    print('h',h)
+    H = hue_quadrature(h, unique_hue_data = None, forward = True)
+    print('H',H)
+    h2 = hue_quadrature(H, unique_hue_data = None, forward = False)
+    print('h2',h2)
+    H2 = hue_quadrature(h2, unique_hue_data = None, forward = True)
+    print('H2',H2)
+    

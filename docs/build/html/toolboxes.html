@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Toolboxes &mdash; LuxPy 1.6.5 documentation</title>
+  <title>Toolboxes &mdash; LuxPy 1.6.6 documentation</title>
   
 
   
@@ -62,7 +62,7 @@
             
             
               <div class="version">
-                1.6.5
+                1.6.6
               </div>
             
           
@@ -99,8 +99,9 @@
 <li class="toctree-l2"><a class="reference internal" href="color.html">Color sub-package</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Toolboxes</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#photbiochem">photbiochem/</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#module-for-calculating-cie-tn003-2015-photobiological-quantities">Module for calculating CIE (TN003:2015) photobiological quantities</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-for-calculating-cie-s026-2018-tn003-2015-photobiological-quantities">Module for calculating CIE (S026:2018 &amp; TN003:2015) photobiological quantities</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-for-calculation-of-cyanosis-index-as-nzs-1680-2-5-1997">Module for calculation of cyanosis index (AS/NZS 1680.2.5:1997)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-for-blue-light-hazard-calculations">Module for Blue light hazard calculations</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#indvcmf">indvcmf/</a><ul>
@@ -221,9 +222,9 @@
 </dd>
 </dl>
 </div></blockquote>
-<span class="target" id="module-luxpy.toolboxes.photbiochem"></span><div class="section" id="module-for-calculating-cie-tn003-2015-photobiological-quantities">
-<h3>Module for calculating CIE (TN003:2015) photobiological quantities<a class="headerlink" href="#module-for-calculating-cie-tn003-2015-photobiological-quantities" title="Permalink to this headline">¶</a></h3>
-<p>(Eesc, Eemc, Eelc, Eez, Eer and Esc, Emc, Elc, Ez, Er)</p>
+<span class="target" id="module-luxpy.toolboxes.photbiochem"></span><div class="section" id="module-for-calculating-cie-s026-2018-tn003-2015-photobiological-quantities">
+<h3>Module for calculating CIE (S026:2018 &amp; TN003:2015) photobiological quantities<a class="headerlink" href="#module-for-calculating-cie-s026-2018-tn003-2015-photobiological-quantities" title="Permalink to this headline">¶</a></h3>
+<p>(Eelc, Eemc, Eesc, Eer, Eez, and Elc, Emc, Esc, Er, Ez)</p>
 <table class="docutils align-default">
 <colgroup>
 <col style="width: 16%" />
@@ -247,11 +248,11 @@ sα(λ)</p></th>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>s-cone</p></td>
-<td><p>photopsin (sc)</p></td>
-<td><p>cyanolabe</p></td>
-<td><p>cyanopic</p></td>
-<td><p>Ee,sc</p></td>
+<tr class="row-even"><td><p>l-cone</p></td>
+<td><p>photopsin (lc)</p></td>
+<td><p>erythrolabe</p></td>
+<td><p>erythropic</p></td>
+<td><p>Ee,lc</p></td>
 <td><p>W.m−2</p></td>
 </tr>
 <tr class="row-odd"><td><p>m-cone</p></td>
@@ -261,25 +262,25 @@ sα(λ)</p></th>
 <td><p>Ee,mc</p></td>
 <td><p>W.m−2</p></td>
 </tr>
-<tr class="row-even"><td><p>l-cone</p></td>
-<td><p>photopsin (lc)</p></td>
-<td><p>erythrolabe</p></td>
-<td><p>erythropic</p></td>
-<td><p>Ee,lc</p></td>
+<tr class="row-even"><td><p>s-cone</p></td>
+<td><p>photopsin (sc)</p></td>
+<td><p>cyanolabe</p></td>
+<td><p>cyanopic</p></td>
+<td><p>Ee,sc</p></td>
 <td><p>W.m−2</p></td>
 </tr>
-<tr class="row-odd"><td><p>ipRGC</p></td>
-<td><p>melanopsin (z)</p></td>
-<td><p>melanopic</p></td>
-<td><p>melanopic</p></td>
-<td><p>Ee,z</p></td>
-<td><p>W.m−2</p></td>
-</tr>
-<tr class="row-even"><td><p>rod</p></td>
+<tr class="row-odd"><td><p>rod</p></td>
 <td><p>rhodopsin (r)</p></td>
 <td><p>rhodopic</p></td>
 <td><p>rhodopic</p></td>
 <td><p>Ee,r</p></td>
+<td><p>W.m−2</p></td>
+</tr>
+<tr class="row-even"><td><p>ipRGC</p></td>
+<td><p>melanopsin (z)</p></td>
+<td><p>melanopic</p></td>
+<td><p>melanopic</p></td>
+<td><p>Ee,z</p></td>
 <td><p>W.m−2</p></td>
 </tr>
 </tbody>
@@ -341,19 +342,57 @@ sα(λ)</p></th>
 </div>
 </dd>
 <dt class="field-odd">_ACTIONSPECTRA</dt>
-<dd class="field-odd"><p>ndarray with alpha-actinic action spectra. (stored in file:
-‘./data/cie_tn003_2015_SI_action_spectra.dat’)</p>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with default CIE-S026:2018 alpha-actinic action spectra. (stored in file:</div>
+<div class="line">‘./data/cie_S026_2018_SI_action_spectra_CIEToolBox_v1.049.dat’)</div>
+</div>
+</dd>
+<dt class="field-even">_ACTIONSPECTRA_CIES026</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">ndarray with alpha-actinic action spectra. (stored in file:</div>
+<div class="line">‘./data/cie_S026_2018_SI_action_spectra_CIEToolBox_v1.049.dat’)</div>
+</div>
+</dd>
+<dt class="field-odd">_ACTIONSPECTRA_CIETN003</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with CIE-TN003:2015 alpha-actinic action spectra. (stored in file:</div>
+<div class="line">‘./data/cie_tn003_2015_SI_action_spectra.dat’)</div>
+</div>
 </dd>
 <dt class="field-even">spd_to_aopicE()</dt>
-<dd class="field-even"><p>Calculate alpha-opic irradiance (Ee,α) and equivalent 
-luminance (Eα) values for the l-cone, m-cone, s-cone, 
-rod and iprgc (α) photoreceptor cells following 
-CIE technical note TN 003:2015.</p>
+<dd class="field-even"><div class="line-block">
+<div class="line">Calculate alpha-opic irradiance (Ee,α) and equivalent </div>
+<div class="line">luminance (Eα) values for the l-cone, m-cone, s-cone, </div>
+<div class="line">rod and iprgc (α) photoreceptor cells following </div>
+<div class="line">CIE S026:2018 (= default actionspectra) or CIE TN003:2015.</div>
+</div>
+</dd>
+<dt class="field-odd">spd_to_aopicEDI()</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">Calculate alpha-opic equivalent daylight (D65) illuminance (lx)</div>
+<div class="line">for the l-cone, m-cone, s-cone, rod and iprgc (α) photoreceptor cells.</div>
+</div>
+</dd>
+<dt class="field-even">spd_to_aopicDER()</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">Calculate α-opic Daylight (D65) Efficacy Ratio</div>
+<div class="line">for the l-cone, m-cone, s-cone, rod and iprgc (α) photoreceptor cells.</div>
+</div>
+</dd>
+<dt class="field-odd">spd_to_aopicELR()</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">Calculate α-opic Efficacy of Luminous Radiation</div>
+<div class="line">for the l-cone, m-cone, s-cone, rod and iprgc (α) photoreceptor cells.</div>
+</div>
 </dd>
 </dl>
 </div></blockquote>
-<dl class="simple">
-<dt>References:</dt><dd><p>1. <a class="reference external" href="http://www.cie.co.at/publications/report-first-international-workshop-circadian-and-neurophysiological-photometry-2013">CIE-TN003:2015 (2015). 
+<dl>
+<dt>References:</dt><dd><p>1. <a class="reference external" href="https://cie.co.at/publications/cie-system-metrology-optical-radiation-iprgc-influenced-responses-light-0">CIE-S026:E2018 (2018). 
+CIE System for Metrology of Optical Radiation for ipRGC-Influenced Responses to Light 
+(Vienna, Austria).</a>
+(<a class="reference external" href="https://files.cie.co.at/CIE%20S%20026%20alpha-opic%20Toolbox%20User%20Guide.pdf">https://files.cie.co.at/CIE%20S%20026%20alpha-opic%20Toolbox%20User%20Guide.pdf</a>)</p>
+<p>2. <a class="reference external" href="http://www.cie.co.at/publications/report-first-international-workshop-circadian-and-neurophysiological-photometry-2013">CIE-TN003:2015 (2015). 
 Report on the first international workshop on 
 circadian and neurophysiological photometry, 2013 
 (Vienna, Austria).</a>
@@ -385,12 +424,117 @@ oxygenated blood</p>
 <dt>Reference:</dt><dd><p>AS/NZS1680.2.5 (1997). INTERIOR LIGHTING PART 2.5: HOSPITAL AND MEDICAL TASKS.</p>
 </dd>
 </dl>
+</div>
+<div class="section" id="module-for-blue-light-hazard-calculations">
+<h3>Module for Blue light hazard calculations<a class="headerlink" href="#module-for-blue-light-hazard-calculations" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><dl class="field-list simple">
+<dt class="field-odd">_BLH</dt>
+<dd class="field-odd"><p>Blue Light Hazard function</p>
+</dd>
+<dt class="field-even">spd_to_blh_eff()</dt>
+<dd class="field-even"><p>Calculate Blue Light Hazard efficacy (K) or efficiency (eta) of radiation.</p>
+</dd>
+</dl>
+</div></blockquote>
+<dl class="simple">
+<dt>References:</dt><dd><ol class="arabic simple">
+<li><p>IEC 62471:2006, 2006, Photobiological safety of lamps and lamp systems.</p></li>
+<li><p>IEC TR 62778, 2014, Application of IEC 62471 for the assessment of blue light hazard to light sources and luminaires.</p></li>
+</ol>
+</dd>
+</dl>
 <dl class="py function">
 <dt id="luxpy.toolboxes.photbiochem.spd_to_aopicE">
-<code class="sig-prename descclassname">luxpy.toolboxes.photbiochem.</code><code class="sig-name descname">spd_to_aopicE</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sid</span></em>, <em class="sig-param"><span class="n">Ee</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">E</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">Q</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">'1931_2'</span></em>, <em class="sig-param"><span class="n">sid_units</span><span class="o">=</span><span class="default_value">'W/m2'</span></em>, <em class="sig-param"><span class="n">out</span><span class="o">=</span><span class="default_value">'Eeas,Eas'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/photbiochem/cie_tn003_2015.html#spd_to_aopicE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.photbiochem.spd_to_aopicE" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate alpha-opic irradiance (Ee,α) and equivalent luminance (Eα) values
-for the l-cone, m-cone, s-cone, rod and iprgc (α) photoreceptor cells 
-following CIE technical note TN 003:2015.</p>
+<code class="sig-prename descclassname">luxpy.toolboxes.photbiochem.</code><code class="sig-name descname">spd_to_aopicE</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sid</span></em>, <em class="sig-param"><span class="n">Ee</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">E</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">Q</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">'1931_2'</span></em>, <em class="sig-param"><span class="n">sid_units</span><span class="o">=</span><span class="default_value">'W/m2'</span></em>, <em class="sig-param"><span class="n">out</span><span class="o">=</span><span class="default_value">'Eeas'</span></em>, <em class="sig-param"><span class="n">actionspectra</span><span class="o">=</span><span class="default_value">'CIE-S026'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/photbiochem/alpha_opic_quantities_cie_s026_2018_cie_tn003_2015.html#spd_to_aopicE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.photbiochem.spd_to_aopicE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate alpha-opic irradiance (Ee,α) values (W/m²) for the l-cone, m-cone, 
+s-cone, rod and iprgc (α) photoreceptor cells following CIE S026:2018.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">sid</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">numpy.ndarray with retinal spectral irradiance in :sid_units: </div>
+<div class="line">(if ‘uW/cm2’, sid will be converted to SI units ‘W/m2’)</div>
+</div>
+</dd>
+<dt class="field-even">Ee</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">If not None: normalize :sid: to an irradiance of :Ee:</div>
+</div>
+</dd>
+<dt class="field-odd">E</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">If not None: normalize :sid: to an illuminance of :E:</div>
+<div class="line">Note that E is calculate using a Km factor corrected to standard air.</div>
+</div>
+</dd>
+<dt class="field-even">Q</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">If not None: Normalize :sid: to a quantal energy of :Q:</div>
+</div>
+</dd>
+<dt class="field-odd">cieobs</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">_CIEOBS or str, optional</div>
+<div class="line">Type of cmf set to use for photometric units.</div>
+</div>
+</dd>
+<dt class="field-even">sid_units</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">‘W/m2’, optional</div>
+<div class="line">Other option ‘uW/m2’, input units of :sid:</div>
+</div>
+</dd>
+<dt class="field-odd">out</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">‘Eeas’ or str, optional</div>
+<div class="line">Determines values to return. </div>
+<div class="line">(to get also get equivalent illuminance Eα set :out: to ‘Eeas,Eas’)</div>
+</div>
+</dd>
+<dt class="field-even">actionspectra</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">‘CIES026’, optional</div>
+<div class="line">Actionspectra to use in calculation </div>
+<div class="line">options: </div>
+<div class="line">- ‘CIE-S026’: will use action spectra as defined in CIE S026 </div>
+<div class="line">- ‘CIE-TN003’: will use action spectra as defined in CIE TN003</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">returns</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">Eeas a numpy.ndarray with the α-opic irradiance</div>
+<div class="line">of all spectra in :sid: in SI-units (W/m²). </div>
+<div class="line"><br /></div>
+<div class="line">(other choice can be set using :out:)</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>References:</dt><dd><p>1. <a class="reference external" href="https://cie.co.at/publications/cie-system-metrology-optical-radiation-iprgc-influenced-responses-light-0">CIE-S026:E2018 (2018). 
+CIE System for Metrology of Optical Radiation for ipRGC-Influenced Responses to Light 
+(Vienna, Austria).</a>
+(<a class="reference external" href="https://files.cie.co.at/CIE%20S%20026%20alpha-opic%20Toolbox%20User%20Guide.pdf">https://files.cie.co.at/CIE%20S%20026%20alpha-opic%20Toolbox%20User%20Guide.pdf</a>)</p>
+<p>2. <a class="reference external" href="http://www.cie.co.at/publications/report-first-international-workshop-circadian-and-neurophysiological-photometry-2013">CIE-TN003:2015 (2015). 
+Report on the first international workshop on 
+circadian and neurophysiological photometry, 2013 
+(Vienna, Austria).</a>
+(<a class="reference external" href="http://files.cie.co.at/785_CIE_TN_003-2015.pdf">http://files.cie.co.at/785_CIE_TN_003-2015.pdf</a>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="luxpy.toolboxes.photbiochem.spd_to_aopicEDI">
+<code class="sig-prename descclassname">luxpy.toolboxes.photbiochem.</code><code class="sig-name descname">spd_to_aopicEDI</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sid</span></em>, <em class="sig-param"><span class="n">Ee</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">E</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">Q</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">'1931_2'</span></em>, <em class="sig-param"><span class="n">sid_units</span><span class="o">=</span><span class="default_value">'W/m2'</span></em>, <em class="sig-param"><span class="n">actionspectra</span><span class="o">=</span><span class="default_value">'CIE-S026'</span></em>, <em class="sig-param"><span class="n">ref</span><span class="o">=</span><span class="default_value">'D65'</span></em>, <em class="sig-param"><span class="n">out</span><span class="o">=</span><span class="default_value">'a_edi'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/photbiochem/alpha_opic_quantities_cie_s026_2018_cie_tn003_2015.html#spd_to_aopicEDI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.photbiochem.spd_to_aopicEDI" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate alpha-opic equivalent daylight (D65) illuminance (lux)
+for the l-cone, m-cone, s-cone, rod and iprgc (α) photoreceptor cells.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
 <dt class="field-odd">sid</dt>
@@ -430,6 +574,21 @@ following CIE technical note TN 003:2015.</p>
 <div class="line">Other option ‘uW/m2’, input units of :sid:</div>
 </div>
 </dd>
+<dt class="field-odd">actionspectra</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">‘CIES026’, optional</div>
+<div class="line">Actionspectra to use in calculation </div>
+<div class="line">options: </div>
+<div class="line">- ‘CIE-S026’: will use action spectra as defined in CIE S026 </div>
+<div class="line">- ‘CIE-TN003’: will use action spectra as defined in CIE TN003</div>
+</div>
+</dd>
+<dt class="field-even">ref</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">‘D65’, optional</div>
+<div class="line">Reference (daylight) spectrum to use. (‘D65’ or ‘E’ or ndarray)</div>
+</div>
+</dd>
 <dt class="field-odd">out</dt>
 <dd class="field-odd"><div class="line-block">
 <div class="line">‘Eeas, Eas’ or str, optional</div>
@@ -441,11 +600,119 @@ following CIE technical note TN 003:2015.</p>
 <dt>Returns:</dt><dd><dl class="field-list">
 <dt class="field-odd">returns</dt>
 <dd class="field-odd"><div class="line-block">
-<div class="line">(Eeas, Eas) with Eeas and Eas resp. numpy.ndarrays with the </div>
-<div class="line">α-opic irradiance and equivalent illuminance values </div>
+<div class="line">ndarray with the α-opic Equivalent Daylight Illuminance (lux) with the </div>
+<div class="line">for the l-cone, m-cone, s-cone, rod and iprgc photoreceptors</div>
 <div class="line">of all spectra in :sid: in SI-units. </div>
-<div class="line"><br /></div>
-<div class="line">(other choice can be set using :out:)</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="luxpy.toolboxes.photbiochem.spd_to_aopicDER">
+<code class="sig-prename descclassname">luxpy.toolboxes.photbiochem.</code><code class="sig-name descname">spd_to_aopicDER</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sid</span></em>, <em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">'1931_2'</span></em>, <em class="sig-param"><span class="n">sid_units</span><span class="o">=</span><span class="default_value">'W/m2'</span></em>, <em class="sig-param"><span class="n">actionspectra</span><span class="o">=</span><span class="default_value">'CIE-S026'</span></em>, <em class="sig-param"><span class="n">ref</span><span class="o">=</span><span class="default_value">'D65'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/photbiochem/alpha_opic_quantities_cie_s026_2018_cie_tn003_2015.html#spd_to_aopicDER"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.photbiochem.spd_to_aopicDER" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate α-opic Daylight (D65) Efficacy Ratio (= α-opic Daylight (D65) Efficiency)
+for the l-cone, m-cone, s-cone, rod and iprgc (α) photoreceptor cells.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">sid</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">numpy.ndarray with retinal spectral irradiance in :sid_units: </div>
+<div class="line">(if ‘uW/cm2’, sid will be converted to SI units ‘W/m2’)</div>
+</div>
+</dd>
+<dt class="field-even">cieobs</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">_CIEOBS or str, optional</div>
+<div class="line">Type of cmf set to use for photometric units.</div>
+</div>
+</dd>
+<dt class="field-odd">sid_units</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">‘W/m2’, optional</div>
+<div class="line">Other option ‘uW/m2’, input units of :sid:</div>
+</div>
+</dd>
+<dt class="field-even">actionspectra</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">‘CIES026’, optional</div>
+<div class="line">Actionspectra to use in calculation </div>
+<div class="line">options: </div>
+<div class="line">- ‘CIE-S026’: will use action spectra as defined in CIE S026 </div>
+<div class="line">- ‘CIE-TN003’: will use action spectra as defined in CIE TN003</div>
+</div>
+</dd>
+<dt class="field-odd">ref</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">‘D65’, optional</div>
+<div class="line">Reference (daylight) spectrum to use. (‘D65’ or ‘E’ or ndarray)</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">returns</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with the α-opic Daylight Efficacy Ratio with the </div>
+<div class="line">for the l-cone, m-cone, s-cone, rod and iprgc photoreceptors</div>
+<div class="line">of all spectra in :sid: in SI-units. </div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="luxpy.toolboxes.photbiochem.spd_to_aopicELR">
+<code class="sig-prename descclassname">luxpy.toolboxes.photbiochem.</code><code class="sig-name descname">spd_to_aopicELR</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sid</span></em>, <em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">'1931_2'</span></em>, <em class="sig-param"><span class="n">sid_units</span><span class="o">=</span><span class="default_value">'W/m2'</span></em>, <em class="sig-param"><span class="n">actionspectra</span><span class="o">=</span><span class="default_value">'CIE-S026'</span></em>, <em class="sig-param"><span class="n">ref</span><span class="o">=</span><span class="default_value">'D65'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/photbiochem/alpha_opic_quantities_cie_s026_2018_cie_tn003_2015.html#spd_to_aopicELR"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.photbiochem.spd_to_aopicELR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate α-opic Efficacy of Luminous Radiation (W/lm)
+for the l-cone, m-cone, s-cone, rod and iprgc (α) photoreceptor cells.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">sid</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">numpy.ndarray with retinal spectral irradiance in :sid_units: </div>
+<div class="line">(if ‘uW/cm2’, sid will be converted to SI units ‘W/m2’)</div>
+</div>
+</dd>
+<dt class="field-even">cieobs</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">_CIEOBS or str, optional</div>
+<div class="line">Type of cmf set to use for photometric units.</div>
+</div>
+</dd>
+<dt class="field-odd">sid_units</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">‘W/m2’, optional</div>
+<div class="line">Other option ‘uW/m2’, input units of :sid:</div>
+</div>
+</dd>
+<dt class="field-even">actionspectra</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">‘CIES026’, optional</div>
+<div class="line">Actionspectra to use in calculation </div>
+<div class="line">options: </div>
+<div class="line">- ‘CIE-S026’: will use action spectra as defined in CIE S026 </div>
+<div class="line">- ‘CIE-TN003’: will use action spectra as defined in CIE TN003</div>
+</div>
+</dd>
+<dt class="field-odd">ref</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">‘D65’, optional</div>
+<div class="line">Reference (daylight) spectrum to use. (‘D65’ or ‘E’ or ndarray)</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">returns</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with the α-opic Efficacy of Luminous Radiation (W/lm) with the </div>
+<div class="line">for the l-cone, m-cone, s-cone, rod and iprgc photoreceptors</div>
+<div class="line">of all spectra in :sid: in SI-units. </div>
 </div>
 </dd>
 </dl>
@@ -618,6 +885,60 @@ Erratum: Modeling the spectral sensitivity of the human circadian system
 (Lighting Research and Technology (2012) 44:4 (386-396)). 
 Light. Res. Technol. 44, 516.</a></p>
 </div></blockquote>
+</dd></dl>
+
+<dl class="py function">
+<dt id="luxpy.toolboxes.photbiochem.spd_to_blh_eff">
+<code class="sig-prename descclassname">luxpy.toolboxes.photbiochem.</code><code class="sig-name descname">spd_to_blh_eff</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spd</span></em>, <em class="sig-param"><span class="n">efficacy</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">'1931_2'</span></em>, <em class="sig-param"><span class="n">scr</span><span class="o">=</span><span class="default_value">'dict'</span></em>, <em class="sig-param"><span class="n">K</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/photbiochem/blue_light_hazard_IEC62471_IECTR62778.html#spd_to_blh_eff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.photbiochem.spd_to_blh_eff" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate Blue Light Hazard efficacy (K) or efficiency (eta) of radiation.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">S</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with spectral data</div>
+</div>
+</dd>
+<dt class="field-even">cieobs</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">str, optional</div>
+<div class="line">Sets the type of Vlambda function to obtain.</div>
+</div>
+</dd>
+<dt class="field-odd">scr</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">‘dict’ or array, optional</div>
+<div class="line">- ‘dict’: get from ybar from _CMF</div>
+<div class="line">- ‘array’: ndarray in :cieobs:</div>
+<div class="line">Determines whether to load cmfs from file (./data/cmfs/) </div>
+<div class="line">or from dict defined in .cmf.py</div>
+<div class="line">Vlambda is obtained by collecting Ybar.</div>
+</div>
+</dd>
+<dt class="field-even">K</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line-block">
+<div class="line">e.g.  K  = 683 lm/W for ‘1931_2’ (relative == False) </div>
+<div class="line">or K = 100/sum(spd*dl)        (relative == True)</div>
+</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">eff</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with blue light hazard efficacy or efficiency of radiation values.</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>References:</dt><dd><ol class="arabic simple">
+<li><p>IEC 62471:2006, 2006, Photobiological safety of lamps and lamp systems.</p></li>
+<li><p>IEC TR 62778, 2014, Application of IEC 62471 for the assessment of blue light hazard to light sources and luminaires.</p></li>
+</ol>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -1665,8 +1986,8 @@ It is also written such that the user can easily write his own
 primary constructor function. It supports the ‘3mixer’ algorithm 
 (but no ‘2mixer’) and a ‘no-mixer’ algorithm (chromaticity as part of the list
 of objectives) for calculating the mixing contributions of the primaries.</p>
-<div class="section" id="id13">
-<h4>Functions<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="id15">
+<h4>Functions<a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h4>
 <blockquote>
 <div><dl class="field-list simple">
 <dt class="field-odd">gaussian_prim_constructor()</dt>
@@ -1702,8 +2023,8 @@ spectra or component spectrum model parameters
 </dl>
 </div></blockquote>
 </div>
-<div class="section" id="id14">
-<h4>Notes<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="id16">
+<h4>Notes<a class="headerlink" href="#id16" title="Permalink to this headline">¶</a></h4>
 <blockquote>
 <div><ol class="arabic simple">
 <li><p>See examples below (in spdoptimizer2020.’__main__’) for use.</p></li>
@@ -1905,7 +2226,7 @@ spectra or component spectrum model parameters
 <div class="line">True outputs a ndarray with first row wavelengths.</div>
 </div>
 </dd>
-<dt class="field-even"><a href="#id19"><span class="problematic" id="id20">min_</span></a>, <a href="#id21"><span class="problematic" id="id22">max_</span></a></dt>
+<dt class="field-even"><a href="#id21"><span class="problematic" id="id22">min_</span></a>, <a href="#id23"><span class="problematic" id="id24">max_</span></a></dt>
 <dd class="field-even"><div class="line-block">
 <div class="line">0.0, 1.0, optional</div>
 <div class="line">Minimum and maximum of spd.</div>
@@ -5687,7 +6008,7 @@ or k nearest neighbour interpolation of samples from a standard reflectance set.
 <div class="line">Plot the position of the luminaire (0,0,0) in the graph as a red diamond.</div>
 </div>
 </dd>
-<dt class="field-odd"><a href="#id23"><span class="problematic" id="id24">plot_X_</span></a>…</dt>
+<dt class="field-odd"><a href="#id25"><span class="problematic" id="id26">plot_X_</span></a>…</dt>
 <dd class="field-odd"><div class="line-block">
 <div class="line">VArious options to customize plotting. Mainly allows for plotting of</div>
 <div class="line">additional info such as plane-ray intersection points, sensor pixels,</div>
@@ -5747,8 +6068,8 @@ or k nearest neighbour interpolation of samples from a standard reflectance set.
 </dl>
 </div></blockquote>
 </div>
-<div class="section" id="id18">
-<h4>Notes<a class="headerlink" href="#id18" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="id20">
+<h4>Notes<a class="headerlink" href="#id20" title="Permalink to this headline">¶</a></h4>
 <blockquote>
 <div><ol class="arabic simple">
 <li><p>For info on the input arguments of get_spd(), see help for each identically named function in each of the subpackages.</p></li>

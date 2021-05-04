@@ -429,8 +429,9 @@ def genMonteCarloObs(n_obs = 1, fieldsize = 10, list_Age = [32], out = 'LMS', wl
     # Get Normally-distributed Physiological Factors:
     vAll = getMonteCarloParam(n_obs = n_obs) 
      
-    if list_Age is 'us_census':
-        list_Age = getUSCensusAgeDist()
+    if isinstance(list_Age,str): 
+        if list_Age == 'us_census':
+            list_Age = getUSCensusAgeDist()
     
     # Generate Random Ages with the same probability density distribution 
     # as color matching experiment:

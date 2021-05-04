@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>luxpy.color.ctf.colortransforms &mdash; LuxPy 1.6.5 documentation</title>
+  <title>luxpy.color.ctf.colortransforms &mdash; LuxPy 1.6.6 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                1.6.5
+                1.6.6
               </div>
             
           
@@ -1270,7 +1270,7 @@
     <span class="k">return</span> <span class="n">Yxy_to_xyz</span><span class="p">(</span><span class="n">Yxy</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">Ydlep</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="xyz_to_srgb"><a class="viewcode-back" href="../../../../color.html#luxpy.color.ctf.colortransforms.xyz_to_srgb">[docs]</a><span class="k">def</span> <span class="nf">xyz_to_srgb</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">gamma</span> <span class="o">=</span> <span class="mf">2.4</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="xyz_to_srgb"><a class="viewcode-back" href="../../../../color.html#luxpy.color.ctf.colortransforms.xyz_to_srgb">[docs]</a><span class="k">def</span> <span class="nf">xyz_to_srgb</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">gamma</span> <span class="o">=</span> <span class="mf">2.4</span><span class="p">,</span> <span class="n">offset</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.055</span><span class="p">,</span> <span class="n">use_linear_part</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">M</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculates IEC:61966 sRGB values from xyz.</span>
 
@@ -1279,19 +1279,34 @@
 <span class="sd">            | ndarray with relative tristimulus values.</span>
 <span class="sd">        :gamma: </span>
 <span class="sd">            | 2.4, optional</span>
-<span class="sd">            | compression in sRGB</span>
-
+<span class="sd">            | Gamma compression in gamma-function gf(x): see notes</span>
+<span class="sd">        :offset:</span>
+<span class="sd">            | -0.055, optional</span>
+<span class="sd">            | Offset in gamma-function gf(x): see notes</span>
+<span class="sd">        :use_linear_part:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | If False: omit linear part at low RGB values and use gamma function throughout</span>
+<span class="sd">        :M:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | xyz to linear srgb conversion matrix.</span>
+<span class="sd">            | If None: use predefined matrix</span>
 <span class="sd">    Returns:</span>
 <span class="sd">        :rgb: </span>
 <span class="sd">            | ndarray with R,G,B values (uint8).</span>
+<span class="sd">            </span>
+<span class="sd">    Notes:</span>
+<span class="sd">        1. Gamma-function: gf(x) = ((1-offset)*x**gamma + offset)*255</span>
+<span class="sd">        2. dark values use linear function: lf(x) = x[dark] * 12.92 * 255</span>
+<span class="sd">        3. To use a pure gamma function, set offset to zero and use_linear_part to False.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">xyz</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">(</span><span class="n">xyz</span><span class="p">)</span>
 
     <span class="c1"># define 3x3 matrix</span>
-    <span class="n">M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">3.2404542</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.5371385</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.4985314</span><span class="p">],</span>
-                  <span class="p">[</span><span class="o">-</span><span class="mf">0.9692660</span><span class="p">,</span>  <span class="mf">1.8760108</span><span class="p">,</span>  <span class="mf">0.0415560</span><span class="p">],</span>
-                  <span class="p">[</span><span class="mf">0.0556434</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.2040259</span><span class="p">,</span>  <span class="mf">1.0572252</span><span class="p">]])</span>
+    <span class="k">if</span> <span class="n">M</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">3.2404542</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.5371385</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.4985314</span><span class="p">],</span>
+                      <span class="p">[</span><span class="o">-</span><span class="mf">0.9692660</span><span class="p">,</span>  <span class="mf">1.8760108</span><span class="p">,</span>  <span class="mf">0.0415560</span><span class="p">],</span>
+                      <span class="p">[</span><span class="mf">0.0556434</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.2040259</span><span class="p">,</span>  <span class="mf">1.0572252</span><span class="p">]])</span>
 
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">xyz</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
         <span class="n">srgb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;ij,klj-&gt;kli&#39;</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">xyz</span><span class="o">/</span><span class="mi">100</span><span class="p">)</span>
@@ -1302,19 +1317,19 @@
     <span class="n">srgb</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">srgb</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">srgb</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">srgb</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span>
 
-    <span class="c1"># test for the dark colours in the non-linear part of the function:</span>
-    <span class="n">dark</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">srgb</span> <span class="o">&lt;=</span>  <span class="mf">0.0031308</span><span class="p">)</span>
 
     <span class="c1"># apply gamma function:</span>
     <span class="n">g</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="n">gamma</span>
 
     <span class="c1"># and scale to range 0-255:</span>
     <span class="n">rgb</span> <span class="o">=</span> <span class="n">srgb</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-    <span class="n">rgb</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.055</span><span class="o">*</span><span class="n">rgb</span><span class="o">**</span><span class="n">g</span> <span class="o">-</span> <span class="mf">0.055</span><span class="p">)</span> <span class="o">*</span> <span class="mi">255</span>
+    <span class="n">rgb</span> <span class="o">=</span> <span class="p">((</span><span class="mf">1.0</span><span class="o">-</span><span class="n">offset</span><span class="p">)</span><span class="o">*</span><span class="n">rgb</span><span class="o">**</span><span class="n">g</span> <span class="o">+</span> <span class="n">offset</span><span class="p">)</span> <span class="o">*</span> <span class="mi">255</span>
 
-    <span class="c1"># non-linear bit for dark colours</span>
-    <span class="n">rgb</span><span class="p">[</span><span class="n">dark</span><span class="p">]</span>  <span class="o">=</span> <span class="p">(</span><span class="n">srgb</span><span class="p">[</span><span class="n">dark</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="o">*</span> <span class="mf">12.92</span><span class="p">)</span> <span class="o">*</span> <span class="mi">255</span>
-
+    <span class="c1"># linear bit for dark colours</span>
+    <span class="k">if</span> <span class="n">use_linear_part</span><span class="p">:</span>
+        <span class="c1"># test for the dark colours:</span>
+        <span class="n">dark</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">srgb</span> <span class="o">&lt;=</span>  <span class="mf">0.0031308</span><span class="p">)</span>
+        <span class="n">rgb</span><span class="p">[</span><span class="n">dark</span><span class="p">]</span>  <span class="o">=</span> <span class="p">(</span><span class="n">srgb</span><span class="p">[</span><span class="n">dark</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="o">*</span> <span class="mf">12.92</span><span class="p">)</span> <span class="o">*</span> <span class="mi">255</span>
 
     <span class="c1"># clip to range:</span>
     <span class="n">rgb</span><span class="p">[</span><span class="n">rgb</span><span class="o">&gt;</span><span class="mi">255</span><span class="p">]</span> <span class="o">=</span> <span class="mi">255</span>
@@ -1323,7 +1338,7 @@
     <span class="k">return</span> <span class="n">rgb</span></div>
 
 
-<div class="viewcode-block" id="srgb_to_xyz"><a class="viewcode-back" href="../../../../color.html#luxpy.color.ctf.colortransforms.srgb_to_xyz">[docs]</a><span class="k">def</span> <span class="nf">srgb_to_xyz</span><span class="p">(</span><span class="n">rgb</span><span class="p">,</span> <span class="n">gamma</span> <span class="o">=</span> <span class="mf">2.4</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="srgb_to_xyz"><a class="viewcode-back" href="../../../../color.html#luxpy.color.ctf.colortransforms.srgb_to_xyz">[docs]</a><span class="k">def</span> <span class="nf">srgb_to_xyz</span><span class="p">(</span><span class="n">rgb</span><span class="p">,</span> <span class="n">gamma</span> <span class="o">=</span> <span class="mf">2.4</span><span class="p">,</span> <span class="n">offset</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.055</span><span class="p">,</span> <span class="n">use_linear_part</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">M</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculates xyz from IEC:61966 sRGB values.</span>
 
@@ -1332,31 +1347,51 @@
 <span class="sd">            | ndarray with srgb values (uint8).</span>
 <span class="sd">        :gamma: </span>
 <span class="sd">            | 2.4, optional</span>
-<span class="sd">            | compression in sRGB</span>
-<span class="sd">            </span>
+<span class="sd">            | Gamma compression in gamma-function gf(x): see notes</span>
+<span class="sd">        :offset:</span>
+<span class="sd">            | -0.055, optional</span>
+<span class="sd">            | Offset in gamma-function gf(x): see notes</span>
+<span class="sd">        :use_linear_part:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | If False: omit linear part at low RGB values and use gamma function throughout</span>
+<span class="sd">        :M:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | xyz to linear srgb conversion matrix </span>
+<span class="sd">            | (!!! Don&#39;t give inverse matrix as input, function will take inverse of input to M!!!).</span>
+<span class="sd">            | If None: use predefined inverse matrix</span>
 <span class="sd">    Returns:</span>
 <span class="sd">        :xyz: </span>
-<span class="sd">            | ndarray with relative tristimulus values.</span>
-
+<span class="sd">            | ndarray with xyz tristimulus values.</span>
+<span class="sd">            </span>
+<span class="sd">    Notes:</span>
+<span class="sd">        1. Gamma-function: gf(x) = ((1-offset)*x**gamma + offset)*255</span>
+<span class="sd">        2. dark values use linear function: lf(x) = x[dark] * 12.92 * 255</span>
+<span class="sd">        3. To use a pure gamma function, set offset to zero and use_linear_part to False.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">rgb</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">(</span><span class="n">rgb</span><span class="p">)</span>
     
     <span class="c1"># define 3x3 matrix</span>
-    <span class="n">M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.4124564</span><span class="p">,</span>  <span class="mf">0.3575761</span><span class="p">,</span>  <span class="mf">0.1804375</span><span class="p">],</span>
-                  <span class="p">[</span><span class="mf">0.2126729</span><span class="p">,</span>  <span class="mf">0.7151522</span><span class="p">,</span>  <span class="mf">0.0721750</span><span class="p">],</span>
-                  <span class="p">[</span><span class="mf">0.0193339</span><span class="p">,</span>  <span class="mf">0.1191920</span><span class="p">,</span>  <span class="mf">0.9503041</span><span class="p">]])</span>
-
+    <span class="c1"># M = np.array([[0.4124564,  0.3575761,  0.1804375],</span>
+    <span class="c1">#               [0.2126729,  0.7151522,  0.0721750],</span>
+    <span class="c1">#               [0.0193339,  0.1191920,  0.9503041]])</span>
+    <span class="k">if</span> <span class="n">M</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">M</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.4124564</span><span class="p">,</span>  <span class="mf">0.3575761</span><span class="p">,</span>  <span class="mf">0.1804375</span><span class="p">],</span>
+                      <span class="p">[</span><span class="mf">0.2126729</span><span class="p">,</span>  <span class="mf">0.7151522</span><span class="p">,</span>  <span class="mf">0.0721750</span><span class="p">],</span>
+                      <span class="p">[</span><span class="mf">0.0193339</span><span class="p">,</span>  <span class="mf">0.1191920</span><span class="p">,</span>  <span class="mf">0.9503041</span><span class="p">]])</span> <span class="c1"># use pre-defined inverse for efficiency</span>
+        
     <span class="c1"># scale device coordinates:</span>
     <span class="n">sRGB</span> <span class="o">=</span> <span class="n">rgb</span><span class="o">/</span><span class="mi">255</span>
 
-    <span class="c1"># test for non-linear part of conversion</span>
-    <span class="n">nonlin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">rgb</span><span class="o">/</span><span class="mi">255</span><span class="p">)</span> <span class="o">&lt;</span>  <span class="mf">0.0031308</span><span class="p">)</span><span class="c1">#0.03928)</span>
-
     <span class="c1"># apply gamma function to convert to sRGB</span>
     <span class="n">srgb</span> <span class="o">=</span> <span class="n">sRGB</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-    <span class="n">srgb</span> <span class="o">=</span> <span class="p">((</span><span class="n">srgb</span> <span class="o">+</span> <span class="mf">0.055</span><span class="p">)</span><span class="o">/</span><span class="mf">1.055</span><span class="p">)</span><span class="o">**</span><span class="n">gamma</span>
+    <span class="n">srgb</span> <span class="o">=</span> <span class="p">((</span><span class="n">srgb</span> <span class="o">-</span> <span class="n">offset</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">offset</span><span class="p">))</span><span class="o">**</span><span class="n">gamma</span>
 
-    <span class="n">srgb</span><span class="p">[</span><span class="n">nonlin</span><span class="p">]</span> <span class="o">=</span> <span class="n">sRGB</span><span class="p">[</span><span class="n">nonlin</span><span class="p">]</span><span class="o">/</span><span class="mf">12.92</span>
+    <span class="k">if</span> <span class="n">use_linear_part</span><span class="p">:</span> 
+        <span class="c1"># test for linear part of conversion</span>
+        <span class="n">dark</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">srgb</span><span class="o">/</span><span class="mi">255</span><span class="p">)</span> <span class="o">&lt;</span>  <span class="mf">0.0031308</span><span class="p">)</span>
+        <span class="n">srgb</span><span class="p">[</span><span class="n">dark</span><span class="p">]</span> <span class="o">=</span> <span class="n">sRGB</span><span class="p">[</span><span class="n">dark</span><span class="p">]</span><span class="o">/</span><span class="mf">12.92</span>
 
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">srgb</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
         <span class="n">xyz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;ij,klj-&gt;kli&#39;</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">srgb</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span>

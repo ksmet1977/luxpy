@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Color sub-package &mdash; LuxPy 1.6.5 documentation</title>
+  <title>Color sub-package &mdash; LuxPy 1.6.6 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                1.6.5
+                1.6.6
               </div>
             
           
@@ -117,6 +117,7 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#cam">cam/</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#cam-sub-package-with-color-appearance-models">cam: sub-package with color appearance models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-for-cam-front-end-cmf-adaptation">Module for CAM “front-end” cmf adaptation</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#deltae">deltaE/</a><ul>
@@ -2206,7 +2207,7 @@ and excitation purity</div>
 
 <dl class="py function">
 <dt id="luxpy.color.ctf.colortransforms.xyz_to_srgb">
-<code class="sig-prename descclassname">luxpy.color.ctf.colortransforms.</code><code class="sig-name descname">xyz_to_srgb</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xyz</span></em>, <em class="sig-param"><span class="n">gamma</span><span class="o">=</span><span class="default_value">2.4</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/ctf/colortransforms.html#xyz_to_srgb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.ctf.colortransforms.xyz_to_srgb" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.color.ctf.colortransforms.</code><code class="sig-name descname">xyz_to_srgb</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xyz</span></em>, <em class="sig-param"><span class="n">gamma</span><span class="o">=</span><span class="default_value">2.4</span></em>, <em class="sig-param"><span class="n">offset</span><span class="o">=</span><span class="default_value">- 0.055</span></em>, <em class="sig-param"><span class="n">use_linear_part</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">M</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/ctf/colortransforms.html#xyz_to_srgb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.ctf.colortransforms.xyz_to_srgb" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates IEC:61966 sRGB values from xyz.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -2218,7 +2219,26 @@ and excitation purity</div>
 <dt class="field-even">gamma</dt>
 <dd class="field-even"><div class="line-block">
 <div class="line">2.4, optional</div>
-<div class="line">compression in sRGB</div>
+<div class="line">Gamma compression in gamma-function gf(x): see notes</div>
+</div>
+</dd>
+<dt class="field-odd">offset</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">-0.055, optional</div>
+<div class="line">Offset in gamma-function gf(x): see notes</div>
+</div>
+</dd>
+<dt class="field-even">use_linear_part</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">True, optional</div>
+<div class="line">If False: omit linear part at low RGB values and use gamma function throughout</div>
+</div>
+</dd>
+<dt class="field-odd">M</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">xyz to linear srgb conversion matrix.</div>
+<div class="line">If None: use predefined matrix</div>
 </div>
 </dd>
 </dl>
@@ -2231,12 +2251,18 @@ and excitation purity</div>
 </dd>
 </dl>
 </dd>
+<dt>Notes:</dt><dd><ol class="arabic simple">
+<li><p>Gamma-function: gf(x) = ((1-offset)*x**gamma + offset)*255</p></li>
+<li><p>dark values use linear function: lf(x) = x[dark] * 12.92 * 255</p></li>
+<li><p>To use a pure gamma function, set offset to zero and use_linear_part to False.</p></li>
+</ol>
+</dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt id="luxpy.color.ctf.colortransforms.srgb_to_xyz">
-<code class="sig-prename descclassname">luxpy.color.ctf.colortransforms.</code><code class="sig-name descname">srgb_to_xyz</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rgb</span></em>, <em class="sig-param"><span class="n">gamma</span><span class="o">=</span><span class="default_value">2.4</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/ctf/colortransforms.html#srgb_to_xyz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.ctf.colortransforms.srgb_to_xyz" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.color.ctf.colortransforms.</code><code class="sig-name descname">srgb_to_xyz</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rgb</span></em>, <em class="sig-param"><span class="n">gamma</span><span class="o">=</span><span class="default_value">2.4</span></em>, <em class="sig-param"><span class="n">offset</span><span class="o">=</span><span class="default_value">- 0.055</span></em>, <em class="sig-param"><span class="n">use_linear_part</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">M</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/ctf/colortransforms.html#srgb_to_xyz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.ctf.colortransforms.srgb_to_xyz" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates xyz from IEC:61966 sRGB values.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -2248,7 +2274,27 @@ and excitation purity</div>
 <dt class="field-even">gamma</dt>
 <dd class="field-even"><div class="line-block">
 <div class="line">2.4, optional</div>
-<div class="line">compression in sRGB</div>
+<div class="line">Gamma compression in gamma-function gf(x): see notes</div>
+</div>
+</dd>
+<dt class="field-odd">offset</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">-0.055, optional</div>
+<div class="line">Offset in gamma-function gf(x): see notes</div>
+</div>
+</dd>
+<dt class="field-even">use_linear_part</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">True, optional</div>
+<div class="line">If False: omit linear part at low RGB values and use gamma function throughout</div>
+</div>
+</dd>
+<dt class="field-odd">M</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">xyz to linear srgb conversion matrix </div>
+<div class="line">(!!! Don’t give inverse matrix as input, function will take inverse of input to M!!!).</div>
+<div class="line">If None: use predefined inverse matrix</div>
 </div>
 </dd>
 </dl>
@@ -2256,10 +2302,16 @@ and excitation purity</div>
 <dt>Returns:</dt><dd><dl class="field-list">
 <dt class="field-odd">xyz</dt>
 <dd class="field-odd"><div class="line-block">
-<div class="line">ndarray with relative tristimulus values.</div>
+<div class="line">ndarray with xyz tristimulus values.</div>
 </div>
 </dd>
 </dl>
+</dd>
+<dt>Notes:</dt><dd><ol class="arabic simple">
+<li><p>Gamma-function: gf(x) = ((1-offset)*x**gamma + offset)*255</p></li>
+<li><p>dark values use linear function: lf(x) = x[dark] * 12.92 * 255</p></li>
+<li><p>To use a pure gamma function, set offset to zero and use_linear_part to False.</p></li>
+</ol>
 </dd>
 </dl>
 </dd></dl>
@@ -4490,6 +4542,33 @@ Journal of the Optical Society of America A, 35(12), 2000–2009.</a>           
 </dd>
 </dl>
 </div></blockquote>
+</div>
+<div class="section" id="module-for-cam-front-end-cmf-adaptation">
+<h3>Module for CAM “front-end” cmf adaptation<a class="headerlink" href="#module-for-cam-front-end-cmf-adaptation" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><dl class="field-list">
+<dt class="field-odd">translate_cmfI_to_cmfS()</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">Using smooth RGB primaries, translate input data (spectral or tristimlus)</div>
+<div class="line">for an indivual observer to the expected tristimulus values for a standard observer. </div>
+</div>
+</dd>
+<dt class="field-even">get_conversion_matrix()</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">Using smooth RGB primaries, get the ‘translator’ matrix to convert </div>
+<div class="line">tristimulus values calculated using an individual observer’s </div>
+<div class="line">color matching functions (cmfs) to those calculated using the cmfs of </div>
+<div class="line">a standard observer.</div>
+</div>
+</dd>
+<dt class="field-odd">get_rgb_smooth_prims()</dt>
+<dd class="field-odd"><p>Get smooth R, G, B primaries with specified wavelength range</p>
+</dd>
+<dt class="field-even">_R,_G,_B</dt>
+<dd class="field-even"><p>precalculated smooth primaries with [360,830,1] wavelength range.</p>
+</dd>
+</dl>
+</div></blockquote>
 <dl class="py function">
 <dt id="luxpy.color.cam.hue_angle">
 <code class="sig-prename descclassname">luxpy.color.cam.</code><code class="sig-name descname">hue_angle</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em>, <em class="sig-param"><span class="n">htype</span><span class="o">=</span><span class="default_value">'deg'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cam/utils.html#hue_angle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cam.hue_angle" title="Permalink to this definition">¶</a></dt>
@@ -4636,13 +4715,17 @@ Journal of the Optical Society of America A, 35(12), 2000–2009.</a>           
 
 <dl class="py function">
 <dt id="luxpy.color.cam.hue_quadrature">
-<code class="sig-prename descclassname">luxpy.color.cam.</code><code class="sig-name descname">hue_quadrature</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">h</span></em>, <em class="sig-param"><span class="n">unique_hue_data</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cam/utils.html#hue_quadrature"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cam.hue_quadrature" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.color.cam.</code><code class="sig-name descname">hue_quadrature</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">h</span></em>, <em class="sig-param"><span class="n">unique_hue_data</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">forward</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cam/utils.html#hue_quadrature"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cam.hue_quadrature" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get hue quadrature H from hue h.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
 <dt class="field-odd">h</dt>
 <dd class="field-odd"><div class="line-block">
-<div class="line">float or ndarray [(N,) or (N,1)] with hue data in degrees (!).</div>
+<div class="line">float or ndarray [(N,) or (N,1)] with: </div>
+<div class="line-block">
+<div class="line">- hue angle data in degrees (!) if forward == True.</div>
+<div class="line">- Hue quadrature data if forward = False</div>
+</div>
 </div>
 </dd>
 <dt class="field-even">unique_hue data</dt>
@@ -4666,12 +4749,18 @@ Journal of the Optical Society of America A, 35(12), 2000–2009.</a>           
 </div>
 </div>
 </dd>
+<dt class="field-odd">forward</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">True, optional</div>
+<div class="line">If true: input h is hue angle, else it is Hue quadrature</div>
+</div>
+</dd>
 </dl>
 </dd>
 <dt>Returns:</dt><dd><dl class="field-list">
 <dt class="field-odd">H</dt>
 <dd class="field-odd"><div class="line-block">
-<div class="line">ndarray of Hue quadrature value(s).</div>
+<div class="line">ndarray of Hue quadrature value(s) (forward == True) or of hue angle values(s) (foward == False).</div>
 </div>
 </dd>
 </dl>
@@ -5836,9 +5925,9 @@ Opt. Express, vol. 25, no. 13, pp. 15131–15151, Jun. 2017.</a></p>
 <p>2. <a class="reference external" href="https://doi.org/10.2352/ISSN.2169-2629.2018.26.96">Safdar, M., Hardeberg, J., Cui, G., Kim, Y. J., and Luo, M. R.(2018).
 A Colour Appearance Model based on Jzazbz Colour Space, 
 26th Color and Imaging Conference (2018), Vancouver, Canada, November 12-16, 2018, pp96-101.</a></p>
-<p>3. Safdar, M., Hardeberg, J.Y., Luo, M.R. (2021) 
-“ZCAM, a psychophysical model for colour appearance prediction”, 
-Optics Express.</p>
+<p>3. Safdar, M.,  Hardeberg, J.Y., Luo, M.R. (2021) 
+ZCAM, a psychophysical model for colour appearance prediction, 
+Optics Express. 29(4), 6036-6052, &lt;<a class="reference external" href="https://doi.org/10.1364/OE.413659">https://doi.org/10.1364/OE.413659</a>&gt;`_</p>
 </dd>
 </dl>
 </dd></dl>
@@ -5888,18 +5977,15 @@ Optics Express.</p>
 <div class="line-block">
 <div class="line">(but note that a D65 shows a small offset from (0,0))</div>
 </div>
-<div class="line">3. ZCAM: uses a slightly different value for b (= 1.16 instead of 1.15)</div>
-<div class="line-block">
-<div class="line">and calculates Iz as M’ - epsilon (instead L’/2 + M’/2 as in Iz,az,bz color space!).</div>
-</div>
+<div class="line">3. ZCAM: calculates Iz as M’ - epsilon (instead L’/2 + M’/2 as in Iz,az,bz color space!).</div>
 </div>
 </dd>
 <dt>Reference:</dt><dd><p>1. <a class="reference external" href="http://www.opticsexpress.org/abstract.cfm?URI=oe-25-13-15131">Safdar, M., Cui, G., Kim,Y. J., and Luo, M. R. (2017).
 Perceptually uniform color space for image signals including high dynamic range and wide gamut.
 Opt. Express, vol. 25, no. 13, pp. 15131–15151, June 2017.</a></p>
 <p>2. Safdar, M., Hardeberg, J.Y., Luo, M.R. (2021) 
-“ZCAM, a psychophysical model for colour appearance prediction”, 
-Optics Express.</p>
+ZCAM, a psychophysical model for colour appearance prediction, 
+Optics Express. 29(4), 6036-6052, &lt;<a class="reference external" href="https://doi.org/10.1364/OE.413659">https://doi.org/10.1364/OE.413659</a>&gt;`_</p>
 </dd>
 </dl>
 </dd></dl>
@@ -5949,18 +6035,15 @@ Optics Express.</p>
 <div class="line-block">
 <div class="line">(but note that a D65 shows a small offset from (0,0))</div>
 </div>
-<div class="line">3. ZCAM: uses a slightly different value for b (= 1.16 instead of 1.15)</div>
-<div class="line-block">
-<div class="line">and calculates Iz as M’ - epsilon (instead L’/2 + M’/2 as in Iz,az,bz color space!).</div>
-</div>
+<div class="line">3. ZCAM: calculates Iz as M’ - epsilon (instead L’/2 + M’/2 as in Iz,az,bz color space!).</div>
 </div>
 </dd>
 <dt>Reference:</dt><dd><p>1. <a class="reference external" href="http://www.opticsexpress.org/abstract.cfm?URI=oe-25-13-15131">Safdar, M., Cui, G., Kim,Y. J., and Luo, M. R. (2017).
 Perceptually uniform color space for image signals including high dynamic range and wide gamut.
 Opt. Express, vol. 25, no. 13, pp. 15131–15151, June, 2017.</a></p>
-<p>2. Safdar, M., Hardeberg, J.Y., Luo, M.R. (2021) 
-“ZCAM, a psychophysical model for colour appearance prediction”, 
-Optics Express.</p>
+<p>2. Safdar,  M., Hardeberg, J.Y., Luo, M.R. (2021) 
+ZCAM, a psychophysical model for colour appearance prediction, 
+Optics Express. 29(4), 6036-6052, &lt;<a class="reference external" href="https://doi.org/10.1364/OE.413659">https://doi.org/10.1364/OE.413659</a>&gt;`_</p>
 </dd>
 </dl>
 </dd></dl>

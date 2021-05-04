@@ -352,6 +352,11 @@ def run(data, xyzw = _DEFAULT_WHITE_POINT, Yw = None, outin = 'J,aM,bM',
         else:
             raise Exception('No lightness or brightness values in data. Inverse CAM-transform not possible!')
             
+        #-------------------------------------------- 
+        # calculate Hue quadrature (if requested in 'out'):
+        if 'H' in outin:    
+            h = hue_quadrature(data[...,outin.index('H')], unique_hue_data = _UNIQUE_HUE_DATA, forward = False)
+
             
         #--------------------------------------------    
         if 'a' in outin[1]: 
@@ -361,9 +366,14 @@ def run(data, xyzw = _DEFAULT_WHITE_POINT, Yw = None, outin = 'J,aM,bM',
             #--------------------------------------------
             # calculate Colorfulness M or Chroma C or Saturation s from a,b:
             MCs = (data[...,1]**2.0 + data[...,2]**2.0)**0.5   
-        else:
+        elif 'H' in outin:    
+            h = hue_quadrature(data[...,outin.index('H')], unique_hue_data = _UNIQUE_HUE_DATA, forward = False)
+            MCs = data[...,1] 
+        elif 'h' in outin:
             h = data[...,2]
             MCs = data[...,1]  
+        else:
+            raise Exception('No (a,b) or hue angle or Hue quadrature data in input!')
         
         
         if ('S' in outin[1]):

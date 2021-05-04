@@ -114,7 +114,7 @@ def plot_hue_bins(hbins = 16, start_hue = 0.0, scalef = 100, \
     hbincenters = hbincenters*np.pi/180
     
     # Setup hbin labels:
-    if bin_labels is '#':
+    if '#' in bin_labels:
         bin_labels = ['#{:1.0f}'.format(i+1) for i in range(nhbins)]
     elif isinstance(bin_labels,str):
         bin_labels = [bin_labels + '{:1.0f}'.format(i+1) for i in range(nhbins)]
