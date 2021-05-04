@@ -14,7 +14,7 @@
 If you use the package, please cite the following **tutorial paper** published in **LEUKOS**:
 [**Smet, K. A. G. (2019). Tutorial: The LuxPy Python Toolbox for Lighting and Color Science. LEUKOS, 1–23. DOI: 10.1080/15502724.2018.1518717**](https://www.tandfonline.com/doi/full/10.1080/15502724.2018.1518717)
 
-### **NEW** luxpy basic web-app:
+### **NEW** luxpy basic web-app [under development]:
 For some online spectral calculations (ANSI/IES TM30, CIE 13.3-1995 Ra, CIE 224:2017 Rf, alpha-opic irradiances, Equivalent Daylight Illuminance (EDI), Efficacy of Luminous Radiation (ELR), Daylight Efficacy Ratio (DER), IES/LDT Luminous Intensity Distribution plots/renders, ...) using a python web-application:
 [**luxpy.herokuapp.com**](https://luxpy.herokuapp.com/) 
  
