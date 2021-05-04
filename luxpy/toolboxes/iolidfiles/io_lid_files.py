@@ -393,55 +393,55 @@ def read_ldt_lamp_data(filename, multiplier = 1.0, normalize = 'I0'):
             if c == 0: # manufacturer
                 LDT['manufacturer'] = line.rstrip()
             elif c == 1: # type indicator: 1: point with symm. around vert. axis, 2: line luminaire, 3: point with other symm.
-                if np.float(line) == 1.0:
+                if float(line) == 1.0:
                     LDT['Ityp'] = 'point source with symm. around vert. axis'
-                elif np.float(line) == 2.0:
+                elif float(line) == 2.0:
                     LDT['Ityp'] = 'line luminaire'
-                elif np.float(line) == 3.0:
+                elif float(line) == 3.0:
                     LDT['Ityp'] = 'point source with other symm.'
             elif c == 2: # symm. indicator
-                if np.float(line) == 0.0:
+                if float(line) == 0.0:
                     LDT['Isym'] = (0, 'no symmetry')
-                elif np.float(line) == 1.0:
+                elif float(line) == 1.0:
                     LDT['Isym'] = (1, 'symmetry about the vertical axis')
-                elif np.float(line) == 2.0:
+                elif float(line) == 2.0:
                     LDT['Isym'] = (2, 'symmetry to plane C0-C180')
-                elif np.float(line) == 3.0:
+                elif float(line) == 3.0:
                     LDT['Isym'] = (3, 'symmetry to plane C90-C270')
-                elif np.float(line) == 4.0:
+                elif float(line) == 4.0:
                     LDT['Isym'] = (4, 'symmetry to plane C0-C180 and to plane C90-C270')
             elif c == 3: # Number Mc of C-planes between 0 and 360 degrees 
-                LDT['Mc'] = np.float(line)
+                LDT['Mc'] = float(line)
             elif c == 4: # Distance Dc between C-planes (Dc = 0 for non-equidistantly available C-planes)
-                LDT['Dc'] = np.float(line)
+                LDT['Dc'] = float(line)
             elif c == 5: # Number Ng of luminous intensities in each C-plane
-                LDT['Ng'] = np.float(line)
+                LDT['Ng'] = float(line)
             elif c == 6: # Distance Dg between luminous intensities per C-plane (Dg = 0 for non-equidistantly available luminous intensities in C-planes)
-                LDT['Dg'] = np.float(line)
+                LDT['Dg'] = float(line)
             elif c == 8: # luminaire name
                 LDT['name'] = line.rstrip()
             elif c == 23: # conversion factor
-                LDT['candela_mult'] = np.float(line)
+                LDT['candela_mult'] = float(line)
             elif c == 24: # Tilt angle
-                LDT['tilt'] = np.float(line)
+                LDT['tilt'] = float(line)
             elif c == 26: # number of lamps
-                LDT['lamps_num'] = np.float(line)
+                LDT['lamps_num'] = float(line)
             elif c == 28: # total luminous flux
-                LDT['tflux'] = np.float(line)
+                LDT['tflux'] = float(line)
                 LDT['lumens_per_lamp'] = LDT['tflux']
             elif c == 29: # cct/cri
                 LDT['cct/cri'] = line.rstrip()
             elif (c >= 42) & (c <= (42 + LDT['Mc'] - 1)): # start of C-angles
-                cangles.append(np.float(line))
+                cangles.append(float(line))
             elif (c >= 42 + LDT['Mc']) & (c <= (42 + LDT['Mc'] + LDT['Ng'] - 1)): # start of t-angles
-                tangles.append(np.float(line))
+                tangles.append(float(line))
             elif (c >= (42 + LDT['Mc'] + LDT['Ng'])) & (c <= (42 + LDT['Mc'] + LDT['Ng'] + LDT['Mc']*LDT['Ng'] - 1)):
-                candela_values.append(np.float(line))
+                candela_values.append(float(line))
             c += 1
          
         candela_values = np.array(candela_values)
         LDT['candela_values'] = np.array(candela_values)
-        candela_2d = np.array(candela_values).reshape((-1,np.int(LDT['Ng'])))
+        candela_2d = np.array(candela_values).reshape((-1,int(LDT['Ng'])))
         LDT['h_angs'] = np.array(cangles)[:candela_2d.shape[0]]
         LDT['v_angs'] = np.array(tangles)
         LDT['candela_2d'] = np.array(candela_2d)
@@ -680,7 +680,7 @@ def get_uv_texture(theta, phi = None, values = None, input_types = ('array','arr
     # When only (theta,values) data is given--> assume rotational symmetry:
     if phi is None:
         phi = phi_map
-        values = matlib.repmat(values,np.int(360*(1/angle_res)),1) # assume rotational symmetry, values must be array!
+        values = matlib.repmat(values,int(360*(1/angle_res)),1) # assume rotational symmetry, values must be array!
         input_types = (input_types[0],'mesh') 
 
     # convert radians to degrees:
@@ -723,7 +723,7 @@ def get_uv_texture(theta, phi = None, values = None, input_types = ('array','arr
         ax2.legend(loc = 'upper right')
     
     if theta_min == -90:
-        values_map = np.roll(values_map, np.int(np.abs(theta_min)/angle_res), axis = 1)
+        values_map = np.roll(values_map, int(np.abs(theta_min)/angle_res), axis = 1)
         theta_map = theta_map + theta_min
         
     return eval(out)
