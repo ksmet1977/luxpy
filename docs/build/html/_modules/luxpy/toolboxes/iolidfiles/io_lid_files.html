@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>luxpy.toolboxes.iolidfiles.io_lid_files &mdash; LuxPy 1.6.6 documentation</title>
+  <title>luxpy.toolboxes.iolidfiles.io_lid_files &mdash; LuxPy 1.6.7 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                1.6.6
+                1.6.7
               </div>
             
           
@@ -198,6 +198,8 @@
 <span class="sd">.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">io</span>
+<span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">luxpy.utils</span> <span class="kn">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">_PKG_PATH</span><span class="p">,</span> <span class="n">_SEP</span>
 <span class="kn">from</span> <span class="nn">luxpy.utils</span> <span class="kn">import</span> <span class="n">plt</span><span class="p">,</span> <span class="n">Axes3D</span> 
@@ -215,14 +217,35 @@
 
 <span class="n">__all__</span> <span class="o">=</span><span class="p">[</span><span class="s1">&#39;_PATH_DATA&#39;</span><span class="p">,</span> <span class="s1">&#39;read_lamp_data&#39;</span><span class="p">,</span><span class="s1">&#39;get_uv_texture&#39;</span><span class="p">,</span><span class="s1">&#39;save_texture&#39;</span><span class="p">,</span><span class="s1">&#39;draw_lid&#39;</span><span class="p">,</span><span class="s1">&#39;render_lid&#39;</span><span class="p">]</span>
 
+<span class="k">def</span> <span class="nf">_read_file</span><span class="p">(</span><span class="n">string_data</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">string_data</span><span class="p">,</span><span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">):</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="n">string_data</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;StringIO&#39;</span>
+    <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">string_data</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">string_data</span><span class="p">[</span><span class="o">-</span><span class="mi">4</span><span class="p">:]</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;.ies&#39;</span><span class="p">,</span> <span class="s1">&#39;.ldt&#39;</span><span class="p">)):</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">string_data</span><span class="p">[:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span>
 
-<div class="viewcode-block" id="read_lamp_data"><a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.iolidfiles.read_lamp_data">[docs]</a><span class="k">def</span> <span class="nf">read_lamp_data</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">multiplier</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">normalize</span> <span class="o">=</span> <span class="s1">&#39;I0&#39;</span><span class="p">,</span> <span class="n">only_common_keys</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="c1"># file = open(filename, &#39;rt&#39;, encoding=&#39;cp1252&#39;)</span>
+        <span class="n">file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">string_data</span><span class="p">,</span> <span class="s1">&#39;rt&#39;</span><span class="p">)</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">string_data</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">string_data</span><span class="p">[</span><span class="o">-</span><span class="mi">4</span><span class="p">:]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;.ies&#39;</span><span class="p">,</span> <span class="s1">&#39;.ldt&#39;</span><span class="p">)):</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">string_data</span><span class="p">)</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;String&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Invalid input (options: filename, StringIO object or string with LID data)&#39;</span><span class="p">)</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s1">&#39;.ies&#39;</span> <span class="k">if</span> <span class="p">((</span><span class="s1">&#39;TILT=&#39;</span> <span class="ow">in</span> <span class="n">content</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="s1">&#39;TILT =&#39;</span> <span class="ow">in</span> <span class="n">content</span><span class="p">))</span> <span class="k">else</span> <span class="s1">&#39;.ldt&#39;</span>
+    <span class="k">return</span> <span class="n">content</span><span class="p">,</span> <span class="n">name</span> <span class="o">+</span> <span class="n">ext</span>
+        
+        
+    
+
+<div class="viewcode-block" id="read_lamp_data"><a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.iolidfiles.read_lamp_data">[docs]</a><span class="k">def</span> <span class="nf">read_lamp_data</span><span class="p">(</span><span class="n">datasource</span><span class="p">,</span> <span class="n">multiplier</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">normalize</span> <span class="o">=</span> <span class="s1">&#39;I0&#39;</span><span class="p">,</span> <span class="n">only_common_keys</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Read in light intensity distribution and other lamp data from LDT or IES files.</span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
-<span class="sd">        :filename:</span>
-<span class="sd">            | Filename of IES file.</span>
+<span class="sd">        :datasource:</span>
+<span class="sd">            | Filename of LID file or StringIO object or string with LID data.</span>
 <span class="sd">        :multiplier:</span>
 <span class="sd">            | 1.0, optional</span>
 <span class="sd">            | Scaler for candela values.</span>
@@ -243,9 +266,9 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        :lid: dict with IES or LDT file data.</span>
 <span class="sd">            |</span>
-<span class="sd">            | If file_ext == &#39;ies&#39;:</span>
+<span class="sd">            | If LIDtype == &#39;ies&#39;:</span>
 <span class="sd">            |    dict_keys(</span>
-<span class="sd">            | [&#39;filename&#39;, &#39;version&#39;, &#39;lamps_num&#39;, &#39;lumens_per_lamp&#39;,</span>
+<span class="sd">            | [&#39;datasource&#39;, &#39;version&#39;, &#39;lamps_num&#39;, &#39;lumens_per_lamp&#39;,</span>
 <span class="sd">            | &#39;candela_mult&#39;, &#39;v_angles_num&#39;, &#39;h_angles_num&#39;, &#39;photometric_type&#39;,</span>
 <span class="sd">            | &#39;units_type&#39;, &#39;width&#39;, &#39;length&#39;, &#39;height&#39;, &#39;ballast_factor&#39;, </span>
 <span class="sd">            | &#39;future_use&#39;, &#39;input_watts&#39;, &#39;v_angs&#39;, &#39;h_angs&#39;, &#39;lamp_cone_type&#39;,</span>
@@ -253,9 +276,9 @@
 <span class="sd">            | &#39;intensity&#39;, &#39;theta&#39;, &#39;values&#39;, &#39;phi&#39;, &#39;map&#39;,&#39;Iv0&#39;]</span>
 <span class="sd">            | )</span>
 <span class="sd">            |</span>
-<span class="sd">            | If file_ext == &#39;ldt&#39;:</span>
+<span class="sd">            | If LIDtype == &#39;ldt&#39;:</span>
 <span class="sd">            |    dict_keys(</span>
-<span class="sd">            | [&#39;filename&#39;, &#39;version&#39;, &#39;manufacturer&#39;, &#39;Ityp&#39;,&#39;Isym&#39;,</span>
+<span class="sd">            | [&#39;datasource&#39;, &#39;version&#39;, &#39;manufacturer&#39;, &#39;Ityp&#39;,&#39;Isym&#39;,</span>
 <span class="sd">            | &#39;Mc&#39;, &#39;Dc&#39;, &#39;Ng&#39;, &#39;name&#39;, Dg&#39;, &#39;cct/cri&#39;, &#39;tflux&#39;, &#39;lumens_per_lamp&#39;,</span>
 <span class="sd">            | &#39;candela_mult&#39;, &#39;tilt&#39;, lamps_num&#39;,</span>
 <span class="sd">            | &#39;cangles&#39;, &#39;tangles&#39;,&#39;candela_values&#39;, &#39;candela_2d&#39;,</span>
@@ -263,26 +286,31 @@
 <span class="sd">            | )</span>
 <span class="sd">            </span>
 <span class="sd">    Notes:</span>
-<span class="sd">        1. if only_common_keys: output is dictionary with keys: [&#39;filename&#39;, &#39;version&#39;, &#39;intensity&#39;, &#39;theta&#39;, &#39;phi&#39;, \</span>
+<span class="sd">        1. if only_common_keys: output is dictionary with keys: [&#39;datasource&#39;, &#39;version&#39;, &#39;intensity&#39;, &#39;theta&#39;, &#39;phi&#39;, \</span>
 <span class="sd">        &#39;values&#39;, &#39;map&#39;, &#39;Iv0&#39;, &#39;candela_values&#39;, &#39;candela_2d&#39;] </span>
 <span class="sd">        2. &#39;theta&#39;,&#39;phi&#39;, &#39;values&#39; (=&#39;candela_2d&#39;) contain the original theta angles, phi angles and normalized candelas as specified in file.</span>
 <span class="sd">        3. &#39;map&#39; contains a dicionary with keys &#39;thetas&#39;, &#39;phis&#39;, &#39;values&#39;. This data has been complete to full angle ranges thetas: [0,180]; phis: [0,360]   </span>
 <span class="sd">        4. LDT map completion only supported for Isymm == 4 (31/10/2018), Map will be filled with original &#39;theta&#39;, &#39;phi&#39; and normalized &#39;candela_2d&#39; values !</span>
+<span class="sd">        5. LIDtype is checked by looking for the presence of &#39;TILT=&#39; in datasource content (if True-&gt;&#39;IES&#39; else &#39;LDT&#39;)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">common_keys</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">,</span> <span class="s1">&#39;version&#39;</span><span class="p">,</span> <span class="s1">&#39;intensity&#39;</span><span class="p">,</span> <span class="s1">&#39;theta&#39;</span><span class="p">,</span> <span class="s1">&#39;phi&#39;</span><span class="p">,</span> \
+    <span class="n">common_keys</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;datasource&#39;</span><span class="p">,</span> <span class="s1">&#39;version&#39;</span><span class="p">,</span> <span class="s1">&#39;intensity&#39;</span><span class="p">,</span> <span class="s1">&#39;theta&#39;</span><span class="p">,</span> <span class="s1">&#39;phi&#39;</span><span class="p">,</span> \
                    <span class="s1">&#39;values&#39;</span><span class="p">,</span> <span class="s1">&#39;map&#39;</span><span class="p">,</span> <span class="s1">&#39;Iv0&#39;</span><span class="p">,</span> <span class="s1">&#39;candela_values&#39;</span><span class="p">,</span> <span class="s1">&#39;candela_2d&#39;</span><span class="p">]</span>
-    <span class="k">if</span> <span class="n">filename</span> <span class="o">==</span> <span class="s1">&#39;?&#39;</span><span class="p">:</span>
+    
+    <span class="k">if</span> <span class="n">datasource</span> <span class="o">==</span> <span class="s1">&#39;?&#39;</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">common_keys</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">common_keys</span><span class="p">,[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">common_keys</span><span class="p">)))</span> 
     
+
+    <span class="n">datasource</span><span class="p">,</span> <span class="n">filename</span> <span class="o">=</span> <span class="n">_read_file</span><span class="p">(</span><span class="n">datasource</span><span class="p">)</span>
     <span class="n">file_ext</span> <span class="o">=</span> <span class="n">filename</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">file_ext</span> <span class="o">==</span> <span class="s1">&#39;ies&#39;</span><span class="p">:</span>
-        <span class="n">lid</span> <span class="o">=</span> <span class="n">read_IES_lamp_data</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">multiplier</span> <span class="o">=</span> <span class="n">multiplier</span><span class="p">,</span> \
+        <span class="n">lid</span> <span class="o">=</span> <span class="n">read_IES_lamp_data</span><span class="p">(</span><span class="n">datasource</span><span class="p">,</span> <span class="n">multiplier</span> <span class="o">=</span> <span class="n">multiplier</span><span class="p">,</span> \
                                  <span class="n">verbosity</span> <span class="o">=</span> <span class="n">verbosity</span><span class="p">,</span> <span class="n">normalize</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">file_ext</span> <span class="o">==</span> <span class="s1">&#39;ldt&#39;</span><span class="p">:</span>
-        <span class="n">lid</span> <span class="o">=</span> <span class="n">read_ldt_lamp_data</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">multiplier</span> <span class="o">=</span> <span class="n">multiplier</span><span class="p">,</span> <span class="n">normalize</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">)</span>
+        <span class="n">lid</span> <span class="o">=</span> <span class="n">read_ldt_lamp_data</span><span class="p">(</span><span class="n">datasource</span><span class="p">,</span> <span class="n">multiplier</span> <span class="o">=</span> <span class="n">multiplier</span><span class="p">,</span> <span class="n">normalize</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;read_lid_lamp_data(): </span><span class="si">{:s}</span><span class="s2"> --&gt; unsupported file type/extension (only &#39;ies&#39; or &#39;ldt&#39;: &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">file_ext</span><span class="p">))</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;read_lid_lamp_data(): </span><span class="si">{:s}</span><span class="s2"> --&gt; unsupported datasource type (only &#39;ies&#39; or &#39;ldt&#39;: &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">file_ext</span><span class="p">))</span>
+    <span class="n">lid</span><span class="p">[</span><span class="s1">&#39;datasource&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">filename</span> <span class="c1"># overwrite with original as this key is set to String or StringIO on call to specific readl_lamp_data functions</span>
     
     <span class="k">if</span> <span class="n">only_common_keys</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span><span class="n">value</span> <span class="k">for</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="n">lid</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">common_keys</span><span class="p">}</span>
@@ -298,29 +326,29 @@
     
     
 
-<span class="k">def</span> <span class="nf">read_IES_lamp_data</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">multiplier</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">normalize</span> <span class="o">=</span> <span class="s1">&#39;I0&#39;</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">read_IES_lamp_data</span><span class="p">(</span><span class="n">datasource</span><span class="p">,</span> <span class="n">multiplier</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">normalize</span> <span class="o">=</span> <span class="s1">&#39;I0&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Read in IES files (adapted from Blender&#39;s ies2cycles.py).</span>
+<span class="sd">    Read in IES data (adapted from Blender&#39;s ies2cycles.py).</span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
-<span class="sd">        :filename:</span>
-<span class="sd">            | Filename of IES file.</span>
+<span class="sd">        :datasource:</span>
+<span class="sd">            | Filename of LID file or StringIO object or string with LID data.</span>
 <span class="sd">        :multiplier:</span>
 <span class="sd">            | 1.0, optional</span>
 <span class="sd">            | Scaler for candela values.</span>
 <span class="sd">        :verbosity:</span>
 <span class="sd">            | 0, optional</span>
-<span class="sd">            | Display messages while reading file.</span>
+<span class="sd">            | Display messages while reading data.</span>
 <span class="sd">        :normalize:</span>
 <span class="sd">            | &#39;I0&#39;, optional</span>
 <span class="sd">            | If &#39;I0&#39;: normalize LID to intensity at (theta,phi) = (0,0)</span>
 <span class="sd">            | If &#39;max&#39;: normalize to max = 1.</span>
 <span class="sd">            </span>
 <span class="sd">    Returns:</span>
-<span class="sd">        :IES: dict with IES file data.</span>
+<span class="sd">        :IES: dict with IES data.</span>
 <span class="sd">            |</span>
 <span class="sd">            | dict_keys(</span>
-<span class="sd">            | [&#39;filename&#39;, &#39;version&#39;, &#39;lamps_num&#39;, &#39;lumens_per_lamp&#39;,</span>
+<span class="sd">            | [&#39;datasource&#39;, &#39;version&#39;, &#39;lamps_num&#39;, &#39;lumens_per_lamp&#39;,</span>
 <span class="sd">            | &#39;candela_mult&#39;, &#39;v_angles_num&#39;, &#39;h_angles_num&#39;, &#39;photometric_type&#39;,</span>
 <span class="sd">            | &#39;units_type&#39;, &#39;width&#39;, &#39;length&#39;, &#39;height&#39;, &#39;ballast_factor&#39;, </span>
 <span class="sd">            | &#39;future_use&#39;, &#39;input_watts&#39;, &#39;v_angs&#39;, &#39;h_angs&#39;, &#39;lamp_cone_type&#39;,</span>
@@ -336,11 +364,14 @@
         <span class="s1">&#39;IESNA:LM-63-2002&#39;</span><span class="p">:</span> <span class="mi">2002</span><span class="p">,</span>
     <span class="p">}</span>
     
-    <span class="n">name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">filename</span><span class="p">)[</span><span class="mi">1</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="c1"># name = os.path.splitext(os.path.split(filename)[1])[0]</span>
 
-    <span class="n">file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;rt&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;cp1252&#39;</span><span class="p">)</span>
-    <span class="n">content</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-    <span class="n">file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="c1"># # file = open(filename, &#39;rt&#39;, encoding=&#39;cp1252&#39;)</span>
+    <span class="c1"># file = open(filename, &#39;rt&#39;)</span>
+    <span class="c1"># content = file.read()</span>
+    <span class="c1"># file.close()</span>
+    <span class="n">content</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="n">_read_file</span><span class="p">(</span><span class="n">datasource</span><span class="p">)</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">name</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># get rid of path</span>
     <span class="n">s</span><span class="p">,</span> <span class="n">content</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
 
@@ -449,8 +480,8 @@
     <span class="c1">#intensity = max(500, min(intensity, 5000)) #???</span>
 
     <span class="c1"># Summarize in dict():</span>
-    <span class="n">IES</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;filename&#39;</span><span class="p">:</span> <span class="n">filename</span><span class="p">}</span>
-    <span class="n">IES</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">name</span>
+    <span class="n">IES</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;datasource&#39;</span><span class="p">:</span> <span class="n">datasource</span><span class="p">}</span>
+    <span class="n">IES</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">name</span><span class="p">[:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span>
     <span class="n">IES</span><span class="p">[</span><span class="s1">&#39;version&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">version</span>
     <span class="n">IES</span><span class="p">[</span><span class="s1">&#39;lamps_num&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lamps_num</span>
     <span class="n">IES</span><span class="p">[</span><span class="s1">&#39;lumens_per_lamp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lumens_per_lamp</span>
@@ -513,13 +544,13 @@
     <span class="k">return</span> <span class="n">IES</span>
   
 
-<span class="k">def</span> <span class="nf">read_ldt_lamp_data</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">multiplier</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">normalize</span> <span class="o">=</span> <span class="s1">&#39;I0&#39;</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">read_ldt_lamp_data</span><span class="p">(</span><span class="n">datasource</span><span class="p">,</span> <span class="n">multiplier</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">normalize</span> <span class="o">=</span> <span class="s1">&#39;I0&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Read in LDT files.</span>
+<span class="sd">    Read in LDT data.</span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
-<span class="sd">        :filename:</span>
-<span class="sd">            | Filename of LDT file.</span>
+<span class="sd">        :datasource:</span>
+<span class="sd">            | Filename of LDT file or StringIO object or string with LID data.</span>
 <span class="sd">        :multiplier:</span>
 <span class="sd">            | 1.0, optional</span>
 <span class="sd">            | Scaler for candela values.</span>
@@ -532,88 +563,90 @@
 <span class="sd">            | If &#39;max&#39;: normalize to max = 1.</span>
 <span class="sd">            </span>
 <span class="sd">    Returns:</span>
-<span class="sd">        :LDT: dict with LDT file data.</span>
+<span class="sd">        :LDT: dict with LDT data.</span>
 <span class="sd">            |</span>
 <span class="sd">            | dict_keys(</span>
-<span class="sd">            | [&#39;filename&#39;, &#39;version&#39;, &#39;manufacturer&#39;, &#39;Ityp&#39;,&#39;Isym&#39;,</span>
+<span class="sd">            | [&#39;datasource&#39;, &#39;version&#39;, &#39;manufacturer&#39;, &#39;Ityp&#39;,&#39;Isym&#39;,</span>
 <span class="sd">            | &#39;Mc&#39;, &#39;Dc&#39;, &#39;Ng&#39;, &#39;name&#39;, Dg&#39;, &#39;cct/cri&#39;, &#39;tflux&#39;, &#39;lumens_per_lamp&#39;,</span>
 <span class="sd">            | &#39;candela_mult&#39;, &#39;tilt&#39;, lamps_num&#39;,</span>
 <span class="sd">            | &#39;cangles&#39;, &#39;tangles&#39;,&#39;candela_values&#39;, &#39;candela_2d&#39;,</span>
 <span class="sd">            | &#39;intensity&#39;, &#39;theta&#39;, &#39;values&#39;, &#39;phi&#39;, &#39;map&#39;, &#39;Iv0&#39;]</span>
 <span class="sd">            | )</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">LDT</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;filename&#39;</span> <span class="p">:</span> <span class="n">filename</span><span class="p">}</span>
+    <span class="n">content</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="n">_read_file</span><span class="p">(</span><span class="n">datasource</span><span class="p">)</span>
+    <span class="n">LDT</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;datasource&#39;</span> <span class="p">:</span> <span class="n">name</span><span class="p">}</span>
     <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;version&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
-        <span class="n">c</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="n">cangles</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">tangles</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">candela_values</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">file</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="c1"># manufacturer</span>
-                <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;manufacturer&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
-            <span class="k">elif</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> <span class="c1"># type indicator: 1: point with symm. around vert. axis, 2: line luminaire, 3: point with other symm.</span>
-                <span class="k">if</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">==</span> <span class="mf">1.0</span><span class="p">:</span>
-                    <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;Ityp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;point source with symm. around vert. axis&#39;</span>
-                <span class="k">elif</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">==</span> <span class="mf">2.0</span><span class="p">:</span>
-                    <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;Ityp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;line luminaire&#39;</span>
-                <span class="k">elif</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">==</span> <span class="mf">3.0</span><span class="p">:</span>
-                    <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;Ityp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;point source with other symm.&#39;</span>
-            <span class="k">elif</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span> <span class="c1"># symm. indicator</span>
-                <span class="k">if</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
-                    <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;Isym&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;no symmetry&#39;</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">==</span> <span class="mf">1.0</span><span class="p">:</span>
-                    <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;Isym&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;symmetry about the vertical axis&#39;</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">==</span> <span class="mf">2.0</span><span class="p">:</span>
-                    <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;Isym&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;symmetry to plane C0-C180&#39;</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">==</span> <span class="mf">3.0</span><span class="p">:</span>
-                    <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;Isym&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;symmetry to plane C90-C270&#39;</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">==</span> <span class="mf">4.0</span><span class="p">:</span>
-                    <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;Isym&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;symmetry to plane C0-C180 and to plane C90-C270&#39;</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span> <span class="c1"># Number Mc of C-planes between 0 and 360 degrees </span>
-                <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;Mc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span> <span class="c1"># Distance Dc between C-planes (Dc = 0 for non-equidistantly available C-planes)</span>
-                <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;Dc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span> <span class="c1"># Number Ng of luminous intensities in each C-plane</span>
-                <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;Ng&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">6</span><span class="p">:</span> <span class="c1"># Distance Dg between luminous intensities per C-plane (Dg = 0 for non-equidistantly available luminous intensities in C-planes)</span>
-                <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;Dg&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">8</span><span class="p">:</span> <span class="c1"># luminaire name</span>
-                <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
-            <span class="k">elif</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">23</span><span class="p">:</span> <span class="c1"># conversion factor</span>
-                <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;candela_mult&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">24</span><span class="p">:</span> <span class="c1"># Tilt angle</span>
-                <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;tilt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">26</span><span class="p">:</span> <span class="c1"># number of lamps</span>
-                <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;lamps_num&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">28</span><span class="p">:</span> <span class="c1"># total luminous flux</span>
-                <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;tflux&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
-                <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;lumens_per_lamp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;tflux&#39;</span><span class="p">]</span>
-            <span class="k">elif</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">29</span><span class="p">:</span> <span class="c1"># cct/cri</span>
-                <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;cct/cri&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
-            <span class="k">elif</span> <span class="p">(</span><span class="n">c</span> <span class="o">&gt;=</span> <span class="mi">42</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">c</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="mi">42</span> <span class="o">+</span> <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;Mc&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)):</span> <span class="c1"># start of C-angles</span>
-                <span class="n">cangles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">))</span>
-            <span class="k">elif</span> <span class="p">(</span><span class="n">c</span> <span class="o">&gt;=</span> <span class="mi">42</span> <span class="o">+</span> <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;Mc&#39;</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">c</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="mi">42</span> <span class="o">+</span> <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;Mc&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;Ng&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)):</span> <span class="c1"># start of t-angles</span>
-                <span class="n">tangles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">))</span>
-            <span class="k">elif</span> <span class="p">(</span><span class="n">c</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="mi">42</span> <span class="o">+</span> <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;Mc&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;Ng&#39;</span><span class="p">]))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">c</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="mi">42</span> <span class="o">+</span> <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;Mc&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;Ng&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;Mc&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;Ng&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)):</span>
-                <span class="n">candela_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">))</span>
-            <span class="n">c</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="c1"># with open(filename) as file:</span>
+    <span class="n">content_list</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">cangles</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">tangles</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">candela_values</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">content_list</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="c1"># manufacturer</span>
+            <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;manufacturer&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> <span class="c1"># type indicator: 1: point with symm. around vert. axis, 2: line luminaire, 3: point with other symm.</span>
+            <span class="k">if</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">==</span> <span class="mf">1.0</span><span class="p">:</span>
+                <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;Ityp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;point source with symm. around vert. axis&#39;</span>
+            <span class="k">elif</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">==</span> <span class="mf">2.0</span><span class="p">:</span>
+                <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;Ityp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;line luminaire&#39;</span>
+            <span class="k">elif</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">==</span> <span class="mf">3.0</span><span class="p">:</span>
+                <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;Ityp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;point source with other symm.&#39;</span>
+        <span class="k">elif</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span> <span class="c1"># symm. indicator</span>
+            <span class="k">if</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+                <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;Isym&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;no symmetry&#39;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">==</span> <span class="mf">1.0</span><span class="p">:</span>
+                <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;Isym&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;symmetry about the vertical axis&#39;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">==</span> <span class="mf">2.0</span><span class="p">:</span>
+                <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;Isym&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;symmetry to plane C0-C180&#39;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">==</span> <span class="mf">3.0</span><span class="p">:</span>
+                <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;Isym&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;symmetry to plane C90-C270&#39;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">==</span> <span class="mf">4.0</span><span class="p">:</span>
+                <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;Isym&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;symmetry to plane C0-C180 and to plane C90-C270&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span> <span class="c1"># Number Mc of C-planes between 0 and 360 degrees </span>
+            <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;Mc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span> <span class="c1"># Distance Dc between C-planes (Dc = 0 for non-equidistantly available C-planes)</span>
+            <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;Dc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span> <span class="c1"># Number Ng of luminous intensities in each C-plane</span>
+            <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;Ng&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">6</span><span class="p">:</span> <span class="c1"># Distance Dg between luminous intensities per C-plane (Dg = 0 for non-equidistantly available luminous intensities in C-planes)</span>
+            <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;Dg&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">8</span><span class="p">:</span> <span class="c1"># luminaire name</span>
+            <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">23</span><span class="p">:</span> <span class="c1"># conversion factor</span>
+            <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;candela_mult&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">24</span><span class="p">:</span> <span class="c1"># Tilt angle</span>
+            <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;tilt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">26</span><span class="p">:</span> <span class="c1"># number of lamps</span>
+            <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;lamps_num&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">28</span><span class="p">:</span> <span class="c1"># total luminous flux</span>
+            <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;tflux&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+            <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;lumens_per_lamp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;tflux&#39;</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">29</span><span class="p">:</span> <span class="c1"># cct/cri</span>
+            <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;cct/cri&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="n">c</span> <span class="o">&gt;=</span> <span class="mi">42</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">c</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="mi">42</span> <span class="o">+</span> <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;Mc&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)):</span> <span class="c1"># start of C-angles</span>
+            <span class="n">cangles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="n">c</span> <span class="o">&gt;=</span> <span class="mi">42</span> <span class="o">+</span> <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;Mc&#39;</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">c</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="mi">42</span> <span class="o">+</span> <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;Mc&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;Ng&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)):</span> <span class="c1"># start of t-angles</span>
+            <span class="n">tangles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="n">c</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="mi">42</span> <span class="o">+</span> <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;Mc&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;Ng&#39;</span><span class="p">]))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">c</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="mi">42</span> <span class="o">+</span> <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;Mc&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;Ng&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;Mc&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;Ng&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">line</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">:</span><span class="n">candela_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">))</span>
+        <span class="n">c</span> <span class="o">+=</span> <span class="mi">1</span>
          
-        <span class="n">candela_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">candela_values</span><span class="p">)</span>
-        <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;candela_values&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">candela_values</span><span class="p">)</span>
-        <span class="n">candela_2d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">candela_values</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="nb">int</span><span class="p">(</span><span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;Ng&#39;</span><span class="p">])))</span>
-        <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;h_angs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cangles</span><span class="p">)[:</span><span class="n">candela_2d</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
-        <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;v_angs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">tangles</span><span class="p">)</span>
-        <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;candela_2d&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">candela_2d</span><span class="p">)</span>
+    <span class="n">candela_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">candela_values</span><span class="p">)</span>
+    <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;candela_values&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">candela_values</span><span class="p">)</span>
+    <span class="n">candela_2d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">candela_values</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="nb">int</span><span class="p">(</span><span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;Ng&#39;</span><span class="p">])))</span>
+    <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;h_angs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cangles</span><span class="p">)[:</span><span class="n">candela_2d</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+    <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;v_angs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">tangles</span><span class="p">)</span>
+    <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;candela_2d&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">candela_2d</span><span class="p">)</span>
 
-        <span class="c1"># normalize candela values to max = 1 or I0 = 1:</span>
-        <span class="n">LDT</span> <span class="o">=</span> <span class="n">_normalize_candela_2d</span><span class="p">(</span><span class="n">LDT</span><span class="p">,</span> <span class="n">normalize</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">,</span> <span class="n">multiplier</span> <span class="o">=</span> <span class="n">multiplier</span><span class="p">)</span>
+    <span class="c1"># normalize candela values to max = 1 or I0 = 1:</span>
+    <span class="n">LDT</span> <span class="o">=</span> <span class="n">_normalize_candela_2d</span><span class="p">(</span><span class="n">LDT</span><span class="p">,</span> <span class="n">normalize</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">,</span> <span class="n">multiplier</span> <span class="o">=</span> <span class="n">multiplier</span><span class="p">)</span>
 
-        <span class="c1"># complete lid to full theta[0-180] and phi [0-360]</span>
-        <span class="n">LDT</span> <span class="o">=</span> <span class="n">_complete_ldt_lid</span><span class="p">(</span><span class="n">LDT</span><span class="p">,</span> <span class="n">Isym</span> <span class="o">=</span> <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;Isym&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
-        
-        <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;Iv0&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;intensity&#39;</span><span class="p">]</span><span class="o">/</span><span class="mi">1000</span><span class="o">*</span><span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;tflux&#39;</span><span class="p">]</span> <span class="c1">#lid in cd/klm </span>
-        <span class="k">return</span> <span class="n">LDT</span>
+    <span class="c1"># complete lid to full theta[0-180] and phi [0-360]</span>
+    <span class="n">LDT</span> <span class="o">=</span> <span class="n">_complete_ldt_lid</span><span class="p">(</span><span class="n">LDT</span><span class="p">,</span> <span class="n">Isym</span> <span class="o">=</span> <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;Isym&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+    
+    <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;Iv0&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;intensity&#39;</span><span class="p">]</span><span class="o">/</span><span class="mi">1000</span><span class="o">*</span><span class="n">LDT</span><span class="p">[</span><span class="s1">&#39;tflux&#39;</span><span class="p">]</span> <span class="c1">#lid in cd/klm </span>
+    <span class="k">return</span> <span class="n">LDT</span>
 
     
 <span class="k">def</span> <span class="nf">_complete_ldt_lid</span><span class="p">(</span><span class="n">LDT</span><span class="p">,</span> <span class="n">Isym</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="n">complete</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
@@ -1013,11 +1046,12 @@
                                <span class="n">ax</span><span class="p">,</span> <span class="n">use_scatter_plot</span><span class="p">,</span> <span class="n">plot_colorbar</span><span class="p">,</span><span class="o">**</span><span class="n">plottingkwargs</span><span class="p">)</span>
         
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">ax</span> <span class="o">=</span> <span class="n">_make_2D_lid_plot_polar</span><span class="p">(</span><span class="n">phim_map</span><span class="p">,</span> <span class="n">thetam_map</span><span class="p">,</span> <span class="n">values_map</span><span class="p">,</span> 
+        <span class="n">ax</span><span class="p">,</span><span class="n">plot_op_half</span> <span class="o">=</span> <span class="n">_make_2D_lid_plot_polar</span><span class="p">(</span><span class="n">phim_map</span><span class="p">,</span> <span class="n">thetam_map</span><span class="p">,</span> <span class="n">values_map</span><span class="p">,</span> 
                                <span class="n">ax</span><span class="p">,</span> <span class="n">polar_plot_Cx_planes</span> <span class="o">=</span> <span class="n">polar_plot_Cx_planes</span><span class="p">,</span> <span class="o">**</span><span class="n">plottingkwargs</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_theta_zero_location</span><span class="p">(</span><span class="s2">&quot;S&quot;</span><span class="p">)</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">set_thetamin</span><span class="p">(</span><span class="o">-</span><span class="mi">90</span><span class="p">)</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">set_thetamax</span><span class="p">(</span><span class="mi">90</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">plot_op_half</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_thetamin</span><span class="p">(</span><span class="o">-</span><span class="mi">90</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_thetamax</span><span class="p">(</span><span class="mi">90</span><span class="p">)</span>
         
     <span class="k">if</span> <span class="p">(</span><span class="n">legend_on</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">projection</span> <span class="o">==</span> <span class="s1">&#39;2d&#39;</span><span class="p">):</span> <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span> <span class="o">=</span> <span class="s1">&#39;best&#39;</span><span class="p">)</span><span class="c1">#bbox_to_anchor=(1.07, 0.8))</span>
     
@@ -1065,13 +1099,21 @@
         <span class="k">return</span> <span class="n">t</span><span class="p">,</span> <span class="n">r</span>
     <span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;b&#39;</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">,</span><span class="s1">&#39;g&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">,</span><span class="s1">&#39;c&#39;</span><span class="p">,</span><span class="s1">&#39;m&#39;</span><span class="p">,</span><span class="s1">&#39;k&#39;</span><span class="p">,</span><span class="s1">&#39;k&#39;</span><span class="p">,</span><span class="s1">&#39;m&#39;</span><span class="p">,</span><span class="s1">&#39;c&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">,</span><span class="s1">&#39;g&#39;</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">,</span><span class="s1">&#39;b&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span>
     <span class="n">linestyles</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;-&#39;</span><span class="p">,</span><span class="s1">&#39;--&#39;</span><span class="p">,</span><span class="s1">&#39;-.&#39;</span><span class="p">,</span><span class="s1">&#39;:&#39;</span><span class="p">]</span><span class="o">*</span><span class="mi">7</span>
+    <span class="n">t_top</span> <span class="o">=</span> <span class="kc">False</span> <span class="c1"># for plotting top  half of polar plot or not</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">phi</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">polar_plot_Cx_planes</span><span class="p">):</span>
         <span class="n">phio</span> <span class="o">=</span> <span class="n">phi</span> <span class="o">+</span> <span class="mi">180</span> <span class="c1"># phi on opposite side</span>
+        
         <span class="n">t</span><span class="p">,</span><span class="n">r</span> <span class="o">=</span> <span class="n">get_tr</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="p">(</span><span class="n">t</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">r</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">any</span><span class="p">():</span> <span class="n">t_top</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">r</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">linestyle</span> <span class="o">=</span> <span class="n">linestyles</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;C</span><span class="si">{:1.0f}</span><span class="s1">-C</span><span class="si">{:1.0f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">phi</span><span class="p">,</span><span class="n">phio</span><span class="p">),</span><span class="o">**</span><span class="n">plottingkwargs</span><span class="p">)</span>
+          
         <span class="n">t</span><span class="p">,</span><span class="n">r</span> <span class="o">=</span> <span class="n">get_tr</span><span class="p">(</span><span class="n">phio</span><span class="p">)</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="p">(</span><span class="n">t</span> <span class="o">&lt;</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">r</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">any</span><span class="p">():</span> <span class="n">t_top</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">r</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">linestyle</span> <span class="o">=</span> <span class="n">linestyles</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="o">**</span><span class="n">plottingkwargs</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">ax</span>
+    
+    <span class="k">return</span> <span class="n">ax</span><span class="p">,</span> <span class="n">t_top</span>
 
 
 <span class="c1">#------------------------------------------------------------------------------</span>
@@ -1302,7 +1344,8 @@
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        :LID:</span>
-<span class="sd">            | dict with IES or LDT file data or string with path/filename. </span>
+<span class="sd">            | dict with IES or LDT file data or string with path/filename;</span>
+<span class="sd">            | or String or StringIO object with IES or LDT data.</span>
 <span class="sd">            | (dict should be obtained with iolidfiles.read_lamp_data())</span>
 <span class="sd">        :sensor_resolution:</span>
 <span class="sd">            | 100, optional</span>
@@ -1557,7 +1600,8 @@
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
     
     <span class="c1"># Read lamp data from IES file:</span>
-    <span class="n">LID</span> <span class="o">=</span> <span class="n">read_lamp_data</span><span class="p">(</span><span class="s1">&#39;./data/luxpy_test_lid_file.ldt&#39;</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">LID</span> <span class="o">=</span> <span class="n">read_lamp_data</span><span class="p">(</span><span class="s1">&#39;./data/luxpy_test_lid_file.ies&#39;</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="c1">#LID = read_lamp_data(&#39;./data/luxpy_test_lid_file.ldt&#39;, verbosity = 1)</span>
     
     <span class="c1"># # Generate uv-map for rendering / ray-tracing (eg by wrapping this around </span>
     <span class="c1"># # a point light source to attenuate the luminous intensity in different directions):</span>
@@ -1575,14 +1619,14 @@
     
     <span class="c1"># draw 2D polar plot of C0-C180 and C90-C270 planes::</span>
     <span class="n">draw_lid</span><span class="p">(</span><span class="n">LID</span><span class="p">)</span>
-    
+
     <span class="c1"># draw 2D polar plot of C0-C180, C45-C225 and C90-C270 planes::</span>
     <span class="n">draw_lid</span><span class="p">(</span><span class="n">LID</span><span class="p">,</span> <span class="n">projection</span> <span class="o">=</span> <span class="s1">&#39;2d&#39;</span><span class="p">,</span> <span class="n">polar_plot_Cx_planes</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">45</span><span class="p">,</span><span class="mi">90</span><span class="p">])</span>
-
+    
 
     <span class="c1"># draw 3D LID:</span>
     <span class="n">draw_lid</span><span class="p">(</span><span class="n">LID</span><span class="p">,</span> <span class="n">projection</span> <span class="o">=</span> <span class="s1">&#39;3d&#39;</span><span class="p">)</span>    
-
+    
     <span class="c1"># # # Render LID</span>
     <span class="c1"># Lv2D = render_lid(LID, sensor_resolution = 40,</span>
     <span class="c1">#                     sensor_position = [0,-1,0.8], sensor_n = [0,1,-0.2], fov = (90,90), Fd = 2,</span>

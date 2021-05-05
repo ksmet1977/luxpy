@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Toolboxes &mdash; LuxPy 1.6.6 documentation</title>
+  <title>Toolboxes &mdash; LuxPy 1.6.7 documentation</title>
   
 
   
@@ -62,7 +62,7 @@
             
             
               <div class="version">
-                1.6.6
+                1.6.7
               </div>
             
           
@@ -5538,13 +5538,13 @@ or k nearest neighbour interpolation of samples from a standard reflectance set.
 </div></blockquote>
 <dl class="py function">
 <dt id="luxpy.toolboxes.iolidfiles.read_lamp_data">
-<code class="sig-prename descclassname">luxpy.toolboxes.iolidfiles.</code><code class="sig-name descname">read_lamp_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">multiplier</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">verbosity</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">normalize</span><span class="o">=</span><span class="default_value">'I0'</span></em>, <em class="sig-param"><span class="n">only_common_keys</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/iolidfiles/io_lid_files.html#read_lamp_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.iolidfiles.read_lamp_data" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.toolboxes.iolidfiles.</code><code class="sig-name descname">read_lamp_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">datasource</span></em>, <em class="sig-param"><span class="n">multiplier</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">verbosity</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">normalize</span><span class="o">=</span><span class="default_value">'I0'</span></em>, <em class="sig-param"><span class="n">only_common_keys</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/iolidfiles/io_lid_files.html#read_lamp_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.iolidfiles.read_lamp_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read in light intensity distribution and other lamp data from LDT or IES files.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
-<dt class="field-odd">filename</dt>
+<dt class="field-odd">datasource</dt>
 <dd class="field-odd"><div class="line-block">
-<div class="line">Filename of IES file.</div>
+<div class="line">Filename of LID file or StringIO object or string with LID data.</div>
 </div>
 </dd>
 <dt class="field-even">multiplier</dt>
@@ -5583,9 +5583,9 @@ or k nearest neighbour interpolation of samples from a standard reflectance set.
 <dt class="field-odd">lid</dt>
 <dd class="field-odd"><p>dict with IES or LDT file data.
 |
-| If file_ext == ‘ies’:
+| If LIDtype == ‘ies’:
 |    dict_keys(
-| [‘filename’, ‘version’, ‘lamps_num’, ‘lumens_per_lamp’,
+| [‘datasource’, ‘version’, ‘lamps_num’, ‘lumens_per_lamp’,
 | ‘candela_mult’, ‘v_angles_num’, ‘h_angles_num’, ‘photometric_type’,
 | ‘units_type’, ‘width’, ‘length’, ‘height’, ‘ballast_factor’, 
 | ‘future_use’, ‘input_watts’, ‘v_angs’, ‘h_angs’, ‘lamp_cone_type’,
@@ -5593,9 +5593,9 @@ or k nearest neighbour interpolation of samples from a standard reflectance set.
 | ‘intensity’, ‘theta’, ‘values’, ‘phi’, ‘map’,’Iv0’]
 | )
 |
-| If file_ext == ‘ldt’:
+| If LIDtype == ‘ldt’:
 |    dict_keys(
-| [‘filename’, ‘version’, ‘manufacturer’, ‘Ityp’,’Isym’,
+| [‘datasource’, ‘version’, ‘manufacturer’, ‘Ityp’,’Isym’,
 | ‘Mc’, ‘Dc’, ‘Ng’, ‘name’, Dg’, ‘cct/cri’, ‘tflux’, ‘lumens_per_lamp’,
 | ‘candela_mult’, ‘tilt’, lamps_num’,
 | ‘cangles’, ‘tangles’,’candela_values’, ‘candela_2d’,
@@ -5605,10 +5605,11 @@ or k nearest neighbour interpolation of samples from a standard reflectance set.
 </dl>
 </dd>
 <dt>Notes:</dt><dd><ol class="arabic simple">
-<li><p>if only_common_keys: output is dictionary with keys: [‘filename’, ‘version’, ‘intensity’, ‘theta’, ‘phi’,         ‘values’, ‘map’, ‘Iv0’, ‘candela_values’, ‘candela_2d’]</p></li>
+<li><p>if only_common_keys: output is dictionary with keys: [‘datasource’, ‘version’, ‘intensity’, ‘theta’, ‘phi’,         ‘values’, ‘map’, ‘Iv0’, ‘candela_values’, ‘candela_2d’]</p></li>
 <li><p>‘theta’,’phi’, ‘values’ (=’candela_2d’) contain the original theta angles, phi angles and normalized candelas as specified in file.</p></li>
 <li><p>‘map’ contains a dicionary with keys ‘thetas’, ‘phis’, ‘values’. This data has been complete to full angle ranges thetas: [0,180]; phis: [0,360]</p></li>
 <li><p>LDT map completion only supported for Isymm == 4 (31/10/2018), Map will be filled with original ‘theta’, ‘phi’ and normalized ‘candela_2d’ values !</p></li>
+<li><p>LIDtype is checked by looking for the presence of ‘TILT=’ in datasource content (if True-&gt;’IES’ else ‘LDT’)</p></li>
 </ol>
 </dd>
 </dl>
@@ -5858,7 +5859,8 @@ or k nearest neighbour interpolation of samples from a standard reflectance set.
 <dt>Args:</dt><dd><dl class="field-list">
 <dt class="field-odd">LID</dt>
 <dd class="field-odd"><div class="line-block">
-<div class="line">dict with IES or LDT file data or string with path/filename. </div>
+<div class="line">dict with IES or LDT file data or string with path/filename;</div>
+<div class="line">or String or StringIO object with IES or LDT data.</div>
 <div class="line">(dict should be obtained with iolidfiles.read_lamp_data())</div>
 </div>
 </dd>

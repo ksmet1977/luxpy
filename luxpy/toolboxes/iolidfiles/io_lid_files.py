@@ -38,6 +38,8 @@ Module for reading / writing LID data from IES and LDT files.
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 import os
+import io
+import copy
 import warnings
 from luxpy.utils import np, _PKG_PATH, _SEP
 from luxpy.utils import plt, Axes3D 
@@ -55,14 +57,35 @@ _PATH_DATA = os.path.join(_PKG_PATH, 'toolboxes','iolidfiles','data') + _SEP
 
 __all__ =['_PATH_DATA', 'read_lamp_data','get_uv_texture','save_texture','draw_lid','render_lid']
 
+def _read_file(string_data):
+    if isinstance(string_data,io.StringIO):
+        content = string_data.read()
+        name = 'StringIO'
+    elif os.path.isfile(string_data) & (string_data[-4:] in ('.ies', '.ldt')):
+        name = string_data[:-4]
 
-def read_lamp_data(filename, multiplier = 1.0, verbosity = 0, normalize = 'I0', only_common_keys = False):
+        # file = open(filename, 'rt', encoding='cp1252')
+        file = open(string_data, 'rt')
+        content = file.read()
+        file.close()
+    elif isinstance(string_data, str) & (string_data[-4:] not in ('.ies', '.ldt')):
+        content = copy.copy(string_data)
+        name = 'String'
+    else:
+        raise Exception('Invalid input (options: filename, StringIO object or string with LID data)')
+    ext = '.ies' if (('TILT=' in content) or ('TILT =' in content)) else '.ldt'
+    return content, name + ext
+        
+        
+    
+
+def read_lamp_data(datasource, multiplier = 1.0, verbosity = 0, normalize = 'I0', only_common_keys = False):
     """
     Read in light intensity distribution and other lamp data from LDT or IES files.
     
     Args:
-        :filename:
-            | Filename of IES file.
+        :datasource:
+            | Filename of LID file or StringIO object or string with LID data.
         :multiplier:
             | 1.0, optional
             | Scaler for candela values.
@@ -83,9 +106,9 @@ def read_lamp_data(filename, multiplier = 1.0, verbosity = 0, normalize = 'I0', 
     Returns:
         :lid: dict with IES or LDT file data.
             |
-            | If file_ext == 'ies':
+            | If LIDtype == 'ies':
             |    dict_keys(
-            | ['filename', 'version', 'lamps_num', 'lumens_per_lamp',
+            | ['datasource', 'version', 'lamps_num', 'lumens_per_lamp',
             | 'candela_mult', 'v_angles_num', 'h_angles_num', 'photometric_type',
             | 'units_type', 'width', 'length', 'height', 'ballast_factor', 
             | 'future_use', 'input_watts', 'v_angs', 'h_angs', 'lamp_cone_type',
@@ -93,9 +116,9 @@ def read_lamp_data(filename, multiplier = 1.0, verbosity = 0, normalize = 'I0', 
             | 'intensity', 'theta', 'values', 'phi', 'map','Iv0']
             | )
             |
-            | If file_ext == 'ldt':
+            | If LIDtype == 'ldt':
             |    dict_keys(
-            | ['filename', 'version', 'manufacturer', 'Ityp','Isym',
+            | ['datasource', 'version', 'manufacturer', 'Ityp','Isym',
             | 'Mc', 'Dc', 'Ng', 'name', Dg', 'cct/cri', 'tflux', 'lumens_per_lamp',
             | 'candela_mult', 'tilt', lamps_num',
             | 'cangles', 'tangles','candela_values', 'candela_2d',
@@ -103,26 +126,31 @@ def read_lamp_data(filename, multiplier = 1.0, verbosity = 0, normalize = 'I0', 
             | )
             
     Notes:
-        1. if only_common_keys: output is dictionary with keys: ['filename', 'version', 'intensity', 'theta', 'phi', \
+        1. if only_common_keys: output is dictionary with keys: ['datasource', 'version', 'intensity', 'theta', 'phi', \
         'values', 'map', 'Iv0', 'candela_values', 'candela_2d'] 
         2. 'theta','phi', 'values' (='candela_2d') contain the original theta angles, phi angles and normalized candelas as specified in file.
         3. 'map' contains a dicionary with keys 'thetas', 'phis', 'values'. This data has been complete to full angle ranges thetas: [0,180]; phis: [0,360]   
         4. LDT map completion only supported for Isymm == 4 (31/10/2018), Map will be filled with original 'theta', 'phi' and normalized 'candela_2d' values !
+        5. LIDtype is checked by looking for the presence of 'TILT=' in datasource content (if True->'IES' else 'LDT')
     """
-    common_keys = ['filename', 'version', 'intensity', 'theta', 'phi', \
+    common_keys = ['datasource', 'version', 'intensity', 'theta', 'phi', \
                    'values', 'map', 'Iv0', 'candela_values', 'candela_2d']
-    if filename == '?':
+    
+    if datasource == '?':
         print(common_keys)
         return dict(zip(common_keys,[np.nan]*len(common_keys))) 
     
+
+    datasource, filename = _read_file(datasource)
     file_ext = filename[-3:].lower()
     if file_ext == 'ies':
-        lid = read_IES_lamp_data(filename, multiplier = multiplier, \
+        lid = read_IES_lamp_data(datasource, multiplier = multiplier, \
                                  verbosity = verbosity, normalize = normalize)
     elif file_ext == 'ldt':
-        lid = read_ldt_lamp_data(filename, multiplier = multiplier, normalize = normalize)
+        lid = read_ldt_lamp_data(datasource, multiplier = multiplier, normalize = normalize)
     else:
-        raise Exception("read_lid_lamp_data(): {:s} --> unsupported file type/extension (only 'ies' or 'ldt': ".format(file_ext))
+        raise Exception("read_lid_lamp_data(): {:s} --> unsupported datasource type (only 'ies' or 'ldt': ".format(file_ext))
+    lid['datasource'] = filename # overwrite with original as this key is set to String or StringIO on call to specific readl_lamp_data functions
     
     if only_common_keys == True:
         return {key:value for (key,value) in lid.items() if key in common_keys}
@@ -138,29 +166,29 @@ def displaymsg(code, message, verbosity = 1):
     
     
 
-def read_IES_lamp_data(filename, multiplier = 1.0, verbosity = 0, normalize = 'I0'):
+def read_IES_lamp_data(datasource, multiplier = 1.0, verbosity = 0, normalize = 'I0'):
     """
-    Read in IES files (adapted from Blender's ies2cycles.py).
+    Read in IES data (adapted from Blender's ies2cycles.py).
     
     Args:
-        :filename:
-            | Filename of IES file.
+        :datasource:
+            | Filename of LID file or StringIO object or string with LID data.
         :multiplier:
             | 1.0, optional
             | Scaler for candela values.
         :verbosity:
             | 0, optional
-            | Display messages while reading file.
+            | Display messages while reading data.
         :normalize:
             | 'I0', optional
             | If 'I0': normalize LID to intensity at (theta,phi) = (0,0)
             | If 'max': normalize to max = 1.
             
     Returns:
-        :IES: dict with IES file data.
+        :IES: dict with IES data.
             |
             | dict_keys(
-            | ['filename', 'version', 'lamps_num', 'lumens_per_lamp',
+            | ['datasource', 'version', 'lamps_num', 'lumens_per_lamp',
             | 'candela_mult', 'v_angles_num', 'h_angles_num', 'photometric_type',
             | 'units_type', 'width', 'length', 'height', 'ballast_factor', 
             | 'future_use', 'input_watts', 'v_angs', 'h_angs', 'lamp_cone_type',
@@ -176,11 +204,14 @@ def read_IES_lamp_data(filename, multiplier = 1.0, verbosity = 0, normalize = 'I
         'IESNA:LM-63-2002': 2002,
     }
     
-    name = os.path.splitext(os.path.split(filename)[1])[0]
+    # name = os.path.splitext(os.path.split(filename)[1])[0]
 
-    file = open(filename, 'rt', encoding='cp1252')
-    content = file.read()
-    file.close()
+    # # file = open(filename, 'rt', encoding='cp1252')
+    # file = open(filename, 'rt')
+    # content = file.read()
+    # file.close()
+    content, name = _read_file(datasource)
+    name = os.path.split(name)[1] # get rid of path
     s, content = content.split('\n', 1)
 
 
@@ -289,8 +320,8 @@ def read_IES_lamp_data(filename, multiplier = 1.0, verbosity = 0, normalize = 'I
     #intensity = max(500, min(intensity, 5000)) #???
 
     # Summarize in dict():
-    IES = {'filename': filename}
-    IES['name'] = name
+    IES = {'datasource': datasource}
+    IES['name'] = name[:-4]
     IES['version'] = version
     IES['lamps_num'] = lamps_num
     IES['lumens_per_lamp'] = lumens_per_lamp
@@ -353,13 +384,13 @@ def _complete_ies_lid(IES, lamp_h_type = 'TYPE90', complete = True):
     return IES
   
 
-def read_ldt_lamp_data(filename, multiplier = 1.0, normalize = 'I0'):
+def read_ldt_lamp_data(datasource, multiplier = 1.0, normalize = 'I0'):
     """
-    Read in LDT files.
+    Read in LDT data.
     
     Args:
-        :filename:
-            | Filename of LDT file.
+        :datasource:
+            | Filename of LDT file or StringIO object or string with LID data.
         :multiplier:
             | 1.0, optional
             | Scaler for candela values.
@@ -372,88 +403,90 @@ def read_ldt_lamp_data(filename, multiplier = 1.0, normalize = 'I0'):
             | If 'max': normalize to max = 1.
             
     Returns:
-        :LDT: dict with LDT file data.
+        :LDT: dict with LDT data.
             |
             | dict_keys(
-            | ['filename', 'version', 'manufacturer', 'Ityp','Isym',
+            | ['datasource', 'version', 'manufacturer', 'Ityp','Isym',
             | 'Mc', 'Dc', 'Ng', 'name', Dg', 'cct/cri', 'tflux', 'lumens_per_lamp',
             | 'candela_mult', 'tilt', lamps_num',
             | 'cangles', 'tangles','candela_values', 'candela_2d',
             | 'intensity', 'theta', 'values', 'phi', 'map', 'Iv0']
             | )
     """
-    LDT = {'filename' : filename}
+    content, name = _read_file(datasource)
+    LDT = {'datasource' : name}
     LDT['version'] = None
-    with open(filename) as file:
-        c = 0
-        cangles = []
-        tangles = []
-        candela_values = []
-        for line in file:
-            if c == 0: # manufacturer
-                LDT['manufacturer'] = line.rstrip()
-            elif c == 1: # type indicator: 1: point with symm. around vert. axis, 2: line luminaire, 3: point with other symm.
-                if float(line) == 1.0:
-                    LDT['Ityp'] = 'point source with symm. around vert. axis'
-                elif float(line) == 2.0:
-                    LDT['Ityp'] = 'line luminaire'
-                elif float(line) == 3.0:
-                    LDT['Ityp'] = 'point source with other symm.'
-            elif c == 2: # symm. indicator
-                if float(line) == 0.0:
-                    LDT['Isym'] = (0, 'no symmetry')
-                elif float(line) == 1.0:
-                    LDT['Isym'] = (1, 'symmetry about the vertical axis')
-                elif float(line) == 2.0:
-                    LDT['Isym'] = (2, 'symmetry to plane C0-C180')
-                elif float(line) == 3.0:
-                    LDT['Isym'] = (3, 'symmetry to plane C90-C270')
-                elif float(line) == 4.0:
-                    LDT['Isym'] = (4, 'symmetry to plane C0-C180 and to plane C90-C270')
-            elif c == 3: # Number Mc of C-planes between 0 and 360 degrees 
-                LDT['Mc'] = float(line)
-            elif c == 4: # Distance Dc between C-planes (Dc = 0 for non-equidistantly available C-planes)
-                LDT['Dc'] = float(line)
-            elif c == 5: # Number Ng of luminous intensities in each C-plane
-                LDT['Ng'] = float(line)
-            elif c == 6: # Distance Dg between luminous intensities per C-plane (Dg = 0 for non-equidistantly available luminous intensities in C-planes)
-                LDT['Dg'] = float(line)
-            elif c == 8: # luminaire name
-                LDT['name'] = line.rstrip()
-            elif c == 23: # conversion factor
-                LDT['candela_mult'] = float(line)
-            elif c == 24: # Tilt angle
-                LDT['tilt'] = float(line)
-            elif c == 26: # number of lamps
-                LDT['lamps_num'] = float(line)
-            elif c == 28: # total luminous flux
-                LDT['tflux'] = float(line)
-                LDT['lumens_per_lamp'] = LDT['tflux']
-            elif c == 29: # cct/cri
-                LDT['cct/cri'] = line.rstrip()
-            elif (c >= 42) & (c <= (42 + LDT['Mc'] - 1)): # start of C-angles
-                cangles.append(float(line))
-            elif (c >= 42 + LDT['Mc']) & (c <= (42 + LDT['Mc'] + LDT['Ng'] - 1)): # start of t-angles
-                tangles.append(float(line))
-            elif (c >= (42 + LDT['Mc'] + LDT['Ng'])) & (c <= (42 + LDT['Mc'] + LDT['Ng'] + LDT['Mc']*LDT['Ng'] - 1)):
-                candela_values.append(float(line))
-            c += 1
+    # with open(filename) as file:
+    content_list = content.split('\n')
+    c = 0
+    cangles = []
+    tangles = []
+    candela_values = []
+    for line in content_list:
+        if c == 0: # manufacturer
+            LDT['manufacturer'] = line.rstrip()
+        elif c == 1: # type indicator: 1: point with symm. around vert. axis, 2: line luminaire, 3: point with other symm.
+            if float(line) == 1.0:
+                LDT['Ityp'] = 'point source with symm. around vert. axis'
+            elif float(line) == 2.0:
+                LDT['Ityp'] = 'line luminaire'
+            elif float(line) == 3.0:
+                LDT['Ityp'] = 'point source with other symm.'
+        elif c == 2: # symm. indicator
+            if float(line) == 0.0:
+                LDT['Isym'] = (0, 'no symmetry')
+            elif float(line) == 1.0:
+                LDT['Isym'] = (1, 'symmetry about the vertical axis')
+            elif float(line) == 2.0:
+                LDT['Isym'] = (2, 'symmetry to plane C0-C180')
+            elif float(line) == 3.0:
+                LDT['Isym'] = (3, 'symmetry to plane C90-C270')
+            elif float(line) == 4.0:
+                LDT['Isym'] = (4, 'symmetry to plane C0-C180 and to plane C90-C270')
+        elif c == 3: # Number Mc of C-planes between 0 and 360 degrees 
+            LDT['Mc'] = float(line)
+        elif c == 4: # Distance Dc between C-planes (Dc = 0 for non-equidistantly available C-planes)
+            LDT['Dc'] = float(line)
+        elif c == 5: # Number Ng of luminous intensities in each C-plane
+            LDT['Ng'] = float(line)
+        elif c == 6: # Distance Dg between luminous intensities per C-plane (Dg = 0 for non-equidistantly available luminous intensities in C-planes)
+            LDT['Dg'] = float(line)
+        elif c == 8: # luminaire name
+            LDT['name'] = line.rstrip()
+        elif c == 23: # conversion factor
+            LDT['candela_mult'] = float(line)
+        elif c == 24: # Tilt angle
+            LDT['tilt'] = float(line)
+        elif c == 26: # number of lamps
+            LDT['lamps_num'] = float(line)
+        elif c == 28: # total luminous flux
+            LDT['tflux'] = float(line)
+            LDT['lumens_per_lamp'] = LDT['tflux']
+        elif c == 29: # cct/cri
+            LDT['cct/cri'] = line.rstrip()
+        elif (c >= 42) & (c <= (42 + LDT['Mc'] - 1)): # start of C-angles
+            cangles.append(float(line))
+        elif (c >= 42 + LDT['Mc']) & (c <= (42 + LDT['Mc'] + LDT['Ng'] - 1)): # start of t-angles
+            tangles.append(float(line))
+        elif (c >= (42 + LDT['Mc'] + LDT['Ng'])) & (c <= (42 + LDT['Mc'] + LDT['Ng'] + LDT['Mc']*LDT['Ng'] - 1)):
+            if line != '':candela_values.append(float(line))
+        c += 1
          
-        candela_values = np.array(candela_values)
-        LDT['candela_values'] = np.array(candela_values)
-        candela_2d = np.array(candela_values).reshape((-1,int(LDT['Ng'])))
-        LDT['h_angs'] = np.array(cangles)[:candela_2d.shape[0]]
-        LDT['v_angs'] = np.array(tangles)
-        LDT['candela_2d'] = np.array(candela_2d)
+    candela_values = np.array(candela_values)
+    LDT['candela_values'] = np.array(candela_values)
+    candela_2d = np.array(candela_values).reshape((-1,int(LDT['Ng'])))
+    LDT['h_angs'] = np.array(cangles)[:candela_2d.shape[0]]
+    LDT['v_angs'] = np.array(tangles)
+    LDT['candela_2d'] = np.array(candela_2d)
 
-        # normalize candela values to max = 1 or I0 = 1:
-        LDT = _normalize_candela_2d(LDT, normalize = normalize, multiplier = multiplier)
+    # normalize candela values to max = 1 or I0 = 1:
+    LDT = _normalize_candela_2d(LDT, normalize = normalize, multiplier = multiplier)
 
-        # complete lid to full theta[0-180] and phi [0-360]
-        LDT = _complete_ldt_lid(LDT, Isym = LDT['Isym'][0])
-        
-        LDT['Iv0'] = LDT['intensity']/1000*LDT['tflux'] #lid in cd/klm 
-        return LDT
+    # complete lid to full theta[0-180] and phi [0-360]
+    LDT = _complete_ldt_lid(LDT, Isym = LDT['Isym'][0])
+    
+    LDT['Iv0'] = LDT['intensity']/1000*LDT['tflux'] #lid in cd/klm 
+    return LDT
 
     
 def _complete_ldt_lid(LDT, Isym = 4, complete = True):
@@ -853,11 +886,12 @@ def draw_lid(LID, grid_interp_method = 'linear', theta_min = 0, angle_res = 1,
                                ax, use_scatter_plot, plot_colorbar,**plottingkwargs)
         
     else:
-        ax = _make_2D_lid_plot_polar(phim_map, thetam_map, values_map, 
+        ax,plot_op_half = _make_2D_lid_plot_polar(phim_map, thetam_map, values_map, 
                                ax, polar_plot_Cx_planes = polar_plot_Cx_planes, **plottingkwargs)
         ax.set_theta_zero_location("S")
-        ax.set_thetamin(-90)
-        ax.set_thetamax(90)
+        if not plot_op_half:
+            ax.set_thetamin(-90)
+            ax.set_thetamax(90)
         
     if (legend_on) & (projection == '2d'): ax.legend(loc = 'best')#bbox_to_anchor=(1.07, 0.8))
     
@@ -905,13 +939,21 @@ def _make_2D_lid_plot_polar(phim_map, thetam_map, values_map,
         return t, r
     colors = ['b','r','g','y','c','m','k','k','m','c','y','g','r','b'] * 2
     linestyles = ['-','--','-.',':']*7
+    t_top = False # for plotting top  half of polar plot or not
     for i, phi in enumerate(polar_plot_Cx_planes):
         phio = phi + 180 # phi on opposite side
+        
         t,r = get_tr(phi)
+        c = (t > np.pi/2) & (r > 0)
+        if c.any(): t_top = True
         ax.plot(t,r, color = colors[i], linestyle = linestyles[i], label = 'C{:1.0f}-C{:1.0f}'.format(phi,phio),**plottingkwargs)
+          
         t,r = get_tr(phio)
+        c = (t < -np.pi/2) & (r > 0)
+        if c.any(): t_top = True
         ax.plot(t,r, color = colors[i], linestyle = linestyles[i], **plottingkwargs)
-    return ax
+    
+    return ax, t_top
 
 
 #------------------------------------------------------------------------------
@@ -1142,7 +1184,8 @@ def render_lid(LID = './data/luxpy_test_lid_file.ies',
     
     Args:
         :LID:
-            | dict with IES or LDT file data or string with path/filename. 
+            | dict with IES or LDT file data or string with path/filename;
+            | or String or StringIO object with IES or LDT data.
             | (dict should be obtained with iolidfiles.read_lamp_data())
         :sensor_resolution:
             | 100, optional
@@ -1397,7 +1440,8 @@ def render_lid(LID = './data/luxpy_test_lid_file.ies',
 if __name__ == '__main__':
     
     # Read lamp data from IES file:
-    LID = read_lamp_data('./data/luxpy_test_lid_file.ldt', verbosity = 1)
+    LID = read_lamp_data('./data/luxpy_test_lid_file.ies', verbosity = 1)
+    #LID = read_lamp_data('./data/luxpy_test_lid_file.ldt', verbosity = 1)
     
     # # Generate uv-map for rendering / ray-tracing (eg by wrapping this around 
     # # a point light source to attenuate the luminous intensity in different directions):
@@ -1415,14 +1459,14 @@ if __name__ == '__main__':
     
     # draw 2D polar plot of C0-C180 and C90-C270 planes::
     draw_lid(LID)
-    
+
     # draw 2D polar plot of C0-C180, C45-C225 and C90-C270 planes::
     draw_lid(LID, projection = '2d', polar_plot_Cx_planes = [0,45,90])
-
+    
 
     # draw 3D LID:
     draw_lid(LID, projection = '3d')    
-
+    
     # # # Render LID
     # Lv2D = render_lid(LID, sensor_resolution = 40,
     #                     sensor_position = [0,-1,0.8], sensor_n = [0,1,-0.2], fov = (90,90), Fd = 2,
