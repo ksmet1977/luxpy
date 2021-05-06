@@ -1256,6 +1256,7 @@ def render_lid(LID = './data/luxpy_test_lid_file.ies',
             | None, optional
             | If None: create new 3D- or 2D- axes for plotting.
             | If join_axes == True: try and combine two axes on same figure.
+            | If False: don't plot..
         :legend_on:
             | False, optional
             | plot legend.
@@ -1499,6 +1500,7 @@ if __name__ == '__main__':
                         plot_wall_edges = True, plot_wall_luminance = True, plot_wall_intersections = False,
                         plot_floor_edges = True, plot_floor_luminance = True, plot_floor_intersections = False,
                         out = 'Lv2D')
+    # Lv2D = render_lid(LID, ax3D = False)
     
     
     

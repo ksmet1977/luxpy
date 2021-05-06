@@ -312,7 +312,7 @@ from .cam18sl import  (cam18sl, _CAM18SL_AXES, _CAM18SL_UNIQUE_HUE_DATA,
                       xyz_to_qabM_cam18sl, qabM_cam18sl_to_xyz, 
                       xyz_to_qabS_cam18sl, qabS_cam18sl_to_xyz)
 
-__all__ += ['xyz_to_qabM_cam18sl', 'qabM_cam18sl_to_xyz',
+__all__ += ['cam18sl','xyz_to_qabM_cam18sl', 'qabM_cam18sl_to_xyz',
             'xyz_to_qabS_cam18sl', 'qabS_cam18sl_to_xyz']
 
 
