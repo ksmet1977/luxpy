@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Spectrum sub-package &mdash; LuxPy 1.6.8 documentation</title>
+  <title>Spectrum sub-package &mdash; LuxPy 1.6.9 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                1.6.8
+                1.6.9
               </div>
             
           
@@ -102,6 +102,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#spectrum-spectral-py">spectrum/spectral.py</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#spectrum-spectral-databases-py">spectrum/spectral_databases.py</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#spectrum-illuminants-py">spectrum/illuminants.py</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#spdx-iestm2714-py">spdx_iestm2714.py</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#references">References</a></li>
 </ul>
 </li>
@@ -501,6 +502,22 @@ index calculations.</p>
 </dd>
 </dl>
 </div>
+<div class="section" id="spdx-iestm2714-py">
+<h3>spdx_iestm2714.py<a class="headerlink" href="#spdx-iestm2714-py" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><dl class="field-list simple">
+<dt class="field-odd">_SPDX_TEMPLATE</dt>
+<dd class="field-odd"><p>template dictionary for SPDX data.</p>
+</dd>
+<dt class="field-even">read_spdx()</dt>
+<dd class="field-even"><p>Read xml file or convert xml string with spdx data to dictionary.</p>
+</dd>
+<dt class="field-odd">write_spdx()</dt>
+<dd class="field-odd"><p>Convert spdx dictionary to xml string (and write to .spdx file)</p>
+</dd>
+</dl>
+</div></blockquote>
+</div>
 <div class="section" id="references">
 <h3>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h3>
 <blockquote>
@@ -515,6 +532,7 @@ ISBN 978-3-902842-61-9.</a></p>
 New York, NY: The Illuminating Engineering Society of North America.</a></p>
 <ol class="arabic simple" start="5">
 <li><p>Judd, D. B., MacAdam, D. L., Wyszecki, G., Budde, H. W., Condit, H. R., Henderson, S. T., &amp; Simonds, J. L. (1964). Spectral Distribution of Typical Daylight as a Function of Correlated Color Temperature. J. Opt. Soc. Am., 54(8), 1031–1040. <a class="reference external" href="https://doi.org/10.1364/JOSA.54.001031">https://doi.org/10.1364/JOSA.54.001031</a></p></li>
+<li><p><a class="reference external" href="http://www.ies.org/iestm2714">http://www.ies.org/iestm2714</a></p></li>
 </ol>
 </div></blockquote>
 <hr class="docutils" />
@@ -1689,6 +1707,60 @@ J. Opt. Soc. Am., 54(8), 1031–1040.</a></p>
 <div class="line">Dictionary with i,j,k,i1,j1,k1,i2,j2,k2 for each cieobs in :cieobs:</div>
 <div class="line">If cieobs contains ndarrays, then keys in dict will be </div>
 <div class="line">labeled ‘cmf_0’, ‘cmf_1’, …</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="luxpy.spectrum.read_spdx">
+<code class="sig-prename descclassname">luxpy.spectrum.</code><code class="sig-name descname">read_spdx</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spdx</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/spdx_ietm2714.html#read_spdx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.spectrum.read_spdx" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read xml file or convert xml string with spdx data to dictionary.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">spdx</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">xml string or file with spdx data.</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">spdx_dict</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">spdx data in a dictionary.</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="luxpy.spectrum.write_spdx">
+<code class="sig-prename descclassname">luxpy.spectrum.</code><code class="sig-name descname">write_spdx</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spdx_dict</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/spdx_ietm2714.html#write_spdx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.spectrum.write_spdx" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert spdx dictionary to xml string (and write to .spdx file).</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">spdx_dict</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">dictionary with spdx keys (see _SPDX for keys).</div>
+</div>
+</dd>
+<dt class="field-even">filename</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">string with filename to write xml data to.</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">spdx_xml</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">string with xml data in spdx dictionary.</div>
 </div>
 </dd>
 </dl>

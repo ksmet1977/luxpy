@@ -4,6 +4,8 @@
 Module for reading and writing IES TM2714 SPDX files
 ====================================================
 
+ :_SPDX_TEMPLATE: template dictionary for SPDX data.
+ 
  :read_spdx(): Read xml file or convert xml string with spdx data to dictionary.
      
  :write_spdx(): Convert spdx dictionary to xml string (and write to .spdx file)
@@ -48,8 +50,11 @@ _SPECTRALDISTRIBUTION = {'SpectralQuantity'  : 'Unknown',
                         'BandwidthCorrected' : 'Unknown',
                         'SpectralData'       :  'unknown'}
 # default SPDX dict
-_SPDX = {'Header' : _HEADER,
+_SPDX_TEMPLATE = {'Header' : _HEADER,
                 'SpectralDistribution' : _SPECTRALDISTRIBUTION}
+
+
+__all__ = ['_SPDX_TEMPLATE', 'read_spdx', 'write_spdx']
 
 #------------------------------------------------------------------------------
 # Writing xml (dict to xml)
@@ -83,12 +88,12 @@ def write_spdx(spdx_dict, filename = None):
     Args:
        :spdx_dict:
            | dictionary with spdx keys (see _SPDX for keys).
-        :filename:
+       :filename:
            | None, optional
            | string with filename to write xml data to.
            
     Returns:
-        :spdx_xml:
+       :spdx_xml:
            | string with xml data in spdx dictionary.
     """
     spdx_xml = ''
@@ -177,7 +182,7 @@ if __name__ == '__main__':
     import luxpy as lx
     
     # create spdx dict:
-    spdx_dict = copy.copy(_SPDX)
+    spdx_dict = copy.copy(_SPDX_TEMPLATE)
     spdx_dict['Header']['Manufacturer'] = 'CIE'
     spdx_dict['Header']['Description'] = 'CIE D65 illuminant (5nm)'
     spdx_dict['Header']['UniqueIdentifier'] = 'CIE D65'

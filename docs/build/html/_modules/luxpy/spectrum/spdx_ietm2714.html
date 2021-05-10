@@ -1,0 +1,407 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>luxpy.spectrum.spdx_ietm2714 &mdash; LuxPy 1.6.9 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> LuxPy
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.6.9
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License: GPLv3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../required_packages.html">Imported (required) packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../luxpy_structure.html">Luxpy package structure</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">LuxPy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>luxpy.spectrum.spdx_ietm2714</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for luxpy.spectrum.spdx_ietm2714</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">Module for reading and writing IES TM2714 SPDX files</span>
+<span class="sd">====================================================</span>
+
+<span class="sd"> :_SPDX_TEMPLATE: template dictionary for SPDX data.</span>
+<span class="sd"> </span>
+<span class="sd"> :read_spdx(): Read xml file or convert xml string with spdx data to dictionary.</span>
+<span class="sd">     </span>
+<span class="sd"> :write_spdx(): Convert spdx dictionary to xml string (and write to .spdx file)</span>
+
+<span class="sd">Reference:</span>
+<span class="sd">    1. http://www.ies.org/iestm2714</span>
+
+
+<span class="sd">Created on Mon May 10 16:25:09 2021</span>
+
+<span class="sd">@author: ksmet1977 [at] gmail.com</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">io</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">import</span> <span class="nn">xml.etree.ElementTree</span> <span class="k">as</span> <span class="nn">ET</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+
+<span class="c1"># Setup general headers:</span>
+<span class="n">_XML_VERSION</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">_XML_HEADER</span> <span class="o">=</span> <span class="s1">&#39;&lt;?xml version=&quot;</span><span class="si">{:1.0f}</span><span class="s1">&quot;?&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">_XML_VERSION</span><span class="p">)</span>
+<span class="n">_IES_TM2714_VERSION</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">_IES_TM2714_HEADER</span> <span class="o">=</span> <span class="s1">&#39;&lt;IESTM2714 xmlns=&quot;iestm2714&quot; version=&quot;</span><span class="si">{:1.0f}</span><span class="s1">&quot;&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">_IES_TM2714_VERSION</span><span class="p">)</span>
+<span class="n">_IES_TM2714_CLOSE</span> <span class="o">=</span> <span class="s1">&#39;&lt;/IESTM2714&gt;&#39;</span>
+
+<span class="c1"># default header dict:</span>
+<span class="n">_HEADER</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Manufacturer&#39;</span>        <span class="p">:</span> <span class="s1">&#39;Unknown&#39;</span><span class="p">,</span>
+		  <span class="s1">&#39;CatalogNumber&#39;</span>        <span class="p">:</span> <span class="s1">&#39;Unknown&#39;</span><span class="p">,</span>
+		  <span class="s1">&#39;Description&#39;</span>          <span class="p">:</span> <span class="s1">&#39;Unknown&#39;</span><span class="p">,</span>
+		  <span class="s1">&#39;FileCreator&#39;</span>          <span class="p">:</span> <span class="s1">&#39;Unknown&#39;</span><span class="p">,</span>
+		  <span class="s1">&#39;Laboratory&#39;</span>           <span class="p">:</span> <span class="s1">&#39;Unknown&#39;</span><span class="p">,</span>
+		  <span class="s1">&#39;UniqueIdentifier&#39;</span>     <span class="p">:</span> <span class="s1">&#39;Unknown&#39;</span><span class="p">,</span>
+		  <span class="s1">&#39;ReportNumber&#39;</span>         <span class="p">:</span> <span class="s1">&#39;Unknown&#39;</span><span class="p">,</span>
+		  <span class="s1">&#39;ReportDate&#39;</span>           <span class="p">:</span> <span class="s1">&#39;Unknown&#39;</span><span class="p">,</span>
+		  <span class="s1">&#39;DocumentCreationDate&#39;</span> <span class="p">:</span> <span class="s1">&#39;Unknown&#39;</span><span class="p">,</span>
+		  <span class="s1">&#39;comments&#39;</span>             <span class="p">:</span> <span class="s1">&#39;Unknown&#39;</span><span class="p">}</span>
+
+<span class="c1"># default spectral distribution dict:</span>
+<span class="n">_SPECTRALDISTRIBUTION</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;SpectralQuantity&#39;</span>  <span class="p">:</span> <span class="s1">&#39;Unknown&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;BandwidthFWHM&#39;</span>      <span class="p">:</span> <span class="s1">&#39;Unknown&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;BandwidthCorrected&#39;</span> <span class="p">:</span> <span class="s1">&#39;Unknown&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;SpectralData&#39;</span>       <span class="p">:</span>  <span class="s1">&#39;unknown&#39;</span><span class="p">}</span>
+<span class="c1"># default SPDX dict</span>
+<span class="n">_SPDX_TEMPLATE</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Header&#39;</span> <span class="p">:</span> <span class="n">_HEADER</span><span class="p">,</span>
+                <span class="s1">&#39;SpectralDistribution&#39;</span> <span class="p">:</span> <span class="n">_SPECTRALDISTRIBUTION</span><span class="p">}</span>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;_SPDX_TEMPLATE&#39;</span><span class="p">,</span> <span class="s1">&#39;read_spdx&#39;</span><span class="p">,</span> <span class="s1">&#39;write_spdx&#39;</span><span class="p">]</span>
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+<span class="c1"># Writing xml (dict to xml)</span>
+<span class="c1">#------------------------------------------------------------------------------</span>
+<span class="k">def</span> <span class="nf">_process_value</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">indent</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">field</span> <span class="o">==</span> <span class="s2">&quot;SpectralData&quot;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="n">xml</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="k">for</span> <span class="n">wi</span><span class="p">,</span> <span class="n">vi</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">value</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+            <span class="n">xml</span> <span class="o">+=</span> <span class="n">indent</span> <span class="o">+</span> <span class="s1">&#39;&lt;SpectralData wavelength=&quot;</span><span class="si">{:1.6f}</span><span class="s1">&quot;&gt;</span><span class="si">{:1.6f}</span><span class="s1">&lt;/SpectralData&gt;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">wi</span><span class="p">,</span><span class="n">vi</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">xml</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">value</span>
+    
+<span class="k">def</span> <span class="nf">_write_xml_field</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">xml</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">indent</span> <span class="o">=</span> <span class="s1">&#39;    &#39;</span><span class="p">,</span> <span class="n">value_fields</span> <span class="o">=</span> <span class="p">[]):</span>
+    <span class="k">if</span> <span class="n">field</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">value_fields</span><span class="p">:</span> <span class="n">xml</span> <span class="o">=</span> <span class="n">xml</span> <span class="o">+</span> <span class="n">indent</span> <span class="o">+</span> <span class="s1">&#39;&lt;&#39;</span> <span class="o">+</span> <span class="n">field</span> <span class="o">+</span> <span class="s1">&#39;&gt;&#39;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="n">xml</span> <span class="o">=</span> <span class="n">xml</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">xml</span> <span class="o">=</span> <span class="n">_write_xml_field</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">xml</span> <span class="o">=</span> <span class="n">xml</span><span class="p">,</span> 
+                                   <span class="n">indent</span> <span class="o">=</span> <span class="n">indent</span> <span class="o">+</span> <span class="s1">&#39;    &#39;</span><span class="p">,</span> <span class="n">value_fields</span> <span class="o">=</span> <span class="n">value_fields</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">field</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">value_fields</span><span class="p">:</span> <span class="n">xml</span> <span class="o">=</span> <span class="n">xml</span> <span class="o">+</span> <span class="n">indent</span> <span class="o">+</span> <span class="s1">&#39;&lt;/&#39;</span> <span class="o">+</span> <span class="n">field</span> <span class="o">+</span> <span class="s1">&#39;&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">xml</span> <span class="o">=</span> <span class="n">xml</span> <span class="o">+</span> <span class="n">_process_value</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">indent</span> <span class="o">=</span> <span class="n">indent</span><span class="p">)</span> 
+        <span class="k">if</span> <span class="n">field</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">value_fields</span><span class="p">:</span> <span class="n">xml</span> <span class="o">+=</span> <span class="s1">&#39;&lt;/&#39;</span> <span class="o">+</span> <span class="n">field</span> <span class="o">+</span> <span class="s1">&#39;&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="k">return</span> <span class="n">xml</span>
+        
+<div class="viewcode-block" id="write_spdx"><a class="viewcode-back" href="../../../spectrum.html#luxpy.spectrum.write_spdx">[docs]</a><span class="k">def</span> <span class="nf">write_spdx</span><span class="p">(</span><span class="n">spdx_dict</span><span class="p">,</span> <span class="n">filename</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Convert spdx dictionary to xml string (and write to .spdx file).</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">       :spdx_dict:</span>
+<span class="sd">           | dictionary with spdx keys (see _SPDX for keys).</span>
+<span class="sd">       :filename:</span>
+<span class="sd">           | None, optional</span>
+<span class="sd">           | string with filename to write xml data to.</span>
+<span class="sd">           </span>
+<span class="sd">    Returns:</span>
+<span class="sd">       :spdx_xml:</span>
+<span class="sd">           | string with xml data in spdx dictionary.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">spdx_xml</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="n">indent</span> <span class="o">=</span> <span class="s1">&#39;    &#39;</span>
+    <span class="n">value_fields</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;SpectralData&#39;</span><span class="p">]</span> <span class="c1"># fields that have a value</span>
+    <span class="n">spdx_xml</span> <span class="o">+=</span> <span class="n">_XML_HEADER</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">_IES_TM2714_HEADER</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">spdx_dict</span><span class="p">:</span>
+        <span class="n">spdx_xml</span> <span class="o">=</span> <span class="n">_write_xml_field</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">spdx_dict</span><span class="p">[</span><span class="n">field</span><span class="p">],</span> <span class="n">xml</span> <span class="o">=</span> <span class="n">spdx_xml</span><span class="p">,</span> <span class="n">indent</span> <span class="o">=</span> <span class="n">indent</span><span class="p">,</span> 
+                               <span class="n">value_fields</span> <span class="o">=</span> <span class="n">value_fields</span><span class="p">)</span>
+    <span class="n">spdx_xml</span> <span class="o">+=</span> <span class="n">_IES_TM2714_CLOSE</span>
+    
+    <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">file</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">file</span> <span class="o">+</span> <span class="s1">&#39;.spdx&#39;</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">spdx_xml</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">spdx_xml</span></div>
+    
+
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+<span class="c1"># Reading xml (xml to dict)</span>
+<span class="c1">#------------------------------------------------------------------------------</span>
+
+<span class="k">def</span> <span class="nf">_etree_to_dict</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Convert tree to dict</span>
+<span class="sd">    </span>
+<span class="sd">    from https://stackoverflow.com/questions/2148119/how-to-convert-an-xml-string-to-a-dictionary/10077069 </span>
+<span class="sd">    &quot;&quot;&quot;</span> 
+    <span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="n">t</span><span class="o">.</span><span class="n">tag</span><span class="p">:</span> <span class="p">{}</span> <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">attrib</span> <span class="k">else</span> <span class="kc">None</span><span class="p">}</span>
+    <span class="n">children</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">children</span><span class="p">:</span>
+        <span class="n">dd</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">dc</span> <span class="ow">in</span> <span class="nb">map</span><span class="p">(</span><span class="n">_etree_to_dict</span><span class="p">,</span> <span class="n">children</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">dc</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">dd</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="n">t</span><span class="o">.</span><span class="n">tag</span><span class="p">:</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">v</span>
+                     <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">dd</span><span class="o">.</span><span class="n">items</span><span class="p">()}}</span>
+    <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">attrib</span><span class="p">:</span>
+        <span class="n">d</span><span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">tag</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">((</span><span class="s1">&#39;@&#39;</span> <span class="o">+</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+                        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">t</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+    <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">text</span><span class="p">:</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">children</span> <span class="ow">or</span> <span class="n">t</span><span class="o">.</span><span class="n">attrib</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">text</span><span class="p">:</span>
+              <span class="n">d</span><span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">tag</span><span class="p">][</span><span class="s1">&#39;#text&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">text</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">d</span><span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">tag</span><span class="p">]</span> <span class="o">=</span> <span class="n">text</span>
+    <span class="k">return</span> <span class="n">d</span>
+
+
+<div class="viewcode-block" id="read_spdx"><a class="viewcode-back" href="../../../spectrum.html#luxpy.spectrum.read_spdx">[docs]</a><span class="k">def</span> <span class="nf">read_spdx</span><span class="p">(</span><span class="n">spdx</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Read xml file or convert xml string with spdx data to dictionary.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">       :spdx:</span>
+<span class="sd">           | xml string or file with spdx data.</span>
+<span class="sd">           </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :spdx_dict:</span>
+<span class="sd">           | spdx data in a dictionary.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spdx</span><span class="p">,</span><span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">):</span>
+        <span class="n">spdx</span> <span class="o">=</span> <span class="n">spdx</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;&lt;?xml&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">spdx</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="s1">&#39;.spdx&#39;</span> <span class="ow">in</span> <span class="n">spdx</span><span class="p">[</span><span class="o">-</span><span class="mi">5</span><span class="p">:]):</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">spdx</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">spdx</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">spdx</span> <span class="o">=</span> <span class="n">spdx</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        
+    <span class="n">xml_header</span> <span class="o">=</span> <span class="p">[</span><span class="n">spdx</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="c1"># get xml header</span>
+    <span class="n">spdx</span> <span class="o">=</span> <span class="n">spdx</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># get rid of _IES_TM2714_HEADER and _IES_TM2714_CLOSE</span>
+    <span class="n">spdx</span> <span class="o">=</span> <span class="n">xml_header</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;&lt;root&gt;&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">spdx</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;&lt;/root&gt;&#39;</span><span class="p">]</span> <span class="c1"># add root field for easy conversion</span>
+    <span class="n">spdx</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">spdx</span><span class="p">)</span> <span class="c1"># make string again</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">spdx</span><span class="p">)</span> <span class="c1">#parse xml from string</span>
+    <span class="n">spdx_dict</span> <span class="o">=</span>  <span class="n">_etree_to_dict</span><span class="p">(</span><span class="n">root</span><span class="p">)[</span><span class="s1">&#39;root&#39;</span><span class="p">]</span> <span class="c1"># get dictionary located at key &#39;root&#39;</span>
+    <span class="k">if</span> <span class="s1">&#39;SpectralDistribution&#39;</span> <span class="ow">in</span> <span class="n">spdx_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>  <span class="c1"># process SpectralData data</span>
+        <span class="k">if</span> <span class="s1">&#39;SpectralData&#39;</span> <span class="ow">in</span> <span class="n">spdx_dict</span><span class="p">[</span><span class="s1">&#39;SpectralDistribution&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">dspd</span> <span class="o">=</span> <span class="n">spdx_dict</span><span class="p">[</span><span class="s1">&#39;SpectralDistribution&#39;</span><span class="p">][</span><span class="s1">&#39;SpectralData&#39;</span><span class="p">]</span> <span class="c1"># make tmp view</span>
+            <span class="n">spdx_dict</span><span class="p">[</span><span class="s1">&#39;SpectralDistribution&#39;</span><span class="p">][</span><span class="s1">&#39;SpectralData&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="nb">float</span><span class="p">(</span><span class="n">dspd</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;@wavelength&#39;</span><span class="p">]),</span><span class="nb">float</span><span class="p">(</span><span class="n">dspd</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;#text&#39;</span><span class="p">])]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dspd</span><span class="p">))])</span><span class="o">.</span><span class="n">T</span>
+    <span class="k">return</span> <span class="n">spdx_dict</span></div>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">luxpy</span> <span class="k">as</span> <span class="nn">lx</span>
+    
+    <span class="c1"># create spdx dict:</span>
+    <span class="n">spdx_dict</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">_SPDX_TEMPLATE</span><span class="p">)</span>
+    <span class="n">spdx_dict</span><span class="p">[</span><span class="s1">&#39;Header&#39;</span><span class="p">][</span><span class="s1">&#39;Manufacturer&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;CIE&#39;</span>
+    <span class="n">spdx_dict</span><span class="p">[</span><span class="s1">&#39;Header&#39;</span><span class="p">][</span><span class="s1">&#39;Description&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;CIE D65 illuminant (5nm)&#39;</span>
+    <span class="n">spdx_dict</span><span class="p">[</span><span class="s1">&#39;Header&#39;</span><span class="p">][</span><span class="s1">&#39;UniqueIdentifier&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;CIE D65&#39;</span>
+    <span class="n">spdx_dict</span><span class="p">[</span><span class="s1">&#39;Header&#39;</span><span class="p">][</span><span class="s1">&#39;Laboratory&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;CIE&#39;</span>
+    <span class="n">spdx_dict</span><span class="p">[</span><span class="s1">&#39;Header&#39;</span><span class="p">][</span><span class="s1">&#39;FileCreator&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;luxpy.spdx_iestm2714&#39;</span>
+    <span class="n">spdx_dict</span><span class="p">[</span><span class="s1">&#39;SpectralDistribution&#39;</span><span class="p">][</span><span class="s1">&#39;SpectralQuantity&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;W/nm&#39;</span>
+    <span class="n">spdx_dict</span><span class="p">[</span><span class="s1">&#39;SpectralDistribution&#39;</span><span class="p">][</span><span class="s1">&#39;SpectralData&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lx</span><span class="o">.</span><span class="n">_CIE_D65</span><span class="p">[:,::</span><span class="mi">5</span><span class="p">]</span>
+    <span class="n">spdx_xml</span> <span class="o">=</span> <span class="n">write_spdx</span><span class="p">(</span><span class="n">spdx_dict</span><span class="p">,</span> <span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;cie_d65_5nm.spdx&#39;</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Spdx dictionary write test: spdx</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">spdx_xml</span><span class="p">)</span>
+    
+    <span class="n">spdx_xml_from_string</span> <span class="o">=</span> <span class="n">read_spdx</span><span class="p">(</span><span class="n">spdx_xml</span><span class="p">)</span>
+    <span class="n">spdx_xml_from_file</span> <span class="o">=</span> <span class="n">read_spdx</span><span class="p">(</span><span class="s1">&#39;cie_d65_5nm.spdx&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Spdx string read test:</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">spdx_xml_from_string</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Spdx file read test:</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">spdx_xml_from_file</span><span class="p">)</span>
+    
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Kevin A.G. Smet.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

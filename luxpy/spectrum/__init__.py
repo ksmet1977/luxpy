@@ -207,6 +207,8 @@ spectrum/illuminants.py
 spdx_iestm2714.py
 -----------------
 
+ :_SPDX_TEMPLATE: template dictionary for SPDX data.
+ 
  :read_spdx(): Read xml file or convert xml string with spdx data to dictionary.
      
  :write_spdx(): Convert spdx dictionary to xml string (and write to .spdx file)
@@ -240,5 +242,5 @@ References
 from .basics import *
 __all__ = basics.__all__ 
 
-from .spdx_ietm2714 import read_spdx, write_spdx
-__all__ += ['read_spdx', 'write_spdx']
+from .spdx_ietm2714 import read_spdx, write_spdx, _SPDX_TEMPLATE
+__all__ += ['read_spdx', 'write_spdx', '_SPDX_TEMPLATE']
