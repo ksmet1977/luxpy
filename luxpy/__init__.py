@@ -151,8 +151,8 @@ __all__ += ['math']
 #----------------------------------------
 
 #   Load spectral module:
-from luxpy.spectrum.basics import *
-__all__ += spectrum.basics.__all__
+from luxpy.spectrum import *
+__all__ += spectrum.__all__
 
 
 #----------------------------------------

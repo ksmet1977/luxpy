@@ -2,7 +2,7 @@
 
 """
 spectrum: sub-package supporting basic spectral calculations
-==================================================================
+============================================================
 
 spectrum/cmf.py
 ---------------
@@ -203,6 +203,15 @@ spectrum/illuminants.py
  
  :spd_to_indoor(): Convert spd to indoor variant by multiplying it with the CIE spectral transmission for glass. 
 
+
+spdx_iestm2714.py
+-----------------
+
+ :read_spdx(): Read xml file or convert xml string with spdx data to dictionary.
+     
+ :write_spdx(): Convert spdx dictionary to xml string (and write to .spdx file)
+
+
     
 References
 ----------
@@ -223,7 +232,13 @@ References
     
     5. Judd, D. B., MacAdam, D. L., Wyszecki, G., Budde, H. W., Condit, H. R., Henderson, S. T., & Simonds, J. L. (1964). Spectral Distribution of Typical Daylight as a Function of Correlated Color Temperature. J. Opt. Soc. Am., 54(8), 1031–1040. https://doi.org/10.1364/JOSA.54.001031
 
+    6. http://www.ies.org/iestm2714
+    
+
 ===============================================================================
 """
 from .basics import *
 __all__ = basics.__all__ 
+
+from .spdx_ietm2714 import read_spdx, write_spdx
+__all__ += ['read_spdx', 'write_spdx']
