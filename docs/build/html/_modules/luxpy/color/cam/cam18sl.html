@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>luxpy.color.cam.cam18sl &mdash; LuxPy 1.6.7 documentation</title>
+  <title>luxpy.color.cam.cam18sl &mdash; LuxPy 1.6.8 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                1.6.7
+                1.6.8
               </div>
             
           
@@ -214,7 +214,7 @@
            <span class="s1">&#39;xyz_to_qabs_cam18sl&#39;</span><span class="p">,</span><span class="s1">&#39;qabs_cam18sl_to_xyz&#39;</span><span class="p">]</span>
 
 <span class="c1">#------------------------------------------------------------------------------------------------------------------------------------------------------------------------------            </span>
-<span class="k">def</span> <span class="nf">cam18sl</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">datab</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Lb</span> <span class="o">=</span> <span class="p">[</span><span class="mi">100</span><span class="p">],</span> <span class="n">fov</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span> <span class="n">inputtype</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;forward&#39;</span><span class="p">,</span> <span class="n">outin</span> <span class="o">=</span> <span class="s1">&#39;Q,aS,bS&#39;</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="cam18sl"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.cam18sl">[docs]</a><span class="k">def</span> <span class="nf">cam18sl</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">datab</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Lb</span> <span class="o">=</span> <span class="p">[</span><span class="mi">100</span><span class="p">],</span> <span class="n">fov</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span> <span class="n">inputtype</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;forward&#39;</span><span class="p">,</span> <span class="n">outin</span> <span class="o">=</span> <span class="s1">&#39;Q,aS,bS&#39;</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert between CIE 2006 10°  XYZ tristimulus values (or spectral data) </span>
 <span class="sd">    and CAM18sl color appearance correlates.</span>
@@ -517,7 +517,7 @@
     <span class="k">if</span> <span class="n">camout</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">camout</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">camout</span><span class="p">,</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
     
-    <span class="k">return</span> <span class="n">camout</span>
+    <span class="k">return</span> <span class="n">camout</span></div>
  
 <span class="c1">#------------------------------------------------------------------------------</span>
 <span class="c1"># def xyz_to_qabW_cam18sl(xyz, xyzb = None, Lb = [100], fov = 10.0, parameters = None, **kwargs):</span>

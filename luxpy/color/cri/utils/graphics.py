@@ -28,6 +28,7 @@ Module for basic color rendition graphical output
 import colorsys
 import os
 import imageio
+import copy
 from luxpy import math
 from luxpy.utils import np, plt, _PKG_PATH
 from luxpy.color.utils.plotters import plotcircle
@@ -43,7 +44,8 @@ def plot_hue_bins(hbins = 16, start_hue = 0.0, scalef = 100, \
         plot_axis_labels = False, bin_labels = '#', plot_edge_lines = True, \
         plot_center_lines = False, plot_bin_colors = True, \
         plot_10_20_circles = False,\
-        axtype = 'polar', ax = None, force_CVG_layout = False):
+        axtype = 'polar', ax = None, force_CVG_layout = False,
+        hbin_color_map = None):
     """
     Makes basis plot for Color Vector Graphic (CVG).
     
@@ -89,6 +91,9 @@ def plot_hue_bins(hbins = 16, start_hue = 0.0, scalef = 100, \
         :force_CVG_layout:
             | False or True, optional
             | True: Force plot of basis of CVG on first encounter.
+        :hbin_color_map:
+           | ndarray with predefined RGB color map
+           | If None or hbin_color_map.shape[0]<nhbins: cmap will be created, else use values in ndarray.
             
     Returns:
         :returns: 
@@ -120,7 +125,7 @@ def plot_hue_bins(hbins = 16, start_hue = 0.0, scalef = 100, \
         bin_labels = [bin_labels + '{:1.0f}'.format(i+1) for i in range(nhbins)]
       
     # initializing the figure
-    cmap = None
+    cmap = hbin_color_map
     if (ax is None) or (ax == 'new'):
         fig = plt.figure()
         newfig = True
@@ -174,18 +179,23 @@ def plot_hue_bins(hbins = 16, start_hue = 0.0, scalef = 100, \
                 #hye = np.vstack((np.zeros(hbincenters.shape),1.2*scalef*np.sin(dL)))
                 hxe = np.vstack((0.1*scalef*np.cos(dL),1.5*scalef*np.cos(dL)))
                 hye = np.vstack((0.1*scalef*np.sin(dL),1.5*scalef*np.sin(dL)))
+        
+        
             
         # Plot hue-bins:
+        cmap = []
         for i in range(nhbins):
             
             # Create color from hue angle:
             #c = np.abs(np.array(colorsys.hsv_to_rgb(hsv_hues[i], 0.75, 0.85)))
             c = np.abs(np.array(colorsys.hls_to_rgb(hsv_hues[i], 0.45, 0.5)))
-            if i == 0:
-                cmap = [c]
-            else:
-                cmap.append(c)
-   
+
+            if (hbin_color_map is not None):
+                if (nhbins <= hbin_color_map.shape[0]):
+                    c = list(hbin_color_map[i])
+            
+            cmap.append(c)
+                
             
             if axtype == 'polar':
                 if plot_edge_lines == True:
@@ -247,6 +257,7 @@ def plot_ColorVectorGraphic(jabt, jabr, hbins = 16, start_hue = 0.0, scalef = 10
                             gamut_line_marker = 'o', gamut_line_label = None,\
                             axtype = 'polar', ax = None,\
                             force_CVG_layout = False,\
+                            hbin_color_map = None, hvector_color_map = None,\
                             jabti = None, jabri = None, hbinnr = None):
     """
     Plot Color Vector Graphic (CVG).
@@ -313,6 +324,12 @@ def plot_ColorVectorGraphic(jabt, jabr, hbins = 16, start_hue = 0.0, scalef = 10
         :force_CVG_layout:
             | False or True, optional
             | True: Force plot of basis of CVG.
+        :hbin_color_map:
+           | ndarray with predefined RGB color map for the hue bins
+           | If None or hbin_color_map.shape[0]<nhbins: cmap will be created, else use values in ndarray.
+        :hvector_color_map:
+           | ndarray with predefined RGB color map for the color shift vectors in each hue bin.
+           | If None or hvector_color_map.shape[0]<hbins: cmap will be created, else use values in ndarray.
         :jabti: 
             | None, optional
             | ndarray with jab data of all samples under test SPD (scaled to 'unit' circle)
@@ -343,10 +360,17 @@ def plot_ColorVectorGraphic(jabt, jabr, hbins = 16, start_hue = 0.0, scalef = 10
                                      bin_labels = bin_labels, 
                                      plot_bin_colors = plot_bin_colors,
                                      plot_10_20_circles = plot_10_20_circles,
-                                     plot_axis_labels = plot_axis_labels)
+                                     plot_axis_labels = plot_axis_labels,
+                                     hbin_color_map = hbin_color_map)
 
-    if cmap == []:
+    # setup color map for plotting color shift vectors:
+    if hvector_color_map is None:
+        if cmap == []:
+            cmap = ['k' for i in range(hbins)]
+    elif hvector_color_map.shape[0] < hbins:
         cmap = ['k' for i in range(hbins)]
+    else:
+        cmap = hvector_color_map.copy()
         
             
     # map jabti relative to center (mean) of reference:
@@ -370,11 +394,11 @@ def plot_ColorVectorGraphic(jabt, jabr, hbins = 16, start_hue = 0.0, scalef = 10
         else:
             ax.plot(jabt_theta,jabt_r, color = gamut_line_color, linestyle = gamut_line_style, linewidth = 2, marker = gamut_line_marker, markersize = 4, label = gamut_line_label)
         for j in range(hbins):
-            c = cmap[j]
+            cmap_j = [list(cmap[j])]
             if plot_vectors == True:
-                ax.quiver(jabr_theta[j],jabr_r[j],jabt[j,1]-jabr[j,1], jabt[j,2]-jabr[j,2], edgecolor = 'k',facecolor = c, headlength=3, angles='uv', scale_units='y', scale = 2,linewidth = 0.5)
+                ax.quiver(jabr_theta[j],jabr_r[j],jabt[j,1]-jabr[j,1], jabt[j,2]-jabr[j,2], edgecolor = 'k',facecolor = cmap_j, headlength=3, angles='uv', scale_units='y', scale = 2,linewidth = 0.5)
             if jabti is not None:
-                ax.plot(jabti_theta[hbinnr==j],jabti_r[hbinnr==j], color = cmap[j],linestyle = 'none',marker='.',markersize=3)
+                ax.plot(jabti_theta[hbinnr==j],jabti_r[hbinnr==j], color = cmap_j,linestyle = 'none',marker='.',markersize=3)
     else:
         #ax.quiver(jabr[...,1],jabr[...,2],jabt[...,1]-jabr[...,1], jabt[...,2]-jabr[...,2], color = 'k', headlength=3, angles='uv', scale_units='xy', scale = 1,linewidth = 0.5)
         if plot_vectors == True:
@@ -382,10 +406,11 @@ def plot_ColorVectorGraphic(jabt, jabr, hbins = 16, start_hue = 0.0, scalef = 10
         else:
             ax.plot(jabt[...,1],jabt[...,2], color = gamut_line_color, linestyle = gamut_line_style, linewidth = 2, marker = gamut_line_marker, markersize = 4, label = gamut_line_label)
         for j in range(hbins):
+            cmap_j = [list(cmap[j])]
             if plot_vectors == True:
-                ax.quiver(jabr[j,1],jabr[j,2],jabt[j,1]-jabr[j,1], jabt[j,2]-jabr[j,2], color = cmap[j], headlength=3, angles='uv', scale_units='xy', scale = 1,linewidth = 0.5)
+                ax.quiver(jabr[j,1],jabr[j,2],jabt[j,1]-jabr[j,1], jabt[j,2]-jabr[j,2], color = cmap_j, headlength=3, angles='uv', scale_units='xy', scale = 1,linewidth = 0.5)
             if jabti is not None:
-                ax.plot(jabti[hbinnr==j,1],jabti[hbinnr==j,2], color = cmap[j],linestyle = 'none',marker='.',markersize=3)
+                ax.plot(jabti[hbinnr==j,1],jabti[hbinnr==j,2], color = cmap_j,linestyle = 'none',marker='.',markersize=3)
 
     if (axtype == 'cart') & (plot_axis_labels == True):
         ax.set_xlabel("a'")

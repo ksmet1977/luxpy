@@ -4,8 +4,8 @@
 
 # Python toolbox for lighting and color science
 * Author: Kevin A.G. Smet (ksmet1977 at gmail.com)
-* Version: 1.6.7
-* Date: May 05, 2021
+* Version: 1.6.8
+* Date: May 11, 2021
 * License: [GPLv3](https://github.com/ksmet1977/luxpy/blob/master/LICENSE.md)
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1298963.svg)](https://doi.org/10.5281/zenodo.1298963)
@@ -30,7 +30,7 @@ For some online spectral calculations (ANSI/IES TM30, CIE 13.3-1995 Ra, CIE 224:
 * color space transformations
 * chromatic adaptation transforms 
 * color appearance models 
-* color rendition indices 
+* color rendition indices (eg. CIE Ra, CIE 224:2017 Rf, ANSI/IES TM30 Rf, Rg, ... + IES TM30 Annex E priority levels & reports)
 * calculation of photobiological quantities (eg melanopic irradiance, MEDI, CS, ...)
 * multi-component spectrum creation and optimization
 * hyper-spectral image simulation and rendering
@@ -46,7 +46,7 @@ As of May 2019, LuxPy now also has a toolbox **spectro** for **spectral measurem
 * spectro.jeti: easy installation (dll's are part of sub-package).
 * spectro.oceanoptics: more tricky installation (requires manual install of  **python-seabreeze**, ...; see [here](https://github.com/ksmet1977/luxpy/blob/master/luxpy/toolboxes/spectro/oceanoptics/oceanoptics.md) or subpackage help for more info)
 
-**NEW** (Sep, 2020): **ANSI/IES-TM30-2018** graphical output (**Color Rendition Report**, **Color Vector Graphic**, ...)
+**UPDATED** (May, 2021): **ANSI/IES-TM30-2018** graphical output (**Color Rendition Reports**, **Color Vector Graphics**, **Annex E priority levels**...)
 
 -------------------------------------------------------------------------------
 ## How to use LuxPy (basics)?

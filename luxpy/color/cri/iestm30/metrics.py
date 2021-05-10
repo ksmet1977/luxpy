@@ -22,6 +22,8 @@ Extension module for IES TM30 metric calculation with additional Vector Field su
 
  :spd_to_ies_tm30_metrics(): Calculates IES TM30 metrics from spectral data + Metameric Uncertainty + Vector Fields
 
+ :tm30_metrics_to_annexE_recommendations(): Get ANSI/IES-TM30 Annex E recommendation for all three design intents ['Preference', 'Vividness', 'Fidelity']
+
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
@@ -39,7 +41,112 @@ from luxpy.color.cri.utils.init_cri_defaults_database import _CRI_DEFAULTS
 from luxpy.color.cri.VFPX.vectorshiftmodel import  _VF_MODEL_TYPE, _VF_PCOLORSHIFT, VF_colorshift_model
 from luxpy.color.cri.VFPX.VF_PX_models import plot_VF_PX_models
 
-__all__ = ['spd_to_ies_tm30_metrics']
+
+_IES_TM30_ANNEX_E_TABLE = {'Preference' : {'P1' : {'Rf' : (78,np.inf),
+                                                   'Rg' : (95,np.inf),
+                                                   'Rcsh1' : (-0.01, 0.15),
+                                                   'Rfh1' : (-np.inf, np.inf)},
+                                           'P2' : {'Rf' : (75,np.inf),
+                                                   'Rg' : (92,np.inf),
+                                                   'Rcsh1' : (-0.07, 0.19),
+                                                   'Rfh1' : (-np.inf, np.inf)},
+                                           'P3' : {'Rf' : (70,np.inf),
+                                                   'Rg' : (89,np.inf),
+                                                   'Rcsh1' : (-0.12, 0.23),
+                                                   'Rfh1' : (-np.inf, np.inf)}
+                                           },
+                           'Vividness' : { 'V1' : {'Rf' : (0,np.inf),
+                                                   'Rg' : (118,np.inf),
+                                                   'Rcsh1' : (0.15, np.inf),
+                                                   'Rfh1' : (-np.inf, np.inf)},
+                                           'V2' : {'Rf' : (0,np.inf),
+                                                   'Rg' : (110,np.inf),
+                                                   'Rcsh1' : (0.06, np.inf),
+                                                   'Rfh1' : (-np.inf, np.inf)},
+                                           'V3' : {'Rf' : (0,np.inf),
+                                                   'Rg' : (100,np.inf),
+                                                   'Rcsh1' : (0, np.inf),
+                                                   'Rfh1' : (-np.inf, np.inf)}
+                                           },
+                           'Fidelity' : { 'F1' : {'Rf' : (95,np.inf),
+                                                   'Rg' : (0,np.inf),
+                                                   'Rcsh1' : (-np.inf, np.inf),
+                                                   'Rfh1' : (-np.inf, np.inf)},
+                                           'F2' : {'Rf' : (90,np.inf),
+                                                   'Rg' : (0,np.inf),
+                                                   'Rcsh1' : (-np.inf, np.inf),
+                                                   'Rfh1' : (90, np.inf)},
+                                           'F3' : {'Rf' : (85,np.inf),
+                                                   'Rg' : (0,np.inf),
+                                                   'Rcsh1' : (-np.inf, np.inf),
+                                                   'Rfh1' : (85, np.inf)}
+                                          }
+                           }
+                           
+                           
+                                           
+                                         
+
+
+__all__ = ['spd_to_ies_tm30_metrics', 'tm30_metrics_to_annexE_recommendations', '_IES_TM30_ANNEX_E_TABLE']
+
+
+def _tm30_metrics_to_annexE_recommendation(design_intent, index_data,
+                                           recommendation_table = _IES_TM30_ANNEX_E_TABLE, **kwargs):
+    """ Get priority levels for a specific design intent for all spds in input """
+    table = recommendation_table[design_intent]
+    priority_levels = list(table.keys()) + [design_intent[0].upper()+'-']
+    pls = np.repeat(priority_levels[-1],index_data['Rf'].shape[0])
+    for pl in priority_levels[::-1]:
+        if pl == priority_levels[-1]:
+            has_pl = np.ones_like(index_data['Rf'].shape[0],dtype = bool)
+        if pl in table.keys():
+            for index in table[pl].keys():
+                tmp = (index_data[index] >= table[pl][index][0]) & (index_data[index] <= table[pl][index][1])
+                has_pl = has_pl & tmp
+            pls[has_pl] = pl
+    return pls
+
+def tm30_metrics_to_annexE_recommendations(Rf = None, Rg = None, 
+                                           Rcsh1 = None, Rfh1 = None, index_rounding = 2,
+                                           recommendation_table = _IES_TM30_ANNEX_E_TABLE, **kwargs):
+    """
+    Get ANSI/IES-TM30 Annex E recommendation for all three design intents ['Preference', 'Vividness', 'Fidelity']
+    
+    Args:
+        :Rf:
+            | ndarray or list with IES TM30 color fidelity index.
+        :Rg:
+            | ndarray or list with IES TM30 gamut area index.  
+        :Rcsh1:
+            | ndarray or list with IES TM30 local chroma shift for hue-angle bin 1.
+            | (expressed in fraction of reference value (=1), so not in %!)
+        :Rfh1:
+            | ndarray or list with IES TM30 local color fidelity index for hue-angle bin 1.
+        :index_rounding:
+            | 2, optional
+            | Round all index values to this number of decimals.
+        :recommendation_table:
+            | _IES_TM30_ANNEX_E_TABLE, optional
+            | Dictionary encoding Annex E table (default as published).
+    
+    Returns:
+        :priority_levels:
+            | ndarray with IES TM30 Annex E priority levels.
+    """
+    design_intents = ['Preference', 'Vividness', 'Fidelity']
+    if ((Rf is not None) &  (Rg is not None) & (Rcsh1 is not None) & (Rfh1 is not None)):
+        index_data = {'Rf': np.round(np.atleast_2d(Rf)[0],index_rounding), 
+                      'Rg': np.round(np.atleast_2d(Rg)[0],index_rounding),
+                      'Rcsh1': np.round(np.atleast_1d(Rcsh1),int(index_rounding + 2)),# +2 because not in procent, but relative
+                      'Rfh1': np.round(np.atleast_1d(Rfh1),index_rounding)}
+        priority_levels = []
+        for design_intent in design_intents:
+            priority_levels.append(_tm30_metrics_to_annexE_recommendation(design_intent, index_data, index_rounding = index_rounding, recommendation_table = recommendation_table, **kwargs))
+        return np.array(priority_levels)
+    else:
+        print('At least 1 required input argument is None, returning the dictionary with the Annex E priority level table.')
+        return recommendation_table
 
 def spd_to_ies_tm30_metrics(St, cri_type = None, \
                             hbins = 16, start_hue = 0.0,\
@@ -204,7 +311,15 @@ def spd_to_ies_tm30_metrics(St, cri_type = None, \
                      'dataVF' : dataVF, 'hue_bin_data' : hue_bin_data_vf})
     
     # Add to main dictionary:
-    data['vf'] = _data_vf
+    data['vf'] = _data_vf;
+    
+    # add Annex E priority levels:
+    if 'AnnexE_priority' not in data.keys():
+        data['AnnexE_priority'] = tm30_metrics_to_annexE_recommendations(Rf = data['Rf'], 
+                                                                         Rg = data['Rg'], 
+                                                                         Rcsh1 = data['Rcshj'][0,:], 
+                                                                         Rfh1 = data['Rfhj'][0,:])
+
     return data
 
 if __name__ == '__main__':
@@ -217,10 +332,14 @@ if __name__ == '__main__':
     spds = lx.cie_interp(spds,wl_new = [360,830,1],kind='spd')
     
     spd = np.vstack((F4,D65[1:]))
-    d = spd_to_ies_tm30_metrics(spd, cri_type = None, \
-                                hbins = 16, start_hue = 0.0,\
-                                scalef = 100, \
-                                vf_model_type = _VF_MODEL_TYPE, \
-                                vf_pcolorshift = _VF_PCOLORSHIFT,\
-                                scale_vf_chroma_to_sample_chroma = False)
-    
+    # d = spd_to_ies_tm30_metrics(spd, cri_type = None, \
+    #                             hbins = 16, start_hue = 0.0,\
+    #                             scalef = 100, \
+    #                             vf_model_type = _VF_MODEL_TYPE, \
+    #                             vf_pcolorshift = _VF_PCOLORSHIFT,\
+    #                             scale_vf_chroma_to_sample_chroma = False)
+        
+    data,_ = lx.cri.spd_to_cri(spd,out = 'data,hue_bin_data')
+    prior_levels1 = tm30_metrics_to_annexE_recommendations(Rf=data['Rf'], Rg=data['Rg'], Rcsh1=data['Rcshj'][0,:], Rfh1=data['Rfhj'][0,:])
+    prior_levels2 = tm30_metrics_to_annexE_recommendations(Rf=[100], Rg=[100], Rcsh1=[0], Rfh1=[95])
+    recommendation_table = tm30_metrics_to_annexE_recommendations()

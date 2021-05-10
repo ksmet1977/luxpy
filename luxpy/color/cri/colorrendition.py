@@ -197,7 +197,10 @@ iestm30/graphics.py
 iestm30/metrics.py
 ------------------
 
-:spd_to_ies_tm30_metrics(): Calculates IES TM30 metrics from spectral data + Metameric Uncertainty + Vector Fields
+ :spd_to_ies_tm30_metrics(): Calculates IES TM30 metrics from spectral data + Metameric Uncertainty + Vector Fields
+
+ :tm30_metrics_to_annexE_recommendations(): Get ANSI/IES-TM30 Annex E recommendation for all three design intents ['Preference', 'Vividness', 'Fidelity']
+
 
 
 iestm30/metrics_fast.py
@@ -236,7 +239,7 @@ from .utils.graphics import *
 from .VFPX import VF_PX_models as VFPX
 
 
-from .iestm30.metrics import spd_to_ies_tm30_metrics
+from .iestm30.metrics import spd_to_ies_tm30_metrics, tm30_metrics_to_annexE_recommendations
 from .iestm30.graphics import (_tm30_process_spd,plot_tm30_cvg,
                                              plot_tm30_Rfi,plot_tm30_Rxhj,
                                              plot_tm30_Rcshj, plot_tm30_Rhshj,

@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Color sub-package &mdash; LuxPy 1.6.7 documentation</title>
+  <title>Color sub-package &mdash; LuxPy 1.6.8 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                1.6.7
+                1.6.8
               </div>
             
           
@@ -4023,13 +4023,13 @@ Color Research &amp; Application, 45(1), 172–177.</a></p>
 <div class="line">If None: calculate inverse of mcat.</div>
 </div>
 </dd>
-<dt class="field-odd"><a href="#id62"><span class="problematic" id="id63">in_</span></a></dt>
+<dt class="field-odd"><a href="#id63"><span class="problematic" id="id64">in_</span></a></dt>
 <dd class="field-odd"><div class="line-block">
 <div class="line">‘xyz’, optional</div>
 <div class="line">Input type (‘xyz’, ‘rgb’) of data in xyz, xyzw1, xyzw2</div>
 </div>
 </dd>
-<dt class="field-even"><a href="#id64"><span class="problematic" id="id65">out_</span></a></dt>
+<dt class="field-even"><a href="#id65"><span class="problematic" id="id66">out_</span></a></dt>
 <dd class="field-even"><div class="line-block">
 <div class="line">‘xyz’, optional</div>
 <div class="line">Output type (‘xyz’, ‘rgb’) of corresponding colors</div>
@@ -4115,13 +4115,13 @@ Color Research &amp; Application, 45(1), 172–177.</a></p>
 <div class="line">If None: calculate inverse of mcat.</div>
 </div>
 </dd>
-<dt class="field-even"><a href="#id66"><span class="problematic" id="id67">in_</span></a></dt>
+<dt class="field-even"><a href="#id67"><span class="problematic" id="id68">in_</span></a></dt>
 <dd class="field-even"><div class="line-block">
 <div class="line">‘xyz’, optional</div>
 <div class="line">Input type (‘xyz’, ‘rgb’) of data in xyz, xyzw1, xyzw2</div>
 </div>
 </dd>
-<dt class="field-odd"><a href="#id68"><span class="problematic" id="id69">out_</span></a></dt>
+<dt class="field-odd"><a href="#id69"><span class="problematic" id="id70">out_</span></a></dt>
 <dd class="field-odd"><div class="line-block">
 <div class="line">‘xyz’, optional</div>
 <div class="line">Output type (‘xyz’, ‘rgb’) of corresponding colors</div>
@@ -4237,13 +4237,13 @@ Color Research &amp; Application, 45(1), 172–177.</a></p>
 <div class="line">If None: calculate inverse of mcat.</div>
 </div>
 </dd>
-<dt class="field-even"><a href="#id70"><span class="problematic" id="id71">in_</span></a></dt>
+<dt class="field-even"><a href="#id71"><span class="problematic" id="id72">in_</span></a></dt>
 <dd class="field-even"><div class="line-block">
 <div class="line">‘xyz’, optional</div>
 <div class="line">Input type (‘xyz’, ‘rgb’) of data in xyz, xyzw1, xyzw2</div>
 </div>
 </dd>
-<dt class="field-odd"><a href="#id72"><span class="problematic" id="id73">out_</span></a></dt>
+<dt class="field-odd"><a href="#id73"><span class="problematic" id="id74">out_</span></a></dt>
 <dd class="field-odd"><div class="line-block">
 <div class="line">‘xyz’, optional</div>
 <div class="line">Output type (‘xyz’, ‘rgb’) of corresponding colors</div>
@@ -6354,6 +6354,135 @@ Journal of the Optical Society of America A, 33(3), A319–A331.</a></p>
 </dd></dl>
 
 <dl class="py function">
+<dt id="luxpy.color.cam.cam18sl">
+<code class="sig-prename descclassname">luxpy.color.cam.</code><code class="sig-name descname">cam18sl</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">datab</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">Lb</span><span class="o">=</span><span class="default_value">[100]</span></em>, <em class="sig-param"><span class="n">fov</span><span class="o">=</span><span class="default_value">10.0</span></em>, <em class="sig-param"><span class="n">inputtype</span><span class="o">=</span><span class="default_value">'xyz'</span></em>, <em class="sig-param"><span class="n">direction</span><span class="o">=</span><span class="default_value">'forward'</span></em>, <em class="sig-param"><span class="n">outin</span><span class="o">=</span><span class="default_value">'Q,aS,bS'</span></em>, <em class="sig-param"><span class="n">parameters</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cam/cam18sl.html#cam18sl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cam.cam18sl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert between CIE 2006 10°  XYZ tristimulus values (or spectral data) 
+and CAM18sl color appearance correlates.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">data</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray of CIE 2006 10°  absolute XYZ tristimulus values or spectral data</div>
+<div class="line-block">
+<div class="line">or color appearance attributes of stimulus</div>
+</div>
+</div>
+</dd>
+<dt class="field-even">datab</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">ndarray of CIE 2006 10°  absolute XYZ tristimulus values or spectral data</div>
+<div class="line-block">
+<div class="line">of stimulus background</div>
+</div>
+</div>
+</dd>
+<dt class="field-odd">Lb</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">[100], optional</div>
+<div class="line">Luminance (cd/m²) value(s) of background(s) calculated using the CIE 2006 10° CMFs </div>
+<div class="line">(only used in case datab == None and the background is assumed to be an Equal-Energy-White)</div>
+</div>
+</dd>
+<dt class="field-even">fov</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">10.0, optional</div>
+<div class="line">Field-of-view of stimulus (for size effect on brightness)</div>
+</div>
+</dd>
+<dt class="field-odd">inputtpe</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">‘xyz’ or ‘spd’, optional</div>
+<div class="line">Specifies the type of input: </div>
+<div class="line-block">
+<div class="line">tristimulus values or spectral data for the forward mode.</div>
+</div>
+</div>
+</dd>
+<dt class="field-even">direction</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">‘forward’ or ‘inverse’, optional</div>
+<div class="line-block">
+<div class="line">-‘forward’: xyz -&gt; cam18sl</div>
+<div class="line">-‘inverse’: cam18sl -&gt; xyz </div>
+</div>
+</div>
+</dd>
+<dt class="field-odd">outin</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">‘Q,aS,bS’ or str, optional</div>
+<div class="line">‘Q,aS,bS’ (brightness and opponent signals for saturation)</div>
+<div class="line-block">
+<div class="line">other options: ‘Q,aM,bM’ (colorfulness) </div>
+<div class="line-block">
+<div class="line">(Note that ‘Q,aW,bW’ would lead to a Cartesian </div>
+<div class="line-block">
+<div class="line">a,b-coordinate system centered at (1,0))</div>
+</div>
+</div>
+</div>
+<div class="line">Str specifying the type of </div>
+<div class="line-block">
+<div class="line">input (:direction: == ‘inverse’) and </div>
+<div class="line">output (:direction: == ‘forward’)</div>
+</div>
+</div>
+</dd>
+<dt class="field-even">parameters</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">None or dict, optional</div>
+<div class="line">Set of model parameters.</div>
+<div class="line-block">
+<div class="line">- None: defaults to luxpy.cam._CAM18SL_PARAMETERS </div>
+<div class="line-block">
+<div class="line">(see references below)</div>
+</div>
+</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">returns</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with color appearance correlates (:direction: == ‘forward’)</div>
+<div class="line-block">
+<div class="line">or </div>
+</div>
+<div class="line">XYZ tristimulus values (:direction: == ‘inverse’)</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Notes:</dt><dd><div class="line-block">
+<div class="line">* Instead of using the CIE 1964 10° CMFs in some places of the model,</div>
+<div class="line-block">
+<div class="line">the CIE 2006 10° CMFs are used througout, making it more self_consistent.</div>
+<div class="line">This has an effect on the k scaling factors (now different those in CAM15u) </div>
+<div class="line">and the illuminant E normalization for use in the chromatic adaptation transform.</div>
+<div class="line">(see future erratum to Hermans et al., 2018)</div>
+</div>
+<div class="line">* The paper also used an equation for the amount of white W, which is</div>
+<div class="line-block">
+<div class="line">based on a Q value not expressed in ‘bright’ (‘cA’ = 0.937 instead of 123). </div>
+<div class="line">This has been corrected for in the luxpy version of the model, i.e.</div>
+<div class="line">_CAM18SL_PARAMETERS[‘cW’][0] has been changed from 2.29 to 1/11672.</div>
+<div class="line">(see future erratum to Hermans et al., 2018)</div>
+</div>
+<div class="line">* Default output was ‘Q,aW,bW’ prior to March 2020, but since this</div>
+<div class="line-block">
+<div class="line">is an a,b Cartesian system centered on (1,0), the default output</div>
+<div class="line">has been changed to ‘Q,aS,bS’.</div>
+</div>
+</div>
+</dd>
+<dt>References: </dt><dd><p>1. <a class="reference external" href="https://doi.org/10.1364/JOSAA.35.002000">Hermans, S., Smet, K. A. G., &amp; Hanselaer, P. (2018). 
+“Color appearance model for self-luminous stimuli.”
+Journal of the Optical Society of America A, 35(12), 2000–2009.</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt id="luxpy.color.cam.xyz_to_qabM_cam18sl">
 <code class="sig-prename descclassname">luxpy.color.cam.</code><code class="sig-name descname">xyz_to_qabM_cam18sl</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xyz</span></em>, <em class="sig-param"><span class="n">xyzb</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">Lb</span><span class="o">=</span><span class="default_value">[100]</span></em>, <em class="sig-param"><span class="n">fov</span><span class="o">=</span><span class="default_value">10.0</span></em>, <em class="sig-param"><span class="n">parameters</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cam/cam18sl.html#xyz_to_qabM_cam18sl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cam.xyz_to_qabM_cam18sl" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wrapper function for cam18sl forward mode with ‘Q,aM,bM’ output.</p>
@@ -7175,8 +7304,8 @@ is determined using the FMC-1 or FMC-2 equations (see refs. 1 &amp; 2).
 </dd>
 </dl>
 </div></blockquote>
-<div class="section" id="id21">
-<h4>References<a class="headerlink" href="#id21" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="id22">
+<h4>References<a class="headerlink" href="#id22" title="Permalink to this headline">¶</a></h4>
 <blockquote>
 <div><p>1. <a class="reference external" href="https://doi.org/10.1080/15502724.2017.1385400">Smet, K. A. G. (2018). 
 Two Neutral White Illumination Loci Based on Unique White Rating and Degree of Chromatic Adaptation. 
@@ -9917,7 +10046,7 @@ Journal of the Illuminating Engineering Society, 4(1), 48–52.</a></p>
 
 <dl class="py function">
 <dt id="luxpy.color.cri.plot_hue_bins">
-<code class="sig-prename descclassname">luxpy.color.cri.</code><code class="sig-name descname">plot_hue_bins</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">hbins</span><span class="o">=</span><span class="default_value">16</span></em>, <em class="sig-param"><span class="n">start_hue</span><span class="o">=</span><span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">scalef</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">plot_axis_labels</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">bin_labels</span><span class="o">=</span><span class="default_value">'#'</span></em>, <em class="sig-param"><span class="n">plot_edge_lines</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">plot_center_lines</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">plot_bin_colors</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">plot_10_20_circles</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">axtype</span><span class="o">=</span><span class="default_value">'polar'</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">force_CVG_layout</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cri/utils/graphics.html#plot_hue_bins"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cri.plot_hue_bins" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.color.cri.</code><code class="sig-name descname">plot_hue_bins</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">hbins</span><span class="o">=</span><span class="default_value">16</span></em>, <em class="sig-param"><span class="n">start_hue</span><span class="o">=</span><span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">scalef</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">plot_axis_labels</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">bin_labels</span><span class="o">=</span><span class="default_value">'#'</span></em>, <em class="sig-param"><span class="n">plot_edge_lines</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">plot_center_lines</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">plot_bin_colors</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">plot_10_20_circles</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">axtype</span><span class="o">=</span><span class="default_value">'polar'</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">force_CVG_layout</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">hbin_color_map</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cri/utils/graphics.html#plot_hue_bins"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cri.plot_hue_bins" title="Permalink to this definition">¶</a></dt>
 <dd><p>Makes basis plot for Color Vector Graphic (CVG).</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -10004,6 +10133,12 @@ Journal of the Illuminating Engineering Society, 4(1), 48–52.</a></p>
 <div class="line">True: Force plot of basis of CVG on first encounter.</div>
 </div>
 </dd>
+<dt class="field-odd">hbin_color_map</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with predefined RGB color map</div>
+<div class="line">If None or hbin_color_map.shape[0]&lt;nhbins: cmap will be created, else use values in ndarray.</div>
+</div>
+</dd>
 </dl>
 </dd>
 <dt>Returns:</dt><dd><dl class="field-list">
@@ -10020,7 +10155,7 @@ other plotting fcns)</div>
 
 <dl class="py function">
 <dt id="luxpy.color.cri.plot_ColorVectorGraphic">
-<code class="sig-prename descclassname">luxpy.color.cri.</code><code class="sig-name descname">plot_ColorVectorGraphic</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">jabt</span></em>, <em class="sig-param"><span class="n">jabr</span></em>, <em class="sig-param"><span class="n">hbins</span><span class="o">=</span><span class="default_value">16</span></em>, <em class="sig-param"><span class="n">start_hue</span><span class="o">=</span><span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">scalef</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">plot_axis_labels</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">bin_labels</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">plot_edge_lines</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">plot_center_lines</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">plot_bin_colors</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">plot_10_20_circles</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">plot_vectors</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">gamut_line_color</span><span class="o">=</span><span class="default_value">'grey'</span></em>, <em class="sig-param"><span class="n">gamut_line_style</span><span class="o">=</span><span class="default_value">'-'</span></em>, <em class="sig-param"><span class="n">gamut_line_marker</span><span class="o">=</span><span class="default_value">'o'</span></em>, <em class="sig-param"><span class="n">gamut_line_label</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">axtype</span><span class="o">=</span><span class="default_value">'polar'</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">force_CVG_layout</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">jabti</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">jabri</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">hbinnr</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cri/utils/graphics.html#plot_ColorVectorGraphic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cri.plot_ColorVectorGraphic" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.color.cri.</code><code class="sig-name descname">plot_ColorVectorGraphic</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">jabt</span></em>, <em class="sig-param"><span class="n">jabr</span></em>, <em class="sig-param"><span class="n">hbins</span><span class="o">=</span><span class="default_value">16</span></em>, <em class="sig-param"><span class="n">start_hue</span><span class="o">=</span><span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">scalef</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">plot_axis_labels</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">bin_labels</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">plot_edge_lines</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">plot_center_lines</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">plot_bin_colors</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">plot_10_20_circles</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">plot_vectors</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">gamut_line_color</span><span class="o">=</span><span class="default_value">'grey'</span></em>, <em class="sig-param"><span class="n">gamut_line_style</span><span class="o">=</span><span class="default_value">'-'</span></em>, <em class="sig-param"><span class="n">gamut_line_marker</span><span class="o">=</span><span class="default_value">'o'</span></em>, <em class="sig-param"><span class="n">gamut_line_label</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">axtype</span><span class="o">=</span><span class="default_value">'polar'</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">force_CVG_layout</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">hbin_color_map</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">hvector_color_map</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">jabti</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">jabri</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">hbinnr</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cri/utils/graphics.html#plot_ColorVectorGraphic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cri.plot_ColorVectorGraphic" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot Color Vector Graphic (CVG).</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -10146,6 +10281,18 @@ other plotting fcns)</div>
 <dd class="field-odd"><div class="line-block">
 <div class="line">False or True, optional</div>
 <div class="line">True: Force plot of basis of CVG.</div>
+</div>
+</dd>
+<dt class="field-even">hbin_color_map</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">ndarray with predefined RGB color map for the hue bins</div>
+<div class="line">If None or hbin_color_map.shape[0]&lt;nhbins: cmap will be created, else use values in ndarray.</div>
+</div>
+</dd>
+<dt class="field-odd">hvector_color_map</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with predefined RGB color map for the color shift vectors in each hue bin.</div>
+<div class="line">If None or hvector_color_map.shape[0]&lt;hbins: cmap will be created, else use values in ndarray.</div>
 </div>
 </dd>
 <dt class="field-even">jabti</dt>
@@ -10368,7 +10515,7 @@ other plotting fcns)</div>
 
 <dl class="py function">
 <dt id="luxpy.color.cri.plot_tm30_cvg">
-<code class="sig-prename descclassname">luxpy.color.cri.</code><code class="sig-name descname">plot_tm30_cvg</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spd</span></em>, <em class="sig-param"><span class="n">cri_type</span><span class="o">=</span><span class="default_value">'ies-tm30'</span></em>, <em class="sig-param"><span class="n">gamut_line_color</span><span class="o">=</span><span class="default_value">'r'</span></em>, <em class="sig-param"><span class="n">gamut_line_style</span><span class="o">=</span><span class="default_value">'-'</span></em>, <em class="sig-param"><span class="n">gamut_line_marker</span><span class="o">=</span><span class="default_value">'o'</span></em>, <em class="sig-param"><span class="n">gamut_line_label</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">plot_vectors</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">plot_index_values</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">axh</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">axtype</span><span class="o">=</span><span class="default_value">'cart'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cri/iestm30/graphics.html#plot_tm30_cvg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cri.plot_tm30_cvg" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.color.cri.</code><code class="sig-name descname">plot_tm30_cvg</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spd</span></em>, <em class="sig-param"><span class="n">cri_type</span><span class="o">=</span><span class="default_value">'ies-tm30'</span></em>, <em class="sig-param"><span class="n">gamut_line_color</span><span class="o">=</span><span class="default_value">'r'</span></em>, <em class="sig-param"><span class="n">gamut_line_style</span><span class="o">=</span><span class="default_value">'-'</span></em>, <em class="sig-param"><span class="n">gamut_line_marker</span><span class="o">=</span><span class="default_value">'o'</span></em>, <em class="sig-param"><span class="n">gamut_line_label</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">plot_vectors</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">plot_index_values</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">axh</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">axtype</span><span class="o">=</span><span class="default_value">'cart'</span></em>, <em class="sig-param"><span class="n">show_annexE_priority</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">show_Rcsh1_Rfh1</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cri/iestm30/graphics.html#plot_tm30_cvg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cri.plot_tm30_cvg" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot TM30 Color Vector Graphic (CVG).</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -10446,6 +10593,10 @@ other plotting fcns)</div>
 <dd class="field-even"><div class="line-block">
 <div class="line">True, optional</div>
 <div class="line">Print Rf, Rg, CCT and Duv in corners of CVG (True) or not (False).</div>
+<div class="line">If False: turns of potential prints of Rcsh1, Rfh1 </div>
+<div class="line">and annexE_priority levelels as well. This way this argument can be </div>
+<div class="line">easily used to turn off all plotting and printing when graphs are</div>
+<div class="line">to be generated with gamuts of multiple sources.</div>
 </div>
 </dd>
 <dt class="field-odd">axh</dt>
@@ -10457,7 +10608,20 @@ other plotting fcns)</div>
 <dt class="field-even">axtype</dt>
 <dd class="field-even"><div class="line-block">
 <div class="line">‘cart’ (or ‘polar’), optional</div>
-<div class="line">Make Cartesian (default) or polar plot.    </div>
+<div class="line">Make Cartesian (default) or polar plot. </div>
+</div>
+</dd>
+<dt class="field-odd">show_annexE_priority</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">True, optional</div>
+<div class="line">Add Annex E priority levels for source.</div>
+</div>
+</dd>
+<dt class="field-even">show_Rcsh1_Rfh1</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">True, optional</div>
+<div class="line">Add the local chroma shift (%) and the local color fidelity index </div>
+<div class="line">for hue bin 1 at the bottom of the graph.</div>
 </div>
 </dd>
 <dt class="field-odd">kwargs</dt>
@@ -10486,7 +10650,7 @@ other plotting fcns)</div>
 
 <dl class="py function">
 <dt id="luxpy.color.cri.plot_tm30_Rfi">
-<code class="sig-prename descclassname">luxpy.color.cri.</code><code class="sig-name descname">plot_tm30_Rfi</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spd</span></em>, <em class="sig-param"><span class="n">cri_type</span><span class="o">=</span><span class="default_value">'ies-tm30'</span></em>, <em class="sig-param"><span class="n">axh</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">font_size</span><span class="o">=</span><span class="default_value">8</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cri/iestm30/graphics.html#plot_tm30_Rfi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cri.plot_tm30_Rfi" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.color.cri.</code><code class="sig-name descname">plot_tm30_Rfi</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spd</span></em>, <em class="sig-param"><span class="n">cri_type</span><span class="o">=</span><span class="default_value">'ies-tm30'</span></em>, <em class="sig-param"><span class="n">axh</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">font_size</span><span class="o">=</span><span class="default_value">11</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cri/iestm30/graphics.html#plot_tm30_Rfi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cri.plot_tm30_Rfi" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot Sample Color Fidelity values (Rfi).</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -10565,7 +10729,7 @@ other plotting fcns)</div>
 
 <dl class="py function">
 <dt id="luxpy.color.cri.plot_tm30_Rxhj">
-<code class="sig-prename descclassname">luxpy.color.cri.</code><code class="sig-name descname">plot_tm30_Rxhj</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spd</span></em>, <em class="sig-param"><span class="n">cri_type</span><span class="o">=</span><span class="default_value">'ies-tm30'</span></em>, <em class="sig-param"><span class="n">axh</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">figsize</span><span class="o">=</span><span class="default_value">(6, 15)</span></em>, <em class="sig-param"><span class="n">font_size</span><span class="o">=</span><span class="default_value">8</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cri/iestm30/graphics.html#plot_tm30_Rxhj"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cri.plot_tm30_Rxhj" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.color.cri.</code><code class="sig-name descname">plot_tm30_Rxhj</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spd</span></em>, <em class="sig-param"><span class="n">cri_type</span><span class="o">=</span><span class="default_value">'ies-tm30'</span></em>, <em class="sig-param"><span class="n">axh</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">figsize</span><span class="o">=</span><span class="default_value">(6, 15)</span></em>, <em class="sig-param"><span class="n">font_size</span><span class="o">=</span><span class="default_value">11</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cri/iestm30/graphics.html#plot_tm30_Rxhj"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cri.plot_tm30_Rxhj" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot Local Chroma Shifts (Rcshj), Local Hue Shifts (Rhshj) and Local Color Fidelity values (Rfhj) (one for each hue-bin).</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -10650,7 +10814,7 @@ other plotting fcns)</div>
 
 <dl class="py function">
 <dt id="luxpy.color.cri.plot_tm30_Rcshj">
-<code class="sig-prename descclassname">luxpy.color.cri.</code><code class="sig-name descname">plot_tm30_Rcshj</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spd</span></em>, <em class="sig-param"><span class="n">cri_type</span><span class="o">=</span><span class="default_value">'ies-tm30'</span></em>, <em class="sig-param"><span class="n">axh</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">xlabel</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">y_offset</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">font_size</span><span class="o">=</span><span class="default_value">8</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cri/iestm30/graphics.html#plot_tm30_Rcshj"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cri.plot_tm30_Rcshj" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.color.cri.</code><code class="sig-name descname">plot_tm30_Rcshj</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spd</span></em>, <em class="sig-param"><span class="n">cri_type</span><span class="o">=</span><span class="default_value">'ies-tm30'</span></em>, <em class="sig-param"><span class="n">axh</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">xlabel</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">y_offset</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">font_size</span><span class="o">=</span><span class="default_value">11</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cri/iestm30/graphics.html#plot_tm30_Rcshj"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cri.plot_tm30_Rcshj" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot Local Chroma Shift values (Rcshj) (one for each hue-bin).</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -10745,7 +10909,7 @@ other plotting fcns)</div>
 
 <dl class="py function">
 <dt id="luxpy.color.cri.plot_tm30_Rhshj">
-<code class="sig-prename descclassname">luxpy.color.cri.</code><code class="sig-name descname">plot_tm30_Rhshj</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spd</span></em>, <em class="sig-param"><span class="n">cri_type</span><span class="o">=</span><span class="default_value">'ies-tm30'</span></em>, <em class="sig-param"><span class="n">axh</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">xlabel</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">y_offset</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">font_size</span><span class="o">=</span><span class="default_value">8</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cri/iestm30/graphics.html#plot_tm30_Rhshj"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cri.plot_tm30_Rhshj" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.color.cri.</code><code class="sig-name descname">plot_tm30_Rhshj</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spd</span></em>, <em class="sig-param"><span class="n">cri_type</span><span class="o">=</span><span class="default_value">'ies-tm30'</span></em>, <em class="sig-param"><span class="n">axh</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">xlabel</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">y_offset</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">font_size</span><span class="o">=</span><span class="default_value">11</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cri/iestm30/graphics.html#plot_tm30_Rhshj"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cri.plot_tm30_Rhshj" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot Local Hue Shift values (Rhshj) (one for each hue-bin).</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -10840,7 +11004,7 @@ other plotting fcns)</div>
 
 <dl class="py function">
 <dt id="luxpy.color.cri.plot_tm30_Rfhj">
-<code class="sig-prename descclassname">luxpy.color.cri.</code><code class="sig-name descname">plot_tm30_Rfhj</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spd</span></em>, <em class="sig-param"><span class="n">cri_type</span><span class="o">=</span><span class="default_value">'ies-tm30'</span></em>, <em class="sig-param"><span class="n">axh</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">xlabel</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">y_offset</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">font_size</span><span class="o">=</span><span class="default_value">8</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cri/iestm30/graphics.html#plot_tm30_Rfhj"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cri.plot_tm30_Rfhj" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.color.cri.</code><code class="sig-name descname">plot_tm30_Rfhj</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spd</span></em>, <em class="sig-param"><span class="n">cri_type</span><span class="o">=</span><span class="default_value">'ies-tm30'</span></em>, <em class="sig-param"><span class="n">axh</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">xlabel</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">y_offset</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">font_size</span><span class="o">=</span><span class="default_value">11</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cri/iestm30/graphics.html#plot_tm30_Rfhj"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cri.plot_tm30_Rfhj" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot Local Color Fidelity values (Rfhj) (one for each hue-bin).</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -10935,7 +11099,7 @@ other plotting fcns)</div>
 
 <dl class="py function">
 <dt id="luxpy.color.cri.plot_tm30_spd">
-<code class="sig-prename descclassname">luxpy.color.cri.</code><code class="sig-name descname">plot_tm30_spd</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spd</span></em>, <em class="sig-param"><span class="n">cri_type</span><span class="o">=</span><span class="default_value">'ies-tm30'</span></em>, <em class="sig-param"><span class="n">axh</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">font_size</span><span class="o">=</span><span class="default_value">8</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cri/iestm30/graphics.html#plot_tm30_spd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cri.plot_tm30_spd" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.color.cri.</code><code class="sig-name descname">plot_tm30_spd</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spd</span></em>, <em class="sig-param"><span class="n">cri_type</span><span class="o">=</span><span class="default_value">'ies-tm30'</span></em>, <em class="sig-param"><span class="n">axh</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">font_size</span><span class="o">=</span><span class="default_value">11</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cri/iestm30/graphics.html#plot_tm30_spd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cri.plot_tm30_spd" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot test SPD and reference illuminant, both normalized to the same luminous power.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -11014,7 +11178,7 @@ other plotting fcns)</div>
 
 <dl class="py function">
 <dt id="luxpy.color.cri.plot_tm30_report">
-<code class="sig-prename descclassname">luxpy.color.cri.</code><code class="sig-name descname">plot_tm30_report</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spd</span></em>, <em class="sig-param"><span class="n">cri_type</span><span class="o">=</span><span class="default_value">'ies-tm30'</span></em>, <em class="sig-param"><span class="n">source</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">manufacturer</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">date</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">model</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">notes</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">max_len_notes_line</span><span class="o">=</span><span class="default_value">40</span></em>, <em class="sig-param"><span class="n">figsize</span><span class="o">=</span><span class="default_value">(7, 12)</span></em>, <em class="sig-param"><span class="n">save_fig_name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">dpi</span><span class="o">=</span><span class="default_value">300</span></em>, <em class="sig-param"><span class="n">plot_report_top</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">plot_report_bottom</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">suptitle</span><span class="o">=</span><span class="default_value">'ANSI/IES TM-30-18 Color Rendition Report'</span></em>, <em class="sig-param"><span class="n">font_size</span><span class="o">=</span><span class="default_value">8</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cri/iestm30/graphics.html#plot_tm30_report"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cri.plot_tm30_report" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.color.cri.</code><code class="sig-name descname">plot_tm30_report</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spd</span></em>, <em class="sig-param"><span class="n">cri_type</span><span class="o">=</span><span class="default_value">'ies-tm30'</span></em>, <em class="sig-param"><span class="n">report_type</span><span class="o">=</span><span class="default_value">'full'</span></em>, <em class="sig-param"><span class="n">source</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">manufacturer</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">date</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">model</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">notes</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">max_len_notes_line</span><span class="o">=</span><span class="default_value">40</span></em>, <em class="sig-param"><span class="n">figsize</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">save_fig_name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">dpi</span><span class="o">=</span><span class="default_value">300</span></em>, <em class="sig-param"><span class="n">plot_report_top</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">plot_report_bottom</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">show_annexE_priority</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">show_Rcsh1_Rfh1</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">suptitle</span><span class="o">=</span><span class="default_value">'ANSI/IES TM-30-18 Color Rendition Report'</span></em>, <em class="sig-param"><span class="n">font_size</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cri/iestm30/graphics.html#plot_tm30_report"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.cri.plot_tm30_report" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create TM30 Color Rendition Report.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -11055,80 +11219,114 @@ other plotting fcns)</div>
 <div class="line">to the function will override default values in cri_type dict.</div>
 </div>
 </dd>
-<dt class="field-odd">source</dt>
+<dt class="field-odd">report_type</dt>
 <dd class="field-odd"><div class="line-block">
+<div class="line">‘full’, optional</div>
+<div class="line">Generate a full report as in ANSI/IES-TM30-2020 </div>
+<div class="line">Options : </div>
+<div class="line-block">
+<div class="line">- ‘full’: full report with spectrum plot, color vector graphic, local indices, sample indices’simple’, …</div>
+<div class="line">- ‘intermediate’: color vector graphic + local chroma and hue shifts </div>
+<div class="line">- ‘simple’: color vector graphic only</div>
+<div class="line">- ‘spd_cvg’: spectrum plot + color vector graphic</div>
+</div>
+</div>
+</dd>
+<dt class="field-even">source</dt>
+<dd class="field-even"><div class="line-block">
 <div class="line">string with source name.</div>
 </div>
 </dd>
-<dt class="field-even">manufacturer</dt>
-<dd class="field-even"><div class="line-block">
+<dt class="field-odd">manufacturer</dt>
+<dd class="field-odd"><div class="line-block">
 <div class="line">string with source manufacturer.</div>
 </div>
 </dd>
-<dt class="field-odd">model</dt>
-<dd class="field-odd"><div class="line-block">
+<dt class="field-even">model</dt>
+<dd class="field-even"><div class="line-block">
 <div class="line">string with source model.</div>
 </div>
 </dd>
-<dt class="field-even">date</dt>
-<dd class="field-even"><div class="line-block">
+<dt class="field-odd">date</dt>
+<dd class="field-odd"><div class="line-block">
 <div class="line">string with source measurement date.</div>
 </div>
 </dd>
-<dt class="field-odd">notes</dt>
-<dd class="field-odd"><div class="line-block">
+<dt class="field-even">notes</dt>
+<dd class="field-even"><div class="line-block">
 <div class="line">string to be split</div>
 </div>
 </dd>
-<dt class="field-even">max_len_notes_line</dt>
-<dd class="field-even"><div class="line-block">
+<dt class="field-odd">max_len_notes_line</dt>
+<dd class="field-odd"><div class="line-block">
 <div class="line">40, optional</div>
 <div class="line">Maximum length of a single line when splitting the string.</div>
 </div>
 </dd>
-<dt class="field-odd">figsize</dt>
-<dd class="field-odd"><div class="line-block">
-<div class="line">(7,12), optional</div>
+<dt class="field-even">figsize</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">None, optional</div>
 <div class="line">Figure size of pyplot figure.</div>
+<div class="line">If None a default depending on the report_type is used:</div>
+<div class="line-block">
+<div class="line">- ‘full’: (7,12)</div>
+<div class="line">- ‘intermediate’ : (14,6)</div>
+<div class="line">- ‘simple’ : (6,6)</div>
+<div class="line">-‘spd_cvg’: (14,6)</div>
+</div>
 </div>
 </dd>
-<dt class="field-even">save_fig_name</dt>
-<dd class="field-even"><div class="line-block">
+<dt class="field-odd">save_fig_name</dt>
+<dd class="field-odd"><div class="line-block">
 <div class="line">None, optional</div>
 <div class="line">Filename (+path) to which the report will be saved as an image (png).</div>
 <div class="line">If None: don’t save, just display.</div>
 </div>
 </dd>
-<dt class="field-odd">dpi</dt>
-<dd class="field-odd"><div class="line-block">
+<dt class="field-even">dpi</dt>
+<dd class="field-even"><div class="line-block">
 <div class="line">300, optional</div>
 <div class="line">Dots-Per-Inch of image file (PNG).</div>
 </div>
 </dd>
-<dt class="field-even">plot_report_top</dt>
-<dd class="field-even"><div class="line-block">
+<dt class="field-odd">plot_report_top</dt>
+<dd class="field-odd"><div class="line-block">
 <div class="line">execute _plot_tm30_report_top()</div>
 </div>
 </dd>
-<dt class="field-odd">plot_report_bottom</dt>
-<dd class="field-odd"><div class="line-block">
+<dt class="field-even">plot_report_bottom</dt>
+<dd class="field-even"><div class="line-block">
 <div class="line">execute _plot_tm30_report_bottom()</div>
 </div>
 </dd>
-<dt class="field-even">suptitle</dt>
+<dt class="field-odd">show_annexE_priority</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">True, optional</div>
+<div class="line">Add Annex E priority levels for source.</div>
+</div>
+</dd>
+<dt class="field-even">show_Rcsh1_Rfh1</dt>
 <dd class="field-even"><div class="line-block">
+<div class="line">True, optional</div>
+<div class="line">Add the local chroma shift (%) and the local color fidelity index </div>
+<div class="line">for hue bin 1 at the bottom of the graph.</div>
+</div>
+</dd>
+<dt class="field-odd">suptitle</dt>
+<dd class="field-odd"><div class="line-block">
 <div class="line">‘ANSI/IES TM-30-18 Color Rendition Report’ or str, optional</div>
 <div class="line">report title (input for plt.suptitle).  </div>
 </div>
 </dd>
-<dt class="field-odd">font_size</dt>
-<dd class="field-odd"><div class="line-block">
-<div class="line">_TM30_FONT_SIZE, optional</div>
-<div class="line">Font size of text, axis labels and axis values.</div>
+<dt class="field-even">font_size</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">Font size of text, axis labels and axis values (adjust when changing figsizes).</div>
+<div class="line">Defaults : (‘full’: _TM30_FONT_SIZE_FULLREPORT, other options: _TM30_FONT_SIZE)</div>
 </div>
 </dd>
-<dt class="field-even">kwargs</dt>
-<dd class="field-even"><div class="line-block">
+<dt class="field-odd">kwargs</dt>
+<dd class="field-odd"><div class="line-block">
 <div class="line">Additional optional keyword arguments, </div>
 <div class="line">the same as in cri.spd_to_cri()</div>
 </div>
@@ -11153,7 +11351,7 @@ other plotting fcns)</div>
 
 <dl class="py function">
 <dt id="luxpy.color.cri.spd_to_tm30_report">
-<code class="sig-prename descclassname">luxpy.color.cri.</code><code class="sig-name descname">spd_to_tm30_report</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spd</span></em>, <em class="sig-param"><span class="n">cri_type</span><span class="o">=</span><span class="default_value">'ies-tm30'</span></em>, <em class="sig-param"><span class="n">source</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">manufacturer</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">date</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">model</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">notes</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">max_len_notes_line</span><span class="o">=</span><span class="default_value">40</span></em>, <em class="sig-param"><span class="n">figsize</span><span class="o">=</span><span class="default_value">(7, 12)</span></em>, <em class="sig-param"><span class="n">save_fig_name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">dpi</span><span class="o">=</span><span class="default_value">300</span></em>, <em class="sig-param"><span class="n">plot_report_top</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">plot_report_bottom</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">suptitle</span><span class="o">=</span><span class="default_value">'ANSI/IES TM-30-18 Color Rendition Report'</span></em>, <em class="sig-param"><span class="n">font_size</span><span class="o">=</span><span class="default_value">8</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#luxpy.color.cri.spd_to_tm30_report" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.color.cri.</code><code class="sig-name descname">spd_to_tm30_report</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spd</span></em>, <em class="sig-param"><span class="n">cri_type</span><span class="o">=</span><span class="default_value">'ies-tm30'</span></em>, <em class="sig-param"><span class="n">report_type</span><span class="o">=</span><span class="default_value">'full'</span></em>, <em class="sig-param"><span class="n">source</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">manufacturer</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">date</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">model</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">notes</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">max_len_notes_line</span><span class="o">=</span><span class="default_value">40</span></em>, <em class="sig-param"><span class="n">figsize</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">save_fig_name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">dpi</span><span class="o">=</span><span class="default_value">300</span></em>, <em class="sig-param"><span class="n">plot_report_top</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">plot_report_bottom</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">show_annexE_priority</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">show_Rcsh1_Rfh1</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">suptitle</span><span class="o">=</span><span class="default_value">'ANSI/IES TM-30-18 Color Rendition Report'</span></em>, <em class="sig-param"><span class="n">font_size</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#luxpy.color.cri.spd_to_tm30_report" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create TM30 Color Rendition Report.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -11194,80 +11392,114 @@ other plotting fcns)</div>
 <div class="line">to the function will override default values in cri_type dict.</div>
 </div>
 </dd>
-<dt class="field-odd">source</dt>
+<dt class="field-odd">report_type</dt>
 <dd class="field-odd"><div class="line-block">
+<div class="line">‘full’, optional</div>
+<div class="line">Generate a full report as in ANSI/IES-TM30-2020 </div>
+<div class="line">Options : </div>
+<div class="line-block">
+<div class="line">- ‘full’: full report with spectrum plot, color vector graphic, local indices, sample indices’simple’, …</div>
+<div class="line">- ‘intermediate’: color vector graphic + local chroma and hue shifts </div>
+<div class="line">- ‘simple’: color vector graphic only</div>
+<div class="line">- ‘spd_cvg’: spectrum plot + color vector graphic</div>
+</div>
+</div>
+</dd>
+<dt class="field-even">source</dt>
+<dd class="field-even"><div class="line-block">
 <div class="line">string with source name.</div>
 </div>
 </dd>
-<dt class="field-even">manufacturer</dt>
-<dd class="field-even"><div class="line-block">
+<dt class="field-odd">manufacturer</dt>
+<dd class="field-odd"><div class="line-block">
 <div class="line">string with source manufacturer.</div>
 </div>
 </dd>
-<dt class="field-odd">model</dt>
-<dd class="field-odd"><div class="line-block">
+<dt class="field-even">model</dt>
+<dd class="field-even"><div class="line-block">
 <div class="line">string with source model.</div>
 </div>
 </dd>
-<dt class="field-even">date</dt>
-<dd class="field-even"><div class="line-block">
+<dt class="field-odd">date</dt>
+<dd class="field-odd"><div class="line-block">
 <div class="line">string with source measurement date.</div>
 </div>
 </dd>
-<dt class="field-odd">notes</dt>
-<dd class="field-odd"><div class="line-block">
+<dt class="field-even">notes</dt>
+<dd class="field-even"><div class="line-block">
 <div class="line">string to be split</div>
 </div>
 </dd>
-<dt class="field-even">max_len_notes_line</dt>
-<dd class="field-even"><div class="line-block">
+<dt class="field-odd">max_len_notes_line</dt>
+<dd class="field-odd"><div class="line-block">
 <div class="line">40, optional</div>
 <div class="line">Maximum length of a single line when splitting the string.</div>
 </div>
 </dd>
-<dt class="field-odd">figsize</dt>
-<dd class="field-odd"><div class="line-block">
-<div class="line">(7,12), optional</div>
+<dt class="field-even">figsize</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">None, optional</div>
 <div class="line">Figure size of pyplot figure.</div>
+<div class="line">If None a default depending on the report_type is used:</div>
+<div class="line-block">
+<div class="line">- ‘full’: (7,12)</div>
+<div class="line">- ‘intermediate’ : (14,6)</div>
+<div class="line">- ‘simple’ : (6,6)</div>
+<div class="line">-‘spd_cvg’: (14,6)</div>
+</div>
 </div>
 </dd>
-<dt class="field-even">save_fig_name</dt>
-<dd class="field-even"><div class="line-block">
+<dt class="field-odd">save_fig_name</dt>
+<dd class="field-odd"><div class="line-block">
 <div class="line">None, optional</div>
 <div class="line">Filename (+path) to which the report will be saved as an image (png).</div>
 <div class="line">If None: don’t save, just display.</div>
 </div>
 </dd>
-<dt class="field-odd">dpi</dt>
-<dd class="field-odd"><div class="line-block">
+<dt class="field-even">dpi</dt>
+<dd class="field-even"><div class="line-block">
 <div class="line">300, optional</div>
 <div class="line">Dots-Per-Inch of image file (PNG).</div>
 </div>
 </dd>
-<dt class="field-even">plot_report_top</dt>
-<dd class="field-even"><div class="line-block">
+<dt class="field-odd">plot_report_top</dt>
+<dd class="field-odd"><div class="line-block">
 <div class="line">execute _plot_tm30_report_top()</div>
 </div>
 </dd>
-<dt class="field-odd">plot_report_bottom</dt>
-<dd class="field-odd"><div class="line-block">
+<dt class="field-even">plot_report_bottom</dt>
+<dd class="field-even"><div class="line-block">
 <div class="line">execute _plot_tm30_report_bottom()</div>
 </div>
 </dd>
-<dt class="field-even">suptitle</dt>
+<dt class="field-odd">show_annexE_priority</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">True, optional</div>
+<div class="line">Add Annex E priority levels for source.</div>
+</div>
+</dd>
+<dt class="field-even">show_Rcsh1_Rfh1</dt>
 <dd class="field-even"><div class="line-block">
+<div class="line">True, optional</div>
+<div class="line">Add the local chroma shift (%) and the local color fidelity index </div>
+<div class="line">for hue bin 1 at the bottom of the graph.</div>
+</div>
+</dd>
+<dt class="field-odd">suptitle</dt>
+<dd class="field-odd"><div class="line-block">
 <div class="line">‘ANSI/IES TM-30-18 Color Rendition Report’ or str, optional</div>
 <div class="line">report title (input for plt.suptitle).  </div>
 </div>
 </dd>
-<dt class="field-odd">font_size</dt>
-<dd class="field-odd"><div class="line-block">
-<div class="line">_TM30_FONT_SIZE, optional</div>
-<div class="line">Font size of text, axis labels and axis values.</div>
+<dt class="field-even">font_size</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">Font size of text, axis labels and axis values (adjust when changing figsizes).</div>
+<div class="line">Defaults : (‘full’: _TM30_FONT_SIZE_FULLREPORT, other options: _TM30_FONT_SIZE)</div>
 </div>
 </dd>
-<dt class="field-even">kwargs</dt>
-<dd class="field-even"><div class="line-block">
+<dt class="field-odd">kwargs</dt>
+<dd class="field-odd"><div class="line-block">
 <div class="line">Additional optional keyword arguments, </div>
 <div class="line">the same as in cri.spd_to_cri()</div>
 </div>

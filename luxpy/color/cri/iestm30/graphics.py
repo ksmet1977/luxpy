@@ -38,7 +38,6 @@ Module for IES color rendition graphical output
 
  :plot_tm30_report(): Plot a figure with an ANSI/IES-TM30 color rendition report.
  
- 
  :plot_cri_graphics(): Plots graphical information on color rendition 
                        properties based on spectral data input or dict with 
                        pre-calculated measures (cusom design). 
@@ -59,15 +58,52 @@ from luxpy.color.cri.utils.graphics import plot_ColorVectorGraphic
 from luxpy.color.cri.utils.graphics import plot_ColorVectorGraphic
 from luxpy.color.cri.VFPX.vectorshiftmodel import  _VF_MODEL_TYPE, _VF_PCOLORSHIFT 
 from luxpy.color.cri.VFPX.VF_PX_models import plot_VF_PX_models
-from luxpy.color.cri.iestm30.metrics import spd_to_ies_tm30_metrics
+from luxpy.color.cri.iestm30.metrics import spd_to_ies_tm30_metrics, tm30_metrics_to_annexE_recommendations
 
-_TM30_FONT_SIZE = 8
+_TM30_FONT_SIZE_FULLREPORT = 8
+_TM30_FONT_SIZE = 11
 
 __all__ = ['_tm30_process_spd','plot_tm30_cvg','plot_tm30_Rfi',
            'plot_tm30_Rxhj','plot_tm30_Rcshj', 'plot_tm30_Rhshj', 
            'plot_tm30_Rfhj', 'plot_tm30_spd','plot_tm30_report', 
            'spd_to_tm30_report',
            'plot_cri_graphics']
+
+# RGB color map for hue bin j in bar graphs as specified in Annex B of ANSI/IES-TM30-2020:
+_HBIN_BAR_CMAP_16 = np.array([[163, 92, 96],
+                               [204, 118, 94],
+                               [204, 129, 69],
+                               [216, 172, 98],
+                               [172, 153, 89],
+                               [145, 158, 93],
+                               [102, 139, 94],
+                               [97, 178, 144],
+                               [123, 186, 166],
+                               [41, 122, 126],
+                               [85, 120, 141],
+                               [112, 138, 178],
+                               [152, 140, 170],
+                               [115, 88, 119],
+                               [143, 102, 130],
+                               [186, 122, 142]])/255
+
+# RGB color map for hue bin j in vector plots as specified in Annex B of ANSI/IES-TM30-2020:
+_HBIN_VECTOR_CMAP_16 = np.array([[230, 40, 40],
+                                 [231, 75, 75],
+                                 [251, 129, 46],
+                                 [255, 181, 41],
+                                 [203, 202, 70],
+                                 [126, 185, 76],
+                                 [65, 192, 109],
+                                 [0, 156, 124],
+                                 [22, 188, 176],
+                                 [0, 164, 191],
+                                 [0, 133, 195],
+                                 [59, 98, 170],
+                                 [69, 104, 174],
+                                 [106, 78, 133],
+                                 [157, 105, 161],
+                                 [167, 79, 129]])/255
 
 def _tm30_process_spd(spd, cri_type = 'ies-tm30',**kwargs):
     """
@@ -107,6 +143,12 @@ def _tm30_process_spd(spd, cri_type = 'ies-tm30',**kwargs):
                           fit_gamut_ellipse = True, **kwargs)
     else:
         data = spd
+    # add Annex E recommentdations:
+    if 'AnnexE_priority' not in data.keys():
+        data['AnnexE_priority'] = tm30_metrics_to_annexE_recommendations(Rf = data['Rf'], 
+                                                                         Rg = data['Rg'], 
+                                                                         Rcsh1 = data['Rcshj'][0,:], 
+                                                                         Rfh1 = data['Rfhj'][0,:])
     return data
 
 def _get_hue_map(hbins = 16, start_hue = 0.0, 
@@ -188,6 +230,8 @@ def plot_tm30_cvg(spd, cri_type = 'ies-tm30',
                   plot_vectors = True,
                   plot_index_values = True,
                   axh = None, axtype = 'cart',
+                  show_annexE_priority = True, 
+                  show_Rcsh1_Rfh1 = True,
                   **kwargs):
     """
     Plot TM30 Color Vector Graphic (CVG).
@@ -233,12 +277,23 @@ def plot_tm30_cvg(spd, cri_type = 'ies-tm30',
         :plot_index_values:
             | True, optional
             | Print Rf, Rg, CCT and Duv in corners of CVG (True) or not (False).
+            | If False: turns of potential prints of Rcsh1, Rfh1 
+            | and annexE_priority levelels as well. This way this argument can be 
+            | easily used to turn off all plotting and printing when graphs are
+            | to be generated with gamuts of multiple sources.
         :axh: 
             | None, optional
             | If None: create new figure with single axes, else plot on specified axes. 
         :axtype: 
             | 'cart' (or 'polar'), optional
-            | Make Cartesian (default) or polar plot.    
+            | Make Cartesian (default) or polar plot. 
+        :show_annexE_priority:
+            | True, optional
+            | Add Annex E priority levels for source.
+        :show_Rcsh1_Rfh1:
+            | True, optional
+            | Add the local chroma shift (%) and the local color fidelity index 
+            | for hue bin 1 at the bottom of the graph.
         :kwargs:
             | Additional optional keyword arguments, 
             | the same as in cri.spd_to_cri()
@@ -269,12 +324,16 @@ def plot_tm30_cvg(spd, cri_type = 'ies-tm30',
                                         plot_vectors = plot_vectors,
                                         ax = axh, axtype = axtype,
                                         force_CVG_layout = True,
-                                        plot_axis_labels = False)
+                                        plot_axis_labels = False,
+                                        hbin_color_map = _HBIN_BAR_CMAP_16,
+                                        hvector_color_map = _HBIN_VECTOR_CMAP_16)
+    
     
     # Print Rf, Rg, CCT and Duv in plot:
+    
     if plot_index_values == True:
-        Rf, Rg, cct, duv = data['Rf'], data['Rg'], data['cct'], data['duv']
         scalef = data['hue_bin_data']['normalized_chroma_ref']
+        Rf, Rg, cct, duv = data['Rf'], data['Rg'], data['cct'], data['duv']
         axh.text(-1.30*scalef,1.30*scalef,'{:1.0f}'.format(Rf[0,0]),fontsize = 15, fontweight='bold', horizontalalignment='center',verticalalignment='center',color = 'k')
         axh.text(-1.33*scalef,1.12*scalef,'$R_f$',fontsize = 13, style='italic', horizontalalignment='center',verticalalignment='center',color = 'k')
         axh.text(1.30*scalef,1.30*scalef,'{:1.0f}'.format(Rg[0,0]),fontsize = 15, fontweight='bold', horizontalalignment='center',verticalalignment='center',color = 'k')
@@ -283,8 +342,25 @@ def plot_tm30_cvg(spd, cri_type = 'ies-tm30',
         axh.text(-1.43*scalef,-1.25*scalef,'$CCT$',fontsize = 13, style='italic', horizontalalignment='left',verticalalignment='bottom',color = 'k')
         axh.text(1.43*scalef,-1.45*scalef,'{:1.4f}'.format(duv[0,0]),fontsize = 15, fontweight='bold', horizontalalignment='right',verticalalignment='bottom',color = 'k')
         axh.text(1.43*scalef,-1.25*scalef,'$D_{uv}$',fontsize = 13, style='italic', horizontalalignment='right',verticalalignment='bottom',color = 'k')
+    
+    
+        annexE_priority = ','.join(list(data['AnnexE_priority'][:,0])) if show_annexE_priority else  ''
+            
+        if show_Rcsh1_Rfh1: 
+            red_info = "$R_{{cs,h1}}$ = {:1.0f}%, $R_{{f,h1}}$ = {:1.0f}".format(100*data['Rcshj'][0,0],data['Rfhj'][0,0])
+            axh.text(-1.43*scalef, -1.65*scalef, red_info, fontsize = 12, fontweight='bold', horizontalalignment='left')
+                     # transform = axh.transAxes)
+            axh.text(1.43*scalef, -1.65*scalef, annexE_priority, fontsize = 12, fontweight='bold', horizontalalignment='right') 
+                     # transform = axh.transAxes)
+        else:
+            if show_annexE_priority:
+                axh.text(1.43*scalef, -1.65*scalef, annexE_priority, fontsize = 12) 
+                     # transform = axh.transAxes)
+    
     axh.set_xticks([])
     axh.set_yticks([])
+
+    
     return axh, data 
 
 
@@ -412,7 +488,8 @@ def plot_tm30_Rfi(spd, cri_type = 'ies-tm30', axh = None,
     if axh is None:
         fig, axh = plt.subplots(nrows = 1, ncols = 1)
     for j in range(N):
-        axh.bar(j,Rfi[j,0], color = cmap[j], width = 1,edgecolor = None, alpha = 0.9)
+        cmap_j = [list(cmap[j])]
+        axh.bar(j,Rfi[j,0], color = cmap_j, width = 1,edgecolor = None, alpha = 0.9)
         #axh.text(j,Rfi[j,0]*1.1, '{:1.0f}'.format(Rfi[j,0]) ,fontsize = 9,horizontalalignment='center',verticalalignment='center',color = np.array([1,1,1])*0.3)
     xticks = np.arange(0,N,step=2)
     xtickslabels = ['CES{:1.0f}'.format(ii+1) for ii in range(0,N,2)]
@@ -480,18 +557,22 @@ def plot_tm30_Rfhj(spd, cri_type = 'ies-tm30', axh = None,
     Rfhj = data['Rfhj']
         
     # Get color map based on sample colors:
-    cmap = _get_hue_map(hbins = hdata['nhbins'], start_hue = hdata['start_hue'], 
-                        hbinnrs = hdata['hbinnrs'], 
-                        xyzri = data['xyzri'], 
-                        xyzrw = data['xyzrw'], 
-                        cri_type = data['cri_type'])
+    if (hdata['nhbins'] != 16) & (hdata['start_hue'] != 0.0):
+        cmap = _get_hue_map(hbins = hdata['nhbins'], start_hue = hdata['start_hue'], 
+                            hbinnrs = hdata['hbinnrs'], 
+                            xyzri = data['xyzri'], 
+                            xyzrw = data['xyzrw'], 
+                            cri_type = data['cri_type'])
+    else:
+        cmap = _HBIN_BAR_CMAP_16
 
     # Plot local color fidelity, Rfhj:
     hbins = range(hdata['nhbins'])
     if axh is None:
         fig, axh = plt.subplots(nrows = 1, ncols = 1)
     for j in hbins:
-        axh.bar(hbins[j],Rfhj[j,0], color = cmap[j], width = 1,edgecolor = 'k', alpha = 1)
+        cmap_j = [list(cmap[j])]
+        axh.bar(hbins[j],Rfhj[j,0], color = cmap_j, width = 1,edgecolor = 'k', alpha = 1)
         ypos = ((np.abs(Rfhj[j,0]) + 2 + y_offset))*np.sign(Rfhj[j,0])
         axh.text(hbins[j],ypos, '{:1.0f}'.format(Rfhj[j,0]),
                  fontsize = font_size,
@@ -571,18 +652,22 @@ def plot_tm30_Rcshj(spd, cri_type = 'ies-tm30', axh = None,
     Rcshj = data['Rcshj']
     
     # Get color map based on sample colors:
-    cmap = _get_hue_map(hbins = hdata['nhbins'], start_hue = hdata['start_hue'], 
-                        hbinnrs = hdata['hbinnrs'], 
-                        xyzri = data['xyzri'], 
-                        xyzrw = data['xyzrw'], 
-                        cri_type = data['cri_type'])
+    if (hdata['nhbins'] != 16) & (hdata['start_hue'] != 0.0):
+        cmap = _get_hue_map(hbins = hdata['nhbins'], start_hue = hdata['start_hue'], 
+                            hbinnrs = hdata['hbinnrs'], 
+                            xyzri = data['xyzri'], 
+                            xyzrw = data['xyzrw'], 
+                            cri_type = data['cri_type'])
+    else:
+        cmap = _HBIN_BAR_CMAP_16
     
     # Plot local chroma shift, Rcshj:
     hbins = range(hdata['nhbins'])
     if axh is None:
         fig, axh = plt.subplots(nrows = 1, ncols = 1)
     for j in hbins:
-        axh.bar(hbins[j],100*Rcshj[j,0], color = cmap[j], width = 1,edgecolor = 'k', alpha = 1)
+        cmap_j = [list(cmap[j])]
+        axh.bar(hbins[j],100*Rcshj[j,0], color = cmap_j, width = 1,edgecolor = 'k', alpha = 1)
         ypos = 100*((np.abs(Rcshj[j,0]) + 0.05 + y_offset))*np.sign(Rcshj[j,0])
         axh.text(hbins[j]+0.05,ypos, '{:1.0f}%'.format(100*Rcshj[j,0]), 
                  fontsize = font_size,horizontalalignment='center',
@@ -666,18 +751,22 @@ def plot_tm30_Rhshj(spd, cri_type = 'ies-tm30', axh = None,
     Rhshj = data['Rhshj']
 
     # Get color map based on sample colors:
-    cmap = _get_hue_map(hbins = hdata['nhbins'], start_hue = hdata['start_hue'], 
-                        hbinnrs = hdata['hbinnrs'], 
-                        xyzri = data['xyzri'], 
-                        xyzrw = data['xyzrw'], 
-                        cri_type = data['cri_type'])
+    if (hdata['nhbins'] != 16) & (hdata['start_hue'] != 0.0):
+        cmap = _get_hue_map(hbins = hdata['nhbins'], start_hue = hdata['start_hue'], 
+                            hbinnrs = hdata['hbinnrs'], 
+                            xyzri = data['xyzri'], 
+                            xyzrw = data['xyzrw'], 
+                            cri_type = data['cri_type'])
+    else:
+        cmap = _HBIN_BAR_CMAP_16
     
     # Plot local hue shift, Rhshj:
     hbins = range(hdata['nhbins'])
     if axh is None:
         fig, axh = plt.subplots(nrows = 1, ncols = 1)
     for j in hbins:
-        axh.bar(hbins[j],Rhshj[j,0], color = cmap[j], width = 1,edgecolor = 'k', alpha = 1)
+        cmap_j = [list(cmap[j])]
+        axh.bar(hbins[j],Rhshj[j,0], color = cmap_j, width = 1,edgecolor = 'k', alpha = 1)
         ypos = ((np.abs(Rhshj[j,0]) + 0.05 + y_offset))*np.sign(Rhshj[j,0])
         axh.text(hbins[j]+0.05,ypos, '{:1.2f}'.format(Rhshj[j,0]),
                  fontsize = font_size,
@@ -875,81 +964,18 @@ def _plot_tm30_report_bottom(axh, spd, notes = '', max_len_notes_line = 40):
 
     return axh
 
-def plot_tm30_report(spd, cri_type = 'ies-tm30',
-                     source = '', manufacturer = '',
-                     date = '', model = '', 
-                     notes = '', max_len_notes_line = 40,
-                     figsize = (7,12),
-                     save_fig_name = None, dpi = 300,
-                     plot_report_top = True, plot_report_bottom = True,
-                     suptitle = 'ANSI/IES TM-30-18 Color Rendition Report',
-                     font_size = _TM30_FONT_SIZE, **kwargs):
-    """
-    Create TM30 Color Rendition Report.
+def _plot_tm30_report_full(spd, cri_type = 'ies-tm30',
+                         source = '', manufacturer = '',
+                         date = '', model = '', 
+                         notes = '', max_len_notes_line = 40,
+                         figsize = (7,12),
+                         save_fig_name = None, dpi = 300,
+                         plot_report_top = True, plot_report_bottom = True,
+                         show_annexE_priority = True, show_Rcsh1_Rfh1 = True,
+                         suptitle = 'ANSI/IES TM-30-18 Color Rendition Report',
+                         font_size = _TM30_FONT_SIZE_FULLREPORT, **kwargs):
+    """ Create TM30 Color Rendition Report ('full'). """
     
-    Args:
-        :spd:
-            | ndarray or dict
-            | If ndarray: single spectral power distribution.
-            | If dict: dictionary with pre-computed parameters (using _tm30_process_spd()).
-            |  required keys:
-            |   dict_keys(['St', 'Sr', 'xyztw_cct', 'cct', 'duv', 
-            |               'xyzti', 'xyztw', 'xyzri', 'xyzrw', 
-            |               'DEi', 'DEa', 'Rf', 'Rg', 
-            |               'Rcshj', 'Rhshj', 'Rfhj', 'hue_bin_data'])
-            | see cri.spd_to_cri() for more info on parameters.
-        :cri_type:
-            | _CRI_TYPE_DEFAULT or str or dict, optional
-            |   -'str: specifies dict with default cri model parameters 
-            |     (for supported types, see luxpy.cri._CRI_DEFAULTS['cri_types'])
-            |   - dict: user defined model parameters 
-            |     (see e.g. luxpy.cri._CRI_DEFAULTS['cierf'] 
-            |     for required structure)
-            | Note that any non-None input arguments (in kwargs) 
-            | to the function will override default values in cri_type dict.
-        :source:
-            | string with source name.
-        :manufacturer:
-            | string with source manufacturer.
-        :model:
-            | string with source model.
-        :date:
-            | string with source measurement date.
-        :notes:
-            | string to be split
-        :max_len_notes_line:
-            | 40, optional
-            | Maximum length of a single line when splitting the string.
-        :figsize:
-            | (7,12), optional
-            | Figure size of pyplot figure.
-        :save_fig_name:
-            | None, optional
-            | Filename (+path) to which the report will be saved as an image (png).
-            | If None: don't save, just display.
-        :dpi:
-            | 300, optional
-            | Dots-Per-Inch of image file (PNG).
-        :plot_report_top:
-            | execute _plot_tm30_report_top()
-        :plot_report_bottom:
-            | execute _plot_tm30_report_bottom()
-        :suptitle:
-            | 'ANSI/IES TM-30-18 Color Rendition Report' or str, optional
-            | report title (input for plt.suptitle).  
-        :font_size:
-            | _TM30_FONT_SIZE, optional
-            | Font size of text, axis labels and axis values.
-        :kwargs:
-            | Additional optional keyword arguments, 
-            | the same as in cri.spd_to_cri()
-            
-    Returns:
-        :axs:
-            | dictionary with handles to each axes.
-        :data:
-            | dictionary with required parameters for plotting functions.      
-    """
     # Set up subplots:
     fig = plt.figure(constrained_layout=True, figsize = figsize)  
     nrows = int(4 + 1*(plot_report_top) + 1*(plot_report_bottom))
@@ -982,7 +1008,9 @@ def plot_tm30_report(spd, cri_type = 'ies-tm30',
                           notes = notes, max_len_notes_line = max_len_notes_line)
 
     plot_tm30_spd(data, axh = f_ax_spd, font_size = font_size)
-    plot_tm30_cvg(data, axh = f_ax_cvg, font_size = font_size)
+    plot_tm30_cvg(data, axh = f_ax_cvg, font_size = font_size,
+                  show_annexE_priority = show_annexE_priority, 
+                  show_Rcsh1_Rfh1 = show_Rcsh1_Rfh1)
     plot_tm30_Rfhj(data, axh = f_ax_fhj, y_offset = 2, font_size = font_size)
     plot_tm30_Rcshj(data, axh = f_ax_cshj, xlabel = False, y_offset = 0.06, font_size = font_size)
     plot_tm30_Rhshj(data, axh = f_ax_hshj, xlabel = False, y_offset = 0.06, font_size = font_size)
@@ -993,12 +1021,255 @@ def plot_tm30_report(spd, cri_type = 'ies-tm30',
     if save_fig_name is not None:
         fig.savefig(save_fig_name, dpi = dpi)
     
-    axs = {'fig': fig, 'top' : f_ax_top, 'bottom': f_ax_bottom, 'cvg':f_ax_cvg,
+    axs = {'fig': fig, 'top' : f_ax_top, 'bottom': f_ax_bottom, 'cvg':f_ax_cvg, 'spd':f_ax_spd,
            'rfi': f_ax_fi, 'rfhj':f_ax_fhj, 'rcshj':f_ax_cshj, 'rhshj':f_ax_hshj}
     
+    return axs, data
+
+def _plot_tm30_report_intermediate(spd, cri_type = 'ies-tm30',
+                                   figsize = (12,7),
+                                   save_fig_name = None, dpi = 300,
+                                   show_annexE_priority = True, show_Rcsh1_Rfh1 = True,
+                                   suptitle = 'ANSI/IES TM-30-18 Color Rendition Report',
+                                   font_size = _TM30_FONT_SIZE, **kwargs):
+    """ Create TM30 Color Rendition Report ('intermediate'). """
+    
+    # Set up subplots:
+    fig = plt.figure(constrained_layout=True, figsize = figsize)  
+    gs = fig.add_gridspec(2, 3, height_ratios=[0.5,0.5], width_ratios=[1,1,1.5])
+    f_ax_cvg = fig.add_subplot(gs[0:2, 0:2])
+    f_ax_cshj = fig.add_subplot(gs[0, 2:])
+    f_ax_hshj = fig.add_subplot(gs[1, 2:])
+    
+    # Get required parameter values from spd:
+    data = _tm30_process_spd(spd, cri_type = cri_type, **kwargs)
+    spd  = data['St']
+    
+    # Create all subplots:
+    plot_tm30_cvg(data, axh = f_ax_cvg, font_size = font_size,
+                  show_annexE_priority = show_annexE_priority, 
+                  show_Rcsh1_Rfh1 = show_Rcsh1_Rfh1)
+    plot_tm30_Rcshj(data, axh = f_ax_cshj, xlabel = False, y_offset = 0.06, font_size = font_size)
+    plot_tm30_Rhshj(data, axh = f_ax_hshj, xlabel = True, y_offset = 0.06, font_size = font_size)
+    fig.suptitle(suptitle, fontsize = 14, fontweight= 'bold')
+    
+    # Save to file:
+    if save_fig_name is not None:
+        fig.savefig(save_fig_name, dpi = dpi)
+    
+    axs = {'fig': fig, 'cvg':f_ax_cvg,
+           'rcshj':f_ax_cshj, 'rhshj':f_ax_hshj}
     
     return axs, data
+
+def _plot_tm30_report_simple(spd, cri_type = 'ies-tm30',
+                         figsize = (7,7),
+                         save_fig_name = None, dpi = 300,
+                         show_annexE_priority = True, show_Rcsh1_Rfh1 = True,
+                         suptitle = 'ANSI/IES TM-30-18 Color Rendition Report',
+                         font_size = _TM30_FONT_SIZE, **kwargs):
+    """ Create TM30 Color Rendition Report ('simple'). """
+    
+    # Set up subplots:
+    fig = plt.figure(constrained_layout=True, figsize = figsize)  
+    f_ax_cvg = fig.subplots(1,1)
+    
+    # Get required parameter values from spd:
+    data = _tm30_process_spd(spd, cri_type = cri_type, **kwargs)
+    spd  = data['St']
+    
+    # Create all subplots:
+    plot_tm30_cvg(data, axh = f_ax_cvg, font_size = font_size,
+                  show_annexE_priority = show_annexE_priority, 
+                  show_Rcsh1_Rfh1 = show_Rcsh1_Rfh1)
+    fig.suptitle(suptitle, fontsize = 14, fontweight= 'bold')
+    
+    # Save to file:
+    if save_fig_name is not None:
+        fig.savefig(save_fig_name, dpi = dpi)
+    
+    axs = {'fig': fig, 'cvg':f_ax_cvg}
+    
+    return axs, data
+
+def _plot_tm30_report_spd_cvg(spd, cri_type = 'ies-tm30', 
+                         figsize = (14,6),
+                         save_fig_name = None, dpi = 300,
+                         show_annexE_priority = True, show_Rcsh1_Rfh1 = True,
+                         suptitle = 'ANSI/IES TM-30-18 Color Rendition Report',
+                         font_size = _TM30_FONT_SIZE, **kwargs):
+    """ Create TM30 Color Rendition Report ('spd_cvg'). """
+    
+    # Set up subplots:
+    fig = plt.figure(constrained_layout=True, figsize = figsize)  
+    #gs = fig.add_gridspec(2, 3,height_ratios=[0.5,0.5], width_ratios=[1,1,1.5])
+    
+    f_ax_spd = fig.add_subplot(121)
+    f_ax_cvg = fig.add_subplot(122)
+    
+    
+    # Get required parameter values from spd:
+    data = _tm30_process_spd(spd, cri_type = cri_type, **kwargs)
+    spd  = data['St']
+    
+    # Create all subplots
+    plot_tm30_spd(data, axh = f_ax_spd, font_size = font_size)
+    plot_tm30_cvg(data, axh = f_ax_cvg, font_size = font_size, 
+                  show_annexE_priority = show_annexE_priority, 
+                  show_Rcsh1_Rfh1 = show_Rcsh1_Rfh1)
+    
+    fig.suptitle(suptitle, fontsize = 14, fontweight= 'bold')
+    
+    # Save to file:
+    if save_fig_name is not None:
+        fig.savefig(save_fig_name, dpi = dpi)
+    
+    axs = {'fig': fig, 'cvg':f_ax_cvg, 'spd':f_ax_spd}
+    
+    return axs, data
+
+
+def plot_tm30_report(spd, cri_type = 'ies-tm30',
+                     report_type = 'full',
+                     source = '', manufacturer = '',
+                     date = '', model = '', 
+                     notes = '', max_len_notes_line = 40,
+                     figsize = None,
+                     save_fig_name = None, dpi = 300,
+                     plot_report_top = True, plot_report_bottom = True,
+                     show_annexE_priority = True, show_Rcsh1_Rfh1 = True,
+                     suptitle = 'ANSI/IES TM-30-18 Color Rendition Report',
+                     font_size = None, **kwargs):
+    """
+    Create TM30 Color Rendition Report.
+    
+    Args:
+        :spd:
+            | ndarray or dict
+            | If ndarray: single spectral power distribution.
+            | If dict: dictionary with pre-computed parameters (using _tm30_process_spd()).
+            |  required keys:
+            |   dict_keys(['St', 'Sr', 'xyztw_cct', 'cct', 'duv', 
+            |               'xyzti', 'xyztw', 'xyzri', 'xyzrw', 
+            |               'DEi', 'DEa', 'Rf', 'Rg', 
+            |               'Rcshj', 'Rhshj', 'Rfhj', 'hue_bin_data'])
+            | see cri.spd_to_cri() for more info on parameters.
+        :cri_type:
+            | _CRI_TYPE_DEFAULT or str or dict, optional
+            |   -'str: specifies dict with default cri model parameters 
+            |     (for supported types, see luxpy.cri._CRI_DEFAULTS['cri_types'])
+            |   - dict: user defined model parameters 
+            |     (see e.g. luxpy.cri._CRI_DEFAULTS['cierf'] 
+            |     for required structure)
+            | Note that any non-None input arguments (in kwargs) 
+            | to the function will override default values in cri_type dict.
+        :report_type:
+            | 'full', optional
+            | Generate a full report as in ANSI/IES-TM30-2020 
+            | Options : 
+            |   - 'full': full report with spectrum plot, color vector graphic, local indices, sample indices'simple', ...
+            |   - 'intermediate': color vector graphic + local chroma and hue shifts 
+            |   - 'simple': color vector graphic only
+            |   - 'spd_cvg': spectrum plot + color vector graphic
+        :source:
+            | string with source name.
+        :manufacturer:
+            | string with source manufacturer.
+        :model:
+            | string with source model.
+        :date:
+            | string with source measurement date.
+        :notes:
+            | string to be split
+        :max_len_notes_line:
+            | 40, optional
+            | Maximum length of a single line when splitting the string.
+        :figsize:
+            | None, optional
+            | Figure size of pyplot figure.
+            | If None a default depending on the report_type is used:
+            |   - 'full': (7,12)
+            |   - 'intermediate' : (14,6)
+            |   - 'simple' : (6,6)
+            |   -'spd_cvg': (14,6)
+        :save_fig_name:
+            | None, optional
+            | Filename (+path) to which the report will be saved as an image (png).
+            | If None: don't save, just display.
+        :dpi:
+            | 300, optional
+            | Dots-Per-Inch of image file (PNG).
+        :plot_report_top:
+            | execute _plot_tm30_report_top()
+        :plot_report_bottom:
+            | execute _plot_tm30_report_bottom()
+        :show_annexE_priority:
+            | True, optional
+            | Add Annex E priority levels for source.
+        :show_Rcsh1_Rfh1:
+            | True, optional
+            | Add the local chroma shift (%) and the local color fidelity index 
+            | for hue bin 1 at the bottom of the graph.
+        :suptitle:
+            | 'ANSI/IES TM-30-18 Color Rendition Report' or str, optional
+            | report title (input for plt.suptitle).  
+        :font_size:
+            | None, optional
+            | Font size of text, axis labels and axis values (adjust when changing figsizes).
+            | Defaults : ('full': _TM30_FONT_SIZE_FULLREPORT, other options: _TM30_FONT_SIZE)
+        :kwargs:
+            | Additional optional keyword arguments, 
+            | the same as in cri.spd_to_cri()
+            
+    Returns:
+        :axs:
+            | dictionary with handles to each axes.
+        :data:
+            | dictionary with required parameters for plotting functions.      
+    """
+    if font_size is None: 
+        font_size = _TM30_FONT_SIZE if report_type != 'full' else _TM30_FONT_SIZE_FULLREPORT
+    if report_type == 'full':
+        if figsize is None: figsize = (7,12)
+        return _plot_tm30_report_full(spd, cri_type = cri_type,
+                     source = source, manufacturer = manufacturer,
+                     date = date, model = model, 
+                     notes = notes, max_len_notes_line = max_len_notes_line,
+                     figsize = figsize,
+                     save_fig_name = save_fig_name, dpi = dpi,
+                     plot_report_top = plot_report_top, plot_report_bottom = plot_report_bottom,
+                     show_annexE_priority = show_annexE_priority, show_Rcsh1_Rfh1 = show_Rcsh1_Rfh1,
+                     suptitle = suptitle,
+                     font_size = font_size, **kwargs)
+    elif report_type == 'intermediate':
+        if figsize is None: figsize = (14,6)
+        return _plot_tm30_report_intermediate(spd, cri_type = cri_type,
+                     figsize = figsize,
+                     save_fig_name = save_fig_name, dpi = dpi,
+                     show_annexE_priority = show_annexE_priority, show_Rcsh1_Rfh1 = show_Rcsh1_Rfh1,
+                     suptitle = suptitle,
+                     font_size = font_size, **kwargs)
+    elif report_type == 'simple':
+        if figsize is None: figsize = (6,6)
+        return _plot_tm30_report_simple(spd, cri_type = cri_type,
+                     figsize = figsize,
+                     save_fig_name = save_fig_name, dpi = dpi,
+                     show_annexE_priority = show_annexE_priority, show_Rcsh1_Rfh1 = show_Rcsh1_Rfh1,
+                     suptitle = suptitle,
+                     font_size = font_size, **kwargs)
+    elif report_type == 'spd_cvg':
+        if figsize is None: figsize = (14,6)
+        return _plot_tm30_report_spd_cvg(spd, cri_type = cri_type,
+                     figsize = figsize,
+                     save_fig_name = save_fig_name, dpi = dpi,
+                     show_annexE_priority = show_annexE_priority, show_Rcsh1_Rfh1 = show_Rcsh1_Rfh1,
+                     suptitle = suptitle,
+                     font_size = font_size, **kwargs)
+    else:
+        print("Requested report_type not supported.")
+        print("Valid options: 'full','intermediate','simple' and 'spd_cvg'.")
         
+    
 spd_to_tm30_report = plot_tm30_report
 
 
@@ -1258,7 +1529,8 @@ def plot_cri_graphics(data, cri_type = None, hbins = 16, start_hue = 0.0, scalef
         # Plot local color fidelity, Rfhi:
         ax_Rfi = create_subplot(layout,4)
         for j in range(nhbins):
-            ax_Rfi.bar(range(nhbins)[j],Rfhj[j,i], color = cmap[j], width = 1,edgecolor = 'k', alpha = 0.4)
+            cmap_j = [list(cmap[j])]
+            ax_Rfi.bar(range(nhbins)[j],Rfhj[j,i], color = cmap_j, width = 1,edgecolor = 'k', alpha = 0.4)
             ax_Rfi.text(range(nhbins)[j],Rfhj[j,i]*1.1, '{:1.0f}'.format(Rfhj[j,i]) ,fontsize = 9,horizontalalignment='center',verticalalignment='center',color = np.array([1,1,1])*0.3)
         ax_Rfi.set_ylim([0,120])
         xticks = np.arange(nhbins)
@@ -1271,7 +1543,8 @@ def plot_cri_graphics(data, cri_type = None, hbins = 16, start_hue = 0.0, scalef
         # Plot local chroma shift, Rcshi:
         ax_locC = create_subplot(layout,5)
         for j in range(nhbins):
-            ax_locC.bar(range(nhbins)[j],Rcshj[j,i], color = cmap[j], width = 1,edgecolor = 'k', alpha = 0.4)
+            cmap_j = [list(cmap[j])]
+            ax_locC.bar(range(nhbins)[j],Rcshj[j,i], color = cmap_j, width = 1,edgecolor = 'k', alpha = 0.4)
             ax_locC.text(range(nhbins)[j],-np.sign(Rcshj[j,i])*0.1, '{:1.0f}%'.format(100*Rcshj[j,i]) ,fontsize = 9,horizontalalignment='center',verticalalignment='center',rotation = 90, color = np.array([1,1,1])*0.3)
         ylim = np.array([np.abs(Rcshj.min()),np.abs(Rcshj.min()),0.2]).max()*1.5
         ax_locC.set_ylim([-ylim,ylim])
@@ -1285,7 +1558,8 @@ def plot_cri_graphics(data, cri_type = None, hbins = 16, start_hue = 0.0, scalef
         # Plot local hue shift, Rhshi:
         ax_locH = create_subplot(layout,6)
         for j in range(nhbins):
-            ax_locH.bar(range(nhbins)[j],Rhshj[j,i], color = cmap[j], width = 1,edgecolor = 'k', alpha = 0.4)
+            cmap_j = [list(cmap[j])]
+            ax_locH.bar(range(nhbins)[j],Rhshj[j,i], color = cmap_j, width = 1,edgecolor = 'k', alpha = 0.4)
             ax_locH.text(range(nhbins)[j],-np.sign(Rhshj[j,i])*0.2, '{:1.3f}'.format(Rhshj[j,i]) ,fontsize = 9,horizontalalignment='center',verticalalignment='center',rotation = 90, color = np.array([1,1,1])*0.3)
         ylim = np.array([np.abs(Rhshj.min()),np.abs(Rhshj.min()),0.2]).max()*1.5
         ax_locH.set_ylim([-ylim,ylim])
@@ -1299,7 +1573,8 @@ def plot_cri_graphics(data, cri_type = None, hbins = 16, start_hue = 0.0, scalef
         # Plot local color fidelity of VF, vfRfhi:
         ax_vfRfi = create_subplot(layout,7)
         for j in range(nhbins):
-            ax_vfRfi.bar(range(nhbins)[j],vf['Rfhj'][j,i], color = cmap[j], width = 1,edgecolor = 'k', alpha = 0.4)
+            cmap_j = [list(cmap[j])]
+            ax_vfRfi.bar(range(nhbins)[j],vf['Rfhj'][j,i], color = cmap_j, width = 1,edgecolor = 'k', alpha = 0.4)
             ax_vfRfi.text(range(nhbins)[j],vf['Rfhj'][j,i]*1.1, '{:1.0f}'.format(vf['Rfhj'][j,i]) ,fontsize = 9,horizontalalignment='center',verticalalignment='center',color = np.array([1,1,1])*0.3)
         ax_vfRfi.set_ylim([0,120])
         xticks = np.arange(hbins)
@@ -1319,28 +1594,29 @@ if __name__ == '__main__':
     spd = lx._CIE_F4
 
     # illustration of ANSI/IES TM30 plots:
-    plot_tm30_cvg(spd, axtype = 'cart', plot_vectors = True, gamut_line_color = 'r')
+    # plot_tm30_cvg(spd, axtype = 'cart', plot_vectors = True, gamut_line_color = 'r')
+    
     plot_tm30_spd(spd)
     plot_tm30_Rfi(spd)
     plot_tm30_Rfhj(spd)
     plot_tm30_Rcshj(spd)
     plot_tm30_Rhshj(spd)
     plot_tm30_Rxhj(spd)
-    plot_tm30_report(spd, source = 'test', font_size = 12,notes = 'This is a test if the note splitting actually works or not.',save_fig_name = 'testfig.png')
-    
+    plot_tm30_report(spd, source = 'test', font_size = 8,notes = 'This is a test if the note splitting actually works or not.',save_fig_name = 'testfig.png')
+    plot_tm30_report(spd, report_type = 'spd_cvg')
     
     # Illustration of custom plotter:
     data2 = plot_cri_graphics(spd, 
-                             cri_type = 'iesrf', 
-                             plot_VF = True,             # cartesian vector fields
-                             plot_CF = True,             # circular vector fields
-                             plot_SF = False,            # sample shifts
-                             plot_bin_colors = True,     # bin colors for CVG
-                             vf_plot_bin_colors = False, # bin colors for vector field graph 
-                             axtype = 'polar',           # use polar plots
-                             ax = None,                  # axes to plot figure in (None: create new)
-                             plot_center_lines = False,  # plot lines at center of hue bin
-                             plot_edge_lines = True,     # plot edges of hue bins
-                             plot_test_sample_coord = False) # plot normalized test sample coordinates (cfr. CIE224:2017)
+                              cri_type = 'iesrf', 
+                              plot_VF = True,             # cartesian vector fields
+                              plot_CF = True,             # circular vector fields
+                              plot_SF = False,            # sample shifts
+                              plot_bin_colors = True,     # bin colors for CVG
+                              vf_plot_bin_colors = False, # bin colors for vector field graph 
+                              axtype = 'polar',           # use polar plots
+                              ax = None,                  # axes to plot figure in (None: create new)
+                              plot_center_lines = False,  # plot lines at center of hue bin
+                              plot_edge_lines = True,     # plot edges of hue bins
+                              plot_test_sample_coord = False) # plot normalized test sample coordinates (cfr. CIE224:2017)
                 
     plt.show()

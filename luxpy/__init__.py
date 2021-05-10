@@ -3,9 +3,9 @@
 LuxPy: a package for lighting and color science
 ===============================================
 
-    * Author: K. A.G. Smet (ksmet1977 at gmail.com)
-    * Version: 1.6.7
-    * Date: May 05, 2021
+    * Author: K.A.G. Smet (ksmet1977 at gmail.com)
+    * Version: 1.6.8
+    * Date: May 11, 2021
     * License: GPLv3
 
     * DOI: https://doi.org/10.5281/zenodo.1298963
@@ -68,9 +68,9 @@ E.g.:
 # Initialze LuxPy
 ###############################################################################
 # Package info:
-__VERSION__ = 'v1.6.7'; """Current version"""
+__VERSION__ = 'v1.6.8'; """Current version"""
 __version__ = __VERSION__
-__DATE__ = '05-May-2021'; """release date"""
+__DATE__ = '11-May-2021'; """release date"""
 
 __COPYRIGHT__ = 'Copyright (C) 2017-2021 - Kevin A.G. Smet'; """copyright info"""
 
