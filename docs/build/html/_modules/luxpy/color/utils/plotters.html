@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>luxpy.color.utils.plotters &mdash; LuxPy 1.6.9 documentation</title>
+  <title>luxpy.color.utils.plotters &mdash; LuxPy 1.6.10 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                1.6.9
+                1.6.10
               </div>
             
           
@@ -1071,7 +1071,7 @@
         <span class="n">cmfs</span> <span class="o">=</span> <span class="n">cieobs</span>
     <span class="n">cmfs</span> <span class="o">=</span> <span class="n">cmfs</span><span class="p">[:,</span><span class="n">cmfs</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># avoid div by zero in xyz-to-Yxy conversion</span>
     
-    <span class="n">wavs</span> <span class="o">=</span> <span class="n">cmfs</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">wavs</span> <span class="o">=</span> <span class="n">cmfs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># changed from cmfs[0:1].T because this stopped working from around matplotlib version 3.4.1</span>
     <span class="n">SL</span> <span class="o">=</span>  <span class="n">cmfs</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">T</span>    
     
     <span class="n">srgb</span> <span class="o">=</span> <span class="n">xyz_to_srgb</span><span class="p">(</span><span class="n">wavelength_lightness</span><span class="o">*</span><span class="mi">100</span><span class="o">*</span><span class="n">SL</span><span class="p">)</span>
