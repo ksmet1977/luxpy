@@ -911,7 +911,7 @@ def plot_spectrum_colors(spd = None, spdmax = None,\
         cmfs = cieobs
     cmfs = cmfs[:,cmfs[1:].sum(axis=0)>0] # avoid div by zero in xyz-to-Yxy conversion
     
-    wavs = cmfs[0:1].T
+    wavs = cmfs[0] # changed from cmfs[0:1].T because this stopped working from around matplotlib version 3.4.1
     SL =  cmfs[1:4].T    
     
     srgb = xyz_to_srgb(wavelength_lightness*100*SL)
