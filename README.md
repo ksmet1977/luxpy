@@ -52,10 +52,10 @@ As of May 2019, LuxPy now also has a toolbox **spectro** for **spectral measurem
 ## How to use LuxPy (basics)?
 Luxpy can be easily installed from pypi `pip install luxpy` or anaconda `conda install -c ksmet1977 luxpy`.
 
-An overview of the *basic usage* is given in the [**luxpy basic usage.ipynb**](https://github.com/ksmet1977/luxpy/blob/master/luxpy_basic_usage.ipynb) jupyter notebook,
+An overview of the *basic usage* is given in the [**luxpy basic usage.ipynb**](https://github.com/ksmet1977/luxpy/blob/master/luxpy_basic_usage.ipynb) jupyter notebook (to download: **open** notebook in github or using nbviewer (see below) and then press download button; don't right-click it and use 'save as ...' as this apparently results in some NotJSONError when opening the notebook!),
  as well as the tutorial paper published in LEUKOS: [**Smet, K. A. G. (2019). Tutorial: The LuxPy Python Toolbox for Lighting and Color Science. LEUKOS, 1–23. DOI: 10.1080/15502724.2018.1518717**](https://www.tandfonline.com/doi/full/10.1080/15502724.2018.1518717)
 
- * !!! **If the jupyter notebook fails to download or gives an error** (*Github seems to experience some type of problem sometimes with its jupyter notebook backend, see [issue](https://github.com/iurisegtovich/PyTherm-applied-thermodynamics/issues/11)*), try opening up the file using the [nbviewer.jupyter.org](https://nbviewer.jupyter.org) online viewer, (or just click this direct link: [nbviewer.jupyter.org/github/ksmet1977/luxpy/blob/master/luxpy_basic_usage.ipynb](https://nbviewer.jupyter.org/github/ksmet1977/luxpy/blob/master/luxpy_basic_usage.ipynb)) and then download it from there (use download notebook button at the top right of the page). 
+ * !!! **If the jupyter notebook fails to open or download or gives an error** (*Github seems to experience some type of problem sometimes with its jupyter notebook backend, see [issue](https://github.com/iurisegtovich/PyTherm-applied-thermodynamics/issues/11)*), try opening up the file using the [nbviewer.jupyter.org](https://nbviewer.jupyter.org) online viewer, (or just click this direct link: [nbviewer.jupyter.org/github/ksmet1977/luxpy/blob/master/luxpy_basic_usage.ipynb](https://nbviewer.jupyter.org/github/ksmet1977/luxpy/blob/master/luxpy_basic_usage.ipynb)) and then download it from there (use download notebook button at the top right of the page). 
  
 For more details on structure, functionality, etc., see: 
  1. the github pages on: [**ksmet1977.github.io/luxpy/**](http://ksmet1977.github.io/luxpy/) 
