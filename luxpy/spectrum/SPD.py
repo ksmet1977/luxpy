@@ -167,7 +167,6 @@ class SPD:
             self.cie_interp(wl_new, kind = interp_method, negative_values_allowed = negative_values_allowed, extrap_values = extrap_values)
         if norm_type is not None:
             self.normalize(norm_type = norm_type, norm_f = norm_f)
-
     
     def read_csv_(self, file, header = None, sep = ','):
         """
@@ -235,7 +234,7 @@ class SPD:
         if isinstance(S,SPD):
             self.value = np.dot(self.value,S.value)
         else:
-            self.value = np.dot(self.value,M)
+            self.value = np.dot(self.value,S)
         self.shape = self.value.shape
         self.N = self.shape[0]
         return self
@@ -368,6 +367,7 @@ class SPD:
         spd = cie_interp(self.get_(), wl_new, kind = kind, negative_values_allowed = negative_values_allowed, extrap_values = extrap_values)
         self.wl = spd[0]
         self.value = spd[1:]
+        self.shape = self.value.shape
         return self
     
     #--------------------------------------------------------------------------------------------------
