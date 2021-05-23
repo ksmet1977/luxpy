@@ -56,7 +56,7 @@ An overview of the *basic usage* is given in the [**luxpy basic usage.ipynb**](h
  as well as the tutorial paper published in LEUKOS: [**Smet, K. A. G. (2019). Tutorial: The LuxPy Python Toolbox for Lighting and Color Science. LEUKOS, 1–23. DOI: 10.1080/15502724.2018.1518717**](https://www.tandfonline.com/doi/full/10.1080/15502724.2018.1518717)
 
  * !!! **To download jupyter notebook:**
-     1. **open** the notebook in github by clicking it and then press download button at the top right; don't right-click the notebook link and use 'save as ...' as this apparently results in some NotJSONError when opening the notebook!)
+     1. **open** the notebook in github by clicking it and then press download button at the top right; don't right-click the notebook link itself and use 'save as ...', as this apparently results in some *NotJSONError* when opening the notebook!
      2. If the jupyter notebook fails to open or download or still gives an error: (*Github seems to experience some type of problem sometimes with its jupyter notebook backend, see [issue](https://github.com/iurisegtovich/PyTherm-applied-thermodynamics/issues/11)*), try opening the file using the [nbviewer.jupyter.org](https://nbviewer.jupyter.org) online viewer, (or just click this direct link: [nbviewer.jupyter.org/github/ksmet1977/luxpy/blob/master/luxpy_basic_usage.ipynb](https://nbviewer.jupyter.org/github/ksmet1977/luxpy/blob/master/luxpy_basic_usage.ipynb)) and then download it from there (use download notebook button at the top right of the page). 
  
 For more details on structure, functionality, etc., see: 
