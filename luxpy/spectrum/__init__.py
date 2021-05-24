@@ -179,7 +179,7 @@ spectrum/illuminants.py
         
  :blackbody(): Calculate blackbody radiator spectrum.
  
-:_DAYLIGHT_LOCI_PARAMETERS: dict with parameters for daylight loci for various CMF sets; used by daylightlocus().
+ :_DAYLIGHT_LOCI_PARAMETERS: dict with parameters for daylight loci for various CMF sets; used by daylightlocus().
  
  :_DAYLIGHT_M12_COEFFS: dict with coefficients in weights M1 & M2 for daylight phases for various CMF sets.
  
@@ -203,9 +203,8 @@ spectrum/illuminants.py
  
  :spd_to_indoor(): Convert spd to indoor variant by multiplying it with the CIE spectral transmission for glass. 
 
-
-spdx_iestm2714.py
------------------
+spectrum/spdx_iestm2714.py
+--------------------------
 
  :_SPDX_TEMPLATE: template dictionary for SPDX data.
  

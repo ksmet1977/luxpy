@@ -343,7 +343,7 @@ class XYZ(CDATA):
             :dtype:
                 | _CSPACE or str, optional
                 | Convert to this color space.
-            :**kwargs:
+            :kwargs:
                 | additional input arguments required for 
                 | color space transformation.
                 | See specific luxpy function for more info 
@@ -353,9 +353,7 @@ class XYZ(CDATA):
             :returns: 
                 | luxpy.LAB with .value field that is a ndarray 
                 |     with color space coordinates 
-
         """
-#        return LAB(value = colortf(self.value, tf = dtype, fwtf = kwargs), relative = self.relative, cieobs = self.cieobs, dtype = dtype, **kwargs)
         return LAB(value = getattr(self,'to_{:s}'.format(dtype))(**kwargs).value, relative = self.relative, cieobs = self.cieobs, dtype = dtype, **kwargs)
 
 
@@ -370,7 +368,7 @@ class XYZ(CDATA):
             :title:
                 | None or str, optional
                 | Give plot a title.
-            :**kwargs: 
+            :kwargs: 
                 | additional arguments for use with 
                 | matplotlib.pyplot.scatter
                 
@@ -569,12 +567,12 @@ class XYZ(CDATA):
             
         Returns:
             :ipt: 
-                | luxpy.LAB with .value field that is a ndarray
+                | luxpy.LAB with `.value` field that is a ndarray
                 | with IPT color coordinates
             
         Note: 
             :xyz: is assumed to be under D65 viewing conditions!! 
-            | If necessary perform chromatic adaptation !!
+                | If necessary perform chromatic adaptation !!
         """
         return LAB(value = xyz_to_ipt(self.value, cieobs = cieobs, xyzw = xyzw, M = M), relative = self.relative,  dtype = 'ipt', cieobs = cieobs, xyzw = xyzw, M = M)
         
@@ -640,14 +638,14 @@ class XYZ(CDATA):
          |
          | 2a. Jz represents the 'lightness' relative to a D65 white with luminance = 10000 cd/m² 
          |      (note that Jz that not exactly equal 1 for this high value, but rather for 102900 cd/m2)
-         | 2b.  az, bz represent respectively a red-green and a yellow-blue opponent axis 
+         | 2b. az, bz represent respectively a red-green and a yellow-blue opponent axis 
          |      (but note that a D65 shows a small offset from (0,0))
 
         Reference:
             1. `Safdar, M., Cui, G., Kim,Y. J., and  Luo,M. R. (2017).
-                Perceptually uniform color space for image signals including high dynamic range and wide gamut.
-                Opt. Express, vol. 25, no. 13, pp. 15131–15151, Jun. 2017.
-                <http://www.opticsexpress.org/abstract.cfm?URI=oe-25-13-15131>`_    
+            Perceptually uniform color space for image signals including high dynamic range and wide gamut.
+            Opt. Express, vol. 25, no. 13, pp. 15131–15151, Jun. 2017.
+            <http://www.opticsexpress.org/abstract.cfm?URI=oe-25-13-15131>`_    
         """
         return LAB(value = xyz_to_jabz(self.value, ztype = ztype), relative = self.relative, cieobs = self.cieobs, dtype = 'jabz')
 
@@ -834,7 +832,7 @@ class LAB(CDATA):
             :dtype: 
                 | 'xyz'
                 | Convert to this color space.
-            :**kwargs: 
+            :kwargs: 
                 | additional input arguments required for 
                 | color space transformation.
                 | See specific luxpy function for more info 
@@ -843,7 +841,7 @@ class LAB(CDATA):
         Returns:
             :returns:
                 | luxpy.XYZ with .value field that is a ndarray 
-                  with tristimulus values 
+                | with tristimulus values 
         """
         db = put_args_in_db(self.cspace_par,locals().copy()) 
         return XYZ(value = colortf(self.value, tf = '{:s}>xyz'.format(self.dtype), bwtf = db), relative = self.relative, cieobs = self.cieobs, dtype = 'xyz')
@@ -864,7 +862,7 @@ class LAB(CDATA):
             :title: 
                 | None or str, optional
                 | Give plot a title.
-            :**kwargs:
+            :kwargs:
                 | additional arguments for use with 
                 | matplotlib.pyplot.scatter
                 

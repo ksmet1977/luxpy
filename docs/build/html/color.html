@@ -133,6 +133,7 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#cri-vfpx">cri/VFPX/</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#xyz-lab-classes">XYZ,LAB classes</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="toolboxes.html">Toolboxes</a></li>
@@ -214,7 +215,6 @@
 <dt class="field-odd">py</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p>__init__.py</p></li>
-<li><p>CDATA.py</p></li>
 </ul>
 </dd>
 <dt class="field-even">namespace</dt>
@@ -4023,13 +4023,13 @@ Color Research &amp; Application, 45(1), 172–177.</a></p>
 <div class="line">If None: calculate inverse of mcat.</div>
 </div>
 </dd>
-<dt class="field-odd"><a href="#id63"><span class="problematic" id="id64">in_</span></a></dt>
+<dt class="field-odd"><a href="#id64"><span class="problematic" id="id65">in_</span></a></dt>
 <dd class="field-odd"><div class="line-block">
 <div class="line">‘xyz’, optional</div>
 <div class="line">Input type (‘xyz’, ‘rgb’) of data in xyz, xyzw1, xyzw2</div>
 </div>
 </dd>
-<dt class="field-even"><a href="#id65"><span class="problematic" id="id66">out_</span></a></dt>
+<dt class="field-even"><a href="#id66"><span class="problematic" id="id67">out_</span></a></dt>
 <dd class="field-even"><div class="line-block">
 <div class="line">‘xyz’, optional</div>
 <div class="line">Output type (‘xyz’, ‘rgb’) of corresponding colors</div>
@@ -4115,13 +4115,13 @@ Color Research &amp; Application, 45(1), 172–177.</a></p>
 <div class="line">If None: calculate inverse of mcat.</div>
 </div>
 </dd>
-<dt class="field-even"><a href="#id67"><span class="problematic" id="id68">in_</span></a></dt>
+<dt class="field-even"><a href="#id68"><span class="problematic" id="id69">in_</span></a></dt>
 <dd class="field-even"><div class="line-block">
 <div class="line">‘xyz’, optional</div>
 <div class="line">Input type (‘xyz’, ‘rgb’) of data in xyz, xyzw1, xyzw2</div>
 </div>
 </dd>
-<dt class="field-odd"><a href="#id69"><span class="problematic" id="id70">out_</span></a></dt>
+<dt class="field-odd"><a href="#id70"><span class="problematic" id="id71">out_</span></a></dt>
 <dd class="field-odd"><div class="line-block">
 <div class="line">‘xyz’, optional</div>
 <div class="line">Output type (‘xyz’, ‘rgb’) of corresponding colors</div>
@@ -4237,13 +4237,13 @@ Color Research &amp; Application, 45(1), 172–177.</a></p>
 <div class="line">If None: calculate inverse of mcat.</div>
 </div>
 </dd>
-<dt class="field-even"><a href="#id71"><span class="problematic" id="id72">in_</span></a></dt>
+<dt class="field-even"><a href="#id72"><span class="problematic" id="id73">in_</span></a></dt>
 <dd class="field-even"><div class="line-block">
 <div class="line">‘xyz’, optional</div>
 <div class="line">Input type (‘xyz’, ‘rgb’) of data in xyz, xyzw1, xyzw2</div>
 </div>
 </dd>
-<dt class="field-odd"><a href="#id73"><span class="problematic" id="id74">out_</span></a></dt>
+<dt class="field-odd"><a href="#id74"><span class="problematic" id="id75">out_</span></a></dt>
 <dd class="field-odd"><div class="line-block">
 <div class="line">‘xyz’, optional</div>
 <div class="line">Output type (‘xyz’, ‘rgb’) of corresponding colors</div>
@@ -4360,6 +4360,7 @@ Color Research &amp; Application, 45(1), 172–177.</a></p>
 <li><p>cam18sl.py</p></li>
 <li><p>camjabz.py</p></li>
 <li><p>zcam.py</p></li>
+<li><p>cmf_translator_sww2021</p></li>
 </ul>
 </dd>
 <dt class="field-even">namespace</dt>
@@ -13022,6 +13023,654 @@ ab-coordinates of the reference illuminant.</div>
 </dl>
 </dd>
 </dl>
+</dd></dl>
+
+</div>
+<div class="section" id="xyz-lab-classes">
+<h2>XYZ,LAB classes<a class="headerlink" href="#xyz-lab-classes" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><dl class="field-list simple">
+<dt class="field-odd">py</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>CDATA.py</p></li>
+</ul>
+</dd>
+<dt class="field-even">namespace</dt>
+<dd class="field-even"><p>luxpy</p>
+</dd>
+</dl>
+</div></blockquote>
+<dl class="py class">
+<dt id="luxpy.color.CDATA.XYZ">
+<em class="property">class </em><code class="sig-prename descclassname">luxpy.color.CDATA.</code><code class="sig-name descname">XYZ</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">relative</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">'1931_2'</span></em>, <em class="sig-param"><span class="n">dtype</span><span class="o">=</span><span class="default_value">'xyz'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/CDATA.html#XYZ"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.CDATA.XYZ" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt id="luxpy.color.CDATA.XYZ.ctf">
+<code class="sig-name descname">ctf</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dtype</span><span class="o">=</span><span class="default_value">'Yuv'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/CDATA.html#XYZ.ctf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.CDATA.XYZ.ctf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert XYZ tristimulus values to color space coordinates.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">dtype</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">_CSPACE or str, optional</div>
+<div class="line">Convert to this color space.</div>
+</div>
+</dd>
+<dt class="field-even">kwargs</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">additional input arguments required for </div>
+<div class="line">color space transformation.</div>
+<div class="line">See specific luxpy function for more info </div>
+<div class="line-block">
+<div class="line">(e.g. ?luxpy.xyz_to_lab)</div>
+</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">returns</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">luxpy.LAB with .value field that is a ndarray </div>
+<div class="line-block">
+<div class="line">with color space coordinates </div>
+</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="luxpy.color.CDATA.XYZ.plot">
+<code class="sig-name descname">plot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">title</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/CDATA.html#XYZ.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.CDATA.XYZ.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot tristimulus or cone fundamental values.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">ax</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">None or axes handles, optional</div>
+<div class="line">None: create new figure axes, else use :ax: for plotting.</div>
+</div>
+</dd>
+<dt class="field-even">title</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">None or str, optional</div>
+<div class="line">Give plot a title.</div>
+</div>
+</dd>
+<dt class="field-odd">kwargs</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">additional arguments for use with </div>
+<div class="line">matplotlib.pyplot.scatter</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">gca</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">handle to current axes.</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="luxpy.color.CDATA.XYZ.to_Yxy">
+<code class="sig-name descname">to_Yxy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/CDATA.html#XYZ.to_Yxy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.CDATA.XYZ.to_Yxy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert XYZ tristimulus values CIE Yxy chromaticity values.</p>
+<dl>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">Yxy</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">luxpy.LAB with .value field that is a ndarray </div>
+<div class="line">with Yxy chromaticity values. </div>
+<div class="line">(Y value refers to luminance or luminance factor)</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="luxpy.color.CDATA.XYZ.to_Yuv">
+<code class="sig-name descname">to_Yuv</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/CDATA.html#XYZ.to_Yuv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.CDATA.XYZ.to_Yuv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert XYZ tristimulus values CIE 1976 Yu’v’ chromaticity values.</p>
+<dl>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">Yuv</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">luxpy.LAB with .value field that is a ndarray </div>
+<div class="line">with CIE 1976 Yu’v’ chromaticity values.</div>
+<div class="line">(Y value refers to luminance or luminance factor)</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="luxpy.color.CDATA.XYZ.to_wuv">
+<code class="sig-name descname">to_wuv</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xyzw</span><span class="o">=</span><span class="default_value">array([100.0, 100.0, 100.0])</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/CDATA.html#XYZ.to_wuv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.CDATA.XYZ.to_wuv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert XYZ tristimulus values CIE 1964 U*V*W* color space.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">xyzw</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with tristimulus values of white point, optional</div>
+<div class="line">Defaults to luxpy._COLORTF_DEFAULT_WHITE_POINT</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">wuv</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">luxpy.LAB with .value field that is a ndarray </div>
+<div class="line">with W*U*V* values.</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="luxpy.color.CDATA.XYZ.to_lms">
+<code class="sig-name descname">to_lms</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/CDATA.html#XYZ.to_lms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.CDATA.XYZ.to_lms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert XYZ tristimulus values or LMS cone fundamental responses 
+to LMS cone fundamental responses.</p>
+<dl>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">lms</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">luxpy.XYZ with .value field that is a ndarray </div>
+<div class="line">with LMS cone fundamental responses.</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="luxpy.color.CDATA.XYZ.to_xyz">
+<code class="sig-name descname">to_xyz</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/CDATA.html#XYZ.to_xyz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.CDATA.XYZ.to_xyz" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert XYZ tristimulus values or LMS cone fundamental responses 
+to XYZ tristimulus values.</p>
+<dl>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">xyz</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">luxpy.XYZ with .value field that is a ndarray </div>
+<div class="line">with XYZ tristimulus values.</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="luxpy.color.CDATA.XYZ.to_lab">
+<code class="sig-name descname">to_lab</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xyzw</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">'1931_2'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/CDATA.html#XYZ.to_lab"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.CDATA.XYZ.to_lab" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert XYZ tristimulus values to CIE 1976 L*a*b* (CIELAB) coordinates.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">xyzw</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">None or ndarray with xyz values of white point, optional</div>
+<div class="line">None defaults to xyz of CIE D65 using the :cieobs: observer.</div>
+</div>
+</dd>
+<dt class="field-even">cieobs</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">luxpy._CIEOBS, optional</div>
+<div class="line">CMF set to use when calculating xyzw.</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">lab</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">luxpy.LAB with .value field that is a ndarray </div>
+<div class="line">with CIE 1976 L*a*b* (CIELAB) color coordinates</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="luxpy.color.CDATA.XYZ.to_luv">
+<code class="sig-name descname">to_luv</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xyzw</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">'1931_2'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/CDATA.html#XYZ.to_luv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.CDATA.XYZ.to_luv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert XYZ tristimulus values to CIE 1976 L*u*v* (CIELUV) coordinates.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">xyzw</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">None or ndarray with xyz values of white point, optional</div>
+<div class="line">None defaults to xyz of CIE D65 using the :cieobs: observer.</div>
+</div>
+</dd>
+<dt class="field-even">cieobs</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">luxpy._CIEOBS, optional</div>
+<div class="line">CMF set to use when calculating xyzw.</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">luv</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">luxpy.LAB with .value field that is a ndarray </div>
+<div class="line">with CIE 1976 L*u*v* (CIELUV) color coordinates</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="luxpy.color.CDATA.XYZ.to_Vrb_mb">
+<code class="sig-name descname">to_Vrb_mb</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">'1931_2'</span></em>, <em class="sig-param"><span class="n">scaling</span><span class="o">=</span><span class="default_value">[1, 1]</span></em>, <em class="sig-param"><span class="n">M</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/CDATA.html#XYZ.to_Vrb_mb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.CDATA.XYZ.to_Vrb_mb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert XYZ tristimulus values to V,r,b (Macleod-Boynton) coordinates.</p>
+<div class="line-block">
+<div class="line">Macleod Boynton: V = R+G, r = R/V, b = B/V </div>
+<div class="line">Note that R,G,B ~ L,M,S</div>
+</div>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">cieobs</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">luxpy._CIEOBS, optional</div>
+<div class="line">CMF set to use when calculating xyzw.</div>
+</div>
+</dd>
+<dt class="field-even">scaling</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">list of scaling factors for r and b dimensions.</div>
+</div>
+</dd>
+<dt class="field-odd">M</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">Conversion matrix for going from XYZ to RGB (LMS) </div>
+<div class="line">If None, :cieobs: determines the M (function does inversion)</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">Vrb</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">luxpy.LAB with .value field that is a ndarray</div>
+<div class="line">ndarray with V,r,b (Macleod-Boynton) color coordinates</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="luxpy.color.CDATA.XYZ.to_ipt">
+<code class="sig-name descname">to_ipt</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">'1931_2'</span></em>, <em class="sig-param"><span class="n">xyzw</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">M</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/CDATA.html#XYZ.to_ipt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.CDATA.XYZ.to_ipt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert XYZ tristimulus values to IPT color coordinates.</p>
+<div class="line-block">
+<div class="line">I: Lightness axis, P, red-green axis, T: yellow-blue axis.</div>
+</div>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">xyzw</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">None or ndarray with xyz values of white point, optional</div>
+<div class="line">None defaults to xyz of CIE D65 using the :cieobs: observer.</div>
+</div>
+</dd>
+<dt class="field-even">cieobs</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">luxpy._CIEOBS, optional</div>
+<div class="line">CMF set to use when calculating xyzw for rescaling Mxyz2lms </div>
+<div class="line">(only when not None).</div>
+</div>
+</dd>
+<dt class="field-odd">M</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">None defaults to conversion matrix determined by :cieobs:</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">ipt</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">luxpy.LAB with <cite>.value</cite> field that is a ndarray</div>
+<div class="line">with IPT color coordinates</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Note: </dt><dd><dl class="field-list simple">
+<dt class="field-odd">xyz</dt>
+<dd class="field-odd"><p>is assumed to be under D65 viewing conditions!! 
+| If necessary perform chromatic adaptation !!</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="luxpy.color.CDATA.XYZ.to_Ydlep">
+<code class="sig-name descname">to_Ydlep</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">'1931_2'</span></em>, <em class="sig-param"><span class="n">xyzw</span><span class="o">=</span><span class="default_value">array([100.0, 100.0, 100.0])</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/CDATA.html#XYZ.to_Ydlep"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.CDATA.XYZ.to_Ydlep" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert XYZ values to Y, dominant (complementary) wavelength 
+and excitation purity.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">xyzw</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">None or ndarray with xyz values of white point, optional</div>
+<div class="line">None defaults to xyz of CIE D65 using the :cieobs: observer.</div>
+</div>
+</dd>
+<dt class="field-even">cieobs</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">luxpy._CIEOBS, optional</div>
+<div class="line">CMF set to use when calculating spectrum locus coordinates.</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">Ydlep</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with Y, dominant (complementary) wavelength </div>
+<div class="line">and excitation purity</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="luxpy.color.CDATA.XYZ.to_srgb">
+<code class="sig-name descname">to_srgb</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">gamma</span><span class="o">=</span><span class="default_value">2.4</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/CDATA.html#XYZ.to_srgb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.CDATA.XYZ.to_srgb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates IEC:61966 sRGB values from xyz.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">xyz</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with relative tristimulus values.</div>
+</div>
+</dd>
+<dt class="field-even">gamma</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">2.4, optional</div>
+<div class="line">compression in sRGB</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">rgb</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with R,G,B values (uint8).</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="luxpy.color.CDATA.XYZ.to_jabz">
+<code class="sig-name descname">to_jabz</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ztype</span><span class="o">=</span><span class="default_value">'jabz'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/CDATA.html#XYZ.to_jabz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.CDATA.XYZ.to_jabz" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert XYZ tristimulus values to Jz,az,bz color coordinates.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">xyz</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with absolute tristimulus values (Y in cd/m²!)</div>
+</div>
+</dd>
+<dt class="field-even">ztype</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">‘jabz’, optional</div>
+<div class="line">String with requested return:</div>
+<div class="line">Options: ‘jabz’, ‘iabz’</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">jabz</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with Jz,az,bz color coordinates</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Notes:</dt><dd><div class="line-block">
+<div class="line">1. :xyz: is assumed to be under D65 viewing conditions! If necessary perform chromatic adaptation!</div>
+<div class="line"><br /></div>
+<div class="line">2a. Jz represents the ‘lightness’ relative to a D65 white with luminance = 10000 cd/m² </div>
+<div class="line-block">
+<div class="line">(note that Jz that not exactly equal 1 for this high value, but rather for 102900 cd/m2)</div>
+</div>
+<div class="line">2b. az, bz represent respectively a red-green and a yellow-blue opponent axis </div>
+<div class="line-block">
+<div class="line">(but note that a D65 shows a small offset from (0,0))</div>
+</div>
+</div>
+</dd>
+<dt>Reference:</dt><dd><p>1. <a class="reference external" href="http://www.opticsexpress.org/abstract.cfm?URI=oe-25-13-15131">Safdar, M., Cui, G., Kim,Y. J., and  Luo,M. R. (2017).
+Perceptually uniform color space for image signals including high dynamic range and wide gamut.
+Opt. Express, vol. 25, no. 13, pp. 15131–15151, Jun. 2017.</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="luxpy.color.CDATA.XYZ.to_jabM_ciecam02">
+<code class="sig-name descname">to_jabM_ciecam02</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xyzw</span><span class="o">=</span><span class="default_value">array([[100.0, 100.0, 100.0]])</span></em>, <em class="sig-param"><span class="n">Yw</span><span class="o">=</span><span class="default_value">100.0</span></em>, <em class="sig-param"><span class="n">conditions</span><span class="o">=</span><span class="default_value">{'D': 1.0, 'Dtype': None, 'La': 100.0, 'Yb': 20.0, 'surround': 'avg'}</span></em>, <em class="sig-param"><span class="n">yellowbluepurplecorrect</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">mcat</span><span class="o">=</span><span class="default_value">'cat02'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/CDATA.html#XYZ.to_jabM_ciecam02"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.CDATA.XYZ.to_jabM_ciecam02" title="Permalink to this definition">¶</a></dt>
+<dd><p>See ?luxpy.xyz_to_jabM_ciecam02</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="luxpy.color.CDATA.XYZ.to_jabC_ciecam02">
+<code class="sig-name descname">to_jabC_ciecam02</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xyzw</span><span class="o">=</span><span class="default_value">array([[100.0, 100.0, 100.0]])</span></em>, <em class="sig-param"><span class="n">Yw</span><span class="o">=</span><span class="default_value">100.0</span></em>, <em class="sig-param"><span class="n">conditions</span><span class="o">=</span><span class="default_value">{'D': 1.0, 'Dtype': None, 'La': 100.0, 'Yb': 20.0, 'surround': 'avg'}</span></em>, <em class="sig-param"><span class="n">yellowbluepurplecorrect</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">mcat</span><span class="o">=</span><span class="default_value">'cat02'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/CDATA.html#XYZ.to_jabC_ciecam02"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.CDATA.XYZ.to_jabC_ciecam02" title="Permalink to this definition">¶</a></dt>
+<dd><p>See ?luxpy.xyz_to_jabC_ciecam02</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="luxpy.color.CDATA.XYZ.to_jab_cam02ucs">
+<code class="sig-name descname">to_jab_cam02ucs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xyzw</span><span class="o">=</span><span class="default_value">array([[100.0, 100.0, 100.0]])</span></em>, <em class="sig-param"><span class="n">Yw</span><span class="o">=</span><span class="default_value">100.0</span></em>, <em class="sig-param"><span class="n">conditions</span><span class="o">=</span><span class="default_value">{'D': 1.0, 'Dtype': None, 'La': 100.0, 'Yb': 20.0, 'surround': 'avg'}</span></em>, <em class="sig-param"><span class="n">yellowbluepurplecorrect</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">mcat</span><span class="o">=</span><span class="default_value">'cat02'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/CDATA.html#XYZ.to_jab_cam02ucs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.CDATA.XYZ.to_jab_cam02ucs" title="Permalink to this definition">¶</a></dt>
+<dd><p>See ?luxpy.xyz_to_jab_cam02ucs</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="luxpy.color.CDATA.XYZ.to_jab_cam02lcd">
+<code class="sig-name descname">to_jab_cam02lcd</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xyzw</span><span class="o">=</span><span class="default_value">array([[100.0, 100.0, 100.0]])</span></em>, <em class="sig-param"><span class="n">Yw</span><span class="o">=</span><span class="default_value">100.0</span></em>, <em class="sig-param"><span class="n">conditions</span><span class="o">=</span><span class="default_value">{'D': 1.0, 'Dtype': None, 'La': 100.0, 'Yb': 20.0, 'surround': 'avg'}</span></em>, <em class="sig-param"><span class="n">yellowbluepurplecorrect</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">mcat</span><span class="o">=</span><span class="default_value">'cat02'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/CDATA.html#XYZ.to_jab_cam02lcd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.CDATA.XYZ.to_jab_cam02lcd" title="Permalink to this definition">¶</a></dt>
+<dd><p>See ?luxpy.xyz_to_jab_cam02lcd</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="luxpy.color.CDATA.XYZ.to_jab_cam02scd">
+<code class="sig-name descname">to_jab_cam02scd</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xyzw</span><span class="o">=</span><span class="default_value">array([[100.0, 100.0, 100.0]])</span></em>, <em class="sig-param"><span class="n">Yw</span><span class="o">=</span><span class="default_value">100.0</span></em>, <em class="sig-param"><span class="n">conditions</span><span class="o">=</span><span class="default_value">{'D': 1.0, 'Dtype': None, 'La': 100.0, 'Yb': 20.0, 'surround': 'avg'}</span></em>, <em class="sig-param"><span class="n">yellowbluepurplecorrect</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">mcat</span><span class="o">=</span><span class="default_value">'cat02'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/CDATA.html#XYZ.to_jab_cam02scd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.CDATA.XYZ.to_jab_cam02scd" title="Permalink to this definition">¶</a></dt>
+<dd><p>See ?luxpy.xyz_to_jab_cam02scd</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="luxpy.color.CDATA.XYZ.to_jabM_ciecam16">
+<code class="sig-name descname">to_jabM_ciecam16</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xyzw</span><span class="o">=</span><span class="default_value">array([[100.0, 100.0, 100.0]])</span></em>, <em class="sig-param"><span class="n">Yw</span><span class="o">=</span><span class="default_value">100.0</span></em>, <em class="sig-param"><span class="n">conditions</span><span class="o">=</span><span class="default_value">{'D': 1.0, 'Dtype': None, 'La': 100.0, 'Yb': 20.0, 'surround': 'avg'}</span></em>, <em class="sig-param"><span class="n">mcat</span><span class="o">=</span><span class="default_value">'cat16'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/CDATA.html#XYZ.to_jabM_ciecam16"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.CDATA.XYZ.to_jabM_ciecam16" title="Permalink to this definition">¶</a></dt>
+<dd><p>See ?luxpy.xyz_to_jabM_ciecam16</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="luxpy.color.CDATA.XYZ.to_jabC_ciecam16">
+<code class="sig-name descname">to_jabC_ciecam16</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xyzw</span><span class="o">=</span><span class="default_value">array([[100.0, 100.0, 100.0]])</span></em>, <em class="sig-param"><span class="n">Yw</span><span class="o">=</span><span class="default_value">100.0</span></em>, <em class="sig-param"><span class="n">conditions</span><span class="o">=</span><span class="default_value">{'D': 1.0, 'Dtype': None, 'La': 100.0, 'Yb': 20.0, 'surround': 'avg'}</span></em>, <em class="sig-param"><span class="n">mcat</span><span class="o">=</span><span class="default_value">'cat16'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/CDATA.html#XYZ.to_jabC_ciecam16"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.CDATA.XYZ.to_jabC_ciecam16" title="Permalink to this definition">¶</a></dt>
+<dd><p>See ?luxpy.xyz_to_jabC_ciecam16</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="luxpy.color.CDATA.XYZ.to_jab_cam16ucs">
+<code class="sig-name descname">to_jab_cam16ucs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xyzw</span><span class="o">=</span><span class="default_value">array([[100.0, 100.0, 100.0]])</span></em>, <em class="sig-param"><span class="n">Yw</span><span class="o">=</span><span class="default_value">100.0</span></em>, <em class="sig-param"><span class="n">conditions</span><span class="o">=</span><span class="default_value">{'D': 1.0, 'Dtype': None, 'La': 100.0, 'Yb': 20.0, 'surround': 'avg'}</span></em>, <em class="sig-param"><span class="n">mcat</span><span class="o">=</span><span class="default_value">'cat16'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/CDATA.html#XYZ.to_jab_cam16ucs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.CDATA.XYZ.to_jab_cam16ucs" title="Permalink to this definition">¶</a></dt>
+<dd><p>See ?luxpy.xyz_to_jab_cam02ucs</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="luxpy.color.CDATA.XYZ.to_jab_cam16lcd">
+<code class="sig-name descname">to_jab_cam16lcd</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xyzw</span><span class="o">=</span><span class="default_value">array([[100.0, 100.0, 100.0]])</span></em>, <em class="sig-param"><span class="n">Yw</span><span class="o">=</span><span class="default_value">100.0</span></em>, <em class="sig-param"><span class="n">conditions</span><span class="o">=</span><span class="default_value">{'D': 1.0, 'Dtype': None, 'La': 100.0, 'Yb': 20.0, 'surround': 'avg'}</span></em>, <em class="sig-param"><span class="n">mcat</span><span class="o">=</span><span class="default_value">'cat16'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/CDATA.html#XYZ.to_jab_cam16lcd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.CDATA.XYZ.to_jab_cam16lcd" title="Permalink to this definition">¶</a></dt>
+<dd><p>See ?luxpy.xyz_to_jab_cam16lcd</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="luxpy.color.CDATA.XYZ.to_jab_cam16scd">
+<code class="sig-name descname">to_jab_cam16scd</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xyzw</span><span class="o">=</span><span class="default_value">array([[100.0, 100.0, 100.0]])</span></em>, <em class="sig-param"><span class="n">Yw</span><span class="o">=</span><span class="default_value">100.0</span></em>, <em class="sig-param"><span class="n">conditions</span><span class="o">=</span><span class="default_value">{'D': 1.0, 'Dtype': None, 'La': 100.0, 'Yb': 20.0, 'surround': 'avg'}</span></em>, <em class="sig-param"><span class="n">mcat</span><span class="o">=</span><span class="default_value">'cat16'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/CDATA.html#XYZ.to_jab_cam16scd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.CDATA.XYZ.to_jab_cam16scd" title="Permalink to this definition">¶</a></dt>
+<dd><p>See ?luxpy.xyz_to_jab_cam16scd</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="luxpy.color.CDATA.XYZ.to_jabM_zcam">
+<code class="sig-name descname">to_jabM_zcam</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xyzw</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">conditions</span><span class="o">=</span><span class="default_value">{'D': 1.0, 'Dtype': None, 'La': 100.0, 'Yb': 20.0, 'surround': 'avg'}</span></em>, <em class="sig-param"><span class="n">mcat</span><span class="o">=</span><span class="default_value">'cat16'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/CDATA.html#XYZ.to_jabM_zcam"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.CDATA.XYZ.to_jabM_zcam" title="Permalink to this definition">¶</a></dt>
+<dd><p>See ?luxpy.xyz_to_jabM_zcam</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="luxpy.color.CDATA.XYZ.to_jabC_zcam">
+<code class="sig-name descname">to_jabC_zcam</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xyzw</span><span class="o">=</span><span class="default_value">array([[100.0, 100.0, 100.0]])</span></em>, <em class="sig-param"><span class="n">conditions</span><span class="o">=</span><span class="default_value">{'D': 1.0, 'Dtype': None, 'La': 100.0, 'Yb': 20.0, 'surround': 'avg'}</span></em>, <em class="sig-param"><span class="n">mcat</span><span class="o">=</span><span class="default_value">'cat16'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/CDATA.html#XYZ.to_jabC_zcam"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.CDATA.XYZ.to_jabC_zcam" title="Permalink to this definition">¶</a></dt>
+<dd><p>See ?luxpy.xyz_to_jabC_zcam</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="luxpy.color.CDATA.XYZ.to_qabW_cam15u">
+<code class="sig-name descname">to_qabW_cam15u</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fov</span><span class="o">=</span><span class="default_value">10.0</span></em>, <em class="sig-param"><span class="n">parameters</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/CDATA.html#XYZ.to_qabW_cam15u"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.CDATA.XYZ.to_qabW_cam15u" title="Permalink to this definition">¶</a></dt>
+<dd><p>See ?luxpy.xyz_to_qabW_cam15u</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="luxpy.color.CDATA.XYZ.to_lab_cam_sww_2016">
+<code class="sig-name descname">to_lab_cam_sww_2016</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xyzw</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">Yb</span><span class="o">=</span><span class="default_value">20.0</span></em>, <em class="sig-param"><span class="n">Lw</span><span class="o">=</span><span class="default_value">400.0</span></em>, <em class="sig-param"><span class="n">relative</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">parameters</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">inputtype</span><span class="o">=</span><span class="default_value">'xyz'</span></em>, <em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">'2006_10'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/CDATA.html#XYZ.to_lab_cam_sww_2016"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.CDATA.XYZ.to_lab_cam_sww_2016" title="Permalink to this definition">¶</a></dt>
+<dd><p>See ?luxpy.xyz_to_lab_cam_sww_2016</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="luxpy.color.CDATA.XYZ.to_qabS_cam18sl">
+<code class="sig-name descname">to_qabS_cam18sl</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xyz</span></em>, <em class="sig-param"><span class="n">xyzb</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">Lb</span><span class="o">=</span><span class="default_value">[100]</span></em>, <em class="sig-param"><span class="n">fov</span><span class="o">=</span><span class="default_value">10.0</span></em>, <em class="sig-param"><span class="n">parameters</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/CDATA.html#XYZ.to_qabS_cam18sl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.CDATA.XYZ.to_qabS_cam18sl" title="Permalink to this definition">¶</a></dt>
+<dd><p>See ?luxpy.xyz_to_qabS_cam18sl</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="luxpy.color.CDATA.XYZ.to_qabM_cam18sl">
+<code class="sig-name descname">to_qabM_cam18sl</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xyz</span></em>, <em class="sig-param"><span class="n">xyzb</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">Lb</span><span class="o">=</span><span class="default_value">[100]</span></em>, <em class="sig-param"><span class="n">fov</span><span class="o">=</span><span class="default_value">10.0</span></em>, <em class="sig-param"><span class="n">parameters</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/CDATA.html#XYZ.to_qabM_cam18sl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.CDATA.XYZ.to_qabM_cam18sl" title="Permalink to this definition">¶</a></dt>
+<dd><p>See ?luxpy.xyz_to_qabM_cam18sl</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="luxpy.color.CDATA.LAB">
+<em class="property">class </em><code class="sig-prename descclassname">luxpy.color.CDATA.</code><code class="sig-name descname">LAB</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">relative</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">'1931_2'</span></em>, <em class="sig-param"><span class="n">dtype</span><span class="o">=</span><span class="default_value">'lab'</span></em>, <em class="sig-param"><span class="n">xyzw</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">M</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">scaling</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">Lw</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">Yw</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">Yb</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">conditions</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">yellowbluepurplecorrect</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">mcat</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ucstype</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">fov</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">parameters</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/CDATA.html#LAB"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.CDATA.LAB" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt id="luxpy.color.CDATA.LAB.ctf">
+<code class="sig-name descname">ctf</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/CDATA.html#LAB.ctf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.CDATA.LAB.ctf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert color space coordinates to XYZ tristimulus values.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">dtype</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">‘xyz’</div>
+<div class="line">Convert to this color space.</div>
+</div>
+</dd>
+<dt class="field-even">kwargs</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">additional input arguments required for </div>
+<div class="line">color space transformation.</div>
+<div class="line">See specific luxpy function for more info </div>
+<div class="line-block">
+<div class="line">(e.g. ?luxpy.xyz_to_lab)</div>
+</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">returns</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">luxpy.XYZ with .value field that is a ndarray </div>
+<div class="line">with tristimulus values </div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="luxpy.color.CDATA.LAB.plot">
+<code class="sig-name descname">plot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">plt_type</span><span class="o">=</span><span class="default_value">'3d'</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">title</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/CDATA.html#LAB.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.CDATA.LAB.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot color coordinates.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">plt_type</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">‘3d’ or 3 or ‘2d or 2, optional</div>
+<div class="line-block">
+<div class="line">-‘3d’ or 3: plot all 3 dimensions (lightness and chromaticity)</div>
+<div class="line">-‘2d’ or 2: plot only chromaticity dimensions.</div>
+</div>
+</div>
+</dd>
+<dt class="field-even">ax</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">None or axes handles, optional</div>
+<div class="line">None: create new figure axes, else use :ax: for plotting.</div>
+</div>
+</dd>
+<dt class="field-odd">title</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">None or str, optional</div>
+<div class="line">Give plot a title.</div>
+</div>
+</dd>
+<dt class="field-even">kwargs</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">additional arguments for use with </div>
+<div class="line">matplotlib.pyplot.scatter</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">gca</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">handle to current axes.</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="luxpy.color.CDATA.LAB.to_xyz">
+<code class="sig-name descname">to_xyz</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/CDATA.html#LAB.to_xyz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.color.CDATA.LAB.to_xyz" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert color space coordinates to XYZ tristimulus values.</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>

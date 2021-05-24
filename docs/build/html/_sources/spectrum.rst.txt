@@ -3,7 +3,12 @@ Spectrum sub-package
 
  :py:
 	* __init__.py
-	* SPD.py 
+	* spdx_ietm2714.py
+	* basics/
+		* __init__.py
+		* cmf.py 
+		* spectral.py
+		* spectral_databases.py
 	
  :namespace: luxpy
 
@@ -11,20 +16,16 @@ Spectrum sub-package
    :members:
    :undoc-members:
    :private-members:
-
-
-basics/ 
--------
+   
+SPD class
+---------
  :py:
-	* __init__.py
-	* cmf.py 
-	* spectral.py
-	* spectral_databases.py
+	* SPD.py 
 	
  :namespace: luxpy
 
-.. automodule:: luxpy.spectrum.basics
+.. autoclass:: luxpy.spectrum.SPD.SPD
    :members:
    :undoc-members:
    :private-members:
-   
+

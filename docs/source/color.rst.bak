@@ -3,6 +3,7 @@ Color sub-package
 
  :py:
 	* __init__.py
+	* CDATA.py 
 	
  :namespace: luxpy
 
@@ -89,7 +90,6 @@ cam/
 	* cam18sl.py
 	* camjabz.py
 	* zcam.py
-	* cmf_translator_sww2021
 	
  :namespace: luxpy.cam
 
@@ -179,23 +179,6 @@ cri/VFPX/
  :namespace: luxpy.cri.VFPX
 
 .. automodule:: luxpy.color.cri.VFPX
-   :members:
-   :undoc-members:
-   :private-members:
-   
-XYZ,LAB classes
----------------
- :py:
-	* CDATA.py 
-	
- :namespace: luxpy
-
-.. autoclass:: luxpy.color.CDATA.XYZ
-   :members:
-   :undoc-members:
-   :private-members:
-
-.. autoclass:: luxpy.color.CDATA.LAB
    :members:
    :undoc-members:
    :private-members:

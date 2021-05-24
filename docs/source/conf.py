@@ -165,8 +165,9 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
+target_name = 'LuxPy_Documentation-v{:s}'.format(version)
 latex_documents = [
-    (master_doc, 'LuxPy.tex', 'LuxPy Documentation',
+    (master_doc, target_name + '.tex', 'LuxPy Documentation',
      'Kevin A.G. Smet', 'manual'),
 ]
 
@@ -176,7 +177,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'luxpy', 'LuxPy Documentation',
+    (master_doc, target_name, 'LuxPy Documentation',
      [author], 1)
 ]
 
@@ -184,7 +185,7 @@ man_pages = [
 
 # -- Options for manual pdf page output ---------------------------------------
 
-#pdf_documents = [(master_doc, 'LuxPy', 'LuxPy Documentation', 'Kevin A.G. Smet'),]
+#pdf_documents = [(master_doc, target_name , 'LuxPy Documentation', 'Kevin A.G. Smet'),]
    
 # index - master document
 # rst2pdf - name of the generated pdf
@@ -199,7 +200,7 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'LuxPy', 'LuxPy Documentation',
+    (master_doc, target_name, 'LuxPy Documentation',
      author, 'LuxPy', 'One line description of project.',
      'Miscellaneous'),
 ]
