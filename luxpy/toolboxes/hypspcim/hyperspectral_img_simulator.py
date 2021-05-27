@@ -34,13 +34,13 @@ import warnings
 from imageio import imsave
 
 __all__ =['_HYPSPCIM_PATH','_HYPSPCIM_DEFAULT_IMAGE','render_image','xyz_to_rfl',
-          'get_superresolution_hsi','hsi_to_rgb','rfl_to_rgb']             
+          'get_superresolution_hsi','hsi_to_rgb','rfl_to_rgb','_CSF_NIKON_D700']             
 
 _HYPSPCIM_PATH = _PKG_PATH + _SEP + 'hypspcim' + _SEP
 _HYPSPCIM_DEFAULT_IMAGE = _PKG_PATH + _SEP + 'toolboxes' + _SEP + 'hypspcim' +  _SEP + 'data' + _SEP + 'testimage1.jpg'
 
 
-_ROUNDING = 6 # to speed up xyz_to_rfl search algorithm
+_ROUNDING = 6 # to speed up xyz_to_rfl search algorithm, increase if kernel dies!!!
 
 # Nikon D700 camera sensitivity functions:
 _CSF_NIKON_D700 = np.vstack((np.arange(400,710,10),
@@ -52,7 +52,8 @@ _CSF_NIKON_D700 = np.vstack((np.arange(400,710,10),
 def xyz_to_rfl(xyz, CSF = None, rfl = None, out = 'rfl_est', \
                  refspd = None, D = None, cieobs = _CIEOBS, \
                  cspace = 'xyz', cspace_tf = {},\
-                 interp_type = 'nd', k_neighbours = 4, verbosity = 0):
+                 interp_type = 'nd', k_neighbours = 4, verbosity = 0,
+                 csf_based_rgb_rounding = _ROUNDING):
     """
     Approximate spectral reflectance of xyz values based on nd-dimensional linear interpolation 
     or k nearest neighbour interpolation of samples from a standard reflectance set.
@@ -98,6 +99,10 @@ def xyz_to_rfl(xyz, CSF = None, rfl = None, out = 'rfl_est', \
             | 0, optional
             | If > 0: make a plot of the color coordinates of original and 
             | rendered image pixels.
+        :csf_based_rgb_rounding:
+            | _ROUNDING, optional
+            | Int representing the number of decimals to round the RGB values (obtained from not-None CSF input) to before applying the search algorithm.
+            | Smaller values increase the search speed, but could cause fatal error that causes python kernel to die. If this happens increase the rounding int value.
 
     Returns:
         :returns: 
@@ -128,7 +133,7 @@ def xyz_to_rfl(xyz, CSF = None, rfl = None, out = 'rfl_est', \
         rgb_rr = rfl_to_rgb(rfl, spd = refspd, CSF = CSF, wl = None)   
         lab_rr = rgb_rr
         xyz = xyz
-        lab_rr = np.round(lab_rr,_ROUNDING) # speed up search
+        lab_rr = np.round(lab_rr,csf_based_rgb_rounding) # speed up search
         
     # Convert xyz to lab-type values under refspd:
     if CSF is None:
@@ -136,7 +141,7 @@ def xyz_to_rfl(xyz, CSF = None, rfl = None, out = 'rfl_est', \
     else:
         lab = xyz # xyz contained rgb values !!!
         rgb = xyz
-        lab = np.round(lab,_ROUNDING) # speed up search
+        lab = np.round(lab,csf_based_rgb_rounding) # speed up search
     
     
     
@@ -239,7 +244,8 @@ def render_image(img = None, spd = None, rfl = None, out = 'img_hyp', \
                  interp_type = 'nd', k_neighbours = 4, show = True,
                  verbosity = 0, show_ref_img = True,\
                  stack_test_ref = 12,\
-                 write_to_file = None):
+                 write_to_file = None,\
+                 csf_based_rgb_rounding = _ROUNDING):
     """
     Render image under specified light source spd.
     
@@ -310,6 +316,11 @@ def render_image(img = None, spd = None, rfl = None, out = 'img_hyp', \
             |   - 1: only show/write test
             |   - 2: only show/write ref
             |   - 0: show both, write test
+        :csf_based_rgb_rounding:
+            | _ROUNDING, optional
+            | Int representing the number of decimals to round the RGB values (obtained from not-None CSF input) to before applying the search algorithm.
+            | Smaller values increase the search speed, but could cause fatal error that causes python kernel to die. If this happens increase the rounding int value.
+
 
     Returns:
         :returns: 
@@ -322,13 +333,21 @@ def render_image(img = None, spd = None, rfl = None, out = 'img_hyp', \
    
     if img is not None:
         if isinstance(img,str):
-            img = plt.imread(img) # use matplotlib.pyplot's imread
+            img = plt.imread(img).copy() # use matplotlib.pyplot's imread
     else:
-        img = plt.imread(_HYPSPCIM_DEFAULT_IMAGE)
-    if isinstance(img,np.uint8): 
+        img = plt.imread(_HYPSPCIM_DEFAULT_IMAGE).copy()
+    
+    if img.dtype == np.uint8: 
         img = img/255
-    elif isinstance(img,np.uint16):
+        print('img/255')
+    elif img.dtype == np.uint16:
         img = img/(2**16-1)
+        print('img/2**16-1')
+    elif (img.dtype == np.float64) | (img.dtype == np.float32):
+        pass
+    else:
+        raise Exception('img input must be None, string or ndarray of (max = 1) float32 or float64 !')
+    if img.max() > 1.0: raise Exception('img input must be None, string or ndarray of (max = 1) float32 or float64 !')
     
     
     # Convert to 2D format:
@@ -363,7 +382,8 @@ def render_image(img = None, spd = None, rfl = None, out = 'img_hyp', \
                  refspd = refspd, D = D, cieobs = cieobs, \
                  cspace = cspace, cspace_tf = cspace_tf, CSF = CSF,\
                  interp_type = interp_type, k_neighbours = k_neighbours, 
-                 verbosity = verbosity)
+                 verbosity = verbosity,
+                 csf_based_rgb_rounding = csf_based_rgb_rounding)
     
 
     # Get default test spd if none supplied:
@@ -526,7 +546,7 @@ def hsi_to_rgb(hsi, spd = None, cieobs = _CIEOBS, srgb = False,
             | If True: use camera sensitivity functions.
         :linear_rgb:
             | False, optional
-            | If False: use gamma = 2.4 in xyz_to_srgb, if False: use gamma = 1.
+            | If False: use gamma = 2.4 in xyz_to_srgb, if False: use gamma = 1 and set :use_linear_part: to False.
         :CSF:
             | None, optional
             | ndarray with camera sensitivity functions 
@@ -549,13 +569,13 @@ def hsi_to_rgb(hsi, spd = None, cieobs = _CIEOBS, srgb = False,
     if srgb:
         xyz = spd_to_xyz(spd, cieobs = cieobs, relative = True, rfl = np.vstack((wlr,hsi_2d)))
         gamma = 1 if linear_rgb else 2.4
-        rgb = xyz_to_srgb(xyz, gamma = gamma)/255
+        rgb = xyz_to_srgb(xyz, gamma = gamma, use_linear_part = not linear_rgb)/255
     else:
         if CSF is None: CSF = _CSF_NIKON_D700
         rgb = rfl_to_rgb(hsi_2d, spd = spd, CSF = CSF, wl = wl)        
     return np.reshape(rgb,(hsi.shape[0],hsi.shape[1],3))
        
-def get_superresolution_hsi(lrhsi, hrci, CSF, wl = [380,780,1],
+def get_superresolution_hsi(lrhsi, hrci, CSF, wl = [380,780,1], csf_based_rgb_rounding = _ROUNDING,
                             interp_type = 'nd', k_neighbours = 4, verbosity = 0):
     """ 
     Get a HighResolution HyperSpectral Image (super-resolution HSI) based on a LowResolution HSI and a HighResolution Color Image.
@@ -586,6 +606,11 @@ def get_superresolution_hsi(lrhsi, hrci, CSF, wl = [380,780,1],
             | Verbosity level for sub-call to render_image().
             | If > 0: make a plot of the color coordinates of original and 
             | rendered image pixels.
+        :csf_based_rgb_rounding:
+            | _ROUNDING, optional
+            | Int representing the number of decimals to round the RGB values (obtained from not-None CSF input) to before applying the search algorithm.
+            | Smaller values increase the search speed, but could cause fatal error that causes python kernel to die. If this happens increase the rounding int value.
+
     Returns:
         :hrhsi:
             | ndarray with HighResolution HSI [M,N,L].
@@ -604,7 +629,8 @@ def get_superresolution_hsi(lrhsi, hrci, CSF, wl = [380,780,1],
     hrhsi = render_image(hrci, spd = eew,
                          refspd = eew, rfl = lrhsi_2d, D = None,
                          interp_type = interp_type, k_neighbours = k_neighbours,
-                         verbosity=verbosity, CSF = CSF) # render HR-hsi from HR-ci using LR-HSI rfls as database        
+                         verbosity = verbosity, 
+                         CSF = CSF, csf_based_rgb_rounding = csf_based_rgb_rounding) # render HR-hsi from HR-ci using LR-HSI rfls as database        
     return hrhsi
 
 if __name__ == '__main__':
@@ -725,8 +751,8 @@ if __name__ == '__main__':
     colors = np.array(['m','b','c','g','y','r','k','lightgrey','grey'])
     for t in range(len(iis)):
         ii,jj = iis[t],jjs[t]
-        axs[1].plot(jj,ii,color = colors[t], marker = 'o', mec = 'w')
-        axs[2].plot(jj,ii,color = colors[t], marker = 'o', mec = 'w')
+        axs[1].plot(jj,ii,color = 'none', marker = 'o', mec = colors[t])
+        axs[2].plot(jj,ii,color = 'none', marker = 'o', mec = colors[t])
         axs[3].plot(wlr,hrhsi[ii,jj,:],color = colors[t], linestyle ='-',label='ground-truth (r{:1.0f},c{:1.0f})'.format(ii,jj))
         axs[3].plot(wlr,hrhsi_est[ii,jj,:],color = colors[t], linestyle = '--',label='estimate (r{:1.0f},c{:1.0f})'.format(ii,jj))
     axs[3].legend(bbox_to_anchor=(1.05, 1))   

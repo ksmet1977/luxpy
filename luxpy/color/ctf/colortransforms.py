@@ -1221,6 +1221,7 @@ def srgb_to_xyz(rgb, gamma = 2.4, offset = -0.055, use_linear_part = True, M = N
                       [0.2126729,  0.7151522,  0.0721750],
                       [0.0193339,  0.1191920,  0.9503041]]) # use pre-defined inverse for efficiency
         
+        
     # scale device coordinates:
     sRGB = rgb/255
 
@@ -1230,7 +1231,7 @@ def srgb_to_xyz(rgb, gamma = 2.4, offset = -0.055, use_linear_part = True, M = N
 
     if use_linear_part: 
         # test for linear part of conversion
-        dark = np.where((srgb/255) <  0.0031308)
+        dark = np.where(srgb <  0.0031308)
         srgb[dark] = sRGB[dark]/12.92
 
     if len(srgb.shape) == 3:
@@ -1238,4 +1239,3 @@ def srgb_to_xyz(rgb, gamma = 2.4, offset = -0.055, use_linear_part = True, M = N
     else:
         xyz = np.einsum('ij,lj->li', M, srgb)*100
     return xyz
-
