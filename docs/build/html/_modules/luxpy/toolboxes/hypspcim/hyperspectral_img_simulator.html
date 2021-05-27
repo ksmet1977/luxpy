@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>luxpy.toolboxes.hypspcim.hyperspectral_img_simulator &mdash; LuxPy 1.6.10 documentation</title>
+  <title>luxpy.toolboxes.hypspcim.hyperspectral_img_simulator &mdash; LuxPy 1.6.11 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                1.6.10
+                1.6.11
               </div>
             
           
@@ -194,13 +194,13 @@
 <span class="kn">from</span> <span class="nn">imageio</span> <span class="kn">import</span> <span class="n">imsave</span>
 
 <span class="n">__all__</span> <span class="o">=</span><span class="p">[</span><span class="s1">&#39;_HYPSPCIM_PATH&#39;</span><span class="p">,</span><span class="s1">&#39;_HYPSPCIM_DEFAULT_IMAGE&#39;</span><span class="p">,</span><span class="s1">&#39;render_image&#39;</span><span class="p">,</span><span class="s1">&#39;xyz_to_rfl&#39;</span><span class="p">,</span>
-          <span class="s1">&#39;get_superresolution_hsi&#39;</span><span class="p">,</span><span class="s1">&#39;hsi_to_rgb&#39;</span><span class="p">,</span><span class="s1">&#39;rfl_to_rgb&#39;</span><span class="p">]</span>             
+          <span class="s1">&#39;get_superresolution_hsi&#39;</span><span class="p">,</span><span class="s1">&#39;hsi_to_rgb&#39;</span><span class="p">,</span><span class="s1">&#39;rfl_to_rgb&#39;</span><span class="p">,</span><span class="s1">&#39;_CSF_NIKON_D700&#39;</span><span class="p">]</span>             
 
 <span class="n">_HYPSPCIM_PATH</span> <span class="o">=</span> <span class="n">_PKG_PATH</span> <span class="o">+</span> <span class="n">_SEP</span> <span class="o">+</span> <span class="s1">&#39;hypspcim&#39;</span> <span class="o">+</span> <span class="n">_SEP</span>
 <span class="n">_HYPSPCIM_DEFAULT_IMAGE</span> <span class="o">=</span> <span class="n">_PKG_PATH</span> <span class="o">+</span> <span class="n">_SEP</span> <span class="o">+</span> <span class="s1">&#39;toolboxes&#39;</span> <span class="o">+</span> <span class="n">_SEP</span> <span class="o">+</span> <span class="s1">&#39;hypspcim&#39;</span> <span class="o">+</span>  <span class="n">_SEP</span> <span class="o">+</span> <span class="s1">&#39;data&#39;</span> <span class="o">+</span> <span class="n">_SEP</span> <span class="o">+</span> <span class="s1">&#39;testimage1.jpg&#39;</span>
 
 
-<span class="n">_ROUNDING</span> <span class="o">=</span> <span class="mi">6</span> <span class="c1"># to speed up xyz_to_rfl search algorithm</span>
+<span class="n">_ROUNDING</span> <span class="o">=</span> <span class="mi">6</span> <span class="c1"># to speed up xyz_to_rfl search algorithm, increase if kernel dies!!!</span>
 
 <span class="c1"># Nikon D700 camera sensitivity functions:</span>
 <span class="n">_CSF_NIKON_D700</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">400</span><span class="p">,</span><span class="mi">710</span><span class="p">,</span><span class="mi">10</span><span class="p">),</span>
@@ -212,7 +212,8 @@
 <div class="viewcode-block" id="xyz_to_rfl"><a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.hypspcim.xyz_to_rfl">[docs]</a><span class="k">def</span> <span class="nf">xyz_to_rfl</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">CSF</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">rfl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;rfl_est&#39;</span><span class="p">,</span> \
                  <span class="n">refspd</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> \
                  <span class="n">cspace</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">cspace_tf</span> <span class="o">=</span> <span class="p">{},</span>\
-                 <span class="n">interp_type</span> <span class="o">=</span> <span class="s1">&#39;nd&#39;</span><span class="p">,</span> <span class="n">k_neighbours</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+                 <span class="n">interp_type</span> <span class="o">=</span> <span class="s1">&#39;nd&#39;</span><span class="p">,</span> <span class="n">k_neighbours</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                 <span class="n">csf_based_rgb_rounding</span> <span class="o">=</span> <span class="n">_ROUNDING</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Approximate spectral reflectance of xyz values based on nd-dimensional linear interpolation </span>
 <span class="sd">    or k nearest neighbour interpolation of samples from a standard reflectance set.</span>
@@ -258,6 +259,10 @@
 <span class="sd">            | 0, optional</span>
 <span class="sd">            | If &gt; 0: make a plot of the color coordinates of original and </span>
 <span class="sd">            | rendered image pixels.</span>
+<span class="sd">        :csf_based_rgb_rounding:</span>
+<span class="sd">            | _ROUNDING, optional</span>
+<span class="sd">            | Int representing the number of decimals to round the RGB values (obtained from not-None CSF input) to before applying the search algorithm.</span>
+<span class="sd">            | Smaller values increase the search speed, but could cause fatal error that causes python kernel to die. If this happens increase the rounding int value.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        :returns: </span>
@@ -288,7 +293,7 @@
         <span class="n">rgb_rr</span> <span class="o">=</span> <span class="n">rfl_to_rgb</span><span class="p">(</span><span class="n">rfl</span><span class="p">,</span> <span class="n">spd</span> <span class="o">=</span> <span class="n">refspd</span><span class="p">,</span> <span class="n">CSF</span> <span class="o">=</span> <span class="n">CSF</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>   
         <span class="n">lab_rr</span> <span class="o">=</span> <span class="n">rgb_rr</span>
         <span class="n">xyz</span> <span class="o">=</span> <span class="n">xyz</span>
-        <span class="n">lab_rr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">lab_rr</span><span class="p">,</span><span class="n">_ROUNDING</span><span class="p">)</span> <span class="c1"># speed up search</span>
+        <span class="n">lab_rr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">lab_rr</span><span class="p">,</span><span class="n">csf_based_rgb_rounding</span><span class="p">)</span> <span class="c1"># speed up search</span>
         
     <span class="c1"># Convert xyz to lab-type values under refspd:</span>
     <span class="k">if</span> <span class="n">CSF</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -296,7 +301,7 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">lab</span> <span class="o">=</span> <span class="n">xyz</span> <span class="c1"># xyz contained rgb values !!!</span>
         <span class="n">rgb</span> <span class="o">=</span> <span class="n">xyz</span>
-        <span class="n">lab</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">lab</span><span class="p">,</span><span class="n">_ROUNDING</span><span class="p">)</span> <span class="c1"># speed up search</span>
+        <span class="n">lab</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">lab</span><span class="p">,</span><span class="n">csf_based_rgb_rounding</span><span class="p">)</span> <span class="c1"># speed up search</span>
     
     
     
@@ -399,7 +404,8 @@
                  <span class="n">interp_type</span> <span class="o">=</span> <span class="s1">&#39;nd&#39;</span><span class="p">,</span> <span class="n">k_neighbours</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="n">show</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
                  <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">show_ref_img</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>\
                  <span class="n">stack_test_ref</span> <span class="o">=</span> <span class="mi">12</span><span class="p">,</span>\
-                 <span class="n">write_to_file</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+                 <span class="n">write_to_file</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>\
+                 <span class="n">csf_based_rgb_rounding</span> <span class="o">=</span> <span class="n">_ROUNDING</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Render image under specified light source spd.</span>
 <span class="sd">    </span>
@@ -470,6 +476,11 @@
 <span class="sd">            |   - 1: only show/write test</span>
 <span class="sd">            |   - 2: only show/write ref</span>
 <span class="sd">            |   - 0: show both, write test</span>
+<span class="sd">        :csf_based_rgb_rounding:</span>
+<span class="sd">            | _ROUNDING, optional</span>
+<span class="sd">            | Int representing the number of decimals to round the RGB values (obtained from not-None CSF input) to before applying the search algorithm.</span>
+<span class="sd">            | Smaller values increase the search speed, but could cause fatal error that causes python kernel to die. If this happens increase the rounding int value.</span>
+
 
 <span class="sd">    Returns:</span>
 <span class="sd">        :returns: </span>
@@ -482,13 +493,19 @@
    
     <span class="k">if</span> <span class="n">img</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">img</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
-            <span class="n">img</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">img</span><span class="p">)</span> <span class="c1"># use matplotlib.pyplot&#39;s imread</span>
+            <span class="n">img</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">img</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="c1"># use matplotlib.pyplot&#39;s imread</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">img</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">_HYPSPCIM_DEFAULT_IMAGE</span><span class="p">)</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">img</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">):</span> 
+        <span class="n">img</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">_HYPSPCIM_DEFAULT_IMAGE</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    
+    <span class="k">if</span> <span class="n">img</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">:</span> 
         <span class="n">img</span> <span class="o">=</span> <span class="n">img</span><span class="o">/</span><span class="mi">255</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">img</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">uint16</span><span class="p">):</span>
+    <span class="k">elif</span> <span class="n">img</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">uint16</span><span class="p">:</span>
         <span class="n">img</span> <span class="o">=</span> <span class="n">img</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="mi">16</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">):</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;img input must be None, string or ndarray of (max = 1) float32 or float64 !&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">img</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">:</span> <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;img input must be None, string or ndarray of (max = 1) float32 or float64 !&#39;</span><span class="p">)</span>
     
     
     <span class="c1"># Convert to 2D format:</span>
@@ -523,7 +540,8 @@
                  <span class="n">refspd</span> <span class="o">=</span> <span class="n">refspd</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="n">D</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> \
                  <span class="n">cspace</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">,</span> <span class="n">cspace_tf</span> <span class="o">=</span> <span class="n">cspace_tf</span><span class="p">,</span> <span class="n">CSF</span> <span class="o">=</span> <span class="n">CSF</span><span class="p">,</span>\
                  <span class="n">interp_type</span> <span class="o">=</span> <span class="n">interp_type</span><span class="p">,</span> <span class="n">k_neighbours</span> <span class="o">=</span> <span class="n">k_neighbours</span><span class="p">,</span> 
-                 <span class="n">verbosity</span> <span class="o">=</span> <span class="n">verbosity</span><span class="p">)</span>
+                 <span class="n">verbosity</span> <span class="o">=</span> <span class="n">verbosity</span><span class="p">,</span>
+                 <span class="n">csf_based_rgb_rounding</span> <span class="o">=</span> <span class="n">csf_based_rgb_rounding</span><span class="p">)</span>
     
 
     <span class="c1"># Get default test spd if none supplied:</span>
@@ -686,7 +704,7 @@
 <span class="sd">            | If True: use camera sensitivity functions.</span>
 <span class="sd">        :linear_rgb:</span>
 <span class="sd">            | False, optional</span>
-<span class="sd">            | If False: use gamma = 2.4 in xyz_to_srgb, if False: use gamma = 1.</span>
+<span class="sd">            | If False: use gamma = 2.4 in xyz_to_srgb, if False: use gamma = 1 and set :use_linear_part: to False.</span>
 <span class="sd">        :CSF:</span>
 <span class="sd">            | None, optional</span>
 <span class="sd">            | ndarray with camera sensitivity functions </span>
@@ -709,13 +727,13 @@
     <span class="k">if</span> <span class="n">srgb</span><span class="p">:</span>
         <span class="n">xyz</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">rfl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">wlr</span><span class="p">,</span><span class="n">hsi_2d</span><span class="p">)))</span>
         <span class="n">gamma</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">linear_rgb</span> <span class="k">else</span> <span class="mf">2.4</span>
-        <span class="n">rgb</span> <span class="o">=</span> <span class="n">xyz_to_srgb</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">gamma</span> <span class="o">=</span> <span class="n">gamma</span><span class="p">)</span><span class="o">/</span><span class="mi">255</span>
+        <span class="n">rgb</span> <span class="o">=</span> <span class="n">xyz_to_srgb</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">gamma</span> <span class="o">=</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">use_linear_part</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">linear_rgb</span><span class="p">)</span><span class="o">/</span><span class="mi">255</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">CSF</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">CSF</span> <span class="o">=</span> <span class="n">_CSF_NIKON_D700</span>
         <span class="n">rgb</span> <span class="o">=</span> <span class="n">rfl_to_rgb</span><span class="p">(</span><span class="n">hsi_2d</span><span class="p">,</span> <span class="n">spd</span> <span class="o">=</span> <span class="n">spd</span><span class="p">,</span> <span class="n">CSF</span> <span class="o">=</span> <span class="n">CSF</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="n">wl</span><span class="p">)</span>        
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">rgb</span><span class="p">,(</span><span class="n">hsi</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">hsi</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="mi">3</span><span class="p">))</span></div>
        
-<div class="viewcode-block" id="get_superresolution_hsi"><a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.hypspcim.get_superresolution_hsi">[docs]</a><span class="k">def</span> <span class="nf">get_superresolution_hsi</span><span class="p">(</span><span class="n">lrhsi</span><span class="p">,</span> <span class="n">hrci</span><span class="p">,</span> <span class="n">CSF</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="p">[</span><span class="mi">380</span><span class="p">,</span><span class="mi">780</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span>
+<div class="viewcode-block" id="get_superresolution_hsi"><a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.hypspcim.get_superresolution_hsi">[docs]</a><span class="k">def</span> <span class="nf">get_superresolution_hsi</span><span class="p">(</span><span class="n">lrhsi</span><span class="p">,</span> <span class="n">hrci</span><span class="p">,</span> <span class="n">CSF</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="p">[</span><span class="mi">380</span><span class="p">,</span><span class="mi">780</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">csf_based_rgb_rounding</span> <span class="o">=</span> <span class="n">_ROUNDING</span><span class="p">,</span>
                             <span class="n">interp_type</span> <span class="o">=</span> <span class="s1">&#39;nd&#39;</span><span class="p">,</span> <span class="n">k_neighbours</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">    Get a HighResolution HyperSpectral Image (super-resolution HSI) based on a LowResolution HSI and a HighResolution Color Image.</span>
@@ -746,6 +764,11 @@
 <span class="sd">            | Verbosity level for sub-call to render_image().</span>
 <span class="sd">            | If &gt; 0: make a plot of the color coordinates of original and </span>
 <span class="sd">            | rendered image pixels.</span>
+<span class="sd">        :csf_based_rgb_rounding:</span>
+<span class="sd">            | _ROUNDING, optional</span>
+<span class="sd">            | Int representing the number of decimals to round the RGB values (obtained from not-None CSF input) to before applying the search algorithm.</span>
+<span class="sd">            | Smaller values increase the search speed, but could cause fatal error that causes python kernel to die. If this happens increase the rounding int value.</span>
+
 <span class="sd">    Returns:</span>
 <span class="sd">        :hrhsi:</span>
 <span class="sd">            | ndarray with HighResolution HSI [M,N,L].</span>
@@ -764,7 +787,8 @@
     <span class="n">hrhsi</span> <span class="o">=</span> <span class="n">render_image</span><span class="p">(</span><span class="n">hrci</span><span class="p">,</span> <span class="n">spd</span> <span class="o">=</span> <span class="n">eew</span><span class="p">,</span>
                          <span class="n">refspd</span> <span class="o">=</span> <span class="n">eew</span><span class="p">,</span> <span class="n">rfl</span> <span class="o">=</span> <span class="n">lrhsi_2d</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                          <span class="n">interp_type</span> <span class="o">=</span> <span class="n">interp_type</span><span class="p">,</span> <span class="n">k_neighbours</span> <span class="o">=</span> <span class="n">k_neighbours</span><span class="p">,</span>
-                         <span class="n">verbosity</span><span class="o">=</span><span class="n">verbosity</span><span class="p">,</span> <span class="n">CSF</span> <span class="o">=</span> <span class="n">CSF</span><span class="p">)</span> <span class="c1"># render HR-hsi from HR-ci using LR-HSI rfls as database        </span>
+                         <span class="n">verbosity</span> <span class="o">=</span> <span class="n">verbosity</span><span class="p">,</span> 
+                         <span class="n">CSF</span> <span class="o">=</span> <span class="n">CSF</span><span class="p">,</span> <span class="n">csf_based_rgb_rounding</span> <span class="o">=</span> <span class="n">csf_based_rgb_rounding</span><span class="p">)</span> <span class="c1"># render HR-hsi from HR-ci using LR-HSI rfls as database        </span>
     <span class="k">return</span> <span class="n">hrhsi</span></div>
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
@@ -885,8 +909,8 @@
     <span class="n">colors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s1">&#39;m&#39;</span><span class="p">,</span><span class="s1">&#39;b&#39;</span><span class="p">,</span><span class="s1">&#39;c&#39;</span><span class="p">,</span><span class="s1">&#39;g&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">,</span><span class="s1">&#39;k&#39;</span><span class="p">,</span><span class="s1">&#39;lightgrey&#39;</span><span class="p">,</span><span class="s1">&#39;grey&#39;</span><span class="p">])</span>
     <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">iis</span><span class="p">)):</span>
         <span class="n">ii</span><span class="p">,</span><span class="n">jj</span> <span class="o">=</span> <span class="n">iis</span><span class="p">[</span><span class="n">t</span><span class="p">],</span><span class="n">jjs</span><span class="p">[</span><span class="n">t</span><span class="p">]</span>
-        <span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">jj</span><span class="p">,</span><span class="n">ii</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="n">colors</span><span class="p">[</span><span class="n">t</span><span class="p">],</span> <span class="n">marker</span> <span class="o">=</span> <span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">mec</span> <span class="o">=</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
-        <span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">jj</span><span class="p">,</span><span class="n">ii</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="n">colors</span><span class="p">[</span><span class="n">t</span><span class="p">],</span> <span class="n">marker</span> <span class="o">=</span> <span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">mec</span> <span class="o">=</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+        <span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">jj</span><span class="p">,</span><span class="n">ii</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">marker</span> <span class="o">=</span> <span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">mec</span> <span class="o">=</span> <span class="n">colors</span><span class="p">[</span><span class="n">t</span><span class="p">])</span>
+        <span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">jj</span><span class="p">,</span><span class="n">ii</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">marker</span> <span class="o">=</span> <span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">mec</span> <span class="o">=</span> <span class="n">colors</span><span class="p">[</span><span class="n">t</span><span class="p">])</span>
         <span class="n">axs</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wlr</span><span class="p">,</span><span class="n">hrhsi</span><span class="p">[</span><span class="n">ii</span><span class="p">,</span><span class="n">jj</span><span class="p">,:],</span><span class="n">color</span> <span class="o">=</span> <span class="n">colors</span><span class="p">[</span><span class="n">t</span><span class="p">],</span> <span class="n">linestyle</span> <span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;ground-truth (r</span><span class="si">{:1.0f}</span><span class="s1">,c</span><span class="si">{:1.0f}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ii</span><span class="p">,</span><span class="n">jj</span><span class="p">))</span>
         <span class="n">axs</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wlr</span><span class="p">,</span><span class="n">hrhsi_est</span><span class="p">[</span><span class="n">ii</span><span class="p">,</span><span class="n">jj</span><span class="p">,:],</span><span class="n">color</span> <span class="o">=</span> <span class="n">colors</span><span class="p">[</span><span class="n">t</span><span class="p">],</span> <span class="n">linestyle</span> <span class="o">=</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;estimate (r</span><span class="si">{:1.0f}</span><span class="s1">,c</span><span class="si">{:1.0f}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ii</span><span class="p">,</span><span class="n">jj</span><span class="p">))</span>
     <span class="n">axs</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">1.05</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>   

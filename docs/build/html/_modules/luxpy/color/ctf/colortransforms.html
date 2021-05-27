@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>luxpy.color.ctf.colortransforms &mdash; LuxPy 1.6.10 documentation</title>
+  <title>luxpy.color.ctf.colortransforms &mdash; LuxPy 1.6.11 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                1.6.10
+                1.6.11
               </div>
             
           
@@ -1381,6 +1381,7 @@
                       <span class="p">[</span><span class="mf">0.2126729</span><span class="p">,</span>  <span class="mf">0.7151522</span><span class="p">,</span>  <span class="mf">0.0721750</span><span class="p">],</span>
                       <span class="p">[</span><span class="mf">0.0193339</span><span class="p">,</span>  <span class="mf">0.1191920</span><span class="p">,</span>  <span class="mf">0.9503041</span><span class="p">]])</span> <span class="c1"># use pre-defined inverse for efficiency</span>
         
+        
     <span class="c1"># scale device coordinates:</span>
     <span class="n">sRGB</span> <span class="o">=</span> <span class="n">rgb</span><span class="o">/</span><span class="mi">255</span>
 
@@ -1390,7 +1391,7 @@
 
     <span class="k">if</span> <span class="n">use_linear_part</span><span class="p">:</span> 
         <span class="c1"># test for linear part of conversion</span>
-        <span class="n">dark</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">srgb</span><span class="o">/</span><span class="mi">255</span><span class="p">)</span> <span class="o">&lt;</span>  <span class="mf">0.0031308</span><span class="p">)</span>
+        <span class="n">dark</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">srgb</span> <span class="o">&lt;</span>  <span class="mf">0.0031308</span><span class="p">)</span>
         <span class="n">srgb</span><span class="p">[</span><span class="n">dark</span><span class="p">]</span> <span class="o">=</span> <span class="n">sRGB</span><span class="p">[</span><span class="n">dark</span><span class="p">]</span><span class="o">/</span><span class="mf">12.92</span>
 
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">srgb</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
@@ -1398,7 +1399,6 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">xyz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;ij,lj-&gt;li&#39;</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">srgb</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span>
     <span class="k">return</span> <span class="n">xyz</span></div>
-
 </pre></div>
 
            </div>
