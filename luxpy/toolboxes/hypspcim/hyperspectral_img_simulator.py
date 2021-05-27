@@ -339,10 +339,8 @@ def render_image(img = None, spd = None, rfl = None, out = 'img_hyp', \
     
     if img.dtype == np.uint8: 
         img = img/255
-        print('img/255')
     elif img.dtype == np.uint16:
         img = img/(2**16-1)
-        print('img/2**16-1')
     elif (img.dtype == np.float64) | (img.dtype == np.float32):
         pass
     else:
