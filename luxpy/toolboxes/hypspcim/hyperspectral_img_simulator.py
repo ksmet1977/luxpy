@@ -518,6 +518,7 @@ def rfl_to_rgb(rfl, spd = None, CSF = None, wl = None, normalize_to_white = True
     rgb = rfl_cp @ CSF[1:].T 
     if normalize_to_white:
         white = np.ones_like(spd)
+        white = white/white.sum()*spd.sum()
         rgbw = white @ CSF[1:].T  
         rgb = rgb/rgbw.max(axis = 0,keepdims=True) 
     
@@ -525,7 +526,8 @@ def rfl_to_rgb(rfl, spd = None, CSF = None, wl = None, normalize_to_white = True
     
     
 def hsi_to_rgb(hsi, spd = None, cieobs = _CIEOBS, srgb = False, 
-               linear_rgb = False, CSF = None, wl = [380,780,1]):
+               linear_rgb = False, CSF = None, normalize_to_white = True, 
+               wl = [380,780,1]):
     """ 
     Convert HyperSpectral Image to rgb.
     
@@ -549,6 +551,9 @@ def hsi_to_rgb(hsi, spd = None, cieobs = _CIEOBS, srgb = False,
             | None, optional
             | ndarray with camera sensitivity functions 
             | If None: use Nikon D700
+        :normalize_to_white:
+            | True, optional
+            | If True & CSF is not None: white-balance output rgb to a perfect white diffuser.
         :wl:
             | [380,780,1], optional
             | Wavelength range and spacing or ndarray with wavelengths of HSI image.
@@ -563,14 +568,13 @@ def hsi_to_rgb(hsi, spd = None, cieobs = _CIEOBS, srgb = False,
     spd = cie_interp(spd,wl,kind='linear')
     
     hsi_2d = np.reshape(hsi,(hsi.shape[0]*hsi.shape[1],hsi.shape[2]))
-    
     if srgb:
         xyz = spd_to_xyz(spd, cieobs = cieobs, relative = True, rfl = np.vstack((wlr,hsi_2d)))
         gamma = 1 if linear_rgb else 2.4
         rgb = xyz_to_srgb(xyz, gamma = gamma, use_linear_part = not linear_rgb)/255
     else:
         if CSF is None: CSF = _CSF_NIKON_D700
-        rgb = rfl_to_rgb(hsi_2d, spd = spd, CSF = CSF, wl = wl)        
+        rgb = rfl_to_rgb(hsi_2d, spd = spd, CSF = CSF, wl = wl, normalize_to_white = normalize_to_white)        
     return np.reshape(rgb,(hsi.shape[0],hsi.shape[1],3))
        
 def get_superresolution_hsi(lrhsi, hrci, CSF, wl = [380,780,1], csf_based_rgb_rounding = _ROUNDING,
@@ -580,9 +584,9 @@ def get_superresolution_hsi(lrhsi, hrci, CSF, wl = [380,780,1], csf_based_rgb_ro
     
     Args:
         :lrhsi:
-            | ndarray with LowResolution HSI [m,m,L].
+            | ndarray with float (max = 1) LowResolution HSI [m,m,L].
         :hrci:
-            | ndarray with HighResolution HSI [M,N,3].
+            | ndarray with float (max = 1) HighResolution HSI [M,N,3].
         :CSF:
             | None, optional
             | ndarray with camera sensitivity functions 
@@ -627,7 +631,7 @@ def get_superresolution_hsi(lrhsi, hrci, CSF, wl = [380,780,1], csf_based_rgb_ro
     hrhsi = render_image(hrci, spd = eew,
                          refspd = eew, rfl = lrhsi_2d, D = None,
                          interp_type = interp_type, k_neighbours = k_neighbours,
-                         verbosity = verbosity, 
+                         verbosity = verbosity, show = bool(verbosity),
                          CSF = CSF, csf_based_rgb_rounding = csf_based_rgb_rounding) # render HR-hsi from HR-ci using LR-HSI rfls as database        
     return hrhsi
 
