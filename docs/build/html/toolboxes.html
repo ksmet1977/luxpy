@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Toolboxes &mdash; LuxPy 1.6.11 documentation</title>
+  <title>Toolboxes &mdash; LuxPy 1.6.13 documentation</title>
   
 
   
@@ -62,7 +62,7 @@
             
             
               <div class="version">
-                1.6.11
+                1.6.13
               </div>
             
           
@@ -4568,12 +4568,12 @@ or k nearest neighbour interpolation of samples from a standard reflectance set.
 <dt>Args:</dt><dd><dl class="field-list">
 <dt class="field-odd">lrhsi</dt>
 <dd class="field-odd"><div class="line-block">
-<div class="line">ndarray with LowResolution HSI [m,m,L].</div>
+<div class="line">ndarray with float (max = 1) LowResolution HSI [m,m,L].</div>
 </div>
 </dd>
 <dt class="field-even">hrci</dt>
 <dd class="field-even"><div class="line-block">
-<div class="line">ndarray with HighResolution HSI [M,N,3].</div>
+<div class="line">ndarray with float (max = 1) HighResolution HSI [M,N,3].</div>
 </div>
 </dd>
 <dt class="field-odd">CSF</dt>
@@ -4642,7 +4642,7 @@ or k nearest neighbour interpolation of samples from a standard reflectance set.
 
 <dl class="py function">
 <dt id="luxpy.toolboxes.hypspcim.hsi_to_rgb">
-<code class="sig-prename descclassname">luxpy.toolboxes.hypspcim.</code><code class="sig-name descname">hsi_to_rgb</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">hsi</span></em>, <em class="sig-param"><span class="n">spd</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">'1931_2'</span></em>, <em class="sig-param"><span class="n">srgb</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">linear_rgb</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">CSF</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">wl</span><span class="o">=</span><span class="default_value">[380, 780, 1]</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/hypspcim/hyperspectral_img_simulator.html#hsi_to_rgb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.hypspcim.hsi_to_rgb" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">luxpy.toolboxes.hypspcim.</code><code class="sig-name descname">hsi_to_rgb</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">hsi</span></em>, <em class="sig-param"><span class="n">spd</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">'1931_2'</span></em>, <em class="sig-param"><span class="n">srgb</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">linear_rgb</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">CSF</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">normalize_to_white</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">wl</span><span class="o">=</span><span class="default_value">[380, 780, 1]</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/hypspcim/hyperspectral_img_simulator.html#hsi_to_rgb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.toolboxes.hypspcim.hsi_to_rgb" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert HyperSpectral Image to rgb.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -4683,8 +4683,14 @@ or k nearest neighbour interpolation of samples from a standard reflectance set.
 <div class="line">If None: use Nikon D700</div>
 </div>
 </dd>
-<dt class="field-odd">wl</dt>
+<dt class="field-odd">normalize_to_white</dt>
 <dd class="field-odd"><div class="line-block">
+<div class="line">True, optional</div>
+<div class="line">If True &amp; CSF is not None: white-balance output rgb to a perfect white diffuser.</div>
+</div>
+</dd>
+<dt class="field-even">wl</dt>
+<dd class="field-even"><div class="line-block">
 <div class="line">[380,780,1], optional</div>
 <div class="line">Wavelength range and spacing or ndarray with wavelengths of HSI image.</div>
 </div>

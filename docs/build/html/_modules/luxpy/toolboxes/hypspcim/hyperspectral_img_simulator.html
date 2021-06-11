@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>luxpy.toolboxes.hypspcim.hyperspectral_img_simulator &mdash; LuxPy 1.6.11 documentation</title>
+  <title>luxpy.toolboxes.hypspcim.hyperspectral_img_simulator &mdash; LuxPy 1.6.13 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                1.6.11
+                1.6.13
               </div>
             
           
@@ -678,6 +678,7 @@
     <span class="n">rgb</span> <span class="o">=</span> <span class="n">rfl_cp</span> <span class="o">@</span> <span class="n">CSF</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">T</span> 
     <span class="k">if</span> <span class="n">normalize_to_white</span><span class="p">:</span>
         <span class="n">white</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">spd</span><span class="p">)</span>
+        <span class="n">white</span> <span class="o">=</span> <span class="n">white</span><span class="o">/</span><span class="n">white</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">*</span><span class="n">spd</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
         <span class="n">rgbw</span> <span class="o">=</span> <span class="n">white</span> <span class="o">@</span> <span class="n">CSF</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">T</span>  
         <span class="n">rgb</span> <span class="o">=</span> <span class="n">rgb</span><span class="o">/</span><span class="n">rgbw</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span><span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> 
     
@@ -685,7 +686,8 @@
     
     
 <div class="viewcode-block" id="hsi_to_rgb"><a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.hypspcim.hsi_to_rgb">[docs]</a><span class="k">def</span> <span class="nf">hsi_to_rgb</span><span class="p">(</span><span class="n">hsi</span><span class="p">,</span> <span class="n">spd</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">srgb</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> 
-               <span class="n">linear_rgb</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">CSF</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="p">[</span><span class="mi">380</span><span class="p">,</span><span class="mi">780</span><span class="p">,</span><span class="mi">1</span><span class="p">]):</span>
+               <span class="n">linear_rgb</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">CSF</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">normalize_to_white</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
+               <span class="n">wl</span> <span class="o">=</span> <span class="p">[</span><span class="mi">380</span><span class="p">,</span><span class="mi">780</span><span class="p">,</span><span class="mi">1</span><span class="p">]):</span>
     <span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">    Convert HyperSpectral Image to rgb.</span>
 <span class="sd">    </span>
@@ -709,6 +711,9 @@
 <span class="sd">            | None, optional</span>
 <span class="sd">            | ndarray with camera sensitivity functions </span>
 <span class="sd">            | If None: use Nikon D700</span>
+<span class="sd">        :normalize_to_white:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | If True &amp; CSF is not None: white-balance output rgb to a perfect white diffuser.</span>
 <span class="sd">        :wl:</span>
 <span class="sd">            | [380,780,1], optional</span>
 <span class="sd">            | Wavelength range and spacing or ndarray with wavelengths of HSI image.</span>
@@ -723,14 +728,13 @@
     <span class="n">spd</span> <span class="o">=</span> <span class="n">cie_interp</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span><span class="n">wl</span><span class="p">,</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">)</span>
     
     <span class="n">hsi_2d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">hsi</span><span class="p">,(</span><span class="n">hsi</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">hsi</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">hsi</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
-    
     <span class="k">if</span> <span class="n">srgb</span><span class="p">:</span>
         <span class="n">xyz</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">rfl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">wlr</span><span class="p">,</span><span class="n">hsi_2d</span><span class="p">)))</span>
         <span class="n">gamma</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">linear_rgb</span> <span class="k">else</span> <span class="mf">2.4</span>
         <span class="n">rgb</span> <span class="o">=</span> <span class="n">xyz_to_srgb</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">gamma</span> <span class="o">=</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">use_linear_part</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">linear_rgb</span><span class="p">)</span><span class="o">/</span><span class="mi">255</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">CSF</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">CSF</span> <span class="o">=</span> <span class="n">_CSF_NIKON_D700</span>
-        <span class="n">rgb</span> <span class="o">=</span> <span class="n">rfl_to_rgb</span><span class="p">(</span><span class="n">hsi_2d</span><span class="p">,</span> <span class="n">spd</span> <span class="o">=</span> <span class="n">spd</span><span class="p">,</span> <span class="n">CSF</span> <span class="o">=</span> <span class="n">CSF</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="n">wl</span><span class="p">)</span>        
+        <span class="n">rgb</span> <span class="o">=</span> <span class="n">rfl_to_rgb</span><span class="p">(</span><span class="n">hsi_2d</span><span class="p">,</span> <span class="n">spd</span> <span class="o">=</span> <span class="n">spd</span><span class="p">,</span> <span class="n">CSF</span> <span class="o">=</span> <span class="n">CSF</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="n">wl</span><span class="p">,</span> <span class="n">normalize_to_white</span> <span class="o">=</span> <span class="n">normalize_to_white</span><span class="p">)</span>        
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">rgb</span><span class="p">,(</span><span class="n">hsi</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">hsi</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="mi">3</span><span class="p">))</span></div>
        
 <div class="viewcode-block" id="get_superresolution_hsi"><a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.hypspcim.get_superresolution_hsi">[docs]</a><span class="k">def</span> <span class="nf">get_superresolution_hsi</span><span class="p">(</span><span class="n">lrhsi</span><span class="p">,</span> <span class="n">hrci</span><span class="p">,</span> <span class="n">CSF</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="p">[</span><span class="mi">380</span><span class="p">,</span><span class="mi">780</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">csf_based_rgb_rounding</span> <span class="o">=</span> <span class="n">_ROUNDING</span><span class="p">,</span>
@@ -740,9 +744,9 @@
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        :lrhsi:</span>
-<span class="sd">            | ndarray with LowResolution HSI [m,m,L].</span>
+<span class="sd">            | ndarray with float (max = 1) LowResolution HSI [m,m,L].</span>
 <span class="sd">        :hrci:</span>
-<span class="sd">            | ndarray with HighResolution HSI [M,N,3].</span>
+<span class="sd">            | ndarray with float (max = 1) HighResolution HSI [M,N,3].</span>
 <span class="sd">        :CSF:</span>
 <span class="sd">            | None, optional</span>
 <span class="sd">            | ndarray with camera sensitivity functions </span>
@@ -787,7 +791,7 @@
     <span class="n">hrhsi</span> <span class="o">=</span> <span class="n">render_image</span><span class="p">(</span><span class="n">hrci</span><span class="p">,</span> <span class="n">spd</span> <span class="o">=</span> <span class="n">eew</span><span class="p">,</span>
                          <span class="n">refspd</span> <span class="o">=</span> <span class="n">eew</span><span class="p">,</span> <span class="n">rfl</span> <span class="o">=</span> <span class="n">lrhsi_2d</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                          <span class="n">interp_type</span> <span class="o">=</span> <span class="n">interp_type</span><span class="p">,</span> <span class="n">k_neighbours</span> <span class="o">=</span> <span class="n">k_neighbours</span><span class="p">,</span>
-                         <span class="n">verbosity</span> <span class="o">=</span> <span class="n">verbosity</span><span class="p">,</span> 
+                         <span class="n">verbosity</span> <span class="o">=</span> <span class="n">verbosity</span><span class="p">,</span> <span class="n">show</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">verbosity</span><span class="p">),</span>
                          <span class="n">CSF</span> <span class="o">=</span> <span class="n">CSF</span><span class="p">,</span> <span class="n">csf_based_rgb_rounding</span> <span class="o">=</span> <span class="n">csf_based_rgb_rounding</span><span class="p">)</span> <span class="c1"># render HR-hsi from HR-ci using LR-HSI rfls as database        </span>
     <span class="k">return</span> <span class="n">hrhsi</span></div>
 

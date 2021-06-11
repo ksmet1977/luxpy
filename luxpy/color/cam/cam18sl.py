@@ -341,7 +341,7 @@ def cam18sl(data, datab = None, Lb = [100], fov = 10.0, inputtype = 'xyz', direc
             rgbc = np.dot(invMAab, Aab.T).T    
 
             # decompress rgbc to (adapted) rgba :
-            rgba = naka_rushton(rgbc, n = naka['n'], sig = naka['sig'](rgbr.mean()), noise = naka['noise'], scaling = naka['scaling'], direction = 'inverse')
+            rgba = naka_rushton(rgbc, n = naka['n'], sig = naka['sig'](rgbr.mean()), noise = naka['noise'], scaling = naka['scaling'], forward = False)
 
             # apply inverse von-kries cat with D = 1:
             rgb = np.dot(np.diag((rgbb/rgbr)[0]),rgba.T).T
