@@ -61,6 +61,83 @@ __all__ = ['_get_hue_bin_data','spd_to_jab_t_r','spd_to_rg', 'spd_to_DEi',
            '_hue_bin_data_to_rxhj', '_hue_bin_data_to_rfi', '_hue_bin_data_to_rg']
 
 #------------------------------------------------------------------------------
+def _get_hue_bin_data_individual_samples(jabt,jabr, normalized_chroma_ref = 100):
+    """ Helper function to return dict with required keys when nhbins = None in call to _get_hue_bin_data"""
+    
+    # get hues of jabt, jabr:
+    ht = cam.hue_angle(jabt[...,1], jabt[...,2], htype = 'rad')
+    hr = cam.hue_angle(jabr[...,1], jabr[...,2], htype = 'rad')
+    
+    # Get chroma of jabt, jabr:
+    Ct = ((jabt[...,1]**2 + jabt[...,2]**2))**0.5
+    Cr = ((jabr[...,1]**2 + jabr[...,2]**2))**0.5
+    
+    
+    # Calculate DEi between jabt, jabr:
+    DEi = ((jabt - jabr)**2).sum(axis = -1, keepdims = True)**0.5
+    
+    jabt_hj, jabr_hj, DE_hj = jabt, jabr, DEi
+    
+    # some dummy variables:
+    start_hue = 0
+    dh = None
+    hue_bin_edges = None
+    nhbins = jabt.shape[0]
+    ht_idx, hr_idx = np.arange(nhbins)[:,None], np.arange(nhbins)[:,None]
+    
+    # calculate normalized hue-bin averages for jabt, jabr:
+    ht_hj = cam.hue_angle(jabt_hj[...,1],jabt_hj[...,2],htype='rad')
+    hr_hj = cam.hue_angle(jabr_hj[...,1],jabr_hj[...,2],htype='rad')
+    Ct_hj = ((jabt_hj[...,1]**2 + jabt_hj[...,2]**2))**0.5
+    Cr_hj = ((jabr_hj[...,1]**2 + jabr_hj[...,2]**2))**0.5
+    Ctn_hj = normalized_chroma_ref*Ct_hj/(Cr_hj + 1e-308) # calculate normalized chroma for samples under test
+    Ctn_hj[Cr_hj == 0.0] = np.inf
+    jabtn_hj = jabt_hj.copy()
+    jabrn_hj = jabr_hj.copy()
+    jabtn_hj[...,1], jabtn_hj[...,2] = Ctn_hj*np.cos(ht_hj), Ctn_hj*np.sin(ht_hj)
+    jabrn_hj[...,1], jabrn_hj[...,2] = normalized_chroma_ref*np.cos(hr_hj), normalized_chroma_ref*np.sin(hr_hj)
+    
+    # calculate normalized versions of jabt, jabr:
+    jabtn = jabt.copy()
+    jabrn = jabr.copy()
+    Ctn = np.zeros((jabt.shape[0],jabt.shape[1]))
+    print((Ctn/Cr_hj[0,...]).shape,(hr_idx==0).shape)
+    Crn = Ctn.copy()
+    for j in range(nhbins):
+        Ctn = Ctn + (Ct/Cr_hj[j,...])*(hr_idx==j)
+        Crn = Crn + (Cr/Cr_hj[j,...])*(hr_idx==j)
+    Ctn*=normalized_chroma_ref
+    Crn*=normalized_chroma_ref
+    print(Ctn.shape,ht.shape)
+    jabtn[...,1] = (Ctn*np.cos(ht))
+    jabtn[...,2] = (Ctn*np.sin(ht))
+    jabrn[...,1] = (Crn*np.cos(hr))
+    jabrn[...,2] = (Crn*np.sin(hr))
+
+    # closed jabt_hj, jabr_hj for Rg:
+    jabt_hj_closed = np.vstack((jabt_hj,jabt_hj[:1,...]))
+    jabr_hj_closed = np.vstack((jabr_hj,jabr_hj[:1,...]))
+    
+    # closed jabtn_hj, jabrn_hj for plotting:
+    jabtn_hj_closed = np.vstack((jabtn_hj,jabtn_hj[:1,...]))
+    jabrn_hj_closed = np.vstack((jabrn_hj,jabrn_hj[:1,...]))
+    
+    return {'jabt' : jabt, 'jabr' : jabr, 
+            'jabtn' : jabtn, 'jabrn' : jabrn,
+            'DEi' : DEi[...,0], 
+            'Ct' : Ct, 'Cr': Cr, 'ht' : ht, 'hr' : hr, 
+            'ht_idx' : ht_idx, 'hr_idx' : hr_idx,
+            'jabt_hj' : jabt_hj, 'jabr_hj' : jabr_hj, 'DE_hj' : DE_hj,
+            'jabt_hj_closed' : jabt_hj_closed, 'jabr_hj_closed' : jabr_hj_closed,
+            'jabtn_hj' : jabtn_hj, 'jabrn_hj' : jabrn_hj,
+            'jabtn_hj_closed' : jabtn_hj_closed, 'jabrn_hj_closed' : jabrn_hj_closed,
+            'ht_hj' : ht_hj, 'hr_hj' : hr_hj, 
+            'Ct_hj': Ct_hj, 'Cr_hj' : Cr_hj, 'Ctn_hj': Ctn_hj,
+            'nhbins' : nhbins, 'start_hue' : start_hue, 
+            'normalized_chroma_ref' : normalized_chroma_ref, 
+            'dh' : dh, 'hue_bin_edges' : hue_bin_edges, 
+            'hbinnrs' : hr_idx}
+    
 def _get_hue_bin_data(jabt, jabr, start_hue = 0, nhbins = 16,
                       normalized_chroma_ref = 100):
     """
@@ -108,10 +185,14 @@ def _get_hue_bin_data(jabt, jabr, start_hue = 0, nhbins = 16,
             | - 'hue_bin_edges': hue bin edge (rad)
             | - 'hbinnrs':  hue bin indices for each sample under ref. (= hr_idx)
     """
-    # calculate hue-bin width, edges:
-    dh = 360/nhbins 
-    hue_bin_edges = np.arange(start_hue, 360 + 1, dh)*np.pi/180
-
+    
+    if nhbins is None:
+        return _get_hue_bin_data_individual_samples(jabt,jabr,normalized_chroma_ref = normalized_chroma_ref)
+    else:
+        # calculate hue-bin width, edges:
+        dh = 360/nhbins 
+        hue_bin_edges = np.arange(start_hue, 360 + 1, dh)*np.pi/180
+        
     # get hues of jabt, jabr:
     ht = cam.hue_angle(jabt[...,1], jabt[...,2], htype = 'rad')
     hr = cam.hue_angle(jabr[...,1], jabr[...,2], htype = 'rad')
@@ -848,7 +929,9 @@ def optimize_scale_factor(cri_type, opt_scale_factor, scale_fcn, avg) :
         
         # optimize scale_factor to minimize rms difference:
         sf = cri_type['scale']['cfactor'] # get scale_factor of cri_type to determine len and non-optimized factors
-
+        
+        if sf is None: sf = [None]
+        
         if (isinstance(sf,float)): #(isinstance(1.0*sf,float))
             sf = [sf]
         if isinstance(opt_scale_factor, bool):
@@ -865,7 +948,7 @@ def optimize_scale_factor(cri_type, opt_scale_factor, scale_fcn, avg) :
         
         optresult = sp.optimize.minimize(fun = optfcn, x0 = x0, args=(), method = 'Nelder-Mead')
         scale_factor = optresult['x']
-        
+
         #Reconstruct 'scale_factor' from optimized and fixed parts:
         if (len(opt_scale_factor)==1) & (len(sf) == 1):
             pass #only cfactor
@@ -1316,7 +1399,7 @@ def spd_to_cri(St, cri_type = _CRI_TYPE_DEFAULT, out = 'Rf', wl = None, \
     # C. get binned jabt jabr and DEi:
     if ('Rg' in outlist) | ('Rfhj' in outlist) | ('DEhj' in outlist) | \
        ('Rhshj' in outlist) | ('Rcshj' in outlist) | ('hue_bin_data' in outlist) |\
-       (fit_gamut_ellipse == True):
+       ('data' in outlist) | (fit_gamut_ellipse == True):
         
         rg_pars = cri_type['rg_pars'] 
         nhbins, normalize_gamut, normalized_chroma_ref, start_hue  = [rg_pars[x] for x in sorted(rg_pars.keys())]
