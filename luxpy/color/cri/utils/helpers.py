@@ -101,14 +101,14 @@ def _get_hue_bin_data_individual_samples(jabt,jabr, normalized_chroma_ref = 100)
     jabtn = jabt.copy()
     jabrn = jabr.copy()
     Ctn = np.zeros((jabt.shape[0],jabt.shape[1]))
-    print((Ctn/Cr_hj[0,...]).shape,(hr_idx==0).shape)
+
     Crn = Ctn.copy()
     for j in range(nhbins):
         Ctn = Ctn + (Ct/Cr_hj[j,...])*(hr_idx==j)
         Crn = Crn + (Cr/Cr_hj[j,...])*(hr_idx==j)
     Ctn*=normalized_chroma_ref
     Crn*=normalized_chroma_ref
-    print(Ctn.shape,ht.shape)
+
     jabtn[...,1] = (Ctn*np.cos(ht))
     jabtn[...,2] = (Ctn*np.sin(ht))
     jabrn[...,1] = (Crn*np.cos(hr))
