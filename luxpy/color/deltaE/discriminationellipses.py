@@ -40,9 +40,9 @@ References:
 
 from luxpy import (math, Yxy_to_xyz, plotSL, plot_chromaticity_diagram_colors, plotellipse)
 from luxpy.utils import sp, np, plt
-from macadamellipses import get_macadam_ellipse
-from brown1957ellipses import get_brown1957_ellipse
-from frieleellipses import (get_gij_fmc, get_fmc_discrimination_ellipse)
+from .macadamellipses import get_macadam_ellipse
+from .brown1957ellipses import get_brown1957_ellipse
+from .frieleellipses import (get_gij_fmc, get_fmc_discrimination_ellipse)
 
 __all__ = ['get_discrimination_ellipse','get_macadam_ellipse','get_brown1957_ellipse','get_gij_fmc','get_fmc_discrimination_ellipse','discrimination_hotelling_t2']
 
