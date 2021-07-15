@@ -28,7 +28,8 @@ References:
 """
 
 from luxpy import (math, plotSL, plot_chromaticity_diagram_colors, plotellipse)
-from luxpy.utils import np, sp, plt
+from luxpy.utils import np, sp, plt, _EPS
+eps = _EPS/10.0
 
 __all__ = ['get_macadam_ellipse']
 
@@ -112,7 +113,7 @@ def get_macadam_ellipse(xy = None, k_neighbours = 3, nsteps = 10, average_cik = 
     
         if k_neighbours  > 1:
             pd = 1
-            w = (1.0 / np.abs(d)**pd)[:,:,None] # inverse distance weigthing
+            w = (1.0 / (np.abs(d) + eps)**pd)[:,:,None] # inverse distance weigthing
             if average_cik == True:
                 cik_long_est = np.sum(w * cik_long[inds,:], axis=1) / np.sum(w, axis=1)
             else:
@@ -153,7 +154,7 @@ if __name__ == '__main__':
     if cspace == 'Yuv':
         axh.set_xlim([0,0.6])
         axh.set_ylim([0,0.6])
-    plt.plot(xy_test[:,1],xy_test[:,2],'ro')
+
     
     
     

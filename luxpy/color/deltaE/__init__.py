@@ -29,6 +29,8 @@ Module for color difference calculations
  
  :get_macadam_ellipse(): Estimate n-step MacAdam ellipse at CIE x,y coordinates  
  
+ :get_brown1957_ellipse(): Estimate n-step Brown (1957) ellipse at CIE x,y coordinates.  
+ 
  :get_gij_fmc(): Get gij matrices describing the discrimination ellipses for Yxy using FMC-1 or FMC-2.
 
  :get_fmc_discrimination_ellipse(): Get n-step discrimination ellipse(s) in v-format (R,r, xc, yc, theta) for Yxy using FMC-1 or FMC-2.
