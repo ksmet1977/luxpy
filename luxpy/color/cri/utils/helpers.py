@@ -228,7 +228,8 @@ def _get_hue_bin_data(jabt, jabr, start_hue = 0, nhbins = 16,
         jabt_hj[j,...] = np.sum((jabt * cndr_hj[...,None]), axis=0)/wr.T # must use ref. bins !!!
         jabr_hj[j,...] = np.sum((jabr * cndr_hj[...,None]), axis=0)/wr.T
         DE_hj[j,...] = np.nansum((DEi * cndr_hj[...,None])/wr.T, axis = 0).T # local color difference is average of DEi per hue bin !!
-    
+        DE_hj[j,np.isnan(wr[0])] = np.nan # signal empty hue bins with a NaN
+        
     # calculate normalized hue-bin averages for jabt, jabr:
     ht_hj = cam.hue_angle(jabt_hj[...,1],jabt_hj[...,2],htype='rad')
     hr_hj = cam.hue_angle(jabr_hj[...,1],jabr_hj[...,2],htype='rad')

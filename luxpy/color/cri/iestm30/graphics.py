@@ -305,7 +305,7 @@ def plot_tm30_cvg(spd, cri_type = 'ies-tm30',
             | dictionary with required parameters for plotting functions. 
     """
 
-    data = _tm30_process_spd(spd, cri_type = 'ies-tm30', **kwargs)
+    data = _tm30_process_spd(spd, cri_type = cri_type, **kwargs)
     hdata = data['hue_bin_data']
     
     # Normalized chroma (closed gamut):
@@ -407,7 +407,7 @@ def plot_tm30_spd(spd, cri_type = 'ies-tm30', axh = None,
   
     """
 
-    data = _tm30_process_spd(spd, cri_type = 'ies-tm30',**kwargs)
+    data = _tm30_process_spd(spd, cri_type = cri_type,**kwargs)
     
     # Normalize Sr to same luminous power as spd:
     Phiv_spd = spd_to_power(data['St'], ptype = 'pu', cieobs = data['cri_type']['cieobs']['cct'])
@@ -469,7 +469,7 @@ def plot_tm30_Rfi(spd, cri_type = 'ies-tm30', axh = None,
         :data:
             | dictionary with required parameters for plotting functions.     
     """
-    data = _tm30_process_spd(spd, cri_type = 'ies-tm30',**kwargs)
+    data = _tm30_process_spd(spd, cri_type = cri_type,**kwargs)
 
     Rfi = data['Rfi']
     
@@ -552,7 +552,7 @@ def plot_tm30_Rfhj(spd, cri_type = 'ies-tm30', axh = None,
             | dictionary with required parameters for plotting functions.     
     """
     
-    data = _tm30_process_spd(spd, cri_type = 'ies-tm30',**kwargs)
+    data = _tm30_process_spd(spd, cri_type = cri_type,**kwargs)
     hdata = data['hue_bin_data']
     Rfhj = data['Rfhj']
         
@@ -647,7 +647,7 @@ def plot_tm30_Rcshj(spd, cri_type = 'ies-tm30', axh = None,
     """
 
     
-    data = _tm30_process_spd(spd, cri_type = 'ies-tm30',**kwargs)
+    data = _tm30_process_spd(spd, cri_type = cri_type,**kwargs)
     hdata = data['hue_bin_data']
     Rcshj = data['Rcshj']
     
@@ -746,7 +746,7 @@ def plot_tm30_Rhshj(spd, cri_type = 'ies-tm30', axh = None,
     """
 
     
-    data = _tm30_process_spd(spd, cri_type = 'ies-tm30',**kwargs)
+    data = _tm30_process_spd(spd, cri_type = cri_type,**kwargs)
     hdata = data['hue_bin_data']
     Rhshj = data['Rhshj']
 
@@ -835,7 +835,7 @@ def plot_tm30_Rxhj(spd, cri_type = 'ies-tm30', axh = None, figsize = (6,15),
             | dictionary with required parameters for plotting functions.     
     """
 
-    data = _tm30_process_spd(spd, cri_type = 'ies-tm30',**kwargs)
+    data = _tm30_process_spd(spd, cri_type = cri_type,**kwargs)
     
     if axh is None:
         fig, axh = plt.subplots(nrows = 3, ncols = 1, sharex = True, figsize = figsize)
