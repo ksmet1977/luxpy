@@ -667,7 +667,7 @@ def spd_to_jab_t_r(St, cri_type = _CRI_TYPE_DEFAULT, out = 'jabt,jabr',
     # unpack and update dict with parameters:
     (avg, catf, cieobs,
      cri_specific_pars, cspace, 
-     ref_type, rg_pars, sampleset, scale) = [cri_type[x] for x in sorted(cri_type.keys())] 
+     ref_type, rf_from_avg_rounded_rfi, rg_pars, sampleset, scale) = [cri_type[x] for x in sorted(cri_type.keys())] 
 
     # pre-interpolate SPD:
     if wl is not None: 
@@ -1152,7 +1152,7 @@ def spd_to_rg(St, cri_type = _CRI_TYPE_DEFAULT, out = 'Rg', wl = None, \
     args = copy.deepcopy(locals()) # get dict with keyword input arguments to function (used to overwrite non-None input arguments present in cri_type dict)
     cri_type = process_cri_type_input(cri_type, args, callerfunction = 'cri.spd_to_rg')
 
-    #avg, catf, cieobs, cieobs_cct, cri_specific_pars, cspace, cspace_pars, ref_type, rg_pars, sampleset, scale_factor, scale_fcn = [cri_type[x] for x in sorted(cri_type.keys())] 
+    #avg, catf, cieobs, cieobs_cct, cri_specific_pars, cspace, cspace_pars, ref_type, rf_from_avg_rounded_rfi, rg_pars, sampleset, scale_factor, scale_fcn = [cri_type[x] for x in sorted(cri_type.keys())] 
 
        
     # calculate Jabt of test and Jabr of the reference illuminant corresponding to test: 
@@ -1203,7 +1203,7 @@ def spd_to_rg(St, cri_type = _CRI_TYPE_DEFAULT, out = 'Rg', wl = None, \
 #------------------------------------------------------------------------------
 def spd_to_cri(St, cri_type = _CRI_TYPE_DEFAULT, out = 'Rf', wl = None, \
                sampleset = None, ref_type = None, cieobs = None, \
-               avg = None, rf_from_avg_rounded_rfi = False,\
+               avg = None, rf_from_avg_rounded_rfi = None,\
                scale = None, opt_scale_factor = False, cspace = None, catf = None,\
                cri_specific_pars = None, rg_pars = None, fit_gamut_ellipse = False):
     """
@@ -1313,7 +1313,9 @@ def spd_to_cri(St, cri_type = _CRI_TYPE_DEFAULT, out = 'Rf', wl = None, \
             | (e.g. numpy.mean, .math.rms, .math.geomean)
             | None use the one specified in :cri_type: dict.
         :rf_from_avg_rounded_rfi:
-            | False, optional
+            | None, optional
+            | If None: use as specified in the :cri_type: dict
+            | If False: calculate Rf directly from DEa.
             | If True: round Rfi to integer numbers and average them to Rf
             |           (method used in CIE-13.3-1995 Ra calculation)
         :scale:
@@ -1323,7 +1325,7 @@ def spd_to_cri(St, cri_type = _CRI_TYPE_DEFAULT, out = 'Rf', wl = None, \
             |     - dict: user specified dict with scaling parameters.
             |         - key: 'fcn': function handle to type of cri scale, 
             |                 e.g. 
-            |                 * linear()_scale --> (100 - scale_factor*DEi), 
+            |                 * linear_scale --> (100 - scale_factor*DEi), 
             |                 * log_scale --> (cfr. Ohno's CQS), 
             |                 * psy_scale (Smet et al.'s cri2012,See: LRT 2013)
             |        - key: 'cfactor': factors used in scaling function, 
