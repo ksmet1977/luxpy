@@ -875,7 +875,7 @@ def spd_to_DEi(St, cri_type = _CRI_TYPE_DEFAULT, out = 'DEi', wl = None, \
 
 
 #------------------------------------------------------------------------------
-def optimize_scale_factor(cri_type, opt_scale_factor, scale_fcn, avg) :
+def optimize_scale_factor(cri_type, opt_scale_factor, scale_fcn, avg, rf_from_avg_rounded_rfi) :
     """
     Optimize scale_factor of cri-model in cri_type 
     such that average Rf for a set of light sources is the same as that 
@@ -927,12 +927,25 @@ def optimize_scale_factor(cri_type, opt_scale_factor, scale_fcn, avg) :
         scale_fcn_opt = opt_cri_type ['scale']['fcn']
         scale_factor_opt = opt_cri_type ['scale']['cfactor']
         avg_opt = opt_cri_type ['avg']
-        DEa_opt = spd_to_DEi(opt_spd_set, out ='DEa', cri_type = opt_cri_type) # DEa using target cri
-        Rf_opt = avg(scale_fcn_opt(DEa_opt,scale_factor_opt))
         
-        DEa = spd_to_DEi(opt_spd_set, out ='DEa', cri_type = cri_type) # DEa using current cri
-
+        rf_from_avg_rounded_rfi_opt = opt_cri_type['rf_from_avg_rounded_rfi']
+        rf_from_avg_rounded_rfi = cri_type['rf_from_avg_rounded_rfi']
         
+        if not rf_from_avg_rounded_rfi_opt:
+            DEa_opt = spd_to_DEi(opt_spd_set, out ='DEa', cri_type = opt_cri_type) # DEa using target cri
+            Rf_opt = avg(scale_fcn_opt(DEa_opt,scale_factor_opt))
+            
+        else:
+            DEi_opt = spd_to_DEi(opt_spd_set, out ='DEi', cri_type = opt_cri_type) # DEa using target cri
+            Rfi_opt = avg(np.round(scale_fcn_opt(DEi_opt,scale_factor_opt),0)) # average rounded individual Rfi to get Rf !!!
+            Rf_opt = avg(Rfi_opt)
+            
+        if not rf_from_avg_rounded_rfi:
+            DEa = spd_to_DEi(opt_spd_set, out ='DEa', cri_type = cri_type) # DEa using current cri
+        else:
+            DEi = spd_to_DEi(opt_spd_set, out ='DEi', cri_type = cri_type) # DEa using target cri
+                        
+            
         # optimize scale_factor to minimize rms difference:
         sf = cri_type['scale']['cfactor'] # get scale_factor of cri_type to determine len and non-optimized factors
         
@@ -942,15 +955,27 @@ def optimize_scale_factor(cri_type, opt_scale_factor, scale_fcn, avg) :
             sf = [sf]
         if isinstance(opt_scale_factor, bool):
             opt_scale_factor = [opt_scale_factor] 
+            
         if (len(opt_scale_factor)==1) & (len(sf) == 1):
             x0 = 1
-            optfcn = lambda x : math.rms(avg(scale_fcn(DEa,x)) - Rf_opt,axis=1) # optimize the only cfactor
+            if not rf_from_avg_rounded_rfi:
+                optfcn = lambda x : math.rms(avg(scale_fcn(DEa,x)) - Rf_opt,axis=1) # optimize the only cfactor
+            else:
+                optfcn = lambda x : math.rms(avg(avg(np.round(scale_fcn(DEi, x),0))) - Rf_opt,axis=1)
+       
         elif (len(opt_scale_factor)==1) & (len(sf) > 1):     
             x0 = 1
-            optfcn = lambda x : math.rms(avg(scale_fcn(DEa,np.hstack( (x,sf[1:]) ))) - Rf_opt,axis=1) # optimize the first cfactor (for scale_factor input of len = 1)
+            if not rf_from_avg_rounded_rfi: 
+                optfcn = lambda x : math.rms(avg(scale_fcn(DEa,np.hstack( (x,sf[1:]) ))) - Rf_opt,axis=1) # optimize the first cfactor (for scale_factor input of len = 1)
+            else:
+                optfcn = lambda x : math.rms(avg(avg(np.round(scale_fcn(DEi,np.hstack( (x,sf[1:]) )),0))) - Rf_opt,axis=1) # optimize the first cfactor (for scale_factor input of len = 1)
+
         else:
             x0 = np.ones(np.sum(opt_scale_factor))
-            optfcn = lambda x : math.rms(avg(scale_fcn(DEa,np.hstack( (x,sf[np.invert(opt_scale_factor)]) ))) - Rf_opt,axis=1) # optimize first N 'True' cfactor (for scale_factor input of len = n>=N)
+            if not rf_from_avg_rounded_rfi: 
+                optfcn = lambda x : math.rms(avg(scale_fcn(DEa,np.hstack( (x,sf[np.invert(opt_scale_factor)]) ))) - Rf_opt,axis=1) # optimize first N 'True' cfactor (for scale_factor input of len = n>=N)
+            else: 
+                optfcn = lambda x : math.rms(avg(avg(np.round(scale_fcn(DEa,np.hstack( (x,sf[np.invert(opt_scale_factor)]) )),0))) - Rf_opt,axis=1) # optimize first N 'True' cfactor (for scale_factor input of len = n>=N)
         
         optresult = sp.optimize.minimize(fun = optfcn, x0 = x0, args=(), method = 'Nelder-Mead')
         scale_factor = optresult['x']
@@ -1177,7 +1202,8 @@ def spd_to_rg(St, cri_type = _CRI_TYPE_DEFAULT, out = 'Rg', wl = None, \
     
 #------------------------------------------------------------------------------
 def spd_to_cri(St, cri_type = _CRI_TYPE_DEFAULT, out = 'Rf', wl = None, \
-               sampleset = None, ref_type = None, cieobs = None, avg = None, \
+               sampleset = None, ref_type = None, cieobs = None, \
+               avg = None, rf_from_avg_rounded_rfi = False,\
                scale = None, opt_scale_factor = False, cspace = None, catf = None,\
                cri_specific_pars = None, rg_pars = None, fit_gamut_ellipse = False):
     """
@@ -1286,6 +1312,10 @@ def spd_to_cri(St, cri_type = _CRI_TYPE_DEFAULT, out = 'Rf', wl = None, \
             | Averaging function (handle) for color differences, DEi 
             | (e.g. numpy.mean, .math.rms, .math.geomean)
             | None use the one specified in :cri_type: dict.
+        :rf_from_avg_rounded_rfi:
+            | False, optional
+            | If True: round Rfi to integer numbers and average them to Rf
+            |           (method used in CIE-13.3-1995 Ra calculation)
         :scale:
             | None or dict, optional
             | Specifies scaling of color differences to obtain CRI.
@@ -1384,9 +1414,10 @@ def spd_to_cri(St, cri_type = _CRI_TYPE_DEFAULT, out = 'Rf', wl = None, \
         scale_factor = cri_type['scale']['cfactor']
     scale_fcn = cri_type['scale']['fcn']
     avg = cri_type['avg']  
+    rf_from_avg_rounded_rfi = cri_type['rf_from_avg_rounded_rfi']
     
     # Input parsing: optimize scale_factor for input based on F1-F12 (default) if scale_factor is NaN or None:
-    scale_factor = optimize_scale_factor(cri_type,opt_scale_factor, scale_fcn, avg)
+    scale_factor = optimize_scale_factor(cri_type,opt_scale_factor, scale_fcn, avg, rf_from_avg_rounded_rfi)
 
     if np.isnan(scale_factor).any():
         raise Exception ('Unable to optimize scale_factor.')
@@ -1406,7 +1437,10 @@ def spd_to_cri(St, cri_type = _CRI_TYPE_DEFAULT, out = 'Rf', wl = None, \
     
     # B. convert DEi to color rendering index:
     Rfi = scale_fcn(DEi, scale_factor)
-    Rf = np2d(scale_fcn(DEa, scale_factor))
+    if not rf_from_avg_rounded_rfi:
+        Rf = np2d(scale_fcn(DEa, scale_factor))
+    else:
+        Rf = np2d(avg(np.round(Rfi,0),axis=0)) # as in CIE 13.3-1995 Ra calculation !!! 
     
     # C. get binned jabt jabr and DEi:
     if ('Rg' in outlist) | ('Rfhj' in outlist) | ('DEhj' in outlist) | \
