@@ -347,9 +347,10 @@ def _hue_bin_data_to_rxhj(hue_bin_data, cri_type = _CRI_TYPE_DEFAULT,
             | Dict with hue bin data obtained with _get_hue_bin_data().
         :use_bin_avg_DEi: 
             | True, optional
-            | Note that following IES-TM30 DEi from gamut_slicer() is obtained by
+            | Note that following IES-TM30 DEhj from gamut_slicer() is obtained by
             | averaging the DEi per hue bin (True), and NOT by averaging the 
-            | jabt and jabr per hue  bin and then calculating the DEi (False).
+            | jabt and jabr per hue  bin and then calculating the DEhj (False).
+            | If None: use value in rg_pars dict in cri_type dict!
         :scale_fcn:
             | function handle to type of cri scale, 
             | e.g. 
@@ -369,7 +370,7 @@ def _hue_bin_data_to_rxhj(hue_bin_data, cri_type = _CRI_TYPE_DEFAULT,
         <https://www.ies.org/store/technical-memoranda/ies-method-for-evaluating-light-source-color-rendition/>`_
     """
     
-    if (scale_factor is None) | (scale_fcn is None):
+    if (scale_factor is None) | (scale_fcn is None) | (use_bin_avg_DEi is None):
         if isinstance(cri_type, str): 
            args = copy.deepcopy(locals()) # get dict with keyword input arguments to function (used to overwrite non-None input arguments present in cri_type dict)
            cri_type = process_cri_type_input(cri_type, args, callerfunction = 'cri._hue_bin_data_to_Ri')
@@ -381,6 +382,10 @@ def _hue_bin_data_to_rxhj(hue_bin_data, cri_type = _CRI_TYPE_DEFAULT,
         if (scale_fcn is None):
             scale_fcn = cri_type['scale']['fcn']    
         
+        if (use_bin_avg_DEi is None) & ('rg_pars' in cri_type): 
+            use_bin_avg_DEi = cri_type['rg_pars']['use_bin_avg_DEi']
+        else:
+            raise Exception('Define use_bin_avg_DEi in rg_pars dict in cri_type dict or set use_bin_avg_DEi kwarg to not None!')
 
     nhbins = hue_bin_data['nhbins']
     start_hue = hue_bin_data['start_hue']
@@ -1257,7 +1262,8 @@ def spd_to_cri(St, cri_type = _CRI_TYPE_DEFAULT, out = 'Rf', wl = None, \
             |             luxpy.cri._CRI_DEFAULTS['mcri']['cri_specific_pars']
         :rg_pars: 
             | None or dict, optional
-            | Dict containing specifying parameters for slicing the gamut.
+            | Dict containing specifying parameters for slicing the gamut 
+            | and calculating hue bin specific indices.
             | Dict structure: 
             |     {'nhbins' : None, 'start_hue' : 0, 
             |       'normalize_gamut' : False, 'normalized_chroma_ref': 100.0}
@@ -1270,6 +1276,11 @@ def spd_to_cri(St, cri_type = _CRI_TYPE_DEFAULT, out = 'Rf', wl = None, \
             |    - key: 'normalized_chroma_ref': 100.0 or float, optional
             |                Controls the size (chroma/radius) 
             |                of the normalization circle/gamut.
+            |    - key 'use_bin_avg_DEi': True or False
+            |               Note that following IES-TM30 DEhj from gamut_slicer()
+            |               is obtained by averaging the DEi per hue bin (True),
+            |               and NOT by averaging the jabt and jabr per hue bin 
+            |               and then calculating the DEhj (False).
         :avg: 
             | None or fcn handle, optional
             | Averaging function (handle) for color differences, DEi 
@@ -1403,7 +1414,8 @@ def spd_to_cri(St, cri_type = _CRI_TYPE_DEFAULT, out = 'Rf', wl = None, \
        ('data' in outlist) | (fit_gamut_ellipse == True):
         
         rg_pars = cri_type['rg_pars'] 
-        nhbins, normalize_gamut, normalized_chroma_ref, start_hue  = [rg_pars[x] for x in sorted(rg_pars.keys())]
+        if 'use_bin_avg_DEi' not in rg_pars: rg_pars['use_bin_avg_DEi'] = True
+        nhbins, normalize_gamut, normalized_chroma_ref, start_hue, use_bin_avg_DEi  = [rg_pars[x] for x in sorted(rg_pars.keys())]
 
         
         # get hue_bin_data:
@@ -1426,7 +1438,11 @@ def spd_to_cri(St, cri_type = _CRI_TYPE_DEFAULT, out = 'Rf', wl = None, \
 
     # D. # Calculate local fidelity, chroma shifts and hue shifts:
     if hue_bin_data is not None:
-        Rcshj, Rhshj, Rfhj, DEhj = _hue_bin_data_to_rxhj(hue_bin_data)
+        Rcshj, Rhshj, Rfhj, DEhj = _hue_bin_data_to_rxhj(hue_bin_data, 
+                                                         scale_fcn = scale_fcn,
+                                                         scale_factor = scale_factor,
+                                                         cri_type = cri_type,
+                                                         use_bin_avg_DEi = use_bin_avg_DEi)
 
 
     if 'data' in out:

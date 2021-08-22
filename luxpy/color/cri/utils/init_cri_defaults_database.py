@@ -44,7 +44,7 @@ _CRI_DEFAULTS['ciera-13.3-1995'] = {'sampleset' : "_CRI_RFL['cie-13.3-1995']['8'
                          'scale' :{'fcn' : linear_scale, 'cfactor' : [4.6]}, 
                          'cspace' : {'type':'wuv', 'xyzw' : None}, 
                          'catf': {'xyzw':None, 'mcat':'judd-1945','D':1.0,'La':None,'cattype':'vonkries','Dtype':None, 'catmode' : '1>2'}, 
-                         'rg_pars' : {'nhbins': None, 'start_hue':0.0, 'normalize_gamut': False, 'normalized_chroma_ref' : 100}, 
+                         'rg_pars' : {'nhbins': None, 'start_hue':0.0, 'normalize_gamut': False, 'normalized_chroma_ref' : 100, 'use_bin_avg_DEi' : True}, 
                          'cri_specific_pars' : None
                          }
 
@@ -61,7 +61,7 @@ _CRI_DEFAULTS['cierf-224-2017'] = {'sampleset' : "_CRI_RFL['cie-224-2017']['99']
                                  'scale' : {'fcn' : log_scale, 'cfactor' : [6.73]}, 
                                  'cspace' : {'type' : 'jab_cam02ucs' , 'xyzw': None, 'mcat':'cat02', 'Yw':None, 'conditions' :{'La':100.0,'surround':'avg','D':1.0,'Yb':20.0,'Dtype':None},'yellowbluepurplecorrect' : None},
                                  'catf': None, 
-                                 'rg_pars' : {'nhbins': 8, 'start_hue':0.0, 'normalize_gamut': False, 'normalized_chroma_ref' : 100}, 
+                                 'rg_pars' : {'nhbins': 8, 'start_hue':0.0, 'normalize_gamut': False, 'normalized_chroma_ref' : 100, 'use_bin_avg_DEi' : True}, 
                                  'cri_specific_pars' : None
                                  }
 
@@ -74,7 +74,7 @@ _CRI_DEFAULTS['iesrf-tm30-15'] = {'sampleset' : "_CRI_RFL['ies-tm30-15']['99']['
                                  'avg' : np.mean, 'scale' :{'fcn' : log_scale, 'cfactor' : [7.54]}, 
                                  'cspace' : {'type': 'jab_cam02ucs', 'xyzw':None, 'mcat':'cat02', 'Yw':None, 'conditions' :{'La':100.0,'surround':'avg','D':1.0,'Yb':20.0,'Dtype':None},'yellowbluepurplecorrect' : None},
                                  'catf': None, 
-                                 'rg_pars' : {'nhbins': 16, 'start_hue':0.0, 'normalize_gamut': False, 'normalized_chroma_ref' : 100}, 
+                                 'rg_pars' : {'nhbins': 16, 'start_hue':0.0, 'normalize_gamut': False, 'normalized_chroma_ref' : 100, 'use_bin_avg_DEi' : True}, 
                                  'cri_specific_pars' : None
                                  }
 
@@ -84,7 +84,7 @@ _CRI_DEFAULTS['iesrf-tm30-18'] = {'sampleset' : "_CRI_RFL['ies-tm30-18']['99']['
                                  'avg' : np.mean, 'scale' :{'fcn' : log_scale, 'cfactor' : [6.73]}, 
                                  'cspace' : {'type': 'jab_cam02ucs', 'xyzw':None, 'mcat':'cat02', 'Yw':None, 'conditions' :{'La':100.0,'surround':'avg','D':1.0,'Yb':20.0,'Dtype':None},'yellowbluepurplecorrect' : None},
                                  'catf': None, 
-                                 'rg_pars' : {'nhbins': 16, 'start_hue':0.0, 'normalize_gamut': False, 'normalized_chroma_ref' : 100}, 
+                                 'rg_pars' : {'nhbins': 16, 'start_hue':0.0, 'normalize_gamut': False, 'normalized_chroma_ref' : 100, 'use_bin_avg_DEi' : True}, 
                                  'cri_specific_pars' : None
                                  }
 
@@ -102,7 +102,7 @@ _CRI_DEFAULTS['cri2012-hl17'] = {'sampleset' : "_CRI_RFL['cri2012']['HL17']",
                              'scale' : {'fcn': psy_scale, 'cfactor' : [1/55, 3/2, 2]}, 
                              'cspace' : {'type': 'jab_cam02ucs', 'xyzw':None, 'mcat':'cat02', 'Yw':None, 'conditions' :{'La':100.0,'surround':'avg','D':1.0,'Yb':20.0,'Dtype':None},'yellowbluepurplecorrect' : 'brill-suss'},
                              'catf': None, 
-                             'rg_pars' : {'nhbins': None, 'start_hue':0.0, 'normalize_gamut': False, 'normalized_chroma_ref' : 100}, 
+                             'rg_pars' : {'nhbins': None, 'start_hue':0.0, 'normalize_gamut': False, 'normalized_chroma_ref' : 100, 'use_bin_avg_DEi' : True}, 
                              'cri_specific_pars' : None
                              }
 
@@ -112,7 +112,7 @@ _CRI_DEFAULTS['cri2012-hl1000'] = {'sampleset' : "_CRI_RFL['cri2012']['HL1000']"
                                    'avg' : math.rms,'scale': {'fcn' : psy_scale, 'cfactor' : [1/50, 3/2, 2]}, 
                                    'cspace' : {'type' : 'jab_cam02ucs','xyzw':None, 'mcat':'cat02', 'Yw':None, 'conditions' :{'La':100.0,'surround':'avg','D':1.0,'Yb':20.0,'Dtype':None},'yellowbluepurplecorrect' : 'brill-suss'},
                                    'catf': None, 
-                                   'rg_pars' : {'nhbins': None, 'start_hue':0.0, 'normalize_gamut': False,'normalized_chroma_ref' : 100}, 
+                                   'rg_pars' : {'nhbins': None, 'start_hue':0.0, 'normalize_gamut': False,'normalized_chroma_ref' : 100, 'use_bin_avg_DEi' : True}, 
                                    'cri_specific_pars' : None
                                    }
 
@@ -123,7 +123,7 @@ _CRI_DEFAULTS['cri2012-real210'] = {'sampleset' : "_CRI_RFL['cri2012']['Real210'
                                     'scale' : {'fcn' : psy_scale, 'cfactor' : [2/45, 3/2, 2]},
                                     'cspace' : {'type': 'jab_cam02ucs', 'xyzw':None, 'mcat':'cat02', 'Yw':None, 'conditions' :{'La':100.0,'surround':'avg','D':1.0,'Yb':20.0,'Dtype':None},'yellowbluepurplecorrect' : 'brill-suss'}, 
                                     'catf': None, 
-                                    'rg_pars' : {'nhbins': None, 'start_hue':0.0, 'normalize_gamut': False, 'normalized_chroma_ref' : 100}, 
+                                    'rg_pars' : {'nhbins': None, 'start_hue':0.0, 'normalize_gamut': False, 'normalized_chroma_ref' : 100, 'use_bin_avg_DEi' : True}, 
                                     'cri_specific_pars' : None
                                     }
 
