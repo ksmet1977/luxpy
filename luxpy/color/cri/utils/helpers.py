@@ -127,7 +127,7 @@ def _get_hue_bin_data_individual_samples(jabt,jabr, normalized_chroma_ref = 100)
             'DEi' : DEi[...,0], 
             'Ct' : Ct, 'Cr': Cr, 'ht' : ht, 'hr' : hr, 
             'ht_idx' : ht_idx, 'hr_idx' : hr_idx,
-            'jabt_hj' : jabt_hj, 'jabr_hj' : jabr_hj, 'DE_hj' : DE_hj,
+            'jabt_hj' : jabt_hj, 'jabr_hj' : jabr_hj, 'DE_hj' : DE_hj[...,0],
             'jabt_hj_closed' : jabt_hj_closed, 'jabr_hj_closed' : jabr_hj_closed,
             'jabtn_hj' : jabtn_hj, 'jabrn_hj' : jabrn_hj,
             'jabtn_hj_closed' : jabtn_hj_closed, 'jabrn_hj_closed' : jabrn_hj_closed,
