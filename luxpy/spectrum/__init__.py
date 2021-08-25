@@ -254,5 +254,5 @@ __all__ = basics.__all__
 from .spdx_ietm2714 import read_spdx, write_spdx, _SPDX_TEMPLATE
 __all__ += ['read_spdx', 'write_spdx', '_SPDX_TEMPLATE']
 
-from .detector_spectral_mismatch import f1prime
-__all__ += ['f1prime','get_spectral_mismatch_correct_factors'] 
+from .detector_spectral_mismatch import f1prime, get_spectral_mismatch_correction_factors
+__all__ += ['f1prime','get_spectral_mismatch_correction_factors'] 

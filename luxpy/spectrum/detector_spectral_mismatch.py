@@ -5,7 +5,7 @@ Module for detector spectral responsivity spectral mismatch calculations
 
  :f1prime(): Determine the f1prime spectral mismatch index.
  
- :get_spectral_mismatch_correct_factors(): Determine the spectral mismatch factors.
+ :get_spectral_mismatch_correction_factors(): Determine the spectral mismatch factors.
 
 Reference:
     1. Krüger, U. et al. GENERAL V(λ) MISMATCH - INDEX HISTORY, CURRENT STATE, NEW IDEAS
@@ -17,7 +17,7 @@ Created on Wed Aug 25 13:02:00 2021
 from luxpy.spectrum import _CIE_ILLUMINANTS, _CMF, cie_interp, getwlr, getwld
 import numpy as np
 
-__all__ = ['f1prime','get_spectral_mismatch_correct_factors']
+__all__ = ['f1prime','get_spectral_mismatch_correction_factors']
 
 def f1prime(s_detector, S_C = 'A', 
             cieobs = '1931_2', s_target_index = 2,
@@ -91,7 +91,7 @@ def f1prime(s_detector, S_C = 'A',
     else:
         return eval(out)
     
-def get_spectral_mismatch_correct_factors(S_Z, s_detector, S_C = 'A', 
+def get_spectral_mismatch_correction_factors(S_Z, s_detector, S_C = 'A', 
                                           cieobs = '1931_2', s_target_index = 2,
                                           wlr = [380,780, 1], interp_kind = 'linear', 
                                           out = 'F'):
@@ -165,5 +165,5 @@ if __name__ == '__main__':
     f1p = f1prime(s_detector)
     
     S_Z = np.vstack((_CIE_ILLUMINANTS['D65'],_CIE_ILLUMINANTS['C'][1:]))
-    F = get_spectral_mismatch_correct_factors(S_Z,s_detector)
+    F = get_spectral_mismatch_correction_factors(S_Z,s_detector)
     print(F.shape)
