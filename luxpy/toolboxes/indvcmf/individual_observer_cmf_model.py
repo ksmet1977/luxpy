@@ -403,7 +403,7 @@ def _load_cietc197_lms_and_odensities(wl=None, path = None):
     docul2 = pd.read_csv(path  + 'cietc197_docul2.dat', header=None)
     ocular_sum_32 = tmp[[0, 4],:].T  # 32 years only!
     docul2 = _docul_fine(ocular_sum_32, docul2)
-    docul2 = cie_interp(docul2.T,wl, kind = 'linear',negative_values_allowed = True, extrap_values = True)
+    docul2 = cie_interp(docul2.T,wl, kind = 'linear',negative_values_allowed = True, extrap_values = 'ext')
     data = {'wls': wl, 'rmd': macula_rel, 'docul':docul2, 'LMSa': absorbance}
     return data
 

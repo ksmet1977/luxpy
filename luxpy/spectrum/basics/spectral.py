@@ -265,6 +265,7 @@ def cie_interp(data,wl_new, kind = None, negative_values_allowed = False,
             |     (not CIE recommended but in most cases seems to give a 
             |     more realistic estimate, but can sometimes seriously fail, 
             |     especially for the 'quadratic' extrapolation case (see note 1)!!!)
+    
     Returns:
         :returns: 
             | ndarray of interpolated spectral data.
@@ -283,7 +284,6 @@ def cie_interp(data,wl_new, kind = None, negative_values_allowed = False,
         |       is likely a more suitable recommendation. When using a 1 nm spacing
         |       'linear' is more similar to 'quadratic' when :extrap_log: is False, otherwise 'linear'
         |       remains the 'best'.
-
     """
     if (kind is not None):
         # Wavelength definition:

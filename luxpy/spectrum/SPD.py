@@ -80,7 +80,7 @@ from luxpy.color.CDATA import XYZ
 class SPD:
     
     def __init__(self, spd = None, wl = None, ax0iswl = True, dtype = 'S', \
-                 wl_new = None, interp_method = 'auto', negative_values_allowed = False, extrap_values = None,\
+                 wl_new = None, interp_method = 'auto', negative_values_allowed = False, extrap_values = 'ext',\
                  norm_type = None, norm_f = 1,\
                  header = None, sep = ','):
         """
@@ -119,9 +119,10 @@ class SPD:
                 | Spectral data can not be negative. Values < 0 are therefore 
                   clipped when set to False.
             :extrap_values:
-                | None, optional
+                | 'ext', optional
                 | float or list or ndarray with values to extrapolate
-                | If None: use CIE recommended 'closest value' approach.
+                | If 'ext' or 'cie15:2018': use CIE15:2018 recommended quadratic extrapolation.
+                | If None or 'cie15:2004': use CIE15:2004 recommended 'closest value' approach.
             :norm_type:
                 | None or str, optional
                 | - 'lambda': make lambda in norm_f equal to 1
@@ -331,7 +332,8 @@ class SPD:
         return self
 
     #--------------------------------------------------------------------------------------------------
-    def cie_interp(self,wl_new, kind = 'auto', negative_values_allowed = False, extrap_values = None):
+    def cie_interp(self,wl_new, kind = 'auto', negative_values_allowed = False, 
+                   extrap_values = 'cie15:2018', extrap_kind = 'quadratic', extrap_log = False):
         """
         Interpolate / extrapolate spectral data following standard CIE15-2018.
         
@@ -353,14 +355,38 @@ class SPD:
                 | False, optional
                 | If False: negative values are clipped to zero
             :extrap_values:
-                | None, optional
-                | float or list or ndarray with values to extrapolate
-                | If None: use CIE recommended 'closest value' approach.
+                | 'ext', optional
+                | If 'ext' or 'cie15:2018': use CIE15:2018 recommended method of quadratic extrapolation (slowest option of the three!!)
+                | If None or 'cie15:2004': use CIE15:2004 recommended 'closest value' approach when extrapolating.
+                | If float or list or ndarray, use those values to fill extrapolated value(s).
+            :extrap_kind:
+                | 'quadratic', optional
+                | Extrapolation method used when :extrap_values: is set to 'ext' or 'cie15:2018' 
+                | CIE15:2018 recommends 'quadratic'. However, see note 1 below. 
+            :extrap_log:
+                | False, optional
+                | If True: extrap the log of the spectral values 
+                |     (not CIE recommended but in most cases seems to give a 
+                |     more realistic estimate, but can sometimes seriously fail, 
+                |     especially for the 'quadratic' extrapolation case (see note 1)!!!)
         
         Returns:
             :returns:
                 | ndarray of interpolated spectral data.
                 | (.shape = (number of spectra+1, number of wavelength in wl_new))
+        Notes:
+            | 1. Type of extrapolation: 'quadratic' vs 'linear'; impact of extrapolating log spectral values:
+            |       Using a 'quadratic' extrapolation this can lead to extreme large
+            |       values when setting :extrap_log: (not CIE recommended) to True. 
+            |       A quick test with the IES TM30 spectra (400 nm - 700 nm, 5 nm spacing) 
+            |       shows that 'linear' is better than 'quadratic' in terms of 
+            |       mean, median and max DEu'v' with the original spectra (380 nm - 780 nm, 5 nm spacing).
+            |       Setting :extrap_log: to True reduces the median, but inflates the mean due to some
+            |       extremely large DEu'v' values. However, the increase in mean and max DEu'v' is much 
+            |       larger for the 'quadratic' case, suggesting that 'linear' extrapolation 
+            |       is likely a more suitable recommendation. When using a 1 nm spacing
+            |       'linear' is more similar to 'quadratic' when :extrap_log: is False, otherwise 'linear'
+            |       remains the 'best'.
         """
         if (kind == 'auto') & (self.dtype is not None):
             kind = self.dtype
