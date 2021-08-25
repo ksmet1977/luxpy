@@ -238,6 +238,9 @@ spectrum/detector_spectral_mismatch.py
 --------------------------------------
 
  :f1prime(): Determine the f1prime spectral mismatch index.
+ 
+ :get_spectral_mismatch_correct_factors(): Determine the spectral mismatch factors.
+
 
 Reference
 ---------
@@ -252,4 +255,4 @@ from .spdx_ietm2714 import read_spdx, write_spdx, _SPDX_TEMPLATE
 __all__ += ['read_spdx', 'write_spdx', '_SPDX_TEMPLATE']
 
 from .detector_spectral_mismatch import f1prime
-__all__ += ['f1prime'] 
+__all__ += ['f1prime','get_spectral_mismatch_correct_factors'] 
