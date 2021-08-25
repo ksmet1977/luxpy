@@ -131,7 +131,8 @@ def get_spectral_mismatch_correction_factors(S_Z, s_detector, S_C = 'A',
             |    e.g. 'F,f1p' also outputs the f1prime spectral mismatch index. 
     Returns:
         :F:
-            | ndarray with correction factors for each of the mesured spectra and spectral responsivities in s_detector.
+            | ndarray with correction factors for each of the mesured spectra (rows)
+            | and spectral responsivities in s_detector (columns).
     """
     if wlr is None:
         wlr = S_Z[0] # use wavelengths of measured spectra!
