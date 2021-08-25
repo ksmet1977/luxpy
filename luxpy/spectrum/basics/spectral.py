@@ -82,7 +82,7 @@ References
 
 #--------------------------------------------------------------------------------------------------
 from luxpy import  _CIEOBS, math
-from luxpy.utils import np, pd, sp, plt, _PKG_PATH, _SEP, np2d, getdata
+from luxpy.utils import np, pd, sp, plt, _PKG_PATH, _SEP, np2d, getdata, _EPS
 
 from .cmf import _CMF
 from scipy import signal
@@ -226,7 +226,8 @@ def spd_normalize(data, norm_type = None, norm_f = 1, wl = True, cieobs = _CIEOB
 
 
 #--------------------------------------------------------------------------------------------------
-def cie_interp(data,wl_new, kind = None, negative_values_allowed = False, extrap_values = None):
+def cie_interp(data,wl_new, kind = None, negative_values_allowed = False,
+               extrap_values = 'cie15:2018', extrap_kind = 'quadratic', extrap_log = False):
     """
     Interpolate / extrapolate spectral data following standard CIE15-2018.
     
@@ -250,15 +251,39 @@ def cie_interp(data,wl_new, kind = None, negative_values_allowed = False, extrap
             | False, optional
             | If False: negative values are clipped to zero.
         :extrap_values:
-            | None, optional
-            | If None: use CIE recommended 'closest value' approach when extrapolating.
+            | 'ext', optional
+            | If 'ext' or 'cie15:2018': use CIE15:2018 recommended method of quadratic extrapolation (slowest option of the three!!)
+            | If None or 'cie15:2004': use CIE15:2004 recommended 'closest value' approach when extrapolating.
             | If float or list or ndarray, use those values to fill extrapolated value(s).
-            | If 'ext': use normal extrapolated values by scipy.interpolate.interp1d
-    
+        :extrap_kind:
+            | 'quadratic', optional
+            | Extrapolation method used when :extrap_values: is set to 'ext' or 'cie15:2018' 
+            | CIE15:2018 recommends 'quadratic'. However, see note 1 below. 
+        :extrap_log:
+            | False, optional
+            | If True: extrap the log of the spectral values 
+            |     (not CIE recommended but in most cases seems to give a 
+            |     more realistic estimate, but can sometimes seriously fail, 
+            |     especially for the 'quadratic' extrapolation case (see note 1)!!!)
     Returns:
         :returns: 
             | ndarray of interpolated spectral data.
             | (.shape = (number of spectra + 1, number of wavelength in wl_new))
+    
+    Notes:
+        | 1. Type of extrapolation: 'quadratic' vs 'linear'; impact of extrapolating log spectral values:
+        |       Using a 'quadratic' extrapolation this can lead to extreme large
+        |       values when setting :extrap_log: (not CIE recommended) to True. 
+        |       A quick test with the IES TM30 spectra (400 nm - 700 nm, 5 nm spacing) 
+        |       shows that 'linear' is better than 'quadratic' in terms of 
+        |       mean, median and max DEu'v' with the original spectra (380 nm - 780 nm, 5 nm spacing).
+        |       Setting :extrap_log: to True reduces the median, but inflates the mean due to some
+        |       extremely large DEu'v' values. However, the increase in mean and max DEu'v' is much 
+        |       larger for the 'quadratic' case, suggesting that 'linear' extrapolation 
+        |       is likely a more suitable recommendation. When using a 1 nm spacing
+        |       'linear' is more similar to 'quadratic' when :extrap_log: is False, otherwise 'linear'
+        |       remains the 'best'.
+
     """
     if (kind is not None):
         # Wavelength definition:
@@ -287,15 +312,26 @@ def cie_interp(data,wl_new, kind = None, negative_values_allowed = False, extrap
             rows_with_nans = np.where(nan_indices.sum(axis=1))[0]
             if not (rows_with_nans.size == N):
                 #allrows_nans = False
-                if extrap_values[0] is None:
+                if (extrap_values[0] is None) | (((type(extrap_values[0])==np.str_) | (type(extrap_values[0])==str)) and (extrap_values[0]=='cie15:2004')): # perform extrapolation conform CIE15-2004 recommendation
                     fill_value = (0,0)
-                elif (((type(extrap_values[0])==np.str_)|(type(extrap_values[0])==str)) and (extrap_values[0][:3]=='ext')):
-                    fill_value = 'extrapolate'
+                    Si_ext = None
+                elif (((type(extrap_values[0])==np.str_)|(type(extrap_values[0])==str)) and ((extrap_values[0][:3]=='ext') | (extrap_values[0]=='cie15:2018'))): # perform quadratic extrapolation (conform CIE15-2018 recommendation)
+                    fill_value = (0,0)
+                    if extrap_log:
+                        Si_ext = np.exp(np.atleast_2d(sp.interpolate.interp1d(wl, np.log(S + _EPS), kind = extrap_kind, bounds_error = False, fill_value = 'extrapolate')(wl_new)))
+                    else:
+                        Si_ext = np.atleast_2d(sp.interpolate.interp1d(wl, S, kind = extrap_kind, bounds_error = False, fill_value = 'extrapolate')(wl_new))
                 else:
                     fill_value = (extrap_values[0],extrap_values[-1])
+                    Si_ext = None
                 Si = sp.interpolate.interp1d(wl, S, kind = kind, bounds_error = False, fill_value = fill_value)(wl_new)
                 
-                #extrapolate by replicating closest known (in source data!) value (conform CIE15-2004 recommendation) 
+                # CIE15:2018 recommendation: Add quadratic extrapolated part to the interpolate part (which had extrapolated fill values set to zero)
+                if Si_ext is not None: 
+                    Si_ext[:,(wl_new >= wl[0]) & (wl_new <= wl[-1])] = 0
+                    Si = Si + Si_ext
+                
+                # CIE15:2004 recommendation: extrapolate by replicating closest known (in source data!) value
                 if extrap_values[0] is None:
                     Si[:,wl_new<wl[0]] = S[:,:1]
                     Si[:,wl_new>wl[-1]] = S[:,-1:]  
@@ -315,12 +351,19 @@ def cie_interp(data,wl_new, kind = None, negative_values_allowed = False, extrap
                     Si_nonan = math.interp1(wl_nonan,S_i_nonan, wl_new, kind = kind, ext = 'extrapolate')
 #                    Si_nonan = sp.interpolate.interp1d(wl_nonan, S_i_nonan, kind = kind, bounds_error = False, fill_value = 'extrapolate')(wl_new)
                   
-                    #extrapolate by replicating closest known (in source data!) value (conform CIE15-2004 recommendation) 
-                    if extrap_values[0] is None:
+                    # Do extrapolation:
+                    if (extrap_values[0] is None) | (((type(extrap_values[0])==np.str_) | (type(extrap_values[0])==str)) and (extrap_values[0]=='cie15:2004')): # extrapolate by replicating closest known (in source data!) value (conform CIE15-2004 recommendation) 
                         Si_nonan[wl_new<wl_nonan[0]] = S_i_nonan[0]
                         Si_nonan[wl_new>wl_nonan[-1]] = S_i_nonan[-1]
-                    elif (((type(extrap_values[0])==np.str_)|(type(extrap_values[0])==str)) and (extrap_values[0][:3]=='ext')):
-                        pass
+                    elif (((type(extrap_values[0])==np.str_)|(type(extrap_values[0])==str)) and ((extrap_values[0][:3]=='ext') | (extrap_values[0]=='cie15:2018'))): # perform quadratic extrapolation (conform CIE15-2018 recommendation) 
+                        if extrap_log:
+                            Si_nonan_ext = np.exp(math.interp1(wl_nonan,np.log(S_i_nonan + _EPS), wl_new, kind = extrap_kind, ext = 'extrapolate'))
+                        else:
+                            Si_nonan_ext = math.interp1(wl_nonan,S_i_nonan, wl_new, kind = extrap_kind, ext = 'extrapolate')
+                            
+                        Si_nonan_ext[(wl_new >= wl_nonan[0]) & (wl_new <= wl_nonan[-1])] = 0
+                        Si_nonan[(wl_new<wl_nonan[0]) | (wl_new>wl_nonan[-1])] = 0
+                        Si_nonan = Si_nonan + Si_nonan_ext
                     else:
                         Si_nonan[wl_new<wl_nonan[0]] = extrap_values[0]
                         Si_nonan[wl_new>wl_nonan[-1]] = extrap_values[-1]  
