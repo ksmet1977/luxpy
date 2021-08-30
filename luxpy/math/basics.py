@@ -85,6 +85,8 @@ Module with useful basic math functions
  
  :fit_cov_ellipse(): Fit an covariance ellipse to supplied data points.
  
+ :interp1_sprague5(): Perform a 1-dimensional 5th order Sprague interpolation.
+ 
  :interp1(): Perform a 1-dimensional linear interpolation (wrapper around scipy.interpolate.InterpolatedUnivariateSpline).
  
  :ndinterp1(): Perform n-dimensional interpolation using Delaunay triangulation.
@@ -106,13 +108,15 @@ Module with useful basic math functions
 from luxpy.utils import np, sp, np2d, _EPS, asplit
 from scipy.special import erf, erfinv
 from scipy import stats
+from scipy.interpolate import interp1d 
+
 __all__  = ['normalize_3x3_matrix','symmM_to_posdefM','check_symmetric',
             'check_posdef','positive_arctan','line_intersect','erf', 'erfinv', 
             'histogram', 'pol2cart', 'cart2pol', 'spher2cart', 'cart2spher']
 __all__ += ['bvgpdf','mahalanobis2','dot23', 'rms','geomean','polyarea']
 __all__ += ['magnitude_v','angle_v1v2']
 __all__ += ['v_to_cik', 'cik_to_v', 'fmod', 'remove_outliers','fit_ellipse','fit_cov_ellipse']
-__all__ += ['in_hull','interp1', 'ndinterp1','ndinterp1_scipy']
+__all__ += ['in_hull','interp1_sprague5','interp1', 'ndinterp1','ndinterp1_scipy']
 __all__ += ['box_m','pitman_morgan', 'stress','stress_F_test']
 
 
@@ -1046,6 +1050,88 @@ def in_hull(p, hull):
     return hull.find_simplex(p)>=0
 
 #------------------------------------------------------------------------------
+_SPRAGUE_COEFFICIENTS = np.array([
+                                 [884, -1960, 3033, -2648, 1080, -180],
+                                 [508, -540, 488, -367, 144, -24],
+                                 [-24, 144, -367, 488, -540, 508],
+                                 [-180, 1080, -2648, 3033, -1960, 884],
+                                 ]).T / 209.0
+def interp1_sprague5(x, y, xn, extrap = (np.nan, np.nan)):
+    """ 
+    Perform a 1-dimensional 5th order Sprague interpolation.
+    
+    Args:
+        :x:
+            | ndarray with n-dimensional coordinates.
+        :y: 
+            | ndarray with values at coordinates in x.
+        :xn:
+            | ndarray of new coordinates.
+        :extrap:
+            | (np.nan, np.nan) or string, optional
+            | If tuple: fill with values in tuple (<x[0],>x[-1])
+            | If string:  ('zeros','linear', 'nearest', 'nearest-up', 'zero', 'slinear', 'quadratic', 'cubic', 'previous','next')
+            |           for more info on the other options see: scipy.interpolate.interp1d?
+    Returns:
+        :yn:
+            | ndarray with values at new coordinates in xn.
+    """
+    # Do extrapolation:
+    if ((xn<x[0]) | (xn>x[-1])).any(): # extrapolation needed !
+        if isinstance(extrap,tuple):
+            if extrap[0] == extrap[1]: 
+                yne = np.ones((y.shape[0],len(xn)))*extrap[0]
+            else:
+                yne = np.zeros((y.shape[0],len(xn)))
+                yne[:,(xn<x[0])] = extrap[0]
+                yne[:,(xn>x[-1])] = extrap[1]
+        elif isinstance(extrap,str):
+            yne = interp1d(x, y, kind = extrap, bounds_error = False, fill_value = 'extrapolate')(xn)
+        else:
+            raise Exception('Invalid option for extrap argument. Only tuple and string allowed.')
+        xn_x = xn[(xn>=x[0]) & (xn<=x[-1])]
+    else:
+        xn_x = xn
+        yne = None
+     
+    # Check equal x-spacing:
+    dx = np.diff(x)
+    if np.all(dx == dx[0]):
+        dx = dx[0] 
+    else:
+        raise Exception('Elements in x are not equally spaced!')
+        
+    # Extrapolate x, y with required additional elements for Sprague to work:
+    xe = np.hstack((x[0] - 2*dx, x[0] - dx, x, x[-1] + dx, x[-1] + 2*dx))
+    
+    y = np.atleast_2d(y)
+    ye1 = (y[:, :6] @ _SPRAGUE_COEFFICIENTS[:,0])[:,None]
+    ye2 = (y[:, :6] @ _SPRAGUE_COEFFICIENTS[:,1])[:,None]
+    ye3 = (y[:,-6:] @ _SPRAGUE_COEFFICIENTS[:,2])[:,None]
+    ye4 = (y[:,-6:] @ _SPRAGUE_COEFFICIENTS[:,3])[:,None]
+    ye = np.hstack((ye1,ye2,y,ye3,ye4)).T
+    
+    
+    # Evaluate at xn_x (no extrapolation!!):
+    i = np.searchsorted(xe, xn_x) - 1
+    X = np.atleast_2d((xn_x - xe[i]) / (xe[i + 1] - xe[i])).T
+
+    a0 = ye[i]
+    a1 = ((2 * ye[i - 2] - 16 * ye[i - 1] + 16 * ye[i + 1] - 2 * ye[i + 2]) / 24)  
+    a2 = ((-ye[i - 2] + 16 * ye[i - 1] - 30 * ye[i] + 16 * ye[i + 1] - ye[i + 2]) / 24) 
+    a3 = ((-9 * ye[i - 2] + 39 * ye[i - 1] - 70 * ye[i] + 66 * ye[i + 1] - 33 * ye[i + 2] + 7 * ye[i + 3]) / 24)
+    a4 = ((13 * ye[i - 2] - 64 * ye[i - 1] + 126 * ye[i] - 124 * ye[i + 1] + 61 * ye[i + 2] - 12 * ye[i + 3]) / 24)
+    a5 = ((-5 * ye[i - 2] + 25 * ye[i - 1] - 50 * ye[i] + 50 * ye[i + 1] - 25 * ye[i + 2] + 5 * ye[i + 3]) / 24)
+
+    yn = (a0 + a1*X + a2*X**2 + a3*X**3 + a4*X**4 + a5*X**5).T
+    
+    if yne is None:
+        return yn
+    else:
+        yne[:,(xn>=x[0]) & (xn<=x[-1])] = yn
+        return yne
+
+#------------------------------------------------------------------------------
 def interp1(X,Y,Xnew, kind = 'linear', ext = 'extrapolate', w = None, bbox=[None, None], check_finite = False):
     """
     Perform a 1-dimensional linear interpolation (wrapper around scipy.interpolate.InterpolatedUnivariateSpline).
@@ -1069,6 +1155,7 @@ def interp1(X,Y,Xnew, kind = 'linear', ext = 'extrapolate', w = None, bbox=[None
             | ndarray with new values at coordinates in Xnew
     """
     k = ['linear', 'quadratic', 'cubic', 'quartic', 'quintic'].index(kind) + 1
+    if ext == 'nearest': ext = 'const'
     return sp.interpolate.InterpolatedUnivariateSpline(X,Y, ext = ext, k = k, w = w, bbox = bbox, check_finite = check_finite)(Xnew)
 #------------------------------------------------------------------------------
 def ndinterp1_scipy(X,Y,Xnew, fill_value = np.nan,  rescale = False):    

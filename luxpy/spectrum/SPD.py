@@ -332,13 +332,12 @@ class SPD:
         return self
 
     #--------------------------------------------------------------------------------------------------
-    def cie_interp(self,wl_new, kind = 'auto', negative_values_allowed = False, 
-                   extrap_values = 'cie15:2018', extrap_kind = 'quadratic', extrap_log = False):
+    def cie_interp(self,wl_new, kind = 'auto', sprague5_allowed = False, negative_values_allowed = False, 
+                   extrap_values = 'ext', extrap_kind = 'linear', extrap_log = False):
         """
         Interpolate / extrapolate spectral data following standard CIE15-2018.
         
         | The interpolation type depends on the spectrum type defined in :kind:. 
-        | Extrapolation is always done by replicate the closest known values.
         
         Args:
             :wl_new: 
@@ -348,21 +347,37 @@ class SPD:
                 | If :kind: is None, return original data.
                 | If :kind: is a spectrum type (see _INTERP_TYPES), the correct 
                 |     interpolation type if automatically chosen.
+                |       (The use of the slow(er) 'sprague5' can be toggled on using :sprague5_allowed:).
                 | If kind = 'auto': use self.dtype
-                | Or :kind: can be any interpolation type supported 
-                  by scipy.interpolate.interp1d
+                | Or :kind: can be any interpolation type supported by 
+                |     scipy.interpolate.interp1d (luxpy.math.interp1 if nan's are present!!)
+                |     or can be 'sprague5' (uses luxpy.math.interp1_sprague5). 
+            :sprague5_allowed:
+                | False, optional
+                | If True: When kind is a spectral data type from _INTERP_TYPES['cubic'],
+                |    then a cubic spline interpolation will be used in case of 
+                |    unequal wavelength spacings, otherwise a 5th order Sprague will be used.
+                | If False: always use 'cubic', don't use 'sprague5'. 
+                |           This is the default, as differences are minimal and 
+                |           use of the 'sprague5' function is a lot slower!
             :negative_values_allowed:
                 | False, optional
                 | If False: negative values are clipped to zero
             :extrap_values:
                 | 'ext', optional
-                | If 'ext' or 'cie15:2018': use CIE15:2018 recommended method of quadratic extrapolation (slowest option of the three!!)
-                | If None or 'cie15:2004': use CIE15:2004 recommended 'closest value' approach when extrapolating.
+                | If 'ext': extrapolate using 'linear' ('cie167:2005' r), 'quadratic' ('cie15:2018') 
+                |           'nearest' ('cie15:2004') recommended or other (e.g. 'cubic') methods.
+                | If None: use CIE15:2004 recommended 'nearest value' approach when extrapolating.
                 | If float or list or ndarray, use those values to fill extrapolated value(s).
             :extrap_kind:
-                | 'quadratic', optional
-                | Extrapolation method used when :extrap_values: is set to 'ext' or 'cie15:2018' 
-                | CIE15:2018 recommends 'quadratic'. However, see note 1 below. 
+                | 'linear', optional
+                | Extrapolation method used when :extrap_values: is set to 'ext'. 
+                | Options: 'linear' ('cie167:2005'), 'quadratic' ('cie15:2018'), 
+                |           'nearest' ('cie15:2004'), 'cubic'
+                | CIE15:2018 states that based on a 2017 paper by Wang that 'quadratic' is 'better'. 
+                | However, no significant difference was found between 'quadratic' and 'linear' methods.
+                | Also see note 1 below, for why the CIE67:2005 recommended 'linear' extrapolation
+                | is set as the default.            
             :extrap_log:
                 | False, optional
                 | If True: extrap the log of the spectral values 
@@ -376,21 +391,27 @@ class SPD:
                 | (.shape = (number of spectra+1, number of wavelength in wl_new))
         Notes:
             | 1. Type of extrapolation: 'quadratic' vs 'linear'; impact of extrapolating log spectral values:
-            |       Using a 'quadratic' extrapolation this can lead to extreme large
-            |       values when setting :extrap_log: (not CIE recommended) to True. 
+            |       Using a 'linear' or 'quadratic' extrapolation, as mentioned in 
+            |       CIE167:2005 and CIE15:2018, resp., can lead to extreme large values 
+            |       when setting :extrap_log: (not CIE recommended) to True. 
             |       A quick test with the IES TM30 spectra (400 nm - 700 nm, 5 nm spacing) 
             |       shows that 'linear' is better than 'quadratic' in terms of 
             |       mean, median and max DEu'v' with the original spectra (380 nm - 780 nm, 5 nm spacing).
+            |       This conferms the recommendation from CIE167:2005 to use 'linear' extrapolation.
             |       Setting :extrap_log: to True reduces the median, but inflates the mean due to some
             |       extremely large DEu'v' values. However, the increase in mean and max DEu'v' is much 
             |       larger for the 'quadratic' case, suggesting that 'linear' extrapolation 
             |       is likely a more suitable recommendation. When using a 1 nm spacing
             |       'linear' is more similar to 'quadratic' when :extrap_log: is False, otherwise 'linear'
-            |       remains the 'best'.
+            |       remains the 'best'. Hence the choice to use the CIE167:2005 recommended linear extrapolation as default!
         """
         if (kind == 'auto') & (self.dtype is not None):
             kind = self.dtype
-        spd = cie_interp(self.get_(), wl_new, kind = kind, negative_values_allowed = negative_values_allowed, extrap_values = extrap_values)
+        spd = cie_interp(self.get_(), wl_new, kind = kind, sprague5_allowed = sprague5_allowed,
+                         negative_values_allowed = negative_values_allowed, 
+                         extrap_values = extrap_values,
+                         extrap_kind = extrap_kind,
+                         extrap_log = extrap_log)
         self.wl = spd[0]
         self.value = spd[1:]
         self.shape = self.value.shape

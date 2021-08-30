@@ -38,7 +38,7 @@ for i, cmf_type in enumerate(_CMF['types']): # store all in single nested dict
 
 
 # add 'all' key to _CIE_ILLUMINANTS that  contains all CIE_ILLUMINANTS in a stack:
-_CIE_ILLUMINANTS['all'] = np.vstack((_CIE_E[0,:],np.array([cie_interp(_CIE_ILLUMINANTS[x],_CIE_E[0,:],kind='linear')[1,:] for x in _CIE_ILLUMINANTS['types'] if 'series' not in x])))
+_CIE_ILLUMINANTS['all'] = np.vstack((_CIE_E[0,:],np.array([cie_interp(_CIE_ILLUMINANTS[x],_CIE_E[0,:],kind = 'spd', extrap_values = 'ext')[1,:] for x in _CIE_ILLUMINANTS['types'] if 'series' not in x])))
 _CIE_S = _CIE_ILLUMINANTS
 
 # load additional functions to determine daylight loci for specific CMF sets:
