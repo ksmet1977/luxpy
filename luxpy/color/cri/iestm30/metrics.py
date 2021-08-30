@@ -257,7 +257,8 @@ def spd_to_ies_tm30_metrics(St, cri_type = None, \
 
     # Get normalized and sliced hue-bin _hj data for plotting:
     rg_pars = cri_type['rg_pars']
-    nhbins, normalize_gamut, normalized_chroma_ref, start_hue = [rg_pars[x] for x in sorted(rg_pars.keys())]
+    if 'use_bin_avg_DEi' not in rg_pars: rg_pars['use_bin_avg_DEi'] = True
+    nhbins, normalize_gamut, normalized_chroma_ref, start_hue, use_bin_avg_DEi = [rg_pars[x] for x in sorted(rg_pars.keys())]
     
     # Get chroma of samples:    
     if scale_vf_chroma_to_sample_chroma == True:

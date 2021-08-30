@@ -581,7 +581,7 @@ if __name__ == '__main__':
     spds1_ = np.vstack((spd1[:,20:-50:5].copy(),20+((spd2[1,20:-50:5])**1.2).copy()))
     spds1 = np.vstack((spd1,20+(spd2[1:])**1.2))
     # spds1_[1:,[5,10,15]] = np.nan
-    spds1_i = cie_interp(spds1_,spds1[0], kind = 'spd',extrap_values = 'ext',extrap_kind='cie167:2005')
+    spds1_i = cie_interp(spds1_,spds1[0], kind = 'spd',extrap_values = 'ext',extrap_kind='quadratic')
     
     plt.plot(spds1[0],spds1[1:].T,linestyle='-')
     plt.plot(spds1_i[0],spds1_i[1:].T,linestyle='--')

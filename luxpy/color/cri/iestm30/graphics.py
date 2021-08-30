@@ -1431,7 +1431,7 @@ def plot_cri_graphics(data, cri_type = None, hbins = 16, start_hue = 0.0, scalef
                                        scale_vf_chroma_to_sample_chroma = scale_vf_chroma_to_sample_chroma)
 
     # Unpack data dictionary:
-    (DEa, DEi, Rcshj, Rf,
+    (AnnexE_priority, DEa, DEi, Rcshj, Rf,
      Rfhj, Rfi, Rg, Rhshj, 
      Sr, St, cct, cri_type, 
      duv, hue_bin_data, vf,
@@ -1464,15 +1464,14 @@ def plot_cri_graphics(data, cri_type = None, hbins = 16, start_hue = 0.0, scalef
                
         
     for i in range(cct.shape[0]):
- 
         
         fig = plt.figure(figsize=(10, 6), dpi=144)
     
         # Plot CVG:
         ax_CVG = create_subplot(layout,1, polar = True, frameon = False)
         if plot_test_sample_coord == False:  
-            jabti = None
-            jabri = None
+            jabti_i = None
+            jabri_i = None
         else:
             jabti_i = jabti[...,i:i+1,:]
             jabri_i = jabri[...,i:i+1,:]
@@ -1488,8 +1487,8 @@ def plot_cri_graphics(data, cri_type = None, hbins = 16, start_hue = 0.0, scalef
                                                    scalef = scalef, 
                                                    force_CVG_layout = force_CVG_layout, 
                                                    bin_labels = '#',
-                                                   jabti = jabti, 
-                                                   jabri = jabri, 
+                                                   jabti = jabti_i, 
+                                                   jabri = jabri_i, 
                                                    hbinnr = hbinnr)
                 
         # Plot VF:

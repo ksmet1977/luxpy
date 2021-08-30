@@ -1092,6 +1092,11 @@ def spd_to_rg(St, cri_type = _CRI_TYPE_DEFAULT, out = 'Rg', wl = None, \
             |    - key: 'normalized_chroma_ref': 100.0 or float, optional
             |                Controls the size (chroma/radius) 
             |                of the normalization circle/gamut.
+            |    - key 'use_bin_avg_DEi': True or False
+            |               Note that following IES-TM30 DEhj from gamut_slicer()
+            |               is obtained by averaging the DEi per hue bin (True),
+            |               and NOT by averaging the jabt and jabr per hue bin 
+            |               and then calculating the DEhj (False).
         :avg: 
             | None or fcn handle, optional
             | Averaging function (handle) for color differences, DEi 
@@ -1164,8 +1169,9 @@ def spd_to_rg(St, cri_type = _CRI_TYPE_DEFAULT, out = 'Rg', wl = None, \
                                           out = 'jabt,jabr,xyzti,xyztw,xyzri,xyzrw,xyztw_cct,cct,duv,St,Sr') 
 
     # calculate gamut area index:
-    rg_pars = cri_type['rg_pars']
-    nhbins, normalize_gamut, normalized_chroma_ref, start_hue  = [rg_pars[x] for x in sorted(rg_pars.keys())]
+    rg_pars = cri_type['rg_pars'] 
+    if 'use_bin_avg_DEi' not in rg_pars: rg_pars['use_bin_avg_DEi'] = True
+    nhbins, normalize_gamut, normalized_chroma_ref, start_hue, use_bin_avg_DEi  = [rg_pars[x] for x in sorted(rg_pars.keys())]
     
     # get hue_bin_data:
     hue_bin_data = _get_hue_bin_data(jabt, jabr, 

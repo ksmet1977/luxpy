@@ -37,7 +37,7 @@ _MCRI_DEFAULTS = {'sampleset': "_CRI_RFL['mcri']",
                   'scale' : {'fcn': psy_scale, 'cfactor': [21.7016,   4.2106,   2.4154]}, 
                   'cspace': {'type': 'ipt', 'Mxyz2lms': [[ 0.400070,    0.707270,   -0.080674],[-0.228111, 1.150561,    0.061230],[0.0, 0.0,    0.931757]]}, 
                   'catf': {'xyzw': [94.81,  100.00,  107.32], 'mcat': 'cat02', 'cattype': 'vonkries', 'F':1, 'Yb': 20.0,'Dtype':'cat02', 'catmode' : '1>2'}, 
-                  'rg_pars' : {'nhbins': None, 'start_hue':0.0, 'normalize_gamut': False, 'normalized_chroma_ref' : 100}, 
+                  'rg_pars' : {'nhbins': None, 'start_hue':0.0, 'normalize_gamut': False, 'normalized_chroma_ref' : 100, 'use_bin_avg_DEi' : False}, 
                   'cri_specific_pars' : {'similarity_ai' : np.array([[-0.09651, 0.41354, 40.64, 16.55, -0.17],
                                                                      [0.16548, 0.38877, 58.27,    20.37,    -0.59],
                                                                      [0.32825, 0.49673, 35.97    , 18.05,-6.04],
@@ -165,7 +165,7 @@ def spd_to_mcri(SPD, D = 0.9, E = None, Yb = 20.0, out = 'Rm', wl = None):
         a2 = a2[:,None]*np.ones(I.shape) #broadcast_shape(a2, target_shape = None,expand_2d_to_3d = 0)
         a12 = np.concatenate((a1,a2),axis=2) #broadcast_shape(np.hstack((a1,a2)), target_shape = ipt.shape,expand_2d_to_3d = 0)
         ipt_mc = np.concatenate((I,a12),axis=2)
-        nhbins, normalize_gamut, normalized_chroma_ref, start_hue  = [rg_pars[x] for x in sorted(rg_pars.keys())]
+        nhbins, normalize_gamut, normalized_chroma_ref, start_hue, use_bin_avg_DEi  = [rg_pars[x] for x in sorted(rg_pars.keys())]
     
         hue_bin_data = _get_hue_bin_data(ipt, ipt_mc, 
                                          start_hue = start_hue, nhbins = nhbins,

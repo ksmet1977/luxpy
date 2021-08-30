@@ -371,7 +371,6 @@ def plot_ColorVectorGraphic(jabt, jabr, hbins = 16, start_hue = 0.0, scalef = 10
         cmap = ['k' for i in range(hbins)]
     else:
         cmap = hvector_color_map.copy()
-        
             
     # map jabti relative to center (mean) of reference:
     if (jabti is not None) & (jabri is not None):
@@ -394,7 +393,7 @@ def plot_ColorVectorGraphic(jabt, jabr, hbins = 16, start_hue = 0.0, scalef = 10
         else:
             ax.plot(jabt_theta,jabt_r, color = gamut_line_color, linestyle = gamut_line_style, linewidth = 2, marker = gamut_line_marker, markersize = 4, label = gamut_line_label)
         for j in range(hbins):
-            cmap_j = [list(cmap[j])]
+            cmap_j = list(cmap[j])
             if plot_vectors == True:
                 ax.quiver(jabr_theta[j],jabr_r[j],jabt[j,1]-jabr[j,1], jabt[j,2]-jabr[j,2], edgecolor = 'k',facecolor = cmap_j, headlength=3, angles='uv', scale_units='y', scale = 2,linewidth = 0.5)
             if jabti is not None:
@@ -406,7 +405,7 @@ def plot_ColorVectorGraphic(jabt, jabr, hbins = 16, start_hue = 0.0, scalef = 10
         else:
             ax.plot(jabt[...,1],jabt[...,2], color = gamut_line_color, linestyle = gamut_line_style, linewidth = 2, marker = gamut_line_marker, markersize = 4, label = gamut_line_label)
         for j in range(hbins):
-            cmap_j = [list(cmap[j])]
+            cmap_j = list(cmap[j])
             if plot_vectors == True:
                 ax.quiver(jabr[j,1],jabr[j,2],jabt[j,1]-jabr[j,1], jabt[j,2]-jabr[j,2], color = cmap_j, headlength=3, angles='uv', scale_units='xy', scale = 1,linewidth = 0.5)
             if jabti is not None:
