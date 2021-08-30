@@ -7,12 +7,14 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>luxpy.spectrum.SPD &mdash; LuxPy 1.6.13 documentation</title>
+  <title>luxpy.spectrum.SPD &mdash; LuxPy 1.7.0 documentation</title>
   
 
   
   <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
 
   
   
@@ -29,6 +31,7 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
         <script src="../../../_static/jquery.js"></script>
         <script src="../../../_static/underscore.js"></script>
         <script src="../../../_static/doctools.js"></script>
@@ -61,7 +64,7 @@
             
             
               <div class="version">
-                1.6.13
+                1.7.0
               </div>
             
           
@@ -240,7 +243,7 @@
 <div class="viewcode-block" id="SPD"><a class="viewcode-back" href="../../../spectrum.html#luxpy.spectrum.SPD.SPD">[docs]</a><span class="k">class</span> <span class="nc">SPD</span><span class="p">:</span>
     
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spd</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ax0iswl</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="s1">&#39;S&#39;</span><span class="p">,</span> \
-                 <span class="n">wl_new</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">interp_method</span> <span class="o">=</span> <span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">negative_values_allowed</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">extrap_values</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>\
+                 <span class="n">wl_new</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">interp_method</span> <span class="o">=</span> <span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">negative_values_allowed</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">extrap_values</span> <span class="o">=</span> <span class="s1">&#39;ext&#39;</span><span class="p">,</span>\
                  <span class="n">norm_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">norm_f</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>\
                  <span class="n">header</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -279,9 +282,10 @@
 <span class="sd">                | Spectral data can not be negative. Values &lt; 0 are therefore </span>
 <span class="sd">                  clipped when set to False.</span>
 <span class="sd">            :extrap_values:</span>
-<span class="sd">                | None, optional</span>
+<span class="sd">                | &#39;ext&#39;, optional</span>
 <span class="sd">                | float or list or ndarray with values to extrapolate</span>
-<span class="sd">                | If None: use CIE recommended &#39;closest value&#39; approach.</span>
+<span class="sd">                | If &#39;ext&#39; or &#39;cie15:2018&#39;: use CIE15:2018 recommended quadratic extrapolation.</span>
+<span class="sd">                | If None or &#39;cie15:2004&#39;: use CIE15:2004 recommended &#39;closest value&#39; approach.</span>
 <span class="sd">            :norm_type:</span>
 <span class="sd">                | None or str, optional</span>
 <span class="sd">                | - &#39;lambda&#39;: make lambda in norm_f equal to 1</span>
@@ -491,12 +495,12 @@
         <span class="k">return</span> <span class="bp">self</span></div>
 
     <span class="c1">#--------------------------------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="SPD.cie_interp"><a class="viewcode-back" href="../../../spectrum.html#luxpy.spectrum.SPD.SPD.cie_interp">[docs]</a>    <span class="k">def</span> <span class="nf">cie_interp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">wl_new</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">negative_values_allowed</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">extrap_values</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="SPD.cie_interp"><a class="viewcode-back" href="../../../spectrum.html#luxpy.spectrum.SPD.SPD.cie_interp">[docs]</a>    <span class="k">def</span> <span class="nf">cie_interp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">wl_new</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">sprague5_allowed</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">negative_values_allowed</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> 
+                   <span class="n">extrap_values</span> <span class="o">=</span> <span class="s1">&#39;ext&#39;</span><span class="p">,</span> <span class="n">extrap_kind</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="n">extrap_log</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Interpolate / extrapolate spectral data following standard CIE15-2018.</span>
 <span class="sd">        </span>
 <span class="sd">        | The interpolation type depends on the spectrum type defined in :kind:. </span>
-<span class="sd">        | Extrapolation is always done by replicate the closest known values.</span>
 <span class="sd">        </span>
 <span class="sd">        Args:</span>
 <span class="sd">            :wl_new: </span>
@@ -506,25 +510,71 @@
 <span class="sd">                | If :kind: is None, return original data.</span>
 <span class="sd">                | If :kind: is a spectrum type (see _INTERP_TYPES), the correct </span>
 <span class="sd">                |     interpolation type if automatically chosen.</span>
+<span class="sd">                |       (The use of the slow(er) &#39;sprague5&#39; can be toggled on using :sprague5_allowed:).</span>
 <span class="sd">                | If kind = &#39;auto&#39;: use self.dtype</span>
-<span class="sd">                | Or :kind: can be any interpolation type supported </span>
-<span class="sd">                  by scipy.interpolate.interp1d</span>
+<span class="sd">                | Or :kind: can be any interpolation type supported by </span>
+<span class="sd">                |     scipy.interpolate.interp1d (luxpy.math.interp1 if nan&#39;s are present!!)</span>
+<span class="sd">                |     or can be &#39;sprague5&#39; (uses luxpy.math.interp1_sprague5). </span>
+<span class="sd">            :sprague5_allowed:</span>
+<span class="sd">                | False, optional</span>
+<span class="sd">                | If True: When kind is a spectral data type from _INTERP_TYPES[&#39;cubic&#39;],</span>
+<span class="sd">                |    then a cubic spline interpolation will be used in case of </span>
+<span class="sd">                |    unequal wavelength spacings, otherwise a 5th order Sprague will be used.</span>
+<span class="sd">                | If False: always use &#39;cubic&#39;, don&#39;t use &#39;sprague5&#39;. </span>
+<span class="sd">                |           This is the default, as differences are minimal and </span>
+<span class="sd">                |           use of the &#39;sprague5&#39; function is a lot slower!</span>
 <span class="sd">            :negative_values_allowed:</span>
 <span class="sd">                | False, optional</span>
 <span class="sd">                | If False: negative values are clipped to zero</span>
 <span class="sd">            :extrap_values:</span>
-<span class="sd">                | None, optional</span>
-<span class="sd">                | float or list or ndarray with values to extrapolate</span>
-<span class="sd">                | If None: use CIE recommended &#39;closest value&#39; approach.</span>
+<span class="sd">                | &#39;ext&#39;, optional</span>
+<span class="sd">                | If &#39;ext&#39;: extrapolate using &#39;linear&#39; (&#39;cie167:2005&#39; r), &#39;quadratic&#39; (&#39;cie15:2018&#39;) </span>
+<span class="sd">                |           &#39;nearest&#39; (&#39;cie15:2004&#39;) recommended or other (e.g. &#39;cubic&#39;) methods.</span>
+<span class="sd">                | If None: use CIE15:2004 recommended &#39;nearest value&#39; approach when extrapolating.</span>
+<span class="sd">                | If float or list or ndarray, use those values to fill extrapolated value(s).</span>
+<span class="sd">            :extrap_kind:</span>
+<span class="sd">                | &#39;linear&#39;, optional</span>
+<span class="sd">                | Extrapolation method used when :extrap_values: is set to &#39;ext&#39;. </span>
+<span class="sd">                | Options: &#39;linear&#39; (&#39;cie167:2005&#39;), &#39;quadratic&#39; (&#39;cie15:2018&#39;), </span>
+<span class="sd">                |           &#39;nearest&#39; (&#39;cie15:2004&#39;), &#39;cubic&#39;</span>
+<span class="sd">                | CIE15:2018 states that based on a 2017 paper by Wang that &#39;quadratic&#39; is &#39;better&#39;. </span>
+<span class="sd">                | However, no significant difference was found between &#39;quadratic&#39; and &#39;linear&#39; methods.</span>
+<span class="sd">                | Also see note 1 below, for why the CIE67:2005 recommended &#39;linear&#39; extrapolation</span>
+<span class="sd">                | is set as the default.            </span>
+<span class="sd">            :extrap_log:</span>
+<span class="sd">                | False, optional</span>
+<span class="sd">                | If True: extrap the log of the spectral values </span>
+<span class="sd">                |     (not CIE recommended but in most cases seems to give a </span>
+<span class="sd">                |     more realistic estimate, but can sometimes seriously fail, </span>
+<span class="sd">                |     especially for the &#39;quadratic&#39; extrapolation case (see note 1)!!!)</span>
 <span class="sd">        </span>
 <span class="sd">        Returns:</span>
 <span class="sd">            :returns:</span>
 <span class="sd">                | ndarray of interpolated spectral data.</span>
 <span class="sd">                | (.shape = (number of spectra+1, number of wavelength in wl_new))</span>
+<span class="sd">        Notes:</span>
+<span class="sd">            | 1. Type of extrapolation: &#39;quadratic&#39; vs &#39;linear&#39;; impact of extrapolating log spectral values:</span>
+<span class="sd">            |       Using a &#39;linear&#39; or &#39;quadratic&#39; extrapolation, as mentioned in </span>
+<span class="sd">            |       CIE167:2005 and CIE15:2018, resp., can lead to extreme large values </span>
+<span class="sd">            |       when setting :extrap_log: (not CIE recommended) to True. </span>
+<span class="sd">            |       A quick test with the IES TM30 spectra (400 nm - 700 nm, 5 nm spacing) </span>
+<span class="sd">            |       shows that &#39;linear&#39; is better than &#39;quadratic&#39; in terms of </span>
+<span class="sd">            |       mean, median and max DEu&#39;v&#39; with the original spectra (380 nm - 780 nm, 5 nm spacing).</span>
+<span class="sd">            |       This conferms the recommendation from CIE167:2005 to use &#39;linear&#39; extrapolation.</span>
+<span class="sd">            |       Setting :extrap_log: to True reduces the median, but inflates the mean due to some</span>
+<span class="sd">            |       extremely large DEu&#39;v&#39; values. However, the increase in mean and max DEu&#39;v&#39; is much </span>
+<span class="sd">            |       larger for the &#39;quadratic&#39; case, suggesting that &#39;linear&#39; extrapolation </span>
+<span class="sd">            |       is likely a more suitable recommendation. When using a 1 nm spacing</span>
+<span class="sd">            |       &#39;linear&#39; is more similar to &#39;quadratic&#39; when :extrap_log: is False, otherwise &#39;linear&#39;</span>
+<span class="sd">            |       remains the &#39;best&#39;. Hence the choice to use the CIE167:2005 recommended linear extrapolation as default!</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">kind</span> <span class="o">==</span> <span class="s1">&#39;auto&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
             <span class="n">kind</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span>
-        <span class="n">spd</span> <span class="o">=</span> <span class="n">cie_interp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_</span><span class="p">(),</span> <span class="n">wl_new</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="n">kind</span><span class="p">,</span> <span class="n">negative_values_allowed</span> <span class="o">=</span> <span class="n">negative_values_allowed</span><span class="p">,</span> <span class="n">extrap_values</span> <span class="o">=</span> <span class="n">extrap_values</span><span class="p">)</span>
+        <span class="n">spd</span> <span class="o">=</span> <span class="n">cie_interp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_</span><span class="p">(),</span> <span class="n">wl_new</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="n">kind</span><span class="p">,</span> <span class="n">sprague5_allowed</span> <span class="o">=</span> <span class="n">sprague5_allowed</span><span class="p">,</span>
+                         <span class="n">negative_values_allowed</span> <span class="o">=</span> <span class="n">negative_values_allowed</span><span class="p">,</span> 
+                         <span class="n">extrap_values</span> <span class="o">=</span> <span class="n">extrap_values</span><span class="p">,</span>
+                         <span class="n">extrap_kind</span> <span class="o">=</span> <span class="n">extrap_kind</span><span class="p">,</span>
+                         <span class="n">extrap_log</span> <span class="o">=</span> <span class="n">extrap_log</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wl</span> <span class="o">=</span> <span class="n">spd</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">spd</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">shape</span>

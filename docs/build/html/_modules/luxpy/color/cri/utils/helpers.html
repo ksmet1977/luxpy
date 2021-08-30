@@ -7,12 +7,14 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>luxpy.color.cri.utils.helpers &mdash; LuxPy 1.6.13 documentation</title>
+  <title>luxpy.color.cri.utils.helpers &mdash; LuxPy 1.7.0 documentation</title>
   
 
   
   <link rel="stylesheet" href="../../../../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../../_static/css/theme.css" type="text/css" />
 
   
   
@@ -29,6 +31,7 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
+        <script data-url_root="../../../../../" id="documentation_options" src="../../../../../_static/documentation_options.js"></script>
         <script src="../../../../../_static/jquery.js"></script>
         <script src="../../../../../_static/underscore.js"></script>
         <script src="../../../../../_static/doctools.js"></script>
@@ -61,7 +64,7 @@
             
             
               <div class="version">
-                1.6.13
+                1.7.0
               </div>
             
           
@@ -221,6 +224,83 @@
            <span class="s1">&#39;_hue_bin_data_to_rxhj&#39;</span><span class="p">,</span> <span class="s1">&#39;_hue_bin_data_to_rfi&#39;</span><span class="p">,</span> <span class="s1">&#39;_hue_bin_data_to_rg&#39;</span><span class="p">]</span>
 
 <span class="c1">#------------------------------------------------------------------------------</span>
+<span class="k">def</span> <span class="nf">_get_hue_bin_data_individual_samples</span><span class="p">(</span><span class="n">jabt</span><span class="p">,</span><span class="n">jabr</span><span class="p">,</span> <span class="n">normalized_chroma_ref</span> <span class="o">=</span> <span class="mi">100</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Helper function to return dict with required keys when nhbins = None in call to _get_hue_bin_data&quot;&quot;&quot;</span>
+    
+    <span class="c1"># get hues of jabt, jabr:</span>
+    <span class="n">ht</span> <span class="o">=</span> <span class="n">cam</span><span class="o">.</span><span class="n">hue_angle</span><span class="p">(</span><span class="n">jabt</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">jabt</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="n">htype</span> <span class="o">=</span> <span class="s1">&#39;rad&#39;</span><span class="p">)</span>
+    <span class="n">hr</span> <span class="o">=</span> <span class="n">cam</span><span class="o">.</span><span class="n">hue_angle</span><span class="p">(</span><span class="n">jabr</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">jabr</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="n">htype</span> <span class="o">=</span> <span class="s1">&#39;rad&#39;</span><span class="p">)</span>
+    
+    <span class="c1"># Get chroma of jabt, jabr:</span>
+    <span class="n">Ct</span> <span class="o">=</span> <span class="p">((</span><span class="n">jabt</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">jabt</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span><span class="o">**</span><span class="mf">0.5</span>
+    <span class="n">Cr</span> <span class="o">=</span> <span class="p">((</span><span class="n">jabr</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">jabr</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span><span class="o">**</span><span class="mf">0.5</span>
+    
+    
+    <span class="c1"># Calculate DEi between jabt, jabr:</span>
+    <span class="n">DEi</span> <span class="o">=</span> <span class="p">((</span><span class="n">jabt</span> <span class="o">-</span> <span class="n">jabr</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
+    
+    <span class="n">jabt_hj</span><span class="p">,</span> <span class="n">jabr_hj</span><span class="p">,</span> <span class="n">DE_hj</span> <span class="o">=</span> <span class="n">jabt</span><span class="p">,</span> <span class="n">jabr</span><span class="p">,</span> <span class="n">DEi</span>
+    
+    <span class="c1"># some dummy variables:</span>
+    <span class="n">start_hue</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">dh</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">hue_bin_edges</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">nhbins</span> <span class="o">=</span> <span class="n">jabt</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">ht_idx</span><span class="p">,</span> <span class="n">hr_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">nhbins</span><span class="p">)[:,</span><span class="kc">None</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">nhbins</span><span class="p">)[:,</span><span class="kc">None</span><span class="p">]</span>
+    
+    <span class="c1"># calculate normalized hue-bin averages for jabt, jabr:</span>
+    <span class="n">ht_hj</span> <span class="o">=</span> <span class="n">cam</span><span class="o">.</span><span class="n">hue_angle</span><span class="p">(</span><span class="n">jabt_hj</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="n">jabt_hj</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="n">htype</span><span class="o">=</span><span class="s1">&#39;rad&#39;</span><span class="p">)</span>
+    <span class="n">hr_hj</span> <span class="o">=</span> <span class="n">cam</span><span class="o">.</span><span class="n">hue_angle</span><span class="p">(</span><span class="n">jabr_hj</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="n">jabr_hj</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="n">htype</span><span class="o">=</span><span class="s1">&#39;rad&#39;</span><span class="p">)</span>
+    <span class="n">Ct_hj</span> <span class="o">=</span> <span class="p">((</span><span class="n">jabt_hj</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">jabt_hj</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span><span class="o">**</span><span class="mf">0.5</span>
+    <span class="n">Cr_hj</span> <span class="o">=</span> <span class="p">((</span><span class="n">jabr_hj</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">jabr_hj</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span><span class="o">**</span><span class="mf">0.5</span>
+    <span class="n">Ctn_hj</span> <span class="o">=</span> <span class="n">normalized_chroma_ref</span><span class="o">*</span><span class="n">Ct_hj</span><span class="o">/</span><span class="p">(</span><span class="n">Cr_hj</span> <span class="o">+</span> <span class="mf">1e-308</span><span class="p">)</span> <span class="c1"># calculate normalized chroma for samples under test</span>
+    <span class="n">Ctn_hj</span><span class="p">[</span><span class="n">Cr_hj</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+    <span class="n">jabtn_hj</span> <span class="o">=</span> <span class="n">jabt_hj</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">jabrn_hj</span> <span class="o">=</span> <span class="n">jabr_hj</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">jabtn_hj</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">jabtn_hj</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">Ctn_hj</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">ht_hj</span><span class="p">),</span> <span class="n">Ctn_hj</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">ht_hj</span><span class="p">)</span>
+    <span class="n">jabrn_hj</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">jabrn_hj</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">normalized_chroma_ref</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">hr_hj</span><span class="p">),</span> <span class="n">normalized_chroma_ref</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">hr_hj</span><span class="p">)</span>
+    
+    <span class="c1"># calculate normalized versions of jabt, jabr:</span>
+    <span class="n">jabtn</span> <span class="o">=</span> <span class="n">jabt</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">jabrn</span> <span class="o">=</span> <span class="n">jabr</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">Ctn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">jabt</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">jabt</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+
+    <span class="n">Crn</span> <span class="o">=</span> <span class="n">Ctn</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nhbins</span><span class="p">):</span>
+        <span class="n">Ctn</span> <span class="o">=</span> <span class="n">Ctn</span> <span class="o">+</span> <span class="p">(</span><span class="n">Ct</span><span class="o">/</span><span class="n">Cr_hj</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="o">...</span><span class="p">])</span><span class="o">*</span><span class="p">(</span><span class="n">hr_idx</span><span class="o">==</span><span class="n">j</span><span class="p">)</span>
+        <span class="n">Crn</span> <span class="o">=</span> <span class="n">Crn</span> <span class="o">+</span> <span class="p">(</span><span class="n">Cr</span><span class="o">/</span><span class="n">Cr_hj</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="o">...</span><span class="p">])</span><span class="o">*</span><span class="p">(</span><span class="n">hr_idx</span><span class="o">==</span><span class="n">j</span><span class="p">)</span>
+    <span class="n">Ctn</span><span class="o">*=</span><span class="n">normalized_chroma_ref</span>
+    <span class="n">Crn</span><span class="o">*=</span><span class="n">normalized_chroma_ref</span>
+
+    <span class="n">jabtn</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">Ctn</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">ht</span><span class="p">))</span>
+    <span class="n">jabtn</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">Ctn</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">ht</span><span class="p">))</span>
+    <span class="n">jabrn</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">Crn</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">hr</span><span class="p">))</span>
+    <span class="n">jabrn</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">Crn</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">hr</span><span class="p">))</span>
+
+    <span class="c1"># closed jabt_hj, jabr_hj for Rg:</span>
+    <span class="n">jabt_hj_closed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">jabt_hj</span><span class="p">,</span><span class="n">jabt_hj</span><span class="p">[:</span><span class="mi">1</span><span class="p">,</span><span class="o">...</span><span class="p">]))</span>
+    <span class="n">jabr_hj_closed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">jabr_hj</span><span class="p">,</span><span class="n">jabr_hj</span><span class="p">[:</span><span class="mi">1</span><span class="p">,</span><span class="o">...</span><span class="p">]))</span>
+    
+    <span class="c1"># closed jabtn_hj, jabrn_hj for plotting:</span>
+    <span class="n">jabtn_hj_closed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">jabtn_hj</span><span class="p">,</span><span class="n">jabtn_hj</span><span class="p">[:</span><span class="mi">1</span><span class="p">,</span><span class="o">...</span><span class="p">]))</span>
+    <span class="n">jabrn_hj_closed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">jabrn_hj</span><span class="p">,</span><span class="n">jabrn_hj</span><span class="p">[:</span><span class="mi">1</span><span class="p">,</span><span class="o">...</span><span class="p">]))</span>
+    
+    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;jabt&#39;</span> <span class="p">:</span> <span class="n">jabt</span><span class="p">,</span> <span class="s1">&#39;jabr&#39;</span> <span class="p">:</span> <span class="n">jabr</span><span class="p">,</span> 
+            <span class="s1">&#39;jabtn&#39;</span> <span class="p">:</span> <span class="n">jabtn</span><span class="p">,</span> <span class="s1">&#39;jabrn&#39;</span> <span class="p">:</span> <span class="n">jabrn</span><span class="p">,</span>
+            <span class="s1">&#39;DEi&#39;</span> <span class="p">:</span> <span class="n">DEi</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> 
+            <span class="s1">&#39;Ct&#39;</span> <span class="p">:</span> <span class="n">Ct</span><span class="p">,</span> <span class="s1">&#39;Cr&#39;</span><span class="p">:</span> <span class="n">Cr</span><span class="p">,</span> <span class="s1">&#39;ht&#39;</span> <span class="p">:</span> <span class="n">ht</span><span class="p">,</span> <span class="s1">&#39;hr&#39;</span> <span class="p">:</span> <span class="n">hr</span><span class="p">,</span> 
+            <span class="s1">&#39;ht_idx&#39;</span> <span class="p">:</span> <span class="n">ht_idx</span><span class="p">,</span> <span class="s1">&#39;hr_idx&#39;</span> <span class="p">:</span> <span class="n">hr_idx</span><span class="p">,</span>
+            <span class="s1">&#39;jabt_hj&#39;</span> <span class="p">:</span> <span class="n">jabt_hj</span><span class="p">,</span> <span class="s1">&#39;jabr_hj&#39;</span> <span class="p">:</span> <span class="n">jabr_hj</span><span class="p">,</span> <span class="s1">&#39;DE_hj&#39;</span> <span class="p">:</span> <span class="n">DE_hj</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span>
+            <span class="s1">&#39;jabt_hj_closed&#39;</span> <span class="p">:</span> <span class="n">jabt_hj_closed</span><span class="p">,</span> <span class="s1">&#39;jabr_hj_closed&#39;</span> <span class="p">:</span> <span class="n">jabr_hj_closed</span><span class="p">,</span>
+            <span class="s1">&#39;jabtn_hj&#39;</span> <span class="p">:</span> <span class="n">jabtn_hj</span><span class="p">,</span> <span class="s1">&#39;jabrn_hj&#39;</span> <span class="p">:</span> <span class="n">jabrn_hj</span><span class="p">,</span>
+            <span class="s1">&#39;jabtn_hj_closed&#39;</span> <span class="p">:</span> <span class="n">jabtn_hj_closed</span><span class="p">,</span> <span class="s1">&#39;jabrn_hj_closed&#39;</span> <span class="p">:</span> <span class="n">jabrn_hj_closed</span><span class="p">,</span>
+            <span class="s1">&#39;ht_hj&#39;</span> <span class="p">:</span> <span class="n">ht_hj</span><span class="p">,</span> <span class="s1">&#39;hr_hj&#39;</span> <span class="p">:</span> <span class="n">hr_hj</span><span class="p">,</span> 
+            <span class="s1">&#39;Ct_hj&#39;</span><span class="p">:</span> <span class="n">Ct_hj</span><span class="p">,</span> <span class="s1">&#39;Cr_hj&#39;</span> <span class="p">:</span> <span class="n">Cr_hj</span><span class="p">,</span> <span class="s1">&#39;Ctn_hj&#39;</span><span class="p">:</span> <span class="n">Ctn_hj</span><span class="p">,</span>
+            <span class="s1">&#39;nhbins&#39;</span> <span class="p">:</span> <span class="n">nhbins</span><span class="p">,</span> <span class="s1">&#39;start_hue&#39;</span> <span class="p">:</span> <span class="n">start_hue</span><span class="p">,</span> 
+            <span class="s1">&#39;normalized_chroma_ref&#39;</span> <span class="p">:</span> <span class="n">normalized_chroma_ref</span><span class="p">,</span> 
+            <span class="s1">&#39;dh&#39;</span> <span class="p">:</span> <span class="n">dh</span><span class="p">,</span> <span class="s1">&#39;hue_bin_edges&#39;</span> <span class="p">:</span> <span class="n">hue_bin_edges</span><span class="p">,</span> 
+            <span class="s1">&#39;hbinnrs&#39;</span> <span class="p">:</span> <span class="n">hr_idx</span><span class="p">}</span>
+    
 <div class="viewcode-block" id="_get_hue_bin_data"><a class="viewcode-back" href="../../../../../color.html#luxpy.color.cri._get_hue_bin_data">[docs]</a><span class="k">def</span> <span class="nf">_get_hue_bin_data</span><span class="p">(</span><span class="n">jabt</span><span class="p">,</span> <span class="n">jabr</span><span class="p">,</span> <span class="n">start_hue</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">nhbins</span> <span class="o">=</span> <span class="mi">16</span><span class="p">,</span>
                       <span class="n">normalized_chroma_ref</span> <span class="o">=</span> <span class="mi">100</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -268,10 +348,14 @@
 <span class="sd">            | - &#39;hue_bin_edges&#39;: hue bin edge (rad)</span>
 <span class="sd">            | - &#39;hbinnrs&#39;:  hue bin indices for each sample under ref. (= hr_idx)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># calculate hue-bin width, edges:</span>
-    <span class="n">dh</span> <span class="o">=</span> <span class="mi">360</span><span class="o">/</span><span class="n">nhbins</span> 
-    <span class="n">hue_bin_edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">start_hue</span><span class="p">,</span> <span class="mi">360</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dh</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">180</span>
-
+    
+    <span class="k">if</span> <span class="n">nhbins</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_get_hue_bin_data_individual_samples</span><span class="p">(</span><span class="n">jabt</span><span class="p">,</span><span class="n">jabr</span><span class="p">,</span><span class="n">normalized_chroma_ref</span> <span class="o">=</span> <span class="n">normalized_chroma_ref</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># calculate hue-bin width, edges:</span>
+        <span class="n">dh</span> <span class="o">=</span> <span class="mi">360</span><span class="o">/</span><span class="n">nhbins</span> 
+        <span class="n">hue_bin_edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">start_hue</span><span class="p">,</span> <span class="mi">360</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dh</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">180</span>
+        
     <span class="c1"># get hues of jabt, jabr:</span>
     <span class="n">ht</span> <span class="o">=</span> <span class="n">cam</span><span class="o">.</span><span class="n">hue_angle</span><span class="p">(</span><span class="n">jabt</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">jabt</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="n">htype</span> <span class="o">=</span> <span class="s1">&#39;rad&#39;</span><span class="p">)</span>
     <span class="n">hr</span> <span class="o">=</span> <span class="n">cam</span><span class="o">.</span><span class="n">hue_angle</span><span class="p">(</span><span class="n">jabr</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">jabr</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="n">htype</span> <span class="o">=</span> <span class="s1">&#39;rad&#39;</span><span class="p">)</span>
@@ -307,7 +391,8 @@
         <span class="n">jabt_hj</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">jabt</span> <span class="o">*</span> <span class="n">cndr_hj</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="kc">None</span><span class="p">]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">/</span><span class="n">wr</span><span class="o">.</span><span class="n">T</span> <span class="c1"># must use ref. bins !!!</span>
         <span class="n">jabr_hj</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">jabr</span> <span class="o">*</span> <span class="n">cndr_hj</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="kc">None</span><span class="p">]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">/</span><span class="n">wr</span><span class="o">.</span><span class="n">T</span>
         <span class="n">DE_hj</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">((</span><span class="n">DEi</span> <span class="o">*</span> <span class="n">cndr_hj</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="kc">None</span><span class="p">])</span><span class="o">/</span><span class="n">wr</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">T</span> <span class="c1"># local color difference is average of DEi per hue bin !!</span>
-    
+        <span class="n">DE_hj</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">wr</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="c1"># signal empty hue bins with a NaN</span>
+        
     <span class="c1"># calculate normalized hue-bin averages for jabt, jabr:</span>
     <span class="n">ht_hj</span> <span class="o">=</span> <span class="n">cam</span><span class="o">.</span><span class="n">hue_angle</span><span class="p">(</span><span class="n">jabt_hj</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="n">jabt_hj</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="n">htype</span><span class="o">=</span><span class="s1">&#39;rad&#39;</span><span class="p">)</span>
     <span class="n">hr_hj</span> <span class="o">=</span> <span class="n">cam</span><span class="o">.</span><span class="n">hue_angle</span><span class="p">(</span><span class="n">jabr_hj</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="n">jabr_hj</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="n">htype</span><span class="o">=</span><span class="s1">&#39;rad&#39;</span><span class="p">)</span>
@@ -425,9 +510,10 @@
 <span class="sd">            | Dict with hue bin data obtained with _get_hue_bin_data().</span>
 <span class="sd">        :use_bin_avg_DEi: </span>
 <span class="sd">            | True, optional</span>
-<span class="sd">            | Note that following IES-TM30 DEi from gamut_slicer() is obtained by</span>
+<span class="sd">            | Note that following IES-TM30 DEhj from gamut_slicer() is obtained by</span>
 <span class="sd">            | averaging the DEi per hue bin (True), and NOT by averaging the </span>
-<span class="sd">            | jabt and jabr per hue  bin and then calculating the DEi (False).</span>
+<span class="sd">            | jabt and jabr per hue  bin and then calculating the DEhj (False).</span>
+<span class="sd">            | If None: use value in rg_pars dict in cri_type dict!</span>
 <span class="sd">        :scale_fcn:</span>
 <span class="sd">            | function handle to type of cri scale, </span>
 <span class="sd">            | e.g. </span>
@@ -447,7 +533,7 @@
 <span class="sd">        &lt;https://www.ies.org/store/technical-memoranda/ies-method-for-evaluating-light-source-color-rendition/&gt;`_</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
-    <span class="k">if</span> <span class="p">(</span><span class="n">scale_factor</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">scale_fcn</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">scale_factor</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">scale_fcn</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">use_bin_avg_DEi</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cri_type</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span> 
            <span class="n">args</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="nb">locals</span><span class="p">())</span> <span class="c1"># get dict with keyword input arguments to function (used to overwrite non-None input arguments present in cri_type dict)</span>
            <span class="n">cri_type</span> <span class="o">=</span> <span class="n">process_cri_type_input</span><span class="p">(</span><span class="n">cri_type</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">callerfunction</span> <span class="o">=</span> <span class="s1">&#39;cri._hue_bin_data_to_Ri&#39;</span><span class="p">)</span>
@@ -459,6 +545,10 @@
         <span class="k">if</span> <span class="p">(</span><span class="n">scale_fcn</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
             <span class="n">scale_fcn</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;scale&#39;</span><span class="p">][</span><span class="s1">&#39;fcn&#39;</span><span class="p">]</span>    
         
+        <span class="k">if</span> <span class="p">(</span><span class="n">use_bin_avg_DEi</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="s1">&#39;rg_pars&#39;</span> <span class="ow">in</span> <span class="n">cri_type</span><span class="p">):</span> 
+            <span class="n">use_bin_avg_DEi</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;rg_pars&#39;</span><span class="p">][</span><span class="s1">&#39;use_bin_avg_DEi&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Define use_bin_avg_DEi in rg_pars dict in cri_type dict or set use_bin_avg_DEi kwarg to not None!&#39;</span><span class="p">)</span>
 
     <span class="n">nhbins</span> <span class="o">=</span> <span class="n">hue_bin_data</span><span class="p">[</span><span class="s1">&#39;nhbins&#39;</span><span class="p">]</span>
     <span class="n">start_hue</span> <span class="o">=</span> <span class="n">hue_bin_data</span><span class="p">[</span><span class="s1">&#39;start_hue&#39;</span><span class="p">]</span>
@@ -740,7 +830,7 @@
     <span class="c1"># unpack and update dict with parameters:</span>
     <span class="p">(</span><span class="n">avg</span><span class="p">,</span> <span class="n">catf</span><span class="p">,</span> <span class="n">cieobs</span><span class="p">,</span>
      <span class="n">cri_specific_pars</span><span class="p">,</span> <span class="n">cspace</span><span class="p">,</span> 
-     <span class="n">ref_type</span><span class="p">,</span> <span class="n">rg_pars</span><span class="p">,</span> <span class="n">sampleset</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="n">cri_type</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">cri_type</span><span class="o">.</span><span class="n">keys</span><span class="p">())]</span> 
+     <span class="n">ref_type</span><span class="p">,</span> <span class="n">rf_from_avg_rounded_rfi</span><span class="p">,</span> <span class="n">rg_pars</span><span class="p">,</span> <span class="n">sampleset</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="n">cri_type</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">cri_type</span><span class="o">.</span><span class="n">keys</span><span class="p">())]</span> 
 
     <span class="c1"># pre-interpolate SPD:</span>
     <span class="k">if</span> <span class="n">wl</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> 
@@ -948,7 +1038,7 @@
 
 
 <span class="c1">#------------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="optimize_scale_factor"><a class="viewcode-back" href="../../../../../color.html#luxpy.color.cri.optimize_scale_factor">[docs]</a><span class="k">def</span> <span class="nf">optimize_scale_factor</span><span class="p">(</span><span class="n">cri_type</span><span class="p">,</span> <span class="n">opt_scale_factor</span><span class="p">,</span> <span class="n">scale_fcn</span><span class="p">,</span> <span class="n">avg</span><span class="p">)</span> <span class="p">:</span>
+<div class="viewcode-block" id="optimize_scale_factor"><a class="viewcode-back" href="../../../../../color.html#luxpy.color.cri.optimize_scale_factor">[docs]</a><span class="k">def</span> <span class="nf">optimize_scale_factor</span><span class="p">(</span><span class="n">cri_type</span><span class="p">,</span> <span class="n">opt_scale_factor</span><span class="p">,</span> <span class="n">scale_fcn</span><span class="p">,</span> <span class="n">avg</span><span class="p">,</span> <span class="n">rf_from_avg_rounded_rfi</span><span class="p">)</span> <span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Optimize scale_factor of cri-model in cri_type </span>
 <span class="sd">    such that average Rf for a set of light sources is the same as that </span>
@@ -1000,32 +1090,59 @@
         <span class="n">scale_fcn_opt</span> <span class="o">=</span> <span class="n">opt_cri_type</span> <span class="p">[</span><span class="s1">&#39;scale&#39;</span><span class="p">][</span><span class="s1">&#39;fcn&#39;</span><span class="p">]</span>
         <span class="n">scale_factor_opt</span> <span class="o">=</span> <span class="n">opt_cri_type</span> <span class="p">[</span><span class="s1">&#39;scale&#39;</span><span class="p">][</span><span class="s1">&#39;cfactor&#39;</span><span class="p">]</span>
         <span class="n">avg_opt</span> <span class="o">=</span> <span class="n">opt_cri_type</span> <span class="p">[</span><span class="s1">&#39;avg&#39;</span><span class="p">]</span>
-        <span class="n">DEa_opt</span> <span class="o">=</span> <span class="n">spd_to_DEi</span><span class="p">(</span><span class="n">opt_spd_set</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span><span class="s1">&#39;DEa&#39;</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">opt_cri_type</span><span class="p">)</span> <span class="c1"># DEa using target cri</span>
-        <span class="n">Rf_opt</span> <span class="o">=</span> <span class="n">avg</span><span class="p">(</span><span class="n">scale_fcn_opt</span><span class="p">(</span><span class="n">DEa_opt</span><span class="p">,</span><span class="n">scale_factor_opt</span><span class="p">))</span>
         
-        <span class="n">DEa</span> <span class="o">=</span> <span class="n">spd_to_DEi</span><span class="p">(</span><span class="n">opt_spd_set</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span><span class="s1">&#39;DEa&#39;</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">)</span> <span class="c1"># DEa using current cri</span>
-
+        <span class="n">rf_from_avg_rounded_rfi_opt</span> <span class="o">=</span> <span class="n">opt_cri_type</span><span class="p">[</span><span class="s1">&#39;rf_from_avg_rounded_rfi&#39;</span><span class="p">]</span>
+        <span class="n">rf_from_avg_rounded_rfi</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;rf_from_avg_rounded_rfi&#39;</span><span class="p">]</span>
         
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">rf_from_avg_rounded_rfi_opt</span><span class="p">:</span>
+            <span class="n">DEa_opt</span> <span class="o">=</span> <span class="n">spd_to_DEi</span><span class="p">(</span><span class="n">opt_spd_set</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span><span class="s1">&#39;DEa&#39;</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">opt_cri_type</span><span class="p">)</span> <span class="c1"># DEa using target cri</span>
+            <span class="n">Rf_opt</span> <span class="o">=</span> <span class="n">avg</span><span class="p">(</span><span class="n">scale_fcn_opt</span><span class="p">(</span><span class="n">DEa_opt</span><span class="p">,</span><span class="n">scale_factor_opt</span><span class="p">))</span>
+            
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">DEi_opt</span> <span class="o">=</span> <span class="n">spd_to_DEi</span><span class="p">(</span><span class="n">opt_spd_set</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span><span class="s1">&#39;DEi&#39;</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">opt_cri_type</span><span class="p">)</span> <span class="c1"># DEa using target cri</span>
+            <span class="n">Rfi_opt</span> <span class="o">=</span> <span class="n">avg</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">scale_fcn_opt</span><span class="p">(</span><span class="n">DEi_opt</span><span class="p">,</span><span class="n">scale_factor_opt</span><span class="p">),</span><span class="mi">0</span><span class="p">))</span> <span class="c1"># average rounded individual Rfi to get Rf !!!</span>
+            <span class="n">Rf_opt</span> <span class="o">=</span> <span class="n">avg</span><span class="p">(</span><span class="n">Rfi_opt</span><span class="p">)</span>
+            
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">rf_from_avg_rounded_rfi</span><span class="p">:</span>
+            <span class="n">DEa</span> <span class="o">=</span> <span class="n">spd_to_DEi</span><span class="p">(</span><span class="n">opt_spd_set</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span><span class="s1">&#39;DEa&#39;</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">)</span> <span class="c1"># DEa using current cri</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">DEi</span> <span class="o">=</span> <span class="n">spd_to_DEi</span><span class="p">(</span><span class="n">opt_spd_set</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span><span class="s1">&#39;DEi&#39;</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">)</span> <span class="c1"># DEa using target cri</span>
+                        
+            
         <span class="c1"># optimize scale_factor to minimize rms difference:</span>
         <span class="n">sf</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;scale&#39;</span><span class="p">][</span><span class="s1">&#39;cfactor&#39;</span><span class="p">]</span> <span class="c1"># get scale_factor of cri_type to determine len and non-optimized factors</span>
-
+        
+        <span class="k">if</span> <span class="n">sf</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">sf</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span>
+        
         <span class="k">if</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">sf</span><span class="p">,</span><span class="nb">float</span><span class="p">)):</span> <span class="c1">#(isinstance(1.0*sf,float))</span>
             <span class="n">sf</span> <span class="o">=</span> <span class="p">[</span><span class="n">sf</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">opt_scale_factor</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
             <span class="n">opt_scale_factor</span> <span class="o">=</span> <span class="p">[</span><span class="n">opt_scale_factor</span><span class="p">]</span> 
+            
         <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">opt_scale_factor</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sf</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
             <span class="n">x0</span> <span class="o">=</span> <span class="mi">1</span>
-            <span class="n">optfcn</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="n">math</span><span class="o">.</span><span class="n">rms</span><span class="p">(</span><span class="n">avg</span><span class="p">(</span><span class="n">scale_fcn</span><span class="p">(</span><span class="n">DEa</span><span class="p">,</span><span class="n">x</span><span class="p">))</span> <span class="o">-</span> <span class="n">Rf_opt</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># optimize the only cfactor</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">rf_from_avg_rounded_rfi</span><span class="p">:</span>
+                <span class="n">optfcn</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="n">math</span><span class="o">.</span><span class="n">rms</span><span class="p">(</span><span class="n">avg</span><span class="p">(</span><span class="n">scale_fcn</span><span class="p">(</span><span class="n">DEa</span><span class="p">,</span><span class="n">x</span><span class="p">))</span> <span class="o">-</span> <span class="n">Rf_opt</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># optimize the only cfactor</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">optfcn</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="n">math</span><span class="o">.</span><span class="n">rms</span><span class="p">(</span><span class="n">avg</span><span class="p">(</span><span class="n">avg</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">scale_fcn</span><span class="p">(</span><span class="n">DEi</span><span class="p">,</span> <span class="n">x</span><span class="p">),</span><span class="mi">0</span><span class="p">)))</span> <span class="o">-</span> <span class="n">Rf_opt</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+       
         <span class="k">elif</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">opt_scale_factor</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sf</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">):</span>     
             <span class="n">x0</span> <span class="o">=</span> <span class="mi">1</span>
-            <span class="n">optfcn</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="n">math</span><span class="o">.</span><span class="n">rms</span><span class="p">(</span><span class="n">avg</span><span class="p">(</span><span class="n">scale_fcn</span><span class="p">(</span><span class="n">DEa</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">sf</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span> <span class="p">)))</span> <span class="o">-</span> <span class="n">Rf_opt</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># optimize the first cfactor (for scale_factor input of len = 1)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">rf_from_avg_rounded_rfi</span><span class="p">:</span> 
+                <span class="n">optfcn</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="n">math</span><span class="o">.</span><span class="n">rms</span><span class="p">(</span><span class="n">avg</span><span class="p">(</span><span class="n">scale_fcn</span><span class="p">(</span><span class="n">DEa</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">sf</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span> <span class="p">)))</span> <span class="o">-</span> <span class="n">Rf_opt</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># optimize the first cfactor (for scale_factor input of len = 1)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">optfcn</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="n">math</span><span class="o">.</span><span class="n">rms</span><span class="p">(</span><span class="n">avg</span><span class="p">(</span><span class="n">avg</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">scale_fcn</span><span class="p">(</span><span class="n">DEi</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">sf</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span> <span class="p">)),</span><span class="mi">0</span><span class="p">)))</span> <span class="o">-</span> <span class="n">Rf_opt</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># optimize the first cfactor (for scale_factor input of len = 1)</span>
+
         <span class="k">else</span><span class="p">:</span>
             <span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">opt_scale_factor</span><span class="p">))</span>
-            <span class="n">optfcn</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="n">math</span><span class="o">.</span><span class="n">rms</span><span class="p">(</span><span class="n">avg</span><span class="p">(</span><span class="n">scale_fcn</span><span class="p">(</span><span class="n">DEa</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">sf</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">invert</span><span class="p">(</span><span class="n">opt_scale_factor</span><span class="p">)])</span> <span class="p">)))</span> <span class="o">-</span> <span class="n">Rf_opt</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># optimize first N &#39;True&#39; cfactor (for scale_factor input of len = n&gt;=N)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">rf_from_avg_rounded_rfi</span><span class="p">:</span> 
+                <span class="n">optfcn</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="n">math</span><span class="o">.</span><span class="n">rms</span><span class="p">(</span><span class="n">avg</span><span class="p">(</span><span class="n">scale_fcn</span><span class="p">(</span><span class="n">DEa</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">sf</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">invert</span><span class="p">(</span><span class="n">opt_scale_factor</span><span class="p">)])</span> <span class="p">)))</span> <span class="o">-</span> <span class="n">Rf_opt</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># optimize first N &#39;True&#39; cfactor (for scale_factor input of len = n&gt;=N)</span>
+            <span class="k">else</span><span class="p">:</span> 
+                <span class="n">optfcn</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="n">math</span><span class="o">.</span><span class="n">rms</span><span class="p">(</span><span class="n">avg</span><span class="p">(</span><span class="n">avg</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">scale_fcn</span><span class="p">(</span><span class="n">DEa</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">sf</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">invert</span><span class="p">(</span><span class="n">opt_scale_factor</span><span class="p">)])</span> <span class="p">)),</span><span class="mi">0</span><span class="p">)))</span> <span class="o">-</span> <span class="n">Rf_opt</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># optimize first N &#39;True&#39; cfactor (for scale_factor input of len = n&gt;=N)</span>
         
         <span class="n">optresult</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">fun</span> <span class="o">=</span> <span class="n">optfcn</span><span class="p">,</span> <span class="n">x0</span> <span class="o">=</span> <span class="n">x0</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(),</span> <span class="n">method</span> <span class="o">=</span> <span class="s1">&#39;Nelder-Mead&#39;</span><span class="p">)</span>
         <span class="n">scale_factor</span> <span class="o">=</span> <span class="n">optresult</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span>
-        
+
         <span class="c1">#Reconstruct &#39;scale_factor&#39; from optimized and fixed parts:</span>
         <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">opt_scale_factor</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sf</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
             <span class="k">pass</span> <span class="c1">#only cfactor</span>
@@ -1198,7 +1315,7 @@
     <span class="n">args</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="nb">locals</span><span class="p">())</span> <span class="c1"># get dict with keyword input arguments to function (used to overwrite non-None input arguments present in cri_type dict)</span>
     <span class="n">cri_type</span> <span class="o">=</span> <span class="n">process_cri_type_input</span><span class="p">(</span><span class="n">cri_type</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">callerfunction</span> <span class="o">=</span> <span class="s1">&#39;cri.spd_to_rg&#39;</span><span class="p">)</span>
 
-    <span class="c1">#avg, catf, cieobs, cieobs_cct, cri_specific_pars, cspace, cspace_pars, ref_type, rg_pars, sampleset, scale_factor, scale_fcn = [cri_type[x] for x in sorted(cri_type.keys())] </span>
+    <span class="c1">#avg, catf, cieobs, cieobs_cct, cri_specific_pars, cspace, cspace_pars, ref_type, rf_from_avg_rounded_rfi, rg_pars, sampleset, scale_factor, scale_fcn = [cri_type[x] for x in sorted(cri_type.keys())] </span>
 
        
     <span class="c1"># calculate Jabt of test and Jabr of the reference illuminant corresponding to test: </span>
@@ -1248,7 +1365,8 @@
     
 <span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="spd_to_cri"><a class="viewcode-back" href="../../../../../color.html#luxpy.color.cri.spd_to_cri">[docs]</a><span class="k">def</span> <span class="nf">spd_to_cri</span><span class="p">(</span><span class="n">St</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">_CRI_TYPE_DEFAULT</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;Rf&#39;</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> \
-               <span class="n">sampleset</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ref_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">avg</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> \
+               <span class="n">sampleset</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ref_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> \
+               <span class="n">avg</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">rf_from_avg_rounded_rfi</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>\
                <span class="n">scale</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">opt_scale_factor</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">cspace</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">catf</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>\
                <span class="n">cri_specific_pars</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">rg_pars</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fit_gamut_ellipse</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -1333,7 +1451,8 @@
 <span class="sd">            |             luxpy.cri._CRI_DEFAULTS[&#39;mcri&#39;][&#39;cri_specific_pars&#39;]</span>
 <span class="sd">        :rg_pars: </span>
 <span class="sd">            | None or dict, optional</span>
-<span class="sd">            | Dict containing specifying parameters for slicing the gamut.</span>
+<span class="sd">            | Dict containing specifying parameters for slicing the gamut </span>
+<span class="sd">            | and calculating hue bin specific indices.</span>
 <span class="sd">            | Dict structure: </span>
 <span class="sd">            |     {&#39;nhbins&#39; : None, &#39;start_hue&#39; : 0, </span>
 <span class="sd">            |       &#39;normalize_gamut&#39; : False, &#39;normalized_chroma_ref&#39;: 100.0}</span>
@@ -1346,11 +1465,22 @@
 <span class="sd">            |    - key: &#39;normalized_chroma_ref&#39;: 100.0 or float, optional</span>
 <span class="sd">            |                Controls the size (chroma/radius) </span>
 <span class="sd">            |                of the normalization circle/gamut.</span>
+<span class="sd">            |    - key &#39;use_bin_avg_DEi&#39;: True or False</span>
+<span class="sd">            |               Note that following IES-TM30 DEhj from gamut_slicer()</span>
+<span class="sd">            |               is obtained by averaging the DEi per hue bin (True),</span>
+<span class="sd">            |               and NOT by averaging the jabt and jabr per hue bin </span>
+<span class="sd">            |               and then calculating the DEhj (False).</span>
 <span class="sd">        :avg: </span>
 <span class="sd">            | None or fcn handle, optional</span>
 <span class="sd">            | Averaging function (handle) for color differences, DEi </span>
 <span class="sd">            | (e.g. numpy.mean, .math.rms, .math.geomean)</span>
 <span class="sd">            | None use the one specified in :cri_type: dict.</span>
+<span class="sd">        :rf_from_avg_rounded_rfi:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | If None: use as specified in the :cri_type: dict</span>
+<span class="sd">            | If False: calculate Rf directly from DEa.</span>
+<span class="sd">            | If True: round Rfi to integer numbers and average them to Rf</span>
+<span class="sd">            |           (method used in CIE-13.3-1995 Ra calculation)</span>
 <span class="sd">        :scale:</span>
 <span class="sd">            | None or dict, optional</span>
 <span class="sd">            | Specifies scaling of color differences to obtain CRI.</span>
@@ -1358,7 +1488,7 @@
 <span class="sd">            |     - dict: user specified dict with scaling parameters.</span>
 <span class="sd">            |         - key: &#39;fcn&#39;: function handle to type of cri scale, </span>
 <span class="sd">            |                 e.g. </span>
-<span class="sd">            |                 * linear()_scale --&gt; (100 - scale_factor*DEi), </span>
+<span class="sd">            |                 * linear_scale --&gt; (100 - scale_factor*DEi), </span>
 <span class="sd">            |                 * log_scale --&gt; (cfr. Ohno&#39;s CQS), </span>
 <span class="sd">            |                 * psy_scale (Smet et al.&#39;s cri2012,See: LRT 2013)</span>
 <span class="sd">            |        - key: &#39;cfactor&#39;: factors used in scaling function, </span>
@@ -1449,9 +1579,10 @@
         <span class="n">scale_factor</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;scale&#39;</span><span class="p">][</span><span class="s1">&#39;cfactor&#39;</span><span class="p">]</span>
     <span class="n">scale_fcn</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;scale&#39;</span><span class="p">][</span><span class="s1">&#39;fcn&#39;</span><span class="p">]</span>
     <span class="n">avg</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;avg&#39;</span><span class="p">]</span>  
+    <span class="n">rf_from_avg_rounded_rfi</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;rf_from_avg_rounded_rfi&#39;</span><span class="p">]</span>
     
     <span class="c1"># Input parsing: optimize scale_factor for input based on F1-F12 (default) if scale_factor is NaN or None:</span>
-    <span class="n">scale_factor</span> <span class="o">=</span> <span class="n">optimize_scale_factor</span><span class="p">(</span><span class="n">cri_type</span><span class="p">,</span><span class="n">opt_scale_factor</span><span class="p">,</span> <span class="n">scale_fcn</span><span class="p">,</span> <span class="n">avg</span><span class="p">)</span>
+    <span class="n">scale_factor</span> <span class="o">=</span> <span class="n">optimize_scale_factor</span><span class="p">(</span><span class="n">cri_type</span><span class="p">,</span><span class="n">opt_scale_factor</span><span class="p">,</span> <span class="n">scale_fcn</span><span class="p">,</span> <span class="n">avg</span><span class="p">,</span> <span class="n">rf_from_avg_rounded_rfi</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">scale_factor</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
         <span class="k">raise</span> <span class="ne">Exception</span> <span class="p">(</span><span class="s1">&#39;Unable to optimize scale_factor.&#39;</span><span class="p">)</span>
@@ -1471,15 +1602,19 @@
     
     <span class="c1"># B. convert DEi to color rendering index:</span>
     <span class="n">Rfi</span> <span class="o">=</span> <span class="n">scale_fcn</span><span class="p">(</span><span class="n">DEi</span><span class="p">,</span> <span class="n">scale_factor</span><span class="p">)</span>
-    <span class="n">Rf</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">(</span><span class="n">scale_fcn</span><span class="p">(</span><span class="n">DEa</span><span class="p">,</span> <span class="n">scale_factor</span><span class="p">))</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">rf_from_avg_rounded_rfi</span><span class="p">:</span>
+        <span class="n">Rf</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">(</span><span class="n">scale_fcn</span><span class="p">(</span><span class="n">DEa</span><span class="p">,</span> <span class="n">scale_factor</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">Rf</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">(</span><span class="n">avg</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">Rfi</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span> <span class="c1"># as in CIE 13.3-1995 Ra calculation !!! </span>
     
     <span class="c1"># C. get binned jabt jabr and DEi:</span>
     <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;Rg&#39;</span> <span class="ow">in</span> <span class="n">outlist</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="s1">&#39;Rfhj&#39;</span> <span class="ow">in</span> <span class="n">outlist</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="s1">&#39;DEhj&#39;</span> <span class="ow">in</span> <span class="n">outlist</span><span class="p">)</span> <span class="o">|</span> \
        <span class="p">(</span><span class="s1">&#39;Rhshj&#39;</span> <span class="ow">in</span> <span class="n">outlist</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="s1">&#39;Rcshj&#39;</span> <span class="ow">in</span> <span class="n">outlist</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="s1">&#39;hue_bin_data&#39;</span> <span class="ow">in</span> <span class="n">outlist</span><span class="p">)</span> <span class="o">|</span>\
-       <span class="p">(</span><span class="n">fit_gamut_ellipse</span> <span class="o">==</span> <span class="kc">True</span><span class="p">):</span>
+       <span class="p">(</span><span class="s1">&#39;data&#39;</span> <span class="ow">in</span> <span class="n">outlist</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">fit_gamut_ellipse</span> <span class="o">==</span> <span class="kc">True</span><span class="p">):</span>
         
         <span class="n">rg_pars</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;rg_pars&#39;</span><span class="p">]</span> 
-        <span class="n">nhbins</span><span class="p">,</span> <span class="n">normalize_gamut</span><span class="p">,</span> <span class="n">normalized_chroma_ref</span><span class="p">,</span> <span class="n">start_hue</span>  <span class="o">=</span> <span class="p">[</span><span class="n">rg_pars</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">rg_pars</span><span class="o">.</span><span class="n">keys</span><span class="p">())]</span>
+        <span class="k">if</span> <span class="s1">&#39;use_bin_avg_DEi&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">rg_pars</span><span class="p">:</span> <span class="n">rg_pars</span><span class="p">[</span><span class="s1">&#39;use_bin_avg_DEi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">nhbins</span><span class="p">,</span> <span class="n">normalize_gamut</span><span class="p">,</span> <span class="n">normalized_chroma_ref</span><span class="p">,</span> <span class="n">start_hue</span><span class="p">,</span> <span class="n">use_bin_avg_DEi</span>  <span class="o">=</span> <span class="p">[</span><span class="n">rg_pars</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">rg_pars</span><span class="o">.</span><span class="n">keys</span><span class="p">())]</span>
 
         
         <span class="c1"># get hue_bin_data:</span>
@@ -1502,7 +1637,11 @@
 
     <span class="c1"># D. # Calculate local fidelity, chroma shifts and hue shifts:</span>
     <span class="k">if</span> <span class="n">hue_bin_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">Rcshj</span><span class="p">,</span> <span class="n">Rhshj</span><span class="p">,</span> <span class="n">Rfhj</span><span class="p">,</span> <span class="n">DEhj</span> <span class="o">=</span> <span class="n">_hue_bin_data_to_rxhj</span><span class="p">(</span><span class="n">hue_bin_data</span><span class="p">)</span>
+        <span class="n">Rcshj</span><span class="p">,</span> <span class="n">Rhshj</span><span class="p">,</span> <span class="n">Rfhj</span><span class="p">,</span> <span class="n">DEhj</span> <span class="o">=</span> <span class="n">_hue_bin_data_to_rxhj</span><span class="p">(</span><span class="n">hue_bin_data</span><span class="p">,</span> 
+                                                         <span class="n">scale_fcn</span> <span class="o">=</span> <span class="n">scale_fcn</span><span class="p">,</span>
+                                                         <span class="n">scale_factor</span> <span class="o">=</span> <span class="n">scale_factor</span><span class="p">,</span>
+                                                         <span class="n">cri_type</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">,</span>
+                                                         <span class="n">use_bin_avg_DEi</span> <span class="o">=</span> <span class="n">use_bin_avg_DEi</span><span class="p">)</span>
 
 
     <span class="k">if</span> <span class="s1">&#39;data&#39;</span> <span class="ow">in</span> <span class="n">out</span><span class="p">:</span>

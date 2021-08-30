@@ -1,0 +1,361 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>luxpy.color.deltaE.brown1957ellipses &mdash; LuxPy 1.7.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> LuxPy
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.7.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../license.html">License: GPLv3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../required_packages.html">Imported (required) packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../luxpy_structure.html">Luxpy package structure</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">LuxPy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>luxpy.color.deltaE.brown1957ellipses</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for luxpy.color.deltaE.brown1957ellipses</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module for Brown color discrimination ellipses.</span>
+<span class="sd">===============================================</span>
+
+<span class="sd"> :get_brown1957_ellipse(): Estimate n-step Brown (1957) ellipse at CIE x,y coordinates.  </span>
+<span class="sd">     </span>
+<span class="sd">References:</span>
+<span class="sd">  1. Brown, W. R. J. (1957). Color Discrimination of Twelve Observers*. Journal of the Optical Society of America, 47(2), 137–143. https://doi.org/10.1364/JOSA.47.000137</span>
+
+
+<span class="sd">Created on Thu Jul 15 13:52:25 2021</span>
+
+<span class="sd">@author: ksmet1877 [at] gmail.com</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="p">(</span><span class="n">math</span><span class="p">,</span> <span class="n">plotSL</span><span class="p">,</span> <span class="n">plot_chromaticity_diagram_colors</span><span class="p">,</span> <span class="n">plotellipse</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">luxpy.utils</span> <span class="kn">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">sp</span><span class="p">,</span> <span class="n">plt</span><span class="p">,</span> <span class="n">_EPS</span>
+<span class="n">eps</span> <span class="o">=</span> <span class="n">_EPS</span><span class="o">/</span><span class="mf">10.0</span>
+
+<span class="n">brown1957</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;color_center&#39;</span> <span class="p">:</span> <span class="p">[</span> <span class="mi">1</span><span class="p">,</span>  <span class="mi">2</span><span class="p">,</span>  <span class="mi">3</span><span class="p">,</span>  <span class="mi">4</span><span class="p">,</span>  <span class="mi">5</span><span class="p">,</span>  <span class="mi">6</span><span class="p">,</span>  <span class="mi">7</span><span class="p">,</span>  <span class="mi">8</span><span class="p">,</span>  <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">19</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">22</span><span class="p">],</span>
+            <span class="s1">&#39;fov&#39;</span> <span class="p">:</span>          <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span>  <span class="mi">2</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span>
+			<span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.308</span><span class="p">,</span> <span class="mf">0.339</span><span class="p">,</span> <span class="mf">0.426</span><span class="p">,</span> <span class="mf">0.536</span><span class="p">,</span> <span class="mf">0.457</span><span class="p">,</span> <span class="mf">0.288</span><span class="p">,</span> <span class="mf">0.254</span><span class="p">,</span> <span class="mf">0.674</span><span class="p">,</span> <span class="mf">0.209</span><span class="p">,</span> <span class="mf">0.340</span><span class="p">,</span> <span class="mf">0.422</span><span class="p">,</span> <span class="mf">0.262</span><span class="p">,</span> <span class="mf">0.368</span><span class="p">,</span> <span class="mf">0.368</span><span class="p">,</span> <span class="mf">0.643</span><span class="p">,</span> <span class="mf">0.385</span><span class="p">,</span> <span class="mf">0.270</span><span class="p">,</span> <span class="mf">0.308</span><span class="p">,</span> <span class="mf">0.562</span><span class="p">,</span> <span class="mf">0.217</span><span class="p">,</span> <span class="mf">0.196</span><span class="p">,</span> <span class="mf">0.161</span><span class="p">,</span> <span class="mf">0.257</span><span class="p">],</span>
+			<span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.280</span><span class="p">,</span> <span class="mf">0.493</span><span class="p">,</span> <span class="mf">0.219</span><span class="p">,</span> <span class="mf">0.411</span><span class="p">,</span> <span class="mf">0.368</span><span class="p">,</span> <span class="mf">0.630</span><span class="p">,</span> <span class="mf">0.456</span><span class="p">,</span> <span class="mf">0.308</span><span class="p">,</span> <span class="mf">0.137</span><span class="p">,</span> <span class="mf">0.178</span><span class="p">,</span> <span class="mf">0.483</span><span class="p">,</span> <span class="mf">0.343</span><span class="p">,</span> <span class="mf">0.352</span><span class="p">,</span> <span class="mf">0.352</span><span class="p">,</span> <span class="mf">0.304</span><span class="p">,</span> <span class="mf">0.546</span><span class="p">,</span> <span class="mf">0.549</span><span class="p">,</span> <span class="mf">0.307</span><span class="p">,</span> <span class="mf">0.252</span><span class="p">,</span> <span class="mf">0.606</span><span class="p">,</span> <span class="mf">0.293</span><span class="p">,</span> <span class="mf">0.410</span><span class="p">,</span> <span class="mf">0.202</span><span class="p">],</span>
+			<span class="s1">&#39;Y_ftL&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">4.6</span><span class="p">,</span> <span class="mf">6.4</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">,</span> <span class="mf">6.1</span><span class="p">,</span> <span class="mf">5.1</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mf">4.4</span><span class="p">,</span> <span class="mf">5.3</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">3.3</span><span class="p">,</span> <span class="mf">4.4</span><span class="p">,</span> <span class="mf">4.7</span><span class="p">,</span> <span class="mf">6.3</span><span class="p">,</span> <span class="mf">6.3</span><span class="p">,</span> <span class="mf">4.1</span><span class="p">,</span> <span class="mf">4.7</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">,</span> <span class="mf">5.5</span><span class="p">,</span> <span class="mf">4.9</span><span class="p">,</span> <span class="mf">5.1</span><span class="p">,</span> <span class="mf">4.3</span><span class="p">],</span>
+			<span class="s1">&#39;straight_averages&#39;</span> <span class="p">:</span> <span class="p">{</span>
+									<span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.00303</span><span class="p">,</span> <span class="mf">0.00530</span><span class="p">,</span> <span class="mf">0.00346</span><span class="p">,</span> <span class="mf">0.00385</span><span class="p">,</span> <span class="mf">0.00264</span><span class="p">,</span> <span class="mf">0.00606</span><span class="p">,</span> <span class="mf">0.00300</span><span class="p">,</span> <span class="mf">0.002180</span><span class="p">,</span> <span class="mf">0.003220</span><span class="p">,</span> <span class="mf">0.00398</span><span class="p">,</span> <span class="mf">0.00545</span><span class="p">,</span> <span class="mf">0.00186</span><span class="p">,</span> <span class="mf">0.00199</span><span class="p">,</span> <span class="mf">0.00320</span><span class="p">,</span> <span class="mf">0.002720</span><span class="p">,</span> <span class="mf">0.00388</span><span class="p">,</span> <span class="mf">0.00473</span><span class="p">,</span> <span class="mf">0.00186</span><span class="p">,</span> <span class="mf">0.002490</span><span class="p">,</span> <span class="mf">0.00635</span><span class="p">,</span> <span class="mf">0.00235</span><span class="p">,</span> <span class="mf">0.00344</span><span class="p">,</span> <span class="mf">0.00362</span><span class="p">],</span>
+									<span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.00139</span><span class="p">,</span> <span class="mf">0.00209</span><span class="p">,</span> <span class="mf">0.00174</span><span class="p">,</span> <span class="mf">0.00190</span><span class="p">,</span> <span class="mf">0.00149</span><span class="p">,</span> <span class="mf">0.00239</span><span class="p">,</span> <span class="mf">0.00175</span><span class="p">,</span> <span class="mf">0.000824</span><span class="p">,</span> <span class="mf">0.000889</span><span class="p">,</span> <span class="mf">0.00183</span><span class="p">,</span> <span class="mf">0.00324</span><span class="p">,</span> <span class="mf">0.00159</span><span class="p">,</span> <span class="mf">0.00130</span><span class="p">,</span> <span class="mf">0.00227</span><span class="p">,</span> <span class="mf">0.000960</span><span class="p">,</span> <span class="mf">0.00339</span><span class="p">,</span> <span class="mf">0.00223</span><span class="p">,</span> <span class="mf">0.00146</span><span class="p">,</span> <span class="mf">0.000995</span><span class="p">,</span> <span class="mf">0.00274</span><span class="p">,</span> <span class="mf">0.00175</span><span class="p">,</span> <span class="mf">0.00193</span><span class="p">,</span> <span class="mf">0.00130</span><span class="p">],</span>
+									<span class="s1">&#39;theta&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">64</span><span class="p">,</span> <span class="mi">84</span><span class="p">,</span> <span class="mi">43</span><span class="p">,</span> <span class="mi">161</span><span class="p">,</span> <span class="mi">171</span><span class="p">,</span> <span class="mi">103</span><span class="p">,</span> <span class="mi">110</span><span class="p">,</span> <span class="mi">170</span><span class="p">,</span> <span class="mi">79</span><span class="p">,</span> <span class="mi">83</span><span class="p">,</span> <span class="mi">123</span><span class="p">,</span> <span class="mi">81</span><span class="p">,</span> <span class="mi">171</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">177</span><span class="p">,</span> <span class="mi">113</span><span class="p">,</span> <span class="mi">125</span><span class="p">,</span> <span class="mi">41</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">154</span><span class="p">,</span> <span class="mi">25</span><span class="p">],</span>
+								   <span class="p">},</span>
+			<span class="s1">&#39;weighted_averages&#39;</span> <span class="p">:</span> <span class="p">{</span>
+									<span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.00211</span><span class="p">,</span> <span class="mf">0.00373</span><span class="p">,</span> <span class="mf">0.00228</span><span class="p">,</span> <span class="mf">0.00290</span><span class="p">,</span> <span class="mf">0.00190</span><span class="p">,</span> <span class="mf">0.00535</span><span class="p">,</span> <span class="mf">0.00182</span><span class="p">,</span> <span class="mf">0.00184</span><span class="p">,</span> <span class="mf">0.00232</span><span class="p">,</span> <span class="mf">0.00230</span><span class="p">,</span> <span class="mf">0.00339</span><span class="p">,</span> <span class="mf">0.00185</span><span class="p">,</span> <span class="mf">0.00189</span><span class="p">,</span> <span class="mf">0.00262</span><span class="p">,</span> <span class="mf">0.00242</span><span class="p">,</span> <span class="mf">0.00429</span><span class="p">,</span> <span class="mf">0.00451</span><span class="p">,</span> <span class="mf">0.00184</span><span class="p">,</span> <span class="mf">0.00205</span><span class="p">,</span> <span class="mf">0.00605</span><span class="p">,</span> <span class="mf">0.00236</span><span class="p">,</span> <span class="mf">0.00304</span><span class="p">,</span> <span class="mf">0.00281</span><span class="p">],</span>
+									<span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.00108</span><span class="p">,</span> <span class="mf">0.00157</span><span class="p">,</span> <span class="mf">0.00131</span><span class="p">,</span> <span class="mf">0.00145</span><span class="p">,</span> <span class="mf">0.00098</span><span class="p">,</span> <span class="mf">0.00205</span><span class="p">,</span> <span class="mf">0.00102</span><span class="p">,</span> <span class="mf">0.00070</span><span class="p">,</span> <span class="mf">0.00074</span><span class="p">,</span> <span class="mf">0.00108</span><span class="p">,</span> <span class="mf">0.00212</span><span class="p">,</span> <span class="mf">0.00147</span><span class="p">,</span> <span class="mf">0.00104</span><span class="p">,</span> <span class="mf">0.00168</span><span class="p">,</span> <span class="mf">0.00090</span><span class="p">,</span> <span class="mf">0.00288</span><span class="p">,</span> <span class="mf">0.00204</span><span class="p">,</span> <span class="mf">0.00143</span><span class="p">,</span> <span class="mf">0.00086</span><span class="p">,</span> <span class="mf">0.00245</span><span class="p">,</span> <span class="mf">0.00148</span><span class="p">,</span> <span class="mf">0.00155</span><span class="p">,</span> <span class="mf">0.00102</span><span class="p">],</span>
+									<span class="s1">&#39;theta&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">67</span><span class="p">,</span> <span class="mi">88</span><span class="p">,</span> <span class="mi">43</span><span class="p">,</span> <span class="mi">169</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">104</span><span class="p">,</span> <span class="mi">112</span><span class="p">,</span> <span class="mi">169</span><span class="p">,</span> <span class="mi">77</span><span class="p">,</span> <span class="mi">65</span><span class="p">,</span> <span class="mi">86</span><span class="p">,</span> <span class="mi">47</span><span class="p">,</span> <span class="mi">165</span><span class="p">,</span> <span class="mi">159</span><span class="p">,</span> <span class="mi">175</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">127</span><span class="p">,</span> <span class="mi">35</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">158</span><span class="p">,</span> <span class="mi">40</span><span class="p">],</span>
+								   <span class="p">}</span>
+			<span class="p">}</span>
+
+<span class="n">brown1957_weighted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">brown1957</span><span class="p">[</span><span class="s1">&#39;weighted_averages&#39;</span><span class="p">][</span><span class="s1">&#39;a&#39;</span><span class="p">])</span><span class="o">*</span><span class="mi">10</span><span class="p">,</span>
+                                <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">brown1957</span><span class="p">[</span><span class="s1">&#39;weighted_averages&#39;</span><span class="p">][</span><span class="s1">&#39;b&#39;</span><span class="p">])</span><span class="o">*</span><span class="mi">10</span><span class="p">,</span>
+                                <span class="n">brown1957</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">],</span>
+                                <span class="n">brown1957</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">],</span>
+                                <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">brown1957</span><span class="p">[</span><span class="s1">&#39;weighted_averages&#39;</span><span class="p">][</span><span class="s1">&#39;theta&#39;</span><span class="p">])</span><span class="o">*</span><span class="mf">1.0</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>
+
+<span class="n">brown1957_straight</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">brown1957</span><span class="p">[</span><span class="s1">&#39;straight_averages&#39;</span><span class="p">][</span><span class="s1">&#39;a&#39;</span><span class="p">])</span><span class="o">*</span><span class="mi">10</span><span class="p">,</span>
+                                <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">brown1957</span><span class="p">[</span><span class="s1">&#39;straight_averages&#39;</span><span class="p">][</span><span class="s1">&#39;b&#39;</span><span class="p">])</span><span class="o">*</span><span class="mi">10</span><span class="p">,</span>
+                                <span class="n">brown1957</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">],</span>
+                                <span class="n">brown1957</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">],</span>
+                                <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">brown1957</span><span class="p">[</span><span class="s1">&#39;straight_averages&#39;</span><span class="p">][</span><span class="s1">&#39;theta&#39;</span><span class="p">])</span><span class="o">*</span><span class="mf">1.0</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;get_brown1957_ellipse&#39;</span><span class="p">,</span><span class="s1">&#39;brown1957&#39;</span><span class="p">]</span>
+
+
+
+<div class="viewcode-block" id="get_brown1957_ellipse"><a class="viewcode-back" href="../../../../color.html#luxpy.color.deltaE.get_brown1957_ellipse">[docs]</a><span class="k">def</span> <span class="nf">get_brown1957_ellipse</span><span class="p">(</span><span class="n">xy</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">weighted</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">k_neighbours</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">nsteps</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">average_cik</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Estimate n-step Brown1957 ellipse at CIE x,y coordinates xy by calculating </span>
+<span class="sd">    average inverse covariance ellipse of the k_neighbours closest ellipses.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :xy:</span>
+<span class="sd">            | None or ndarray, optional</span>
+<span class="sd">            | If None: output Brown1957 ellipses, if not None: xy are the </span>
+<span class="sd">            | CIE xy coordinates for which ellipses will be estimated.</span>
+<span class="sd">        :weighted:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | If True: use weighted averages from Table III in Brown 1957 paper, else use the straight averages.</span>
+<span class="sd">        :k_neighbours:</span>
+<span class="sd">            | 3, optional</span>
+<span class="sd">            | Number of nearest ellipses to use to calculate ellipse at xy</span>
+<span class="sd">        :nsteps:</span>
+<span class="sd">            | 10, optional</span>
+<span class="sd">            | Set number of steps of ellipse.</span>
+<span class="sd">        :average_cik:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | If True: take distance weighted average of inverse </span>
+<span class="sd">            |   &#39;covariance ellipse&#39; elements cik. </span>
+<span class="sd">            | If False: average major &amp; minor axis lengths and </span>
+<span class="sd">            |   ellipse orientation angles directly.</span>
+<span class="sd">            </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :v_brown_est:</span>
+<span class="sd">            | estimated Brown1957 ellipse(s) in v-format [Rmax,Rmin,xc,yc,theta]</span>
+<span class="sd">    </span>
+<span class="sd">    References:</span>
+<span class="sd">        1. Brown, W.R.J. (1957). Color Discrimination of Twelve Observers*. Journal of the Optical Society of America, 47(2), 137–143. https://doi.org/10.1364/JOSA.47.000137</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Create list of 22 Brown ellipses (x10)</span>
+    <span class="n">v_brown1957</span> <span class="o">=</span> <span class="n">brown1957_weighted</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="k">if</span> <span class="n">weighted</span> <span class="k">else</span> <span class="n">brown1957_straight</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    
+    <span class="c1"># convert last column to rad.:</span>
+    <span class="n">v_brown1957</span><span class="p">[:,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">v_brown1957</span><span class="p">[:,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">180</span>
+    
+    <span class="c1"># convert to desired number of brown1957-steps:</span>
+    <span class="n">v_brown1957</span><span class="p">[:,</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">v_brown1957</span><span class="p">[:,</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span><span class="o">/</span><span class="mi">10</span><span class="o">*</span><span class="n">nsteps</span>
+    
+    <span class="k">if</span> <span class="n">xy</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1">#calculate inverse covariance matrices:</span>
+        <span class="n">cik</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">v_to_cik</span><span class="p">(</span><span class="n">v_brown1957</span><span class="p">,</span> <span class="n">inverse</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">average_cik</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">cik_long</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">cik</span><span class="p">[:,</span><span class="mi">0</span><span class="p">,:],</span><span class="n">cik</span><span class="p">[:,</span><span class="mi">1</span><span class="p">,:]))</span>
+        
+        <span class="c1"># Calculate k_neighbours closest ellipses to xy:</span>
+        <span class="n">tree</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">spatial</span><span class="o">.</span><span class="n">cKDTree</span><span class="p">(</span><span class="n">v_brown1957</span><span class="p">[:,</span><span class="mi">2</span><span class="p">:</span><span class="mi">4</span><span class="p">],</span> <span class="n">copy_data</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">d</span><span class="p">,</span> <span class="n">inds</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">xy</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="n">k_neighbours</span><span class="p">)</span>
+    
+        <span class="k">if</span> <span class="n">k_neighbours</span>  <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">pd</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">w</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="o">+</span> <span class="n">eps</span><span class="p">)</span><span class="o">**</span><span class="n">pd</span><span class="p">)[:,:,</span><span class="kc">None</span><span class="p">]</span> <span class="c1"># inverse distance weigthing</span>
+            <span class="k">if</span> <span class="n">average_cik</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">cik_long_est</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">w</span> <span class="o">*</span> <span class="n">cik_long</span><span class="p">[</span><span class="n">inds</span><span class="p">,:],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">v_brown1957_est</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">w</span> <span class="o">*</span> <span class="n">v_brown1957</span><span class="p">[</span><span class="n">inds</span><span class="p">,:],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># for average xyc</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">v_brown1957_est</span> <span class="o">=</span> <span class="n">v_brown1957</span><span class="p">[</span><span class="n">inds</span><span class="p">,:]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        
+        <span class="c1"># convert cik back to v:</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">average_cik</span> <span class="o">==</span> <span class="kc">True</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">k_neighbours</span> <span class="o">&gt;</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">cik_est</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dstack</span><span class="p">((</span><span class="n">cik_long_est</span><span class="p">[:,</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">],</span><span class="n">cik_long_est</span><span class="p">[:,</span><span class="mi">2</span><span class="p">:</span><span class="mi">4</span><span class="p">]))</span>
+            <span class="n">v_brown1957_est</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">cik_to_v</span><span class="p">(</span><span class="n">cik_est</span><span class="p">,</span> <span class="n">inverse</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">v_brown1957_est</span><span class="p">[:,</span><span class="mi">2</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">xy</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">v_brown1957_est</span> <span class="o">=</span> <span class="n">v_brown1957</span>
+        
+    <span class="k">return</span> <span class="n">v_brown1957_est</span></div>
+
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    
+    <span class="c1"># Get brown1957 ellipses:</span>
+    <span class="n">v_brown1957_weighted</span> <span class="o">=</span> <span class="n">get_brown1957_ellipse</span><span class="p">(</span><span class="n">xy</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">weighted</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">v_brown1957_straight</span> <span class="o">=</span> <span class="n">get_brown1957_ellipse</span><span class="p">(</span><span class="n">xy</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">weighted</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+    
+    <span class="c1"># Estimate brown1957 ellipse at test xy:</span>
+    <span class="n">xy_test</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([[</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">],[</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">]])</span>
+    
+    <span class="n">v_brown1957_est</span> <span class="o">=</span> <span class="n">get_brown1957_ellipse</span><span class="p">(</span><span class="n">xy_test</span><span class="p">,</span> <span class="n">weighted</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Plot results:</span>
+    <span class="n">cspace</span> <span class="o">=</span> <span class="s1">&#39;Yuv&#39;</span>
+    <span class="c1">#axh = plot_chromaticity_diagram_colors(cspace = cspace)</span>
+    <span class="n">axh</span> <span class="o">=</span> <span class="n">plotSL</span><span class="p">(</span><span class="n">cspace</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;1931_2&#39;</span><span class="p">,</span> <span class="n">show</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">diagram_colors</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">axh</span> <span class="o">=</span> <span class="n">plotellipse</span><span class="p">(</span><span class="n">v_brown1957_weighted</span><span class="p">,</span> <span class="n">show</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">axh</span> <span class="o">=</span> <span class="n">axh</span><span class="p">,</span> <span class="n">cspace_out</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">,</span><span class="n">plot_center</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">center_color</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;axh&#39;</span><span class="p">,</span> <span class="n">line_style</span> <span class="o">=</span> <span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="n">line_color</span> <span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span><span class="n">line_width</span> <span class="o">=</span> <span class="mf">1.5</span><span class="p">)</span>
+    <span class="n">axh</span> <span class="o">=</span> <span class="n">plotellipse</span><span class="p">(</span><span class="n">v_brown1957_straight</span><span class="p">,</span> <span class="n">show</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">axh</span> <span class="o">=</span> <span class="n">axh</span><span class="p">,</span> <span class="n">cspace_out</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">,</span><span class="n">plot_center</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">center_color</span> <span class="o">=</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;axh&#39;</span><span class="p">,</span> <span class="n">line_style</span> <span class="o">=</span> <span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="n">line_color</span> <span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">,</span><span class="n">line_width</span> <span class="o">=</span> <span class="mf">1.5</span><span class="p">)</span>
+    <span class="n">plotellipse</span><span class="p">(</span><span class="n">v_brown1957_est</span><span class="p">,</span> <span class="n">show</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">axh</span> <span class="o">=</span> <span class="n">axh</span><span class="p">,</span> <span class="n">cspace_out</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">,</span><span class="n">line_color</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">plot_center</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">center_color</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">cspace</span> <span class="o">==</span> <span class="s1">&#39;Yuv&#39;</span><span class="p">:</span>
+        <span class="n">axh</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mf">0.6</span><span class="p">])</span>
+        <span class="n">axh</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mf">0.6</span><span class="p">])</span>
+    
+    
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Kevin A.G. Smet.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -4,15 +4,18 @@
 <html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" />
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Spectrum sub-package &mdash; LuxPy 1.6.13 documentation</title>
+  <title>Spectrum sub-package &mdash; LuxPy 1.7.0 documentation</title>
   
 
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
 
   
   
@@ -29,6 +32,7 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
@@ -63,7 +67,7 @@
             
             
               <div class="version">
-                1.6.13
+                1.7.0
               </div>
             
           
@@ -104,6 +108,8 @@
 <li class="toctree-l4"><a class="reference internal" href="#spectrum-illuminants-py">spectrum/illuminants.py</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#spectrum-spdx-iestm2714-py">spectrum/spdx_iestm2714.py</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#references">References</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#spectrum-detector-spectral-mismatch-py">spectrum/detector_spectral_mismatch.py</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#reference">Reference</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#spd-class">SPD class</a></li>
@@ -182,7 +188,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="spectrum-sub-package">
+  <section id="spectrum-sub-package">
 <h1>Spectrum sub-package<a class="headerlink" href="#spectrum-sub-package" title="Permalink to this headline">¶</a></h1>
 <blockquote>
 <div><dl class="field-list simple">
@@ -190,6 +196,7 @@
 <dd class="field-odd"><ul class="simple">
 <li><p>__init__.py</p></li>
 <li><p>spdx_ietm2714.py</p></li>
+<li><p>detector_spectral_mismatch.py</p></li>
 <li><dl class="simple">
 <dt>basics/</dt><dd><ul>
 <li><p>__init__.py</p></li>
@@ -207,9 +214,9 @@
 </dd>
 </dl>
 </div></blockquote>
-<span class="target" id="module-luxpy.spectrum"></span><div class="section" id="spectrum-sub-package-supporting-basic-spectral-calculations">
+<span class="target" id="module-luxpy.spectrum"></span><section id="spectrum-sub-package-supporting-basic-spectral-calculations">
 <h2>spectrum: sub-package supporting basic spectral calculations<a class="headerlink" href="#spectrum-sub-package-supporting-basic-spectral-calculations" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="spectrum-cmf-py">
+<section id="spectrum-cmf-py">
 <h3>spectrum/cmf.py<a class="headerlink" href="#spectrum-cmf-py" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><dl class="field-list">
@@ -302,8 +309,8 @@ as defined by [1] &amp; [2].</p>
 </dd>
 </dl>
 </div></blockquote>
-</div>
-<div class="section" id="spectrum-spectral-py">
+</section>
+<section id="spectrum-spectral-py">
 <h3>spectrum/spectral.py<a class="headerlink" href="#spectrum-spectral-py" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><dl class="field-list">
@@ -379,8 +386,8 @@ or quantal energy units.</p>
 </dd>
 </dl>
 </div></blockquote>
-</div>
-<div class="section" id="spectrum-spectral-databases-py">
+</section>
+<section id="spectrum-spectral-databases-py">
 <h3>spectrum/spectral_databases.py<a class="headerlink" href="#spectrum-spectral-databases-py" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><dl class="field-list">
@@ -448,8 +455,8 @@ and Value (V), Chroma (C), hue (h) and (ab) specifications.</p>
 </dd>
 </dl>
 </div></blockquote>
-</div>
-<div class="section" id="spectrum-illuminants-py">
+</section>
+<section id="spectrum-illuminants-py">
 <h3>spectrum/illuminants.py<a class="headerlink" href="#spectrum-illuminants-py" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><dl class="field-list simple">
@@ -507,8 +514,8 @@ index calculations.</p>
 </dd>
 </dl>
 </div></blockquote>
-</div>
-<div class="section" id="spectrum-spdx-iestm2714-py">
+</section>
+<section id="spectrum-spdx-iestm2714-py">
 <h3>spectrum/spdx_iestm2714.py<a class="headerlink" href="#spectrum-spdx-iestm2714-py" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><dl class="field-list simple">
@@ -523,8 +530,8 @@ index calculations.</p>
 </dd>
 </dl>
 </div></blockquote>
-</div>
-<div class="section" id="references">
+</section>
+<section id="references">
 <h3>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><ol class="arabic simple">
@@ -541,10 +548,31 @@ New York, NY: The Illuminating Engineering Society of North America.</a></p>
 <li><p><a class="reference external" href="http://www.ies.org/iestm2714">http://www.ies.org/iestm2714</a></p></li>
 </ol>
 </div></blockquote>
+</section>
+<section id="spectrum-detector-spectral-mismatch-py">
+<h3>spectrum/detector_spectral_mismatch.py<a class="headerlink" href="#spectrum-detector-spectral-mismatch-py" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><dl class="field-list simple">
+<dt class="field-odd">f1prime()</dt>
+<dd class="field-odd"><p>Determine the f1prime spectral mismatch index.</p>
+</dd>
+<dt class="field-even">get_spectral_mismatch_correct_factors()</dt>
+<dd class="field-even"><p>Determine the spectral mismatch factors.</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+<section id="reference">
+<h3>Reference<a class="headerlink" href="#reference" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>Krüger, U. et al. GENERAL V(λ) MISMATCH - INDEX HISTORY, CURRENT STATE, NEW IDEAS</p></li>
+</ol>
+</div></blockquote>
 <hr class="docutils" />
 <dl class="py function">
-<dt id="luxpy.spectrum.getwlr">
-<code class="sig-prename descclassname">luxpy.spectrum.</code><code class="sig-name descname">getwlr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">wl3</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/basics/spectral.html#getwlr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.spectrum.getwlr" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="luxpy.spectrum.getwlr">
+<span class="sig-prename descclassname"><span class="pre">luxpy.spectrum.</span></span><span class="sig-name descname"><span class="pre">getwlr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wl3</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/basics/spectral.html#getwlr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.spectrum.getwlr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get/construct a wavelength range from a 3-vector (start, stop, spacing).</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -569,8 +597,8 @@ New York, NY: The Illuminating Engineering Society of North America.</a></p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="luxpy.spectrum.getwld">
-<code class="sig-prename descclassname">luxpy.spectrum.</code><code class="sig-name descname">getwld</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">wl</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/basics/spectral.html#getwld"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.spectrum.getwld" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="luxpy.spectrum.getwld">
+<span class="sig-prename descclassname"><span class="pre">luxpy.spectrum.</span></span><span class="sig-name descname"><span class="pre">getwld</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wl</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/basics/spectral.html#getwld"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.spectrum.getwld" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get wavelength spacing.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -594,8 +622,8 @@ New York, NY: The Illuminating Engineering Society of North America.</a></p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="luxpy.spectrum.spd_normalize">
-<code class="sig-prename descclassname">luxpy.spectrum.</code><code class="sig-name descname">spd_normalize</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">norm_type</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">norm_f</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">wl</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">'1931_2'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/basics/spectral.html#spd_normalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.spectrum.spd_normalize" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="luxpy.spectrum.spd_normalize">
+<span class="sig-prename descclassname"><span class="pre">luxpy.spectrum.</span></span><span class="sig-name descname"><span class="pre">spd_normalize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm_f</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/basics/spectral.html#spd_normalize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.spectrum.spd_normalize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Normalize a spectral power distribution (SPD).</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -656,12 +684,11 @@ New York, NY: The Illuminating Engineering Society of North America.</a></p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="luxpy.spectrum.cie_interp">
-<code class="sig-prename descclassname">luxpy.spectrum.</code><code class="sig-name descname">cie_interp</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">wl_new</span></em>, <em class="sig-param"><span class="n">kind</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">negative_values_allowed</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">extrap_values</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/basics/spectral.html#cie_interp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.spectrum.cie_interp" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="luxpy.spectrum.cie_interp">
+<span class="sig-prename descclassname"><span class="pre">luxpy.spectrum.</span></span><span class="sig-name descname"><span class="pre">cie_interp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl_new</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sprague5_allowed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">negative_values_allowed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extrap_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ext'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extrap_kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extrap_log</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/basics/spectral.html#cie_interp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.spectrum.cie_interp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Interpolate / extrapolate spectral data following standard CIE15-2018.</p>
 <div class="line-block">
 <div class="line">The kind of interpolation depends on the spectrum type defined in :kind:. </div>
-<div class="line">Extrapolation is always done by replicate the closest known values.</div>
 </div>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -683,27 +710,74 @@ New York, NY: The Illuminating Engineering Society of North America.</a></p>
 <div class="line">- If :kind: is None, return original data.</div>
 <div class="line">- If :kind: is a spectrum type (see _INTERP_TYPES), the correct </div>
 <div class="line-block">
-<div class="line">interpolation type if automatically chosen.</div>
+<div class="line">interpolation type is automatically chosen </div>
+<div class="line-block">
+<div class="line">(The use of the slow(er) ‘sprague5’ can be toggled on using :sprague5_allowed:).</div>
+</div>
 </div>
 <div class="line">- Or :kind: can be any interpolation type supported by </div>
 <div class="line-block">
-<div class="line">scipy.interpolate.interp1d (math.interp1d if nan’s are present!!)</div>
+<div class="line">scipy.interpolate.interp1d (or luxpy.math.interp1 if nan’s are present!!)</div>
+<div class="line">or can be ‘sprague5’ (uses luxpy.math.interp1_sprague5).  </div>
 </div>
 </div>
 </div>
 </dd>
-<dt class="field-even">negative_values_allowed</dt>
+<dt class="field-even">sprague5_allowed</dt>
 <dd class="field-even"><div class="line-block">
+<div class="line">False, optional</div>
+<div class="line">If True: When kind is a spectral data type from _INTERP_TYPES[‘cubic’],</div>
+<div class="line-block">
+<div class="line">then a cubic spline interpolation will be used in case of </div>
+<div class="line">unequal wavelength spacings, otherwise a 5th order Sprague will be used.</div>
+</div>
+<div class="line">If False: always use ‘cubic’, don’t use ‘sprague5’. </div>
+<div class="line-block">
+<div class="line">This is the default, as differences are minimal and </div>
+<div class="line">use of the ‘sprague5’ function is a lot slower!</div>
+</div>
+</div>
+</dd>
+<dt class="field-odd">negative_values_allowed</dt>
+<dd class="field-odd"><div class="line-block">
 <div class="line">False, optional</div>
 <div class="line">If False: negative values are clipped to zero.</div>
 </div>
 </dd>
-<dt class="field-odd">extrap_values</dt>
-<dd class="field-odd"><div class="line-block">
-<div class="line">None, optional</div>
-<div class="line">If None: use CIE recommended ‘closest value’ approach when extrapolating.</div>
+<dt class="field-even">extrap_values</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">‘ext’, optional</div>
+<div class="line">If ‘ext’: extrapolate using ‘linear’ (‘cie167:2005’), ‘quadratic’ (‘cie15:2018’) </div>
+<div class="line-block">
+<div class="line">‘nearest’ (‘cie15:2004’) recommended or other (e.g. ‘cubic’) methods.</div>
+</div>
+<div class="line">If None: use CIE15:2004 recommended ‘nearest value’ approach when extrapolating.</div>
 <div class="line">If float or list or ndarray, use those values to fill extrapolated value(s).</div>
-<div class="line">If ‘ext’: use normal extrapolated values by scipy.interpolate.interp1d</div>
+</div>
+</dd>
+<dt class="field-odd">extrap_kind</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">‘linear’, optional</div>
+<div class="line">Extrapolation method used when :extrap_values: is set to ‘ext’. </div>
+<div class="line">Options: ‘linear’ (‘cie167:2005’), ‘quadratic’ (‘cie15:2018’), </div>
+<div class="line-block">
+<div class="line">‘nearest’ (‘cie15:2004’), ‘cubic’</div>
+</div>
+<div class="line">CIE15:2018 states that based on a 2017 paper by Wang that ‘quadratic’ is ‘better’. </div>
+<div class="line">However, no significant difference was found between ‘quadratic’ and ‘linear’ methods.</div>
+<div class="line">Also see note 1 below, for why the CIE67:2005 recommended ‘linear’ extrapolation</div>
+<div class="line">is set as the default.</div>
+</div>
+</dd>
+<dt class="field-even">extrap_log</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">False, optional</div>
+<div class="line">If True: extrap the log of the spectral values </div>
+<div class="line-block">
+<div class="line">(not CIE recommended but in most cases seems to give a </div>
+<div class="line">more realistic estimate, but can sometimes seriously fail, </div>
+<div class="line">especially for the ‘quadratic’ extrapolation case (see note 1)!!!)</div>
+</div>
 </div>
 </dd>
 </dl>
@@ -717,12 +791,31 @@ New York, NY: The Illuminating Engineering Society of North America.</a></p>
 </dd>
 </dl>
 </dd>
+<dt>Notes:</dt><dd><div class="line-block">
+<div class="line">1. Type of extrapolation: ‘quadratic’ vs ‘linear’; impact of extrapolating log spectral values:</div>
+<div class="line-block">
+<div class="line">Using a ‘linear’ or ‘quadratic’ extrapolation, as mentioned in </div>
+<div class="line">CIE167:2005 and CIE15:2018, resp., can lead to extreme large values </div>
+<div class="line">when setting :extrap_log: (not CIE recommended) to True. </div>
+<div class="line">A quick test with the IES TM30 spectra (400 nm - 700 nm, 5 nm spacing) </div>
+<div class="line">shows that ‘linear’ is better than ‘quadratic’ in terms of </div>
+<div class="line">mean, median and max DEu’v’ with the original spectra (380 nm - 780 nm, 5 nm spacing).</div>
+<div class="line">This conferms the recommendation from CIE167:2005 to use ‘linear’ extrapolation.</div>
+<div class="line">Setting :extrap_log: to True reduces the median, but inflates the mean due to some</div>
+<div class="line">extremely large DEu’v’ values. However, the increase in mean and max DEu’v’ is much </div>
+<div class="line">larger for the ‘quadratic’ case, suggesting that ‘linear’ extrapolation </div>
+<div class="line">is likely a more suitable recommendation. When using a 1 nm spacing</div>
+<div class="line">‘linear’ is more similar to ‘quadratic’ when :extrap_log: is False, otherwise ‘linear’</div>
+<div class="line">remains the ‘best’. Hence the choice to use the CIE167:2005 recommended linear extrapolation as default!</div>
+</div>
+</div>
+</dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
-<dt id="luxpy.spectrum.spd">
-<code class="sig-prename descclassname">luxpy.spectrum.</code><code class="sig-name descname">spd</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">interpolation</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">kind</span><span class="o">=</span><span class="default_value">'np'</span></em>, <em class="sig-param"><span class="n">wl</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">columns</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">sep</span><span class="o">=</span><span class="default_value">','</span></em>, <em class="sig-param"><span class="n">header</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">datatype</span><span class="o">=</span><span class="default_value">'S'</span></em>, <em class="sig-param"><span class="n">norm_type</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">norm_f</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/basics/spectral.html#spd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.spectrum.spd" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="luxpy.spectrum.spd">
+<span class="sig-prename descclassname"><span class="pre">luxpy.spectrum.</span></span><span class="sig-name descname"><span class="pre">spd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interpolation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'np'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">','</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datatype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'S'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm_f</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/basics/spectral.html#spd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.spectrum.spd" title="Permalink to this definition">¶</a></dt>
 <dd><div class="line-block">
 <div class="line">All-in-one function that can:</div>
 <div class="line-block">
@@ -828,8 +921,8 @@ or which wavelength is normalized to 1 for ‘lambda’ option.</div>
 </dd></dl>
 
 <dl class="py function">
-<dt id="luxpy.spectrum.xyzbar">
-<code class="sig-prename descclassname">luxpy.spectrum.</code><code class="sig-name descname">xyzbar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">'1931_2'</span></em>, <em class="sig-param"><span class="n">scr</span><span class="o">=</span><span class="default_value">'dict'</span></em>, <em class="sig-param"><span class="n">wl_new</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">kind</span><span class="o">=</span><span class="default_value">'np'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/basics/spectral.html#xyzbar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.spectrum.xyzbar" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="luxpy.spectrum.xyzbar">
+<span class="sig-prename descclassname"><span class="pre">luxpy.spectrum.</span></span><span class="sig-name descname"><span class="pre">xyzbar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'dict'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl_new</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'np'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/basics/spectral.html#xyzbar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.spectrum.xyzbar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get color matching functions.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -877,8 +970,8 @@ or which wavelength is normalized to 1 for ‘lambda’ option.</div>
 </dd></dl>
 
 <dl class="py function">
-<dt id="luxpy.spectrum.vlbar">
-<code class="sig-prename descclassname">luxpy.spectrum.</code><code class="sig-name descname">vlbar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">'1931_2'</span></em>, <em class="sig-param"><span class="n">scr</span><span class="o">=</span><span class="default_value">'dict'</span></em>, <em class="sig-param"><span class="n">wl_new</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">kind</span><span class="o">=</span><span class="default_value">'np'</span></em>, <em class="sig-param"><span class="n">out</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/basics/spectral.html#vlbar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.spectrum.vlbar" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="luxpy.spectrum.vlbar">
+<span class="sig-prename descclassname"><span class="pre">luxpy.spectrum.</span></span><span class="sig-name descname"><span class="pre">vlbar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'dict'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl_new</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'np'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/basics/spectral.html#vlbar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.spectrum.vlbar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get Vlambda functions.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -938,8 +1031,8 @@ or which wavelength is normalized to 1 for ‘lambda’ option.</div>
 </dd></dl>
 
 <dl class="py function">
-<dt id="luxpy.spectrum.vlbar_cie_mesopic">
-<code class="sig-prename descclassname">luxpy.spectrum.</code><code class="sig-name descname">vlbar_cie_mesopic</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">m</span><span class="o">=</span><span class="default_value">[1]</span></em>, <em class="sig-param"><span class="n">wl_new</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">kind</span><span class="o">=</span><span class="default_value">'np'</span></em>, <em class="sig-param"><span class="n">out</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">Lp</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">Ls</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">SP</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/basics/spectral.html#vlbar_cie_mesopic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.spectrum.vlbar_cie_mesopic" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="luxpy.spectrum.vlbar_cie_mesopic">
+<span class="sig-prename descclassname"><span class="pre">luxpy.spectrum.</span></span><span class="sig-name descname"><span class="pre">vlbar_cie_mesopic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[1]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl_new</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'np'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Lp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ls</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SP</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/basics/spectral.html#vlbar_cie_mesopic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.spectrum.vlbar_cie_mesopic" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get CIE mesopic luminous efficiency function Vmesm according to CIE191:2010</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -1010,8 +1103,8 @@ or which wavelength is normalized to 1 for ‘lambda’ option.</div>
 </dd></dl>
 
 <dl class="py function">
-<dt id="luxpy.spectrum.get_cie_mesopic_adaptation">
-<code class="sig-prename descclassname">luxpy.spectrum.</code><code class="sig-name descname">get_cie_mesopic_adaptation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">Lp</span></em>, <em class="sig-param"><span class="n">Ls</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">SP</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/basics/spectral.html#get_cie_mesopic_adaptation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.spectrum.get_cie_mesopic_adaptation" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="luxpy.spectrum.get_cie_mesopic_adaptation">
+<span class="sig-prename descclassname"><span class="pre">luxpy.spectrum.</span></span><span class="sig-name descname"><span class="pre">get_cie_mesopic_adaptation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Lp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ls</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SP</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/basics/spectral.html#get_cie_mesopic_adaptation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.spectrum.get_cie_mesopic_adaptation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the mesopic adaptation state according to CIE191:2010</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -1056,8 +1149,8 @@ or which wavelength is normalized to 1 for ‘lambda’ option.</div>
 </dd></dl>
 
 <dl class="py function">
-<dt id="luxpy.spectrum.spd_to_xyz">
-<code class="sig-prename descclassname">luxpy.spectrum.</code><code class="sig-name descname">spd_to_xyz</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">relative</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">rfl</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">'1931_2'</span></em>, <em class="sig-param"><span class="n">K</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">out</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cie_std_dev_obs</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/basics/spectral.html#spd_to_xyz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.spectrum.spd_to_xyz" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="luxpy.spectrum.spd_to_xyz">
+<span class="sig-prename descclassname"><span class="pre">luxpy.spectrum.</span></span><span class="sig-name descname"><span class="pre">spd_to_xyz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relative</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rfl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">K</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cie_std_dev_obs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/basics/spectral.html#spd_to_xyz"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.spectrum.spd_to_xyz" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates xyz tristimulus values from spectral data.</p>
 <dl>
 <dt>Args: </dt><dd><dl class="field-list">
@@ -1166,8 +1259,8 @@ or which wavelength is normalized to 1 for ‘lambda’ option.</div>
 </dd></dl>
 
 <dl class="py function">
-<dt id="luxpy.spectrum.spd_to_ler">
-<code class="sig-prename descclassname">luxpy.spectrum.</code><code class="sig-name descname">spd_to_ler</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">'1931_2'</span></em>, <em class="sig-param"><span class="n">K</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/basics/spectral.html#spd_to_ler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.spectrum.spd_to_ler" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="luxpy.spectrum.spd_to_ler">
+<span class="sig-prename descclassname"><span class="pre">luxpy.spectrum.</span></span><span class="sig-name descname"><span class="pre">spd_to_ler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">K</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/basics/spectral.html#spd_to_ler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.spectrum.spd_to_ler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates Luminous efficacy of radiation (LER) from spectral data.</p>
 <dl>
 <dt>Args: </dt><dd><dl class="field-list">
@@ -1214,8 +1307,8 @@ or which wavelength is normalized to 1 for ‘lambda’ option.</div>
 </dd></dl>
 
 <dl class="py function">
-<dt id="luxpy.spectrum.spd_to_power">
-<code class="sig-prename descclassname">luxpy.spectrum.</code><code class="sig-name descname">spd_to_power</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">ptype</span><span class="o">=</span><span class="default_value">'ru'</span></em>, <em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">'1931_2'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/basics/spectral.html#spd_to_power"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.spectrum.spd_to_power" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="luxpy.spectrum.spd_to_power">
+<span class="sig-prename descclassname"><span class="pre">luxpy.spectrum.</span></span><span class="sig-name descname"><span class="pre">spd_to_power</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ptype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ru'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/basics/spectral.html#spd_to_power"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.spectrum.spd_to_power" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate power of spectral data in radiometric, photometric 
 or quantal energy units.</p>
 <dl>
@@ -1258,8 +1351,8 @@ or quantal energy units.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="luxpy.spectrum.detect_peakwl">
-<code class="sig-prename descclassname">luxpy.spectrum.</code><code class="sig-name descname">detect_peakwl</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spd</span></em>, <em class="sig-param"><span class="n">n</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">verbosity</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/basics/spectral.html#detect_peakwl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.spectrum.detect_peakwl" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="luxpy.spectrum.detect_peakwl">
+<span class="sig-prename descclassname"><span class="pre">luxpy.spectrum.</span></span><span class="sig-name descname"><span class="pre">detect_peakwl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbosity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/basics/spectral.html#detect_peakwl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.spectrum.detect_peakwl" title="Permalink to this definition">¶</a></dt>
 <dd><p>Detect primary peak wavelengths and fwhm in spectrum spd.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -1305,8 +1398,8 @@ or quantal energy units.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="luxpy.spectrum.cri_ref">
-<code class="sig-prename descclassname">luxpy.spectrum.</code><code class="sig-name descname">cri_ref</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ccts</span></em>, <em class="sig-param"><span class="n">wl3</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ref_type</span><span class="o">=</span><span class="default_value">'ciera'</span></em>, <em class="sig-param"><span class="n">mix_range</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">norm_type</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">norm_f</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">force_daylight_below4000K</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">n</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">daylight_locus</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/basics/illuminants.html#cri_ref"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.spectrum.cri_ref" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="luxpy.spectrum.cri_ref">
+<span class="sig-prename descclassname"><span class="pre">luxpy.spectrum.</span></span><span class="sig-name descname"><span class="pre">cri_ref</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ccts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl3</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ciera'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mix_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm_f</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_daylight_below4000K</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">daylight_locus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/basics/illuminants.html#cri_ref"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.spectrum.cri_ref" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates a reference illuminant spectrum based on cct 
 for color rendering index calculations .</p>
 <dl>
@@ -1428,8 +1521,8 @@ than the ones in _CRI_REF_TYPES.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="luxpy.spectrum.blackbody">
-<code class="sig-prename descclassname">luxpy.spectrum.</code><code class="sig-name descname">blackbody</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cct</span></em>, <em class="sig-param"><span class="n">wl3</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">n</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">relative</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/basics/illuminants.html#blackbody"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.spectrum.blackbody" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="luxpy.spectrum.blackbody">
+<span class="sig-prename descclassname"><span class="pre">luxpy.spectrum.</span></span><span class="sig-name descname"><span class="pre">blackbody</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cct</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl3</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relative</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/basics/illuminants.html#blackbody"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.spectrum.blackbody" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate blackbody radiator spectrum for correlated color temperature (cct).</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -1479,14 +1572,14 @@ than the ones in _CRI_REF_TYPES.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="luxpy.spectrum.spd_to_indoor">
-<code class="sig-prename descclassname">luxpy.spectrum.</code><code class="sig-name descname">spd_to_indoor</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spd</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/basics/illuminants.html#spd_to_indoor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.spectrum.spd_to_indoor" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="luxpy.spectrum.spd_to_indoor">
+<span class="sig-prename descclassname"><span class="pre">luxpy.spectrum.</span></span><span class="sig-name descname"><span class="pre">spd_to_indoor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spd</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/basics/illuminants.html#spd_to_indoor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.spectrum.spd_to_indoor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert spd to indoor variant by multiplying it with the CIE spectral transmission for glass.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="luxpy.spectrum.daylightlocus">
-<code class="sig-prename descclassname">luxpy.spectrum.</code><code class="sig-name descname">daylightlocus</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cct</span></em>, <em class="sig-param"><span class="n">force_daylight_below4000K</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">daylight_locus</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/basics/illuminants.html#daylightlocus"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.spectrum.daylightlocus" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="luxpy.spectrum.daylightlocus">
+<span class="sig-prename descclassname"><span class="pre">luxpy.spectrum.</span></span><span class="sig-name descname"><span class="pre">daylightlocus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cct</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_daylight_below4000K</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">daylight_locus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/basics/illuminants.html#daylightlocus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.spectrum.daylightlocus" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates daylight chromaticity (xD,yD) from correlated color temperature (cct).</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -1537,8 +1630,8 @@ than the ones in _CRI_REF_TYPES.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="luxpy.spectrum.daylightphase">
-<code class="sig-prename descclassname">luxpy.spectrum.</code><code class="sig-name descname">daylightphase</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cct</span></em>, <em class="sig-param"><span class="n">wl3</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">nominal_cct</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">force_daylight_below4000K</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">verbosity</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">n</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">daylight_locus</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">daylight_Mi_coeffs</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/basics/illuminants.html#daylightphase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.spectrum.daylightphase" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="luxpy.spectrum.daylightphase">
+<span class="sig-prename descclassname"><span class="pre">luxpy.spectrum.</span></span><span class="sig-name descname"><span class="pre">daylightphase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cct</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl3</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nominal_cct</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_daylight_below4000K</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbosity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">daylight_locus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">daylight_Mi_coeffs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/basics/illuminants.html#daylightphase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.spectrum.daylightphase" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate daylight phase spectrum for correlated color temperature (cct).</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -1632,8 +1725,8 @@ J. Opt. Soc. Am., 54(8), 1031–1040.</a></p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="luxpy.spectrum.get_daylightloci_parameters">
-<code class="sig-prename descclassname">luxpy.spectrum.</code><code class="sig-name descname">get_daylightloci_parameters</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ccts</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">wl3</span><span class="o">=</span><span class="default_value">[300, 830, 10]</span></em>, <em class="sig-param"><span class="n">verbosity</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/basics/illuminants.html#get_daylightloci_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.spectrum.get_daylightloci_parameters" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="luxpy.spectrum.get_daylightloci_parameters">
+<span class="sig-prename descclassname"><span class="pre">luxpy.spectrum.</span></span><span class="sig-name descname"><span class="pre">get_daylightloci_parameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ccts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl3</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[300,</span> <span class="pre">830,</span> <span class="pre">10]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbosity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/basics/illuminants.html#get_daylightloci_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.spectrum.get_daylightloci_parameters" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get parameters for the daylight loci functions xD(1000/CCT) and yD(xD).</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -1680,8 +1773,8 @@ J. Opt. Soc. Am., 54(8), 1031–1040.</a></p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="luxpy.spectrum.get_daylightphase_Mi_coeffs">
-<code class="sig-prename descclassname">luxpy.spectrum.</code><code class="sig-name descname">get_daylightphase_Mi_coeffs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">wl3</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">S012_daylightphase</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/basics/illuminants.html#get_daylightphase_Mi_coeffs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.spectrum.get_daylightphase_Mi_coeffs" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="luxpy.spectrum.get_daylightphase_Mi_coeffs">
+<span class="sig-prename descclassname"><span class="pre">luxpy.spectrum.</span></span><span class="sig-name descname"><span class="pre">get_daylightphase_Mi_coeffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl3</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">S012_daylightphase</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/basics/illuminants.html#get_daylightphase_Mi_coeffs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.spectrum.get_daylightphase_Mi_coeffs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get coefficients of Mi weights of daylight phase for specific cieobs</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -1721,8 +1814,8 @@ J. Opt. Soc. Am., 54(8), 1031–1040.</a></p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="luxpy.spectrum.read_spdx">
-<code class="sig-prename descclassname">luxpy.spectrum.</code><code class="sig-name descname">read_spdx</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spdx</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/spdx_ietm2714.html#read_spdx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.spectrum.read_spdx" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="luxpy.spectrum.read_spdx">
+<span class="sig-prename descclassname"><span class="pre">luxpy.spectrum.</span></span><span class="sig-name descname"><span class="pre">read_spdx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spdx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/spdx_ietm2714.html#read_spdx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.spectrum.read_spdx" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read xml file or convert xml string with spdx data to dictionary.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -1745,8 +1838,8 @@ J. Opt. Soc. Am., 54(8), 1031–1040.</a></p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="luxpy.spectrum.write_spdx">
-<code class="sig-prename descclassname">luxpy.spectrum.</code><code class="sig-name descname">write_spdx</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spdx_dict</span></em>, <em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/spdx_ietm2714.html#write_spdx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.spectrum.write_spdx" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="luxpy.spectrum.write_spdx">
+<span class="sig-prename descclassname"><span class="pre">luxpy.spectrum.</span></span><span class="sig-name descname"><span class="pre">write_spdx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spdx_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/spdx_ietm2714.html#write_spdx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.spectrum.write_spdx" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert spdx dictionary to xml string (and write to .spdx file).</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -1774,9 +1867,154 @@ J. Opt. Soc. Am., 54(8), 1031–1040.</a></p>
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="luxpy.spectrum.f1prime">
+<span class="sig-prename descclassname"><span class="pre">luxpy.spectrum.</span></span><span class="sig-name descname"><span class="pre">f1prime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s_detector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">S_C</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'A'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s_target_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wlr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[380,</span> <span class="pre">780,</span> <span class="pre">1]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interp_kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'f1p'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/detector_spectral_mismatch.html#f1prime"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.spectrum.f1prime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine the f1prime spectral mismatch index.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">s_detector</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with detector spectral responsivity (first row = wavelengths)</div>
+</div>
+</dd>
+<dt class="field-even">S_C</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">‘A’, optional</div>
+<div class="line">Standard ‘calibration’ illuminant.</div>
+<div class="line">string specifying the illuminant to use from the luxpy._CIE_ILLUMINANTS dict </div>
+<div class="line">or ndarray with standard illuminant spectral data.</div>
+</div>
+</dd>
+<dt class="field-odd">cieobs</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">‘1931_2’, optional</div>
+<div class="line">string with CIE standard observer color matching functions to use (from luxpy._CMF)</div>
+<div class="line">or ndarray with CMFs (s_target_index &gt; 0) </div>
+<div class="line">or target spectral responsivity (s_target_index == 0)</div>
+<div class="line">(first row contains the wavelengths).</div>
+</div>
+</dd>
+<dt class="field-even">s_target_index</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">2, optional</div>
+<div class="line">if &gt; 0: index into CMF set (1-&gt;’xbar’, 2-&gt;’ybar’=’Vlambda’, 3-&gt;’zbar’)</div>
+<div class="line">if == 0: cieobs is expected to contain an ndarray with the target spectral responsivity. </div>
+</div>
+</dd>
+<dt class="field-odd">wlr</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">[380,780,1], optional</div>
+<div class="line">Wavelength range (ndarray or [start, stop, spacing]).</div>
+</div>
+</dd>
+<dt class="field-even">interp_kind</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">‘linear’, optional</div>
+<div class="line">Interpolation type to use when interpolating function to specified wavelength range.</div>
+</div>
+</dd>
+<dt class="field-odd">out</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">‘f1p’, optional</div>
+<div class="line">Specify requested output of function, </div>
+<div class="line-block">
+<div class="line">e.g. ‘f1p,s_rel’ also outputs the normalized target spectral responsitivity. </div>
 </div>
 </div>
-<div class="section" id="spd-class">
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">f1p</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray (vector) with f1prime values for each of the spectral responsivities in s_detector.</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="luxpy.spectrum.get_spectral_mismatch_correction_factors">
+<span class="sig-prename descclassname"><span class="pre">luxpy.spectrum.</span></span><span class="sig-name descname"><span class="pre">get_spectral_mismatch_correction_factors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">S_Z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s_detector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">S_C</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'A'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s_target_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wlr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[380,</span> <span class="pre">780,</span> <span class="pre">1]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interp_kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'F'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/detector_spectral_mismatch.html#get_spectral_mismatch_correction_factors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.spectrum.get_spectral_mismatch_correction_factors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine the spectral mismatch factors.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">S_Z</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with spectral power distribution of measured light source (first row = wavelengths).</div>
+</div>
+</dd>
+<dt class="field-even">s_detector</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">ndarray with detector spectral responsivity (first row = wavelengths)</div>
+</div>
+</dd>
+<dt class="field-odd">S_C</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">‘A’, optional</div>
+<div class="line">Standard ‘calibration’ illuminant.</div>
+<div class="line">string specifying the illuminant to use from the luxpy._CIE_ILLUMINANTS dict </div>
+<div class="line">or ndarray with standard illuminant spectral data.</div>
+</div>
+</dd>
+<dt class="field-even">cieobs</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">‘1931_2’, optional</div>
+<div class="line">string with CIE standard observer color matching functions to use (from luxpy._CMF)</div>
+<div class="line">or ndarray with CMFs (s_target_index &gt; 0) </div>
+<div class="line">or target spectral responsivity (s_target_index == 0)</div>
+<div class="line">(first row contains the wavelengths).</div>
+</div>
+</dd>
+<dt class="field-odd">s_target_index</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">2, optional</div>
+<div class="line">if &gt; 0: index into CMF set (1-&gt;’xbar’, 2-&gt;’ybar’=’Vlambda’, 3-&gt;’zbar’)</div>
+<div class="line">if == 0: cieobs is expected to contain an ndarray with the target spectral responsivity. </div>
+</div>
+</dd>
+<dt class="field-even">wlr</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">[380,780,1], optional</div>
+<div class="line">Wavelength range (ndarray or [start, stop, spacing]).</div>
+<div class="line">If None: use the wavelength range of S_Z.</div>
+</div>
+</dd>
+<dt class="field-odd">interp_kind</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">‘linear’, optional</div>
+<div class="line">Interpolation type to use when interpolating function to specified wavelength range.</div>
+</div>
+</dd>
+<dt class="field-even">out</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">‘F’, optional</div>
+<div class="line">Specify requested output of function, </div>
+<div class="line-block">
+<div class="line">e.g. ‘F,f1p’ also outputs the f1prime spectral mismatch index. </div>
+</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">F</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with correction factors for each of the mesured spectra (rows)</div>
+<div class="line">and spectral responsivities in s_detector (columns).</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+<section id="spd-class">
 <h2>SPD class<a class="headerlink" href="#spd-class" title="Permalink to this headline">¶</a></h2>
 <blockquote>
 <div><dl class="field-list simple">
@@ -1791,11 +2029,11 @@ J. Opt. Soc. Am., 54(8), 1031–1040.</a></p>
 </dl>
 </div></blockquote>
 <dl class="py class">
-<dt id="luxpy.spectrum.SPD.SPD">
-<em class="property">class </em><code class="sig-prename descclassname">luxpy.spectrum.SPD.</code><code class="sig-name descname">SPD</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spd</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">wl</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ax0iswl</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">dtype</span><span class="o">=</span><span class="default_value">'S'</span></em>, <em class="sig-param"><span class="n">wl_new</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">interp_method</span><span class="o">=</span><span class="default_value">'auto'</span></em>, <em class="sig-param"><span class="n">negative_values_allowed</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">extrap_values</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">norm_type</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">norm_f</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">header</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">sep</span><span class="o">=</span><span class="default_value">','</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/SPD.html#SPD"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.spectrum.SPD.SPD" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="luxpy.spectrum.SPD.SPD">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">luxpy.spectrum.SPD.</span></span><span class="sig-name descname"><span class="pre">SPD</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax0iswl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'S'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl_new</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interp_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">negative_values_allowed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extrap_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ext'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm_f</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">','</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/SPD.html#SPD"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.spectrum.SPD.SPD" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="py method">
-<dt id="luxpy.spectrum.SPD.SPD.read_csv_">
-<code class="sig-name descname">read_csv_</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file</span></em>, <em class="sig-param"><span class="n">header</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">sep</span><span class="o">=</span><span class="default_value">','</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/SPD.html#SPD.read_csv_"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.spectrum.SPD.SPD.read_csv_" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="luxpy.spectrum.SPD.SPD.read_csv_">
+<span class="sig-name descname"><span class="pre">read_csv_</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">','</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/SPD.html#SPD.read_csv_"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.spectrum.SPD.SPD.read_csv_" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reads spectral data from file.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -1834,8 +2072,8 @@ column containing  the wavelengths.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="luxpy.spectrum.SPD.SPD.plot">
-<code class="sig-name descname">plot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ylabel</span><span class="o">=</span><span class="default_value">'Spectrum'</span></em>, <em class="sig-param"><span class="n">wavelength_bar</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/SPD.html#SPD.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.spectrum.SPD.SPD.plot" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="luxpy.spectrum.SPD.SPD.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ylabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Spectrum'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength_bar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/SPD.html#SPD.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.spectrum.SPD.SPD.plot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make a plot of the spectral data in SPD instance.</p>
 <dl>
 <dt>Returns:</dt><dd><dl class="field-list">
@@ -1850,68 +2088,68 @@ column containing  the wavelengths.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="luxpy.spectrum.SPD.SPD.mean">
-<code class="sig-name descname">mean</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/SPD.html#SPD.mean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.spectrum.SPD.SPD.mean" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="luxpy.spectrum.SPD.SPD.mean">
+<span class="sig-name descname"><span class="pre">mean</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/SPD.html#SPD.mean"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.spectrum.SPD.SPD.mean" title="Permalink to this definition">¶</a></dt>
 <dd><p>Take mean of all spectra in SPD instance.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="luxpy.spectrum.SPD.SPD.sum">
-<code class="sig-name descname">sum</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/SPD.html#SPD.sum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.spectrum.SPD.SPD.sum" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="luxpy.spectrum.SPD.SPD.sum">
+<span class="sig-name descname"><span class="pre">sum</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/SPD.html#SPD.sum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.spectrum.SPD.SPD.sum" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sum all spectra in SPD instance.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="luxpy.spectrum.SPD.SPD.dot">
-<code class="sig-name descname">dot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">S</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/SPD.html#SPD.dot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.spectrum.SPD.SPD.dot" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="luxpy.spectrum.SPD.SPD.dot">
+<span class="sig-name descname"><span class="pre">dot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">S</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/SPD.html#SPD.dot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.spectrum.SPD.SPD.dot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Take dot product with instance of SPD.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="luxpy.spectrum.SPD.SPD.add">
-<code class="sig-name descname">add</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">S</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/SPD.html#SPD.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.spectrum.SPD.SPD.add" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="luxpy.spectrum.SPD.SPD.add">
+<span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">S</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/SPD.html#SPD.add"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.spectrum.SPD.SPD.add" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add instance of SPD.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="luxpy.spectrum.SPD.SPD.sub">
-<code class="sig-name descname">sub</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">S</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/SPD.html#SPD.sub"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.spectrum.SPD.SPD.sub" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="luxpy.spectrum.SPD.SPD.sub">
+<span class="sig-name descname"><span class="pre">sub</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">S</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/SPD.html#SPD.sub"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.spectrum.SPD.SPD.sub" title="Permalink to this definition">¶</a></dt>
 <dd><p>Subtract instance of SPD.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="luxpy.spectrum.SPD.SPD.mul">
-<code class="sig-name descname">mul</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">S</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/SPD.html#SPD.mul"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.spectrum.SPD.SPD.mul" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="luxpy.spectrum.SPD.SPD.mul">
+<span class="sig-name descname"><span class="pre">mul</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">S</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/SPD.html#SPD.mul"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.spectrum.SPD.SPD.mul" title="Permalink to this definition">¶</a></dt>
 <dd><p>Multiply by instance of SPD.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="luxpy.spectrum.SPD.SPD.div">
-<code class="sig-name descname">div</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">S</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/SPD.html#SPD.div"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.spectrum.SPD.SPD.div" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="luxpy.spectrum.SPD.SPD.div">
+<span class="sig-name descname"><span class="pre">div</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">S</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/SPD.html#SPD.div"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.spectrum.SPD.SPD.div" title="Permalink to this definition">¶</a></dt>
 <dd><p>Divide by instance of SPD.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="luxpy.spectrum.SPD.SPD.pow">
-<code class="sig-name descname">pow</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/SPD.html#SPD.pow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.spectrum.SPD.SPD.pow" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="luxpy.spectrum.SPD.SPD.pow">
+<span class="sig-name descname"><span class="pre">pow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/SPD.html#SPD.pow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.spectrum.SPD.SPD.pow" title="Permalink to this definition">¶</a></dt>
 <dd><p>Raise SPD instance to power n.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="luxpy.spectrum.SPD.SPD.get_">
-<code class="sig-name descname">get_</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/SPD.html#SPD.get_"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.spectrum.SPD.SPD.get_" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="luxpy.spectrum.SPD.SPD.get_">
+<span class="sig-name descname"><span class="pre">get_</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/SPD.html#SPD.get_"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.spectrum.SPD.SPD.get_" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get spd as ndarray in instance of SPD.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="luxpy.spectrum.SPD.SPD.setwlv">
-<code class="sig-name descname">setwlv</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spd</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/SPD.html#SPD.setwlv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.spectrum.SPD.SPD.setwlv" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="luxpy.spectrum.SPD.SPD.setwlv">
+<span class="sig-name descname"><span class="pre">setwlv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spd</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/SPD.html#SPD.setwlv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.spectrum.SPD.SPD.setwlv" title="Permalink to this definition">¶</a></dt>
 <dd><p>Store spd ndarray in fields wl and values of instance of SPD.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="luxpy.spectrum.SPD.SPD.getwld_">
-<code class="sig-name descname">getwld_</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/SPD.html#SPD.getwld_"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.spectrum.SPD.SPD.getwld_" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="luxpy.spectrum.SPD.SPD.getwld_">
+<span class="sig-name descname"><span class="pre">getwld_</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/SPD.html#SPD.getwld_"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.spectrum.SPD.SPD.getwld_" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get wavelength spacing of SPD instance.</p>
 <dl>
 <dt>Returns:</dt><dd><dl class="field-list">
@@ -1929,8 +2167,8 @@ column containing  the wavelengths.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="luxpy.spectrum.SPD.SPD.normalize">
-<code class="sig-name descname">normalize</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">norm_type</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">norm_f</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">'1931_2'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/SPD.html#SPD.normalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.spectrum.SPD.SPD.normalize" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="luxpy.spectrum.SPD.SPD.normalize">
+<span class="sig-name descname"><span class="pre">normalize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">norm_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm_f</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/SPD.html#SPD.normalize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.spectrum.SPD.SPD.normalize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Normalize spectral power distributions in SPD instance.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -1971,12 +2209,11 @@ units (norm_type == ‘pu’)</div>
 </dd></dl>
 
 <dl class="py method">
-<dt id="luxpy.spectrum.SPD.SPD.cie_interp">
-<code class="sig-name descname">cie_interp</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">wl_new</span></em>, <em class="sig-param"><span class="n">kind</span><span class="o">=</span><span class="default_value">'auto'</span></em>, <em class="sig-param"><span class="n">negative_values_allowed</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">extrap_values</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/SPD.html#SPD.cie_interp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.spectrum.SPD.SPD.cie_interp" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="luxpy.spectrum.SPD.SPD.cie_interp">
+<span class="sig-name descname"><span class="pre">cie_interp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wl_new</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sprague5_allowed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">negative_values_allowed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extrap_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ext'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extrap_kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extrap_log</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/SPD.html#SPD.cie_interp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.spectrum.SPD.SPD.cie_interp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Interpolate / extrapolate spectral data following standard CIE15-2018.</p>
 <div class="line-block">
 <div class="line">The interpolation type depends on the spectrum type defined in :kind:. </div>
-<div class="line">Extrapolation is always done by replicate the closest known values.</div>
 </div>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -1992,23 +2229,73 @@ units (norm_type == ‘pu’)</div>
 <div class="line">If :kind: is a spectrum type (see _INTERP_TYPES), the correct </div>
 <div class="line-block">
 <div class="line">interpolation type if automatically chosen.</div>
+<div class="line-block">
+<div class="line">(The use of the slow(er) ‘sprague5’ can be toggled on using :sprague5_allowed:).</div>
+</div>
 </div>
 <div class="line">If kind = ‘auto’: use self.dtype</div>
-<div class="line">Or :kind: can be any interpolation type supported 
-by scipy.interpolate.interp1d</div>
+<div class="line">Or :kind: can be any interpolation type supported by </div>
+<div class="line-block">
+<div class="line">scipy.interpolate.interp1d (luxpy.math.interp1 if nan’s are present!!)</div>
+<div class="line">or can be ‘sprague5’ (uses luxpy.math.interp1_sprague5). </div>
+</div>
 </div>
 </dd>
-<dt class="field-odd">negative_values_allowed</dt>
+<dt class="field-odd">sprague5_allowed</dt>
 <dd class="field-odd"><div class="line-block">
+<div class="line">False, optional</div>
+<div class="line">If True: When kind is a spectral data type from _INTERP_TYPES[‘cubic’],</div>
+<div class="line-block">
+<div class="line">then a cubic spline interpolation will be used in case of </div>
+<div class="line">unequal wavelength spacings, otherwise a 5th order Sprague will be used.</div>
+</div>
+<div class="line">If False: always use ‘cubic’, don’t use ‘sprague5’. </div>
+<div class="line-block">
+<div class="line">This is the default, as differences are minimal and </div>
+<div class="line">use of the ‘sprague5’ function is a lot slower!</div>
+</div>
+</div>
+</dd>
+<dt class="field-even">negative_values_allowed</dt>
+<dd class="field-even"><div class="line-block">
 <div class="line">False, optional</div>
 <div class="line">If False: negative values are clipped to zero</div>
 </div>
 </dd>
-<dt class="field-even">extrap_values</dt>
+<dt class="field-odd">extrap_values</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">‘ext’, optional</div>
+<div class="line">If ‘ext’: extrapolate using ‘linear’ (‘cie167:2005’ r), ‘quadratic’ (‘cie15:2018’) </div>
+<div class="line-block">
+<div class="line">‘nearest’ (‘cie15:2004’) recommended or other (e.g. ‘cubic’) methods.</div>
+</div>
+<div class="line">If None: use CIE15:2004 recommended ‘nearest value’ approach when extrapolating.</div>
+<div class="line">If float or list or ndarray, use those values to fill extrapolated value(s).</div>
+</div>
+</dd>
+<dt class="field-even">extrap_kind</dt>
 <dd class="field-even"><div class="line-block">
-<div class="line">None, optional</div>
-<div class="line">float or list or ndarray with values to extrapolate</div>
-<div class="line">If None: use CIE recommended ‘closest value’ approach.</div>
+<div class="line">‘linear’, optional</div>
+<div class="line">Extrapolation method used when :extrap_values: is set to ‘ext’. </div>
+<div class="line">Options: ‘linear’ (‘cie167:2005’), ‘quadratic’ (‘cie15:2018’), </div>
+<div class="line-block">
+<div class="line">‘nearest’ (‘cie15:2004’), ‘cubic’</div>
+</div>
+<div class="line">CIE15:2018 states that based on a 2017 paper by Wang that ‘quadratic’ is ‘better’. </div>
+<div class="line">However, no significant difference was found between ‘quadratic’ and ‘linear’ methods.</div>
+<div class="line">Also see note 1 below, for why the CIE67:2005 recommended ‘linear’ extrapolation</div>
+<div class="line">is set as the default.            </div>
+</div>
+</dd>
+<dt class="field-odd">extrap_log</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">False, optional</div>
+<div class="line">If True: extrap the log of the spectral values </div>
+<div class="line-block">
+<div class="line">(not CIE recommended but in most cases seems to give a </div>
+<div class="line">more realistic estimate, but can sometimes seriously fail, </div>
+<div class="line">especially for the ‘quadratic’ extrapolation case (see note 1)!!!)</div>
+</div>
 </div>
 </dd>
 </dl>
@@ -2022,12 +2309,31 @@ by scipy.interpolate.interp1d</div>
 </dd>
 </dl>
 </dd>
+<dt>Notes:</dt><dd><div class="line-block">
+<div class="line">1. Type of extrapolation: ‘quadratic’ vs ‘linear’; impact of extrapolating log spectral values:</div>
+<div class="line-block">
+<div class="line">Using a ‘linear’ or ‘quadratic’ extrapolation, as mentioned in </div>
+<div class="line">CIE167:2005 and CIE15:2018, resp., can lead to extreme large values </div>
+<div class="line">when setting :extrap_log: (not CIE recommended) to True. </div>
+<div class="line">A quick test with the IES TM30 spectra (400 nm - 700 nm, 5 nm spacing) </div>
+<div class="line">shows that ‘linear’ is better than ‘quadratic’ in terms of </div>
+<div class="line">mean, median and max DEu’v’ with the original spectra (380 nm - 780 nm, 5 nm spacing).</div>
+<div class="line">This conferms the recommendation from CIE167:2005 to use ‘linear’ extrapolation.</div>
+<div class="line">Setting :extrap_log: to True reduces the median, but inflates the mean due to some</div>
+<div class="line">extremely large DEu’v’ values. However, the increase in mean and max DEu’v’ is much </div>
+<div class="line">larger for the ‘quadratic’ case, suggesting that ‘linear’ extrapolation </div>
+<div class="line">is likely a more suitable recommendation. When using a 1 nm spacing</div>
+<div class="line">‘linear’ is more similar to ‘quadratic’ when :extrap_log: is False, otherwise ‘linear’</div>
+<div class="line">remains the ‘best’. Hence the choice to use the CIE167:2005 recommended linear extrapolation as default!</div>
+</div>
+</div>
+</dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt id="luxpy.spectrum.SPD.SPD.to_xyz">
-<code class="sig-name descname">to_xyz</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">relative</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">rfl</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cieobs</span><span class="o">=</span><span class="default_value">'1931_2'</span></em>, <em class="sig-param"><span class="n">out</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/SPD.html#SPD.to_xyz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.spectrum.SPD.SPD.to_xyz" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="luxpy.spectrum.SPD.SPD.to_xyz">
+<span class="sig-name descname"><span class="pre">to_xyz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">relative</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rfl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/SPD.html#SPD.to_xyz"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.spectrum.SPD.SPD.to_xyz" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates xyz tristimulus values from spectral data 
 and return as instance of XYZ.</p>
 <dl>
@@ -2114,8 +2420,8 @@ calculation of XYZ.</div>
 
 </dd></dl>
 
-</div>
-</div>
+</section>
+</section>
 
 
            </div>

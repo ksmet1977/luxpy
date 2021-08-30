@@ -7,12 +7,14 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>luxpy.color.deltaE.discriminationellipses &mdash; LuxPy 1.6.13 documentation</title>
+  <title>luxpy.color.deltaE.discriminationellipses &mdash; LuxPy 1.7.0 documentation</title>
   
 
   
   <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
 
   
   
@@ -29,6 +31,7 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
         <script src="../../../../_static/jquery.js"></script>
         <script src="../../../../_static/underscore.js"></script>
         <script src="../../../../_static/doctools.js"></script>
@@ -61,7 +64,7 @@
             
             
               <div class="version">
-                1.6.13
+                1.7.0
               </div>
             
           
@@ -180,6 +183,8 @@
 <span class="sd">==================================================</span>
 <span class="sd"> :get_macadam_ellipse(): Estimate n-step MacAdam ellipse at CIE x,y coordinates  </span>
 <span class="sd"> </span>
+<span class="sd"> :get_brown1957_ellipse(): Estimate n-step Brown (1957) ellipse at CIE x,y coordinates.  </span>
+<span class="sd"> </span>
 <span class="sd"> :get_gij_fmc(): Get gij matrices describing the discrimination ellipses for Yxy using FMC-1 or FMC-2.</span>
 
 <span class="sd"> :get_fmc_discrimination_ellipse(): Get n-step discrimination ellipse(s) in v-format (R,r, xc, yc, theta) for Yxy using FMC-1 or FMC-2.</span>
@@ -191,19 +196,22 @@
 <span class="sd">    1. MacAdam DL. Visual Sensitivities to Color Differences in Daylight*. J Opt Soc Am. 1942;32(5):247-274.</span>
 <span class="sd">    2. Chickering, K.D. (1967), Optimization of the MacAdam-Modified 1965 Friele Color-Difference Formula, 57(4):537-541</span>
 <span class="sd">    3. Chickering, K.D. (1971), FMC Color-Difference Formulas: Clarification Concerning Usage, 61(1):118-122</span>
-<span class="sd">    </span>
+<span class="sd">    4. Brown, W. R. J. (1957). Color Discrimination of Twelve Observers*. Journal of the Optical Society of America, 47(2), 137–143. </span>
+
 <span class="sd">.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="p">(</span><span class="n">math</span><span class="p">,</span> <span class="n">Yxy_to_xyz</span><span class="p">,</span> <span class="n">plotSL</span><span class="p">,</span> <span class="n">plot_chromaticity_diagram_colors</span><span class="p">,</span> <span class="n">plotellipse</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">luxpy.utils</span> <span class="kn">import</span> <span class="n">sp</span><span class="p">,</span> <span class="n">np</span><span class="p">,</span> <span class="n">plt</span>
 <span class="kn">from</span> <span class="nn">.macadamellipses</span> <span class="kn">import</span> <span class="n">get_macadam_ellipse</span>
+<span class="kn">from</span> <span class="nn">.brown1957ellipses</span> <span class="kn">import</span> <span class="n">get_brown1957_ellipse</span>
 <span class="kn">from</span> <span class="nn">.frieleellipses</span> <span class="kn">import</span> <span class="p">(</span><span class="n">get_gij_fmc</span><span class="p">,</span> <span class="n">get_fmc_discrimination_ellipse</span><span class="p">)</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;get_discrimination_ellipse&#39;</span><span class="p">,</span><span class="s1">&#39;get_macadam_ellipse&#39;</span><span class="p">,</span><span class="s1">&#39;get_gij_fmc&#39;</span><span class="p">,</span><span class="s1">&#39;get_fmc_discrimination_ellipse&#39;</span><span class="p">,</span><span class="s1">&#39;discrimination_hotelling_t2&#39;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;get_discrimination_ellipse&#39;</span><span class="p">,</span><span class="s1">&#39;get_macadam_ellipse&#39;</span><span class="p">,</span><span class="s1">&#39;get_brown1957_ellipse&#39;</span><span class="p">,</span><span class="s1">&#39;get_gij_fmc&#39;</span><span class="p">,</span><span class="s1">&#39;get_fmc_discrimination_ellipse&#39;</span><span class="p">,</span><span class="s1">&#39;discrimination_hotelling_t2&#39;</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="get_discrimination_ellipse"><a class="viewcode-back" href="../../../../color.html#luxpy.color.deltaE.get_discrimination_ellipse">[docs]</a><span class="k">def</span> <span class="nf">get_discrimination_ellipse</span><span class="p">(</span><span class="n">Yxy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">100</span><span class="p">,</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">]]),</span> <span class="n">etype</span> <span class="o">=</span> <span class="s1">&#39;fmc2&#39;</span><span class="p">,</span> <span class="n">nsteps</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">k_neighbours</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">average_cik</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="get_discrimination_ellipse"><a class="viewcode-back" href="../../../../color.html#luxpy.color.deltaE.get_discrimination_ellipse">[docs]</a><span class="k">def</span> <span class="nf">get_discrimination_ellipse</span><span class="p">(</span><span class="n">Yxy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">100</span><span class="p">,</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">]]),</span> <span class="n">etype</span> <span class="o">=</span> <span class="s1">&#39;fmc2&#39;</span><span class="p">,</span> <span class="n">nsteps</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> 
+                               <span class="n">k_neighbours</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">average_cik</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">brown1957_weighted</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get discrimination ellipse(s) in v-format (R,r, xc, yc, theta) for Yxy using an interpolation of the MacAdam ellipses or using FMC-1 or FMC-2.</span>
 <span class="sd">    </span>
@@ -218,11 +226,15 @@
 <span class="sd">            |  - &#39;macadam&#39;: interpolate covariance matrices of closest MacAdam ellipses (see: get_macadam_ellipse?).</span>
 <span class="sd">            |  - &#39;fmc1&#39;: use FMC-1 from ref 2 (see get_fmc_discrimination_ellipse?).</span>
 <span class="sd">            |  - &#39;fmc2&#39;: use FMC-1 from ref 3 (see get_fmc_discrimination_ellipse?).</span>
+<span class="sd">            |  - &#39;brown1957&#39;: interpolate covariance matrices of closest Brown1957 ellipses (see: get_brown1957_ellipse?).</span>
 <span class="sd">        :nsteps:</span>
 <span class="sd">            | 10, optional</span>
 <span class="sd">            | Set multiplication factor for ellipses </span>
 <span class="sd">            | (nsteps=1 corresponds to approximately 1 MacAdam step, </span>
 <span class="sd">            | for FMC-2, Y also has to be 10.69, see note below).</span>
+<span class="sd">        :brown1957_weighted:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | If True: use weighted averages from Table III in Brown 1957 paper, else use the straight averages.</span>
 <span class="sd">        :k_neighbours:</span>
 <span class="sd">            | 3, optional</span>
 <span class="sd">            | Only for option &#39;macadam&#39;.</span>
@@ -246,6 +258,7 @@
 <span class="sd">       1. MacAdam DL. Visual Sensitivities to Color Differences in Daylight*. J Opt Soc Am. 1942;32(5):247-274.</span>
 <span class="sd">       2. Chickering, K.D. (1967), Optimization of the MacAdam-Modified 1965 Friele Color-Difference Formula, 57(4):537-541</span>
 <span class="sd">       3. Chickering, K.D. (1971), FMC Color-Difference Formulas: Clarification Concerning Usage, 61(1):118-122</span>
+<span class="sd">       4. Brown, WRJ. (1957). Color Discrimination of Twelve Observers*. Journal of the Optical Society of America, 47(2), 137–143. </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">Yxy</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
         <span class="n">Yxy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="mi">100</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">Yxy</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">1</span><span class="p">)),</span><span class="n">Yxy</span><span class="p">))</span>
@@ -253,6 +266,8 @@
         <span class="n">Yxy</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">Y</span>
     <span class="k">if</span> <span class="n">etype</span> <span class="o">==</span> <span class="s1">&#39;macadam&#39;</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">get_macadam_ellipse</span><span class="p">(</span><span class="n">xy</span> <span class="o">=</span> <span class="n">Yxy</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">:],</span> <span class="n">k_neighbours</span> <span class="o">=</span> <span class="n">k_neighbours</span><span class="p">,</span> <span class="n">nsteps</span> <span class="o">=</span> <span class="n">nsteps</span><span class="p">,</span> <span class="n">average_cik</span> <span class="o">=</span> <span class="n">average_cik</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">etype</span> <span class="o">==</span> <span class="s1">&#39;brown1957&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">get_brown1957_ellipse</span><span class="p">(</span><span class="n">xy</span> <span class="o">=</span> <span class="n">Yxy</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">:],</span> <span class="n">weighted</span> <span class="o">=</span> <span class="n">brown1957_weighted</span><span class="p">,</span> <span class="n">k_neighbours</span> <span class="o">=</span> <span class="n">k_neighbours</span><span class="p">,</span> <span class="n">nsteps</span> <span class="o">=</span> <span class="n">nsteps</span><span class="p">,</span> <span class="n">average_cik</span> <span class="o">=</span> <span class="n">average_cik</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">get_fmc_discrimination_ellipse</span><span class="p">(</span><span class="n">Yxy</span> <span class="o">=</span> <span class="n">Yxy</span><span class="p">,</span> <span class="n">etype</span> <span class="o">=</span> <span class="n">etype</span><span class="p">,</span> <span class="n">nsteps</span> <span class="o">=</span> <span class="n">nsteps</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">Y</span><span class="p">)</span></div>
     
@@ -338,18 +353,25 @@
     <span class="n">v_mac</span> <span class="o">=</span> <span class="n">get_macadam_ellipse</span><span class="p">(</span><span class="n">xy</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
     <span class="n">xys</span> <span class="o">=</span> <span class="n">v_mac</span><span class="p">[:,</span><span class="mi">2</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span>
     
-    <span class="c1"># Get discrimination ellipses for MacAdam centers using FMC-1 &amp; FMC-2:</span>
-    <span class="n">v_mac_0</span> <span class="o">=</span> <span class="n">get_fmc_discrimination_ellipse</span><span class="p">(</span><span class="n">Yxy</span> <span class="o">=</span> <span class="n">xys</span><span class="p">,</span> <span class="n">etype</span> <span class="o">=</span> <span class="s1">&#39;macadam&#39;</span><span class="p">,</span> <span class="n">nsteps</span> <span class="o">=</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="c1"># Get Brown1957 ellipses:</span>
+    <span class="n">v_brown1957</span> <span class="o">=</span> <span class="n">get_brown1957_ellipse</span><span class="p">(</span><span class="n">xy</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">xys_brown1957</span> <span class="o">=</span> <span class="n">v_brown1957</span><span class="p">[:,</span><span class="mi">2</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span>
+    
+    <span class="c1"># Get discrimination ellipses for MacAdam centers using FMC-1 &amp; FMC-2 &amp; Brown1957:</span>
+    <span class="n">v_mac_0</span> <span class="o">=</span> <span class="n">get_discrimination_ellipse</span><span class="p">(</span><span class="n">Yxy</span> <span class="o">=</span> <span class="n">xys</span><span class="p">,</span> <span class="n">etype</span> <span class="o">=</span> <span class="s1">&#39;macadam&#39;</span><span class="p">,</span> <span class="n">nsteps</span> <span class="o">=</span> <span class="mi">10</span><span class="p">)</span>
     <span class="n">v_mac_1</span> <span class="o">=</span> <span class="n">get_discrimination_ellipse</span><span class="p">(</span><span class="n">Yxy</span> <span class="o">=</span> <span class="n">xys</span><span class="p">,</span> <span class="n">etype</span> <span class="o">=</span> <span class="s1">&#39;fmc1&#39;</span><span class="p">,</span> <span class="n">nsteps</span> <span class="o">=</span> <span class="mi">10</span><span class="p">)</span>
     <span class="n">v_mac_2</span> <span class="o">=</span> <span class="n">get_discrimination_ellipse</span><span class="p">(</span><span class="n">Yxy</span> <span class="o">=</span> <span class="n">xys</span><span class="p">,</span> <span class="n">etype</span> <span class="o">=</span> <span class="s1">&#39;fmc2&#39;</span><span class="p">,</span> <span class="n">nsteps</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="mf">10.69</span><span class="p">)</span>
+    <span class="n">v_mac_brown1957</span> <span class="o">=</span> <span class="n">get_discrimination_ellipse</span><span class="p">(</span><span class="n">Yxy</span> <span class="o">=</span> <span class="n">xys</span><span class="p">,</span> <span class="n">etype</span> <span class="o">=</span> <span class="s1">&#39;brown1957&#39;</span><span class="p">,</span> <span class="n">nsteps</span> <span class="o">=</span> <span class="mi">10</span><span class="p">)</span>
     
     <span class="c1"># Plot results:</span>
     <span class="n">cspace</span> <span class="o">=</span> <span class="s1">&#39;Yxy&#39;</span>
     <span class="c1">#axh = plot_chromaticity_diagram_colors(cspace = cspace)</span>
     <span class="n">axh</span> <span class="o">=</span> <span class="n">plotSL</span><span class="p">(</span><span class="n">cspace</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;1931_2&#39;</span><span class="p">,</span> <span class="n">show</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">diagram_colors</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
     <span class="n">axh</span> <span class="o">=</span> <span class="n">plotellipse</span><span class="p">(</span><span class="n">v_mac_0</span><span class="p">,</span> <span class="n">show</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">axh</span> <span class="o">=</span> <span class="n">axh</span><span class="p">,</span> <span class="n">cspace_in</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cspace_out</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">,</span><span class="n">plot_center</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">center_color</span> <span class="o">=</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;axh&#39;</span><span class="p">,</span> <span class="n">line_style</span> <span class="o">=</span> <span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="n">line_color</span> <span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span><span class="n">line_width</span> <span class="o">=</span> <span class="mf">1.5</span><span class="p">)</span>
+    <span class="c1">#plotellipse(v_mac, show = True, axh = axh, cspace_in = None, cspace_out = cspace,line_color = &#39;m&#39;, line_style = &#39;:&#39;, plot_center = True, center_color = &#39;k&#39;)</span>
     <span class="n">plotellipse</span><span class="p">(</span><span class="n">v_mac_1</span><span class="p">,</span> <span class="n">show</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">axh</span> <span class="o">=</span> <span class="n">axh</span><span class="p">,</span> <span class="n">cspace_in</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cspace_out</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">,</span><span class="n">line_color</span> <span class="o">=</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="n">line_style</span> <span class="o">=</span> <span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="n">plot_center</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">center_color</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span><span class="p">)</span>
     <span class="n">plotellipse</span><span class="p">(</span><span class="n">v_mac_2</span><span class="p">,</span> <span class="n">show</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">axh</span> <span class="o">=</span> <span class="n">axh</span><span class="p">,</span> <span class="n">cspace_in</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cspace_out</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">,</span><span class="n">line_color</span> <span class="o">=</span> <span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="n">line_style</span> <span class="o">=</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">plot_center</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">center_color</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span><span class="p">)</span>
+    <span class="n">plotellipse</span><span class="p">(</span><span class="n">v_mac_brown1957</span><span class="p">,</span> <span class="n">show</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">axh</span> <span class="o">=</span> <span class="n">axh</span><span class="p">,</span> <span class="n">cspace_in</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cspace_out</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">,</span><span class="n">line_color</span> <span class="o">=</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">line_style</span> <span class="o">=</span> <span class="s1">&#39;-.&#39;</span><span class="p">,</span> <span class="n">plot_center</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">center_color</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">cspace</span> <span class="o">==</span> <span class="s1">&#39;Yuv&#39;</span><span class="p">:</span>
         <span class="n">axh</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mf">0.6</span><span class="p">])</span>

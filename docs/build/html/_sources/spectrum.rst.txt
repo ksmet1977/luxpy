@@ -4,6 +4,7 @@ Spectrum sub-package
  :py:
 	* __init__.py
 	* spdx_ietm2714.py
+	* detector_spectral_mismatch.py
 	* basics/
 		* __init__.py
 		* cmf.py 

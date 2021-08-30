@@ -7,12 +7,14 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>luxpy.color.cri.iestm30.graphics &mdash; LuxPy 1.6.13 documentation</title>
+  <title>luxpy.color.cri.iestm30.graphics &mdash; LuxPy 1.7.0 documentation</title>
   
 
   
   <link rel="stylesheet" href="../../../../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../../_static/css/theme.css" type="text/css" />
 
   
   
@@ -29,6 +31,7 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
+        <script data-url_root="../../../../../" id="documentation_options" src="../../../../../_static/documentation_options.js"></script>
         <script src="../../../../../_static/jquery.js"></script>
         <script src="../../../../../_static/underscore.js"></script>
         <script src="../../../../../_static/doctools.js"></script>
@@ -61,7 +64,7 @@
             
             
               <div class="version">
-                1.6.13
+                1.7.0
               </div>
             
           
@@ -465,7 +468,7 @@
 <span class="sd">            | dictionary with required parameters for plotting functions. </span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">data</span> <span class="o">=</span> <span class="n">_tm30_process_spd</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="s1">&#39;ies-tm30&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">_tm30_process_spd</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="n">hdata</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;hue_bin_data&#39;</span><span class="p">]</span>
     
     <span class="c1"># Normalized chroma (closed gamut):</span>
@@ -567,7 +570,7 @@
 <span class="sd">  </span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">data</span> <span class="o">=</span> <span class="n">_tm30_process_spd</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="s1">&#39;ies-tm30&#39;</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">_tm30_process_spd</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     
     <span class="c1"># Normalize Sr to same luminous power as spd:</span>
     <span class="n">Phiv_spd</span> <span class="o">=</span> <span class="n">spd_to_power</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;St&#39;</span><span class="p">],</span> <span class="n">ptype</span> <span class="o">=</span> <span class="s1">&#39;pu&#39;</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;cri_type&#39;</span><span class="p">][</span><span class="s1">&#39;cieobs&#39;</span><span class="p">][</span><span class="s1">&#39;cct&#39;</span><span class="p">])</span>
@@ -629,7 +632,7 @@
 <span class="sd">        :data:</span>
 <span class="sd">            | dictionary with required parameters for plotting functions.     </span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="n">_tm30_process_spd</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="s1">&#39;ies-tm30&#39;</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">_tm30_process_spd</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="n">Rfi</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Rfi&#39;</span><span class="p">]</span>
     
@@ -712,7 +715,7 @@
 <span class="sd">            | dictionary with required parameters for plotting functions.     </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
-    <span class="n">data</span> <span class="o">=</span> <span class="n">_tm30_process_spd</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="s1">&#39;ies-tm30&#39;</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">_tm30_process_spd</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="n">hdata</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;hue_bin_data&#39;</span><span class="p">]</span>
     <span class="n">Rfhj</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Rfhj&#39;</span><span class="p">]</span>
         
@@ -807,7 +810,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     
-    <span class="n">data</span> <span class="o">=</span> <span class="n">_tm30_process_spd</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="s1">&#39;ies-tm30&#39;</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">_tm30_process_spd</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="n">hdata</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;hue_bin_data&#39;</span><span class="p">]</span>
     <span class="n">Rcshj</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Rcshj&#39;</span><span class="p">]</span>
     
@@ -906,7 +909,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     
-    <span class="n">data</span> <span class="o">=</span> <span class="n">_tm30_process_spd</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="s1">&#39;ies-tm30&#39;</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">_tm30_process_spd</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="n">hdata</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;hue_bin_data&#39;</span><span class="p">]</span>
     <span class="n">Rhshj</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Rhshj&#39;</span><span class="p">]</span>
 
@@ -995,7 +998,7 @@
 <span class="sd">            | dictionary with required parameters for plotting functions.     </span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">data</span> <span class="o">=</span> <span class="n">_tm30_process_spd</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="s1">&#39;ies-tm30&#39;</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">_tm30_process_spd</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     
     <span class="k">if</span> <span class="n">axh</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">fig</span><span class="p">,</span> <span class="n">axh</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">ncols</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sharex</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">figsize</span> <span class="o">=</span> <span class="n">figsize</span><span class="p">)</span>

@@ -341,39 +341,45 @@ def cie_interp(data, wl_new, kind = None, sprague5_allowed = False, negative_val
             nan_indices = np.isnan(S)
             
             # Interpolate all spectra:
+            all_rows = np.arange(S.shape[0])
             rows_with_nans = np.where(nan_indices.sum(axis=1))[0]
-            if (rows_with_nans.size > 0): # at least 1 row has at least one NaN, so don't interpolate using scipy's interp1d as NaN's in one row also affect interpolation of other rows!
-                Si = np.zeros([N,wl_new.shape[0]])
-                Si.fill(np.nan)
-            else:
+            rows_with_no_nans = np.setdiff1d(all_rows,rows_with_nans)
+            # rows_with_no_nans = np.where(~np.isnan(S.sum(axis=1)))
+
+            Si = np.zeros([N,wl_new.shape[0]])
+            Si.fill(np.nan)
+            if (rows_with_no_nans.size>0): 
+
+                S_no_nans = S[rows_with_no_nans]
+
                 # prepare + do 'ext' extrapolation:
                 if (extrap_values[0] is None) | (((type(extrap_values[0])==np.str_)|(type(extrap_values[0])==str)) and (extrap_values[0][:3]=='ext')): 
                     fill_value = (0,0)
                     if extrap_log:
-                        Si_ext = np.exp(np.atleast_2d(sp.interpolate.interp1d(wl, np.log(S + _EPS), kind = extrapolation_kind, bounds_error = False, fill_value = 'extrapolate')(wl_new)))
+                        Si_ext_no_nans = np.exp(np.atleast_2d(sp.interpolate.interp1d(wl, np.log(S_no_nans + _EPS), kind = extrapolation_kind, bounds_error = False, fill_value = 'extrapolate')(wl_new)))
                     else:
-                        Si_ext = np.atleast_2d(sp.interpolate.interp1d(wl, S, kind = extrapolation_kind, bounds_error = False, fill_value = 'extrapolate')(wl_new))
+                        Si_ext_no_nans = np.atleast_2d(sp.interpolate.interp1d(wl, S_no_nans, kind = extrapolation_kind, bounds_error = False, fill_value = 'extrapolate')(wl_new))
                 else:
-                    fill_value, Si_ext = (extrap_values[0],extrap_values[-1]), None
+                    fill_value, Si_ext_no_nans = (extrap_values[0],extrap_values[-1]), None
 
                 # interpolate:
                 if kind != 'sprague5':
-                    Si = sp.interpolate.interp1d(wl, S, kind = kind, bounds_error = False, fill_value = fill_value)(wl_new)
+                    Si_no_nans = sp.interpolate.interp1d(wl, S_no_nans, kind = kind, bounds_error = False, fill_value = fill_value)(wl_new)
                 else:
-                    Si = math.interp1_sprague5(wl, S, wl_new, extrap = fill_value)
+                    Si_no_nans = math.interp1_sprague5(wl, S_no_nans, wl_new, extrap = fill_value)
 
                 # Add extrapolated part to the interpolate part (which had extrapolated fill values set to zero)
-                if Si_ext is not None: 
-                    Si_ext[:,(wl_new >= wl[0]) & (wl_new <= wl[-1])] = 0
-                    Si = Si + Si_ext
+                if Si_ext_no_nans is not None: 
+                    Si_ext_no_nans[:,(wl_new >= wl[0]) & (wl_new <= wl[-1])] = 0
+                    Si_no_nans += Si_ext_no_nans
                 
-                   
+                Si[rows_with_no_nans] = Si_no_nans
+                
             # In case there are NaN's:
-            if nan_indices.any():
+            if rows_with_nans.size > 0:
 
                 # looping required as some values are NaN's:
-                # for i in rows_with_nans: # this line would ideally work, so interpolation should only be done for those rows with NaNs, but once there is a single NaN in the array scipy's interp1d outputs NaNs for all rows!
-                for i in range(S.shape[0]):
+                for i in rows_with_nans:
 
                     nonan_indices = np.logical_not(nan_indices[i])
                     wl_nonan = wl[nonan_indices]
