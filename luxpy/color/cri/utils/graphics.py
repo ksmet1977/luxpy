@@ -184,6 +184,7 @@ def plot_hue_bins(hbins = 16, start_hue = 0.0, scalef = 100, \
             
         # Plot hue-bins:
         cmap = []
+        grey = (0.45,0.45,0.45) # TM30-20 recommends (166/255,166/255,166/255), but this does not provide enough contrast 
         for i in range(nhbins):
             
             # Create color from hue angle:
@@ -199,31 +200,31 @@ def plot_hue_bins(hbins = 16, start_hue = 0.0, scalef = 100, \
             
             if axtype == 'polar':
                 if plot_edge_lines == True:
-                    ax.plot(edges[:,i],r[:,i]*1.,color = 'grey',marker = 'None',linestyle = '--',linewidth = 1, markersize = 2)
+                    ax.plot(edges[:,i],r[:,i]*1.,color = grey, marker = 'None',linestyle = '--',linewidth = 0.75, markersize = 2)
                 if plot_center_lines == True:
                     if np.mod(i,2) == 1:
-                        ax.plot(theta[:,i],r[:,i],color = c,marker = None,linestyle = '--',linewidth = 1)
+                        ax.plot(theta[:,i],r[:,i],color = c,marker = None,linestyle = '--',linewidth = 0.75)
                     else:
-                        ax.plot(theta[:,i],r[:,i],color = c,marker = None,linestyle = '--',linewidth = 1,markersize = 10)
+                        ax.plot(theta[:,i],r[:,i],color = c,marker = None,linestyle = '--',linewidth = 0.75,markersize = 10)
                 if plot_bin_colors == True:
                     bar = ax.bar(dM[i],r[1,i], width = dt[i],color = c,alpha=0.25)
                 if bin_labels is not None:
-                    ax.text(hbincenters[i],1.3*scalef,bin_labels[i],fontsize = 10, horizontalalignment='center',verticalalignment='center',color = np.array([1,1,1])*0.45)
+                    ax.text(hbincenters[i],1.3*scalef,bin_labels[i],fontsize = 10, horizontalalignment='center',verticalalignment='center',color = grey)
                 if plot_axis_labels == False:
                     ax.set_xticklabels([])
                     ax.set_yticklabels([])
             else:
                 axis_ = 1.*np.array([-scalef*1.5, scalef*1.5, -scalef*1.5, scalef*1.5])
                 if plot_edge_lines == True:
-                    ax.plot(hxe[:,i],hye[:,i],color = 'grey',marker = 'None',linestyle = '--',linewidth = 1, markersize = 2)
+                    ax.plot(hxe[:,i],hye[:,i],color = grey,marker = 'None',linestyle = '--',linewidth = 0.75, markersize = 2)
 
                 if plot_center_lines == True:
                     if np.mod(i,2) == 1:
-                        ax.plot(hx[:,i],hy[:,i],color = c,marker = None,linestyle = '--',linewidth = 1)
+                        ax.plot(hx[:,i],hy[:,i],color = c,marker = None,linestyle = '--',linewidth = 0.75)
                     else:
-                        ax.plot(hx[:,i],hy[:,i],color = c,marker = None,linestyle = '--',linewidth = 1,markersize = 10)
+                        ax.plot(hx[:,i],hy[:,i],color = c,marker = None,linestyle = '--',linewidth = 0.75,markersize = 10)
                 if bin_labels is not None:
-                    ax.text(hxv[1,i],hyv[1,i],bin_labels[i],fontsize = 10,horizontalalignment='center',verticalalignment='center',color = np.array([1,1,1])*0.45)
+                    ax.text(hxv[1,i],hyv[1,i],bin_labels[i],fontsize = 10,horizontalalignment='center',verticalalignment='center',color = grey)
                 ax.axis(axis_)
                     
         if plot_axis_labels == False:
@@ -238,7 +239,7 @@ def plot_hue_bins(hbins = 16, start_hue = 0.0, scalef = 100, \
         if (axtype != 'polar') & (plot_10_20_circles == True):
             r = np.array([0.8,0.9,1.1,1.2])*scalef # plot circles at 80, 90, 100, 110, 120 % of scale f
             plotcircle(radii = r, angles = np.arange(0,365,5), color = 'w', linestyle = '-', axh = ax, linewidth = 0.5)
-            plotcircle(radii = [scalef], angles = np.arange(0,365,5), color = 'k', linestyle = '-', axh = ax, linewidth = 1)
+            plotcircle(radii = [scalef], angles = np.arange(0,365,5), color = 'k', linestyle = '-', axh = ax, linewidth = 1.25)
             ax.text(0,-0.75*scalef,'-20%',fontsize = 8,horizontalalignment='center',verticalalignment='center',color = 'w')
             ax.text(0,-1.25*scalef,'+20%',fontsize = 8,horizontalalignment='center',verticalalignment='center',color = 'w')
 
@@ -253,7 +254,7 @@ def plot_ColorVectorGraphic(jabt, jabr, hbins = 16, start_hue = 0.0, scalef = 10
                             plot_edge_lines = True, plot_center_lines = False, \
                             plot_bin_colors = True, plot_10_20_circles = True,\
                             plot_vectors = True, 
-                            gamut_line_color = 'grey',gamut_line_style = '-',
+                            gamut_line_color = None, gamut_line_style = '-',\
                             gamut_line_marker = 'o', gamut_line_label = None,\
                             axtype = 'polar', ax = None,\
                             force_CVG_layout = False,\
@@ -377,8 +378,7 @@ def plot_ColorVectorGraphic(jabt, jabr, hbins = 16, start_hue = 0.0, scalef = 10
         jabti = (jabti - jabri)
         for i in range(hbins):
             if i in hbinnr:
-                jabti[hbinnr == i,...] = jabti[hbinnr == i,...] + jabr[i,...]
-
+                jabti[hbinnr == i,...] = jabti[hbinnr == i,...] + jabr[i,...]  
     
     if axtype == 'polar':
        

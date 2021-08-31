@@ -73,7 +73,7 @@ from luxpy.utils import np, _PKG_PATH, _SEP, getdata
 __all__ = ['_R_PATH','_S_PATH', 
            '_CIE_ILLUMINANTS', '_CIE_E', '_CIE_D65', '_CIE_A', '_CIE_B', '_CIE_C', '_CIE_F4',
            '_CIE_F_SERIES', '_CIE_F3_SERIES','_CIE_HP_SERIES','_CIE_LED_SERIES',
-           '_IESTM3015','_IESTM3015_S','_IESTM3018','_IESTM3018_S',
+           '_IESTM3015','_IESTM3015_S','_IESTM3018','_IESTM3018_S','_IESTM3020','_IESTM3020_S',
            '_CIE_GLASS_ID','_CRI_RFL','_RFL', '_MUNSELL']
 
 _S_PATH = _PKG_PATH + _SEP + 'data'+ _SEP + 'spds' + _SEP #folder with spd data
@@ -136,7 +136,8 @@ _IESTM3015_S = _IESTM3015['S']
 _IESTM3018 = {'S': {'data': getdata(_S_PATH + 'IESTM30_15_Sspds.dat',kind='np').transpose()}}
 _IESTM3018['S']['info'] = getdata(_S_PATH + 'IESTM30_15_Sinfo.txt',kind='np',header='infer',verbosity = False)
 _IESTM3018_S = _IESTM3018['S']
-
+_IESTM3020 = _IESTM3018
+_IESTM3020_S = _IESTM3020['S']
     
 ###############################################################################
 # spectral reflectance/transmission functions:
@@ -167,10 +168,12 @@ _CIE224_2017['99']['info'] = _IESTM3015['R']['99']['info']
 
 
 #------------------------------------------------------------------------------  
-# IES TM30-18 color fidelity and color gamut indices:
+# IES TM30-18 and TM30-20 color fidelity and color gamut indices:
 _IESTM3018['R'] = copy.deepcopy(_IESTM3015['R'])
 _IESTM3018['R']['99']['1nm'] = _CIE224_2017['99']['1nm']
 _IESTM3018['R']['99']['5nm'] = _CIE224_2017['99']['5nm']
+_IESTM3020['R']['99']['1nm'] = _IESTM3018['R']['99']['1nm']
+_IESTM3020['R']['99']['5nm'] = _IESTM3018['R']['99']['5nm'] 
 
 
 #------------------------------------------------------------------------------
@@ -204,7 +207,8 @@ _CRI_RFL['cie-224-2017'] = _CIE224_2017
 _CRI_RFL['cri2012'] = _CRI2012
 _CRI_RFL['ies-tm30-15'] = _IESTM3015['R']
 _CRI_RFL['ies-tm30-18'] = _IESTM3018['R']
-_CRI_RFL['ies-tm30'] = _IESTM3018['R']
+_CRI_RFL['ies-tm30-20'] = _IESTM3020['R']
+_CRI_RFL['ies-tm30'] = _IESTM3020['R']
 _CRI_RFL['mcri'] = _MCRI['R']
 _CRI_RFL['cqs'] = _CQS
 _CRI_RFL['fci'] = _FCI['R']

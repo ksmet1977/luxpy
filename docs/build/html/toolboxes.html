@@ -134,6 +134,11 @@
 <li class="toctree-l4"><a class="reference internal" href="#package-for-spectral-measurements">Package for spectral measurements</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="#sherbrooke-spectral-indices">sherbrooke_spectral_indices/</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#spectral-mismatch-and-uncertainty">spectral_mismatch_and_uncertainty/</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#toolbox-for-spectral-mismatch-and-measurement-uncertainty-calculations">Toolbox for spectral mismatch and measurement uncertainty calculations</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -6185,6 +6190,325 @@ or k nearest neighbour interpolation of samples from a standard reflectance set.
 <dt class="field-odd">Errors</dt>
 <dd class="field-odd"><div class="line-block">
 <div class="line">Dict with error messages.</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+</section>
+<section id="sherbrooke-spectral-indices">
+<h2>sherbrooke_spectral_indices/<a class="headerlink" href="#sherbrooke-spectral-indices" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><dl class="field-list simple">
+<dt class="field-odd">py</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>__init__.py</p></li>
+<li><p>sherbrooke_spectral_indices_2013.py</p></li>
+</ul>
+</dd>
+<dt class="field-even">namespace</dt>
+<dd class="field-even"><p>luxpy.sherbrooke_spectral_indices</p>
+</dd>
+</dl>
+</div></blockquote>
+<span class="target" id="module-luxpy.toolboxes.sherbrooke_spectral_indices"></span><p>Module for the calculation of the Melatonin Suppression Index (MSI), 
+the Induced Photosynthesis Index (IPI) and the Star Light Index (SLI)
+———————————————————————</p>
+<blockquote>
+<div><dl class="field-list simple">
+<dt class="field-odd">spd_to_msi()</dt>
+<dd class="field-odd"><p>calculate Melatonin Suppression Index from spectrum.</p>
+</dd>
+<dt class="field-even">spd_to_ipi()</dt>
+<dd class="field-even"><p>calculate Induced Photosynthesis Index from spectrum.</p>
+</dd>
+<dt class="field-odd">spd_to_sli()</dt>
+<dd class="field-odd"><p>calculate Star Light Index  from spectrum.</p>
+</dd>
+</dl>
+</div></blockquote>
+<dl class="simple">
+<dt>References: </dt><dd><p>1. Aubé M, Roby J, Kocifaj M (2013) 
+Evaluating Potential Spectral Impacts of Various Artificial Lights on Melatonin Suppression, Photosynthesis, and Star Visibility. 
+PLoS ONE 8(7): e67798
+<a class="reference external" href="https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0067798">https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0067798</a></p>
+</dd>
+</dl>
+<p>Created on Fri Jun 11 13:46:33 2021</p>
+<p>&#64;author: ksmet1977 [at] gmail dot com</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="luxpy.toolboxes.sherbrooke_spectral_indices.spd_to_msi">
+<span class="sig-prename descclassname"><span class="pre">luxpy.toolboxes.sherbrooke_spectral_indices.</span></span><span class="sig-name descname"><span class="pre">spd_to_msi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_5nm_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/sherbrooke_spectral_indices/sherbrooke_spectral_indices_2013.html#spd_to_msi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.toolboxes.sherbrooke_spectral_indices.spd_to_msi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate Melatonin Suppression Index from spectrum.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">spd</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with spectral data (first row are wavelengths)</div>
+</div>
+</dd>
+<dt class="field-even">force_5nm_interval</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">True, optional</div>
+<div class="line">If True: interpolate spd to 5nm wavelengths intervals, else: keep as in spd.</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">msi</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with Melatonin Suppression Index values for each input spectrum.</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="luxpy.toolboxes.sherbrooke_spectral_indices.spd_to_ipi">
+<span class="sig-prename descclassname"><span class="pre">luxpy.toolboxes.sherbrooke_spectral_indices.</span></span><span class="sig-name descname"><span class="pre">spd_to_ipi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_5nm_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/sherbrooke_spectral_indices/sherbrooke_spectral_indices_2013.html#spd_to_ipi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.toolboxes.sherbrooke_spectral_indices.spd_to_ipi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate Induced Photosynthesis Index from spectrum.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">spd</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with spectral data (first row are wavelengths)</div>
+</div>
+</dd>
+<dt class="field-even">force_5nm_interval</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">True, optional</div>
+<div class="line">If True: interpolate spd to 5nm wavelengths intervals, else: keep as in spd.</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">msi</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with Induced Photosynthesis Index values for each input spectrum.</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="luxpy.toolboxes.sherbrooke_spectral_indices.spd_to_sli">
+<span class="sig-prename descclassname"><span class="pre">luxpy.toolboxes.sherbrooke_spectral_indices.</span></span><span class="sig-name descname"><span class="pre">spd_to_sli</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_5nm_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/sherbrooke_spectral_indices/sherbrooke_spectral_indices_2013.html#spd_to_sli"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.toolboxes.sherbrooke_spectral_indices.spd_to_sli" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate Star Light Index from spectrum.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">spd</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with spectral data (first row are wavelengths)</div>
+</div>
+</dd>
+<dt class="field-even">force_5nm_interval</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">True, optional</div>
+<div class="line">If True: interpolate spd to 5nm wavelengths intervals, else: keep as in spd.</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">msi</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with Star Light Index values for each input spectrum.</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="spectral-mismatch-and-uncertainty">
+<h2>spectral_mismatch_and_uncertainty/<a class="headerlink" href="#spectral-mismatch-and-uncertainty" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><dl class="field-list simple">
+<dt class="field-odd">py</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>__init__.py</p></li>
+<li><p>detector_spectral_mismatch.py</p></li>
+</ul>
+</dd>
+<dt class="field-even">namespace</dt>
+<dd class="field-even"><p>luxpy.spectral_mismatch_and_uncertainty</p>
+</dd>
+</dl>
+</div></blockquote>
+<span class="target" id="module-luxpy.toolboxes.spectral_mismatch_and_uncertainty"></span><section id="toolbox-for-spectral-mismatch-and-measurement-uncertainty-calculations">
+<h3>Toolbox for spectral mismatch and measurement uncertainty calculations<a class="headerlink" href="#toolbox-for-spectral-mismatch-and-measurement-uncertainty-calculations" title="Permalink to this headline">¶</a></h3>
+<section id="spectral-mismatch-and-uncertainty-detector-spectral-mismatch-py">
+<h4>spectral_mismatch_and_uncertainty/detector_spectral_mismatch.py<a class="headerlink" href="#spectral-mismatch-and-uncertainty-detector-spectral-mismatch-py" title="Permalink to this headline">¶</a></h4>
+<blockquote>
+<div><dl class="field-list simple">
+<dt class="field-odd">f1prime()</dt>
+<dd class="field-odd"><p>Determine the f1prime spectral mismatch index.</p>
+</dd>
+<dt class="field-even">get_spectral_mismatch_correct_factors()</dt>
+<dd class="field-even"><p>Determine the spectral mismatch factors.</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+<section id="reference">
+<h4>Reference<a class="headerlink" href="#reference" title="Permalink to this headline">¶</a></h4>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>Krüger, U. et al. GENERAL V(λ) MISMATCH - INDEX HISTORY, CURRENT STATE, NEW IDEAS (TechnoTeam)</p></li>
+</ol>
+</div></blockquote>
+<hr class="docutils" />
+<p>Created on Tue Aug 31 10:46:02 2021</p>
+<p>&#64;author: ksmet1977 [at] gmail.com</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="luxpy.toolboxes.spectral_mismatch_and_uncertainty.f1prime">
+<span class="sig-prename descclassname"><span class="pre">luxpy.toolboxes.spectral_mismatch_and_uncertainty.</span></span><span class="sig-name descname"><span class="pre">f1prime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s_detector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">S_C</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'A'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s_target_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wlr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[380,</span> <span class="pre">780,</span> <span class="pre">1]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interp_kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'f1p'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/spectral_mismatch_and_uncertainty/detector_spectral_mismatch.html#f1prime"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.toolboxes.spectral_mismatch_and_uncertainty.f1prime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine the f1prime spectral mismatch index.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">s_detector</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with detector spectral responsivity (first row = wavelengths)</div>
+</div>
+</dd>
+<dt class="field-even">S_C</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">‘A’, optional</div>
+<div class="line">Standard ‘calibration’ illuminant.</div>
+<div class="line">string specifying the illuminant to use from the luxpy._CIE_ILLUMINANTS dict </div>
+<div class="line">or ndarray with standard illuminant spectral data.</div>
+</div>
+</dd>
+<dt class="field-odd">cieobs</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">‘1931_2’, optional</div>
+<div class="line">string with CIE standard observer color matching functions to use (from luxpy._CMF)</div>
+<div class="line">or ndarray with CMFs (s_target_index &gt; 0) </div>
+<div class="line">or target spectral responsivity (s_target_index == 0)</div>
+<div class="line">(first row contains the wavelengths).</div>
+</div>
+</dd>
+<dt class="field-even">s_target_index</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">2, optional</div>
+<div class="line">if &gt; 0: index into CMF set (1-&gt;’xbar’, 2-&gt;’ybar’=’Vlambda’, 3-&gt;’zbar’)</div>
+<div class="line">if == 0: cieobs is expected to contain an ndarray with the target spectral responsivity. </div>
+</div>
+</dd>
+<dt class="field-odd">wlr</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">[380,780,1], optional</div>
+<div class="line">Wavelength range (ndarray or [start, stop, spacing]).</div>
+</div>
+</dd>
+<dt class="field-even">interp_kind</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">‘linear’, optional</div>
+<div class="line">Interpolation type to use when interpolating function to specified wavelength range.</div>
+</div>
+</dd>
+<dt class="field-odd">out</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">‘f1p’, optional</div>
+<div class="line">Specify requested output of function, </div>
+<div class="line-block">
+<div class="line">e.g. ‘f1p,s_rel’ also outputs the normalized target spectral responsitivity. </div>
+</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">f1p</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray (vector) with f1prime values for each of the spectral responsivities in s_detector.</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="luxpy.toolboxes.spectral_mismatch_and_uncertainty.get_spectral_mismatch_correction_factors">
+<span class="sig-prename descclassname"><span class="pre">luxpy.toolboxes.spectral_mismatch_and_uncertainty.</span></span><span class="sig-name descname"><span class="pre">get_spectral_mismatch_correction_factors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">S_Z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s_detector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">S_C</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'A'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s_target_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wlr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[380,</span> <span class="pre">780,</span> <span class="pre">1]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interp_kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'F'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/spectral_mismatch_and_uncertainty/detector_spectral_mismatch.html#get_spectral_mismatch_correction_factors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.toolboxes.spectral_mismatch_and_uncertainty.get_spectral_mismatch_correction_factors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine the spectral mismatch factors.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">S_Z</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with spectral power distribution of measured light source (first row = wavelengths).</div>
+</div>
+</dd>
+<dt class="field-even">s_detector</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">ndarray with detector spectral responsivity (first row = wavelengths)</div>
+</div>
+</dd>
+<dt class="field-odd">S_C</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">‘A’, optional</div>
+<div class="line">Standard ‘calibration’ illuminant.</div>
+<div class="line">string specifying the illuminant to use from the luxpy._CIE_ILLUMINANTS dict </div>
+<div class="line">or ndarray with standard illuminant spectral data.</div>
+</div>
+</dd>
+<dt class="field-even">cieobs</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">‘1931_2’, optional</div>
+<div class="line">string with CIE standard observer color matching functions to use (from luxpy._CMF)</div>
+<div class="line">or ndarray with CMFs (s_target_index &gt; 0) </div>
+<div class="line">or target spectral responsivity (s_target_index == 0)</div>
+<div class="line">(first row contains the wavelengths).</div>
+</div>
+</dd>
+<dt class="field-odd">s_target_index</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">2, optional</div>
+<div class="line">if &gt; 0: index into CMF set (1-&gt;’xbar’, 2-&gt;’ybar’=’Vlambda’, 3-&gt;’zbar’)</div>
+<div class="line">if == 0: cieobs is expected to contain an ndarray with the target spectral responsivity. </div>
+</div>
+</dd>
+<dt class="field-even">wlr</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">[380,780,1], optional</div>
+<div class="line">Wavelength range (ndarray or [start, stop, spacing]).</div>
+<div class="line">If None: use the wavelength range of S_Z.</div>
+</div>
+</dd>
+<dt class="field-odd">interp_kind</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">‘linear’, optional</div>
+<div class="line">Interpolation type to use when interpolating function to specified wavelength range.</div>
+</div>
+</dd>
+<dt class="field-even">out</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">‘F’, optional</div>
+<div class="line">Specify requested output of function, </div>
+<div class="line-block">
+<div class="line">e.g. ‘F,f1p’ also outputs the f1prime spectral mismatch index. </div>
+</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">F</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with correction factors for each of the mesured spectra (rows)</div>
+<div class="line">and spectral responsivities in s_detector (columns).</div>
 </div>
 </dd>
 </dl>

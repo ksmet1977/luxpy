@@ -38,7 +38,7 @@ utils/init_cri_defaults_database.py
                  
                 * Supported cri-types:
                     * 'ciera','ciera-8','ciera-14','cierf',
-                    * 'iesrf','iesrf-tm30-15','iesrf-tm30-18',
+                    * 'iesrf','iesrf-tm30-15','iesrf-tm30-18','iesrf-tm30-20',
                     * 'cri2012','cri2012-hl17','cri2012-hl1000','cri2012-real210',
                     * 'mcri',
                     * 'cqs-v7.5','cqs-v9.0',
@@ -113,6 +113,7 @@ indices/indices.py
       | spd_to_iesrf_tm30(): latest version
       | spd_to_iesrf_tm30_15(): TM30-15 version
       | spd_to_iesrf_tm30_18(): TM30-18 version
+      | spd_to_iesrf_tm30_20(): TM30-20 version (= TM30-18)
 
       | spd_to_cri2012()
       | spd_to_cri2012_hl17()
@@ -124,6 +125,7 @@ indices/indices.py
       | spd_to_iesrg_tm30(): latest version
       | spd_to_iesrg_tm30_15(): TM30-15 version
       | spd_to_iesrg_tm30_18(): TM30-18 version
+      | spd_to_iesrg_tm30_20(): TM30-20 version (= TM30-18)
 
 
 indices/mcri.py
@@ -267,7 +269,8 @@ __all__ += ['spd_to_ciera', 'spd_to_cierf',
 __all__ += ['spd_to_iesrf','spd_to_iesrg',
            'spd_to_iesrf_tm30','spd_to_iesrg_tm30',
            'spd_to_iesrf_tm30_15','spd_to_iesrg_tm30_15',
-           'spd_to_iesrf_tm30_18','spd_to_iesrg_tm30_18']
+           'spd_to_iesrf_tm30_18','spd_to_iesrg_tm30_18',
+           'spd_to_iesrf_tm30_20','spd_to_iesrg_tm30_20']
 __all__ += ['spd_to_cri2012','spd_to_cri2012_hl17','spd_to_cri2012_hl1000','spd_to_cri2012_real210']
 __all__ += ['spd_to_mcri']
 __all__ += ['spd_to_cqs']

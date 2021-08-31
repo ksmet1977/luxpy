@@ -108,8 +108,6 @@
 <li class="toctree-l4"><a class="reference internal" href="#spectrum-illuminants-py">spectrum/illuminants.py</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#spectrum-spdx-iestm2714-py">spectrum/spdx_iestm2714.py</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#references">References</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#spectrum-detector-spectral-mismatch-py">spectrum/detector_spectral_mismatch.py</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#reference">Reference</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#spd-class">SPD class</a></li>
@@ -196,7 +194,6 @@
 <dd class="field-odd"><ul class="simple">
 <li><p>__init__.py</p></li>
 <li><p>spdx_ietm2714.py</p></li>
-<li><p>detector_spectral_mismatch.py</p></li>
 <li><dl class="simple">
 <dt>basics/</dt><dd><ul>
 <li><p>__init__.py</p></li>
@@ -546,27 +543,6 @@ New York, NY: The Illuminating Engineering Society of North America.</a></p>
 <ol class="arabic simple" start="5">
 <li><p>Judd, D. B., MacAdam, D. L., Wyszecki, G., Budde, H. W., Condit, H. R., Henderson, S. T., &amp; Simonds, J. L. (1964). Spectral Distribution of Typical Daylight as a Function of Correlated Color Temperature. J. Opt. Soc. Am., 54(8), 1031–1040. <a class="reference external" href="https://doi.org/10.1364/JOSA.54.001031">https://doi.org/10.1364/JOSA.54.001031</a></p></li>
 <li><p><a class="reference external" href="http://www.ies.org/iestm2714">http://www.ies.org/iestm2714</a></p></li>
-</ol>
-</div></blockquote>
-</section>
-<section id="spectrum-detector-spectral-mismatch-py">
-<h3>spectrum/detector_spectral_mismatch.py<a class="headerlink" href="#spectrum-detector-spectral-mismatch-py" title="Permalink to this headline">¶</a></h3>
-<blockquote>
-<div><dl class="field-list simple">
-<dt class="field-odd">f1prime()</dt>
-<dd class="field-odd"><p>Determine the f1prime spectral mismatch index.</p>
-</dd>
-<dt class="field-even">get_spectral_mismatch_correct_factors()</dt>
-<dd class="field-even"><p>Determine the spectral mismatch factors.</p>
-</dd>
-</dl>
-</div></blockquote>
-</section>
-<section id="reference">
-<h3>Reference<a class="headerlink" href="#reference" title="Permalink to this headline">¶</a></h3>
-<blockquote>
-<div><ol class="arabic simple">
-<li><p>Krüger, U. et al. GENERAL V(λ) MISMATCH - INDEX HISTORY, CURRENT STATE, NEW IDEAS</p></li>
 </ol>
 </div></blockquote>
 <hr class="docutils" />
@@ -1860,151 +1836,6 @@ J. Opt. Soc. Am., 54(8), 1031–1040.</a></p>
 <dt class="field-odd">spdx_xml</dt>
 <dd class="field-odd"><div class="line-block">
 <div class="line">string with xml data in spdx dictionary.</div>
-</div>
-</dd>
-</dl>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="luxpy.spectrum.f1prime">
-<span class="sig-prename descclassname"><span class="pre">luxpy.spectrum.</span></span><span class="sig-name descname"><span class="pre">f1prime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s_detector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">S_C</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'A'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s_target_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wlr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[380,</span> <span class="pre">780,</span> <span class="pre">1]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interp_kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'f1p'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/detector_spectral_mismatch.html#f1prime"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.spectrum.f1prime" title="Permalink to this definition">¶</a></dt>
-<dd><p>Determine the f1prime spectral mismatch index.</p>
-<dl>
-<dt>Args:</dt><dd><dl class="field-list">
-<dt class="field-odd">s_detector</dt>
-<dd class="field-odd"><div class="line-block">
-<div class="line">ndarray with detector spectral responsivity (first row = wavelengths)</div>
-</div>
-</dd>
-<dt class="field-even">S_C</dt>
-<dd class="field-even"><div class="line-block">
-<div class="line">‘A’, optional</div>
-<div class="line">Standard ‘calibration’ illuminant.</div>
-<div class="line">string specifying the illuminant to use from the luxpy._CIE_ILLUMINANTS dict </div>
-<div class="line">or ndarray with standard illuminant spectral data.</div>
-</div>
-</dd>
-<dt class="field-odd">cieobs</dt>
-<dd class="field-odd"><div class="line-block">
-<div class="line">‘1931_2’, optional</div>
-<div class="line">string with CIE standard observer color matching functions to use (from luxpy._CMF)</div>
-<div class="line">or ndarray with CMFs (s_target_index &gt; 0) </div>
-<div class="line">or target spectral responsivity (s_target_index == 0)</div>
-<div class="line">(first row contains the wavelengths).</div>
-</div>
-</dd>
-<dt class="field-even">s_target_index</dt>
-<dd class="field-even"><div class="line-block">
-<div class="line">2, optional</div>
-<div class="line">if &gt; 0: index into CMF set (1-&gt;’xbar’, 2-&gt;’ybar’=’Vlambda’, 3-&gt;’zbar’)</div>
-<div class="line">if == 0: cieobs is expected to contain an ndarray with the target spectral responsivity. </div>
-</div>
-</dd>
-<dt class="field-odd">wlr</dt>
-<dd class="field-odd"><div class="line-block">
-<div class="line">[380,780,1], optional</div>
-<div class="line">Wavelength range (ndarray or [start, stop, spacing]).</div>
-</div>
-</dd>
-<dt class="field-even">interp_kind</dt>
-<dd class="field-even"><div class="line-block">
-<div class="line">‘linear’, optional</div>
-<div class="line">Interpolation type to use when interpolating function to specified wavelength range.</div>
-</div>
-</dd>
-<dt class="field-odd">out</dt>
-<dd class="field-odd"><div class="line-block">
-<div class="line">‘f1p’, optional</div>
-<div class="line">Specify requested output of function, </div>
-<div class="line-block">
-<div class="line">e.g. ‘f1p,s_rel’ also outputs the normalized target spectral responsitivity. </div>
-</div>
-</div>
-</dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><dl class="field-list">
-<dt class="field-odd">f1p</dt>
-<dd class="field-odd"><div class="line-block">
-<div class="line">ndarray (vector) with f1prime values for each of the spectral responsivities in s_detector.</div>
-</div>
-</dd>
-</dl>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="luxpy.spectrum.get_spectral_mismatch_correction_factors">
-<span class="sig-prename descclassname"><span class="pre">luxpy.spectrum.</span></span><span class="sig-name descname"><span class="pre">get_spectral_mismatch_correction_factors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">S_Z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s_detector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">S_C</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'A'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s_target_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wlr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[380,</span> <span class="pre">780,</span> <span class="pre">1]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interp_kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'F'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/spectrum/detector_spectral_mismatch.html#get_spectral_mismatch_correction_factors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.spectrum.get_spectral_mismatch_correction_factors" title="Permalink to this definition">¶</a></dt>
-<dd><p>Determine the spectral mismatch factors.</p>
-<dl>
-<dt>Args:</dt><dd><dl class="field-list">
-<dt class="field-odd">S_Z</dt>
-<dd class="field-odd"><div class="line-block">
-<div class="line">ndarray with spectral power distribution of measured light source (first row = wavelengths).</div>
-</div>
-</dd>
-<dt class="field-even">s_detector</dt>
-<dd class="field-even"><div class="line-block">
-<div class="line">ndarray with detector spectral responsivity (first row = wavelengths)</div>
-</div>
-</dd>
-<dt class="field-odd">S_C</dt>
-<dd class="field-odd"><div class="line-block">
-<div class="line">‘A’, optional</div>
-<div class="line">Standard ‘calibration’ illuminant.</div>
-<div class="line">string specifying the illuminant to use from the luxpy._CIE_ILLUMINANTS dict </div>
-<div class="line">or ndarray with standard illuminant spectral data.</div>
-</div>
-</dd>
-<dt class="field-even">cieobs</dt>
-<dd class="field-even"><div class="line-block">
-<div class="line">‘1931_2’, optional</div>
-<div class="line">string with CIE standard observer color matching functions to use (from luxpy._CMF)</div>
-<div class="line">or ndarray with CMFs (s_target_index &gt; 0) </div>
-<div class="line">or target spectral responsivity (s_target_index == 0)</div>
-<div class="line">(first row contains the wavelengths).</div>
-</div>
-</dd>
-<dt class="field-odd">s_target_index</dt>
-<dd class="field-odd"><div class="line-block">
-<div class="line">2, optional</div>
-<div class="line">if &gt; 0: index into CMF set (1-&gt;’xbar’, 2-&gt;’ybar’=’Vlambda’, 3-&gt;’zbar’)</div>
-<div class="line">if == 0: cieobs is expected to contain an ndarray with the target spectral responsivity. </div>
-</div>
-</dd>
-<dt class="field-even">wlr</dt>
-<dd class="field-even"><div class="line-block">
-<div class="line">[380,780,1], optional</div>
-<div class="line">Wavelength range (ndarray or [start, stop, spacing]).</div>
-<div class="line">If None: use the wavelength range of S_Z.</div>
-</div>
-</dd>
-<dt class="field-odd">interp_kind</dt>
-<dd class="field-odd"><div class="line-block">
-<div class="line">‘linear’, optional</div>
-<div class="line">Interpolation type to use when interpolating function to specified wavelength range.</div>
-</div>
-</dd>
-<dt class="field-even">out</dt>
-<dd class="field-even"><div class="line-block">
-<div class="line">‘F’, optional</div>
-<div class="line">Specify requested output of function, </div>
-<div class="line-block">
-<div class="line">e.g. ‘F,f1p’ also outputs the f1prime spectral mismatch index. </div>
-</div>
-</div>
-</dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><dl class="field-list">
-<dt class="field-odd">F</dt>
-<dd class="field-odd"><div class="line-block">
-<div class="line">ndarray with correction factors for each of the mesured spectra (rows)</div>
-<div class="line">and spectral responsivities in s_detector (columns).</div>
 </div>
 </dd>
 </dl>

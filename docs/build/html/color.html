@@ -4027,13 +4027,13 @@ Color Research &amp; Application, 45(1), 172–177.</a></p>
 <div class="line">If None: calculate inverse of mcat.</div>
 </div>
 </dd>
-<dt class="field-odd"><a href="#id64"><span class="problematic" id="id65">in_</span></a></dt>
+<dt class="field-odd"><a href="#id70"><span class="problematic" id="id71">in_</span></a></dt>
 <dd class="field-odd"><div class="line-block">
 <div class="line">‘xyz’, optional</div>
 <div class="line">Input type (‘xyz’, ‘rgb’) of data in xyz, xyzw1, xyzw2</div>
 </div>
 </dd>
-<dt class="field-even"><a href="#id66"><span class="problematic" id="id67">out_</span></a></dt>
+<dt class="field-even"><a href="#id72"><span class="problematic" id="id73">out_</span></a></dt>
 <dd class="field-even"><div class="line-block">
 <div class="line">‘xyz’, optional</div>
 <div class="line">Output type (‘xyz’, ‘rgb’) of corresponding colors</div>
@@ -4119,13 +4119,13 @@ Color Research &amp; Application, 45(1), 172–177.</a></p>
 <div class="line">If None: calculate inverse of mcat.</div>
 </div>
 </dd>
-<dt class="field-even"><a href="#id68"><span class="problematic" id="id69">in_</span></a></dt>
+<dt class="field-even"><a href="#id74"><span class="problematic" id="id75">in_</span></a></dt>
 <dd class="field-even"><div class="line-block">
 <div class="line">‘xyz’, optional</div>
 <div class="line">Input type (‘xyz’, ‘rgb’) of data in xyz, xyzw1, xyzw2</div>
 </div>
 </dd>
-<dt class="field-odd"><a href="#id70"><span class="problematic" id="id71">out_</span></a></dt>
+<dt class="field-odd"><a href="#id76"><span class="problematic" id="id77">out_</span></a></dt>
 <dd class="field-odd"><div class="line-block">
 <div class="line">‘xyz’, optional</div>
 <div class="line">Output type (‘xyz’, ‘rgb’) of corresponding colors</div>
@@ -4241,13 +4241,13 @@ Color Research &amp; Application, 45(1), 172–177.</a></p>
 <div class="line">If None: calculate inverse of mcat.</div>
 </div>
 </dd>
-<dt class="field-even"><a href="#id72"><span class="problematic" id="id73">in_</span></a></dt>
+<dt class="field-even"><a href="#id78"><span class="problematic" id="id79">in_</span></a></dt>
 <dd class="field-even"><div class="line-block">
 <div class="line">‘xyz’, optional</div>
 <div class="line">Input type (‘xyz’, ‘rgb’) of data in xyz, xyzw1, xyzw2</div>
 </div>
 </dd>
-<dt class="field-odd"><a href="#id74"><span class="problematic" id="id75">out_</span></a></dt>
+<dt class="field-odd"><a href="#id80"><span class="problematic" id="id81">out_</span></a></dt>
 <dd class="field-odd"><div class="line-block">
 <div class="line">‘xyz’, optional</div>
 <div class="line">Output type (‘xyz’, ‘rgb’) of corresponding colors</div>
@@ -7585,7 +7585,7 @@ cri_specific_pars [dict])</p>
 <li><dl class="simple">
 <dt>Supported cri-types:</dt><dd><ul>
 <li><p>‘ciera’,’ciera-8’,’ciera-14’,’cierf’,</p></li>
-<li><p>‘iesrf’,’iesrf-tm30-15’,’iesrf-tm30-18’,</p></li>
+<li><p>‘iesrf’,’iesrf-tm30-15’,’iesrf-tm30-18’,’iesrf-tm30-20’,</p></li>
 <li><p>‘cri2012’,’cri2012-hl17’,’cri2012-hl1000’,’cri2012-real210’,</p></li>
 <li><p>‘mcri’,</p></li>
 <li><p>‘cqs-v7.5’,’cqs-v9.0’</p></li>
@@ -7701,6 +7701,7 @@ Can also output Rg, Rfhi, Rcshi, Rhshi, cct, duv, …</p>
 <div class="line">spd_to_iesrf_tm30(): latest version</div>
 <div class="line">spd_to_iesrf_tm30_15(): TM30-15 version</div>
 <div class="line">spd_to_iesrf_tm30_18(): TM30-18 version</div>
+<div class="line">spd_to_iesrf_tm30_20(): TM30-20 version (= TM30-18)</div>
 </div>
 <div class="line-block">
 <div class="line">spd_to_cri2012()</div>
@@ -7715,6 +7716,7 @@ Can also output Rg, Rfhi, Rcshi, Rhshi, cct, duv, …</p>
 <div class="line">spd_to_iesrg_tm30(): latest version</div>
 <div class="line">spd_to_iesrg_tm30_15(): TM30-15 version</div>
 <div class="line">spd_to_iesrg_tm30_18(): TM30-18 version</div>
+<div class="line">spd_to_iesrg_tm30_20(): TM30-20 version (= TM30-18)</div>
 </div>
 </dd>
 </dl>
@@ -8406,6 +8408,13 @@ SPD and its reference illuminant.</p>
 <div class="line-block">
 <div class="line">Controls the size (chroma/radius) </div>
 <div class="line">of the normalization circle/gamut.</div>
+</div>
+<div class="line">- key ‘use_bin_avg_DEi’: True or False</div>
+<div class="line-block">
+<div class="line">Note that following IES-TM30 DEhj from gamut_slicer()</div>
+<div class="line">is obtained by averaging the DEi per hue bin (True),</div>
+<div class="line">and NOT by averaging the jabt and jabr per hue bin </div>
+<div class="line">and then calculating the DEhj (False).</div>
 </div>
 </div>
 </div>
@@ -9401,8 +9410,8 @@ Vienna, Austria: CIE. (2017).</a></p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="luxpy.color.cri.spd_to_iesrf">
-<span class="sig-prename descclassname"><span class="pre">luxpy.color.cri.</span></span><span class="sig-name descname"><span class="pre">spd_to_iesrf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SPD</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Rf'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cri_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'iesrf-tm30-18'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#luxpy.color.cri.spd_to_iesrf" title="Permalink to this definition">¶</a></dt>
-<dd><p>Wrapper function for the ‘iesrf’ color fidelity index (IES TM30-18).</p>
+<span class="sig-prename descclassname"><span class="pre">luxpy.color.cri.</span></span><span class="sig-name descname"><span class="pre">spd_to_iesrf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SPD</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Rf'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cri_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'iesrf-tm30-20'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#luxpy.color.cri.spd_to_iesrf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper function for the ‘iesrf’ color fidelity index (IES TM30-20 = TM30-18).</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
 <dt class="field-odd">SPD</dt>
@@ -9429,7 +9438,7 @@ Vienna, Austria: CIE. (2017).</a></p>
 <dt>Returns:</dt><dd><dl class="field-list">
 <dt class="field-odd">returns</dt>
 <dd class="field-odd"><div class="line-block">
-<div class="line">float or ndarray with IES TM30_15 Rf for :out: ‘Rf’</div>
+<div class="line">float or ndarray with IES TM30-20 Rf for :out: ‘Rf’</div>
 <div class="line">Other output is also possible by changing the :out: str value.</div>
 </div>
 </dd>
@@ -9448,8 +9457,8 @@ LEUKOS, vol. 12, no. 1–2, pp. 39–50, 2016</a></p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="luxpy.color.cri.spd_to_iesrg">
-<span class="sig-prename descclassname"><span class="pre">luxpy.color.cri.</span></span><span class="sig-name descname"><span class="pre">spd_to_iesrg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SPD</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Rg'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cri_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'iesrf-tm30-18'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#luxpy.color.cri.spd_to_iesrg" title="Permalink to this definition">¶</a></dt>
-<dd><p>Wrapper function for the ‘spd_to_rg’ color gamut area index (IES TM30-18).</p>
+<span class="sig-prename descclassname"><span class="pre">luxpy.color.cri.</span></span><span class="sig-name descname"><span class="pre">spd_to_iesrg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SPD</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Rg'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cri_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'iesrf-tm30-20'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#luxpy.color.cri.spd_to_iesrg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper function for the ‘spd_to_rg’ color gamut area index (IES TM30-18 = TM30-20).</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
 <dt class="field-odd">SPD</dt>
@@ -9476,7 +9485,7 @@ LEUKOS, vol. 12, no. 1–2, pp. 39–50, 2016</a></p>
 <dt>Returns:</dt><dd><dl class="field-list">
 <dt class="field-odd">returns</dt>
 <dd class="field-odd"><div class="line-block">
-<div class="line">float or ndarray with IES TM30_15 Rg for :out: ‘Rg’</div>
+<div class="line">float or ndarray with IES TM30-20 Rg for :out: ‘Rg’</div>
 <div class="line">Other output is also possible by changing the :out: str value.</div>
 </div>
 </dd>
@@ -9495,8 +9504,8 @@ LEUKOS, vol. 12, no. 1–2, pp. 39–50, 2016</a></p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="luxpy.color.cri.spd_to_iesrf_tm30">
-<span class="sig-prename descclassname"><span class="pre">luxpy.color.cri.</span></span><span class="sig-name descname"><span class="pre">spd_to_iesrf_tm30</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SPD</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Rf'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cri_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'iesrf-tm30-18'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#luxpy.color.cri.spd_to_iesrf_tm30" title="Permalink to this definition">¶</a></dt>
-<dd><p>Wrapper function for the ‘iesrf’ color fidelity index (IES TM30-18).</p>
+<span class="sig-prename descclassname"><span class="pre">luxpy.color.cri.</span></span><span class="sig-name descname"><span class="pre">spd_to_iesrf_tm30</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SPD</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Rf'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cri_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'iesrf-tm30-20'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#luxpy.color.cri.spd_to_iesrf_tm30" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper function for the ‘iesrf’ color fidelity index (IES TM30-20 = TM30-18).</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
 <dt class="field-odd">SPD</dt>
@@ -9523,7 +9532,7 @@ LEUKOS, vol. 12, no. 1–2, pp. 39–50, 2016</a></p>
 <dt>Returns:</dt><dd><dl class="field-list">
 <dt class="field-odd">returns</dt>
 <dd class="field-odd"><div class="line-block">
-<div class="line">float or ndarray with IES TM30_15 Rf for :out: ‘Rf’</div>
+<div class="line">float or ndarray with IES TM30-20 Rf for :out: ‘Rf’</div>
 <div class="line">Other output is also possible by changing the :out: str value.</div>
 </div>
 </dd>
@@ -9542,8 +9551,8 @@ LEUKOS, vol. 12, no. 1–2, pp. 39–50, 2016</a></p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="luxpy.color.cri.spd_to_iesrg_tm30">
-<span class="sig-prename descclassname"><span class="pre">luxpy.color.cri.</span></span><span class="sig-name descname"><span class="pre">spd_to_iesrg_tm30</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SPD</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Rg'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cri_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'iesrf-tm30-18'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#luxpy.color.cri.spd_to_iesrg_tm30" title="Permalink to this definition">¶</a></dt>
-<dd><p>Wrapper function for the ‘spd_to_rg’ color gamut area index (IES TM30-18).</p>
+<span class="sig-prename descclassname"><span class="pre">luxpy.color.cri.</span></span><span class="sig-name descname"><span class="pre">spd_to_iesrg_tm30</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SPD</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Rg'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cri_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'iesrf-tm30-20'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#luxpy.color.cri.spd_to_iesrg_tm30" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper function for the ‘spd_to_rg’ color gamut area index (IES TM30-18 = TM30-20).</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
 <dt class="field-odd">SPD</dt>
@@ -9570,7 +9579,7 @@ LEUKOS, vol. 12, no. 1–2, pp. 39–50, 2016</a></p>
 <dt>Returns:</dt><dd><dl class="field-list">
 <dt class="field-odd">returns</dt>
 <dd class="field-odd"><div class="line-block">
-<div class="line">float or ndarray with IES TM30_15 Rg for :out: ‘Rg’</div>
+<div class="line">float or ndarray with IES TM30-20 Rg for :out: ‘Rg’</div>
 <div class="line">Other output is also possible by changing the :out: str value.</div>
 </div>
 </dd>
@@ -9617,7 +9626,7 @@ LEUKOS, vol. 12, no. 1–2, pp. 39–50, 2016</a></p>
 <dt>Returns:</dt><dd><dl class="field-list">
 <dt class="field-odd">returns</dt>
 <dd class="field-odd"><div class="line-block">
-<div class="line">float or ndarray with IES TM30_15 Rf for :out: ‘Rf’</div>
+<div class="line">float or ndarray with IES TM30-15 Rf for :out: ‘Rf’</div>
 <div class="line">Other output is also possible by changing the :out: str value.</div>
 </div>
 </dd>
@@ -9664,7 +9673,7 @@ LEUKOS, vol. 12, no. 1–2, pp. 39–50, 2016</a></p>
 <dt>Returns:</dt><dd><dl class="field-list">
 <dt class="field-odd">returns</dt>
 <dd class="field-odd"><div class="line-block">
-<div class="line">float or ndarray with IES TM30_15 Rg for :out: ‘Rg’</div>
+<div class="line">float or ndarray with IES TM30-15 Rg for :out: ‘Rg’</div>
 <div class="line">Other output is also possible by changing the :out: str value.</div>
 </div>
 </dd>
@@ -9711,7 +9720,7 @@ LEUKOS, vol. 12, no. 1–2, pp. 39–50, 2016</a></p>
 <dt>Returns:</dt><dd><dl class="field-list">
 <dt class="field-odd">returns</dt>
 <dd class="field-odd"><div class="line-block">
-<div class="line">float or ndarray with IES TM30_15 Rf for :out: ‘Rf’</div>
+<div class="line">float or ndarray with IES TM30-18 Rf for :out: ‘Rf’</div>
 <div class="line">Other output is also possible by changing the :out: str value.</div>
 </div>
 </dd>
@@ -9758,7 +9767,101 @@ LEUKOS, vol. 12, no. 1–2, pp. 39–50, 2016</a></p>
 <dt>Returns:</dt><dd><dl class="field-list">
 <dt class="field-odd">returns</dt>
 <dd class="field-odd"><div class="line-block">
-<div class="line">float or ndarray with IES TM30_15 Rg for :out: ‘Rg’</div>
+<div class="line">float or ndarray with IES TM30-18 Rg for :out: ‘Rg’</div>
+<div class="line">Other output is also possible by changing the :out: str value.</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>References:</dt><dd><p>1. <a class="reference external" href="https://www.ies.org/store/technical-memoranda/ies-method-for-evaluating-light-source-color-rendition/">IES TM30 (99, 4880 spectrally uniform samples)</a></p>
+<p>2. <a class="reference external" href="https://www.osapublishing.org/oe/abstract.cfm?uri=oe-23-12-15888">A. David, P. T. Fini, K. W. Houser, Y. Ohno, M. P. Royer, K. A. G. Smet, M. Wei, and L. Whitehead, 
+“Development of the IES method for evaluating the color rendition of light sources,” 
+Opt. Express, vol. 23, no. 12, pp. 15888–15906, 2015.</a></p>
+<p>3. <a class="reference external" href="http://www.tandfonline.com/doi/abs/10.1080/15502724.2015.1091356">K. A. G. Smet, A. David, and L. Whitehead, 
+“Why color space uniformity and sample set spectral uniformity are essential for color rendering measures,” 
+LEUKOS, vol. 12, no. 1–2, pp. 39–50, 2016</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="luxpy.color.cri.spd_to_iesrf_tm30_20">
+<span class="sig-prename descclassname"><span class="pre">luxpy.color.cri.</span></span><span class="sig-name descname"><span class="pre">spd_to_iesrf_tm30_20</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SPD</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Rf'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cri_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'iesrf-tm30-20'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cri/indices/iestm30_wrappers.html#spd_to_iesrf_tm30_20"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cri.spd_to_iesrf_tm30_20" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper function for the ‘iesrf’ color fidelity index (IES TM30-20 = TM30-18).</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">SPD</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with spectral data (can be multiple SPDs, </div>
+<div class="line">first axis are the wavelengths)</div>
+</div>
+</dd>
+<dt class="field-even">wl</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">Wavelengths (or [start, end, spacing]) to interpolate the SPDs to. </div>
+<div class="line">None: default to no interpolation</div>
+</div>
+</dd>
+<dt class="field-odd">out</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">‘Rf’ or str, optional</div>
+<div class="line">Specifies requested output (e.g. ‘Rf,Rfi,cct,duv’) </div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">returns</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">float or ndarray with IES TM30-20 Rf for :out: ‘Rf’</div>
+<div class="line">Other output is also possible by changing the :out: str value.</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>References:</dt><dd><p>1. <a class="reference external" href="https://www.ies.org/store/technical-memoranda/ies-method-for-evaluating-light-source-color-rendition/">IES TM30 (99, 4880 spectrally uniform samples)</a></p>
+<p>2. <a class="reference external" href="https://www.osapublishing.org/oe/abstract.cfm?uri=oe-23-12-15888">A. David, P. T. Fini, K. W. Houser, Y. Ohno, M. P. Royer, K. A. G. Smet, M. Wei, and L. Whitehead, 
+“Development of the IES method for evaluating the color rendition of light sources,” 
+Opt. Express, vol. 23, no. 12, pp. 15888–15906, 2015.</a></p>
+<p>3. <a class="reference external" href="http://www.tandfonline.com/doi/abs/10.1080/15502724.2015.1091356">K. A. G. Smet, A. David, and L. Whitehead, 
+“Why color space uniformity and sample set spectral uniformity are essential for color rendering measures,” 
+LEUKOS, vol. 12, no. 1–2, pp. 39–50, 2016</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="luxpy.color.cri.spd_to_iesrg_tm30_20">
+<span class="sig-prename descclassname"><span class="pre">luxpy.color.cri.</span></span><span class="sig-name descname"><span class="pre">spd_to_iesrg_tm30_20</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SPD</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Rg'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cri_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'iesrf-tm30-20'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cri/indices/iestm30_wrappers.html#spd_to_iesrg_tm30_20"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cri.spd_to_iesrg_tm30_20" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper function for the ‘spd_to_rg’ color gamut area index (IES TM30-18 = TM30-20).</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">SPD</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with spectral data (can be multiple SPDs, </div>
+<div class="line">first axis are the wavelengths)</div>
+</div>
+</dd>
+<dt class="field-even">wl</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">Wavelengths (or [start, end, spacing]) to interpolate the SPDs to. </div>
+<div class="line">None: default to no interpolation</div>
+</div>
+</dd>
+<dt class="field-odd">out</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">‘Rg’ or str, optional</div>
+<div class="line">Specifies requested output (e.g. ‘Rg,Rf,Rfi,cct,duv’) </div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">returns</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">float or ndarray with IES TM30-20 Rg for :out: ‘Rg’</div>
 <div class="line">Other output is also possible by changing the :out: str value.</div>
 </div>
 </dd>
@@ -10253,7 +10356,7 @@ other plotting fcns)</div>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="luxpy.color.cri.plot_ColorVectorGraphic">
-<span class="sig-prename descclassname"><span class="pre">luxpy.color.cri.</span></span><span class="sig-name descname"><span class="pre">plot_ColorVectorGraphic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jabt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jabr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hbins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">16</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_hue</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scalef</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_axis_labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bin_labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_edge_lines</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_center_lines</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_bin_colors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_10_20_circles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_vectors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamut_line_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'grey'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamut_line_style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'-'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamut_line_marker</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'o'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamut_line_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'polar'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_CVG_layout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hbin_color_map</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hvector_color_map</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jabti</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jabri</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hbinnr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cri/utils/graphics.html#plot_ColorVectorGraphic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cri.plot_ColorVectorGraphic" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">luxpy.color.cri.</span></span><span class="sig-name descname"><span class="pre">plot_ColorVectorGraphic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jabt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jabr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hbins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">16</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_hue</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scalef</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_axis_labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bin_labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_edge_lines</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_center_lines</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_bin_colors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_10_20_circles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_vectors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamut_line_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamut_line_style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'-'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamut_line_marker</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'o'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamut_line_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'polar'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_CVG_layout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hbin_color_map</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hvector_color_map</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jabti</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jabri</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hbinnr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cri/utils/graphics.html#plot_ColorVectorGraphic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cri.plot_ColorVectorGraphic" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot Color Vector Graphic (CVG).</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -10613,7 +10716,7 @@ other plotting fcns)</div>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="luxpy.color.cri.plot_tm30_cvg">
-<span class="sig-prename descclassname"><span class="pre">luxpy.color.cri.</span></span><span class="sig-name descname"><span class="pre">plot_tm30_cvg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cri_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ies-tm30'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamut_line_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'r'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamut_line_style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'-'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamut_line_marker</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'o'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamut_line_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_vectors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_index_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cart'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_annexE_priority</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_Rcsh1_Rfh1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cri/iestm30/graphics.html#plot_tm30_cvg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cri.plot_tm30_cvg" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">luxpy.color.cri.</span></span><span class="sig-name descname"><span class="pre">plot_tm30_cvg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cri_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ies-tm30'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamut_line_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamut_line_style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'-'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamut_line_marker</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'o'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamut_line_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_vectors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_index_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cart'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_annexE_priority</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_Rcsh1_Rfh1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cri/iestm30/graphics.html#plot_tm30_cvg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cri.plot_tm30_cvg" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot TM30 Color Vector Graphic (CVG).</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -10659,11 +10762,12 @@ other plotting fcns)</div>
 <div class="line">‘r’, optional</div>
 <div class="line">Plotting line style for the line connecting the </div>
 <div class="line">average test chromaticity in the hue bins.</div>
+<div class="line">None defaults to red (240,80,70)/255 (IES-TM30-20 recommended).</div>
 </div>
 </dd>
 <dt class="field-even">gamut_line_style</dt>
 <dd class="field-even"><div class="line-block">
-<div class="line">‘r’, optional</div>
+<div class="line">‘-’, optional</div>
 <div class="line">Plotting color for the line connecting the </div>
 <div class="line">average test chromaticity in the hue bins.</div>
 </div>

@@ -1255,6 +1255,11 @@
 <span class="sd">            |    - key: &#39;normalized_chroma_ref&#39;: 100.0 or float, optional</span>
 <span class="sd">            |                Controls the size (chroma/radius) </span>
 <span class="sd">            |                of the normalization circle/gamut.</span>
+<span class="sd">            |    - key &#39;use_bin_avg_DEi&#39;: True or False</span>
+<span class="sd">            |               Note that following IES-TM30 DEhj from gamut_slicer()</span>
+<span class="sd">            |               is obtained by averaging the DEi per hue bin (True),</span>
+<span class="sd">            |               and NOT by averaging the jabt and jabr per hue bin </span>
+<span class="sd">            |               and then calculating the DEhj (False).</span>
 <span class="sd">        :avg: </span>
 <span class="sd">            | None or fcn handle, optional</span>
 <span class="sd">            | Averaging function (handle) for color differences, DEi </span>
@@ -1327,8 +1332,9 @@
                                           <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;jabt,jabr,xyzti,xyztw,xyzri,xyzrw,xyztw_cct,cct,duv,St,Sr&#39;</span><span class="p">)</span> 
 
     <span class="c1"># calculate gamut area index:</span>
-    <span class="n">rg_pars</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;rg_pars&#39;</span><span class="p">]</span>
-    <span class="n">nhbins</span><span class="p">,</span> <span class="n">normalize_gamut</span><span class="p">,</span> <span class="n">normalized_chroma_ref</span><span class="p">,</span> <span class="n">start_hue</span>  <span class="o">=</span> <span class="p">[</span><span class="n">rg_pars</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">rg_pars</span><span class="o">.</span><span class="n">keys</span><span class="p">())]</span>
+    <span class="n">rg_pars</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;rg_pars&#39;</span><span class="p">]</span> 
+    <span class="k">if</span> <span class="s1">&#39;use_bin_avg_DEi&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">rg_pars</span><span class="p">:</span> <span class="n">rg_pars</span><span class="p">[</span><span class="s1">&#39;use_bin_avg_DEi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">nhbins</span><span class="p">,</span> <span class="n">normalize_gamut</span><span class="p">,</span> <span class="n">normalized_chroma_ref</span><span class="p">,</span> <span class="n">start_hue</span><span class="p">,</span> <span class="n">use_bin_avg_DEi</span>  <span class="o">=</span> <span class="p">[</span><span class="n">rg_pars</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">rg_pars</span><span class="o">.</span><span class="n">keys</span><span class="p">())]</span>
     
     <span class="c1"># get hue_bin_data:</span>
     <span class="n">hue_bin_data</span> <span class="o">=</span> <span class="n">_get_hue_bin_data</span><span class="p">(</span><span class="n">jabt</span><span class="p">,</span> <span class="n">jabr</span><span class="p">,</span> 

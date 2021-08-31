@@ -1,0 +1,355 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>luxpy.toolboxes.sherbrooke_spectral_indices.sherbrooke_spectral_indices_2013 &mdash; LuxPy 1.7.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> LuxPy
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.7.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../license.html">License: GPLv3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../required_packages.html">Imported (required) packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../luxpy_structure.html">Luxpy package structure</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">LuxPy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>luxpy.toolboxes.sherbrooke_spectral_indices.sherbrooke_spectral_indices_2013</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for luxpy.toolboxes.sherbrooke_spectral_indices.sherbrooke_spectral_indices_2013</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module for the calculation of the Melatonin Suppression Index (MSI), </span>
+<span class="sd">the Induced Photosynthesis Index (IPI) and the Star Light Index (SLI)</span>
+<span class="sd">---------------------------------------------------------------------</span>
+
+<span class="sd"> :spd_to_msi(): calculate Melatonin Suppression Index from spectrum.</span>
+<span class="sd"> </span>
+<span class="sd"> :spd_to_ipi(): calculate Induced Photosynthesis Index from spectrum.</span>
+<span class="sd"> </span>
+<span class="sd"> :spd_to_sli(): calculate Star Light Index from spectrum.</span>
+
+<span class="sd">References: </span>
+<span class="sd">    1. Aubé M, Roby J, Kocifaj M (2013) </span>
+<span class="sd">    Evaluating Potential Spectral Impacts of Various Artificial Lights on Melatonin Suppression, Photosynthesis, and Star Visibility. </span>
+<span class="sd">    PLoS ONE 8(7): e67798</span>
+<span class="sd">    https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0067798</span>
+
+<span class="sd">Created on Fri Jun 11 13:46:33 2021</span>
+
+<span class="sd">@author: ksmet1977 [at] gmail dot com</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="n">_CMF</span><span class="p">,</span> <span class="n">_CIE_D65</span><span class="p">,</span> <span class="n">cie_interp</span><span class="p">,</span> <span class="n">getwlr</span>
+<span class="kn">from</span> <span class="nn">luxpy.utils</span> <span class="kn">import</span> <span class="n">_PKG_PATH</span><span class="p">,</span> <span class="n">_SEP</span><span class="p">,</span> <span class="n">np</span><span class="p">,</span> <span class="n">pd</span>
+
+
+<span class="n">_WLR_RANGE</span> <span class="o">=</span> <span class="p">[</span><span class="mi">380</span><span class="p">,</span> <span class="mi">730</span><span class="p">]</span> <span class="c1"># for 2013 indices (see ref. 1)</span>
+<span class="n">_VSCOT_VM_MSAS_PAS</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_PKG_PATH</span><span class="p">,</span><span class="s1">&#39;toolboxes&#39;</span><span class="p">,</span><span class="s1">&#39;sherbrooke_spectral_indices&#39;</span><span class="p">,</span><span class="s1">&#39;data&#39;</span><span class="p">,</span><span class="s1">&#39;msas_pas_functions_2013.csv&#39;</span><span class="p">),</span><span class="n">header</span> <span class="o">=</span> <span class="s1">&#39;infer&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">T</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;spd_to_msi&#39;</span><span class="p">,</span><span class="s1">&#39;spd_to_ipi&#39;</span><span class="p">,</span><span class="s1">&#39;spd_to_sli&#39;</span><span class="p">,</span><span class="s1">&#39;_VSCOT_VM_MSAS_PAS&#39;</span><span class="p">,</span><span class="s1">&#39;_WLR_RANGE&#39;</span><span class="p">]</span>
+
+<span class="k">def</span> <span class="nf">_limit_wlr_range</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">wlr_range</span> <span class="o">=</span> <span class="n">_WLR_RANGE</span><span class="p">,</span> <span class="n">wlr_interval</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">wlr_interval</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">spd</span><span class="p">[:,(</span><span class="n">spd</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">&gt;=</span><span class="n">wlr_range</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">spd</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">&lt;=</span><span class="n">wlr_range</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">cie_interp</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">getwlr</span><span class="p">([</span><span class="n">wlr_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">wlr_range</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">wlr_interval</span><span class="p">]),</span> <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span><span class="p">)</span>
+
+<span class="n">_VSCOT_VM_MSAS_PAS</span> <span class="o">=</span> <span class="n">_limit_wlr_range</span><span class="p">(</span><span class="n">_VSCOT_VM_MSAS_PAS</span><span class="p">,</span> <span class="n">wlr_range</span> <span class="o">=</span> <span class="n">_WLR_RANGE</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">_spd_to_x</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">force_5nm_interval</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Calculate x Index from spectrum.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :spd:</span>
+<span class="sd">            | ndarray with spectral data (first row are wavelengths)</span>
+<span class="sd">        :idx:</span>
+<span class="sd">            | index in _VSCOT_VM_MSAS_PAS</span>
+<span class="sd">        :force_5nm_interval:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | If True: interpolate spd to 5nm wavelengths intervals, else: keep as in spd.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :index:</span>
+<span class="sd">            | ndarray with requested index values for each input spectrum.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># limit spectrum to desired wavelength range:</span>
+    <span class="n">wlr_interval</span> <span class="o">=</span> <span class="mi">5</span> <span class="k">if</span> <span class="n">force_5nm_interval</span> <span class="k">else</span> <span class="kc">None</span>
+    <span class="n">spd</span> <span class="o">=</span> <span class="n">_limit_wlr_range</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">wlr_interval</span> <span class="o">=</span> <span class="n">wlr_interval</span><span class="p">)</span>
+    
+    <span class="c1"># get VM &amp; requested action spectrum interpolated to spd wavelengths:</span>
+    <span class="n">vm_acs</span> <span class="o">=</span> <span class="n">cie_interp</span><span class="p">(</span><span class="n">_VSCOT_VM_MSAS_PAS</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="n">idx</span><span class="p">]],</span> <span class="n">spd</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span><span class="p">)</span>
+    <span class="n">vm</span><span class="p">,</span> <span class="n">acs</span> <span class="o">=</span> <span class="n">vm_acs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">vm_acs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    
+    <span class="c1"># get D65 ref spectrum interpolated to spd wavelengths:</span>
+    <span class="n">D65</span> <span class="o">=</span> <span class="n">cie_interp</span><span class="p">(</span><span class="n">_CIE_D65</span><span class="p">,</span> <span class="n">spd</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span><span class="p">)</span>
+    
+    <span class="c1"># normalize spectrum and D65 using VM function:</span>
+    <span class="n">spd</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">=</span> <span class="n">spd</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">/</span><span class="p">(</span><span class="n">spd</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">*</span><span class="n">vm</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">D65</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">=</span> <span class="n">D65</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">/</span><span class="p">(</span><span class="n">D65</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">*</span><span class="n">vm</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    
+    <span class="c1"># x = ratio of integrated actionspectrum-weighted spd and D65:</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">spd</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">*</span><span class="n">acs</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">D65</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">*</span><span class="n">acs</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+
+
+
+<div class="viewcode-block" id="spd_to_msi"><a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.sherbrooke_spectral_indices.spd_to_msi">[docs]</a><span class="k">def</span> <span class="nf">spd_to_msi</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">force_5nm_interval</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Calculate Melatonin Suppression Index from spectrum.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :spd:</span>
+<span class="sd">            | ndarray with spectral data (first row are wavelengths)</span>
+<span class="sd">        :force_5nm_interval:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | If True: interpolate spd to 5nm wavelengths intervals, else: keep as in spd.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :msi:</span>
+<span class="sd">            | ndarray with Melatonin Suppression Index values for each input spectrum.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_spd_to_x</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">force_5nm_interval</span> <span class="o">=</span> <span class="n">force_5nm_interval</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="spd_to_ipi"><a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.sherbrooke_spectral_indices.spd_to_ipi">[docs]</a><span class="k">def</span> <span class="nf">spd_to_ipi</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">force_5nm_interval</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Calculate Induced Photosynthesis Index from spectrum.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :spd:</span>
+<span class="sd">            | ndarray with spectral data (first row are wavelengths)</span>
+<span class="sd">        :force_5nm_interval:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | If True: interpolate spd to 5nm wavelengths intervals, else: keep as in spd.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :msi:</span>
+<span class="sd">            | ndarray with Induced Photosynthesis Index values for each input spectrum.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_spd_to_x</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">force_5nm_interval</span> <span class="o">=</span> <span class="n">force_5nm_interval</span><span class="p">)</span></div>
+
+   
+<div class="viewcode-block" id="spd_to_sli"><a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.sherbrooke_spectral_indices.spd_to_sli">[docs]</a><span class="k">def</span> <span class="nf">spd_to_sli</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">force_5nm_interval</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Calculate Star Light Index from spectrum.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :spd:</span>
+<span class="sd">            | ndarray with spectral data (first row are wavelengths)</span>
+<span class="sd">        :force_5nm_interval:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | If True: interpolate spd to 5nm wavelengths intervals, else: keep as in spd.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :msi:</span>
+<span class="sd">            | ndarray with Star Light Index values for each input spectrum.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_spd_to_x</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">force_5nm_interval</span> <span class="o">=</span> <span class="n">force_5nm_interval</span><span class="p">)</span></div>
+    
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    
+    <span class="c1"># Read test spectrum:</span>
+    <span class="n">cree</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_PKG_PATH</span><span class="p">,</span><span class="s1">&#39;toolboxes&#39;</span><span class="p">,</span><span class="s1">&#39;sherbrooke_spectral_indices&#39;</span><span class="p">,</span><span class="s1">&#39;data&#39;</span><span class="p">,</span><span class="s1">&#39;LED_CREE_BR30.csv&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">T</span>
+    
+    <span class="n">msi</span> <span class="o">=</span> <span class="n">spd_to_msi</span><span class="p">(</span><span class="n">cree</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;MSI:&#39;</span><span class="p">,</span> <span class="n">msi</span><span class="p">)</span>
+    
+    <span class="n">ipi</span> <span class="o">=</span> <span class="n">spd_to_ipi</span><span class="p">(</span><span class="n">cree</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;IPI:&#39;</span><span class="p">,</span> <span class="n">ipi</span><span class="p">)</span>
+    
+    <span class="n">sli</span> <span class="o">=</span> <span class="n">spd_to_sli</span><span class="p">(</span><span class="n">cree</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;SLI:&#39;</span><span class="p">,</span> <span class="n">sli</span><span class="p">)</span>
+
+    
+    
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Kevin A.G. Smet.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

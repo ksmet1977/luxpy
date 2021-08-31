@@ -107,6 +107,7 @@ indices/ciewrappers.py & ieswrappers.py
       | spd_to_iesrf_tm30(): latest version
       | spd_to_iesrf_tm30_15(): TM30-15 version
       | spd_to_iesrf_tm30_18(): TM30-18 version
+      | spd_to_iesrf_tm30_20(): TM30-20 version (= TM30-18)
 
       | spd_to_cri2012()
       | spd_to_cri2012_hl17()
@@ -118,6 +119,7 @@ indices/ciewrappers.py & ieswrappers.py
       | spd_to_iesrg_tm30(): latest version
       | spd_to_iesrg_tm30_15(): TM30-15 version
       | spd_to_iesrg_tm30_18(): TM30-18 version
+      | spd_to_iesrg_tm30_20(): TM30-20 version (= TM30-18)
 
 
 indices/mcri.py
@@ -171,7 +173,8 @@ from .cie_wrappers import (spd_to_ciera, spd_to_cierf,
 from .iestm30_wrappers import (spd_to_iesrf, spd_to_iesrg, 
                          spd_to_iesrf_tm30, spd_to_iesrg_tm30,
                          spd_to_iesrf_tm30_15, spd_to_iesrg_tm30_15, 
-                         spd_to_iesrf_tm30_18, spd_to_iesrg_tm30_18)
+                         spd_to_iesrf_tm30_18, spd_to_iesrg_tm30_18,
+                         spd_to_iesrf_tm30_20, spd_to_iesrg_tm30_20)
 from .cri2012 import spd_to_cri2012, spd_to_cri2012_hl17, spd_to_cri2012_hl1000, spd_to_cri2012_real210
 from .mcri import _MCRI_DEFAULTS, spd_to_mcri
 from .cqs import _CQS_DEFAULTS, spd_to_cqs
@@ -192,7 +195,8 @@ __all__ += ['spd_to_ciera', 'spd_to_cierf',
 __all__ += ['spd_to_iesrf','spd_to_iesrg',
            'spd_to_iesrf_tm30','spd_to_iesrg_tm30',
            'spd_to_iesrf_tm30_15','spd_to_iesrg_tm30_15',
-           'spd_to_iesrf_tm30_18','spd_to_iesrg_tm30_18']
+           'spd_to_iesrf_tm30_18','spd_to_iesrg_tm30_18',
+           'spd_to_iesrf_tm30_20','spd_to_iesrg_tm30_20']
 
 __all__ += ['spd_to_cri2012','spd_to_cri2012_hl17','spd_to_cri2012_hl1000','spd_to_cri2012_real210']
 

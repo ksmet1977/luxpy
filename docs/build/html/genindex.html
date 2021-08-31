@@ -436,7 +436,7 @@
 <h2 id="F">F</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="spectrum.html#luxpy.spectrum.f1prime">f1prime() (in module luxpy.spectrum)</a>
+      <li><a href="toolboxes.html#luxpy.toolboxes.spectral_mismatch_and_uncertainty.f1prime">f1prime() (in module luxpy.toolboxes.spectral_mismatch_and_uncertainty)</a>
 </li>
       <li><a href="math.html#luxpy.math.fit_cov_ellipse">fit_cov_ellipse() (in module luxpy.math)</a>
 </li>
@@ -504,7 +504,7 @@
         <li><a href="toolboxes.html#luxpy.toolboxes.spdbuild.PrimConstructor.get_spd">(luxpy.toolboxes.spdbuild.PrimConstructor method)</a>
 </li>
       </ul></li>
-      <li><a href="spectrum.html#luxpy.spectrum.get_spectral_mismatch_correction_factors">get_spectral_mismatch_correction_factors() (in module luxpy.spectrum)</a>
+      <li><a href="toolboxes.html#luxpy.toolboxes.spectral_mismatch_and_uncertainty.get_spectral_mismatch_correction_factors">get_spectral_mismatch_correction_factors() (in module luxpy.toolboxes.spectral_mismatch_and_uncertainty)</a>
 </li>
       <li><a href="color.html#luxpy.color.utils.get_subplot_layout">get_subplot_layout() (in module luxpy.color.utils)</a>
 </li>
@@ -704,8 +704,6 @@
         <li><a href="color.html#module-luxpy.color.utils">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     luxpy.color.whiteness
 
@@ -713,6 +711,8 @@
         <li><a href="color.html#module-luxpy.color.whiteness">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     luxpy.math
 
@@ -784,10 +784,24 @@
 </li>
       </ul></li>
       <li>
+    luxpy.toolboxes.sherbrooke_spectral_indices
+
+      <ul>
+        <li><a href="toolboxes.html#module-luxpy.toolboxes.sherbrooke_spectral_indices">module</a>
+</li>
+      </ul></li>
+      <li>
     luxpy.toolboxes.spdbuild
 
       <ul>
         <li><a href="toolboxes.html#module-luxpy.toolboxes.spdbuild">module</a>
+</li>
+      </ul></li>
+      <li>
+    luxpy.toolboxes.spectral_mismatch_and_uncertainty
+
+      <ul>
+        <li><a href="toolboxes.html#module-luxpy.toolboxes.spectral_mismatch_and_uncertainty">module</a>
 </li>
       </ul></li>
       <li>
@@ -868,7 +882,11 @@
 </li>
         <li><a href="toolboxes.html#module-luxpy.toolboxes.rgb2spec">luxpy.toolboxes.rgb2spec</a>
 </li>
+        <li><a href="toolboxes.html#module-luxpy.toolboxes.sherbrooke_spectral_indices">luxpy.toolboxes.sherbrooke_spectral_indices</a>
+</li>
         <li><a href="toolboxes.html#module-luxpy.toolboxes.spdbuild">luxpy.toolboxes.spdbuild</a>
+</li>
+        <li><a href="toolboxes.html#module-luxpy.toolboxes.spectral_mismatch_and_uncertainty">luxpy.toolboxes.spectral_mismatch_and_uncertainty</a>
 </li>
         <li><a href="toolboxes.html#module-luxpy.toolboxes.spectro">luxpy.toolboxes.spectro</a>
 </li>
@@ -1131,14 +1149,14 @@
 </li>
       <li><a href="toolboxes.html#luxpy.toolboxes.photbiochem.spd_to_CS_CLa_lrc">spd_to_CS_CLa_lrc() (in module luxpy.toolboxes.photbiochem)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="color.html#luxpy.color.cri.spd_to_DEi">spd_to_DEi() (in module luxpy.color.cri)</a>
 </li>
       <li><a href="color.html#luxpy.color.cri.spd_to_fci">spd_to_fci() (in module luxpy.color.cri)</a>
 </li>
       <li><a href="color.html#luxpy.color.cri.spd_to_ies_tm30_metrics">spd_to_ies_tm30_metrics() (in module luxpy.color.cri)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="color.html#luxpy.color.cri.spd_to_iesrf">spd_to_iesrf() (in module luxpy.color.cri)</a>
 </li>
       <li><a href="color.html#luxpy.color.cri.spd_to_iesrf_tm30">spd_to_iesrf_tm30() (in module luxpy.color.cri)</a>
@@ -1146,6 +1164,8 @@
       <li><a href="color.html#luxpy.color.cri.spd_to_iesrf_tm30_15">spd_to_iesrf_tm30_15() (in module luxpy.color.cri)</a>
 </li>
       <li><a href="color.html#luxpy.color.cri.spd_to_iesrf_tm30_18">spd_to_iesrf_tm30_18() (in module luxpy.color.cri)</a>
+</li>
+      <li><a href="color.html#luxpy.color.cri.spd_to_iesrf_tm30_20">spd_to_iesrf_tm30_20() (in module luxpy.color.cri)</a>
 </li>
       <li><a href="color.html#luxpy.color.cri.spd_to_iesrg">spd_to_iesrg() (in module luxpy.color.cri)</a>
 </li>
@@ -1155,7 +1175,11 @@
 </li>
       <li><a href="color.html#luxpy.color.cri.spd_to_iesrg_tm30_18">spd_to_iesrg_tm30_18() (in module luxpy.color.cri)</a>
 </li>
+      <li><a href="color.html#luxpy.color.cri.spd_to_iesrg_tm30_20">spd_to_iesrg_tm30_20() (in module luxpy.color.cri)</a>
+</li>
       <li><a href="spectrum.html#luxpy.spectrum.spd_to_indoor">spd_to_indoor() (in module luxpy.spectrum)</a>
+</li>
+      <li><a href="toolboxes.html#luxpy.toolboxes.sherbrooke_spectral_indices.spd_to_ipi">spd_to_ipi() (in module luxpy.toolboxes.sherbrooke_spectral_indices)</a>
 </li>
       <li><a href="color.html#luxpy.color.cri.spd_to_jab_t_r">spd_to_jab_t_r() (in module luxpy.color.cri)</a>
 </li>
@@ -1163,9 +1187,13 @@
 </li>
       <li><a href="color.html#luxpy.color.cri.spd_to_mcri">spd_to_mcri() (in module luxpy.color.cri)</a>
 </li>
+      <li><a href="toolboxes.html#luxpy.toolboxes.sherbrooke_spectral_indices.spd_to_msi">spd_to_msi() (in module luxpy.toolboxes.sherbrooke_spectral_indices)</a>
+</li>
       <li><a href="spectrum.html#luxpy.spectrum.spd_to_power">spd_to_power() (in module luxpy.spectrum)</a>
 </li>
       <li><a href="color.html#luxpy.color.cri.spd_to_rg">spd_to_rg() (in module luxpy.color.cri)</a>
+</li>
+      <li><a href="toolboxes.html#luxpy.toolboxes.sherbrooke_spectral_indices.spd_to_sli">spd_to_sli() (in module luxpy.toolboxes.sherbrooke_spectral_indices)</a>
 </li>
       <li><a href="color.html#luxpy.color.cri.spd_to_thornton_cpi">spd_to_thornton_cpi() (in module luxpy.color.cri)</a>
 </li>

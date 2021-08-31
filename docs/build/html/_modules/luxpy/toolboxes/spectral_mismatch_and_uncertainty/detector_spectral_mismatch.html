@@ -7,14 +7,14 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>luxpy.spectrum.detector_spectral_mismatch &mdash; LuxPy 1.7.0 documentation</title>
+  <title>luxpy.toolboxes.spectral_mismatch_and_uncertainty.detector_spectral_mismatch &mdash; LuxPy 1.7.0 documentation</title>
   
 
   
-  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
 
   
   
@@ -26,21 +26,21 @@
 
   
   <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
     
-      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
     
-    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
 
     
-    <link rel="index" title="Index" href="../../../genindex.html" />
-    <link rel="search" title="Search" href="../../../search.html" /> 
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -54,7 +54,7 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home"> LuxPy
+            <a href="../../../../index.html" class="icon icon-home"> LuxPy
           
 
           
@@ -71,7 +71,7 @@
 
           
 <div role="search">
-  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
@@ -91,10 +91,10 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License: GPLv3</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../required_packages.html">Imported (required) packages</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../luxpy_structure.html">Luxpy package structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../license.html">License: GPLv3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../required_packages.html">Imported (required) packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../luxpy_structure.html">Luxpy package structure</a></li>
 </ul>
 
             
@@ -110,7 +110,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../../index.html">LuxPy</a>
+          <a href="../../../../index.html">LuxPy</a>
         
       </nav>
 
@@ -141,11 +141,11 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
         
-          <li><a href="../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
         
-      <li>luxpy.spectrum.detector_spectral_mismatch</li>
+      <li>luxpy.toolboxes.spectral_mismatch_and_uncertainty.detector_spectral_mismatch</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -160,7 +160,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for luxpy.spectrum.detector_spectral_mismatch</h1><div class="highlight"><pre>
+  <h1>Source code for luxpy.toolboxes.spectral_mismatch_and_uncertainty.detector_spectral_mismatch</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Module for detector spectral responsivity spectral mismatch calculations</span>
@@ -182,7 +182,7 @@
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;f1prime&#39;</span><span class="p">,</span><span class="s1">&#39;get_spectral_mismatch_correction_factors&#39;</span><span class="p">]</span>
 
-<div class="viewcode-block" id="f1prime"><a class="viewcode-back" href="../../../spectrum.html#luxpy.spectrum.f1prime">[docs]</a><span class="k">def</span> <span class="nf">f1prime</span><span class="p">(</span><span class="n">s_detector</span><span class="p">,</span> <span class="n">S_C</span> <span class="o">=</span> <span class="s1">&#39;A&#39;</span><span class="p">,</span> 
+<div class="viewcode-block" id="f1prime"><a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.spectral_mismatch_and_uncertainty.f1prime">[docs]</a><span class="k">def</span> <span class="nf">f1prime</span><span class="p">(</span><span class="n">s_detector</span><span class="p">,</span> <span class="n">S_C</span> <span class="o">=</span> <span class="s1">&#39;A&#39;</span><span class="p">,</span> 
             <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;1931_2&#39;</span><span class="p">,</span> <span class="n">s_target_index</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
             <span class="n">wlr</span> <span class="o">=</span> <span class="p">[</span><span class="mi">380</span><span class="p">,</span><span class="mi">780</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">interp_kind</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span> 
             <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;f1p&#39;</span><span class="p">):</span>
@@ -254,7 +254,7 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">eval</span><span class="p">(</span><span class="n">out</span><span class="p">)</span></div>
     
-<div class="viewcode-block" id="get_spectral_mismatch_correction_factors"><a class="viewcode-back" href="../../../spectrum.html#luxpy.spectrum.get_spectral_mismatch_correction_factors">[docs]</a><span class="k">def</span> <span class="nf">get_spectral_mismatch_correction_factors</span><span class="p">(</span><span class="n">S_Z</span><span class="p">,</span> <span class="n">s_detector</span><span class="p">,</span> <span class="n">S_C</span> <span class="o">=</span> <span class="s1">&#39;A&#39;</span><span class="p">,</span> 
+<div class="viewcode-block" id="get_spectral_mismatch_correction_factors"><a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.spectral_mismatch_and_uncertainty.get_spectral_mismatch_correction_factors">[docs]</a><span class="k">def</span> <span class="nf">get_spectral_mismatch_correction_factors</span><span class="p">(</span><span class="n">S_Z</span><span class="p">,</span> <span class="n">s_detector</span><span class="p">,</span> <span class="n">S_C</span> <span class="o">=</span> <span class="s1">&#39;A&#39;</span><span class="p">,</span> 
                                           <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;1931_2&#39;</span><span class="p">,</span> <span class="n">s_target_index</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
                                           <span class="n">wlr</span> <span class="o">=</span> <span class="p">[</span><span class="mi">380</span><span class="p">,</span><span class="mi">780</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">interp_kind</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span> 
                                           <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;F&#39;</span><span class="p">):</span>

@@ -386,7 +386,7 @@
     <span class="k">return</span> <span class="n">cmap</span>
 
 <div class="viewcode-block" id="plot_tm30_cvg"><a class="viewcode-back" href="../../../../../color.html#luxpy.color.cri.plot_tm30_cvg">[docs]</a><span class="k">def</span> <span class="nf">plot_tm30_cvg</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="s1">&#39;ies-tm30&#39;</span><span class="p">,</span>  
-                  <span class="n">gamut_line_color</span> <span class="o">=</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span>
+                  <span class="n">gamut_line_color</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                   <span class="n">gamut_line_style</span> <span class="o">=</span> <span class="s1">&#39;-&#39;</span><span class="p">,</span>
                   <span class="n">gamut_line_marker</span> <span class="o">=</span> <span class="s1">&#39;o&#39;</span><span class="p">,</span>
                   <span class="n">gamut_line_label</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -423,8 +423,9 @@
 <span class="sd">            | &#39;r&#39;, optional</span>
 <span class="sd">            | Plotting line style for the line connecting the </span>
 <span class="sd">            | average test chromaticity in the hue bins.</span>
+<span class="sd">            | None defaults to red (240,80,70)/255 (IES-TM30-20 recommended).</span>
 <span class="sd">        :gamut_line_style:</span>
-<span class="sd">            | &#39;r&#39;, optional</span>
+<span class="sd">            | &#39;-&#39;, optional</span>
 <span class="sd">            | Plotting color for the line connecting the </span>
 <span class="sd">            | average test chromaticity in the hue bins.</span>
 <span class="sd">        :gamut_line_marker:</span>
@@ -475,6 +476,8 @@
     <span class="n">jabt</span> <span class="o">=</span> <span class="n">hdata</span><span class="p">[</span><span class="s1">&#39;jabtn_hj_closed&#39;</span><span class="p">][:,</span><span class="mi">0</span><span class="p">,:]</span>
     <span class="n">jabr</span> <span class="o">=</span> <span class="n">hdata</span><span class="p">[</span><span class="s1">&#39;jabrn_hj_closed&#39;</span><span class="p">][:,</span><span class="mi">0</span><span class="p">,:]</span>
     
+    <span class="k">if</span> <span class="n">gamut_line_color</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">gamut_line_color</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="mi">240</span><span class="p">,</span><span class="mi">80</span><span class="p">,</span><span class="mi">70</span><span class="p">))</span><span class="o">/</span><span class="mi">255</span> <span class="c1"># recommended color in ANSI/IES-TM30-20</span>
+        
     <span class="c1"># Plot color vector graphic</span>
     <span class="n">_</span><span class="p">,</span> <span class="n">axh</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">plot_ColorVectorGraphic</span><span class="p">(</span><span class="n">jabt</span> <span class="o">=</span> <span class="n">jabt</span><span class="p">,</span> <span class="n">jabr</span> <span class="o">=</span> <span class="n">jabr</span><span class="p">,</span> 
                                         <span class="n">hbins</span> <span class="o">=</span> <span class="n">hdata</span><span class="p">[</span><span class="s1">&#39;nhbins&#39;</span><span class="p">],</span> 
@@ -1594,7 +1597,7 @@
                                        <span class="n">scale_vf_chroma_to_sample_chroma</span> <span class="o">=</span> <span class="n">scale_vf_chroma_to_sample_chroma</span><span class="p">)</span>
 
     <span class="c1"># Unpack data dictionary:</span>
-    <span class="p">(</span><span class="n">DEa</span><span class="p">,</span> <span class="n">DEi</span><span class="p">,</span> <span class="n">Rcshj</span><span class="p">,</span> <span class="n">Rf</span><span class="p">,</span>
+    <span class="p">(</span><span class="n">AnnexE_priority</span><span class="p">,</span> <span class="n">DEa</span><span class="p">,</span> <span class="n">DEi</span><span class="p">,</span> <span class="n">Rcshj</span><span class="p">,</span> <span class="n">Rf</span><span class="p">,</span>
      <span class="n">Rfhj</span><span class="p">,</span> <span class="n">Rfi</span><span class="p">,</span> <span class="n">Rg</span><span class="p">,</span> <span class="n">Rhshj</span><span class="p">,</span> 
      <span class="n">Sr</span><span class="p">,</span> <span class="n">St</span><span class="p">,</span> <span class="n">cct</span><span class="p">,</span> <span class="n">cri_type</span><span class="p">,</span> 
      <span class="n">duv</span><span class="p">,</span> <span class="n">hue_bin_data</span><span class="p">,</span> <span class="n">vf</span><span class="p">,</span>
@@ -1627,15 +1630,14 @@
                
         
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cct</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
- 
         
         <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">144</span><span class="p">)</span>
     
         <span class="c1"># Plot CVG:</span>
         <span class="n">ax_CVG</span> <span class="o">=</span> <span class="n">create_subplot</span><span class="p">(</span><span class="n">layout</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span> <span class="n">polar</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">frameon</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">plot_test_sample_coord</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>  
-            <span class="n">jabti</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="n">jabri</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">jabti_i</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">jabri_i</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">jabti_i</span> <span class="o">=</span> <span class="n">jabti</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,:]</span>
             <span class="n">jabri_i</span> <span class="o">=</span> <span class="n">jabri</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,:]</span>
@@ -1651,8 +1653,8 @@
                                                    <span class="n">scalef</span> <span class="o">=</span> <span class="n">scalef</span><span class="p">,</span> 
                                                    <span class="n">force_CVG_layout</span> <span class="o">=</span> <span class="n">force_CVG_layout</span><span class="p">,</span> 
                                                    <span class="n">bin_labels</span> <span class="o">=</span> <span class="s1">&#39;#&#39;</span><span class="p">,</span>
-                                                   <span class="n">jabti</span> <span class="o">=</span> <span class="n">jabti</span><span class="p">,</span> 
-                                                   <span class="n">jabri</span> <span class="o">=</span> <span class="n">jabri</span><span class="p">,</span> 
+                                                   <span class="n">jabti</span> <span class="o">=</span> <span class="n">jabti_i</span><span class="p">,</span> 
+                                                   <span class="n">jabri</span> <span class="o">=</span> <span class="n">jabri_i</span><span class="p">,</span> 
                                                    <span class="n">hbinnr</span> <span class="o">=</span> <span class="n">hbinnr</span><span class="p">)</span>
                 
         <span class="c1"># Plot VF:</span>

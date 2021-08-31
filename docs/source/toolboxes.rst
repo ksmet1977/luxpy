@@ -118,3 +118,32 @@ spectro/
    :members:
    :undoc-members:
    :private-members:
+   
+sherbrooke_spectral_indices/ 
+----------------------------
+ :py:
+	* __init__.py
+	* sherbrooke_spectral_indices_2013.py 
+
+	
+ :namespace: luxpy.sherbrooke_spectral_indices
+
+.. automodule:: luxpy.toolboxes.sherbrooke_spectral_indices
+   :members:
+   :undoc-members:
+   :private-members: 
+   
+spectral_mismatch_and_uncertainty/ 
+----------------------------------
+ :py:
+	* __init__.py
+   	* detector_spectral_mismatch.py
+
+	
+ :namespace: luxpy.spectral_mismatch_and_uncertainty
+
+.. automodule:: luxpy.toolboxes.spectral_mismatch_and_uncertainty
+   :members:
+   :undoc-members:
+   :private-members: 
+   

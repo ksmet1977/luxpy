@@ -255,7 +255,9 @@ __all__ += ['SPD']
 #----------------------------------------
 # From /toolboxes:
 #----------------------------------------
-list_of_toolboxes = ['photbiochem','indvcmf','spdbuild','hypspcim','iolidfiles','spectro','rgb2spec','dispcal']
+list_of_toolboxes = ['photbiochem','indvcmf','spdbuild','hypspcim','iolidfiles',
+                     'spectro','rgb2spec','dispcal','sherbrooke_spectral_indices',
+                     'spectral_mismatch_and_uncertainty']
 try:
     #   load ciephotbio sub_package:
     from luxpy.toolboxes import photbiochem 
@@ -292,6 +294,10 @@ try:
     #   Load sherbrooke spectral index sub_package:
     from luxpy.toolboxes import sherbrooke_spectral_indices
     __all__ += ['sherbrooke_spectral_indices']
+    
+    #   Load spectral mismatch and uncertainty sub_package:
+    from luxpy.toolboxes import spectral_mismatch_and_uncertainty
+    __all__ += ['spectral_mismatch_and_uncertainty']
 except:
     pass
 

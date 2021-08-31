@@ -223,7 +223,7 @@ def _get_hue_map(hbins = 16, start_hue = 0.0,
     return cmap
 
 def plot_tm30_cvg(spd, cri_type = 'ies-tm30',  
-                  gamut_line_color = 'r',
+                  gamut_line_color = None,
                   gamut_line_style = '-',
                   gamut_line_marker = 'o',
                   gamut_line_label = None,
@@ -260,8 +260,9 @@ def plot_tm30_cvg(spd, cri_type = 'ies-tm30',
             | 'r', optional
             | Plotting line style for the line connecting the 
             | average test chromaticity in the hue bins.
+            | None defaults to red (240,80,70)/255 (IES-TM30-20 recommended).
         :gamut_line_style:
-            | 'r', optional
+            | '-', optional
             | Plotting color for the line connecting the 
             | average test chromaticity in the hue bins.
         :gamut_line_marker:
@@ -312,6 +313,8 @@ def plot_tm30_cvg(spd, cri_type = 'ies-tm30',
     jabt = hdata['jabtn_hj_closed'][:,0,:]
     jabr = hdata['jabrn_hj_closed'][:,0,:]
     
+    if gamut_line_color is None: gamut_line_color = np.array((240,80,70))/255 # recommended color in ANSI/IES-TM30-20
+        
     # Plot color vector graphic
     _, axh, _ = plot_ColorVectorGraphic(jabt = jabt, jabr = jabr, 
                                         hbins = hdata['nhbins'], 

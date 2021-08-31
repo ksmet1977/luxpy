@@ -23,6 +23,7 @@ Module with color fidelity and color gamut area parameter dicts
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
+import copy
 from luxpy import math
 from luxpy.utils import np, put_args_in_db
 from .DE_scalers import linear_scale, log_scale, psy_scale
@@ -34,7 +35,7 @@ __all__ = ['_CRI_TYPE_DEFAULT', '_CRI_DEFAULTS', 'process_cri_type_input']
 _CRI_TYPE_DEFAULT = 'ies-tm30'
 
 _CRI_DEFAULTS = {'cri_types' : ['ciera','ciera-8','ciera-14','cierf',
-                                'iesrf','iesrf-tm30-15','iesrf-tm30-18','ies-tm30',
+                                'iesrf','iesrf-tm30-15','iesrf-tm30-18','iesrf-tm30-20','ies-tm30',
                                 'cri2012','cri2012-hl17','cri2012-hl1000','cri2012-real210']}
 
 _CRI_DEFAULTS['ciera-13.3-1995'] = {'sampleset' : "_CRI_RFL['cie-13.3-1995']['8']", 
@@ -49,9 +50,9 @@ _CRI_DEFAULTS['ciera-13.3-1995'] = {'sampleset' : "_CRI_RFL['cie-13.3-1995']['8'
                          'cri_specific_pars' : None
                          }
 
-_CRI_DEFAULTS['ciera'] = _CRI_DEFAULTS['ciera-13.3-1995'].copy()
-_CRI_DEFAULTS['ciera-8'] = _CRI_DEFAULTS['ciera-13.3-1995'].copy()
-_CRI_DEFAULTS['ciera-14'] = _CRI_DEFAULTS['ciera-13.3-1995'].copy() 
+_CRI_DEFAULTS['ciera'] = copy.deepcopy(_CRI_DEFAULTS['ciera-13.3-1995'])
+_CRI_DEFAULTS['ciera-8'] = copy.deepcopy(_CRI_DEFAULTS['ciera-13.3-1995'])
+_CRI_DEFAULTS['ciera-14'] = copy.deepcopy(_CRI_DEFAULTS['ciera-13.3-1995']) 
 _CRI_DEFAULTS['ciera-14']['sampleset'] = "_CRI_RFL['cie-13.3-1995']['14']"
 
 
@@ -67,7 +68,7 @@ _CRI_DEFAULTS['cierf-224-2017'] = {'sampleset' : "_CRI_RFL['cie-224-2017']['99']
                                  'cri_specific_pars' : None
                                  }
 
-_CRI_DEFAULTS['cierf'] = _CRI_DEFAULTS['cierf-224-2017'].copy()
+_CRI_DEFAULTS['cierf'] = copy.deepcopy(_CRI_DEFAULTS['cierf-224-2017'])
 
 
 _CRI_DEFAULTS['iesrf-tm30-15'] = {'sampleset' : "_CRI_RFL['ies-tm30-15']['99']['5nm']", 
@@ -94,11 +95,14 @@ _CRI_DEFAULTS['iesrf-tm30-18'] = {'sampleset' : "_CRI_RFL['ies-tm30-18']['99']['
                                  'cri_specific_pars' : None
                                  }
 
-_CRI_DEFAULTS['iesrf'] = _CRI_DEFAULTS['iesrf-tm30-18'].copy()
+_CRI_DEFAULTS['iesrf-tm30-20'] = copy.deepcopy(_CRI_DEFAULTS['iesrf-tm30-18'])
+_CRI_DEFAULTS['iesrf-tm30-20']['sampleset'] = "_CRI_RFL['ies-tm30-20']['99']['5nm']"
 
-_CRI_DEFAULTS['iesrf-tm30'] = _CRI_DEFAULTS['iesrf-tm30-18'].copy()
+_CRI_DEFAULTS['iesrf'] = copy.deepcopy(_CRI_DEFAULTS['iesrf-tm30-20'])
 
-_CRI_DEFAULTS['ies-tm30'] = _CRI_DEFAULTS['iesrf-tm30-18'].copy()
+_CRI_DEFAULTS['iesrf-tm30'] = copy.deepcopy(_CRI_DEFAULTS['iesrf-tm30-20'])
+
+_CRI_DEFAULTS['ies-tm30'] = copy.deepcopy(_CRI_DEFAULTS['iesrf-tm30-20'])
 
 
 _CRI_DEFAULTS['cri2012-hl17'] = {'sampleset' : "_CRI_RFL['cri2012']['HL17']", 
@@ -137,7 +141,7 @@ _CRI_DEFAULTS['cri2012-real210'] = {'sampleset' : "_CRI_RFL['cri2012']['Real210'
                                     'cri_specific_pars' : None
                                     }
 
-_CRI_DEFAULTS['cri2012'] = _CRI_DEFAULTS['cri2012-hl17'].copy()
+_CRI_DEFAULTS['cri2012'] = copy.deepcopy(_CRI_DEFAULTS['cri2012-hl17'])
 
 
 #------------------------------------------------------------------------------
