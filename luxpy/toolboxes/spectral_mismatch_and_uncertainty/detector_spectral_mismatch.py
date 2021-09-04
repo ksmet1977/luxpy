@@ -67,7 +67,8 @@ def f1prime(s_detector, S_C = 'A',
     s_target = _CMF[cieobs]['bar'][[0,s_target_index]].copy() if isinstance(cieobs, str) else cieobs[[0,s_target_index]].copy()
     
     # Interpolate to desired wavelength range:
-    wlr = getwlr(wlr) # get wavelength range from array or '3-vector'
+    #wlr = getwlr(wlr) # get wavelength range from array or '3-vector'
+    wlr = s_detector[0] # get wavelength range from the detector data
     dl = getwld(wlr) # wavelength differences (unequal wavelength spacings are taken into account)
     s_detector = cie_interp(s_detector, wlr, kind = interp_kind)[1:]
     s_target = cie_interp(s_target, wlr, kind = interp_kind)[1:]
