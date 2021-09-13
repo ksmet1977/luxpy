@@ -21,7 +21,7 @@ __all__ = ['f1prime','get_spectral_mismatch_correction_factors']
 
 def f1prime(s_detector, S_C = 'A', 
             cieobs = '1931_2', s_target_index = 2,
-            wlr = [380,780, 1], interp_kind = 'linear', 
+            wlr = None, interp_kind = 'linear', 
             out = 'f1p'):
     """
     Determine the f1prime spectral mismatch index.
@@ -45,8 +45,9 @@ def f1prime(s_detector, S_C = 'A',
             | if > 0: index into CMF set (1->'xbar', 2->'ybar'='Vlambda', 3->'zbar')
             | if == 0: cieobs is expected to contain an ndarray with the target spectral responsivity. 
         :wlr:
-            | [380,780,1], optional
-            | Wavelength range (ndarray or [start, stop, spacing]).
+            | None, optional
+            | Wavelength range (None, ndarray or [start, stop, spacing]).
+            | If None: the wavelengths of the detector are used throughout.
         :interp_kind:
             | 'linear', optional
             | Interpolation type to use when interpolating function to specified wavelength range.
@@ -67,7 +68,7 @@ def f1prime(s_detector, S_C = 'A',
     s_target = _CMF[cieobs]['bar'][[0,s_target_index]].copy() if isinstance(cieobs, str) else cieobs[[0,s_target_index]].copy()
     
     # Interpolate to desired wavelength range:
-    wlr = getwlr(wlr) # get wavelength range from array or '3-vector'
+    wlr = s_detector[0] if wlr is None else getwlr(wlr) # get wavelength range from array or '3-vector'
     dl = getwld(wlr) # wavelength differences (unequal wavelength spacings are taken into account)
     s_detector = cie_interp(s_detector, wlr, kind = interp_kind)[1:]
     s_target = cie_interp(s_target, wlr, kind = interp_kind)[1:]
@@ -93,7 +94,7 @@ def f1prime(s_detector, S_C = 'A',
     
 def get_spectral_mismatch_correction_factors(S_Z, s_detector, S_C = 'A', 
                                           cieobs = '1931_2', s_target_index = 2,
-                                          wlr = [380,780, 1], interp_kind = 'linear', 
+                                          wlr = None, interp_kind = 'linear', 
                                           out = 'F'):
     """
     Determine the spectral mismatch factors.
@@ -119,7 +120,7 @@ def get_spectral_mismatch_correction_factors(S_Z, s_detector, S_C = 'A',
             | if > 0: index into CMF set (1->'xbar', 2->'ybar'='Vlambda', 3->'zbar')
             | if == 0: cieobs is expected to contain an ndarray with the target spectral responsivity. 
         :wlr:
-            | [380,780,1], optional
+            | None, optional
             | Wavelength range (ndarray or [start, stop, spacing]).
             | If None: use the wavelength range of S_Z.
         :interp_kind:
