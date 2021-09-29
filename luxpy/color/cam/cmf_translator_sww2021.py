@@ -59,7 +59,7 @@ def _get_rgb_tristim_matrix(cmf, R = None, G = None, B = None, wl = None):
     else:
         cmf = cie_interp(cmf, wl_new = wl, kind = 'cmf') # interp cmfset to desired wl
     
-    # Get smooth primaries (use input or generate from sratch):
+    # Get smooth primaries (use input or generate from scratch):
     if (R is None) | (G is None) | (B is None):
         R_, G_, B_ = get_rgb_smooth_prims(wl = wl) # generate smooth primaries
     R = cie_interp(R, wl, kind = 'spd') if (R is not None) else R_ # set to input R and interp to desired wl, else use generated one

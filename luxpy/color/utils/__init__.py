@@ -19,6 +19,8 @@
 Module with functions related to plotting of color data
 =======================================================
 
+ :get_cmap(): Get an ndarray of rgb values representing a linearly sampled matplotlib colormap
+
  :get_subplot_layout(): Calculate layout of multiple subplots.
 
  :plot_color_data(): Plot color data (local helper function)

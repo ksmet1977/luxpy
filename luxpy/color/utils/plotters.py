@@ -19,6 +19,8 @@
 Module with functions related to plotting of color data
 =======================================================
 
+ :get_cmap(): Get an ndarray of rgb values representing a linearly sampled matplotlib colormap
+
  :get_subplot_layout(): Calculate layout of multiple subplots.
      
  :plot_color_data(): Plot color data (local helper function)
@@ -65,11 +67,31 @@ Module with functions related to plotting of color data
 from luxpy import math, _CIEOBS, _CSPACE, _CSPACE_AXES, _CIE_ILLUMINANTS, _CMF, _CIE_D65, daylightlocus, colortf, Yxy_to_xyz, spd_to_xyz, cri_ref, xyz_to_srgb
 from luxpy.utils import np, plt,_EPS, asplit
 from matplotlib.patches import Polygon
+from matplotlib import cm
 
-__all__ = ['get_subplot_layout','plotSL','plotDL','plotBB','plot_color_data',
+__all__ = ['get_cmap','get_subplot_layout','plotSL','plotDL','plotBB','plot_color_data',
            'plotceruleanline','plotUH','plotcircle','plotellipse',
            'plot_chromaticity_diagram_colors','plot_spectrum_colors',
            'plot_rfl_color_patches','plot_rgb_color_patches','plot_cmfs']
+
+def get_cmap(N, cmap_name = 'jet'):
+    """
+    Get an ndarray of rgba values representing a linearly sampled matplotlib colormap.
+    
+    Args:
+        :N:
+            | Number of rgba values in returned cmap.
+        :cmap_name:
+            | 'jet', optional
+            | Matplotlib color map name to sample from.
+            
+    Returns:
+        :cmap:
+            | ndarray with rgba values.
+    """
+    cmap = cm.get_cmap(cmap_name, N)
+    cmap = cmap(range(N))
+    return cmap
 
 def get_subplot_layout(N, min_1xncols = 3):
     """

@@ -131,7 +131,7 @@ def _triangle_mixer(Yxy_target, Yxyi, triangle_strengths):
         for i in range(N):
             M[:,i] = np.nansum(np.nansum(M_final*(combos == i)[None,...],axis=1),axis=-1)#/n_in_gamut
     else:
-        M = M3
+        M = M3[:,0,:]
     M[M.sum(axis=-1)==0] = np.nan
     return M
 
