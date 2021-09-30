@@ -367,6 +367,10 @@ def _complete_ies_lid(IES, lamp_h_type = 'TYPE90', complete = True):
         candela_2d = matlib.repmat(IES['candela_2d'],2,1)
         phis = np.hstack((IES['h_angs'], IES['h_angs'] + 180))
         make_map = True
+    elif (IES['lamp_h_type'] == 'TYPE360') & (complete == True):
+        candela_2d = matlib.repmat(IES['candela_2d'],361,1)
+        phis = np.arange(IES['h_angs'], IES['h_angs'] + 360 + 1)
+        make_map = True
     else:
         make_map = False
     if make_map:
@@ -1437,7 +1441,7 @@ def render_lid(LID = './data/luxpy_test_lid_file.ies',
         
     return eval(out)
 
-
+    
 if __name__ == '__main__':
     
     # Read lamp data from IES file:
