@@ -692,7 +692,7 @@ def spd_to_jab_t_r(St, cri_type = _CRI_TYPE_DEFAULT, out = 'jabt,jabr',
 
     # B. calculate xyz and xyzw of SPD and Sr (stack for speed):
     xyzi, xyzw = spd_to_xyz(np.vstack((St,Sr[1:])), cieobs = cieobs['xyz'], rfl = sampleset, out = 2)
-    xyzri, xyzrw = spd_to_xyz(Sr, cieobs = cieobs['xyz'], rfl = sampleset, out = 2)
+    #xyzri, xyzrw = spd_to_xyz(Sr, cieobs = cieobs['xyz'], rfl = sampleset, out = 2)
     N = St.shape[0]-1
     xyzti, xyzri =  xyzi[:,:N,:], xyzi[:,N:,:]
     xyztw, xyzrw =  xyzw[:N,:], xyzw[N:,:]
