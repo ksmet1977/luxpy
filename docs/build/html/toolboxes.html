@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Toolboxes &mdash; LuxPy 1.7.1 documentation</title>
+  <title>Toolboxes &mdash; LuxPy 1.7.2 documentation</title>
   
 
   
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                1.7.1
+                1.7.2
               </div>
             
           
@@ -5644,7 +5644,7 @@ or k nearest neighbour interpolation of samples from a standard reflectance set.
 <li><p>if only_common_keys: output is dictionary with keys: [‘datasource’, ‘version’, ‘intensity’, ‘theta’, ‘phi’,         ‘values’, ‘map’, ‘Iv0’, ‘candela_values’, ‘candela_2d’]</p></li>
 <li><p>‘theta’,’phi’, ‘values’ (=’candela_2d’) contain the original theta angles, phi angles and normalized candelas as specified in file.</p></li>
 <li><p>‘map’ contains a dicionary with keys ‘thetas’, ‘phis’, ‘values’. This data has been complete to full angle ranges thetas: [0,180]; phis: [0,360]</p></li>
-<li><p>LDT map completion only supported for Isymm == 4 (31/10/2018), Map will be filled with original ‘theta’, ‘phi’ and normalized ‘candela_2d’ values !</p></li>
+<li><p>LDT map completion only supported for Isymm == 4 (since 31/10/2018), and Isymm == 1 (since, 02/10/2021), Map will be filled with original ‘theta’, ‘phi’ and normalized ‘candela_2d’ values !</p></li>
 <li><p>LIDtype is checked by looking for the presence of ‘TILT=’ in datasource content (if True-&gt;’IES’ else ‘LDT’)</p></li>
 </ol>
 </dd>
@@ -5791,7 +5791,7 @@ or k nearest neighbour interpolation of samples from a standard reflectance set.
 
 <dl class="py function">
 <dt class="sig sig-object py" id="luxpy.toolboxes.iolidfiles.draw_lid">
-<span class="sig-prename descclassname"><span class="pre">luxpy.toolboxes.iolidfiles.</span></span><span class="sig-name descname"><span class="pre">draw_lid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">LID</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_interp_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle_res</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">projection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'2d'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polar_plot_Cx_planes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0,</span> <span class="pre">90]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_scatter_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_colorbar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legend_on</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_luminaire_position</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ax'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">plottingkwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/iolidfiles/io_lid_files.html#draw_lid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.toolboxes.iolidfiles.draw_lid" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">luxpy.toolboxes.iolidfiles.</span></span><span class="sig-name descname"><span class="pre">draw_lid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">LID</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_interp_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle_res</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">projection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'2d'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polar_plot_Cx_planes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0,</span> <span class="pre">90]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_scatter_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_colorbar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legend_on</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_luminaire_position</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_diagram_top</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ax'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">plottingkwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/iolidfiles/io_lid_files.html#draw_lid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.toolboxes.iolidfiles.draw_lid" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draw the light intensity distribution.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -5867,8 +5867,19 @@ or k nearest neighbour interpolation of samples from a standard reflectance set.
 <div class="line">Plot the position of the luminaire (0,0,0) in the 3D graph as a red diamond.</div>
 </div>
 </dd>
-<dt class="field-even">out</dt>
+<dt class="field-even">plot_diagram_top</dt>
 <dd class="field-even"><div class="line-block">
+<div class="line">1e-3, optional</div>
+<div class="line">Plot the top of the polar diagram (True)</div>
+<div class="line">If None: automatic detection of non-zero intensity values in top part.</div>
+<div class="line">If float: automatic detection of intensity values larger than max__intensity*float in top part.</div>
+<div class="line-block">
+<div class="line">(if smaller: don’t plot top.)</div>
+</div>
+</div>
+</dd>
+<dt class="field-odd">out</dt>
+<dd class="field-odd"><div class="line-block">
 <div class="line">‘ax’, optional</div>
 <div class="line">string with variable to return</div>
 <div class="line">default: ax handle to plot.</div>
