@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>luxpy.toolboxes.spectral_mismatch_and_uncertainty.detector_spectral_mismatch &mdash; LuxPy 1.7.0 documentation</title>
+  <title>luxpy.toolboxes.spectral_mismatch_and_uncertainty.detector_spectral_mismatch &mdash; LuxPy 1.7.1 documentation</title>
   
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                1.7.0
+                1.7.1
               </div>
             
           
@@ -184,7 +184,7 @@
 
 <div class="viewcode-block" id="f1prime"><a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.spectral_mismatch_and_uncertainty.f1prime">[docs]</a><span class="k">def</span> <span class="nf">f1prime</span><span class="p">(</span><span class="n">s_detector</span><span class="p">,</span> <span class="n">S_C</span> <span class="o">=</span> <span class="s1">&#39;A&#39;</span><span class="p">,</span> 
             <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;1931_2&#39;</span><span class="p">,</span> <span class="n">s_target_index</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
-            <span class="n">wlr</span> <span class="o">=</span> <span class="p">[</span><span class="mi">380</span><span class="p">,</span><span class="mi">780</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">interp_kind</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span> 
+            <span class="n">wlr</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">interp_kind</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span> 
             <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;f1p&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Determine the f1prime spectral mismatch index.</span>
@@ -208,8 +208,9 @@
 <span class="sd">            | if &gt; 0: index into CMF set (1-&gt;&#39;xbar&#39;, 2-&gt;&#39;ybar&#39;=&#39;Vlambda&#39;, 3-&gt;&#39;zbar&#39;)</span>
 <span class="sd">            | if == 0: cieobs is expected to contain an ndarray with the target spectral responsivity. </span>
 <span class="sd">        :wlr:</span>
-<span class="sd">            | [380,780,1], optional</span>
-<span class="sd">            | Wavelength range (ndarray or [start, stop, spacing]).</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | Wavelength range (None, ndarray or [start, stop, spacing]).</span>
+<span class="sd">            | If None: the wavelengths of the detector are used throughout.</span>
 <span class="sd">        :interp_kind:</span>
 <span class="sd">            | &#39;linear&#39;, optional</span>
 <span class="sd">            | Interpolation type to use when interpolating function to specified wavelength range.</span>
@@ -230,7 +231,7 @@
     <span class="n">s_target</span> <span class="o">=</span> <span class="n">_CMF</span><span class="p">[</span><span class="n">cieobs</span><span class="p">][</span><span class="s1">&#39;bar&#39;</span><span class="p">][[</span><span class="mi">0</span><span class="p">,</span><span class="n">s_target_index</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cieobs</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">cieobs</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span><span class="n">s_target_index</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     
     <span class="c1"># Interpolate to desired wavelength range:</span>
-    <span class="n">wlr</span> <span class="o">=</span> <span class="n">getwlr</span><span class="p">(</span><span class="n">wlr</span><span class="p">)</span> <span class="c1"># get wavelength range from array or &#39;3-vector&#39;</span>
+    <span class="n">wlr</span> <span class="o">=</span> <span class="n">s_detector</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">wlr</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">getwlr</span><span class="p">(</span><span class="n">wlr</span><span class="p">)</span> <span class="c1"># get wavelength range from array or &#39;3-vector&#39;</span>
     <span class="n">dl</span> <span class="o">=</span> <span class="n">getwld</span><span class="p">(</span><span class="n">wlr</span><span class="p">)</span> <span class="c1"># wavelength differences (unequal wavelength spacings are taken into account)</span>
     <span class="n">s_detector</span> <span class="o">=</span> <span class="n">cie_interp</span><span class="p">(</span><span class="n">s_detector</span><span class="p">,</span> <span class="n">wlr</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="n">interp_kind</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span>
     <span class="n">s_target</span> <span class="o">=</span> <span class="n">cie_interp</span><span class="p">(</span><span class="n">s_target</span><span class="p">,</span> <span class="n">wlr</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="n">interp_kind</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span>
@@ -256,7 +257,7 @@
     
 <div class="viewcode-block" id="get_spectral_mismatch_correction_factors"><a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.spectral_mismatch_and_uncertainty.get_spectral_mismatch_correction_factors">[docs]</a><span class="k">def</span> <span class="nf">get_spectral_mismatch_correction_factors</span><span class="p">(</span><span class="n">S_Z</span><span class="p">,</span> <span class="n">s_detector</span><span class="p">,</span> <span class="n">S_C</span> <span class="o">=</span> <span class="s1">&#39;A&#39;</span><span class="p">,</span> 
                                           <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;1931_2&#39;</span><span class="p">,</span> <span class="n">s_target_index</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
-                                          <span class="n">wlr</span> <span class="o">=</span> <span class="p">[</span><span class="mi">380</span><span class="p">,</span><span class="mi">780</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">interp_kind</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span> 
+                                          <span class="n">wlr</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">interp_kind</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span> 
                                           <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;F&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Determine the spectral mismatch factors.</span>
@@ -282,7 +283,7 @@
 <span class="sd">            | if &gt; 0: index into CMF set (1-&gt;&#39;xbar&#39;, 2-&gt;&#39;ybar&#39;=&#39;Vlambda&#39;, 3-&gt;&#39;zbar&#39;)</span>
 <span class="sd">            | if == 0: cieobs is expected to contain an ndarray with the target spectral responsivity. </span>
 <span class="sd">        :wlr:</span>
-<span class="sd">            | [380,780,1], optional</span>
+<span class="sd">            | None, optional</span>
 <span class="sd">            | Wavelength range (ndarray or [start, stop, spacing]).</span>
 <span class="sd">            | If None: use the wavelength range of S_Z.</span>
 <span class="sd">        :interp_kind:</span>

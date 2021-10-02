@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Color sub-package &mdash; LuxPy 1.7.0 documentation</title>
+  <title>Color sub-package &mdash; LuxPy 1.7.1 documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                1.7.0
+                1.7.1
               </div>
             
           
@@ -245,26 +245,29 @@
 <h3>Module with functions related to plotting of color data<a class="headerlink" href="#module-with-functions-related-to-plotting-of-color-data" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><dl class="field-list">
-<dt class="field-odd">get_subplot_layout()</dt>
-<dd class="field-odd"><p>Calculate layout of multiple subplots.</p>
+<dt class="field-odd">get_cmap()</dt>
+<dd class="field-odd"><p>Get an ndarray of rgb values representing a linearly sampled matplotlib colormap</p>
 </dd>
-<dt class="field-even">plot_color_data()</dt>
-<dd class="field-even"><p>Plot color data (local helper function)</p>
+<dt class="field-even">get_subplot_layout()</dt>
+<dd class="field-even"><p>Calculate layout of multiple subplots.</p>
 </dd>
-<dt class="field-odd">plotDL()</dt>
-<dd class="field-odd"><p>Plot daylight locus.</p>
+<dt class="field-odd">plot_color_data()</dt>
+<dd class="field-odd"><p>Plot color data (local helper function)</p>
 </dd>
-<dt class="field-even">plotBB()</dt>
-<dd class="field-even"><p>Plot blackbody locus.</p>
+<dt class="field-even">plotDL()</dt>
+<dd class="field-even"><p>Plot daylight locus.</p>
 </dd>
-<dt class="field-odd">plotSL()</dt>
-<dd class="field-odd"><div class="line-block">
+<dt class="field-odd">plotBB()</dt>
+<dd class="field-odd"><p>Plot blackbody locus.</p>
+</dd>
+<dt class="field-even">plotSL()</dt>
+<dd class="field-even"><div class="line-block">
 <div class="line">Plot spectrum locus.  </div>
 <div class="line">(plotBB() and plotDL() are also called, but can be turned off).</div>
 </div>
 </dd>
-<dt class="field-even">plotcerulean()</dt>
-<dd class="field-even"><div class="line-block">
+<dt class="field-odd">plotcerulean()</dt>
+<dd class="field-odd"><div class="line-block">
 <div class="line">Plot cerulean (yellow (577 nm) - blue (472 nm)) line </div>
 <div class="line">(Kuehni, CRA, 2014: Table II: spectral lights)</div>
 <div class="line"><a class="reference external" href="https://doi.org/10.1002/col.21793">Kuehni, R. G. (2014). 
@@ -272,8 +275,8 @@ Unique hues and their stimuli—state of the art.
 Color Research &amp; Application, 39(3), 279–287.</a></div>
 </div>
 </dd>
-<dt class="field-odd">plotUH()</dt>
-<dd class="field-odd"><div class="line-block">
+<dt class="field-even">plotUH()</dt>
+<dd class="field-even"><div class="line-block">
 <div class="line">Plot unique hue lines from color space center point xyz0. </div>
 <div class="line">(Kuehni, CRA, 2014: uY,uB,uG: Table II: spectral lights; </div>
 <div class="line">uR: Table IV: Xiao data) </div>
@@ -282,27 +285,57 @@ Unique hues and their stimuli—state of the art.
 Color Research &amp; Application, 39(3), 279–287.</a></div>
 </div>
 </dd>
-<dt class="field-even">plotcircle()</dt>
-<dd class="field-even"><p>Plot one or more concentric circles.</p>
+<dt class="field-odd">plotcircle()</dt>
+<dd class="field-odd"><p>Plot one or more concentric circles.</p>
 </dd>
-<dt class="field-odd">plotellipse()</dt>
-<dd class="field-odd"><p>Plot one or more ellipses.</p>
+<dt class="field-even">plotellipse()</dt>
+<dd class="field-even"><p>Plot one or more ellipses.</p>
 </dd>
-<dt class="field-even">plot_chromaticity_diagram_colors()</dt>
-<dd class="field-even"><p>Plot the chromaticity diagram colors.</p>
+<dt class="field-odd">plot_chromaticity_diagram_colors()</dt>
+<dd class="field-odd"><p>Plot the chromaticity diagram colors.</p>
 </dd>
-<dt class="field-odd">plot_spectrum_colors()</dt>
-<dd class="field-odd"><p>Plot spd with spectrum colors.</p>
+<dt class="field-even">plot_spectrum_colors()</dt>
+<dd class="field-even"><p>Plot spd with spectrum colors.</p>
 </dd>
-<dt class="field-even">plot_rfl_color_patches()</dt>
-<dd class="field-even"><p>Create (and plot) an image with colored patches representing a set of reflectance spectra illuminated by a specified illuminant.</p>
+<dt class="field-odd">plot_rfl_color_patches()</dt>
+<dd class="field-odd"><p>Create (and plot) an image with colored patches representing a set of reflectance spectra illuminated by a specified illuminant.</p>
 </dd>
-<dt class="field-odd">plot_rgb_color_patches()</dt>
-<dd class="field-odd"><p>Create (and plot) an image with patches with specified rgb values.</p>
+<dt class="field-even">plot_rgb_color_patches()</dt>
+<dd class="field-even"><p>Create (and plot) an image with patches with specified rgb values.</p>
 </dd>
 </dl>
 </div></blockquote>
 <hr class="docutils" />
+<dl class="py function">
+<dt class="sig sig-object py" id="luxpy.color.utils.get_cmap">
+<span class="sig-prename descclassname"><span class="pre">luxpy.color.utils.</span></span><span class="sig-name descname"><span class="pre">get_cmap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'jet'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/utils/plotters.html#get_cmap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.utils.get_cmap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get an ndarray of rgba values representing a linearly sampled matplotlib colormap.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">N</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">Number of rgba values in returned cmap.</div>
+</div>
+</dd>
+<dt class="field-even">cmap_name</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">‘jet’, optional</div>
+<div class="line">Matplotlib color map name to sample from.</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">cmap</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with rgba values.</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="luxpy.color.utils.get_subplot_layout">
 <span class="sig-prename descclassname"><span class="pre">luxpy.color.utils.</span></span><span class="sig-name descname"><span class="pre">get_subplot_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_1xncols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/utils/plotters.html#get_subplot_layout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.utils.get_subplot_layout" title="Permalink to this definition">¶</a></dt>

@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>luxpy.color.cri.utils.helpers &mdash; LuxPy 1.7.0 documentation</title>
+  <title>luxpy.color.cri.utils.helpers &mdash; LuxPy 1.7.1 documentation</title>
   
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                1.7.0
+                1.7.1
               </div>
             
           
@@ -855,7 +855,7 @@
 
     <span class="c1"># B. calculate xyz and xyzw of SPD and Sr (stack for speed):</span>
     <span class="n">xyzi</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">St</span><span class="p">,</span><span class="n">Sr</span><span class="p">[</span><span class="mi">1</span><span class="p">:])),</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">[</span><span class="s1">&#39;xyz&#39;</span><span class="p">],</span> <span class="n">rfl</span> <span class="o">=</span> <span class="n">sampleset</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
-    <span class="n">xyzri</span><span class="p">,</span> <span class="n">xyzrw</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">Sr</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">[</span><span class="s1">&#39;xyz&#39;</span><span class="p">],</span> <span class="n">rfl</span> <span class="o">=</span> <span class="n">sampleset</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="c1">#xyzri, xyzrw = spd_to_xyz(Sr, cieobs = cieobs[&#39;xyz&#39;], rfl = sampleset, out = 2)</span>
     <span class="n">N</span> <span class="o">=</span> <span class="n">St</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span>
     <span class="n">xyzti</span><span class="p">,</span> <span class="n">xyzri</span> <span class="o">=</span>  <span class="n">xyzi</span><span class="p">[:,:</span><span class="n">N</span><span class="p">,:],</span> <span class="n">xyzi</span><span class="p">[:,</span><span class="n">N</span><span class="p">:,:]</span>
     <span class="n">xyztw</span><span class="p">,</span> <span class="n">xyzrw</span> <span class="o">=</span>  <span class="n">xyzw</span><span class="p">[:</span><span class="n">N</span><span class="p">,:],</span> <span class="n">xyzw</span><span class="p">[</span><span class="n">N</span><span class="p">:,:]</span>

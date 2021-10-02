@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>luxpy.toolboxes.iolidfiles.io_lid_files &mdash; LuxPy 1.7.0 documentation</title>
+  <title>luxpy.toolboxes.iolidfiles.io_lid_files &mdash; LuxPy 1.7.1 documentation</title>
   
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                1.7.0
+                1.7.1
               </div>
             
           
@@ -529,6 +529,10 @@
     <span class="k">elif</span> <span class="p">(</span><span class="n">IES</span><span class="p">[</span><span class="s1">&#39;lamp_h_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;TYPE180&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">complete</span> <span class="o">==</span> <span class="kc">True</span><span class="p">):</span>
         <span class="n">candela_2d</span> <span class="o">=</span> <span class="n">matlib</span><span class="o">.</span><span class="n">repmat</span><span class="p">(</span><span class="n">IES</span><span class="p">[</span><span class="s1">&#39;candela_2d&#39;</span><span class="p">],</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">phis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">IES</span><span class="p">[</span><span class="s1">&#39;h_angs&#39;</span><span class="p">],</span> <span class="n">IES</span><span class="p">[</span><span class="s1">&#39;h_angs&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">180</span><span class="p">))</span>
+        <span class="n">make_map</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="n">IES</span><span class="p">[</span><span class="s1">&#39;lamp_h_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;TYPE360&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">complete</span> <span class="o">==</span> <span class="kc">True</span><span class="p">):</span>
+        <span class="n">candela_2d</span> <span class="o">=</span> <span class="n">matlib</span><span class="o">.</span><span class="n">repmat</span><span class="p">(</span><span class="n">IES</span><span class="p">[</span><span class="s1">&#39;candela_2d&#39;</span><span class="p">],</span><span class="mi">361</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">phis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">IES</span><span class="p">[</span><span class="s1">&#39;h_angs&#39;</span><span class="p">],</span> <span class="n">IES</span><span class="p">[</span><span class="s1">&#39;h_angs&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">360</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
         <span class="n">make_map</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">make_map</span> <span class="o">=</span> <span class="kc">False</span>
@@ -1600,7 +1604,7 @@
         
     <span class="k">return</span> <span class="nb">eval</span><span class="p">(</span><span class="n">out</span><span class="p">)</span></div>
 
-
+    
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
     
     <span class="c1"># Read lamp data from IES file:</span>

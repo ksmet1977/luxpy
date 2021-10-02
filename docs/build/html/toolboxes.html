@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Toolboxes &mdash; LuxPy 1.7.0 documentation</title>
+  <title>Toolboxes &mdash; LuxPy 1.7.1 documentation</title>
   
 
   
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                1.7.0
+                1.7.1
               </div>
             
           
@@ -6373,7 +6373,7 @@ PLoS ONE 8(7): e67798
 <p>&#64;author: ksmet1977 [at] gmail.com</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="luxpy.toolboxes.spectral_mismatch_and_uncertainty.f1prime">
-<span class="sig-prename descclassname"><span class="pre">luxpy.toolboxes.spectral_mismatch_and_uncertainty.</span></span><span class="sig-name descname"><span class="pre">f1prime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s_detector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">S_C</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'A'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s_target_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wlr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[380,</span> <span class="pre">780,</span> <span class="pre">1]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interp_kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'f1p'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/spectral_mismatch_and_uncertainty/detector_spectral_mismatch.html#f1prime"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.toolboxes.spectral_mismatch_and_uncertainty.f1prime" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">luxpy.toolboxes.spectral_mismatch_and_uncertainty.</span></span><span class="sig-name descname"><span class="pre">f1prime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s_detector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">S_C</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'A'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s_target_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wlr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interp_kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'f1p'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/spectral_mismatch_and_uncertainty/detector_spectral_mismatch.html#f1prime"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.toolboxes.spectral_mismatch_and_uncertainty.f1prime" title="Permalink to this definition">¶</a></dt>
 <dd><p>Determine the f1prime spectral mismatch index.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -6408,8 +6408,9 @@ PLoS ONE 8(7): e67798
 </dd>
 <dt class="field-odd">wlr</dt>
 <dd class="field-odd"><div class="line-block">
-<div class="line">[380,780,1], optional</div>
-<div class="line">Wavelength range (ndarray or [start, stop, spacing]).</div>
+<div class="line">None, optional</div>
+<div class="line">Wavelength range (None, ndarray or [start, stop, spacing]).</div>
+<div class="line">If None: the wavelengths of the detector are used throughout.</div>
 </div>
 </dd>
 <dt class="field-even">interp_kind</dt>
@@ -6442,7 +6443,7 @@ PLoS ONE 8(7): e67798
 
 <dl class="py function">
 <dt class="sig sig-object py" id="luxpy.toolboxes.spectral_mismatch_and_uncertainty.get_spectral_mismatch_correction_factors">
-<span class="sig-prename descclassname"><span class="pre">luxpy.toolboxes.spectral_mismatch_and_uncertainty.</span></span><span class="sig-name descname"><span class="pre">get_spectral_mismatch_correction_factors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">S_Z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s_detector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">S_C</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'A'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s_target_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wlr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[380,</span> <span class="pre">780,</span> <span class="pre">1]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interp_kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'F'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/spectral_mismatch_and_uncertainty/detector_spectral_mismatch.html#get_spectral_mismatch_correction_factors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.toolboxes.spectral_mismatch_and_uncertainty.get_spectral_mismatch_correction_factors" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">luxpy.toolboxes.spectral_mismatch_and_uncertainty.</span></span><span class="sig-name descname"><span class="pre">get_spectral_mismatch_correction_factors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">S_Z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s_detector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">S_C</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'A'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s_target_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wlr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interp_kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'F'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/spectral_mismatch_and_uncertainty/detector_spectral_mismatch.html#get_spectral_mismatch_correction_factors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.toolboxes.spectral_mismatch_and_uncertainty.get_spectral_mismatch_correction_factors" title="Permalink to this definition">¶</a></dt>
 <dd><p>Determine the spectral mismatch factors.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -6482,7 +6483,7 @@ PLoS ONE 8(7): e67798
 </dd>
 <dt class="field-even">wlr</dt>
 <dd class="field-even"><div class="line-block">
-<div class="line">[380,780,1], optional</div>
+<div class="line">None, optional</div>
 <div class="line">Wavelength range (ndarray or [start, stop, spacing]).</div>
 <div class="line">If None: use the wavelength range of S_Z.</div>
 </div>

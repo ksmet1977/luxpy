@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>luxpy.toolboxes.spdbuild.spdoptimizer2020 &mdash; LuxPy 1.7.0 documentation</title>
+  <title>luxpy.toolboxes.spdbuild.spdoptimizer2020 &mdash; LuxPy 1.7.1 documentation</title>
   
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                1.7.0
+                1.7.1
               </div>
             
           
@@ -294,7 +294,7 @@
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
             <span class="n">M</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="n">M_final</span><span class="o">*</span><span class="p">(</span><span class="n">combos</span> <span class="o">==</span> <span class="n">i</span><span class="p">)[</span><span class="kc">None</span><span class="p">,</span><span class="o">...</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span><span class="c1">#/n_in_gamut</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">M</span> <span class="o">=</span> <span class="n">M3</span>
+        <span class="n">M</span> <span class="o">=</span> <span class="n">M3</span><span class="p">[:,</span><span class="mi">0</span><span class="p">,:]</span>
     <span class="n">M</span><span class="p">[</span><span class="n">M</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
     <span class="k">return</span> <span class="n">M</span></div>
 
