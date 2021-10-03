@@ -394,7 +394,8 @@ def _complete_ies_lid(IES, lamp_h_type = 'TYPE90', complete = True):
         candela_2d, thetas = _complete_thetas(candela_2d.T, thetas)
         # print('TYPE90',candela_2d.shape, thetas.shape,phis.shape)
         make_map = True
-    
+        IES['Isym'] = 4
+        
     elif (IES['lamp_h_type'] == 'TYPE180') & (complete == True):
 
         # complete phis:
@@ -410,24 +411,32 @@ def _complete_ies_lid(IES, lamp_h_type = 'TYPE90', complete = True):
         candela_2d, thetas = _complete_thetas(candela_2d.T, thetas)
         
         make_map = True
+        IES['Isym'] = 2
         
     elif (IES['lamp_h_type'] == 'TYPE180_C90') & (complete == True):
         
-        a = candela_2d.T
-        b = np.hstack((a[:,:-1],a[:,(a.shape[1]-1):0:-1]))
-        candela_2d = np.hstack((b,b[:,:1])).T 
+        # complete phis:
+        a = candela_2d.T # starts at C270 plane !! (angles start at 0° !!)
+        b = np.hstack((a[:,:-1],a[:,-1:0:-1]))
+        ac = phis# - 90 # create array of angles corresponding to actual C-meas.
+        bc = np.hstack((ac[:-1],180-ac[-1:0:-1]))
+        roll = -np.where(bc==0)[0][0] # figure out how much to roll the array to get the 0° data at the beginning
+        bc = np.roll(bc,roll,axis=-1)
+        b = np.roll(b,roll,axis=-1)
+        candela_2d = np.hstack((b,b[:,:1])).T
         
-        phis = np.hstack((phis, phis[1:-1] + 180))
-        phis = np.hstack((phis,phis[:1]+360))
+        phis = np.hstack((bc,bc[:1])) 
+        phis[phis<0] = phis[phis<0] + 360
         phis[phis>360] = phis[phis>360] - 360
-        
+
         # complete thetas:
         candela_2d, thetas = _complete_thetas(candela_2d.T, thetas)
-
+        
         make_map = True
+        IES['Isym'] = 3
         
     elif (IES['lamp_h_type'] == 'TYPE360') & (complete == True):
-        candela_2d = matlib.repmat(candela_2d,361,1).T
+        candela_2d = matlib.repmat(candela_2d,361,1)
         phis = np.arange(phis, phis + 360 + 1)
         phis[phis>360] = phis[phis>360] - 360
         
@@ -435,9 +444,11 @@ def _complete_ies_lid(IES, lamp_h_type = 'TYPE90', complete = True):
         candela_2d, thetas = _complete_thetas(candela_2d.T, thetas)
         
         make_map = True
+        IES['Isym'] = 1
         
     else:
         make_map = False
+        IES['Isym'] = 0
         
     if make_map:
         IES['map']['thetas'] =  thetas
@@ -585,25 +596,40 @@ def _complete_ldt_lid(LDT, Isym = 4, complete = True):
         # print('Isym4',candela_2d.shape, thetas.shape,phis.shape)
         make_map = True
         
-    elif (Isym == -4) & (complete == True):
-        # complete phis:
-        a = candela_2d.T
-        b = np.hstack((a,a[:,(a.shape[1]-2)::-1]))
-        c = np.hstack((b,b[:,(b.shape[1]-2):0:-1]))
-        candela_2d = np.hstack((c,c[:,:1])).T
+    # elif (Isym == -4) & (complete == True):
         
-        phis = np.hstack((phis, -phis[(phis.shape[0]-2)::-1] + 180))
-        phis = np.hstack((phis, -phis[(phis.shape[0]-2):0:-1] + 360))
-        phis = np.hstack((phis,phis[:1])) 
-        phis[phis>360] = phis[phis>360] - 360
+    #     # complete phis:
+    #     a = candela_2d.T
+    #     b = np.hstack((a,a[:,(a.shape[1]-2)::-1]))
+    #     c = np.hstack((b,b[:,(b.shape[1]-2):0:-1]))
+    #     candela_2d = np.hstack((c,c[:,:1])).T 
         
-        # complete  thetas:
-        a = candela_2d.T
-        b = np.vstack((a,np.zeros(a.shape)[1:,:]))
-        thetas = np.hstack((thetas, -thetas[(thetas.shape[0]-2)::-1] + 180))
-        candela_2d = b.T
+    #     phis = np.hstack((phis, 180 - phis[-2::-1] , 180 + phis[1:], 360 - phis[-2::-1]))
+    #     phis[phis>360] = phis[phis>360] - 360
         
-        make_map = True
+    #     # complete thetas:
+    #     candela_2d, thetas = _complete_thetas(candela_2d.T, thetas)
+    #     # print('Isym4',candela_2d.shape, thetas.shape,phis.shape)
+    #     make_map = True
+        
+    #     # # complete phis:
+    #     # a = candela_2d.T
+    #     # b = np.hstack((a,a[:,(a.shape[1]-2)::-1]))
+    #     # c = np.hstack((b,b[:,(b.shape[1]-2):0:-1]))
+    #     # candela_2d = np.hstack((c,c[:,:1])).T
+        
+    #     # phis = np.hstack((phis, -phis[(phis.shape[0]-2)::-1] + 180))
+    #     # phis = np.hstack((phis, -phis[(phis.shape[0]-2):0:-1] + 360))
+    #     # phis = np.hstack((phis,phis[:1])) 
+    #     # phis[phis>360] = phis[phis>360] - 360
+        
+    #     # # complete  thetas:
+    #     # a = candela_2d.T
+    #     # b = np.vstack((a,np.zeros(a.shape)[1:,:]))
+    #     # thetas = np.hstack((thetas, -thetas[(thetas.shape[0]-2)::-1] + 180))
+    #     # candela_2d = b.T
+        
+    #     # make_map = True
         
     elif (Isym == 2) & (complete == True):
         # complete phis:
@@ -628,7 +654,7 @@ def _complete_ldt_lid(LDT, Isym = 4, complete = True):
         roll = -np.where(bc==0)[0][0] # figure out how much to roll the array to get the 0° data at the beginning
         bc = np.roll(bc,roll,axis=-1)
         b = np.roll(b,roll,axis=-1)
-        candela_2d_0C360 = np.hstack((b,b[:,:1])).T
+        candela_2d = np.hstack((b,b[:,:1])).T
         
         phis = np.hstack((bc,bc[:1])) 
         phis[phis<0] = phis[phis<0] + 360
@@ -640,8 +666,7 @@ def _complete_ldt_lid(LDT, Isym = 4, complete = True):
         
     elif (Isym == 1) & (complete == True):
         # complete phis:
-        candela_2d = np.repeat(candela_2d,361,axis=0).T
-        
+        candela_2d = np.repeat(candela_2d,361,axis=0)
         phis = np.arange(phis,phis + 360 + 1)
         phis[phis>360] = phis[phis>360] - 360
         
@@ -1013,7 +1038,7 @@ def draw_lid(LID, grid_interp_method = 'linear', theta_min = 0, angle_res = 1,
             | Plot the position of the luminaire (0,0,0) in the 3D graph as a red diamond.
         :plot_diagram_top:
             | 1e-3, optional
-            | Plot the top of the polar diagram (True)
+            | Plot the top of the polar diagram (True).
             | If None: automatic detection of non-zero intensity values in top part.
             | If float: automatic detection of intensity values larger than max__intensity*float in top part.
             |           (if smaller: don't plot top.)
@@ -1106,9 +1131,20 @@ def _make_2D_lid_plot_polar(phim_map, thetam_map, values_map,
             value_min = 0
         t, r = np.deg2rad(thetam_map[pp])*s*((values_map[pp]/values_map.max())>value_min), values_map[pp]
         return t, r
-    colors = ['b','r','g','y','c','m','k','k','m','c','y','g','r','b'] * 2
+    
+    # default color and linestyles
+    colors = ['r','b','g','y','c','m','k','k','m','c','y','g','b','r'] * 2
     linestyles = ['-','--','-.',':']*7
-    t_top = False # for plotting top  half of polar plot or not
+    
+    # allow for user input of color and linestyle:
+    if 'linestyles' in plottingkwargs: linestyles = plottingkwargs.pop('linestyles')
+    if isinstance(linestyles,str): linestyles = [linestyles]*len(polar_plot_Cx_planes)
+    if 'colors' in plottingkwargs: colors = plottingkwargs.pop('colors')
+    if isinstance(colors,str): colors = [colors]*len(polar_plot_Cx_planes)
+    if 'linestyle' in plottingkwargs: linestyles = [plottingkwargs.pop('linestyle')]*len(polar_plot_Cx_planes)
+    if 'color' in plottingkwargs: colors = [plottingkwargs.pop('color')]*len(polar_plot_Cx_planes)
+    
+    t_top = plot_diagram_top if isinstance(plot_diagram_top,bool) else False  # for plotting top  half of polar plot or not
     for i, phi in enumerate(polar_plot_Cx_planes):
         phio = phi + 180 # phi on opposite side
         
@@ -1605,28 +1641,33 @@ def render_lid(LID = './data/luxpy_test_lid_file.ies',
         
     return eval(out)
 
-# if __name__ == '__main__':
-# 
-#     # tests for different LDT and IES formats:
-#     LID = read_lamp_data('./data/luxpy_test_lid_file.ldt', verbosity = 1)
-#     LIDi = read_lamp_data('./data/luxpy_test_lid_file.ies', verbosity = 1)
-#     LIDi2 = read_lamp_data('./data/luxpy_test_lid_file2.ies', verbosity = 1)
-#     # LID1 = read_lamp_data(r'c:\users\u0032318\downloads\007cfb11e343e2f42e3b476be4ab684e.ldt', verbosity = 1)
-#     # LID2 = read_lamp_data(r'C:\Users\u0032318\Downloads\erco_33499000_1xqt32_230w.ldt', verbosity = 1)
-       
-#     # LID3i_c0 = read_lamp_data(r'c:\users\u0032318\downloads\028e97564391140b1476695ae7a46fa4.ies', verbosity = 1)
-   
-#     # LID3i_c270 = read_lamp_data(r'c:\users\u0032318\downloads\17a73b5ef452513ecc743077a2211f16.ies', verbosity = 1)
-#     # LID3 = read_lamp_data(r'c:\users\u0032318\downloads\17a73b5ef452513ecc743077a2211f16.ldt', verbosity = 1)
+if __name__ == '__main__':
+
+    # tests for different LDT and IES formats:
+    LIDl_1 = read_lamp_data('./data/luxpy_test_lid_file.ldt', verbosity = 1)
+    LIDi_1 = read_lamp_data('./data/luxpy_test_lid_file.ies', verbosity = 1)
+    LIDi_2b = read_lamp_data('./data/luxpy_test_lid_file2b.ies', verbosity = 1)
+    LIDi_2t = read_lamp_data('./data/luxpy_test_lid_file2t.ies', verbosity = 1)
     
-#     # LID3_c0 = read_lamp_data(r'c:\users\u0032318\downloads\Testlamp_eulumdat_symmetryOverC0C180axis.ldt', verbosity = 1)
-#     # LID3_c270 = read_lamp_data(r'c:\users\u0032318\downloads\Testlamp_eulumdat_symmetryOverC90C270axis.ldt', verbosity = 1)
+    # other tests (downloaded from: ieslibrary.com):
+    test_folder = '../../../testcode/iolid_data/'
+    LID1l= read_lamp_data(test_folder+'Testlamp_Isym1_007cfb11e343e2f42e3b476be4ab684e.ldt', verbosity = 1)
+    LID1i = read_lamp_data(test_folder+'Testlamp_Isym1_007cfb11e343e2f42e3b476be4ab684e.ies', verbosity = 1)
+    
+    LID2l = read_lamp_data(test_folder+'Testlamp_Isym2_theta180+_erco_33499000_1xqt32_230w.ldt', verbosity = 1)
+    LID2i = read_lamp_data(test_folder+'Testlamp_Isym2_theta180+_erco_33499000_1xqt32_230w.ies', verbosity = 1)
+       
+    LID3l_c0 = read_lamp_data(test_folder+'Testlamp_Isym2_symmetryOverC0C180axis.ldt', verbosity = 1)
+    LID3l_c270 = read_lamp_data(test_folder+'Testlamp_Isym3_symmetryOverC90C270axis.ldt', verbosity = 1)
+    LID3i_c0 = read_lamp_data(test_folder+'Testlamp_Isym2_symmetryOverC0C180axis.ies', verbosity = 1)
+    LID3i_c270 = read_lamp_data(test_folder+'Testlamp_Isym3_symmetryOverC90C270axis.ies', verbosity = 1)
 
-#     LID4 = read_lamp_data(r'c:\users\u0032318\downloads\43cef5d76a391dd85c41d4d09d68600d.ldt', verbosity = 1)
-#     LID4i = read_lamp_data(r'c:\users\u0032318\downloads\43cef5d76a391dd85c41d4d09d68600d.ies', verbosity = 1)
-#     draw_lid(LID4i)
+    LID4l = read_lamp_data(test_folder+'Testlamp_Isym4_43cef5d76a391dd85c41d4d09d68600d.ldt', verbosity = 1)
+    LID4i = read_lamp_data(test_folder+'Testlamp_Isym4_43cef5d76a391dd85c41d4d09d68600d.ies', verbosity = 1)
+    LID = LIDl_1
+#     draw_lid(LID)
 
-#     # render_lid(LID3i_c270)
+#     render_lid(LID)
     
 if __name__ == '__main__':
     

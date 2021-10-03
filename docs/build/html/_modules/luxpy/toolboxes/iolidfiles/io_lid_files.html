@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>luxpy.toolboxes.iolidfiles.io_lid_files &mdash; LuxPy 1.7.2 documentation</title>
+  <title>luxpy.toolboxes.iolidfiles.io_lid_files &mdash; LuxPy 1.7.3 documentation</title>
   
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                1.7.2
+                1.7.3
               </div>
             
           
@@ -557,7 +557,8 @@
         <span class="n">candela_2d</span><span class="p">,</span> <span class="n">thetas</span> <span class="o">=</span> <span class="n">_complete_thetas</span><span class="p">(</span><span class="n">candela_2d</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">thetas</span><span class="p">)</span>
         <span class="c1"># print(&#39;TYPE90&#39;,candela_2d.shape, thetas.shape,phis.shape)</span>
         <span class="n">make_map</span> <span class="o">=</span> <span class="kc">True</span>
-    
+        <span class="n">IES</span><span class="p">[</span><span class="s1">&#39;Isym&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">4</span>
+        
     <span class="k">elif</span> <span class="p">(</span><span class="n">IES</span><span class="p">[</span><span class="s1">&#39;lamp_h_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;TYPE180&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">complete</span> <span class="o">==</span> <span class="kc">True</span><span class="p">):</span>
 
         <span class="c1"># complete phis:</span>
@@ -573,24 +574,32 @@
         <span class="n">candela_2d</span><span class="p">,</span> <span class="n">thetas</span> <span class="o">=</span> <span class="n">_complete_thetas</span><span class="p">(</span><span class="n">candela_2d</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">thetas</span><span class="p">)</span>
         
         <span class="n">make_map</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">IES</span><span class="p">[</span><span class="s1">&#39;Isym&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
         
     <span class="k">elif</span> <span class="p">(</span><span class="n">IES</span><span class="p">[</span><span class="s1">&#39;lamp_h_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;TYPE180_C90&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">complete</span> <span class="o">==</span> <span class="kc">True</span><span class="p">):</span>
         
-        <span class="n">a</span> <span class="o">=</span> <span class="n">candela_2d</span><span class="o">.</span><span class="n">T</span>
-        <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">a</span><span class="p">[:,:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">a</span><span class="p">[:,(</span><span class="n">a</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
-        <span class="n">candela_2d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">b</span><span class="p">,</span><span class="n">b</span><span class="p">[:,:</span><span class="mi">1</span><span class="p">]))</span><span class="o">.</span><span class="n">T</span> 
+        <span class="c1"># complete phis:</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">candela_2d</span><span class="o">.</span><span class="n">T</span> <span class="c1"># starts at C270 plane !! (angles start at 0° !!)</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">a</span><span class="p">[:,:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">a</span><span class="p">[:,</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="n">ac</span> <span class="o">=</span> <span class="n">phis</span><span class="c1"># - 90 # create array of angles corresponding to actual C-meas.</span>
+        <span class="n">bc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">ac</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="mi">180</span><span class="o">-</span><span class="n">ac</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="n">roll</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">bc</span><span class="o">==</span><span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># figure out how much to roll the array to get the 0° data at the beginning</span>
+        <span class="n">bc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">roll</span><span class="p">(</span><span class="n">bc</span><span class="p">,</span><span class="n">roll</span><span class="p">,</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">roll</span><span class="p">(</span><span class="n">b</span><span class="p">,</span><span class="n">roll</span><span class="p">,</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">candela_2d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">b</span><span class="p">,</span><span class="n">b</span><span class="p">[:,:</span><span class="mi">1</span><span class="p">]))</span><span class="o">.</span><span class="n">T</span>
         
-        <span class="n">phis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">phis</span><span class="p">,</span> <span class="n">phis</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">180</span><span class="p">))</span>
-        <span class="n">phis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">phis</span><span class="p">,</span><span class="n">phis</span><span class="p">[:</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mi">360</span><span class="p">))</span>
+        <span class="n">phis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">bc</span><span class="p">,</span><span class="n">bc</span><span class="p">[:</span><span class="mi">1</span><span class="p">]))</span> 
+        <span class="n">phis</span><span class="p">[</span><span class="n">phis</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">phis</span><span class="p">[</span><span class="n">phis</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">360</span>
         <span class="n">phis</span><span class="p">[</span><span class="n">phis</span><span class="o">&gt;</span><span class="mi">360</span><span class="p">]</span> <span class="o">=</span> <span class="n">phis</span><span class="p">[</span><span class="n">phis</span><span class="o">&gt;</span><span class="mi">360</span><span class="p">]</span> <span class="o">-</span> <span class="mi">360</span>
-        
+
         <span class="c1"># complete thetas:</span>
         <span class="n">candela_2d</span><span class="p">,</span> <span class="n">thetas</span> <span class="o">=</span> <span class="n">_complete_thetas</span><span class="p">(</span><span class="n">candela_2d</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">thetas</span><span class="p">)</span>
-
+        
         <span class="n">make_map</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">IES</span><span class="p">[</span><span class="s1">&#39;Isym&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
         
     <span class="k">elif</span> <span class="p">(</span><span class="n">IES</span><span class="p">[</span><span class="s1">&#39;lamp_h_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;TYPE360&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">complete</span> <span class="o">==</span> <span class="kc">True</span><span class="p">):</span>
-        <span class="n">candela_2d</span> <span class="o">=</span> <span class="n">matlib</span><span class="o">.</span><span class="n">repmat</span><span class="p">(</span><span class="n">candela_2d</span><span class="p">,</span><span class="mi">361</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">candela_2d</span> <span class="o">=</span> <span class="n">matlib</span><span class="o">.</span><span class="n">repmat</span><span class="p">(</span><span class="n">candela_2d</span><span class="p">,</span><span class="mi">361</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">phis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">phis</span><span class="p">,</span> <span class="n">phis</span> <span class="o">+</span> <span class="mi">360</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
         <span class="n">phis</span><span class="p">[</span><span class="n">phis</span><span class="o">&gt;</span><span class="mi">360</span><span class="p">]</span> <span class="o">=</span> <span class="n">phis</span><span class="p">[</span><span class="n">phis</span><span class="o">&gt;</span><span class="mi">360</span><span class="p">]</span> <span class="o">-</span> <span class="mi">360</span>
         
@@ -598,9 +607,11 @@
         <span class="n">candela_2d</span><span class="p">,</span> <span class="n">thetas</span> <span class="o">=</span> <span class="n">_complete_thetas</span><span class="p">(</span><span class="n">candela_2d</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">thetas</span><span class="p">)</span>
         
         <span class="n">make_map</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">IES</span><span class="p">[</span><span class="s1">&#39;Isym&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
         
     <span class="k">else</span><span class="p">:</span>
         <span class="n">make_map</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">IES</span><span class="p">[</span><span class="s1">&#39;Isym&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
         
     <span class="k">if</span> <span class="n">make_map</span><span class="p">:</span>
         <span class="n">IES</span><span class="p">[</span><span class="s1">&#39;map&#39;</span><span class="p">][</span><span class="s1">&#39;thetas&#39;</span><span class="p">]</span> <span class="o">=</span>  <span class="n">thetas</span>
@@ -748,25 +759,40 @@
         <span class="c1"># print(&#39;Isym4&#39;,candela_2d.shape, thetas.shape,phis.shape)</span>
         <span class="n">make_map</span> <span class="o">=</span> <span class="kc">True</span>
         
-    <span class="k">elif</span> <span class="p">(</span><span class="n">Isym</span> <span class="o">==</span> <span class="o">-</span><span class="mi">4</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">complete</span> <span class="o">==</span> <span class="kc">True</span><span class="p">):</span>
-        <span class="c1"># complete phis:</span>
-        <span class="n">a</span> <span class="o">=</span> <span class="n">candela_2d</span><span class="o">.</span><span class="n">T</span>
-        <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">a</span><span class="p">,</span><span class="n">a</span><span class="p">[:,(</span><span class="n">a</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="mi">2</span><span class="p">)::</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
-        <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">b</span><span class="p">,</span><span class="n">b</span><span class="p">[:,(</span><span class="n">b</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="mi">2</span><span class="p">):</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
-        <span class="n">candela_2d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">c</span><span class="p">,</span><span class="n">c</span><span class="p">[:,:</span><span class="mi">1</span><span class="p">]))</span><span class="o">.</span><span class="n">T</span>
+    <span class="c1"># elif (Isym == -4) &amp; (complete == True):</span>
         
-        <span class="n">phis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">phis</span><span class="p">,</span> <span class="o">-</span><span class="n">phis</span><span class="p">[(</span><span class="n">phis</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">2</span><span class="p">)::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">180</span><span class="p">))</span>
-        <span class="n">phis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">phis</span><span class="p">,</span> <span class="o">-</span><span class="n">phis</span><span class="p">[(</span><span class="n">phis</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">2</span><span class="p">):</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">360</span><span class="p">))</span>
-        <span class="n">phis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">phis</span><span class="p">,</span><span class="n">phis</span><span class="p">[:</span><span class="mi">1</span><span class="p">]))</span> 
-        <span class="n">phis</span><span class="p">[</span><span class="n">phis</span><span class="o">&gt;</span><span class="mi">360</span><span class="p">]</span> <span class="o">=</span> <span class="n">phis</span><span class="p">[</span><span class="n">phis</span><span class="o">&gt;</span><span class="mi">360</span><span class="p">]</span> <span class="o">-</span> <span class="mi">360</span>
+    <span class="c1">#     # complete phis:</span>
+    <span class="c1">#     a = candela_2d.T</span>
+    <span class="c1">#     b = np.hstack((a,a[:,(a.shape[1]-2)::-1]))</span>
+    <span class="c1">#     c = np.hstack((b,b[:,(b.shape[1]-2):0:-1]))</span>
+    <span class="c1">#     candela_2d = np.hstack((c,c[:,:1])).T </span>
         
-        <span class="c1"># complete  thetas:</span>
-        <span class="n">a</span> <span class="o">=</span> <span class="n">candela_2d</span><span class="o">.</span><span class="n">T</span>
-        <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">a</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">shape</span><span class="p">)[</span><span class="mi">1</span><span class="p">:,:]))</span>
-        <span class="n">thetas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">thetas</span><span class="p">,</span> <span class="o">-</span><span class="n">thetas</span><span class="p">[(</span><span class="n">thetas</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">2</span><span class="p">)::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">180</span><span class="p">))</span>
-        <span class="n">candela_2d</span> <span class="o">=</span> <span class="n">b</span><span class="o">.</span><span class="n">T</span>
+    <span class="c1">#     phis = np.hstack((phis, 180 - phis[-2::-1] , 180 + phis[1:], 360 - phis[-2::-1]))</span>
+    <span class="c1">#     phis[phis&gt;360] = phis[phis&gt;360] - 360</span>
         
-        <span class="n">make_map</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="c1">#     # complete thetas:</span>
+    <span class="c1">#     candela_2d, thetas = _complete_thetas(candela_2d.T, thetas)</span>
+    <span class="c1">#     # print(&#39;Isym4&#39;,candela_2d.shape, thetas.shape,phis.shape)</span>
+    <span class="c1">#     make_map = True</span>
+        
+    <span class="c1">#     # # complete phis:</span>
+    <span class="c1">#     # a = candela_2d.T</span>
+    <span class="c1">#     # b = np.hstack((a,a[:,(a.shape[1]-2)::-1]))</span>
+    <span class="c1">#     # c = np.hstack((b,b[:,(b.shape[1]-2):0:-1]))</span>
+    <span class="c1">#     # candela_2d = np.hstack((c,c[:,:1])).T</span>
+        
+    <span class="c1">#     # phis = np.hstack((phis, -phis[(phis.shape[0]-2)::-1] + 180))</span>
+    <span class="c1">#     # phis = np.hstack((phis, -phis[(phis.shape[0]-2):0:-1] + 360))</span>
+    <span class="c1">#     # phis = np.hstack((phis,phis[:1])) </span>
+    <span class="c1">#     # phis[phis&gt;360] = phis[phis&gt;360] - 360</span>
+        
+    <span class="c1">#     # # complete  thetas:</span>
+    <span class="c1">#     # a = candela_2d.T</span>
+    <span class="c1">#     # b = np.vstack((a,np.zeros(a.shape)[1:,:]))</span>
+    <span class="c1">#     # thetas = np.hstack((thetas, -thetas[(thetas.shape[0]-2)::-1] + 180))</span>
+    <span class="c1">#     # candela_2d = b.T</span>
+        
+    <span class="c1">#     # make_map = True</span>
         
     <span class="k">elif</span> <span class="p">(</span><span class="n">Isym</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">complete</span> <span class="o">==</span> <span class="kc">True</span><span class="p">):</span>
         <span class="c1"># complete phis:</span>
@@ -791,7 +817,7 @@
         <span class="n">roll</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">bc</span><span class="o">==</span><span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># figure out how much to roll the array to get the 0° data at the beginning</span>
         <span class="n">bc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">roll</span><span class="p">(</span><span class="n">bc</span><span class="p">,</span><span class="n">roll</span><span class="p">,</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">roll</span><span class="p">(</span><span class="n">b</span><span class="p">,</span><span class="n">roll</span><span class="p">,</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">candela_2d_0C360</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">b</span><span class="p">,</span><span class="n">b</span><span class="p">[:,:</span><span class="mi">1</span><span class="p">]))</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">candela_2d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">b</span><span class="p">,</span><span class="n">b</span><span class="p">[:,:</span><span class="mi">1</span><span class="p">]))</span><span class="o">.</span><span class="n">T</span>
         
         <span class="n">phis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">bc</span><span class="p">,</span><span class="n">bc</span><span class="p">[:</span><span class="mi">1</span><span class="p">]))</span> 
         <span class="n">phis</span><span class="p">[</span><span class="n">phis</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">phis</span><span class="p">[</span><span class="n">phis</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">360</span>
@@ -803,8 +829,7 @@
         
     <span class="k">elif</span> <span class="p">(</span><span class="n">Isym</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">complete</span> <span class="o">==</span> <span class="kc">True</span><span class="p">):</span>
         <span class="c1"># complete phis:</span>
-        <span class="n">candela_2d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">candela_2d</span><span class="p">,</span><span class="mi">361</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
-        
+        <span class="n">candela_2d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">candela_2d</span><span class="p">,</span><span class="mi">361</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">phis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">phis</span><span class="p">,</span><span class="n">phis</span> <span class="o">+</span> <span class="mi">360</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
         <span class="n">phis</span><span class="p">[</span><span class="n">phis</span><span class="o">&gt;</span><span class="mi">360</span><span class="p">]</span> <span class="o">=</span> <span class="n">phis</span><span class="p">[</span><span class="n">phis</span><span class="o">&gt;</span><span class="mi">360</span><span class="p">]</span> <span class="o">-</span> <span class="mi">360</span>
         
@@ -1176,7 +1201,7 @@
 <span class="sd">            | Plot the position of the luminaire (0,0,0) in the 3D graph as a red diamond.</span>
 <span class="sd">        :plot_diagram_top:</span>
 <span class="sd">            | 1e-3, optional</span>
-<span class="sd">            | Plot the top of the polar diagram (True)</span>
+<span class="sd">            | Plot the top of the polar diagram (True).</span>
 <span class="sd">            | If None: automatic detection of non-zero intensity values in top part.</span>
 <span class="sd">            | If float: automatic detection of intensity values larger than max__intensity*float in top part.</span>
 <span class="sd">            |           (if smaller: don&#39;t plot top.)</span>
@@ -1269,9 +1294,20 @@
             <span class="n">value_min</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">t</span><span class="p">,</span> <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">thetam_map</span><span class="p">[</span><span class="n">pp</span><span class="p">])</span><span class="o">*</span><span class="n">s</span><span class="o">*</span><span class="p">((</span><span class="n">values_map</span><span class="p">[</span><span class="n">pp</span><span class="p">]</span><span class="o">/</span><span class="n">values_map</span><span class="o">.</span><span class="n">max</span><span class="p">())</span><span class="o">&gt;</span><span class="n">value_min</span><span class="p">),</span> <span class="n">values_map</span><span class="p">[</span><span class="n">pp</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">t</span><span class="p">,</span> <span class="n">r</span>
-    <span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;b&#39;</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">,</span><span class="s1">&#39;g&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">,</span><span class="s1">&#39;c&#39;</span><span class="p">,</span><span class="s1">&#39;m&#39;</span><span class="p">,</span><span class="s1">&#39;k&#39;</span><span class="p">,</span><span class="s1">&#39;k&#39;</span><span class="p">,</span><span class="s1">&#39;m&#39;</span><span class="p">,</span><span class="s1">&#39;c&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">,</span><span class="s1">&#39;g&#39;</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">,</span><span class="s1">&#39;b&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span>
+    
+    <span class="c1"># default color and linestyles</span>
+    <span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;r&#39;</span><span class="p">,</span><span class="s1">&#39;b&#39;</span><span class="p">,</span><span class="s1">&#39;g&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">,</span><span class="s1">&#39;c&#39;</span><span class="p">,</span><span class="s1">&#39;m&#39;</span><span class="p">,</span><span class="s1">&#39;k&#39;</span><span class="p">,</span><span class="s1">&#39;k&#39;</span><span class="p">,</span><span class="s1">&#39;m&#39;</span><span class="p">,</span><span class="s1">&#39;c&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">,</span><span class="s1">&#39;g&#39;</span><span class="p">,</span><span class="s1">&#39;b&#39;</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span>
     <span class="n">linestyles</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;-&#39;</span><span class="p">,</span><span class="s1">&#39;--&#39;</span><span class="p">,</span><span class="s1">&#39;-.&#39;</span><span class="p">,</span><span class="s1">&#39;:&#39;</span><span class="p">]</span><span class="o">*</span><span class="mi">7</span>
-    <span class="n">t_top</span> <span class="o">=</span> <span class="kc">False</span> <span class="c1"># for plotting top  half of polar plot or not</span>
+    
+    <span class="c1"># allow for user input of color and linestyle:</span>
+    <span class="k">if</span> <span class="s1">&#39;linestyles&#39;</span> <span class="ow">in</span> <span class="n">plottingkwargs</span><span class="p">:</span> <span class="n">linestyles</span> <span class="o">=</span> <span class="n">plottingkwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;linestyles&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">linestyles</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span> <span class="n">linestyles</span> <span class="o">=</span> <span class="p">[</span><span class="n">linestyles</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">polar_plot_Cx_planes</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s1">&#39;colors&#39;</span> <span class="ow">in</span> <span class="n">plottingkwargs</span><span class="p">:</span> <span class="n">colors</span> <span class="o">=</span> <span class="n">plottingkwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;colors&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">colors</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span> <span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="n">colors</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">polar_plot_Cx_planes</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s1">&#39;linestyle&#39;</span> <span class="ow">in</span> <span class="n">plottingkwargs</span><span class="p">:</span> <span class="n">linestyles</span> <span class="o">=</span> <span class="p">[</span><span class="n">plottingkwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;linestyle&#39;</span><span class="p">)]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">polar_plot_Cx_planes</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s1">&#39;color&#39;</span> <span class="ow">in</span> <span class="n">plottingkwargs</span><span class="p">:</span> <span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="n">plottingkwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;color&#39;</span><span class="p">)]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">polar_plot_Cx_planes</span><span class="p">)</span>
+    
+    <span class="n">t_top</span> <span class="o">=</span> <span class="n">plot_diagram_top</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">plot_diagram_top</span><span class="p">,</span><span class="nb">bool</span><span class="p">)</span> <span class="k">else</span> <span class="kc">False</span>  <span class="c1"># for plotting top  half of polar plot or not</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">phi</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">polar_plot_Cx_planes</span><span class="p">):</span>
         <span class="n">phio</span> <span class="o">=</span> <span class="n">phi</span> <span class="o">+</span> <span class="mi">180</span> <span class="c1"># phi on opposite side</span>
         
@@ -1768,28 +1804,33 @@
         
     <span class="k">return</span> <span class="nb">eval</span><span class="p">(</span><span class="n">out</span><span class="p">)</span></div>
 
-<span class="c1"># if __name__ == &#39;__main__&#39;:</span>
-<span class="c1"># </span>
-<span class="c1">#     # tests for different LDT and IES formats:</span>
-<span class="c1">#     LID = read_lamp_data(&#39;./data/luxpy_test_lid_file.ldt&#39;, verbosity = 1)</span>
-<span class="c1">#     LIDi = read_lamp_data(&#39;./data/luxpy_test_lid_file.ies&#39;, verbosity = 1)</span>
-<span class="c1">#     LIDi2 = read_lamp_data(&#39;./data/luxpy_test_lid_file2.ies&#39;, verbosity = 1)</span>
-<span class="c1">#     # LID1 = read_lamp_data(r&#39;c:\users\u0032318\downloads\007cfb11e343e2f42e3b476be4ab684e.ldt&#39;, verbosity = 1)</span>
-<span class="c1">#     # LID2 = read_lamp_data(r&#39;C:\Users\u0032318\Downloads\erco_33499000_1xqt32_230w.ldt&#39;, verbosity = 1)</span>
-       
-<span class="c1">#     # LID3i_c0 = read_lamp_data(r&#39;c:\users\u0032318\downloads\028e97564391140b1476695ae7a46fa4.ies&#39;, verbosity = 1)</span>
-   
-<span class="c1">#     # LID3i_c270 = read_lamp_data(r&#39;c:\users\u0032318\downloads\17a73b5ef452513ecc743077a2211f16.ies&#39;, verbosity = 1)</span>
-<span class="c1">#     # LID3 = read_lamp_data(r&#39;c:\users\u0032318\downloads\17a73b5ef452513ecc743077a2211f16.ldt&#39;, verbosity = 1)</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+
+    <span class="c1"># tests for different LDT and IES formats:</span>
+    <span class="n">LIDl_1</span> <span class="o">=</span> <span class="n">read_lamp_data</span><span class="p">(</span><span class="s1">&#39;./data/luxpy_test_lid_file.ldt&#39;</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">LIDi_1</span> <span class="o">=</span> <span class="n">read_lamp_data</span><span class="p">(</span><span class="s1">&#39;./data/luxpy_test_lid_file.ies&#39;</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">LIDi_2b</span> <span class="o">=</span> <span class="n">read_lamp_data</span><span class="p">(</span><span class="s1">&#39;./data/luxpy_test_lid_file2b.ies&#39;</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">LIDi_2t</span> <span class="o">=</span> <span class="n">read_lamp_data</span><span class="p">(</span><span class="s1">&#39;./data/luxpy_test_lid_file2t.ies&#39;</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
     
-<span class="c1">#     # LID3_c0 = read_lamp_data(r&#39;c:\users\u0032318\downloads\Testlamp_eulumdat_symmetryOverC0C180axis.ldt&#39;, verbosity = 1)</span>
-<span class="c1">#     # LID3_c270 = read_lamp_data(r&#39;c:\users\u0032318\downloads\Testlamp_eulumdat_symmetryOverC90C270axis.ldt&#39;, verbosity = 1)</span>
+    <span class="c1"># other tests (downloaded from: ieslibrary.com):</span>
+    <span class="n">test_folder</span> <span class="o">=</span> <span class="s1">&#39;../../../testcode/iolid_data/&#39;</span>
+    <span class="n">LID1l</span><span class="o">=</span> <span class="n">read_lamp_data</span><span class="p">(</span><span class="n">test_folder</span><span class="o">+</span><span class="s1">&#39;Testlamp_Isym1_007cfb11e343e2f42e3b476be4ab684e.ldt&#39;</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">LID1i</span> <span class="o">=</span> <span class="n">read_lamp_data</span><span class="p">(</span><span class="n">test_folder</span><span class="o">+</span><span class="s1">&#39;Testlamp_Isym1_007cfb11e343e2f42e3b476be4ab684e.ies&#39;</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+    
+    <span class="n">LID2l</span> <span class="o">=</span> <span class="n">read_lamp_data</span><span class="p">(</span><span class="n">test_folder</span><span class="o">+</span><span class="s1">&#39;Testlamp_Isym2_theta180+_erco_33499000_1xqt32_230w.ldt&#39;</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">LID2i</span> <span class="o">=</span> <span class="n">read_lamp_data</span><span class="p">(</span><span class="n">test_folder</span><span class="o">+</span><span class="s1">&#39;Testlamp_Isym2_theta180+_erco_33499000_1xqt32_230w.ies&#39;</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+       
+    <span class="n">LID3l_c0</span> <span class="o">=</span> <span class="n">read_lamp_data</span><span class="p">(</span><span class="n">test_folder</span><span class="o">+</span><span class="s1">&#39;Testlamp_Isym2_symmetryOverC0C180axis.ldt&#39;</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">LID3l_c270</span> <span class="o">=</span> <span class="n">read_lamp_data</span><span class="p">(</span><span class="n">test_folder</span><span class="o">+</span><span class="s1">&#39;Testlamp_Isym3_symmetryOverC90C270axis.ldt&#39;</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">LID3i_c0</span> <span class="o">=</span> <span class="n">read_lamp_data</span><span class="p">(</span><span class="n">test_folder</span><span class="o">+</span><span class="s1">&#39;Testlamp_Isym2_symmetryOverC0C180axis.ies&#39;</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">LID3i_c270</span> <span class="o">=</span> <span class="n">read_lamp_data</span><span class="p">(</span><span class="n">test_folder</span><span class="o">+</span><span class="s1">&#39;Testlamp_Isym3_symmetryOverC90C270axis.ies&#39;</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
 
-<span class="c1">#     LID4 = read_lamp_data(r&#39;c:\users\u0032318\downloads\43cef5d76a391dd85c41d4d09d68600d.ldt&#39;, verbosity = 1)</span>
-<span class="c1">#     LID4i = read_lamp_data(r&#39;c:\users\u0032318\downloads\43cef5d76a391dd85c41d4d09d68600d.ies&#39;, verbosity = 1)</span>
-<span class="c1">#     draw_lid(LID4i)</span>
+    <span class="n">LID4l</span> <span class="o">=</span> <span class="n">read_lamp_data</span><span class="p">(</span><span class="n">test_folder</span><span class="o">+</span><span class="s1">&#39;Testlamp_Isym4_43cef5d76a391dd85c41d4d09d68600d.ldt&#39;</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">LID4i</span> <span class="o">=</span> <span class="n">read_lamp_data</span><span class="p">(</span><span class="n">test_folder</span><span class="o">+</span><span class="s1">&#39;Testlamp_Isym4_43cef5d76a391dd85c41d4d09d68600d.ies&#39;</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">LID</span> <span class="o">=</span> <span class="n">LIDl_1</span>
+<span class="c1">#     draw_lid(LID)</span>
 
-<span class="c1">#     # render_lid(LID3i_c270)</span>
+<span class="c1">#     render_lid(LID)</span>
     
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
     
