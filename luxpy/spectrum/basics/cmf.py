@@ -40,10 +40,9 @@ cmf.py
                             
      Notes:
          
-        1. All functions have been expanded (when necessary) using zeros to a 
-            full 360-830 range. This way those wavelengths do not contribute 
-            in the calculation, AND are not extrapolated using the closest 
-            known value, as per CIE recommendation.
+        1. All CMF functions are extrapolated using the CIE recommended method 
+            to a full 360-830 range. See luxpy.cie_interp for more info on the default
+            extrapolation method used.
 
         2. There is no XYZ to LMS conversion matrices defined for the 
             1931 2° Judd corrected (1951) cmf sets.
@@ -158,7 +157,7 @@ _CMF_N_2006_2 = np.ones((3,3))*np.nan # N : definition of 3x3 matrices to conver
 
 
 #------------------------------------------------------------------------------
-# 2015 CMFs based on 2006 cone fundamentals (2°):
+# 2015 CMFs based on 2006 cone fundamentals (10°):
 _CMF_M_2006_10 = np.linalg.inv(np.array([[1.93986443, -1.34664359, 0.43044935], # from CIE15:2018
                                         [0.69283932, 0.34967567, 0],
                                         [0, 0, 2.14687945]]))
