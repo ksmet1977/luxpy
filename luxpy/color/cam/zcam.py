@@ -786,9 +786,9 @@ if __name__ == '__main__':
     # Test code with examples in Table of supplement to paper:
     xyzt =np.array([[185,206,163]])
     xyzw =np.array([[256,264,202]])
-    out1 = run(xyzt,xyzw=xyzw,outin='h,Q,J,M,C,Sz,Vz,Kz,Wz',conditions={'La':264,'Yb':100,'D':None,'Dtype':'cat02','surround':'avg'}, mcat='cat02')
+    out1 = run(xyzt,xyzw=xyzw,outin='h,H,Q,J,M,C,Sz,Vz,Kz,Wz',conditions={'La':264,'Yb':100,'D':None,'Dtype':'cat02','surround':'avg'}, mcat='cat02')
     print('\nout1', out1)
-    expected_1 = np.array([[196.3524, 321.3464, 92.25, 10.53, 3.0216, 19.1314, 34.7022, 25.2994, 91.6837]])
+    expected_1 = np.array([[196.3524, 237.6401, 321.3464, 92.25, 10.53, 3.0216, 19.1314, 34.7022, 25.2994, 91.6837]]) # from supplementary material of Z-CAM paper
     print('expected1: ', expected_1)
     print('diff1: ', out1 - expected_1)
     
