@@ -77,14 +77,14 @@ cct: Module with functions related to correlated color temperature calculations
 """
 #from . import _CCT_LUT_CALC
 
-from luxpy import  _CMF, _CIEOBS, spd_to_xyz, cri_ref, blackbody, xyz_to_Yxy, xyz_to_Yuv,Yuv_to_xyz
+from luxpy import  _WL3, _CMF, _CIEOBS, spd_to_xyz, cri_ref, blackbody, xyz_to_Yxy, xyz_to_Yuv,Yuv_to_xyz
 from luxpy.utils import np, pd, sp, _PKG_PATH, _SEP, _EPS, np2d, np2dT, getdata, dictkv
 
 _CCT_MAX = 1e11 # maximum value that does not cause overflow problems
 _CCT_LUT_CALC = False # True: (re-)calculates LUTs for ccts in .cctluts/cct_lut_cctlist.dat
 __all__ = ['_CCT_LUT_CALC', '_CCT_MAX']
 
-__all__ += ['_CCT_LUT','_CCT_LUT_PATH', 'calculate_luts', 'xyz_to_cct','xyz_to_duv', 'cct_to_xyz',
+__all__ += ['_CCT_LUT','_CCT_LUT_PATH', 'calculate_lut', 'calculate_luts', 'xyz_to_cct','xyz_to_duv', 'cct_to_xyz',
             'cct_to_mired','xyz_to_cct_ohno','xyz_to_cct_search','xyz_to_cct_search_fast', 'xyz_to_cct_search_robust',
             'xyz_to_cct_HA','xyz_to_cct_mcamy']
 
@@ -92,9 +92,11 @@ __all__ += ['_CCT_LUT','_CCT_LUT_PATH', 'calculate_luts', 'xyz_to_cct','xyz_to_d
 _CCT_LUT_PATH = _PKG_PATH + _SEP + 'data'+ _SEP + 'cctluts' + _SEP #folder with cct lut data
 _CCT_LUT = {}
 
+
+
 #--------------------------------------------------------------------------------------------------
 # load / calculate CCT LUT:
-def calculate_lut(ccts = None, cieobs = None, add_to_lut = True):
+def calculate_lut(ccts = None, cieobs = None, add_to_lut = True, wl = _WL3):
     """
     Function that calculates LUT for the ccts stored in 
     ./data/cctluts/cct_lut_cctlist.dat or given as input argument.
@@ -109,6 +111,9 @@ def calculate_lut(ccts = None, cieobs = None, add_to_lut = True):
         :cieobs: 
             | None or str, optional
             | str specifying cmf set.
+        :wl: 
+            | _WL3, optional
+            | Generate luts based on Planckians with wavelengths (range). 
             
     Returns:
         :returns: 
@@ -124,7 +129,7 @@ def calculate_lut(ccts = None, cieobs = None, add_to_lut = True):
         
     Yuv = np.zeros((ccts.shape[0],2));Yuv.fill(np.nan)
     for i,cct in enumerate(ccts):
-        Yuv[i,:] = xyz_to_Yuv(spd_to_xyz(blackbody(cct, wl3 = [360,830,1]), cieobs = cieobs))[:,1:3]
+        Yuv[i,:] = xyz_to_Yuv(spd_to_xyz(blackbody(cct, wl3 = wl), cieobs = cieobs))[:,1:3]
     u = Yuv[:,0,None] # get CIE 1960 u
     v = (2.0/3.0)*Yuv[:,1,None] # get CIE 1960 v
     cctuv = np.hstack((ccts,u,v))
@@ -132,7 +137,7 @@ def calculate_lut(ccts = None, cieobs = None, add_to_lut = True):
         _CCT_LUT[cieobs] = cctuv
     return cctuv 
     
-def calculate_luts(ccts = None):
+def calculate_luts(ccts = None, wl = _WL3, save_luts = True):
     """
     Function that recalculates (and overwrites) LUTs in ./data/cctluts/ 
     for the ccts stored in ./data/cctluts/cct_lut_cctlist.dat or given as 
@@ -144,21 +149,28 @@ def calculate_luts(ccts = None):
             | ndarray or str, optional
             | List of ccts for which to (re-)calculate the LUTs.
             | If str, ccts contains path/filename.dat to list.
+        :wl: 
+            | _WL3, optional
+            | Generate luts based on Planckians with wavelengths (range). 
+        :save_luts:
+            | True, optional
+            | If True: save luts to folder './data/cctluts/'
             
     Returns:
          | None
         
-    Note:
-        Function writes LUTs to ./data/cctluts/ folder!
     """
-
+    luts = {}
     for ii, cieobs in enumerate(sorted(_CMF['types'])):
         print("Calculating CCT LUT for CMF set: {}".format(cieobs))
-        cctuv = calculate_lut(ccts = ccts, cieobs = cieobs, add_to_lut = False)
-        pd.DataFrame(cctuv).to_csv('{}cct_lut_{}.dat'.format(_CCT_LUT_PATH,cieobs), header=None, index=None, float_format = '%1.9e')
-
+        cctuv = calculate_lut(ccts = ccts, cieobs = cieobs, add_to_lut = False, wl = wl)
+        if save_luts:  
+            pd.DataFrame(cctuv).to_csv('{}cct_lut_{}.dat'.format(_CCT_LUT_PATH,cieobs), header=None, index=None, float_format = '%1.9e')
+        luts[cieobs] = cctuv
+    return luts
+        
 if _CCT_LUT_CALC == True:
-    calculate_luts()  
+    _CCT_LUT = calculate_luts(wl = _WL3)  
 
 # Initialize _CCT_LUT dict:
 try:
@@ -249,7 +261,7 @@ def xyz_to_cct_HA(xyzw, verbosity = 1):
         print("Warning: xyz_to_cct_HA(): one or more CCTs out of range! --> (CCT < 3 kK,  CCT >800 kK) coded as (-1, NaN) 's")
     return CCT.T
 
-def _find_closest_ccts(uvw, cieobs = _CIEOBS, ccts =None):
+def _find_closest_ccts(uvw, cieobs = _CIEOBS, ccts = None, wl = _WL3):
     """
     Find closest cct from a list and the two surrounding ccts.
     """
@@ -261,7 +273,7 @@ def _find_closest_ccts(uvw, cieobs = _CIEOBS, ccts =None):
     
     uv = np.empty((ccts.shape[0],2))
     for i,cct in enumerate(ccts):
-        uv[i,:] = xyz_to_Yuv(spd_to_xyz(blackbody(cct, wl3 = [360,830,1]), cieobs = cieobs))[:,1:3]
+        uv[i,:] = xyz_to_Yuv(spd_to_xyz(blackbody(cct, wl3 = wl), cieobs = cieobs))[:,1:3]
     uv[:,1] *= (2.0/3.0) # get CIE 1960 v
     
     dc2=((uv[...,None]-uvw.T[None,...])**2).sum(axis=1)
@@ -449,7 +461,7 @@ def xyz_to_cct_search_robust(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None, rtol
         
     #calculate preliminary estimates in 50 K to _CCT_MAX range or whatever is given in cct_search_list:
     ccts_est, cctranges = _find_closest_ccts(np.hstack((ut,vt)), cieobs = cieobs, 
-                                             ccts = cct_search_list)
+                                             ccts = cct_search_list, wl = wl)
     
     cct_scale_fun = lambda x: x
     cct_scale_ifun = lambda x: x
@@ -546,7 +558,7 @@ def xyz_to_cct_search_robust(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None, rtol
     elif (out == 'cct,duv') | (out == 2):
         return np2d(ccts), np2d(duvs)
     elif (out == "[cct,duv]") | (out == -2):
-        return np.vstack((ccts,duvs)).T        
+        return np.hstack((ccts,duvs))       
 
 def xyz_to_cct_search_fast(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None, 
                            rtol = 1e-5, atol = 0.1, upper_cct_max = _CCT_MAX, 
@@ -645,7 +657,7 @@ def xyz_to_cct_search_fast(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None,
         if ((np.isnan(ccts_est).any()) | (ccts_est == -2).any() | (ccts_est == -1).any()) | ((ccts_est < procent_estimates[0,0]).any() | (ccts_est > procent_estimates[-2,1]).any()):
             
             #calculate preliminary estimates in 50 K to _CCT_MAX range or whatever is given in cct_search_list:
-            ccts_est, cct_ranges = _find_closest_ccts(np.hstack((ut,vt)), cieobs = cieobs)
+            ccts_est, cct_ranges = _find_closest_ccts(np.hstack((ut,vt)), cieobs = cieobs, wl = wl)
             not_in_estimator_range = True
             ccts_est[(ccts_est>upper_cct_max)[:,0],:] = upper_cct_max
 
@@ -792,11 +804,12 @@ def xyz_to_cct_search_fast(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None,
     elif (out == 'cct,duv') | (out == 2):
         return np2d(ccts), np2d(duvs)
     elif (out == "[cct,duv]") | (out == -2):
-        return np.vstack((ccts,duvs)).T
+        return np.hstack((ccts,duvs))
 
 def xyz_to_cct_ohno(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, rtol = 1e-5, atol = 0.1, 
                     force_out_of_lut = True, upper_cct_max = _CCT_MAX, 
-                    approx_cct_temp = True, cct_search_list = None, fast_search = True):
+                    approx_cct_temp = True, cct_search_list = None, fast_search = True,
+                    cctuv_lut = None):
     """
     Convert XYZ tristimulus values to correlated color temperature (CCT) and 
     Duv (distance above (>0) or below (<0) the Planckian locus) 
@@ -846,6 +859,10 @@ def xyz_to_cct_ohno(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, rtol = 1e-5,
             | True, optional
             | If True and cct is out of range of the LUT, then switch to 
             | brute-force search method, else return numpy.nan values.
+        :cctuv_lut:
+            | None, optional
+            | CCT+uv look-up-table to use.
+            | If None: use luxpy._CCT_LUT
         
     Returns:
         :returns: 
@@ -856,7 +873,7 @@ def xyz_to_cct_ohno(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, rtol = 1e-5,
             |    [cct,duv]: out == "[cct,duv]" (or -2) 
             
     Note:
-        LUTs are stored in ./data/cctluts/
+        Default LUTs are stored in ./data/cctluts/
         
     Reference:
         1. `Ohno Y. Practical use and calculation of CCT and Duv. 
@@ -878,10 +895,15 @@ def xyz_to_cct_ohno(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, rtol = 1e-5,
     uv = np2d(np.concatenate((u,v),axis = axis_of_v3))
     
     # load cct & uv from LUT:
-    if cieobs not in _CCT_LUT:
-        _CCT_LUT[cieobs] = calculate_lut(ccts = None, cieobs = cieobs, add_to_lut = False)
-    cct_LUT = _CCT_LUT[cieobs][:,0,None] 
-    uv_LUT = _CCT_LUT[cieobs][:,1:3] 
+    if cctuv_lut is None:   
+        cctuv_lut = _CCT_LUT
+    else:
+        if not isinstance(cctuv_lut,dict):
+            cctuv_lut = {cieobs:cctuv_lut}
+    if cieobs not in cctuv_lut:
+        cctuv_lut[cieobs] = calculate_lut(ccts = None, cieobs = cieobs, add_to_lut = False, wl = wl)
+    cct_LUT = cctuv_lut[cieobs][:,0,None] 
+    uv_LUT = cctuv_lut[cieobs][:,1:3] 
     
     # calculate CCT of each uv:
     CCT = np.zeros(uv.shape[0]);CCT.fill(np.nan) # initialize with NaN's
@@ -977,7 +999,8 @@ def xyz_to_cct_ohno(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, rtol = 1e-5,
 #---------------------------------------------------------------------------------------------------
 def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut', out = None, 
                rtol = 1e-5, atol = 0.1, force_out_of_lut = True, upper_cct_max = _CCT_MAX, 
-               approx_cct_temp = True, fast_search = True, cct_search_list = None):
+               approx_cct_temp = True, fast_search = True, cct_search_list = None,
+               cctuv_lut = None):
     """
     Convert correlated color temperature (CCT) and Duv (distance above (>0) or 
     below (<0) the Planckian locus) to XYZ tristimulus values.
@@ -1042,6 +1065,10 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut', out 
             | True, optional
             | If True and cct is out of range of the LUT, then switch to 
             | brute-force search method, else return numpy.nan values.
+        :cctuv_lut:
+            | None, optional
+            | CCT+uv look-up-table to use.
+            | If None: use luxpy._CCT_LUT
         
     Returns:
         :returns: 
@@ -1086,7 +1113,8 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut', out 
                                           upper_cct_max = upper_cct_max, 
                                           approx_cct_temp = approx_cct_temp,
                                           cct_search_list = cct_search_list,
-                                          fast_search = fast_search)
+                                          fast_search = fast_search,
+                                          cctuv_lut = cctuv_lut)
             
             F = np.sqrt(((100.0*(cct_min[0] - cct[0])/(cct[0]))**2.0) + (((duv_min[0] - duv[0])/(duv[0]))**2.0))
             if out == 'F':
@@ -1105,7 +1133,8 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut', out 
                                            upper_cct_max = upper_cct_max, 
                                            approx_cct_temp = approx_cct_temp,
                                            cct_search_list = cct_search_list,
-                                           fast_search = fast_search)
+                                           fast_search = fast_search,
+                                           cctuv_lut = cctuv_lut)
             
             if np.abs(duv[i]) > _EPS:
                 # find xyz:
@@ -1136,7 +1165,8 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut', out 
 # general CCT-wrapper function
 def xyz_to_cct(xyzw, cieobs = _CIEOBS, out = 'cct',mode = 'lut', wl = None, rtol = 1e-5, atol = 0.1, 
                force_out_of_lut = True, upper_cct_max = _CCT_MAX, 
-               approx_cct_temp = True, fast_search = True, cct_search_list = None): 
+               approx_cct_temp = True, fast_search = True, cct_search_list = None,
+               cctuv_lut = None): 
     """
     Convert XYZ tristimulus values to correlated color temperature (CCT) and
     Duv (distance above (>0) or below (<0) the Planckian locus)
@@ -1191,6 +1221,10 @@ def xyz_to_cct(xyzw, cieobs = _CIEOBS, out = 'cct',mode = 'lut', wl = None, rtol
             | True, optional
             | If True and cct is out of range of the LUT, then switch to 
             | brute-force search method, else return numpy.nan values.
+        :cctuv_lut:
+            | None, optional
+            | CCT+uv look-up-table to use.
+            | If None: use luxpy._CCT_LUT
         
     Returns:
         :returns: 
@@ -1202,15 +1236,16 @@ def xyz_to_cct(xyzw, cieobs = _CIEOBS, out = 'cct',mode = 'lut', wl = None, rtol
             |    [cct,duv]: out == "[cct,duv]" (or -2)
     """
     if (mode == 'lut') | (mode == 'ohno'):
-        return xyz_to_cct_ohno(xyzw = xyzw, cieobs = cieobs, out = out, rtol = rtol, atol = atol, force_out_of_lut = force_out_of_lut,
-                               upper_cct_max = upper_cct_max, approx_cct_temp = approx_cct_temp, cct_search_list = cct_search_list, fast_search = fast_search)
+        return xyz_to_cct_ohno(xyzw = xyzw, cieobs = cieobs, out = out, rtol = rtol, atol = atol, force_out_of_lut = force_out_of_lut, wl = wl,
+                               upper_cct_max = upper_cct_max, approx_cct_temp = approx_cct_temp, cct_search_list = cct_search_list, fast_search = fast_search, cctuv_lut = cctuv_lut)
     elif (mode == 'search'):
         return xyz_to_cct_search(xyzw = xyzw, cieobs = cieobs, out = out, wl = wl, rtol = rtol, atol = atol, upper_cct_max = upper_cct_max, approx_cct_temp = approx_cct_temp, cct_search_list = cct_search_list, fast = fast_search)
 
 
 def xyz_to_duv(xyzw, cieobs = _CIEOBS, out = 'duv', mode = 'lut', wl = None,
                rtol = 1e-5, atol = 0.1, force_out_of_lut = True, upper_cct_max = _CCT_MAX, 
-               approx_cct_temp = True, fast_search = True, cct_search_list = None): 
+               approx_cct_temp = True, fast_search = True, cct_search_list = None,
+               cctuv_lut = None): 
     """
     Convert XYZ tristimulus values to Duv (distance above (>0) or below (<0) 
     the Planckian locus) and correlated color temperature (CCT) values
@@ -1265,6 +1300,10 @@ def xyz_to_duv(xyzw, cieobs = _CIEOBS, out = 'duv', mode = 'lut', wl = None,
             | True, optional
             | If True and cct is out of range of the LUT, then switch to 
             | brute-force search method, else return numpy.nan values.
+        :cctuv_lut:
+            | None, optional
+            | CCT+uv look-up-table to use.
+            | If None: use luxpy._CCT_LUT
         
     Returns:
         :returns:
@@ -1276,8 +1315,8 @@ def xyz_to_duv(xyzw, cieobs = _CIEOBS, out = 'duv', mode = 'lut', wl = None,
             |     [cct,duv]: out == "[cct,duv]" (or -2)
     """
     if (mode == 'lut') | (mode == 'ohno'):
-        return xyz_to_cct_ohno(xyzw = xyzw, cieobs = cieobs, out = out, rtol = rtol, atol = atol, force_out_of_lut = force_out_of_lut,
-                               upper_cct_max = upper_cct_max, approx_cct_temp = approx_cct_temp, cct_search_list = cct_search_list, fast_search = fast_search)
+        return xyz_to_cct_ohno(xyzw = xyzw, cieobs = cieobs, out = out, rtol = rtol, atol = atol, force_out_of_lut = force_out_of_lut, wl = wl,
+                               upper_cct_max = upper_cct_max, approx_cct_temp = approx_cct_temp, cct_search_list = cct_search_list, fast_search = fast_search, cctuv_lut = cctuv_lut)
     elif (mode == 'search'):
         return xyz_to_cct_search(xyzw = xyzw, cieobs = cieobs, out = out, wl = wl, rtol = rtol, atol = atol, upper_cct_max = upper_cct_max, approx_cct_temp = approx_cct_temp, cct_search_list = cct_search_list, fast = fast_search)
    
