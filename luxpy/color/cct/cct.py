@@ -267,7 +267,7 @@ def _find_closest_ccts(uvw, cieobs = _CIEOBS, ccts = None, wl = _WL3):
     """
     if ccts is None:
         ccts=np.array([50,100,500,1000,2000,3000,4000,5000,6000,10000,
-                       20000,50000,1e5,1e6, 1e7, 1e8,1e9, 1e10, 1e11, _CCT_MAX])
+                       20000,50000, 7.5e4, 1e5, 5e5, 1e6, 5e6, 1e7, 5e7, 1e8, 5e8, 1e9, 5e9, 1e10, 5e10, 1e11, _CCT_MAX])
     
     max_cct = ccts[-1]
     
@@ -340,7 +340,7 @@ def xyz_to_cct_search(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None, rtol = 1e-5
             | None, optional
             | list of ccts to obtain a first guess for the cct of the input xyz.
             | None defaults to: [50,100,500,1000,2000,3000,4000,5000,6000,10000,
-            |                  20000,50000,1e5,1e6, 1e7, 1e8,1e9, 1e10, 1e11, _CCT_MAX]
+            |                  20000,50000, 7.5e4, 1e5, 5e5, 1e6, 5e6, 1e7, 5e7, 1e8, 5e8, 1e9, 5e9, 1e10, 5e10, 1e11, _CCT_MAX]
             | Only for 'robust' code option.
         :approx_cct_temp: 
             | True, optional
@@ -355,7 +355,7 @@ def xyz_to_cct_search(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None, rtol = 1e-5
             | list of ccts to obtain a first guess for the cct of the input xyz 
             | when HA estimation fails due to out-of-range cct or when fast == False.
             | None defaults to: [50,100,500,1000,2000,3000,4000,5000,6000,10000,
-            |                  20000,50000,1e5,1e6, 1e7, 1e8,1e9, 1e10, 1e11, _CCT_MAX]
+            |                  20000,50000, 7.5e4, 1e5, 5e5, 1e6, 5e6, 1e7, 5e7, 1e8, 5e8, 1e9, 5e9, 1e10, 5e10, 1e11, _CCT_MAX]
 
     Returns:
         :returns: 
@@ -396,7 +396,7 @@ def xyz_to_cct_search_robust(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None, rtol
     | chromaticity points due to floating point errors), looking for the closest
     | blackbody radiator and then calculating the mean of the two surrounding ones.
     | The default cct list is [50,100,500,1000,2000,3000,4000,5000,6000,10000,
-    |                          20000,50000,1e5,1e6, 1e7, 1e8,1e9, 1e10, 1e11, _CCT_MAX].
+    |                          20000,50000, 7.5e4, 1e5, 5e5, 1e6, 5e6, 1e7, 5e7, 1e8, 5e8, 1e9, 5e9, 1e10, 5e10, 1e11, _CCT_MAX].
 
 
     Args:
@@ -429,7 +429,7 @@ def xyz_to_cct_search_robust(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None, rtol
             | None, optional
             | list of ccts to obtain a first guess for the cct of the input xyz.
             | None defaults to: [50,100,500,1000,2000,3000,4000,5000,6000,10000,
-            |                  20000,50000,1e5,1e6, 1e7, 1e8,1e9, 1e10, 1e11, _CCT_MAX]
+            |                  20000,50000, 7.5e4, 1e5, 5e5, 1e6, 5e6, 1e7, 5e7, 1e8, 5e8, 1e9, 5e9, 1e10, 5e10, 1e11, _CCT_MAX]
 
     Returns:
         :returns: 
@@ -579,7 +579,7 @@ def xyz_to_cct_search_fast(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None,
     | chromaticity points due to floating point errors), looking for the closest
     | blackbody radiator and then calculating the mean of the two surrounding ones.
     | The default cct list is [50,100,500,1000,2000,3000,4000,5000,6000,10000,
-    |                          20000,50000,1e5,1e6, 1e7, 1e8,1e9, 1e10, 1e11, _CCT_MAX].
+    |                          20000,50000, 7.5e4, 1e5, 5e5, 1e6, 5e6, 1e7, 5e7, 1e8, 5e8, 1e9, 5e9, 1e10, 5e10, 1e11, _CCT_MAX].
 
 
     Args:
@@ -618,7 +618,7 @@ def xyz_to_cct_search_fast(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None,
             | list of ccts to obtain a first guess for the cct of the input xyz 
             | when HA estimation fails due to out-of-range cct.
             | None defaults to: [50,100,500,1000,2000,3000,4000,5000,6000,10000,
-            |                  20000,50000,1e5,1e6, 1e7, 1e8,1e9, 1e10, 1e11, _CCT_MAX]
+            |                  20000,50000, 7.5e4, 1e5, 5e5, 1e6, 5e6, 1e7, 5e7, 1e8, 5e8, 1e9, 5e9, 1e10, 5e10, 1e11, _CCT_MAX]
 
     Returns:
         :returns: 
@@ -657,7 +657,7 @@ def xyz_to_cct_search_fast(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None,
         if ((np.isnan(ccts_est).any()) | (ccts_est == -2).any() | (ccts_est == -1).any()) | ((ccts_est < procent_estimates[0,0]).any() | (ccts_est > procent_estimates[-2,1]).any()):
             
             #calculate preliminary estimates in 50 K to _CCT_MAX range or whatever is given in cct_search_list:
-            ccts_est, cct_ranges = _find_closest_ccts(np.hstack((ut,vt)), cieobs = cieobs, wl = wl)
+            ccts_est, cct_ranges = _find_closest_ccts(np.hstack((ut,vt)), cieobs = cieobs, wl = wl, ccts = cct_search_list)
             not_in_estimator_range = True
             ccts_est[(ccts_est>upper_cct_max)[:,0],:] = upper_cct_max
 
@@ -854,7 +854,7 @@ def xyz_to_cct_ohno(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, rtol = 1e-5,
             | list of ccts to obtain a first guess for the cct of the input xyz 
             | when HA estimation fails due to out-of-range cct.
             | None defaults to: [50,100,500,1000,2000,3000,4000,5000,6000,10000,
-            |                  20000,50000,1e5,1e6, 1e7, 1e8,1e9, 1e10, 1e11, _CCT_MAX]
+            |                  20000,50000, 7.5e4, 1e5, 5e5, 1e6, 5e6, 1e7, 5e7, 1e8, 5e8, 1e9, 5e9, 1e10, 5e10, 1e11, _CCT_MAX]
         :force_out_of_lut: 
             | True, optional
             | If True and cct is out of range of the LUT, then switch to 
@@ -1060,7 +1060,7 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut', out 
             | list of ccts to obtain a first guess for the cct of the input xyz 
             | when HA estimation fails due to out-of-range cct or when fast_search == False.
             | None defaults to: [50,100,500,1000,2000,3000,4000,5000,6000,10000,
-            |                  20000,50000,1e5,1e6, 1e7, 1e8,1e9, 1e10, 1e11, _CCT_MAX]
+            |                  20000,50000, 7.5e4, 1e5, 5e5, 1e6, 5e6, 1e7, 5e7, 1e8, 5e8, 1e9, 5e9, 1e10, 5e10, 1e11, _CCT_MAX]
         :force_out_of_lut: 
             | True, optional
             | If True and cct is out of range of the LUT, then switch to 
@@ -1216,7 +1216,7 @@ def xyz_to_cct(xyzw, cieobs = _CIEOBS, out = 'cct',mode = 'lut', wl = None, rtol
             | list of ccts to obtain a first guess for the cct of the input xyz 
             | when HA estimation fails due to out-of-range cct or when fast_search == False.
             | None defaults to: [50,100,500,1000,2000,3000,4000,5000,6000,10000,
-            |                  20000,50000,1e5,1e6, 1e7, 1e8,1e9, 1e10, 1e11, _CCT_MAX]
+            |                  20000,50000, 7.5e4, 1e5, 5e5, 1e6, 5e6, 1e7, 5e7, 1e8, 5e8, 1e9, 5e9, 1e10, 5e10, 1e11, _CCT_MAX]
         :force_out_of_lut: 
             | True, optional
             | If True and cct is out of range of the LUT, then switch to 
@@ -1295,7 +1295,7 @@ def xyz_to_duv(xyzw, cieobs = _CIEOBS, out = 'duv', mode = 'lut', wl = None,
             | list of ccts to obtain a first guess for the cct of the input xyz 
             | when HA estimation fails due to out-of-range cct or when fast_search == False.
             | None defaults to: [50,100,500,1000,2000,3000,4000,5000,6000,10000,
-            |                  20000,50000,1e5,1e6, 1e7, 1e8,1e9, 1e10, 1e11, _CCT_MAX]
+            |                  20000,50000, 7.5e4, 1e5, 5e5, 1e6, 5e6, 1e7, 5e7, 1e8, 5e8, 1e9, 5e9, 1e10, 5e10, 1e11, _CCT_MAX]
         :force_out_of_lut: 
             | True, optional
             | If True and cct is out of range of the LUT, then switch to 
