@@ -40,6 +40,8 @@ colortransforms.py
 Supported chromaticity / colorspace functions:
   | * xyz_to_Yxy(), Yxy_to_xyz(): (X,Y,Z) <-> (Y,x,y);
   | * xyz_to_Yuv(), Yuv_to_Yxy(): (X,Y,Z) <-> CIE 1976 (Y,u',v');
+  | * xyz_to_Yuv76(), Yuv76_to_Yxy(): (X,Y,Z) <-> CIE 1976 (Y,u',v');
+  | * xyz_to_Yuv60(), Yuv60_to_Yxy(): (X,Y,Z) <-> CIE 1960 (Y,u,v);
   | * xyz_to_xyz(), lms_to_xyz(): (X,Y,Z) <-> (X,Y,Z); for use with colortf()
   | * xyz_to_lms(), lms_to_xyz(): (X,Y,Z) <-> (L,M,S) cone fundamental responses
   | * xyz_to_lab(), lab_to_xyz(): (X,Y,Z) <-> CIE 1976 (L*a*b*)
@@ -72,6 +74,7 @@ from luxpy import _CMF, _CIE_ILLUMINANTS, _CIEOBS, _CSPACE, math, spd_to_xyz
 from luxpy.utils import np, np2d, np2dT, np3d, todim, asplit, ajoin
 
 __all__ = ['_CSPACE_AXES', '_IPT_M','xyz_to_Yxy','Yxy_to_xyz','xyz_to_Yuv','Yuv_to_xyz',
+           'xyz_to_Yuv76','Yuv76_to_xyz', 'xyz_to_Yuv60','Yuv60_to_xyz',
            'xyz_to_wuv','wuv_to_xyz','xyz_to_xyz','xyz_to_lms', 'lms_to_xyz','xyz_to_lab','lab_to_xyz','xyz_to_luv','luv_to_xyz',
            'xyz_to_Vrb_mb','Vrb_mb_to_xyz','xyz_to_ipt','ipt_to_xyz','xyz_to_Ydlep','Ydlep_to_xyz','xyz_to_srgb','srgb_to_xyz']
 
@@ -79,6 +82,8 @@ __all__ = ['_CSPACE_AXES', '_IPT_M','xyz_to_Yxy','Yxy_to_xyz','xyz_to_Yuv','Yuv_
 # Database with cspace-axis strings (for plotting):
 _CSPACE_AXES = {'Yxy': ['Y / L (cd/m²)', 'x', 'y']}
 _CSPACE_AXES['Yuv'] = ['Y / L (cd/m²)', "u'", "v'"]
+_CSPACE_AXES['Yuv76'] = ['Y / L (cd/m²)', "u'", "v'"]
+_CSPACE_AXES['Yuv60'] = ['Y / L (cd/m²)', "u", "v"]
 _CSPACE_AXES['xyz'] = ['X', 'Y', 'Z']
 _CSPACE_AXES['lms'] = ['L', 'M', 'S']
 _CSPACE_AXES['lab'] = ['L*', "a*", "b*"]
@@ -141,7 +146,7 @@ def Yxy_to_xyz(Yxy, **kwargs):
 
 def xyz_to_Yuv(xyz,**kwargs):
     """
-    Convert XYZ tristimulus values CIE 1976 Yu'v' chromaticity values.
+    Convert XYZ tristimulus values CIE 1976 Y,u',v' chromaticity values.
 
     Args:
         :xyz: 
@@ -149,7 +154,7 @@ def xyz_to_Yuv(xyz,**kwargs):
 
     Returns:
         :Yuv: 
-            | ndarray with CIE 1976 Yu'v' chromaticity values
+            | ndarray with CIE 1976 Y,u',v' chromaticity values
             |  (Y value refers to luminance or luminance factor)
     """
     xyz = np2d(xyz)
@@ -160,14 +165,15 @@ def xyz_to_Yuv(xyz,**kwargs):
     Yuv[...,2] = 9.0*xyz[...,1] / denom
     return Yuv
 
+xyz_to_Yuv76 = xyz_to_Yuv
 
 def Yuv_to_xyz(Yuv, **kwargs):
     """
-    Convert CIE 1976 Yu'v' chromaticity values to XYZ tristimulus values.
+    Convert CIE 1976 Y,u',v' chromaticity values to XYZ tristimulus values.
 
     Args:
         :Yuv: 
-            | ndarray with CIE 1976 Yu'v' chromaticity values
+            | ndarray with CIE 1976 Y,u',v' chromaticity values
             |  (Y value refers to luminance or luminance factor)
 
     Returns:
@@ -180,6 +186,44 @@ def Yuv_to_xyz(Yuv, **kwargs):
     xyz[...,0] = Yuv[...,0]*(9.0*Yuv[...,1])/(4.0*Yuv[...,2])
     xyz[...,2] = Yuv[...,0]*(12.0 - 3.0*Yuv[...,1] - 20.0*Yuv[...,2])/(4.0*Yuv[...,2])
     return xyz
+
+Yuv76_to_xyz = Yuv_to_xyz
+
+
+def xyz_to_Yuv60(xyz,**kwargs):
+    """
+    Convert XYZ tristimulus values CIE 1960 Y,u,v chromaticity values.
+
+    Args:
+        :xyz: 
+            | ndarray with tristimulus values
+
+    Returns:
+        :Yuv: 
+            | ndarray with CIE 1960 Y,u,v chromaticity values
+            |  (Y value refers to luminance or luminance factor)
+    """
+    Yuv = xyz_to_Yuv(xyz,**kwargs)
+    Yuv[...,2] *= 2/3 
+    return Yuv
+
+
+def Yuv60_to_xyz(Yuv60, **kwargs):
+    """
+    Convert CIE 1976 Y,u,v chromaticity values to XYZ tristimulus values.
+
+    Args:
+        :Yuv: 
+            | ndarray with CIE 1976 Yu'v' chromaticity values
+            |  (Y value refers to luminance or luminance factor)
+
+    Returns:
+        :xyz: 
+            | ndarray with tristimulus values
+    """
+    Yuv = np2d(Yuv60)
+    Yuv[...,2] *= 3/2 
+    return Yuv_to_xyz(Yuv,**kwargs)
 
 
 def xyz_to_wuv(xyz, xyzw = _COLORTF_DEFAULT_WHITE_POINT, **kwargs):

@@ -27,7 +27,7 @@ cct: Module with functions related to correlated color temperature calculations
  :_CCT_LUT: Dict with LUTs.
  
  :_CCT_LUT_CALC: Boolean determining whether to force LUT calculation, even if
-                 the LUT can be fuond in ./data/cctluts/.
+                 the LUT can be found in ./data/cctluts/.
 
  :calculate_lut(): Function that calculates the LUT for the ccts stored in 
                    ./data/cctluts/cct_lut_cctlist.dat or given as input 
@@ -76,13 +76,16 @@ cct: Module with functions related to correlated color temperature calculations
 ===============================================================================
 """
 #from . import _CCT_LUT_CALC
-
-from luxpy import  _WL3, _CMF, _CIEOBS, spd_to_xyz, cri_ref, blackbody, xyz_to_Yxy, xyz_to_Yuv,Yuv_to_xyz
+import copy
+from luxpy import  _WL3, _CMF, _CIEOBS, spd_to_xyz, cri_ref, blackbody, xyz_to_Yxy, xyz_to_Yuv, Yuv_to_xyz, xyz_to_Yuv60, Yuv60_to_xyz
 from luxpy.utils import np, pd, sp, _PKG_PATH, _SEP, _EPS, np2d, np2dT, getdata, dictkv
+from luxpy.color.ctf.colortf import colortf
 
 _CCT_MAX = 1e11 # maximum value that does not cause overflow problems
 _CCT_LUT_CALC = False # True: (re-)calculates LUTs for ccts in .cctluts/cct_lut_cctlist.dat
-__all__ = ['_CCT_LUT_CALC', '_CCT_MAX']
+_CCT_CSPACE = 'Yuv60' # chromaticity diagram to perform CCT, Duv calculations in
+_CCT_CSPACE_KWARGS = {'fwtf':{},'bwtf':{}} # any required parameters in the xyz_to_cspace() funtion
+__all__ = ['_CCT_LUT_CALC', '_CCT_MAX','_CCT_CSPACE', '_CCT_CSPACE_KWARGS']
 
 __all__ += ['_CCT_LUT','_CCT_LUT_PATH', 'calculate_lut', 'calculate_luts', 'xyz_to_cct','xyz_to_duv', 'cct_to_xyz',
             'cct_to_mired','xyz_to_cct_ohno','xyz_to_cct_search','xyz_to_cct_search_fast', 'xyz_to_cct_search_robust',
@@ -92,16 +95,78 @@ __all__ += ['_CCT_LUT','_CCT_LUT_PATH', 'calculate_lut', 'calculate_luts', 'xyz_
 _CCT_LUT_PATH = _PKG_PATH + _SEP + 'data'+ _SEP + 'cctluts' + _SEP #folder with cct lut data
 _CCT_LUT = {}
 
+#------------------------------------------------------------------------------
+def _process_cspace_input(cspace, cspace_kwargs = None, cust_str = 'cspace'):
+    """ 
+    Process cspace and cspace_kwargs input. 
+    
+    Returns dict with keys:
+        - 'str': cspace string
+        - 'fwtf': lambda function for xyz_to_cspace forward transform (cspace_kwargs are already processed).
+        - 'bwtf': lambda function for cspace_to_xyz backward transform (cspace_kwargs are already processed).
+    """
+    if cspace_kwargs is None: cspace_kwargs = {'fwtf':{},'bwtf':{}}
+    if 'fwtf' not in cspace_kwargs: cspace_kwargs['fwtf'] = {}
+    if 'bwtf' not in cspace_kwargs: cspace_kwargs['bwtf'] = {}
+    if isinstance(cspace,str): 
+        cspace_str = cspace
+        if cspace == 'Yuv60':
+            cspace_fw = xyz_to_Yuv60 # don't use lambda function for speed
+            cspace_bw = Yuv60_to_xyz 
+        elif (cspace == 'Yuv') | (cspace == 'Yuv76'):
+            cspace_fw = xyz_to_Yuv # don't use lambda function for speed
+            cspace_bw = Yuv_to_xyz 
+        else:
+            cspace_fw = (lambda xyz,**kwargs: colortf(xyz,tf = 'xyz>' + cspace_str, fwtf = cspace_kwargs['fwtf']))
+            cspace_bw = (lambda Yuv,**kwargs: colortf(Yuv,tf = cspace_str + '>xyz', bwtf = cspace_kwargs['bwtf']))
+    elif isinstance(cspace,tuple):
+        if len(cspace) == 3: 
+            cspace_str = cspace[2]
+            cspace_fw = cspace[0]
+            cspace_bw = cspace[1]
+        elif len(cspace) == 2:
+            if isinstance(cspace[1],str):
+                cspace_str = cspace[1]
+                cspace_fw = cspace[0]
+                cspace_bw = None
+            else:
+                cspace_str = cust_str
+                cspace_fw = cspace[0]
+                cspace_bw = cspace[1]
+        else:
+            cspace_str = cust_str
+            cspace_fw = cspace[0]
+            cspace_bw = None
+    elif isinstance(cspace,dict):
+        cspace_str = cspace['str'] if ('str' in cspace) else cust_str
+        if 'fwtf' not in cspace: 
+            raise Exception("'fwtf' key with forward xyz_to_cspace function must be supplied !!!")
+        else:
+            cspace_fw = cspace['fwtf'] 
+        cspace_bw = cspace['bwtf']  if ('bwtf' in cspace) else None
+    else:
+        cspace_str = cust_str
+        cspace_fw = cspace
+        cspace_bw = None
+    
+    # create cspace dict:
+    cspace_dict = {'str': cspace_str} 
+    cspace_dict['fwtf'] = cspace_fw if (len(cspace_kwargs['fwtf']) == 0) else (lambda xyz,**kwargs: cspace_fw(xyz,**cspace_kwargs['fwtf']))
+    cspace_dict['bwtf'] = cspace_bw if (len(cspace_kwargs['bwtf']) == 0) else (lambda xyz,**kwargs: cspace_fw(xyz,**cspace_kwargs['fwtf']))
 
+    return cspace_dict
+        
 
 #--------------------------------------------------------------------------------------------------
 # load / calculate CCT LUT:
-def calculate_lut(ccts = None, cieobs = None, add_to_lut = True, wl = _WL3):
+def calculate_lut(ccts = None, cieobs = None, add_to_lut = True, wl = _WL3, 
+                  cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS):
     """
     Function that calculates LUT for the ccts stored in 
-    ./data/cctluts/cct_lut_cctlist.dat or given as input argument.
-    Calculation is performed for CMF set specified in cieobs. 
-    Adds a new (temprorary) field to the _CCT_LUT dict.
+    '_CCT_LUT_PATH/cct_lut_cctlist.dat' or given as input argument.
+    Calculation is performed for CMF set specified in cieobs and in the
+    chromaticity diagram in cspace. 
+    Adds a new (temporary) field to the nested _CCT_LUT dict.
     
     Args:
         :ccts: 
@@ -114,6 +179,19 @@ def calculate_lut(ccts = None, cieobs = None, add_to_lut = True, wl = _WL3):
         :wl: 
             | _WL3, optional
             | Generate luts based on Planckians with wavelengths (range). 
+        :cspace:
+            | _CCT_SPACE, optional
+            | Color space to do calculations in. 
+            | Options: 
+            |    - cspace string: 
+            |        e.g. 'Yuv60' for use with luxpy.colortf()
+            |    - tuple with forward (i.e. xyz_to..) and backward (i.e. ..to_xyz) functions 
+            |      (and an optional string describing the cspace): 
+            |        e.g. (forward, backward) or (forward, backward, cspace string) or (forward, cspace string) 
+            |    - dict with keys: 'fwtf' (foward), 'bwtf' (backward, only needed for cct_to_xyz) [, optional: 'str' (cspace string)]
+        :cspace_kwargs:
+            | _CCT_CSPACE_KWARGS, optional
+            | Parameter nested dictionary for the forward and backward transforms.
             
     Returns:
         :returns: 
@@ -127,20 +205,27 @@ def calculate_lut(ccts = None, cieobs = None, add_to_lut = True, wl = _WL3):
     elif isinstance(ccts,str):
         ccts = getdata(ccts)
         
-    Yuv = np.zeros((ccts.shape[0],2));Yuv.fill(np.nan)
+    Yuv = np.zeros((ccts.shape[0],2)); 
+    Yuv.fill(np.nan)
+    
+    cspace_dict = _process_cspace_input(cspace, cspace_kwargs)
+    
     for i,cct in enumerate(ccts):
-        Yuv[i,:] = xyz_to_Yuv(spd_to_xyz(blackbody(cct, wl3 = wl), cieobs = cieobs))[:,1:3]
+        Yuv[i,:] = cspace_dict['fwtf'](spd_to_xyz(blackbody(cct, wl3 = wl), cieobs = cieobs))[:,1:3]
     u = Yuv[:,0,None] # get CIE 1960 u
-    v = (2.0/3.0)*Yuv[:,1,None] # get CIE 1960 v
+    v = Yuv[:,1,None] # get CIE 1960 v
     cctuv = np.hstack((ccts,u,v))
     if add_to_lut == True:
-        _CCT_LUT[cieobs] = cctuv
+        if cspace_str not in _CCT_LUT.keys(): _CCT_LUT[cspace_str] = {} # create nested dict if required
+        _CCT_LUT[cspace_str][cieobs] = cctuv
     return cctuv 
     
-def calculate_luts(ccts = None, wl = _WL3, save_luts = True):
+def calculate_luts(ccts = None, wl = _WL3, 
+                   save_path = _CCT_LUT_PATH, save_luts = True, add_cspace_str = True,
+                   cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS):
     """
-    Function that recalculates (and overwrites) LUTs in ./data/cctluts/ 
-    for the ccts stored in ./data/cctluts/cct_lut_cctlist.dat or given as 
+    Function that recalculates (and overwrites) LUTs in save_path
+    for the ccts stored in '_CCT_LUT_PATH/cct_lut_cctlist.dat' or given as 
     input argument. Calculation is performed for all CMF sets listed 
     in _CMF['types'].
     
@@ -152,32 +237,66 @@ def calculate_luts(ccts = None, wl = _WL3, save_luts = True):
         :wl: 
             | _WL3, optional
             | Generate luts based on Planckians with wavelengths (range). 
+        :save_path:
+            | _CCT_LUT_PATH, optional
+            | Path to save luts to.
         :save_luts:
             | True, optional
-            | If True: save luts to folder './data/cctluts/'
+            | If True: save luts to folder specified in save_luts.
+        :add_cspace_str:
+            | True, optional
+            | If True: Add a string specifying the cspace to the filename of the saved luts.
+            |           (if cspace is a function, 'cspace' is added)
+            | Else: if add_cspace_str is itself a string, add this, else add nothing.
+        :cspace:
+            | _CCT_SPACE, optional
+            | Color space to do calculations in. 
+            | Options: 
+            |    - cspace string: 
+            |        e.g. 'Yuv60' for use with luxpy.colortf()
+            |    - tuple with forward (i.e. xyz_to..) and backward (i.e. ..to_xyz) functions 
+            |      (and an optional string describing the cspace): 
+            |        e.g. (forward, backward) or (forward, backward, cspace string) or (forward, cspace string) 
+            |    - dict with keys: 'fwtf' (foward), 'bwtf' (backward, only needed for cct_to_xyz) [, optional: 'str' (cspace string)]
+        :cspace_kwargs:
+            | _CCT_CSPACE_KWARGS, optional
+            | Parameter nested dictionary for the forward and backward transforms.
             
     Returns:
          | None
         
     """
     luts = {}
+    
+    cspace_dict = _process_cspace_input(cspace, cspace_kwargs)
+    cspace_str = '_' + cspace_dict['str'] if add_cspace_str else '' 
+
+    # if add_cspace_str:
+    #     cspace_str = '_' + cspace if isinstance(cspace,str) else ''
+    # else:
+    #     cspace_str = '_' + add_cspace_str if isinstance(add_cspace_str,str) else ''
+        
     for ii, cieobs in enumerate(sorted(_CMF['types'])):
-        print("Calculating CCT LUT for CMF set: {}".format(cieobs))
-        cctuv = calculate_lut(ccts = ccts, cieobs = cieobs, add_to_lut = False, wl = wl)
+        print("Calculating CCT LUT for CMF set {} & cspace {}".format(cieobs,cspace_string))
+        cctuv = calculate_lut(ccts = ccts, cieobs = cieobs, add_to_lut = False, wl = wl, cspace = cspace_dict, cspace_kwargs = None)
         if save_luts:  
-            pd.DataFrame(cctuv).to_csv('{}cct_lut_{}.dat'.format(_CCT_LUT_PATH,cieobs), header=None, index=None, float_format = '%1.9e')
-        luts[cieobs] = cctuv
+            pd.DataFrame(cctuv).to_csv('{}cct_lut_{}{}.dat'.format(save_path,cieobs,cspace_str), header=None, index=None, float_format = '%1.9e')
+        if cspace_string not in luts.keys(): luts[cspace_string] = {} # create nested dict if required
+        luts[cspace_string][cieobs] = cctuv
     return luts
         
 if _CCT_LUT_CALC == True:
-    _CCT_LUT = calculate_luts(wl = _WL3)  
+    _CCT_LUT = calculate_luts(wl = _WL3, cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS)  
 
 # Initialize _CCT_LUT dict:
+cspace_dict = _process_cspace_input(_CCT_CSPACE, _CCT_CSPACE_KWARGS)
+cspace_string = cspace_dict['str']
+cspace_str = '_' + cspace_string   
 try:
-    _CCT_LUT = dictkv(keys = sorted(_CMF['types']), values = [getdata('{}cct_lut_{}.dat'.format(_CCT_LUT_PATH,sorted(_CMF['types'])[i]),kind='np') for i in range(len(_CMF['types']))],ordered = False)
+    _CCT_LUT[cspace_string] = dictkv(keys = sorted(_CMF['types']), values = [getdata('{}cct_lut_{}{}.dat'.format(_CCT_LUT_PATH,sorted(_CMF['types'])[i],cspace_str),kind='np') for i in range(len(_CMF['types']))],ordered = False)
 except:
-    calculate_luts()  
-    _CCT_LUT = dictkv(keys = sorted(_CMF['types']), values = [getdata('{}cct_lut_{}.dat'.format(_CCT_LUT_PATH,sorted(_CMF['types'])[i]),kind='np') for i in range(len(_CMF['types']))],ordered = False)
+    calculate_luts(wl = _WL3, cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS)  
+    _CCT_LUT[cspace_string] = dictkv(keys = sorted(_CMF['types']), values = [getdata('{}cct_lut_{}{}.dat'.format(_CCT_LUT_PATH,sorted(_CMF['types'])[i],cspace_str),kind='np') for i in range(len(_CMF['types']))],ordered = False)
       
 
 
@@ -261,7 +380,8 @@ def xyz_to_cct_HA(xyzw, verbosity = 1):
         print("Warning: xyz_to_cct_HA(): one or more CCTs out of range! --> (CCT < 3 kK,  CCT >800 kK) coded as (-1, NaN) 's")
     return CCT.T
 
-def _find_closest_ccts(uvw, cieobs = _CIEOBS, ccts = None, wl = _WL3):
+def _find_closest_ccts(uvw, cieobs = _CIEOBS, ccts = None, wl = _WL3,
+                       cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS):
     """
     Find closest cct from a list and the two surrounding ccts.
     """
@@ -271,10 +391,12 @@ def _find_closest_ccts(uvw, cieobs = _CIEOBS, ccts = None, wl = _WL3):
     
     max_cct = ccts[-1]
     
+    cspace_dict = _process_cspace_input(cspace, cspace_kwargs)
+    
     uv = np.empty((ccts.shape[0],2))
     for i,cct in enumerate(ccts):
-        uv[i,:] = xyz_to_Yuv(spd_to_xyz(blackbody(cct, wl3 = wl), cieobs = cieobs))[:,1:3]
-    uv[:,1] *= (2.0/3.0) # get CIE 1960 v
+        uv[i,:] = cspace_dict['fwtf'](spd_to_xyz(blackbody(cct, wl3 = wl), cieobs = cieobs))[:,1:3]
+    #uv[:,1] *= (2.0/3.0) # get CIE 1960 v
     
     dc2=((uv[...,None]-uvw.T[None,...])**2).sum(axis=1)
     q = dc2.argmin(axis=0)
@@ -302,7 +424,8 @@ def _find_closest_ccts(uvw, cieobs = _CIEOBS, ccts = None, wl = _WL3):
     return ccts_i.mean(axis=0,keepdims=True).T, ccts_i.T
       
 def xyz_to_cct_search(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None, rtol = 1e-5, atol = 0.1, 
-                      upper_cct_max = _CCT_MAX, approx_cct_temp = True, fast = True, cct_search_list = None):
+                      upper_cct_max = _CCT_MAX, approx_cct_temp = True, fast = True, cct_search_list = None,
+                      cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS):
     """
     Convert XYZ tristimulus values to correlated color temperature (CCT) and 
     Duv(distance above (> 0) or below ( < 0) the Planckian locus) by a 
@@ -356,7 +479,20 @@ def xyz_to_cct_search(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None, rtol = 1e-5
             | when HA estimation fails due to out-of-range cct or when fast == False.
             | None defaults to: [50,100,500,1000,2000,3000,4000,5000,6000,10000,
             |                  20000,50000, 7.5e4, 1e5, 5e5, 1e6, 5e6, 1e7, 5e7, 1e8, 5e8, 1e9, 5e9, 1e10, 5e10, 1e11, _CCT_MAX]
-
+        :cspace:
+            | _CCT_SPACE, optional
+            | Color space to do calculations in. 
+            | Options: 
+            |    - cspace string: 
+            |        e.g. 'Yuv60' for use with luxpy.colortf()
+            |    - tuple with forward (i.e. xyz_to..) and backward (i.e. ..to_xyz) functions 
+            |      (and an optional string describing the cspace): 
+            |        e.g. (forward, backward) or (forward, backward, cspace string) or (forward, cspace string) 
+            |    - dict with keys: 'fwtf' (foward), 'bwtf' (backward, only needed for cct_to_xyz) [, optional: 'str' (cspace string)]
+        :cspace_kwargs:
+            | _CCT_CSPACE_KWARGS, optional
+            | Parameter nested dictionary for the forward and backward transforms.
+            
     Returns:
         :returns: 
             | ndarray with:
@@ -373,23 +509,26 @@ def xyz_to_cct_search(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None, rtol = 1e-5
     if fast == False:
         return xyz_to_cct_search_robust(xyzw, cieobs = cieobs, out = out, wl = wl, 
                                  rtol = rtol, atol = atol, upper_cct_max = upper_cct_max, 
-                                 cct_search_list = cct_search_list)
+                                 cct_search_list = cct_search_list,
+                                 cspace = cspace, cspace_kwargs = cspace_kwargs)
     else:
         return xyz_to_cct_search_fast(xyzw, cieobs = cieobs, out = out,wl = wl, 
                                rtol = rtol, atol = atol, upper_cct_max = upper_cct_max, 
-                               approx_cct_temp = approx_cct_temp, cct_search_list = cct_search_list)
+                               approx_cct_temp = approx_cct_temp, cct_search_list = cct_search_list,
+                               cspace = cspace, cspace_kwargs = cspace_kwargs)
     
   
 def xyz_to_cct_search_robust(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None, rtol = 1e-5, atol = 0.1, 
-                      upper_cct_max = _CCT_MAX, cct_search_list = None):
+                      upper_cct_max = _CCT_MAX, cct_search_list = None,
+                      cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS):
     """
     Convert XYZ tristimulus values to correlated color temperature (CCT) and 
     Duv(distance above (> 0) or below ( < 0) the Planckian locus) by a 
     brute-force search. 
 
-    | The algorithm uses an approximate cct_temp as starting point 
-    | then constructs, a 4-step section of the blackbody (Planckian) locus 
-    | on which to find the minimum distance to the 1960 uv chromaticity of 
+    | The algorithm uses an approximate cct_temp as starting point then 
+    | constructs, a 4-step section of the blackbody (Planckian) locus on which 
+    | to find the minimum distance to the 1960 uv (or other) chromaticity of 
     | the test source. The approximate starting point is found by generating 
     | the uv chromaticity values of a set blackbody radiators spread across the
     | locus in a 50 K to _CCT_MAX K range (larger CCT's cause instability of the 
@@ -430,7 +569,20 @@ def xyz_to_cct_search_robust(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None, rtol
             | list of ccts to obtain a first guess for the cct of the input xyz.
             | None defaults to: [50,100,500,1000,2000,3000,4000,5000,6000,10000,
             |                  20000,50000, 7.5e4, 1e5, 5e5, 1e6, 5e6, 1e7, 5e7, 1e8, 5e8, 1e9, 5e9, 1e10, 5e10, 1e11, _CCT_MAX]
-
+        :cspace:
+            | _CCT_SPACE, optional
+            | Color space to do calculations in. 
+            | Options: 
+            |    - cspace string: 
+            |        e.g. 'Yuv60' for use with luxpy.colortf()
+            |    - tuple with forward (i.e. xyz_to..) and backward (i.e. ..to_xyz) functions 
+            |      (and an optional string describing the cspace): 
+            |        e.g. (forward, backward) or (forward, backward, cspace string) or (forward, cspace string) 
+            |    - dict with keys: 'fwtf' (foward), 'bwtf' (backward, only needed for cct_to_xyz) [, optional: 'str' (cspace string)]
+        :cspace_kwargs:
+            | _CCT_CSPACE_KWARGS, optional
+            | Parameter nested dictionary for the forward and backward transforms.
+            
     Returns:
         :returns: 
             | ndarray with:
@@ -450,10 +602,12 @@ def xyz_to_cct_search_robust(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None, rtol
     if len(xyzw.shape)>2:
         raise Exception('xyz_to_cct_search(): Input xyzw.shape must be <= 2 !')
        
+    cspace_dict = _process_cspace_input(cspace, cspace_kwargs)     
+   
     # get 1960 u,v of test source:
-    Yuvt = xyz_to_Yuv(np.squeeze(xyzw)) # remove possible 1-dim + convert xyzw to CIE 1976 u',v'
+    Yuvt = cspace_dict['fwtf'](np.squeeze(xyzw)) # remove possible 1-dim 
     ut = Yuvt[:,1,None] # get CIE 1960 u
-    vt = (2/3)*Yuvt[:,2,None] # get CIE 1960 v
+    vt = Yuvt[:,2,None] # get CIE 1960 v
 
     # Initialize arrays:
     ccts = np.zeros((xyzw.shape[0],1));ccts.fill(np.nan)
@@ -461,7 +615,8 @@ def xyz_to_cct_search_robust(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None, rtol
         
     #calculate preliminary estimates in 50 K to _CCT_MAX range or whatever is given in cct_search_list:
     ccts_est, cctranges = _find_closest_ccts(np.hstack((ut,vt)), cieobs = cieobs, 
-                                             ccts = cct_search_list, wl = wl)
+                                             ccts = cct_search_list, wl = wl,
+                                             cspace = cspace_dict, cspace_kwargs = None)
     
     cct_scale_fun = lambda x: x
     cct_scale_ifun = lambda x: x
@@ -495,9 +650,9 @@ def xyz_to_cct_search_robust(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None, rtol
             xyz = spd_to_xyz(BB, cieobs = cieobs)
     
             # Convert to CIE 1960 u,v:
-            Yuv = xyz_to_Yuv(np.squeeze(xyz)) # remove possible 1-dim + convert xyz to CIE 1976 u',v'
+            Yuv = cspace_dict['fwtf'](np.squeeze(xyz)) # remove possible 1-dim 
             u = Yuv[:,1,None] # get CIE 1960 u
-            v = (2.0/3.0)*Yuv[:,2,None] # get CIE 1960 v
+            v = Yuv[:,2,None] # get CIE 1960 v
             
             # Calculate distance between list of uv's and uv of test source:
             dc = ((ut[i] - u)**2 + (vt[i] - v)**2)**0.5
@@ -562,7 +717,8 @@ def xyz_to_cct_search_robust(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None, rtol
 
 def xyz_to_cct_search_fast(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None, 
                            rtol = 1e-5, atol = 0.1, upper_cct_max = _CCT_MAX, 
-                           approx_cct_temp = True, cct_search_list = None):
+                           approx_cct_temp = True, cct_search_list = None,
+                           cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS):
     """
     Convert XYZ tristimulus values to correlated color temperature (CCT) and 
     Duv(distance above (> 0) or below ( < 0) the Planckian locus) by a 
@@ -572,7 +728,7 @@ def xyz_to_cct_search_fast(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None,
     |  as starting point or uses the middle of the allowed cct-range 
     |  (1e2 K - _CCT_MAX K, higher causes overflow) on a log-scale, then constructs 
     |  a 4-step section of the blackbody (Planckian) locus on which to find the
-    |  minimum distance to the 1960 uv chromaticity of the test source.
+    |  minimum distance to the 1960 uv (or other) chromaticity of the test source.
     | If HA fails then another approximate starting point is found by generating 
     | the uv chromaticity values of a set blackbody radiators spread across the
     | locus in a 50 K to _CCT_MAX K range (larger CCT's cause instability of the 
@@ -619,7 +775,20 @@ def xyz_to_cct_search_fast(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None,
             | when HA estimation fails due to out-of-range cct.
             | None defaults to: [50,100,500,1000,2000,3000,4000,5000,6000,10000,
             |                  20000,50000, 7.5e4, 1e5, 5e5, 1e6, 5e6, 1e7, 5e7, 1e8, 5e8, 1e9, 5e9, 1e10, 5e10, 1e11, _CCT_MAX]
-
+        :cspace:
+            | _CCT_SPACE, optional
+            | Color space to do calculations in. 
+            | Options: 
+            |    - cspace string: 
+            |        e.g. 'Yuv60' for use with luxpy.colortf()
+            |    - tuple with forward (i.e. xyz_to..) and backward (i.e. ..to_xyz) functions 
+            |      (and an optional string describing the cspace): 
+            |        e.g. (forward, backward) or (forward, backward, cspace string) or (forward, cspace string) 
+            |    - dict with keys: 'fwtf' (foward), 'bwtf' (backward, only needed for cct_to_xyz) [, optional: 'str' (cspace string)]
+        :cspace_kwargs:
+            | _CCT_CSPACE_KWARGS, optional
+            | Parameter nested dictionary for the forward and backward transforms.
+            
     Returns:
         :returns: 
             | ndarray with:
@@ -638,12 +807,13 @@ def xyz_to_cct_search_fast(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None,
     
     if len(xyzw.shape)>2:
         raise Exception('xyz_to_cct_search(): Input xyzw.shape must be <= 2 !')
-       
+    
+    cspace_dict = _process_cspace_input(cspace, cspace_kwargs)
+
     # get 1960 u,v of test source:
-    Yuvt = xyz_to_Yuv(np.squeeze(xyzw)) # remove possible 1-dim + convert xyzw to CIE 1976 u',v'
-    #axis_of_v3t = len(Yuvt.shape)-1 # axis containing color components
+    Yuvt = cspace_dict['fwtf'](np.squeeze(xyzw)) # remove possible 1-dim 
     ut = Yuvt[:,1,None] #.take([1],axis = axis_of_v3t) # get CIE 1960 u
-    vt = (2/3)*Yuvt[:,2,None] #.take([2],axis = axis_of_v3t) # get CIE 1960 v
+    vt = Yuvt[:,2,None] #.take([2],axis = axis_of_v3t) # get CIE 1960 v
 
     # Initialize arrays:
     ccts = np.zeros((xyzw.shape[0],1));ccts.fill(np.nan)
@@ -657,7 +827,8 @@ def xyz_to_cct_search_fast(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None,
         if ((np.isnan(ccts_est).any()) | (ccts_est == -2).any() | (ccts_est == -1).any()) | ((ccts_est < procent_estimates[0,0]).any() | (ccts_est > procent_estimates[-2,1]).any()):
             
             #calculate preliminary estimates in 50 K to _CCT_MAX range or whatever is given in cct_search_list:
-            ccts_est, cct_ranges = _find_closest_ccts(np.hstack((ut,vt)), cieobs = cieobs, wl = wl, ccts = cct_search_list)
+            ccts_est, cct_ranges = _find_closest_ccts(np.hstack((ut,vt)), cieobs = cieobs, wl = wl, ccts = cct_search_list, 
+                                                      cspace = cspace_dict, cspace_kwargs = None)
             not_in_estimator_range = True
             ccts_est[(ccts_est>upper_cct_max)[:,0],:] = upper_cct_max
 
@@ -728,10 +899,9 @@ def xyz_to_cct_search_fast(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None,
             xyz = spd_to_xyz(BB,cieobs = cieobs)
     
             # Convert to CIE 1960 u,v:
-            Yuv = xyz_to_Yuv(np.squeeze(xyz)) # remove possible 1-dim + convert xyz to CIE 1976 u',v'
-
+            Yuv = cspace_dict['fwtf'](np.squeeze(xyz)) # remove possible 1-dim 
             u = Yuv[:,1,None] # get CIE 1960 u
-            v = (2.0/3.0)*Yuv[:,2,None] # get CIE 1960 v
+            v = Yuv[:,2,None] # get CIE 1960 v
             
             # Calculate distance between list of uv's and uv of test source:
             dc = ((ut[i] - u)**2 + (vt[i] - v)**2)**0.5
@@ -809,7 +979,7 @@ def xyz_to_cct_search_fast(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None,
 def xyz_to_cct_ohno(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, rtol = 1e-5, atol = 0.1, 
                     force_out_of_lut = True, upper_cct_max = _CCT_MAX, 
                     approx_cct_temp = True, cct_search_list = None, fast_search = True,
-                    cctuv_lut = None):
+                    cctuv_lut = None, cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS):
     """
     Convert XYZ tristimulus values to correlated color temperature (CCT) and 
     Duv (distance above (>0) or below (<0) the Planckian locus) 
@@ -863,6 +1033,19 @@ def xyz_to_cct_ohno(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, rtol = 1e-5,
             | None, optional
             | CCT+uv look-up-table to use.
             | If None: use luxpy._CCT_LUT
+        :cspace:
+            | _CCT_SPACE, optional
+            | Color space to do calculations in. 
+            | Options: 
+            |    - cspace string: 
+            |        e.g. 'Yuv60' for use with luxpy.colortf()
+            |    - tuple with forward (i.e. xyz_to..) and backward (i.e. ..to_xyz) functions 
+            |      (and an optional string describing the cspace): 
+            |        e.g. (forward, backward) or (forward, backward, cspace string) or (forward, cspace string) 
+            |    - dict with keys: 'fwtf' (foward), 'bwtf' (backward, only needed for cct_to_xyz) [, optional: 'str' (cspace string)]
+        :cspace_kwargs:
+            | _CCT_CSPACE_KWARGS, optional
+            | Parameter nested dictionary for the forward and backward transforms.
         
     Returns:
         :returns: 
@@ -873,7 +1056,7 @@ def xyz_to_cct_ohno(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, rtol = 1e-5,
             |    [cct,duv]: out == "[cct,duv]" (or -2) 
             
     Note:
-        Default LUTs are stored in ./data/cctluts/
+        Default LUTs are stored in the folder specified in _CCT_LUT_PATH.
         
     Reference:
         1. `Ohno Y. Practical use and calculation of CCT and Duv. 
@@ -886,11 +1069,14 @@ def xyz_to_cct_ohno(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, rtol = 1e-5,
     if len(xyzw.shape)>2:
         raise Exception('xyz_to_cct_ohno(): Input xyzwa.ndim must be <= 2 !')
       
+    cspace_dict = _process_cspace_input(cspace, cspace_kwargs)
+    cspace_string = cspace_dict['str']
+    
     # get 1960 u,v of test source:
-    Yuv = xyz_to_Yuv(xyzw) # remove possible 1-dim + convert xyzw to CIE 1976 u',v'
+    Yuv = cspace_dict['fwtf'](xyzw) # remove possible 1-dim 
     axis_of_v3 = len(Yuv.shape)-1 # axis containing color components
     u = Yuv[:,1,None] # get CIE 1960 u
-    v = (2.0/3.0)*Yuv[:,2,None] # get CIE 1960 v
+    v = Yuv[:,2,None] # get CIE 1960 v
 
     uv = np2d(np.concatenate((u,v),axis = axis_of_v3))
     
@@ -899,11 +1085,16 @@ def xyz_to_cct_ohno(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, rtol = 1e-5,
         cctuv_lut = _CCT_LUT
     else:
         if not isinstance(cctuv_lut,dict):
-            cctuv_lut = {cieobs:cctuv_lut}
-    if cieobs not in cctuv_lut:
-        cctuv_lut[cieobs] = calculate_lut(ccts = None, cieobs = cieobs, add_to_lut = False, wl = wl)
-    cct_LUT = cctuv_lut[cieobs][:,0,None] 
-    uv_LUT = cctuv_lut[cieobs][:,1:3] 
+            cctuv_lut = {cspace_string: {cieobs:cctuv_lut}}
+    if cspace_string not in cctuv_lut.keys():
+        cctuv_lut[cspace_string][cieobs] = calculate_lut(ccts = None, cieobs = cieobs, add_to_lut = False, wl = wl,
+                                                         cspace = cspace_dict, cspace_kwargs = None)
+    if cieobs not in cctuv_lut[cspace_string]:
+        cctuv_lut[cspace_string][cieobs] = calculate_lut(ccts = None, cieobs = cieobs, add_to_lut = False, wl = wl,
+                                                         cspace = cspace_dict, cspace_kwargs = None)
+    
+    cct_LUT = cctuv_lut[cspace_string][cieobs][:,0,None] 
+    uv_LUT = cctuv_lut[cspace_string][cieobs][:,1:3] 
     
     # calculate CCT of each uv:
     CCT = np.zeros(uv.shape[0]);CCT.fill(np.nan) # initialize with NaN's
@@ -932,7 +1123,7 @@ def xyz_to_cct_ohno(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, rtol = 1e-5,
             cct_i, Duv_i = xyz_to_cct_search(xyzw[i:i+1,:], cieobs = cieobs, wl = wl, rtol = rtol, atol = atol,
                                              out = 'cct,duv',upper_cct_max = upper_cct_max, 
                                              approx_cct_temp = approx_cct_temp, cct_search_list = cct_search_list,
-                                             fast = fast_search)
+                                             fast = fast_search, cspace = cspace_dict, cspace_kwargs = None)
             CCT[i] = cct_i
             Duv[i] = Duv_i
             continue
@@ -1000,7 +1191,7 @@ def xyz_to_cct_ohno(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, rtol = 1e-5,
 def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut', out = None, 
                rtol = 1e-5, atol = 0.1, force_out_of_lut = True, upper_cct_max = _CCT_MAX, 
                approx_cct_temp = True, fast_search = True, cct_search_list = None,
-               cctuv_lut = None):
+               cctuv_lut = None, cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS):
     """
     Convert correlated color temperature (CCT) and Duv (distance above (>0) or 
     below (<0) the Planckian locus) to XYZ tristimulus values.
@@ -1069,6 +1260,19 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut', out 
             | None, optional
             | CCT+uv look-up-table to use.
             | If None: use luxpy._CCT_LUT
+        :cspace:
+            | _CCT_SPACE, optional
+            | Color space to do calculations in. 
+            | Options: 
+            |    - cspace string: 
+            |        e.g. 'Yuv60' for use with luxpy.colortf()
+            |    - tuple with forward (i.e. xyz_to..) and backward (i.e. ..to_xyz) functions 
+            |      (and an optional string describing the cspace): 
+            |        e.g. (forward, backward) or (forward, backward, cspace string) or (forward, cspace string) 
+            |    - dict with keys: 'fwtf' (foward), 'bwtf' (backward, only needed for cct_to_xyz) [, optional: 'str' (cspace string)]
+        :cspace_kwargs:
+            | _CCT_CSPACE_KWARGS, optional
+            | Parameter nested dictionary for the forward and backward transforms.
         
     Returns:
         :returns: 
@@ -1096,6 +1300,27 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut', out 
     elif duv is not None:
         duv = np2d(duv)
 
+    cspace_dict = _process_cspace_input(cspace, cspace_kwargs)
+    # cspace_string = cspace['str']
+    if cspace_dict['bwtf'] is None:
+        raise Exception('cct_to_xyz(): backward cspace tranform must be defined !!!')
+
+
+    # pre-load or pre-create LUT:
+    if cctuv_lut is None:   
+        cctuv_lut = _CCT_LUT
+    else:
+        if not isinstance(cctuv_lut,dict):
+            cctuv_lut = {cspace_string: {cieobs:cctuv_lut}}
+    if cspace_string not in cctuv_lut.keys():
+        cctuv_lut[cspace_string][cieobs] = calculate_lut(ccts = None, cieobs = cieobs, add_to_lut = False, wl = wl,
+                                                         cspace = cspace_dict, cspace_kwargs = None)
+    if cieobs not in cctuv_lut[cspace_string]:
+        cctuv_lut[cspace_string][cieobs] = calculate_lut(ccts = None, cieobs = cieobs, add_to_lut = False, wl = wl,
+                                                         cspace = cspace_dict, cspace_kwargs = None)
+
+
+
     #get estimates of approximate xyz values in case duv = None:
     BB = cri_ref(ccts = cct, wl3 = wl, ref_type = ['BB'])
     xyz_est = spd_to_xyz(data = BB, cieobs = cieobs, out = 1)
@@ -1114,7 +1339,9 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut', out 
                                           approx_cct_temp = approx_cct_temp,
                                           cct_search_list = cct_search_list,
                                           fast_search = fast_search,
-                                          cctuv_lut = cctuv_lut)
+                                          cctuv_lut = cctuv_lut,
+                                          cspace = cspace_dict, 
+                                          cspace_kwargs = None)
             
             F = np.sqrt(((100.0*(cct_min[0] - cct[0])/(cct[0]))**2.0) + (((duv_min[0] - duv[0])/(duv[0]))**2.0))
             if out == 'F':
@@ -1134,11 +1361,13 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut', out 
                                            approx_cct_temp = approx_cct_temp,
                                            cct_search_list = cct_search_list,
                                            fast_search = fast_search,
-                                           cctuv_lut = cctuv_lut)
+                                           cctuv_lut = cctuv_lut,
+                                           cspace = cspace_dict,
+                                           cspace_kwargs = None)
             
             if np.abs(duv[i]) > _EPS:
                 # find xyz:
-                Yuv0 = xyz_to_Yuv(xyz0)
+                Yuv0 = cspace_dict['fwtf'](xyz0)
                 uv0 = Yuv0[0] [1:3]
 
                 OptimizeResult = sp.optimize.minimize(fun = objfcn,x0 = np.zeros((1,2)), args = (uv0,cct_i, duv_i, 'F'), method = 'Nelder-Mead',options={"maxiter":np.inf, "maxfev":np.inf, 'xatol': 0.000001, 'fatol': 0.000001})
@@ -1149,7 +1378,7 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut', out 
                 
                 uv0 = np2d(uv0 + betas)
                 Yuv0 = np.concatenate((np2d([100.0]),uv0),axis=1)
-                xyz_est[i] = Yuv_to_xyz(Yuv0)
+                xyz_est[i] = cspace_dict['bwtf'](Yuv0)
             
             else:
                 xyz_est[i] = xyz0
@@ -1166,7 +1395,7 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut', out 
 def xyz_to_cct(xyzw, cieobs = _CIEOBS, out = 'cct',mode = 'lut', wl = None, rtol = 1e-5, atol = 0.1, 
                force_out_of_lut = True, upper_cct_max = _CCT_MAX, 
                approx_cct_temp = True, fast_search = True, cct_search_list = None,
-               cctuv_lut = None): 
+               cctuv_lut = None, cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS): 
     """
     Convert XYZ tristimulus values to correlated color temperature (CCT) and
     Duv (distance above (>0) or below (<0) the Planckian locus)
@@ -1225,7 +1454,20 @@ def xyz_to_cct(xyzw, cieobs = _CIEOBS, out = 'cct',mode = 'lut', wl = None, rtol
             | None, optional
             | CCT+uv look-up-table to use.
             | If None: use luxpy._CCT_LUT
-        
+        :cspace:
+            | _CCT_SPACE, optional
+            | Color space to do calculations in. 
+            | Options: 
+            |    - cspace string: 
+            |        e.g. 'Yuv60' for use with luxpy.colortf()
+            |    - tuple with forward (i.e. xyz_to..) and backward (i.e. ..to_xyz) functions 
+            |      (and an optional string describing the cspace): 
+            |        e.g. (forward, backward) or (forward, backward, cspace string) or (forward, cspace string) 
+            |    - dict with keys: 'fwtf' (foward), 'bwtf' (backward, only needed for cct_to_xyz) [, optional: 'str' (cspace string)]
+        :cspace_kwargs:
+            | _CCT_CSPACE_KWARGS, optional
+            | Parameter nested dictionary for the forward and backward transforms.
+            
     Returns:
         :returns: 
             | ndarray with:
@@ -1237,15 +1479,17 @@ def xyz_to_cct(xyzw, cieobs = _CIEOBS, out = 'cct',mode = 'lut', wl = None, rtol
     """
     if (mode == 'lut') | (mode == 'ohno'):
         return xyz_to_cct_ohno(xyzw = xyzw, cieobs = cieobs, out = out, rtol = rtol, atol = atol, force_out_of_lut = force_out_of_lut, wl = wl,
-                               upper_cct_max = upper_cct_max, approx_cct_temp = approx_cct_temp, cct_search_list = cct_search_list, fast_search = fast_search, cctuv_lut = cctuv_lut)
+                               upper_cct_max = upper_cct_max, approx_cct_temp = approx_cct_temp, cct_search_list = cct_search_list, fast_search = fast_search, 
+                               cctuv_lut = cctuv_lut, cspace = cspace, cspace_kwargs = cspace_kwargs)
     elif (mode == 'search'):
-        return xyz_to_cct_search(xyzw = xyzw, cieobs = cieobs, out = out, wl = wl, rtol = rtol, atol = atol, upper_cct_max = upper_cct_max, approx_cct_temp = approx_cct_temp, cct_search_list = cct_search_list, fast = fast_search)
+        return xyz_to_cct_search(xyzw = xyzw, cieobs = cieobs, out = out, wl = wl, rtol = rtol, atol = atol, upper_cct_max = upper_cct_max, approx_cct_temp = approx_cct_temp, cct_search_list = cct_search_list, fast = fast_search,
+                                 cspace = cspace, cspace_kwargs = cspace_kwargs)
 
 
 def xyz_to_duv(xyzw, cieobs = _CIEOBS, out = 'duv', mode = 'lut', wl = None,
                rtol = 1e-5, atol = 0.1, force_out_of_lut = True, upper_cct_max = _CCT_MAX, 
                approx_cct_temp = True, fast_search = True, cct_search_list = None,
-               cctuv_lut = None): 
+               cctuv_lut = None, cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS): 
     """
     Convert XYZ tristimulus values to Duv (distance above (>0) or below (<0) 
     the Planckian locus) and correlated color temperature (CCT) values
@@ -1304,7 +1548,20 @@ def xyz_to_duv(xyzw, cieobs = _CIEOBS, out = 'duv', mode = 'lut', wl = None,
             | None, optional
             | CCT+uv look-up-table to use.
             | If None: use luxpy._CCT_LUT
-        
+        :cspace:
+            | _CCT_SPACE, optional
+            | Color space to do calculations in. 
+            | Options: 
+            |    - cspace string: 
+            |        e.g. 'Yuv60' for use with luxpy.colortf()
+            |    - tuple with forward (i.e. xyz_to..) and backward (i.e. ..to_xyz) functions 
+            |      (and an optional string describing the cspace): 
+            |        e.g. (forward, backward) or (forward, backward, cspace string) or (forward, cspace string) 
+            |    - dict with keys: 'fwtf' (foward), 'bwtf' (backward, only needed for cct_to_xyz) [, optional: 'str' (cspace string)]
+        :cspace_kwargs:
+            | _CCT_CSPACE_KWARGS, optional
+            | Parameter nested dictionary for the forward and backward transforms.
+            
     Returns:
         :returns:
             | ndarray with:
@@ -1316,9 +1573,11 @@ def xyz_to_duv(xyzw, cieobs = _CIEOBS, out = 'duv', mode = 'lut', wl = None,
     """
     if (mode == 'lut') | (mode == 'ohno'):
         return xyz_to_cct_ohno(xyzw = xyzw, cieobs = cieobs, out = out, rtol = rtol, atol = atol, force_out_of_lut = force_out_of_lut, wl = wl,
-                               upper_cct_max = upper_cct_max, approx_cct_temp = approx_cct_temp, cct_search_list = cct_search_list, fast_search = fast_search, cctuv_lut = cctuv_lut)
+                               upper_cct_max = upper_cct_max, approx_cct_temp = approx_cct_temp, cct_search_list = cct_search_list, fast_search = fast_search, 
+                               cctuv_lut = cctuv_lut, cspace = cspace, cspace_kwargs = cspace_kwargs)
     elif (mode == 'search'):
-        return xyz_to_cct_search(xyzw = xyzw, cieobs = cieobs, out = out, wl = wl, rtol = rtol, atol = atol, upper_cct_max = upper_cct_max, approx_cct_temp = approx_cct_temp, cct_search_list = cct_search_list, fast = fast_search)
+        return xyz_to_cct_search(xyzw = xyzw, cieobs = cieobs, out = out, wl = wl, rtol = rtol, atol = atol, upper_cct_max = upper_cct_max, approx_cct_temp = approx_cct_temp, cct_search_list = cct_search_list, fast = fast_search,
+                                 cspace = cspace, cspace_kwargs = cspace_kwargs)
    
    
 #-------------------------------------------------------------------------------------------------   

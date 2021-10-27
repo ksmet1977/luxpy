@@ -92,7 +92,7 @@ __all__ = ['__version__','__VERSION__','__AUTHOR__','__EMAIL__', '__URL__','__DA
 # core: should be in core
 # other: commonly used packages
 # special: more special packages that are imported (or tried to be) on use of module
-__REQUIRED__={'core':['os','warnings','pathlib','importlib',
+__REQUIRED__={'core':['os','warnings','pathlib','importlib','sys',
                       'collections.OrderedDict.odict','mpl_toolkits.mplot3d.Axes3D',
                       'colorsys','itertools','copy','time','tkinter','ctypes',
                       'platform','subprocess',
@@ -226,6 +226,8 @@ _CSPACE_AXES = {**_CSPACE_AXES, **_CAM_AXES}; """ Dictionary with color space ax
 
 #   Extend color transform module:
 #__all__ = [x for x in dir() if x[:2]!='__'] # to give color.ctf.colortf access to globals()
+import sys,importlib
+importlib.reload(sys.modules['luxpy.color.ctf.colortf']) # force reload so that colortf has access to all colortransforms defined up to that point
 from luxpy.color.ctf.colortf import *
 __all__ += color.ctf.colortf.__all__
 
@@ -256,8 +258,8 @@ __all__ += ['SPD']
 # From /toolboxes:
 #----------------------------------------
 list_of_toolboxes = ['photbiochem','indvcmf','spdbuild','hypspcim','iolidfiles',
-                     'spectro','rgb2spec','dispcal','sherbrooke_spectral_indices',
-                     'spectral_mismatch_and_uncertainty']
+                      'spectro','rgb2spec','dispcal','sherbrooke_spectral_indices',
+                      'spectral_mismatch_and_uncertainty']
 try:
     #   load ciephotbio sub_package:
     from luxpy.toolboxes import photbiochem 
