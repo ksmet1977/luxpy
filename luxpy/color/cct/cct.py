@@ -209,6 +209,7 @@ def calculate_lut(ccts = None, cieobs = None, add_to_lut = True, wl = _WL3,
     Yuv.fill(np.nan)
     
     cspace_dict = _process_cspace_input(cspace, cspace_kwargs)
+    cspace_str = cspace_dict['str']
     
     for i,cct in enumerate(ccts):
         Yuv[i,:] = cspace_dict['fwtf'](spd_to_xyz(blackbody(cct, wl3 = wl), cieobs = cieobs))[:,1:3]
@@ -269,7 +270,8 @@ def calculate_luts(ccts = None, wl = _WL3,
     luts = {}
     
     cspace_dict = _process_cspace_input(cspace, cspace_kwargs)
-    cspace_str = '_' + cspace_dict['str'] if add_cspace_str else '' 
+    cspace_string = cspace_dict['str']
+    cspace_str = '_' + cspace_string if add_cspace_str else '' 
 
     # if add_cspace_str:
     #     cspace_str = '_' + cspace if isinstance(cspace,str) else ''
@@ -1087,8 +1089,8 @@ def xyz_to_cct_ohno(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, rtol = 1e-5,
         if not isinstance(cctuv_lut,dict):
             cctuv_lut = {cspace_string: {cieobs:cctuv_lut}}
     if cspace_string not in cctuv_lut.keys():
-        cctuv_lut[cspace_string][cieobs] = calculate_lut(ccts = None, cieobs = cieobs, add_to_lut = False, wl = wl,
-                                                         cspace = cspace_dict, cspace_kwargs = None)
+        cctuv_lut[cspace_string] = {cieobs : calculate_lut(ccts = None, cieobs = cieobs, add_to_lut = False, wl = wl,
+                                                         cspace = cspace_dict, cspace_kwargs = None)}
     if cieobs not in cctuv_lut[cspace_string]:
         cctuv_lut[cspace_string][cieobs] = calculate_lut(ccts = None, cieobs = cieobs, add_to_lut = False, wl = wl,
                                                          cspace = cspace_dict, cspace_kwargs = None)
@@ -1313,8 +1315,8 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut', out 
         if not isinstance(cctuv_lut,dict):
             cctuv_lut = {cspace_string: {cieobs:cctuv_lut}}
     if cspace_string not in cctuv_lut.keys():
-        cctuv_lut[cspace_string][cieobs] = calculate_lut(ccts = None, cieobs = cieobs, add_to_lut = False, wl = wl,
-                                                         cspace = cspace_dict, cspace_kwargs = None)
+        cctuv_lut[cspace_string] = {cieobs : calculate_lut(ccts = None, cieobs = cieobs, add_to_lut = False, wl = wl,
+                                                         cspace = cspace_dict, cspace_kwargs = None)}
     if cieobs not in cctuv_lut[cspace_string]:
         cctuv_lut[cspace_string][cieobs] = calculate_lut(ccts = None, cieobs = cieobs, add_to_lut = False, wl = wl,
                                                          cspace = cspace_dict, cspace_kwargs = None)
