@@ -1309,21 +1309,23 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut', out 
 
 
     # pre-load or pre-create LUT:
-    if cctuv_lut is None:   
-        cctuv_lut = _CCT_LUT
+    if (mode == 'lut') | (mode == 'ohno'):
+        if cctuv_lut is None:   
+            cctuv_lut = _CCT_LUT
+        else:
+            if not isinstance(cctuv_lut,dict):
+                cctuv_lut = {cspace_string: {cieobs:cctuv_lut}}
+        if cspace_string not in cctuv_lut.keys():
+            cctuv_lut[cspace_string] = {cieobs : calculate_lut(ccts = None, cieobs = cieobs, add_to_lut = False, wl = wl,
+                                                             cspace = cspace_dict, cspace_kwargs = None)}
+        if cieobs not in cctuv_lut[cspace_string]:
+            cctuv_lut[cspace_string][cieobs] = calculate_lut(ccts = None, cieobs = cieobs, add_to_lut = False, wl = wl,
+                                                             cspace = cspace_dict, cspace_kwargs = None)
     else:
-        if not isinstance(cctuv_lut,dict):
-            cctuv_lut = {cspace_string: {cieobs:cctuv_lut}}
-    if cspace_string not in cctuv_lut.keys():
-        cctuv_lut[cspace_string] = {cieobs : calculate_lut(ccts = None, cieobs = cieobs, add_to_lut = False, wl = wl,
-                                                         cspace = cspace_dict, cspace_kwargs = None)}
-    if cieobs not in cctuv_lut[cspace_string]:
-        cctuv_lut[cspace_string][cieobs] = calculate_lut(ccts = None, cieobs = cieobs, add_to_lut = False, wl = wl,
-                                                         cspace = cspace_dict, cspace_kwargs = None)
+        cctuv_lut = None
 
 
-
-    #get estimates of approximate xyz values in case duv = None:
+    # get estimates of approximate xyz values in case duv = None:
     BB = cri_ref(ccts = cct, wl3 = wl, ref_type = ['BB'])
     xyz_est = spd_to_xyz(data = BB, cieobs = cieobs, out = 1)
     results = np.zeros([ccts.shape[0],3]);results.fill(np.nan) 
@@ -1334,7 +1336,7 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut', out 
         def objfcn(uv_offset, uv0, cct, duv, out = 1):#, cieobs = cieobs, wl = wl, mode = mode):
             uv0 = np2d(uv0 + uv_offset)
             Yuv0 = np.concatenate((np2d([100.0]), uv0),axis=1)
-            cct_min, duv_min = xyz_to_cct(Yuv_to_xyz(Yuv0),cieobs = cieobs, out = 'cct,duv',
+            cct_min, duv_min = xyz_to_cct(cspace_dict['bwtf'](Yuv0),cieobs = cieobs, out = 'cct,duv',
                                           wl = wl, mode = mode, rtol = rtol, atol = atol, 
                                           force_out_of_lut = force_out_of_lut, 
                                           upper_cct_max = upper_cct_max, 
