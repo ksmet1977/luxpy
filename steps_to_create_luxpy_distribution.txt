@@ -5,7 +5,7 @@ make latexpdf
 
 # Make source distribution and wheel:
 python setup.py sdist bdist_wheel
-twine upload dist/luxpy-1.7.*
+twine upload dist/luxpy-1.8.*
 
 
 # Build conda version:
