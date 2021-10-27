@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>luxpy.color.CDATA &mdash; LuxPy 1.7.0 documentation</title>
+  <title>luxpy.color.CDATA &mdash; LuxPy 1.8.0 documentation</title>
   
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                1.7.0
+                1.8.0
               </div>
             
           
@@ -297,8 +297,8 @@
 
 <span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="n">_CMF</span><span class="p">,</span> <span class="n">_COLORTF_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">_CSPACE</span><span class="p">,</span> <span class="n">_CSPACE_AXES</span>
 <span class="kn">from</span> <span class="nn">luxpy.color.cam.colorappearancemodels</span> <span class="kn">import</span> <span class="n">_CAM_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">_CAM_DEFAULT_CONDITIONS</span> 
-<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="p">(</span><span class="n">xyz_to_Yxy</span><span class="p">,</span> <span class="n">xyz_to_Yuv</span><span class="p">,</span> <span class="n">xyz_to_wuv</span><span class="p">,</span> <span class="n">xyz_to_lab</span><span class="p">,</span> <span class="n">xyz_to_luv</span><span class="p">,</span> <span class="n">xyz_to_Vrb_mb</span><span class="p">,</span> <span class="n">xyz_to_ipt</span><span class="p">,</span> <span class="n">xyz_to_Ydlep</span><span class="p">,</span> <span class="n">xyz_to_xyz</span><span class="p">,</span> <span class="n">xyz_to_lms</span><span class="p">,</span> 
-                   <span class="n">Yxy_to_xyz</span><span class="p">,</span> <span class="n">Yuv_to_xyz</span><span class="p">,</span> <span class="n">lab_to_xyz</span><span class="p">,</span> <span class="n">luv_to_xyz</span><span class="p">,</span> <span class="n">Vrb_mb_to_xyz</span><span class="p">,</span> <span class="n">ipt_to_xyz</span><span class="p">,</span> <span class="n">Ydlep_to_xyz</span><span class="p">,</span> <span class="n">lms_to_xyz</span><span class="p">,</span> 
+<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="p">(</span><span class="n">xyz_to_Yxy</span><span class="p">,</span> <span class="n">xyz_to_Yuv</span><span class="p">,</span> <span class="n">xyz_to_Yuv76</span><span class="p">,</span> <span class="n">xyz_to_Yuv60</span><span class="p">,</span> <span class="n">xyz_to_wuv</span><span class="p">,</span> <span class="n">xyz_to_lab</span><span class="p">,</span> <span class="n">xyz_to_luv</span><span class="p">,</span> <span class="n">xyz_to_Vrb_mb</span><span class="p">,</span> <span class="n">xyz_to_ipt</span><span class="p">,</span> <span class="n">xyz_to_Ydlep</span><span class="p">,</span> <span class="n">xyz_to_xyz</span><span class="p">,</span> <span class="n">xyz_to_lms</span><span class="p">,</span> 
+                   <span class="n">Yxy_to_xyz</span><span class="p">,</span> <span class="n">Yuv_to_xyz</span><span class="p">,</span> <span class="n">Yuv76_to_xyz</span><span class="p">,</span> <span class="n">Yuv60_to_xyz</span><span class="p">,</span> <span class="n">lab_to_xyz</span><span class="p">,</span> <span class="n">luv_to_xyz</span><span class="p">,</span> <span class="n">Vrb_mb_to_xyz</span><span class="p">,</span> <span class="n">ipt_to_xyz</span><span class="p">,</span> <span class="n">Ydlep_to_xyz</span><span class="p">,</span> <span class="n">lms_to_xyz</span><span class="p">,</span> 
                    <span class="n">xyz_to_jabM_ciecam02</span><span class="p">,</span> <span class="n">jabM_ciecam02_to_xyz</span><span class="p">,</span> <span class="n">xyz_to_jabC_ciecam02</span><span class="p">,</span> <span class="n">jabC_ciecam02_to_xyz</span><span class="p">,</span> 
                    <span class="n">xyz_to_jabM_ciecam16</span><span class="p">,</span> <span class="n">jabM_ciecam16_to_xyz</span><span class="p">,</span> <span class="n">xyz_to_jabC_ciecam16</span><span class="p">,</span> <span class="n">jabC_ciecam16_to_xyz</span><span class="p">,</span> 
                    <span class="n">xyz_to_jabz</span><span class="p">,</span> <span class="n">jabz_to_xyz</span><span class="p">,</span> <span class="n">xyz_to_jabM_zcam</span><span class="p">,</span> <span class="n">jabM_zcam_to_xyz</span><span class="p">,</span> <span class="n">xyz_to_jabC_zcam</span><span class="p">,</span> <span class="n">jabC_zcam_to_xyz</span><span class="p">,</span> 
@@ -589,6 +589,36 @@
 <span class="sd">           &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">LAB</span><span class="p">(</span><span class="n">value</span> <span class="o">=</span> <span class="n">xyz_to_Yuv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">),</span> <span class="n">relative</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">relative</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cieobs</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="s1">&#39;Yuv&#39;</span><span class="p">)</span></div>
     
+    
+    
+<div class="viewcode-block" id="XYZ.to_Yuv76"><a class="viewcode-back" href="../../../color.html#luxpy.color.CDATA.XYZ.to_Yuv76">[docs]</a>    <span class="k">def</span> <span class="nf">to_Yuv76</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">        Convert XYZ tristimulus values CIE 1976 Yu&#39;v&#39; chromaticity values.</span>
+
+<span class="sd">            </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            :Yuv: </span>
+<span class="sd">                | luxpy.LAB with .value field that is a ndarray </span>
+<span class="sd">                | with CIE 1976 Yu&#39;v&#39; chromaticity values.</span>
+<span class="sd">                | (Y value refers to luminance or luminance factor)</span>
+<span class="sd">           &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">LAB</span><span class="p">(</span><span class="n">value</span> <span class="o">=</span> <span class="n">xyz_to_Yuv76</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">),</span> <span class="n">relative</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">relative</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cieobs</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="s1">&#39;Yuv76&#39;</span><span class="p">)</span></div>
+    
+    
+    
+<div class="viewcode-block" id="XYZ.to_Yuv60"><a class="viewcode-back" href="../../../color.html#luxpy.color.CDATA.XYZ.to_Yuv60">[docs]</a>    <span class="k">def</span> <span class="nf">to_Yuv60</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">        Convert XYZ tristimulus values CIE 1960 Yuv chromaticity values.</span>
+
+<span class="sd">            </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            :Yuv: </span>
+<span class="sd">                | luxpy.LAB with .value field that is a ndarray </span>
+<span class="sd">                | with CIE 1960 Yuv chromaticity values.</span>
+<span class="sd">                | (Y value refers to luminance or luminance factor)</span>
+<span class="sd">           &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">LAB</span><span class="p">(</span><span class="n">value</span> <span class="o">=</span> <span class="n">xyz_to_Yuv60</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">),</span> <span class="n">relative</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">relative</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cieobs</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="s1">&#39;Yuv60&#39;</span><span class="p">)</span></div>
+
     
     
 <div class="viewcode-block" id="XYZ.to_wuv"><a class="viewcode-back" href="../../../color.html#luxpy.color.CDATA.XYZ.to_wuv">[docs]</a>    <span class="k">def</span> <span class="nf">to_wuv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_COLORTF_DEFAULT_WHITE_POINT</span><span class="p">):</span>

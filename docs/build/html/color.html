@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Color sub-package &mdash; LuxPy 1.7.3 documentation</title>
+  <title>Color sub-package &mdash; LuxPy 1.8.0 documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                1.7.3
+                1.8.0
               </div>
             
           
@@ -1460,6 +1460,8 @@ of defined cspaces</p>
 <dt>Supported chromaticity / colorspace functions:</dt><dd><div class="line-block">
 <div class="line">* xyz_to_Yxy(), Yxy_to_xyz(): (X,Y,Z) &lt;-&gt; (Y,x,y);</div>
 <div class="line">* xyz_to_Yuv(), Yuv_to_Yxy(): (X,Y,Z) &lt;-&gt; CIE 1976 (Y,u’,v’);</div>
+<div class="line">* xyz_to_Yuv76(), Yuv76_to_Yxy(): (X,Y,Z) &lt;-&gt; CIE 1976 (Y,u’,v’);</div>
+<div class="line">* xyz_to_Yuv60(), Yuv60_to_Yxy(): (X,Y,Z) &lt;-&gt; CIE 1960 (Y,u,v);</div>
 <div class="line">* xyz_to_xyz(), lms_to_xyz(): (X,Y,Z) &lt;-&gt; (X,Y,Z); for use with colortf()</div>
 <div class="line">* xyz_to_lms(), lms_to_xyz(): (X,Y,Z) &lt;-&gt; (L,M,S) cone fundamental responses</div>
 <div class="line">* xyz_to_lab(), lab_to_xyz(): (X,Y,Z) &lt;-&gt; CIE 1976 (L*a*b*)</div>
@@ -1543,7 +1545,7 @@ J. Opt. Soc. Am. 69, 1183–1186.</a></p>
 <dl class="py function">
 <dt class="sig sig-object py" id="luxpy.color.ctf.colortransforms.xyz_to_Yuv">
 <span class="sig-prename descclassname"><span class="pre">luxpy.color.ctf.colortransforms.</span></span><span class="sig-name descname"><span class="pre">xyz_to_Yuv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyz</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/ctf/colortransforms.html#xyz_to_Yuv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.ctf.colortransforms.xyz_to_Yuv" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convert XYZ tristimulus values CIE 1976 Yu’v’ chromaticity values.</p>
+<dd><p>Convert XYZ tristimulus values CIE 1976 Y,u’,v’ chromaticity values.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
 <dt class="field-odd">xyz</dt>
@@ -1556,7 +1558,7 @@ J. Opt. Soc. Am. 69, 1183–1186.</a></p>
 <dt>Returns:</dt><dd><dl class="field-list">
 <dt class="field-odd">Yuv</dt>
 <dd class="field-odd"><div class="line-block">
-<div class="line">ndarray with CIE 1976 Yu’v’ chromaticity values</div>
+<div class="line">ndarray with CIE 1976 Y,u’,v’ chromaticity values</div>
 <div class="line-block">
 <div class="line">(Y value refers to luminance or luminance factor)</div>
 </div>
@@ -1570,7 +1572,115 @@ J. Opt. Soc. Am. 69, 1183–1186.</a></p>
 <dl class="py function">
 <dt class="sig sig-object py" id="luxpy.color.ctf.colortransforms.Yuv_to_xyz">
 <span class="sig-prename descclassname"><span class="pre">luxpy.color.ctf.colortransforms.</span></span><span class="sig-name descname"><span class="pre">Yuv_to_xyz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Yuv</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/ctf/colortransforms.html#Yuv_to_xyz"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.ctf.colortransforms.Yuv_to_xyz" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convert CIE 1976 Yu’v’ chromaticity values to XYZ tristimulus values.</p>
+<dd><p>Convert CIE 1976 Y,u’,v’ chromaticity values to XYZ tristimulus values.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">Yuv</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with CIE 1976 Y,u’,v’ chromaticity values</div>
+<div class="line-block">
+<div class="line">(Y value refers to luminance or luminance factor)</div>
+</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">xyz</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with tristimulus values</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="luxpy.color.ctf.colortransforms.xyz_to_Yuv76">
+<span class="sig-prename descclassname"><span class="pre">luxpy.color.ctf.colortransforms.</span></span><span class="sig-name descname"><span class="pre">xyz_to_Yuv76</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyz</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#luxpy.color.ctf.colortransforms.xyz_to_Yuv76" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert XYZ tristimulus values CIE 1976 Y,u’,v’ chromaticity values.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">xyz</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with tristimulus values</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">Yuv</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with CIE 1976 Y,u’,v’ chromaticity values</div>
+<div class="line-block">
+<div class="line">(Y value refers to luminance or luminance factor)</div>
+</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="luxpy.color.ctf.colortransforms.Yuv76_to_xyz">
+<span class="sig-prename descclassname"><span class="pre">luxpy.color.ctf.colortransforms.</span></span><span class="sig-name descname"><span class="pre">Yuv76_to_xyz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Yuv</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#luxpy.color.ctf.colortransforms.Yuv76_to_xyz" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert CIE 1976 Y,u’,v’ chromaticity values to XYZ tristimulus values.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">Yuv</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with CIE 1976 Y,u’,v’ chromaticity values</div>
+<div class="line-block">
+<div class="line">(Y value refers to luminance or luminance factor)</div>
+</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">xyz</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with tristimulus values</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="luxpy.color.ctf.colortransforms.xyz_to_Yuv60">
+<span class="sig-prename descclassname"><span class="pre">luxpy.color.ctf.colortransforms.</span></span><span class="sig-name descname"><span class="pre">xyz_to_Yuv60</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyz</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/ctf/colortransforms.html#xyz_to_Yuv60"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.ctf.colortransforms.xyz_to_Yuv60" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert XYZ tristimulus values CIE 1960 Y,u,v chromaticity values.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">xyz</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with tristimulus values</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">Yuv</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with CIE 1960 Y,u,v chromaticity values</div>
+<div class="line-block">
+<div class="line">(Y value refers to luminance or luminance factor)</div>
+</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="luxpy.color.ctf.colortransforms.Yuv60_to_xyz">
+<span class="sig-prename descclassname"><span class="pre">luxpy.color.ctf.colortransforms.</span></span><span class="sig-name descname"><span class="pre">Yuv60_to_xyz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Yuv60</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/ctf/colortransforms.html#Yuv60_to_xyz"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.ctf.colortransforms.Yuv60_to_xyz" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert CIE 1976 Y,u,v chromaticity values to XYZ tristimulus values.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
 <dt class="field-odd">Yuv</dt>
@@ -2461,42 +2571,57 @@ to use the dict :fwtf: (should be empty!)
 <h3>cct: Module with functions related to correlated color temperature calculations<a class="headerlink" href="#cct-module-with-functions-related-to-correlated-color-temperature-calculations" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><dl class="field-list">
-<dt class="field-odd">_CCT_LUT_PATH</dt>
-<dd class="field-odd"><p>Folder with Look-Up-Tables (LUT) for correlated color 
+<dt class="field-odd">_CCT_MAX</dt>
+<dd class="field-odd"><p>(= 1e12), max. value that does not cause overflow problems.</p>
+</dd>
+<dt class="field-even">_CCT_LUT_PATH</dt>
+<dd class="field-even"><p>Folder with Look-Up-Tables (LUT) for correlated color 
 temperature calculation followings Ohno’s method.</p>
 </dd>
-<dt class="field-even">_CCT_LUT</dt>
-<dd class="field-even"><p>Dict with LUTs.</p>
+<dt class="field-odd">_CCT_LUT</dt>
+<dd class="field-odd"><p>Dict with LUTs.</p>
 </dd>
-<dt class="field-odd">_CCT_LUT_CALC</dt>
-<dd class="field-odd"><p>Boolean determining whether to force LUT calculation, even if
-the LUT can be fuond in ./data/cctluts/.</p>
+<dt class="field-even">_CCT_LUT_CALC</dt>
+<dd class="field-even"><p>Boolean determining whether to force LUT calculation, even if
+the LUT can be found in ./data/cctluts/.</p>
 </dd>
-<dt class="field-even">calculate_lut()</dt>
-<dd class="field-even"><p>Function that calculates the LUT for the ccts stored in 
+<dt class="field-odd">_CCT_CSPACE</dt>
+<dd class="field-odd"><p>default chromaticity space to calculate CCT and Duv in.</p>
+</dd>
+<dt class="field-even">_CCT_CSPACE_KWARGS</dt>
+<dd class="field-even"><p>nested dict with cspace parameters for forward and backward modes.</p>
+</dd>
+<dt class="field-odd">calculate_lut()</dt>
+<dd class="field-odd"><p>Function that calculates the LUT for the ccts stored in 
 ./data/cctluts/cct_lut_cctlist.dat or given as input 
 argument. Calculation is performed for CMF set specified in
 cieobs. Adds a new (temprorary) field to the _CCT_LUT dict.</p>
 </dd>
-<dt class="field-odd">calculate_luts()</dt>
-<dd class="field-odd"><p>Function that recalculates (and overwrites) LUTs in 
+<dt class="field-even">calculate_luts()</dt>
+<dd class="field-even"><p>Function that recalculates (and overwrites) LUTs in 
 ./data/cctluts/ for the ccts stored in 
 ./data/cctluts/cct_lut_cctlist.dat or given as input 
 argument. Calculation is performed for all CMF sets listed 
 in _CMF[‘types’].</p>
 </dd>
-<dt class="field-even">xyz_to_cct()</dt>
-<dd class="field-even"><div class="line-block">
+<dt class="field-odd">xyz_to_cct()</dt>
+<dd class="field-odd"><div class="line-block">
 <div class="line">Calculates CCT, Duv from XYZ </div>
 <div class="line">wrapper for xyz_to_cct_ohno() &amp; xyz_to_cct_search()</div>
 </div>
 </dd>
-<dt class="field-odd">xyz_to_duv()</dt>
-<dd class="field-odd"><p>Calculates Duv, (CCT) from XYZ
-wrapper for xyz_to_cct_ohno() &amp; xyz_to_cct_search()</p>
+<dt class="field-even">xyz_to_duv()</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">Calculates Duv, (CCT) from XYZ</div>
+<div class="line">wrapper for xyz_to_cct_ohno() &amp; xyz_to_cct_search()</div>
+</div>
+</dd>
+<dt class="field-odd">cct_to_xyz_fast()</dt>
+<dd class="field-odd"><p>Calculates xyz from CCT, Duv by estimating 
+the line perpendicular to the planckian locus.</p>
 </dd>
 <dt class="field-even">cct_to_xyz()</dt>
-<dd class="field-even"><p>Calculates xyz from CCT, Duv [100 K &lt; CCT &lt; 1e12]</p>
+<dd class="field-even"><p>Calculates xyz from CCT, Duv [100 K &lt; CCT &lt; _CCT_MAX]</p>
 </dd>
 <dt class="field-odd">xyz_to_cct_mcamy()</dt>
 <dd class="field-odd"><div class="line-block">
@@ -2513,7 +2638,7 @@ Color Research &amp; Application. 17 (2): 142–144.</a></div>
 <div class="line"><a class="reference external" href="https://www.osapublishing.org/ao/abstract.cfm?uri=ao-38-27-5703">Hernández-Andrés, Javier; Lee, RL; Romero, J (September 20, 1999). 
 Calculating Correlated Color Temperatures Across the 
 Entire Gamut of Daylight and Skylight Chromaticities. 
-Applied Optics. 38 (27), 5703–5709. PMID 18324081.</a></div>
+Applied Optics. 38 (27): 5703–5709. PMID 18324081.</a></div>
 </div>
 </dd>
 <dt class="field-odd">xyz_to_cct_ohno()</dt>
@@ -2526,7 +2651,7 @@ Leukos. 2014 Jan 2;10(1):47-55.</a></div>
 </dd>
 <dt class="field-even">xyz_to_cct_search()</dt>
 <dd class="field-even"><p>Calculates CCT, Duv from XYZ using brute-force search 
-algorithm (between 1e2 K - 1e12 K on a log scale)</p>
+algorithm (between 1e2 K - _CCT_MAX K)</p>
 </dd>
 <dt class="field-odd">cct_to_mired()</dt>
 <dd class="field-odd"><p>Converts from CCT to Mired scale (or back).</p>
@@ -2538,10 +2663,84 @@ algorithm (between 1e2 K - 1e12 K on a log scale)</p>
 </div></blockquote>
 <hr class="docutils" />
 <dl class="py function">
+<dt class="sig sig-object py" id="luxpy.color.cct.calculate_lut">
+<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">calculate_lut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ccts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_to_lut</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[360.0,</span> <span class="pre">830.0,</span> <span class="pre">1.0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Yuv60'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'bwtf':</span> <span class="pre">{},</span> <span class="pre">'fwtf':</span> <span class="pre">{}}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#calculate_lut"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct.calculate_lut" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function that calculates LUT for the ccts stored in 
+‘_CCT_LUT_PATH/cct_lut_cctlist.dat’ or given as input argument.
+Calculation is performed for CMF set specified in cieobs and in the
+chromaticity diagram in cspace. 
+Adds a new (temporary) field to the nested _CCT_LUT dict.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">ccts</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray or str, optional</div>
+<div class="line">list of ccts for which to (re-)calculate the LUTs.</div>
+<div class="line">If str, ccts contains path/filename.dat to list.</div>
+</div>
+</dd>
+<dt class="field-even">cieobs</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">None or str, optional</div>
+<div class="line">str specifying cmf set.</div>
+</div>
+</dd>
+<dt class="field-odd">wl</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">_WL3, optional</div>
+<div class="line">Generate luts based on Planckians with wavelengths (range). </div>
+</div>
+</dd>
+<dt class="field-even">cspace</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">_CCT_SPACE, optional</div>
+<div class="line">Color space to do calculations in. </div>
+<div class="line">Options: </div>
+<div class="line-block">
+<div class="line-block">
+<div class="line">- cspace string: </div>
+<div class="line-block">
+<div class="line">e.g. ‘Yuv60’ for use with luxpy.colortf()</div>
+</div>
+<div class="line">- tuple with forward (i.e. xyz_to..) [and backward (i.e. ..to_xyz)] functions </div>
+<div class="line-block">
+<div class="line">(and an optional string describing the cspace): </div>
+<div class="line-block">
+<div class="line">e.g. (forward, backward) or (forward, backward, cspace string) or (forward, cspace string) </div>
+</div>
+</div>
+<div class="line">- dict with keys: ‘fwtf’ (foward), ‘bwtf’ (backward) [, optional: ‘str’ (cspace string)]</div>
+</div>
+<div class="line">Note: if the backward tf is not supplied, optimization in cct_to_xyz() is done in the CIE 1976 u’v’ diagram</div>
+</div>
+</div>
+</dd>
+<dt class="field-odd">cspace_kwargs</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">_CCT_CSPACE_KWARGS, optional</div>
+<div class="line">Parameter nested dictionary for the forward and backward transforms.</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">returns</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with cct and duv.</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Note:</dt><dd><p>Function changes the global variable: _CCT_LUT!</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="luxpy.color.cct.calculate_luts">
-<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">calculate_luts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ccts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#calculate_luts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct.calculate_luts" title="Permalink to this definition">¶</a></dt>
-<dd><p>Function that recalculates (and overwrites) LUTs in ./data/cctluts/ 
-for the ccts stored in ./data/cctluts/cct_lut_cctlist.dat or given as 
+<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">calculate_luts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ccts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[360.0,</span> <span class="pre">830.0,</span> <span class="pre">1.0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'D:\\Documents\\GitHub\\luxpy\\luxpy\\data\\cctluts\\'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_luts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_cspace_str</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Yuv60'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'bwtf':</span> <span class="pre">{},</span> <span class="pre">'fwtf':</span> <span class="pre">{}}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#calculate_luts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct.calculate_luts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function that recalculates (and overwrites) LUTs in save_path
+for the ccts stored in ‘_CCT_LUT_PATH/cct_lut_cctlist.dat’ or given as 
 input argument. Calculation is performed for all CMF sets listed 
 in _CMF[‘types’].</p>
 <dl>
@@ -2553,20 +2752,76 @@ in _CMF[‘types’].</p>
 <div class="line">If str, ccts contains path/filename.dat to list.</div>
 </div>
 </dd>
+<dt class="field-even">wl</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">_WL3, optional</div>
+<div class="line">Generate luts based on Planckians with wavelengths (range). </div>
+</div>
+</dd>
+<dt class="field-odd">save_path</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">_CCT_LUT_PATH, optional</div>
+<div class="line">Path to save luts to.</div>
+</div>
+</dd>
+<dt class="field-even">save_luts</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">True, optional</div>
+<div class="line">If True: save luts to folder specified in save_luts.</div>
+</div>
+</dd>
+<dt class="field-odd">add_cspace_str</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">True, optional</div>
+<div class="line">If True: Add a string specifying the cspace to the filename of the saved luts.</div>
+<div class="line-block">
+<div class="line">(if cspace is a function, ‘cspace’ is added)</div>
+</div>
+<div class="line">Else: if add_cspace_str is itself a string, add this, else add nothing.</div>
+</div>
+</dd>
+<dt class="field-even">cspace</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">_CCT_SPACE, optional</div>
+<div class="line">Color space to do calculations in. </div>
+<div class="line">Options: </div>
+<div class="line-block">
+<div class="line-block">
+<div class="line">- cspace string: </div>
+<div class="line-block">
+<div class="line">e.g. ‘Yuv60’ for use with luxpy.colortf()</div>
+</div>
+<div class="line">- tuple with forward (i.e. xyz_to..) [and backward (i.e. ..to_xyz)] functions </div>
+<div class="line-block">
+<div class="line">(and an optional string describing the cspace): </div>
+<div class="line-block">
+<div class="line">e.g. (forward, backward) or (forward, backward, cspace string) or (forward, cspace string) </div>
+</div>
+</div>
+<div class="line">- dict with keys: ‘fwtf’ (foward), ‘bwtf’ (backward) [, optional: ‘str’ (cspace string)]</div>
+</div>
+<div class="line">Note: if the backward tf is not supplied, optimization in cct_to_xyz() is done in the CIE 1976 u’v’ diagram</div>
+</div>
+</div>
+</dd>
+<dt class="field-odd">cspace_kwargs</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">_CCT_CSPACE_KWARGS, optional</div>
+<div class="line">Parameter nested dictionary for the forward and backward transforms.</div>
+</div>
+</dd>
 </dl>
 </dd>
 <dt>Returns:</dt><dd><div class="line-block">
 <div class="line">None</div>
 </div>
 </dd>
-<dt>Note:</dt><dd><p>Function writes LUTs to ./data/cctluts/ folder!</p>
-</dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="luxpy.color.cct.xyz_to_cct">
-<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">xyz_to_cct</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyzw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cct'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lut'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_out_of_lut</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper_cct_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">approx_cct_temp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast_search</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cct_search_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#xyz_to_cct"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct.xyz_to_cct" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">xyz_to_cct</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyzw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cct'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lut'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_out_of_lut</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper_cct_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">approx_cct_temp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast_search</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cct_search_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cctuv_lut</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Yuv60'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'bwtf':</span> <span class="pre">{},</span> <span class="pre">'fwtf':</span> <span class="pre">{}}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#xyz_to_cct"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct.xyz_to_cct" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert XYZ tristimulus values to correlated color temperature (CCT) and
 Duv (distance above (&gt;0) or below (&lt;0) the Planckian locus)
 using either the brute-force search method or Ohno’s method.</p>
@@ -2650,7 +2905,7 @@ using either the brute-force search method or Ohno’s method.</p>
 <div class="line">when HA estimation fails due to out-of-range cct or when fast_search == False.</div>
 <div class="line">None defaults to: [50,100,500,1000,2000,3000,4000,5000,6000,10000,</div>
 <div class="line-block">
-<div class="line">20000,50000,1e5,1e6, 1e7, 1e8,1e9, 1e10, 1e11, _CCT_MAX]</div>
+<div class="line">20000,50000, 7.5e4, 1e5, 5e5, 1e6, 5e6, 1e7, 5e7, 1e8, 5e8, 1e9, 5e9, 1e10, 5e10, 1e11, _CCT_MAX]</div>
 </div>
 </div>
 </dd>
@@ -2659,6 +2914,43 @@ using either the brute-force search method or Ohno’s method.</p>
 <div class="line">True, optional</div>
 <div class="line">If True and cct is out of range of the LUT, then switch to </div>
 <div class="line">brute-force search method, else return numpy.nan values.</div>
+</div>
+</dd>
+<dt class="field-odd">cctuv_lut</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">CCT+uv look-up-table to use.</div>
+<div class="line">If None: use luxpy._CCT_LUT</div>
+</div>
+</dd>
+<dt class="field-even">cspace</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">_CCT_SPACE, optional</div>
+<div class="line">Color space to do calculations in. </div>
+<div class="line">Options: </div>
+<div class="line-block">
+<div class="line-block">
+<div class="line">- cspace string: </div>
+<div class="line-block">
+<div class="line">e.g. ‘Yuv60’ for use with luxpy.colortf()</div>
+</div>
+<div class="line">- tuple with forward (i.e. xyz_to..) [and backward (i.e. ..to_xyz)] functions </div>
+<div class="line-block">
+<div class="line">(and an optional string describing the cspace): </div>
+<div class="line-block">
+<div class="line">e.g. (forward, backward) or (forward, backward, cspace string) or (forward, cspace string) </div>
+</div>
+</div>
+<div class="line">- dict with keys: ‘fwtf’ (foward), ‘bwtf’ (backward) [, optional: ‘str’ (cspace string)]</div>
+</div>
+<div class="line">Note: if the backward tf is not supplied, optimization in cct_to_xyz() is done in the CIE 1976 u’v’ diagram</div>
+</div>
+</div>
+</dd>
+<dt class="field-odd">cspace_kwargs</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">_CCT_CSPACE_KWARGS, optional</div>
+<div class="line">Parameter nested dictionary for the forward and backward transforms.</div>
 </div>
 </dd>
 </dl>
@@ -2687,7 +2979,7 @@ using either the brute-force search method or Ohno’s method.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="luxpy.color.cct.xyz_to_duv">
-<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">xyz_to_duv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyzw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'duv'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lut'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_out_of_lut</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper_cct_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">approx_cct_temp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast_search</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cct_search_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#xyz_to_duv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct.xyz_to_duv" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">xyz_to_duv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyzw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'duv'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lut'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_out_of_lut</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper_cct_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">approx_cct_temp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast_search</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cct_search_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cctuv_lut</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Yuv60'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'bwtf':</span> <span class="pre">{},</span> <span class="pre">'fwtf':</span> <span class="pre">{}}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#xyz_to_duv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct.xyz_to_duv" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert XYZ tristimulus values to Duv (distance above (&gt;0) or below (&lt;0) 
 the Planckian locus) and correlated color temperature (CCT) values
 using either the brute-force search method or Ohno’s method.</p>
@@ -2771,7 +3063,7 @@ using either the brute-force search method or Ohno’s method.</p>
 <div class="line">when HA estimation fails due to out-of-range cct or when fast_search == False.</div>
 <div class="line">None defaults to: [50,100,500,1000,2000,3000,4000,5000,6000,10000,</div>
 <div class="line-block">
-<div class="line">20000,50000,1e5,1e6, 1e7, 1e8,1e9, 1e10, 1e11, _CCT_MAX]</div>
+<div class="line">20000,50000, 7.5e4, 1e5, 5e5, 1e6, 5e6, 1e7, 5e7, 1e8, 5e8, 1e9, 5e9, 1e10, 5e10, 1e11, _CCT_MAX]</div>
 </div>
 </div>
 </dd>
@@ -2780,6 +3072,43 @@ using either the brute-force search method or Ohno’s method.</p>
 <div class="line">True, optional</div>
 <div class="line">If True and cct is out of range of the LUT, then switch to </div>
 <div class="line">brute-force search method, else return numpy.nan values.</div>
+</div>
+</dd>
+<dt class="field-odd">cctuv_lut</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">CCT+uv look-up-table to use.</div>
+<div class="line">If None: use luxpy._CCT_LUT</div>
+</div>
+</dd>
+<dt class="field-even">cspace</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">_CCT_SPACE, optional</div>
+<div class="line">Color space to do calculations in. </div>
+<div class="line">Options: </div>
+<div class="line-block">
+<div class="line-block">
+<div class="line">- cspace string: </div>
+<div class="line-block">
+<div class="line">e.g. ‘Yuv60’ for use with luxpy.colortf()</div>
+</div>
+<div class="line">- tuple with forward (i.e. xyz_to..) [and backward (i.e. ..to_xyz)] functions </div>
+<div class="line-block">
+<div class="line">(and an optional string describing the cspace): </div>
+<div class="line-block">
+<div class="line">e.g. (forward, backward) or (forward, backward, cspace string) or (forward, cspace string) </div>
+</div>
+</div>
+<div class="line">- dict with keys: ‘fwtf’ (foward), ‘bwtf’ (backward) [, optional: ‘str’ (cspace string)]</div>
+</div>
+<div class="line">Note: if the backward tf is not supplied, optimization in cct_to_xyz() is done in the CIE 1976 u’v’ diagram</div>
+</div>
+</div>
+</dd>
+<dt class="field-odd">cspace_kwargs</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">_CCT_CSPACE_KWARGS, optional</div>
+<div class="line">Parameter nested dictionary for the forward and backward transforms.</div>
 </div>
 </dd>
 </dl>
@@ -2805,8 +3134,93 @@ using either the brute-force search method or Ohno’s method.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="luxpy.color.cct.cct_to_xyz_fast">
+<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">cct_to_xyz_fast</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ccts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cct_resolution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Yuv60'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'bwtf':</span> <span class="pre">{},</span> <span class="pre">'fwtf':</span> <span class="pre">{}}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#cct_to_xyz_fast"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct.cct_to_xyz_fast" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert correlated color temperature (CCT) and Duv (distance above (&gt;0) or 
+below (&lt;0) the Planckian locus) to XYZ tristimulus values.</p>
+<div class="line-block">
+<div class="line">Finds xyzw_estimated by estimating the line perpendicular to the Planckian lcous: </div>
+<div class="line-block">
+<div class="line">First, the angle between the coordinates corresponding to ccts </div>
+<div class="line">and ccts-cct_resolution are calculated, then 90° is added, and finally</div>
+<div class="line">the new coordinates are determined, while taking sign of duv into account.   </div>
+</div>
+</div>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">ccts</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray of cct values</div>
+</div>
+</dd>
+<dt class="field-even">duv</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">None or ndarray of duv values, optional</div>
+<div class="line">Note that duv can be supplied together with cct values in :ccts: </div>
+<div class="line">as ndarray with shape (N,2)</div>
+</div>
+</dd>
+<dt class="field-odd">cieobs</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">luxpy._CIEOBS, optional</div>
+<div class="line">CMF set used to calculated xyzw.</div>
+</div>
+</dd>
+<dt class="field-even">wl</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">Wavelengths used when calculating Planckian radiators.</div>
+</div>
+</dd>
+<dt class="field-odd">cspace</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">_CCT_SPACE, optional</div>
+<div class="line">Color space to do calculations in. </div>
+<div class="line">Options: </div>
+<div class="line-block">
+<div class="line-block">
+<div class="line">- cspace string: </div>
+<div class="line-block">
+<div class="line">e.g. ‘Yuv60’ for use with luxpy.colortf()</div>
+</div>
+<div class="line">- tuple with forward (i.e. xyz_to..) [and backward (i.e. ..to_xyz)] functions </div>
+<div class="line-block">
+<div class="line">(and an optional string describing the cspace): </div>
+<div class="line-block">
+<div class="line">e.g. (forward, backward) or (forward, backward, cspace string) or (forward, cspace string) </div>
+</div>
+</div>
+<div class="line">- dict with keys: ‘fwtf’ (foward), ‘bwtf’ (backward) [, optional: ‘str’ (cspace string)]</div>
+</div>
+<div class="line">Note: if the backward tf is not supplied, optimization in cct_to_xyz() is done in the CIE 1976 u’v’ diagram</div>
+</div>
+</div>
+</dd>
+<dt class="field-even">cspace_kwargs</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">_CCT_CSPACE_KWARGS, optional</div>
+<div class="line">Parameter nested dictionary for the forward and backward transforms.</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">returns</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with estimated XYZ tristimulus values</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Note:</dt><dd><p>If duv is not supplied (:ccts:.shape is (N,1) and :duv: is None), 
+source is assumed to be on the Planckian locus.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="luxpy.color.cct.cct_to_xyz">
-<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">cct_to_xyz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ccts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lut'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_out_of_lut</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper_cct_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">approx_cct_temp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast_search</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cct_search_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#cct_to_xyz"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct.cct_to_xyz" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">cct_to_xyz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ccts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lut'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_fast_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cct_resolution_of_fast_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_out_of_lut</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper_cct_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">approx_cct_temp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast_search</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cct_search_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cctuv_lut</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Yuv60'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'bwtf':</span> <span class="pre">{},</span> <span class="pre">'fwtf':</span> <span class="pre">{}}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#cct_to_xyz"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct.cct_to_xyz" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert correlated color temperature (CCT) and Duv (distance above (&gt;0) or 
 below (&lt;0) the Planckian locus) to XYZ tristimulus values.</p>
 <div class="line-block">
@@ -2821,6 +3235,15 @@ below (&lt;0) the Planckian locus) to XYZ tristimulus values.</p>
 </div>
 <div class="line">with cct,duv the input values and cct_min, duv_min calculated using </div>
 <div class="line">luxpy.xyz_to_cct(xyzw_estimated,…).</div>
+<div class="line"><br /></div>
+<div class="line">or </div>
+<div class="line"><br /></div>
+<div class="line">Finds xyzw_estimated by estimating the line perpendicular to the Planckian lcous: </div>
+<div class="line-block">
+<div class="line">First, the angle between the coordinates corresponding to ccts </div>
+<div class="line">and ccts-cct_resolution are calculated, then 90° is added, and finally</div>
+<div class="line">the new coordinates are determined, while taking sign of duv into account.   </div>
+</div>
 </div>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -2844,8 +3267,25 @@ below (&lt;0) the Planckian locus) to XYZ tristimulus values.</p>
 </dd>
 <dt class="field-even">mode</dt>
 <dd class="field-even"><div class="line-block">
-<div class="line">‘lut’ or ‘search’, optional</div>
+<div class="line">‘lut’ [or ‘search’ or ‘fast’], optional</div>
 <div class="line">Determines what method to use.</div>
+<div class="line">(if ‘fast’ fails –&gt; ‘lut’ is used as fall-back method)</div>
+</div>
+</dd>
+<dt class="field-odd">force_fast_mode</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">True, optional</div>
+<div class="line">Try the fast approach (i.e. cct_to_xyz_fast()). This overrides the </div>
+<div class="line">method specified in ‘mode’. (mode method only used when cspace </div>
+<div class="line-block">
+<div class="line">does not have backward transform!)</div>
+</div>
+</div>
+</dd>
+<dt class="field-even">cct_resolution_of_fast_mode</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">0.1, optional</div>
+<div class="line">The CCT resolution of the fast mode.</div>
 </div>
 </dd>
 <dt class="field-odd">out</dt>
@@ -2853,7 +3293,10 @@ below (&lt;0) the Planckian locus) to XYZ tristimulus values.</p>
 <div class="line">None (or 1), optional</div>
 <div class="line">If not None or 1: output a ndarray that contains estimated </div>
 <div class="line">xyz and minimization results: </div>
+<div class="line-block">
 <div class="line">(cct_min, duv_min, F_min (objective fcn value))</div>
+</div>
+<div class="line">(Defaults to None when fast mode is used !!!)</div>
 </div>
 </dd>
 <dt class="field-even">wl</dt>
@@ -2907,7 +3350,7 @@ below (&lt;0) the Planckian locus) to XYZ tristimulus values.</p>
 <div class="line">when HA estimation fails due to out-of-range cct or when fast_search == False.</div>
 <div class="line">None defaults to: [50,100,500,1000,2000,3000,4000,5000,6000,10000,</div>
 <div class="line-block">
-<div class="line">20000,50000,1e5,1e6, 1e7, 1e8,1e9, 1e10, 1e11, _CCT_MAX]</div>
+<div class="line">20000,50000, 7.5e4, 1e5, 5e5, 1e6, 5e6, 1e7, 5e7, 1e8, 5e8, 1e9, 5e9, 1e10, 5e10, 1e11, _CCT_MAX]</div>
 </div>
 </div>
 </dd>
@@ -2916,6 +3359,43 @@ below (&lt;0) the Planckian locus) to XYZ tristimulus values.</p>
 <div class="line">True, optional</div>
 <div class="line">If True and cct is out of range of the LUT, then switch to </div>
 <div class="line">brute-force search method, else return numpy.nan values.</div>
+</div>
+</dd>
+<dt class="field-even">cctuv_lut</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">CCT+uv look-up-table to use.</div>
+<div class="line">If None: use luxpy._CCT_LUT</div>
+</div>
+</dd>
+<dt class="field-odd">cspace</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">_CCT_SPACE, optional</div>
+<div class="line">Color space to do calculations in. </div>
+<div class="line">Options: </div>
+<div class="line-block">
+<div class="line-block">
+<div class="line">- cspace string: </div>
+<div class="line-block">
+<div class="line">e.g. ‘Yuv60’ for use with luxpy.colortf()</div>
+</div>
+<div class="line">- tuple with forward (i.e. xyz_to..) [and backward (i.e. ..to_xyz)] functions </div>
+<div class="line-block">
+<div class="line">(and an optional string describing the cspace): </div>
+<div class="line-block">
+<div class="line">e.g. (forward, backward) or (forward, backward, cspace string) or (forward, cspace string) </div>
+</div>
+</div>
+<div class="line">- dict with keys: ‘fwtf’ (foward), ‘bwtf’ (backward) [, optional: ‘str’ (cspace string)]</div>
+</div>
+<div class="line">Note: if the backward tf is not supplied, optimization in cct_to_xyz() is done in the CIE 1976 u’v’ diagram</div>
+</div>
+</div>
+</dd>
+<dt class="field-even">cspace_kwargs</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">_CCT_CSPACE_KWARGS, optional</div>
+<div class="line">Parameter nested dictionary for the forward and backward transforms.</div>
 </div>
 </dd>
 </dl>
@@ -2960,7 +3440,7 @@ source is assumed to be on the Planckian locus.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="luxpy.color.cct.xyz_to_cct_ohno">
-<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">xyz_to_cct_ohno</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyzw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cct'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_out_of_lut</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper_cct_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">approx_cct_temp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cct_search_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast_search</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#xyz_to_cct_ohno"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct.xyz_to_cct_ohno" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">xyz_to_cct_ohno</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyzw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cct'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_out_of_lut</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper_cct_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">approx_cct_temp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cct_search_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast_search</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cctuv_lut</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Yuv60'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'bwtf':</span> <span class="pre">{},</span> <span class="pre">'fwtf':</span> <span class="pre">{}}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#xyz_to_cct_ohno"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct.xyz_to_cct_ohno" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert XYZ tristimulus values to correlated color temperature (CCT) and 
 Duv (distance above (&gt;0) or below (&lt;0) the Planckian locus) 
 using Ohno’s method.</p>
@@ -3035,7 +3515,7 @@ using Ohno’s method.</p>
 <div class="line">when HA estimation fails due to out-of-range cct.</div>
 <div class="line">None defaults to: [50,100,500,1000,2000,3000,4000,5000,6000,10000,</div>
 <div class="line-block">
-<div class="line">20000,50000,1e5,1e6, 1e7, 1e8,1e9, 1e10, 1e11, _CCT_MAX]</div>
+<div class="line">20000,50000, 7.5e4, 1e5, 5e5, 1e6, 5e6, 1e7, 5e7, 1e8, 5e8, 1e9, 5e9, 1e10, 5e10, 1e11, _CCT_MAX]</div>
 </div>
 </div>
 </dd>
@@ -3044,6 +3524,43 @@ using Ohno’s method.</p>
 <div class="line">True, optional</div>
 <div class="line">If True and cct is out of range of the LUT, then switch to </div>
 <div class="line">brute-force search method, else return numpy.nan values.</div>
+</div>
+</dd>
+<dt class="field-even">cctuv_lut</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">CCT+uv look-up-table to use.</div>
+<div class="line">If None: use luxpy._CCT_LUT</div>
+</div>
+</dd>
+<dt class="field-odd">cspace</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">_CCT_SPACE, optional</div>
+<div class="line">Color space to do calculations in. </div>
+<div class="line">Options: </div>
+<div class="line-block">
+<div class="line-block">
+<div class="line">- cspace string: </div>
+<div class="line-block">
+<div class="line">e.g. ‘Yuv60’ for use with luxpy.colortf()</div>
+</div>
+<div class="line">- tuple with forward (i.e. xyz_to..) [and backward (i.e. ..to_xyz)] functions </div>
+<div class="line-block">
+<div class="line">(and an optional string describing the cspace): </div>
+<div class="line-block">
+<div class="line">e.g. (forward, backward) or (forward, backward, cspace string) or (forward, cspace string) </div>
+</div>
+</div>
+<div class="line">- dict with keys: ‘fwtf’ (foward), ‘bwtf’ (backward) [, optional: ‘str’ (cspace string)]</div>
+</div>
+<div class="line">Note: if the backward tf is not supplied, optimization in cct_to_xyz() is done in the CIE 1976 u’v’ diagram</div>
+</div>
+</div>
+</dd>
+<dt class="field-even">cspace_kwargs</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">_CCT_CSPACE_KWARGS, optional</div>
+<div class="line">Parameter nested dictionary for the forward and backward transforms.</div>
 </div>
 </dd>
 </dl>
@@ -3062,7 +3579,7 @@ using Ohno’s method.</p>
 </dd>
 </dl>
 </dd>
-<dt>Note:</dt><dd><p>LUTs are stored in ./data/cctluts/</p>
+<dt>Note:</dt><dd><p>Default LUTs are stored in the folder specified in _CCT_LUT_PATH.</p>
 </dd>
 <dt>Reference:</dt><dd><p>1. <a class="reference external" href="http://www.tandfonline.com/doi/abs/10.1080/15502724.2014.839020">Ohno Y. Practical use and calculation of CCT and Duv. 
 Leukos. 2014 Jan 2;10(1):47-55.</a></p>
@@ -3072,7 +3589,7 @@ Leukos. 2014 Jan 2;10(1):47-55.</a></p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="luxpy.color.cct.xyz_to_cct_search">
-<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">xyz_to_cct_search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyzw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cct'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper_cct_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">approx_cct_temp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cct_search_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#xyz_to_cct_search"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct.xyz_to_cct_search" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">xyz_to_cct_search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyzw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cct'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper_cct_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">approx_cct_temp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cct_search_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Yuv60'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'bwtf':</span> <span class="pre">{},</span> <span class="pre">'fwtf':</span> <span class="pre">{}}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#xyz_to_cct_search"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct.xyz_to_cct_search" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert XYZ tristimulus values to correlated color temperature (CCT) and 
 Duv(distance above (&gt; 0) or below ( &lt; 0) the Planckian locus) by a 
 brute-force search.</p>
@@ -3131,7 +3648,7 @@ brute-force search.</p>
 <div class="line">list of ccts to obtain a first guess for the cct of the input xyz.</div>
 <div class="line">None defaults to: [50,100,500,1000,2000,3000,4000,5000,6000,10000,</div>
 <div class="line-block">
-<div class="line">20000,50000,1e5,1e6, 1e7, 1e8,1e9, 1e10, 1e11, _CCT_MAX]</div>
+<div class="line">20000,50000, 7.5e4, 1e5, 5e5, 1e6, 5e6, 1e7, 5e7, 1e8, 5e8, 1e9, 5e9, 1e10, 5e10, 1e11, _CCT_MAX]</div>
 </div>
 <div class="line">Only for ‘robust’ code option.</div>
 </div>
@@ -3159,8 +3676,38 @@ brute-force search.</p>
 <div class="line">when HA estimation fails due to out-of-range cct or when fast == False.</div>
 <div class="line">None defaults to: [50,100,500,1000,2000,3000,4000,5000,6000,10000,</div>
 <div class="line-block">
-<div class="line">20000,50000,1e5,1e6, 1e7, 1e8,1e9, 1e10, 1e11, _CCT_MAX]</div>
+<div class="line">20000,50000, 7.5e4, 1e5, 5e5, 1e6, 5e6, 1e7, 5e7, 1e8, 5e8, 1e9, 5e9, 1e10, 5e10, 1e11, _CCT_MAX]</div>
 </div>
+</div>
+</dd>
+<dt class="field-even">cspace</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">_CCT_SPACE, optional</div>
+<div class="line">Color space to do calculations in. </div>
+<div class="line">Options: </div>
+<div class="line-block">
+<div class="line-block">
+<div class="line">- cspace string: </div>
+<div class="line-block">
+<div class="line">e.g. ‘Yuv60’ for use with luxpy.colortf()</div>
+</div>
+<div class="line">- tuple with forward (i.e. xyz_to..) [and backward (i.e. ..to_xyz)] functions </div>
+<div class="line-block">
+<div class="line">(and an optional string describing the cspace): </div>
+<div class="line-block">
+<div class="line">e.g. (forward, backward) or (forward, backward, cspace string) or (forward, cspace string) </div>
+</div>
+</div>
+<div class="line">- dict with keys: ‘fwtf’ (foward), ‘bwtf’ (backward) [, optional: ‘str’ (cspace string)]</div>
+</div>
+<div class="line">Note: if the backward tf is not supplied, optimization in cct_to_xyz() is done in the CIE 1976 u’v’ diagram</div>
+</div>
+</div>
+</dd>
+<dt class="field-odd">cspace_kwargs</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">_CCT_CSPACE_KWARGS, optional</div>
+<div class="line">Parameter nested dictionary for the forward and backward transforms.</div>
 </div>
 </dd>
 </dl>
@@ -3188,7 +3735,7 @@ Note that cct must be between 50 K - _CCT_MAX K
 
 <dl class="py function">
 <dt class="sig sig-object py" id="luxpy.color.cct.xyz_to_cct_search_fast">
-<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">xyz_to_cct_search_fast</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyzw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cct'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper_cct_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">approx_cct_temp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cct_search_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#xyz_to_cct_search_fast"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct.xyz_to_cct_search_fast" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">xyz_to_cct_search_fast</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyzw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cct'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper_cct_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">approx_cct_temp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cct_search_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Yuv60'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'bwtf':</span> <span class="pre">{},</span> <span class="pre">'fwtf':</span> <span class="pre">{}}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#xyz_to_cct_search_fast"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct.xyz_to_cct_search_fast" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert XYZ tristimulus values to correlated color temperature (CCT) and 
 Duv(distance above (&gt; 0) or below ( &lt; 0) the Planckian locus) by a 
 brute-force search.</p>
@@ -3198,7 +3745,7 @@ brute-force search.</p>
 <div class="line">as starting point or uses the middle of the allowed cct-range </div>
 <div class="line">(1e2 K - _CCT_MAX K, higher causes overflow) on a log-scale, then constructs </div>
 <div class="line">a 4-step section of the blackbody (Planckian) locus on which to find the</div>
-<div class="line">minimum distance to the 1960 uv chromaticity of the test source.</div>
+<div class="line">minimum distance to the 1960 uv (or other) chromaticity of the test source.</div>
 </div>
 <div class="line">If HA fails then another approximate starting point is found by generating </div>
 <div class="line">the uv chromaticity values of a set blackbody radiators spread across the</div>
@@ -3207,7 +3754,7 @@ brute-force search.</p>
 <div class="line">blackbody radiator and then calculating the mean of the two surrounding ones.</div>
 <div class="line">The default cct list is [50,100,500,1000,2000,3000,4000,5000,6000,10000,</div>
 <div class="line-block">
-<div class="line">20000,50000,1e5,1e6, 1e7, 1e8,1e9, 1e10, 1e11, _CCT_MAX].</div>
+<div class="line">20000,50000, 7.5e4, 1e5, 5e5, 1e6, 5e6, 1e7, 5e7, 1e8, 5e8, 1e9, 5e9, 1e10, 5e10, 1e11, _CCT_MAX].</div>
 </div>
 </div>
 <dl>
@@ -3273,8 +3820,38 @@ speed up search.</div>
 <div class="line">when HA estimation fails due to out-of-range cct.</div>
 <div class="line">None defaults to: [50,100,500,1000,2000,3000,4000,5000,6000,10000,</div>
 <div class="line-block">
-<div class="line">20000,50000,1e5,1e6, 1e7, 1e8,1e9, 1e10, 1e11, _CCT_MAX]</div>
+<div class="line">20000,50000, 7.5e4, 1e5, 5e5, 1e6, 5e6, 1e7, 5e7, 1e8, 5e8, 1e9, 5e9, 1e10, 5e10, 1e11, _CCT_MAX]</div>
 </div>
+</div>
+</dd>
+<dt class="field-even">cspace</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">_CCT_SPACE, optional</div>
+<div class="line">Color space to do calculations in. </div>
+<div class="line">Options: </div>
+<div class="line-block">
+<div class="line-block">
+<div class="line">- cspace string: </div>
+<div class="line-block">
+<div class="line">e.g. ‘Yuv60’ for use with luxpy.colortf()</div>
+</div>
+<div class="line">- tuple with forward (i.e. xyz_to..) [and backward (i.e. ..to_xyz)] functions </div>
+<div class="line-block">
+<div class="line">(and an optional string describing the cspace): </div>
+<div class="line-block">
+<div class="line">e.g. (forward, backward) or (forward, backward, cspace string) or (forward, cspace string) </div>
+</div>
+</div>
+<div class="line">- dict with keys: ‘fwtf’ (foward), ‘bwtf’ (backward) [, optional: ‘str’ (cspace string)]</div>
+</div>
+<div class="line">Note: if the backward tf is not supplied, optimization in cct_to_xyz() is done in the CIE 1976 u’v’ diagram</div>
+</div>
+</div>
+</dd>
+<dt class="field-odd">cspace_kwargs</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">_CCT_CSPACE_KWARGS, optional</div>
+<div class="line">Parameter nested dictionary for the forward and backward transforms.</div>
 </div>
 </dd>
 </dl>
@@ -3302,14 +3879,14 @@ Note that cct must be between 1e3 K - 1e20 K
 
 <dl class="py function">
 <dt class="sig sig-object py" id="luxpy.color.cct.xyz_to_cct_search_robust">
-<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">xyz_to_cct_search_robust</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyzw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cct'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper_cct_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cct_search_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#xyz_to_cct_search_robust"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct.xyz_to_cct_search_robust" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">xyz_to_cct_search_robust</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyzw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cct'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper_cct_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cct_search_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Yuv60'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'bwtf':</span> <span class="pre">{},</span> <span class="pre">'fwtf':</span> <span class="pre">{}}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#xyz_to_cct_search_robust"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct.xyz_to_cct_search_robust" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert XYZ tristimulus values to correlated color temperature (CCT) and 
 Duv(distance above (&gt; 0) or below ( &lt; 0) the Planckian locus) by a 
 brute-force search.</p>
 <div class="line-block">
-<div class="line">The algorithm uses an approximate cct_temp as starting point </div>
-<div class="line">then constructs, a 4-step section of the blackbody (Planckian) locus </div>
-<div class="line">on which to find the minimum distance to the 1960 uv chromaticity of </div>
+<div class="line">The algorithm uses an approximate cct_temp as starting point then </div>
+<div class="line">constructs, a 4-step section of the blackbody (Planckian) locus on which </div>
+<div class="line">to find the minimum distance to the 1960 uv (or other) chromaticity of </div>
 <div class="line">the test source. The approximate starting point is found by generating </div>
 <div class="line">the uv chromaticity values of a set blackbody radiators spread across the</div>
 <div class="line">locus in a 50 K to _CCT_MAX K range (larger CCT’s cause instability of the </div>
@@ -3317,7 +3894,7 @@ brute-force search.</p>
 <div class="line">blackbody radiator and then calculating the mean of the two surrounding ones.</div>
 <div class="line">The default cct list is [50,100,500,1000,2000,3000,4000,5000,6000,10000,</div>
 <div class="line-block">
-<div class="line">20000,50000,1e5,1e6, 1e7, 1e8,1e9, 1e10, 1e11, _CCT_MAX].</div>
+<div class="line">20000,50000, 7.5e4, 1e5, 5e5, 1e6, 5e6, 1e7, 5e7, 1e8, 5e8, 1e9, 5e9, 1e10, 5e10, 1e11, _CCT_MAX].</div>
 </div>
 </div>
 <dl>
@@ -3374,8 +3951,38 @@ brute-force search.</p>
 <div class="line">list of ccts to obtain a first guess for the cct of the input xyz.</div>
 <div class="line">None defaults to: [50,100,500,1000,2000,3000,4000,5000,6000,10000,</div>
 <div class="line-block">
-<div class="line">20000,50000,1e5,1e6, 1e7, 1e8,1e9, 1e10, 1e11, _CCT_MAX]</div>
+<div class="line">20000,50000, 7.5e4, 1e5, 5e5, 1e6, 5e6, 1e7, 5e7, 1e8, 5e8, 1e9, 5e9, 1e10, 5e10, 1e11, _CCT_MAX]</div>
 </div>
+</div>
+</dd>
+<dt class="field-odd">cspace</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">_CCT_SPACE, optional</div>
+<div class="line">Color space to do calculations in. </div>
+<div class="line">Options: </div>
+<div class="line-block">
+<div class="line-block">
+<div class="line">- cspace string: </div>
+<div class="line-block">
+<div class="line">e.g. ‘Yuv60’ for use with luxpy.colortf()</div>
+</div>
+<div class="line">- tuple with forward (i.e. xyz_to..) [and backward (i.e. ..to_xyz)] functions </div>
+<div class="line-block">
+<div class="line">(and an optional string describing the cspace): </div>
+<div class="line-block">
+<div class="line">e.g. (forward, backward) or (forward, backward, cspace string) or (forward, cspace string) </div>
+</div>
+</div>
+<div class="line">- dict with keys: ‘fwtf’ (foward), ‘bwtf’ (backward) [, optional: ‘str’ (cspace string)]</div>
+</div>
+<div class="line">Note: if the backward tf is not supplied, optimization in cct_to_xyz() is done in the CIE 1976 u’v’ diagram</div>
+</div>
+</div>
+</dd>
+<dt class="field-even">cspace_kwargs</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">_CCT_CSPACE_KWARGS, optional</div>
+<div class="line">Parameter nested dictionary for the forward and backward transforms.</div>
 </div>
 </dd>
 </dl>
@@ -5862,7 +6469,7 @@ Color Res. Appl., vol. 31, no. 4, pp. 320–330, 2006.</a></p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="luxpy.color.cam.zcam">
-<span class="sig-prename descclassname"><span class="pre">luxpy.color.cam.</span></span><span class="sig-name descname"><span class="pre">zcam</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xyzw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'J,aM,bM'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conditions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forward</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mcat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cat02'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#luxpy.color.cam.zcam" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">luxpy.color.cam.</span></span><span class="sig-name descname"><span class="pre">zcam</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xyzw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'J,aM,bM'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conditions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forward</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mcat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cat02'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apply_cat_to_whitepoint</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#luxpy.color.cam.zcam" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run the Jz,az,bz based color appearance model in forward or backward modes.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -5941,6 +6548,13 @@ Color Res. Appl., vol. 31, no. 4, pp. 320–330, 2006.</a></p>
 </div>
 <div class="line">- ndarray: matrix with sensor primaries</div>
 </div>
+</div>
+</dd>
+<dt class="field-even">apply_cat_to_whitepoint</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">False, optional</div>
+<div class="line">Apply a CAT to the white point.</div>
+<div class="line">However, ZCAM as published doesn’t do this for some reason.</div>
 </div>
 </dd>
 </dl>
@@ -6088,7 +6702,7 @@ Optics Express. 29(4), 6036-6052, &lt;<a class="reference external" href="https:
 
 <dl class="py function">
 <dt class="sig sig-object py" id="luxpy.color.cam.xyz_to_jabM_zcam">
-<span class="sig-prename descclassname"><span class="pre">luxpy.color.cam.</span></span><span class="sig-name descname"><span class="pre">xyz_to_jabM_zcam</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xyzw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'_CIE_D65'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conditions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mcat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cat02'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cam/zcam.html#xyz_to_jabM_zcam"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cam.xyz_to_jabM_zcam" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">luxpy.color.cam.</span></span><span class="sig-name descname"><span class="pre">xyz_to_jabM_zcam</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xyzw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'_CIE_D65'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conditions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mcat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cat02'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apply_cat_to_whitepoint</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cam/zcam.html#xyz_to_jabM_zcam"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cam.xyz_to_jabM_zcam" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wrapper function for zcam forward mode with J,aM,bM output.</p>
 <div class="line-block">
 <div class="line">For help on parameter details: ?luxpy.cam.zcam </div>
@@ -6097,7 +6711,7 @@ Optics Express. 29(4), 6036-6052, &lt;<a class="reference external" href="https:
 
 <dl class="py function">
 <dt class="sig sig-object py" id="luxpy.color.cam.jabM_zcam_to_xyz">
-<span class="sig-prename descclassname"><span class="pre">luxpy.color.cam.</span></span><span class="sig-name descname"><span class="pre">jabM_zcam_to_xyz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xyzw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'_CIE_D65'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conditions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mcat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cat02'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cam/zcam.html#jabM_zcam_to_xyz"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cam.jabM_zcam_to_xyz" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">luxpy.color.cam.</span></span><span class="sig-name descname"><span class="pre">jabM_zcam_to_xyz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xyzw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'_CIE_D65'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conditions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mcat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cat02'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apply_cat_to_whitepoint</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cam/zcam.html#jabM_zcam_to_xyz"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cam.jabM_zcam_to_xyz" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wrapper function for zcam inverse mode with J,aM,bM input.</p>
 <div class="line-block">
 <div class="line">For help on parameter details: ?luxpy.cam.zcam </div>
@@ -6106,7 +6720,7 @@ Optics Express. 29(4), 6036-6052, &lt;<a class="reference external" href="https:
 
 <dl class="py function">
 <dt class="sig sig-object py" id="luxpy.color.cam.xyz_to_jabC_zcam">
-<span class="sig-prename descclassname"><span class="pre">luxpy.color.cam.</span></span><span class="sig-name descname"><span class="pre">xyz_to_jabC_zcam</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xyzw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'_CIE_D65'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conditions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mcat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cat02'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cam/zcam.html#xyz_to_jabC_zcam"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cam.xyz_to_jabC_zcam" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">luxpy.color.cam.</span></span><span class="sig-name descname"><span class="pre">xyz_to_jabC_zcam</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xyzw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'_CIE_D65'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conditions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mcat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cat02'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apply_cat_to_whitepoint</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cam/zcam.html#xyz_to_jabC_zcam"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cam.xyz_to_jabC_zcam" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wrapper function for zcam forward mode with J,aC,bC output.</p>
 <div class="line-block">
 <div class="line">For help on parameter details: ?luxpy.cam.zcam </div>
@@ -6115,7 +6729,7 @@ Optics Express. 29(4), 6036-6052, &lt;<a class="reference external" href="https:
 
 <dl class="py function">
 <dt class="sig sig-object py" id="luxpy.color.cam.jabC_zcam_to_xyz">
-<span class="sig-prename descclassname"><span class="pre">luxpy.color.cam.</span></span><span class="sig-name descname"><span class="pre">jabC_zcam_to_xyz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xyzw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'_CIE_D65'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conditions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mcat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cat02'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cam/zcam.html#jabC_zcam_to_xyz"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cam.jabC_zcam_to_xyz" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">luxpy.color.cam.</span></span><span class="sig-name descname"><span class="pre">jabC_zcam_to_xyz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xyzw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'_CIE_D65'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conditions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mcat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cat02'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apply_cat_to_whitepoint</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cam/zcam.html#jabC_zcam_to_xyz"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cam.jabC_zcam_to_xyz" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wrapper function for zcam inverse mode with J,aC,bC input.</p>
 <div class="line-block">
 <div class="line">For help on parameter details: ?luxpy.cam.zcam </div>
@@ -13380,6 +13994,42 @@ ab-coordinates of the reference illuminant.</div>
 <dd class="field-odd"><div class="line-block">
 <div class="line">luxpy.LAB with .value field that is a ndarray </div>
 <div class="line">with CIE 1976 Yu’v’ chromaticity values.</div>
+<div class="line">(Y value refers to luminance or luminance factor)</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="luxpy.color.CDATA.XYZ.to_Yuv76">
+<span class="sig-name descname"><span class="pre">to_Yuv76</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/CDATA.html#XYZ.to_Yuv76"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.CDATA.XYZ.to_Yuv76" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert XYZ tristimulus values CIE 1976 Yu’v’ chromaticity values.</p>
+<dl>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">Yuv</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">luxpy.LAB with .value field that is a ndarray </div>
+<div class="line">with CIE 1976 Yu’v’ chromaticity values.</div>
+<div class="line">(Y value refers to luminance or luminance factor)</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="luxpy.color.CDATA.XYZ.to_Yuv60">
+<span class="sig-name descname"><span class="pre">to_Yuv60</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/CDATA.html#XYZ.to_Yuv60"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.CDATA.XYZ.to_Yuv60" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert XYZ tristimulus values CIE 1960 Yuv chromaticity values.</p>
+<dl>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">Yuv</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">luxpy.LAB with .value field that is a ndarray </div>
+<div class="line">with CIE 1960 Yuv chromaticity values.</div>
 <div class="line">(Y value refers to luminance or luminance factor)</div>
 </div>
 </dd>

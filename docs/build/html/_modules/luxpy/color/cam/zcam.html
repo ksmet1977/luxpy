@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>luxpy.color.cam.zcam &mdash; LuxPy 1.7.0 documentation</title>
+  <title>luxpy.color.cam.zcam &mdash; LuxPy 1.8.0 documentation</title>
   
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                1.7.0
+                1.8.0
               </div>
             
           
@@ -322,7 +322,7 @@
 
     <span class="c1"># Transform L&#39;,M&#39;,S&#39; to Iabz:</span>
     <span class="k">if</span> <span class="n">use_zcam_parameters</span><span class="p">:</span>
-        <span class="n">epsilon</span> <span class="o">=</span> <span class="mf">3.70352262101900054e-11</span>
+        <span class="n">epsilon</span> <span class="o">=</span> <span class="mf">3.7035226210190005e-11</span>
         <span class="n">M</span> <span class="o">=</span> <span class="n">_M_LMSP_TO_IAB_ZCAM</span> 
     <span class="k">else</span><span class="p">:</span>
         <span class="n">epsilon</span> <span class="o">=</span> <span class="mi">0</span>
@@ -421,7 +421,8 @@
 
 
 <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">outin</span> <span class="o">=</span> <span class="s1">&#39;J,aM,bM&#39;</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span>
-            <span class="n">conditions</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">forward</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat02&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="n">conditions</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">forward</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
+            <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat02&#39;</span><span class="p">,</span> <span class="n">apply_cat_to_whitepoint</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">    Run the Jz,az,bz based color appearance model in forward or backward modes.</span>
 <span class="sd">    </span>
@@ -466,6 +467,10 @@
 <span class="sd">            |    - str: see see luxpy.cat._MCATS.keys() for options </span>
 <span class="sd">            |         (details on type, ?luxpy.cat)</span>
 <span class="sd">            |    - ndarray: matrix with sensor primaries</span>
+<span class="sd">        :apply_cat_to_whitepoint: </span>
+<span class="sd">            | False, optional</span>
+<span class="sd">            | Apply a CAT to the white point.</span>
+<span class="sd">            | However, ZCAM as published doesn&#39;t do this for some reason.</span>
 <span class="sd">    Returns:</span>
 <span class="sd">        :camout: </span>
 <span class="sd">            | ndarray with color appearance correlates (forward mode) </span>
@@ -511,8 +516,9 @@
     
     <span class="c1">#--------------------------------------------</span>
     <span class="c1"># Get white point of D65 fro chromatic adaptation transform (CAT)</span>
-    <span class="n">xyzw_d65</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">9.5047e+01</span><span class="p">,</span> <span class="mf">1.0000e+02</span><span class="p">,</span> <span class="mf">1.08883e+02</span><span class="p">]])</span> <span class="k">if</span> <span class="n">cieobs</span> <span class="o">==</span> <span class="s1">&#39;1931_2&#39;</span>  <span class="k">else</span>  <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">_CIE_D65</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">)</span>
-    
+    <span class="c1"># xyzw_d65 = np.array([[9.5047e+01, 1.0000e+02, 1.08883e+02]]) if cieobs == &#39;1931_2&#39;  else  spd_to_xyz(_CIE_D65, cieobs = cieobs)</span>
+    <span class="n">xyzw_d65</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">95.0429</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mf">108.89</span><span class="p">]])</span> <span class="k">if</span> <span class="n">cieobs</span> <span class="o">==</span> <span class="s1">&#39;1931_2&#39;</span>  <span class="k">else</span>  <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">_CIE_D65</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">)</span>
+
    
     <span class="c1">#--------------------------------------------</span>
     <span class="c1"># Get default white point:</span>
@@ -539,17 +545,21 @@
     
     <span class="c1">#--------------------------------------------</span>
     <span class="c1"># Apply CAT to white point:</span>
-    <span class="n">xyzwc</span> <span class="o">=</span> <span class="n">cat</span><span class="o">.</span><span class="n">apply_vonkries1</span><span class="p">(</span><span class="n">xyzw</span><span class="p">,</span> <span class="n">xyzw1</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">xyzw2</span> <span class="o">=</span> <span class="n">xyzw_d65</span><span class="p">,</span> 
+    <span class="k">if</span> <span class="n">apply_cat_to_whitepoint</span><span class="p">:</span> 
+        <span class="n">xyzwc</span> <span class="o">=</span> <span class="n">cat</span><span class="o">.</span><span class="n">apply_vonkries1</span><span class="p">(</span><span class="n">xyzw</span><span class="p">,</span> <span class="n">xyzw1</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">xyzw2</span> <span class="o">=</span> <span class="n">xyzw_d65</span><span class="p">,</span> 
                                 <span class="n">D</span> <span class="o">=</span> <span class="n">D</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="n">mcat</span><span class="p">,</span> <span class="n">invmcat</span> <span class="o">=</span> <span class="n">invmcat</span><span class="p">,</span>
                                 <span class="n">use_Yw</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span> 
+        <span class="n">xyzwc</span> <span class="o">=</span> <span class="n">xyzw</span> <span class="c1"># use original unadapted white point in further calculations</span>
     
     
     <span class="c1">#--------------------------------------------</span>
     <span class="c1"># Get Iz,az,bz coordinates:</span>
     <span class="n">iabzw</span> <span class="o">=</span> <span class="n">xyz_to_jabz</span><span class="p">(</span><span class="n">xyzwc</span><span class="p">,</span> <span class="n">ztype</span> <span class="o">=</span> <span class="s1">&#39;iabz&#39;</span><span class="p">,</span> <span class="n">use_zcam_parameters</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+   
     
     <span class="c1"># Get brightness of white point:</span>
-    <span class="n">Qw</span> <span class="o">=</span> <span class="mi">2700</span> <span class="o">*</span> <span class="p">(</span><span class="n">iabzw</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="p">(</span><span class="mf">1.6</span><span class="o">*</span><span class="n">Fs</span><span class="o">/</span><span class="n">Fb</span><span class="o">**</span><span class="mf">0.12</span><span class="p">))</span> <span class="o">*</span> <span class="p">((</span><span class="n">Fs</span><span class="p">)</span><span class="o">**</span><span class="mf">2.2</span><span class="p">)</span> <span class="o">*</span> <span class="p">((</span><span class="n">Fb</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span><span class="p">)</span> <span class="o">*</span> <span class="p">((</span><span class="n">FL</span><span class="p">)</span><span class="o">**</span><span class="mf">0.2</span><span class="p">)</span>
+    <span class="n">Qw</span> <span class="o">=</span> <span class="mi">2700</span> <span class="o">*</span> <span class="p">(</span><span class="n">iabzw</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="p">(</span><span class="mf">1.6</span><span class="o">*</span><span class="n">Fs</span><span class="o">/</span><span class="p">(</span><span class="n">Fb</span><span class="o">**</span><span class="mf">0.12</span><span class="p">)))</span> <span class="o">*</span> <span class="p">(</span><span class="n">Fs</span><span class="o">**</span><span class="mf">2.2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">Fb</span><span class="o">**</span><span class="mf">0.5</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">FL</span><span class="o">**</span><span class="mf">0.2</span><span class="p">)</span>
     
     <span class="c1">#===================================================================</span>
     <span class="c1"># STIMULUS transformations:</span>
@@ -567,6 +577,7 @@
  
         <span class="c1"># Get Iz,az,bz coordinates:</span>
         <span class="n">iabz</span> <span class="o">=</span> <span class="n">xyz_to_jabz</span><span class="p">(</span><span class="n">xyzc</span><span class="p">,</span> <span class="n">ztype</span> <span class="o">=</span> <span class="s1">&#39;iabz&#39;</span><span class="p">,</span> <span class="n">use_zcam_parameters</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">Iz</span><span class="p">,</span> <span class="n">az</span><span class="p">,</span> <span class="n">bz</span> <span class="o">=</span> <span class="n">iabz</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span><span class="n">iabz</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">iabz</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span>
 
         <span class="c1">#--------------------------------------------</span>
         <span class="c1"># calculate hue h and eccentricity factor, et:</span>
@@ -583,7 +594,7 @@
             
         <span class="c1">#-------------------------------------------- </span>
         <span class="c1"># calculate brightness, Q:</span>
-        <span class="n">Q</span> <span class="o">=</span> <span class="mi">2700</span> <span class="o">*</span> <span class="p">(</span><span class="n">iabz</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="p">(</span><span class="mf">1.6</span><span class="o">*</span><span class="n">Fs</span><span class="o">/</span><span class="n">Fb</span><span class="o">**</span><span class="mf">0.12</span><span class="p">))</span> <span class="o">*</span> <span class="p">((</span><span class="n">Fs</span><span class="p">)</span><span class="o">**</span><span class="mf">2.2</span><span class="p">)</span> <span class="o">*</span> <span class="p">((</span><span class="n">Fb</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span><span class="p">)</span> <span class="o">*</span> <span class="p">((</span><span class="n">FL</span><span class="p">)</span><span class="o">**</span><span class="mf">0.2</span><span class="p">)</span>
+        <span class="n">Q</span> <span class="o">=</span> <span class="mi">2700</span> <span class="o">*</span> <span class="p">(</span><span class="n">iabz</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="p">(</span><span class="mf">1.6</span><span class="o">*</span><span class="n">Fs</span><span class="o">/</span><span class="p">(</span><span class="n">Fb</span><span class="o">**</span><span class="mf">0.12</span><span class="p">)))</span> <span class="o">*</span> <span class="p">(</span><span class="n">Fs</span><span class="o">**</span><span class="mf">2.2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">Fb</span><span class="o">**</span><span class="mf">0.5</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">FL</span><span class="o">**</span><span class="mf">0.2</span><span class="p">)</span>
             
         <span class="c1">#--------------------------------------------   </span>
         <span class="c1"># calculate lightness, J:</span>
@@ -638,6 +649,22 @@
         <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;aM&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">):</span>
              <span class="n">aM</span> <span class="o">=</span> <span class="n">M</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">h</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.0</span><span class="p">)</span>
              <span class="n">bM</span> <span class="o">=</span> <span class="n">M</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">h</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.0</span><span class="p">)</span>
+             
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;aKz&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">):</span>
+             <span class="n">aKz</span> <span class="o">=</span> <span class="n">Kz</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">h</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.0</span><span class="p">)</span>
+             <span class="n">bKz</span> <span class="o">=</span> <span class="n">Kz</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">h</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.0</span><span class="p">)</span>
+             
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;aVz&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">):</span>
+             <span class="n">aVz</span> <span class="o">=</span> <span class="n">Vz</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">h</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.0</span><span class="p">)</span>
+             <span class="n">bVz</span> <span class="o">=</span> <span class="n">Vz</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">h</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.0</span><span class="p">)</span>
+             
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;aWz&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">):</span>
+             <span class="n">aWz</span> <span class="o">=</span> <span class="n">Wz</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">h</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.0</span><span class="p">)</span>
+             <span class="n">bWz</span> <span class="o">=</span> <span class="n">Wz</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">h</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.0</span><span class="p">)</span>
+             
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;aSz&#39;</span> <span class="ow">in</span> <span class="n">outin</span><span class="p">):</span>
+             <span class="n">aSz</span> <span class="o">=</span> <span class="n">Sz</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">h</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.0</span><span class="p">)</span>
+             <span class="n">bSz</span> <span class="o">=</span> <span class="n">Sz</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">h</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.0</span><span class="p">)</span>
              
          
         <span class="c1">#-------------------------------------------- </span>
@@ -753,44 +780,44 @@
 <span class="c1">#------------------------------------------------------------------------------</span>
 <span class="n">zcam</span> <span class="o">=</span> <span class="n">run</span>
 <div class="viewcode-block" id="xyz_to_jabM_zcam"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.xyz_to_jabM_zcam">[docs]</a><span class="k">def</span> <span class="nf">xyz_to_jabM_zcam</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span>
-                         <span class="n">conditions</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat02&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+                         <span class="n">conditions</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat02&#39;</span><span class="p">,</span> <span class="n">apply_cat_to_whitepoint</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Wrapper function for zcam forward mode with J,aM,bM output.</span>
 <span class="sd">    </span>
 <span class="sd">    | For help on parameter details: ?luxpy.cam.zcam </span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">zcam</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="n">conditions</span><span class="p">,</span> <span class="n">forward</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">outin</span> <span class="o">=</span> <span class="s1">&#39;J,aM,bM&#39;</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="n">mcat</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">zcam</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="n">conditions</span><span class="p">,</span> <span class="n">forward</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">outin</span> <span class="o">=</span> <span class="s1">&#39;J,aM,bM&#39;</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="n">mcat</span><span class="p">,</span> <span class="n">apply_cat_to_whitepoint</span> <span class="o">=</span> <span class="n">apply_cat_to_whitepoint</span><span class="p">)</span></div>
    
 
 <div class="viewcode-block" id="jabM_zcam_to_xyz"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.jabM_zcam_to_xyz">[docs]</a><span class="k">def</span> <span class="nf">jabM_zcam_to_xyz</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span>
-                         <span class="n">conditions</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat02&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+                         <span class="n">conditions</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat02&#39;</span><span class="p">,</span> <span class="n">apply_cat_to_whitepoint</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Wrapper function for zcam inverse mode with J,aM,bM input.</span>
 <span class="sd">    </span>
 <span class="sd">    | For help on parameter details: ?luxpy.cam.zcam </span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">zcam</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="n">conditions</span><span class="p">,</span> <span class="n">forward</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">outin</span> <span class="o">=</span> <span class="s1">&#39;J,aM,bM&#39;</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="n">mcat</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">zcam</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="n">conditions</span><span class="p">,</span> <span class="n">forward</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">outin</span> <span class="o">=</span> <span class="s1">&#39;J,aM,bM&#39;</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="n">mcat</span><span class="p">,</span> <span class="n">apply_cat_to_whitepoint</span> <span class="o">=</span> <span class="n">apply_cat_to_whitepoint</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="xyz_to_jabC_zcam"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.xyz_to_jabC_zcam">[docs]</a><span class="k">def</span> <span class="nf">xyz_to_jabC_zcam</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span>
-                         <span class="n">conditions</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat02&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+                         <span class="n">conditions</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat02&#39;</span><span class="p">,</span> <span class="n">apply_cat_to_whitepoint</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Wrapper function for zcam forward mode with J,aC,bC output.</span>
 <span class="sd">    </span>
 <span class="sd">    | For help on parameter details: ?luxpy.cam.zcam </span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">zcam</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="n">conditions</span><span class="p">,</span> <span class="n">forward</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">outin</span> <span class="o">=</span> <span class="s1">&#39;J,aC,bC&#39;</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="n">mcat</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">zcam</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="n">conditions</span><span class="p">,</span> <span class="n">forward</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">outin</span> <span class="o">=</span> <span class="s1">&#39;J,aC,bC&#39;</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="n">mcat</span><span class="p">,</span> <span class="n">apply_cat_to_whitepoint</span> <span class="o">=</span> <span class="n">apply_cat_to_whitepoint</span><span class="p">)</span></div>
  
 
 <div class="viewcode-block" id="jabC_zcam_to_xyz"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.jabC_zcam_to_xyz">[docs]</a><span class="k">def</span> <span class="nf">jabC_zcam_to_xyz</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span>
-                         <span class="n">conditions</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat02&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+                         <span class="n">conditions</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat02&#39;</span><span class="p">,</span> <span class="n">apply_cat_to_whitepoint</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Wrapper function for zcam inverse mode with J,aC,bC input.</span>
 <span class="sd">    </span>
 <span class="sd">    | For help on parameter details: ?luxpy.cam.zcam </span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">zcam</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="n">conditions</span><span class="p">,</span> <span class="n">forward</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">outin</span> <span class="o">=</span> <span class="s1">&#39;J,aC,bC&#39;</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="n">mcat</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">zcam</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="n">conditions</span><span class="p">,</span> <span class="n">forward</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">outin</span> <span class="o">=</span> <span class="s1">&#39;J,aC,bC&#39;</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="n">mcat</span><span class="p">,</span> <span class="n">apply_cat_to_whitepoint</span> <span class="o">=</span> <span class="n">apply_cat_to_whitepoint</span><span class="p">)</span></div>
     
   
 <span class="c1">#==============================================================================  </span>
@@ -906,16 +933,32 @@
     <span class="c1"># axs[1].set_xlabel(&#39;azC (zcam)&#39;)</span>
     <span class="c1"># axs[1].set_ylabel(&#39;bzC (zcam)&#39;)</span>
     
+    
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    
+    <span class="c1">#--------------------------------------------------------------------------</span>
+    <span class="c1"># Code test using examples in Table of supplement to paper</span>
+    <span class="c1">#--------------------------------------------------------------------------</span>
+    
+   
+    <span class="kn">import</span> <span class="nn">luxpy</span> <span class="k">as</span> <span class="nn">lx</span>
+    <span class="kn">from</span> <span class="nn">luxpy.utils</span> <span class="kn">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">plt</span>
+
+    <span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">formatter</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;float_kind&#39;</span><span class="p">:</span><span class="s2">&quot;</span><span class="si">{:.6f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">})</span>
+
     <span class="c1"># Test code with examples in Table of supplement to paper:</span>
     <span class="n">xyzt</span> <span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">185</span><span class="p">,</span><span class="mi">206</span><span class="p">,</span><span class="mi">163</span><span class="p">]])</span>
     <span class="n">xyzw</span> <span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">256</span><span class="p">,</span><span class="mi">264</span><span class="p">,</span><span class="mi">202</span><span class="p">]])</span>
-    <span class="n">out1</span> <span class="o">=</span> <span class="n">run</span><span class="p">(</span><span class="n">xyzt</span><span class="p">,</span><span class="n">xyzw</span><span class="o">=</span><span class="n">xyzw</span><span class="p">,</span><span class="n">outin</span><span class="o">=</span><span class="s1">&#39;h,Q,J,M,C,Sz,Vz,Kz,Wz&#39;</span><span class="p">,</span><span class="n">conditions</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;La&#39;</span><span class="p">:</span><span class="mi">264</span><span class="p">,</span><span class="s1">&#39;Yb&#39;</span><span class="p">:</span><span class="mi">100</span><span class="p">,</span><span class="s1">&#39;D&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;Dtype&#39;</span><span class="p">:</span><span class="kc">None</span><span class="p">,</span><span class="s1">&#39;surround&#39;</span><span class="p">:</span><span class="s1">&#39;avg&#39;</span><span class="p">},</span><span class="n">mcat</span><span class="o">=</span><span class="s1">&#39;cat02&#39;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;out1&#39;</span><span class="p">,</span> <span class="n">out1</span><span class="p">)</span>
+    <span class="n">out1</span> <span class="o">=</span> <span class="n">run</span><span class="p">(</span><span class="n">xyzt</span><span class="p">,</span><span class="n">xyzw</span><span class="o">=</span><span class="n">xyzw</span><span class="p">,</span><span class="n">outin</span><span class="o">=</span><span class="s1">&#39;h,H,Q,J,M,C,Sz,Vz,Kz,Wz&#39;</span><span class="p">,</span><span class="n">conditions</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;La&#39;</span><span class="p">:</span><span class="mi">264</span><span class="p">,</span><span class="s1">&#39;Yb&#39;</span><span class="p">:</span><span class="mi">100</span><span class="p">,</span><span class="s1">&#39;D&#39;</span><span class="p">:</span><span class="kc">None</span><span class="p">,</span><span class="s1">&#39;Dtype&#39;</span><span class="p">:</span><span class="s1">&#39;cat02&#39;</span><span class="p">,</span><span class="s1">&#39;surround&#39;</span><span class="p">:</span><span class="s1">&#39;avg&#39;</span><span class="p">},</span> <span class="n">mcat</span><span class="o">=</span><span class="s1">&#39;cat02&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">out1&#39;</span><span class="p">,</span> <span class="n">out1</span><span class="p">)</span>
+    <span class="n">expected_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">196.3524</span><span class="p">,</span> <span class="mf">237.6401</span><span class="p">,</span> <span class="mf">321.3464</span><span class="p">,</span> <span class="mf">92.25</span><span class="p">,</span> <span class="mf">10.53</span><span class="p">,</span> <span class="mf">3.0216</span><span class="p">,</span> <span class="mf">19.1314</span><span class="p">,</span> <span class="mf">34.7022</span><span class="p">,</span> <span class="mf">25.2994</span><span class="p">,</span> <span class="mf">91.6837</span><span class="p">]])</span> <span class="c1"># from supplementary material of Z-CAM paper</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;expected1: &#39;</span><span class="p">,</span> <span class="n">expected_1</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;diff1: &#39;</span><span class="p">,</span> <span class="n">out1</span> <span class="o">-</span> <span class="n">expected_1</span><span class="p">)</span>
     
     <span class="n">xyzt</span> <span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">89</span><span class="p">,</span><span class="mi">96</span><span class="p">,</span><span class="mi">120</span><span class="p">]])</span>
     <span class="n">xyzw</span> <span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">256</span><span class="p">,</span><span class="mi">264</span><span class="p">,</span><span class="mi">202</span><span class="p">]])</span>
-    <span class="n">out2</span> <span class="o">=</span> <span class="n">run</span><span class="p">(</span><span class="n">xyzt</span><span class="p">,</span><span class="n">xyzw</span><span class="o">=</span><span class="n">xyzw</span><span class="p">,</span><span class="n">outin</span><span class="o">=</span><span class="s1">&#39;h,Q,J,M,C,Sz,Vz,Kz,Wz&#39;</span><span class="p">,</span><span class="n">conditions</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;La&#39;</span><span class="p">:</span><span class="mi">264</span><span class="p">,</span><span class="s1">&#39;Yb&#39;</span><span class="p">:</span><span class="mi">100</span><span class="p">,</span><span class="s1">&#39;D&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;Dtype&#39;</span><span class="p">:</span><span class="kc">None</span><span class="p">,</span><span class="s1">&#39;surround&#39;</span><span class="p">:</span><span class="s1">&#39;avg&#39;</span><span class="p">},</span><span class="n">mcat</span><span class="o">=</span><span class="s1">&#39;cat02&#39;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;out2&#39;</span><span class="p">,</span> <span class="n">out2</span><span class="p">)</span>
+    <span class="n">out2</span> <span class="o">=</span> <span class="n">run</span><span class="p">(</span><span class="n">xyzt</span><span class="p">,</span><span class="n">xyzw</span><span class="o">=</span><span class="n">xyzw</span><span class="p">,</span><span class="n">outin</span><span class="o">=</span><span class="s1">&#39;h,Q,J,aM,bM,M,C,Sz,Vz,Kz,Wz&#39;</span><span class="p">,</span><span class="n">conditions</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;La&#39;</span><span class="p">:</span><span class="mi">264</span><span class="p">,</span><span class="s1">&#39;Yb&#39;</span><span class="p">:</span><span class="mi">100</span><span class="p">,</span><span class="s1">&#39;D&#39;</span><span class="p">:</span><span class="kc">None</span><span class="p">,</span><span class="s1">&#39;Dtype&#39;</span><span class="p">:</span><span class="kc">None</span><span class="p">,</span><span class="s1">&#39;surround&#39;</span><span class="p">:</span><span class="s1">&#39;avg&#39;</span><span class="p">},</span><span class="n">mcat</span><span class="o">=</span><span class="s1">&#39;cat02&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">out2&#39;</span><span class="p">,</span> <span class="n">out2</span><span class="p">)</span>
     
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1"> !!!! REMARK !!!!&#39;</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Output does not match perfectly with example in supplementary material of paper Safdar et al (2021).&#39;</span><span class="p">)</span>
