@@ -28,6 +28,10 @@ cct: Module with functions related to correlated color temperature calculations
  
  :_CCT_LUT_CALC: Boolean determining whether to force LUT calculation, even if
                  the LUT can be found in ./data/cctluts/.
+                 
+ :_CCT_CSPACE: default chromaticity space to calculate CCT and Duv in.
+ 
+ :_CCT_CSPACE_KWARGS: nested dict with cspace parameters for forward and backward modes. 
 
  :calculate_lut(): Function that calculates the LUT for the ccts stored in 
                    ./data/cctluts/cct_lut_cctlist.dat or given as input 
@@ -43,8 +47,11 @@ cct: Module with functions related to correlated color temperature calculations
  :xyz_to_cct(): | Calculates CCT, Duv from XYZ 
                 | wrapper for xyz_to_cct_ohno() & xyz_to_cct_search()
 
- :xyz_to_duv(): Calculates Duv, (CCT) from XYZ
-                wrapper for xyz_to_cct_ohno() & xyz_to_cct_search()
+ :xyz_to_duv(): | Calculates Duv, (CCT) from XYZ
+                | wrapper for xyz_to_cct_ohno() & xyz_to_cct_search()
+
+ :cct_to_xyz_fast(): Calculates xyz from CCT, Duv by estimating 
+                     the line perpendicular to the planckian locus.
 
  :cct_to_xyz(): Calculates xyz from CCT, Duv [100 K < CCT < _CCT_MAX]
 
@@ -70,14 +77,14 @@ cct: Module with functions related to correlated color temperature calculations
 
  :xyz_to_cct_search(): Calculates CCT, Duv from XYZ using brute-force search 
                        algorithm (between 1e2 K - _CCT_MAX K)
-
+                       
  :cct_to_mired(): Converts from CCT to Mired scale (or back).
 
 ===============================================================================
 """
 #from . import _CCT_LUT_CALC
 import copy
-from luxpy import  _WL3, _CMF, _CIEOBS, spd_to_xyz, cri_ref, blackbody, xyz_to_Yxy, xyz_to_Yuv, Yuv_to_xyz, xyz_to_Yuv60, Yuv60_to_xyz
+from luxpy import  _WL3, _CMF, _CIEOBS, math, spd_to_xyz, cri_ref, blackbody, xyz_to_Yxy, xyz_to_Yuv, Yuv_to_xyz, xyz_to_Yuv60, Yuv60_to_xyz
 from luxpy.utils import np, pd, sp, _PKG_PATH, _SEP, _EPS, np2d, np2dT, getdata, dictkv
 from luxpy.color.ctf.colortf import colortf
 
@@ -87,7 +94,7 @@ _CCT_CSPACE = 'Yuv60' # chromaticity diagram to perform CCT, Duv calculations in
 _CCT_CSPACE_KWARGS = {'fwtf':{},'bwtf':{}} # any required parameters in the xyz_to_cspace() funtion
 __all__ = ['_CCT_LUT_CALC', '_CCT_MAX','_CCT_CSPACE', '_CCT_CSPACE_KWARGS']
 
-__all__ += ['_CCT_LUT','_CCT_LUT_PATH', 'calculate_lut', 'calculate_luts', 'xyz_to_cct','xyz_to_duv', 'cct_to_xyz',
+__all__ += ['_CCT_LUT','_CCT_LUT_PATH', 'calculate_lut', 'calculate_luts', 'xyz_to_cct','xyz_to_duv', 'cct_to_xyz_fast', 'cct_to_xyz',
             'cct_to_mired','xyz_to_cct_ohno','xyz_to_cct_search','xyz_to_cct_search_fast', 'xyz_to_cct_search_robust',
             'xyz_to_cct_HA','xyz_to_cct_mcamy']
 
@@ -1196,7 +1203,86 @@ def xyz_to_cct_ohno(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, rtol = 1e-5,
 
 
 #---------------------------------------------------------------------------------------------------
-def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut', out = None, 
+def cct_to_xyz_fast(ccts, duv = None, cct_resolution = 0.1, cieobs = _CIEOBS, wl = None,
+               cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS):
+    """
+    Convert correlated color temperature (CCT) and Duv (distance above (>0) or 
+    below (<0) the Planckian locus) to XYZ tristimulus values.
+    
+    | Finds xyzw_estimated by estimating the line perpendicular to the Planckian lcous: 
+    |    First, the angle between the coordinates corresponding to ccts 
+    |    and ccts-cct_resolution are calculated, then 90° is added, and finally
+    |    the new coordinates are determined, while taking sign of duv into account.   
+     
+    Args:
+        :ccts: 
+            | ndarray of cct values
+        :duv: 
+            | None or ndarray of duv values, optional
+            | Note that duv can be supplied together with cct values in :ccts: 
+            | as ndarray with shape (N,2)
+        :cieobs: 
+            | luxpy._CIEOBS, optional
+            | CMF set used to calculated xyzw.
+        :wl: 
+            | None, optional
+            | Wavelengths used when calculating Planckian radiators.
+        :cspace:
+            | _CCT_SPACE, optional
+            | Color space to do calculations in. 
+            | Options: 
+            |    - cspace string: 
+            |        e.g. 'Yuv60' for use with luxpy.colortf()
+            |    - tuple with forward (i.e. xyz_to..) [and backward (i.e. ..to_xyz)] functions 
+            |      (and an optional string describing the cspace): 
+            |        e.g. (forward, backward) or (forward, backward, cspace string) or (forward, cspace string) 
+            |    - dict with keys: 'fwtf' (foward), 'bwtf' (backward) [, optional: 'str' (cspace string)]
+            |  Note: if the backward tf is not supplied, optimization in cct_to_xyz() is done in the CIE 1976 u'v' diagram
+        :cspace_kwargs:
+            | _CCT_CSPACE_KWARGS, optional
+            | Parameter nested dictionary for the forward and backward transforms.
+        
+    Returns:
+        :returns: 
+            | ndarray with estimated XYZ tristimulus values
+    
+    Note:
+        If duv is not supplied (:ccts:.shape is (N,1) and :duv: is None), 
+        source is assumed to be on the Planckian locus.
+    """
+    # make ccts a min. 2d np.array:
+    if isinstance(ccts,list):
+        ccts = np2dT(np.array(ccts))
+    else:
+        ccts = np2d(ccts) 
+    
+    if len(ccts.shape)>2:
+        raise Exception('cct_to_xyz(): Input ccts.shape must be <= 2 !')
+    
+    # get cct and duv arrays from :ccts:
+    cct = np2d(ccts[:,0,None])
+
+    if (duv is None) & (ccts.shape[1] == 2):
+        duv = np2d(ccts[:,1,None])
+    elif duv is not None:
+        duv = np2d(duv)
+
+    cspace_dict = _process_cspace_input(cspace, cspace_kwargs)
+    if cspace_dict['bwtf'] is None:
+        raise Exception('cct_to_xyz_fast requires the backward cspace transform to be defined !!!')
+    
+    BB = cri_ref(np.vstack((cct, cct-cct_resolution)), wl3 = wl, ref_type = ['BB'])
+    xyzBB = spd_to_xyz(BB, cieobs = cieobs)
+    
+    YuvBB = cspace_dict['fwtf'](xyzBB)
+    N = (BB.shape[0]-1)//2
+    YuvBB_centered = (YuvBB[N:] - YuvBB[:N])
+    theta = math.positive_arctan(YuvBB_centered[...,1], YuvBB_centered[...,2],htype='rad') + np.pi/2*np.sign(duv)
+    u, v = YuvBB[:N,1] + np.abs(duv)*np.cos(theta), YuvBB[:N,2] + np.abs(duv)*np.sin(theta)
+    return cspace_dict['bwtf'](np.hstack((100*np.ones_like(u),u,v)))
+
+def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut', 
+               force_fast_mode = True, cct_resolution_of_fast_mode = 0.1, out = None, 
                rtol = 1e-5, atol = 0.1, force_out_of_lut = True, upper_cct_max = _CCT_MAX, 
                approx_cct_temp = True, fast_search = True, cct_search_list = None,
                cctuv_lut = None, cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS):
@@ -1211,7 +1297,14 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut', out 
     |    
     | with cct,duv the input values and cct_min, duv_min calculated using 
     | luxpy.xyz_to_cct(xyzw_estimated,...).
-    
+    |
+    | or 
+    |
+    | Finds xyzw_estimated by estimating the line perpendicular to the Planckian lcous: 
+    |    First, the angle between the coordinates corresponding to ccts 
+    |    and ccts-cct_resolution are calculated, then 90° is added, and finally
+    |    the new coordinates are determined, while taking sign of duv into account.   
+
     Args:
         :ccts: 
             | ndarray of cct values
@@ -1223,13 +1316,23 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut', out 
             | luxpy._CIEOBS, optional
             | CMF set used to calculated xyzw.
         :mode: 
-            | 'lut' or 'search', optional
+            | 'lut' [or 'search' or 'fast'], optional
             | Determines what method to use.
+            | (if 'fast' fails --> 'lut' is used as fall-back method)
+        :force_fast_mode:
+            | True, optional
+            | Try the fast approach (i.e. cct_to_xyz_fast()). This overrides the 
+            | method specified in 'mode'. (mode method only used when cspace 
+            |                              does not have backward transform!)
+        :cct_resolution_of_fast_mode:
+            | 0.1, optional
+            | The CCT resolution of the fast mode.
         :out: 
             | None (or 1), optional
             | If not None or 1: output a ndarray that contains estimated 
             | xyz and minimization results: 
-            | (cct_min, duv_min, F_min (objective fcn value))
+            |    (cct_min, duv_min, F_min (objective fcn value))
+            | (Defaults to None when fast mode is used !!!)
         :wl: 
             | None, optional
             | Wavelengths used when calculating Planckian radiators.
@@ -1312,95 +1415,104 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut', out 
     cspace_dict = _process_cspace_input(cspace, cspace_kwargs)
     # cspace_string = cspace['str']
     
-    # if cspace_dict['bwtf'] is None: # Exception not needed: use xyz_to_Yuv and Yuv_to_xyz in optimization
-    #     raise Exception('cct_to_xyz(): backward cspace tranform must be defined !!!')
-
-
-    # pre-load or pre-create LUT:
-    if (mode == 'lut') | (mode == 'ohno'):
-        if cctuv_lut is None:   
-            cctuv_lut = _CCT_LUT
-        else:
-            if not isinstance(cctuv_lut,dict):
-                cctuv_lut = {cspace_string: {cieobs:cctuv_lut}}
-        if cspace_string not in cctuv_lut.keys():
-            cctuv_lut[cspace_string] = {cieobs : calculate_lut(ccts = None, cieobs = cieobs, add_to_lut = False, wl = wl,
-                                                             cspace = cspace_dict, cspace_kwargs = None)}
-        if cieobs not in cctuv_lut[cspace_string]:
-            cctuv_lut[cspace_string][cieobs] = calculate_lut(ccts = None, cieobs = cieobs, add_to_lut = False, wl = wl,
-                                                             cspace = cspace_dict, cspace_kwargs = None)
+    mode_bak = mode
+    if force_fast_mode: mode = 'fast'
+    if mode == 'fast':
+        if cspace_dict['bwtf'] is None: # Exception not needed: use xyz_to_Yuv and Yuv_to_xyz in optimization
+            mode = 'lut' if mode_bak == 'fast' else mode_bak # use fall-back method
+    
+    if mode == 'fast':
+        return cct_to_xyz_fast(cct, duv = duv, 
+                               cct_resolution = cct_resolution_of_fast_mode, 
+                               cieobs = cieobs, wl = wl,
+                               cspace = cspace_dict, cspace_kwargs = None)
     else:
-        cctuv_lut = None
-
-
-    # get estimates of approximate xyz values in case duv = None:
-    BB = cri_ref(ccts = cct, wl3 = wl, ref_type = ['BB'])
-    xyz_est = spd_to_xyz(data = BB, cieobs = cieobs, out = 1)
-    results = np.zeros([ccts.shape[0],3]);results.fill(np.nan) 
-
-    if duv is not None:
         
-        # optimization/minimization setup:
-        def objfcn(uv_offset, uv0, cct, duv, out = 1):#, cieobs = cieobs, wl = wl, mode = mode):
-            uv0 = np2d(uv0 + uv_offset)
-            Yuv0 = np.concatenate((np2d([100.0]), uv0),axis=1)
-            xyz0 = cspace_dict['bwtf'](Yuv0) if cspace_dict['bwtf'] is not None else Yuv_to_xyz(Yuv0)
-            cct_min, duv_min = xyz_to_cct(xyz0,cieobs = cieobs, out = 'cct,duv',
-                                          wl = wl, mode = mode, rtol = rtol, atol = atol, 
-                                          force_out_of_lut = force_out_of_lut, 
-                                          upper_cct_max = upper_cct_max, 
-                                          approx_cct_temp = approx_cct_temp,
-                                          cct_search_list = cct_search_list,
-                                          fast_search = fast_search,
-                                          cctuv_lut = cctuv_lut,
-                                          cspace = cspace_dict, 
-                                          cspace_kwargs = None)
-            
-            F = np.sqrt(((100.0*(cct_min[0] - cct[0])/(cct[0]))**2.0) + (((duv_min[0] - duv[0])/(duv[0]))**2.0))
-            if out == 'F':
-                return F
+        # pre-load or pre-create LUT:
+        if (mode == 'lut') | (mode == 'ohno'):
+            if cctuv_lut is None:   
+                cctuv_lut = _CCT_LUT
             else:
-                return np.concatenate((cct_min, duv_min, np2d(F)),axis = 1) 
+                if not isinstance(cctuv_lut,dict):
+                    cctuv_lut = {cspace_string: {cieobs:cctuv_lut}}
+            if cspace_string not in cctuv_lut.keys():
+                cctuv_lut[cspace_string] = {cieobs : calculate_lut(ccts = None, cieobs = cieobs, add_to_lut = False, wl = wl,
+                                                                 cspace = cspace_dict, cspace_kwargs = None)}
+            if cieobs not in cctuv_lut[cspace_string]:
+                cctuv_lut[cspace_string][cieobs] = calculate_lut(ccts = None, cieobs = cieobs, add_to_lut = False, wl = wl,
+                                                                 cspace = cspace_dict, cspace_kwargs = None)
+        else:
+            cctuv_lut = None
+    
+    
+        # get estimates of approximate xyz values in case duv = None:
+        BB = cri_ref(ccts = cct, wl3 = wl, ref_type = ['BB'])
+        xyz_est = spd_to_xyz(data = BB, cieobs = cieobs, out = 1)
+        results = np.zeros([ccts.shape[0],3]);results.fill(np.nan) 
+    
+        if duv is not None:
             
-        # loop through each xyz_est:
-        for i in range(xyz_est.shape[0]):
-            xyz0 = xyz_est[i]
-            cct_i = cct[i]
-            duv_i = duv[i]
-            cct_min, duv_min =  xyz_to_cct(xyz0,cieobs = cieobs, out = 'cct,duv',wl = wl, 
-                                           mode = mode, rtol = rtol, atol = atol, 
-                                           force_out_of_lut = force_out_of_lut, 
-                                           upper_cct_max = upper_cct_max, 
-                                           approx_cct_temp = approx_cct_temp,
-                                           cct_search_list = cct_search_list,
-                                           fast_search = fast_search,
-                                           cctuv_lut = cctuv_lut,
-                                           cspace = cspace_dict,
-                                           cspace_kwargs = None)
-            
-            if np.abs(duv[i]) > _EPS:
-                # find xyz:
-                Yuv0 = cspace_dict['fwtf'](xyz0) if cspace_dict['bwtf'] is not None else xyz_to_Yuv(xyz0)
-                uv0 = Yuv0[0] [1:3]
-
-                OptimizeResult = sp.optimize.minimize(fun = objfcn,x0 = np.zeros((1,2)), args = (uv0,cct_i, duv_i, 'F'), method = 'Nelder-Mead',options={"maxiter":np.inf, "maxfev":np.inf, 'xatol': 0.000001, 'fatol': 0.000001})
-                betas = OptimizeResult['x']
-                #betas = np.zeros(uv0.shape)
-                if out is not None:
-                    results[i] = objfcn(betas,uv0,cct_i, duv_i, out = 3)
+            # optimization/minimization setup:
+            def objfcn(uv_offset, uv0, cct, duv, out = 1):#, cieobs = cieobs, wl = wl, mode = mode):
+                uv0 = np2d(uv0 + uv_offset)
+                Yuv0 = np.concatenate((np2d([100.0]), uv0),axis=1)
+                xyz0 = cspace_dict['bwtf'](Yuv0) if cspace_dict['bwtf'] is not None else Yuv_to_xyz(Yuv0)
+                cct_min, duv_min = xyz_to_cct(xyz0,cieobs = cieobs, out = 'cct,duv',
+                                              wl = wl, mode = mode, rtol = rtol, atol = atol, 
+                                              force_out_of_lut = force_out_of_lut, 
+                                              upper_cct_max = upper_cct_max, 
+                                              approx_cct_temp = approx_cct_temp,
+                                              cct_search_list = cct_search_list,
+                                              fast_search = fast_search,
+                                              cctuv_lut = cctuv_lut,
+                                              cspace = cspace_dict, 
+                                              cspace_kwargs = None)
                 
-                uv0 = np2d(uv0 + betas)
-                Yuv0 = np.concatenate((np2d([100.0]),uv0),axis=1)
-                xyz_est[i] = cspace_dict['bwtf'](Yuv0) if cspace_dict['bwtf'] is not None else Yuv_to_xyz(Yuv0)
-            
-            else:
-                xyz_est[i] = xyz0
-      
-    if (out is None) | (out == 1):
-        return xyz_est
-    else:
-        # Also output results of minimization:
-        return np.concatenate((xyz_est,results),axis = 1)  
+                F = np.sqrt(((100.0*(cct_min[0] - cct[0])/(cct[0]))**2.0) + (((duv_min[0] - duv[0])/(duv[0]))**2.0))
+                if out == 'F':
+                    return F
+                else:
+                    return np.concatenate((cct_min, duv_min, np2d(F)),axis = 1) 
+                
+            # loop through each xyz_est:
+            for i in range(xyz_est.shape[0]):
+                xyz0 = xyz_est[i]
+                cct_i = cct[i]
+                duv_i = duv[i]
+                cct_min, duv_min =  xyz_to_cct(xyz0,cieobs = cieobs, out = 'cct,duv',wl = wl, 
+                                               mode = mode, rtol = rtol, atol = atol, 
+                                               force_out_of_lut = force_out_of_lut, 
+                                               upper_cct_max = upper_cct_max, 
+                                               approx_cct_temp = approx_cct_temp,
+                                               cct_search_list = cct_search_list,
+                                               fast_search = fast_search,
+                                               cctuv_lut = cctuv_lut,
+                                               cspace = cspace_dict,
+                                               cspace_kwargs = None)
+                
+                if np.abs(duv[i]) > _EPS:
+                    # find xyz:
+                    Yuv0 = cspace_dict['fwtf'](xyz0) if cspace_dict['bwtf'] is not None else xyz_to_Yuv(xyz0)
+                    uv0 = Yuv0[0] [1:3]
+    
+                    OptimizeResult = sp.optimize.minimize(fun = objfcn,x0 = np.zeros((1,2)), args = (uv0,cct_i, duv_i, 'F'), method = 'Nelder-Mead',options={"maxiter":np.inf, "maxfev":np.inf, 'xatol': 0.000001, 'fatol': 0.000001})
+                    betas = OptimizeResult['x']
+                    #betas = np.zeros(uv0.shape)
+                    if out is not None:
+                        results[i] = objfcn(betas,uv0,cct_i, duv_i, out = 3)
+                    
+                    uv0 = np2d(uv0 + betas)
+                    Yuv0 = np.concatenate((np2d([100.0]),uv0),axis=1)
+                    xyz_est[i] = cspace_dict['bwtf'](Yuv0) if cspace_dict['bwtf'] is not None else Yuv_to_xyz(Yuv0)
+                
+                else:
+                    xyz_est[i] = xyz0
+          
+        if (out is None) | (out == 1):
+            return xyz_est
+        else:
+            # Also output results of minimization:
+            return np.concatenate((xyz_est,results),axis = 1)  
 
 
 #-------------------------------------------------------------------------------------------------   
