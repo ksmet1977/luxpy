@@ -185,10 +185,11 @@ def calculate_lut(ccts = None, cieobs = None, add_to_lut = True, wl = _WL3,
             | Options: 
             |    - cspace string: 
             |        e.g. 'Yuv60' for use with luxpy.colortf()
-            |    - tuple with forward (i.e. xyz_to..) and backward (i.e. ..to_xyz) functions 
+            |    - tuple with forward (i.e. xyz_to..) [and backward (i.e. ..to_xyz)] functions 
             |      (and an optional string describing the cspace): 
             |        e.g. (forward, backward) or (forward, backward, cspace string) or (forward, cspace string) 
-            |    - dict with keys: 'fwtf' (foward), 'bwtf' (backward, only needed for cct_to_xyz) [, optional: 'str' (cspace string)]
+            |    - dict with keys: 'fwtf' (foward), 'bwtf' (backward) [, optional: 'str' (cspace string)]
+            |  Note: if the backward tf is not supplied, optimization in cct_to_xyz() is done in the CIE 1976 u'v' diagram
         :cspace_kwargs:
             | _CCT_CSPACE_KWARGS, optional
             | Parameter nested dictionary for the forward and backward transforms.
@@ -255,10 +256,11 @@ def calculate_luts(ccts = None, wl = _WL3,
             | Options: 
             |    - cspace string: 
             |        e.g. 'Yuv60' for use with luxpy.colortf()
-            |    - tuple with forward (i.e. xyz_to..) and backward (i.e. ..to_xyz) functions 
+            |    - tuple with forward (i.e. xyz_to..) [and backward (i.e. ..to_xyz)] functions 
             |      (and an optional string describing the cspace): 
             |        e.g. (forward, backward) or (forward, backward, cspace string) or (forward, cspace string) 
-            |    - dict with keys: 'fwtf' (foward), 'bwtf' (backward, only needed for cct_to_xyz) [, optional: 'str' (cspace string)]
+            |    - dict with keys: 'fwtf' (foward), 'bwtf' (backward) [, optional: 'str' (cspace string)]
+            |  Note: if the backward tf is not supplied, optimization in cct_to_xyz() is done in the CIE 1976 u'v' diagram
         :cspace_kwargs:
             | _CCT_CSPACE_KWARGS, optional
             | Parameter nested dictionary for the forward and backward transforms.
@@ -487,10 +489,11 @@ def xyz_to_cct_search(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None, rtol = 1e-5
             | Options: 
             |    - cspace string: 
             |        e.g. 'Yuv60' for use with luxpy.colortf()
-            |    - tuple with forward (i.e. xyz_to..) and backward (i.e. ..to_xyz) functions 
+            |    - tuple with forward (i.e. xyz_to..) [and backward (i.e. ..to_xyz)] functions 
             |      (and an optional string describing the cspace): 
             |        e.g. (forward, backward) or (forward, backward, cspace string) or (forward, cspace string) 
-            |    - dict with keys: 'fwtf' (foward), 'bwtf' (backward, only needed for cct_to_xyz) [, optional: 'str' (cspace string)]
+            |    - dict with keys: 'fwtf' (foward), 'bwtf' (backward) [, optional: 'str' (cspace string)]
+            |  Note: if the backward tf is not supplied, optimization in cct_to_xyz() is done in the CIE 1976 u'v' diagram
         :cspace_kwargs:
             | _CCT_CSPACE_KWARGS, optional
             | Parameter nested dictionary for the forward and backward transforms.
@@ -577,10 +580,11 @@ def xyz_to_cct_search_robust(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None, rtol
             | Options: 
             |    - cspace string: 
             |        e.g. 'Yuv60' for use with luxpy.colortf()
-            |    - tuple with forward (i.e. xyz_to..) and backward (i.e. ..to_xyz) functions 
+            |    - tuple with forward (i.e. xyz_to..) [and backward (i.e. ..to_xyz)] functions 
             |      (and an optional string describing the cspace): 
             |        e.g. (forward, backward) or (forward, backward, cspace string) or (forward, cspace string) 
-            |    - dict with keys: 'fwtf' (foward), 'bwtf' (backward, only needed for cct_to_xyz) [, optional: 'str' (cspace string)]
+            |    - dict with keys: 'fwtf' (foward), 'bwtf' (backward) [, optional: 'str' (cspace string)]
+            |  Note: if the backward tf is not supplied, optimization in cct_to_xyz() is done in the CIE 1976 u'v' diagram
         :cspace_kwargs:
             | _CCT_CSPACE_KWARGS, optional
             | Parameter nested dictionary for the forward and backward transforms.
@@ -783,10 +787,11 @@ def xyz_to_cct_search_fast(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None,
             | Options: 
             |    - cspace string: 
             |        e.g. 'Yuv60' for use with luxpy.colortf()
-            |    - tuple with forward (i.e. xyz_to..) and backward (i.e. ..to_xyz) functions 
+            |    - tuple with forward (i.e. xyz_to..) [and backward (i.e. ..to_xyz)] functions 
             |      (and an optional string describing the cspace): 
             |        e.g. (forward, backward) or (forward, backward, cspace string) or (forward, cspace string) 
-            |    - dict with keys: 'fwtf' (foward), 'bwtf' (backward, only needed for cct_to_xyz) [, optional: 'str' (cspace string)]
+            |    - dict with keys: 'fwtf' (foward), 'bwtf' (backward) [, optional: 'str' (cspace string)]
+            |  Note: if the backward tf is not supplied, optimization in cct_to_xyz() is done in the CIE 1976 u'v' diagram
         :cspace_kwargs:
             | _CCT_CSPACE_KWARGS, optional
             | Parameter nested dictionary for the forward and backward transforms.
@@ -1041,10 +1046,11 @@ def xyz_to_cct_ohno(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, rtol = 1e-5,
             | Options: 
             |    - cspace string: 
             |        e.g. 'Yuv60' for use with luxpy.colortf()
-            |    - tuple with forward (i.e. xyz_to..) and backward (i.e. ..to_xyz) functions 
+            |    - tuple with forward (i.e. xyz_to..) [and backward (i.e. ..to_xyz)] functions 
             |      (and an optional string describing the cspace): 
             |        e.g. (forward, backward) or (forward, backward, cspace string) or (forward, cspace string) 
-            |    - dict with keys: 'fwtf' (foward), 'bwtf' (backward, only needed for cct_to_xyz) [, optional: 'str' (cspace string)]
+            |    - dict with keys: 'fwtf' (foward), 'bwtf' (backward) [, optional: 'str' (cspace string)]
+            |  Note: if the backward tf is not supplied, optimization in cct_to_xyz() is done in the CIE 1976 u'v' diagram
         :cspace_kwargs:
             | _CCT_CSPACE_KWARGS, optional
             | Parameter nested dictionary for the forward and backward transforms.
@@ -1268,10 +1274,11 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut', out 
             | Options: 
             |    - cspace string: 
             |        e.g. 'Yuv60' for use with luxpy.colortf()
-            |    - tuple with forward (i.e. xyz_to..) and backward (i.e. ..to_xyz) functions 
+            |    - tuple with forward (i.e. xyz_to..) [and backward (i.e. ..to_xyz)] functions 
             |      (and an optional string describing the cspace): 
             |        e.g. (forward, backward) or (forward, backward, cspace string) or (forward, cspace string) 
-            |    - dict with keys: 'fwtf' (foward), 'bwtf' (backward, only needed for cct_to_xyz) [, optional: 'str' (cspace string)]
+            |    - dict with keys: 'fwtf' (foward), 'bwtf' (backward) [, optional: 'str' (cspace string)]
+            |  Note: if the backward tf is not supplied, optimization in cct_to_xyz() is done in the CIE 1976 u'v' diagram
         :cspace_kwargs:
             | _CCT_CSPACE_KWARGS, optional
             | Parameter nested dictionary for the forward and backward transforms.
@@ -1304,8 +1311,9 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut', out 
 
     cspace_dict = _process_cspace_input(cspace, cspace_kwargs)
     # cspace_string = cspace['str']
-    if cspace_dict['bwtf'] is None:
-        raise Exception('cct_to_xyz(): backward cspace tranform must be defined !!!')
+    
+    # if cspace_dict['bwtf'] is None: # Exception not needed: use xyz_to_Yuv and Yuv_to_xyz in optimization
+    #     raise Exception('cct_to_xyz(): backward cspace tranform must be defined !!!')
 
 
     # pre-load or pre-create LUT:
@@ -1336,7 +1344,8 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut', out 
         def objfcn(uv_offset, uv0, cct, duv, out = 1):#, cieobs = cieobs, wl = wl, mode = mode):
             uv0 = np2d(uv0 + uv_offset)
             Yuv0 = np.concatenate((np2d([100.0]), uv0),axis=1)
-            cct_min, duv_min = xyz_to_cct(cspace_dict['bwtf'](Yuv0),cieobs = cieobs, out = 'cct,duv',
+            xyz0 = cspace_dict['bwtf'](Yuv0) if cspace_dict['bwtf'] is not None else Yuv_to_xyz(Yuv0)
+            cct_min, duv_min = xyz_to_cct(xyz0,cieobs = cieobs, out = 'cct,duv',
                                           wl = wl, mode = mode, rtol = rtol, atol = atol, 
                                           force_out_of_lut = force_out_of_lut, 
                                           upper_cct_max = upper_cct_max, 
@@ -1371,7 +1380,7 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut', out 
             
             if np.abs(duv[i]) > _EPS:
                 # find xyz:
-                Yuv0 = cspace_dict['fwtf'](xyz0)
+                Yuv0 = cspace_dict['fwtf'](xyz0) if cspace_dict['bwtf'] is not None else xyz_to_Yuv(xyz0)
                 uv0 = Yuv0[0] [1:3]
 
                 OptimizeResult = sp.optimize.minimize(fun = objfcn,x0 = np.zeros((1,2)), args = (uv0,cct_i, duv_i, 'F'), method = 'Nelder-Mead',options={"maxiter":np.inf, "maxfev":np.inf, 'xatol': 0.000001, 'fatol': 0.000001})
@@ -1382,7 +1391,7 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut', out 
                 
                 uv0 = np2d(uv0 + betas)
                 Yuv0 = np.concatenate((np2d([100.0]),uv0),axis=1)
-                xyz_est[i] = cspace_dict['bwtf'](Yuv0)
+                xyz_est[i] = cspace_dict['bwtf'](Yuv0) if cspace_dict['bwtf'] is not None else Yuv_to_xyz(Yuv0)
             
             else:
                 xyz_est[i] = xyz0
@@ -1464,10 +1473,11 @@ def xyz_to_cct(xyzw, cieobs = _CIEOBS, out = 'cct',mode = 'lut', wl = None, rtol
             | Options: 
             |    - cspace string: 
             |        e.g. 'Yuv60' for use with luxpy.colortf()
-            |    - tuple with forward (i.e. xyz_to..) and backward (i.e. ..to_xyz) functions 
+            |    - tuple with forward (i.e. xyz_to..) [and backward (i.e. ..to_xyz)] functions 
             |      (and an optional string describing the cspace): 
             |        e.g. (forward, backward) or (forward, backward, cspace string) or (forward, cspace string) 
-            |    - dict with keys: 'fwtf' (foward), 'bwtf' (backward, only needed for cct_to_xyz) [, optional: 'str' (cspace string)]
+            |    - dict with keys: 'fwtf' (foward), 'bwtf' (backward) [, optional: 'str' (cspace string)]
+            |  Note: if the backward tf is not supplied, optimization in cct_to_xyz() is done in the CIE 1976 u'v' diagram
         :cspace_kwargs:
             | _CCT_CSPACE_KWARGS, optional
             | Parameter nested dictionary for the forward and backward transforms.
@@ -1558,10 +1568,11 @@ def xyz_to_duv(xyzw, cieobs = _CIEOBS, out = 'duv', mode = 'lut', wl = None,
             | Options: 
             |    - cspace string: 
             |        e.g. 'Yuv60' for use with luxpy.colortf()
-            |    - tuple with forward (i.e. xyz_to..) and backward (i.e. ..to_xyz) functions 
+            |    - tuple with forward (i.e. xyz_to..) [and backward (i.e. ..to_xyz)] functions 
             |      (and an optional string describing the cspace): 
             |        e.g. (forward, backward) or (forward, backward, cspace string) or (forward, cspace string) 
-            |    - dict with keys: 'fwtf' (foward), 'bwtf' (backward, only needed for cct_to_xyz) [, optional: 'str' (cspace string)]
+            |    - dict with keys: 'fwtf' (foward), 'bwtf' (backward) [, optional: 'str' (cspace string)]
+            |  Note: if the backward tf is not supplied, optimization in cct_to_xyz() is done in the CIE 1976 u'v' diagram
         :cspace_kwargs:
             | _CCT_CSPACE_KWARGS, optional
             | Parameter nested dictionary for the forward and backward transforms.
