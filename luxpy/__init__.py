@@ -5,7 +5,7 @@ LuxPy: a package for lighting and color science
 
     * Author: K.A.G. Smet (ksmet1977 at gmail.com)
     * Version: 1.8.0
-    * Date: October 15, 2021
+    * Date: November 1, 2021
     * License: GPLv3
 
     * DOI: https://doi.org/10.5281/zenodo.1298963
@@ -35,7 +35,7 @@ run: luxpy.utils.show_luxpy_tree()
 
 Imported core packages/modules/functions:
 ----------------------------------------
- * os, warnings, colorsys, itertools, copy, time, tkinter, ctypes, platform, subprocess, pathlib, importlib
+ * os, warnings, colorsys, itertools, copy, time, tkinter, ctypes, platform, subprocess, pathlib, importlib, sys
  * collections.OrderedDict.odict
  * mpl_toolkits.mplot3d.Axes3D
  
@@ -70,7 +70,7 @@ E.g.:
 # Package info:
 __VERSION__ = 'v1.8.0'; """Current version"""
 __version__ = __VERSION__
-__DATE__ = '15-Oct-2021'; """release date"""
+__DATE__ = '01-Nov-2021'; """release date"""
 
 __COPYRIGHT__ = 'Copyright (C) 2017-2021 - Kevin A.G. Smet'; """copyright info"""
 

@@ -1273,13 +1273,13 @@ def cct_to_xyz_fast(ccts, duv = None, cct_resolution = 0.1, cieobs = _CIEOBS, wl
     
     BB = cri_ref(np.vstack((cct, cct-cct_resolution)), wl3 = wl, ref_type = ['BB'])
     xyzBB = spd_to_xyz(BB, cieobs = cieobs)
-    
     YuvBB = cspace_dict['fwtf'](xyzBB)
     N = (BB.shape[0]-1)//2
-    YuvBB_centered = (YuvBB[N:] - YuvBB[:N])
-    theta = math.positive_arctan(YuvBB_centered[...,1], YuvBB_centered[...,2],htype='rad') + np.pi/2*np.sign(duv)
-    u, v = YuvBB[:N,1] + np.abs(duv)*np.cos(theta), YuvBB[:N,2] + np.abs(duv)*np.sin(theta)
-    return cspace_dict['bwtf'](np.hstack((100*np.ones_like(u),u,v)))
+    YuvBB_centered = (YuvBB[N:] - YuvBB[:N]);
+    theta = math.positive_arctan(YuvBB_centered[...,1], YuvBB_centered[...,2],htype='rad')[:,None] + np.pi/2*np.sign(duv)
+    u, v = YuvBB[:N,1:2] + np.abs(duv)*np.cos(theta), YuvBB[:N,2:3] + np.abs(duv)*np.sin(theta)
+    Yuv = np.hstack((100*np.ones_like(u),u,v))
+    return cspace_dict['bwtf'](Yuv)
 
 def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut', 
                force_fast_mode = True, cct_resolution_of_fast_mode = 0.1, out = None, 
@@ -1394,24 +1394,6 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut',
         If duv is not supplied (:ccts:.shape is (N,1) and :duv: is None), 
         source is assumed to be on the Planckian locus.
     """
-    # make ccts a min. 2d np.array:
-    if isinstance(ccts,list):
-        ccts = np2dT(np.array(ccts))
-    else:
-        ccts = np2d(ccts) 
-    
-    if len(ccts.shape)>2:
-        raise Exception('cct_to_xyz(): Input ccts.shape must be <= 2 !')
-    
-    # get cct and duv arrays from :ccts:
-    cct = np2d(ccts[:,0,None])
-
-
-    if (duv is None) & (ccts.shape[1] == 2):
-        duv = np2d(ccts[:,1,None])
-    elif duv is not None:
-        duv = np2d(duv)
-
     cspace_dict = _process_cspace_input(cspace, cspace_kwargs)
     # cspace_string = cspace['str']
     
@@ -1422,11 +1404,29 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut',
             mode = 'lut' if mode_bak == 'fast' else mode_bak # use fall-back method
     
     if mode == 'fast':
-        return cct_to_xyz_fast(cct, duv = duv, 
+        return cct_to_xyz_fast(ccts, duv = duv, 
                                cct_resolution = cct_resolution_of_fast_mode, 
                                cieobs = cieobs, wl = wl,
                                cspace = cspace_dict, cspace_kwargs = None)
     else:
+        
+        # make ccts a min. 2d np.array:
+        if isinstance(ccts,list):
+            ccts = np2dT(np.array(ccts))
+        else:
+            ccts = np2d(ccts) 
+        
+        if len(ccts.shape)>2:
+            raise Exception('cct_to_xyz(): Input ccts.shape must be <= 2 !')
+        
+        # get cct and duv arrays from :ccts:
+        cct = np2d(ccts[:,0,None])
+
+
+        if (duv is None) & (ccts.shape[1] == 2):
+            duv = np2d(ccts[:,1,None])
+        elif duv is not None:
+            duv = np2d(duv)
         
         # pre-load or pre-create LUT:
         if (mode == 'lut') | (mode == 'ohno'):

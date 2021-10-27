@@ -134,8 +134,8 @@ LAB methods
 
 from luxpy import _CMF, _COLORTF_DEFAULT_WHITE_POINT, _CIEOBS, _CSPACE, _CSPACE_AXES
 from luxpy.color.cam.colorappearancemodels import _CAM_DEFAULT_WHITE_POINT, _CAM_DEFAULT_CONDITIONS 
-from luxpy import (xyz_to_Yxy, xyz_to_Yuv, xyz_to_wuv, xyz_to_lab, xyz_to_luv, xyz_to_Vrb_mb, xyz_to_ipt, xyz_to_Ydlep, xyz_to_xyz, xyz_to_lms, 
-                   Yxy_to_xyz, Yuv_to_xyz, lab_to_xyz, luv_to_xyz, Vrb_mb_to_xyz, ipt_to_xyz, Ydlep_to_xyz, lms_to_xyz, 
+from luxpy import (xyz_to_Yxy, xyz_to_Yuv, xyz_to_Yuv76, xyz_to_Yuv60, xyz_to_wuv, xyz_to_lab, xyz_to_luv, xyz_to_Vrb_mb, xyz_to_ipt, xyz_to_Ydlep, xyz_to_xyz, xyz_to_lms, 
+                   Yxy_to_xyz, Yuv_to_xyz, Yuv76_to_xyz, Yuv60_to_xyz, lab_to_xyz, luv_to_xyz, Vrb_mb_to_xyz, ipt_to_xyz, Ydlep_to_xyz, lms_to_xyz, 
                    xyz_to_jabM_ciecam02, jabM_ciecam02_to_xyz, xyz_to_jabC_ciecam02, jabC_ciecam02_to_xyz, 
                    xyz_to_jabM_ciecam16, jabM_ciecam16_to_xyz, xyz_to_jabC_ciecam16, jabC_ciecam16_to_xyz, 
                    xyz_to_jabz, jabz_to_xyz, xyz_to_jabM_zcam, jabM_zcam_to_xyz, xyz_to_jabC_zcam, jabC_zcam_to_xyz, 
@@ -426,6 +426,36 @@ class XYZ(CDATA):
            """
         return LAB(value = xyz_to_Yuv(self.value), relative = self.relative, cieobs = self.cieobs, dtype = 'Yuv')
     
+    
+    
+    def to_Yuv76(self,**kwargs):
+        """ 
+        Convert XYZ tristimulus values CIE 1976 Yu'v' chromaticity values.
+
+            
+        Returns:
+            :Yuv: 
+                | luxpy.LAB with .value field that is a ndarray 
+                | with CIE 1976 Yu'v' chromaticity values.
+                | (Y value refers to luminance or luminance factor)
+           """
+        return LAB(value = xyz_to_Yuv76(self.value), relative = self.relative, cieobs = self.cieobs, dtype = 'Yuv76')
+    
+    
+    
+    def to_Yuv60(self,**kwargs):
+        """ 
+        Convert XYZ tristimulus values CIE 1960 Yuv chromaticity values.
+
+            
+        Returns:
+            :Yuv: 
+                | luxpy.LAB with .value field that is a ndarray 
+                | with CIE 1960 Yuv chromaticity values.
+                | (Y value refers to luminance or luminance factor)
+           """
+        return LAB(value = xyz_to_Yuv60(self.value), relative = self.relative, cieobs = self.cieobs, dtype = 'Yuv60')
+
     
     
     def to_wuv(self, xyzw = _COLORTF_DEFAULT_WHITE_POINT):
