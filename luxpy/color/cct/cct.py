@@ -1203,14 +1203,14 @@ def xyz_to_cct_ohno(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, rtol = 1e-5,
 
 
 #---------------------------------------------------------------------------------------------------
-def cct_to_xyz_fast(ccts, duv = None, cct_resolution = 0.1, cieobs = _CIEOBS, wl = None,
+def cct_to_xyz_fast(ccts, duv = None, cct_resolution = 0.25, cieobs = _CIEOBS, wl = None,
                cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS):
     """
     Convert correlated color temperature (CCT) and Duv (distance above (>0) or 
     below (<0) the Planckian locus) to XYZ tristimulus values.
     
     | Finds xyzw_estimated by estimating the line perpendicular to the Planckian lcous: 
-    |    First, the angle between the coordinates corresponding to ccts 
+    |    First, the angle (tangent) between the coordinates corresponding to ccts 
     |    and ccts-cct_resolution are calculated, then 90° is added, and finally
     |    the new coordinates are determined, while taking sign of duv into account.   
      
@@ -1221,6 +1221,9 @@ def cct_to_xyz_fast(ccts, duv = None, cct_resolution = 0.1, cieobs = _CIEOBS, wl
             | None or ndarray of duv values, optional
             | Note that duv can be supplied together with cct values in :ccts: 
             | as ndarray with shape (N,2)
+        :cct_resolution:
+            | 0.25, optional
+            | Distance between cct and previous cct to estimate tangent to the Planckian locus. 
         :cieobs: 
             | luxpy._CIEOBS, optional
             | CMF set used to calculated xyzw.
@@ -1282,7 +1285,7 @@ def cct_to_xyz_fast(ccts, duv = None, cct_resolution = 0.1, cieobs = _CIEOBS, wl
     return cspace_dict['bwtf'](Yuv)
 
 def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut', 
-               force_fast_mode = True, cct_resolution_of_fast_mode = 0.1, out = None, 
+               force_fast_mode = True, cct_resolution_of_fast_mode = 0.25, out = None, 
                rtol = 1e-5, atol = 0.1, force_out_of_lut = True, upper_cct_max = _CCT_MAX, 
                approx_cct_temp = True, fast_search = True, cct_search_list = None,
                cctuv_lut = None, cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS):
@@ -1301,7 +1304,7 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut',
     | or 
     |
     | Finds xyzw_estimated by estimating the line perpendicular to the Planckian lcous: 
-    |    First, the angle between the coordinates corresponding to ccts 
+    |    First, the angle (tangent) between the coordinates corresponding to ccts 
     |    and ccts-cct_resolution are calculated, then 90° is added, and finally
     |    the new coordinates are determined, while taking sign of duv into account.   
 
@@ -1325,8 +1328,10 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut',
             | method specified in 'mode'. (mode method only used when cspace 
             |                              does not have backward transform!)
         :cct_resolution_of_fast_mode:
-            | 0.1, optional
+            | 0.25, optional
             | The CCT resolution of the fast mode.
+            |   (i.e. distance between cct and previous cct to estimate tangent 
+            |    to the Planckian locus.) 
         :out: 
             | None (or 1), optional
             | If not None or 1: output a ndarray that contains estimated 

@@ -1338,7 +1338,7 @@ def _get_luminaire_illuminance_at_plane(plum, nlum, pplane, lid, xyzm_maps):
     Iv = _read_luminous_intensity(theta, phi, lid, method = 'linear')
     
     # illuminance at point pplane:
-    Ev = Iv*np.cos(np.deg2rad(theta))/r**2
+    Ev = np.abs(Iv*np.cos(np.deg2rad(theta))/r**2)
     return Ev, u0, nlum, r, xyzm_maps
 
 def _get_plane_luminance(plum, nlum, lid, pplane, nplane, psensor, rho, xyzm_maps):
