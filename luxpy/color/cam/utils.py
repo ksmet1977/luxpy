@@ -163,24 +163,41 @@ def hue_quadrature(h, unique_hue_data = None, forward = True):
     ei = unique_hue_data['ei']
     
     
-    
     if forward == True:
         h = np.atleast_2d(h)
         h[h>360] -= 360.0
         h[h<hi[0]] += 360.0
         if h.shape[0] == 1:
             h = h.T
-    
+        
         H = np.zeros_like(h)
         for j in range(h.shape[1]):
             h_j = h[...,j:j+1]
             h_hi = np.repeat(h_j, repeats = len(hi), axis = 1)
             hi_h = np.repeat(np.atleast_2d(hi),repeats = h.shape[0], axis = 0)
             d = (h_hi - hi_h)
-            d[d<0] = 1000.0
+            d[d<0] = 100000.0
             p = d.argmin(axis = 1)
             p[p == (len(hi)-1)] = 0 # make sure last unique hue data is not selected
-            H_j = np.array([Hi[pi] + (100.0*(h_j[i]-hi[pi])/ei[pi])/((h_j[i]-hi[pi])/ei[pi] + (hi[pi+1] - h_j[i])/ei[pi+1]) for (i,pi) in enumerate(p)])
+            H_j = np.array([Hi[pi] + (100.0/(1.0 + ((hi[pi+1] - h_j[i])/ei[pi+1])/(1e-308 + ((h_j[i]-hi[pi])-360.0*((h_j[i]-hi[pi])==360.0))/ei[pi]))) for (i,pi) in enumerate(p)])
+            
+            # for (i,pi) in enumerate(p):
+            #     print('i,pi',i,pi)
+            #     print('Hi[pi]',Hi[pi])
+            #     print('h_j[i]-hi[pi]',h_j[i]-hi[pi])
+            #     print('with bool',((h_j[i]-hi[pi])-360.0*((h_j[i]-hi[pi])==360)))
+            #     print('ei[pi]',ei[pi])
+            #     print('1/ei[pi]',1/ei[pi])
+            #     print('(h_j[i]-hi[pi])/ei[pi]',(h_j[i]-hi[pi])/ei[pi])
+            #     print('ei[pi+1]',ei[pi+1])
+            #     print('1/ei[pi+1]',1/ei[pi+1])
+            #     print('(hi[pi+1] - h_j[i])',(hi[pi+1] - h_j[i]))
+            #     print('(hi[pi+1] - h_j[i])/ei[pi+1]',(hi[pi+1] - h_j[i])/ei[pi+1])
+            #     print('((h_j[i]-hi[pi])/ei[pi] + (hi[pi+1] - h_j[i])/ei[pi+1])',((h_j[i]-hi[pi])/ei[pi] + (hi[pi+1] - h_j[i])/ei[pi+1]))
+            #     print('100*...',(100.0/(1.0 + ((hi[pi+1] - h_j[i])/ei[pi+1])/((h_j[i]-hi[pi])/ei[pi]))))
+            #     print('p1',1/(1e-308+(((h_j[i]-hi[pi])-360.0*((h_j[i]-hi[pi])==360.0))/ei[pi])))
+            #     print(Hi[pi] + (100.0/(1.0 + ((hi[pi+1] - h_j[i])/ei[pi+1])/(1e-308 + ((h_j[i]-hi[pi])-360.0*((h_j[i]-hi[pi])==360.0))/ei[pi]))))
+            
             H[...,j:j+1] = H_j
     
         if ndim == 0:
@@ -192,6 +209,7 @@ def hue_quadrature(h, unique_hue_data = None, forward = True):
 
     else:
         H = np.atleast_2d(h)
+        H[H>=400] = H[H>=400] - 400
         if H.shape[0] == 1:
             H = H.T
         h = np.zeros_like(H)
@@ -200,7 +218,7 @@ def hue_quadrature(h, unique_hue_data = None, forward = True):
             H_Hi = np.repeat(H_j, repeats = len(Hi), axis = 1)
             Hi_H = np.repeat(np.atleast_2d(Hi),repeats = H.shape[0], axis = 0)
             d = (H_Hi - Hi_H)
-            d[d<0] = 1000.0
+            d[d<0] = 100000.0
             p = d.argmin(axis = 1)
             p[p == (len(Hi)-1)] = 0 # make sure last unique hue data is not selected
             h_j = np.array([((H_j[i] - Hi[pi])*(ei[pi+1]*hi[pi] - ei[pi]*hi[pi+1]) - 100*ei[pi+1]*hi[pi])/((H_j[i] - Hi[pi])*(ei[pi+1] - ei[pi]) - 100*ei[pi+1]) for (i,pi) in enumerate(p)])
@@ -215,7 +233,8 @@ def hue_quadrature(h, unique_hue_data = None, forward = True):
             return h
         
 if __name__ == '__main__':
-    h = np.array([10.0,30,110,280,370,390])
+    h = np.array([10.0,30,110,280,370, 380.13, 380.14, 381.15, 390])
+    # h = np.array([380.14])
     print('h',h)
     H = hue_quadrature(h, unique_hue_data = None, forward = True)
     print('H',H)

@@ -41,7 +41,7 @@ Module with utility functions and parameters
 
  :vec_to_dict(): Convert dict to vec and vice versa.
 
-  getdata(): Get data from csv-file or convert between pandas dataframe
+ :getdata(): Get data from csv-file or convert between pandas dataframe
              and numpy 2d-array.
 
  :dictkv(): Easy input of of keys and values into dict 
@@ -761,3 +761,25 @@ def profile_fcn(fcn, profile=True, sort_stats = 'tottime', output_file=None):
             with open(output_file, 'w+') as f:
                 f.write(s.getvalue())
         return ps
+    
+#------------------------------------------------------------------------------
+def unique(array, sort = True):
+    """ 
+    Get unique elements from array.
+    
+    Args:
+        :array:
+            | array to get unique elements from.
+        :sort:
+            | True, optional
+            | If True: get sorted unique elements.
+            
+    Returns:
+        :unique_array:
+            | ndarray with (sorted) unique elements.
+    """
+    if sort:
+        return np.unique(array) 
+    else:
+        uniq, index = np.unique(array, return_index=True)
+        return uniq[index.argsort()]
