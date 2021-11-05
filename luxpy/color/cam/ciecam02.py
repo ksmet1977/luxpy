@@ -246,6 +246,10 @@ def run(data, xyzw = _DEFAULT_WHITE_POINT, Yw = None, outin = 'J,aM,bM',
     # Calculate achromatic signal of white:
     Aw =  (2.0*rgbwpa[...,0] + rgbwpa[...,1] + (1.0/20.0)*rgbwpa[...,2] - 0.305)*Nbb
     
+    #--------------------------------------------
+    # calculate brightness, Qw of white:
+    Qw = (4.0/c)* (1.0) * (Aw + 4.0)*(FL**0.25)
+    
     # massage shape of data for broadcasting:
     original_ndim = data.ndim
     if data.ndim == 2: data = data[:,None]
