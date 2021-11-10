@@ -19,7 +19,7 @@
 cct: Module with functions related to correlated color temperature calculations
 ===============================================================================
 
- :_CCT_MAX: (= 1e12), max. value that does not cause overflow problems. 
+ :_CCT_MAX: (= 1e11), max. value that does not cause overflow problems. 
 
  :_CCT_LUT_PATH: Folder with Look-Up-Tables (LUT) for correlated color 
                  temperature calculation followings Ohno's method.
