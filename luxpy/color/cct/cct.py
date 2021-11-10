@@ -1766,7 +1766,7 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut',
 #-------------------------------------------------------------------------------------------------   
 # general CCT-wrapper function
 def xyz_to_cct(xyzw, cieobs = _CIEOBS, out = 'cct',mode = 'lut', wl = None, rtol = 1e-5, atol = 0.1, 
-               force_out_of_lut = True, fallback_mode_for_lut = 'zhang', upper_cct_max = _CCT_MAX, 
+               force_out_of_lut = True, fallback_mode_for_lut = 'search', upper_cct_max = _CCT_MAX, 
                approx_cct_temp = True, fast_search = True, 
                cct_search_list = None, MK_search_list = None,
                cctuv_lut = None, cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS): 
@@ -1816,7 +1816,7 @@ def xyz_to_cct(xyzw, cieobs = _CIEOBS, out = 'cct',mode = 'lut', wl = None, rtol
             | If True and cct is out of range of the LUT, then switch to 
             | the selected fallback_mode, else return numpy.nan values.
         :fallback_mode_for_lut:
-            | 'zhang', optional
+            | 'search', optional
             | Fallback mode for out-of-lut input when mode == 'ohno' (or 'lut'). 
             | Options:
             |  - 'Zhang' or 'golden-ratio': use xyz_to_cct_zhang()
@@ -1895,7 +1895,7 @@ def xyz_to_cct(xyzw, cieobs = _CIEOBS, out = 'cct',mode = 'lut', wl = None, rtol
 
 
 def xyz_to_duv(xyzw, cieobs = _CIEOBS, out = 'duv',mode = 'lut', wl = None, rtol = 1e-5, atol = 0.1, 
-               force_out_of_lut = True, fallback_mode_for_lut = 'zhang', upper_cct_max = _CCT_MAX, 
+               force_out_of_lut = True, fallback_mode_for_lut = 'search', upper_cct_max = _CCT_MAX, 
                approx_cct_temp = True, fast_search = True, 
                cct_search_list = None, MK_search_list = None,
                cctuv_lut = None, cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS): 
@@ -1945,7 +1945,7 @@ def xyz_to_duv(xyzw, cieobs = _CIEOBS, out = 'duv',mode = 'lut', wl = None, rtol
             | If True and cct is out of range of the LUT, then switch to 
             | the selected fallback_mode, else return numpy.nan values.
         :fallback_mode_for_lut:
-            | 'zhang', optional
+            | 'search', optional
             | Fallback mode for out-of-lut input when mode == 'ohno' (or 'lut'). 
             | Options:
             |  - 'Zhang' or 'golden-ratio': use xyz_to_cct_zhang()
