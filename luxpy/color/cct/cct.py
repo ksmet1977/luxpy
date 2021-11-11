@@ -1009,8 +1009,9 @@ def xyz_to_cct_search_fast(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None,
     elif (out == "[cct,duv]") | (out == -2):
         return np.hstack((ccts,duvs))
 
+
 def xyz_to_cct_zhang(xyzw, cieobs = _CIEOBS, out = 'cct', wl  = None, 
-                     rtol = 1e-5, atol = 0.1,
+                     rtol = 1e-5, atol = 0.1, split_calculation_at_N = 100,
                      cct_search_list = None, MK_search_list = None, upper_cct_max = _CCT_MAX,
                      cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS, 
                      ):
@@ -1042,6 +1043,10 @@ def xyz_to_cct_zhang(xyzw, cieobs = _CIEOBS, out = 'cct', wl  = None,
         :atol: 
             | 0.1, optional
             | Stop golden-ratio search when cct a absolute tolerance (K) is reached.
+        :split_calculation_at_N:
+            | 100, optional
+            | Split calculation when xyzw.shape[0] > split_calculation_at_N. 
+            | Splitting speeds up the calculation. If None: no splitting is done.
         :upper_cct_max: 
             | _CCT_MAX, optional
             | Limit golden-ratio search to this cct.
@@ -1096,11 +1101,14 @@ def xyz_to_cct_zhang(xyzw, cieobs = _CIEOBS, out = 'cct', wl  = None,
     elif isinstance(cct_search_list,str):
         if cct_search_list.lower() == 'zhang':
             MK_search_list = np.arange(1.0,1025+25,25)
-            cct_search_list = cct_to_mired(MK_search_list)
-            cct_search_list = cct_search_list[cct_search_list<=upper_cct_max]
-            MK_search_list = MK_search_list[cct_search_list<=upper_cct_max]
+        elif cct_search_list.lower() == 'zhang_extended':
+            MK_search_list = np.hstack((np.arange(cct_to_mired(_CCT_MAX),25,0.5),
+                                        np.arange(1.0,1025+40*25,25)[1:]))
         else:
             raise Exception('cct_search_list = {:s} not supported'.format(cct_search_list))
+        cct_search_list = cct_to_mired(MK_search_list)
+        cct_search_list = cct_search_list[cct_search_list<=upper_cct_max]
+        MK_search_list = MK_search_list[cct_search_list<=upper_cct_max]
     else:
         cct_search_list = cct_search_list[cct_search_list<=upper_cct_max]
         MK_search_list = cct_to_mired(np.array(cct_search_list))
@@ -1118,103 +1126,123 @@ def xyz_to_cct_zhang(xyzw, cieobs = _CIEOBS, out = 'cct', wl  = None,
     # convert BB spectra to xyz:
     xyzBB = spd_to_xyz(BB, cieobs = cieobs, relative = True)
         
-    # get cspace coordinates of BB and input xyz:
+    # get cspace coordinates of BB xyz:
     uvBB = cspace_dict['fwtf'](xyzBB)[...,1:]
-    uv = cspace_dict['fwtf'](np.squeeze(xyzw))[...,1:] # squeeze to remove any potential double
     
     # # store cct, MK and uv in LUT:
     # lut = np.vstack((cct_search_list,MK_search_list, uvBB.T)).T 
     # lut = np.vstack((lut[0],lut,lut[-1]))
     MK_search_list = np.hstack((MK_search_list[0],MK_search_list,MK_search_list[-1]))
     
-    # find distance in UCD of BB to input:
-    uBB, vBB = uvBB[...,0:1],uvBB[...,1:2]
-    u, v = uv[...,0:1],uv[...,1:2]
-    DEuv = ((uBB - u.T)**2 + (vBB - v.T)**2)**0.5
+    # get cspace coordinates of input xyzw:
+    xyzw = np.squeeze(xyzw) # squeeze to remove any potential double
+    uvw = cspace_dict['fwtf'](np.squeeze(xyzw))[...,1:] 
     
-    # find minimum in distance table:
-    p0 = DEuv.argmin(axis=0) + 1 # + 1 to index in lut
     
-    # get RTm-1 (RTl) and RTm+1 (RTr):
-    RTl = MK_search_list[p0 - 1]
-    RTr = MK_search_list[p0 + 1]
-    
-    # calculate RTa, RTb:
-    s = (5**0.5 - 1)/2
-    RTa = RTl + (1.0 - s) * (RTr - RTl)
-    RTb = RTl + s * (RTr - RTl)
-    
-    while True:
-        # calculate BBa BBb:
-        BBab = cri_ref(np.hstack([cct_to_mired(RTa), cct_to_mired(RTb)]), ref_type = ['BB'], wl3 = wl)
+    n = xyzw.shape[0]
+    ccts = np.zeros((n,))
+    duvs = np.zeros((n,))
+    n_i = split_calculation_at_N if split_calculation_at_N is not None else n
+    N_i = n//n_i + 1*((n%n_i)>0)
+    for i in range(N_i):
         
-        # calculate xyzBBab:
-        xyzBBab = spd_to_xyz(BBab, cieobs = cieobs, relative = True)
-    
-        # get cspace coordinates of BB and input xyz:
-        uvBBab = cspace_dict['fwtf'](xyzBBab)[...,1:]
-        N = uvBBab.shape[0]//2 
-        uBBa, vBBa = uvBBab[:N,0:1], uvBBab[:N,1:2]
-        uBBb, vBBb = uvBBab[N:,0:1], uvBBab[N:,1:2]
-        
-        # find distance in UCD of BBab to input:
-        DEuv_a = ((uBBa - u)**2 + (vBBa - v)**2)**0.5
-        DEuv_b = ((uBBb - u)**2 + (vBBb - v)**2)**0.5
-        
-        c = (DEuv_a < DEuv_b)[:,0]
-        
-        # when DEuv_a < DEuv_b:
-        RTr[c] = RTb[c]
-        RTb[c] = RTa[c]
-        DEuv_b[c] = DEuv_a[c]
-        RTa[c] = RTl[c] + (1.0 - s) * (RTr[c] - RTl[c])
-        
-        # when DEuv_a >= DEuv_b:
-        RTl[~c] = RTa[~c]
-        RTa[~c] = RTb[~c]
-        DEuv_a[~c] = DEuv_b[~c]
-        RTb[~c] = RTl[~c] + s * (RTr[~c] - RTl[~c])
-        
-        if (np.abs(RTb - RTa) <= atol/2).all() | ((np.abs(RTb - RTa)/((RTb + RTa)/2)) <= rtol).all():
-            break
-    
-    # Calculate CCTs from RTa and RTb:
-    ccts = cct_to_mired((RTa+RTb)/2)
+        # split:
+        uv = uvw[n_i*i:n_i*i+n_i] if (i < (N_i-1)) else uvw[n_i*i:]
 
-    # Get duv: 
-    BB = cri_ref(ccts, ref_type = ['BB'], wl3 = wl)
-    xyzBB = spd_to_xyz(BB, cieobs = cieobs, relative = True)
-    uvBB = cspace_dict['fwtf'](xyzBB)[...,1:]
-    uBB, vBB = uvBB[...,0:1], uvBB[...,1:2]
-    uBB_c, vBB_c = (u - uBB), (v - vBB)
-    duvs = (uBB_c**2 + vBB_c**2)**0.5
+        # find distance in UCD of BB to input:
+        uBB, vBB = uvBB[...,0:1],uvBB[...,1:2]
+        u, v = uv[...,0:1],uv[...,1:2]
+        DEuv = ((uBB - u.T)**2 + (vBB - v.T)**2)**0.5
+        
+        # find minimum in distance table:
+        p0 = DEuv.argmin(axis=0) + 1 # + 1 to index in lut
+        
+        # get RTm-1 (RTl) and RTm+1 (RTr):
+        RTl = MK_search_list[p0 - 1]
+        RTr = MK_search_list[p0 + 1]
+        
+        # calculate RTa, RTb:
+        s = (5**0.5 - 1)/2
+        RTa = RTl + (1.0 - s) * (RTr - RTl)
+        RTb = RTl + s * (RTr - RTl)
+        
+        while True:
+            # calculate BBa BBb:
+            BBab = cri_ref(np.hstack([cct_to_mired(RTa), cct_to_mired(RTb)]), ref_type = ['BB'], wl3 = wl)
+            
+            # calculate xyzBBab:
+            xyzBBab = spd_to_xyz(BBab, cieobs = cieobs, relative = True)
+        
+            # get cspace coordinates of BB and input xyz:
+            uvBBab = cspace_dict['fwtf'](xyzBBab)[...,1:]
+            N = uvBBab.shape[0]//2 
+            uBBa, vBBa = uvBBab[:N,0:1], uvBBab[:N,1:2]
+            uBBb, vBBb = uvBBab[N:,0:1], uvBBab[N:,1:2]
+            
+            # find distance in UCD of BBab to input:
+            DEuv_a = ((uBBa - u)**2 + (vBBa - v)**2)**0.5
+            DEuv_b = ((uBBb - u)**2 + (vBBb - v)**2)**0.5
+            
+            c = (DEuv_a < DEuv_b)[:,0]
+            
+            # when DEuv_a < DEuv_b:
+            RTr[c] = RTb[c]
+            RTb[c] = RTa[c]
+            DEuv_b[c] = DEuv_a[c]
+            RTa[c] = RTl[c] + (1.0 - s) * (RTr[c] - RTl[c])
+            
+            # when DEuv_a >= DEuv_b:
+            RTl[~c] = RTa[~c]
+            RTa[~c] = RTb[~c]
+            DEuv_a[~c] = DEuv_b[~c]
+            RTb[~c] = RTl[~c] + s * (RTr[~c] - RTl[~c])
+            
+            # Calculate CCTs from RTa and RTb:
+            ccts_a, ccts_b = cct_to_mired(RTa), cct_to_mired(RTb)
+            ccts_i = cct_to_mired((RTa+RTb)/2)
+            dccts = np.abs(ccts_a - ccts_b)
+            if (dccts <= atol).all() | ((dccts/ccts_i) <= rtol).all():
+                break
     
-    # find sign of duv:
-    theta = math.positive_arctan(uBB_c,vBB_c,htype='deg')
-    theta[theta>180] = theta[theta>180] - 360
-    # lx.plotSL(cieobs=cieobs,cspace='Yuv60')
-    # plt.plot(u,v,'ro')
-    # plt.plot(uBB,vBB,'bx')
-    sign_duvs = np.sign(theta)
-    duvs *= sign_duvs 
+        # Get duv: 
+        BB_i = cri_ref(ccts_i, ref_type = ['BB'], wl3 = wl)
+        xyzBB_i = spd_to_xyz(BB_i, cieobs = cieobs, relative = True)
+        uvBB_i = cspace_dict['fwtf'](xyzBB_i)[...,1:]
+        uBB_i, vBB_i = uvBB_i[...,0:1], uvBB_i[...,1:2]
+        uBB_c, vBB_c = (u - uBB_i), (v - vBB_i)
+        duvs_i = (uBB_c**2 + vBB_c**2)**0.5
+        
+        # find sign of duv:
+        theta = math.positive_arctan(uBB_c,vBB_c,htype='deg')
+        theta[theta>180] = theta[theta>180] - 360
+        # lx.plotSL(cieobs=cieobs,cspace='Yuv60')
+        # plt.plot(u,v,'ro')
+        # plt.plot(uBB,vBB,'bx')
+        duvs_i *= np.sign(theta)
 
+        if (i < (N_i-1)): 
+            ccts[n_i*i:n_i*i+n_i] = ccts_i
+            duvs[n_i*i:n_i*i+n_i] = duvs_i[:,0]
+        else: 
+            ccts[n_i*i:] = ccts_i
+            duvs[n_i*i:] = duvs_i[:,0]
+    
     # Regulate output:
     if (out == 'cct') | (out == 1):
         return np2d(ccts).T
     elif (out == 'duv') | (out == -1):
-        return np2d(duvs)
+        return np2d(duvs).T
     elif (out == 'cct,duv') | (out == 2):
-        return np2d(ccts).T, np2d(duvs)
+        return np2d(ccts).T, np2d(duvs).T
     elif (out == "[cct,duv]") | (out == -2):
-        return np.hstack((np2d(ccts).T,duvs))   
+        return np.vstack((ccts,duvs)).T   
     else:
         raise Exception('Unknown output requested')
 
 
-
 def xyz_to_cct_ohno(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, rtol = 1e-5, atol = 0.1, 
-                    force_out_of_lut = True, fallback_mode = 'zhang', upper_cct_max = _CCT_MAX, 
-                    approx_cct_temp = True, cct_search_list = None, fast_search = True,
+                    force_out_of_lut = True, fallback_mode = 'zhang', split_zhang_calculation_at_N = 100, 
+                    upper_cct_max = _CCT_MAX, approx_cct_temp = True, cct_search_list = None, fast_search = True,
                     cctuv_lut = None, cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS):
     """
     Convert XYZ tristimulus values to correlated color temperature (CCT) and 
@@ -1255,6 +1283,10 @@ def xyz_to_cct_ohno(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, rtol = 1e-5,
             |  - 'Zhang' or 'golden-ratio': use xyz_to_cct_zhang()
             |  - 'brute-force-search-robust': use xyz_to_cct_search_robust()
             |  - 'brute-force-search-fast': use xyz_to_cct_search_fast()
+        :split_zhang_calculation_at_N:
+            | 100, optional
+            | Split calculation when xyzw.shape[0] > split_calculation_at_N. 
+            | Splitting speeds up the calculation. If None: no splitting is done.
         :upper_cct_max: 
             | _CCT_MAX, optional
             | Limit brute-force or golden-ratio search to this cct.
@@ -1382,8 +1414,8 @@ def xyz_to_cct_ohno(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, rtol = 1e-5,
             
             elif ('zhang' in fallback_mode) |('golden-ratio' in fallback_mode):   
                 cct_i, Duv_i = xyz_to_cct_zhang(xyzw[i:i+1,:], cieobs = cieobs, wl = wl, rtol = rtol, atol = atol,
-                                                 out = 'cct,duv',upper_cct_max = upper_cct_max, 
-                                                 cct_search_list = cct_search_list,
+                                                 out = 'cct,duv',split_calculation_at_N = split_zhang_calculation_at_N, 
+                                                 upper_cct_max = upper_cct_max, cct_search_list = cct_search_list,
                                                  cspace = cspace_dict, cspace_kwargs = None)
 
             
@@ -1530,6 +1562,7 @@ def cct_to_xyz_fast(ccts, duv = None, cct_resolution = 0.1, cieobs = _CIEOBS, wl
     return cspace_dict['bwtf'](Yuv)
 
 def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut', 
+               fallback_mode_for_lut = 'zhang', split_zhang_calculation_at_N = 100,
                force_fast_mode = True, cct_resolution_of_fast_mode = 0.1, out = None, 
                rtol = 1e-5, atol = 0.1, force_out_of_lut = True, upper_cct_max = _CCT_MAX, 
                approx_cct_temp = True, fast_search = True, cct_search_list = None,
@@ -1564,9 +1597,21 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut',
             | luxpy._CIEOBS, optional
             | CMF set used to calculated xyzw.
         :mode: 
-            | 'lut' [or 'search' or 'fast'], optional
+            | 'lut', optional
             | Determines what method to use.
-            | (if 'fast' fails --> 'lut' is used as fall-back method)
+            | Options:
+            | - 'fast': use cct_to_xyz_fast() 
+            | - 'lut': use xyz_to_cct_ohno() in inverse search.
+            | - 'search': use xyz_to_cct_search() in inverse search, 
+            |            If fast_search == True: use use xyz_to_cct_search_fast(), 
+            |            else use use xyz_to_cct_search_robust()
+            | - 'brute-force-search-fast': use xyz_to_cct_search_fast() in inverse search.
+            | - 'brute-force-search-robust': use xyz_to_cct_search_robust() for inverse search.
+            | - 'zhang' or 'golden-ratio': use xyz_to_cct_zhang() for inverse search.
+        :split_zhang_calculation_at_N:
+            | 100, optional
+            | Split calculation when xyzw.shape[0] > split_calculation_at_N. 
+            | Splitting speeds up the calculation. If None: no splitting is done.
         :force_fast_mode:
             | True, optional
             | Try the fast approach (i.e. cct_to_xyz_fast()). This overrides the 
@@ -1615,6 +1660,13 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut',
             | True, optional
             | If True and cct is out of range of the LUT, then switch to 
             | brute-force search method, else return numpy.nan values.
+        :fallback_mode_for_lut:
+            | 'zhang', optional
+            | Fallback mode for out-of-lut input when mode == 'ohno' (or 'lut'). 
+            | Options:
+            |  - 'zhang' or 'golden-ratio': use xyz_to_cct_zhang()
+            |  - 'brute-force-search-robust': use xyz_to_cct_search_robust()
+            |  - 'brute-force-search-fast': use xyz_to_cct_search_fast()
         :cctuv_lut:
             | None, optional
             | CCT+uv look-up-table to use.
@@ -1706,7 +1758,10 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut',
                 Yuv0 = np.concatenate((np2d([100.0]), uv0),axis=1)
                 xyz0 = cspace_dict['bwtf'](Yuv0) if cspace_dict['bwtf'] is not None else Yuv_to_xyz(Yuv0)
                 cct_min, duv_min = xyz_to_cct(xyz0,cieobs = cieobs, out = 'cct,duv',
-                                              wl = wl, mode = mode, rtol = rtol, atol = atol, 
+                                              wl = wl, mode = mode, 
+                                              fallback_mode_for_lut = fallback_mode_for_lut, 
+                                              split_zhang_calculation_at_N = split_zhang_calculation_at_N,
+                                              rtol = rtol, atol = atol, 
                                               force_out_of_lut = force_out_of_lut, 
                                               upper_cct_max = upper_cct_max, 
                                               approx_cct_temp = approx_cct_temp,
@@ -1728,7 +1783,10 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut',
                 cct_i = cct[i]
                 duv_i = duv[i]
                 cct_min, duv_min =  xyz_to_cct(xyz0,cieobs = cieobs, out = 'cct,duv',wl = wl, 
-                                               mode = mode, rtol = rtol, atol = atol, 
+                                               mode = mode,
+                                               fallback_mode_for_lut = fallback_mode_for_lut,
+                                               split_zhang_calculation_at_N = split_zhang_calculation_at_N,
+                                               rtol = rtol, atol = atol, 
                                                force_out_of_lut = force_out_of_lut, 
                                                upper_cct_max = upper_cct_max, 
                                                approx_cct_temp = approx_cct_temp,
@@ -1766,8 +1824,8 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut',
 #-------------------------------------------------------------------------------------------------   
 # general CCT-wrapper function
 def xyz_to_cct(xyzw, cieobs = _CIEOBS, out = 'cct',mode = 'lut', wl = None, rtol = 1e-5, atol = 0.1, 
-               force_out_of_lut = True, fallback_mode_for_lut = 'search', upper_cct_max = _CCT_MAX, 
-               approx_cct_temp = True, fast_search = True, 
+               force_out_of_lut = True, fallback_mode_for_lut = 'zhang', split_zhang_calculation_at_N = 100,
+               upper_cct_max = _CCT_MAX, approx_cct_temp = True, fast_search = True, 
                cct_search_list = None, MK_search_list = None,
                cctuv_lut = None, cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS): 
     """
@@ -1798,6 +1856,10 @@ def xyz_to_cct(xyzw, cieobs = _CIEOBS, out = 'cct',mode = 'lut', wl = None, rtol
             | - 'brute-force-search-fast': use xyz_to_cct_search_fast()
             | - 'brute-force-search-robust': use xyz_to_cct_search_robust()
             | - 'zhang' or 'golden-ratio': use xyz_to_cct_zhang()
+        :split_zhang_calculation_at_N:
+            | 100, optional
+            | Split calculation when xyzw.shape[0] > split_calculation_at_N. 
+            | Splitting speeds up the calculation. If None: no splitting is done.
         :wl: 
             | None, optional
             | Wavelengths used when calculating Planckian radiators.
@@ -1816,7 +1878,7 @@ def xyz_to_cct(xyzw, cieobs = _CIEOBS, out = 'cct',mode = 'lut', wl = None, rtol
             | If True and cct is out of range of the LUT, then switch to 
             | the selected fallback_mode, else return numpy.nan values.
         :fallback_mode_for_lut:
-            | 'search', optional
+            | 'zhang', optional
             | Fallback mode for out-of-lut input when mode == 'ohno' (or 'lut'). 
             | Options:
             |  - 'Zhang' or 'golden-ratio': use xyz_to_cct_zhang()
@@ -1888,15 +1950,15 @@ def xyz_to_cct(xyzw, cieobs = _CIEOBS, out = 'cct',mode = 'lut', wl = None, rtol
     
     elif (mode.lower() == 'zhang') | (mode.lower() == 'golden-ratio'):
         return xyz_to_cct_zhang(xyzw = xyzw, cieobs = cieobs, out = out, wl  = wl, 
-                                rtol = rtol, atol = atol,
+                                rtol = rtol, atol = atol, split_calculation_at_N = split_zhang_calculation_at_N,
                                 cct_search_list = cct_search_list, MK_search_list = MK_search_list, 
                                 upper_cct_max = upper_cct_max,
                                 cspace = cspace, cspace_kwargs = cspace_kwargs)
 
 
 def xyz_to_duv(xyzw, cieobs = _CIEOBS, out = 'duv',mode = 'lut', wl = None, rtol = 1e-5, atol = 0.1, 
-               force_out_of_lut = True, fallback_mode_for_lut = 'search', upper_cct_max = _CCT_MAX, 
-               approx_cct_temp = True, fast_search = True, 
+               force_out_of_lut = True, fallback_mode_for_lut = 'search', split_zhang_calculation_at_N = 100, 
+               upper_cct_max = _CCT_MAX, approx_cct_temp = True, fast_search = True, 
                cct_search_list = None, MK_search_list = None,
                cctuv_lut = None, cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS): 
     """
@@ -1926,7 +1988,11 @@ def xyz_to_duv(xyzw, cieobs = _CIEOBS, out = 'duv',mode = 'lut', wl = None, rtol
             |            else use use xyz_to_cct_search_robust()
             | - 'brute-force-search-fast': use xyz_to_cct_search_fast()
             | - 'brute-force-search-robust': use xyz_to_cct_search_robust()
-            | - 'zhang' or 'golden-ratio': use xyz_to_cct_zhang()
+            | - 'zhang' or 'golden-ratio': use xyz_to_cct_zhang() 
+        :split_zhang_calculation_at_N:
+            | 100, optional
+            | Split calculation when xyzw.shape[0] > split_calculation_at_N. 
+            | Splitting speeds up the calculation. If None: no splitting is done.
         :wl: 
             | None, optional
             | Wavelengths used when calculating Planckian radiators.
@@ -2016,7 +2082,7 @@ def xyz_to_duv(xyzw, cieobs = _CIEOBS, out = 'duv',mode = 'lut', wl = None, rtol
    
     elif (mode == 'Zhang') | (mode == 'golden-ratio'):
         return xyz_to_cct_zhang(xyzw = xyzw, cieobs = cieobs, out = out, wl  = wl, 
-                                rtol = rtol, atol = atol,
+                                rtol = rtol, atol = atol, split_calculation_at_N = split_zhang_calculation_at_N,
                                 cct_search_list = cct_search_list, MK_search_list = MK_search_list, 
                                 upper_cct_max = upper_cct_max,
                                 cspace = cspace, cspace_kwargs = cspace_kwargs)
