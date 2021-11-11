@@ -2,7 +2,8 @@
 """
 cct: Module with functions related to correlated color temperature calculations
 ===============================================================================
- :_CCT_MAX: (= 1e12), max. value that does not cause overflow problems. 
+
+:_CCT_MAX: (= 1e11), max. value that does not cause overflow problems. 
 
  :_CCT_LUT_PATH: Folder with Look-Up-Tables (LUT) for correlated color 
                  temperature calculation followings Ohno's method.
@@ -15,6 +16,14 @@ cct: Module with functions related to correlated color temperature calculations
  :_CCT_CSPACE: default chromaticity space to calculate CCT and Duv in.
  
  :_CCT_CSPACE_KWARGS: nested dict with cspace parameters for forward and backward modes. 
+ 
+ :_CCT_SEARCH_LIST:  ndarray with default CCTs to start the search algorithms.
+ 
+ :_MK_SEARCH_LIST: ndarray with default CCTs (in mired) to start the search algorithms.
+ 
+ :_CCT_SEARCH_LIST_PW_LIN:  ndarray with (piecewise) linearly spaced  CCTs to start the search algorithms.
+ 
+ :_MK_SEARCH_LIST_PW_LIN: ndarray with (piecewise) linearly spaced CCTs (in mired) to start the search algorithms.
 
  :calculate_lut(): Function that calculates the LUT for the ccts stored in 
                    ./data/cctluts/cct_lut_cctlist.dat or given as input 
@@ -59,10 +68,18 @@ cct: Module with functions related to correlated color temperature calculations
                        <http://www.tandfonline.com/doi/abs/10.1080/15502724.2014.839020>`_
 
  :xyz_to_cct_search(): Calculates CCT, Duv from XYZ using brute-force search 
-                       algorithm (between 1e2 K - _CCT_MAX K)
+                       algorithm or Zhang's golden-ration method.
+                       
+ :xyz_to_cct_search_zhang():  | Calculates CCT, Duv from XYZ using golden-ratio search algorithm
+                              | `Zhang, F. (2019). 
+                                High-accuracy method for calculating correlated color temperature with 
+                                a lookup table based on golden section search. 
+                                Optik, 193, 163018. 
+                                <https://doi.org/https://doi.org/10.1016/j.ijleo.2019.163018>`_
                        
  :cct_to_mired(): Converts from CCT to Mired scale (or back).
- 
+
+
  :xyz_to_cct_ohno2011(): Calculate cct and Duv from CIE 1931 2° xyz following Ohno (CORM 2011).
 
 ===============================================================================

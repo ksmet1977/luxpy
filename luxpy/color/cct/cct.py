@@ -32,6 +32,14 @@ cct: Module with functions related to correlated color temperature calculations
  :_CCT_CSPACE: default chromaticity space to calculate CCT and Duv in.
  
  :_CCT_CSPACE_KWARGS: nested dict with cspace parameters for forward and backward modes. 
+ 
+ :_CCT_SEARCH_LIST:  ndarray with default CCTs to start the search algorithms.
+ 
+ :_MK_SEARCH_LIST: ndarray with default CCTs (in mired) to start the search algorithms.
+ 
+ :_CCT_SEARCH_LIST_PW_LIN:  ndarray with (piecewise) linearly spaced  CCTs to start the search algorithms.
+ 
+ :_MK_SEARCH_LIST_PW_LIN: ndarray with (piecewise) linearly spaced CCTs (in mired) to start the search algorithms.
 
  :calculate_lut(): Function that calculates the LUT for the ccts stored in 
                    ./data/cctluts/cct_lut_cctlist.dat or given as input 
@@ -76,14 +84,14 @@ cct: Module with functions related to correlated color temperature calculations
                        <http://www.tandfonline.com/doi/abs/10.1080/15502724.2014.839020>`_
 
  :xyz_to_cct_search(): Calculates CCT, Duv from XYZ using brute-force search 
-                       algorithm (between 1e2 K - _CCT_MAX K)
+                       algorithm or Zhang's golden-ration method.
                        
- :xyz_to_cct_zhang(): | Calculates CCT, Duv from XYZ using golden-ratio search algorithm
-                      | `Zhang, F. (2019). 
-                        High-accuracy method for calculating correlated color temperature with 
-                        a lookup table based on golden section search. 
-                        Optik, 193, 163018. 
-                        <https://doi.org/https://doi.org/10.1016/j.ijleo.2019.163018>`_
+ :xyz_to_cct_search_zhang():  | Calculates CCT, Duv from XYZ using golden-ratio search algorithm
+                              | `Zhang, F. (2019). 
+                                High-accuracy method for calculating correlated color temperature with 
+                                a lookup table based on golden section search. 
+                                Optik, 193, 163018. 
+                                <https://doi.org/https://doi.org/10.1016/j.ijleo.2019.163018>`_
                        
  :cct_to_mired(): Converts from CCT to Mired scale (or back).
 
@@ -96,6 +104,16 @@ from luxpy.utils import np, pd, sp, _PKG_PATH, _SEP, _EPS, np2d, np2dT, getdata,
 from luxpy.color.ctf.colortf import colortf
 
 _CCT_MAX = 1e11 # maximum value that does not cause overflow problems
+
+# Definition of some default search lists for use with brute-force or golden-ratio (Zhang,2019) based search methods:
+_CCT_SEARCH_LIST_PW_LIN = np.array([50,100,500,1000,2000,3000,4000,5000,6000,10000, 20000,50000, 7.5e4, 1e5, 5e5, 1e6, 5e6, 1e7, 5e7, 1e8, 5e8, 1e9, 5e9, 1e10, 5e10, 1e11, _CCT_MAX])
+_MK_SEARCH_LIST_PW_LIN = 1e6/_CCT_SEARCH_LIST_PW_LIN
+_MK_SEARCH_LIST  = np.hstack((np.arange(1e6/_CCT_MAX,1+0.1,0.1),
+                              np.arange(1.0,1025+25,25)[1:],
+                              np.arange(1026.0,1025+50*21,50)[1:],
+                              1e6/np.arange(450,0,-100)))
+_CCT_SEARCH_LIST = 1e6/_MK_SEARCH_LIST
+
 _CCT_LUT_CALC = False # True: (re-)calculates LUTs for ccts in .cctluts/cct_lut_cctlist.dat
 _CCT_CSPACE = 'Yuv60' # chromaticity diagram to perform CCT, Duv calculations in
 _CCT_CSPACE_KWARGS = {'fwtf':{},'bwtf':{}} # any required parameters in the xyz_to_cspace() funtion
@@ -103,8 +121,8 @@ __all__ = ['_CCT_LUT_CALC', '_CCT_MAX','_CCT_CSPACE', '_CCT_CSPACE_KWARGS']
 
 __all__ += ['_CCT_LUT','_CCT_LUT_PATH', 'calculate_lut', 'calculate_luts', 
             'xyz_to_cct','xyz_to_duv', 'cct_to_xyz_fast', 'cct_to_xyz',
-            'cct_to_mired','xyz_to_cct_ohno', 'xyz_to_cct_zhang',
-            'xyz_to_cct_search', 'xyz_to_cct_search_fast', 'xyz_to_cct_search_robust',
+            'cct_to_mired','xyz_to_cct_ohno', 'xyz_to_cct_search_zhang',
+            'xyz_to_cct_search', 'xyz_to_cct_search_bf_fast', 'xyz_to_cct_search_bf_robust',
             'xyz_to_cct_HA','xyz_to_cct_mcamy']
 
 #------------------------------------------------------------------------------
@@ -334,8 +352,13 @@ except:
     calculate_luts(wl = _WL3, cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS)  
     _CCT_LUT[cspace_string] = dictkv(keys = sorted(_CMF['types']), values = [getdata('{}cct_lut_{}{}.dat'.format(_CCT_LUT_PATH,sorted(_CMF['types'])[i],cspace_str),kind='np') for i in range(len(_CMF['types']))],ordered = False)
       
+#------------------------------------------------------------------------------
+# CCT calculation methods:
+#------------------------------------------------------------------------------
 
-
+#------------------------------------------------------------------------------
+# Mcamy, 1992:
+#-------------
 def xyz_to_cct_mcamy(xyzw):
     """
     Convert XYZ tristimulus values to correlated color temperature (CCT) using 
@@ -363,6 +386,9 @@ def xyz_to_cct_mcamy(xyzw):
     return  np2d(-449.0*(n**3) + 3525.0*(n**2) - 6823.3*n + 5520.33).T
 
 
+#------------------------------------------------------------------------------
+# Hernandez-Andres, 1999:
+#------------------------
 def xyz_to_cct_HA(xyzw, verbosity = 1):
     """
     Convert XYZ tristimulus values to correlated color temperature (CCT). 
@@ -416,14 +442,14 @@ def xyz_to_cct_HA(xyzw, verbosity = 1):
         print("Warning: xyz_to_cct_HA(): one or more CCTs out of range! --> (CCT < 3 kK,  CCT >800 kK) coded as (-1, NaN) 's")
     return CCT.T
 
-def _find_closest_ccts(uvw, cieobs = _CIEOBS, ccts = None, wl = _WL3,
+#------------------------------------------------------------------------------
+# Brute-force search algorithm:
+#------------------------------
+def _find_closest_ccts(uvw, cieobs = _CIEOBS, ccts = _CCT_SEARCH_LIST, wl = _WL3,
                        cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS):
     """
     Find closest cct from a list and the two surrounding ccts.
     """
-    if ccts is None:
-        ccts=np.array([50,100,500,1000,2000,3000,4000,5000,6000,10000,
-                       20000,50000, 7.5e4, 1e5, 5e5, 1e6, 5e6, 1e7, 5e7, 1e8, 5e8, 1e9, 5e9, 1e10, 5e10, 1e11, _CCT_MAX])
     
     max_cct = ccts[-1]
     
@@ -459,15 +485,66 @@ def _find_closest_ccts(uvw, cieobs = _CIEOBS, ccts = None, wl = _WL3,
 
     return ccts_i.mean(axis=0,keepdims=True).T, ccts_i.T
       
-def xyz_to_cct_search(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None, rtol = 1e-5, atol = 0.1, 
-                      upper_cct_max = _CCT_MAX, approx_cct_temp = True, fast = True, cct_search_list = None,
-                      cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS):
+def _process_cct_mk_search_lists(cct_search_list = _CCT_SEARCH_LIST, 
+                                 mk_search_list = None, 
+                                 upper_cct_max = _CCT_MAX):
+    """ 
+    Get cct_search_list and mk_search_list.
+    
+    Args:
+        :cct_search_list:
+            | _CCT_SEARCH_LIST,optional
+        :mk_search_list:
+            | None, optional
+            | If not None: overrides cct_search_list
+            
+    Returns:
+        :cct_search_list,mk_search_list:
+            | ndarrays
+    """
+    # Get search lists:
+    if mk_search_list is not None:
+        if isinstance(mk_search_list,str):
+            cct_search_list = mk_search_list
+        else:
+            cct_search_list = cct_to_mired(mk_search_list)
+    if cct_search_list is not None:
+        if isinstance(cct_search_list,str):
+            if cct_search_list.lower() == ('zhang_extended') | (cct_search_list.lower() == 'default'):
+                cct_search_list = _CCT_SEARCH_LIST
+                mk_search_list = _MK_SEARCH_LIST
+            elif cct_search_list.lower() == 'pw_linear':
+                cct_search_list = _CCT_SEARCH_LIST_PW_LIN
+                mk_search_list = _MK_SEARCH_LIST_PW_LIN
+            elif cct_search_list.lower() == 'zhang':
+                mk_search_list = np.arange(1.0,1025+25,25)
+                cct_search_list = cct_to_mired(mk_search_list)
+            else:
+                raise Exception('cct_search_list = {:s} not supported'.format(cct_search_list))
+        else:
+            if mk_search_list is None: 
+                mk_search_list = cct_to_mired(cct_search_list)
+    else:
+        cct_search_list = _CCT_SEARCH_LIST
+        mk_search_list = _MK_SEARCH_LIST
+
+    cct_search_list = cct_search_list[cct_search_list<=upper_cct_max]
+    mk_search_list = mk_search_list[cct_search_list<=upper_cct_max]
+            
+    return cct_search_list, mk_search_list
+
+def xyz_to_cct_search(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, mode = 'zhang',
+                      rtol = 1e-5, atol = 0.1, 
+                      cct_search_list = None, mk_search_list = None, 
+                      split_zhang_calculation_at_N = 100, upper_cct_max = _CCT_MAX,
+                      cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS, 
+                      approx_cct_temp = True):
     """
     Convert XYZ tristimulus values to correlated color temperature (CCT) and 
     Duv(distance above (> 0) or below ( < 0) the Planckian locus) by a 
-    brute-force search. 
+    brute-force (robust or fast) search method or Zhang's golden-ratio search method. 
     
-    Wrapper around xyz_to_cct_search_robust() and xyz_to_cct_search_fast()
+    Wrapper around xyz_to_cct_search_bf_robust(), xyz_to_cct_search_bf_fast() and xyz_to_cct_search_zhang()
     
     Args:
         :xyzw: 
@@ -482,33 +559,43 @@ def xyz_to_cct_search(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None, rtol = 1e-5
         :wl: 
             | None, optional
             | Wavelengths used when calculating Planckian radiators.
+        :mode:
+            | 'zhang', optional
+            | Options:
+            |   -'bf-robust': use xyz_to_cct_search_robust()
+            |   -'bf-fast': use xyz_to_cct_search_fast()
+            |   -'zhang': use xyz_to_cct_search_zhang()
         :rtol: 
             | 1e-5, float, optional
-            | Stop brute-force search when cct a relative tolerance is reached.
+            | Stop search when a relative cct tolerance is reached.
             | The relative tolerance is calculated as dCCT/CCT_est, 
             | with CCT_est the current intermediate estimate in the 
-            | brute-force search and with dCCT the difference between
+            | search process and with dCCT the difference between
             | the present and former estimates.
         :atol: 
             | 0.1, optional
-            | Stop brute-force search when cct a absolute tolerance (K) is reached.
+            | Stop search when an absolute cct tolerance (K) is reached.
         :upper_cct_max: 
             | _CCT_MAX, optional
-            | Limit brute-force search to this cct.
-        :approx_cct_temp: 
-            | True, optional
-            | If True: use xyz_to_cct_HA() to get a first estimate of cct to 
-            |  speed up search.
-            | Only for 'fast' code option.
-        :fast:
-            | True, optional
-            | Use fast brute-force search, i.e. xyz_to_cct_search_fast()
+            | Limit search to this cct.
         :cct_search_list:
             | None, optional
-            | list of ccts to obtain a first guess for the cct of the input xyz 
-            | when HA estimation fails due to out-of-range cct or when fast == False.
-            | None defaults to: [50,100,500,1000,2000,3000,4000,5000,6000,10000,
-            |                  20000,50000, 7.5e4, 1e5, 5e5, 1e6, 5e6, 1e7, 5e7, 1e8, 5e8, 1e9, 5e9, 1e10, 5e10, 1e11, _CCT_MAX]
+            | List of ccts to obtain a first guess for the cct of the input xyz
+            | for the 'brute-force-search-robust', 'zhang' fallback methods, or
+            | when HA estimation fails in the 'brute-force-search-fast' fallback algorithm 
+            | due to out-of-range ccts.
+            | Options:
+            |   - 'default' or None: _CCT_SEARCH_LIST
+            |   - 'zhang': defaults to mired_to_cct(np.arange(1.0,1025+25,25))
+            |   - 'pw_linear': defaults to _CCT_SEARCH_PW_LIN
+        :mk_search_list:
+            | None, optional
+            | Input cct_search_list directly in MK (mired) scale.
+            | None: does nothing, but when not None input overwrites cct_search_list !
+        :split_calculation_at_N:
+            | 100, optional
+            | Split calculation when xyzw.shape[0] > split_calculation_at_N. 
+            | Splitting speeds up the calculation. If None: no splitting is done.
         :cspace:
             | _CCT_SPACE, optional
             | Color space to do calculations in. 
@@ -523,6 +610,11 @@ def xyz_to_cct_search(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None, rtol = 1e-5
         :cspace_kwargs:
             | _CCT_CSPACE_KWARGS, optional
             | Parameter nested dictionary for the forward and backward transforms.
+        :approx_cct_temp: 
+            | True, optional
+            | If True: use xyz_to_cct_HA() to get a first estimate of cct to 
+            |          speed up search.
+
             
     Returns:
         :returns: 
@@ -532,26 +624,36 @@ def xyz_to_cct_search(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None, rtol = 1e-5
             |    cct, duv: out == 'cct,duv' (or 2)
             |    [cct,duv]: out == "[cct,duv]" (or -2) 
     
-    Notes:
-        1. This function is more accurate, but slower than xyz_to_cct_ohno!
-        Note that cct must be between 50 K - _CCT_MAX K 
-        (very large cct take a long time!!!)
     """
-    if fast == False:
-        return xyz_to_cct_search_robust(xyzw, cieobs = cieobs, out = out, wl = wl, 
-                                 rtol = rtol, atol = atol, upper_cct_max = upper_cct_max, 
-                                 cct_search_list = cct_search_list,
-                                 cspace = cspace, cspace_kwargs = cspace_kwargs)
-    else:
-        return xyz_to_cct_search_fast(xyzw, cieobs = cieobs, out = out,wl = wl, 
-                               rtol = rtol, atol = atol, upper_cct_max = upper_cct_max, 
-                               approx_cct_temp = approx_cct_temp, cct_search_list = cct_search_list,
-                               cspace = cspace, cspace_kwargs = cspace_kwargs)
+    if (mode == 'brute-force-search-robust') | (mode == 'brute-force-robust') | (mode == 'bf-robust'):
+        return xyz_to_cct_search_bf_robust(xyzw, cieobs = cieobs, out = out, wl = wl, 
+                                           rtol = rtol, atol = atol, 
+                                           upper_cct_max = upper_cct_max, 
+                                           cct_search_list = cct_search_list, mk_search_list = mk_search_list,
+                                           cspace = cspace, cspace_kwargs = cspace_kwargs)
     
+    elif (mode == 'brute-force-search-fast') | (mode == 'brute-force-fast') | (mode == 'bf-fast') | (mode == 'search'): # 'search' for legacy reasons
+        return xyz_to_cct_search_bf_fast(xyzw, cieobs = cieobs, out = out, wl = wl, 
+                                         rtol = rtol, atol = atol, 
+                                         upper_cct_max = upper_cct_max, 
+                                         cct_search_list = cct_search_list, mk_search_list = mk_search_list,
+                                         cspace = cspace, cspace_kwargs = cspace_kwargs, 
+                                         approx_cct_temp = approx_cct_temp)
+    
+    elif (mode == 'zhang') | (mode == 'golden-ratio'):
+        return xyz_to_cct_search_zhang(xyzw, cieobs = cieobs, out = out, wl = wl, 
+                                       rtol = rtol, atol = atol, 
+                                       upper_cct_max = upper_cct_max, split_calculation_at_N = split_zhang_calculation_at_N, 
+                                       cct_search_list = cct_search_list, mk_search_list = mk_search_list,
+                                       cspace = cspace, cspace_kwargs = cspace_kwargs)
+    else:
+        raise Exception('Unrecognize cct search mode: {:s}'.format(mode))
+                
   
-def xyz_to_cct_search_robust(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None, rtol = 1e-5, atol = 0.1, 
-                      upper_cct_max = _CCT_MAX, cct_search_list = None,
-                      cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS):
+def xyz_to_cct_search_bf_robust(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, 
+                             rtol = 1e-5, atol = 0.1, 
+                             upper_cct_max = _CCT_MAX, cct_search_list = None, mk_search_list = None,
+                             cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS):
     """
     Convert XYZ tristimulus values to correlated color temperature (CCT) and 
     Duv(distance above (> 0) or below ( < 0) the Planckian locus) by a 
@@ -562,12 +664,10 @@ def xyz_to_cct_search_robust(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None, rtol
     | to find the minimum distance to the 1960 uv (or other) chromaticity of 
     | the test source. The approximate starting point is found by generating 
     | the uv chromaticity values of a set blackbody radiators spread across the
-    | locus in a 50 K to _CCT_MAX K range (larger CCT's cause instability of the 
+    | locus in a ~ 50 K to ~ _CCT_MAX K range (larger CCT's cause instability of the 
     | chromaticity points due to floating point errors), looking for the closest
     | blackbody radiator and then calculating the mean of the two surrounding ones.
-    | The default cct list is [50,100,500,1000,2000,3000,4000,5000,6000,10000,
-    |                          20000,50000, 7.5e4, 1e5, 5e5, 1e6, 5e6, 1e7, 5e7, 1e8, 5e8, 1e9, 5e9, 1e10, 5e10, 1e11, _CCT_MAX].
-
+    | The default cct search list is given in _CCT_SEARCH_LIST.
 
     Args:
         :xyzw: 
@@ -584,22 +684,21 @@ def xyz_to_cct_search_robust(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None, rtol
             | Wavelengths used when calculating Planckian radiators.
         :rtol: 
             | 1e-5, float, optional
-            | Stop brute-force search when cct a relative tolerance is reached.
+            | Stop search when a relative cct tolerance is reached.
             | The relative tolerance is calculated as dCCT/CCT_est, 
             | with CCT_est the current intermediate estimate in the 
-            | brute-force search and with dCCT the difference between
+            | search process and with dCCT the difference between
             | the present and former estimates.
         :atol: 
             | 0.1, optional
-            | Stop brute-force search when cct a absolute tolerance (K) is reached.
+            | Stop search when an absolute cct tolerance (K) is reached.
         :upper_cct_max: 
             | _CCT_MAX, optional
-            | Limit brute-force search to this cct.
+            | Limit search to this cct.
         :cct_search_list:
             | None, optional
-            | list of ccts to obtain a first guess for the cct of the input xyz.
-            | None defaults to: [50,100,500,1000,2000,3000,4000,5000,6000,10000,
-            |                  20000,50000, 7.5e4, 1e5, 5e5, 1e6, 5e6, 1e7, 5e7, 1e8, 5e8, 1e9, 5e9, 1e10, 5e10, 1e11, _CCT_MAX]
+            | List of ccts to obtain a first guess for the cct of the input xyz.
+            | None defaults to _CCT_SEARCH_LIST.
         :cspace:
             | _CCT_SPACE, optional
             | Color space to do calculations in. 
@@ -642,10 +741,16 @@ def xyz_to_cct_search_robust(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None, rtol
     vt = Yuvt[:,2,None] # get CIE 1960 v
 
     # Initialize arrays:
-    ccts = np.zeros((xyzw.shape[0],1));ccts.fill(np.nan)
+    ccts = np.zeros((xyzw.shape[0],1))
+    ccts.fill(np.nan)
     duvs = ccts.copy()
+    
+    # get cct_search_list:
+    cct_search_list, _ = _process_cct_mk_search_lists(cct_search_list =cct_search_list, 
+                                                      mk_search_list = mk_search_list,
+                                                      upper_cct_max=upper_cct_max)
         
-    #calculate preliminary estimates in 50 K to _CCT_MAX range or whatever is given in cct_search_list:
+    #calculate preliminary estimates within range in cct_search_list:
     ccts_est, cctranges = _find_closest_ccts(np.hstack((ut,vt)), cieobs = cieobs, 
                                              ccts = cct_search_list, wl = wl,
                                              cspace = cspace_dict, cspace_kwargs = None)
@@ -667,7 +772,7 @@ def xyz_to_cct_search_robust(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None, rtol
         delta_cct = dT
         reached_CCT_MAX = False
 
-        while (((delta_cct*2/ccttemp) >= rtol) & (delta_cct*2 >= atol)) & (reached_CCT_MAX == False):# & (ccttemp<upper_cct_max)):# keep converging on CCT 
+        while (((delta_cct*2/ccttemp) >= rtol) & (delta_cct*2 >= atol)) & (reached_CCT_MAX == False):# keep converging on CCT 
 
             #generate range of ccts:
             ccts_i = cct_scale_ifun(np.linspace(cct_scale_fun(ccttemp)-dT,cct_scale_fun(ccttemp)+dT,nsteps+1))
@@ -696,7 +801,6 @@ def xyz_to_cct_search_robust(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None, rtol
                     duv = np.median(dc[q,0])
                     q = np.median(q)
                     q = int(q) #must be able to serve as index
-    
                 else:
                      cct = ccts_i[q]
                      duv = dc[q]
@@ -747,10 +851,12 @@ def xyz_to_cct_search_robust(xyzw, cieobs = _CIEOBS, out = 'cct',wl = None, rtol
     elif (out == "[cct,duv]") | (out == -2):
         return np.hstack((ccts,duvs))       
 
-def xyz_to_cct_search_fast(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, 
-                           rtol = 1e-5, atol = 0.1, upper_cct_max = _CCT_MAX, 
-                           approx_cct_temp = True, cct_search_list = None,
-                           cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS):
+
+def xyz_to_cct_search_bf_fast(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, 
+                               rtol = 1e-5, atol = 0.1, 
+                               upper_cct_max = _CCT_MAX, cct_search_list = None, mk_search_list = None, 
+                               cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS,
+                               approx_cct_temp = True):
     """
     Convert XYZ tristimulus values to correlated color temperature (CCT) and 
     Duv(distance above (> 0) or below ( < 0) the Planckian locus) by a 
@@ -758,17 +864,15 @@ def xyz_to_cct_search_fast(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None,
 
     | The algorithm uses an approximate cct_temp (HA approx., see xyz_to_cct_HA) 
     |  as starting point or uses the middle of the allowed cct-range 
-    |  (1e2 K - _CCT_MAX K, higher causes overflow) on a log-scale, then constructs 
+    |  (~ 100 K - _CCT_MAX K, higher causes overflow) on a log-scale, then constructs 
     |  a 4-step section of the blackbody (Planckian) locus on which to find the
     |  minimum distance to the 1960 uv (or other) chromaticity of the test source.
     | If HA fails then another approximate starting point is found by generating 
     | the uv chromaticity values of a set blackbody radiators spread across the
-    | locus in a 50 K to _CCT_MAX K range (larger CCT's cause instability of the 
+    | locus in a ~ 50 K to _CCT_MAX K range (larger CCT's cause instability of the 
     | chromaticity points due to floating point errors), looking for the closest
     | blackbody radiator and then calculating the mean of the two surrounding ones.
-    | The default cct list is [50,100,500,1000,2000,3000,4000,5000,6000,10000,
-    |                          20000,50000, 7.5e4, 1e5, 5e5, 1e6, 5e6, 1e7, 5e7, 1e8, 5e8, 1e9, 5e9, 1e10, 5e10, 1e11, _CCT_MAX].
-
+    | The default cct list is given in _CCT_SEARCH_LIST.
 
     Args:
         :xyzw: 
@@ -785,28 +889,22 @@ def xyz_to_cct_search_fast(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None,
             | Wavelengths used when calculating Planckian radiators.
         :rtol: 
             | 1e-5, float, optional
-            | Stop brute-force search when cct a relative tolerance is reached.
+            | Stop search when a relative cct tolerance is reached.
             | The relative tolerance is calculated as dCCT/CCT_est, 
             | with CCT_est the current intermediate estimate in the 
-            | brute-force search and with dCCT the difference between
+            | search process and with dCCT the difference between
             | the present and former estimates.
         :atol: 
             | 0.1, optional
-            | Stop brute-force search when cct a absolute tolerance (K) is reached.
+            | Stop search when an absolute cct tolerance (K) is reached.
         :upper_cct_max: 
             | _CCT_MAX, optional
-            | Limit brute-force search to this cct.
-            | Note that values > _CCT_MAX give overflow problems.
-        :approx_cct_temp: 
-            | True, optional
-            | If True: use xyz_to_cct_HA() to get a first estimate of cct to 
-              speed up search.
+            | Limit search to this cct.
         :cct_search_list:
             | None, optional
-            | list of ccts to obtain a first guess for the cct of the input xyz 
+            | List of ccts to obtain a first guess for the cct of the input xyz 
             | when HA estimation fails due to out-of-range cct.
-            | None defaults to: [50,100,500,1000,2000,3000,4000,5000,6000,10000,
-            |                  20000,50000, 7.5e4, 1e5, 5e5, 1e6, 5e6, 1e7, 5e7, 1e8, 5e8, 1e9, 5e9, 1e10, 5e10, 1e11, _CCT_MAX]
+            | None defaults to _CCT_SEARCH_LIST
         :cspace:
             | _CCT_SPACE, optional
             | Color space to do calculations in. 
@@ -821,6 +919,10 @@ def xyz_to_cct_search_fast(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None,
         :cspace_kwargs:
             | _CCT_CSPACE_KWARGS, optional
             | Parameter nested dictionary for the forward and backward transforms.
+        :approx_cct_temp: 
+            | True, optional
+            | If True: use xyz_to_cct_HA() to get a first estimate of cct to 
+            |          speed up search.
             
     Returns:
         :returns: 
@@ -835,7 +937,7 @@ def xyz_to_cct_search_fast(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None,
         Note that cct must be between 1e3 K - 1e20 K 
         (very large cct take a long time!!!)
     """
-
+ 
     xyzw = np2d(xyzw)   
     
     if len(xyzw.shape)>2:
@@ -849,10 +951,15 @@ def xyz_to_cct_search_fast(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None,
     vt = Yuvt[:,2,None] #.take([2],axis = axis_of_v3t) # get CIE 1960 v
 
     # Initialize arrays:
-    ccts = np.zeros((xyzw.shape[0],1));ccts.fill(np.nan)
+    ccts = np.zeros((xyzw.shape[0],1))
+    ccts.fill(np.nan)
     duvs = ccts.copy()
 
-    #calculate preliminary solution(s):
+    # get cct_searh_list:
+    cct_search_list, _ = _process_cct_mk_search_lists(cct_search_list =cct_search_list, 
+                                                      mk_search_list = mk_search_list,
+                                                      upper_cct_max=upper_cct_max)
+    # calculate preliminary solution(s):
     if (approx_cct_temp == True):
         ccts_est = xyz_to_cct_HA(xyzw, verbosity = 0)
         procent_estimates = np.array([[3000.0, 100000.0,0.05],[100000.0,200000.0,0.1],[200000.0,300000.0,0.25],[300000.0,400000.0,0.4],[400000.0,600000.0,0.4],[600000.0,800000.0,0.4],[800000.0,np.inf,0.25]])
@@ -1010,12 +1117,10 @@ def xyz_to_cct_search_fast(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None,
         return np.hstack((ccts,duvs))
 
 
-def xyz_to_cct_zhang(xyzw, cieobs = _CIEOBS, out = 'cct', wl  = None, 
-                     rtol = 1e-5, atol = 0.1, split_calculation_at_N = 100,
-                     cct_search_list = None, MK_search_list = 'zhang_extended',
-                     upper_cct_max = _CCT_MAX,
-                     cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS, 
-                     ):
+def xyz_to_cct_search_zhang(xyzw, cieobs = _CIEOBS, out = 'cct', wl  = None, 
+                            rtol = 1e-5, atol = 0.1, split_calculation_at_N = 100,
+                            cct_search_list = None, mk_search_list = None, upper_cct_max = _CCT_MAX,
+                            cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS):
     """
     Convert XYZ tristimulus values to correlated color temperature (CCT) and 
     Duv(distance above (> 0) or below ( < 0) the Planckian locus) using the 
@@ -1036,14 +1141,14 @@ def xyz_to_cct_zhang(xyzw, cieobs = _CIEOBS, out = 'cct', wl  = None,
             | Wavelengths used when calculating Planckian radiators.
         :rtol: 
             | 1e-5, float, optional
-            | Stop golden-ratio search when cct a relative tolerance is reached.
+            | Stop search when cct a relative tolerance is reached.
             | The relative tolerance is calculated as dCCT/CCT_est, 
             | with CCT_est the current intermediate estimate in the 
             | search and with dCCT the difference between
             | the present and former estimates.
         :atol: 
             | 0.1, optional
-            | Stop golden-ratio search when cct a absolute tolerance (K) is reached.
+            | Stop search when cct a absolute tolerance (K) is reached.
         :split_calculation_at_N:
             | 100, optional
             | Split calculation when xyzw.shape[0] > split_calculation_at_N. 
@@ -1052,15 +1157,14 @@ def xyz_to_cct_zhang(xyzw, cieobs = _CIEOBS, out = 'cct', wl  = None,
             | _CCT_MAX, optional
             | Limit golden-ratio search to this cct.
         :cct_search_list:
-            | 'golden-ratio', optional
+            | None, optional
             | list of ccts to obtain a first guess for the cct of the input xyz.
             | Options:
-            |   - 'zhang' defaults to mired_to_cct(np.arange(1.0,1025+25,25))
-            |   - 'zhang_extended' defaults to an extension of the [1,1025+25,25] MK range to a 500 K - _CCT_MAX K range..
-            |   - None defaults to: [50,100,500,1000,2000,3000,4000,5000,6000,10000,
-            |                       20000,50000, 7.5e4, 1e5, 5e5, 1e6, 5e6, 1e7, 5e7, 1e8, 5e8, 1e9, 5e9, 1e10, 5e10, 1e11, _CCT_MAX]
-        :MK_search_list:
-            | 'zhang_extended', optional
+            |   - 'default' or None: _CCT_SEARCH_LIST
+            |   - 'zhang': defaults to mired_to_cct(np.arange(1.0,1025+25,25))
+            |   - 'pw_linear': defaults to _CCT_SEARCH_PW_LIN
+        :mk_search_list:
+            | None, optional
             | Input cct_search_list directly in MK (mired) scale.
             | None: does nothing, but when not None input overwrites cct_search_list !
         :cspace:
@@ -1093,38 +1197,18 @@ def xyz_to_cct_zhang(xyzw, cieobs = _CIEOBS, out = 'cct', wl  = None,
         Optik, 193, 163018. 
         <https://doi.org/https://doi.org/10.1016/j.ijleo.2019.163018>`_
     """
-    # Get MK search list:
-    if MK_search_list is not None:
-        if isinstance(cct_search_list,str):
-            cct_search_list == 'zhang_extended'
-        else:
-            cct_search_list = cct_to_mired(MK_search_list) # overwrite cct list, MK list has priority!!
-    if cct_search_list is None:
-        cct_search_list = np.array([50,100,500,1000,2000,3000,4000,5000,6000,10000, 20000,50000, 7.5e4, 1e5, 5e5, 1e6, 5e6, 1e7, 5e7, 1e8, 5e8, 1e9, 5e9, 1e10, 5e10, 1e11, _CCT_MAX])
-        cct_search_list = cct_search_list[cct_search_list<=upper_cct_max]
-        MK_search_list = cct_to_mired(cct_search_list)
-    elif isinstance(cct_search_list,str):
-        if cct_search_list.lower() == 'zhang':
-            MK_search_list = np.arange(1.0,1025+25,25)
-        elif cct_search_list.lower() == 'zhang_extended':
-            MK_search_list = np.hstack((np.arange(cct_to_mired(_CCT_MAX),1+0.1,0.1),
-                                        np.arange(1.0,1025+25,25)[1:],
-                                        np.arange(1026.0,1025+50*21,50)[1:]))
-        else:
-            raise Exception('cct_search_list = {:s} not supported'.format(cct_search_list))
-        cct_search_list = cct_to_mired(MK_search_list)
-        cct_search_list = cct_search_list[cct_search_list<=upper_cct_max]
-        MK_search_list = MK_search_list[cct_search_list<=upper_cct_max]
-    else:
-        cct_search_list = cct_search_list[cct_search_list<=upper_cct_max]
-        MK_search_list = cct_to_mired(np.array(cct_search_list))
-        
+    
     xyzw = np2d(xyzw)   
     
     if len(xyzw.shape)>2:
         raise Exception('xyz_to_cct_search(): Input xyzw.shape must be <= 2 !')
     
     cspace_dict = _process_cspace_input(cspace, cspace_kwargs)
+    
+    # get search_lists:
+    cct_search_list, mk_search_list = _process_cct_mk_search_lists(cct_search_list = cct_search_list, 
+                                                                   mk_search_list = mk_search_list, 
+                                                                   upper_cct_max = upper_cct_max)
         
     # get BB radiator spectra:
     BB = cri_ref(cct_search_list, ref_type = ['BB'], wl3 = wl)
@@ -1136,23 +1220,24 @@ def xyz_to_cct_zhang(xyzw, cieobs = _CIEOBS, out = 'cct', wl  = None,
     uvBB = cspace_dict['fwtf'](xyzBB)[...,1:]
     
     # # store cct, MK and uv in LUT:
-    # lut = np.vstack((cct_search_list,MK_search_list, uvBB.T)).T 
+    # lut = np.vstack((cct_search_list,mk_search_list, uvBB.T)).T 
     # lut = np.vstack((lut[0],lut,lut[-1]))
-    MK_search_list = np.hstack((MK_search_list[0],MK_search_list,MK_search_list[-1]))
+    mk_search_list = np.hstack((mk_search_list[0],mk_search_list,mk_search_list[-1]))
     
     # get cspace coordinates of input xyzw:
-    xyzw = np.squeeze(xyzw) # squeeze to remove any potential double
-    uvw = cspace_dict['fwtf'](np.squeeze(xyzw))[...,1:] 
+    uvw = cspace_dict['fwtf'](xyzw)[...,1:] 
     
-    
+    # prepare split of input data to speed up calculation:
     n = xyzw.shape[0]
     ccts = np.zeros((n,))
     duvs = np.zeros((n,))
     n_i = split_calculation_at_N if split_calculation_at_N is not None else n
     N_i = n//n_i + 1*((n%n_i)>0)
+    
+    # loop of splitted data:
     for i in range(N_i):
         
-        # split:
+        # get data for split i:
         uv = uvw[n_i*i:n_i*i+n_i] if (i < (N_i-1)) else uvw[n_i*i:]
 
         # find distance in UCD of BB to input:
@@ -1164,8 +1249,8 @@ def xyz_to_cct_zhang(xyzw, cieobs = _CIEOBS, out = 'cct', wl  = None,
         p0 = DEuv.argmin(axis=0) + 1 # + 1 to index in lut
         
         # get RTm-1 (RTl) and RTm+1 (RTr):
-        RTl = MK_search_list[p0 - 1]
-        RTr = MK_search_list[p0 + 1]
+        RTl = mk_search_list[p0 - 1]
+        RTr = mk_search_list[p0 + 1]
         
         # calculate RTa, RTb:
         s = (5**0.5 - 1)/2
@@ -1248,7 +1333,7 @@ def xyz_to_cct_zhang(xyzw, cieobs = _CIEOBS, out = 'cct', wl  = None,
 
 def xyz_to_cct_ohno(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, rtol = 1e-5, atol = 0.1, 
                     force_out_of_lut = True, fallback_mode = 'zhang', split_zhang_calculation_at_N = 100, 
-                    upper_cct_max = _CCT_MAX, approx_cct_temp = True, cct_search_list = None, fast_search = True,
+                    cct_search_list = None, mk_search_list = None, upper_cct_max = _CCT_MAX, approx_cct_temp = True, 
                     cctuv_lut = None, cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS):
     """
     Convert XYZ tristimulus values to correlated color temperature (CCT) and 
@@ -1268,56 +1353,52 @@ def xyz_to_cct_ohno(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, rtol = 1e-5,
         :wl: 
             | None, optional
             | Wavelengths used when calculating Planckian radiators.
-        :rtol: 
-            | 1e-5, float, optional
-            | Stop brute-force or golden-ratio search when cct a relative tolerance is reached.
-            | The relative tolerance is calculated as dCCT/CCT_est, 
-            | with CCT_est the current intermediate estimate in the 
-            | brute-force or golden-ratio search and with dCCT the difference between
-            | the present and former estimates.
-        :atol: 
-            | 0.1, optional
-            | Stop brute-force or golden-ratio search when cct a absolute tolerance (K) is reached.
         :force_out_of_lut: 
             | True, optional
             | If True and cct is out of range of the LUT, then switch to 
-            | the selected fallback_mode, else return numpy.nan values.
+            | the selected search fallback_mode, else return numpy.nan values.
         :fallback_mode:
             | 'zhang', optional
             | Fallback mode for out-of-lut input. 
             | Options:
-            |  - 'Zhang' or 'golden-ratio': use xyz_to_cct_zhang()
-            |  - 'brute-force-search-robust': use xyz_to_cct_search_robust()
-            |  - 'brute-force-search-fast': use xyz_to_cct_search_fast()
+            |  - 'Zhang': use xyz_to_cct_zhang()
+            |  - 'brute-force-search-robust': use xyz_to_cct_search_bf_robust()
+            |  - 'brute-force-search-fast': use xyz_to_cct_search_bf_fast()
         :split_zhang_calculation_at_N:
             | 100, optional
             | Split calculation when xyzw.shape[0] > split_calculation_at_N. 
             | Splitting speeds up the calculation. If None: no splitting is done.
+        :rtol: 
+            | 1e-5, float, optional
+            | Stop search when  a relative cct tolerance is reached.
+            | The relative tolerance is calculated as dCCT/CCT_est, 
+            | with CCT_est the current intermediate estimate in the 
+            | search and with dCCT the difference between
+            | the present and former estimates.
+        :atol: 
+            | 0.1, optional
+            | Stop search when cct a absolute tolerance (K) is reached.
         :upper_cct_max: 
             | _CCT_MAX, optional
             | Limit brute-force or golden-ratio search to this cct.
         :approx_cct_temp: 
             | True, optional
             | If True: use xyz_to_cct_HA() to get a first estimate of cct to 
-            |  speed up the brute-force search.
-            | Only for 'fast' code option.
-        :fast_search:
-            | True, optional
-            | Use fast brute-force search, i.e. xyz_to_cct_search_fast()
-            | Overrides a 'brute-force-search-robust' fallback_mode setting.
+            |           speed up the fast brute-force search.
         :cct_search_list:
             | None, optional
             | List of ccts to obtain a first guess for the cct of the input xyz
-            | for the 'brute-force-robust', 'zhang' or 'golden-ratio' fallback methods, or
+            | for the 'brute-force-search-robust', 'zhang' fallback methods, or
             | when HA estimation fails in the 'brute-force-search-fast' fallback algorithm 
             | due to out-of-range ccts.
             | Options:
-            |   - 'zhang' or 'golden-ratio' defaults to mired_to_cct(np.arange(1.0,1025+25,25))
-            |           (only when this 'zhang' is the fallback method)
-            |   - 'zhang_extended': extension of Zhang's [1,1025+25,25] MK range to a 500 K - _CCT_MAX K range.
-            |   - None defaults to: [50,100,500,1000,2000,3000,4000,5000,6000,10000,
-            |                       20000,50000, 7.5e4, 1e5, 5e5, 1e6, 5e6, 1e7, 5e7, 1e8, 5e8, 1e9, 5e9, 1e10, 5e10, 1e11, _CCT_MAX]µ
-            |        (except when mode == 'zhang', an extended range from 500 K to _CCT_MAX is used).
+            |   - 'default' or None: _CCT_SEARCH_LIST
+            |   - 'zhang': defaults to mired_to_cct(np.arange(1.0,1025+25,25))
+            |   - 'pw_linear': defaults to _CCT_SEARCH_PW_LIN
+        :mk_search_list:
+            | None, optional
+            | Input cct_search_list directly in MK (mired) scale.
+            | None: does nothing, but when not None input overwrites cct_search_list !        
         :cctuv_lut:
             | None, optional
             | CCT+uv look-up-table to use.
@@ -1370,6 +1451,11 @@ def xyz_to_cct_ohno(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, rtol = 1e-5,
 
     uv = np2d(np.concatenate((u,v),axis = axis_of_v3))
     
+    # get search_lists:
+    cct_search_list, mk_search_list = _process_cct_mk_search_lists(cct_search_list = cct_search_list, 
+                                                                   mk_search_list = mk_search_list, 
+                                                                   upper_cct_max = upper_cct_max)
+    
     # load cct & uv from LUT:
     if cctuv_lut is None:   
         cctuv_lut = _CCT_LUT
@@ -1387,7 +1473,8 @@ def xyz_to_cct_ohno(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, rtol = 1e-5,
     uv_LUT = cctuv_lut[cspace_string][cieobs][:,1:3] 
     
     # calculate CCT of each uv:
-    CCT = np.zeros(uv.shape[0]);CCT.fill(np.nan) # initialize with NaN's
+    CCT = np.zeros(uv.shape[0])
+    CCT.fill(np.nan) # initialize with NaN's
     Duv = CCT.copy() # initialize with NaN's
     idx_m = 0
     idx_M = uv_LUT.shape[0]-1
@@ -1410,23 +1497,15 @@ def xyz_to_cct_ohno(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, rtol = 1e-5,
         
 
         if (out_of_lut == True) & (force_out_of_lut == True): # calculate using search-function
-            if 'search' in fallback_mode:
-                if fast_search | ('fast' in fallback_mode):
-                    fast = True 
-                else:
-                    fast = False
-                cct_i, Duv_i = xyz_to_cct_search(xyzw[i:i+1,:], cieobs = cieobs, wl = wl, rtol = rtol, atol = atol,
-                                                 out = 'cct,duv',upper_cct_max = upper_cct_max, 
-                                                 approx_cct_temp = approx_cct_temp, cct_search_list = cct_search_list,
-                                                 fast = fast, cspace = cspace_dict, cspace_kwargs = None)
-            
-            elif ('zhang' in fallback_mode) |('golden-ratio' in fallback_mode):   
-                cct_i, Duv_i = xyz_to_cct_zhang(xyzw[i:i+1,:], cieobs = cieobs, wl = wl, rtol = rtol, atol = atol,
-                                                 out = 'cct,duv',split_calculation_at_N = split_zhang_calculation_at_N, 
-                                                 upper_cct_max = upper_cct_max, cct_search_list = cct_search_list,
-                                                 cspace = cspace_dict, cspace_kwargs = None)
 
-            
+            cct_i, Duv_i = xyz_to_cct_search(xyzw[i:i+1,:], cieobs = cieobs, wl = wl, mode = fallback_mode,
+                                             rtol = rtol, atol = atol,
+                                             out = 'cct,duv', upper_cct_max = upper_cct_max, 
+                                             cct_search_list = cct_search_list, mk_search_list = mk_search_list,
+                                             split_zhang_calculation_at_N = split_zhang_calculation_at_N,
+                                             cspace = cspace_dict, cspace_kwargs = None,
+                                             approx_cct_temp = approx_cct_temp)
+     
             CCT[i] = cct_i
             Duv[i] = Duv_i
             continue
@@ -1575,7 +1654,7 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut',
                fallback_mode_for_lut = 'zhang', split_zhang_calculation_at_N = 100,
                force_fast_mode = True, cct_resolution_of_fast_mode = 0.1, out = None, 
                rtol = 1e-5, atol = 0.1, force_out_of_lut = True, upper_cct_max = _CCT_MAX, 
-               approx_cct_temp = True, fast_search = True, cct_search_list = None,
+               approx_cct_temp = True, cct_search_list = None, mk_search_list = None,
                cctuv_lut = None, cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS):
     """
     Convert correlated color temperature (CCT) and Duv (distance above (>0) or 
@@ -1587,7 +1666,8 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut',
     |         + (((duv_min - duv)/(duv))**2.0))
     |    
     | with cct,duv the input values and cct_min, duv_min calculated using 
-    | luxpy.xyz_to_cct(xyzw_estimated,...).
+    | luxpy.xyz_to_cct(xyzw_estimated,...). This requires calculating xyz_to_cct()
+    | which is done using the method specified in mode (if not 'fast').
     |
     | or 
     |
@@ -1610,14 +1690,14 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut',
             | 'lut', optional
             | Determines what method to use.
             | Options:
-            | - 'fast': use cct_to_xyz_fast() 
+            | - 'fast': use cct_to_xyz_fast() for a direct search.
             | - 'lut': use xyz_to_cct_ohno() in inverse search.
             | - 'search': use xyz_to_cct_search() in inverse search, 
             |            If fast_search == True: use use xyz_to_cct_search_fast(), 
             |            else use use xyz_to_cct_search_robust()
-            | - 'brute-force-search-fast': use xyz_to_cct_search_fast() in inverse search.
-            | - 'brute-force-search-robust': use xyz_to_cct_search_robust() for inverse search.
-            | - 'zhang' or 'golden-ratio': use xyz_to_cct_zhang() for inverse search.
+            | - 'bf-fast' or 'brute-force-search-fast': use xyz_to_cct_search_bf_fast() in inverse search.
+            | - 'bf-robust' or 'brute-force-search-robust': use xyz_to_cct_search_bf_robust() for inverse search.
+            | - 'zhang' or 'golden-ratio': use xyz_to_cct_search_zhang() for inverse search.
         :split_zhang_calculation_at_N:
             | 100, optional
             | Split calculation when xyzw.shape[0] > split_calculation_at_N. 
@@ -1641,38 +1721,35 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut',
             | Wavelengths used when calculating Planckian radiators.
         :rtol: 
             | 1e-5, float, optional
-            | Stop brute-force search when cct a relative tolerance is reached.
+            | Stop search when a relative cct tolerance is reached.
             | The relative tolerance is calculated as dCCT/CCT_est, 
             | with CCT_est the current intermediate estimate in the 
-            | brute-force search and with dCCT the difference between
+            | search and with dCCT the difference between
             | the present and former estimates.
         :atol: 
             | 0.1, optional
-            | Stop brute-force search when cct a absolute tolerance (K) is reached.
+            | Stop brute-force search when an absolute cct tolerance (K) is reached.
         :upper_cct_max: 
             | _CCT_MAX, optional
             | Limit brute-force search to this cct.
         :approx_cct_temp: 
             | True, optional
             | If True: use xyz_to_cct_HA() to get a first estimate of cct to 
-            |  speed up search.
-            | Only for 'fast' code option.
-        :fast_search:
-            | True, optional
-            | Use fast brute-force search, i.e. xyz_to_cct_search_fast()
+            |           speed up the fast brute-force search.
         :cct_search_list:
             | None, optional
             | List of ccts to obtain a first guess for the cct of the input xyz
-            | for the 'brute-force-robust', 'zhang' or 'golden-ratio' fallback methods, or
+            | for the 'brute-force-search-robust', 'zhang' fallback methods, or
             | when HA estimation fails in the 'brute-force-search-fast' fallback algorithm 
             | due to out-of-range ccts.
             | Options:
-            |   - 'zhang' or 'golden-ratio' defaults to mired_to_cct(np.arange(1.0,1025+25,25))
-            |           (only when this 'zhang' is the fallback method)
-            |   - 'zhang_extended': extension of Zhang's [1,1025+25,25] MK range to a 500 K - _CCT_MAX K range.
-            |   - None defaults to: [50,100,500,1000,2000,3000,4000,5000,6000,10000,
-            |                       20000,50000, 7.5e4, 1e5, 5e5, 1e6, 5e6, 1e7, 5e7, 1e8, 5e8, 1e9, 5e9, 1e10, 5e10, 1e11, _CCT_MAX]µ
-            |        (except when mode == 'zhang', an extended range from 500 K to _CCT_MAX is used).
+            |   - 'default' or None: _CCT_SEARCH_LIST
+            |   - 'zhang': defaults to mired_to_cct(np.arange(1.0,1025+25,25))
+            |   - 'pw_linear': defaults to _CCT_SEARCH_PW_LIN
+        :mk_search_list:
+            | None, optional
+            | Input cct_search_list directly in MK (mired) scale.
+            | None: does nothing, but when not None input overwrites cct_search_list !         
         :force_out_of_lut: 
             | True, optional
             | If True and cct is out of range of the LUT, then switch to 
@@ -1681,9 +1758,9 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut',
             | 'zhang', optional
             | Fallback mode for out-of-lut input when mode == 'ohno' (or 'lut'). 
             | Options:
-            |  - 'zhang' or 'golden-ratio': use xyz_to_cct_zhang()
-            |  - 'brute-force-search-robust': use xyz_to_cct_search_robust()
-            |  - 'brute-force-search-fast': use xyz_to_cct_search_fast()
+            |  - 'zhang' or 'golden-ratio': use xyz_to_cct_search_zhang()
+            |  - 'bf-robust' or 'brute-force-search-robust': use xyz_to_cct_search_bf_robust()
+            |  - 'bf-fast' or 'brute-force-search-fast': use xyz_to_cct_search_bf_fast()
         :cctuv_lut:
             | None, optional
             | CCT+uv look-up-table to use.
@@ -1712,8 +1789,8 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut',
         source is assumed to be on the Planckian locus.
     """
     cspace_dict = _process_cspace_input(cspace, cspace_kwargs)
-    # cspace_string = cspace['str']
-    
+   
+    # Set up requested mode:
     mode_bak = mode
     if force_fast_mode: mode = 'fast'
     if mode == 'fast':
@@ -1761,6 +1838,11 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut',
         else:
             cctuv_lut = None
     
+        # get search_lists:
+        cct_search_list, mk_search_list = _process_cct_mk_search_lists(cct_search_list = cct_search_list, 
+                                                                       mk_search_list = mk_search_list, 
+                                                                       upper_cct_max = upper_cct_max)
+
     
         # get estimates of approximate xyz values in case duv = None:
         BB = cri_ref(ccts = cct, wl3 = wl, ref_type = ['BB'])
@@ -1783,7 +1865,7 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut',
                                               upper_cct_max = upper_cct_max, 
                                               approx_cct_temp = approx_cct_temp,
                                               cct_search_list = cct_search_list,
-                                              fast_search = fast_search,
+                                              mk_search_list = mk_search_list,
                                               cctuv_lut = cctuv_lut,
                                               cspace = cspace_dict, 
                                               cspace_kwargs = None)
@@ -1808,7 +1890,7 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut',
                                                upper_cct_max = upper_cct_max, 
                                                approx_cct_temp = approx_cct_temp,
                                                cct_search_list = cct_search_list,
-                                               fast_search = fast_search,
+                                               mk_search_list = mk_search_list,
                                                cctuv_lut = cctuv_lut,
                                                cspace = cspace_dict,
                                                cspace_kwargs = None)
@@ -1843,12 +1925,13 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut',
 def xyz_to_cct(xyzw, cieobs = _CIEOBS, out = 'cct',mode = 'lut', wl = None, rtol = 1e-5, atol = 0.1, 
                force_out_of_lut = True, fallback_mode_for_lut = 'zhang', split_zhang_calculation_at_N = 100,
                upper_cct_max = _CCT_MAX, approx_cct_temp = True, fast_search = True, 
-               cct_search_list = None, MK_search_list = 'zhang_extended',
+               cct_search_list = None, mk_search_list = None,
                cctuv_lut = None, cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS): 
     """
     Convert XYZ tristimulus values to correlated color temperature (CCT) and
     Duv (distance above (>0) or below (<0) the Planckian locus)
-    using a brute-force search method, or Ohno's method, or Zhang's golden-ratio search method. 
+    using a brute-force search method, or Zhang's golden-ratio search method, 
+    or Ohno's Look-Up-Table method. 
     
     | Wrapper function for use with luxpy.colortf().
     
@@ -1866,13 +1949,14 @@ def xyz_to_cct(xyzw, cieobs = _CIEOBS, out = 'cct',mode = 'lut', wl = None, rtol
             | 'lut', optional
             | Determines what method to use.
             | Options:
-            | - 'lut': use xyz_to_cct_ohno()
-            | - 'search': use xyz_to_cct_search(), 
+            | - 'fast': use cct_to_xyz_fast() for a direct search.
+            | - 'lut': use xyz_to_cct_ohno() in inverse search.
+            | - 'search': use xyz_to_cct_search() in inverse search, 
             |            If fast_search == True: use use xyz_to_cct_search_fast(), 
             |            else use use xyz_to_cct_search_robust()
-            | - 'brute-force-search-fast': use xyz_to_cct_search_fast()
-            | - 'brute-force-search-robust': use xyz_to_cct_search_robust()
-            | - 'zhang' or 'golden-ratio': use xyz_to_cct_zhang()
+            | - 'bf-fast' or 'brute-force-search-fast': use xyz_to_cct_search_bf_fast() in inverse search.
+            | - 'bf-robust' or 'brute-force-search-robust': use xyz_to_cct_search_bf_robust() for inverse search.
+            | - 'zhang' or 'golden-ratio': use xyz_to_cct_search_zhang() for inverse search.
         :split_zhang_calculation_at_N:
             | 100, optional
             | Split calculation when xyzw.shape[0] > split_calculation_at_N. 
@@ -1882,14 +1966,14 @@ def xyz_to_cct(xyzw, cieobs = _CIEOBS, out = 'cct',mode = 'lut', wl = None, rtol
             | Wavelengths used when calculating Planckian radiators.
         :rtol: 
             | 1e-5, float, optional
-            | Stop brute-force or golden-ratio search when cct a relative tolerance is reached.
+            | Stop search when cct a relative tolerance is reached.
             | The relative tolerance is calculated as dCCT/CCT_est, 
             | with CCT_est the current intermediate estimate in the 
-            | brute-force or golden-ratio search and with dCCT the difference between
+            | search and with dCCT the difference between
             | the present and former estimates.
         :atol: 
             | 0.1, optional
-            | Stop brute-force or golden-ratio search when cct a absolute tolerance (K) is reached.
+            | Stop search when cct a absolute tolerance (K) is reached.
         :force_out_of_lut: 
             | True, optional
             | If True and cct is out of range of the LUT, then switch to 
@@ -1925,7 +2009,7 @@ def xyz_to_cct(xyzw, cieobs = _CIEOBS, out = 'cct',mode = 'lut', wl = None, rtol
             |   - None defaults to: [50,100,500,1000,2000,3000,4000,5000,6000,10000,
             |                       20000,50000, 7.5e4, 1e5, 5e5, 1e6, 5e6, 1e7, 5e7, 1e8, 5e8, 1e9, 5e9, 1e10, 5e10, 1e11, _CCT_MAX]µ
             |        (except when mode == 'zhang', an extended range from 500 K to _CCT_MAX is used).
-        :MK_search_list:
+        :mk_search_list:
             | 'zhang_extended', optional
             | Input cct_search_list directly in MK (mired) scale.
             | None: does nothing, but when not None input overwrites cct_search_list !
@@ -1959,31 +2043,31 @@ def xyz_to_cct(xyzw, cieobs = _CIEOBS, out = 'cct',mode = 'lut', wl = None, rtol
     """
 
     if (mode.lower() == 'lut') | (mode.lower() == 'ohno'):
-        return xyz_to_cct_ohno(xyzw = xyzw, cieobs = cieobs, out = out, rtol = rtol, atol = atol, force_out_of_lut = force_out_of_lut, wl = wl,
-                               upper_cct_max = upper_cct_max, approx_cct_temp = approx_cct_temp, cct_search_list = cct_search_list, fast_search = fast_search, 
+        return xyz_to_cct_ohno(xyzw = xyzw, cieobs = cieobs, out = out, wl  = wl, 
+                               rtol = rtol, atol = atol, 
+                               force_out_of_lut = force_out_of_lut, fallback_mode = fallback_mode_for_lut,
+                               split_zhang_calculation_at_N = split_zhang_calculation_at_N,
+                               cct_search_list = cct_search_list, mk_search_list = mk_search_list, 
+                               upper_cct_max = upper_cct_max, approx_cct_temp = approx_cct_temp,
                                cctuv_lut = cctuv_lut, cspace = cspace, cspace_kwargs = cspace_kwargs)
-    elif ('search' in mode.lower()):
-        if 'fast' in mode: fast_search = True 
-        return xyz_to_cct_search(xyzw = xyzw, cieobs = cieobs, out = out, wl = wl, rtol = rtol, atol = atol, upper_cct_max = upper_cct_max, approx_cct_temp = approx_cct_temp, cct_search_list = cct_search_list, fast = fast_search,
-                                 cspace = cspace, cspace_kwargs = cspace_kwargs)
-    
-    elif (mode.lower() == 'zhang') | (mode.lower() == 'golden-ratio'):
-        return xyz_to_cct_zhang(xyzw = xyzw, cieobs = cieobs, out = out, wl  = wl, 
-                                rtol = rtol, atol = atol, split_calculation_at_N = split_zhang_calculation_at_N,
-                                cct_search_list = cct_search_list, MK_search_list = MK_search_list, 
-                                upper_cct_max = upper_cct_max,
-                                cspace = cspace, cspace_kwargs = cspace_kwargs)
+    else:
+        return xyz_to_cct_search(xyzw = xyzw, cieobs = cieobs, out = out, wl  = wl, mode = mode,
+                                  rtol = rtol, atol = atol, split_zhang_calculation_at_N = split_zhang_calculation_at_N,
+                                  cct_search_list = cct_search_list, mk_search_list = mk_search_list, 
+                                  upper_cct_max = upper_cct_max,
+                                  cspace = cspace, cspace_kwargs = cspace_kwargs)
 
 
 def xyz_to_duv(xyzw, cieobs = _CIEOBS, out = 'duv',mode = 'lut', wl = None, rtol = 1e-5, atol = 0.1, 
-               force_out_of_lut = True, fallback_mode_for_lut = 'search', split_zhang_calculation_at_N = 100, 
+               force_out_of_lut = True, fallback_mode_for_lut = 'zhang', split_zhang_calculation_at_N = 100,
                upper_cct_max = _CCT_MAX, approx_cct_temp = True, fast_search = True, 
-               cct_search_list = None, MK_search_list = 'zhang_extended',
+               cct_search_list = None, mk_search_list = None,
                cctuv_lut = None, cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS): 
     """
     Convert XYZ tristimulus values to correlated color temperature (CCT) and
     Duv (distance above (>0) or below (<0) the Planckian locus)
-    using a brute-force search method, or Ohno's method, or Zhang's golden-ratio search method. 
+    using a brute-force search method, or Zhang's golden-ratio search method, 
+    or Ohno's Look-Up-Table method. 
     
     | Wrapper function for use with luxpy.colortf().
     
@@ -2001,13 +2085,14 @@ def xyz_to_duv(xyzw, cieobs = _CIEOBS, out = 'duv',mode = 'lut', wl = None, rtol
             | 'lut', optional
             | Determines what method to use.
             | Options:
-            | - 'lut': use xyz_to_cct_ohno()
-            | - 'search': use xyz_to_cct_search(), 
+            | - 'fast': use cct_to_xyz_fast() for a direct search.
+            | - 'lut': use xyz_to_cct_ohno() in inverse search.
+            | - 'search': use xyz_to_cct_search() in inverse search, 
             |            If fast_search == True: use use xyz_to_cct_search_fast(), 
             |            else use use xyz_to_cct_search_robust()
-            | - 'brute-force-search-fast': use xyz_to_cct_search_fast()
-            | - 'brute-force-search-robust': use xyz_to_cct_search_robust()
-            | - 'zhang' or 'golden-ratio': use xyz_to_cct_zhang() 
+            | - 'bf-fast' or 'brute-force-search-fast': use xyz_to_cct_search_bf_fast() in inverse search.
+            | - 'bf-robust' or 'brute-force-search-robust': use xyz_to_cct_search_bf_robust() for inverse search.
+            | - 'zhang' or 'golden-ratio': use xyz_to_cct_search_zhang() for inverse search.
         :split_zhang_calculation_at_N:
             | 100, optional
             | Split calculation when xyzw.shape[0] > split_calculation_at_N. 
@@ -2017,20 +2102,20 @@ def xyz_to_duv(xyzw, cieobs = _CIEOBS, out = 'duv',mode = 'lut', wl = None, rtol
             | Wavelengths used when calculating Planckian radiators.
         :rtol: 
             | 1e-5, float, optional
-            | Stop brute-force or golden-ratio search when cct a relative tolerance is reached.
+            | Stop search when cct a relative tolerance is reached.
             | The relative tolerance is calculated as dCCT/CCT_est, 
             | with CCT_est the current intermediate estimate in the 
-            | brute-force or golden-ratio search and with dCCT the difference between
+            | search and with dCCT the difference between
             | the present and former estimates.
         :atol: 
             | 0.1, optional
-            | Stop brute-force or golden-ratio search when cct a absolute tolerance (K) is reached.
+            | Stop search when cct a absolute tolerance (K) is reached.
         :force_out_of_lut: 
             | True, optional
             | If True and cct is out of range of the LUT, then switch to 
             | the selected fallback_mode, else return numpy.nan values.
         :fallback_mode_for_lut:
-            | 'search', optional
+            | 'zhang', optional
             | Fallback mode for out-of-lut input when mode == 'ohno' (or 'lut'). 
             | Options:
             |  - 'Zhang' or 'golden-ratio': use xyz_to_cct_zhang()
@@ -2060,7 +2145,7 @@ def xyz_to_duv(xyzw, cieobs = _CIEOBS, out = 'duv',mode = 'lut', wl = None, rtol
             |   - None defaults to: [50,100,500,1000,2000,3000,4000,5000,6000,10000,
             |                       20000,50000, 7.5e4, 1e5, 5e5, 1e6, 5e6, 1e7, 5e7, 1e8, 5e8, 1e9, 5e9, 1e10, 5e10, 1e11, _CCT_MAX]µ
             |        (except when mode == 'zhang', an extended range from 500 K to _CCT_MAX is used).
-        :MK_search_list:
+        :mk_search_list:
             | 'zhang_extended', optional
             | Input cct_search_list directly in MK (mired) scale.
             | None: does nothing, but when not None input overwrites cct_search_list !
@@ -2092,21 +2177,22 @@ def xyz_to_duv(xyzw, cieobs = _CIEOBS, out = 'duv',mode = 'lut', wl = None, rtol
             |     cct, duv: out == 'cct,duv' (or 2), 
             |     [cct,duv]: out == "[cct,duv]" (or -2)
     """
-    if (mode == 'lut') | (mode == 'ohno'):
-        return xyz_to_cct_ohno(xyzw = xyzw, cieobs = cieobs, out = out, rtol = rtol, atol = atol, force_out_of_lut = force_out_of_lut, wl = wl,
-                               upper_cct_max = upper_cct_max, approx_cct_temp = approx_cct_temp, cct_search_list = cct_search_list, fast_search = fast_search, 
+
+    if (mode.lower() == 'lut') | (mode.lower() == 'ohno'):
+        return xyz_to_cct_ohno(xyzw = xyzw, cieobs = cieobs, out = out, wl  = wl, 
+                               rtol = rtol, atol = atol, 
+                               force_out_of_lut = force_out_of_lut, fallback_mode = fallback_mode_for_lut,
+                               split_zhang_calculation_at_N = split_zhang_calculation_at_N,
+                               cct_search_list = cct_search_list, mk_search_list = mk_search_list, 
+                               upper_cct_max = upper_cct_max, approx_cct_temp = approx_cct_temp,
                                cctuv_lut = cctuv_lut, cspace = cspace, cspace_kwargs = cspace_kwargs)
-    elif ('search' in mode):
-        if 'fast' in mode: fast_search = True 
-        return xyz_to_cct_search(xyzw = xyzw, cieobs = cieobs, out = out, wl = wl, rtol = rtol, atol = atol, upper_cct_max = upper_cct_max, approx_cct_temp = approx_cct_temp, cct_search_list = cct_search_list, fast = fast_search,
-                                 cspace = cspace, cspace_kwargs = cspace_kwargs)
-   
-    elif (mode == 'Zhang') | (mode == 'golden-ratio'):
-        return xyz_to_cct_zhang(xyzw = xyzw, cieobs = cieobs, out = out, wl  = wl, 
-                                rtol = rtol, atol = atol, split_calculation_at_N = split_zhang_calculation_at_N,
-                                cct_search_list = cct_search_list, MK_search_list = MK_search_list, 
-                                upper_cct_max = upper_cct_max,
-                                cspace = cspace, cspace_kwargs = cspace_kwargs)
+    else:
+        return xyz_to_cct_search(xyzw = xyzw, cieobs = cieobs, out = out, wl  = wl, mode = mode,
+                                  rtol = rtol, atol = atol, split_zhang_calculation_at_N = split_zhang_calculation_at_N,
+                                  cct_search_list = cct_search_list, mk_search_list = mk_search_list, 
+                                  upper_cct_max = upper_cct_max,
+                                  cspace = cspace, cspace_kwargs = cspace_kwargs)
+
 
    
 
