@@ -562,8 +562,8 @@ def xyz_to_cct_search(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, mode = 'zh
         :mode:
             | 'zhang', optional
             | Options:
-            |   -'bf-robust': use xyz_to_cct_search_robust()
-            |   -'bf-fast': use xyz_to_cct_search_fast()
+            |   -'bf-robust': use xyz_to_cct_search_bf_robust()
+            |   -'bf-fast': use xyz_to_cct_search_bf_fast()
             |   -'zhang': use xyz_to_cct_search_zhang()
         :rtol: 
             | 1e-5, float, optional
@@ -1692,9 +1692,7 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut',
             | Options:
             | - 'fast': use cct_to_xyz_fast() for a direct search.
             | - 'lut': use xyz_to_cct_ohno() in inverse search.
-            | - 'search': use xyz_to_cct_search() in inverse search, 
-            |            If fast_search == True: use use xyz_to_cct_search_fast(), 
-            |            else use use xyz_to_cct_search_robust()
+            | - 'search': use xyz_to_cct_search_bf_fast() in inverse search, 
             | - 'bf-fast' or 'brute-force-search-fast': use xyz_to_cct_search_bf_fast() in inverse search.
             | - 'bf-robust' or 'brute-force-search-robust': use xyz_to_cct_search_bf_robust() for inverse search.
             | - 'zhang' or 'golden-ratio': use xyz_to_cct_search_zhang() for inverse search.
@@ -1924,7 +1922,7 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut',
 # general CCT-wrapper function
 def xyz_to_cct(xyzw, cieobs = _CIEOBS, out = 'cct',mode = 'lut', wl = None, rtol = 1e-5, atol = 0.1, 
                force_out_of_lut = True, fallback_mode_for_lut = 'zhang', split_zhang_calculation_at_N = 100,
-               upper_cct_max = _CCT_MAX, approx_cct_temp = True, fast_search = True, 
+               upper_cct_max = _CCT_MAX, approx_cct_temp = True, 
                cct_search_list = None, mk_search_list = None,
                cctuv_lut = None, cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS): 
     """
@@ -1951,9 +1949,7 @@ def xyz_to_cct(xyzw, cieobs = _CIEOBS, out = 'cct',mode = 'lut', wl = None, rtol
             | Options:
             | - 'fast': use cct_to_xyz_fast() for a direct search.
             | - 'lut': use xyz_to_cct_ohno() in inverse search.
-            | - 'search': use xyz_to_cct_search() in inverse search, 
-            |            If fast_search == True: use use xyz_to_cct_search_fast(), 
-            |            else use use xyz_to_cct_search_robust()
+            | - 'search': use xyz_to_cct_search_bf_fast() in inverse search, 
             | - 'bf-fast' or 'brute-force-search-fast': use xyz_to_cct_search_bf_fast() in inverse search.
             | - 'bf-robust' or 'brute-force-search-robust': use xyz_to_cct_search_bf_robust() for inverse search.
             | - 'zhang' or 'golden-ratio': use xyz_to_cct_search_zhang() for inverse search.
@@ -1983,8 +1979,8 @@ def xyz_to_cct(xyzw, cieobs = _CIEOBS, out = 'cct',mode = 'lut', wl = None, rtol
             | Fallback mode for out-of-lut input when mode == 'ohno' (or 'lut'). 
             | Options:
             |  - 'Zhang' or 'golden-ratio': use xyz_to_cct_zhang()
-            |  - 'brute-force-search-robust': use xyz_to_cct_search_robust()
-            |  - 'brute-force-search-fast': use xyz_to_cct_search_fast()
+            |  - 'brute-force-search-robust': use xyz_to_cct_search_bf_robust()
+            |  - 'brute-force-search-fast': use xyz_to_cct_search_bf_fast()
         :upper_cct_max: 
             | _CCT_MAX, optional
             | Limit brute-force or golden-ratio search to this cct.
@@ -1992,10 +1988,6 @@ def xyz_to_cct(xyzw, cieobs = _CIEOBS, out = 'cct',mode = 'lut', wl = None, rtol
             | True, optional
             | If True: use xyz_to_cct_HA() to get a first estimate of cct to 
             |  speed up the brute-force search. Only for 'fast' code option.
-        :fast_search:
-            | True, optional
-            | Use fast brute-force search, i.e. xyz_to_cct_search_fast()
-            | Overrides a 'brute-force-search-robust' fallback_mode setting.
         :cct_search_list:
             | None, optional
             | List of ccts to obtain a first guess for the cct of the input xyz
@@ -2060,7 +2052,7 @@ def xyz_to_cct(xyzw, cieobs = _CIEOBS, out = 'cct',mode = 'lut', wl = None, rtol
 
 def xyz_to_duv(xyzw, cieobs = _CIEOBS, out = 'duv',mode = 'lut', wl = None, rtol = 1e-5, atol = 0.1, 
                force_out_of_lut = True, fallback_mode_for_lut = 'zhang', split_zhang_calculation_at_N = 100,
-               upper_cct_max = _CCT_MAX, approx_cct_temp = True, fast_search = True, 
+               upper_cct_max = _CCT_MAX, approx_cct_temp = True,  
                cct_search_list = None, mk_search_list = None,
                cctuv_lut = None, cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS): 
     """
@@ -2087,9 +2079,7 @@ def xyz_to_duv(xyzw, cieobs = _CIEOBS, out = 'duv',mode = 'lut', wl = None, rtol
             | Options:
             | - 'fast': use cct_to_xyz_fast() for a direct search.
             | - 'lut': use xyz_to_cct_ohno() in inverse search.
-            | - 'search': use xyz_to_cct_search() in inverse search, 
-            |            If fast_search == True: use use xyz_to_cct_search_fast(), 
-            |            else use use xyz_to_cct_search_robust()
+            | - 'search': use xyz_to_cct_search_bf_fast() in inverse search, 
             | - 'bf-fast' or 'brute-force-search-fast': use xyz_to_cct_search_bf_fast() in inverse search.
             | - 'bf-robust' or 'brute-force-search-robust': use xyz_to_cct_search_bf_robust() for inverse search.
             | - 'zhang' or 'golden-ratio': use xyz_to_cct_search_zhang() for inverse search.
@@ -2119,8 +2109,8 @@ def xyz_to_duv(xyzw, cieobs = _CIEOBS, out = 'duv',mode = 'lut', wl = None, rtol
             | Fallback mode for out-of-lut input when mode == 'ohno' (or 'lut'). 
             | Options:
             |  - 'Zhang' or 'golden-ratio': use xyz_to_cct_zhang()
-            |  - 'brute-force-search-robust': use xyz_to_cct_search_robust()
-            |  - 'brute-force-search-fast': use xyz_to_cct_search_fast()
+            |  - 'brute-force-search-robust': use xyz_to_cct_search_bf_robust()
+            |  - 'brute-force-search-fast': use xyz_to_cct_search_bf_fast()
         :upper_cct_max: 
             | _CCT_MAX, optional
             | Limit brute-force or golden-ratio search to this cct.
@@ -2128,10 +2118,6 @@ def xyz_to_duv(xyzw, cieobs = _CIEOBS, out = 'duv',mode = 'lut', wl = None, rtol
             | True, optional
             | If True: use xyz_to_cct_HA() to get a first estimate of cct to 
             |  speed up the brute-force search. Only for 'fast' code option.
-        :fast_search:
-            | True, optional
-            | Use fast brute-force search, i.e. xyz_to_cct_search_fast()
-            | Overrides a 'brute-force-search-robust' fallback_mode setting.
         :cct_search_list:
             | None, optional
             | List of ccts to obtain a first guess for the cct of the input xyz
