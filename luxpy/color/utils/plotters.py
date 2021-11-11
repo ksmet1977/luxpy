@@ -193,7 +193,7 @@ def plotDL(ccts = None, cieobs =_CIEOBS, cspace = _CSPACE, axh = None, \
     Args: 
         :ccts: 
             | None or list[float], optional
-            | None defaults to [4000 K to 1e19 K] in 100 steps on a log10 scale.
+            | None defaults to [4000 K to 1e11 K] in 100 steps on a log10 scale.
         :force_daylight_below4000K: 
             | False or True, optional
             | CIE daylight phases are not defined below 4000 K. 
@@ -230,7 +230,7 @@ def plotDL(ccts = None, cieobs =_CIEOBS, cspace = _CSPACE, axh = None, \
     """
     
     if ccts is None:
-        ccts = 10**np.linspace(np.log10(4000.0),np.log10(10.0**19.0),100)
+        ccts = 10**np.linspace(np.log10(4000.0),np.log10(10.0**11.0),100)
         
     xD,yD = daylightlocus(ccts, cieobs = cieobs, force_daylight_below4000K = force_daylight_below4000K)
     Y = 100*np.ones(xD.shape)
@@ -253,7 +253,7 @@ def plotBB(ccts = None, cieobs =_CIEOBS, cspace = _CSPACE, axh = None, cctlabels
             | None defaults to [1000 to 1e19 K].
             | Range: 
             |     [1000,1500,2000,2500,3000,3500,4000,5000,6000,8000,10000] 
-            |    + [15000 K to 1e19 K] in 100 steps on a log10 scale
+            |    + [15000 K to 1e11 K] in 100 steps on a log10 scale
         :cctlabels:
             | True or False, optional
             | Add cct text labels at various points along the blackbody locus.
@@ -289,7 +289,7 @@ def plotBB(ccts = None, cieobs =_CIEOBS, cspace = _CSPACE, axh = None, cctlabels
     """
     if ccts is None:
         ccts1 = np.array([1000.0,1500.0,2000.0,2500.0,3000.0,3500.0,4000.0,5000.0,6000.0,8000.0,10000.0])
-        ccts2 = 10**np.linspace(np.log10(15000.0),np.log10(10.0**19.0),100)
+        ccts2 = 10**np.linspace(np.log10(15000.0),np.log10(10.0**11.0),100)
         ccts = np.hstack((ccts1,ccts2))
     else:
         ccts1 = None

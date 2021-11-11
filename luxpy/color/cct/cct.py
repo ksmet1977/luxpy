@@ -1012,7 +1012,8 @@ def xyz_to_cct_search_fast(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None,
 
 def xyz_to_cct_zhang(xyzw, cieobs = _CIEOBS, out = 'cct', wl  = None, 
                      rtol = 1e-5, atol = 0.1, split_calculation_at_N = 100,
-                     cct_search_list = None, MK_search_list = None, upper_cct_max = _CCT_MAX,
+                     cct_search_list = None, MK_search_list = 'zhang_extended',
+                     upper_cct_max = _CCT_MAX,
                      cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS, 
                      ):
     """
@@ -1054,11 +1055,12 @@ def xyz_to_cct_zhang(xyzw, cieobs = _CIEOBS, out = 'cct', wl  = None,
             | 'golden-ratio', optional
             | list of ccts to obtain a first guess for the cct of the input xyz.
             | Options:
-            |   - 'zhang' or 'golden-ratio' defaults to mired_to_cct(np.arange(1.0,1025+25,25))
+            |   - 'zhang' defaults to mired_to_cct(np.arange(1.0,1025+25,25))
+            |   - 'zhang_extended' defaults to an extension of the [1,1025+25,25] MK range to a 500 K - _CCT_MAX K range..
             |   - None defaults to: [50,100,500,1000,2000,3000,4000,5000,6000,10000,
             |                       20000,50000, 7.5e4, 1e5, 5e5, 1e6, 5e6, 1e7, 5e7, 1e8, 5e8, 1e9, 5e9, 1e10, 5e10, 1e11, _CCT_MAX]
         :MK_search_list:
-            | None, optional
+            | 'zhang_extended', optional
             | Input cct_search_list directly in MK (mired) scale.
             | None: does nothing, but when not None input overwrites cct_search_list !
         :cspace:
@@ -1093,7 +1095,10 @@ def xyz_to_cct_zhang(xyzw, cieobs = _CIEOBS, out = 'cct', wl  = None,
     """
     # Get MK search list:
     if MK_search_list is not None:
-        cct_search_list = cct_to_mired(MK_search_list) # overwrite cct list, MK list has priority!!
+        if isinstance(cct_search_list,str):
+            cct_search_list == 'zhang_extended'
+        else:
+            cct_search_list = cct_to_mired(MK_search_list) # overwrite cct list, MK list has priority!!
     if cct_search_list is None:
         cct_search_list = np.array([50,100,500,1000,2000,3000,4000,5000,6000,10000, 20000,50000, 7.5e4, 1e5, 5e5, 1e6, 5e6, 1e7, 5e7, 1e8, 5e8, 1e9, 5e9, 1e10, 5e10, 1e11, _CCT_MAX])
         cct_search_list = cct_search_list[cct_search_list<=upper_cct_max]
@@ -1102,8 +1107,9 @@ def xyz_to_cct_zhang(xyzw, cieobs = _CIEOBS, out = 'cct', wl  = None,
         if cct_search_list.lower() == 'zhang':
             MK_search_list = np.arange(1.0,1025+25,25)
         elif cct_search_list.lower() == 'zhang_extended':
-            MK_search_list = np.hstack((np.arange(cct_to_mired(_CCT_MAX),25,0.5),
-                                        np.arange(1.0,1025+40*25,25)[1:]))
+            MK_search_list = np.hstack((np.arange(cct_to_mired(_CCT_MAX),1+0.1,0.1),
+                                        np.arange(1.0,1025+25,25)[1:],
+                                        np.arange(1026.0,1025+50*21,50)[1:]))
         else:
             raise Exception('cct_search_list = {:s} not supported'.format(cct_search_list))
         cct_search_list = cct_to_mired(MK_search_list)
@@ -1308,8 +1314,10 @@ def xyz_to_cct_ohno(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, rtol = 1e-5,
             | Options:
             |   - 'zhang' or 'golden-ratio' defaults to mired_to_cct(np.arange(1.0,1025+25,25))
             |           (only when this 'zhang' is the fallback method)
+            |   - 'zhang_extended': extension of Zhang's [1,1025+25,25] MK range to a 500 K - _CCT_MAX K range.
             |   - None defaults to: [50,100,500,1000,2000,3000,4000,5000,6000,10000,
-            |                       20000,50000, 7.5e4, 1e5, 5e5, 1e6, 5e6, 1e7, 5e7, 1e8, 5e8, 1e9, 5e9, 1e10, 5e10, 1e11, _CCT_MAX]
+            |                       20000,50000, 7.5e4, 1e5, 5e5, 1e6, 5e6, 1e7, 5e7, 1e8, 5e8, 1e9, 5e9, 1e10, 5e10, 1e11, _CCT_MAX]µ
+            |        (except when mode == 'zhang', an extended range from 500 K to _CCT_MAX is used).
         :cctuv_lut:
             | None, optional
             | CCT+uv look-up-table to use.
@@ -1544,6 +1552,8 @@ def cct_to_xyz_fast(ccts, duv = None, cct_resolution = 0.1, cieobs = _CIEOBS, wl
 
     if (duv is None) & (ccts.shape[1] == 2):
         duv = np2d(ccts[:,1,None])
+    if (duv is None) & (ccts.shape[1] == 1):
+        duv = np.zeros_like(ccts)
     elif duv is not None:
         duv = np2d(duv)
 
@@ -1652,10 +1662,17 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut',
             | Use fast brute-force search, i.e. xyz_to_cct_search_fast()
         :cct_search_list:
             | None, optional
-            | list of ccts to obtain a first guess for the cct of the input xyz 
-            | when HA estimation fails due to out-of-range cct or when fast_search == False.
-            | None defaults to: [50,100,500,1000,2000,3000,4000,5000,6000,10000,
-            |                  20000,50000, 7.5e4, 1e5, 5e5, 1e6, 5e6, 1e7, 5e7, 1e8, 5e8, 1e9, 5e9, 1e10, 5e10, 1e11, _CCT_MAX]
+            | List of ccts to obtain a first guess for the cct of the input xyz
+            | for the 'brute-force-robust', 'zhang' or 'golden-ratio' fallback methods, or
+            | when HA estimation fails in the 'brute-force-search-fast' fallback algorithm 
+            | due to out-of-range ccts.
+            | Options:
+            |   - 'zhang' or 'golden-ratio' defaults to mired_to_cct(np.arange(1.0,1025+25,25))
+            |           (only when this 'zhang' is the fallback method)
+            |   - 'zhang_extended': extension of Zhang's [1,1025+25,25] MK range to a 500 K - _CCT_MAX K range.
+            |   - None defaults to: [50,100,500,1000,2000,3000,4000,5000,6000,10000,
+            |                       20000,50000, 7.5e4, 1e5, 5e5, 1e6, 5e6, 1e7, 5e7, 1e8, 5e8, 1e9, 5e9, 1e10, 5e10, 1e11, _CCT_MAX]µ
+            |        (except when mode == 'zhang', an extended range from 500 K to _CCT_MAX is used).
         :force_out_of_lut: 
             | True, optional
             | If True and cct is out of range of the LUT, then switch to 
@@ -1826,7 +1843,7 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'lut',
 def xyz_to_cct(xyzw, cieobs = _CIEOBS, out = 'cct',mode = 'lut', wl = None, rtol = 1e-5, atol = 0.1, 
                force_out_of_lut = True, fallback_mode_for_lut = 'zhang', split_zhang_calculation_at_N = 100,
                upper_cct_max = _CCT_MAX, approx_cct_temp = True, fast_search = True, 
-               cct_search_list = None, MK_search_list = None,
+               cct_search_list = None, MK_search_list = 'zhang_extended',
                cctuv_lut = None, cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS): 
     """
     Convert XYZ tristimulus values to correlated color temperature (CCT) and
@@ -1904,12 +1921,14 @@ def xyz_to_cct(xyzw, cieobs = _CIEOBS, out = 'cct',mode = 'lut', wl = None, rtol
             | Options:
             |   - 'zhang' or 'golden-ratio' defaults to mired_to_cct(np.arange(1.0,1025+25,25))
             |           (only when this 'zhang' is the fallback method)
+            |   - 'zhang_extended': extension of Zhang's [1,1025+25,25] MK range to a 500 K - _CCT_MAX K range.
             |   - None defaults to: [50,100,500,1000,2000,3000,4000,5000,6000,10000,
-            |                       20000,50000, 7.5e4, 1e5, 5e5, 1e6, 5e6, 1e7, 5e7, 1e8, 5e8, 1e9, 5e9, 1e10, 5e10, 1e11, _CCT_MAX]
+            |                       20000,50000, 7.5e4, 1e5, 5e5, 1e6, 5e6, 1e7, 5e7, 1e8, 5e8, 1e9, 5e9, 1e10, 5e10, 1e11, _CCT_MAX]µ
+            |        (except when mode == 'zhang', an extended range from 500 K to _CCT_MAX is used).
         :MK_search_list:
-            | None, optional
+            | 'zhang_extended', optional
             | Input cct_search_list directly in MK (mired) scale.
-            | None: does nothing, but when not None input overwrites cct_search_list ! 
+            | None: does nothing, but when not None input overwrites cct_search_list !
         :cctuv_lut:
             | None, optional
             | CCT+uv look-up-table to use.
@@ -1959,7 +1978,7 @@ def xyz_to_cct(xyzw, cieobs = _CIEOBS, out = 'cct',mode = 'lut', wl = None, rtol
 def xyz_to_duv(xyzw, cieobs = _CIEOBS, out = 'duv',mode = 'lut', wl = None, rtol = 1e-5, atol = 0.1, 
                force_out_of_lut = True, fallback_mode_for_lut = 'search', split_zhang_calculation_at_N = 100, 
                upper_cct_max = _CCT_MAX, approx_cct_temp = True, fast_search = True, 
-               cct_search_list = None, MK_search_list = None,
+               cct_search_list = None, MK_search_list = 'zhang_extended',
                cctuv_lut = None, cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS): 
     """
     Convert XYZ tristimulus values to correlated color temperature (CCT) and
@@ -2037,12 +2056,14 @@ def xyz_to_duv(xyzw, cieobs = _CIEOBS, out = 'duv',mode = 'lut', wl = None, rtol
             | Options:
             |   - 'zhang' or 'golden-ratio' defaults to mired_to_cct(np.arange(1.0,1025+25,25))
             |           (only when this 'zhang' is the fallback method)
+            |   - 'zhang_extended': extension of Zhang's [1,1025+25,25] MK range to a 500 K - _CCT_MAX K range.
             |   - None defaults to: [50,100,500,1000,2000,3000,4000,5000,6000,10000,
-            |                       20000,50000, 7.5e4, 1e5, 5e5, 1e6, 5e6, 1e7, 5e7, 1e8, 5e8, 1e9, 5e9, 1e10, 5e10, 1e11, _CCT_MAX]
+            |                       20000,50000, 7.5e4, 1e5, 5e5, 1e6, 5e6, 1e7, 5e7, 1e8, 5e8, 1e9, 5e9, 1e10, 5e10, 1e11, _CCT_MAX]µ
+            |        (except when mode == 'zhang', an extended range from 500 K to _CCT_MAX is used).
         :MK_search_list:
-            | None, optional
+            | 'zhang_extended', optional
             | Input cct_search_list directly in MK (mired) scale.
-            | None: does nothing, but when not None input overwrites cct_search_list ! 
+            | None: does nothing, but when not None input overwrites cct_search_list !
         :cctuv_lut:
             | None, optional
             | CCT+uv look-up-table to use.
