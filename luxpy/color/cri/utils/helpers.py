@@ -682,7 +682,7 @@ def spd_to_jab_t_r(St, cri_type = _CRI_TYPE_DEFAULT, out = 'jabt,jabr',
     xyztw_cct = spd_to_xyz(St, cieobs = cieobs['cct'], rfl = None, out = 1)
 
     # A.b. get cct:
-    cct, duv = xyz_to_cct(xyztw_cct, cieobs = cieobs['cct'], out = 'cct,duv',mode = 'lut')
+    cct, duv = xyz_to_cct(xyztw_cct, cieobs = cieobs['cct'], out = 'cct,duv',mode = 'ohno2014')
     
     # A.c. get reference ill.:
     if isinstance(ref_type,np.ndarray):
