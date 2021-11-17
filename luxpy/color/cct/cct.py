@@ -34,7 +34,7 @@ cct: Module with functions related to correlated color temperature calculations
  :_CCT_CSPACE_KWARGS: nested dict with cspace parameters for forward and backward modes. 
  
  
- :_CCT_SEARCH_METHOD: string with default search method.
+ :_CCT_SEARCH_MODE: string with default search method.
  
  :_OHNO2014_FALLBACK_MODE: string with fallback method when Ohno's 2014 LUT algorithm has out-of-lut values.
  
@@ -156,8 +156,9 @@ _MK_SEARCH_LIST_BRUTEFORCE  = np2d(np.hstack((np.arange(1e6/_CCT_MAX,1+0.1,0.1),
                               np.arange(1026.0,1025+50*21,50)[1:],
                               1e6/np.arange(450,0,-100)))).T
 _CCT_SEARCH_LIST_BRUTEFORCE = 1e6/_MK_SEARCH_LIST_BRUTEFORCE
-_CCT_SEARCH_METHOD = 'robertson1968'
-_OHNO2014_FALLBACK_MODE = _CCT_SEARCH_METHOD
+_CCT_SEARCH_MODE = 'robertson1968'
+_OHNO2014_FALLBACK_MODE = _CCT_SEARCH_MODE
+_CCT_SEARCH_LIST_DEFAULT = 'default'
 
 
 _CCT_LUT_CALC = False # True: (re-)calculates LUTs for ccts in .cctluts/cct_lut_cctlist.dat
@@ -170,7 +171,7 @@ __all__ +=['_CCT_SEARCH_LIST_OHNO2014','_MK_SEARCH_LIST_OHNO2014',
            '_CCT_SEARCH_LIST_ZHANG2019', '_MK_SEARCH_LIST_ZHANG2019',
            '_CCT_SEARCH_LIST_PW_LIN', '_MK_SEARCH_LIST_PW_LIN',
            '_CCT_SEARCH_LIST_BRUTEFORCE','_MK_SEARCH_LIST_BRUTEFORCE',
-           '_CCT_SEARCH_METHOD','_OHNO2014_FALLBACK_MODE']
+           '_CCT_SEARCH_MODE','_OHNO2014_FALLBACK_MODE']
 
 __all__ += ['_CCT_LUT_PATH', 'cct_to_mired',
             '_CCT_LUT','calculate_lut', 'calculate_luts', 
@@ -571,17 +572,17 @@ def xyz_to_cct_HA(xyzw, verbosity = 1):
 #------------------------------------------------------------------------------
 # Search algorithms: 
 #------------------------------------------------------------------------------      
-def _process_cct_mk_search_lists(cct_search_list = None, 
+def _process_cct_mk_search_lists(cct_search_list = _CCT_SEARCH_LIST_DEFAULT, 
                                  mk_search_list = None, 
-                                 upper_cct_max = _CCT_MAX):
+                                 upper_cct_max = _CCT_MAX,
+                                 cct_search_list_default = None):
     """ 
     Get cct_search_list and mk_search_list.
     
     Args:
         :cct_search_list:
-            | None,optional
+            | _CCT_SEARCH_LIST_DEFAULT,optional
             | Options: 'bf-search','pw-linear','zhang2019','robertson1968'
-            | None defaults to _CCT_SEARCH_METHOD
         :mk_search_list:
             | None, optional
             | If not None: overrides cct_search_list
@@ -597,8 +598,11 @@ def _process_cct_mk_search_lists(cct_search_list = None,
         else:
             cct_search_list = cct_to_mired(mk_search_list)
     
-    if cct_search_list is None:
-        cct_search_list = _CCT_SEARCH_METHOD
+    if (cct_search_list is None) | (cct_search_list == 'default'):
+        if (cct_search_list_default is None) | (cct_search_list != 'default'): 
+            cct_search_list = _CCT_SEARCH_MODE
+        else: 
+            cct_search_list = cct_search_list_default
         
     if isinstance(cct_search_list,str):
         if ('bf-search' in cct_search_list.lower()):
@@ -625,9 +629,9 @@ def _process_cct_mk_search_lists(cct_search_list = None,
 
     return cct_search_list, mk_search_list
 
-def xyz_to_cct_search(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, mode = 'zhang2019',
+def xyz_to_cct_search(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, mode = _CCT_SEARCH_MODE,
                       rtol = 1e-5, atol = 0.1, force_tolerance = True,
-                      cct_search_list = None, mk_search_list = None, 
+                      cct_search_list = _CCT_SEARCH_LIST_DEFAULT, mk_search_list = None, 
                       split_zhang_calculation_at_N = 100, upper_cct_max = _CCT_MAX,
                       cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS, 
                       approx_cct_temp = True, lut = None):
@@ -683,13 +687,14 @@ def xyz_to_cct_search(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, mode = 'zh
             | Limit search to this cct.
             | Not used in 'robertson2019' !
         :cct_search_list:
-            | None, optional
+            | _CCT_SEARCH_LIST_DEFAULT, optional
             | List of ccts to obtain a first guess for the cct of the input xyz
             | for the 'brute-force-search-robust', 'zhang2019', 'robertson1968' fallback methods, or
             | when HA estimation fails in the 'brute-force-search-fast' fallback algorithm 
             | due to out-of-range ccts.
             | Options:
-            |   - 'default' or None: defaults to the mode in _CCT_SEARCH_METHOD.
+            |   -  None: defaults to the mode in _CCT_SEARCH_MODE.
+            |   - 'default': defaults to the one corresponding to the specific algorithm (=mode)
             |   - 'bf-search': defaults to _CCT_SEARCH_LIST_BRUTEFORCE
             |   - 'zhang2019': defaults to _CCT_SEARCH_LIST_ZHANG2019
             |   - 'pw_linear': defaults to _CCT_SEARCH_PW_LIN
@@ -867,13 +872,14 @@ def xyz_to_cct_search_bf_robust(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None,
             | _CCT_MAX, optional
             | Limit search to this cct.
         :cct_search_list:
-            | None, optional
+            | _CCT_SEARCH_LIST_DEFAULT, optional
             | List of ccts to obtain a first guess for the cct of the input xyz
             | for the 'brute-force-search-robust', 'zhang2019', 'robertson1968' fallback methods, or
             | when HA estimation fails in the 'brute-force-search-fast' fallback algorithm 
             | due to out-of-range ccts.
             | Options:
-            |   - 'default' or None: defaults to the mode in _CCT_SEARCH_METHOD.
+            |   -  None: defaults to the mode in _CCT_SEARCH_MODE.
+            |   - 'default': defaults to the one corresponding to the specific algorithm (=mode)
             |   - 'bf-search': defaults to _CCT_SEARCH_LIST_BRUTEFORCE
             |   - 'zhang2019': defaults to _CCT_SEARCH_LIST_ZHANG2019
             |   - 'pw_linear': defaults to _CCT_SEARCH_PW_LIN
@@ -931,7 +937,8 @@ def xyz_to_cct_search_bf_robust(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None,
     # get cct_search_list:
     cct_search_list, _ = _process_cct_mk_search_lists(cct_search_list =cct_search_list, 
                                                       mk_search_list = mk_search_list,
-                                                      upper_cct_max=upper_cct_max)
+                                                      upper_cct_max=upper_cct_max,
+                                                      cct_search_list_default = 'bf-robust')
         
     #calculate preliminary estimates within range in cct_search_list:
     ccts_est, cctranges = _find_closest_ccts(np.hstack((ut,vt)), cieobs = cieobs, 
@@ -1092,13 +1099,14 @@ def xyz_to_cct_search_bf_fast(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None,
             | _CCT_MAX, optional
             | Limit search to this cct.
         :cct_search_list:
-            | None, optional
+            | _CCT_SEARCH_LIST_DEFAULT, optional
             | List of ccts to obtain a first guess for the cct of the input xyz
             | for the 'brute-force-search-robust', 'zhang2019', 'robertson1968' fallback methods, or
             | when HA estimation fails in the 'brute-force-search-fast' fallback algorithm 
             | due to out-of-range ccts.
             | Options:
-            |   - 'default' or None: defaults to the mode in _CCT_SEARCH_METHOD.
+            |   -  None: defaults to the mode in _CCT_SEARCH_MODE.
+            |   - 'default': defaults to the one corresponding to the specific algorithm (=mode)
             |   - 'bf-search': defaults to _CCT_SEARCH_LIST_BRUTEFORCE
             |   - 'zhang2019': defaults to _CCT_SEARCH_LIST_ZHANG2019
             |   - 'pw_linear': defaults to _CCT_SEARCH_PW_LIN
@@ -1160,7 +1168,8 @@ def xyz_to_cct_search_bf_fast(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None,
     # get cct_searh_list:
     cct_search_list, _ = _process_cct_mk_search_lists(cct_search_list =cct_search_list, 
                                                       mk_search_list = mk_search_list,
-                                                      upper_cct_max=upper_cct_max)
+                                                      upper_cct_max=upper_cct_max,
+                                                      cct_search_list_default = 'bf-fast')
     cct_search_list = cct_search_list[:,0]
     
     # calculate preliminary solution(s):
@@ -1371,10 +1380,11 @@ def xyz_to_cct_search_zhang2019(xyzw, cieobs = _CIEOBS, out = 'cct', wl  = None,
             | _CCT_MAX, optional
             | Limit golden-ratio search to this cct.
         :cct_search_list:
-            | None, optional
+            | _CCT_SEARCH_LIST_DEFAULT, optional
             | List of ccts to obtain a first guess for the cct of the input xyz.
             | Options:
-            |   - 'default' or None: defaults to the mode in _CCT_SEARCH_METHOD.
+            |   -  None: defaults to the mode in _CCT_SEARCH_MODE.
+            |   - 'default': defaults to the one corresponding to the specific algorithm (=mode)
             |   - 'bf-search': defaults to _CCT_SEARCH_LIST_BRUTEFORCE
             |   - 'zhang2019': defaults to _CCT_SEARCH_LIST_ZHANG2019
             |   - 'pw_linear': defaults to _CCT_SEARCH_PW_LIN
@@ -1424,7 +1434,8 @@ def xyz_to_cct_search_zhang2019(xyzw, cieobs = _CIEOBS, out = 'cct', wl  = None,
     # get search_lists:
     cct_search_list, mk_search_list = _process_cct_mk_search_lists(cct_search_list = cct_search_list, 
                                                                    mk_search_list = mk_search_list, 
-                                                                   upper_cct_max = upper_cct_max)
+                                                                   upper_cct_max = upper_cct_max,
+                                                                   cct_search_list_default = 'zhang2019')
     
     # dirty solution to code that was originally programmed for vectors:
     cct_search_list, mk_search_list = cct_search_list[:,0], mk_search_list[:,0]
@@ -1602,11 +1613,12 @@ def xyz_to_cct_search_robertson1968(xyzw, cieobs = _CIEOBS, out = 'cct', wl = No
             | None, optional
             | Pre-calculated LUT. If None use _CCT_LUT['robertson1968']
         :cct_search_list:
-            | None, optional
+            | _CCT_SEARCH_LIST_DEFAULT, optional
             | List of ccts to obtain a first guess for the cct of the input xyz.
             |   (creates new LUT)
             | Options:
-            |   - 'default' or None: defaults to the mode in _CCT_SEARCH_METHOD.
+            |   -  None: defaults to the mode in _CCT_SEARCH_MODE.
+            |   - 'default': defaults to the one corresponding to the specific algorithm (=mode)
             |   - 'bf-search': defaults to _CCT_SEARCH_LIST_BRUTEFORCE
             |   - 'zhang2019': defaults to _CCT_SEARCH_LIST_ZHANG2019
             |   - 'pw_linear': defaults to _CCT_SEARCH_PW_LIN
@@ -1659,7 +1671,8 @@ def xyz_to_cct_search_robertson1968(xyzw, cieobs = _CIEOBS, out = 'cct', wl = No
     # get search_lists:
     cct_search_list, mk_search_list = _process_cct_mk_search_lists(cct_search_list = cct_search_list, 
                                                                     mk_search_list = mk_search_list, 
-                                                                    upper_cct_max = upper_cct_max)
+                                                                    upper_cct_max = upper_cct_max,
+                                                                    cct_search_list_default = 'robertson1968')
 
     # load / create LUT:
     if lut is None:   
@@ -1781,7 +1794,7 @@ def xyz_to_cct_search_robertson1968(xyzw, cieobs = _CIEOBS, out = 'cct', wl = No
 def xyz_to_cct_ohno2014(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, 
                         rtol = 1e-5, atol = 0.1, force_tolerance = True, 
                         force_out_of_lut = True, fallback_mode = _OHNO2014_FALLBACK_MODE, split_zhang_calculation_at_N = 100, 
-                        cct_search_list = None, mk_search_list = None, upper_cct_max = _CCT_MAX, approx_cct_temp = True, 
+                        cct_search_list = _CCT_SEARCH_LIST_DEFAULT, mk_search_list = None, upper_cct_max = _CCT_MAX, approx_cct_temp = True, 
                         cctuv_lut = None, cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS):
     """
     Convert XYZ tristimulus values to correlated color temperature (CCT) and 
@@ -1843,13 +1856,14 @@ def xyz_to_cct_ohno2014(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None,
             | If True: use xyz_to_cct_HA() to get a first estimate of cct to 
             |           speed up the fast brute-force search.
         :cct_search_list:
-            | None, optional
+            | _CCT_SEARCH_LIST_DEFAULT, optional
             | List of ccts to obtain a first guess for the cct of the input xyz
             | for the 'brute-force-search-robust', 'zhang2019', 'robertson1968' fallback methods, or
             | when HA estimation fails in the 'brute-force-search-fast' fallback algorithm 
             | due to out-of-range ccts.
             | Options:
-            |   - 'default' or None: defaults to the mode in _CCT_SEARCH_METHOD.
+            |   -  None: defaults to the mode in _CCT_SEARCH_MODE.
+            |   - 'default': defaults to the one corresponding to the specific algorithm (=mode)
             |   - 'bf-search': defaults to _CCT_SEARCH_LIST_BRUTEFORCE
             |   - 'zhang2019': defaults to _CCT_SEARCH_LIST_ZHANG2019
             |   - 'pw_linear': defaults to _CCT_SEARCH_PW_LIN
@@ -1913,7 +1927,8 @@ def xyz_to_cct_ohno2014(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None,
     # get search_lists:
     cct_search_list, mk_search_list = _process_cct_mk_search_lists(cct_search_list = cct_search_list, 
                                                                    mk_search_list = mk_search_list, 
-                                                                   upper_cct_max = upper_cct_max)
+                                                                   upper_cct_max = upper_cct_max,
+                                                                   cct_search_list_default = fallback_mode)
     
     # load cct & uv from LUT:
     if cctuv_lut is None:   
@@ -2117,7 +2132,7 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'ohno2014',
                force_fast_mode = True, cct_resolution_of_fast_mode = 0.1, out = None, 
                rtol = 1e-5, atol = 0.1, force_tolerance = True, 
                force_out_of_lut = True, upper_cct_max = _CCT_MAX, 
-               approx_cct_temp = True, cct_search_list = None, mk_search_list = None,
+               approx_cct_temp = True, cct_search_list = _CCT_SEARCH_LIST_DEFAULT, mk_search_list = None,
                cctuv_lut = None, cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS):
     """
     Convert correlated color temperature (CCT) and Duv (distance above (>0) or 
@@ -2207,13 +2222,14 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'ohno2014',
             | If True: use xyz_to_cct_HA() to get a first estimate of cct to 
             |           speed up the fast brute-force search.
         :cct_search_list:
-            | None, optional
+            | _CCT_SEARCH_LIST_DEFAULT, optional
             | List of ccts to obtain a first guess for the cct of the input xyz
             | for the 'brute-force-search-robust', 'zhang2019', 'robertson1968' fallback methods, or
             | when HA estimation fails in the 'brute-force-search-fast' fallback algorithm 
             | due to out-of-range ccts.
             | Options:
-            |   - 'default' or None: defaults to the mode in _CCT_SEARCH_METHOD.
+            |   -  None: defaults to the mode in _CCT_SEARCH_MODE.
+            |   - 'default': defaults to the one corresponding to the specific algorithm (=mode)
             |   - 'bf-search': defaults to _CCT_SEARCH_LIST_BRUTEFORCE
             |   - 'zhang2019': defaults to _CCT_SEARCH_LIST_ZHANG2019
             |   - 'pw_linear': defaults to _CCT_SEARCH_PW_LIN
@@ -2313,9 +2329,11 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'ohno2014',
             cctuv_lut = None
     
         # get search_lists:
+        cct_search_list_default = fallback_mode_for_ohno2014 if (mode == 'ohno2014') else mode
         cct_search_list, mk_search_list = _process_cct_mk_search_lists(cct_search_list = cct_search_list, 
                                                                        mk_search_list = mk_search_list, 
-                                                                       upper_cct_max = upper_cct_max)
+                                                                       upper_cct_max = upper_cct_max,
+                                                                       cct_search_list_default = cct_search_list_default)
 
     
         # get estimates of approximate xyz values in case duv = None:
@@ -2401,7 +2419,7 @@ def xyz_to_cct(xyzw, cieobs = _CIEOBS, out = 'cct',mode = 'ohno2014', wl = None,
                force_out_of_lut = True, fallback_mode_for_ohno2014 = _OHNO2014_FALLBACK_MODE,
                split_zhang_calculation_at_N = 100,
                upper_cct_max = _CCT_MAX, approx_cct_temp = True, 
-               cct_search_list = None, mk_search_list = None,
+               cct_search_list = _CCT_SEARCH_LIST_DEFAULT, mk_search_list = None,
                cctuv_lut = None, cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS): 
     """
     Convert XYZ tristimulus values to correlated color temperature (CCT) and
@@ -2477,13 +2495,14 @@ def xyz_to_cct(xyzw, cieobs = _CIEOBS, out = 'cct',mode = 'ohno2014', wl = None,
             | If True: use xyz_to_cct_HA() to get a first estimate of cct to 
             |  speed up the brute-force search. Only for 'fast' code option.
         :cct_search_list:
-            | None, optional
+            | _CCT_SEARCH_LIST_DEFAULT, optional
             | List of ccts to obtain a first guess for the cct of the input xyz
             | for the 'brute-force-search-robust', 'zhang2019', 'robertson1968' fallback methods, or
             | when HA estimation fails in the 'brute-force-search-fast' fallback algorithm 
             | due to out-of-range ccts.
             | Options:
-            |   - 'default' or None: defaults to the mode in _CCT_SEARCH_METHOD.
+            |   -  None: defaults to the mode in _CCT_SEARCH_MODE.
+            |   - 'default': defaults to the one corresponding to the specific algorithm (=mode)
             |   - 'bf-search': defaults to _CCT_SEARCH_LIST_BRUTEFORCE
             |   - 'zhang2019': defaults to _CCT_SEARCH_LIST_ZHANG2019
             |   - 'pw_linear': defaults to _CCT_SEARCH_PW_LIN
@@ -2542,7 +2561,7 @@ def xyz_to_duv(xyzw, cieobs = _CIEOBS, out = 'duv',mode = 'ohno2014', wl = None,
                force_out_of_lut = True, fallback_mode_for_ohno2014 = _OHNO2014_FALLBACK_MODE, 
                split_zhang_calculation_at_N = 100,
                upper_cct_max = _CCT_MAX, approx_cct_temp = True,  
-               cct_search_list = None, mk_search_list = None,
+               cct_search_list = _CCT_SEARCH_LIST_DEFAULT, mk_search_list = None,
                cctuv_lut = None, cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS): 
     """
     Convert XYZ tristimulus values to correlated color temperature (CCT) and
@@ -2618,13 +2637,14 @@ def xyz_to_duv(xyzw, cieobs = _CIEOBS, out = 'duv',mode = 'ohno2014', wl = None,
             | If True: use xyz_to_cct_HA() to get a first estimate of cct to 
             |  speed up the brute-force search. Only for 'fast' code option.
         :cct_search_list:
-            | None, optional
+            | _CCT_SEARCH_LIST_DEFAULT, optional
             | List of ccts to obtain a first guess for the cct of the input xyz
             | for the 'brute-force-search-robust', 'zhang2019', 'robertson1968' fallback methods, or
             | when HA estimation fails in the 'brute-force-search-fast' fallback algorithm 
             | due to out-of-range ccts.
             | Options:
-            |   - 'default' or None: defaults to the mode in _CCT_SEARCH_METHOD.
+            |   -  None: defaults to the mode in _CCT_SEARCH_MODE.
+            |   - 'default': defaults to the one corresponding to the specific algorithm (=mode)
             |   - 'bf-search': defaults to _CCT_SEARCH_LIST_BRUTEFORCE
             |   - 'zhang2019': defaults to _CCT_SEARCH_LIST_ZHANG2019
             |   - 'pw_linear': defaults to _CCT_SEARCH_PW_LIN
