@@ -139,8 +139,10 @@ _CCT_LUT_PATH = _PKG_PATH + _SEP + 'data'+ _SEP + 'cctluts' + _SEP #folder with 
 _CCT_SEARCH_LIST_PW_LIN = np.array([[50,100,500,1000,2000,3000,4000,5000,6000,10000, 20000,50000, 7.5e4, 1e5, 5e5, 1e6, 5e6, 1e7, 5e7, 1e8, 5e8, 1e9, 5e9, 1e10, 5e10, 1e11, _CCT_MAX]]).T
 _MK_SEARCH_LIST_PW_LIN = 1e6/_CCT_SEARCH_LIST_PW_LIN
 # _MK_SEARCH_LIST_ROBERTSON1968 = np.hstack((np.arange(1e-308,20,1),np.arange(20,100,10),np.arange(100,625,25),np.arange(625,1000,100),np.arange(1000,2200,200)))
-# _CCT_SEARCH_LIST_ROBERTSON1968 = 1e6/_MK_SEARCH_LIST_ROBERTSON1968
-# pd.DataFrame(_CCT_SEARCH_LIST_ROBERTSON1968).to_csv('{}cct_lut_cctlist_{:s}.dat'.format(_CCT_LUT_PATH, 'robertson1968'),header=None,float_format='%1.9e',index=False)
+_MK_SEARCH_LIST_ROBERTSON1968 = np.hstack((np.arange(1e-300,20,1),np.arange(20,50,2),np.arange(50,100,10),np.arange(100,625,25),np.arange(625,1000,100),np.arange(1000,2400,200)))
+_CCT_SEARCH_LIST_ROBERTSON1968 = 1e6/_MK_SEARCH_LIST_ROBERTSON1968
+_CCT_SEARCH_LIST_ROBERTSON1968[0] = _CCT_MAX
+pd.DataFrame(_CCT_SEARCH_LIST_ROBERTSON1968).to_csv('{}cct_lut_cctlist_{:s}.dat'.format(_CCT_LUT_PATH, 'robertson1968'),header=None,float_format='%1.9e',index=False)
 _CCT_SEARCH_LIST_ROBERTSON1968 = getdata('{}cct_lut_cctlist_{:s}.dat'.format(_CCT_LUT_PATH, 'robertson1968'))
 _CCT_SEARCH_LIST_ROBERTSON1968[np.isinf(_CCT_SEARCH_LIST_ROBERTSON1968)] = _CCT_MAX # avoid overflow problems causing calculation of wrong CCTS!!
 _MK_SEARCH_LIST_ROBERTSON1968 = 1e6/_CCT_SEARCH_LIST_ROBERTSON1968
@@ -1710,8 +1712,11 @@ def xyz_to_cct_search_robertson1968(xyzw, cieobs = _CIEOBS, out = 'cct', wl = No
         # plt.plot(u,v,'ro')
     
         # Estimate Tc:
-        ccts_i = np2d(np.diag(((1/TBB[pn])+(di[pn]/(di[pn]-di[pn+1]))*((1/TBB[pn+1]) - (1/TBB[pn])))**(-1))).T
-
+        c = ((pn)>=(TBB.shape[0]-1)) # check out-of-luts
+        pn[c] = (TBB.shape[0] - 2)
+        ccts_i = (np.diag(((1/TBB[pn])+(di[pn]/(di[pn]-di[pn+1]))*((1/TBB[pn+1]) - (1/TBB[pn])))**(-1)))[:,None].copy()
+        if c.any(): ccts_i[c] = -1 # indicate out of lut
+        
         # break loop if required tolerance is reached:
         if force_tolerance:
             ni = 10
