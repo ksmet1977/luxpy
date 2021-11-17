@@ -36,6 +36,8 @@ cct: Module with functions related to correlated color temperature calculations
  
  :_CCT_SEARCH_METHOD: string with default search method.
  
+ :_OHNO2014_FALLBACK_MODE: string with fallback method when Ohno's 2014 LUT algorithm has out-of-lut values.
+ 
  :_CCT_SEARCH_LIST_OHNO2014:  ndarray with default CCTs to start Ohno's 2014 LUT algorithms.
  
  :_MK_SEARCH_LIST_OHNO2014: ndarray with default CCTs (in mired) to start Ohno's 2014 LUT algorithms.
@@ -134,23 +136,26 @@ _CCT_LUT_PATH = _PKG_PATH + _SEP + 'data'+ _SEP + 'cctluts' + _SEP #folder with 
 
 #------------------------------------------------------------------------------
 # Definition of some default search lists for use with brute-force or golden-ratio (Zhang,2019) or Robertson1968 based search methods:
-_CCT_SEARCH_LIST_PW_LIN = np.array([50,100,500,1000,2000,3000,4000,5000,6000,10000, 20000,50000, 7.5e4, 1e5, 5e5, 1e6, 5e6, 1e7, 5e7, 1e8, 5e8, 1e9, 5e9, 1e10, 5e10, 1e11, _CCT_MAX])
+_CCT_SEARCH_LIST_PW_LIN = np.array([[50,100,500,1000,2000,3000,4000,5000,6000,10000, 20000,50000, 7.5e4, 1e5, 5e5, 1e6, 5e6, 1e7, 5e7, 1e8, 5e8, 1e9, 5e9, 1e10, 5e10, 1e11, _CCT_MAX]]).T
 _MK_SEARCH_LIST_PW_LIN = 1e6/_CCT_SEARCH_LIST_PW_LIN
-# _MK_SEARCH_LIST_ROBERTSON1968 = np.hstack((np.arange(1e-308,100,10),np.arange(100,625,25),np.arange(625,1000,100),np.arange(1000,2200,200)))
+# _MK_SEARCH_LIST_ROBERTSON1968 = np.hstack((np.arange(1e-308,20,1),np.arange(20,100,10),np.arange(100,625,25),np.arange(625,1000,100),np.arange(1000,2200,200)))
 # _CCT_SEARCH_LIST_ROBERTSON1968 = 1e6/_MK_SEARCH_LIST_ROBERTSON1968
 # pd.DataFrame(_CCT_SEARCH_LIST_ROBERTSON1968).to_csv('{}cct_lut_cctlist_{:s}.dat'.format(_CCT_LUT_PATH, 'robertson1968'),header=None,float_format='%1.9e',index=False)
 _CCT_SEARCH_LIST_ROBERTSON1968 = getdata('{}cct_lut_cctlist_{:s}.dat'.format(_CCT_LUT_PATH, 'robertson1968'))
+_CCT_SEARCH_LIST_ROBERTSON1968[np.isinf(_CCT_SEARCH_LIST_ROBERTSON1968)] = _CCT_MAX # avoid overflow problems causing calculation of wrong CCTS!!
 _MK_SEARCH_LIST_ROBERTSON1968 = 1e6/_CCT_SEARCH_LIST_ROBERTSON1968
 _CCT_SEARCH_LIST_OHNO2014 = getdata('{}cct_lut_cctlist_{:s}.dat'.format(_CCT_LUT_PATH, 'ohno2014'))
+_CCT_SEARCH_LIST_OHNO2014[np.isinf(_CCT_SEARCH_LIST_OHNO2014)] = _CCT_MAX # avoid overflow problems causing calculation of wrong CCTS!!
 _MK_SEARCH_LIST_OHNO2014 = 1e6/_CCT_SEARCH_LIST_OHNO2014
-_MK_SEARCH_LIST_ZHANG2019 = np.arange(1.0,1025+25,25)
+_MK_SEARCH_LIST_ZHANG2019 = np2d(np.arange(1.0,1025+25,25)).T
 _CCT_SEARCH_LIST_ZHANG2019 = 1e6/_MK_SEARCH_LIST_ZHANG2019
-_MK_SEARCH_LIST_BRUTEFORCE  = np.hstack((np.arange(1e6/_CCT_MAX,1+0.1,0.1),
-                              _MK_SEARCH_LIST_ZHANG2019[1:],
+_MK_SEARCH_LIST_BRUTEFORCE  = np2d(np.hstack((np.arange(1e6/_CCT_MAX,1+0.1,0.1),
+                              _MK_SEARCH_LIST_ZHANG2019[1:,0],
                               np.arange(1026.0,1025+50*21,50)[1:],
-                              1e6/np.arange(450,0,-100)))
+                              1e6/np.arange(450,0,-100)))).T
 _CCT_SEARCH_LIST_BRUTEFORCE = 1e6/_MK_SEARCH_LIST_BRUTEFORCE
 _CCT_SEARCH_METHOD = 'robertson1968'
+_OHNO2014_FALLBACK_MODE = _CCT_SEARCH_METHOD
 
 
 _CCT_LUT_CALC = False # True: (re-)calculates LUTs for ccts in .cctluts/cct_lut_cctlist.dat
@@ -163,7 +168,7 @@ __all__ +=['_CCT_SEARCH_LIST_OHNO2014','_MK_SEARCH_LIST_OHNO2014',
            '_CCT_SEARCH_LIST_ZHANG2019', '_MK_SEARCH_LIST_ZHANG2019',
            '_CCT_SEARCH_LIST_PW_LIN', '_MK_SEARCH_LIST_PW_LIN',
            '_CCT_SEARCH_LIST_BRUTEFORCE','_MK_SEARCH_LIST_BRUTEFORCE',
-           '_CCT_SEARCH_METHOD']
+           '_CCT_SEARCH_METHOD','_OHNO2014_FALLBACK_MODE']
 
 __all__ += ['_CCT_LUT_PATH', 'cct_to_mired',
             '_CCT_LUT','calculate_lut', 'calculate_luts', 
@@ -256,7 +261,7 @@ def _get_tristim_of_BB_and_BBprime(T, xyzbar, wl):
     """ Get the tristimulus values for CMF set xyzbar of the blackbody radiatior spectra
     and the spectra corresponding to the blackbody radiator derivated to Tc.
     """
-    T = np2d(T).T
+    T = np2d(T)
     wl = wl*1e-9
     dl = getwld(wl)
     exp = np.exp(_BB['c2']/(wl*T))
@@ -280,8 +285,8 @@ def _get_tristim_of_BB_and_BBprime(T, xyzbar, wl):
    
    
 _CCT_LUT = {'ohno2014':{},'robertson1968':{}}
-def calculate_lut(lut_mode, ccts = None, cieobs = None, add_to_lut = True, wl = _WL3, 
-                  cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS):
+def calculate_lut(lut_mode, ccts = None, cieobs = None, add_to_lut = False, wl = _WL3, 
+                  cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS, cct_max = _CCT_MAX):
     """
     Function that calculates a LUT for the specified calculation method 
     for the ccts stored in '_CCT_LUT_PATH/cct_lut_cctlist_{lut_mode}.dat',
@@ -295,7 +300,7 @@ def calculate_lut(lut_mode, ccts = None, cieobs = None, add_to_lut = True, wl = 
             | string with calculation mode requiring a pre-calculated lut for speed
             | Options: 'ohno2014', 'robertson1968'
         :ccts: 
-            | ndarray or str, optional
+            | ndarray [Nx1] or str, optional
             | list of ccts for which to (re-)calculate the LUTs.
             | If str, ccts contains path/filename.dat to list.
         :cieobs: 
@@ -318,16 +323,19 @@ def calculate_lut(lut_mode, ccts = None, cieobs = None, add_to_lut = True, wl = 
         :cspace_kwargs:
             | _CCT_CSPACE_KWARGS, optional
             | Parameter nested dictionary for the forward and backward transforms.
-            
+        :cct_max:
+            | _CCT_MAX, optional
+            | Maximum CCT, anything higher will be set to _CCT_MAX
     Returns:
         :returns: 
             | ndarray with cct and duv.
     """
+
     if ccts is None:
         ccts = getdata('{}cct_lut_cctlist_{}.dat'.format(_CCT_LUT_PATH, lut_mode))
     elif isinstance(ccts,str):
-        ccts = getdata(ccts)
-           
+        ccts = getdata(ccts)       
+
     # get requested cmf set:
     if isinstance(cieobs,str):
         cmf = _CMF[cieobs]['bar'].copy()
@@ -345,8 +353,8 @@ def calculate_lut(lut_mode, ccts = None, cieobs = None, add_to_lut = True, wl = 
     uvwbar = Yxy_to_xyz(Yuvbar).T # convert from chromaticity format (Vuv) to tristimulus (UVW) format and take transpose (=spectra)
     
     # calculate U,V,W (Eq. 6) and U',V',W' (Eq.10):
-    Ti, UVW, UVWprime = _get_tristim_of_BB_and_BBprime(ccts[:,0], uvwbar, wl)
-    
+    Ti, UVW, UVWprime = _get_tristim_of_BB_and_BBprime(ccts, uvwbar, wl)
+
     # calculate li, mi:
     R = UVW.sum(axis=-1, keepdims = True)
     Rprime = UVWprime.sum(axis=-1, keepdims = True)
@@ -366,7 +374,7 @@ def calculate_lut(lut_mode, ccts = None, cieobs = None, add_to_lut = True, wl = 
     if add_to_lut == True:
         if cspace_str not in _CCT_LUT[lut_mode].keys(): _CCT_LUT[lut_mode][cspace_str] = {} # create nested dict if required
         _CCT_LUT[lut_mode][cspace_str][cieobs] = lut
-        
+
     return lut 
    
 
@@ -384,7 +392,7 @@ def calculate_luts(lut_mode, ccts = None, wl = _WL3,
             | string with calculation mode requiring a pre-calculated lut for speed
             | Options: 'ohno2014', 'robertson1968'
         :ccts: 
-            | ndarray or str, optional
+            | ndarray [Nx1] or str, optional
             | List of ccts for which to (re-)calculate the LUTs.
             | If str, ccts contains path/filename.dat to list.
         :wl: 
@@ -608,19 +616,19 @@ def _process_cct_mk_search_lists(cct_search_list = None,
     else:
         if mk_search_list is None: 
             mk_search_list = cct_to_mired(cct_search_list)
-    
+
     if upper_cct_max is not None: 
-        mk_search_list = mk_search_list[cct_search_list<=upper_cct_max]
-        cct_search_list = cct_search_list[cct_search_list<=upper_cct_max]
-          
+        mk_search_list = mk_search_list[cct_search_list<=upper_cct_max][:,None]
+        cct_search_list = cct_search_list[cct_search_list<=upper_cct_max][:,None]
+
     return cct_search_list, mk_search_list
 
 def xyz_to_cct_search(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, mode = 'zhang2019',
-                      rtol = 1e-5, atol = 0.1, 
+                      rtol = 1e-5, atol = 0.1, force_tolerance = True,
                       cct_search_list = None, mk_search_list = None, 
                       split_zhang_calculation_at_N = 100, upper_cct_max = _CCT_MAX,
                       cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS, 
-                      approx_cct_temp = True):
+                      approx_cct_temp = True, lut = None):
     """
     Convert XYZ tristimulus values to correlated color temperature (CCT) and 
     Duv(distance above (> 0) or below ( < 0) the Planckian locus) by a 
@@ -657,11 +665,17 @@ def xyz_to_cct_search(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, mode = 'zh
             | with CCT_est the current intermediate estimate in the 
             | search process and with dCCT the difference between
             | the present and former estimates.
-            | Not used in 'robertson2019' !
         :atol: 
             | 0.1, optional
             | Stop search when an absolute cct tolerance (K) is reached.
-            | Not used in 'robertson2019' !
+        :force_tolerance:
+            | True, optional
+            | Accuracy of the calculations depends on the CCT of test source 
+            |   and the location and spacing of initial CCTs used to start the search,
+            |   or the LUT based method.
+            | If True:  search process will continue until the tolerance is
+            |           reached for ALL sources in xyzw! 
+            | If False: search process might stop early (depending on the chosen mode).
         :upper_cct_max: 
             | _CCT_MAX, optional
             | Limit search to this cct.
@@ -704,6 +718,9 @@ def xyz_to_cct_search(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, mode = 'zh
             | True, optional
             | If True: use xyz_to_cct_HA() to get a first estimate of cct to 
             |          speed up search.
+        :lut:
+            | None, optional
+            | LUT for mode == 'robertson1968'. If None: use _CCT_LUT['robertson1968']
 
             
     Returns:
@@ -717,14 +734,14 @@ def xyz_to_cct_search(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, mode = 'zh
     """
     if (mode == 'brute-force-search-robust') | (mode == 'brute-force-robust') | (mode == 'bf-robust'):
         return xyz_to_cct_search_bf_robust(xyzw, cieobs = cieobs, out = out, wl = wl, 
-                                           rtol = rtol, atol = atol, 
+                                           rtol = rtol, atol = atol, force_tolerance = force_tolerance, 
                                            upper_cct_max = upper_cct_max, 
                                            cct_search_list = cct_search_list, mk_search_list = mk_search_list,
                                            cspace = cspace, cspace_kwargs = cspace_kwargs)
     
     elif (mode == 'brute-force-search-fast') | (mode == 'brute-force-fast') | (mode == 'bf-fast') | (mode == 'search'): # 'search' for legacy reasons
         return xyz_to_cct_search_bf_fast(xyzw, cieobs = cieobs, out = out, wl = wl, 
-                                         rtol = rtol, atol = atol, 
+                                         rtol = rtol, atol = atol, force_tolerance = force_tolerance, 
                                          upper_cct_max = upper_cct_max, 
                                          cct_search_list = cct_search_list, mk_search_list = mk_search_list,
                                          cspace = cspace, cspace_kwargs = cspace_kwargs, 
@@ -732,14 +749,15 @@ def xyz_to_cct_search(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, mode = 'zh
     
     elif (mode == 'zhang2019'):
         return xyz_to_cct_search_zhang2019(xyzw, cieobs = cieobs, out = out, wl = wl, 
-                                       rtol = rtol, atol = atol, 
+                                       rtol = rtol, atol = atol, force_tolerance = force_tolerance, 
                                        upper_cct_max = upper_cct_max, split_calculation_at_N = split_zhang_calculation_at_N, 
                                        cct_search_list = cct_search_list, mk_search_list = mk_search_list,
                                        cspace = cspace, cspace_kwargs = cspace_kwargs)
     
     elif (mode == 'robertson1968'):
         return xyz_to_cct_search_robertson1968(xyzw, cieobs = cieobs, out = out, wl = wl, 
-                                               upper_cct_max = upper_cct_max, 
+                                               rtol = rtol, atol = atol, force_tolerance = force_tolerance,
+                                               upper_cct_max = upper_cct_max, lut = lut,
                                                cct_search_list = cct_search_list, mk_search_list = mk_search_list,
                                                cspace = cspace, cspace_kwargs = cspace_kwargs)
 
@@ -794,7 +812,7 @@ def _find_closest_ccts(uvw, cieobs = _CIEOBS, ccts = None, wl = _WL3,
     return ccts_i.mean(axis=0,keepdims=True).T, ccts_i.T
 
 def xyz_to_cct_search_bf_robust(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, 
-                                rtol = 1e-5, atol = 0.1, 
+                                rtol = 1e-5, atol = 0.1, force_tolerance = True, 
                                 upper_cct_max = _CCT_MAX, cct_search_list = 'bf-search', mk_search_list = None,
                                 cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS):
     """
@@ -835,6 +853,14 @@ def xyz_to_cct_search_bf_robust(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None,
         :atol: 
             | 0.1, optional
             | Stop search when an absolute cct tolerance (K) is reached.
+        :force_tolerance:
+            | True, optional
+            | Accuracy of the calculations depends on the CCT of test source 
+            |   and the location and spacing of initial CCTs used to start the search,
+            |   or the LUT based method.
+            | If True:  search process will continue until the tolerance is
+            |           reached for ALL sources in xyzw! 
+            | If False: search process might stop early (depending on the chosen mode).
         :upper_cct_max: 
             | _CCT_MAX, optional
             | Limit search to this cct.
@@ -907,9 +933,9 @@ def xyz_to_cct_search_bf_robust(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None,
         
     #calculate preliminary estimates within range in cct_search_list:
     ccts_est, cctranges = _find_closest_ccts(np.hstack((ut,vt)), cieobs = cieobs, 
-                                             ccts = cct_search_list, wl = wl,
+                                             ccts = cct_search_list[:,0], wl = wl,
                                              cspace = cspace_dict, cspace_kwargs = None)
-    
+
     cct_scale_fun = lambda x: x
     cct_scale_ifun = lambda x: x
     
@@ -927,7 +953,7 @@ def xyz_to_cct_search_bf_robust(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None,
         delta_cct = dT
         reached_CCT_MAX = False
 
-        while (((delta_cct*2/ccttemp) >= rtol) & (delta_cct*2 >= atol)) & (reached_CCT_MAX == False):# keep converging on CCT 
+        while ((((delta_cct*2/ccttemp) >= rtol) & (delta_cct*2 >= atol)) & (reached_CCT_MAX == False)) & (force_tolerance == True):# keep converging on CCT 
 
             #generate range of ccts:
             ccts_i = cct_scale_ifun(np.linspace(cct_scale_fun(ccttemp)-dT,cct_scale_fun(ccttemp)+dT,nsteps+1))
@@ -1008,7 +1034,7 @@ def xyz_to_cct_search_bf_robust(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None,
 
 
 def xyz_to_cct_search_bf_fast(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, 
-                               rtol = 1e-5, atol = 0.1, 
+                               rtol = 1e-5, atol = 0.1, force_tolerance = True, 
                                upper_cct_max = _CCT_MAX, cct_search_list = 'bf-search', mk_search_list = None, 
                                cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS,
                                approx_cct_temp = True):
@@ -1052,6 +1078,14 @@ def xyz_to_cct_search_bf_fast(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None,
         :atol: 
             | 0.1, optional
             | Stop search when an absolute cct tolerance (K) is reached.
+        :force_tolerance:
+            | True, optional
+            | Accuracy of the calculations depends on the CCT of test source 
+            |   and the location and spacing of initial CCTs used to start the search,
+            |   or the LUT based method.
+            | If True:  search process will continue until the tolerance is
+            |           reached for ALL sources in xyzw! 
+            | If False: search process might stop early (depending on the chosen mode).
         :upper_cct_max: 
             | _CCT_MAX, optional
             | Limit search to this cct.
@@ -1190,7 +1224,7 @@ def xyz_to_cct_search_bf_fast(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None,
         rtols = np.ones((5,))*_CCT_MAX
         cnt = 0
 
-        while (((delta_cct*2) >= atol) & ((delta_cct*2/ccttemp) >= rtol)) & (reached_CCT_MAX == False):# keep converging on CCT 
+        while ((((delta_cct*2) >= atol) & ((delta_cct*2/ccttemp) >= rtol)) & (reached_CCT_MAX == False)) & (force_tolerance == True):# keep converging on CCT 
 
             #generate range of ccts:
             ccts_i = cct_scale_ifun(np.linspace(cct_scale_fun(ccttemp)-dT,cct_scale_fun(ccttemp)+dT,nsteps+1))
@@ -1286,7 +1320,7 @@ def xyz_to_cct_search_bf_fast(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None,
 # Zhang, 2019
 #------------------------------------------------------------------------------
 def xyz_to_cct_search_zhang2019(xyzw, cieobs = _CIEOBS, out = 'cct', wl  = None, 
-                                rtol = 1e-5, atol = 0.1, split_calculation_at_N = 100,
+                                rtol = 1e-5, atol = 0.1, force_tolerance = True, split_calculation_at_N = 100,
                                 cct_search_list = 'bf-search', mk_search_list = None, upper_cct_max = _CCT_MAX,
                                 cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS):
     """
@@ -1317,6 +1351,14 @@ def xyz_to_cct_search_zhang2019(xyzw, cieobs = _CIEOBS, out = 'cct', wl  = None,
         :atol: 
             | 0.1, optional
             | Stop search when cct a absolute tolerance (K) is reached.
+        :force_tolerance:
+            | True, optional
+            | Accuracy of the calculations depends on the CCT of test source 
+            |   and the location and spacing of initial CCTs used to start the search,
+            |   or the LUT based method.
+            | If True:  search process will continue until the tolerance is
+            |           reached for ALL sources in xyzw! 
+            | If False: search process might stop early (depending on the chosen mode).
         :split_calculation_at_N:
             | 100, optional
             | Split calculation when xyzw.shape[0] > split_calculation_at_N. 
@@ -1326,10 +1368,7 @@ def xyz_to_cct_search_zhang2019(xyzw, cieobs = _CIEOBS, out = 'cct', wl  = None,
             | Limit golden-ratio search to this cct.
         :cct_search_list:
             | None, optional
-            | List of ccts to obtain a first guess for the cct of the input xyz
-            | for the 'brute-force-search-robust', 'zhang2019', 'robertson1968' fallback methods, or
-            | when HA estimation fails in the 'brute-force-search-fast' fallback algorithm 
-            | due to out-of-range ccts.
+            | List of ccts to obtain a first guess for the cct of the input xyz.
             | Options:
             |   - 'default' or None: defaults to the mode in _CCT_SEARCH_METHOD.
             |   - 'bf-search': defaults to _CCT_SEARCH_LIST_BRUTEFORCE
@@ -1382,7 +1421,10 @@ def xyz_to_cct_search_zhang2019(xyzw, cieobs = _CIEOBS, out = 'cct', wl  = None,
     cct_search_list, mk_search_list = _process_cct_mk_search_lists(cct_search_list = cct_search_list, 
                                                                    mk_search_list = mk_search_list, 
                                                                    upper_cct_max = upper_cct_max)
-        
+    
+    # dirty solution to code that was originally programmed for vectors:
+    cct_search_list, mk_search_list = cct_search_list[:,0], mk_search_list[:,0]
+    
     # get BB radiator spectra:
     BB = cri_ref(cct_search_list, ref_type = ['BB'], wl3 = wl)
     
@@ -1465,7 +1507,7 @@ def xyz_to_cct_search_zhang2019(xyzw, cieobs = _CIEOBS, out = 'cct', wl  = None,
             ccts_a, ccts_b = cct_to_mired(RTa), cct_to_mired(RTb)
             ccts_i = cct_to_mired((RTa+RTb)/2)
             dccts = np.abs(ccts_a - ccts_b)
-            if (dccts <= atol).all() | ((dccts/ccts_i) <= rtol).all():
+            if ((dccts <= atol).all() | ((dccts/ccts_i) <= rtol).all()) | (force_tolerance == False):
                 break
     
         # Get duv: 
@@ -1506,11 +1548,99 @@ def xyz_to_cct_search_zhang2019(xyzw, cieobs = _CIEOBS, out = 'cct', wl  = None,
 #------------------------------------------------------------------------------
 # Robertson 1968:
 #------------------------------------------------------------------------------
-def xyz_to_cct_search_robertson1968(xyzw, cieobs = _CIEOBS, wl = _WL3, 
+def xyz_to_cct_search_robertson1968(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, 
+                                    atol = 0.1, rtol = 1e-5, force_tolerance = True,
                                     cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS,
-                                    lut = None, out = 'cct',
-                                    cct_search_list = 'robertson1968', mk_search_list = None, upper_cct_max = _CCT_MAX):
+                                    lut = None, cct_search_list = 'robertson1968', mk_search_list = None, 
+                                    upper_cct_max = _CCT_MAX, 
+                                    ):
+    """
+    Convert XYZ tristimulus values to correlated color temperature (CCT) and 
+    Duv(distance above (> 0) or below ( < 0) the Planckian locus) using  
+    Robertson's 1968 search method.
+        
+    Args:
+        :xyzw: 
+            | ndarray of tristimulus values
+        :cieobs: 
+            | luxpy._CIEOBS, optional
+            | CMF set used to calculated xyzw.
+        :out: 
+            | 'cct' (or 1), optional
+            | Determines what to return.
+            | Other options: 'duv' (or -1), 'cct,duv'(or 2), "[cct,duv]" (or -2)
+        :wl: 
+            | None, optional
+            | Wavelengths used when calculating Planckian radiators.
+        :rtol: 
+            | 1e-5, float, optional
+            | Stop search when cct a relative tolerance is reached.
+            | The relative tolerance is calculated as dCCT/CCT_est, 
+            | with CCT_est the current intermediate estimate in the 
+            | search and with dCCT the difference between
+            | the present and former estimates.
+        :atol: 
+            | 0.1, optional
+            | Stop search when cct a absolute tolerance (K) is reached.
+        :force_tolerance:
+            | True, optional
+            | If False: search only using the list of CCTs in _CCT_LUT, or in lut,
+            |           or suplied using :cct_search_list: or :mk_search_list:. 
+            |           Only one loop is performed. Accuracy depends on CCT of test
+            |           source and the location and spacing of the LUT-CCTs in the list.
+            | If True:  search will use adjacent CCTs to test source to create a new LUT,
+            |           after which the search process repeats until the tolerance is
+            |           reached for ALL sources in xyzw!
+        :upper_cct_max: 
+            | _CCT_MAX, optional
+            | Limit golden-ratio search to this cct.
+        :lut:
+            | None, optional
+            | Pre-calculated LUT. If None use _CCT_LUT['robertson1968']
+        :cct_search_list:
+            | None, optional
+            | List of ccts to obtain a first guess for the cct of the input xyz.
+            |   (creates new LUT)
+            | Options:
+            |   - 'default' or None: defaults to the mode in _CCT_SEARCH_METHOD.
+            |   - 'bf-search': defaults to _CCT_SEARCH_LIST_BRUTEFORCE
+            |   - 'zhang2019': defaults to _CCT_SEARCH_LIST_ZHANG2019
+            |   - 'pw_linear': defaults to _CCT_SEARCH_PW_LIN
+            |   - 'robertson1968': defaults to _CCT_SEARCH_LIST_ROBERTSON1968
+        :mk_search_list:
+            | None, optional
+            | Input cct_search_list directly in MK (mired) scale.
+            | None: does nothing, but when not None input overwrites cct_search_list !
+        :cspace:
+            | _CCT_SPACE, optional
+            | Color space to do calculations in. 
+            | Options: 
+            |    - cspace string: 
+            |        e.g. 'Yuv60' for use with luxpy.colortf()
+            |    - tuple with forward (i.e. xyz_to..) [and backward (i.e. ..to_xyz)] functions 
+            |      (and an optional string describing the cspace): 
+            |        e.g. (forward, backward) or (forward, backward, cspace string) or (forward, cspace string) 
+            |    - dict with keys: 'fwtf' (foward), 'bwtf' (backward) [, optional: 'str' (cspace string)]
+            |  Note: if the backward tf is not supplied, optimization in cct_to_xyz() is done in the CIE 1976 u'v' diagram
+        :cspace_kwargs:
+            | _CCT_CSPACE_KWARGS, optional
+            | Parameter nested dictionary for the forward and backward transforms.
+            
+    Returns:
+        :returns: 
+            | ndarray with:
+            |    cct: out == 'cct' (or 1)
+            |    duv: out == 'duv' (or -1)
+            |    cct, duv: out == 'cct,duv' (or 2)
+            |    [cct,duv]: out == "[cct,duv]" (or -2) 
     
+    References:
+         1.  `Robertson, A. R. (1968). 
+         Computation of Correlated Color Temperature and Distribution Temperature. 
+         Journal of the Optical Society of America,  58(11), 1528–1535. 
+         <https://doi.org/10.1364/JOSA.58.001528>`_
+
+    """
     # get requested cmf set:
     if isinstance(cieobs,str):
         cmf = _CMF[cieobs]['bar'].copy()
@@ -1525,11 +1655,11 @@ def xyz_to_cct_search_robertson1968(xyzw, cieobs = _CIEOBS, wl = _WL3,
     # get search_lists:
     cct_search_list, mk_search_list = _process_cct_mk_search_lists(cct_search_list = cct_search_list, 
                                                                     mk_search_list = mk_search_list, 
-                                                                    upper_cct_max = None)
-    
+                                                                    upper_cct_max = upper_cct_max)
+
     # load / create LUT:
     if lut is None:   
-        lut = _CCT_LUT['robertson1968']
+        lut = copy.deepcopy(_CCT_LUT['robertson1968'])
     else:
         if not isinstance(lut,dict):
             lut = {cspace_str: {cieobs:lut}}
@@ -1540,39 +1670,79 @@ def xyz_to_cct_search_robertson1968(xyzw, cieobs = _CIEOBS, wl = _WL3,
     if cieobs not in lut[cspace_str]:
         lut[cspace_str][cieobs] = calculate_lut('robertson1968', cct_search_list, cieobs = cieobs, wl = wl,
                                                 cspace = cspace_dict, cspace_kwargs = None)
-
+    # print(lut[cspace_str][cieobs][:,:1].shape,cct_search_list.shape)
+    # print(np.hstack((lut[cspace_str][cieobs][:,:1],cct_search_list)))
     if not np.array_equal(lut[cspace_str][cieobs][:,:1],cct_search_list):
         print('Generating Robertson1968 LUT for cct_search_list != default list.')
         lut[cspace_str][cieobs] = calculate_lut('robertson1968', cct_search_list, cieobs = cieobs, wl = wl,
                                                 cspace = cspace_dict, cspace_kwargs = None)
-        
-        
+       
+    lut_i = lut[cspace_str][cieobs]
+       
     # calculate chromaticity coordinates of input xyzw:
     Yuv = cspace_dict['fwtf'](xyzw)
     u = Yuv[:,1,None] # get CIE 1960 u
     v = Yuv[:,2,None] # get CIE 1960 v
+    i = 0
+    while True:
+        N = lut_i.shape[-1]//4
+        ns = np.arange(0,N*4,4,dtype=int)
+        
+        # get uBB, vBB, mBB from lut:
+        TBB = lut_i[:,ns]
+        uBB = lut_i[:,ns+1]
+        vBB = lut_i[:,ns+2]
+        mBB =  lut_i[:,ns+3] # slope
+ 
+        # calculate distances to coordinates in lut (Eq. 4):
+        di = ((v.T - vBB) - mBB * (u.T - uBB)) / ((1 + mBB**2)**(0.5))
+        # dip1 = np.roll(di,-1,0)
+        di0 = ((v.T - vBB)**2 + (u.T - uBB)**2)
+        
+        # find adjacent Ti's (i.e. dj/dj+1<0):
+        # pn = np.where((di/dip1) < 0)[0]#[u.shape[0]:] # results in multiple solutions for single CCT!!
+        pn = (di0.argmin(axis=0))
+        # import matplotlib.pyplot as plt
+        # plt.plot(uBB,vBB,'b+-')
+        # plt.plot(uBB[pn],vBB[pn],'mx')
+        # plt.plot(u,v,'ro')
     
-    # get uBB, vBB, mBB from lut:
-    TBB = lut[cspace_str][cieobs][:,0,None]
-    uBB = lut[cspace_str][cieobs][:,1,None]
-    vBB = lut[cspace_str][cieobs][:,2,None]
-    mBB =  lut[cspace_str][cieobs][:,3,None] # slope
-    
-    # calculate distances to coordinates in lut (Eq. 4):
-    di = ((v.T - vBB) - mBB * (u.T - uBB)) / ((1 + mBB**2)**(0.5))
-    # dip1 = np.roll(di,-1,0)
-    di0 = ((v.T - vBB)**2 + (u.T - uBB)**2)
-    
-    # find adjacent Ti's (i.e. dj/dj+1<0):
-    # pn = np.where((di/dip1) < 0)[0]#[u.shape[0]:] # results in multiple solutions for single CCT!!
-    pn = (di0.argmin(axis=0))
+        # Estimate Tc:
+        ccts_i = np2d(np.diag(((1/TBB[pn])+(di[pn]/(di[pn]-di[pn+1]))*((1/TBB[pn+1]) - (1/TBB[pn])))**(-1))).T
 
-    # Estimate Tc:
-    # ccts = np.diag(((1/TBB[pn])+(di[pn]/(di[pn]-di[pn+1]))*((1/TBB[pn+1]) - (1/TBB[pn])))**(-1)).T
-    ccts = ((1/TBB[pn])+np.diag(di[pn]/(di[pn]-di[pn+1]))[:,None]*((1/TBB[pn+1]) - (1/TBB[pn])))**(-1)
-
+        # break loop if required tolerance is reached:
+        if force_tolerance:
+            ni = 10
+            # update lut_i:
+            pn[(pn-1)<0] = 1
+            pn[(pn+1)>TBB.shape[0]] = TBB.shape[0] - 1
+            ccts_i_mM =  np.hstack((TBB[pn-1],TBB[pn+1]))
+            ccts_min, ccts_max = ccts_i_mM.min(axis=-1),ccts_i_mM.max(axis=-1)
+            cct_search_list_i = 1e6/np.linspace(1e6/ccts_max,1e6/ccts_min,ni)
+            cct_search_list_i = np.reshape(cct_search_list_i,(-1,1)) # reshape for easy input in calculate lut
+            ccts_im1 = ccts_i # update previous cct
+            lut_i = calculate_lut('robertson1968', cct_search_list_i, cieobs = cieobs, wl = wl,
+                                  cspace = cspace_dict, cspace_kwargs = None)
+            lut_i = np.reshape(lut_i, (ni,-1))
+            
+            if i == 0:
+                ccts_im1 = ccts_i  # initialize
+                i+=1
+                continue
+            
+            dccts = np.abs(ccts_i - ccts_im1)
+            if (dccts <= atol).all() | ((dccts/ccts_i) <= rtol).all():
+                break
+            i+=1
+            
+        else:
+            break
+        
+    # Final ccts:
+    ccts = ccts_i
+    
     # Get duv: 
-    BB_i = cri_ref(ccts, ref_type = ['BB'], wl3 = wl)
+    BB_i = cri_ref(ccts_i, ref_type = ['BB'], wl3 = wl)
     xyzBB_i = spd_to_xyz(BB_i, cieobs = cieobs, relative = True)
     uvBB_i = cspace_dict['fwtf'](xyzBB_i)[...,1:]
     uBB_i, vBB_i = uvBB_i[...,0:1], uvBB_i[...,1:2]
@@ -1584,6 +1754,7 @@ def xyz_to_cct_search_robertson1968(xyzw, cieobs = _CIEOBS, wl = _WL3,
     theta[theta>180] = theta[theta>180] - 360
     duvs_i *= np.sign(theta)
     duvs = duvs_i
+
 
     # Regulate output:
     if (out == 'cct') | (out == 1):
@@ -1600,8 +1771,9 @@ def xyz_to_cct_search_robertson1968(xyzw, cieobs = _CIEOBS, wl = _WL3,
 #------------------------------------------------------------------------------
 # Ohno 2014
 #------------------------------------------------------------------------------
-def xyz_to_cct_ohno2014(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, rtol = 1e-5, atol = 0.1, 
-                        force_out_of_lut = True, fallback_mode = 'zhang2019', split_zhang_calculation_at_N = 100, 
+def xyz_to_cct_ohno2014(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, 
+                        rtol = 1e-5, atol = 0.1, force_tolerance = True, 
+                        force_out_of_lut = True, fallback_mode = _OHNO2014_FALLBACK_MODE, split_zhang_calculation_at_N = 100, 
                         cct_search_list = None, mk_search_list = None, upper_cct_max = _CCT_MAX, approx_cct_temp = True, 
                         cctuv_lut = None, cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS):
     """
@@ -1627,12 +1799,13 @@ def xyz_to_cct_ohno2014(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, rtol = 1
             | If True and cct is out of range of the LUT, then switch to 
             | the selected search fallback_mode, else return numpy.nan values.
         :fallback_mode:
-            | 'zhang2019', optional
+            | _OHNO2014_FALLBACK_MODE, optional
             | Fallback mode for out-of-lut input. 
             | Options:
             |  - 'zhang2019': use xyz_to_cct_zhang2019()
             |  - 'brute-force-search-robust': use xyz_to_cct_search_bf_robust()
             |  - 'brute-force-search-fast': use xyz_to_cct_search_bf_fast()
+            |  - 'robertson1968': use xyz_to_cct_search_robertson1968()
         :split_zhang_calculation_at_N:
             | 100, optional
             | Split calculation when xyzw.shape[0] > split_calculation_at_N. 
@@ -1647,6 +1820,14 @@ def xyz_to_cct_ohno2014(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, rtol = 1
         :atol: 
             | 0.1, optional
             | Stop search when cct a absolute tolerance (K) is reached.
+        :force_tolerance:
+            | True, optional
+            | Accuracy of the calculations depends on the CCT of test source 
+            |   and the location and spacing of initial CCTs used to start the search,
+            |   or the LUT based method.
+            | If True:  search process will continue until the tolerance is
+            |           reached for ALL sources in xyzw! 
+            | If False: search process might stop early (depending on the chosen mode).
         :upper_cct_max: 
             | _CCT_MAX, optional
             | Limit brute-force or golden-ratio search to this cct.
@@ -1673,7 +1854,7 @@ def xyz_to_cct_ohno2014(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, rtol = 1
         :cctuv_lut:
             | None, optional
             | CCT+uv look-up-table to use.
-            | If None: use luxpy._CCT_LUT
+            | If None: use luxpy._CCT_LUT['ohno2014']
         :cspace:
             | _CCT_SPACE, optional
             | Color space to do calculations in. 
@@ -1770,12 +1951,12 @@ def xyz_to_cct_ohno2014(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, rtol = 1
         if (out_of_lut == True) & (force_out_of_lut == True): # calculate using search-function
 
             cct_i, Duv_i = xyz_to_cct_search(xyzw[i:i+1,:], cieobs = cieobs, wl = wl, mode = fallback_mode,
-                                             rtol = rtol, atol = atol,
+                                             rtol = rtol, atol = atol, force_tolerance = force_tolerance,
                                              out = 'cct,duv', upper_cct_max = upper_cct_max, 
                                              cct_search_list = cct_search_list, mk_search_list = mk_search_list,
                                              split_zhang_calculation_at_N = split_zhang_calculation_at_N,
                                              cspace = cspace_dict, cspace_kwargs = None,
-                                             approx_cct_temp = approx_cct_temp)
+                                             approx_cct_temp = approx_cct_temp, lut = None)
      
             CCT[i] = cct_i
             Duv[i] = Duv_i
@@ -1925,9 +2106,10 @@ def cct_to_xyz_fast(ccts, duv = None, cct_resolution = 0.1, cieobs = _CIEOBS, wl
     return cspace_dict['bwtf'](Yuv)
 
 def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'ohno2014', 
-               fallback_mode_for_lut = 'zhang2019', split_zhang_calculation_at_N = 100,
+               fallback_mode_for_ohno2014 = _OHNO2014_FALLBACK_MODE, split_zhang_calculation_at_N = 100,
                force_fast_mode = True, cct_resolution_of_fast_mode = 0.1, out = None, 
-               rtol = 1e-5, atol = 0.1, force_out_of_lut = True, upper_cct_max = _CCT_MAX, 
+               rtol = 1e-5, atol = 0.1, force_tolerance = True, 
+               force_out_of_lut = True, upper_cct_max = _CCT_MAX, 
                approx_cct_temp = True, cct_search_list = None, mk_search_list = None,
                cctuv_lut = None, cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS):
     """
@@ -2002,6 +2184,14 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'ohno2014',
         :atol: 
             | 0.1, optional
             | Stop brute-force search when an absolute cct tolerance (K) is reached.
+        :force_tolerance:
+            | True, optional
+            | Accuracy of the calculations depends on the CCT of test source 
+            |   and the location and spacing of initial CCTs used to start the search,
+            |   or the LUT based method.
+            | If True:  search process will continue until the tolerance is
+            |           reached for ALL sources in xyzw! 
+            | If False: search process might stop early (depending on the chosen mode).
         :upper_cct_max: 
             | _CCT_MAX, optional
             | Limit brute-force search to this cct.
@@ -2029,8 +2219,8 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'ohno2014',
             | True, optional
             | If True and cct is out of range of the LUT, then switch to 
             | brute-force search method, else return numpy.nan values.
-        :fallback_mode_for_lut:
-            | 'zhang2019', optional
+        :fallback_mode_for_ohno2014:
+            | _OHNO2014_FALLBACK_MODE, optional
             | Fallback mode for out-of-lut input when mode == 'ohno2014'. 
             | Options:
             |  - 'robertson1968': use xyz_to_cct_search_robertson1968()
@@ -2135,9 +2325,9 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'ohno2014',
                 xyz0 = cspace_dict['bwtf'](Yuv0) if cspace_dict['bwtf'] is not None else Yuv_to_xyz(Yuv0)
                 cct_min, duv_min = xyz_to_cct(xyz0,cieobs = cieobs, out = 'cct,duv',
                                               wl = wl, mode = mode, 
-                                              fallback_mode_for_lut = fallback_mode_for_lut, 
+                                              fallback_mode_for_ohno2014 = fallback_mode_for_ohno2014, 
                                               split_zhang_calculation_at_N = split_zhang_calculation_at_N,
-                                              rtol = rtol, atol = atol, 
+                                              rtol = rtol, atol = atol, force_tolerance = force_tolerance,
                                               force_out_of_lut = force_out_of_lut, 
                                               upper_cct_max = upper_cct_max, 
                                               approx_cct_temp = approx_cct_temp,
@@ -2160,9 +2350,9 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'ohno2014',
                 duv_i = duv[i]
                 cct_min, duv_min =  xyz_to_cct(xyz0,cieobs = cieobs, out = 'cct,duv',wl = wl, 
                                                mode = mode,
-                                               fallback_mode_for_lut = fallback_mode_for_lut,
+                                               fallback_mode_for_ohno2014 = fallback_mode_for_ohno2014,
                                                split_zhang_calculation_at_N = split_zhang_calculation_at_N,
-                                               rtol = rtol, atol = atol, 
+                                               rtol = rtol, atol = atol, force_tolerance = force_tolerance, 
                                                force_out_of_lut = force_out_of_lut, 
                                                upper_cct_max = upper_cct_max, 
                                                approx_cct_temp = approx_cct_temp,
@@ -2199,8 +2389,10 @@ def cct_to_xyz(ccts, duv = None, cieobs = _CIEOBS, wl = None, mode = 'ohno2014',
 
 #-------------------------------------------------------------------------------------------------   
 # general CCT-wrapper function
-def xyz_to_cct(xyzw, cieobs = _CIEOBS, out = 'cct',mode = 'ohno2014', wl = None, rtol = 1e-5, atol = 0.1, 
-               force_out_of_lut = True, fallback_mode_for_lut = 'zhang2019', split_zhang_calculation_at_N = 100,
+def xyz_to_cct(xyzw, cieobs = _CIEOBS, out = 'cct',mode = 'ohno2014', wl = None, 
+               rtol = 1e-5, atol = 0.1, force_tolerance = True, 
+               force_out_of_lut = True, fallback_mode_for_ohno2014 = _OHNO2014_FALLBACK_MODE,
+               split_zhang_calculation_at_N = 100,
                upper_cct_max = _CCT_MAX, approx_cct_temp = True, 
                cct_search_list = None, mk_search_list = None,
                cctuv_lut = None, cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS): 
@@ -2250,11 +2442,19 @@ def xyz_to_cct(xyzw, cieobs = _CIEOBS, out = 'cct',mode = 'ohno2014', wl = None,
         :atol: 
             | 0.1, optional
             | Stop search when cct a absolute tolerance (K) is reached.
+        :force_tolerance:
+            | True, optional
+            | Accuracy of the calculations depends on the CCT of test source 
+            |   and the location and spacing of initial CCTs used to start the search,
+            |   or the LUT based method.
+            | If True:  search process will continue until the tolerance is
+            |           reached for ALL sources in xyzw! 
+            | If False: search process might stop early (depending on the chosen mode).
         :force_out_of_lut: 
             | True, optional
             | If True and cct is out of range of the LUT, then switch to 
             | the selected fallback_mode, else return numpy.nan values.
-        :fallback_mode_for_lut:
+        :fallback_mode_for_ohno2014:
             | 'zhang2019', optional
             | Fallback mode for out-of-lut input when mode == 'ohno2014'. 
             | Options:
@@ -2313,25 +2513,27 @@ def xyz_to_cct(xyzw, cieobs = _CIEOBS, out = 'cct',mode = 'ohno2014', wl = None,
             |    cct, duv: out == 'cct,duv' (or 2), 
             |    [cct,duv]: out == "[cct,duv]" (or -2)
     """
-
     if (mode.lower() == 'ohno2014') | (mode.lower() == 'ohno'):
         return xyz_to_cct_ohno(xyzw = xyzw, cieobs = cieobs, out = out, wl  = wl, 
-                               rtol = rtol, atol = atol, 
-                               force_out_of_lut = force_out_of_lut, fallback_mode = fallback_mode_for_lut,
+                               rtol = rtol, atol = atol, force_tolerance = force_tolerance, 
+                               force_out_of_lut = force_out_of_lut, fallback_mode = fallback_mode_for_ohno2014,
                                split_zhang_calculation_at_N = split_zhang_calculation_at_N,
                                cct_search_list = cct_search_list, mk_search_list = mk_search_list, 
                                upper_cct_max = upper_cct_max, approx_cct_temp = approx_cct_temp,
                                cctuv_lut = cctuv_lut, cspace = cspace, cspace_kwargs = cspace_kwargs)
     else:
         return xyz_to_cct_search(xyzw = xyzw, cieobs = cieobs, out = out, wl  = wl, mode = mode,
-                                  rtol = rtol, atol = atol, split_zhang_calculation_at_N = split_zhang_calculation_at_N,
+                                  rtol = rtol, atol = atol, force_tolerance = force_tolerance, 
+                                  split_zhang_calculation_at_N = split_zhang_calculation_at_N,
                                   cct_search_list = cct_search_list, mk_search_list = mk_search_list, 
-                                  upper_cct_max = upper_cct_max,
+                                  upper_cct_max = upper_cct_max, lut = cctuv_lut,
                                   cspace = cspace, cspace_kwargs = cspace_kwargs)
 
 
-def xyz_to_duv(xyzw, cieobs = _CIEOBS, out = 'duv',mode = 'ohno2014', wl = None, rtol = 1e-5, atol = 0.1, 
-               force_out_of_lut = True, fallback_mode_for_lut = 'zhang2019', split_zhang_calculation_at_N = 100,
+def xyz_to_duv(xyzw, cieobs = _CIEOBS, out = 'duv',mode = 'ohno2014', wl = None,
+               rtol = 1e-5, atol = 0.1, force_tolerance = True, 
+               force_out_of_lut = True, fallback_mode_for_ohno2014 = _OHNO2014_FALLBACK_MODE, 
+               split_zhang_calculation_at_N = 100,
                upper_cct_max = _CCT_MAX, approx_cct_temp = True,  
                cct_search_list = None, mk_search_list = None,
                cctuv_lut = None, cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS): 
@@ -2381,12 +2583,20 @@ def xyz_to_duv(xyzw, cieobs = _CIEOBS, out = 'duv',mode = 'ohno2014', wl = None,
         :atol: 
             | 0.1, optional
             | Stop search when cct a absolute tolerance (K) is reached.
+        :force_tolerance:
+            | True, optional
+            | Accuracy of the calculations depends on the CCT of test source 
+            |   and the location and spacing of initial CCTs used to start the search,
+            |   or the LUT based method.
+            | If True:  search process will continue until the tolerance is
+            |           reached for ALL sources in xyzw! 
+            | If False: search process might stop early (depending on the chosen mode).
         :force_out_of_lut: 
             | True, optional
             | If True and cct is out of range of the LUT, then switch to 
             | the selected fallback_mode, else return numpy.nan values.
-        :fallback_mode_for_lut:
-            | 'zhang2019', optional
+        :fallback_mode_for_ohno2014:
+            | _OHNO2014_FALLBACK_MODE, optional
             | Fallback mode for out-of-lut input when mode == 'ohno2014'. 
             | Options:
             |  - 'robertson1968': use xyz_to_cct_search_robertson1968()
@@ -2456,17 +2666,18 @@ def xyz_to_duv(xyzw, cieobs = _CIEOBS, out = 'duv',mode = 'ohno2014', wl = None,
 
     if (mode.lower() == 'ohno2014') | (mode.lower() == 'ohno'):
         return xyz_to_cct_ohno2014(xyzw = xyzw, cieobs = cieobs, out = out, wl  = wl, 
-                               rtol = rtol, atol = atol, 
-                               force_out_of_lut = force_out_of_lut, fallback_mode = fallback_mode_for_lut,
+                               rtol = rtol, atol = atol, force_tolerance = force_tolerance,
+                               force_out_of_lut = force_out_of_lut, fallback_mode = fallback_mode_for_ohno2014,
                                split_zhang_calculation_at_N = split_zhang_calculation_at_N,
                                cct_search_list = cct_search_list, mk_search_list = mk_search_list, 
                                upper_cct_max = upper_cct_max, approx_cct_temp = approx_cct_temp,
                                cctuv_lut = cctuv_lut, cspace = cspace, cspace_kwargs = cspace_kwargs)
     else:
         return xyz_to_cct_search(xyzw = xyzw, cieobs = cieobs, out = out, wl  = wl, mode = mode,
-                                  rtol = rtol, atol = atol, split_zhang_calculation_at_N = split_zhang_calculation_at_N,
+                                  rtol = rtol, atol = atol, force_tolerance = force_tolerance, 
+                                  split_zhang_calculation_at_N = split_zhang_calculation_at_N,
                                   cct_search_list = cct_search_list, mk_search_list = mk_search_list, 
-                                  upper_cct_max = upper_cct_max,
+                                  upper_cct_max = upper_cct_max, lut = cctuv_lut,
                                   cspace = cspace, cspace_kwargs = cspace_kwargs)
 
 

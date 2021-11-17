@@ -3,7 +3,7 @@
 cct: Module with functions related to correlated color temperature calculations
 ===============================================================================
 
- :_CCT_MAX: (= 1e11), max. value that does not cause overflow problems. 
+  :_CCT_MAX: (= 1e11), max. value that does not cause overflow problems. 
 
  :_CCT_LUT_PATH: Folder with Look-Up-Tables (LUT) for correlated color 
                  temperature calculation followings Ohno's method.
@@ -19,6 +19,8 @@ cct: Module with functions related to correlated color temperature calculations
  
  
  :_CCT_SEARCH_METHOD: string with default search method.
+ 
+ :_OHNO2014_FALLBACK_MODE: string with fallback method when Ohno's 2014 LUT algorithm has out-of-lut values.
  
  :_CCT_SEARCH_LIST_OHNO2014:  ndarray with default CCTs to start Ohno's 2014 LUT algorithms.
  
@@ -94,9 +96,6 @@ cct: Module with functions related to correlated color temperature calculations
                                         Computation of Correlated Color Temperature and Distribution Temperature. 
                                         Journal of the Optical Society of America,  58(11), 1528–1535. 
                                         <https://doi.org/10.1364/JOSA.58.001528>`_
-                                                     
- :cct_to_mired(): Converts from CCT to Mired scale (or back).
-
 
  :xyz_to_cct_ohno2011(): Calculate cct and Duv from CIE 1931 2° xyz following Ohno (CORM 2011).
 
