@@ -1159,6 +1159,8 @@ def xyz_to_cct_search_bf_fast(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None,
     cct_search_list, _ = _process_cct_mk_search_lists(cct_search_list =cct_search_list, 
                                                       mk_search_list = mk_search_list,
                                                       upper_cct_max=upper_cct_max)
+    cct_search_list = cct_search_list[:,0]
+    
     # calculate preliminary solution(s):
     if (approx_cct_temp == True):
         ccts_est = xyz_to_cct_HA(xyzw, verbosity = 0)
