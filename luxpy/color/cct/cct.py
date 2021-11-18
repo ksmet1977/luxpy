@@ -1714,11 +1714,11 @@ def xyz_to_cct_search_robertson1968(xyzw, cieobs = _CIEOBS, out = 'cct', wl = No
  
         # calculate distances to coordinates in lut (Eq. 4):
         di = ((v.T - vBB) - mBB * (u.T - uBB)) / ((1 + mBB**2)**(0.5))
+        di0 = ((v.T - vBB)**2 + (u.T - uBB)**2)
         # dip1 = np.roll(di,-1,0)
         # di_div_dip1 = di/dip1
         # di_div_dip1[-1] = - di_div_dip1[-1]
-        di0 = ((v.T - vBB)**2 + (u.T - uBB)**2)
-        
+         
         # find adjacent Ti's (i.e. dj/dj+1<0):
         # pn = np.where((di_div_dip1) < 0)[0]#[u.shape[0]:] # results in multiple solutions for single CCT!!
         pn = (di0.argmin(axis=0))
@@ -1745,17 +1745,20 @@ def xyz_to_cct_search_robertson1968(xyzw, cieobs = _CIEOBS, out = 'cct', wl = No
             else:
                 ccts_i_mM =  np.vstack((np.diag(TBB[pn-1]),np.diag(TBB[pn+1]))).T
             ccts_min, ccts_max = ccts_i_mM.min(axis=-1),ccts_i_mM.max(axis=-1)
-            cct_search_list_i = 1e6/np.linspace(1e6/ccts_max,1e6/ccts_min,ni)
-            cct_search_list_i = np.reshape(cct_search_list_i,(-1,1)) # reshape for easy input in calculate lut
- 
-            lut_i = calculate_lut('robertson1968', cct_search_list_i, cieobs = cieobs, wl = wl,
-                                  cspace = cspace_dict, cspace_kwargs = None)
-            lut_i = np.reshape(lut_i, (ni,-1))
-
+            
             dccts = np.abs(ccts_max - ccts_min)
             if (dccts <= atol).all() | ((dccts/ccts_i) <= rtol).all():
                 ccts_i =  ((ccts_min + ccts_max)/2)[:,None] #(2*1e6/(1e6/ccts_min + 1e6/ccts_max))[:,None]
-                break
+                break 
+            else:
+                cct_search_list_i = 1e6/np.linspace(1e6/ccts_max,1e6/ccts_min,ni)
+                # cct_search_list_i = np.linspace(ccts_max,ccts_min,ni)
+                cct_search_list_i = np.reshape(cct_search_list_i,(-1,1)) # reshape for easy input in calculate lut
+     
+                lut_i = calculate_lut('robertson1968', cct_search_list_i, cieobs = cieobs, wl = wl,
+                                      cspace = cspace_dict, cspace_kwargs = None)
+                lut_i = np.reshape(lut_i, (ni,-1))
+
             # i+=1
 
         else:
