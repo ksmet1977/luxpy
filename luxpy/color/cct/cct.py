@@ -371,7 +371,6 @@ def calculate_lut(lut_mode, ccts = None, cieobs = None, add_to_lut = False, wl =
     li = num/denom
     mi = -1.0/li
     uvi = UVW[:,:2]/R
-    
     lut = np.hstack((Ti,uvi,mi))
 
     if add_to_lut == True:
@@ -605,7 +604,7 @@ def _process_cct_mk_search_lists(cct_search_list = _CCT_SEARCH_LIST_DEFAULT,
             cct_search_list = cct_search_list_default
         
     if isinstance(cct_search_list,str):
-        if ('bf-search' in cct_search_list.lower()):
+        if ('bf-' in cct_search_list.lower()):
             cct_search_list = _CCT_SEARCH_LIST_BRUTEFORCE
             mk_search_list = _MK_SEARCH_LIST_BRUTEFORCE
         elif cct_search_list.lower() == 'pw-linear':
@@ -1700,7 +1699,8 @@ def xyz_to_cct_search_robertson1968(xyzw, cieobs = _CIEOBS, out = 'cct', wl = No
     Yuv = cspace_dict['fwtf'](xyzw)
     u = Yuv[:,1,None] # get CIE 1960 u
     v = Yuv[:,2,None] # get CIE 1960 v
-    i = 0
+    # i = 0
+
     while True:
         N = lut_i.shape[-1]//4
         ns = np.arange(0,N*4,4,dtype=int)
@@ -1710,15 +1710,19 @@ def xyz_to_cct_search_robertson1968(xyzw, cieobs = _CIEOBS, out = 'cct', wl = No
         uBB = lut_i[:,ns+1]
         vBB = lut_i[:,ns+2]
         mBB =  lut_i[:,ns+3] # slope
+        mBB[mBB>0] = -mBB[mBB>0]
  
         # calculate distances to coordinates in lut (Eq. 4):
         di = ((v.T - vBB) - mBB * (u.T - uBB)) / ((1 + mBB**2)**(0.5))
         # dip1 = np.roll(di,-1,0)
+        # di_div_dip1 = di/dip1
+        # di_div_dip1[-1] = - di_div_dip1[-1]
         di0 = ((v.T - vBB)**2 + (u.T - uBB)**2)
         
         # find adjacent Ti's (i.e. dj/dj+1<0):
-        # pn = np.where((di/dip1) < 0)[0]#[u.shape[0]:] # results in multiple solutions for single CCT!!
+        # pn = np.where((di_div_dip1) < 0)[0]#[u.shape[0]:] # results in multiple solutions for single CCT!!
         pn = (di0.argmin(axis=0))
+        
         # import matplotlib.pyplot as plt
         # plt.plot(uBB,vBB,'b+-')
         # plt.plot(uBB[pn],vBB[pn],'mx')
@@ -1732,29 +1736,28 @@ def xyz_to_cct_search_robertson1968(xyzw, cieobs = _CIEOBS, out = 'cct', wl = No
         
         # break loop if required tolerance is reached:
         if force_tolerance:
-            ni = 10
+            ni = 5
             # update lut_i:
-            pn[(pn-1)<0] = 1
+            pn[(pn-1)<0] = 0
             pn[(pn+1)>TBB.shape[0]] = TBB.shape[0] - 1
-            ccts_i_mM =  np.hstack((TBB[pn-1],TBB[pn+1]))
+            if TBB.shape[-1]==1:
+                ccts_i_mM =  np.hstack((TBB[pn-1],TBB[pn+1]))
+            else:
+                ccts_i_mM =  np.vstack((np.diag(TBB[pn-1]),np.diag(TBB[pn+1]))).T
             ccts_min, ccts_max = ccts_i_mM.min(axis=-1),ccts_i_mM.max(axis=-1)
             cct_search_list_i = 1e6/np.linspace(1e6/ccts_max,1e6/ccts_min,ni)
             cct_search_list_i = np.reshape(cct_search_list_i,(-1,1)) # reshape for easy input in calculate lut
-            ccts_im1 = ccts_i # update previous cct
+ 
             lut_i = calculate_lut('robertson1968', cct_search_list_i, cieobs = cieobs, wl = wl,
                                   cspace = cspace_dict, cspace_kwargs = None)
             lut_i = np.reshape(lut_i, (ni,-1))
-            
-            if i == 0:
-                ccts_im1 = ccts_i  # initialize
-                i+=1
-                continue
-            
-            dccts = np.abs(ccts_i - ccts_im1)
+
+            dccts = np.abs(ccts_max - ccts_min)
             if (dccts <= atol).all() | ((dccts/ccts_i) <= rtol).all():
+                ccts_i =  ((ccts_min + ccts_max)/2)[:,None] #(2*1e6/(1e6/ccts_min + 1e6/ccts_max))[:,None]
                 break
-            i+=1
-            
+            # i+=1
+
         else:
             break
         
