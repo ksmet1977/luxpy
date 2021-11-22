@@ -136,7 +136,7 @@ _CCT_LUT_PATH = _PKG_PATH + _SEP + 'data'+ _SEP + 'cctluts' + _SEP #folder with 
 
 #------------------------------------------------------------------------------
 # Definition of some default search lists for use with brute-force or golden-ratio (Zhang,2019) or Robertson1968 based search methods:
-_CCT_SEARCH_LIST_PW_LIN = np.array([[50,100,500,1000,2000,3000,4000,5000,6000,10000, 20000,50000, 7.5e4, 1e5, 5e5, 1e6, 5e6, 1e7, 5e7, 1e8, 5e8, 1e9, 5e9, 1e10, 5e10, 1e11, _CCT_MAX]]).T
+_CCT_SEARCH_LIST_PW_LIN = np.array([[50.0,100,500,1000,2000,3000,4000,5000,6000,10000, 20000,50000, 7.5e4, 1e5, 5e5, 1e6, 5e6, 1e7, 5e7, 1e8, 5e8, 1e9, 5e9, 1e10, 5e10, 1e11, _CCT_MAX]]).T
 _MK_SEARCH_LIST_PW_LIN = 1e6/_CCT_SEARCH_LIST_PW_LIN
 # _MK_SEARCH_LIST_ROBERTSON1968 = np.hstack((np.arange(1e-308,20,1),np.arange(20,100,10),np.arange(100,625,25),np.arange(625,1000,100),np.arange(1000,2200,200)))
 _MK_SEARCH_LIST_ROBERTSON1968 = np.hstack((np.arange(1e-300,20,1),np.arange(20,50,2),np.arange(50,100,10),np.arange(100,625,25),np.arange(625,1000,100),np.arange(1000,2400,200)))
@@ -160,11 +160,11 @@ _CCT_SEARCH_MODE = 'robertson1968'
 _OHNO2014_FALLBACK_MODE = _CCT_SEARCH_MODE
 _CCT_SEARCH_LIST_DEFAULT = 'default'
 
-
+_CCT_LUT_COL_NUM = 8 # T, u, v, u', v', u", v", slope (note: ' = 1st deriv., " is second deriv.)
 _CCT_LUT_CALC = False # True: (re-)calculates LUTs for ccts in .cctluts/cct_lut_cctlist.dat
 _CCT_CSPACE = 'Yuv60' # chromaticity diagram to perform CCT, Duv calculations in
 _CCT_CSPACE_KWARGS = {'fwtf':{},'bwtf':{}} # any required parameters in the xyz_to_cspace() funtion
-__all__ = ['_CCT_LUT_CALC', '_CCT_MAX','_CCT_CSPACE', '_CCT_CSPACE_KWARGS']
+__all__ = ['_CCT_LUT_CALC', '_CCT_LUT_COL_NUM', '_CCT_MAX','_CCT_CSPACE', '_CCT_CSPACE_KWARGS']
 
 __all__ +=['_CCT_SEARCH_LIST_OHNO2014','_MK_SEARCH_LIST_OHNO2014',
            '_CCT_SEARCH_LIST_ROBERTSON1968','_MK_SEARCH_LIST_ROBERTSON1968',
@@ -259,32 +259,45 @@ def _process_cspace_input(cspace, cspace_kwargs = None, cust_str = 'cspace'):
     return cspace_dict
         
 
-#------------------------------------------------------------------------------ 
-def _get_tristim_of_BB_and_BBprime(T, xyzbar, wl):
-    """ Get the tristimulus values for CMF set xyzbar of the blackbody radiatior spectra
-    and the spectra corresponding to the blackbody radiator derivated to Tc.
+#------------------------------------------------------------------------------
+def _get_BB_and_BBp_BBpp(T, wl):
+    """ Get the blackbody radiatior spectrum, and the spectra corresponding to 
+    the first and second derivatives to Tc of the blackbody radiator.
     """
     T = np2d(T)
-    wl = wl*1e-9
-    dl = getwld(wl)
-    exp = np.exp(_BB['c2']/(wl*T))
+    wlt = wl*1.0e-9
+    c_wl_T = _BB['c2']/(wlt*T)
+    exp = np.exp(c_wl_T)
     
     # avoid div by inf or zero:
     exp_min_1 = exp - 1.0
+    exp_plus_1 = exp + 1.0
     exp_min_1[exp_min_1==0] = (1e-308)
-    exp_min_1_squared = (exp-1.0)**2
+    exp_min_1_squared = exp_min_1**2
     exp_min_1_squared[np.isinf(exp_min_1_squared)] = 1e308 # avoid warning "invalid value encountered in true_divide"
     exp_min_1_squared[exp_min_1_squared == 0.0] = 1e-308
     exp_frac = exp/exp_min_1_squared
     
-    BB = _BB['c1']*(wl**(-5))*(1/(exp_min_1))
+    BB = _BB['c1']*(wlt**(-5))*(1/(exp_min_1))
     BB[np.isinf(BB)] = 1e308
-    BBprime = (_BB['c1']*_BB['c2']*(T**(-2))*(wl**(-6)))*exp_frac
-    cnd = ((xyzbar>0).sum(0)==3).T # keep only wavelengths where not all 3 cmfs are equal (to avoid nan's for 2015 cmfs which are defined only between 390 and 830 nm)
+    BBprime = (_BB['c1']*_BB['c2']*(T**(-2))*(wlt**(-6)))*exp_frac
+    BBprimeprime = (BBprime/T) * (c_wl_T * (exp_plus_1 / exp_min_1)  - 2) 
+    return BB, BBprime, BBprimeprime
+    
+def _get_tristim_of_BB_and_BBprime(T, xyzbar, wl, dl = None):
+    """ Get the tristimulus values for CMF set xyzbar of the blackbody radiatior spectra
+    and the spectra corresponding to the first and second derivatives to Tc 
+    of the blackbody radiator.
+    """
+    BB, BBprime, BBprimeprime =  _get_BB_and_BBp_BBpp(T, wl)
+    if dl is None: dl = getwld(wl)
+    cnd = np.ones((BB.shape[-1],),dtype=bool)#((xyzbar>0).sum(0)>0).T # keep only wavelengths where not all 3 cmfs are equal (to avoid nan's for 2015 cmfs which are defined only between 390 and 830 nm)
     xyz = ((BB * dl)[:,cnd] @ xyzbar[:,cnd].T)
     xyzprime = ((BBprime * dl)[:,cnd] @ xyzbar[:,cnd].T)
     xyzprime[np.isinf(xyzprime)] = 1e308/3 # # avoid warning "invalid value encountered in subtract" when calculating li
-    return T, xyz, xyzprime
+    xyzprimeprime = ((BBprimeprime * dl)[:,cnd] @ xyzbar[:,cnd].T)
+    xyzprimeprime[np.isinf(xyzprimeprime)] = 1e308/3
+    return T, xyz, xyzprime, xyzprimeprime
    
    
 _CCT_LUT = {'ohno2014':{},'robertson1968':{}}
@@ -355,12 +368,13 @@ def calculate_lut(lut_mode, ccts = None, cieobs = None, add_to_lut = False, wl =
     Yuvbar = cspace_dict['fwtf'](cmf[1:].T) # convert to chromaticity format from xyz (cfr. cmf) format
     uvwbar = Yxy_to_xyz(Yuvbar).T # convert from chromaticity format (Vuv) to tristimulus (UVW) format and take transpose (=spectra)
     
-    # calculate U,V,W (Eq. 6) and U',V',W' (Eq.10):
-    Ti, UVW, UVWprime = _get_tristim_of_BB_and_BBprime(ccts, uvwbar, wl)
+    # calculate U,V,W (Eq. 6) and U',V',W' (Eq.10) [Robertson,1986] and U",V",W" [Li,2016; started from XYZ, but this is equivalent]:
+    Ti, UVW, UVWprime, UVWprimeprime = _get_tristim_of_BB_and_BBprime(ccts, uvwbar, wl)
 
     # calculate li, mi:
-    R = UVW.sum(axis=-1, keepdims = True)
-    Rprime = UVWprime.sum(axis=-1, keepdims = True)
+    R = UVW.sum(axis=-1, keepdims = True) # for Ohno, 2014 & Robertson, 1968 & Li, 2016
+    Rprime = UVWprime.sum(axis=-1, keepdims = True) # for Robertson, 1968 & Li, 2016
+    Rprimeprime = UVWprimeprime.sum(axis=-1, keepdims = True) # for Li, 2016
 
     # avoid div by zero:
     num = (UVWprime[:,1:2]*R - UVW[:,1:2]*Rprime) 
@@ -370,8 +384,12 @@ def calculate_lut(lut_mode, ccts = None, cieobs = None, add_to_lut = False, wl =
     
     li = num/denom
     mi = -1.0/li
+    
+    # get u,v & u',v' and u",v":
     uvi = UVW[:,:2]/R
-    lut = np.hstack((Ti,uvi,mi))
+    uvpi = UVWprime[:,:2]/Rprime
+    uvppi = UVWprimeprime[:,:2]/Rprimeprime
+    lut = np.hstack((Ti,uvi,uvpi,uvppi,mi))
 
     if add_to_lut == True:
         if cspace_str not in _CCT_LUT[lut_mode].keys(): _CCT_LUT[lut_mode][cspace_str] = {} # create nested dict if required
@@ -1521,7 +1539,7 @@ def xyz_to_cct_search_zhang2019(xyzw, cieobs = _CIEOBS, out = 'cct', wl  = None,
             ccts_a, ccts_b = cct_to_mired(RTa), cct_to_mired(RTb)
             ccts_i = cct_to_mired((RTa+RTb)/2)
             dccts = np.abs(ccts_a - ccts_b)
-            if ((dccts <= atol).all() | ((dccts/ccts_i) <= rtol).all()) | (force_tolerance == False):
+            if ((dccts <= atol).all() | ((dccts/ccts_i) <= rtol).all()):
                 break
     
         # Get duv: 
@@ -1562,7 +1580,7 @@ def xyz_to_cct_search_zhang2019(xyzw, cieobs = _CIEOBS, out = 'cct', wl  = None,
 #------------------------------------------------------------------------------
 # Robertson 1968:
 #------------------------------------------------------------------------------
-def xyz_to_cct_search_robertson1968(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None, 
+def xyz_to_cct_search_robertson1968(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = False, wl = None, 
                                     atol = 0.1, rtol = 1e-5, force_tolerance = True,
                                     cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS,
                                     lut = None, cct_search_list = 'robertson1968', mk_search_list = None, 
@@ -1694,27 +1712,31 @@ def xyz_to_cct_search_robertson1968(xyzw, cieobs = _CIEOBS, out = 'cct', wl = No
                                                 cspace = cspace_dict, cspace_kwargs = None)
        
     lut_i = lut[cspace_str][cieobs]
+    lut_n_cols = lut_i.shape[-1] # store now, as this will change later
        
     # calculate chromaticity coordinates of input xyzw:
-    Yuv = cspace_dict['fwtf'](xyzw)
-    u = Yuv[:,1,None] # get CIE 1960 u
-    v = Yuv[:,2,None] # get CIE 1960 v
+    if is_uv_input == False: 
+        uvw = cspace_dict['fwtf'](xyzw)[:,1:3]
+    else:
+        uvw = xyzw[:,:2] # xyz was actually already uv input
+    u = uvw[:,0,None] # get CIE 1960 u
+    v = uvw[:,1,None] # get CIE 1960 v
     # i = 0
 
     while True:
-        N = lut_i.shape[-1]//4
-        ns = np.arange(0,N*4,4,dtype=int)
+        N = lut_i.shape[-1]//lut_n_cols
+        ns = np.arange(0,N*lut_n_cols,lut_n_cols,dtype=int)
         
         # get uBB, vBB, mBB from lut:
         TBB = lut_i[:,ns]
         uBB = lut_i[:,ns+1]
         vBB = lut_i[:,ns+2]
-        mBB =  lut_i[:,ns+3] # slope
+        mBB =  lut_i[:,ns+(lut_n_cols-1)] # slope
         mBB[mBB>0] = -mBB[mBB>0]
  
         # calculate distances to coordinates in lut (Eq. 4):
         di = ((v.T - vBB) - mBB * (u.T - uBB)) / ((1 + mBB**2)**(0.5))
-        di0 = ((v.T - vBB)**2 + (u.T - uBB)**2)
+        di0 = ((v.T - vBB)**2 + (u.T - uBB)**2)**0.5
         # dip1 = np.roll(di,-1,0)
         # di_div_dip1 = di/dip1
         # di_div_dip1[-1] = - di_div_dip1[-1]
@@ -1735,7 +1757,9 @@ def xyz_to_cct_search_robertson1968(xyzw, cieobs = _CIEOBS, out = 'cct', wl = No
         if c.any(): ccts_i[c] = -1 # indicate out of lut
         
         # break loop if required tolerance is reached:
-        if force_tolerance:
+        if force_tolerance == False:
+            break 
+        else:
             ni = 5
             # update lut_i:
             pn[(pn-1)<0] = 0
@@ -1760,9 +1784,6 @@ def xyz_to_cct_search_robertson1968(xyzw, cieobs = _CIEOBS, out = 'cct', wl = No
                 lut_i = np.reshape(lut_i, (ni,-1))
 
             # i+=1
-
-        else:
-            break
         
     # Final ccts:
     ccts = ccts_i
@@ -1923,7 +1944,7 @@ def xyz_to_cct_ohno2014(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None,
     cspace_string = cspace_dict['str']
     
     # get 1960 u,v of test source:
-    Yuv = cspace_dict['fwtf'](xyzw) # remove possible 1-dim 
+    Yuv = cspace_dict['fwtf'](xyzw) 
     axis_of_v3 = len(Yuv.shape)-1 # axis containing color components
     u = Yuv[:,1,None] # get CIE 1960 u
     v = Yuv[:,2,None] # get CIE 1960 v
@@ -2051,16 +2072,22 @@ def xyz_to_cct_ohno2014(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None,
 xyz_to_cct_ohno = xyz_to_cct_ohno2014 # for legacy reasons
 
 #---------------------------------------------------------------------------------------------------
-def cct_to_xyz_fast(ccts, duv = None, cct_resolution = 0.1, cieobs = _CIEOBS, wl = None,
+def cct_to_xyz_fast(ccts, duv = None, cct_offset = None, cieobs = _CIEOBS, wl = None,
                cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS):
     """
-    Convert correlated color temperature (CCT) and Duv (distance above (>0) or 
-    below (<0) the Planckian locus) to XYZ tristimulus values.
+    Convert correlated color temperature (550 K <= CCT <= 1e11 K) and 
+    Duv (distance above (>0) or below (<0) the Planckian locus) to 
+    XYZ tristimulus values.
     
-    | Finds xyzw_estimated by estimating the line perpendicular to the Planckian lcous: 
-    |    First, the angle between the coordinates corresponding to ccts 
-    |    and ccts-cct_resolution are calculated, then 90° is added, and finally
-    |    the new coordinates are determined, while taking sign of duv into account.   
+    | Finds xyzw_estimated by determining the iso-temperature line 
+    |   (= line perpendicular to the Planckian locus): 
+    |   Option 1 (fastest):
+    |       First, the angle between the coordinates corresponding to ccts 
+    |       and ccts-cct_offset are calculated, then 90° is added, and finally
+    |       the new coordinates are determined, while taking sign of duv into account.
+    |   Option 2 (slowest, about 55% slower):
+    |       Calculate the slope of the iso-T-line directly using the Planckian
+    |       spectrum and its derivative.
      
     Args:
         :ccts: 
@@ -2069,6 +2096,11 @@ def cct_to_xyz_fast(ccts, duv = None, cct_resolution = 0.1, cieobs = _CIEOBS, wl
             | None or ndarray [N,1] of duv values, optional
             | Note that duv can be supplied together with cct values in :ccts: 
             | as ndarray with shape [N,2].
+        :cct_offset:
+            | None, optional
+            | If None: use option 2 (direct iso-T slope calculation, more accurate,
+            |                        but slower: about 1.55 slower)
+            | else: use option 1 (estimate slope from 90° + angle of small cct_offset)
         :cieobs: 
             | luxpy._CIEOBS, optional
             | CMF set used to calculated xyzw.
@@ -2095,8 +2127,10 @@ def cct_to_xyz_fast(ccts, duv = None, cct_resolution = 0.1, cieobs = _CIEOBS, wl
             | ndarray with estimated XYZ tristimulus values
     
     Note:
-        If duv is not supplied (:ccts:.shape is (N,1) and :duv: is None), 
+        1. If duv is not supplied (:ccts:.shape is (N,1) and :duv: is None), 
         source is assumed to be on the Planckian locus.
+        2. Minimum CCT is 550 K (lower than 550 K, some negative Duv values
+        will result in coordinates outside of the Spectrum Locus !!!)
     """
     # make ccts a min. 2d np.array:
     if isinstance(ccts,list):
@@ -2117,19 +2151,47 @@ def cct_to_xyz_fast(ccts, duv = None, cct_resolution = 0.1, cieobs = _CIEOBS, wl
     elif duv is not None:
         duv = np2d(duv)
 
-    cspace_dict = _process_cspace_input(cspace, cspace_kwargs)
+    cspace_dict,_ = _process_cspace(cspace, cspace_kwargs)
     if cspace_dict['bwtf'] is None:
         raise Exception('cct_to_xyz_fast requires the backward cspace transform to be defined !!!')
+
+    xyzbar,wl, dl = _get_xyzbar_wl_dl(cieobs, wl = wl)
+    if cct_offset is not None:
+        # estimate iso-T-line from estimated slope using small cct offset:
+        #-----------------------------------------------------------------
+        _,xyzBB,_,_ = _get_tristim_of_BB_BBp_BBpp(np.vstack((cct, cct-cct_offset,cct+cct_offset)),xyzbar,wl,dl,out='BB') 
+        YuvBB = cspace_dict['fwtf'](xyzBB)
+
+        N = (xyzBB.shape[0])//3
+        YuvBB_centered = (YuvBB[N:] - np.vstack((YuvBB[:N],YuvBB[:N])))
+        theta = np.arctan2(YuvBB_centered[...,2:3],YuvBB_centered[...,1:2])
+        theta = (theta[:N] + (theta[N:] - np.pi*np.sign(theta[N:])))/2 # take average for increased accuracy
+        theta = theta + np.pi/2*np.sign(duv) # add 90° to obtain the direction perpendicular to the blackbody locus
+        u, v = YuvBB[:N,1:2] + np.abs(duv)*np.cos(theta), YuvBB[:N,2:3] + np.abs(duv)*np.sin(theta)
+
+    else:
+        # estimate iso-T-line from calculated slope:
+        #-------------------------------------------
+        uvwbar = _convert_xyzbar_to_uvwbar(xyzbar,cspace_dict)
+        _,UVW,UVWp,_ = _get_tristim_of_BB_BBp_BBpp(cct,uvwbar,wl,dl,out='BB,BBp') 
+        
+        R = UVW.sum(axis=-1, keepdims = True) 
+        Rp = UVWp.sum(axis=-1, keepdims = True) 
+        num = (UVWp[:,1:2]*R - UVW[:,1:2]*Rp) 
+        denom = (UVWp[:,:1]*R - UVW[:,:1]*Rp)
+        num[(num == 0)] += _AVOID_ZERO_DIV
+        denom[(denom == 0)] += _AVOID_ZERO_DIV
+        li = num/denom  
+        li = li + np.sign(li)*_AVOID_ZERO_DIV # avoid division by zero
+        mi = -1.0/li # slope of isotemperature lines
+
+        YuvBB = xyz_to_Yxy(UVW)
+        u, v = YuvBB[:,1:2] + np.sign(mi) * duv*(1/((1+mi**2)**0.5)), YuvBB[:,2:3] + np.sign(mi)* duv*((mi)/(1+mi**2)**0.5)
+   
+    # plt.plot(YuvBB[...,1],YuvBB[...,2],'gx')
+    # lx.plotSL(cspace='Yuv60',axh=plt.gca())
+    # plt.plot(u,v,'b+')    
     
-    BB = cri_ref(np.vstack((cct, cct-cct_resolution,cct+cct_resolution)), wl3 = wl, ref_type = ['BB'])
-    xyzBB = spd_to_xyz(BB, cieobs = cieobs)
-    YuvBB = cspace_dict['fwtf'](xyzBB)
-    N = (BB.shape[0]-1)//3
-    YuvBB_centered = (YuvBB[N:] - np.vstack((YuvBB[:N],YuvBB[:N])))
-    theta = math.positive_arctan(YuvBB_centered[...,1:2], YuvBB_centered[...,2:3],htype='rad') 
-    theta = (theta[:N] + (theta[N:] - np.pi))/2 # take average for increased accuracy
-    theta = theta + np.pi/2*np.sign(duv) # add 90° to obtain the direction perpendicular to the blackbody locus
-    u, v = YuvBB[:N,1:2] + np.abs(duv)*np.cos(theta), YuvBB[:N,2:3] + np.abs(duv)*np.sin(theta)
     Yuv = np.hstack((100*np.ones_like(u),u,v))
     return cspace_dict['bwtf'](Yuv)
 
