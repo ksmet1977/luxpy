@@ -2072,7 +2072,7 @@ def xyz_to_cct_ohno2014(xyzw, cieobs = _CIEOBS, out = 'cct', wl = None,
 xyz_to_cct_ohno = xyz_to_cct_ohno2014 # for legacy reasons
 
 #---------------------------------------------------------------------------------------------------
-def cct_to_xyz_fast(ccts, duv = None, cct_offset = None, cieobs = _CIEOBS, wl = None,
+def cct_to_xyz_fast(ccts, duv = None, cct_resolution = 0.1, cieobs = _CIEOBS, wl = None,
                cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS):
     """
     Convert correlated color temperature (550 K <= CCT <= 1e11 K) and 
@@ -2081,13 +2081,9 @@ def cct_to_xyz_fast(ccts, duv = None, cct_offset = None, cieobs = _CIEOBS, wl = 
     
     | Finds xyzw_estimated by determining the iso-temperature line 
     |   (= line perpendicular to the Planckian locus): 
-    |   Option 1 (fastest):
     |       First, the angle between the coordinates corresponding to ccts 
-    |       and ccts-cct_offset are calculated, then 90° is added, and finally
+    |       and ccts-cct_resolution are calculated, then 90° is added, and finally
     |       the new coordinates are determined, while taking sign of duv into account.
-    |   Option 2 (slowest, about 55% slower):
-    |       Calculate the slope of the iso-T-line directly using the Planckian
-    |       spectrum and its derivative.
      
     Args:
         :ccts: 
@@ -2096,11 +2092,9 @@ def cct_to_xyz_fast(ccts, duv = None, cct_offset = None, cieobs = _CIEOBS, wl = 
             | None or ndarray [N,1] of duv values, optional
             | Note that duv can be supplied together with cct values in :ccts: 
             | as ndarray with shape [N,2].
-        :cct_offset:
-            | None, optional
-            | If None: use option 2 (direct iso-T slope calculation, more accurate,
-            |                        but slower: about 1.55 slower)
-            | else: use option 1 (estimate slope from 90° + angle of small cct_offset)
+        :cct_resolution:
+            | 0.1, optional
+            | Resolution of cct scale to estimate slope from 90° + angle of small offset (=resolution)
         :cieobs: 
             | luxpy._CIEOBS, optional
             | CMF set used to calculated xyzw.
@@ -2151,47 +2145,19 @@ def cct_to_xyz_fast(ccts, duv = None, cct_offset = None, cieobs = _CIEOBS, wl = 
     elif duv is not None:
         duv = np2d(duv)
 
-    cspace_dict,_ = _process_cspace(cspace, cspace_kwargs)
+    cspace_dict = _process_cspace_input(cspace, cspace_kwargs)
     if cspace_dict['bwtf'] is None:
         raise Exception('cct_to_xyz_fast requires the backward cspace transform to be defined !!!')
-
-    xyzbar,wl, dl = _get_xyzbar_wl_dl(cieobs, wl = wl)
-    if cct_offset is not None:
-        # estimate iso-T-line from estimated slope using small cct offset:
-        #-----------------------------------------------------------------
-        _,xyzBB,_,_ = _get_tristim_of_BB_BBp_BBpp(np.vstack((cct, cct-cct_offset,cct+cct_offset)),xyzbar,wl,dl,out='BB') 
-        YuvBB = cspace_dict['fwtf'](xyzBB)
-
-        N = (xyzBB.shape[0])//3
-        YuvBB_centered = (YuvBB[N:] - np.vstack((YuvBB[:N],YuvBB[:N])))
-        theta = np.arctan2(YuvBB_centered[...,2:3],YuvBB_centered[...,1:2])
-        theta = (theta[:N] + (theta[N:] - np.pi*np.sign(theta[N:])))/2 # take average for increased accuracy
-        theta = theta + np.pi/2*np.sign(duv) # add 90° to obtain the direction perpendicular to the blackbody locus
-        u, v = YuvBB[:N,1:2] + np.abs(duv)*np.cos(theta), YuvBB[:N,2:3] + np.abs(duv)*np.sin(theta)
-
-    else:
-        # estimate iso-T-line from calculated slope:
-        #-------------------------------------------
-        uvwbar = _convert_xyzbar_to_uvwbar(xyzbar,cspace_dict)
-        _,UVW,UVWp,_ = _get_tristim_of_BB_BBp_BBpp(cct,uvwbar,wl,dl,out='BB,BBp') 
-        
-        R = UVW.sum(axis=-1, keepdims = True) 
-        Rp = UVWp.sum(axis=-1, keepdims = True) 
-        num = (UVWp[:,1:2]*R - UVW[:,1:2]*Rp) 
-        denom = (UVWp[:,:1]*R - UVW[:,:1]*Rp)
-        num[(num == 0)] += _AVOID_ZERO_DIV
-        denom[(denom == 0)] += _AVOID_ZERO_DIV
-        li = num/denom  
-        li = li + np.sign(li)*_AVOID_ZERO_DIV # avoid division by zero
-        mi = -1.0/li # slope of isotemperature lines
-
-        YuvBB = xyz_to_Yxy(UVW)
-        u, v = YuvBB[:,1:2] + np.sign(mi) * duv*(1/((1+mi**2)**0.5)), YuvBB[:,2:3] + np.sign(mi)* duv*((mi)/(1+mi**2)**0.5)
-   
-    # plt.plot(YuvBB[...,1],YuvBB[...,2],'gx')
-    # lx.plotSL(cspace='Yuv60',axh=plt.gca())
-    # plt.plot(u,v,'b+')    
     
+    BB = cri_ref(np.vstack((cct, cct-cct_resolution,cct+cct_resolution)), wl3 = wl, ref_type = ['BB'])
+    xyzBB = spd_to_xyz(BB, cieobs = cieobs)
+    YuvBB = cspace_dict['fwtf'](xyzBB)
+    N = (BB.shape[0]-1)//3
+    YuvBB_centered = (YuvBB[N:] - np.vstack((YuvBB[:N],YuvBB[:N])))
+    theta = math.positive_arctan(YuvBB_centered[...,1:2], YuvBB_centered[...,2:3],htype='rad') 
+    theta = (theta[:N] + (theta[N:] - np.pi))/2 # take average for increased accuracy
+    theta = theta + np.pi/2*np.sign(duv) # add 90° to obtain the direction perpendicular to the blackbody locus
+    u, v = YuvBB[:N,1:2] + np.abs(duv)*np.cos(theta), YuvBB[:N,2:3] + np.abs(duv)*np.sin(theta)
     Yuv = np.hstack((100*np.ones_like(u),u,v))
     return cspace_dict['bwtf'](Yuv)
 
