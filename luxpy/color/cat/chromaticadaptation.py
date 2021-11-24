@@ -609,7 +609,7 @@ def apply(data, n_step = 2, catmode = None, cattype = 'vonkries', xyzw1 = None, 
     
 def apply_vonkries1(xyz, xyzw1, xyzw2, D = 1, 
                     mcat = None, invmcat = None, 
-                    in_ = 'xyz', out_ = 'xyz',
+                    in_type = 'xyz', out_type = 'xyz',
                     use_Yw = False):
     """ 
     Apply a 1-step von kries chromatic adaptation transform.
@@ -636,10 +636,10 @@ def apply_vonkries1(xyz, xyzw1, xyzw2, D = 1,
             | None,optional
             | Pre-calculated inverse mcat.
             | If None: calculate inverse of mcat.
-        :in_:
+        :in_type:
             | 'xyz', optional
             | Input type ('xyz', 'rgb') of data in xyz, xyzw1, xyzw2
-        :out_:
+        :out_type:
             | 'xyz', optional
             | Output type ('xyz', 'rgb') of corresponding colors
         :use_Yw:
@@ -658,7 +658,7 @@ def apply_vonkries1(xyz, xyzw1, xyzw2, D = 1,
         <https://doi.org/10.1002/col.22457>`_
     """
     # Define cone/chromatic adaptation sensor space: 
-    if (in_ == 'xyz') | (out_ == 'xyz'):
+    if (in_type == 'xyz') | (out_type == 'xyz'):
         if not isinstance(mcat,np.ndarray):
             if (mcat is None):
                 mcat = _MCATS[_MCAT_DEFAULT]
@@ -669,11 +669,11 @@ def apply_vonkries1(xyz, xyzw1, xyzw2, D = 1,
     
     #--------------------------------------------
     # transform from xyz to cat sensor space:
-    if in_ == 'xyz':
+    if in_type == 'xyz':
         rgb = math.dot23(mcat, xyz.T)
         rgbw1 = math.dot23(mcat, xyzw1.T)
         rgbw2 = math.dot23(mcat, xyzw2.T)
-    elif (in_ == 'xyz') & (use_Yw == False):
+    elif (in_type == 'xyz') & (use_Yw == False):
         rgb = xyz
         rgbw1 = xyzw1
         rgbw2 = xyzw2
@@ -691,14 +691,14 @@ def apply_vonkries1(xyz, xyzw1, xyzw2, D = 1,
 
     #--------------------------------------------
     # convert from cat16 sensor space to xyz:
-    if out_ == 'xyz':
+    if out_type == 'xyz':
         return math.dot23(invmcat, rgbc).T
     else: 
         return rgbc.T
 
 def apply_vonkries2(xyz, xyzw1, xyzw2, xyzw0 = None, D = 1, 
                     mcat = None, invmcat = None, 
-                    in_ = 'xyz', out_ = 'xyz',
+                    in_type = 'xyz', out_type = 'xyz',
                     use_Yw = False):
     """ 
     Apply a 2-step von kries chromatic adaptation transform.
@@ -729,10 +729,10 @@ def apply_vonkries2(xyz, xyzw1, xyzw2, xyzw0 = None, D = 1,
             | None,optional
             | Pre-calculated inverse mcat.
             | If None: calculate inverse of mcat.
-        :in_:
+        :in_type:
             | 'xyz', optional
             | Input type ('xyz', 'rgb') of data in xyz, xyzw1, xyzw2
-        :out_:
+        :out_type:
             | 'xyz', optional
             | Output type ('xyz', 'rgb') of corresponding colors
         :use_Yw:
@@ -751,7 +751,7 @@ def apply_vonkries2(xyz, xyzw1, xyzw2, xyzw0 = None, D = 1,
         <https://doi.org/10.1002/col.22457>`_
     """
     # Define cone/chromatic adaptation sensor space: 
-    if (in_ == 'xyz') | (out_ == 'xyz'):
+    if (in_type == 'xyz') | (out_type == 'xyz'):
         if not isinstance(mcat,np.ndarray):
             if (mcat is None):
                 mcat = _MCATS[_MCAT_DEFAULT]
@@ -769,12 +769,12 @@ def apply_vonkries2(xyz, xyzw1, xyzw2, xyzw0 = None, D = 1,
     
     #--------------------------------------------
     # transform from xyz to cat sensor space:
-    if in_ == 'xyz':
+    if in_type == 'xyz':
         rgb = math.dot23(mcat, xyz.T)
         rgbw1 = math.dot23(mcat, xyzw1.T)
         rgbw2 = math.dot23(mcat, xyzw2.T)
         rgbw0 = math.dot23(mcat, xyzw0.T)
-    elif (in_ == 'xyz') & (use_Yw == False):
+    elif (in_type == 'xyz') & (use_Yw == False):
         rgb = xyz
         rgbw1 = xyzw1
         rgbw2 = xyzw2
@@ -802,14 +802,14 @@ def apply_vonkries2(xyz, xyzw1, xyzw2, xyzw0 = None, D = 1,
 
     #--------------------------------------------
     # convert from cat16 sensor space to xyz:
-    if out_ == 'xyz':
+    if out_type == 'xyz':
         return math.dot23(invmcat, rgbc).T
     else: 
         return rgbc.T
     
 def apply_vonkries(xyz, xyzw1, xyzw2, xyzw0 = None, D = 1, n_step = 2, 
                    catmode = '1>0>2', mcat = None, invmcat = None, 
-                   in_ = 'xyz', out_ = 'xyz', use_Yw = False):
+                   in_type = 'xyz', out_type = 'xyz', use_Yw = False):
     """ 
     Apply a 1-step or 2-step von kries chromatic adaptation transform.
     
@@ -853,10 +853,10 @@ def apply_vonkries(xyz, xyzw1, xyzw2, xyzw0 = None, D = 1, n_step = 2,
             | None,optional
             | Pre-calculated inverse mcat.
             | If None: calculate inverse of mcat.
-        :in_:
+        :in_type:
             | 'xyz', optional
             | Input type ('xyz', 'rgb') of data in xyz, xyzw1, xyzw2
-        :out_:
+        :out_type:
             | 'xyz', optional
             | Output type ('xyz', 'rgb') of corresponding colors
         :use_Yw:
@@ -887,12 +887,12 @@ def apply_vonkries(xyz, xyzw1, xyzw2, xyzw0 = None, D = 1, n_step = 2,
         n_step = 2
         return apply_vonkries2(xyz, xyzw1, xyzw2, xyzw0 = xyzw0, 
                                D = D, mcat = mcat, invmcat = invmcat, 
-                               in_ = in_, out_ = out_, use_Yw = use_Yw)
+                               in_type = in_type, out_type = out_type, use_Yw = use_Yw)
     elif catmode == '1>2':
         n_step = 1
         return apply_vonkries1(xyz, xyzw1, xyzw2, 
                                D = D, mcat = mcat, invmcat = invmcat, 
-                               in_ = in_, out_ = out_, use_Yw = use_Yw)
+                               in_type = in_type, out_type = out_type, use_Yw = use_Yw)
     else:
         raise Exception('cat.apply(n_step = {:1.0f}, catmode = {:s}): Unknown requested n-step CAT mode !'.format(n_step, catmode))
 

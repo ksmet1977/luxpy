@@ -51,6 +51,7 @@ cct/
  :py:
 	* __init__.py
 	* cct.py 
+	* cct_legacy.py
 	* cctduv_ohno_CORM2011.py
 	
  :namespace: luxpy

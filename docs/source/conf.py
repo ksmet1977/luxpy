@@ -73,7 +73,7 @@ author = 'Kevin A.G. Smet'
 # built documents.
 #
 # The short X.Y version.
-version = '1.8.0'
+version = '1.9.0'
 # The full version, including alpha/beta/rc tags.
 release = version
 

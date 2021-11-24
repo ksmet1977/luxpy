@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>luxpy.toolboxes.hypspcim.hyperspectral_img_simulator &mdash; LuxPy 1.7.0 documentation</title>
+  <title>luxpy.toolboxes.hypspcim.hyperspectral_img_simulator &mdash; LuxPy 1.9.0 documentation</title>
   
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                1.7.0
+                1.9.0
               </div>
             
           
@@ -571,7 +571,7 @@
             <span class="n">white</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">spd</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">rgbwr</span> <span class="o">=</span> <span class="n">rfl_to_rgb</span><span class="p">(</span><span class="n">white</span><span class="p">,</span> <span class="n">spd</span> <span class="o">=</span> <span class="n">refspd</span><span class="p">,</span> <span class="n">CSF</span> <span class="o">=</span> <span class="n">CSF</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
             <span class="n">rgbwt</span> <span class="o">=</span> <span class="n">rfl_to_rgb</span><span class="p">(</span><span class="n">white</span><span class="p">,</span> <span class="n">spd</span> <span class="o">=</span> <span class="n">spd</span><span class="p">,</span> <span class="n">CSF</span> <span class="o">=</span> <span class="n">CSF</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
-            <span class="n">rgbti</span> <span class="o">=</span> <span class="n">cat</span><span class="o">.</span><span class="n">apply_vonkries2</span><span class="p">(</span><span class="n">rgbti</span><span class="p">,</span><span class="n">rgbwt</span><span class="p">,</span><span class="n">rgbwr</span><span class="p">,</span><span class="n">xyzw0</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">]]),</span> <span class="n">in_</span><span class="o">=</span><span class="s1">&#39;rgb&#39;</span><span class="p">,</span><span class="n">out_</span><span class="o">=</span> <span class="s1">&#39;rgb&#39;</span><span class="p">,</span><span class="n">D</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">rgbti</span> <span class="o">=</span> <span class="n">cat</span><span class="o">.</span><span class="n">apply_vonkries2</span><span class="p">(</span><span class="n">rgbti</span><span class="p">,</span><span class="n">rgbwt</span><span class="p">,</span><span class="n">rgbwr</span><span class="p">,</span><span class="n">xyzw0</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">]]),</span> <span class="n">in_type</span><span class="o">=</span><span class="s1">&#39;rgb&#39;</span><span class="p">,</span><span class="n">out_type</span><span class="o">=</span> <span class="s1">&#39;rgb&#39;</span><span class="p">,</span><span class="n">D</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         
     
     <span class="c1"># Reconstruct original locations for rendered image rgbs:</span>

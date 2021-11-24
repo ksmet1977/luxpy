@@ -298,6 +298,7 @@ def spd_to_tm30(St):
     
     # calculate cct, duv:
     cct, duv = xyz_to_cct(xyzw_cct, cieobs = '1931_2', out = 'cct,duv')
+    cct = np.abs(cct) # out-of-lut ccts are encoded as negative
     
     # calculate ref illuminant:
     Sr = _cri_ref(cct, mix_range = [4000, 5000], cieobs = '1931_2', wl3 = St[0])

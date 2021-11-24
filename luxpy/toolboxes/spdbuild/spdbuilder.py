@@ -235,7 +235,7 @@ def butterworth_spd(peakwl = 530, fwhm = 20, bw_order = 1, wl = _WL3, with_wl = 
 
 #------------------------------------------------------------------------------
 def roundedtriangle_spd(peakwl = 530, fwhm = 100, rounding = 0.5, wl = _WL3, with_wl = True,
-                        min_ = 0.0, max_ = 1.0,
+                        min_v = 0.0, max_v = 1.0,
                         fw = 100, rw = 100):
 
     """
@@ -257,7 +257,7 @@ def roundedtriangle_spd(peakwl = 530, fwhm = 100, rounding = 0.5, wl = _WL3, wit
         :with_wl:
             | True, optional
             | True outputs a ndarray with first row wavelengths.
-        :min_, max_:
+        :min_v, max_v:
             | 0.0, 1.0, optional
             | Minimum and maximum of spd.
         :fw:
@@ -275,8 +275,8 @@ def roundedtriangle_spd(peakwl = 530, fwhm = 100, rounding = 0.5, wl = _WL3, wit
     """
     peakwl = np.abs(np.atleast_2d(peakwl))
     rounding = np.abs(np.atleast_2d(rounding))
-    max_ = np.abs(np.atleast_2d(max_))
-    min_ = np.abs(np.atleast_2d(min_))
+    max_v = np.abs(np.atleast_2d(max_v))
+    min_v = np.abs(np.atleast_2d(min_v))
     if fwhm is None:
         fw = np.abs(np.atleast_2d(fw))
         rw = np.abs(np.atleast_2d(rw))
@@ -310,7 +310,7 @@ def roundedtriangle_spd(peakwl = 530, fwhm = 100, rounding = 0.5, wl = _WL3, wit
     Rraw[c2] = 1.0/2.0/rounding[c2]*((np.abs(x[c2]) - (1.0 + rounding[c2]/2.0))**2)
     Rraw[c3] = 0.0
     
-    spd = min_ + (max_ - min_)*Rraw/(1-rounding/4)
+    spd = min_v + (max_v - min_v)*Rraw/(1-rounding/4)
     if with_wl == True:
         spd = np.vstack((wl, spd))
     return spd
@@ -1560,7 +1560,7 @@ def spd_optimizer_2_3(optimizer_type = '2mixer', \
             spd_optim_pars['LB'] = None
         if 'UB' not in spd_model_pars:
             spd_optim_pars['UB'] = None
-            
+
     # Also store the following args in spd_constructor_pars (needed by spd_constructor):
     spd_model_pars['target'] = Yxy_target
     spd_model_pars['tar_type'] = 'Yxy'
@@ -1635,7 +1635,7 @@ def get_optim_pars_dict(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs =
     """
     opts = locals()
     spd_models_pars = opts.pop('spd_model_pars')
-    
+    wl = getwlr(wl)
     
     # Set number of component sources:
     if component_spds is not None:
@@ -1758,6 +1758,7 @@ def initialize_spd_model_pars(component_data, N_components = None, allow_nongaus
             | dict with spectrum-model parameters
 
     """
+    wl = getwlr(wl)
     # Initialize parameter dict:
     if isinstance(component_data,int):
         # input is Number of components
@@ -1882,6 +1883,7 @@ def initialize_spd_optim_pars(component_data, N_components = None,\
             | dict with optimization parameters (x0, ub, lb)
 
     """
+    wl = getwlr(wl)
     spd_optim_pars = {}
     if spd_model_pars is None:
         spd_model_pars = initialize_spd_model_pars(component_data, N_components = N_components,\
@@ -2264,19 +2266,46 @@ def spd_optimizer(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs = _CIEO
         return spds, M  
     else:  
         return eval(out)
-
+    
 if __name__ == '__main__':
+    print('3: spd_optimizer() with free peakwl and fwhm:')
+    cieobs='1931_2'
+    cspace_bwtf = {'cieobs':cieobs}
+    target = np.array([[4500, -0.005]]) # specify cct & duv!
+    obj_fcn = [cri.spd_to_iesrf, cri.spd_to_iesrg]
+    obj_tar_vals = [85,105]
+    S, _ = spd_optimizer(target = target, \
+                          tar_type = 'cct',\
+                          cspace_bwtf = cspace_bwtf,\
+                          optimizer_type = '2mixer',\
+                          N_components = 5,
+                          obj_fcn = obj_fcn, \
+                          obj_tar_vals = obj_tar_vals,\
+                          verbosity = 1)
+    
+    # Check output agrees with target:
+    xyz = spd_to_xyz(S, relative = False, cieobs = cieobs)
+    cct = xyz_to_cct(xyz, cieobs = cieobs, out='[cct,duv]')
+    Rf, Rg = [fcn(S)[0,0] for fcn in obj_fcn]
+    print('\nResults (optim,target):')
+    print("cct(K): ({:1.1f},{:1.1f})".format(cct[0,0], target[0,0]))
+    print("Duv: ({:1.3f},{:1.3f})".format(cct[0,1], target[0,1]))
+    print("Rf: ({:1.2f},{:1.2f})".format(Rf, obj_tar_vals[0]))
+    print("Rg: ({:1.2f}, {:1.2f})".format(Rg, obj_tar_vals[1]))
+    plt.figure();plt.plot(S[0],S[1],'b')
+
+if __name__ == '__main__x':
     print('3: spd_optimizer() with constraints on peakwl and fwhm:')
-    target = 4000
+    target = 4500
     cieobs='1931_2'
     obj_fcn = [cri.spd_to_iesrf, cri.spd_to_iesrg]
     obj_tar_vals = [90,110]
-    n = 4
+    n = 5
     S4, _ = spd_optimizer(minimize_method='Nelder-Mead',
                           target = target, \
                           tar_type = 'cct',\
                           cieobs = cieobs,\
-                          cspace_bwtf = {'cieobs' : cieobs, 'mode' : 'search'},\
+                          cspace_bwtf = {'cieobs' : cieobs},\
                           optimizer_type = '3mixer',\
                           N_components = n,
                           obj_fcn = obj_fcn, \
@@ -2287,7 +2316,7 @@ if __name__ == '__main__':
                           verbosity = 1)
     # Check output agrees with target:
     xyz = spd_to_xyz(S4, relative = False, cieobs = cieobs)
-    cct = xyz_to_cct(xyz, cieobs = cieobs, mode = 'search')
+    cct = xyz_to_cct(xyz, cieobs = cieobs, mode = 'robertson1968')
     Rf = obj_fcn[0](S4)
     Rg = obj_fcn[1](S4)
     print('\nResults (optim,target):')
@@ -2295,7 +2324,7 @@ if __name__ == '__main__':
     print("Rf: ({:1.2f},{:1.2f})".format(Rf[0,0], obj_tar_vals[0]))
     print("Rg: ({:1.2f}, {:1.2f})".format(Rg[0,0], obj_tar_vals[1]))
 
-
+    raise Exception('')
 #------------------------------------------------------------------------------
 if __name__ == '__main__x':
     
@@ -2339,7 +2368,7 @@ if __name__ == '__main__x':
     # Check output agrees with target:
     if target is not None:
         xyz = spd_to_xyz(S, relative = False, cieobs = cieobs)
-        cct = xyz_to_cct(xyz, cieobs = cieobs, mode = 'lut')
+        cct = xyz_to_cct(xyz, cieobs = cieobs)
         print("S: Phosphor model / target cct: {:1.1f} K / {:1.1f} K\n\n".format(cct[0,0], target))
 
         
@@ -2399,7 +2428,7 @@ if __name__ == '__main__x':
     # Check output agrees with target:
     S = S[(1*np.isnan(S)).sum(axis=1)==0,:] # get rid op nan spectra
     xyz = spd_to_xyz(S, relative = False, cieobs = cieobs)
-    cct = xyz_to_cct(xyz, cieobs = cieobs, mode = 'lut')
+    cct = xyz_to_cct(xyz, cieobs = cieobs)
     print(cct)
     
     #--------------------------------------------------------------------------
@@ -2418,7 +2447,7 @@ if __name__ == '__main__x':
     N_components = 4 #if not None, spd model parameters (peakwl, fwhm, ...) are optimized
     component_spds = None; #component_spds= {}; # if empty dict, then generate using initialize_spd_model_pars and overwrite with function args: peakwl and fwhm. N_components must match length of either peakwl or fwhm
     allow_nongaussianbased_mono_spds = False
-    S3, _ = spd_optimizer(target, tar_type = tar_type, cspace_bwtf = {'cieobs' : cieobs, 'mode' : 'search'},\
+    S3, _ = spd_optimizer(target, tar_type = tar_type, cspace_bwtf = {'cieobs' : cieobs},\
                           optimizer_type = '2mixer', N_components = N_components,component_spds = component_spds,\
                           allow_nongaussianbased_mono_spds = allow_nongaussianbased_mono_spds,\
                           peakwl = peakwl, fwhm = fwhm, obj_fcn = obj_fcn, obj_tar_vals = obj_tar_vals,\
@@ -2428,7 +2457,7 @@ if __name__ == '__main__x':
     
     # Check output agrees with target:
     xyz = spd_to_xyz(S3, relative = False, cieobs = cieobs)
-    cct = xyz_to_cct(xyz, cieobs = cieobs, mode = 'lut')
+    cct = xyz_to_cct(xyz, cieobs = cieobs)
     Rf = obj_fcn1(S3)
     Rg = obj_fcn2(S3)
     print('\nS3: Optimization results:')
@@ -2449,7 +2478,7 @@ if __name__ == '__main__x':
     S4, _ = spd_optimizer(target = target, \
                           tar_type = 'cct',\
                           cieobs = cieobs,\
-                          cspace_bwtf = {'cieobs' : cieobs, 'mode' : 'search'},\
+                          cspace_bwtf = {'cieobs' : cieobs},\
                           optimizer_type = '3mixer',\
                           N_components = 3,
                           obj_fcn = obj_fcn, \
@@ -2460,7 +2489,7 @@ if __name__ == '__main__x':
                           verbosity = 0)
     # Check output agrees with target:
     xyz = spd_to_xyz(S4, relative = False, cieobs = cieobs)
-    cct = xyz_to_cct(xyz, cieobs = cieobs, mode = 'search')
+    cct = xyz_to_cct(xyz, cieobs = cieobs)
     Rf = obj_fcn1(S4)
     Rg = obj_fcn2(S4)
     print('\nResults (optim,target):')

@@ -113,6 +113,7 @@ def spd_to_COI_ASNZS1680(S = None, tf = _COI_CSPACE, cieobs = _COI_CIEOBS, out =
     # Calculate cct, if requested:
     if 'cct' in out.split(','):
         cct, duv = xyz_to_cct(xyzwt, cieobs = cieobs, out = 2)
+        cct = np.abs(cct) # out-of-lut ccts are encoded as negative
 
     # manage output:
     if out == 'COI':

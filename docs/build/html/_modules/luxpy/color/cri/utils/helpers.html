@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>luxpy.color.cri.utils.helpers &mdash; LuxPy 1.7.1 documentation</title>
+  <title>luxpy.color.cri.utils.helpers &mdash; LuxPy 1.9.0 documentation</title>
   
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                1.7.1
+                1.9.0
               </div>
             
           
@@ -223,6 +223,7 @@
            <span class="s1">&#39;optimize_scale_factor&#39;</span><span class="p">,</span><span class="s1">&#39;spd_to_cri&#39;</span><span class="p">,</span>
            <span class="s1">&#39;_hue_bin_data_to_rxhj&#39;</span><span class="p">,</span> <span class="s1">&#39;_hue_bin_data_to_rfi&#39;</span><span class="p">,</span> <span class="s1">&#39;_hue_bin_data_to_rg&#39;</span><span class="p">]</span>
 
+<span class="n">_CCT_MODE</span> <span class="o">=</span> <span class="s1">&#39;ohno2014&#39;</span>
 <span class="c1">#------------------------------------------------------------------------------</span>
 <span class="k">def</span> <span class="nf">_get_hue_bin_data_individual_samples</span><span class="p">(</span><span class="n">jabt</span><span class="p">,</span><span class="n">jabr</span><span class="p">,</span> <span class="n">normalized_chroma_ref</span> <span class="o">=</span> <span class="mi">100</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Helper function to return dict with required keys when nhbins = None in call to _get_hue_bin_data&quot;&quot;&quot;</span>
@@ -845,7 +846,8 @@
     <span class="n">xyztw_cct</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">St</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">[</span><span class="s1">&#39;cct&#39;</span><span class="p">],</span> <span class="n">rfl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
 
     <span class="c1"># A.b. get cct:</span>
-    <span class="n">cct</span><span class="p">,</span> <span class="n">duv</span> <span class="o">=</span> <span class="n">xyz_to_cct</span><span class="p">(</span><span class="n">xyztw_cct</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">[</span><span class="s1">&#39;cct&#39;</span><span class="p">],</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;cct,duv&#39;</span><span class="p">,</span><span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;lut&#39;</span><span class="p">)</span>
+    <span class="n">cct</span><span class="p">,</span> <span class="n">duv</span> <span class="o">=</span> <span class="n">xyz_to_cct</span><span class="p">(</span><span class="n">xyztw_cct</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">[</span><span class="s1">&#39;cct&#39;</span><span class="p">],</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;cct,duv&#39;</span><span class="p">,</span><span class="n">mode</span> <span class="o">=</span> <span class="n">_CCT_MODE</span><span class="p">)</span>
+    <span class="n">cct</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">cct</span><span class="p">)</span> <span class="c1"># out-of-lut ccts are encoded as negative</span>
     
     <span class="c1"># A.c. get reference ill.:</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ref_type</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>

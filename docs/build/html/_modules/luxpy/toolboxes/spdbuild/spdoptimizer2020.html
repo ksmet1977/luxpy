@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>luxpy.toolboxes.spdbuild.spdoptimizer2020 &mdash; LuxPy 1.7.1 documentation</title>
+  <title>luxpy.toolboxes.spdbuild.spdoptimizer2020 &mdash; LuxPy 1.9.0 documentation</title>
   
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                1.7.1
+                1.9.0
               </div>
             
           
@@ -1618,7 +1618,9 @@
     
     <span class="k">def</span> <span class="nf">spd_to_cct</span><span class="p">(</span><span class="n">spd</span><span class="p">):</span>
         <span class="n">xyz</span> <span class="o">=</span> <span class="n">lx</span><span class="o">.</span><span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span><span class="n">cieobs</span><span class="o">=</span><span class="n">cieobs</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">xyz_to_cct</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span><span class="n">cieobs</span><span class="o">=</span><span class="n">cieobs</span><span class="p">,</span><span class="n">out</span><span class="o">=</span><span class="s1">&#39;cct,duv&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">cct</span><span class="p">,</span> <span class="n">duv</span> <span class="o">=</span> <span class="n">xyz_to_cct</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span><span class="n">cieobs</span><span class="o">=</span><span class="n">cieobs</span><span class="p">,</span><span class="n">out</span><span class="o">=</span><span class="s1">&#39;cct,duv&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">cct</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">cct</span><span class="p">)</span> <span class="c1"># out-of-lut ccts are encoded as negative</span>
+        <span class="k">return</span> <span class="n">cct</span><span class="p">,</span> <span class="n">duv</span>
     
     <span class="c1">#--------------------------------------------------------------------------</span>
     <span class="k">if</span> <span class="n">run_example_class_1</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>

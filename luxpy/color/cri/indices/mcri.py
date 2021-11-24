@@ -111,7 +111,8 @@ def spd_to_mcri(SPD, D = 0.9, E = None, Yb = 20.0, out = 'Rm', wl = None):
     # A. calculate xyz:
     xyzti, xyztw = spd_to_xyz(SPD, cieobs = cieobs['xyz'],  rfl = sampleset, out = 2)
     if 'cct' in out.split(','):
-        cct, duv = xyz_to_cct(xyztw, cieobs = cieobs['cct'], out = 'cct,duv',mode = 'lut')
+        cct, duv = xyz_to_cct(xyztw, cieobs = cieobs['cct'], out = 'cct,duv')
+        cct = np.abs(cct) # out-of-lut ccts are encoded as negative
         
     # B. perform chromatic adaptation to adopted whitepoint of ipt color space, i.e. D65:
     if catf is not None:

@@ -408,7 +408,7 @@ def render_image(img = None, spd = None, rfl = None, out = 'img_hyp', \
             white[0] = spd[0]
             rgbwr = rfl_to_rgb(white, spd = refspd, CSF = CSF, wl = None)
             rgbwt = rfl_to_rgb(white, spd = spd, CSF = CSF, wl = None)
-            rgbti = cat.apply_vonkries2(rgbti,rgbwt,rgbwr,xyzw0=np.array([[1.0,1.0,1.0]]), in_='rgb',out_= 'rgb',D=1)
+            rgbti = cat.apply_vonkries2(rgbti,rgbwt,rgbwr,xyzw0=np.array([[1.0,1.0,1.0]]), in_type='rgb',out_type= 'rgb',D=1)
         
     
     # Reconstruct original locations for rendered image rgbs:

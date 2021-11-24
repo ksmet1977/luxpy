@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>luxpy.toolboxes.photbiochem.ASNZS_1680_2_5_1997_COI &mdash; LuxPy 1.7.0 documentation</title>
+  <title>luxpy.toolboxes.photbiochem.ASNZS_1680_2_5_1997_COI &mdash; LuxPy 1.9.0 documentation</title>
   
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                1.7.0
+                1.9.0
               </div>
             
           
@@ -276,6 +276,7 @@
     <span class="c1"># Calculate cct, if requested:</span>
     <span class="k">if</span> <span class="s1">&#39;cct&#39;</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">):</span>
         <span class="n">cct</span><span class="p">,</span> <span class="n">duv</span> <span class="o">=</span> <span class="n">xyz_to_cct</span><span class="p">(</span><span class="n">xyzwt</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">cct</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">cct</span><span class="p">)</span> <span class="c1"># out-of-lut ccts are encoded as negative</span>
 
     <span class="c1"># manage output:</span>
     <span class="k">if</span> <span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;COI&#39;</span><span class="p">:</span>

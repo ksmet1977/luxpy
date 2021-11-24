@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>luxpy.color.cat.chromaticadaptation &mdash; LuxPy 1.8.0 documentation</title>
+  <title>luxpy.color.cat.chromaticadaptation &mdash; LuxPy 1.9.0 documentation</title>
   
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                1.8.0
+                1.9.0
               </div>
             
           
@@ -772,7 +772,7 @@
     
 <div class="viewcode-block" id="apply_vonkries1"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cat.apply_vonkries1">[docs]</a><span class="k">def</span> <span class="nf">apply_vonkries1</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">xyzw1</span><span class="p">,</span> <span class="n">xyzw2</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> 
                     <span class="n">mcat</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">invmcat</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
-                    <span class="n">in_</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">out_</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span>
+                    <span class="n">in_type</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">out_type</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span>
                     <span class="n">use_Yw</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">    Apply a 1-step von kries chromatic adaptation transform.</span>
@@ -799,10 +799,10 @@
 <span class="sd">            | None,optional</span>
 <span class="sd">            | Pre-calculated inverse mcat.</span>
 <span class="sd">            | If None: calculate inverse of mcat.</span>
-<span class="sd">        :in_:</span>
+<span class="sd">        :in_type:</span>
 <span class="sd">            | &#39;xyz&#39;, optional</span>
 <span class="sd">            | Input type (&#39;xyz&#39;, &#39;rgb&#39;) of data in xyz, xyzw1, xyzw2</span>
-<span class="sd">        :out_:</span>
+<span class="sd">        :out_type:</span>
 <span class="sd">            | &#39;xyz&#39;, optional</span>
 <span class="sd">            | Output type (&#39;xyz&#39;, &#39;rgb&#39;) of corresponding colors</span>
 <span class="sd">        :use_Yw:</span>
@@ -821,7 +821,7 @@
 <span class="sd">        &lt;https://doi.org/10.1002/col.22457&gt;`_</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Define cone/chromatic adaptation sensor space: </span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">in_</span> <span class="o">==</span> <span class="s1">&#39;xyz&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">out_</span> <span class="o">==</span> <span class="s1">&#39;xyz&#39;</span><span class="p">):</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">in_type</span> <span class="o">==</span> <span class="s1">&#39;xyz&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">out_type</span> <span class="o">==</span> <span class="s1">&#39;xyz&#39;</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mcat</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
             <span class="k">if</span> <span class="p">(</span><span class="n">mcat</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
                 <span class="n">mcat</span> <span class="o">=</span> <span class="n">_MCATS</span><span class="p">[</span><span class="n">_MCAT_DEFAULT</span><span class="p">]</span>
@@ -832,11 +832,11 @@
     
     <span class="c1">#--------------------------------------------</span>
     <span class="c1"># transform from xyz to cat sensor space:</span>
-    <span class="k">if</span> <span class="n">in_</span> <span class="o">==</span> <span class="s1">&#39;xyz&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">in_type</span> <span class="o">==</span> <span class="s1">&#39;xyz&#39;</span><span class="p">:</span>
         <span class="n">rgb</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">dot23</span><span class="p">(</span><span class="n">mcat</span><span class="p">,</span> <span class="n">xyz</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
         <span class="n">rgbw1</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">dot23</span><span class="p">(</span><span class="n">mcat</span><span class="p">,</span> <span class="n">xyzw1</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
         <span class="n">rgbw2</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">dot23</span><span class="p">(</span><span class="n">mcat</span><span class="p">,</span> <span class="n">xyzw2</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="p">(</span><span class="n">in_</span> <span class="o">==</span> <span class="s1">&#39;xyz&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">use_Yw</span> <span class="o">==</span> <span class="kc">False</span><span class="p">):</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="n">in_type</span> <span class="o">==</span> <span class="s1">&#39;xyz&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">use_Yw</span> <span class="o">==</span> <span class="kc">False</span><span class="p">):</span>
         <span class="n">rgb</span> <span class="o">=</span> <span class="n">xyz</span>
         <span class="n">rgbw1</span> <span class="o">=</span> <span class="n">xyzw1</span>
         <span class="n">rgbw2</span> <span class="o">=</span> <span class="n">xyzw2</span>
@@ -854,14 +854,14 @@
 
     <span class="c1">#--------------------------------------------</span>
     <span class="c1"># convert from cat16 sensor space to xyz:</span>
-    <span class="k">if</span> <span class="n">out_</span> <span class="o">==</span> <span class="s1">&#39;xyz&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">out_type</span> <span class="o">==</span> <span class="s1">&#39;xyz&#39;</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">dot23</span><span class="p">(</span><span class="n">invmcat</span><span class="p">,</span> <span class="n">rgbc</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
     <span class="k">else</span><span class="p">:</span> 
         <span class="k">return</span> <span class="n">rgbc</span><span class="o">.</span><span class="n">T</span></div>
 
 <div class="viewcode-block" id="apply_vonkries2"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cat.apply_vonkries2">[docs]</a><span class="k">def</span> <span class="nf">apply_vonkries2</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">xyzw1</span><span class="p">,</span> <span class="n">xyzw2</span><span class="p">,</span> <span class="n">xyzw0</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> 
                     <span class="n">mcat</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">invmcat</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
-                    <span class="n">in_</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">out_</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span>
+                    <span class="n">in_type</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">out_type</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span>
                     <span class="n">use_Yw</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">    Apply a 2-step von kries chromatic adaptation transform.</span>
@@ -892,10 +892,10 @@
 <span class="sd">            | None,optional</span>
 <span class="sd">            | Pre-calculated inverse mcat.</span>
 <span class="sd">            | If None: calculate inverse of mcat.</span>
-<span class="sd">        :in_:</span>
+<span class="sd">        :in_type:</span>
 <span class="sd">            | &#39;xyz&#39;, optional</span>
 <span class="sd">            | Input type (&#39;xyz&#39;, &#39;rgb&#39;) of data in xyz, xyzw1, xyzw2</span>
-<span class="sd">        :out_:</span>
+<span class="sd">        :out_type:</span>
 <span class="sd">            | &#39;xyz&#39;, optional</span>
 <span class="sd">            | Output type (&#39;xyz&#39;, &#39;rgb&#39;) of corresponding colors</span>
 <span class="sd">        :use_Yw:</span>
@@ -914,7 +914,7 @@
 <span class="sd">        &lt;https://doi.org/10.1002/col.22457&gt;`_</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Define cone/chromatic adaptation sensor space: </span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">in_</span> <span class="o">==</span> <span class="s1">&#39;xyz&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">out_</span> <span class="o">==</span> <span class="s1">&#39;xyz&#39;</span><span class="p">):</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">in_type</span> <span class="o">==</span> <span class="s1">&#39;xyz&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">out_type</span> <span class="o">==</span> <span class="s1">&#39;xyz&#39;</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mcat</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
             <span class="k">if</span> <span class="p">(</span><span class="n">mcat</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
                 <span class="n">mcat</span> <span class="o">=</span> <span class="n">_MCATS</span><span class="p">[</span><span class="n">_MCAT_DEFAULT</span><span class="p">]</span>
@@ -932,12 +932,12 @@
     
     <span class="c1">#--------------------------------------------</span>
     <span class="c1"># transform from xyz to cat sensor space:</span>
-    <span class="k">if</span> <span class="n">in_</span> <span class="o">==</span> <span class="s1">&#39;xyz&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">in_type</span> <span class="o">==</span> <span class="s1">&#39;xyz&#39;</span><span class="p">:</span>
         <span class="n">rgb</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">dot23</span><span class="p">(</span><span class="n">mcat</span><span class="p">,</span> <span class="n">xyz</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
         <span class="n">rgbw1</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">dot23</span><span class="p">(</span><span class="n">mcat</span><span class="p">,</span> <span class="n">xyzw1</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
         <span class="n">rgbw2</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">dot23</span><span class="p">(</span><span class="n">mcat</span><span class="p">,</span> <span class="n">xyzw2</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
         <span class="n">rgbw0</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">dot23</span><span class="p">(</span><span class="n">mcat</span><span class="p">,</span> <span class="n">xyzw0</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="p">(</span><span class="n">in_</span> <span class="o">==</span> <span class="s1">&#39;xyz&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">use_Yw</span> <span class="o">==</span> <span class="kc">False</span><span class="p">):</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="n">in_type</span> <span class="o">==</span> <span class="s1">&#39;xyz&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">use_Yw</span> <span class="o">==</span> <span class="kc">False</span><span class="p">):</span>
         <span class="n">rgb</span> <span class="o">=</span> <span class="n">xyz</span>
         <span class="n">rgbw1</span> <span class="o">=</span> <span class="n">xyzw1</span>
         <span class="n">rgbw2</span> <span class="o">=</span> <span class="n">xyzw2</span>
@@ -965,14 +965,14 @@
 
     <span class="c1">#--------------------------------------------</span>
     <span class="c1"># convert from cat16 sensor space to xyz:</span>
-    <span class="k">if</span> <span class="n">out_</span> <span class="o">==</span> <span class="s1">&#39;xyz&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">out_type</span> <span class="o">==</span> <span class="s1">&#39;xyz&#39;</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">dot23</span><span class="p">(</span><span class="n">invmcat</span><span class="p">,</span> <span class="n">rgbc</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
     <span class="k">else</span><span class="p">:</span> 
         <span class="k">return</span> <span class="n">rgbc</span><span class="o">.</span><span class="n">T</span></div>
     
 <div class="viewcode-block" id="apply_vonkries"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cat.apply_vonkries">[docs]</a><span class="k">def</span> <span class="nf">apply_vonkries</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">xyzw1</span><span class="p">,</span> <span class="n">xyzw2</span><span class="p">,</span> <span class="n">xyzw0</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n_step</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> 
                    <span class="n">catmode</span> <span class="o">=</span> <span class="s1">&#39;1&gt;0&gt;2&#39;</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">invmcat</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
-                   <span class="n">in_</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">out_</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">use_Yw</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+                   <span class="n">in_type</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">out_type</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">use_Yw</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">    Apply a 1-step or 2-step von kries chromatic adaptation transform.</span>
 <span class="sd">    </span>
@@ -1016,10 +1016,10 @@
 <span class="sd">            | None,optional</span>
 <span class="sd">            | Pre-calculated inverse mcat.</span>
 <span class="sd">            | If None: calculate inverse of mcat.</span>
-<span class="sd">        :in_:</span>
+<span class="sd">        :in_type:</span>
 <span class="sd">            | &#39;xyz&#39;, optional</span>
 <span class="sd">            | Input type (&#39;xyz&#39;, &#39;rgb&#39;) of data in xyz, xyzw1, xyzw2</span>
-<span class="sd">        :out_:</span>
+<span class="sd">        :out_type:</span>
 <span class="sd">            | &#39;xyz&#39;, optional</span>
 <span class="sd">            | Output type (&#39;xyz&#39;, &#39;rgb&#39;) of corresponding colors</span>
 <span class="sd">        :use_Yw:</span>
@@ -1050,12 +1050,12 @@
         <span class="n">n_step</span> <span class="o">=</span> <span class="mi">2</span>
         <span class="k">return</span> <span class="n">apply_vonkries2</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">xyzw1</span><span class="p">,</span> <span class="n">xyzw2</span><span class="p">,</span> <span class="n">xyzw0</span> <span class="o">=</span> <span class="n">xyzw0</span><span class="p">,</span> 
                                <span class="n">D</span> <span class="o">=</span> <span class="n">D</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="n">mcat</span><span class="p">,</span> <span class="n">invmcat</span> <span class="o">=</span> <span class="n">invmcat</span><span class="p">,</span> 
-                               <span class="n">in_</span> <span class="o">=</span> <span class="n">in_</span><span class="p">,</span> <span class="n">out_</span> <span class="o">=</span> <span class="n">out_</span><span class="p">,</span> <span class="n">use_Yw</span> <span class="o">=</span> <span class="n">use_Yw</span><span class="p">)</span>
+                               <span class="n">in_type</span> <span class="o">=</span> <span class="n">in_type</span><span class="p">,</span> <span class="n">out_type</span> <span class="o">=</span> <span class="n">out_type</span><span class="p">,</span> <span class="n">use_Yw</span> <span class="o">=</span> <span class="n">use_Yw</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">catmode</span> <span class="o">==</span> <span class="s1">&#39;1&gt;2&#39;</span><span class="p">:</span>
         <span class="n">n_step</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="k">return</span> <span class="n">apply_vonkries1</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">xyzw1</span><span class="p">,</span> <span class="n">xyzw2</span><span class="p">,</span> 
                                <span class="n">D</span> <span class="o">=</span> <span class="n">D</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="n">mcat</span><span class="p">,</span> <span class="n">invmcat</span> <span class="o">=</span> <span class="n">invmcat</span><span class="p">,</span> 
-                               <span class="n">in_</span> <span class="o">=</span> <span class="n">in_</span><span class="p">,</span> <span class="n">out_</span> <span class="o">=</span> <span class="n">out_</span><span class="p">,</span> <span class="n">use_Yw</span> <span class="o">=</span> <span class="n">use_Yw</span><span class="p">)</span>
+                               <span class="n">in_type</span> <span class="o">=</span> <span class="n">in_type</span><span class="p">,</span> <span class="n">out_type</span> <span class="o">=</span> <span class="n">out_type</span><span class="p">,</span> <span class="n">use_Yw</span> <span class="o">=</span> <span class="n">use_Yw</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;cat.apply(n_step = </span><span class="si">{:1.0f}</span><span class="s1">, catmode = </span><span class="si">{:s}</span><span class="s1">): Unknown requested n-step CAT mode !&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n_step</span><span class="p">,</span> <span class="n">catmode</span><span class="p">))</span></div>
 

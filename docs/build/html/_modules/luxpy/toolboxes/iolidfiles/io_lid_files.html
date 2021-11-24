@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>luxpy.toolboxes.iolidfiles.io_lid_files &mdash; LuxPy 1.7.3 documentation</title>
+  <title>luxpy.toolboxes.iolidfiles.io_lid_files &mdash; LuxPy 1.9.0 documentation</title>
   
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                1.7.3
+                1.9.0
               </div>
             
           
@@ -1501,7 +1501,7 @@
     <span class="n">Iv</span> <span class="o">=</span> <span class="n">_read_luminous_intensity</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">lid</span><span class="p">,</span> <span class="n">method</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span><span class="p">)</span>
     
     <span class="c1"># illuminance at point pplane:</span>
-    <span class="n">Ev</span> <span class="o">=</span> <span class="n">Iv</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">theta</span><span class="p">))</span><span class="o">/</span><span class="n">r</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">Ev</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">Iv</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">theta</span><span class="p">))</span><span class="o">/</span><span class="n">r</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">Ev</span><span class="p">,</span> <span class="n">u0</span><span class="p">,</span> <span class="n">nlum</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">xyzm_maps</span>
 
 <span class="k">def</span> <span class="nf">_get_plane_luminance</span><span class="p">(</span><span class="n">plum</span><span class="p">,</span> <span class="n">nlum</span><span class="p">,</span> <span class="n">lid</span><span class="p">,</span> <span class="n">pplane</span><span class="p">,</span> <span class="n">nplane</span><span class="p">,</span> <span class="n">psensor</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">xyzm_maps</span><span class="p">):</span>
@@ -1631,7 +1631,7 @@
 <span class="sd">        :plot_luminaire_position:</span>
 <span class="sd">            | True, optional</span>
 <span class="sd">            | Plot the position of the luminaire (0,0,0) in the graph as a red diamond.</span>
-<span class="sd">        :plot_X_...:</span>
+<span class="sd">        :plot_X...:</span>
 <span class="sd">            | VArious options to customize plotting. Mainly allows for plotting of</span>
 <span class="sd">            | additional info such as plane-ray intersection points, sensor pixels,</span>
 <span class="sd">            | sensor-to-plane rays, plane-to-luminaire rays, 3D plot of LID, etc.</span>

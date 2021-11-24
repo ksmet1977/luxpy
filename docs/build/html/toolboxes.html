@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Toolboxes &mdash; LuxPy 1.8.0 documentation</title>
+  <title>Toolboxes &mdash; LuxPy 1.9.0 documentation</title>
   
 
   
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                1.8.0
+                1.9.0
               </div>
             
           
@@ -801,8 +801,8 @@ suitable to the detection of cyanosis should be provided:</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="luxpy.toolboxes.photbiochem.spd_to_CS_CLa_lrc">
-<span class="sig-prename descclassname"><span class="pre">luxpy.toolboxes.photbiochem.</span></span><span class="sig-name descname"><span class="pre">spd_to_CS_CLa_lrc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">El</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sum_sources</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interpolate_sources</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/photbiochem/circadian_CS_CLa_lrc.html#spd_to_CS_CLa_lrc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.toolboxes.photbiochem.spd_to_CS_CLa_lrc" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate Circadian Stimulus (CS) and Circadian Light [LRC: Rea et al 2012].</p>
+<span class="sig-prename descclassname"><span class="pre">luxpy.toolboxes.photbiochem.</span></span><span class="sig-name descname"><span class="pre">spd_to_CS_CLa_lrc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">El</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'CLa2.0'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sum_sources</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interpolate_sources</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_CS</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_CS</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/photbiochem/circadian_CS_CLa_lrc.html#spd_to_CS_CLa_lrc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.toolboxes.photbiochem.spd_to_CS_CLa_lrc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate Circadian Stimulus (CS) and Circadian Light (CLa, CLa2.0).</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
 <dt class="field-odd">El</dt>
@@ -812,25 +812,34 @@ suitable to the detection of cyanosis should be provided:</p>
 <div class="line">light source spectral irradiance distribution</div>
 </div>
 </dd>
-<dt class="field-even">E</dt>
+<dt class="field-even">version</dt>
 <dd class="field-even"><div class="line-block">
+<div class="line">‘CLa2.0’, optional</div>
+<div class="line">CLa version to calculate </div>
+<div class="line">Options: </div>
+<div class="line">- ‘CLa1.0’: Rea et al. 2012</div>
+<div class="line">- ‘CLa2.0’: Rea et al. 2021</div>
+</div>
+</dd>
+<dt class="field-odd">E</dt>
+<dd class="field-odd"><div class="line-block">
 <div class="line">None, float or ndarray, optional</div>
 <div class="line">Illuminance of light sources.</div>
 <div class="line">If None: El is used as is, otherwise El is renormalized to have</div>
 <div class="line">an illuminance equal to E.</div>
 </div>
 </dd>
-<dt class="field-odd">sum_sources</dt>
-<dd class="field-odd"><div class="line-block">
+<dt class="field-even">sum_sources</dt>
+<dd class="field-even"><div class="line-block">
 <div class="line">False, optional</div>
 <div class="line-block">
-<div class="line">- False: calculate CS and CLa for all sources in El array.</div>
+<div class="line">- False: calculate CS (1.0,2.0) and CLa (1.0, 2.0) for all sources in El array.</div>
 <div class="line">- True: sum sources in El to a single source and perform calc.</div>
 </div>
 </div>
 </dd>
-<dt class="field-even">interpolate_sources</dt>
-<dd class="field-even"><div class="line-block">
+<dt class="field-odd">interpolate_sources</dt>
+<dd class="field-odd"><div class="line-block">
 <div class="line">True, optional</div>
 <div class="line-block">
 <div class="line">- True: El is interpolated to wavelength range of efficiency </div>
@@ -841,9 +850,27 @@ suitable to the detection of cyanosis should be provided:</p>
 <div class="line-block">
 <div class="line">Source interpolation is not recommended due to possible</div>
 <div class="line">errors for peaky spectra. </div>
-<div class="line">(see CIE15-2004, “Colorimetry”).</div>
+<div class="line">(see CIE15-2018, “Colorimetry”).</div>
 </div>
 </div>
+</div>
+</dd>
+<dt class="field-even">t_CS</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">1.0, optional</div>
+<div class="line">The duration factor (in hours): a continuous value from 0.5 to 3.0</div>
+</div>
+</dd>
+<dt class="field-odd">f_CS</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">1.0, optional</div>
+<div class="line">The spatial distribution factor: a discrete value (2, 1, or 0.5)</div>
+<div class="line">depending upon the spatial distribution of the light source.</div>
+<div class="line">Default = 1 (for t = 1 h, CS is equal to the 2012 version).</div>
+<div class="line">Options:</div>
+<div class="line">- 2.0: full visual field, as with a Ganzfeld.</div>
+<div class="line">- 1.0: central visual field, as with a discrete light box on a desk.</div>
+<div class="line">- 0.5: superior visual field, as from ceiling mounted down-light fixtures.</div>
 </div>
 </dd>
 </dl>
@@ -861,7 +888,7 @@ suitable to the detection of cyanosis should be provided:</p>
 </dd>
 </dl>
 </dd>
-<dt>Notes:</dt><dd><p>1. The original 2012 (E.q. 1) had set the peak wavelength of the 
+<dt>Notes on CLa1.0 (2012 version):</dt><dd><p>1. The original 2012 (E.q. 1) had set the peak wavelength of the 
 melanopsin at 480 nm. Rea et al. later published a corrigendum with 
 updated model parameters for k, a_{b-y} and a_rod. The comparison table
 between showing values calculated for a number of sources with the old
@@ -879,13 +906,32 @@ a_rod = 3.3.</p>
 <p>4. The parameter values to convert CLa to CS were also taken from the 
 2017 excel calculator.</p>
 </dd>
+<dt>Notes on CLa2.0 (2021 version):</dt><dd><p>1. In the original model, 1000 lux of CIE Illuminant A resulted in a 
+CLA = 1000. In the revised model, a photopic illuminance of 1000 lux 
+from CIE Illuminant A (approximately that of an incandescent lamp 
+operated at 2856 K) results in a CLA 2.0 = 813. The value of 813 CLA 2.0
+should be used by those wishing to calibrate instrumentation designed 
+to report CLA 2.0 and CS. CLA 2.0 values can still be used to approximate
+the photopic illuminance, in lux, from a nonspecific “white” light source.
+For comparison, CLA 2.0 values should be multiplied by 1.23 to estimate
+the equivalent photopic illuminance from CIE Illuminant A, or by 0.66 
+to estimate the equivalent photopic illuminance from CIE Illuminant D65
+(an approximation of daylight with a CCT of 6500 K).</p>
+<p>2. Nov. 6, 2012: To get a value of CLa2.0 = 813, Eq. 3 from the paper 
+must be adjusted to also divide by the transmision of the 
+macula (‘mp’ in paper) the S-cone and Vlambda functions prior to 
+calculating the integrals in the denominators of the first factor after
+the a_rod_1 and a_rod_2 scalars! Failure to do so results in a CLa2.0 
+of 800, instead of the reported 813 by the online calculator. 
+Verification of the code on github shows indeed that these denominators
+are calculated by using the macular transmission divided S-cone and 
+Vlambda functions. Is this an error in the code or in the paper?</p>
+</dd>
 </dl>
 <p>References:</p>
 <blockquote>
-<div><ol class="arabic simple">
-<li><p><a class="reference external" href="http://www.lrc.rpi.edu/cscalculator/">LRC Online Circadian stimulus calculator</a></p></li>
-<li><p><a class="reference external" href="http://www.lrc.rpi.edu/resources/CSCalculator_2017_10_03_Mac.xlsm">LRC Excel based Circadian stimulus calculator.</a></p></li>
-</ol>
+<div><p>1. <a class="reference external" href="http://www.lrc.rpi.edu/cscalculator/">LRC Online Circadian stimulus calculator</a></p>
+<p>2. <a class="reference external" href="http://www.lrc.rpi.edu/resources/CSCalculator_2017_10_03_Mac.xlsm">LRC Excel based Circadian stimulus calculator.</a></p>
 <p>3. <a class="reference external" href="https://doi.org/10.1177/1477153511430474">Rea MS, Figueiro MG, Bierman A, and Hamner R (2012). 
 Modelling the spectral sensitivity of the human circadian system. 
 Light. Res. Technol. 44, 386–396.</a></p>
@@ -893,7 +939,73 @@ Light. Res. Technol. 44, 386–396.</a></p>
 Erratum: Modeling the spectral sensitivity of the human circadian system 
 (Lighting Research and Technology (2012) 44:4 (386-396)). 
 Light. Res. Technol. 44, 516.</a></p>
+<p>5. <a class="reference external" href="https://doi.org/10.3389/fnins.2021.615322">Rea, M. S., Nagare, R., &amp; Figueiro, M. G. (2021). 
+Modeling Circadian Phototransduction: Quantitative Predictions of Psychophysical Data. 
+Frontiers in Neuroscience, 15, 44.</a></p>
+<p>6. <a class="reference external" href="https://docs.light-health.org/cscalc">LRC Online Circadian stimulus calculator (CLa2.0, 2021)</a></p>
 </div></blockquote>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="luxpy.toolboxes.photbiochem.CLa_to_CS">
+<span class="sig-prename descclassname"><span class="pre">luxpy.toolboxes.photbiochem.</span></span><span class="sig-name descname"><span class="pre">CLa_to_CS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">CLa</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forward</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/photbiochem/circadian_CS_CLa_lrc.html#CLa_to_CS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.toolboxes.photbiochem.CLa_to_CS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert Circadian Light to Circadian Stimulus (and back).</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">CLa</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with Circadian Light values</div>
+<div class="line">or Circadian Stimulus values (if forward == False)</div>
+</div>
+</dd>
+<dt class="field-even">t</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">1.0, optional</div>
+<div class="line">The duration factor (in hours): a continuous value from 0.5 to 3.0</div>
+</div>
+</dd>
+<dt class="field-odd">f</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">1.0, optional</div>
+<div class="line">The spatial distribution factor: a discrete value (2, 1, or 0.5)</div>
+<div class="line">depending upon the spatial distribution of the light source.</div>
+<div class="line">Default = 1 (for t = 1 h, CS is equal to the 2012 version).</div>
+<div class="line">Options:</div>
+<div class="line">- 2.0: full visual field, as with a Ganzfeld.</div>
+<div class="line">- 1.0: central visual field, as with a discrete light box on a desk.</div>
+<div class="line">- 0.5: superior visual field, as from ceiling mounted down-light fixtures.</div>
+</div>
+</dd>
+<dt class="field-even">forward</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">True, optional</div>
+<div class="line">If True: convert CLa to CS values.</div>
+<div class="line">If False: convert CS values to CLa values.</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">CS</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with CS values or with CLa values (if forward == False)</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>References:</dt><dd><p>1. <a class="reference external" href="https://doi.org/10.1177/1477153511430474">Rea MS, Figueiro MG, Bierman A, and Hamner  R (2012). 
+Modelling the spectral sensitivity of the human circadian system. 
+Light. Res. Technol. 44, 386–396.</a></p>
+<p>2. <a class="reference external" href="https://doi.org/10.1177/1477153512467607">Rea MS, Figueiro MG, Bierman A, and Hamner R (2012). 
+Erratum: Modeling the spectral sensitivity of the human circadian system 
+(Lighting Research and Technology (2012) 44:4 (386-396)). 
+Light. Res. Technol. 44, 516.</a></p>
+<p>3. <a class="reference external" href="https://doi.org/10.3389/fnins.2021.615322">Rea, M. S., Nagare, R., &amp; Figueiro, M.G. (2021). 
+Modeling Circadian Phototransduction: Quantitative Predictions of Psychophysical Data. 
+Frontiers in Neuroscience, 15, 44.</a></p>
+<p>4. <a class="reference external" href="https://docs.light-health.org/cscalc">LRC Online Circadian Stimulus calculator (CLa2.0, 2021)</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -1995,8 +2107,8 @@ It is also written such that the user can easily write his own
 primary constructor function. It supports the ‘3mixer’ algorithm 
 (but no ‘2mixer’) and a ‘no-mixer’ algorithm (chromaticity as part of the list
 of objectives) for calculating the mixing contributions of the primaries.</p>
-<section id="id15">
-<h4>Functions<a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h4>
+<section id="id19">
+<h4>Functions<a class="headerlink" href="#id19" title="Permalink to this headline">¶</a></h4>
 <blockquote>
 <div><dl class="field-list simple">
 <dt class="field-odd">gaussian_prim_constructor()</dt>
@@ -2032,8 +2144,8 @@ spectra or component spectrum model parameters
 </dl>
 </div></blockquote>
 </section>
-<section id="id16">
-<h4>Notes<a class="headerlink" href="#id16" title="Permalink to this headline">¶</a></h4>
+<section id="id20">
+<h4>Notes<a class="headerlink" href="#id20" title="Permalink to this headline">¶</a></h4>
 <blockquote>
 <div><ol class="arabic simple">
 <li><p>See examples below (in spdoptimizer2020.’__main__’) for use.</p></li>
@@ -2201,7 +2313,7 @@ spectra or component spectrum model parameters
 
 <dl class="py function">
 <dt class="sig sig-object py" id="luxpy.toolboxes.spdbuild.roundedtriangle_spd">
-<span class="sig-prename descclassname"><span class="pre">luxpy.toolboxes.spdbuild.</span></span><span class="sig-name descname"><span class="pre">roundedtriangle_spd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">peakwl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">530</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fwhm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rounding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[360.0,</span> <span class="pre">830.0,</span> <span class="pre">1.0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">with_wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/spdbuild/spdbuilder.html#roundedtriangle_spd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.toolboxes.spdbuild.roundedtriangle_spd" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">luxpy.toolboxes.spdbuild.</span></span><span class="sig-name descname"><span class="pre">roundedtriangle_spd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">peakwl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">530</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fwhm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rounding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[360.0,</span> <span class="pre">830.0,</span> <span class="pre">1.0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">with_wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_v</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_v</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/spdbuild/spdbuilder.html#roundedtriangle_spd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.toolboxes.spdbuild.roundedtriangle_spd" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate rounded triangle spectrum.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -2235,7 +2347,7 @@ spectra or component spectrum model parameters
 <div class="line">True outputs a ndarray with first row wavelengths.</div>
 </div>
 </dd>
-<dt class="field-even"><a href="#id21"><span class="problematic" id="id22">min_</span></a>, <a href="#id23"><span class="problematic" id="id24">max_</span></a></dt>
+<dt class="field-even">min_v, max_v</dt>
 <dd class="field-even"><div class="line-block">
 <div class="line">0.0, 1.0, optional</div>
 <div class="line">Minimum and maximum of spd.</div>
@@ -6058,7 +6170,7 @@ or k nearest neighbour interpolation of samples from a standard reflectance set.
 <div class="line">Plot the position of the luminaire (0,0,0) in the graph as a red diamond.</div>
 </div>
 </dd>
-<dt class="field-odd"><a href="#id25"><span class="problematic" id="id26">plot_X_</span></a>…</dt>
+<dt class="field-odd">plot_X…</dt>
 <dd class="field-odd"><div class="line-block">
 <div class="line">VArious options to customize plotting. Mainly allows for plotting of</div>
 <div class="line">additional info such as plane-ray intersection points, sensor pixels,</div>
@@ -6118,8 +6230,8 @@ or k nearest neighbour interpolation of samples from a standard reflectance set.
 </dl>
 </div></blockquote>
 </section>
-<section id="id20">
-<h4>Notes<a class="headerlink" href="#id20" title="Permalink to this headline">¶</a></h4>
+<section id="id24">
+<h4>Notes<a class="headerlink" href="#id24" title="Permalink to this headline">¶</a></h4>
 <blockquote>
 <div><ol class="arabic simple">
 <li><p>For info on the input arguments of get_spd(), see help for each identically named function in each of the subpackages.</p></li>

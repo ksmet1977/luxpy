@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>luxpy.color.cri.indices.mcri &mdash; LuxPy 1.7.0 documentation</title>
+  <title>luxpy.color.cri.indices.mcri &mdash; LuxPy 1.9.0 documentation</title>
   
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                1.7.0
+                1.9.0
               </div>
             
           
@@ -274,7 +274,8 @@
     <span class="c1"># A. calculate xyz:</span>
     <span class="n">xyzti</span><span class="p">,</span> <span class="n">xyztw</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">SPD</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">[</span><span class="s1">&#39;xyz&#39;</span><span class="p">],</span>  <span class="n">rfl</span> <span class="o">=</span> <span class="n">sampleset</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
     <span class="k">if</span> <span class="s1">&#39;cct&#39;</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">):</span>
-        <span class="n">cct</span><span class="p">,</span> <span class="n">duv</span> <span class="o">=</span> <span class="n">xyz_to_cct</span><span class="p">(</span><span class="n">xyztw</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">[</span><span class="s1">&#39;cct&#39;</span><span class="p">],</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;cct,duv&#39;</span><span class="p">,</span><span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;lut&#39;</span><span class="p">)</span>
+        <span class="n">cct</span><span class="p">,</span> <span class="n">duv</span> <span class="o">=</span> <span class="n">xyz_to_cct</span><span class="p">(</span><span class="n">xyztw</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">[</span><span class="s1">&#39;cct&#39;</span><span class="p">],</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;cct,duv&#39;</span><span class="p">)</span>
+        <span class="n">cct</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">cct</span><span class="p">)</span> <span class="c1"># out-of-lut ccts are encoded as negative</span>
         
     <span class="c1"># B. perform chromatic adaptation to adopted whitepoint of ipt color space, i.e. D65:</span>
     <span class="k">if</span> <span class="n">catf</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>

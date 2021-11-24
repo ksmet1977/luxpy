@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>luxpy.utils.utilities &mdash; LuxPy 1.7.0 documentation</title>
+  <title>luxpy.utils.utilities &mdash; LuxPy 1.9.0 documentation</title>
   
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                1.7.0
+                1.9.0
               </div>
             
           
@@ -204,7 +204,7 @@
 
 <span class="sd"> :vec_to_dict(): Convert dict to vec and vice versa.</span>
 
-<span class="sd">  getdata(): Get data from csv-file or convert between pandas dataframe</span>
+<span class="sd"> :getdata(): Get data from csv-file or convert between pandas dataframe</span>
 <span class="sd">             and numpy 2d-array.</span>
 
 <span class="sd"> :dictkv(): Easy input of of keys and values into dict </span>
@@ -924,6 +924,28 @@
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="s1">&#39;w+&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">getvalue</span><span class="p">())</span>
         <span class="k">return</span> <span class="n">ps</span></div>
+    
+<span class="c1">#------------------------------------------------------------------------------</span>
+<span class="k">def</span> <span class="nf">unique</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">sort</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Get unique elements from array.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :array:</span>
+<span class="sd">            | array to get unique elements from.</span>
+<span class="sd">        :sort:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | If True: get sorted unique elements.</span>
+<span class="sd">            </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :unique_array:</span>
+<span class="sd">            | ndarray with (sorted) unique elements.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">sort</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">array</span><span class="p">)</span> 
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">uniq</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">return_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">uniq</span><span class="p">[</span><span class="n">index</span><span class="o">.</span><span class="n">argsort</span><span class="p">()]</span>
 </pre></div>
 
            </div>

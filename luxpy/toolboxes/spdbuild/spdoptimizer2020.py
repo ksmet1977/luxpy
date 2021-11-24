@@ -1455,7 +1455,9 @@ if __name__ == '__main__':
     
     def spd_to_cct(spd):
         xyz = lx.spd_to_xyz(spd,cieobs=cieobs)
-        return xyz_to_cct(xyz,cieobs=cieobs,out='cct,duv')[0]
+        cct, duv = xyz_to_cct(xyz,cieobs=cieobs,out='cct,duv')[0]
+        cct = np.abs(cct) # out-of-lut ccts are encoded as negative
+        return cct, duv
     
     #--------------------------------------------------------------------------
     if run_example_class_1 == True:

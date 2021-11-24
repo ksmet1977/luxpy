@@ -1468,7 +1468,7 @@ def render_lid(LID = './data/luxpy_test_lid_file.ies',
         :plot_luminaire_position:
             | True, optional
             | Plot the position of the luminaire (0,0,0) in the graph as a red diamond.
-        :plot_X_...:
+        :plot_X...:
             | VArious options to customize plotting. Mainly allows for plotting of
             | additional info such as plane-ray intersection points, sensor pixels,
             | sensor-to-plane rays, plane-to-luminaire rays, 3D plot of LID, etc.
