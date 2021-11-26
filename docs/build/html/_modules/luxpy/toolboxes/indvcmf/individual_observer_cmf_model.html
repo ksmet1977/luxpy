@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>luxpy.toolboxes.indvcmf.individual_observer_cmf_model &mdash; LuxPy 1.7.0 documentation</title>
+  <title>luxpy.toolboxes.indvcmf.individual_observer_cmf_model &mdash; LuxPy 1.9.1 documentation</title>
   
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                1.7.0
+                1.9.1
               </div>
             
           
@@ -2543,8 +2543,8 @@
     <span class="n">add_to_cmf_dict</span><span class="p">(</span><span class="n">bar</span> <span class="o">=</span> <span class="n">XYZb_All_CatObs</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;CatObs1&#39;</span><span class="p">,</span> <span class="n">K</span> <span class="o">=</span> <span class="mi">683</span><span class="p">)</span> 
     <span class="n">xyz2</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">_CIE_ILLUMINANTS</span><span class="p">[</span><span class="s1">&#39;F4&#39;</span><span class="p">],</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;1931_2&#39;</span><span class="p">)</span>
     <span class="n">xyz1</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">_CIE_ILLUMINANTS</span><span class="p">[</span><span class="s1">&#39;F4&#39;</span><span class="p">],</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;CatObs1&#39;</span><span class="p">)</span>
-    <span class="n">cct2</span><span class="p">,</span><span class="n">duv2</span> <span class="o">=</span> <span class="n">xyz_to_cct_ohno</span><span class="p">(</span><span class="n">xyz2</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;1931_2&#39;</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;cct,duv&#39;</span><span class="p">)</span>
-    <span class="n">cct1</span><span class="p">,</span><span class="n">duv1</span> <span class="o">=</span> <span class="n">xyz_to_cct_ohno</span><span class="p">(</span><span class="n">xyz1</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;CatObs1&#39;</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;cct,duv&#39;</span><span class="p">)</span>
+    <span class="n">cct2</span><span class="p">,</span><span class="n">duv2</span> <span class="o">=</span> <span class="n">xyz_to_cct_ohno2014</span><span class="p">(</span><span class="n">xyz2</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;1931_2&#39;</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;cct,duv&#39;</span><span class="p">)</span>
+    <span class="n">cct1</span><span class="p">,</span><span class="n">duv1</span> <span class="o">=</span> <span class="n">xyz_to_cct_ohno2014</span><span class="p">(</span><span class="n">xyz1</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;CatObs1&#39;</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;cct,duv&#39;</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;cct,duv using 1931_2: </span><span class="si">{:1.0f}</span><span class="s1"> K, </span><span class="si">{:1.4f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cct2</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span><span class="n">duv2</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]))</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;cct,duv using CatObs1: </span><span class="si">{:1.0f}</span><span class="s1"> K, </span><span class="si">{:1.4f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cct1</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span><span class="n">duv1</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]))</span>
 </pre></div>

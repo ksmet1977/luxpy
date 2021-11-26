@@ -4,7 +4,7 @@
 
 # Python toolbox for lighting and color science
 * Author: Kevin A.G. Smet (ksmet1977 at gmail.com)
-* Version: 1.9.0
+* Version: 1.9.1
 * Date: Nov 25, 2021
 * License: [GPLv3](https://github.com/ksmet1977/luxpy/blob/master/LICENSE.md)
 

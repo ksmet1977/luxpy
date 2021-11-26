@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Color sub-package &mdash; LuxPy 1.9.0 documentation</title>
+  <title>Color sub-package &mdash; LuxPy 1.9.1 documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                1.9.0
+                1.9.1
               </div>
             
           
@@ -4264,9 +4264,31 @@ use the dictionary format (with cspace_kwargs alreadty taken into account.)
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="luxpy.color.cct._generate_tcs">
+<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">_generate_tcs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lut_int</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[1]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lut_unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['%']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lut_min_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[[1000,</span> <span class="pre">50000.0]]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cct_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cct_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">550</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seamless</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lut_unit_fallback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'K-1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lut_N_fallback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#_generate_tcs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct._generate_tcs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate an ndarray of CCTs. The ndarray is a vstack of ccts with a specific
+interval in the specified units over the specified tuple min-max range. 
+(not larger than cct_max or smaller than cct_min, whatever the input in lut_min_max!).
+(seamless fits multiple lut specifications together; this will impact the 
+estimated min,max ranges of each)</p>
+<p>Planckians are computed for wavelength interval wl and cmf set in cieobs and in the color space
+specified in cspace (additional arguments for these chromaticity functions can be supplied using
+the cspace_kwargs).</p>
+<p>Unit options are:
+- ‘%’: equal relative Tc spacing (in %, cfr. (Ti+1 - Ti-1)/Ti-1).
+- ‘K’ equal absolute Tc spacing (in K, cfr. (Ti+1 - Ti-1).
+- ‘%-1’: equal relative reciprocal Tc (MK-1 = mired).
+- ‘K-1’: equal absolute reciprocal Tc (MK-1 = mired).
+- ‘au’: arbitrary interval (generate by supplying an ndarray of Tc in lut_min_max).</p>
+<p>Note: if lut_unit == ‘au’ &amp; lut_min_max is not an ndarray (but a list of mins, maxs),
+Tcs are calculated using the units in lut_units_fallback and the min-max range is split
+in lut_N_fallback divisions.</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="luxpy.color.cct._generate_lut">
-<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">_generate_lut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lut_int</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lut_unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'%'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lut_min_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[1000,</span> <span class="pre">50000.0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cct_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cct_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">550</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[360.0,</span> <span class="pre">830.0,</span> <span class="pre">1.0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lut_vars</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['T',</span> <span class="pre">'uv',</span> <span class="pre">'uvp',</span> <span class="pre">'uvpp',</span> <span class="pre">'iso-T-slope']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Yuv60'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'bwtf':</span> <span class="pre">{},</span> <span class="pre">'fwtf':</span> <span class="pre">{}}</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#_generate_lut"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct._generate_lut" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generate a lut with a specific interval in the specified units over the specified min-max range 
+<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">_generate_lut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lut_int</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[1]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lut_unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['%']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lut_min_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[(1000,</span> <span class="pre">50000.0)]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cct_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cct_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">550</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[360.0,</span> <span class="pre">830.0,</span> <span class="pre">1.0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lut_vars</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['T',</span> <span class="pre">'uv',</span> <span class="pre">'uvp',</span> <span class="pre">'uvpp',</span> <span class="pre">'iso-T-slope']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Yuv60'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'bwtf':</span> <span class="pre">{},</span> <span class="pre">'fwtf':</span> <span class="pre">{}}</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#_generate_lut"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct._generate_lut" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a lut with a specific interval in the specified units over the specified tuple min-max range 
 (not larger than cct_max or smaller than cct_min, whatever the input in lut_min_max!).</p>
 <p>Planckians are computed for wavelength interval wl and cmf set in cieobs and in the color space
 specified in cspace (additional arguments for these chromaticity functions can be supplied using
@@ -4284,6 +4306,7 @@ lut_vars (Tc and uv are always present!). Default lut_vars =  [‘T’,’uv’,
 - u’v’: chromaticity coordinates of 1st derivative of the planckians.
 - u”,v”: chromaticity coordinates of 2nd derivative of the planckians.
 - slope of isotemperature lines (calculated as in Robertson, 1968).</p>
+<p>Note that a vstack of CCTs can be generate by supplying lists for lut_int, lut_unit and lut_min_max</p>
 </dd></dl>
 
 <dl class="py function">

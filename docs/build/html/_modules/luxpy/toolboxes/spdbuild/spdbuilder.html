@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>luxpy.toolboxes.spdbuild.spdbuilder &mdash; LuxPy 1.9.0 documentation</title>
+  <title>luxpy.toolboxes.spdbuild.spdbuilder &mdash; LuxPy 1.9.1 documentation</title>
   
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                1.9.0
+                1.9.1
               </div>
             
           
@@ -473,7 +473,7 @@
     <span class="n">Rraw</span><span class="p">[</span><span class="n">c2</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span><span class="o">/</span><span class="mf">2.0</span><span class="o">/</span><span class="n">rounding</span><span class="p">[</span><span class="n">c2</span><span class="p">]</span><span class="o">*</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">c2</span><span class="p">])</span> <span class="o">-</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">rounding</span><span class="p">[</span><span class="n">c2</span><span class="p">]</span><span class="o">/</span><span class="mf">2.0</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
     <span class="n">Rraw</span><span class="p">[</span><span class="n">c3</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
     
-    <span class="n">spd</span> <span class="o">=</span> <span class="n">min_</span> <span class="o">+</span> <span class="p">(</span><span class="n">max_v</span> <span class="o">-</span> <span class="n">min_v</span><span class="p">)</span><span class="o">*</span><span class="n">Rraw</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">rounding</span><span class="o">/</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">spd</span> <span class="o">=</span> <span class="n">min_v</span> <span class="o">+</span> <span class="p">(</span><span class="n">max_v</span> <span class="o">-</span> <span class="n">min_v</span><span class="p">)</span><span class="o">*</span><span class="n">Rraw</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">rounding</span><span class="o">/</span><span class="mi">4</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">with_wl</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
         <span class="n">spd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">wl</span><span class="p">,</span> <span class="n">spd</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">spd</span></div>
@@ -1723,7 +1723,7 @@
             <span class="n">spd_optim_pars</span><span class="p">[</span><span class="s1">&#39;LB&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="s1">&#39;UB&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">spd_model_pars</span><span class="p">:</span>
             <span class="n">spd_optim_pars</span><span class="p">[</span><span class="s1">&#39;UB&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-            
+
     <span class="c1"># Also store the following args in spd_constructor_pars (needed by spd_constructor):</span>
     <span class="n">spd_model_pars</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Yxy_target</span>
     <span class="n">spd_model_pars</span><span class="p">[</span><span class="s1">&#39;tar_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Yxy&#39;</span>
@@ -1798,7 +1798,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">opts</span> <span class="o">=</span> <span class="nb">locals</span><span class="p">()</span>
     <span class="n">spd_models_pars</span> <span class="o">=</span> <span class="n">opts</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;spd_model_pars&#39;</span><span class="p">)</span>
-    
+    <span class="n">wl</span> <span class="o">=</span> <span class="n">getwlr</span><span class="p">(</span><span class="n">wl</span><span class="p">)</span>
     
     <span class="c1"># Set number of component sources:</span>
     <span class="k">if</span> <span class="n">component_spds</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -1921,6 +1921,7 @@
 <span class="sd">            | dict with spectrum-model parameters</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">wl</span> <span class="o">=</span> <span class="n">getwlr</span><span class="p">(</span><span class="n">wl</span><span class="p">)</span>
     <span class="c1"># Initialize parameter dict:</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">component_data</span><span class="p">,</span><span class="nb">int</span><span class="p">):</span>
         <span class="c1"># input is Number of components</span>
@@ -2045,6 +2046,7 @@
 <span class="sd">            | dict with optimization parameters (x0, ub, lb)</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">wl</span> <span class="o">=</span> <span class="n">getwlr</span><span class="p">(</span><span class="n">wl</span><span class="p">)</span>
     <span class="n">spd_optim_pars</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">if</span> <span class="n">spd_model_pars</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">spd_model_pars</span> <span class="o">=</span> <span class="n">initialize_spd_model_pars</span><span class="p">(</span><span class="n">component_data</span><span class="p">,</span> <span class="n">N_components</span> <span class="o">=</span> <span class="n">N_components</span><span class="p">,</span>\
@@ -2427,19 +2429,46 @@
         <span class="k">return</span> <span class="n">spds</span><span class="p">,</span> <span class="n">M</span>  
     <span class="k">else</span><span class="p">:</span>  
         <span class="k">return</span> <span class="nb">eval</span><span class="p">(</span><span class="n">out</span><span class="p">)</span></div>
-
+    
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;3: spd_optimizer() with free peakwl and fwhm:&#39;</span><span class="p">)</span>
+    <span class="n">cieobs</span><span class="o">=</span><span class="s1">&#39;1931_2&#39;</span>
+    <span class="n">cspace_bwtf</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;cieobs&#39;</span><span class="p">:</span><span class="n">cieobs</span><span class="p">}</span>
+    <span class="n">target</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">4500</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.005</span><span class="p">]])</span> <span class="c1"># specify cct &amp; duv!</span>
+    <span class="n">obj_fcn</span> <span class="o">=</span> <span class="p">[</span><span class="n">cri</span><span class="o">.</span><span class="n">spd_to_iesrf</span><span class="p">,</span> <span class="n">cri</span><span class="o">.</span><span class="n">spd_to_iesrg</span><span class="p">]</span>
+    <span class="n">obj_tar_vals</span> <span class="o">=</span> <span class="p">[</span><span class="mi">85</span><span class="p">,</span><span class="mi">105</span><span class="p">]</span>
+    <span class="n">S</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">spd_optimizer</span><span class="p">(</span><span class="n">target</span> <span class="o">=</span> <span class="n">target</span><span class="p">,</span> \
+                          <span class="n">tar_type</span> <span class="o">=</span> <span class="s1">&#39;cct&#39;</span><span class="p">,</span>\
+                          <span class="n">cspace_bwtf</span> <span class="o">=</span> <span class="n">cspace_bwtf</span><span class="p">,</span>\
+                          <span class="n">optimizer_type</span> <span class="o">=</span> <span class="s1">&#39;2mixer&#39;</span><span class="p">,</span>\
+                          <span class="n">N_components</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+                          <span class="n">obj_fcn</span> <span class="o">=</span> <span class="n">obj_fcn</span><span class="p">,</span> \
+                          <span class="n">obj_tar_vals</span> <span class="o">=</span> <span class="n">obj_tar_vals</span><span class="p">,</span>\
+                          <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+    
+    <span class="c1"># Check output agrees with target:</span>
+    <span class="n">xyz</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">)</span>
+    <span class="n">cct</span> <span class="o">=</span> <span class="n">xyz_to_cct</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="s1">&#39;[cct,duv]&#39;</span><span class="p">)</span>
+    <span class="n">Rf</span><span class="p">,</span> <span class="n">Rg</span> <span class="o">=</span> <span class="p">[</span><span class="n">fcn</span><span class="p">(</span><span class="n">S</span><span class="p">)[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">fcn</span> <span class="ow">in</span> <span class="n">obj_fcn</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Results (optim,target):&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;cct(K): (</span><span class="si">{:1.1f}</span><span class="s2">,</span><span class="si">{:1.1f}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cct</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">target</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Duv: (</span><span class="si">{:1.3f}</span><span class="s2">,</span><span class="si">{:1.3f}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cct</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">target</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Rf: (</span><span class="si">{:1.2f}</span><span class="s2">,</span><span class="si">{:1.2f}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">Rf</span><span class="p">,</span> <span class="n">obj_tar_vals</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Rg: (</span><span class="si">{:1.2f}</span><span class="s2">, </span><span class="si">{:1.2f}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">Rg</span><span class="p">,</span> <span class="n">obj_tar_vals</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">();</span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">S</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">S</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="s1">&#39;b&#39;</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__x&#39;</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;3: spd_optimizer() with constraints on peakwl and fwhm:&#39;</span><span class="p">)</span>
-    <span class="n">target</span> <span class="o">=</span> <span class="mi">4000</span>
+    <span class="n">target</span> <span class="o">=</span> <span class="mi">4500</span>
     <span class="n">cieobs</span><span class="o">=</span><span class="s1">&#39;1931_2&#39;</span>
     <span class="n">obj_fcn</span> <span class="o">=</span> <span class="p">[</span><span class="n">cri</span><span class="o">.</span><span class="n">spd_to_iesrf</span><span class="p">,</span> <span class="n">cri</span><span class="o">.</span><span class="n">spd_to_iesrg</span><span class="p">]</span>
     <span class="n">obj_tar_vals</span> <span class="o">=</span> <span class="p">[</span><span class="mi">90</span><span class="p">,</span><span class="mi">110</span><span class="p">]</span>
-    <span class="n">n</span> <span class="o">=</span> <span class="mi">4</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="mi">5</span>
     <span class="n">S4</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">spd_optimizer</span><span class="p">(</span><span class="n">minimize_method</span><span class="o">=</span><span class="s1">&#39;Nelder-Mead&#39;</span><span class="p">,</span>
                           <span class="n">target</span> <span class="o">=</span> <span class="n">target</span><span class="p">,</span> \
                           <span class="n">tar_type</span> <span class="o">=</span> <span class="s1">&#39;cct&#39;</span><span class="p">,</span>\
                           <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span>\
-                          <span class="n">cspace_bwtf</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;cieobs&#39;</span> <span class="p">:</span> <span class="n">cieobs</span><span class="p">,</span> <span class="s1">&#39;mode&#39;</span> <span class="p">:</span> <span class="s1">&#39;search&#39;</span><span class="p">},</span>\
+                          <span class="n">cspace_bwtf</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;cieobs&#39;</span> <span class="p">:</span> <span class="n">cieobs</span><span class="p">},</span>\
                           <span class="n">optimizer_type</span> <span class="o">=</span> <span class="s1">&#39;3mixer&#39;</span><span class="p">,</span>\
                           <span class="n">N_components</span> <span class="o">=</span> <span class="n">n</span><span class="p">,</span>
                           <span class="n">obj_fcn</span> <span class="o">=</span> <span class="n">obj_fcn</span><span class="p">,</span> \
@@ -2458,7 +2487,7 @@
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Rf: (</span><span class="si">{:1.2f}</span><span class="s2">,</span><span class="si">{:1.2f}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">Rf</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">obj_tar_vals</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Rg: (</span><span class="si">{:1.2f}</span><span class="s2">, </span><span class="si">{:1.2f}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">Rg</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">obj_tar_vals</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
 
-
+    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
 <span class="c1">#------------------------------------------------------------------------------</span>
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__x&#39;</span><span class="p">:</span>
     
@@ -2581,7 +2610,7 @@
     <span class="n">N_components</span> <span class="o">=</span> <span class="mi">4</span> <span class="c1">#if not None, spd model parameters (peakwl, fwhm, ...) are optimized</span>
     <span class="n">component_spds</span> <span class="o">=</span> <span class="kc">None</span><span class="p">;</span> <span class="c1">#component_spds= {}; # if empty dict, then generate using initialize_spd_model_pars and overwrite with function args: peakwl and fwhm. N_components must match length of either peakwl or fwhm</span>
     <span class="n">allow_nongaussianbased_mono_spds</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="n">S3</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">spd_optimizer</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">tar_type</span> <span class="o">=</span> <span class="n">tar_type</span><span class="p">,</span> <span class="n">cspace_bwtf</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;cieobs&#39;</span> <span class="p">:</span> <span class="n">cieobs</span><span class="p">,</span> <span class="s1">&#39;mode&#39;</span> <span class="p">:</span> <span class="s1">&#39;search&#39;</span><span class="p">},</span>\
+    <span class="n">S3</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">spd_optimizer</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">tar_type</span> <span class="o">=</span> <span class="n">tar_type</span><span class="p">,</span> <span class="n">cspace_bwtf</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;cieobs&#39;</span> <span class="p">:</span> <span class="n">cieobs</span><span class="p">},</span>\
                           <span class="n">optimizer_type</span> <span class="o">=</span> <span class="s1">&#39;2mixer&#39;</span><span class="p">,</span> <span class="n">N_components</span> <span class="o">=</span> <span class="n">N_components</span><span class="p">,</span><span class="n">component_spds</span> <span class="o">=</span> <span class="n">component_spds</span><span class="p">,</span>\
                           <span class="n">allow_nongaussianbased_mono_spds</span> <span class="o">=</span> <span class="n">allow_nongaussianbased_mono_spds</span><span class="p">,</span>\
                           <span class="n">peakwl</span> <span class="o">=</span> <span class="n">peakwl</span><span class="p">,</span> <span class="n">fwhm</span> <span class="o">=</span> <span class="n">fwhm</span><span class="p">,</span> <span class="n">obj_fcn</span> <span class="o">=</span> <span class="n">obj_fcn</span><span class="p">,</span> <span class="n">obj_tar_vals</span> <span class="o">=</span> <span class="n">obj_tar_vals</span><span class="p">,</span>\
@@ -2612,7 +2641,7 @@
     <span class="n">S4</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">spd_optimizer</span><span class="p">(</span><span class="n">target</span> <span class="o">=</span> <span class="n">target</span><span class="p">,</span> \
                           <span class="n">tar_type</span> <span class="o">=</span> <span class="s1">&#39;cct&#39;</span><span class="p">,</span>\
                           <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span>\
-                          <span class="n">cspace_bwtf</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;cieobs&#39;</span> <span class="p">:</span> <span class="n">cieobs</span><span class="p">,</span> <span class="s1">&#39;mode&#39;</span> <span class="p">:</span> <span class="s1">&#39;search&#39;</span><span class="p">},</span>\
+                          <span class="n">cspace_bwtf</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;cieobs&#39;</span> <span class="p">:</span> <span class="n">cieobs</span><span class="p">},</span>\
                           <span class="n">optimizer_type</span> <span class="o">=</span> <span class="s1">&#39;3mixer&#39;</span><span class="p">,</span>\
                           <span class="n">N_components</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
                           <span class="n">obj_fcn</span> <span class="o">=</span> <span class="n">obj_fcn</span><span class="p">,</span> \

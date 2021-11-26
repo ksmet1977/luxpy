@@ -123,8 +123,8 @@ __all__ = ['_CCT_MAX','_CCT_MIN','_CCT_CSPACE','_CCT_CSPACE_KWARGS',
            'cct_to_mired','xyz_to_cct_mcamy1992', 'xyz_to_cct_hernandez1999',
            'xyz_to_cct_robertson1968','xyz_to_cct_ohno2014',
            'xyz_to_cct_li2016','xyz_to_cct_zhang2019',
-            'xyz_to_cct','cct_to_xyz', 'calculate_lut', 'generate_luts',
-            '_get_lut','_generate_lut','_generate_lut_ohno2014']
+           'xyz_to_cct','cct_to_xyz', 'calculate_lut', 'generate_luts',
+           '_get_lut', '_generate_tcs', '_generate_lut','_generate_lut_ohno2014']
 
 _AVOID_ZERO_DIV = 1e-300
 _AVOID_INF = 1/_AVOID_ZERO_DIV
@@ -450,9 +450,85 @@ def _process_lut_label(label = None, lut_int = None, lut_unit = None, lut_min_ma
             lut_min_max = label[2] if len(label) > 2 else []
         return lut_int, lut_unit, lut_min_max
             
-def _get_lut_characteristics(lut):
+def _get_lut_characteristics(lut, force_au = True):
     """ 
     Guesses the interval, unit and wavelength range from lut array.
+     (slow, so avoid use: set force_au to True !!)
+    """
+    if force_au:
+        return np.nan, 'au', [lut[:,0].min(),lut[:,0].max()]
+    
+    else:
+        
+        lut_units = np.array(['K','%','K-1','%-1'])
+        
+        T = lut[:,:1]
+        T1 = np.roll(T,1)
+        T01 = T[1:]
+        T11 = T1[1:]
+        
+        dT = (np.round(np.abs(T - T1),8)[1:])
+        intsT = np.unique(dT)
+        minmaxT = [[T01[(dT==intsT[i])].min(),T01[(dT==intsT[i])].max()] for i in range(len(intsT))]
+        minmaxT[0][0] = T[0,0]
+        
+        dTr = np.round((T01-T11)/T11,8)*100
+        intsTr = np.unique(dTr)
+        minmaxTr = [[T01[(dTr==intsTr[i])].min(),T01[(dTr==intsTr[i])].max()] for i in range(len(intsTr))]
+        minmaxTr[0][0] = T[0,0]
+        
+        dRD = (np.round(np.abs(1e6/T01 - 1e6/T11),8))
+        intsRD = np.unique(dRD)
+        minmaxRD = [[1e6/T01[(dRD==intsRD[i])].max(),1e6/T01[(dRD==intsRD[i])].min()] for i in range(len(intsRD))]
+        minmaxRD[-1][1] = 1e6/T[0,0]
+            
+        dRDr = np.round((T01-T11)/T11,8)*100
+        intsRDr = np.unique(dRDr)
+        minmaxRDr = [[1e6/T01[(dRDr==intsRDr[i])].max(),1e6/T01[(dRDr==intsRDr[i])].min()] for i in range(len(intsRDr))]
+        minmaxRDr[-1][1] = 1e6/T[0,0]
+        
+        # find minimum lengths & units for which the min max order is ok: 
+        len_ints = np.array([intsT.shape[0],intsTr.shape[0],intsRD.shape[0],intsRDr.shape[0]])
+        if len_ints.min()>1: 
+            minmax_order_ok = np.array([minmaxT[0][1]<=minmaxT[1][0],
+                                    minmaxTr[0][1]<=minmaxTr[1][0],
+                                    minmaxRD[0][1]<=minmaxRD[1][0],
+                                    minmaxRDr[0][1]<=minmaxRDr[1][0]])
+        else:
+            minmax_order_ok = np.ones((4,),dtype = bool)
+        
+        # determine unit:
+        len_order_ok = ((len_ints == len_ints.min()) & minmax_order_ok)
+        lut_unit = lut_units[len_order_ok]
+        if len(lut_unit) == 0: lut_unit = 'au'
+        # for code testing:
+        # return {'K':(dT,intsT,minmaxT),
+        #         '%':(dTr,intsTr,minmaxTr),
+        #        'K-1':(dRD,intsRD,minmaxRD),
+        #        '%-1':(dRDr,intsRDr,minmaxRDr),
+        #        'len_ints':len_ints,
+        #        'minmax_order_ok':minmax_order_ok,
+        #        'len_order_ok' : len_order_ok,
+        #        'lut_unit':lut_unit}
+        
+        if lut_unit[0] == 'K':
+            dT, lut_unit, Tminmax = intsT,lut_unit[0],minmaxT
+        elif lut_unit[0] == '%':
+            dT, lut_unit, Tminmax = intsTr,lut_unit[0],minmaxTr 
+        elif lut_unit[0] == 'K-1':
+            dT, lut_unit, Tminmax = intsRD,lut_unit[0],minmaxRD
+        elif lut_unit[0] == '%-1':
+            dT, lut_unit, Tminmax = intsRDr,lut_unit[0],minmaxRDr
+        else:
+            dT, lut_unit, Tminmax = np.nan, 'au', [[T.min(),T.max()]]
+        if not np.isnan(dT).any(): dT = dT[0] if (dT.shape[0] == 1) else tuple(dT)
+        Tminmax = Tminmax[0] if (len(Tminmax) == 1) else tuple(Tminmax)
+        return dT, lut_unit, Tminmax
+
+def _get_lut_characteristics_1(lut):
+    """ 
+    Guesses the interval, unit and wavelength range from lut array.
+    (only for luts constructed with 1 lut_int)
     """
     T = lut[:,0]
     Tminmax = [T.min(),T.max()]
@@ -472,20 +548,129 @@ def _get_lut_characteristics(lut):
         dT, lut_unit = 100*dRDr[0], '%-1'
     else:
         dT, lut_unit = np.nan, 'au'
-    return np.round(dT,6), lut_unit, Tminmax, 
-        
+    return np.round(dT,6), lut_unit, Tminmax        
 
 def _add_lut_endpoints(x):
     """ Replicates endpoints of lut to avoid out-of-bounds issues """
     return np.vstack((x[:1],x,x[-1:]))
-               
+ 
+def _generate_tcs(lut_int = [1], lut_unit = ['%'], lut_min_max = [[1000,5e4]], 
+                  cct_max = _CCT_MAX, cct_min = _CCT_MIN, seamless = True,
+                  lut_unit_fallback = 'K-1', 
+                  lut_N_fallback = _CCT_LUT_RESOLUTION_REDUCTION_FACTOR):
+    """
+    Generate an ndarray of CCTs. The ndarray is a vstack of ccts with a specific
+    interval in the specified units over the specified tuple min-max range. 
+    (not larger than cct_max or smaller than cct_min, whatever the input in lut_min_max!).
+    (seamless fits multiple lut specifications together; this will impact the 
+    estimated min,max ranges of each)
+    
+    Planckians are computed for wavelength interval wl and cmf set in cieobs and in the color space
+    specified in cspace (additional arguments for these chromaticity functions can be supplied using
+    the cspace_kwargs).
+    
+    Unit options are:
+    - '%': equal relative Tc spacing (in %, cfr. (Ti+1 - Ti-1)/Ti-1).
+    - 'K' equal absolute Tc spacing (in K, cfr. (Ti+1 - Ti-1).
+    - '%-1': equal relative reciprocal Tc (MK-1 = mired).
+    - 'K-1': equal absolute reciprocal Tc (MK-1 = mired).
+    - 'au': arbitrary interval (generate by supplying an ndarray of Tc in lut_min_max).
+    
+    Note: if lut_unit == 'au' & lut_min_max is not an ndarray (but a list of mins, maxs),
+    Tcs are calculated using the units in lut_units_fallback and the min-max range is split
+    in lut_N_fallback divisions.
+    """
 
-def _generate_lut(lut_int = 1, lut_unit = '%', lut_min_max = [1000,5e4], cct_max = _CCT_MAX, cct_min = _CCT_MIN,
+    # Get ccts for lut generation:
+    if not isinstance(lut_min_max,np.ndarray):
+                
+        if (lut_unit == 'au'): 
+            lut_unit = lut_unit_fallback
+            if np.isnan(lut_int):
+                
+                T0 = lut_min_max[0]
+                Tn = lut_min_max[1] 
+                n = lut_N_fallback
+                
+                if '-1' in lut_unit:
+                    T0, Tn = 1e6/Tn[::-1], 1e6/T0[::-1] # generate scale in mireds (input was always in Tc)
+                     
+                    
+                if 'K' in lut_unit:
+                    dT = ((Tn - T0)/n)
+                    fT = lambda m,M,d: (m[:,None]+(np.arange(0,(((M-m)//d)+1*(((M-m)%d)!=0)+1).max(),1)*d[:,None])).T
+                    Ts = fT(T0, Tn, dT)
+                elif '%' in lut_unit:
+                    p = (Tn/T0)**(1/n)
+                    Ts = T0*p**np.arange(0, n + 1.0,1)[:,None]
+                    
+                if '-1' in lut_unit: # scale back to Tc scale
+                    Ts[Ts==0] = 1e6/cct_max
+                    Ts = 1e6/Ts[::-1] # scale was in mireds 
+
+        else:
+            
+            if (len(lut_min_max) ==  2) & (not isinstance(lut_min_max[0],(tuple,list))): lut_min_max = [lut_min_max] # make list
+            if not isinstance(lut_int, (list,tuple)): lut_int = [lut_int] # make list
+
+            if isinstance(lut_unit, str): lut_unit = [lut_unit]
+            if len(lut_unit) == 1: lut_unit = lut_unit*len(lut_min_max) 
+            if len(lut_unit) != len(lut_min_max):
+                raise Exception('len(lut_unit) does not match len(lut_min_max)')
+                
+            
+            if len(lut_int) == 1: lut_int = lut_int*len(lut_min_max) 
+            if len(lut_int) != len(lut_min_max):
+                raise Exception('len(lut_int) does not match len(lut_min_max)')
+            
+            
+            Ts = None
+            for i,(lut_int_i,lut_min_max_i) in enumerate(zip(lut_int,lut_min_max)):
+                lut_min_max_i = np.array(lut_min_max_i)
+                T0 = lut_min_max_i[0] 
+                Tn = lut_min_max_i[1]
+                dT = lut_int_i
+                if seamless & (i>0): 
+                    if ('-1' in lut_unit[i]) :
+                        T0 = 1e6/Ts[0,0]
+                    else:
+                        T0 = Ts[-1,0]
+                 
+                if '%' in lut_unit[i]:
+                    # p = int((np.log(Tn/T0) / np.log(1 + dT/100)) + 1.0) 
+                    p = (((np.log(Tn/T0) / np.log(1 + dT/100))).max())
+                    # Ts_i = T0*(1 + dT/100)**np.arange(-1,p + 1,1)[:,None]
+                    Ts_i = T0*(1 + dT/100)**np.arange(0,p + 1.0,1)[:,None]
+                elif 'K' in lut_unit[i]:
+                    fT = lambda m,M,d: m+(np.arange(0,(((M-m)//d)+1*(((M-m)%d)!=0)+1).max(),1)*d)[:,None]
+                    # fT = lambda m,M,d: np.linspace(m,m+int((M-m)/d)*d-(((M-m)%d)==0)*d+d,int((M-m)/d)+2)
+                    Ts_i = fT(T0, Tn, dT)
+                    # Ts = np.arange(lut_min_max[0],lut_min_max[1]+lut_int,lut_int)
+                if '-1' in lut_unit[i]:
+                    Ts_i[Ts_i==0] = 1e6/cct_max
+                    Ts_i = 1e6/Ts_i[::-1] # scale was in mireds 
+    
+                if (i == 0):
+                    Ts = Ts_i  
+                else:
+                    if '-1' in lut_unit[i]: 
+                        Ts = np.vstack((Ts_i[Ts_i[:,0]<Ts[0,0],:],Ts))
+                    else:
+                        Ts = np.vstack((Ts,Ts_i[Ts_i[:,0]>Ts[-1,0],:]))
+
+    else:
+        Ts = lut_min_max # actually stores ccts already! [Nx1] with N>2 !
+
+    Ts[(Ts<cct_min)] = cct_min
+    Ts[(Ts>cct_max)] = cct_max # limit to a maximum cct to avoid overflow/error and/or increase speed.    
+    return Ts              
+
+def _generate_lut(lut_int = [1], lut_unit = ['%'], lut_min_max = [(1000,5e4)], cct_max = _CCT_MAX, cct_min = _CCT_MIN,
                   wl = _WL3, cieobs = _CIEOBS, lut_vars = ['T','uv','uvp','uvpp','iso-T-slope'],
                   cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS,
                   **kwargs):
     """
-    Generate a lut with a specific interval in the specified units over the specified min-max range 
+    Generate a lut with a specific interval in the specified units over the specified tuple min-max range 
     (not larger than cct_max or smaller than cct_min, whatever the input in lut_min_max!).
     
     Planckians are computed for wavelength interval wl and cmf set in cieobs and in the color space
@@ -506,32 +691,12 @@ def _generate_lut(lut_int = 1, lut_unit = '%', lut_min_max = [1000,5e4], cct_max
     - u'v': chromaticity coordinates of 1st derivative of the planckians.
     - u",v": chromaticity coordinates of 2nd derivative of the planckians.
     - slope of isotemperature lines (calculated as in Robertson, 1968).
-    """    
-    # Get ccts for lut generation:
-    if len(lut_min_max) == 2: 
-        lut_min_max = np.array(lut_min_max)
-        T0 = lut_min_max[0]
-        Tn = lut_min_max[1]
-        if '%' in lut_unit:
-            # p = int((np.log(Tn/T0) / np.log(1 + lut_int/100)) + 1.0) 
-            p = (((np.log(Tn/T0) / np.log(1 + lut_int/100)) + 1.0).max())
-            Ts = T0*(1 + lut_int/100)**np.arange(-1,p + 1,1)[:,None]
-        elif 'K' in lut_unit:
-            fT = lambda m,M,d: m+(np.arange(0,(((M-m)//d)+1*(((M-m)%d)!=0)+1).max(),1)*d)[:,None]
-            
-            
-            # fT = lambda m,M,d: np.linspace(m,m+int((M-m)/d)*d-(((M-m)%d)==0)*d+d,int((M-m)/d)+2)
-            Ts = fT(T0, Tn, lut_int)
-            # Ts = np.arange(lut_min_max[0],lut_min_max[1]+lut_int,lut_int)
-        if '-1' in lut_unit:
-            Ts[Ts==0] = 1e6/cct_max
-            Ts = 1e6/Ts[::-1] # scale was in mireds        
-    else:
-        Ts = lut_min_max # actually stores ccts already! [Nx1] with N>2 !
     
-    Ts[(Ts<cct_min)] = cct_min
-    Ts[(Ts>cct_max)] = cct_max # limit to a maximum cct to avoid overflow/error and/or increase speed.    
-
+    Note that a vstack of CCTs can be generate by supplying lists for lut_int, lut_unit and lut_min_max
+    """    
+    Ts = _generate_tcs(lut_int = lut_int, lut_unit = lut_unit, lut_min_max = lut_min_max, 
+                       cct_max = cct_max, cct_min = cct_min)
+        
     # reshape for input in calculate_luts:
     n_sources = Ts.shape[-1]
     
@@ -548,6 +713,23 @@ def _generate_lut(lut_int = 1, lut_unit = '%', lut_min_max = [1000,5e4], cct_max
         lut = np.reshape(lut,(-1,lut.shape[-1]*n_sources))
                
     return list([lut, {}])
+
+
+def _convert_lut_type_to_tuple_key(lut_type):
+    tmp = [None,None,None] # make tuple to list so we can change it (might need to add lut_min_max)
+    if isinstance(lut_type[-1][0],list): 
+        if len(lut_type[-1]) > 1: 
+            tmp[-1] = tuple(tuple(lut_type[-1][i]) for i in range(len(lut_type[-1]))) # convert all sublists to tuples
+        else:
+            tmp[-1] = tuple(lut_type[-1][0])
+    else: 
+        tmp[-1] = tuple(lut_type[-1]) if len(lut_type[-1]) > 1 else tuple(lut_type[-1][0])
+    for i in range(2): 
+        if isinstance(lut_type[i],(int,float,str)): 
+            tmp[i] = lut_type[i] #(lut_type[i],) # force tuple
+        else: 
+            tmp[i] = tuple(lut_type[i]) # force tuple
+    return tuple(tmp)
 
   
 def generate_luts(lut_file = None, load = False, lut_path = _CCT_LUT_PATH, 
@@ -647,7 +829,10 @@ def generate_luts(lut_file = None, load = False, lut_path = _CCT_LUT_PATH,
                 for type_k in types:
                     tmp = list(type_k)
                     if len(tmp[-1]) == 0: tmp[-1] = lut_min_max
-                    tmp[-1] = tuple(tmp[-1])
+                    tmp = _convert_lut_type_to_tuple_key(tmp)
+                    # if isinstance(tmp[-1][0],list) & (not isinstance(tmp[-1],tuple)): tmp[-1] = tuple(tuple(tmp[-1][i]) for i in range(len(tmp[-1]))) # convert all sublists to tuples
+                    # if isinstance(tmp[-1][0],list): tmp[-1] = tuple(tmp[-1])
+                    # if isinstance(tmp[-1][0],list) & (not isinstance(tmp[-1],tuple)): tmp[-1] = tuple(tuple(tmp[-1][i]) for i in range(len(tmp[-1])))
                     type_k = copy.deepcopy(tmp)
                     # if ('%' in type_k): tmp[0] *= 100
                     if verbosity > 0:
@@ -675,6 +860,7 @@ def _get_lut(lut, luts_dict = None, cieobs = None, cspace_str = None,
              default_lut_type = None, lut_vars = ['T','uv','uvp','uvpp','iso-T-slope'],
              ignore_unequal_wl = False, lut_generator_fcn = _generate_lut,
              lut_generator_kwargs = {},
+             # cspace = _CCT_CSPACE, cct_cspace_kwargs = _CCT_CSPACE_KWARGS, 
              **kwargs):
     """ 
     Helper function to make coding specific xyz_to_cct_MODE functions
@@ -813,7 +999,7 @@ def _get_Duv_for_T(u,v, T, wl, cieobs, cspace_dict, uvwbar = None, dl = None):
     # Get duv: 
     if (uvwbar is not None) & (dl is not None):
         _,UVWBB,_,_ = _get_tristim_of_BB_BBp_BBpp(T, uvwbar, wl, dl, out='BB')
-        uvBB = xyz_to_Yxy(UVWBB)
+        uvBB = xyz_to_Yxy(UVWBB)[...,1:]
     else:
         BB = cri_ref(T, ref_type = ['BB'], wl3 = wl)
         xyzBB = spd_to_xyz(BB, cieobs = cieobs, relative = True)
@@ -1212,7 +1398,7 @@ def _get_newton_raphson_estimated_Tc(u, v, T0, wl = _WL3, atol = 0.1, rtol = 1e-
 # Robertson 1968:
 #------------------------------------------------------------------------------
 _CCT_LUT['robertson1968'] = {}
-_CCT_LUT['robertson1968']['lut_type_def'] = (25.0, 'K-1', (0.0, 625.0)) # default LUT 
+_CCT_LUT['robertson1968']['lut_type_def'] = ((10,25),'K-1',((10,100),(100,625))) # default LUT 
 _CCT_LUT['robertson1968']['lut_vars'] = ['T','uv','iso-T-slope']
 _CCT_LUT['robertson1968']['_generate_lut'] = _generate_lut 
 
@@ -1373,11 +1559,11 @@ def xyz_to_cct_robertson1968(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = 
     
     # Prepare some parameters for forced tolerance:
     if force_tolerance: 
-        if (tol_method == 'cascading-lut') | (tol_method == 'cl'): 
-            lut_int, lut_unit, lut_min_max = _get_lut_characteristics(lut)
-        elif (tol_method == 'newton-raphson') | (tol_method == 'nr'):
+        if (tol_method == 'newton-raphson') | (tol_method == 'nr'):
             max_iter_nr = max_iter 
             max_iter = 1 # no need to run multiple times, all estimation done by NR
+        elif (tol_method == 'cascading-lut') | (tol_method == 'cl'): 
+            lut_int, lut_unit, _ = _get_lut_characteristics(lut)
         else:
             raise Exception('Tolerance method = {:s} not implemented.'.format(tol_method))
     
@@ -1440,15 +1626,20 @@ def xyz_to_cct_robertson1968(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = 
             # Estimate Tc (Robertson, 1968): 
             Tx = ((((1/TBB_0)+(di_0/((di_0 - di_p1) + _AVOID_ZERO_DIV))*((1/TBB_p1) - (1/TBB_0)))**(-1))).copy()
             
+            Tx_0 = Tx
             if force_tolerance == False:
                 break 
             else:
                 
-                if (tol_method == 'cascading-lut') | (tol_method == 'cl'):            
+                if (tol_method == 'cascading-lut') | (tol_method == 'cl'):
+                   
+                    if out_of_lut.all(): # cl cannot recover from this!
+                        break 
+                   
                     Ts_m1p1 =  np.hstack((TBB_m1,TBB_p1)) 
                     Ts_min, Ts_max = Ts_m1p1.min(axis=-1),Ts_m1p1.max(axis=-1)
                     dTs = np.abs(Ts_max - Ts_min)
-
+                    
                     if (dTs<= atol).all() | (np.abs(dTs/Tx) <= rtol).all():
                         Tx =  ((Ts_min + Ts_max)/2)[:,None] 
                         break 
@@ -1468,12 +1659,18 @@ def xyz_to_cct_robertson1968(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = 
                 elif (tol_method == 'newton-raphson') | (tol_method == 'nr'):
                     Tx, Duvx = _get_newton_raphson_estimated_Tc(u, v, Tx, wl = wl, uvwbar = uvwbar,
                                                                 atol = atol, rtol = rtol, max_iter = max_iter_nr)           
-
+                    break # Tx already ok from newton-raphson
+                    
             i+=1 # stop cascade loop
             
-            
+        if force_tolerance:
+            if (tol_method == 'cascading-lut') | (tol_method == 'cl'):
+                Tx[out_of_lut] = Tx_0[out_of_lut] # restore originals as cl_lut might have messed up these Tx   
+        
         if Duvx is None:
+
             Duvx = _get_Duv_for_T(u,v, Tx, wl, cieobs, cspace_dict, uvwbar = uvwbar, dl = dl)
+        
         Tx = Tx*(-1)**out_of_lut
         # Add freshly calculated Tx, Duvx to storage array:
         if (ii < (N_ii-1)): 
@@ -1703,7 +1900,7 @@ def xyz_to_cct_zhang2019(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = Fals
     max_iter_i = max_iter
     if force_tolerance: 
         if (tol_method == 'cascading-lut') | (tol_method == 'cl'): 
-            lut_int, lut_unit, lut_min_max = _get_lut_characteristics(lut)
+            lut_int, lut_unit, _ = _get_lut_characteristics(lut)
         elif (tol_method == 'newton-raphson') | (tol_method == 'nr'):
             max_iter_nr = max_iter
             max_iter_i = 1 # no need to run multiple times, all estimation done by NR (no need for cascading loop)
@@ -1730,7 +1927,7 @@ def xyz_to_cct_zhang2019(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = Fals
         i = 0
         lut_i = lut # cascading lut will be updated later in while loop
         Duvx = None
-        while True & (i < max_iter_i):
+        while True & (i < max_iter_i): # tolerance compliance loop (only runs possible >1 if force_tolerance==True)
                 
             # needed to get correct columns from lut_i:
             N = lut_i.shape[-1]//lut_n_cols
@@ -1778,7 +1975,7 @@ def xyz_to_cct_zhang2019(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = Fals
             # RTx = ((RTa+RTb)/2)
             # _plot_triangular_solution(u,v,uBB,vBB,TBB,pn)
             j = 0
-            while True & (j < max_iter):
+            while True & (j < max_iter): # loop part of zhang optimization process
                 
                 # calculate BBa BBb:
                 # BBab = cri_ref(np.vstack([cct_to_mired(RTa), cct_to_mired(RTx), cct_to_mired(RTb)]), ref_type = ['BB'], wl3 = wl)
@@ -1789,12 +1986,14 @@ def xyz_to_cct_zhang2019(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = Fals
                 # xyzBBab = spd_to_xyz(BBab, cieobs = cieobs, relative = True)
             
                 # get cspace coordinates of BB and input xyz:
-                # uvBBab = cspace_dict['fwtf'](xyzBBab)[...,1:]
-                uvBBab = xyz_to_Yxy(UVWBBab)
+                # uvBBab_ = cspace_dict['fwtf'](XYZBBab)[...,1:]
+                uvBBab = xyz_to_Yxy(UVWBBab)[...,1:]
+
                 # N = uvBBab.shape[0]//3 
                 # uBBa, vBBa = uvBBab[:N,0:1], uvBBab[:N,1:2]
                 # uBBx, vBBx = uvBBab[N:2*N,0:1], uvBBab[N:2*N,1:2]
                 # uBBb, vBBb = uvBBab[2*N:,0:1], uvBBab[2*N:,1:2]
+               
                 N = uvBBab.shape[0]//2 
                 uBBa, vBBa = uvBBab[:N,0:1], uvBBab[:N,1:2]
                 uBBb, vBBb = uvBBab[N:,0:1], uvBBab[N:,1:2]
@@ -1839,6 +2038,10 @@ def xyz_to_cct_zhang2019(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = Fals
                 # RTa[out_of_lut] = 1e6/((1e6/RTa[out_of_lut]) - 100)
                 # RTb[out_of_lut] = 1e6/((1e6/RTb[out_of_lut]) + 100)
                 if (tol_method == 'cascading-lut') | (tol_method == 'cl'):
+                    
+                    if out_of_lut.all(): # cl cannot recover from this!
+                        break
+                    
                     Ts_m1p1 =  1e6/np.hstack((RTa,RTb)) 
                     Ts_min, Ts_max = Ts_m1p1.min(axis=-1),Ts_m1p1.max(axis=-1)
                     
@@ -1861,10 +2064,11 @@ def xyz_to_cct_zhang2019(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = Fals
                         
             
                 elif (tol_method == 'newton-raphson') | (tol_method == 'nr'):
+
                     Tx, Duvx = _get_newton_raphson_estimated_Tc(u, v, Tx, wl = wl, uvwbar = uvwbar,
                                                                 atol = atol, rtol = rtol, max_iter = max_iter_nr)
                            
-            
+                    break # Tx already ok from newton-raphson
             i+=1 # stop cascade loop
             
             
@@ -2266,7 +2470,7 @@ def xyz_to_cct_ohno2014(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = False
     # Prepare some parameters for forced tolerance:
     if force_tolerance: 
         if (tol_method == 'cascading-lut') | (tol_method =='cl'): 
-            lut_int, lut_unit, lut_min_max  = _get_lut_characteristics(lut)
+            lut_int, lut_unit, _  = _get_lut_characteristics(lut)
         elif (tol_method == 'newton-raphson') | (tol_method == 'nr'):
             xyzbar, wl, dl = _get_xyzbar_wl_dl(cieobs, wl)
             uvwbar = _convert_xyzbar_to_uvwbar(xyzbar, cspace_dict)
@@ -2368,13 +2572,17 @@ def xyz_to_cct_ohno2014(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = False
             cnd = np.abs(Duvx) >= duv_parabolic_threshold
             Tx[cnd], Duvx[cnd]= Txp[cnd], Duvxp[cnd]
             
-            
+            if i == 0: Tx_0 = Tx.copy()
+
             if force_tolerance == False:
                 break 
             else:
                 
                 if (tol_method == 'cascading-lut') | (tol_method == 'cl'):
-                                
+                    
+                    if out_of_lut.all(): # cl cannot recover from this!
+                        break
+                    
                     Ts_m1p1 =  np.hstack((TBB_m1,TBB_p1)) 
                     Ts_min, Ts_max = Ts_m1p1.min(axis=-1),Ts_m1p1.max(axis=-1)
                     
@@ -2396,9 +2604,14 @@ def xyz_to_cct_ohno2014(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = False
                 elif (tol_method == 'newton-raphson') | (tol_method == 'nr'):
                     Tx, Duvx = _get_newton_raphson_estimated_Tc(u, v, Tx, wl = wl, uvwbar = uvwbar,
                                                                 atol = atol, rtol = rtol, max_iter = max_iter_nr)
+                    break # Tx already ok from newton-raphson
                     
             i+=1 # stop cascade loop
-        
+            
+        if force_tolerance:
+            if (tol_method == 'cascading-lut') | (tol_method == 'cl'):
+                Tx[out_of_lut] = Tx_0[out_of_lut] # restore originals as cl_lut might have messed up these Tx   
+
         Tx = Tx*(-1)**out_of_lut
         
         # Add freshly calculated Tx, Duvx to storage array:
@@ -2980,14 +3193,14 @@ if __name__ == '__main__':
     
     xyz = spd_to_xyz(BB, cieobs = cieobs)
     
-    cct = 6500
+    cct = 1000
     duvs = np.array([[0.05,0.025,0,-0.025,-0.05]]).T
     duvs = np.array([[-0.03,0.03]]).T
     ccts = np.array([[cct]*duvs.shape[0]]).T
     cctsduvs_t = np.hstack((ccts,duvs))
     
     cct_offset = None
-    plt.figure()
+    # plt.figure()
     xyz = cct_to_xyz(ccts = ccts, duv = duvs, cieobs = cieobs, wl = _WL3, cct_offset = cct_offset)
     
     # fig,ax=plt.subplots(1,1)    
@@ -3006,7 +3219,7 @@ if __name__ == '__main__':
 
     # xyz = np.array([[100,100,100]])
     cctsduvs = xyz_to_cct(xyz, rtol = 1e-6,cieobs = cieobs, out = '[cct,duv]', wl = _WL3, 
-                          mode='ohno2014',force_tolerance=True,tol_method='cl',lut=[(25,'K-1',(15,625)),{'f_corr':0.4}])
+                          mode='robertson1968',force_tolerance=True,tol_method='cl',lut=[(25,'K-1',(15,625)),{'f_corr':0.4}])
     # cctsduvs2 = xyz_to_cct_li2016(xyz, rtol=1e-6, cieobs = cieobs, out = '[cct,duv]',force_tolerance=True)
     cctsduvs_ = cctsduvs.copy();cctsduvs_[:,0] = np.abs(cctsduvs_[:,0]) # outof gamut ccts are encoded as negative!!
     xyz_ = cct_to_xyz(cctsduvs_, cieobs = cieobs, wl = _WL3,cct_offset = cct_offset)

@@ -1,5 +1,5 @@
 {% set name = "luxpy" %}
-{% set version = "1.9.0" %}
+{% set version = "1.9.1" %}
 
 package:
   name: "{{ name|lower }}"
@@ -7,7 +7,7 @@ package:
 
 source:
   url: "https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz"
-  sha256: ae243713987986a1d49cce9c1eca1ea7163ac795c96d7d9ef0e450d73a128237
+  sha256: f966ce61bd7d700b13dab1498f443650b32ab9e024f4b561dfa23dd5fbf39557
 
 build:
   number: 0
