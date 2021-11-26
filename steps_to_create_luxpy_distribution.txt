@@ -12,4 +12,4 @@ twine upload dist/luxpy-1.9.*
 cd conda
 conda skeleton pypi luxpy
 conda-build luxpy
-anaconda upload C:\Miniconda3\envs\py37\conda-bld\win-64\luxpy-1.9.2-py37h39e3cac_0.tar.bz2
+anaconda upload C:\Miniconda3\envs\py37\conda-bld\win-64\luxpy-1.9.3-py37h39e3cac_0.tar.bz2

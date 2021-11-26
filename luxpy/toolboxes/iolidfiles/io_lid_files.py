@@ -971,8 +971,14 @@ def save_texture(filename, tex, bits = 16, transpose = True):
         imageio.plugins.freeimage.download() 
         imageio.imsave(filename, im)
     except:
-        print("imageio.plugins.freeimage.download() failed. Try installing it manually. Downgrade imageio or wait until the developers of imageio fix this.")
-        print('Nothin was saved. Try saving it manually using openexr or other.')
+        print("!!!      imageio.plugins.freeimage.download() failed. !!!")
+        print("!!  No image was saved. Returning 16-bit numpy ndarray !! ")
+        print("                                                          ")
+        print("  Try installing the freeimage plugin manually.") 
+        print("  or, try downgrading imageio")
+        print("  or, wait until the developers of imageio fix this.")
+        print("  or, try saving it using PIL or opencv or openexc or other.")
+        
     return im
   
 #------------------------------------------------------------------------------
