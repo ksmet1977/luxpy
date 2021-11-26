@@ -23,6 +23,10 @@ cct: Module with functions related to correlated color temperature calculations
  :_CCT_MAX: (= 1e11 K), max. value that does not cause overflow problems. 
  
  :_CCT_MIN: (= 550 K), min. value that does not cause underflow problems.
+ 
+ :_CCT_FALLBACK_N: Number of intervals to divide an ndarray with CCTs.
+ 
+ :_CCT_FALLBACK_UNIT: Type of scale (units) an ndarray will be subdivided.
 
  :_CCT_LUT_PATH: Folder with Look-Up-Tables (LUT) for correlated color 
                  temperature calculations. 
@@ -42,6 +46,8 @@ cct: Module with functions related to correlated color temperature calculations
  :_CCT_CSPACE: default chromaticity space to calculate CCT and Duv in.
  
  :_CCT_CSPACE_KWARGS: nested dict with cspace parameters for forward and backward modes. 
+ 
+ :get_tcs4(): Get an ndarray of Tc's obtained from a list or tuple of tc4 4-vectors.
  
  :calculate_lut(): Function that calculates the LUT for the input ccts.
  
@@ -120,45 +126,45 @@ from luxpy.color.ctf.colortf import colortf
 
 __all__ = ['_CCT_MAX','_CCT_MIN','_CCT_CSPACE','_CCT_CSPACE_KWARGS',
            '_CCT_LUT_PATH','_CCT_LUT', '_CCT_LUT_RESOLUTION_REDUCTION_FACTOR',
+           '_CCT_FALLBACK_N', '_CCT_FALLBACK_UNIT',
            'cct_to_mired','xyz_to_cct_mcamy1992', 'xyz_to_cct_hernandez1999',
            'xyz_to_cct_robertson1968','xyz_to_cct_ohno2014',
            'xyz_to_cct_li2016','xyz_to_cct_zhang2019',
-           'xyz_to_cct','cct_to_xyz', 'calculate_lut', 'generate_luts',
+           'xyz_to_cct','cct_to_xyz', 'calculate_lut', 'generate_luts', 'get_tcs4',
            '_get_lut', '_generate_tcs', '_generate_lut','_generate_lut_ohno2014']
 
+
+
+#==============================================================================
+# define global variables:
+#==============================================================================
 _AVOID_ZERO_DIV = 1e-300
 _AVOID_INF = 1/_AVOID_ZERO_DIV
+
+_CCT_MAX = 1e11 # don't set to higher value to avoid overflow and errors
+_CCT_MIN = 550
+
+_CCT_CSPACE = 'Yuv60'
+_CCT_CSPACE_KWARGS = {'fwtf':{}, 'bwtf':{}}
+
+_CCT_FALLBACK_N = 50
+_CCT_FALLBACK_UNIT = 'K-1'
+
+_CCT_LUT_PATH = _PKG_PATH + _SEP + 'data'+ _SEP + 'cctluts' + _SEP #folder with cct lut data
+_CCT_LUT_CALC = False
+_CCT_LUT = {}
+_CCT_LUT_RESOLUTION_REDUCTION_FACTOR = 4 # for when cascading luts are used (d(Tm1,Tp1)-->divide in _CCT_LUT_RESOLUTION_REDUCTION_FACTOR segments)
+
+verbosity_lut_generation = 1
 
 #==============================================================================
 # define general helper functions:
 #==============================================================================
-_CCT_MAX = 1e11 # don't set to higher value to avoid overflow and errors
-_CCT_MIN = 550
-_CCT_CSPACE = 'Yuv60'
-_CCT_CSPACE_KWARGS = {'fwtf':{}, 'bwtf':{}}
-_CCT_LUT_PATH = _PKG_PATH + _SEP + 'data'+ _SEP + 'cctluts' + _SEP #folder with cct lut data
-_CCT_LUT_CALC = False
-_CCT_LUT = {}
-# _CCT_LUT_COL_NUM = 8 # T, (u, v), (u', v'; 1st deriv.), (u", v"; 2nd deriv.), slope of iso-T-lines
-_CCT_LUT_RESOLUTION_REDUCTION_FACTOR = 4 # for when cascading luts are used (d(Tm1,Tp1)-->divide in _CCT_LUT_RESOLUTION_REDUCTION_FACTOR segments)
-verbosity_lut_generation = 1
 
 #------------------------------------------------------------------------------
-def cct_to_mired(data):
-    """
-    Convert cct to Mired scale (or back). 
-
-    Args:
-        :data: 
-            | ndarray with cct or Mired values.
-
-    Returns:
-        :returns: 
-            | ndarray ((10**6) / data)
-    """
-    return np.divide(10**6,data)
-
+# cspace related functions:
 #------------------------------------------------------------------------------
+
 def _process_cspace(cspace, cspace_kwargs = None, cust_str = 'cspace'):
     """ 
     Process cspace and cspace_kwargs input. 
@@ -249,7 +255,8 @@ def _convert_xyzbar_to_uvwbar(xyzbar, cspace_dict):
     return uvwbar
 
 
-
+#------------------------------------------------------------------------------
+# Planckian spectrum and colorimetric calculations:
 #------------------------------------------------------------------------------
 def _get_BB_BBp_BBpp(T, wl, out = 'BB,BBp,BBpp'):
     """ 
@@ -297,8 +304,345 @@ def _get_tristim_of_BB_BBp_BBpp(T, xyzbar, wl, dl, out = 'BB,BBp,BBpp'):
         xyzpp = ((BBpp * dl)[:,cnd] @ xyzbar[:,cnd].T)
         xyzpp[np.isinf(xyzpp)] = _AVOID_INF
     return T, xyz, xyzp, xyzpp
-   
-#------------------------------------------------------------------------------  
+
+
+#------------------------------------------------------------------------------
+# Tc list generation functions:
+#------------------------------------------------------------------------------
+
+def _get_tcs4(tc4, uin = None, out = 'Ts',
+              fallback_unit = _CCT_FALLBACK_UNIT, 
+              fallback_n = _CCT_FALLBACK_N):
+
+    (T0,Tn,dT),u = (np.atleast_1d(tc4_i) for tc4_i in tc4[:-1]), tc4[-1] # min, max, interval, unit
+
+    # Get n from third element:
+    if ((dT<0).any() & (dT>=0).any()):
+        raise Exception('3e element [dT,n] in 4-vector tc4 contains negatives AND positives! Should be only 1 type.')
+    else:
+        n = np.abs(dT) if (dT<0).all() else None # dT contains number of tcs between T0 and Tn, not dT
+ 
+    # special 'au' case
+    if 'au' in u:
+        u = fallback_unit 
+        if n is None: n = fallback_n # not-None n force the use of n in what follows !!
+    
+    # Tmin, Tmax input different from unit u:
+    if uin is not None:
+        if uin != u:
+            if (('-1' in uin) & ('-1' not in u)) | (('-1' not in uin) & ('-1' in u)):
+                T0, Tn = 1e6/Tn[::-1], 1e6/T0[::-1] # generate scale in mireds (input was always in Tc)
+    
+    # calculate Ts for different unit types:
+    if 'K' in u:
+        if n is None:
+            n = (((Tn-T0)//dT) + (((Tn-T0)%dT)!=0)).max() # get n from dT
+        else: 
+            dT = (Tn - T0)/n # get dT from n
+            n = n.max() 
+            
+        Ts = (T0[:,None] + np.arange(0, n + 1,1)*dT[:,None]).T # to include Tn
+    
+    elif '%' in u:
+        if n is None:
+            p = 1 + dT/100
+            n = (((np.log(Tn/T0) / np.log(p))).max()) # get n from dT
+        else:
+            p = (Tn/T0)**(1/n) # get p = (1+dT/100) from n
+            n = n.max()
+        Ts = T0*p**np.arange(0, n + 1, 1)[:,None]
+    
+        
+    
+    if '-1' in u:
+        Ts[Ts==0] = _AVOID_ZERO_DIV
+        Ts = 1e6/Ts[::-1] # scale was in mireds 
+    
+    if out == 'Ts': 
+        return Ts
+    elif out == 'Ts,T0,Tn,dT,u,n':
+        return Ts,T0,Tn,dT,u,n
+
+def get_tcs4(tc4, uin = None, seamless_stitch = True,
+             fallback_unit = _CCT_FALLBACK_UNIT, 
+             fallback_n = _CCT_FALLBACK_N):
+    """ 
+    Get an ndarray of Tc's obtained from a list or tuple of tc4 4-vectors.
+    
+    Args:
+        :tc4:
+            | list or tuple of 4-vectors.
+            |  e.g. (tc4_1, tc4_2, tc4_3,...) or (tc4_1, tc4_2, tc4_3,..., bool::seamless_stitch)
+            | When the last element of the list/tuple is a bool, then this specifies
+            |  how the Tc arrays generated for each of the 4-vector elements need to be
+            |  stitched together. This overrides the seamless_stitch input argument.
+            | Vector elements are: 
+            |    [Tmin, Tmax inclusive, Tinterval(or number of intervals), unit]
+            |  Unit specifies unit of the Tc interval, i.e. it determines the
+            |       type of scale in which the spacing of the Tc are done.
+            |  Unit options are:
+            |   - '%': equal relative Tc spacing (in %, cfr. (Ti+1 - Ti-1)/Ti-1).
+            |   - 'K' equal absolute Tc spacing (in K, cfr. (Ti+1 - Ti-1).
+            |   - '%-1': equal relative reciprocal Tc (MK-1 = mired).
+            |   - 'K-1': equal absolute reciprocal Tc (MK-1 = mired).
+            |  If the 'interval' element is negative, it actually represents
+            |  the number of intervals between Tmin, Tmax (included).
+        :uin:
+            | None, optional
+            | Unit of input Tmin, Tmax (by default it is assumed to be the same
+            | as the scale 'unit').
+        :seamless_stitch:
+            | True, optional
+            | Determines how the Tc arrays generated for each of the 4-vector 
+            | elements are stitched together. Is overriden by the presence of a 
+            | bool as last list/tuple element in :tc4:.
+            | For a seamless stitch, all units for all 4-vectors should be the same!!
+        :fallback_unit:
+            | _CCT_FALLBACK_UNIT, optional
+            | Unit to fall back on when the input unit in tc4 (of first list) is 'au'.
+            | As there is no common distancing of the unit types ['K','%','%-1','K-1']
+            | the Tc's are generated by dividing the min-max range into 
+            | a number of divisions, specified by the negative 3 element (or when
+            | positive or NaN, the number of divisions is set by :fallback_divisions:)
+        :fallback_n:
+            | _CCT_FALLBACK_N, optional
+            | Number of divisions the min-max range is divided into, in the 
+            | fallback case in which unit=='au' and the 3e 4-vector element 
+            | is NaN or positive.
+            
+    Returns:
+        :tcs:
+            | ndarray with Tcs
+            
+    """
+    
+    # make tupleof depth 2 if not already:
+    if isinstance(tc4[-1],str): 
+         tc4 = tuple([tc4])
+    
+    # use seamless stitch from tuple/list of tc4s:
+    if isinstance(tc4[-1],bool): 
+        seamless_stitch = tc4[-1]
+        tc4 = tc4[:-1]
+    
+    # check all units (should be the same!!):
+    if seamless_stitch & (len(tc4)>1):
+        units = np.array([(tc4_i[3]==tc4[0][3]) for tc4_i in tc4])
+        if (~units).any():
+            raise Exception('Seamless stitching for unequal units not supported.')
+    
+    # loop over all tc4s and 'stitch' them together.
+    Ts = None    
+    for i,tc4_i in enumerate(tc4):
+        tc4_i = list(tc4_i)
+        if seamless_stitch & (i>0): 
+            if ('-1' in tc4_i[-1]):
+                tc4_i[0] = 1e6/Ts[0,0] # change T0
+            else:
+                tc4_i[0] = Ts[-1,0] # change T0
+        
+        Ts_i = _get_tcs4(tc4_i, uin = uin, 
+                         fallback_unit = fallback_unit,
+                         fallback_n = fallback_n)
+        
+        if (i == 0):
+            Ts = Ts_i  
+        else:
+            if '-1' in tc4_i[-1]: # avoid overlap
+                Ts = np.vstack((Ts_i[Ts_i[:,0]<Ts[0,0],:],Ts))
+            else:
+                Ts = np.vstack((Ts,Ts_i[Ts_i[:,0]>Ts[-1,0],:]))
+    return Ts
+          
+
+def _generate_tcs(tc4, uin = None, seamless_stitch = True, cct_max = _CCT_MAX, cct_min = _CCT_MIN, 
+                  fallback_unit = _CCT_FALLBACK_UNIT, 
+                  fallback_n = _CCT_FALLBACK_N,
+                  resample_nd_array = False):
+    """ 
+    Get an ndarray of Tc's obtained from a list or tuple of tc4 4-vectors (or ndarray).
+        
+    Args:
+        :tc4:
+            | list or tuple of 4-vectors or ndarray.
+            | If ndarray: return tc4 limited to a cct_min-cct_max range (do nothing else).
+            | If list/tuple: e.g. (tc4_1, tc4_2, tc4_3,...) or (tc4_1, tc4_2, tc4_3,..., bool::seamless_stitch)
+            | When the last element of the list/tuple is a bool, then this specifies
+            |  how the Tc arrays generated for each of the 4-vector elements need to be
+            |  stitched together. This overrides the seamless_stitch input argument.
+            | Vector elements are: 
+            |    [Tmin, Tmax inclusive, Tinterval(or number of intervals), unit]
+            |  Unit specifies unit of the Tc interval, i.e. it determines the
+            |       type of scale in which the spacing of the Tc are done.
+            |  Unit options are:
+            |   - '%': equal relative Tc spacing (in %, cfr. (Ti+1 - Ti-1)/Ti-1).
+            |   - 'K' equal absolute Tc spacing (in K, cfr. (Ti+1 - Ti-1).
+            |   - '%-1': equal relative reciprocal Tc (MK-1 = mired).
+            |   - 'K-1': equal absolute reciprocal Tc (MK-1 = mired).
+            |  If the 'interval' element is negative, it actually represents
+            |   the number of intervals between Tmin, Tmax (included).
+        :uin:
+            | None, optional
+            | Unit of input Tmin, Tmax (by default it is assumed to be the same
+            | as the scale 'unit').
+        :seamless_stitch:
+            | True, optional
+            | Determines how the Tc arrays generated for each of the 4-vector 
+            | elements are stitched together. Is overriden by the presence of a 
+            | bool as last list/tuple element in :tc4:.
+            | For a seamless stitch, all units for all 4-vectors should be the same!!
+        :cct_max:
+            | _CCT_MAX, optional
+            | Limit Tc's to a maximum value of cct_max
+        :cct_min:
+            | _CCT_MIN, optional
+            | Limit Tc's to a minimum value of cct_max
+        :fallback_unit:
+            | _CCT_FALLBACK_UNIT, optional
+            | Unit to fall back on when the input unit in tc4 (of first list) is 'au'.
+            | As there is no common distancing of the unit types ['K','%','%-1','K-1']
+            | the Tc's are generated by dividing the min-max range into 
+            | a number of divisions, specified by the negative 3 element (or when
+            | positive or NaN, the number of divisions is set by :fallback_divisions:)
+        :fallback_n:
+            | _CCT_FALLBACK_N, optional
+            | Number of divisions the min-max range is divided into, in the 
+            | fallback case in which unit=='au' and the 3e 4-vector element 
+            | is NaN or positive.
+        :resample_nd_array:
+            | False, optional
+            | If False: do not resample Tc's of an ndarray input for tc4
+            | else: divide min-max range in fallback_n intervals. Uses fallback_unit
+            | to determine the scale for the resampling.
+    
+    Returns:
+        :tcs:
+            | ndarray with Tcs
+            
+    """
+
+    # Get ccts for lut generation:
+    if not isinstance(tc4,np.ndarray):
+
+        Ts = get_tcs4(tc4, uin = uin, seamless_stitch = seamless_stitch,
+                      fallback_unit = fallback_unit, 
+                      fallback_n = fallback_n)
+
+    else:
+
+        if resample_nd_array:
+            T0 = tc4[:,0].min()
+            T1 = tc4[:,0].max()
+            n = -fallback_n
+            u = fallback_unit
+            tc4_a = (T0,T1,n,u)
+            
+            Ts = get_tcs4(tc4_a, uin = 'K')
+            
+        else:
+            Ts = tc4[:,:1] # actually stores ccts already! [Nx1] with N>2 !
+
+    Ts[(Ts<cct_min)] = cct_min
+    Ts[(Ts>cct_max)] = cct_max # limit to a maximum cct to avoid overflow/error and/or increase speed.    
+    return Ts              
+ 
+    
+def _get_lut_characteristics(lut, force_au = True, tuple_depth_2 = True):
+    """ 
+    Guesses the interval, unit and wavelength range from lut array.
+     (slow, so avoid use: set force_au to True !!)
+    """
+    if force_au:
+        if tuple_depth_2: 
+            return ((lut[:,0].min(),lut[:,0].max(), np.nan, 'au'),)
+        else:
+            return (lut[:,0].min(),lut[:,0].max(), np.nan, 'au')
+    else:
+        
+        lut_units = np.array(['K','%','K-1','%-1'])
+        
+        T = lut[:,:1]
+        T1 = np.roll(T,1)
+        T01 = T[1:]
+        T11 = T1[1:]
+        
+        # cfr. 'K'
+        dT = (np.round(np.abs(T - T1),8)[1:])
+        intsT = np.unique(dT)
+        minmaxT = [[T01[(dT==intsT[i])].min(),T01[(dT==intsT[i])].max()] for i in range(len(intsT))]
+        minmaxT[0][0] = T[0,0]
+        
+        # cfr '%:
+        dTr = np.round((T01-T11)/T11,8)*100
+        intsTr = np.unique(dTr)
+        minmaxTr = [[T01[(dTr==intsTr[i])].min(),T01[(dTr==intsTr[i])].max()] for i in range(len(intsTr))]
+        minmaxTr[0][0] = T[0,0]
+        
+        # cfr. 'K-1':
+        dRD = (np.round(np.abs(1e6/T01 - 1e6/T11),8))
+        intsRD = np.unique(dRD)
+        minmaxRD = [[1e6/T01[(dRD==intsRD[i])].max(),1e6/T01[(dRD==intsRD[i])].min()] for i in range(len(intsRD))]
+        minmaxRD[-1][1] = 1e6/T[0,0]
+          
+        # cfr. '%-1':
+        dRDr = np.round((T01-T11)/T11,8)*100
+        intsRDr = np.unique(dRDr)
+        minmaxRDr = [[1e6/T01[(dRDr==intsRDr[i])].max(),1e6/T01[(dRDr==intsRDr[i])].min()] for i in range(len(intsRDr))]
+        minmaxRDr[-1][1] = 1e6/T[0,0]
+        
+        # find minimum lengths & units for which the min max order is ok: 
+        len_ints = np.array([intsT.shape[0],intsTr.shape[0],intsRD.shape[0],intsRDr.shape[0]])
+        if len_ints.min()>1: 
+            minmax_order_ok = np.array([minmaxT[0][1]<=minmaxT[1][0],
+                                    minmaxTr[0][1]<=minmaxTr[1][0],
+                                    minmaxRD[0][1]<=minmaxRD[1][0],
+                                    minmaxRDr[0][1]<=minmaxRDr[1][0]])
+        else:
+            minmax_order_ok = np.ones((4,),dtype = bool)
+        
+        # determine unit:
+        len_order_ok = ((len_ints == len_ints.min()) & minmax_order_ok)
+        lut_unit = lut_units[len_order_ok]
+        if len(lut_unit) == 0: lut_unit = 'au'
+        # for code testing:
+        # return {'K':(dT,intsT,minmaxT),
+        #         '%':(dTr,intsTr,minmaxTr),
+        #         'K-1':(dRD,intsRD,minmaxRD),
+        #         '%-1':(dRDr,intsRDr,minmaxRDr),
+        #         'len_ints':len_ints,
+        #         'minmax_order_ok':minmax_order_ok,
+        #         'len_order_ok' : len_order_ok,
+        #         'lut_unit':lut_unit}
+        
+        if lut_unit[0] == 'K':
+            dT, lut_unit, Tminmax = intsT,lut_unit[0],minmaxT
+        elif lut_unit[0] == '%':
+            dT, lut_unit, Tminmax = intsTr,lut_unit[0],minmaxTr 
+        elif lut_unit[0] == 'K-1':
+            dT, lut_unit, Tminmax = intsRD,lut_unit[0],minmaxRD
+        elif lut_unit[0] == '%-1':
+            dT, lut_unit, Tminmax = intsRDr,lut_unit[0],minmaxRDr
+        else:
+            dT, lut_unit, Tminmax = np.nan, 'au', [[T.min(),T.max()]]
+        if not np.isnan(dT).any(): dT = dT[0] if (dT.shape[0] == 1) else tuple(dT)
+        Tminmax = Tminmax[0] if (len(Tminmax) == 1) else Tminmax 
+        
+        # format output:
+        if isinstance(dT,(float,int)): 
+            if tuple_depth_2: 
+                return ((*Tminmax, dT, lut_unit),)
+            else:
+                return (*Tminmax, dT, lut_unit)
+        else: 
+            tmp = (*np.array(Tminmax).T, dT, (lut_unit,)*len(dT)) 
+            tmp = np.array(tmp,dtype=object).T
+            return (*tuple((tuple(tmp[i]) for i in range(tmp.shape[0]))),lut_unit!='au')
+        
+ 
+#------------------------------------------------------------------------------
+# LUT generation functions:
+#------------------------------------------------------------------------------
+
 def calculate_lut(ccts, cieobs, wl = _WL3, lut_vars = ['T','uv','uvp','uvpp','iso-T-slope'],
                   cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS):
     """
@@ -409,295 +753,107 @@ def calculate_lut(ccts, cieobs, wl = _WL3, lut_vars = ['T','uv','uvp','uvpp','is
         lut = np.hstack((Ti,uvi,mi))
 
     return lut 
-
-#------------------------------------------------------------------------------
-def _process_lut_label(label = None, lut_int = None, lut_unit = None, lut_min_max = None):
-    """
-    Convert string or tuple to tuple with the interval, unit and range of the lut.
-    If these values are supplied as input argument then a label will be created.
-    The returned label will be a string if input label is None (of = type str),
-    if type tuple then a tuple.
-    """
-    if (label is None) | (label is str): # compose
-        if (lut_int is not None) & (lut_unit is not None):
-            label = '{:1.2g}_{:s}'.format(lut_int,lut_unit)
-        else:
-            raise Exception('lut_int and lut_unit are minimum requirements for lut label construction')
-        if lut_min_max is not None:
-            if len(lut_min_max)==2:
-                label = label + ',[{:1.1f}-{:1.1f}]'.format(*lut_min_max)
-        return label
-    elif label == tuple:
-        if lut_min_max is not None:
-            return (lut_int,lut_unit, tuple(lut_min_max))
-        else:
-            return (lut_int,lut_unit)
-    else: # decompose:
-        if isinstance(label,str):
-            p = label.find('_')
-            lut_int = float(label[:p])
-            p2 = label.find(',')
-            if p2 == -1:
-                lut_unit = label[(p+1):]
-                lut_min_max = []
-            else:
-                lut_unit = label[(p+1):p2]
-                t = label[p2+2:-1]
-                p3 = t.find('-')
-                lut_min_max = [float(t[:p3]), float(t[p3+1:])]
-        else:
-            lut_int, lut_unit = label[0], label[1]
-            lut_min_max = label[2] if len(label) > 2 else []
-        return lut_int, lut_unit, lut_min_max
-            
-def _get_lut_characteristics(lut, force_au = True):
-    """ 
-    Guesses the interval, unit and wavelength range from lut array.
-     (slow, so avoid use: set force_au to True !!)
-    """
-    if force_au:
-        return np.nan, 'au', [lut[:,0].min(),lut[:,0].max()]
     
-    else:
-        
-        lut_units = np.array(['K','%','K-1','%-1'])
-        
-        T = lut[:,:1]
-        T1 = np.roll(T,1)
-        T01 = T[1:]
-        T11 = T1[1:]
-        
-        dT = (np.round(np.abs(T - T1),8)[1:])
-        intsT = np.unique(dT)
-        minmaxT = [[T01[(dT==intsT[i])].min(),T01[(dT==intsT[i])].max()] for i in range(len(intsT))]
-        minmaxT[0][0] = T[0,0]
-        
-        dTr = np.round((T01-T11)/T11,8)*100
-        intsTr = np.unique(dTr)
-        minmaxTr = [[T01[(dTr==intsTr[i])].min(),T01[(dTr==intsTr[i])].max()] for i in range(len(intsTr))]
-        minmaxTr[0][0] = T[0,0]
-        
-        dRD = (np.round(np.abs(1e6/T01 - 1e6/T11),8))
-        intsRD = np.unique(dRD)
-        minmaxRD = [[1e6/T01[(dRD==intsRD[i])].max(),1e6/T01[(dRD==intsRD[i])].min()] for i in range(len(intsRD))]
-        minmaxRD[-1][1] = 1e6/T[0,0]
-            
-        dRDr = np.round((T01-T11)/T11,8)*100
-        intsRDr = np.unique(dRDr)
-        minmaxRDr = [[1e6/T01[(dRDr==intsRDr[i])].max(),1e6/T01[(dRDr==intsRDr[i])].min()] for i in range(len(intsRDr))]
-        minmaxRDr[-1][1] = 1e6/T[0,0]
-        
-        # find minimum lengths & units for which the min max order is ok: 
-        len_ints = np.array([intsT.shape[0],intsTr.shape[0],intsRD.shape[0],intsRDr.shape[0]])
-        if len_ints.min()>1: 
-            minmax_order_ok = np.array([minmaxT[0][1]<=minmaxT[1][0],
-                                    minmaxTr[0][1]<=minmaxTr[1][0],
-                                    minmaxRD[0][1]<=minmaxRD[1][0],
-                                    minmaxRDr[0][1]<=minmaxRDr[1][0]])
-        else:
-            minmax_order_ok = np.ones((4,),dtype = bool)
-        
-        # determine unit:
-        len_order_ok = ((len_ints == len_ints.min()) & minmax_order_ok)
-        lut_unit = lut_units[len_order_ok]
-        if len(lut_unit) == 0: lut_unit = 'au'
-        # for code testing:
-        # return {'K':(dT,intsT,minmaxT),
-        #         '%':(dTr,intsTr,minmaxTr),
-        #        'K-1':(dRD,intsRD,minmaxRD),
-        #        '%-1':(dRDr,intsRDr,minmaxRDr),
-        #        'len_ints':len_ints,
-        #        'minmax_order_ok':minmax_order_ok,
-        #        'len_order_ok' : len_order_ok,
-        #        'lut_unit':lut_unit}
-        
-        if lut_unit[0] == 'K':
-            dT, lut_unit, Tminmax = intsT,lut_unit[0],minmaxT
-        elif lut_unit[0] == '%':
-            dT, lut_unit, Tminmax = intsTr,lut_unit[0],minmaxTr 
-        elif lut_unit[0] == 'K-1':
-            dT, lut_unit, Tminmax = intsRD,lut_unit[0],minmaxRD
-        elif lut_unit[0] == '%-1':
-            dT, lut_unit, Tminmax = intsRDr,lut_unit[0],minmaxRDr
-        else:
-            dT, lut_unit, Tminmax = np.nan, 'au', [[T.min(),T.max()]]
-        if not np.isnan(dT).any(): dT = dT[0] if (dT.shape[0] == 1) else tuple(dT)
-        Tminmax = Tminmax[0] if (len(Tminmax) == 1) else tuple(Tminmax)
-        return dT, lut_unit, Tminmax
-
-def _get_lut_characteristics_1(lut):
-    """ 
-    Guesses the interval, unit and wavelength range from lut array.
-    (only for luts constructed with 1 lut_int)
-    """
-    T = lut[:,0]
-    Tminmax = [T.min(),T.max()]
-    T = T[:3]
-    T1 = np.roll(T,1)
-    dT = np.abs((T-T1))[1:]
-    dTr = (dT/T1[1:])
-    dRD = np.abs((1e6/T - 1e6/T1))[1:]
-    dRDr = (dRD/(1e6/T1[1:]))
-    if (np.isclose(dT[0], dT[1])) & (~np.isclose(dTr[0],dTr[1])):
-        dT,lut_unit = dT[0],'K'
-    elif (~np.isclose(dT[0], dT[1])) & (np.isclose(dTr[0],dTr[1])):
-        dT,lut_unit = 100*dTr[0],'%'
-    elif (np.isclose(dRD[0], dRD[1])) & (~np.isclose(dRDr[0], dRDr[1])):
-        dT, lut_unit = dRD[0], 'K-1'
-    elif (~np.isclose(dRD[0], dRD[1])) & (np.isclose(dRDr[0], dRDr[1])):
-        dT, lut_unit = 100*dRDr[0], '%-1'
-    else:
-        dT, lut_unit = np.nan, 'au'
-    return np.round(dT,6), lut_unit, Tminmax        
-
-def _add_lut_endpoints(x):
-    """ Replicates endpoints of lut to avoid out-of-bounds issues """
-    return np.vstack((x[:1],x,x[-1:]))
- 
-def _generate_tcs(lut_int = [1], lut_unit = ['%'], lut_min_max = [[1000,5e4]], 
-                  cct_max = _CCT_MAX, cct_min = _CCT_MIN, seamless_stitch = True,
-                  lut_unit_fallback = 'K-1', 
-                  lut_N_fallback = _CCT_LUT_RESOLUTION_REDUCTION_FACTOR):
-    """
-    Generate an ndarray of CCTs. The ndarray is a vstack of ccts with a specific
-    interval in the specified units over the specified tuple min-max range. 
-    (not larger than cct_max or smaller than cct_min, whatever the input in lut_min_max!).
-    (seamless_stitch fits multiple lut specifications together; this will impact the 
-    estimated min,max ranges of each)
-    
-    Planckians are computed for wavelength interval wl and cmf set in cieobs and in the color space
-    specified in cspace (additional arguments for these chromaticity functions can be supplied using
-    the cspace_kwargs).
-    
-    Unit options are:
-    - '%': equal relative Tc spacing (in %, cfr. (Ti+1 - Ti-1)/Ti-1).
-    - 'K' equal absolute Tc spacing (in K, cfr. (Ti+1 - Ti-1).
-    - '%-1': equal relative reciprocal Tc (MK-1 = mired).
-    - 'K-1': equal absolute reciprocal Tc (MK-1 = mired).
-    - 'au': arbitrary interval (generate by supplying an ndarray of Tc in lut_min_max).
-    
-    Note: if lut_unit == 'au' & lut_min_max is not an ndarray (but a list of mins, maxs),
-    Tcs are calculated using the units in lut_units_fallback and the min-max range is split
-    in lut_N_fallback divisions.
-    """
-
-    # Get ccts for lut generation:
-    if not isinstance(lut_min_max,np.ndarray):
-                
-        if (lut_unit == 'au'): 
-            lut_unit = lut_unit_fallback
-            if np.isnan(lut_int):
-                
-                T0 = lut_min_max[0]
-                Tn = lut_min_max[1] 
-                n = lut_N_fallback
-                
-                if '-1' in lut_unit:
-                    T0, Tn = 1e6/Tn[::-1], 1e6/T0[::-1] # generate scale in mireds (input was always in Tc)
-                     
-                    
-                if 'K' in lut_unit:
-                    dT = ((Tn - T0)/n)
-                    fT = lambda m,M,d: (m[:,None]+(np.arange(0,(((M-m)//d)+1*(((M-m)%d)!=0)+1).max(),1)*d[:,None])).T
-                    Ts = fT(T0, Tn, dT)
-                elif '%' in lut_unit:
-                    p = (Tn/T0)**(1/n)
-                    Ts = T0*p**np.arange(0, n + 1.0,1)[:,None]
-                    
-                if '-1' in lut_unit: # scale back to Tc scale
-                    Ts[Ts==0] = 1e6/cct_max
-                    Ts = 1e6/Ts[::-1] # scale was in mireds 
-
-        else:
-            
-            if (len(lut_min_max) ==  2) & (not isinstance(lut_min_max[0],(tuple,list))): lut_min_max = [lut_min_max] # make list
-            if not isinstance(lut_int, (list,tuple)): lut_int = [lut_int] # make list
-
-            if isinstance(lut_unit, str): lut_unit = [lut_unit]
-            if len(lut_unit) == 1: lut_unit = lut_unit*len(lut_min_max) 
-            if len(lut_unit) != len(lut_min_max):
-                raise Exception('len(lut_unit) does not match len(lut_min_max)')
-                
-            
-            if len(lut_int) == 1: lut_int = lut_int*len(lut_min_max) 
-            if len(lut_int) != len(lut_min_max):
-                raise Exception('len(lut_int) does not match len(lut_min_max)')
-            
-            
-            Ts = None
-            for i,(lut_int_i,lut_min_max_i) in enumerate(zip(lut_int,lut_min_max)):
-                lut_min_max_i = np.array(lut_min_max_i)
-                T0 = lut_min_max_i[0] 
-                Tn = lut_min_max_i[1]
-                dT = lut_int_i
-                if seamless_stitch & (i>0): 
-                    if ('-1' in lut_unit[i]) :
-                        T0 = 1e6/Ts[0,0]
-                    else:
-                        T0 = Ts[-1,0]
-                 
-                if '%' in lut_unit[i]:
-                    # p = int((np.log(Tn/T0) / np.log(1 + dT/100)) + 1.0) 
-                    p = (((np.log(Tn/T0) / np.log(1 + dT/100))).max())
-                    # Ts_i = T0*(1 + dT/100)**np.arange(-1,p + 1,1)[:,None]
-                    Ts_i = T0*(1 + dT/100)**np.arange(0,p + 1.0,1)[:,None]
-                elif 'K' in lut_unit[i]:
-                    fT = lambda m,M,d: m+(np.arange(0,(((M-m)//d)+1*(((M-m)%d)!=0)+1).max(),1)*d)[:,None]
-                    # fT = lambda m,M,d: np.linspace(m,m+int((M-m)/d)*d-(((M-m)%d)==0)*d+d,int((M-m)/d)+2)
-                    Ts_i = fT(T0, Tn, dT)
-                    # Ts = np.arange(lut_min_max[0],lut_min_max[1]+lut_int,lut_int)
-                if '-1' in lut_unit[i]:
-                    Ts_i[Ts_i==0] = 1e6/cct_max
-                    Ts_i = 1e6/Ts_i[::-1] # scale was in mireds 
-    
-                if (i == 0):
-                    Ts = Ts_i  
-                else:
-                    if '-1' in lut_unit[i]: # avoid overlap
-                        Ts = np.vstack((Ts_i[Ts_i[:,0]<Ts[0,0],:],Ts))
-                    else:
-                        Ts = np.vstack((Ts,Ts_i[Ts_i[:,0]>Ts[-1,0],:]))
-
-    else:
-        Ts = lut_min_max # actually stores ccts already! [Nx1] with N>2 !
-
-    Ts[(Ts<cct_min)] = cct_min
-    Ts[(Ts>cct_max)] = cct_max # limit to a maximum cct to avoid overflow/error and/or increase speed.    
-    return Ts              
-
-def _generate_lut(lut_int = [1], lut_unit = ['%'], lut_min_max = [(1000,5e4)], 
-                  cct_max = _CCT_MAX, cct_min = _CCT_MIN, seamless_stitch = True,
+def _generate_lut(tc4, uin = None, seamless_stitch = True, 
+                  fallback_unit = _CCT_FALLBACK_UNIT, fallback_n = _CCT_FALLBACK_UNIT,
+                  resample_nd_array = False,
+                  cct_max = _CCT_MAX, cct_min = _CCT_MIN,
                   wl = _WL3, cieobs = _CIEOBS, lut_vars = ['T','uv','uvp','uvpp','iso-T-slope'],
                   cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS,
                   **kwargs):
-    """
-    Generate a lut with a specific interval in the specified units over the specified tuple min-max range 
-    (not larger than cct_max or smaller than cct_min, whatever the input in lut_min_max!).
-    
-    Planckians are computed for wavelength interval wl and cmf set in cieobs and in the color space
-    specified in cspace (additional arguments for these chromaticity functions can be supplied using
-    the cspace_kwargs).
-    
-    Unit options are:
-    - '%': equal relative Tc spacing (in %, cfr. (Ti+1 - Ti-1)/Ti-1).
-    - 'K' equal absolute Tc spacing (in K, cfr. (Ti+1 - Ti-1).
-    - '%-1': equal relative reciprocal Tc (MK-1 = mired).
-    - 'K-1': equal absolute reciprocal Tc (MK-1 = mired).
-    - 'au': arbitrary interval (generate by supplying an ndarray of Tc in lut_min_max).
-    
-    Returns single element list with an ndarray with in the columns whatever is specified in 
-    lut_vars (Tc and uv are always present!). Default lut_vars =  ['T','uv','uvp','uvpp','iso-T-slope']
-    - Tc: (in K)
-    - u,v: chromaticity coordinates of planckians
-    - u'v': chromaticity coordinates of 1st derivative of the planckians.
-    - u",v": chromaticity coordinates of 2nd derivative of the planckians.
-    - slope of isotemperature lines (calculated as in Robertson, 1968).
-    
-    Note that a vstack of CCTs can be generate by supplying lists for lut_int, lut_unit and lut_min_max.
-    They can be stitched seamlessly (no weird jumps in lut interval) or just keeping the original min-max ranges.
+    """ 
+    Get an ndarray LUT for Tc's obtained from a list or tuple of tc4 4-vectors (or ndarray).
+        
+    Args:
+        :tc4:
+            | list or tuple of 4-vectors or ndarray.
+            | If ndarray: return tc4 limited to a cct_min-cct_max range (do nothing else).
+            | If list/tuple: e.g. (tc4_1, tc4_2, tc4_3,...) or (tc4_1, tc4_2, tc4_3,..., bool::seamless_stitch)
+            | When the last element of the list/tuple is a bool, then this specifies
+            |  how the Tc arrays generated for each of the 4-vector elements need to be
+            |  stitched together. This overrides the seamless_stitch input argument.
+            | Vector elements are: 
+            |    [Tmin, Tmax inclusive, Tinterval(or number of intervals), unit]
+            |  Unit specifies unit of the Tc interval, i.e. it determines the
+            |       type of scale in which the spacing of the Tc are done.
+            |  Unit options are:
+            |   - '%': equal relative Tc spacing (in %, cfr. (Ti+1 - Ti-1)/Ti-1).
+            |   - 'K' equal absolute Tc spacing (in K, cfr. (Ti+1 - Ti-1).
+            |   - '%-1': equal relative reciprocal Tc (MK-1 = mired).
+            |   - 'K-1': equal absolute reciprocal Tc (MK-1 = mired).
+            |  If the 'interval' element is negative, it actually represents
+            |   the number of intervals between Tmin, Tmax (included).
+        :uin:
+            | None, optional
+            | Unit of input Tmin, Tmax (by default it is assumed to be the same
+            | as the scale 'unit').
+        :seamless_stitch:
+            | True, optional
+            | Determines how the Tc arrays generated for each of the 4-vector 
+            | elements are stitched together. Is overriden by the presence of a 
+            | bool as last list/tuple element in :tc4:.
+            | For a seamless stitch, all units for all 4-vectors should be the same!!
+        :cct_max:
+            | _CCT_MAX, optional
+            | Limit Tc's to a maximum value of cct_max
+        :cct_min:
+            | _CCT_MIN, optional
+            | Limit Tc's to a minimum value of cct_max
+        :fallback_unit:
+            | _CCT_FALLBACK_UNIT, optional
+            | Unit to fall back on when the input unit in tc4 (of first list) is 'au'.
+            | As there is no common distancing of the unit types ['K','%','%-1','K-1']
+            | the Tc's are generated by dividing the min-max range into 
+            | a number of divisions, specified by the negative 3 element (or when
+            | positive or NaN, the number of divisions is set by :fallback_divisions:)
+        :fallback_n:
+            | _CCT_FALLBACK_N, optional
+            | Number of divisions the min-max range is divided into, in the 
+            | fallback case in which unit=='au' and the 3e 4-vector element 
+            | is NaN or positive.
+        :resample_tc4_array:
+            | False, optional
+            | If False: do not resample Tc's of an ndarray input for tc4
+            | else: divide min-max range in fallback_n intervals. Uses fallback_unit
+            | to determine the scale for the resampling.
+        :wl:
+            | _WL3, optional
+            | Wavelength for Planckian spectrum generation.
+        :cieobs:
+            | [_CIEOBS] or list, optional
+            | Generate a LUT for each one in the list.
+            | If None: generate for all cmfs in _CMF.
+        :lut_vars:
+            | ['T','uv','uvp','uvpp','iso-T-slope'], optional
+            | Data the lut should contain. Must follow this order 
+            | and minimum should be ['T','uv']
+        :cspace,cspace_kwargs:
+            | Lists with the cspace and cspace_kwargs for which luts will be generated.
+            | Default is single chromaticity diagram in _CCT_CSPACE.
+
+    Returns:
+        :lut:
+            | List with an ndarray with in the columns whatever is specified in 
+            | lut_vars (Tc and uv are always present!).
+            | Default lut_vars =  ['T','uv','uvp','uvpp','iso-T-slope']
+            | - Tc: (in K)
+            | - u,v: chromaticity coordinates of planckians
+            | - u'v': chromaticity coordinates of 1st derivative of the planckians.
+            | - u",v": chromaticity coordinates of 2nd derivative of the planckians.
+            | - slope of isotemperature lines (calculated as in Robertson, 1968).
+        :lut_kwargs:
+            | {},
+            | Dictionary with additional parameters related to the generation of the
+            | lut.
+            
     """    
-    Ts = _generate_tcs(lut_int = lut_int, lut_unit = lut_unit, lut_min_max = lut_min_max, 
-                       cct_max = cct_max, cct_min = cct_min, seamless_stitch = seamless_stitch)
+    
+    # get tcs:
+    Ts = _generate_tcs(tc4, uin = uin, seamless_stitch = seamless_stitch,
+                       fallback_unit = fallback_unit, 
+                       fallback_n = fallback_n,
+                       cct_min = cct_min, cct_max = cct_max,
+                       resample_nd_array = resample_nd_array)
         
     # reshape for input in calculate_luts:
     n_sources = Ts.shape[-1]
@@ -713,31 +869,240 @@ def _generate_lut(lut_int = [1], lut_unit = ['%'], lut_min_max = [(1000,5e4)],
     # reshape lut back:
     if n_sources > 1:
         lut = np.reshape(lut,(-1,lut.shape[-1]*n_sources))
-               
-    return list([lut, {'seamless_stitch':seamless_stitch}])
+      
+    
+    return list([lut, {}])
 
+    
+def _get_lut(lut, 
+             uin = None, seamless_stitch = True, 
+             fallback_unit = _CCT_FALLBACK_UNIT, fallback_n = _CCT_FALLBACK_N,
+             resample_nd_array = False, cct_max = _CCT_MAX, cct_min = _CCT_MIN,
+             luts_dict = None, lut_type_def = None, lut_vars = ['T','uv','uvp','uvpp','iso-T-slope'],
+             cieobs =  _CIEOBS, cspace_str = None, wl = _WL3, ignore_unequal_wl = False, 
+             lut_generator_fcn = _generate_lut, lut_generator_kwargs = {},
+             cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS,
+             **kwargs):
+    """ 
+    Get an ndarray LUT from various sources.
+        
+    Args:
+        :lut:
+            | Look-Up-Table with Ti, u,v,u',v',u",v",slope values of Planckians, or
+            | whatever quantities are specified in lut_vars ('T','uv' is always part of the lut).
+            | Options: 
+            | - list: must have two elements: [lut,lut_kwargs]
+            | - None: lut from luts_dict with lut_type_def as key
+            | - str: lut from luts_dict at key :lut:
+            | - ndarray [Nxn, with n>1]: precalculated lut (only processing will be to keep it with cct_min-cct_max range)
+            | - ndarray [Nx1]: list of Tc's from which a new lut will be calculated.
+            | - tuple of 4-vectors: used as key in luts_dict or to generate new lut from scratch
+            |    4-vector info: 
+            |       + format: e.g. (tc4_1, tc4_2, tc4_3,...) or (tc4_1, tc4_2, tc4_3,..., bool::seamless_stitch)
+            |       + When the last element of the list/tuple is a bool, then this specifies
+            |         how the Tc arrays generated for each of the 4-vector elements need to be
+            |         stitched together. This overrides the seamless_stitch input argument.
+            |       + Vector elements are: 
+            |           [Tmin, Tmax inclusive, Tinterval(or number of intervals), unit]
+            |         Unit specifies unit of the Tc interval, i.e. it determines the
+            |         type of scale in which the spacing of the Tc are done.
+            |         Unit options are:
+            |           - '%': equal relative Tc spacing (in %, cfr. (Ti+1 - Ti-1)/Ti-1).
+            |           - 'K' equal absolute Tc spacing (in K, cfr. (Ti+1 - Ti-1).
+            |           - '%-1': equal relative reciprocal Tc (MK-1 = mired).
+            |           - 'K-1': equal absolute reciprocal Tc (MK-1 = mired).
+            |         If the 'interval' element is negative, it actually represents
+            |         the number of intervals between Tmin, Tmax (included).
+        :uin:
+            | None, optional
+            | Unit of input Tmin, Tmax (by default it is assumed to be the same
+            | as the scale 'unit') in Tc generation from tuple.
+        :seamless_stitch:
+            | True, optional
+            | Determines how the Tc arrays generated for each of the 4-vector 
+            | elements are stitched together. Is overriden by the presence of a 
+            | bool as last list/tuple element in :tc4:.
+            | For a seamless stitch, all units for all 4-vectors should be the same!!
+        :cct_max:
+            | _CCT_MAX, optional
+            | Limit Tc's to a maximum value of cct_max
+        :cct_min:
+            | _CCT_MIN, optional
+            | Limit Tc's to a minimum value of cct_max
+        :fallback_unit:
+            | _CCT_FALLBACK_UNIT, optional
+            | Unit to fall back on when the input unit in tc4 (of first list) is 'au'.
+            | As there is no common distancing of the unit types ['K','%','%-1','K-1']
+            | the Tc's are generated by dividing the min-max range into 
+            | a number of divisions, specified by the negative 3 element (or when
+            | positive or NaN, the number of divisions is set by :fallback_divisions:)
+        :fallback_n:
+            | _CCT_FALLBACK_N, optional
+            | Number of divisions the min-max range is divided into, in the 
+            | fallback case in which unit=='au' and the 3e 4-vector element 
+            | is NaN or positive.
+        :resample_tc4_array:
+            | False, optional
+            | If False: do not resample Tc's of an ndarray input for tc4
+            | else: divide min-max range in fallback_n intervals. Uses fallback_unit
+            | to determine the scale for the resampling.
+        :wl:
+            | _WL3, optional
+            | Wavelength for Planckian spectrum generation.
+        :cieobs:
+            | _CIEOBS, optional
+            | CMF set used to convert Planckian spectra to chromaticity coordinates
+        :lut_type_def:
+            | None, placeholder
+            | Default lut (tuple key) to read from luts_dict.
+        :luts_dict:
+            | None, optional
+            | Dictionary of pre-calculated luts for various cspaces and cmf sets.
+            |  Must have structure luts_dict[cspace][cieobs][lut_label] with the
+            |   lut part of a two-element list [lut, lut_kwargs]. It must contain
+            |   at the top-level a key 'wl' containing the wavelengths of the 
+            |   Planckians used to generate the luts in this dictionary.
+            | If None: the default dict for the mode is used 
+            |   (e.g. _CCT_LUT['ohno2014']['lut_type_def'], for mode=='ohno2014').    
+        :lut_vars:
+            | ['T','uv','uvp','uvpp','iso-T-slope'], optional
+            | Data the lut should contain. Must follow this order 
+            | and minimum should be ['T','uv']
+        :cspace,cspace_kwargs:
+            | Lists with the cspace and cspace_kwargs for which luts will be generated.
+            | Default is single chromaticity diagram in _CCT_CSPACE.
+        :ignore_unequal_wl:
+            | False, optional
+            | If True: ignore any differences in the wavelengths used to calculate
+            |   the lut (cfr. Planckians) from the luts_dict and the requested 
+            |   wavelengths in :wl:
+        :lut_generator_fcn:
+            | _generate_lut, optional
+            | Lets a user specify his own lut generation function (must output a list of 1 lut). 
+            | Default is the general function. There is a specific one for
+            | Ohno's 2014 method as that one requires a different correction factor
+            | for each lut for the parabolic solutions. This optimized value is specified in the 
+            | second list index. (see _generate_lut_ohno2014()).
+        :lut_generator_kwargs:
+            | {}, optional
+            | Dict with keyword arguments specific to the (user) lut_generator_fcn.
+            |  (e.g. {'f_corr':0.9991} for _generate_lut_ohno2014())  
 
-def _convert_lut_type_to_tuple_key(lut_type):
-    tmp = [None,None,None] # make tuple to list so we can change it (might need to add lut_min_max)
-    if isinstance(lut_type[-1][0],list): 
-        if len(lut_type[-1]) > 1: 
-            tmp[-1] = tuple(tuple(lut_type[-1][i]) for i in range(len(lut_type[-1]))) # convert all sublists to tuples
+    Returns:
+        :lut:
+            | List with an ndarray with in the columns whatever is specified in 
+            | lut_vars (Tc and uv are always present!).
+            | Default lut_vars =  ['T','uv','uvp','uvpp','iso-T-slope']
+            | - Tc: (in K)
+            | - u,v: chromaticity coordinates of planckians
+            | - u'v': chromaticity coordinates of 1st derivative of the planckians.
+            | - u",v": chromaticity coordinates of 2nd derivative of the planckians.
+            | - slope of isotemperature lines (calculated as in Robertson, 1968).
+        :lut_kwargs:
+            | {}
+            | Dictionary with additional parameters related to the generation of the
+            | lut.
+            
+    """  
+    
+    # get cspace info:
+    cspace_dict, cspace_str = _process_cspace(cspace, cspace_kwargs)
+
+    lut_kwargs = lut_generator_kwargs # default settings, but can be overriden later depending on the lut input argument
+
+    if isinstance(lut,list): # should contain [(tuple,list,ndarray)::lut,dict::lut_kwargs]
+        lut_list_error = True 
+        if (len(lut) == 2):
+            if (isinstance(lut[-1],dict)): # test for lut_kwargs presence 
+                lut_kwargs = lut[1]
+                lut = lut[0]
+                lut_list_error = False
+
+        if lut_list_error: 
+            raise Exception("""When lut input is a list, the first element 
+contains the lut as a tuple/list, tuple/list of 
+tuples/lists or as an ndarray; the second element
+should be a dictionary 'lut_kwargs'.""")
+    
+    luts_dict_empty = False 
+    lut_from_dict = False
+    lut_from_tuple = False
+    lut_from_str = False
+    lut_from_Tcs = False
+    lut_from_array = False 
+    unequal_wl = False
+
+    # print(luts_dict[cspace_str][cieobs].keys(),lut)
+    if lut is None: # use default type in luts_dict
+
+        if luts_dict is None:
+            raise Exception('User must supply a dictionary with luts when lut is None!')
+        if ('wl' not in luts_dict): luts_dict_empty = True # if not present luts_dict must be empty 
+        lut, lut_kwargs = copy.deepcopy(luts_dict[cspace_str][cieobs][lut_type_def])
+        lut_from_dict = True
+
+    # further process lut (1st element of input lut): 
+    if isinstance(lut, (tuple,str)): # lut is key in luts_dict, if not generate new lut from scratch
+        lut_from_tuple = True
+
+        if luts_dict is not None: # luts_dict is None: generate a new lut from scratch
+            if ('wl' not in luts_dict): luts_dict_empty = True # if not present luts_dict must be empty 
+
+            if lut in luts_dict[cspace_str][cieobs]: # read from luts_dict
+                lut, lut_kwargs = copy.deepcopy(luts_dict[cspace_str][cieobs][lut])
+                lut_from_dict = True
+                lut_from_tuple = False
+                if isinstance(lut,str): lut_from_str = True
+    
+    elif isinstance(lut, np.ndarray): # lut is either pre-calculated lut or a list with Tcs for which a lut needs to be generated
+        lut_from_array = True
+        if lut.ndim == 1:
+            lut = lut[:,None] # make 2D
+        if lut.shape[-1] == 1:
+            lut_from_Tcs = True
+            lut_from_array = False # signal that the lut doesn't exist yet!
+
+    # If pre-calculated from luts_dict, check if wavelengths agree.
+    # When directly entered as ndarray there is no way to check, 
+    # so assume unequal_wl==False:
+    if ignore_unequal_wl == False:
+        if luts_dict is not None:
+            if not np.array_equal(luts_dict['wl'], wl):
+                unequal_wl = True
+        
+    if (unequal_wl  | luts_dict_empty| lut_from_tuple | lut_from_Tcs | resample_nd_array):
+    
+        if cspace_dict is None: raise Exception('No cspace dict or other given !')
+    
+    
+        if (not lut_from_array) | (resample_nd_array):
+    
+            lut, lut_kwargs = lut_generator_fcn(lut, 
+                                                uin = uin,
+                                                seamless_stitch = seamless_stitch,
+                                                fallback_unit = fallback_unit,
+                                                fallback_n = fallback_n,
+                                                resample_nd_array = resample_nd_array,
+                                                cct_max = cct_max,
+                                                cct_min = cct_min,
+                                                lut_vars = lut_vars,
+                                                wl = wl, 
+                                                cieobs = cieobs, 
+                                                cspace = cspace_dict,
+                                                cspace_kwargs = None,
+                                                **lut_kwargs)
         else:
-            tmp[-1] = tuple(lut_type[-1][0])
-    else: 
-        tmp[-1] = tuple(lut_type[-1]) if len(lut_type[-1]) > 1 else tuple(lut_type[-1][0])
-    for i in range(2): 
-        if isinstance(lut_type[i],(int,float,str)): 
-            tmp[i] = lut_type[i] #(lut_type[i],) # force tuple
-        else: 
-            tmp[i] = tuple(lut_type[i]) # force tuple
-    return tuple(tmp)
+            lut = lut[(lut[:,0]>=cct_min) & (lut[:,0]<=cct_max),:]
+            
 
+    return list([lut, lut_kwargs])
   
-def generate_luts(lut_file = None, load = False, lut_path = _CCT_LUT_PATH, 
+
+def generate_luts(types = [None], seamless_stitch = True,
+                  fallback_unit = _CCT_FALLBACK_UNIT, fallback_n = _CCT_FALLBACK_N,
+                  cct_min = _CCT_MIN, cct_max = _CCT_MAX,
+                  lut_file = None, load = False, lut_path = _CCT_LUT_PATH, 
                   wl = _WL3, cieobs = [_CIEOBS], 
-                  types = ['15_%','1_%','0.25_%','1000_K'],
-                  lut_min_max = [1e3,5e4], seamless_stitch = True,
                   lut_vars = ['T','uv','uvp','uvpp','iso-T-slope'],
                   cspace = [_CCT_CSPACE], cspace_kwargs = [_CCT_CSPACE_KWARGS],
                   verbosity = 0, lut_generator_fcn = _generate_lut, 
@@ -766,28 +1131,44 @@ def generate_luts(lut_file = None, load = False, lut_path = _CCT_LUT_PATH,
             | Generate a LUT for each one in the list.
             | If None: generate for all cmfs in _CMF.
         :types:
-            | ['15_%','1_%','0.25_%','1000_K'] or list, optional
-            | List of lut intervals and units as strings (note '_' between
-            | between value and unit!) or as tuples (eg. (15, '%') or (15,'%',(1e3,1e5))).
-            | The latter would be '15_%,[1e3-1e5]' in string format.
-            | If the min_max range is given, then this one will be used, otherwise
-            | the range in :lut_min_max: is used. If units are in MK-1 then the range is also!
+            | [None], optional
+            | List of lut specifiers of format [(Tmin,Tmax,Tinterval,unit),...]
+            | If units are in MK-1 then the range is also!
             |  Unit options are:
             |  - '%': equal relative Tc spacing (in %, cfr. (Ti+1 - Ti-1)/Ti-1).
             |  - 'K' equal absolute Tc spacing (in K, cfr. (Ti+1 - Ti-1).
             |  - '%-1': equal relative reciprocal Tc (MK-1 = mired).
             |  - 'K-1': equal absolute reciprocal Tc (MK-1 = mired).
-            |  - 'au': arbitrary interval (generate by supplying an ndarray of Tc in lut_min_max).
-            |
-        :lut_min_max:
-            | [1e3,5e4], optional
-            | Aim for the min and max of the Tc (K or MK-1) range.
+            | If the last element of the list is a bool, then the way the different
+            | lists of Tcs generated by each list element can be set. If True:
+            | the Tcs will be 'seamlessly' stitched together (this does have an
+            | an impact on the min-max range of each Tc set) so that there are no
+            | discontinuities in terms of the intervals.
         :seamless_stitch:
             | True, optional
             | When stitching (creating) LUTs composed of several CCT ranges with different
             | intervals, these do not always 'match' well, in the sense that discontinuities
             | might be generated. This can be avoided (at the expense of possibly slightly changed ranges)
-            | by setting the :seamless_stitch: argument to True.
+            | by setting the :seamless_stitch: argument to True. Is overriden when
+            | the last element in the lut list is a boolean.
+        :cct_max:
+            | _CCT_MAX, optional
+            | Limit Tc's to a maximum value of cct_max
+        :cct_min:
+            | _CCT_MIN, optional
+            | Limit Tc's to a minimum value of cct_max
+        :fallback_unit:
+            | _CCT_FALLBACK_UNIT, optional
+            | Unit to fall back on when the input unit in tc4 (of first list) is 'au'.
+            | As there is no common distancing of the unit types ['K','%','%-1','K-1']
+            | the Tc's are generated by dividing the min-max range into 
+            | a number of divisions, specified by the negative 3 element (or when
+            | positive or NaN, the number of divisions is set by :fallback_divisions:)
+        :fallback_n:
+            | _CCT_FALLBACK_N, optional
+            | Number of divisions the min-max range is divided into, in the 
+            | fallback case in which unit=='au' and the 3e 4-vector element 
+            | is NaN or positive.
         :lut_vars:
             | ['T','uv','uvp','uvpp','iso-T-slope'], optional
             | Data the lut should contain. Must follow this order 
@@ -825,32 +1206,47 @@ def generate_luts(lut_file = None, load = False, lut_path = _CCT_LUT_PATH,
     
     # Calculate luts:
     if (load == False):
-        types = [_process_lut_label(type) for type in types]
         luts['wl'] = wl
+        
         for cspace_i,cspace_kwargs_i in zip(cspace,cspace_kwargs):
+            
             cspace_dict_i,_ = _process_cspace(cspace_i, cspace_kwargs = cspace_kwargs_i)
             cspace_str_i = cspace_dict_i['str']
             luts[cspace_i] = {'cspace' : cspace_i, 'cspace_kwargs' : cspace_kwargs_i, 'cspace_dict': cspace_dict_i}
+            
             if cieobs is None: cieobs = _CMF['types']
+            
             for cieobs_j in cieobs:
-                ftmp = lambda lut_int, lut_unit, lut_min_max: lut_generator_fcn(lut_int = lut_int, lut_unit = lut_unit, wl = wl, lut_min_max = lut_min_max, lut_vars = lut_vars, cieobs = cieobs_j, cspace = cspace_dict_i, cspace_kwargs = None, seamless_stitch = seamless_stitch, **lut_generator_kwargs)
+                
+                ftmp = lambda lut: lut_generator_fcn(lut,                                                      seamless_stitch = seamless_stitch, 
+                                                     fallback_unit = fallback_unit, 
+                                                     fallback_n = fallback_n,
+                                                     cct_max = cct_max, 
+                                                     cct_min = cct_min,
+                                                     wl = wl, 
+                                                     cieobs = cieobs_j, 
+                                                     cspace =  cspace_dict_i, 
+                                                     cspace_kwargs = None,
+                                                     lut_vars = lut_vars,
+                                                     **lut_generator_kwargs)
                 luts[cspace_i][cieobs_j] = {}
+                
                 for type_k in types:
-                    tmp = list(type_k)
-                    if len(tmp[-1]) == 0: tmp[-1] = lut_min_max
-                    tmp = _convert_lut_type_to_tuple_key(tmp)
-                    # if isinstance(tmp[-1][0],list) & (not isinstance(tmp[-1],tuple)): tmp[-1] = tuple(tuple(tmp[-1][i]) for i in range(len(tmp[-1]))) # convert all sublists to tuples
-                    # if isinstance(tmp[-1][0],list): tmp[-1] = tuple(tmp[-1])
-                    # if isinstance(tmp[-1][0],list) & (not isinstance(tmp[-1],tuple)): tmp[-1] = tuple(tuple(tmp[-1][i]) for i in range(len(tmp[-1])))
-                    type_k = copy.deepcopy(tmp)
-                    # if ('%' in type_k): tmp[0] *= 100
+                    # ensure full tuple depth for use as key:
+                    if not isinstance(type_k[-1],str): # at least depth 2 (<--last element is str for depth 1)
+                        tmp = list((tuple(type_kl) for type_kl in type_k if not isinstance(type_kl,bool)))
+                        if (isinstance(type_k[-1],bool)): seamless_stitch = type_k[-1]
+                        if (len(tmp)>1): tmp = (*tmp,seamless_stitch) # 
+                    tmp = (tuple(tmp))
                     if verbosity > 0:
                         print('Generating lut with type = {} in cspace = {:s} for cieobs = {:s}'.format(type_k,cspace_str_i,cieobs_j))
                     
-                    luts[cspace_i][cieobs_j][tuple(type_k)] = list(ftmp(tmp[0],tmp[1],tmp[2]))
+                    luts[cspace_i][cieobs_j][tmp] = list(ftmp(tmp))
         
         # save to disk:
         if lut_file is not None:
+            if not os.path.exists(lut_path):
+                os.makedirs(lut_path,exist_ok=True)
             file_path = os.path.join(lut_path,lut_file)
             if verbosity > 0:
                 print('Saving dict with luts in {:s}'.format(file_path))                                                 
@@ -865,141 +1261,16 @@ def generate_luts(lut_file = None, load = False, lut_path = _CCT_LUT_PATH,
             raise Exception('Trying to load lut file but no lut_file has been supplied.')
     return luts
 
-def _get_lut(lut, luts_dict = None, cieobs = None, cspace_str = None, 
-             default_lut_type = None, 
-             lut_vars = ['T','uv','uvp','uvpp','iso-T-slope'],
-             ignore_unequal_wl = False, lut_generator_fcn = _generate_lut,
-             lut_generator_kwargs = {},
-             # cspace = _CCT_CSPACE, cct_cspace_kwargs = _CCT_CSPACE_KWARGS, 
-             **kwargs):
-    """ 
-    Helper function to make coding specific xyz_to_cct_MODE functions
-    more easy. It basically processes input of the :lut: argument in several 
-    xyz_to_cct_MODE functions to make code in those functions cleaner. lut can 
-    be the first element of list (other element lut_kwargs (i.e. lut_generator_kwargs)
-    must be a dictionary with keys of any other arguments one wants to pass along
-    to the :lut_generator_fcn:), if supplied it will overwrite any input via 
-    lut_generator_kwargs. Lut[0] can be string or tuple specifying the type in
-    a (global) nested dictionary with luts or it can be a dictionary itself 
-    with all keywords required for the :lut_generator_fcn:. :cieobs: and 
-    :cspace_str: are strings (keys) in the lut dictionary. the :default_lut_type:
-    is used whenever :lut: is set to None by a user.
-    For the user_defined lut_generator function, lut_generator_fcn kwargs can be supplied
-    using the lut_generator_kwargs argument. If not supplied the fcn-defaults will be used or
-    whatever is in lut_kwargs (if 2n element in lut-list).
-    When :ignore_unequal_wl: no new lut will be generated when the wavelengths of the lut
-    do not match the ones specified in kwargs (the keyword arguments to 
-    the :lut_generator_fcn:, excluding mandatory arguments :cspace_str: 
-    (which is required for indexing in the lut dictionary), like :cieobs:,
-    the latter is also required when generating a new lut using the
-    generator function.) When supplying cspace information to the function
-    use the dictionary format (with cspace_kwargs alreadty taken into account.)
-    :lut_vars: sepcifies what the lut should contain. By default it contains 
-    ['T','uv','uvp','uvpp','iso-T-slope'] and minimally it should contain ['T','uv'].    
-    """
-    luts_dict_empty = False
-    lut_is_cct_list = False
-    lut_is_precalc_lut = False
-    unequal_wl = False
-    # cspace_dict = kwargs.pop('cspace_dict') if 'cspace_dict' in kwargs else None  
-    if 'cspace' in kwargs:
-        cspace_dict, cspace_str = _process_cspace(kwargs.pop('cspace'),
-                                                  kwargs.pop('cspace_kwargs',None))
-    
 
-    if len(lut_generator_kwargs)==0:
-        lut_kwargs = {} if 'lut_kwargs' not in kwargs else kwargs['lut_kwargs']
-    else:
-        lut_kwargs = lut_generator_kwargs
-
-    wl = kwargs.pop('wl') if 'wl' in kwargs else _WL3  # use defaults if not given
-        
-    # get single lut:
-    if isinstance(lut,list): # if list, second element contains additional kwargs for the lut_generator_fcn
-        lut_kwargs = lut[1] if len(lut) > 1 else None 
-        lut = lut[0]
-  
-    if lut is None: # use default type in luts_dict
-        if luts_dict is None:
-            raise Exception('User must supply a dictionary with luts when lut is None!')
-        if ('wl' not in luts_dict): luts_dict_empty = True # if not present luts_dict must be empty 
-        lut, lut_kwargs = copy.deepcopy(luts_dict[cspace_str][cieobs][default_lut_type])
-        
-    elif isinstance(lut,str) | (isinstance(lut,tuple)): # str or tuples specify the (lut_int,lut_unit,lut_min_max)
-        if luts_dict is None: # luts_dict is None: generate a new lut from scratch
-            if isinstance(lut,str): # prepare variable for input into _generate_lut
-                lut_int,lut_unit,lut_min_max = _process_lut_label(lut)
-                lut = (lut_int, lut_unit, lut_min_max)
-            #raise Exception('User must supply a dictionary with luts when lut is a string key or tuple key!')
-        else:
-            if ('wl' not in luts_dict): luts_dict_empty = True # if not present luts_dict must be empty 
-            if lut in luts_dict[cspace_str][cieobs]: # read from luts_dict
-                lut, lut_kwargs = copy.deepcopy(luts_dict[cspace_str][cieobs][lut])
-            else: # if not in luts_dict: generate a new lut from scratch
-                if isinstance(lut,str): # prepare variable for input into _generate_lut
-                    lut_int,lut_unit,lut_min_max = _process_lut_label(lut)
-                    lut = (lut_int, lut_unit, lut_min_max)
- 
-    elif isinstance(lut,np.ndarray):
-        if lut.ndim == 1:
-            lut = lut[:,None] # make 2D
-        if lut.shape[-1]==1:
-            lut_is_cct_list = True
-        else:
-            lut_is_precalc_lut = True
-           
-    if ignore_unequal_wl == False:
-        if luts_dict is not None:
-            if not np.array_equal(luts_dict['wl'],wl):
-                unequal_wl = True
-    
-    if ((unequal_wl) | (isinstance(lut, dict) | isinstance(lut, tuple) | (luts_dict_empty) | (lut_is_cct_list))) & (lut_is_precalc_lut==False):
-    
-        if cspace_dict is None: raise Exception('No cspace dict or other given !')
-        
-        # create dict with lut_kwargs for input in the generator function:
-        # if not isinstance(lut_kwargs,dict) & (len(lut_generator_kwargs)>0):
-        #     if not isinstance(lut_kwargs,list): lut_kwargs = [lut_kwargs] 
-        #     lut_kwargs_keys = lut_generator_kwargs.keys()
-        #     lut_kwargs = dict(zip(lut_kwargs_keys,lut_kwargs))
-
-        if 'seamless_stitch' in kwargs: lut_kwargs['seamless_stitch'] = kwargs['seamless_stitch']
-        
-        if isinstance(lut, dict): 
-            if ('cieobs' not in lut): lut['cieobs'] = cieobs
-            if ('wl' not in lut): lut['wl'] = wl
-            if ('lut_vars' not in lut): lut['lut_vars'] = lut_vars
-            if ('lut_kwargs') not in lut: 
-                lut = {**lut,**lut_kwargs}
-            if ('cspace' not in lut): 
-                lut['cspace'] = cspace_dict
-                lut['cspace_kwargs'] = None
-            lut, lut_kwargs = lut_generator_fcn(**lut)
-        
-        elif isinstance(lut, tuple):
-            lut, lut_kwargs = lut_generator_fcn(lut_int = lut[0],
-                                                lut_unit = lut[1],
-                                                lut_min_max = lut[2],
-                                                cieobs = cieobs, wl = wl,
-                                                cspace = cspace_dict,
-                                                lut_vars = lut_vars,
-                                                cspace_kwargs = None,
-                                                **lut_kwargs)
-        else:
-            # generator function must always have to returns!
-            # Take care of wavelength difference or when lut is actually a cct_list:
-            ccts = lut[:,:1]
-            lut, lut_kwargs = lut_generator_fcn(lut_min_max = ccts,
-                                                cieobs = cieobs, wl = wl,
-                                                cspace = cspace_dict,
-                                                lut_vars = lut_vars,
-                                                cspace_kwargs = None,
-                                                **lut_kwargs)
-    
-    return list([lut, lut_kwargs])
+def _add_lut_endpoints(x):
+    """ Replicates endpoints of lut to avoid out-of-bounds issues """
+    return np.vstack((x[:1],x,x[-1:]))
 
 
 #------------------------------------------------------------------------------
+# Other helper functions
+#------------------------------------------------------------------------------
+
 def _get_Duv_for_T(u,v, T, wl, cieobs, cspace_dict, uvwbar = None, dl = None):
     """ 
     Calculate Duv from T by generating a planckian and
@@ -1055,7 +1326,6 @@ def _get_pns_from_x(x, idx):
     else:
         diag = np.diag
         return diag(x[idx-1])[:,None], diag(x[idx])[:,None], diag(x[idx+1])[:,None]
-
 
 #==============================================================================
 # define original versions of various cct methods:
@@ -1404,12 +1674,11 @@ def _get_newton_raphson_estimated_Tc(u, v, T0, wl = _WL3, atol = 0.1, rtol = 1e-
     Duv *= np.sign(theta)
     return T, Duv
 
-
 #------------------------------------------------------------------------------
 # Robertson 1968:
 #------------------------------------------------------------------------------
 _CCT_LUT['robertson1968'] = {}
-_CCT_LUT['robertson1968']['lut_type_def'] = ((10,25),'K-1',((10,100),(100,625))) # default LUT 
+_CCT_LUT['robertson1968']['lut_type_def'] = ((10,100,10,'K-1'),(100,625,25,'K-1'),True) # default LUT
 _CCT_LUT['robertson1968']['lut_vars'] = ['T','uv','iso-T-slope']
 _CCT_LUT['robertson1968']['_generate_lut'] = _generate_lut 
 
@@ -1489,7 +1758,9 @@ def xyz_to_cct_robertson1968(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = 
             |  - None: defaults to the lut specified in _CCT_LUT['robertson1968']['lut_type_def'].
             |  - list (lut,lut_kwargs): use this pre-calculated lut 
             |       (add additional kwargs for the lut_generator_fcn(), defaults to None if omitted)
-            |  - str or tuple: must be key (label) in :luts_dict: (pre-calculated dict of luts)
+            |  - tuple: must be key (label) in :luts_dict: (pre-calculated dict of luts),
+            |           if not: then a new lut will be generated from scratch using the info in the tuple.
+            |  - str: must be key (label) in :luts_dict: (pre-calculated dict of luts)
             |  - ndarray [Nx1]: list of luts for which to generate a lut
             |  - ndarray [Nxn] with n>3: pre-calculated lut (last col must contain slope of the isotemperature lines).
         :luts_dict:
@@ -1546,6 +1817,7 @@ def xyz_to_cct_robertson1968(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = 
         <https://doi.org/10.1364/OE.24.014066>`_
 
     """
+    mode = 'robertson1968'
     
     # Process cspace-parameters:
     cspace_dict, cspace_str = _process_cspace(cspace, cspace_kwargs)
@@ -1556,14 +1828,20 @@ def xyz_to_cct_robertson1968(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = 
     # Get or generate requested lut
     # (if wl doesn't match those in _CCT_LUT['robertson1968'] , 
     # a new recalculated lut will be generated):
-    if luts_dict is None: luts_dict = _CCT_LUT['robertson1968']['luts']
+    if luts_dict is None: luts_dict = _CCT_LUT[mode]['luts']
 
-    lut,_ = _get_lut(lut, luts_dict = luts_dict, 
-                     default_lut_type = _CCT_LUT['robertson1968']['lut_type_def'], cieobs = cieobs, 
-                     cspace_str = cspace_str, wl = wl, cspace = cspace_dict, 
-                     cspace_kwargs = None, ignore_unequal_wl = ignore_wl_diff,
-                     lut_vars = _CCT_LUT['robertson1968']['lut_vars'])
-    
+    lut, lut_kwargs = _get_lut(lut, 
+                               fallback_unit = _CCT_FALLBACK_UNIT, 
+                               fallback_n = _CCT_FALLBACK_N,
+                               resample_nd_array = False, 
+                               luts_dict = luts_dict, cieobs = cieobs, 
+                               lut_type_def = _CCT_LUT[mode]['lut_type_def'],
+                               cspace_str = cspace_str, wl = wl, cspace = cspace_dict, 
+                               cspace_kwargs = None, ignore_unequal_wl = ignore_wl_diff, 
+                               lut_generator_fcn = _CCT_LUT[mode]['_generate_lut'],
+                               lut_vars = _CCT_LUT[mode]['lut_vars'])
+
+
     # pre-calculate wl,dl,uvwbar for later use:
     xyzbar, wl, dl = _get_xyzbar_wl_dl(cieobs, wl)
     uvwbar = _convert_xyzbar_to_uvwbar(xyzbar, cspace_dict)
@@ -1574,7 +1852,7 @@ def xyz_to_cct_robertson1968(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = 
             max_iter_nr = max_iter 
             max_iter = 1 # no need to run multiple times, all estimation done by NR
         elif (tol_method == 'cascading-lut') | (tol_method == 'cl'): 
-            lut_int, lut_unit, _ = _get_lut_characteristics(lut)
+            lut_char = _get_lut_characteristics(lut, force_au = False)
         else:
             raise Exception('Tolerance method = {:s} not implemented.'.format(tol_method))
     
@@ -1598,7 +1876,7 @@ def xyz_to_cct_robertson1968(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = 
         i = 0
         lut_i = lut # cascading lut will be updated later in while loop
         Duvx = None
-        
+
         while True & (i < max_iter):
   
             # needed to get correct columns from lut_i:
@@ -1641,7 +1919,7 @@ def xyz_to_cct_robertson1968(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = 
             if force_tolerance == False:
                 break 
             else:
-                
+
                 if (tol_method == 'cascading-lut') | (tol_method == 'cl'):
                    
                     if out_of_lut.all(): # cl cannot recover from this!
@@ -1655,17 +1933,28 @@ def xyz_to_cct_robertson1968(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = 
                         Tx =  ((Ts_min + Ts_max)/2)[:,None] 
                         break 
                     else:
+                        
+                        lut_int = lut_char[0][2]
+                        
                         if np.isnan(lut_int): 
-                            lut_min_max = 1e6/np.linspace(1e6/Ts_max,1e6/Ts_min,lut_resolution_reduction_factor)
+                            lut_cl = 1e6/np.linspace(1e6/Ts_max,1e6/Ts_min,lut_resolution_reduction_factor)
                         else:
-                            lut_min_max = [Ts_min,Ts_max] if ('-1' not in lut_unit) else [1e6/Ts_max,1e6/Ts_min]
+                            lut_unit = lut_char[0][3]
+                            lut_int = lut_int/lut_resolution_reduction_factor**(i+1)
+                            lut_cl = [Ts_min,Ts_max,lut_int,lut_unit] if ('-1' not in lut_unit) else [1e6/Ts_max,1e6/Ts_min,lut_int,lut_unit]
                        
-                        lut_i = _generate_lut(lut_int/lut_resolution_reduction_factor**(i+1),
-                                              lut_min_max = lut_min_max, wl = wl,
-                                              lut_unit = lut_unit, cieobs = cieobs,   
-                                              cspace = cspace_dict, cspace_kwargs = None,
-                                              lut_vars = _CCT_LUT['robertson1968']['lut_vars'])[0]
-
+                                               
+                        lut_i = _generate_lut(lut_cl, seamless_stitch = True, 
+                                            fallback_unit = _CCT_FALLBACK_UNIT, 
+                                            fallback_n = _CCT_FALLBACK_N,
+                                            resample_nd_array = False, 
+                                            luts_dict = luts_dict, cieobs = cieobs, 
+                                            lut_type_def = _CCT_LUT[mode]['lut_type_def'],
+                                            cspace_str = cspace_str, wl = wl, cspace = cspace_dict, 
+                                            cspace_kwargs = None, ignore_unequal_wl = ignore_wl_diff, 
+                                            lut_generator_fcn = _CCT_LUT[mode]['_generate_lut'],
+                                            lut_vars = _CCT_LUT[mode]['lut_vars']
+                                            )[0]
             
                 elif (tol_method == 'newton-raphson') | (tol_method == 'nr'):
                     Tx, Duvx = _get_newton_raphson_estimated_Tc(u, v, Tx, wl = wl, uvwbar = uvwbar,
@@ -1681,8 +1970,9 @@ def xyz_to_cct_robertson1968(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = 
         if Duvx is None:
 
             Duvx = _get_Duv_for_T(u,v, Tx, wl, cieobs, cspace_dict, uvwbar = uvwbar, dl = dl)
-        
+
         Tx = Tx*(-1)**out_of_lut
+        
         # Add freshly calculated Tx, Duvx to storage array:
         if (ii < (N_ii-1)): 
             ccts[n_ii*ii:n_ii*ii+n_ii] = Tx
@@ -1705,18 +1995,18 @@ def xyz_to_cct_robertson1968(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = 
 
 # pre-generate some LUTs for Robertson1968:
 robertson1968_luts_exist = os.path.exists(os.path.join(_CCT_LUT_PATH,'robertson1968_luts.npy'))
-_CCT_LUT['robertson1968']['luts'] = generate_luts('robertson1968_luts.npy', 
+_CCT_LUT['robertson1968']['luts'] = generate_luts(types = [_CCT_LUT['robertson1968']['lut_type_def']],
+                                                lut_file ='robertson1968_luts.npy', 
                                                 load = (robertson1968_luts_exist & (_CCT_LUT_CALC==False)), 
                                                 lut_path = _CCT_LUT_PATH, 
-                                                wl = _WL3, cieobs = None, 
-                                                types = [_CCT_LUT['robertson1968']['lut_type_def']],
+                                                wl = _WL3, cieobs = None,
                                                 cspace = [_CCT_CSPACE], cspace_kwargs = [_CCT_CSPACE_KWARGS],
                                                 lut_vars = _CCT_LUT['robertson1968']['lut_vars'],
                                                 verbosity = verbosity_lut_generation)
 
 # #-----------------------------------------------------------------------------
 # # test code for different input formats if :lut::
-# key = (25.0, 'K-1', (0.0, 625.0))
+# key = _CCT_LUT['robertson1968']['lut_type_def']#((0.0,625,25.0, 'K-1'),)
 # cctduvs = xyz_to_cct_robertson1968(np.array([[9.5047e+01, 1.0000e+02, 1.0888e+02]]),out='[cct,duv]',force_tolerance=True)
 # print('cctduvs',cctduvs)   
 # cctduvs = xyz_to_cct_robertson1968(np.array([[100,100,100],[9.5047e+01, 1.0000e+02, 1.0888e+02]]),out='[cct,duv]',force_tolerance=True)
@@ -1724,7 +2014,7 @@ _CCT_LUT['robertson1968']['luts'] = generate_luts('robertson1968_luts.npy',
 #                                 out='[cct,duv]',force_tolerance=False, lut = key) 
 # print('cctduvs2',cctduvs2) 
 # lut = _CCT_LUT['robertson1968']['luts']['Yuv60']['1931_2'][key][0]
-# lut2 = _generate_lut(lut_int = 25.0, lut_unit='K-1',lut_min_max=lut[:,:1])[0]
+# lut2 = _generate_lut(lut[:,:1],lut_vars = ['T','uv','iso-T-slope'])[0]
 # cctduvs3 = xyz_to_cct_robertson1968(np.array([[9.5047e+01, 1.0000e+02, 1.0888e+02]]),
 #                                 out='[cct,duv]',force_tolerance=True, lut = lut2)
 # print('cctduvs3',cctduvs3) 
@@ -1736,7 +2026,7 @@ _CCT_LUT['robertson1968']['luts'] = generate_luts('robertson1968_luts.npy',
 # cctduvs5 = xyz_to_cct_robertson1968(np.array([[9.5047e+01, 1.0000e+02, 1.0888e+02]]),
 #                                 out='[cct,duv]',force_tolerance=False, lut = list_2 )
 # print('cctduvs5',cctduvs5) 
-# list_1 = [_CCT_LUT['robertson1968']['luts']['Yuv60']['1931_2'][key][0]]
+# list_1 = _CCT_LUT['robertson1968']['luts']['Yuv60']['1931_2'][key]
 # cctduvs6 = xyz_to_cct_robertson1968(np.array([[9.5047e+01, 1.0000e+02, 1.0888e+02]]),
 #                                 out='[cct,duv]',force_tolerance=False, lut = list_1 )
 # print('cctduvs6',cctduvs6) 
@@ -1746,7 +2036,7 @@ _CCT_LUT['robertson1968']['luts'] = generate_luts('robertson1968_luts.npy',
 # Zhang 2019:
 #------------------------------------------------------------------------------
 _CCT_LUT['zhang2019'] = {} 
-_CCT_LUT['zhang2019']['lut_type_def'] = ((1,25.0), 'K-1',((1,1), (25, 1025.0)))
+_CCT_LUT['zhang2019']['lut_type_def'] = ((1,1,1,'K-1'),(25,1025,25,'K-1'),False)
 _CCT_LUT['zhang2019']['lut_vars'] = ['T','uv']
 _CCT_LUT['zhang2019']['_generate_lut'] = _generate_lut 
 
@@ -1824,9 +2114,11 @@ def xyz_to_cct_zhang2019(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = Fals
             | Look-Up-Table with Ti, u,v,u',v',u",v",slope values of Planckians. 
             | Options:
             |  - None: defaults to the lut specified in _CCT_LUT['zhang2019']['lut_type_def'].
-            |  - list [lut,lut_kwargs]: use this pre-calculated lut 
+            |  - list (lut,lut_kwargs): use this pre-calculated lut 
             |       (add additional kwargs for the lut_generator_fcn(), defaults to None if omitted)
-            |  - str or tuple: must be key (label) in :luts_dict: (pre-calculated dict of luts)
+            |  - tuple: must be key (label) in :luts_dict: (pre-calculated dict of luts),
+            |           if not: then a new lut will be generated from scratch using the info in the tuple.
+            |  - str: must be key (label) in :luts_dict: (pre-calculated dict of luts)
             |  - ndarray [Nx1]: list of luts for which to generate a lut
             |  - ndarray [Nxn] with n>3: pre-calculated lut (last col must contain slope of the isotemperature lines).
         :luts_dict:
@@ -1884,6 +2176,7 @@ def xyz_to_cct_zhang2019(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = Fals
         <https://doi.org/10.1364/OE.24.014066>`_
 
     """
+    mode = 'zhang2019'
     
     # Process cspace-parameters:
     cspace_dict, cspace_str = _process_cspace(cspace, cspace_kwargs)
@@ -1894,14 +2187,18 @@ def xyz_to_cct_zhang2019(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = Fals
     # Get or generate requested lut
     # (if wl doesn't match those in _CCT_LUT['zhang2019']['luts'], 
     # a new recalculated lut will be generated):
-    if luts_dict is None: luts_dict = _CCT_LUT['zhang2019']['luts']
-    lut, _ = _get_lut(lut, luts_dict = luts_dict, cieobs = cieobs, 
-                      default_lut_type = _CCT_LUT['zhang2019']['lut_type_def'], 
-                      cspace_str = cspace_str, wl = wl, cspace = cspace_dict, 
-                      cspace_kwargs = None, ignore_unequal_wl = ignore_wl_diff,
-                      lut_vars = _CCT_LUT['zhang2019']['lut_vars'])
-    
-    # lut = lut[::-1] # should be increasing CCT !
+    if luts_dict is None: luts_dict = _CCT_LUT[mode]['luts']
+
+    lut, lut_kwargs = _get_lut(lut, 
+                               fallback_unit = _CCT_FALLBACK_UNIT, 
+                               fallback_n = _CCT_FALLBACK_N,
+                               resample_nd_array = False, 
+                               luts_dict = luts_dict, cieobs = cieobs, 
+                               lut_type_def = _CCT_LUT[mode]['lut_type_def'],
+                               cspace_str = cspace_str, wl = wl, cspace = cspace_dict, 
+                               cspace_kwargs = None, ignore_unequal_wl = ignore_wl_diff, 
+                               lut_generator_fcn = _CCT_LUT[mode]['_generate_lut'],
+                               lut_vars = _CCT_LUT[mode]['lut_vars'])
     
     # pre-calculate wl,dl,uvwbar for later use:
     xyzbar, wl, dl = _get_xyzbar_wl_dl(cieobs, wl)
@@ -1911,12 +2208,14 @@ def xyz_to_cct_zhang2019(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = Fals
     max_iter_i = max_iter
     if force_tolerance: 
         if (tol_method == 'cascading-lut') | (tol_method == 'cl'): 
-            lut_int, lut_unit, _ = _get_lut_characteristics(lut)
+            lut_char = _get_lut_characteristics(lut, force_au = False)
         elif (tol_method == 'newton-raphson') | (tol_method == 'nr'):
             max_iter_nr = max_iter
             max_iter_i = 1 # no need to run multiple times, all estimation done by NR (no need for cascading loop)
         else:
             raise Exception('Tolerance method = {:s} not implemented.'.format(tol_method))
+            
+
             
     lut_n_cols = lut.shape[-1] # store now, as this will change later
     
@@ -2061,16 +2360,28 @@ def xyz_to_cct_zhang2019(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = Fals
                         Tx =  ((Ts_min + Ts_max)/2)[:,None] 
                         break 
                     else:
+                        
+                        lut_int = lut_char[0][2]
+                        
                         if np.isnan(lut_int): 
-                            lut_min_max = 1e6/np.linspace(1e6/Ts_max,1e6/Ts_min,lut_resolution_reduction_factor)
+                            lut_cl = 1e6/np.linspace(1e6/Ts_max,1e6/Ts_min,lut_resolution_reduction_factor)
                         else:
-                            lut_min_max = [Ts_min,Ts_max] if ('-1' not in lut_unit) else [1e6/Ts_max,1e6/Ts_min]
-
-                        lut_i = _generate_lut(lut_int/lut_resolution_reduction_factor**(i+1),
-                                              lut_min_max = lut_min_max, wl = wl,
-                                              lut_unit = lut_unit, cieobs = cieobs,   
-                                              cspace = cspace_dict, cspace_kwargs = None,
-                                              lut_vars = _CCT_LUT['zhang2019']['lut_vars'])[0]
+                            lut_unit = lut_char[0][3]
+                            lut_int = lut_int/lut_resolution_reduction_factor**(i+1)
+                            lut_cl = [Ts_min,Ts_max,lut_int,lut_unit] if ('-1' not in lut_unit) else [1e6/Ts_max,1e6/Ts_min,lut_int,lut_unit]
+                       
+                                               
+                        lut_i = _generate_lut(lut_cl, seamless_stitch = True, 
+                                            fallback_unit = _CCT_FALLBACK_UNIT, 
+                                            fallback_n = _CCT_FALLBACK_N,
+                                            resample_nd_array = False, 
+                                            luts_dict = luts_dict, cieobs = cieobs, 
+                                            lut_type_def = _CCT_LUT[mode]['lut_type_def'],
+                                            cspace_str = cspace_str, wl = wl, cspace = cspace_dict, 
+                                            cspace_kwargs = None, ignore_unequal_wl = ignore_wl_diff, 
+                                            lut_generator_fcn = _CCT_LUT[mode]['_generate_lut'],
+                                            lut_vars = _CCT_LUT[mode]['lut_vars']
+                                            )[0]
                         
                         
             
@@ -2111,57 +2422,95 @@ def xyz_to_cct_zhang2019(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = Fals
 
 # pre-generate some LUTs for Zhang2019:
 zhang2019_luts_exist = os.path.exists(os.path.join(_CCT_LUT_PATH,'zhang2019_luts.npy'))
-_CCT_LUT['zhang2019']['luts'] = generate_luts('zhang2019_luts.npy', 
-                                    load = (zhang2019_luts_exist & (_CCT_LUT_CALC==False)), 
-                                    lut_path = _CCT_LUT_PATH, 
-                                    wl = _WL3, cieobs = None, 
-                                    types = [_CCT_LUT['zhang2019']['lut_type_def']],
-                                    seamless_stitch = False,
-                                    cspace = [_CCT_CSPACE], cspace_kwargs = [_CCT_CSPACE_KWARGS],
-                                    lut_vars = _CCT_LUT['zhang2019']['lut_vars'],
-                                    verbosity = verbosity_lut_generation)
-
-#-----------------------------------------------------------------------------
-# # test code for different input formats if :lut::
-# print('Zhang2019')
-# cctduvs = xyz_to_cct_zhang2019(np.array([[9.5047e+01, 1.0000e+02, 1.0888e+02]]),out='[cct,duv]',force_tolerance=True)
-# print('cctduvs',cctduvs)   
-# # cctduvs = xyz_to_cct_zhang2019(np.array([[100,100,100],[9.5047e+01, 1.0000e+02, 1.0888e+02]]),out='[cct,duv]',force_tolerance=True)
-# cctduvs2 = xyz_to_cct_zhang2019(np.array([[9.5047e+01, 1.0000e+02, 1.0888e+02]]),
-#                                 out='[cct,duv]',force_tolerance=True, lut = (25.0, 'K-1', (1.0, 1025+25.0)))
-# print('cctduvs2',cctduvs2) 
-# lut = _CCT_LUT['zhang2019']['luts']['Yuv60']['1931_2'][(25.0, 'K-1', (1.0, 1025+25.0))][0]
-# lut2 = _generate_lut(lut_int = 25.0, lut_unit='K-1',lut_min_max=lut[:,:1])[0]
-# cctduvs3 = xyz_to_cct_zhang2019(np.array([[9.5047e+01, 1.0000e+02, 1.0888e+02]]),
-#                                 out='[cct,duv]',force_tolerance=True, lut = lut2 )
-# print('cctduvs3',cctduvs3) 
-# ccts = _CCT_LUT['zhang2019']['luts']['Yuv60']['1931_2'][(25.0, 'K-1', (1.0, 1025+25.0))][0][:,:1]
-# cctduvs4 = xyz_to_cct_zhang2019(np.array([[9.5047e+01, 1.0000e+02, 1.0888e+02]]),
-#                                 out='[cct,duv]',force_tolerance=False, lut = ccts )
-# print('cctduvs4',cctduvs4) 
-# list_2 = _CCT_LUT['zhang2019']['luts']['Yuv60']['1931_2'][(25.0, 'K-1', (1.0, 1025+25.0))]
-# cctduvs5 = xyz_to_cct_zhang2019(np.array([[9.5047e+01, 1.0000e+02, 1.0888e+02]]),
-#                                 out='[cct,duv]',force_tolerance=False, lut = list_2 )
-# print('cctduvs5',cctduvs5) 
-# list_1 = [_CCT_LUT['zhang2019']['luts']['Yuv60']['1931_2'][(25.0, 'K-1', (1.0, 1025+25.0))][0]]
-# cctduvs6 = xyz_to_cct_zhang2019(np.array([[9.5047e+01, 1.0000e+02, 1.0888e+02]]),
-#                                 out='[cct,duv]',force_tolerance=False, lut = list_1 )
-# print('cctduvs6',cctduvs6) 
-# raise Exception('')
-
+_CCT_LUT['zhang2019']['luts'] = generate_luts(types = [_CCT_LUT['zhang2019']['lut_type_def']],
+                                                lut_file = 'zhang2019_luts.npy', 
+                                                load = (zhang2019_luts_exist & (_CCT_LUT_CALC==False)), 
+                                                lut_path = _CCT_LUT_PATH, 
+                                                wl = _WL3, cieobs = None, 
+                                                cspace = [_CCT_CSPACE], cspace_kwargs = [_CCT_CSPACE_KWARGS],
+                                                lut_vars = _CCT_LUT['zhang2019']['lut_vars'],
+                                                verbosity = verbosity_lut_generation)
 
 
 #------------------------------------------------------------------------------
-# Ohno 2014:
+# Ohno 2014 related functions:
 #------------------------------------------------------------------------------
 _CCT_LUT['ohno2014'] = {'luts':None}
-_CCT_LUT['ohno2014']['lut_type_def'] = (1.0, '%', (1000.0, 50000.0))
+_CCT_LUT['ohno2014']['lut_type_def'] = ((1000.0, 50000.0, 1.0, '%'),)
 _CCT_LUT['ohno2014']['lut_vars'] = ['T','uv']
 
+def _generate_lut_ohno2014(lut, 
+                           uin = None, seamless_stitch = True, 
+                           fallback_unit = _CCT_FALLBACK_UNIT, fallback_n = _CCT_FALLBACK_N,
+                           resample_nd_array = False,
+                           cct_max = _CCT_MAX, cct_min = _CCT_MIN,
+                           luts_dict = None, lut_type_def = None, lut_vars = ['T','uv'],
+                           cieobs =  _CIEOBS, cspace_str = None, wl = _WL3, ignore_unequal_wl = False, 
+                           lut_generator_fcn = _generate_lut, lut_generator_kwargs = {},
+                           cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS,
+                           f_corr = None, ignore_f_corr_is_None = False,
+                           ignore_wl_diff = False, 
+                           **kwargs):
+    """
+    Lut generator function for ohno2014. 
+    
+    Args:
+        :...: 
+            | see docstring for _generate_lut
+        :f_corr:
+            | Tc,x correction factor for the parabolic solution in Ohno2014.
+            |   If None, it will be recalculated (note that it depends on the lut) for increased accuracy.
+        :ignore_f_corr_is_None: 
+            |   If True, ignore f_corr is None, i.e. don't re-calculate f_corr.
+                             
+    Returns:
+        :lut: 
+            | an ndarray with the lut 
+        :dict:
+            | a dictionary with the (re-optmized) value for f_corr and for ignore_f_cor_is_None.)
+    """    
+    # generate lut:
+    lut, _ = _generate_lut(lut, uin = uin, seamless_stitch = seamless_stitch, 
+                        fallback_unit = fallback_unit, fallback_n = fallback_n,
+                        resample_nd_array = resample_nd_array, cct_max = cct_max, cct_min = cct_min,
+                        wl = wl, cieobs = cieobs, lut_vars = lut_vars,
+                        cspace =  cspace, cspace_kwargs = cspace_kwargs)        
+
+    # Get correction factor for Tx in parabolic solution:
+    if (f_corr is None): 
+        if (ignore_f_corr_is_None == False):
+            f_corr = get_correction_factor_for_Tx(lut, 
+                                                  uin = uin, 
+                                                  seamless_stitch = seamless_stitch, 
+                                                  fallback_unit = _CCT_FALLBACK_UNIT,
+                                                  fallback_n = lut.shape[0]*4,
+                                                  resample_nd_array = True,
+                                                  cct_max = cct_max, 
+                                                  cct_min = cct_min,
+                                                  wl = wl, cieobs = cieobs, 
+                                                  lut_vars = lut_vars,
+                                                  cspace =  cspace, 
+                                                  cspace_kwargs = cspace_kwargs,
+                                                  ignore_wl_diff = ignore_wl_diff)
+        else: 
+            f_corr = 1.0 # use this a backup value
+
+
+    return list([lut, {'f_corr':f_corr,'ignore_f_corr_is_None':ignore_f_corr_is_None}])
+
+_CCT_LUT['ohno2014']['_generate_lut'] = _generate_lut_ohno2014
+
 def get_correction_factor_for_Tx(lut, 
-                                 lut_int = 1, lut_unit = '%', lut_min_max = [1000,5e4], seamless_stitch = True,
-                                 wl = _WL3, cieobs = _CIEOBS, ignore_wl_diff = False,
+                                 uin = None, seamless_stitch = True, 
+                                 fallback_unit = _CCT_FALLBACK_UNIT, fallback_n = _CCT_FALLBACK_N,
+                                 resample_nd_array = True,
+                                 cct_max = _CCT_MAX, cct_min = _CCT_MIN,
+                                 luts_dict = None, lut_type_def = None, lut_vars = ['T','uv'],
+                                 cieobs =  _CIEOBS, cspace_str = None, wl = _WL3, ignore_unequal_wl = False, 
+                                 lut_generator_fcn = _generate_lut, lut_generator_kwargs = {},
                                  cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS,
+                                 f_corr = None, ignore_f_corr_is_None = False,
+                                 ignore_wl_diff = False,
                                  verbosity = 0):
     """ 
     Ohno's 2014 parabolic solution uses a correction factor to correct the
@@ -2174,65 +2523,30 @@ def get_correction_factor_for_Tx(lut,
     Args:
         :lut:
             | ndarray with lut to optimize factor for.
-        :lut_int:
-            | 1, optional  
-            | CCT interval (see lut_unit for more info)
-        :lut_unit:
-            | '%', optional 
-            | String specifier for the units in the lut.
-            | Unit options are:
-            | - '%': equal relative Tc spacing (in %, cfr. (Ti+1 - Ti-1)/Ti-1).
-            | - 'K' equal absolute Tc spacing (in K, cfr. (Ti+1 - Ti-1).
-            | - '%-1': equal relative reciprocal Tc (MK-1 = mired).
-            | - 'K-1': equal absolute reciprocal Tc (MK-1 = mired).
-            | - 'au': arbitrary interval (generate by supplying an ndarray of Tc in lut_min_max).
-        :lut_min_max:
-            | [1e3,5e4], optional
-            | Minimum and maximum values (in units in lut_unit) of the lut.
-            | (note that the actual values are allways in K !!!)
-        :cieobs: 
-            | luxpy._CIEOBS, optional
-            | CMF set used to calculated xyzw.
-        :wl: 
-            | None, optional
-            | Wavelengths used when calculating Planckian radiators.
-        :cspace:
-            | _CCT_SPACE, optional
-            | Color space to do calculations in. 
-            | Options: 
-            |    - cspace string: 
-            |        e.g. 'Yuv60' for use with luxpy.colortf()
-            |    - tuple with forward (i.e. xyz_to..) [and backward (i.e. ..to_xyz)] functions 
-            |      (and an optional string describing the cspace): 
-            |        e.g. (forward, backward) or (forward, backward, cspace string) or (forward, cspace string) 
-            |    - dict with keys: 'fwtf' (foward), 'bwtf' (backward) [, optional: 'str' (cspace string)]
-            |  Note: if the backward tf is not supplied, optimization in cct_to_xyz() is done in the CIE 1976 u'v' diagram
-        :cspace_kwargs:
-            | _CCT_CSPACE_KWARGS, optional
-            | Parameter nested dictionary for the forward and backward transforms.
-        :verbosity:
-            | 0, optional
-            | If > 9; print some intermediate (status) output.
-        :ignore_wl_diff:
-            | False, optional
-            | When getting a lut from the dictionary, if differences are
-            | detected in the wavelengts of the lut and the ones used to calculate any
-            | plankcians then a new lut should be generated. Seting this to True ignores
-            | these differences and proceeds anyway.
-     
-        Returns:
+        :...: 
+            | see docstring for _generate_lut
+        :f_corr:
+            | Tc,x correction factor for the parabolic solution in Ohno2014.
+            |   If None, it will be recalculated (note that it depends on the lut) for increased accuracy.
+        :ignore_f_corr_is_None: 
+            |   If True, ignore f_corr is None, i.e. don't re-calculate f_corr.
+                             
+
+    Returns:
          :f_corr:
              | Tc,x correction factor.
     """
     # Generate a finer resolution lut to estimate the f_corr correction factor:
-    lut_fine,_ = _generate_lut(lut_int = lut_int, lut_unit = lut_unit, lut_min_max = lut_min_max, seamless_stitch = seamless_stitch,
-                             wl = wl, cieobs = cieobs, cspace = cspace, 
-                             cspace_kwargs = cspace_kwargs,
-                             lut_vars = _CCT_LUT['ohno2014']['lut_vars'])
+
+    lut_fine, _ = _generate_lut(lut, uin = uin, seamless_stitch = seamless_stitch, 
+                                fallback_unit = fallback_unit, fallback_n = fallback_n,
+                                resample_nd_array = resample_nd_array, cct_max = cct_max, cct_min = cct_min,
+                                wl = wl, cieobs = cieobs, 
+                                cspace =  cspace, cspace_kwargs = cspace_kwargs,
+                                lut_vars = _CCT_LUT['ohno2014']['lut_vars'])
 
     # define shorthand lambda fcn:
-    TxDuvx_p = lambda x: xyz_to_cct_ohno2014(lut_fine[:,1:3], lut = [lut, {'seamless_stitch' : seamless_stitch,
-                                                                           'f_corr': np.round(x,5)}], 
+    TxDuvx_p = lambda x: xyz_to_cct_ohno2014(lut_fine[:,1:3], lut = [lut, {'f_corr': np.round(x,5)}], 
                                             is_uv_input = True, 
                                             force_tolerance = False, out = '[cct,duv]',
                                             duv_parabolic_threshold = 0, # force use of parabolic
@@ -2278,52 +2592,10 @@ def get_correction_factor_for_Tx(lut,
         
     if verbosity > 0: 
         print('    f_corr = {:1.5f}: rmse dT={:1.4f}, dDuv={:1.6f}'.format(f_corr, dT2.mean()**0.5, dDuv2.mean()**0.5))
-    
+
     return f_corr
-    
 
-
-def _generate_lut_ohno2014(lut_int = 1, lut_unit = True, lut_min_max = [1000,5e4], 
-                           seamless_stitch = True, wl = _WL3, cieobs = _CIEOBS, 
-                           cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS,
-                           ignore_wl_diff = False,
-                           f_corr = None, ignore_f_corr_is_None = False,
-                           lut_vars = ['T','uv']):
-    """
-    Generate a lut with a specific interval in the specified units over the specified min-max range.
-    
-    Planckians are computed for wavelength interval wl and cmf set in cieobs and in the color space
-    specified in cspace (additional arguments for these chromaticity functions can be supplied using
-    the cspace_kwargs). [=  for _generate_lut with some additions to allow for the
-    Tc,x correction factor for the parabolic solution in Ohno2014]
-                         
-    Returns ndarray with lut and an optimized f_corr factor (when f_corr is set to None 
-    in the input, else use whatever is set in f_corr.)
-    """    
-    # generate lut:
-    lut = _generate_lut(lut_int = lut_int, lut_unit = lut_unit, lut_min_max = lut_min_max,
-                        seamless_stitch = seamless_stitch,
-                        wl = wl, cieobs = cieobs, cspace = cspace, 
-                        cspace_kwargs = cspace_kwargs, lut_vars = lut_vars)[0]        
-
-    # Get correction factor for Tx in parabolic solution:
-    if (f_corr is None): 
-        if (ignore_f_corr_is_None == False):
-            f_corr = get_correction_factor_for_Tx(lut, lut_int = lut_int/4, 
-                                                  lut_unit = lut_unit, 
-                                                  lut_min_max = lut_min_max, 
-                                                  seamless_stitch = seamless_stitch,
-                                                  wl = wl, cieobs = cieobs, 
-                                                  cspace = cspace, 
-                                                  cspace_kwargs = cspace_kwargs,
-                                                  ignore_wl_diff = ignore_wl_diff)
-        else: 
-            f_corr = 1.0 # use this a backup value
-
-
-    return list([lut, {'seamless_stitch':seamless_stitch, 'f_corr':f_corr,'ignore_f_corr_is_None':ignore_f_corr_is_None}])
-
-_CCT_LUT['ohno2014']['_generate_lut'] = _generate_lut_ohno2014
+  
     
 def xyz_to_cct_ohno2014(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = False, wl = None, 
                         atol = 0.1, rtol = 1e-5, force_tolerance = True, tol_method = 'newton-raphson', 
@@ -2404,9 +2676,11 @@ def xyz_to_cct_ohno2014(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = False
             | Look-Up-Table with Ti, u,v,u',v',u",v",slope values of Planckians. 
             | Options:
             |  - None: defaults to the lut specified in _CCT_LUT['ohno2014']['lut_type_def'].
-            |  - list [lut,lut_kwargs]: use this pre-calculated lut 
+            |  - list (lut,lut_kwargs): use this pre-calculated lut 
             |       (add additional kwargs for the lut_generator_fcn(), defaults to None if omitted)
-            |  - str or tuple: must be key (label) in :luts_dict: (pre-calculated dict of luts)
+            |  - tuple: must be key (label) in :luts_dict: (pre-calculated dict of luts),
+            |           if not: then a new lut will be generated from scratch using the info in the tuple.
+            |  - str: must be key (label) in :luts_dict: (pre-calculated dict of luts)
             |  - ndarray [Nx1]: list of luts for which to generate a lut
             |  - ndarray [Nxn] with n>3: pre-calculated lut (last col must contain slope of the isotemperature lines).
         :luts_dict:
@@ -2462,7 +2736,8 @@ def xyz_to_cct_ohno2014(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = False
         Optics Express, 24(13), 14066–14078. 
         <https://doi.org/10.1364/OE.24.014066>`_
         
-    """    
+    """ 
+    mode = 'ohno2014'
     
     # Process cspace-parameters:
     cspace_dict, cspace_str = _process_cspace(cspace, cspace_kwargs)
@@ -2473,21 +2748,27 @@ def xyz_to_cct_ohno2014(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = False
     # Get or generate requested lut
     # (if wl doesn't match those in _CCT_LUT['ohno2014']['luts'], 
     # a new recalculated lut will be generated):
-    if luts_dict is None: luts_dict = _CCT_LUT['ohno2014']['luts']
-    lut, lut_kwargs = _get_lut(lut, luts_dict = luts_dict, cieobs = cieobs, 
-                               default_lut_type = _CCT_LUT['ohno2014']['lut_type_def'], 
+    if luts_dict is None: luts_dict = _CCT_LUT[mode]['luts']
+
+    lut, lut_kwargs = _get_lut(lut, 
+                               fallback_unit = _CCT_FALLBACK_UNIT, 
+                               fallback_n = _CCT_FALLBACK_N,
+                               resample_nd_array = False, 
+                               luts_dict = luts_dict, cieobs = cieobs, 
+                               lut_type_def = _CCT_LUT[mode]['lut_type_def'],
                                cspace_str = cspace_str, wl = wl, cspace = cspace_dict, 
                                cspace_kwargs = None, ignore_unequal_wl = ignore_wl_diff, 
-                               lut_generator_fcn = _CCT_LUT['ohno2014']['_generate_lut'],
-                               lut_vars = _CCT_LUT['ohno2014']['lut_vars'])
-
+                               lut_generator_fcn = _CCT_LUT[mode]['_generate_lut'],
+                               lut_vars = _CCT_LUT[mode]['lut_vars'])
+    
+                                
     f_corr = lut_kwargs['f_corr']
     
     
     # Prepare some parameters for forced tolerance:
     if force_tolerance: 
         if (tol_method == 'cascading-lut') | (tol_method =='cl'): 
-            lut_int, lut_unit, _  = _get_lut_characteristics(lut)
+            lut_char  = _get_lut_characteristics(lut, force_au = False)
         elif (tol_method == 'newton-raphson') | (tol_method == 'nr'):
             xyzbar, wl, dl = _get_xyzbar_wl_dl(cieobs, wl)
             uvwbar = _convert_xyzbar_to_uvwbar(xyzbar, cspace_dict)
@@ -2608,14 +2889,29 @@ def xyz_to_cct_ohno2014(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = False
                         Tx =  ((Ts_min + Ts_max)/2)[:,None] 
                         break 
                     else:
-                        lut_min_max = [Ts_min,Ts_max] if ('-1' not in lut_unit) else [1e6/Ts_max,1e6/Ts_min]
+                        
+                        lut_int = lut_char[0][2] # use first interval in list
 
-                        lut_i, lut_kwargs = _generate_lut_ohno2014(lut_int/lut_resolution_reduction_factor**(i+1),
-                                                                   lut_min_max = lut_min_max, 
-                                                                   lut_unit = lut_unit, cieobs = cieobs, 
-                                                                   wl = wl, f_corr = 1, ignore_wl_diff = ignore_wl_diff,
-                                                                   cspace = cspace_dict, cspace_kwargs = None,
-                                                                   lut_vars = _CCT_LUT['ohno2014']['lut_vars'])
+                        if np.isnan(lut_int): 
+                            lut_cl = 1e6/np.linspace(1e6/Ts_max,1e6/Ts_min,lut_resolution_reduction_factor)
+                        else:
+                            lut_unit = lut_char[0][3]
+                            lut_int = lut_int/lut_resolution_reduction_factor**(i+1)
+                            lut_cl = [Ts_min,Ts_max,lut_int,lut_unit] if ('-1' not in lut_unit) else [1e6/Ts_max,1e6/Ts_min,lut_int,lut_unit]
+                     
+                        lut_i, lut_kwargs = _generate_lut_ohno2014(lut_cl, seamless_stitch = True, 
+                                                                   fallback_unit = _CCT_FALLBACK_UNIT, 
+                                                                   fallback_n = _CCT_FALLBACK_N,
+                                                                   resample_nd_array = False, 
+                                                                   luts_dict = luts_dict, cieobs = cieobs, 
+                                                                   lut_type_def = _CCT_LUT[mode]['lut_type_def'],
+                                                                   cspace_str = cspace_str, wl = wl, cspace = cspace_dict, 
+                                                                   cspace_kwargs = None, ignore_unequal_wl = ignore_wl_diff, 
+                                                                   lut_generator_fcn = _CCT_LUT[mode]['_generate_lut'],
+                                                                   lut_vars = _CCT_LUT[mode]['lut_vars'],
+                                                                   f_corr = 1
+                                                                   )
+                                                               
                         f_corr = lut_kwargs['f_corr']
                         
                 elif (tol_method == 'newton-raphson') | (tol_method == 'nr'):
@@ -2650,26 +2946,28 @@ def xyz_to_cct_ohno2014(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = False
         return np.hstack((ccts,duvs))   
     else:
         raise Exception('Unknown output requested')
- 
-   
- 
+
 # pre-generate some LUTs for Ohno 2014:
 ohno2014_luts_exist = os.path.exists(os.path.join(_CCT_LUT_PATH,'ohno2014_luts.npy'))
-_CCT_LUT['ohno2014']['luts'] = generate_luts('ohno2014_luts.npy', 
-                                load = (ohno2014_luts_exist & (_CCT_LUT_CALC==False)), 
-                                lut_path = _CCT_LUT_PATH, 
-                                wl = _WL3, cieobs = None, 
-                                types = [_CCT_LUT['ohno2014']['lut_type_def'],'15_%','0.25_%', '100_K'],
-                                lut_min_max = [1e3,5e4],
-                                cspace = [_CCT_CSPACE], cspace_kwargs = [_CCT_CSPACE_KWARGS],
-                                lut_vars = _CCT_LUT['ohno2014']['lut_vars'],
-                                verbosity = verbosity_lut_generation, 
-                                lut_generator_fcn = _CCT_LUT['ohno2014']['_generate_lut'])
-         
+_CCT_LUT['ohno2014']['luts'] = generate_luts(types = [_CCT_LUT['ohno2014']['lut_type_def'],
+                                                     ((1000.0, 50000.0, 15, '%'),),
+                                                     ((1000.0, 50000.0, 0.25, '%'),),
+                                                     ((1000.0, 50000.0, 100.0, 'K'),),
+                                                     ],
+                                             lut_file = 'ohno2014_luts.npy', 
+                                             load = (ohno2014_luts_exist & (_CCT_LUT_CALC==False)), 
+                                             lut_path = _CCT_LUT_PATH, 
+                                             wl = _WL3, cieobs = None, 
+                                             cspace = [_CCT_CSPACE], cspace_kwargs = [_CCT_CSPACE_KWARGS],
+                                             lut_vars = _CCT_LUT['ohno2014']['lut_vars'],
+                                             verbosity = verbosity_lut_generation, 
+                                             lut_generator_fcn = _CCT_LUT['ohno2014']['_generate_lut'])
+
 #------------------------------------------------------------------------------
 # Li 2016:
 #------------------------------------------------------------------------------
 _CCT_LUT['li2016'] = {'lut_vars': None, 'lut_type_def': None, 'luts':None,'_generate_lut':None}
+
 def xyz_to_cct_li2016(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = False, wl = None, 
                       atol = 0.1, rtol = 1e-5, max_iter = 100, split_calculation_at_N = 10, 
                       cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS,
@@ -2829,7 +3127,7 @@ def xyz_to_cct_li2016(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = False, 
     else:
         raise Exception('Unknown output requested')
   
-    
+
 #==============================================================================
 # General wrapper function for the various methods: xyz_to_cct()
 #==============================================================================
@@ -2917,10 +3215,12 @@ def xyz_to_cct(xyzw, mode = 'ohno2014',
             | None, optional
             | Look-Up-Table with Ti, u,v,u',v',u",v",slope values of Planckians. 
             | Options:
-            |  - None: defaults to the lut specified in _CCT_LUT['ohno2014']['lut_type_def'].
-            |  - list [lut,lut_kwargs]: use this pre-calculated lut 
+            |  - None: defaults to the lut specified in _CCT_LUT[mode]['lut_type_def'].
+            |  - list (lut,lut_kwargs): use this pre-calculated lut 
             |       (add additional kwargs for the lut_generator_fcn(), defaults to None if omitted)
-            |  - str or tuple: must be key (label) in :luts_dict: (pre-calculated dict of luts)
+            |  - tuple: must be key (label) in :luts_dict: (pre-calculated dict of luts),
+            |           if not: then a new lut will be generated from scratch using the info in the tuple.
+            |  - str: must be key (label) in :luts_dict: (pre-calculated dict of luts)
             |  - ndarray [Nx1]: list of luts for which to generate a lut
             |  - ndarray [Nxn] with n>3: pre-calculated lut (last col must contain slope of the isotemperature lines).
         :luts_dict:
@@ -3203,7 +3503,21 @@ def cct_to_xyz(ccts, duv = None, cct_offset = None, cieobs = _CIEOBS, wl = None,
     Yuv = np.hstack((100*np.ones_like(u),u,v))
     return cspace_dict['bwtf'](Yuv)
 
-    
+#------------------------------------------------------------------------------
+def cct_to_mired(data):
+    """
+    Convert cct to Mired scale (or back). 
+
+    Args:
+        :data: 
+            | ndarray with cct or Mired values.
+
+    Returns:
+        :returns: 
+            | ndarray ((10**6) / data)
+    """
+    return np.divide(10**6,data)
+  
 
 if __name__ == '__main__':
     import luxpy as lx 
@@ -3216,7 +3530,7 @@ if __name__ == '__main__':
     
     xyz = spd_to_xyz(BB, cieobs = cieobs)
     
-    cct = 1000
+    cct = 5000
     duvs = np.array([[0.05,0.025,0,-0.025,-0.05]]).T
     duvs = np.array([[-0.03,0.03]]).T
     ccts = np.array([[cct]*duvs.shape[0]]).T
@@ -3242,7 +3556,7 @@ if __name__ == '__main__':
 
     # xyz = np.array([[100,100,100]])
     cctsduvs = xyz_to_cct(xyz, rtol = 1e-6,cieobs = cieobs, out = '[cct,duv]', wl = _WL3, 
-                          mode='robertson1968',force_tolerance=True,tol_method='cl',lut=[(25,'K-1',(15,625)),{'f_corr':0.4}])
+                          mode='li2016:zhang2019',force_tolerance=True,tol_method='cl',lut=[(1000.0, 50000.0, 1.0, '%'),{'f_corr':None}])
     # cctsduvs2 = xyz_to_cct_li2016(xyz, rtol=1e-6, cieobs = cieobs, out = '[cct,duv]',force_tolerance=True)
     cctsduvs_ = cctsduvs.copy();cctsduvs_[:,0] = np.abs(cctsduvs_[:,0]) # outof gamut ccts are encoded as negative!!
     xyz_ = cct_to_xyz(cctsduvs_, cieobs = cieobs, wl = _WL3,cct_offset = cct_offset)
@@ -3250,4 +3564,3 @@ if __name__ == '__main__':
     print('cctsduvs:\n', cctsduvs)
     print('Dcctsduvs:\n', cctsduvs - cctsduvs_t)
     print('Dxyz:\n', xyz - xyz_)
-

@@ -2,10 +2,15 @@
 """
 cct: Module with functions related to correlated color temperature calculations
 ===============================================================================
+ These methods supersede earlier methods in cct_legacy.y (prior to Nov 2021)
 
-  :_CCT_MAX: (= 1e11 K), max. value that does not cause overflow problems. 
+ :_CCT_MAX: (= 1e11 K), max. value that does not cause overflow problems. 
  
  :_CCT_MIN: (= 550 K), min. value that does not cause underflow problems.
+ 
+ :_CCT_FALLBACK_N: Number of intervals to divide an ndarray with CCTs.
+ 
+ :_CCT_FALLBACK_UNIT: Type of scale (units) an ndarray will be subdivided.
 
  :_CCT_LUT_PATH: Folder with Look-Up-Tables (LUT) for correlated color 
                  temperature calculations. 
@@ -25,6 +30,8 @@ cct: Module with functions related to correlated color temperature calculations
  :_CCT_CSPACE: default chromaticity space to calculate CCT and Duv in.
  
  :_CCT_CSPACE_KWARGS: nested dict with cspace parameters for forward and backward modes. 
+ 
+ :get_tcs4(): Get an ndarray of Tc's obtained from a list or tuple of tc4 4-vectors.
  
  :calculate_lut(): Function that calculates the LUT for the input ccts.
  

@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Color sub-package &mdash; LuxPy 1.9.1 documentation</title>
+  <title>Color sub-package &mdash; LuxPy 1.9.2 documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                1.9.1
+                1.9.2
               </div>
             
           
@@ -2571,42 +2571,48 @@ to use the dict :fwtf: (should be empty!)
 <span class="target" id="module-luxpy.color.cct"></span><section id="cct-module-with-functions-related-to-correlated-color-temperature-calculations">
 <h3>cct: Module with functions related to correlated color temperature calculations<a class="headerlink" href="#cct-module-with-functions-related-to-correlated-color-temperature-calculations" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><blockquote>
-<div><dl class="field-list simple">
+<div><p>These methods supersede earlier methods in cct_legacy.y (prior to Nov 2021)</p>
+<dl class="field-list">
 <dt class="field-odd">_CCT_MAX</dt>
 <dd class="field-odd"><p>(= 1e11 K), max. value that does not cause overflow problems.</p>
 </dd>
-</dl>
-</div></blockquote>
-<dl class="field-list">
-<dt class="field-odd">_CCT_MIN</dt>
-<dd class="field-odd"><p>(= 550 K), min. value that does not cause underflow problems.</p>
+<dt class="field-even">_CCT_MIN</dt>
+<dd class="field-even"><p>(= 550 K), min. value that does not cause underflow problems.</p>
 </dd>
-<dt class="field-even">_CCT_LUT_PATH</dt>
-<dd class="field-even"><p>Folder with Look-Up-Tables (LUT) for correlated color 
+<dt class="field-odd">_CCT_FALLBACK_N</dt>
+<dd class="field-odd"><p>Number of intervals to divide an ndarray with CCTs.</p>
+</dd>
+<dt class="field-even">_CCT_FALLBACK_UNIT</dt>
+<dd class="field-even"><p>Type of scale (units) an ndarray will be subdivided.</p>
+</dd>
+<dt class="field-odd">_CCT_LUT_PATH</dt>
+<dd class="field-odd"><p>Folder with Look-Up-Tables (LUT) for correlated color 
 temperature calculations.</p>
 </dd>
-<dt class="field-odd">_CCT_LUT</dt>
-<dd class="field-odd"><p>Dict with LUTs structure LUT[mode][cspace][cieobs][lut i].</p>
+<dt class="field-even">_CCT_LUT</dt>
+<dd class="field-even"><p>Dict with LUTs structure LUT[mode][cspace][cieobs][lut i].</p>
 </dd>
-<dt class="field-even">_CCT_LUT_CALC</dt>
-<dd class="field-even"><p>Boolean determining whether to force LUT calculation, even if
+<dt class="field-odd">_CCT_LUT_CALC</dt>
+<dd class="field-odd"><p>Boolean determining whether to force LUT calculation, even if
 the LUT.npy files can be found in ./data/cctluts/.</p>
 </dd>
-<dt class="field-odd">_CCT_LUT</dt>
-<dd class="field-odd"><p>Dict with all pre-calculated LUTs.</p>
+<dt class="field-even">_CCT_LUT</dt>
+<dd class="field-even"><p>Dict with all pre-calculated LUTs.</p>
 </dd>
-<dt class="field-even">_CCT_LUT_RESOLUTION_REDUCTION_FACTOR</dt>
-<dd class="field-even"><p>number of subdivisions when performing
+<dt class="field-odd">_CCT_LUT_RESOLUTION_REDUCTION_FACTOR</dt>
+<dd class="field-odd"><p>number of subdivisions when performing
 a cascading lut calculation to zoom-in 
 progressively on the CCT (until a certain 
 tolerance is met)</p>
 </dd>
-<dt class="field-odd">_CCT_CSPACE</dt>
-<dd class="field-odd"><p>default chromaticity space to calculate CCT and Duv in.</p>
+<dt class="field-even">_CCT_CSPACE</dt>
+<dd class="field-even"><p>default chromaticity space to calculate CCT and Duv in.</p>
 </dd>
-<dt class="field-even">_CCT_CSPACE_KWARGS</dt>
-<dd class="field-even"><p>nested dict with cspace parameters for forward and backward modes.</p>
+<dt class="field-odd">_CCT_CSPACE_KWARGS</dt>
+<dd class="field-odd"><p>nested dict with cspace parameters for forward and backward modes.</p>
+</dd>
+<dt class="field-even">get_tcs4()</dt>
+<dd class="field-even"><p>Get an ndarray of Tc’s obtained from a list or tuple of tc4 4-vectors.</p>
 </dd>
 <dt class="field-odd">calculate_lut()</dt>
 <dd class="field-odd"><p>Function that calculates the LUT for the input ccts.</p>
@@ -3015,7 +3021,11 @@ Robertson’s 1968 search method.</p>
 <div class="line-block">
 <div class="line">(add additional kwargs for the lut_generator_fcn(), defaults to None if omitted)</div>
 </div>
-<div class="line">- str or tuple: must be key (label) in :luts_dict: (pre-calculated dict of luts)</div>
+<div class="line">- tuple: must be key (label) in :luts_dict: (pre-calculated dict of luts),</div>
+<div class="line-block">
+<div class="line">if not: then a new lut will be generated from scratch using the info in the tuple.</div>
+</div>
+<div class="line">- str: must be key (label) in :luts_dict: (pre-calculated dict of luts)</div>
 <div class="line">- ndarray [Nx1]: list of luts for which to generate a lut</div>
 <div class="line">- ndarray [Nxn] with n&gt;3: pre-calculated lut (last col must contain slope of the isotemperature lines).</div>
 </div>
@@ -3228,11 +3238,15 @@ using Ohno’s 2014 method.</p>
 <div class="line">Options:</div>
 <div class="line-block">
 <div class="line">- None: defaults to the lut specified in _CCT_LUT[‘ohno2014’][‘lut_type_def’].</div>
-<div class="line">- list [lut,lut_kwargs]: use this pre-calculated lut </div>
+<div class="line">- list (lut,lut_kwargs): use this pre-calculated lut </div>
 <div class="line-block">
 <div class="line">(add additional kwargs for the lut_generator_fcn(), defaults to None if omitted)</div>
 </div>
-<div class="line">- str or tuple: must be key (label) in :luts_dict: (pre-calculated dict of luts)</div>
+<div class="line">- tuple: must be key (label) in :luts_dict: (pre-calculated dict of luts),</div>
+<div class="line-block">
+<div class="line">if not: then a new lut will be generated from scratch using the info in the tuple.</div>
+</div>
+<div class="line">- str: must be key (label) in :luts_dict: (pre-calculated dict of luts)</div>
 <div class="line">- ndarray [Nx1]: list of luts for which to generate a lut</div>
 <div class="line">- ndarray [Nxn] with n&gt;3: pre-calculated lut (last col must contain slope of the isotemperature lines).</div>
 </div>
@@ -3567,11 +3581,15 @@ golden-ratio search method described in Zhang et al. (2019).</p>
 <div class="line">Options:</div>
 <div class="line-block">
 <div class="line">- None: defaults to the lut specified in _CCT_LUT[‘zhang2019’][‘lut_type_def’].</div>
-<div class="line">- list [lut,lut_kwargs]: use this pre-calculated lut </div>
+<div class="line">- list (lut,lut_kwargs): use this pre-calculated lut </div>
 <div class="line-block">
 <div class="line">(add additional kwargs for the lut_generator_fcn(), defaults to None if omitted)</div>
 </div>
-<div class="line">- str or tuple: must be key (label) in :luts_dict: (pre-calculated dict of luts)</div>
+<div class="line">- tuple: must be key (label) in :luts_dict: (pre-calculated dict of luts),</div>
+<div class="line-block">
+<div class="line">if not: then a new lut will be generated from scratch using the info in the tuple.</div>
+</div>
+<div class="line">- str: must be key (label) in :luts_dict: (pre-calculated dict of luts)</div>
 <div class="line">- ndarray [Nx1]: list of luts for which to generate a lut</div>
 <div class="line">- ndarray [Nxn] with n&gt;3: pre-calculated lut (last col must contain slope of the isotemperature lines).</div>
 </div>
@@ -3682,6 +3700,10 @@ of modes (methods).</p>
 <div class="line-block">
 <div class="line">(also, but see note below: ‘mcamy1992’, ‘hernandez1999’)</div>
 </div>
+<div class="line">Note: first_guess_mode for li2016 can also be specified using a ‘:’ separator,</div>
+<div class="line-block">
+<div class="line">e.g. ‘li2016:robertson1968’</div>
+</div>
 </div>
 </dd>
 <dt class="field-odd">cieobs</dt>
@@ -3785,12 +3807,16 @@ of modes (methods).</p>
 <div class="line">Look-Up-Table with Ti, u,v,u’,v’,u”,v”,slope values of Planckians. </div>
 <div class="line">Options:</div>
 <div class="line-block">
-<div class="line">- None: defaults to the lut specified in _CCT_LUT[‘ohno2014’][‘lut_type_def’].</div>
-<div class="line">- list [lut,lut_kwargs]: use this pre-calculated lut </div>
+<div class="line">- None: defaults to the lut specified in _CCT_LUT[mode][‘lut_type_def’].</div>
+<div class="line">- list (lut,lut_kwargs): use this pre-calculated lut </div>
 <div class="line-block">
 <div class="line">(add additional kwargs for the lut_generator_fcn(), defaults to None if omitted)</div>
 </div>
-<div class="line">- str or tuple: must be key (label) in :luts_dict: (pre-calculated dict of luts)</div>
+<div class="line">- tuple: must be key (label) in :luts_dict: (pre-calculated dict of luts),</div>
+<div class="line-block">
+<div class="line">if not: then a new lut will be generated from scratch using the info in the tuple.</div>
+</div>
+<div class="line">- str: must be key (label) in :luts_dict: (pre-calculated dict of luts)</div>
 <div class="line">- ndarray [Nx1]: list of luts for which to generate a lut</div>
 <div class="line">- ndarray [Nxn] with n&gt;3: pre-calculated lut (last col must contain slope of the isotemperature lines).</div>
 </div>
@@ -4113,7 +4139,7 @@ cieobs and in the chromaticity diagram in cspace.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="luxpy.color.cct.generate_luts">
-<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">generate_luts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">lut_file=None,</span> <span class="pre">load=False,</span> <span class="pre">lut_path='D:\\Documents\\GitHub\\luxpy\\luxpy\\data\\cctluts\\',</span> <span class="pre">wl=[360.0,</span> <span class="pre">830.0,</span> <span class="pre">1.0],</span> <span class="pre">cieobs=['1931_2'],</span> <span class="pre">types=['15_%',</span> <span class="pre">'1_%',</span> <span class="pre">'0.25_%',</span> <span class="pre">'1000_K'],</span> <span class="pre">lut_min_max=[1000.0,</span> <span class="pre">50000.0],</span> <span class="pre">lut_vars=['T',</span> <span class="pre">'uv',</span> <span class="pre">'uvp',</span> <span class="pre">'uvpp',</span> <span class="pre">'iso-T-slope'],</span> <span class="pre">cspace=['Yuv60'],</span> <span class="pre">cspace_kwargs=[{'fwtf':</span> <span class="pre">{},</span> <span class="pre">'bwtf':</span> <span class="pre">{}}],</span> <span class="pre">verbosity=0,</span> <span class="pre">lut_generator_fcn=&lt;function</span> <span class="pre">_generate_lut&gt;,</span> <span class="pre">lut_generator_kwargs={}</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#generate_luts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct.generate_luts" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">generate_luts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">types=[None],</span> <span class="pre">seamless_stitch=True,</span> <span class="pre">fallback_unit='K-1',</span> <span class="pre">fallback_n=50,</span> <span class="pre">cct_min=550,</span> <span class="pre">cct_max=100000000000.0,</span> <span class="pre">lut_file=None,</span> <span class="pre">load=False,</span> <span class="pre">lut_path='D:\\Documents\\GitHub\\luxpy\\luxpy\\data\\cctluts\\',</span> <span class="pre">wl=[360.0,</span> <span class="pre">830.0,</span> <span class="pre">1.0],</span> <span class="pre">cieobs=['1931_2'],</span> <span class="pre">lut_vars=['T',</span> <span class="pre">'uv',</span> <span class="pre">'uvp',</span> <span class="pre">'uvpp',</span> <span class="pre">'iso-T-slope'],</span> <span class="pre">cspace=['Yuv60'],</span> <span class="pre">cspace_kwargs=[{'fwtf':</span> <span class="pre">{},</span> <span class="pre">'bwtf':</span> <span class="pre">{}}],</span> <span class="pre">verbosity=0,</span> <span class="pre">lut_generator_fcn=&lt;function</span> <span class="pre">_generate_lut&gt;,</span> <span class="pre">lut_generator_kwargs={}</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#generate_luts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct.generate_luts" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate a number of luts and store them in a nested dictionary.
 Structure: lut[cspace][cieobs][lut type].</p>
 <dl>
@@ -4153,27 +4179,61 @@ Structure: lut[cspace][cieobs][lut type].</p>
 </dd>
 <dt class="field-even">types</dt>
 <dd class="field-even"><div class="line-block">
-<div class="line">[‘15_%’,’1_%’,’0.25_%’,’1000_K’] or list, optional</div>
-<div class="line">List of lut intervals and units as strings (note ‘_’ between</div>
-<div class="line">between value and unit!) or as tuples (eg. (15, ‘%’) or (15,’%’,(1e3,1e5))).</div>
-<div class="line">The latter would be ‘15_%,[1e3-1e5]’ in string format.</div>
-<div class="line">If the min_max range is given, then this one will be used, otherwise</div>
-<div class="line">the range in :lut_min_max: is used. If units are in MK-1 then the range is also!</div>
+<div class="line">[None], optional</div>
+<div class="line">List of lut specifiers of format [(Tmin,Tmax,Tinterval,unit),…]</div>
+<div class="line">If units are in MK-1 then the range is also!</div>
 <div class="line-block">
 <div class="line">Unit options are:</div>
 <div class="line">- ‘%’: equal relative Tc spacing (in %, cfr. (Ti+1 - Ti-1)/Ti-1).</div>
 <div class="line">- ‘K’ equal absolute Tc spacing (in K, cfr. (Ti+1 - Ti-1).</div>
 <div class="line">- ‘%-1’: equal relative reciprocal Tc (MK-1 = mired).</div>
 <div class="line">- ‘K-1’: equal absolute reciprocal Tc (MK-1 = mired).</div>
-<div class="line">- ‘au’: arbitrary interval (generate by supplying an ndarray of Tc in lut_min_max).</div>
-<div class="line"><br /></div>
 </div>
+<div class="line">If the last element of the list is a bool, then the way the different</div>
+<div class="line">lists of Tcs generated by each list element can be set. If True:</div>
+<div class="line">the Tcs will be ‘seamlessly’ stitched together (this does have an</div>
+<div class="line">an impact on the min-max range of each Tc set) so that there are no</div>
+<div class="line">discontinuities in terms of the intervals.</div>
 </div>
 </dd>
-<dt class="field-odd">lut_min_max</dt>
+<dt class="field-odd">seamless_stitch</dt>
 <dd class="field-odd"><div class="line-block">
-<div class="line">[1e3,5e4], optional</div>
-<div class="line">Aim for the min and max of the Tc (K or MK-1) range.</div>
+<div class="line">True, optional</div>
+<div class="line">When stitching (creating) LUTs composed of several CCT ranges with different</div>
+<div class="line">intervals, these do not always ‘match’ well, in the sense that discontinuities</div>
+<div class="line">might be generated. This can be avoided (at the expense of possibly slightly changed ranges)</div>
+<div class="line">by setting the :seamless_stitch: argument to True. Is overriden when</div>
+<div class="line">the last element in the lut list is a boolean.</div>
+</div>
+</dd>
+<dt class="field-even">cct_max</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">_CCT_MAX, optional</div>
+<div class="line">Limit Tc’s to a maximum value of cct_max</div>
+</div>
+</dd>
+<dt class="field-odd">cct_min</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">_CCT_MIN, optional</div>
+<div class="line">Limit Tc’s to a minimum value of cct_max</div>
+</div>
+</dd>
+<dt class="field-even">fallback_unit</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">_CCT_FALLBACK_UNIT, optional</div>
+<div class="line">Unit to fall back on when the input unit in tc4 (of first list) is ‘au’.</div>
+<div class="line">As there is no common distancing of the unit types [‘K’,’%’,’%-1’,’K-1’]</div>
+<div class="line">the Tc’s are generated by dividing the min-max range into </div>
+<div class="line">a number of divisions, specified by the negative 3 element (or when</div>
+<div class="line">positive or NaN, the number of divisions is set by :fallback_divisions:)</div>
+</div>
+</dd>
+<dt class="field-odd">fallback_n</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">_CCT_FALLBACK_N, optional</div>
+<div class="line">Number of divisions the min-max range is divided into, in the </div>
+<div class="line">fallback case in which unit==’au’ and the 3e 4-vector element </div>
+<div class="line">is NaN or positive.</div>
 </div>
 </dd>
 <dt class="field-even">lut_vars</dt>
@@ -4236,89 +4296,588 @@ Structure: lut[cspace][cieobs][lut type].</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="luxpy.color.cct.get_tcs4">
+<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">get_tcs4</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tc4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seamless_stitch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fallback_unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'K-1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fallback_n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#get_tcs4"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct.get_tcs4" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get an ndarray of Tc’s obtained from a list or tuple of tc4 4-vectors.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">tc4</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">list or tuple of 4-vectors.</div>
+<div class="line-block">
+<div class="line">e.g. (tc4_1, tc4_2, tc4_3,…) or (tc4_1, tc4_2, tc4_3,…, bool::seamless_stitch)</div>
+</div>
+<div class="line">When the last element of the list/tuple is a bool, then this specifies</div>
+<div class="line-block">
+<div class="line">how the Tc arrays generated for each of the 4-vector elements need to be</div>
+<div class="line">stitched together. This overrides the seamless_stitch input argument.</div>
+</div>
+<div class="line">Vector elements are: </div>
+<div class="line-block">
+<div class="line-block">
+<div class="line">[Tmin, Tmax inclusive, Tinterval(or number of intervals), unit]</div>
+</div>
+<div class="line">Unit specifies unit of the Tc interval, i.e. it determines the</div>
+<div class="line-block">
+<div class="line">type of scale in which the spacing of the Tc are done.</div>
+</div>
+<div class="line">Unit options are:</div>
+<div class="line-block">
+<div class="line">- ‘%’: equal relative Tc spacing (in %, cfr. (Ti+1 - Ti-1)/Ti-1).</div>
+<div class="line">- ‘K’ equal absolute Tc spacing (in K, cfr. (Ti+1 - Ti-1).</div>
+<div class="line">- ‘%-1’: equal relative reciprocal Tc (MK-1 = mired).</div>
+<div class="line">- ‘K-1’: equal absolute reciprocal Tc (MK-1 = mired).</div>
+</div>
+<div class="line">If the ‘interval’ element is negative, it actually represents</div>
+<div class="line">the number of intervals between Tmin, Tmax (included).</div>
+</div>
+</div>
+</dd>
+<dt class="field-even">uin</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">Unit of input Tmin, Tmax (by default it is assumed to be the same</div>
+<div class="line">as the scale ‘unit’).</div>
+</div>
+</dd>
+<dt class="field-odd">seamless_stitch</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">True, optional</div>
+<div class="line">Determines how the Tc arrays generated for each of the 4-vector </div>
+<div class="line">elements are stitched together. Is overriden by the presence of a </div>
+<div class="line">bool as last list/tuple element in :tc4:.</div>
+<div class="line">For a seamless stitch, all units for all 4-vectors should be the same!!</div>
+</div>
+</dd>
+<dt class="field-even">fallback_unit</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">_CCT_FALLBACK_UNIT, optional</div>
+<div class="line">Unit to fall back on when the input unit in tc4 (of first list) is ‘au’.</div>
+<div class="line">As there is no common distancing of the unit types [‘K’,’%’,’%-1’,’K-1’]</div>
+<div class="line">the Tc’s are generated by dividing the min-max range into </div>
+<div class="line">a number of divisions, specified by the negative 3 element (or when</div>
+<div class="line">positive or NaN, the number of divisions is set by :fallback_divisions:)</div>
+</div>
+</dd>
+<dt class="field-odd">fallback_n</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">_CCT_FALLBACK_N, optional</div>
+<div class="line">Number of divisions the min-max range is divided into, in the </div>
+<div class="line">fallback case in which unit==’au’ and the 3e 4-vector element </div>
+<div class="line">is NaN or positive.</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">tcs</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with Tcs</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="luxpy.color.cct._get_lut">
-<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">_get_lut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">lut,</span> <span class="pre">luts_dict=None,</span> <span class="pre">cieobs=None,</span> <span class="pre">cspace_str=None,</span> <span class="pre">default_lut_type=None,</span> <span class="pre">lut_vars=['T',</span> <span class="pre">'uv',</span> <span class="pre">'uvp',</span> <span class="pre">'uvpp',</span> <span class="pre">'iso-T-slope'],</span> <span class="pre">ignore_unequal_wl=False,</span> <span class="pre">lut_generator_fcn=&lt;function</span> <span class="pre">_generate_lut&gt;,</span> <span class="pre">lut_generator_kwargs={},</span> <span class="pre">**kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#_get_lut"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct._get_lut" title="Permalink to this definition">¶</a></dt>
-<dd><p>Helper function to make coding specific xyz_to_cct_MODE functions
-more easy. It basically processes input of the :lut: argument in several 
-xyz_to_cct_MODE functions to make code in those functions cleaner. lut can 
-be the first element of list (other element lut_kwargs (i.e. lut_generator_kwargs)
-must be a dictionary with keys of any other arguments one wants to pass along
-to the :lut_generator_fcn:), if supplied it will overwrite any input via 
-lut_generator_kwargs. Lut[0] can be string or tuple specifying the type in
-a (global) nested dictionary with luts or it can be a dictionary itself 
-with all keywords required for the :lut_generator_fcn:. :cieobs: and 
-:cspace_str: are strings (keys) in the lut dictionary. the :default_lut_type:
-is used whenever :lut: is set to None by a user.
-For the user_defined lut_generator function, lut_generator_fcn kwargs can be supplied
-using the lut_generator_kwargs argument. If not supplied the fcn-defaults will be used or
-whatever is in lut_kwargs (if 2n element in lut-list).
-When :ignore_unequal_wl: no new lut will be generated when the wavelengths of the lut
-do not match the ones specified in kwargs (the keyword arguments to 
-the :lut_generator_fcn:, excluding mandatory arguments :cspace_str: 
-(which is required for indexing in the lut dictionary), like :cieobs:,
-the latter is also required when generating a new lut using the
-generator function.) When supplying cspace information to the function
-use the dictionary format (with cspace_kwargs alreadty taken into account.)
-:lut_vars: sepcifies what the lut should contain. By default it contains 
-[‘T’,’uv’,’uvp’,’uvpp’,’iso-T-slope’] and minimally it should contain [‘T’,’uv’].</p>
+<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">_get_lut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">lut,</span> <span class="pre">uin=None,</span> <span class="pre">seamless_stitch=True,</span> <span class="pre">fallback_unit='K-1',</span> <span class="pre">fallback_n=50,</span> <span class="pre">resample_nd_array=False,</span> <span class="pre">cct_max=100000000000.0,</span> <span class="pre">cct_min=550,</span> <span class="pre">luts_dict=None,</span> <span class="pre">lut_type_def=None,</span> <span class="pre">lut_vars=['T',</span> <span class="pre">'uv',</span> <span class="pre">'uvp',</span> <span class="pre">'uvpp',</span> <span class="pre">'iso-T-slope'],</span> <span class="pre">cieobs='1931_2',</span> <span class="pre">cspace_str=None,</span> <span class="pre">wl=[360.0,</span> <span class="pre">830.0,</span> <span class="pre">1.0],</span> <span class="pre">ignore_unequal_wl=False,</span> <span class="pre">lut_generator_fcn=&lt;function</span> <span class="pre">_generate_lut&gt;,</span> <span class="pre">lut_generator_kwargs={},</span> <span class="pre">cspace='Yuv60',</span> <span class="pre">cspace_kwargs={'bwtf':</span> <span class="pre">{},</span> <span class="pre">'fwtf':</span> <span class="pre">{}},</span> <span class="pre">**kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#_get_lut"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct._get_lut" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get an ndarray LUT from various sources.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">lut</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">Look-Up-Table with Ti, u,v,u’,v’,u”,v”,slope values of Planckians, or</div>
+<div class="line">whatever quantities are specified in lut_vars (‘T’,’uv’ is always part of the lut).</div>
+<div class="line">Options: </div>
+<div class="line">- list: must have two elements: [lut,lut_kwargs]</div>
+<div class="line">- None: lut from luts_dict with lut_type_def as key</div>
+<div class="line">- str: lut from luts_dict at key :lut:</div>
+<div class="line">- ndarray [Nxn, with n&gt;1]: precalculated lut (only processing will be to keep it with cct_min-cct_max range)</div>
+<div class="line">- ndarray [Nx1]: list of Tc’s from which a new lut will be calculated.</div>
+<div class="line">- tuple of 4-vectors: used as key in luts_dict or to generate new lut from scratch</div>
+<div class="line-block">
+<div class="line">4-vector info: </div>
+<div class="line-block">
+<div class="line">+ format: e.g. (tc4_1, tc4_2, tc4_3,…) or (tc4_1, tc4_2, tc4_3,…, bool::seamless_stitch)</div>
+<div class="line">+ When the last element of the list/tuple is a bool, then this specifies</div>
+<div class="line-block">
+<div class="line">how the Tc arrays generated for each of the 4-vector elements need to be</div>
+<div class="line">stitched together. This overrides the seamless_stitch input argument.</div>
+</div>
+<div class="line">+ Vector elements are: </div>
+<div class="line-block">
+<div class="line-block">
+<div class="line">[Tmin, Tmax inclusive, Tinterval(or number of intervals), unit]</div>
+</div>
+<div class="line">Unit specifies unit of the Tc interval, i.e. it determines the</div>
+<div class="line">type of scale in which the spacing of the Tc are done.</div>
+<div class="line">Unit options are:</div>
+<div class="line-block">
+<div class="line">- ‘%’: equal relative Tc spacing (in %, cfr. (Ti+1 - Ti-1)/Ti-1).</div>
+<div class="line">- ‘K’ equal absolute Tc spacing (in K, cfr. (Ti+1 - Ti-1).</div>
+<div class="line">- ‘%-1’: equal relative reciprocal Tc (MK-1 = mired).</div>
+<div class="line">- ‘K-1’: equal absolute reciprocal Tc (MK-1 = mired).</div>
+</div>
+<div class="line">If the ‘interval’ element is negative, it actually represents</div>
+<div class="line">the number of intervals between Tmin, Tmax (included).</div>
+</div>
+</div>
+</div>
+</div>
+</dd>
+<dt class="field-even">uin</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">Unit of input Tmin, Tmax (by default it is assumed to be the same</div>
+<div class="line">as the scale ‘unit’) in Tc generation from tuple.</div>
+</div>
+</dd>
+<dt class="field-odd">seamless_stitch</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">True, optional</div>
+<div class="line">Determines how the Tc arrays generated for each of the 4-vector </div>
+<div class="line">elements are stitched together. Is overriden by the presence of a </div>
+<div class="line">bool as last list/tuple element in :tc4:.</div>
+<div class="line">For a seamless stitch, all units for all 4-vectors should be the same!!</div>
+</div>
+</dd>
+<dt class="field-even">cct_max</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">_CCT_MAX, optional</div>
+<div class="line">Limit Tc’s to a maximum value of cct_max</div>
+</div>
+</dd>
+<dt class="field-odd">cct_min</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">_CCT_MIN, optional</div>
+<div class="line">Limit Tc’s to a minimum value of cct_max</div>
+</div>
+</dd>
+<dt class="field-even">fallback_unit</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">_CCT_FALLBACK_UNIT, optional</div>
+<div class="line">Unit to fall back on when the input unit in tc4 (of first list) is ‘au’.</div>
+<div class="line">As there is no common distancing of the unit types [‘K’,’%’,’%-1’,’K-1’]</div>
+<div class="line">the Tc’s are generated by dividing the min-max range into </div>
+<div class="line">a number of divisions, specified by the negative 3 element (or when</div>
+<div class="line">positive or NaN, the number of divisions is set by :fallback_divisions:)</div>
+</div>
+</dd>
+<dt class="field-odd">fallback_n</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">_CCT_FALLBACK_N, optional</div>
+<div class="line">Number of divisions the min-max range is divided into, in the </div>
+<div class="line">fallback case in which unit==’au’ and the 3e 4-vector element </div>
+<div class="line">is NaN or positive.</div>
+</div>
+</dd>
+<dt class="field-even">resample_tc4_array</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">False, optional</div>
+<div class="line">If False: do not resample Tc’s of an ndarray input for tc4</div>
+<div class="line">else: divide min-max range in fallback_n intervals. Uses fallback_unit</div>
+<div class="line">to determine the scale for the resampling.</div>
+</div>
+</dd>
+<dt class="field-odd">wl</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">_WL3, optional</div>
+<div class="line">Wavelength for Planckian spectrum generation.</div>
+</div>
+</dd>
+<dt class="field-even">cieobs</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">_CIEOBS, optional</div>
+<div class="line">CMF set used to convert Planckian spectra to chromaticity coordinates</div>
+</div>
+</dd>
+<dt class="field-odd">lut_type_def</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">None, placeholder</div>
+<div class="line">Default lut (tuple key) to read from luts_dict.</div>
+</div>
+</dd>
+<dt class="field-even">luts_dict</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">Dictionary of pre-calculated luts for various cspaces and cmf sets.</div>
+<div class="line-block">
+<div class="line">Must have structure luts_dict[cspace][cieobs][lut_label] with the</div>
+<div class="line-block">
+<div class="line">lut part of a two-element list [lut, lut_kwargs]. It must contain</div>
+<div class="line">at the top-level a key ‘wl’ containing the wavelengths of the </div>
+<div class="line">Planckians used to generate the luts in this dictionary.</div>
+</div>
+</div>
+<div class="line">If None: the default dict for the mode is used </div>
+<div class="line-block">
+<div class="line">(e.g. _CCT_LUT[‘ohno2014’][‘lut_type_def’], for mode==’ohno2014’).    </div>
+</div>
+</div>
+</dd>
+<dt class="field-odd">lut_vars</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">[‘T’,’uv’,’uvp’,’uvpp’,’iso-T-slope’], optional</div>
+<div class="line">Data the lut should contain. Must follow this order </div>
+<div class="line">and minimum should be [‘T’,’uv’]</div>
+</div>
+</dd>
+<dt class="field-even">cspace,cspace_kwargs</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">Lists with the cspace and cspace_kwargs for which luts will be generated.</div>
+<div class="line">Default is single chromaticity diagram in _CCT_CSPACE.</div>
+</div>
+</dd>
+<dt class="field-odd">ignore_unequal_wl</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">False, optional</div>
+<div class="line">If True: ignore any differences in the wavelengths used to calculate</div>
+<div class="line-block">
+<div class="line">the lut (cfr. Planckians) from the luts_dict and the requested </div>
+<div class="line">wavelengths in :wl:</div>
+</div>
+</div>
+</dd>
+<dt class="field-even">lut_generator_fcn</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">_generate_lut, optional</div>
+<div class="line">Lets a user specify his own lut generation function (must output a list of 1 lut). </div>
+<div class="line">Default is the general function. There is a specific one for</div>
+<div class="line">Ohno’s 2014 method as that one requires a different correction factor</div>
+<div class="line">for each lut for the parabolic solutions. This optimized value is specified in the </div>
+<div class="line">second list index. (see _generate_lut_ohno2014()).</div>
+</div>
+</dd>
+<dt class="field-odd">lut_generator_kwargs</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">{}, optional</div>
+<div class="line">Dict with keyword arguments specific to the (user) lut_generator_fcn.</div>
+<div class="line-block">
+<div class="line">(e.g. {‘f_corr’:0.9991} for _generate_lut_ohno2014())  </div>
+</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">lut</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">List with an ndarray with in the columns whatever is specified in </div>
+<div class="line">lut_vars (Tc and uv are always present!).</div>
+<div class="line">Default lut_vars =  [‘T’,’uv’,’uvp’,’uvpp’,’iso-T-slope’]</div>
+<div class="line">- Tc: (in K)</div>
+<div class="line">- u,v: chromaticity coordinates of planckians</div>
+<div class="line">- u’v’: chromaticity coordinates of 1st derivative of the planckians.</div>
+<div class="line">- u”,v”: chromaticity coordinates of 2nd derivative of the planckians.</div>
+<div class="line">- slope of isotemperature lines (calculated as in Robertson, 1968).</div>
+</div>
+</dd>
+<dt class="field-even">lut_kwargs</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">{}</div>
+<div class="line">Dictionary with additional parameters related to the generation of the</div>
+<div class="line">lut.</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="luxpy.color.cct._generate_tcs">
-<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">_generate_tcs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lut_int</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[1]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lut_unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['%']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lut_min_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[[1000,</span> <span class="pre">50000.0]]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cct_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cct_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">550</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seamless</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lut_unit_fallback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'K-1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lut_N_fallback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#_generate_tcs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct._generate_tcs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generate an ndarray of CCTs. The ndarray is a vstack of ccts with a specific
-interval in the specified units over the specified tuple min-max range. 
-(not larger than cct_max or smaller than cct_min, whatever the input in lut_min_max!).
-(seamless fits multiple lut specifications together; this will impact the 
-estimated min,max ranges of each)</p>
-<p>Planckians are computed for wavelength interval wl and cmf set in cieobs and in the color space
-specified in cspace (additional arguments for these chromaticity functions can be supplied using
-the cspace_kwargs).</p>
-<p>Unit options are:
-- ‘%’: equal relative Tc spacing (in %, cfr. (Ti+1 - Ti-1)/Ti-1).
-- ‘K’ equal absolute Tc spacing (in K, cfr. (Ti+1 - Ti-1).
-- ‘%-1’: equal relative reciprocal Tc (MK-1 = mired).
-- ‘K-1’: equal absolute reciprocal Tc (MK-1 = mired).
-- ‘au’: arbitrary interval (generate by supplying an ndarray of Tc in lut_min_max).</p>
-<p>Note: if lut_unit == ‘au’ &amp; lut_min_max is not an ndarray (but a list of mins, maxs),
-Tcs are calculated using the units in lut_units_fallback and the min-max range is split
-in lut_N_fallback divisions.</p>
+<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">_generate_tcs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tc4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seamless_stitch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cct_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cct_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">550</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fallback_unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'K-1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fallback_n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resample_nd_array</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#_generate_tcs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct._generate_tcs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get an ndarray of Tc’s obtained from a list or tuple of tc4 4-vectors (or ndarray).</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">tc4</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">list or tuple of 4-vectors or ndarray.</div>
+<div class="line">If ndarray: return tc4 limited to a cct_min-cct_max range (do nothing else).</div>
+<div class="line">If list/tuple: e.g. (tc4_1, tc4_2, tc4_3,…) or (tc4_1, tc4_2, tc4_3,…, bool::seamless_stitch)</div>
+<div class="line">When the last element of the list/tuple is a bool, then this specifies</div>
+<div class="line-block">
+<div class="line">how the Tc arrays generated for each of the 4-vector elements need to be</div>
+<div class="line">stitched together. This overrides the seamless_stitch input argument.</div>
+</div>
+<div class="line">Vector elements are: </div>
+<div class="line-block">
+<div class="line-block">
+<div class="line">[Tmin, Tmax inclusive, Tinterval(or number of intervals), unit]</div>
+</div>
+<div class="line">Unit specifies unit of the Tc interval, i.e. it determines the</div>
+<div class="line-block">
+<div class="line">type of scale in which the spacing of the Tc are done.</div>
+</div>
+<div class="line">Unit options are:</div>
+<div class="line-block">
+<div class="line">- ‘%’: equal relative Tc spacing (in %, cfr. (Ti+1 - Ti-1)/Ti-1).</div>
+<div class="line">- ‘K’ equal absolute Tc spacing (in K, cfr. (Ti+1 - Ti-1).</div>
+<div class="line">- ‘%-1’: equal relative reciprocal Tc (MK-1 = mired).</div>
+<div class="line">- ‘K-1’: equal absolute reciprocal Tc (MK-1 = mired).</div>
+</div>
+<div class="line">If the ‘interval’ element is negative, it actually represents</div>
+<div class="line-block">
+<div class="line">the number of intervals between Tmin, Tmax (included).</div>
+</div>
+</div>
+</div>
+</dd>
+<dt class="field-even">uin</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">Unit of input Tmin, Tmax (by default it is assumed to be the same</div>
+<div class="line">as the scale ‘unit’).</div>
+</div>
+</dd>
+<dt class="field-odd">seamless_stitch</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">True, optional</div>
+<div class="line">Determines how the Tc arrays generated for each of the 4-vector </div>
+<div class="line">elements are stitched together. Is overriden by the presence of a </div>
+<div class="line">bool as last list/tuple element in :tc4:.</div>
+<div class="line">For a seamless stitch, all units for all 4-vectors should be the same!!</div>
+</div>
+</dd>
+<dt class="field-even">cct_max</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">_CCT_MAX, optional</div>
+<div class="line">Limit Tc’s to a maximum value of cct_max</div>
+</div>
+</dd>
+<dt class="field-odd">cct_min</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">_CCT_MIN, optional</div>
+<div class="line">Limit Tc’s to a minimum value of cct_max</div>
+</div>
+</dd>
+<dt class="field-even">fallback_unit</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">_CCT_FALLBACK_UNIT, optional</div>
+<div class="line">Unit to fall back on when the input unit in tc4 (of first list) is ‘au’.</div>
+<div class="line">As there is no common distancing of the unit types [‘K’,’%’,’%-1’,’K-1’]</div>
+<div class="line">the Tc’s are generated by dividing the min-max range into </div>
+<div class="line">a number of divisions, specified by the negative 3 element (or when</div>
+<div class="line">positive or NaN, the number of divisions is set by :fallback_divisions:)</div>
+</div>
+</dd>
+<dt class="field-odd">fallback_n</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">_CCT_FALLBACK_N, optional</div>
+<div class="line">Number of divisions the min-max range is divided into, in the </div>
+<div class="line">fallback case in which unit==’au’ and the 3e 4-vector element </div>
+<div class="line">is NaN or positive.</div>
+</div>
+</dd>
+<dt class="field-even">resample_nd_array</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">False, optional</div>
+<div class="line">If False: do not resample Tc’s of an ndarray input for tc4</div>
+<div class="line">else: divide min-max range in fallback_n intervals. Uses fallback_unit</div>
+<div class="line">to determine the scale for the resampling.</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">tcs</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with Tcs</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="luxpy.color.cct._generate_lut">
-<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">_generate_lut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lut_int</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[1]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lut_unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['%']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lut_min_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[(1000,</span> <span class="pre">50000.0)]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cct_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cct_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">550</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[360.0,</span> <span class="pre">830.0,</span> <span class="pre">1.0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lut_vars</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['T',</span> <span class="pre">'uv',</span> <span class="pre">'uvp',</span> <span class="pre">'uvpp',</span> <span class="pre">'iso-T-slope']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Yuv60'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'bwtf':</span> <span class="pre">{},</span> <span class="pre">'fwtf':</span> <span class="pre">{}}</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#_generate_lut"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct._generate_lut" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generate a lut with a specific interval in the specified units over the specified tuple min-max range 
-(not larger than cct_max or smaller than cct_min, whatever the input in lut_min_max!).</p>
-<p>Planckians are computed for wavelength interval wl and cmf set in cieobs and in the color space
-specified in cspace (additional arguments for these chromaticity functions can be supplied using
-the cspace_kwargs).</p>
-<p>Unit options are:
-- ‘%’: equal relative Tc spacing (in %, cfr. (Ti+1 - Ti-1)/Ti-1).
-- ‘K’ equal absolute Tc spacing (in K, cfr. (Ti+1 - Ti-1).
-- ‘%-1’: equal relative reciprocal Tc (MK-1 = mired).
-- ‘K-1’: equal absolute reciprocal Tc (MK-1 = mired).
-- ‘au’: arbitrary interval (generate by supplying an ndarray of Tc in lut_min_max).</p>
-<p>Returns single element list with an ndarray with in the columns whatever is specified in 
-lut_vars (Tc and uv are always present!). Default lut_vars =  [‘T’,’uv’,’uvp’,’uvpp’,’iso-T-slope’]
-- Tc: (in K)
-- u,v: chromaticity coordinates of planckians
-- u’v’: chromaticity coordinates of 1st derivative of the planckians.
-- u”,v”: chromaticity coordinates of 2nd derivative of the planckians.
-- slope of isotemperature lines (calculated as in Robertson, 1968).</p>
-<p>Note that a vstack of CCTs can be generate by supplying lists for lut_int, lut_unit and lut_min_max</p>
+<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">_generate_lut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tc4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seamless_stitch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fallback_unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'K-1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fallback_n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'K-1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resample_nd_array</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cct_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cct_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">550</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[360.0,</span> <span class="pre">830.0,</span> <span class="pre">1.0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lut_vars</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['T',</span> <span class="pre">'uv',</span> <span class="pre">'uvp',</span> <span class="pre">'uvpp',</span> <span class="pre">'iso-T-slope']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Yuv60'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'bwtf':</span> <span class="pre">{},</span> <span class="pre">'fwtf':</span> <span class="pre">{}}</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#_generate_lut"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct._generate_lut" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get an ndarray LUT for Tc’s obtained from a list or tuple of tc4 4-vectors (or ndarray).</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">tc4</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">list or tuple of 4-vectors or ndarray.</div>
+<div class="line">If ndarray: return tc4 limited to a cct_min-cct_max range (do nothing else).</div>
+<div class="line">If list/tuple: e.g. (tc4_1, tc4_2, tc4_3,…) or (tc4_1, tc4_2, tc4_3,…, bool::seamless_stitch)</div>
+<div class="line">When the last element of the list/tuple is a bool, then this specifies</div>
+<div class="line-block">
+<div class="line">how the Tc arrays generated for each of the 4-vector elements need to be</div>
+<div class="line">stitched together. This overrides the seamless_stitch input argument.</div>
+</div>
+<div class="line">Vector elements are: </div>
+<div class="line-block">
+<div class="line-block">
+<div class="line">[Tmin, Tmax inclusive, Tinterval(or number of intervals), unit]</div>
+</div>
+<div class="line">Unit specifies unit of the Tc interval, i.e. it determines the</div>
+<div class="line-block">
+<div class="line">type of scale in which the spacing of the Tc are done.</div>
+</div>
+<div class="line">Unit options are:</div>
+<div class="line-block">
+<div class="line">- ‘%’: equal relative Tc spacing (in %, cfr. (Ti+1 - Ti-1)/Ti-1).</div>
+<div class="line">- ‘K’ equal absolute Tc spacing (in K, cfr. (Ti+1 - Ti-1).</div>
+<div class="line">- ‘%-1’: equal relative reciprocal Tc (MK-1 = mired).</div>
+<div class="line">- ‘K-1’: equal absolute reciprocal Tc (MK-1 = mired).</div>
+</div>
+<div class="line">If the ‘interval’ element is negative, it actually represents</div>
+<div class="line-block">
+<div class="line">the number of intervals between Tmin, Tmax (included).</div>
+</div>
+</div>
+</div>
+</dd>
+<dt class="field-even">uin</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">Unit of input Tmin, Tmax (by default it is assumed to be the same</div>
+<div class="line">as the scale ‘unit’).</div>
+</div>
+</dd>
+<dt class="field-odd">seamless_stitch</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">True, optional</div>
+<div class="line">Determines how the Tc arrays generated for each of the 4-vector </div>
+<div class="line">elements are stitched together. Is overriden by the presence of a </div>
+<div class="line">bool as last list/tuple element in :tc4:.</div>
+<div class="line">For a seamless stitch, all units for all 4-vectors should be the same!!</div>
+</div>
+</dd>
+<dt class="field-even">cct_max</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">_CCT_MAX, optional</div>
+<div class="line">Limit Tc’s to a maximum value of cct_max</div>
+</div>
+</dd>
+<dt class="field-odd">cct_min</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">_CCT_MIN, optional</div>
+<div class="line">Limit Tc’s to a minimum value of cct_max</div>
+</div>
+</dd>
+<dt class="field-even">fallback_unit</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">_CCT_FALLBACK_UNIT, optional</div>
+<div class="line">Unit to fall back on when the input unit in tc4 (of first list) is ‘au’.</div>
+<div class="line">As there is no common distancing of the unit types [‘K’,’%’,’%-1’,’K-1’]</div>
+<div class="line">the Tc’s are generated by dividing the min-max range into </div>
+<div class="line">a number of divisions, specified by the negative 3 element (or when</div>
+<div class="line">positive or NaN, the number of divisions is set by :fallback_divisions:)</div>
+</div>
+</dd>
+<dt class="field-odd">fallback_n</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">_CCT_FALLBACK_N, optional</div>
+<div class="line">Number of divisions the min-max range is divided into, in the </div>
+<div class="line">fallback case in which unit==’au’ and the 3e 4-vector element </div>
+<div class="line">is NaN or positive.</div>
+</div>
+</dd>
+<dt class="field-even">resample_tc4_array</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">False, optional</div>
+<div class="line">If False: do not resample Tc’s of an ndarray input for tc4</div>
+<div class="line">else: divide min-max range in fallback_n intervals. Uses fallback_unit</div>
+<div class="line">to determine the scale for the resampling.</div>
+</div>
+</dd>
+<dt class="field-odd">wl</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">_WL3, optional</div>
+<div class="line">Wavelength for Planckian spectrum generation.</div>
+</div>
+</dd>
+<dt class="field-even">cieobs</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">[_CIEOBS] or list, optional</div>
+<div class="line">Generate a LUT for each one in the list.</div>
+<div class="line">If None: generate for all cmfs in _CMF.</div>
+</div>
+</dd>
+<dt class="field-odd">lut_vars</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">[‘T’,’uv’,’uvp’,’uvpp’,’iso-T-slope’], optional</div>
+<div class="line">Data the lut should contain. Must follow this order </div>
+<div class="line">and minimum should be [‘T’,’uv’]</div>
+</div>
+</dd>
+<dt class="field-even">cspace,cspace_kwargs</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">Lists with the cspace and cspace_kwargs for which luts will be generated.</div>
+<div class="line">Default is single chromaticity diagram in _CCT_CSPACE.</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">lut</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">List with an ndarray with in the columns whatever is specified in </div>
+<div class="line">lut_vars (Tc and uv are always present!).</div>
+<div class="line">Default lut_vars =  [‘T’,’uv’,’uvp’,’uvpp’,’iso-T-slope’]</div>
+<div class="line">- Tc: (in K)</div>
+<div class="line">- u,v: chromaticity coordinates of planckians</div>
+<div class="line">- u’v’: chromaticity coordinates of 1st derivative of the planckians.</div>
+<div class="line">- u”,v”: chromaticity coordinates of 2nd derivative of the planckians.</div>
+<div class="line">- slope of isotemperature lines (calculated as in Robertson, 1968).</div>
+</div>
+</dd>
+<dt class="field-even">lut_kwargs</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">{},</div>
+<div class="line">Dictionary with additional parameters related to the generation of the</div>
+<div class="line">lut.</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="luxpy.color.cct._generate_lut_ohno2014">
-<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">_generate_lut_ohno2014</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lut_int</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lut_unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lut_min_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[1000,</span> <span class="pre">50000.0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[360.0,</span> <span class="pre">830.0,</span> <span class="pre">1.0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Yuv60'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'bwtf':</span> <span class="pre">{},</span> <span class="pre">'fwtf':</span> <span class="pre">{}}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_wl_diff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_corr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_f_corr_is_None</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lut_vars</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['T',</span> <span class="pre">'uv']</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#_generate_lut_ohno2014"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct._generate_lut_ohno2014" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generate a lut with a specific interval in the specified units over the specified min-max range.</p>
-<p>Planckians are computed for wavelength interval wl and cmf set in cieobs and in the color space
-specified in cspace (additional arguments for these chromaticity functions can be supplied using
-the cspace_kwargs). [=  for _generate_lut with some additions to allow for the
-Tc,x correction factor for the parabolic solution in Ohno2014]</p>
-<p>Returns ndarray with lut and an optimized f_corr factor (when f_corr is set to None 
-in the input, else use whatever is set in f_corr.)</p>
+<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">_generate_lut_ohno2014</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">lut,</span> <span class="pre">uin=None,</span> <span class="pre">seamless_stitch=True,</span> <span class="pre">fallback_unit='K-1',</span> <span class="pre">fallback_n=50,</span> <span class="pre">resample_nd_array=False,</span> <span class="pre">cct_max=100000000000.0,</span> <span class="pre">cct_min=550,</span> <span class="pre">luts_dict=None,</span> <span class="pre">lut_type_def=None,</span> <span class="pre">lut_vars=['T',</span> <span class="pre">'uv'],</span> <span class="pre">cieobs='1931_2',</span> <span class="pre">cspace_str=None,</span> <span class="pre">wl=[360.0,</span> <span class="pre">830.0,</span> <span class="pre">1.0],</span> <span class="pre">ignore_unequal_wl=False,</span> <span class="pre">lut_generator_fcn=&lt;function</span> <span class="pre">_generate_lut&gt;,</span> <span class="pre">lut_generator_kwargs={},</span> <span class="pre">cspace='Yuv60',</span> <span class="pre">cspace_kwargs={'bwtf':</span> <span class="pre">{},</span> <span class="pre">'fwtf':</span> <span class="pre">{}},</span> <span class="pre">f_corr=None,</span> <span class="pre">ignore_f_corr_is_None=False,</span> <span class="pre">ignore_wl_diff=False,</span> <span class="pre">**kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#_generate_lut_ohno2014"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct._generate_lut_ohno2014" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lut generator function for ohno2014.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">…</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">see docstring for _generate_lut</div>
+</div>
+</dd>
+<dt class="field-even">f_corr</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">Tc,x correction factor for the parabolic solution in Ohno2014.</div>
+<div class="line-block">
+<div class="line">If None, it will be recalculated (note that it depends on the lut) for increased accuracy.</div>
+</div>
+</div>
+</dd>
+<dt class="field-odd">ignore_f_corr_is_None</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">If True, ignore f_corr is None, i.e. don’t re-calculate f_corr.</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">lut</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">an ndarray with the lut </div>
+</div>
+</dd>
+<dt class="field-even">dict</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">a dictionary with the (re-optmized) value for f_corr and for ignore_f_cor_is_None.)</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
