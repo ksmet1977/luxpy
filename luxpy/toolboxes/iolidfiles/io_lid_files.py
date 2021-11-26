@@ -50,10 +50,6 @@ import matplotlib
 from matplotlib import cm
 
 import imageio
-try: 
-    imageio.plugins.freeimage.download()
-except:
-    print("imageio.plugins.freeimage.download() failed. Try installing it manually. Downgrade imageio or wait until the developers of imageio fix this.")
 
 # from skimage import exposure, img_as_uint
 
@@ -970,7 +966,14 @@ def save_texture(filename, tex, bits = 16, transpose = True):
     #im = img_as_uint(im)
     if transpose == True:
         im = im.T
-    imageio.imsave(filename, im)
+        
+    try: 
+        imageio.plugins.freeimage.download() 
+        imageio.imsave(filename, im)
+    except:
+        print("imageio.plugins.freeimage.download() failed. Try installing it manually. Downgrade imageio or wait until the developers of imageio fix this.")
+        print('Nothin was saved. Try saving it manually using openexr or other.')
+    return im
   
 #------------------------------------------------------------------------------
 # Make plot of LID
