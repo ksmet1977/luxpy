@@ -50,7 +50,11 @@ import matplotlib
 from matplotlib import cm
 
 import imageio
-imageio.plugins.freeimage.download()
+try: 
+    imageio.plugins.freeimage.download()
+except:
+    print("imageio.plugins.freeimage.download() failed. Try installing it manually. Downgrade imageio or wait until the developers of imageio fix this.")
+
 # from skimage import exposure, img_as_uint
 
 _PATH_DATA = os.path.join(_PKG_PATH, 'toolboxes','iolidfiles','data') + _SEP
