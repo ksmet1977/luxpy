@@ -555,14 +555,14 @@ def _add_lut_endpoints(x):
     return np.vstack((x[:1],x,x[-1:]))
  
 def _generate_tcs(lut_int = [1], lut_unit = ['%'], lut_min_max = [[1000,5e4]], 
-                  cct_max = _CCT_MAX, cct_min = _CCT_MIN, seamless = True,
+                  cct_max = _CCT_MAX, cct_min = _CCT_MIN, seamless_stitch = True,
                   lut_unit_fallback = 'K-1', 
                   lut_N_fallback = _CCT_LUT_RESOLUTION_REDUCTION_FACTOR):
     """
     Generate an ndarray of CCTs. The ndarray is a vstack of ccts with a specific
     interval in the specified units over the specified tuple min-max range. 
     (not larger than cct_max or smaller than cct_min, whatever the input in lut_min_max!).
-    (seamless fits multiple lut specifications together; this will impact the 
+    (seamless_stitch fits multiple lut specifications together; this will impact the 
     estimated min,max ranges of each)
     
     Planckians are computed for wavelength interval wl and cmf set in cieobs and in the color space
@@ -630,7 +630,7 @@ def _generate_tcs(lut_int = [1], lut_unit = ['%'], lut_min_max = [[1000,5e4]],
                 T0 = lut_min_max_i[0] 
                 Tn = lut_min_max_i[1]
                 dT = lut_int_i
-                if seamless & (i>0): 
+                if seamless_stitch & (i>0): 
                     if ('-1' in lut_unit[i]) :
                         T0 = 1e6/Ts[0,0]
                     else:
@@ -653,7 +653,7 @@ def _generate_tcs(lut_int = [1], lut_unit = ['%'], lut_min_max = [[1000,5e4]],
                 if (i == 0):
                     Ts = Ts_i  
                 else:
-                    if '-1' in lut_unit[i]: 
+                    if '-1' in lut_unit[i]: # avoid overlap
                         Ts = np.vstack((Ts_i[Ts_i[:,0]<Ts[0,0],:],Ts))
                     else:
                         Ts = np.vstack((Ts,Ts_i[Ts_i[:,0]>Ts[-1,0],:]))
@@ -665,7 +665,8 @@ def _generate_tcs(lut_int = [1], lut_unit = ['%'], lut_min_max = [[1000,5e4]],
     Ts[(Ts>cct_max)] = cct_max # limit to a maximum cct to avoid overflow/error and/or increase speed.    
     return Ts              
 
-def _generate_lut(lut_int = [1], lut_unit = ['%'], lut_min_max = [(1000,5e4)], cct_max = _CCT_MAX, cct_min = _CCT_MIN,
+def _generate_lut(lut_int = [1], lut_unit = ['%'], lut_min_max = [(1000,5e4)], 
+                  cct_max = _CCT_MAX, cct_min = _CCT_MIN, seamless_stitch = True,
                   wl = _WL3, cieobs = _CIEOBS, lut_vars = ['T','uv','uvp','uvpp','iso-T-slope'],
                   cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS,
                   **kwargs):
@@ -692,10 +693,11 @@ def _generate_lut(lut_int = [1], lut_unit = ['%'], lut_min_max = [(1000,5e4)], c
     - u",v": chromaticity coordinates of 2nd derivative of the planckians.
     - slope of isotemperature lines (calculated as in Robertson, 1968).
     
-    Note that a vstack of CCTs can be generate by supplying lists for lut_int, lut_unit and lut_min_max
+    Note that a vstack of CCTs can be generate by supplying lists for lut_int, lut_unit and lut_min_max.
+    They can be stitched seamlessly (no weird jumps in lut interval) or just keeping the original min-max ranges.
     """    
     Ts = _generate_tcs(lut_int = lut_int, lut_unit = lut_unit, lut_min_max = lut_min_max, 
-                       cct_max = cct_max, cct_min = cct_min)
+                       cct_max = cct_max, cct_min = cct_min, seamless_stitch = seamless_stitch)
         
     # reshape for input in calculate_luts:
     n_sources = Ts.shape[-1]
@@ -712,7 +714,7 @@ def _generate_lut(lut_int = [1], lut_unit = ['%'], lut_min_max = [(1000,5e4)], c
     if n_sources > 1:
         lut = np.reshape(lut,(-1,lut.shape[-1]*n_sources))
                
-    return list([lut, {}])
+    return list([lut, {'seamless_stitch':seamless_stitch}])
 
 
 def _convert_lut_type_to_tuple_key(lut_type):
@@ -735,7 +737,8 @@ def _convert_lut_type_to_tuple_key(lut_type):
 def generate_luts(lut_file = None, load = False, lut_path = _CCT_LUT_PATH, 
                   wl = _WL3, cieobs = [_CIEOBS], 
                   types = ['15_%','1_%','0.25_%','1000_K'],
-                  lut_min_max = [1e3,5e4], lut_vars = ['T','uv','uvp','uvpp','iso-T-slope'],
+                  lut_min_max = [1e3,5e4], seamless_stitch = True,
+                  lut_vars = ['T','uv','uvp','uvpp','iso-T-slope'],
                   cspace = [_CCT_CSPACE], cspace_kwargs = [_CCT_CSPACE_KWARGS],
                   verbosity = 0, lut_generator_fcn = _generate_lut, 
                   lut_generator_kwargs = {}):
@@ -779,6 +782,12 @@ def generate_luts(lut_file = None, load = False, lut_path = _CCT_LUT_PATH,
         :lut_min_max:
             | [1e3,5e4], optional
             | Aim for the min and max of the Tc (K or MK-1) range.
+        :seamless_stitch:
+            | True, optional
+            | When stitching (creating) LUTs composed of several CCT ranges with different
+            | intervals, these do not always 'match' well, in the sense that discontinuities
+            | might be generated. This can be avoided (at the expense of possibly slightly changed ranges)
+            | by setting the :seamless_stitch: argument to True.
         :lut_vars:
             | ['T','uv','uvp','uvpp','iso-T-slope'], optional
             | Data the lut should contain. Must follow this order 
@@ -824,7 +833,7 @@ def generate_luts(lut_file = None, load = False, lut_path = _CCT_LUT_PATH,
             luts[cspace_i] = {'cspace' : cspace_i, 'cspace_kwargs' : cspace_kwargs_i, 'cspace_dict': cspace_dict_i}
             if cieobs is None: cieobs = _CMF['types']
             for cieobs_j in cieobs:
-                ftmp = lambda lut_int, lut_unit, lut_min_max: lut_generator_fcn(lut_int = lut_int, lut_unit = lut_unit, wl = wl, lut_min_max = lut_min_max, lut_vars = lut_vars, cieobs = cieobs_j, cspace = cspace_dict_i, cspace_kwargs = None, **lut_generator_kwargs)
+                ftmp = lambda lut_int, lut_unit, lut_min_max: lut_generator_fcn(lut_int = lut_int, lut_unit = lut_unit, wl = wl, lut_min_max = lut_min_max, lut_vars = lut_vars, cieobs = cieobs_j, cspace = cspace_dict_i, cspace_kwargs = None, seamless_stitch = seamless_stitch, **lut_generator_kwargs)
                 luts[cspace_i][cieobs_j] = {}
                 for type_k in types:
                     tmp = list(type_k)
@@ -857,7 +866,8 @@ def generate_luts(lut_file = None, load = False, lut_path = _CCT_LUT_PATH,
     return luts
 
 def _get_lut(lut, luts_dict = None, cieobs = None, cspace_str = None, 
-             default_lut_type = None, lut_vars = ['T','uv','uvp','uvpp','iso-T-slope'],
+             default_lut_type = None, 
+             lut_vars = ['T','uv','uvp','uvpp','iso-T-slope'],
              ignore_unequal_wl = False, lut_generator_fcn = _generate_lut,
              lut_generator_kwargs = {},
              # cspace = _CCT_CSPACE, cct_cspace_kwargs = _CCT_CSPACE_KWARGS, 
@@ -953,6 +963,7 @@ def _get_lut(lut, luts_dict = None, cieobs = None, cspace_str = None,
         #     lut_kwargs_keys = lut_generator_kwargs.keys()
         #     lut_kwargs = dict(zip(lut_kwargs_keys,lut_kwargs))
 
+        if 'seamless_stitch' in kwargs: lut_kwargs['seamless_stitch'] = kwargs['seamless_stitch']
         
         if isinstance(lut, dict): 
             if ('cieobs' not in lut): lut['cieobs'] = cieobs
@@ -1735,7 +1746,7 @@ _CCT_LUT['robertson1968']['luts'] = generate_luts('robertson1968_luts.npy',
 # Zhang 2019:
 #------------------------------------------------------------------------------
 _CCT_LUT['zhang2019'] = {} 
-_CCT_LUT['zhang2019']['lut_type_def'] = (25.0, 'K-1', (1.0, 1025+25.0))
+_CCT_LUT['zhang2019']['lut_type_def'] = ((1,25.0), 'K-1',((1,1), (25, 1025.0)))
 _CCT_LUT['zhang2019']['lut_vars'] = ['T','uv']
 _CCT_LUT['zhang2019']['_generate_lut'] = _generate_lut 
 
@@ -2105,6 +2116,7 @@ _CCT_LUT['zhang2019']['luts'] = generate_luts('zhang2019_luts.npy',
                                     lut_path = _CCT_LUT_PATH, 
                                     wl = _WL3, cieobs = None, 
                                     types = [_CCT_LUT['zhang2019']['lut_type_def']],
+                                    seamless_stitch = False,
                                     cspace = [_CCT_CSPACE], cspace_kwargs = [_CCT_CSPACE_KWARGS],
                                     lut_vars = _CCT_LUT['zhang2019']['lut_vars'],
                                     verbosity = verbosity_lut_generation)
@@ -2147,7 +2159,7 @@ _CCT_LUT['ohno2014']['lut_type_def'] = (1.0, '%', (1000.0, 50000.0))
 _CCT_LUT['ohno2014']['lut_vars'] = ['T','uv']
 
 def get_correction_factor_for_Tx(lut, 
-                                 lut_int = 1, lut_unit = '%', lut_min_max = [1000,5e4], 
+                                 lut_int = 1, lut_unit = '%', lut_min_max = [1000,5e4], seamless_stitch = True,
                                  wl = _WL3, cieobs = _CIEOBS, ignore_wl_diff = False,
                                  cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS,
                                  verbosity = 0):
@@ -2213,13 +2225,15 @@ def get_correction_factor_for_Tx(lut,
              | Tc,x correction factor.
     """
     # Generate a finer resolution lut to estimate the f_corr correction factor:
-    lut_fine,_ = _generate_lut(lut_int = lut_int, lut_unit = lut_unit, lut_min_max = lut_min_max, 
+    lut_fine,_ = _generate_lut(lut_int = lut_int, lut_unit = lut_unit, lut_min_max = lut_min_max, seamless_stitch = seamless_stitch,
                              wl = wl, cieobs = cieobs, cspace = cspace, 
                              cspace_kwargs = cspace_kwargs,
                              lut_vars = _CCT_LUT['ohno2014']['lut_vars'])
 
     # define shorthand lambda fcn:
-    TxDuvx_p = lambda x: xyz_to_cct_ohno2014(lut_fine[:,1:3], lut = [lut, {'f_corr':np.round(x,5)}], is_uv_input = True, 
+    TxDuvx_p = lambda x: xyz_to_cct_ohno2014(lut_fine[:,1:3], lut = [lut, {'seamless_stitch' : seamless_stitch,
+                                                                           'f_corr': np.round(x,5)}], 
+                                            is_uv_input = True, 
                                             force_tolerance = False, out = '[cct,duv]',
                                             duv_parabolic_threshold = 0, # force use of parabolic
                                             lut_resolution_reduction_factor = _CCT_LUT_RESOLUTION_REDUCTION_FACTOR,
@@ -2270,8 +2284,9 @@ def get_correction_factor_for_Tx(lut,
 
 
 def _generate_lut_ohno2014(lut_int = 1, lut_unit = True, lut_min_max = [1000,5e4], 
-                           wl = _WL3, cieobs = _CIEOBS, cspace = _CCT_CSPACE, 
-                           cspace_kwargs = _CCT_CSPACE_KWARGS, ignore_wl_diff = False,
+                           seamless_stitch = True, wl = _WL3, cieobs = _CIEOBS, 
+                           cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS,
+                           ignore_wl_diff = False,
                            f_corr = None, ignore_f_corr_is_None = False,
                            lut_vars = ['T','uv']):
     """
@@ -2287,6 +2302,7 @@ def _generate_lut_ohno2014(lut_int = 1, lut_unit = True, lut_min_max = [1000,5e4
     """    
     # generate lut:
     lut = _generate_lut(lut_int = lut_int, lut_unit = lut_unit, lut_min_max = lut_min_max,
+                        seamless_stitch = seamless_stitch,
                         wl = wl, cieobs = cieobs, cspace = cspace, 
                         cspace_kwargs = cspace_kwargs, lut_vars = lut_vars)[0]        
 
@@ -2296,6 +2312,7 @@ def _generate_lut_ohno2014(lut_int = 1, lut_unit = True, lut_min_max = [1000,5e4
             f_corr = get_correction_factor_for_Tx(lut, lut_int = lut_int/4, 
                                                   lut_unit = lut_unit, 
                                                   lut_min_max = lut_min_max, 
+                                                  seamless_stitch = seamless_stitch,
                                                   wl = wl, cieobs = cieobs, 
                                                   cspace = cspace, 
                                                   cspace_kwargs = cspace_kwargs,
@@ -2304,7 +2321,7 @@ def _generate_lut_ohno2014(lut_int = 1, lut_unit = True, lut_min_max = [1000,5e4
             f_corr = 1.0 # use this a backup value
 
 
-    return list([lut, {'f_corr':f_corr,'ignore_f_corr_is_None':ignore_f_corr_is_None}])
+    return list([lut, {'seamless_stitch':seamless_stitch, 'f_corr':f_corr,'ignore_f_corr_is_None':ignore_f_corr_is_None}])
 
 _CCT_LUT['ohno2014']['_generate_lut'] = _generate_lut_ohno2014
     
@@ -2840,6 +2857,8 @@ def xyz_to_cct(xyzw, mode = 'ohno2014',
             | String with name of method to use.
             | Options: 'robertson1968', 'ohno2014', 'li2016', 'zhang2019'
             |       (also, but see note below: 'mcamy1992', 'hernandez1999')
+            | Note: first_guess_mode for li2016 can also be specified using a ':' separator,
+            |        e.g. 'li2016:robertson1968'
         :cieobs: 
             | luxpy._CIEOBS, optional
             | CMF set used to calculated xyzw.
@@ -3028,7 +3047,11 @@ def xyz_to_cct(xyzw, mode = 'ohno2014',
                                     lut = lut, luts_dict = luts_dict, 
                                     ignore_wl_diff = ignore_wl_diff, 
                                     **kwargs)
-    elif mode == 'li2016':
+    elif  'li2016' in mode:
+        if ':' in mode:
+            p = mode.index(':')
+            first_guess_mode = mode[p+1:]
+            mode = mode[:p]
         return xyz_to_cct_li2016(xyzw, cieobs = cieobs, out = out, wl = wl, is_uv_input = is_uv_input, 
                                  cspace = cspace, cspace_kwargs = cspace_kwargs,
                                  atol = atol, rtol = rtol, force_tolerance = force_tolerance,
