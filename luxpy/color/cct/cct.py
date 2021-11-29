@@ -316,7 +316,7 @@ def _get_tcs4(tc4, uin = None, out = 'Ts',
               fallback_n = _CCT_FALLBACK_N):
 
     (T0,Tn,dT),u = (np.atleast_1d(tc4_i) for tc4_i in tc4[:-1]), tc4[-1] # min, max, interval, unit
-
+    
     # Get n from third element:
     if ((dT<0).any() & (dT>=0).any()):
         raise Exception('3e element [dT,n] in 4-vector tc4 contains negatives AND positives! Should be only 1 type.')
@@ -441,7 +441,7 @@ def get_tcs4(tc4, uin = None, seamless_stitch = True,
                 tc4_i[0] = 1e6/Ts[0,0] # change T0
             else:
                 tc4_i[0] = Ts[-1,0] # change T0
-        
+
         Ts_i = _get_tcs4(tc4_i, uin = uin, 
                          fallback_unit = fallback_unit,
                          fallback_n = fallback_n)
@@ -848,7 +848,6 @@ def _generate_lut(tc4, uin = None, seamless_stitch = True,
             | lut.
             
     """    
-    
     # get tcs:
     Ts = _generate_tcs(tc4, uin = uin, seamless_stitch = seamless_stitch,
                        fallback_unit = fallback_unit, 
@@ -1333,9 +1332,10 @@ def _deal_with_lut_end_points(pn, TBB, out_of_lut = None):
     ce = pn == (TBB.shape[0]-1) # end point
     cb = pn==0 # begin point
     if out_of_lut is None: out_of_lut = (cb | ce)[:,None]
+    pn[cb] =  1 # begin point 
+    ce = pn == (TBB.shape[0]-1) # end point double-check !!
     pn[ce] = (TBB.shape[0] - 2) # end of lut (results in TBB_0==TBB_p1 -> (1/TBB_0)-(1/TBB_p1)) == 0 !
-    pn[cb] =  1 # begin point
-  
+
     return pn, out_of_lut
 
 #==============================================================================
@@ -1699,14 +1699,16 @@ def _get_loop_i_lut_for_cascading_lut(Tx, TBB_m1, TBB_p1, out_of_lut,
     """
     Get a new updated lut with reduced min-max range for a cascading lut calculation.
     """
-     
+
     # cl cannot recover from out-of-lut, so if all are out-of-lut, no use continuing!
     if out_of_lut.all(): 
         return "break", None # ,None because expected output (from _generate_lut is 2):
 
     # get overall min, max Ts over all xyzw test points:
     Ts_m1p1 =  np.hstack((TBB_m1,TBB_p1)) 
+    dTs_m1p1 = np.abs(TBB_p1 - TBB_m1).max(axis=-1) 
     Ts_min, Ts_max = Ts_m1p1.min(axis=-1),Ts_m1p1.max(axis=-1)
+    
     dTs = np.abs(Ts_max - Ts_min)
 
     if (dTs<= atol).all() | (np.abs(dTs/Tx) <= rtol).all():
@@ -1715,14 +1717,21 @@ def _get_loop_i_lut_for_cascading_lut(Tx, TBB_m1, TBB_p1, out_of_lut,
     else:
         
         lut_int = lut_char[0][2]
-        
+
         if np.isnan(lut_int): 
             lut_cl = 1e6/np.linspace(1e6/Ts_max,1e6/Ts_min,lut_resolution_reduction_factor)
         else:
             lut_unit = lut_char[0][3]
             lut_int = lut_int/lut_resolution_reduction_factor**(cascade_idx + 1)
+            
+            # dTs = np.abs((Ts_max-Ts_min)) if ('-1' not in lut_unit) else np.abs((1e6/Ts_max - 1e6/Ts_min))
+            # if (dTs < lut_int).any(): 
+            #     lut_int = lut_int*np.ones_like(dTs) 
+            #     lut_int[dTs < lut_int] = dTs[dTs< lut_int]/lut_resolution_reduction_factor
+
             lut_cl = [Ts_min,Ts_max,lut_int,lut_unit] if ('-1' not in lut_unit) else [1e6/Ts_max,1e6/Ts_min,lut_int,lut_unit]
-       
+            
+        
         #return (lut, lut_kwargs) tuple:
         return lut_generator_fcn(lut_cl, seamless_stitch = True, 
                                  fallback_unit = _CCT_FALLBACK_UNIT, 
@@ -1772,6 +1781,7 @@ def _get_cascading_lut_Tx(mode, u, v, lut, lut_n_cols, lut_char, lut_resolution_
             Tx, Duvx, out_of_lut, (TBB_l,TBB_r) = _uv_to_Tx_mode(u, v, lut_i, lut_n_cols, 
                                                                  ns = ns, out_of_lut = out_of_lut, 
                                                                  **mode_kwargs[mode])
+        
         if cascade_i == 0: Tx0 = Tx.copy() # keep copy of first estimate
         
         # Update lut for next cascade (ie decrease min-max range):
@@ -1902,7 +1912,7 @@ def _xyz_to_cct(xyzw, mode, is_uv_input = False, cieobs = _CIEOBS, wl = _WL3, ou
                                                 luts_dict, cieobs, wl, cspace_str, cspace_dict, ignore_wl_diff, 
                                                 max_iter = max_iter, mode_kwargs = mode_kwargs, atol = atol, rtol = rtol,
                                                 Tx = Tx, Duvx = Duvx, out_of_lut = out_of_lut, TBB_l = TBB_l, TBB_r = TBB_r,
-                                                caller = 'main_cl')
+                                                )
 
    
             elif (tol_method == 'newton-raphson') | (tol_method == 'nr'):
@@ -2176,7 +2186,7 @@ def _uv_to_Tx_zhang2019(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None,
     """ 
     Calculate Tx from u,v and lut using Zhang 2019.
     """
-    
+
     # get uBB, vBB from lut:
     TBB, uBB, vBB  = lut[:,ns], lut[:,ns+1], lut[:,ns+2]
     # MKBB = cct_to_mired(TBB)
@@ -2188,7 +2198,6 @@ def _uv_to_Tx_zhang2019(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None,
     # Deal with endpoints of lut + create intermediate variables 
     # to save memory:
     pn, out_of_lut = _deal_with_lut_end_points(pn, TBB, out_of_lut = out_of_lut)
-
   
     TBB_m1, TBB_0, TBB_p1 = _get_pns_from_x(TBB, pn)
     uBB_m1, uBB_0, uBB_p1 = _get_pns_from_x(uBB, pn)
@@ -2263,7 +2272,7 @@ def _uv_to_Tx_zhang2019(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None,
         if (((dTx <= atol).all() | ((dTx/Tx) <= rtol).all())):
             break
         j+=1
-        
+
     # uBB = np.vstack((uBBa,uBBx,uBBb))
     # vBB = np.vstack((vBBa,vBBx,vBBb))
     # TBB = np.vstack((Tx_a,Tx,Tx_b))
@@ -2557,7 +2566,6 @@ def get_correction_factor_for_Tx(lut,
                                      wl = wl, cieobs = cieobs, ignore_wl_diff = ignore_wl_diff,
                                      cspace = cspace, cspace_kwargs = cspace_kwargs,
                                      luts_dict = _CCT_LUT['ohno2014']['luts'],
-                                     caller = 'get_fcorr_Tx'
                                      )[1:-1,:]
  
     T = lut_fine[1:-1,0] 
@@ -3326,9 +3334,9 @@ if __name__ == '__main__':
     
     xyz = spd_to_xyz(BB, cieobs = cieobs)
     
-    cct = 5500
+    cct = 4500
     duvs = np.array([[0.05,0.025,0,-0.025,-0.05]]).T
-    duvs = np.array([[-0.03,0.03]]).T
+    duvs = np.array([[-0.05,0.05]]).T
     ccts = np.array([[cct]*duvs.shape[0]]).T
     cctsduvs_t = np.hstack((ccts,duvs))
     
@@ -3352,7 +3360,7 @@ if __name__ == '__main__':
 
     # xyz = np.array([[100,100,100]])
     cctsduvs = xyz_to_cct(xyz, rtol = 1e-6,cieobs = cieobs, out = '[cct,duv]', wl = _WL3, 
-                          mode='zhang2019',force_tolerance=True,tol_method='cl',lut=[(1000.0, 50000.0, 1.0, '%'),{'f_corr':None}],caller = 'main')
+                          mode='zhang2019',force_tolerance=True,tol_method='cl',lut=None)
     
     # cctsduvs2 = xyz_to_cct_li2016(xyz, rtol=1e-6, cieobs = cieobs, out = '[cct,duv]',force_tolerance=True)
     cctsduvs_ = cctsduvs.copy();cctsduvs_[:,0] = np.abs(cctsduvs_[:,0]) # outof gamut ccts are encoded as negative!!
