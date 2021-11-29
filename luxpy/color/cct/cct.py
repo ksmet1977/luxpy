@@ -1706,7 +1706,7 @@ def _get_loop_i_lut_for_cascading_lut(Tx, TBB_m1, TBB_p1, out_of_lut,
 
     # get overall min, max Ts over all xyzw test points:
     Ts_m1p1 =  np.hstack((TBB_m1,TBB_p1)) 
-    dTs_m1p1 = np.abs(TBB_p1 - TBB_m1).max(axis=-1) 
+    # dTs_m1p1 = np.abs(TBB_p1 - TBB_m1).max(axis=-1) 
     Ts_min, Ts_max = Ts_m1p1.min(axis=-1),Ts_m1p1.max(axis=-1)
     
     dTs = np.abs(Ts_max - Ts_min)
@@ -2970,7 +2970,7 @@ def xyz_to_cct_li2016(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = False, 
 # General wrapper function for the various methods: xyz_to_cct()
 #==============================================================================
 
-def xyz_to_cct(xyzw, mode = 'ohno2014',
+def xyz_to_cct(xyzw, mode = 'li2016',
                cieobs = _CIEOBS, out = 'cct', is_uv_input = False, wl = None, 
                atol = 0.1, rtol = 1e-5, force_tolerance = True, tol_method = 'newton-raphson', 
                lut_resolution_reduction_factor = _CCT_LUT_RESOLUTION_REDUCTION_FACTOR,
