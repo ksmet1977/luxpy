@@ -153,6 +153,7 @@ _CCT_FALLBACK_UNIT = 'K-1'
 _CCT_LUT_PATH = _PKG_PATH + _SEP + 'data'+ _SEP + 'cctluts' + _SEP #folder with cct lut data
 _CCT_LUT_CALC = False
 _CCT_LUT = {}
+_CCT_UV_TO_TX_FCNS = {}
 _CCT_LUT_RESOLUTION_REDUCTION_FACTOR = 4 # for when cascading luts are used (d(Tm1,Tp1)-->divide in _CCT_LUT_RESOLUTION_REDUCTION_FACTOR segments)
 
 verbosity_lut_generation = 1
@@ -1017,7 +1018,7 @@ def _get_lut(lut,
                 lut_kwargs = lut[1]
                 lut = lut[0]
                 lut_list_error = False
-
+ 
         if lut_list_error: 
             raise Exception("""When lut input is a list, the first element 
 contains the lut as a tuple/list, tuple/list of 
@@ -1076,7 +1077,7 @@ should be a dictionary 'lut_kwargs'.""")
     
     
         if (not lut_from_array) | (resample_nd_array):
-    
+
             lut, lut_kwargs = lut_generator_fcn(lut, 
                                                 uin = uin,
                                                 seamless_stitch = seamless_stitch,
@@ -1091,6 +1092,7 @@ should be a dictionary 'lut_kwargs'.""")
                                                 cspace = cspace_dict,
                                                 cspace_kwargs = None,
                                                 **lut_kwargs)
+
         else:
             lut = lut[(lut[:,0]>=cct_min) & (lut[:,0]<=cct_max),:]
             
@@ -1326,6 +1328,15 @@ def _get_pns_from_x(x, idx):
     else:
         diag = np.diag
         return diag(x[idx-1])[:,None], diag(x[idx])[:,None], diag(x[idx+1])[:,None]
+    
+def _deal_with_lut_end_points(pn, TBB, out_of_lut = None):
+    ce = pn == (TBB.shape[0]-1) # end point
+    cb = pn==0 # begin point
+    if out_of_lut is None: out_of_lut = (cb | ce)[:,None]
+    pn[ce] = (TBB.shape[0] - 2) # end of lut (results in TBB_0==TBB_p1 -> (1/TBB_0)-(1/TBB_p1)) == 0 !
+    pn[cb] =  1 # begin point
+  
+    return pn, out_of_lut
 
 #==============================================================================
 # define original versions of various cct methods:
@@ -1675,12 +1686,294 @@ def _get_newton_raphson_estimated_Tc(u, v, T0, wl = _WL3, atol = 0.1, rtol = 1e-
     return T, Duv
 
 #------------------------------------------------------------------------------
+# Cascade lut estimator:
+#------------------------------------------------------------------------------       
+def _get_loop_i_lut_for_cascading_lut(Tx, TBB_m1, TBB_p1, out_of_lut,
+                                      atol, rtol, 
+                                      cascade_idx, lut_char, lut_resolution_reduction_factor,
+                                      mode, luts_dict, cieobs, wl, cspace_str, cspace_dict,
+                                      ignore_wl_diff,
+                                      lut_generator_fcn = _generate_lut,
+                                      lut_generator_kwargs = {},
+                                      **kwargs):
+    """
+    Get a new updated lut with reduced min-max range for a cascading lut calculation.
+    """
+     
+    # cl cannot recover from out-of-lut, so if all are out-of-lut, no use continuing!
+    if out_of_lut.all(): 
+        return "break", None # ,None because expected output (from _generate_lut is 2):
+
+    # get overall min, max Ts over all xyzw test points:
+    Ts_m1p1 =  np.hstack((TBB_m1,TBB_p1)) 
+    Ts_min, Ts_max = Ts_m1p1.min(axis=-1),Ts_m1p1.max(axis=-1)
+    dTs = np.abs(Ts_max - Ts_min)
+
+    if (dTs<= atol).all() | (np.abs(dTs/Tx) <= rtol).all():
+        Tx =  ((Ts_min + Ts_max)/2)[:,None] 
+        return "break", Tx 
+    else:
+        
+        lut_int = lut_char[0][2]
+        
+        if np.isnan(lut_int): 
+            lut_cl = 1e6/np.linspace(1e6/Ts_max,1e6/Ts_min,lut_resolution_reduction_factor)
+        else:
+            lut_unit = lut_char[0][3]
+            lut_int = lut_int/lut_resolution_reduction_factor**(cascade_idx + 1)
+            lut_cl = [Ts_min,Ts_max,lut_int,lut_unit] if ('-1' not in lut_unit) else [1e6/Ts_max,1e6/Ts_min,lut_int,lut_unit]
+       
+        #return (lut, lut_kwargs) tuple:
+        return lut_generator_fcn(lut_cl, seamless_stitch = True, 
+                                 fallback_unit = _CCT_FALLBACK_UNIT, 
+                                 fallback_n = _CCT_FALLBACK_N,
+                                 resample_nd_array = False, 
+                                 luts_dict = luts_dict, cieobs = cieobs, 
+                                 lut_type_def = _CCT_LUT[mode]['lut_type_def'],
+                                 cspace_str = cspace_str, wl = wl, cspace = cspace_dict, 
+                                 cspace_kwargs = None, ignore_unequal_wl = ignore_wl_diff, 
+                                 lut_vars = _CCT_LUT[mode]['lut_vars'],
+                                 **lut_generator_kwargs)
+
+def _get_cascading_lut_Tx(mode, u, v, lut, lut_n_cols, lut_char, lut_resolution_reduction_factor,
+                          luts_dict, cieobs, wl, cspace_str, cspace_dict, ignore_wl_diff,
+                          max_iter = 100, mode_kwargs = {}, atol = 0.1, rtol = 1e-5, 
+                          Tx = None, Duvx = None, out_of_lut = None, TBB_l = None, TBB_r = None,
+                          **kwargs):
+    """
+    Determine Tx using a specified mode from u,v input using a cascading lut, 
+    i.e. lut progressively decreasing in min-max range, zooming-in on the 
+    'true' Tx value. lut_n_cols should specify the number of columns in the lut
+    for the specified mode. _uv_to_Tx_mode is a function that calculates the Tx
+    for the specific mode from u,v. It should have the following interface:
+    _uv_to_Tx_mode(u,v,lut,lut_n_cols, ns = 0, out_of_lut = None, 
+                   Tx = None, out_of_lut = None, TBB_l = None, TBB_r = None)
+    and return the Tx,Duvx, out_of_lut and a tuple with Tleft (TBB_m1), Tright (TBB_p1). 
+    Duvx can be None if method doesn't naturally provide an estimate.
+    Skips first calculation of Tx when (Tx0, out_of_lut, TBB_l, TBB_r) are None
+    (i.e. already calculated).
+    """
+    # cascading lut:
+    cascade_i = 0
+    lut_i = lut # cascading lut will be updated later in the while loop
+    _uv_to_Tx_mode = _CCT_UV_TO_TX_FCNS[mode]
+    lut_generator_fcn = _CCT_LUT[mode]['_generate_lut']
+    lut_generator_kwargs = copy.copy(mode_kwargs[mode])
+    lut_generator_kwargs.update({'f_corr':1}) # only required when mode = 'ohno2014'
+    if 'wl' in lut_generator_kwargs: lut_generator_kwargs.pop('wl') # for mode == 'hang2019': 'wl' is also part of this dict!
+    while True & (cascade_i < max_iter):
+        
+        # needed to get correct columns from updated lut_i:
+        N = lut_i.shape[-1]//lut_n_cols
+        ns = np.arange(0,N*lut_n_cols,lut_n_cols,dtype=int)
+        
+        # get Tx estimate, out_of_lut boolean array, and (TBB_m1, TBB_p1 or equivalent):
+        if ((Tx is None) & (out_of_lut is None) & (TBB_l is None) & (TBB_r is None)) | (cascade_i > 0):
+            Tx, Duvx, out_of_lut, (TBB_l,TBB_r) = _uv_to_Tx_mode(u, v, lut_i, lut_n_cols, 
+                                                                 ns = ns, out_of_lut = out_of_lut, 
+                                                                 **mode_kwargs[mode])
+        if cascade_i == 0: Tx0 = Tx.copy() # keep copy of first estimate
+        
+        # Update lut for next cascade (ie decrease min-max range):
+        tmp = _get_loop_i_lut_for_cascading_lut(Tx, TBB_l, TBB_r, out_of_lut,
+                                                atol, rtol, 
+                                                cascade_i, lut_char, lut_resolution_reduction_factor,
+                                                mode, luts_dict, cieobs, wl, cspace_str, cspace_dict,
+                                                ignore_wl_diff,
+                                                lut_generator_fcn = lut_generator_fcn,
+                                                lut_generator_kwargs = lut_generator_kwargs,
+                                                )
+
+        if tmp[0] is "break": 
+            if tmp[1] is not None: Tx = tmp[1]
+            break
+        else:
+            lut_i = tmp[0]
+            lut_kwargs = tmp[1]
+
+        cascade_i+=1 # to stop cascade loop after max_iter iterations
+    
+    Tx[out_of_lut] = Tx0[out_of_lut] # restore originals as cl_lut might have messed up these Tx   
+
+    return Tx, Duvx
+
+
+#------------------------------------------------------------------------------
+# General _xyz_to_cct structure:
+#------------------------------------------------------------------------------
+def _xyz_to_cct(xyzw, mode, is_uv_input = False, cieobs = _CIEOBS, wl = _WL3, out = 'cct',
+                lut = None, luts_dict = None, ignore_wl_diff = False,
+                force_tolerance = True, tol_method = 'newton-raphson', atol = 0.1, rtol = 1e-5, 
+                max_iter = 100, force_au = False, 
+                split_calculation_at_N = 10, lut_resolution_reduction_factor = _CCT_LUT_RESOLUTION_REDUCTION_FACTOR,
+                cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS,
+                duv_parabolic_threshold = 0.002, 
+                first_guess_mode = 'robertson1968',
+                **kwargs):
+    """ 
+    Convert XYZ tristimulus values to correlated color temperature (CCT) and 
+    Duv (distance above (>0) or below (<0) the Planckian locus) using a number
+    of modes (methods). 
+    
+    General fucntion for calculation of 'robertson1968', 'ohno2014', 'li2016' and 'zhang2019'
+    (for info on arguments, see docstring of xyz_to_cct)
+    """
+    
+    # Deal with mode == 'li2016': 
+    if 'li2016' in mode: 
+        if ':' in mode: # for 'li2016:first_guess_mode' format
+            p = mode.index(':')
+            first_guess_mode = mode[p+1:]
+        mode = first_guess_mode # overwrite mode with first_guess_mode as this is the one to use together with LUTs
+        force_tolerance = True # must be True, otherwise li2016 == first_guess_mode output!
+        tol_method = 'newton-raphson' # by default, no need for addditional lut cascading   
+    
+    # Process cspace-parameters:
+    cspace_dict, cspace_str = _process_cspace(cspace, cspace_kwargs)
+    
+    # Get chromaticity coordinates u,v from xyzw:
+    uvw = cspace_dict['fwtf'](xyzw)[:,1:3]  if is_uv_input == False else xyzw[:,0:2] # xyz contained uv !!! (needed to efficiently determine f_corr)
+
+    # Get or generate requested lut
+    # (if wl doesn't match those in _CCT_LUT[mode] , 
+    # a new recalculated lut will be generated):
+    if luts_dict is None: luts_dict = _CCT_LUT[mode]['luts']
+
+    lut, lut_kwargs = _get_lut(lut, 
+                               fallback_unit = _CCT_FALLBACK_UNIT, 
+                               fallback_n = _CCT_FALLBACK_N,
+                               resample_nd_array = False, 
+                               luts_dict = luts_dict, cieobs = cieobs, 
+                               lut_type_def = _CCT_LUT[mode]['lut_type_def'],
+                               cspace_str = cspace_str, wl = wl, cspace = cspace_dict, 
+                               cspace_kwargs = None, ignore_unequal_wl = ignore_wl_diff, 
+                               lut_generator_fcn = _CCT_LUT[mode]['_generate_lut'],
+                               lut_vars = _CCT_LUT[mode]['lut_vars'])
+
+    # pre-calculate wl,dl,uvwbar for later use:
+    xyzbar, wl, dl = _get_xyzbar_wl_dl(cieobs, wl)
+    uvwbar = _convert_xyzbar_to_uvwbar(xyzbar, cspace_dict)
+    
+    # Prepare some parameters for forced tolerance:
+    if force_tolerance: 
+        if (tol_method == 'newton-raphson') | (tol_method == 'nr'):
+            pass
+        elif (tol_method == 'cascading-lut') | (tol_method == 'cl'): 
+            lut_char = _get_lut_characteristics(lut, force_au = force_au)
+        else:
+            raise Exception('Tolerance method = {:s} not implemented.'.format(tol_method))
+    
+    lut_n_cols = lut.shape[-1] # store now, as this will change later
+    
+    # prepare split of input data to speed up calculation:
+    n = xyzw.shape[0]
+    ccts = np.zeros((n,1))
+    duvs = np.zeros((n,1))
+    n_ii = split_calculation_at_N if split_calculation_at_N is not None else n
+    N_ii = n//n_ii + 1*((n%n_ii)>0)
+
+    # prepare mode_kwargs (i.e. extra kwargs for _uv_to_Tx_mode() required by specific modes):
+    mode_kwargs = {'robertson1968': {},
+                   'zhang2019' : {'uvwbar' : uvwbar, 'wl' : wl, 'dl' : dl, 
+                                  'max_iter' : max_iter, 'atol' : atol, 'rtol' : rtol},
+                   'ohno2014' : {**lut_kwargs, **{'duv_parabolic_threshold' : duv_parabolic_threshold}}
+                   } 
+
+    # loop of splitted data:
+    for ii in range(N_ii):
+        out_of_lut = None
+
+        # get data for split ii:
+        uv = uvw[n_ii*ii:n_ii*ii+n_ii] if (ii < (N_ii-1)) else uvw[n_ii*ii:]
+        # xyz = xyzw[n_ii*ii:n_ii*ii+n_ii] if (ii < (N_ii-1)) else xyzw[n_ii*ii:]
+        u, v = uv[:,0,None], uv[:,1,None]
+    
+        # get Tx estimate, out_of_lut boolean array, and (TBB_m1, TBB_p1 or equivalent):
+        Tx, Duvx, out_of_lut, (TBB_l, TBB_r) = _CCT_UV_TO_TX_FCNS[mode](u, v, lut, lut_n_cols, 
+                                                                        ns = np.array([0]), 
+                                                                        out_of_lut = out_of_lut,
+                                                                        **mode_kwargs[mode])  
+
+        
+        if force_tolerance:
+            if (tol_method == 'cascading-lut') | (tol_method == 'cl'): 
+
+                Tx,Duvx = _get_cascading_lut_Tx(mode, u, v, lut, lut_n_cols, lut_char, lut_resolution_reduction_factor,
+                                                luts_dict, cieobs, wl, cspace_str, cspace_dict, ignore_wl_diff, 
+                                                max_iter = max_iter, mode_kwargs = mode_kwargs, atol = atol, rtol = rtol,
+                                                Tx = Tx, Duvx = Duvx, out_of_lut = out_of_lut, TBB_l = TBB_l, TBB_r = TBB_r,
+                                                caller = 'main_cl')
+
+   
+            elif (tol_method == 'newton-raphson') | (tol_method == 'nr'):
+
+                Tx, Duvx = _get_newton_raphson_estimated_Tc(u, v, Tx, wl = wl, uvwbar = uvwbar,
+                                                            atol = atol, rtol = rtol, max_iter = max_iter)           
+
+        if Duvx is None:
+            Duvx = _get_Duv_for_T(u,v, Tx, wl, cieobs, cspace_dict, uvwbar = uvwbar, dl = dl)
+
+        Tx = Tx*(-1)**out_of_lut
+
+        # Add freshly calculated Tx, Duvx to storage array:
+        if (ii < (N_ii-1)): 
+            ccts[n_ii*ii:n_ii*ii+n_ii] = Tx
+            duvs[n_ii*ii:n_ii*ii+n_ii] = Duvx
+        else: 
+            ccts[n_ii*ii:] = Tx
+            duvs[n_ii*ii:] = Duvx
+
+    # Regulate output:
+    if (out == 'cct') | (out == 1):
+        return ccts
+    elif (out == 'duv') | (out == -1):
+        return duvs
+    elif (out == 'cct,duv') | (out == 2):
+        return ccts, duvs
+    elif (out == "[cct,duv]") | (out == -2):
+        return np.hstack((ccts,duvs))   
+    else:
+        raise Exception('Unknown output requested')
+
+
+#------------------------------------------------------------------------------
 # Robertson 1968:
 #------------------------------------------------------------------------------
 _CCT_LUT['robertson1968'] = {}
 _CCT_LUT['robertson1968']['lut_type_def'] = ((10,100,10,'K-1'),(100,625,25,'K-1'),True) # default LUT
 _CCT_LUT['robertson1968']['lut_vars'] = ['T','uv','iso-T-slope']
 _CCT_LUT['robertson1968']['_generate_lut'] = _generate_lut 
+
+def _uv_to_Tx_robertson1968(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None,**kwargs):
+    """ 
+    Calculate Tx from u,v and lut using Robertson 1968.
+    (lut_n_cols specifies the number of columns in the lut for 'robertson1968')
+    """
+    Duvx = None 
+
+    # get uBB, vBB, mBB from lut:
+    TBB, uBB, vBB, mBB  = lut[:,ns], lut[:,ns+1], lut[:,ns+2], lut[:,ns+(lut_n_cols-1)]
+    mBB[mBB>0] = -mBB[mBB>0]
+    
+    # calculate distances to coordinates in lut (Eq. 4 in Robertson, 1968):
+    di = ((v.T - vBB) - mBB * (u.T - uBB)) / ((1 + mBB**2)**(0.5))
+    pn = (((v.T - vBB)**2 + (u.T - uBB)**2)**0.5).argmin(axis=0)
+
+
+    # Deal with endpoints of lut + create intermediate variables 
+    # to save memory:
+    pn, out_of_lut = _deal_with_lut_end_points(pn, TBB, out_of_lut)
+  
+    TBB_m1, TBB_0, TBB_p1 = _get_pns_from_x(TBB, pn)
+    uBB_m1, uBB_0, uBB_p1 = _get_pns_from_x(uBB, pn)
+    vBB_m1, vBB0, vBB_p1 = _get_pns_from_x(vBB, pn)
+    di_m1, di_0, di_p1 = _get_pns_from_x(di, pn)
+
+    # Estimate Tc (Robertson, 1968): 
+    Tx = ((((1/TBB_0)+(di_0/((di_0 - di_p1) + _AVOID_ZERO_DIV))*((1/TBB_p1) - (1/TBB_0)))**(-1))).copy()
+    return Tx, Duvx, out_of_lut, (TBB_m1, TBB_p1)
+
+_CCT_UV_TO_TX_FCNS['robertson1968'] = _uv_to_Tx_robertson1968
 
 def xyz_to_cct_robertson1968(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = False, wl = _WL3, 
                             atol = 0.1, rtol = 1e-5, force_tolerance = True, tol_method = 'newton-raphson', 
@@ -1817,181 +2110,16 @@ def xyz_to_cct_robertson1968(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = 
         <https://doi.org/10.1364/OE.24.014066>`_
 
     """
-    mode = 'robertson1968'
-    
-    # Process cspace-parameters:
-    cspace_dict, cspace_str = _process_cspace(cspace, cspace_kwargs)
-    
-    # Get chromaticity coordinates u,v from xyzw:
-    uvw = cspace_dict['fwtf'](xyzw)[:,1:3]  if is_uv_input == False else xyzw[:,0:2] # xyz contained uv !!! (needed to efficiently determine f_corr)
-    
-    # Get or generate requested lut
-    # (if wl doesn't match those in _CCT_LUT['robertson1968'] , 
-    # a new recalculated lut will be generated):
-    if luts_dict is None: luts_dict = _CCT_LUT[mode]['luts']
-
-    lut, lut_kwargs = _get_lut(lut, 
-                               fallback_unit = _CCT_FALLBACK_UNIT, 
-                               fallback_n = _CCT_FALLBACK_N,
-                               resample_nd_array = False, 
-                               luts_dict = luts_dict, cieobs = cieobs, 
-                               lut_type_def = _CCT_LUT[mode]['lut_type_def'],
-                               cspace_str = cspace_str, wl = wl, cspace = cspace_dict, 
-                               cspace_kwargs = None, ignore_unequal_wl = ignore_wl_diff, 
-                               lut_generator_fcn = _CCT_LUT[mode]['_generate_lut'],
-                               lut_vars = _CCT_LUT[mode]['lut_vars'])
-
-
-    # pre-calculate wl,dl,uvwbar for later use:
-    xyzbar, wl, dl = _get_xyzbar_wl_dl(cieobs, wl)
-    uvwbar = _convert_xyzbar_to_uvwbar(xyzbar, cspace_dict)
-    
-    # Prepare some parameters for forced tolerance:
-    if force_tolerance: 
-        if (tol_method == 'newton-raphson') | (tol_method == 'nr'):
-            max_iter_nr = max_iter 
-            max_iter = 1 # no need to run multiple times, all estimation done by NR
-        elif (tol_method == 'cascading-lut') | (tol_method == 'cl'): 
-            lut_char = _get_lut_characteristics(lut, force_au = False)
-        else:
-            raise Exception('Tolerance method = {:s} not implemented.'.format(tol_method))
-    
-    lut_n_cols = lut.shape[-1] # store now, as this will change later
-    
-    # prepare split of input data to speed up calculation:
-    n = xyzw.shape[0]
-    ccts = np.zeros((n,1))
-    duvs = np.zeros((n,1))
-    n_ii = split_calculation_at_N if split_calculation_at_N is not None else n
-    N_ii = n//n_ii + 1*((n%n_ii)>0)
-
-    # loop of splitted data:
-    for ii in range(N_ii):
-        
-        # get data for split ii:
-        uv = uvw[n_ii*ii:n_ii*ii+n_ii] if (ii < (N_ii-1)) else uvw[n_ii*ii:]
-        # xyz = xyzw[n_ii*ii:n_ii*ii+n_ii] if (ii < (N_ii-1)) else xyzw[n_ii*ii:]
-        u, v = uv[:,0,None], uv[:,1,None]
-    
-        i = 0
-        lut_i = lut # cascading lut will be updated later in while loop
-        Duvx = None
-
-        while True & (i < max_iter):
-  
-            # needed to get correct columns from lut_i:
-            N = lut_i.shape[-1]//lut_n_cols
-            ns = np.arange(0,N*lut_n_cols,lut_n_cols,dtype=int)
-            
-            # get uBB, vBB, mBB from lut:
-            TBB, uBB, vBB, mBB  = lut_i[:,ns], lut_i[:,ns+1], lut_i[:,ns+2], lut_i[:,ns+(lut_n_cols-1)]
-            mBB[mBB>0] = -mBB[mBB>0]
-            
-            # calculate distances to coordinates in lut (Eq. 4 in Robertson, 1968):
-            di = ((v.T - vBB) - mBB * (u.T - uBB)) / ((1 + mBB**2)**(0.5))
-            pn = (((v.T - vBB)**2 + (u.T - uBB)**2)**0.5).argmin(axis=0)
-
-            # Deal with endpoints of lut + create intermediate variables 
-            # to save memory:
-            ce = pn == (TBB.shape[0]-1) # end point
-            cb = pn==0 # begin point
-            if i == 0: out_of_lut = (cb | ce)[:,None]
-            pn[ce] = (TBB.shape[0] - 2) # end of lut (results in TBB_0==TBB_p1 -> (1/TBB_0)-(1/TBB_p1)) == 0 !
-            pn[cb] =  1 # begin point
-
-            # TBB = _add_lut_endpoints(TBB)
-            # uBB = _add_lut_endpoints(uBB)
-            # vBB = _add_lut_endpoints(vBB)
-            # di = _add_lut_endpoints(di)
-            # pn += 1
-
-            # if i == 0: out_of_lut = ((pn==1) | (pn==TBB.shape[0]-2))[:,None]
-          
-            TBB_m1, TBB_0, TBB_p1 = _get_pns_from_x(TBB, pn)
-            uBB_m1, uBB_0, uBB_p1 = _get_pns_from_x(uBB, pn)
-            vBB_m1, vBB0, vBB_p1 = _get_pns_from_x(vBB, pn)
-            di_m1, di_0, di_p1 = _get_pns_from_x(di, pn)
-
-            # Estimate Tc (Robertson, 1968): 
-            Tx = ((((1/TBB_0)+(di_0/((di_0 - di_p1) + _AVOID_ZERO_DIV))*((1/TBB_p1) - (1/TBB_0)))**(-1))).copy()
-            
-            Tx_0 = Tx
-            if force_tolerance == False:
-                break 
-            else:
-
-                if (tol_method == 'cascading-lut') | (tol_method == 'cl'):
-                   
-                    if out_of_lut.all(): # cl cannot recover from this!
-                        break 
-                   
-                    Ts_m1p1 =  np.hstack((TBB_m1,TBB_p1)) 
-                    Ts_min, Ts_max = Ts_m1p1.min(axis=-1),Ts_m1p1.max(axis=-1)
-                    dTs = np.abs(Ts_max - Ts_min)
-                    
-                    if (dTs<= atol).all() | (np.abs(dTs/Tx) <= rtol).all():
-                        Tx =  ((Ts_min + Ts_max)/2)[:,None] 
-                        break 
-                    else:
-                        
-                        lut_int = lut_char[0][2]
-                        
-                        if np.isnan(lut_int): 
-                            lut_cl = 1e6/np.linspace(1e6/Ts_max,1e6/Ts_min,lut_resolution_reduction_factor)
-                        else:
-                            lut_unit = lut_char[0][3]
-                            lut_int = lut_int/lut_resolution_reduction_factor**(i+1)
-                            lut_cl = [Ts_min,Ts_max,lut_int,lut_unit] if ('-1' not in lut_unit) else [1e6/Ts_max,1e6/Ts_min,lut_int,lut_unit]
-                       
-                                               
-                        lut_i = _generate_lut(lut_cl, seamless_stitch = True, 
-                                            fallback_unit = _CCT_FALLBACK_UNIT, 
-                                            fallback_n = _CCT_FALLBACK_N,
-                                            resample_nd_array = False, 
-                                            luts_dict = luts_dict, cieobs = cieobs, 
-                                            lut_type_def = _CCT_LUT[mode]['lut_type_def'],
-                                            cspace_str = cspace_str, wl = wl, cspace = cspace_dict, 
-                                            cspace_kwargs = None, ignore_unequal_wl = ignore_wl_diff, 
-                                            lut_generator_fcn = _CCT_LUT[mode]['_generate_lut'],
-                                            lut_vars = _CCT_LUT[mode]['lut_vars']
-                                            )[0]
-            
-                elif (tol_method == 'newton-raphson') | (tol_method == 'nr'):
-                    Tx, Duvx = _get_newton_raphson_estimated_Tc(u, v, Tx, wl = wl, uvwbar = uvwbar,
-                                                                atol = atol, rtol = rtol, max_iter = max_iter_nr)           
-                    break # Tx already ok from newton-raphson
-                    
-            i+=1 # stop cascade loop
-            
-        if force_tolerance:
-            if (tol_method == 'cascading-lut') | (tol_method == 'cl'):
-                Tx[out_of_lut] = Tx_0[out_of_lut] # restore originals as cl_lut might have messed up these Tx   
-        
-        if Duvx is None:
-
-            Duvx = _get_Duv_for_T(u,v, Tx, wl, cieobs, cspace_dict, uvwbar = uvwbar, dl = dl)
-
-        Tx = Tx*(-1)**out_of_lut
-        
-        # Add freshly calculated Tx, Duvx to storage array:
-        if (ii < (N_ii-1)): 
-            ccts[n_ii*ii:n_ii*ii+n_ii] = Tx
-            duvs[n_ii*ii:n_ii*ii+n_ii] = Duvx
-        else: 
-            ccts[n_ii*ii:] = Tx
-            duvs[n_ii*ii:] = Duvx
-
-    # Regulate output:
-    if (out == 'cct') | (out == 1):
-        return ccts
-    elif (out == 'duv') | (out == -1):
-        return duvs
-    elif (out == 'cct,duv') | (out == 2):
-        return ccts, duvs
-    elif (out == "[cct,duv]") | (out == -2):
-        return np.hstack((ccts,duvs))   
-    else:
-        raise Exception('Unknown output requested')
+    return _xyz_to_cct(xyzw, mode = 'robertson1968',
+                       cieobs = cieobs, out = out, wl = wl, is_uv_input = is_uv_input, 
+                       cspace = cspace, cspace_kwargs = cspace_kwargs,
+                       atol = atol, rtol = rtol, force_tolerance = force_tolerance,
+                       tol_method = tol_method, max_iter = max_iter,  
+                       lut_resolution_reduction_factor = lut_resolution_reduction_factor,
+                       split_calculation_at_N = split_calculation_at_N, 
+                       lut = lut, luts_dict = luts_dict, 
+                       ignore_wl_diff = ignore_wl_diff, 
+                       **kwargs)
 
 # pre-generate some LUTs for Robertson1968:
 robertson1968_luts_exist = os.path.exists(os.path.join(_CCT_LUT_PATH,'robertson1968_luts.npy'))
@@ -2039,6 +2167,112 @@ _CCT_LUT['zhang2019'] = {}
 _CCT_LUT['zhang2019']['lut_type_def'] = ((1,1,1,'K-1'),(25,1025,25,'K-1'),False)
 _CCT_LUT['zhang2019']['lut_vars'] = ['T','uv']
 _CCT_LUT['zhang2019']['_generate_lut'] = _generate_lut 
+
+
+def _uv_to_Tx_zhang2019(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None, 
+                        max_iter = 100, uvwbar = None, wl = None, dl = None, 
+                        atol = 0.1, rtol = 1e-5,
+                        **kwargs):
+    """ 
+    Calculate Tx from u,v and lut using Zhang 2019.
+    """
+    
+    # get uBB, vBB from lut:
+    TBB, uBB, vBB  = lut[:,ns], lut[:,ns+1], lut[:,ns+2]
+    # MKBB = cct_to_mired(TBB)
+
+    # calculate distances to coordinates in lut (Eq. 4 in Robertson, 1968):
+    di = (((v.T - vBB)**2 + (u.T - uBB)**2)**0.5)
+    pn = di.argmin(axis=0)
+
+    # Deal with endpoints of lut + create intermediate variables 
+    # to save memory:
+    pn, out_of_lut = _deal_with_lut_end_points(pn, TBB, out_of_lut = out_of_lut)
+
+  
+    TBB_m1, TBB_0, TBB_p1 = _get_pns_from_x(TBB, pn)
+    uBB_m1, uBB_0, uBB_p1 = _get_pns_from_x(uBB, pn)
+    vBB_m1, vBB0, vBB_p1 = _get_pns_from_x(vBB, pn)
+
+
+    # get RTm-1 (RTl) and RTm+1 (RTr):
+    RTl = 1e6/TBB_m1
+    RTr = 1e6/TBB_p1
+
+    # calculate RTa, RTb:
+    s = (5.0**0.5 - 1.0)/2.0
+    RTa = RTl + (1.0 - s) * (RTr - RTl)
+    RTb = RTl + s * (RTr - RTl)
+    
+    Tx_a, Tx_b = 1e6/RTa, 1e6/RTb
+    # RTx = ((RTa+RTb)/2)
+    # _plot_triangular_solution(u,v,uBB,vBB,TBB,pn)
+    
+    j = 0
+    while True & (j < max_iter): # loop part of zhang optimization process
+        
+        # calculate BBa BBb:
+        # BBab = cri_ref(np.vstack([cct_to_mired(RTa), cct_to_mired(RTx), cct_to_mired(RTb)]), ref_type = ['BB'], wl3 = wl)
+        # BBab = cri_ref(np.vstack([cct_to_mired(RTa), cct_to_mired(RTb)]), ref_type = ['BB'], wl3 = wl)
+        if (uvwbar is not None) & (wl is not None) & (dl is not None):
+            _,UVWBBab,_,_ = _get_tristim_of_BB_BBp_BBpp(np.vstack([1e6/RTa, 1e6/RTb]), 
+                                                    uvwbar, wl, dl, out='BB')
+        else:
+            raise Exception('uvwbar, wl & dl must all be not None !!!')
+        
+        # calculate xyzBBab:
+        # xyzBBab = spd_to_xyz(BBab, cieobs = cieobs, relative = True)
+    
+        # get cspace coordinates of BB and input xyz:
+        # uvBBab_ = cspace_dict['fwtf'](XYZBBab)[...,1:]
+        uvBBab = xyz_to_Yxy(UVWBBab)[...,1:]
+
+        # N = uvBBab.shape[0]//3 
+        # uBBa, vBBa = uvBBab[:N,0:1], uvBBab[:N,1:2]
+        # uBBx, vBBx = uvBBab[N:2*N,0:1], uvBBab[N:2*N,1:2]
+        # uBBb, vBBb = uvBBab[2*N:,0:1], uvBBab[2*N:,1:2]
+       
+        N = uvBBab.shape[0]//2 
+        uBBa, vBBa = uvBBab[:N,0:1], uvBBab[:N,1:2]
+        uBBb, vBBb = uvBBab[N:,0:1], uvBBab[N:,1:2]
+        
+        # find distance in UCD of BBab to input:
+        DEuv_a = ((uBBa - u)**2 + (vBBa - v)**2)**0.5
+        DEuv_b = ((uBBb - u)**2 + (vBBb - v)**2)**0.5
+        
+        c = (DEuv_a < DEuv_b)[:,0]
+        
+        # when DEuv_a < DEuv_b:
+        RTr[c] = RTb[c]
+        RTb[c] = RTa[c]
+        DEuv_b[c] = DEuv_a[c]
+        RTa[c] = (RTl[c] + (1.0 - s) * (RTr[c] - RTl[c])).copy()
+        
+        # when DEuv_a >= DEuv_b:
+        RTl[~c] = RTa[~c]
+        RTa[~c] = RTb[~c]
+        DEuv_a[~c] = DEuv_b[~c]
+        RTb[~c] = (RTl[~c] + s * (RTr[~c] - RTl[~c]))
+        
+        # Calculate CCTs from RTa and RTb:
+        Tx_a, Tx_b = 1e6/RTa, 1e6/RTb
+
+        Tx = 1e6/((RTa+RTb)/2)
+        dTx = np.abs(Tx_a - Tx_b)
+        # print(j,Tx, dTx,RTx,RTa-RTb)
+        if (((dTx <= atol).all() | ((dTx/Tx) <= rtol).all())):
+            break
+        j+=1
+        
+    # uBB = np.vstack((uBBa,uBBx,uBBb))
+    # vBB = np.vstack((vBBa,vBBx,vBBb))
+    # TBB = np.vstack((Tx_a,Tx,Tx_b))
+    # pn = np.array([1])
+    # _plot_triangular_solution(u,v,uBB,vBB,TBB,pn)
+    
+    return Tx, None, out_of_lut, (Tx_a,Tx_b) 
+
+_CCT_UV_TO_TX_FCNS['zhang2019'] = _uv_to_Tx_zhang2019
 
 def xyz_to_cct_zhang2019(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = False, wl = None, 
                         atol = 0.1, rtol = 1e-5, force_tolerance = True, tol_method = 'newton-raphson', 
@@ -2176,248 +2410,15 @@ def xyz_to_cct_zhang2019(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = Fals
         <https://doi.org/10.1364/OE.24.014066>`_
 
     """
-    mode = 'zhang2019'
-    
-    # Process cspace-parameters:
-    cspace_dict, cspace_str = _process_cspace(cspace, cspace_kwargs)
-    
-    # Get chromaticity coordinates u,v from xyzw:
-    uvw = cspace_dict['fwtf'](xyzw)[:,1:3]  if is_uv_input == False else xyzw[:,0:2] # xyz contained uv !!! (needed to efficiently determine f_corr)
-    
-    # Get or generate requested lut
-    # (if wl doesn't match those in _CCT_LUT['zhang2019']['luts'], 
-    # a new recalculated lut will be generated):
-    if luts_dict is None: luts_dict = _CCT_LUT[mode]['luts']
-
-    lut, lut_kwargs = _get_lut(lut, 
-                               fallback_unit = _CCT_FALLBACK_UNIT, 
-                               fallback_n = _CCT_FALLBACK_N,
-                               resample_nd_array = False, 
-                               luts_dict = luts_dict, cieobs = cieobs, 
-                               lut_type_def = _CCT_LUT[mode]['lut_type_def'],
-                               cspace_str = cspace_str, wl = wl, cspace = cspace_dict, 
-                               cspace_kwargs = None, ignore_unequal_wl = ignore_wl_diff, 
-                               lut_generator_fcn = _CCT_LUT[mode]['_generate_lut'],
-                               lut_vars = _CCT_LUT[mode]['lut_vars'])
-    
-    # pre-calculate wl,dl,uvwbar for later use:
-    xyzbar, wl, dl = _get_xyzbar_wl_dl(cieobs, wl)
-    uvwbar = _convert_xyzbar_to_uvwbar(xyzbar, cspace_dict)
-    
-    # Prepare some parameters for forced tolerance:
-    max_iter_i = max_iter
-    if force_tolerance: 
-        if (tol_method == 'cascading-lut') | (tol_method == 'cl'): 
-            lut_char = _get_lut_characteristics(lut, force_au = False)
-        elif (tol_method == 'newton-raphson') | (tol_method == 'nr'):
-            max_iter_nr = max_iter
-            max_iter_i = 1 # no need to run multiple times, all estimation done by NR (no need for cascading loop)
-        else:
-            raise Exception('Tolerance method = {:s} not implemented.'.format(tol_method))
-            
-
-            
-    lut_n_cols = lut.shape[-1] # store now, as this will change later
-    
-    # prepare split of input data to speed up calculation:
-    n = xyzw.shape[0]
-    ccts = np.zeros((n,1))
-    duvs = np.zeros((n,1))
-    n_ii = split_calculation_at_N if split_calculation_at_N is not None else n
-    N_ii = n//n_ii + 1*((n%n_ii)>0)
-
-    # loop of splitted data:
-    for ii in range(N_ii):
-        
-        # get data for split ii:
-        uv = uvw[n_ii*ii:n_ii*ii+n_ii] if (ii < (N_ii-1)) else uvw[n_ii*ii:]
-        # xyz = xyzw[n_ii*ii:n_ii*ii+n_ii] if (ii < (N_ii-1)) else xyzw[n_ii*ii:]
-        u, v = uv[:,0,None], uv[:,1,None]
-    
-        i = 0
-        lut_i = lut # cascading lut will be updated later in while loop
-        Duvx = None
-        while True & (i < max_iter_i): # tolerance compliance loop (only runs possible >1 if force_tolerance==True)
-                
-            # needed to get correct columns from lut_i:
-            N = lut_i.shape[-1]//lut_n_cols
-            ns = np.arange(0,N*lut_n_cols,lut_n_cols,dtype=int)
-            
-            # get uBB, vBB from lut:
-            TBB, uBB, vBB  = lut_i[:,ns], lut_i[:,ns+1], lut_i[:,ns+2]
-            # MKBB = cct_to_mired(TBB)
-        
-            # calculate distances to coordinates in lut (Eq. 4 in Robertson, 1968):
-            di = (((v.T - vBB)**2 + (u.T - uBB)**2)**0.5)
-            pn = di.argmin(axis=0)
-    
-            # Deal with endpoints of lut + create intermediate variables 
-            # to save memory:
-            ce = pn == (TBB.shape[0]-1) # end point
-            cb = pn==0 # begin point
-            if i == 0: out_of_lut = (cb | ce)[:,None]
-            pn[ce] = (TBB.shape[0] - 2) # end of lut (results in TBB_0==TBB_p1 -> (1/TBB_0)-(1/TBB_p1)) == 0 !
-            pn[cb] =  1 # begin point
-
-            # TBB = _add_lut_endpoints(TBB)
-            # uBB = _add_lut_endpoints(uBB)
-            # vBB = _add_lut_endpoints(vBB)
-            # di = _add_lut_endpoints(di)
-            # pn += 1
-
-            # if i == 0: out_of_lut = ((pn==1) | (pn==TBB.shape[0]-2))[:,None]
-          
-            TBB_m1, TBB_0, TBB_p1 = _get_pns_from_x(TBB, pn)
-            uBB_m1, uBB_0, uBB_p1 = _get_pns_from_x(uBB, pn)
-            vBB_m1, vBB0, vBB_p1 = _get_pns_from_x(vBB, pn)
-
-
-            # get RTm-1 (RTl) and RTm+1 (RTr):
-            RTl = 1e6/TBB_m1
-            RTr = 1e6/TBB_p1
-
-            # calculate RTa, RTb:
-            s = (5.0**0.5 - 1.0)/2.0
-            RTa = RTl + (1.0 - s) * (RTr - RTl)
-            RTb = RTl + s * (RTr - RTl)
-            
-            Tx_a, Tx_b = cct_to_mired(RTa), cct_to_mired(RTb)
-            # RTx = ((RTa+RTb)/2)
-            # _plot_triangular_solution(u,v,uBB,vBB,TBB,pn)
-            j = 0
-            while True & (j < max_iter): # loop part of zhang optimization process
-                
-                # calculate BBa BBb:
-                # BBab = cri_ref(np.vstack([cct_to_mired(RTa), cct_to_mired(RTx), cct_to_mired(RTb)]), ref_type = ['BB'], wl3 = wl)
-                # BBab = cri_ref(np.vstack([cct_to_mired(RTa), cct_to_mired(RTb)]), ref_type = ['BB'], wl3 = wl)
-                _,UVWBBab,_,_ = _get_tristim_of_BB_BBp_BBpp(np.vstack([cct_to_mired(RTa), cct_to_mired(RTb)]), uvwbar, wl, dl, out='BB')
-                
-                # calculate xyzBBab:
-                # xyzBBab = spd_to_xyz(BBab, cieobs = cieobs, relative = True)
-            
-                # get cspace coordinates of BB and input xyz:
-                # uvBBab_ = cspace_dict['fwtf'](XYZBBab)[...,1:]
-                uvBBab = xyz_to_Yxy(UVWBBab)[...,1:]
-
-                # N = uvBBab.shape[0]//3 
-                # uBBa, vBBa = uvBBab[:N,0:1], uvBBab[:N,1:2]
-                # uBBx, vBBx = uvBBab[N:2*N,0:1], uvBBab[N:2*N,1:2]
-                # uBBb, vBBb = uvBBab[2*N:,0:1], uvBBab[2*N:,1:2]
-               
-                N = uvBBab.shape[0]//2 
-                uBBa, vBBa = uvBBab[:N,0:1], uvBBab[:N,1:2]
-                uBBb, vBBb = uvBBab[N:,0:1], uvBBab[N:,1:2]
-                
-                # find distance in UCD of BBab to input:
-                DEuv_a = ((uBBa - u)**2 + (vBBa - v)**2)**0.5
-                DEuv_b = ((uBBb - u)**2 + (vBBb - v)**2)**0.5
-                
-                c = (DEuv_a < DEuv_b)[:,0]
-                
-                # when DEuv_a < DEuv_b:
-                RTr[c] = RTb[c]
-                RTb[c] = RTa[c]
-                DEuv_b[c] = DEuv_a[c]
-                RTa[c] = (RTl[c] + (1.0 - s) * (RTr[c] - RTl[c])).copy()
-                
-                # when DEuv_a >= DEuv_b:
-                RTl[~c] = RTa[~c]
-                RTa[~c] = RTb[~c]
-                DEuv_a[~c] = DEuv_b[~c]
-                RTb[~c] = (RTl[~c] + s * (RTr[~c] - RTl[~c]))
-                
-                # Calculate CCTs from RTa and RTb:
-                Tx_a, Tx_b = cct_to_mired(RTa), cct_to_mired(RTb)
-
-                Tx = cct_to_mired((RTa+RTb)/2)
-                dTx = np.abs(Tx_a - Tx_b)
-                # print(j,Tx, dTx,RTx,RTa-RTb)
-                if (((dTx <= atol).all() | ((dTx/Tx) <= rtol).all())):
-                    break
-                j+=1
-                
-            # uBB = np.vstack((uBBa,uBBx,uBBb))
-            # vBB = np.vstack((vBBa,vBBx,vBBb))
-            # TBB = np.vstack((Tx_a,Tx,Tx_b))
-            # pn = np.array([1])
-            # _plot_triangular_solution(u,v,uBB,vBB,TBB,pn)
-
-            if force_tolerance == False:
-                break 
-            else:
-                # RTa[out_of_lut] = 1e6/((1e6/RTa[out_of_lut]) - 100)
-                # RTb[out_of_lut] = 1e6/((1e6/RTb[out_of_lut]) + 100)
-                if (tol_method == 'cascading-lut') | (tol_method == 'cl'):
-                    
-                    if out_of_lut.all(): # cl cannot recover from this!
-                        break
-                    
-                    Ts_m1p1 =  1e6/np.hstack((RTa,RTb)) 
-                    Ts_min, Ts_max = Ts_m1p1.min(axis=-1),Ts_m1p1.max(axis=-1)
-                    
-                    dTs = np.abs(Ts_max - Ts_min)
-                    if (dTs<= atol).all() | (np.abs(dTs/Tx) <= rtol).all():
-                        Tx =  ((Ts_min + Ts_max)/2)[:,None] 
-                        break 
-                    else:
-                        
-                        lut_int = lut_char[0][2]
-                        
-                        if np.isnan(lut_int): 
-                            lut_cl = 1e6/np.linspace(1e6/Ts_max,1e6/Ts_min,lut_resolution_reduction_factor)
-                        else:
-                            lut_unit = lut_char[0][3]
-                            lut_int = lut_int/lut_resolution_reduction_factor**(i+1)
-                            lut_cl = [Ts_min,Ts_max,lut_int,lut_unit] if ('-1' not in lut_unit) else [1e6/Ts_max,1e6/Ts_min,lut_int,lut_unit]
-                       
-                                               
-                        lut_i = _generate_lut(lut_cl, seamless_stitch = True, 
-                                            fallback_unit = _CCT_FALLBACK_UNIT, 
-                                            fallback_n = _CCT_FALLBACK_N,
-                                            resample_nd_array = False, 
-                                            luts_dict = luts_dict, cieobs = cieobs, 
-                                            lut_type_def = _CCT_LUT[mode]['lut_type_def'],
-                                            cspace_str = cspace_str, wl = wl, cspace = cspace_dict, 
-                                            cspace_kwargs = None, ignore_unequal_wl = ignore_wl_diff, 
-                                            lut_generator_fcn = _CCT_LUT[mode]['_generate_lut'],
-                                            lut_vars = _CCT_LUT[mode]['lut_vars']
-                                            )[0]
-                        
-                        
-            
-                elif (tol_method == 'newton-raphson') | (tol_method == 'nr'):
-
-                    Tx, Duvx = _get_newton_raphson_estimated_Tc(u, v, Tx, wl = wl, uvwbar = uvwbar,
-                                                                atol = atol, rtol = rtol, max_iter = max_iter_nr)
-                           
-                    break # Tx already ok from newton-raphson
-            i+=1 # stop cascade loop
-            
-            
-        if Duvx is None:
-            Duvx = _get_Duv_for_T(u,v, Tx, wl, cieobs, cspace_dict, uvwbar = uvwbar, dl = dl)
-        
-        Tx = Tx*(-1)**out_of_lut
-        
-        # Add freshly calculated Tx, Duvx to storage array:
-        if (ii < (N_ii-1)): 
-            ccts[n_ii*ii:n_ii*ii+n_ii] = Tx
-            duvs[n_ii*ii:n_ii*ii+n_ii] = Duvx
-        else: 
-            ccts[n_ii*ii:] = Tx
-            duvs[n_ii*ii:] = Duvx
-
-    # Regulate output:
-    if (out == 'cct') | (out == 1):
-        return ccts
-    elif (out == 'duv') | (out == -1):
-        return duvs
-    elif (out == 'cct,duv') | (out == 2):
-        return ccts, duvs
-    elif (out == "[cct,duv]") | (out == -2):
-        return np.hstack((ccts,duvs))   
-    else:
-        raise Exception('Unknown output requested')
+    return _xyz_to_cct(xyzw, mode = 'zhang2019', cieobs = cieobs, out = out, wl = wl, is_uv_input = is_uv_input, 
+                       cspace = cspace, cspace_kwargs = cspace_kwargs,
+                       atol = atol, rtol = rtol, force_tolerance = force_tolerance,
+                       tol_method = tol_method, max_iter = max_iter,  
+                       lut_resolution_reduction_factor = lut_resolution_reduction_factor,
+                       split_calculation_at_N = split_calculation_at_N, 
+                       lut = lut, luts_dict = luts_dict, 
+                       ignore_wl_diff = ignore_wl_diff, 
+                       **kwargs)
 
 
 # pre-generate some LUTs for Zhang2019:
@@ -2492,6 +2493,7 @@ def _generate_lut_ohno2014(lut,
                                                   cspace =  cspace, 
                                                   cspace_kwargs = cspace_kwargs,
                                                   ignore_wl_diff = ignore_wl_diff)
+
         else: 
             f_corr = 1.0 # use this a backup value
 
@@ -2537,7 +2539,6 @@ def get_correction_factor_for_Tx(lut,
              | Tc,x correction factor.
     """
     # Generate a finer resolution lut to estimate the f_corr correction factor:
-
     lut_fine, _ = _generate_lut(lut, uin = uin, seamless_stitch = seamless_stitch, 
                                 fallback_unit = fallback_unit, fallback_n = fallback_n,
                                 resample_nd_array = resample_nd_array, cct_max = cct_max, cct_min = cct_min,
@@ -2546,14 +2547,18 @@ def get_correction_factor_for_Tx(lut,
                                 lut_vars = _CCT_LUT['ohno2014']['lut_vars'])
 
     # define shorthand lambda fcn:
-    TxDuvx_p = lambda x: xyz_to_cct_ohno2014(lut_fine[:,1:3], lut = [lut, {'f_corr': np.round(x,5)}], 
-                                            is_uv_input = True, 
-                                            force_tolerance = False, out = '[cct,duv]',
-                                            duv_parabolic_threshold = 0, # force use of parabolic
-                                            lut_resolution_reduction_factor = _CCT_LUT_RESOLUTION_REDUCTION_FACTOR,
-                                            wl = wl, cieobs = cieobs, ignore_wl_diff = ignore_wl_diff,
-                                            cspace = cspace, cspace_kwargs = cspace_kwargs,
-                                            luts_dict = _CCT_LUT['ohno2014']['luts'])[1:-1,:]
+    TxDuvx_p = lambda x: _xyz_to_cct(lut_fine[:,1:3], mode = 'ohno2014', 
+                                     lut = [lut, {'f_corr': np.round(x,5)}], 
+                                     is_uv_input = True, 
+                                     force_tolerance = False, tol_method = None,
+                                     out = '[cct,duv]',
+                                     duv_parabolic_threshold = 0, # force use of parabolic
+                                     lut_resolution_reduction_factor = _CCT_LUT_RESOLUTION_REDUCTION_FACTOR,
+                                     wl = wl, cieobs = cieobs, ignore_wl_diff = ignore_wl_diff,
+                                     cspace = cspace, cspace_kwargs = cspace_kwargs,
+                                     luts_dict = _CCT_LUT['ohno2014']['luts'],
+                                     caller = 'get_fcorr_Tx'
+                                     )[1:-1,:]
  
     T = lut_fine[1:-1,0] 
     Duv = 0.0
@@ -2567,6 +2572,7 @@ def get_correction_factor_for_Tx(lut,
         dT2 = (T-Tx)**2
         dDuv2 = (Duv - Duvx)**2
         F = (dT2/1000**2 + dDuv2).mean()
+        
         if out == 'F':
             return F
         else:
@@ -2595,7 +2601,66 @@ def get_correction_factor_for_Tx(lut,
 
     return f_corr
 
-  
+
+def _uv_to_Tx_ohno2014(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None, 
+                       f_corr = 1.0, duv_parabolic_threshold = 0.002, **kwargs):
+    """ 
+    Calculate Tx from u,v and lut using Ohno2014.
+    """ 
+    # get uBB, vBB from lut:
+    TBB, uBB, vBB  = lut[:,ns], lut[:,ns+1], lut[:,ns+2]
+
+    # calculate distances to coordinates in lut:
+    di = ((u.T - uBB)**2 + (v.T - vBB)**2)**0.5
+    pn = di.argmin(axis=0)
+
+    # Deal with endpoints of lut + create intermediate variables 
+    # to save memory:
+    pn, out_of_lut = _deal_with_lut_end_points(pn, TBB, out_of_lut)
+
+    TBB_m1, TBB_0, TBB_p1 = _get_pns_from_x(TBB, pn)
+    uBB_m1, uBB_0, uBB_p1 = _get_pns_from_x(uBB, pn)
+    vBB_m1, vBB0, vBB_p1 = _get_pns_from_x(vBB, pn)
+    di_m1, di_0, di_p1 = _get_pns_from_x(di, pn)
+
+    #---------------------------------------------
+    # Triangular solution:        
+    l = ((uBB_p1 - uBB_m1)**2 + (vBB_p1 - vBB_m1)**2)**0.5
+    l[l==0] += -_AVOID_ZERO_DIV 
+    x = (di_m1**2 - di_p1**2 + l**2) / (2*l)
+    # uTx = uBB_m1 + (uBB_p1 - uBB_m1)*(x/l)
+    vTx = vBB_m1 + (vBB_p1 - vBB_m1)*(x/l)
+    Txt = TBB_m1 + (TBB_p1 - TBB_m1) * (x/l) 
+    Duvxt = (di_m1**2 - x**2)
+    Duvxt[Duvxt<0] = 0
+    Duvxt = (Duvxt**0.5)*np.sign(v - vTx)
+    # _plot_triangular_solution(u,v,uBB,vBB,TBB,pn)
+
+
+    #---------------------------------------------
+    # Parabolic solution:
+    X = (TBB_p1 - TBB_0) * (TBB_m1 - TBB_p1) * (TBB_0-TBB_m1)
+    X[X==0] += _AVOID_ZERO_DIV
+    a = (TBB_m1 * (di_p1 - di_0) + TBB_0 * (di_m1 - di_p1) + TBB_p1 * (di_0 - di_m1)) / X
+    a[a==0] += _AVOID_ZERO_DIV
+    b = -((TBB_m1**2) * (di_p1 - di_0) + (TBB_0**2) * (di_m1 - di_p1) + (TBB_p1**2) * (di_0 - di_m1)) / X
+    c = -(di_m1 * (TBB_p1 - TBB_0)  * TBB_p1 * TBB_0  +\
+          di_0  * (TBB_m1 - TBB_p1) * TBB_m1 * TBB_p1 +\
+          di_p1 * (TBB_0 - TBB_m1)  * TBB_0 * TBB_m1) / X
+    Txp = -b/(2*a)
+    Txp_corr = Txp * f_corr # correction factor depends on the LUT !!!!! (0.0.99991 is for 1% Table I in paper, for smaller % correction factor is not needed)
+    Txp = Txp_corr
+    Duvxp = np.sign(v - vTx)*(a*Txp**2 + b*Txp + c)
+
+    # Select triangular (threshold=0), parabolic (threshold=inf) or 
+    # combined solution:
+    Tx, Duvx = Txt, Duvxt 
+    cnd = np.abs(Duvx) >= duv_parabolic_threshold
+    Tx[cnd], Duvx[cnd]= Txp[cnd], Duvxp[cnd]
+            
+    return Tx, Duvx, out_of_lut, (TBB_m1,TBB_p1)
+
+_CCT_UV_TO_TX_FCNS['ohno2014']= _uv_to_Tx_ohno2014
     
 def xyz_to_cct_ohno2014(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = False, wl = None, 
                         atol = 0.1, rtol = 1e-5, force_tolerance = True, tol_method = 'newton-raphson', 
@@ -2737,215 +2802,16 @@ def xyz_to_cct_ohno2014(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = False
         <https://doi.org/10.1364/OE.24.014066>`_
         
     """ 
-    mode = 'ohno2014'
-    
-    # Process cspace-parameters:
-    cspace_dict, cspace_str = _process_cspace(cspace, cspace_kwargs)
-    
-    # Get chromaticity coordinates u,v from xyzw:
-    uvw = cspace_dict['fwtf'](xyzw)[:,1:3]  if is_uv_input == False else xyzw[:,0:2] # xyz contained uv !!! (needed to efficiently determine f_corr)
-    
-    # Get or generate requested lut
-    # (if wl doesn't match those in _CCT_LUT['ohno2014']['luts'], 
-    # a new recalculated lut will be generated):
-    if luts_dict is None: luts_dict = _CCT_LUT[mode]['luts']
-
-    lut, lut_kwargs = _get_lut(lut, 
-                               fallback_unit = _CCT_FALLBACK_UNIT, 
-                               fallback_n = _CCT_FALLBACK_N,
-                               resample_nd_array = False, 
-                               luts_dict = luts_dict, cieobs = cieobs, 
-                               lut_type_def = _CCT_LUT[mode]['lut_type_def'],
-                               cspace_str = cspace_str, wl = wl, cspace = cspace_dict, 
-                               cspace_kwargs = None, ignore_unequal_wl = ignore_wl_diff, 
-                               lut_generator_fcn = _CCT_LUT[mode]['_generate_lut'],
-                               lut_vars = _CCT_LUT[mode]['lut_vars'])
-    
-                                
-    f_corr = lut_kwargs['f_corr']
-    
-    
-    # Prepare some parameters for forced tolerance:
-    if force_tolerance: 
-        if (tol_method == 'cascading-lut') | (tol_method =='cl'): 
-            lut_char  = _get_lut_characteristics(lut, force_au = False)
-        elif (tol_method == 'newton-raphson') | (tol_method == 'nr'):
-            xyzbar, wl, dl = _get_xyzbar_wl_dl(cieobs, wl)
-            uvwbar = _convert_xyzbar_to_uvwbar(xyzbar, cspace_dict)
-            max_iter_nr = max_iter 
-            max_iter = 1 # no need to run multiple times, all estimation done by NR
-        else:
-            raise Exception('Tolerance method = {:s} not implemented.'.format(tol_method))
-    
-    lut_n_cols = lut.shape[-1] # store now, as this will change later
-    
-    # prepare split of input data to speed up calculation:
-    n = xyzw.shape[0]
-    ccts = np.zeros((n,1))
-    duvs = np.zeros((n,1))
-    n_ii = split_calculation_at_N if split_calculation_at_N is not None else n
-    N_ii = n//n_ii + 1*((n%n_ii)>0)
-
-    # loop of splitted data:
-    for ii in range(N_ii):
-        
-        # get data for split ii:
-        uv = uvw[n_ii*ii:n_ii*ii+n_ii] if (ii < (N_ii-1)) else uvw[n_ii*ii:]
-        # xyz = xyzw[n_ii*ii:n_ii*ii+n_ii] if (ii < (N_ii-1)) else xyzw[n_ii*ii:]
-        u, v = uv[:,0,None], uv[:,1,None]
-    
-        i = 0
-        lut_i = lut # cascading lut will be updated later in while loop ()
-        while True & (i < max_iter):
-
-            # needed to get correct columns from lut_i:
-            N = lut_i.shape[-1]//lut_n_cols
-            ns = np.arange(0,N*lut_n_cols,lut_n_cols,dtype=int)
-
-            
-            # get uBB, vBB from lut:
-            TBB, uBB, vBB  = lut_i[:,ns], lut_i[:,ns+1], lut_i[:,ns+2]
-
-            # calculate distances to coordinates in lut:
-            di = ((u.T - uBB)**2 + (v.T - vBB)**2)**0.5
-            pn = di.argmin(axis=0)
-    
-            # Deal with endpoints of lut + create intermediate variables 
-            # to save memory:
-            ce = pn == (TBB.shape[0]-1) # end point
-            cb = pn==0 # begin point
-            if i == 0: out_of_lut = (cb | ce)[:,None]
-            pn[ce] = (TBB.shape[0] - 2) # end of lut (results in TBB_0==TBB_p1 -> (1/TBB_0)-(1/TBB_p1)) == 0 !
-            pn[cb] =  1 # begin point
-                     
-            # TBB_m1, TBB_0, TBB_p1 = _get_pns_from_x(TBB, pn)
-            # uBB_m1, uBB_0, uBB_p1 = _get_pns_from_x(uBB, pn)
-            # vBB_m1, vBB0, vBB_p1 = _get_pns_from_x(vBB, pn)
-            # di_m1, di_0, di_p1 = _get_pns_from_x(di, pn)
-
-            # TBB = _add_lut_endpoints(TBB)
-            # uBB = _add_lut_endpoints(uBB)
-            # vBB = _add_lut_endpoints(vBB)
-            # di = _add_lut_endpoints(di)
-
-            # pn += 1
-            # if i == 0: out_of_lut = ((pn==1) | (pn==TBB.shape[0]))[:,None]
-            TBB_m1, TBB_0, TBB_p1 = _get_pns_from_x(TBB, pn)
-            uBB_m1, uBB_0, uBB_p1 = _get_pns_from_x(uBB, pn)
-            vBB_m1, vBB0, vBB_p1 = _get_pns_from_x(vBB, pn)
-            di_m1, di_0, di_p1 = _get_pns_from_x(di, pn)
-
-            #---------------------------------------------
-            # Triangular solution:        
-            l = ((uBB_p1 - uBB_m1)**2 + (vBB_p1 - vBB_m1)**2)**0.5
-            l[l==0] += -_AVOID_ZERO_DIV 
-            x = (di_m1**2 - di_p1**2 + l**2) / (2*l)
-            # uTx = uBB_m1 + (uBB_p1 - uBB_m1)*(x/l)
-            vTx = vBB_m1 + (vBB_p1 - vBB_m1)*(x/l)
-            Txt = TBB_m1 + (TBB_p1 - TBB_m1) * (x/l) 
-            Duvxt = (di_m1**2 - x**2)
-            Duvxt[Duvxt<0] = 0
-            Duvxt = (Duvxt**0.5)*np.sign(v - vTx)
-            # _plot_triangular_solution(u,v,uBB,vBB,TBB,pn)
-
-    
-            #---------------------------------------------
-            # Parabolic solution:
-            X = (TBB_p1 - TBB_0) * (TBB_m1 - TBB_p1) * (TBB_0-TBB_m1)
-            X[X==0] += _AVOID_ZERO_DIV
-            a = (TBB_m1 * (di_p1 - di_0) + TBB_0 * (di_m1 - di_p1) + TBB_p1 * (di_0 - di_m1)) / X
-            a[a==0] += _AVOID_ZERO_DIV
-            b = -((TBB_m1**2) * (di_p1 - di_0) + (TBB_0**2) * (di_m1 - di_p1) + (TBB_p1**2) * (di_0 - di_m1)) / X
-            c = -(di_m1 * (TBB_p1 - TBB_0)  * TBB_p1 * TBB_0  +\
-                  di_0  * (TBB_m1 - TBB_p1) * TBB_m1 * TBB_p1 +\
-                  di_p1 * (TBB_0 - TBB_m1)  * TBB_0 * TBB_m1) / X
-            Txp = -b/(2*a)
-            Txp_corr = Txp * f_corr # correction factor depends on the LUT !!!!! (0.0.99991 is for 1% Table I in paper, for smaller % correction factor is not needed)
-            Txp = Txp_corr
-            Duvxp = np.sign(v - vTx)*(a*Txp**2 + b*Txp + c)
-    
-            # Select triangular (threshold=0), parabolic (threshold=inf) or 
-            # combined solution:
-            Tx, Duvx = Txt, Duvxt 
-            cnd = np.abs(Duvx) >= duv_parabolic_threshold
-            Tx[cnd], Duvx[cnd]= Txp[cnd], Duvxp[cnd]
-            
-            if i == 0: Tx_0 = Tx.copy()
-
-            if force_tolerance == False:
-                break 
-            else:
-                
-                if (tol_method == 'cascading-lut') | (tol_method == 'cl'):
-                    
-                    if out_of_lut.all(): # cl cannot recover from this!
-                        break
-                    
-                    Ts_m1p1 =  np.hstack((TBB_m1,TBB_p1)) 
-                    Ts_min, Ts_max = Ts_m1p1.min(axis=-1),Ts_m1p1.max(axis=-1)
-                    
-                    dTs = np.abs(Ts_max - Ts_min)
-                    if (dTs<= atol).all() | (np.abs(dTs/Tx) <= rtol).all():
-                        Tx =  ((Ts_min + Ts_max)/2)[:,None] 
-                        break 
-                    else:
-                        
-                        lut_int = lut_char[0][2] # use first interval in list
-
-                        if np.isnan(lut_int): 
-                            lut_cl = 1e6/np.linspace(1e6/Ts_max,1e6/Ts_min,lut_resolution_reduction_factor)
-                        else:
-                            lut_unit = lut_char[0][3]
-                            lut_int = lut_int/lut_resolution_reduction_factor**(i+1)
-                            lut_cl = [Ts_min,Ts_max,lut_int,lut_unit] if ('-1' not in lut_unit) else [1e6/Ts_max,1e6/Ts_min,lut_int,lut_unit]
-                     
-                        lut_i, lut_kwargs = _generate_lut_ohno2014(lut_cl, seamless_stitch = True, 
-                                                                   fallback_unit = _CCT_FALLBACK_UNIT, 
-                                                                   fallback_n = _CCT_FALLBACK_N,
-                                                                   resample_nd_array = False, 
-                                                                   luts_dict = luts_dict, cieobs = cieobs, 
-                                                                   lut_type_def = _CCT_LUT[mode]['lut_type_def'],
-                                                                   cspace_str = cspace_str, wl = wl, cspace = cspace_dict, 
-                                                                   cspace_kwargs = None, ignore_unequal_wl = ignore_wl_diff, 
-                                                                   lut_generator_fcn = _CCT_LUT[mode]['_generate_lut'],
-                                                                   lut_vars = _CCT_LUT[mode]['lut_vars'],
-                                                                   f_corr = 1
-                                                                   )
-                                                               
-                        f_corr = lut_kwargs['f_corr']
-                        
-                elif (tol_method == 'newton-raphson') | (tol_method == 'nr'):
-                    Tx, Duvx = _get_newton_raphson_estimated_Tc(u, v, Tx, wl = wl, uvwbar = uvwbar,
-                                                                atol = atol, rtol = rtol, max_iter = max_iter_nr)
-                    break # Tx already ok from newton-raphson
-                    
-            i+=1 # stop cascade loop
-            
-        if force_tolerance:
-            if (tol_method == 'cascading-lut') | (tol_method == 'cl'):
-                Tx[out_of_lut] = Tx_0[out_of_lut] # restore originals as cl_lut might have messed up these Tx   
-
-        Tx = Tx*(-1)**out_of_lut
-        
-        # Add freshly calculated Tx, Duvx to storage array:
-        if (ii < (N_ii-1)): 
-            ccts[n_ii*ii:n_ii*ii+n_ii] = Tx
-            duvs[n_ii*ii:n_ii*ii+n_ii] = Duvx
-        else: 
-            ccts[n_ii*ii:] = Tx
-            duvs[n_ii*ii:] = Duvx
-
-    # Regulate output:
-    if (out == 'cct') | (out == 1):
-        return ccts
-    elif (out == 'duv') | (out == -1):
-        return duvs
-    elif (out == 'cct,duv') | (out == 2):
-        return ccts, duvs
-    elif (out == "[cct,duv]") | (out == -2):
-        return np.hstack((ccts,duvs))   
-    else:
-        raise Exception('Unknown output requested')
+    return _xyz_to_cct(xyzw, mode = 'ohno2014', cieobs = cieobs, out = out, wl = wl, is_uv_input = is_uv_input, 
+                       cspace = cspace, cspace_kwargs = cspace_kwargs,
+                       atol = atol, rtol = rtol, force_tolerance = force_tolerance,
+                       tol_method = tol_method, max_iter = max_iter,  
+                       lut_resolution_reduction_factor = lut_resolution_reduction_factor,
+                       split_calculation_at_N = split_calculation_at_N, 
+                       lut = lut, luts_dict = luts_dict, 
+                       ignore_wl_diff = ignore_wl_diff, 
+                       duv_parabolic_threshold = duv_parabolic_threshold,
+                       **kwargs)
 
 # pre-generate some LUTs for Ohno 2014:
 ohno2014_luts_exist = os.path.exists(os.path.join(_CCT_LUT_PATH,'ohno2014_luts.npy'))
@@ -2967,6 +2833,34 @@ _CCT_LUT['ohno2014']['luts'] = generate_luts(types = [_CCT_LUT['ohno2014']['lut_
 # Li 2016:
 #------------------------------------------------------------------------------
 _CCT_LUT['li2016'] = {'lut_vars': None, 'lut_type_def': None, 'luts':None,'_generate_lut':None}
+
+# def _uv_to_Tx_li2016(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None, 
+#                      first_guess_mode = 'robertson1968', fgm_kwargs = {}, 
+#                      wl = None, cieobs = None, xyzbar = None, uvwbar = None, 
+#                      cspace_dict = None, max_iter = None, atol = None, rtol = None,
+#                      **kwargs):
+#     """ 
+#     Calculate Tx from u,v and lut using Ohno2014.
+#     """ 
+#     if first_guess_mode is 'robertson1968':
+#         _uv_to_Tx_mode = _uv_to_Tx_robertson1968
+#     elif first_guess_mode is 'zhang2019':
+#         _uv_to_Tx_mode = _uv_to_Tx_zhang2019
+#     elif first_guess_mode is 'ohno2014':
+#         _uv_to_Tx_mode = _uv_to_Tx_ohno2014
+#     else:
+#         raise Exception('li2016: unsupported first_guess_mode {:s}'.format(first_guess_mode))
+
+#     Tx0, out_of_lut, TBB_lr = _uv_to_Tx_mode(u, v, lut, lut_n_cols, ns = ns, out_of_lut = out_of_lut, **fgm_kwargs)
+    
+#     # Apply Newton–Raphson's method (use Tx0):
+#     Tx, Duvx = _get_newton_raphson_estimated_Tc(u, v, Tx0, wl = wl, atol = atol, rtol = rtol,
+#                                                 cieobs = cieobs, xyzbar = xyzbar, uvwbar = uvwbar,
+#                                                 cspace_dict = cspace_dict, max_iter = max_iter)
+
+#     return Tx, Duvx, out_of_lut, TBB_lr
+
+# _CCT_UV_TO_TX_FCNS['li2016'] = _uv_to_Tx_li2016
 
 def xyz_to_cct_li2016(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = False, wl = None, 
                       atol = 0.1, rtol = 1e-5, max_iter = 100, split_calculation_at_N = 10, 
@@ -3051,82 +2945,18 @@ def xyz_to_cct_li2016(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = False, 
         Journal of the Optical Society of America,  58(11), 1528–1535. 
         <https://doi.org/10.1364/JOSA.58.001528>`_
     """  
-    
-    # Process cspace-parameters:
-    cspace_dict, cspace_str = _process_cspace(cspace, cspace_kwargs)
-    
-    # Get xyzbar cmfs:
-    xyzbar, wl, dl = _get_xyzbar_wl_dl(cieobs, wl)
-    
-    # Convert xyz cmfs to uvw cmfs:
-    uvwbar = _convert_xyzbar_to_uvwbar(xyzbar, cspace_dict)
-    
-    # Get chromaticity coordinates u,v from xyzw:
-    uvw = cspace_dict['fwtf'](xyzw)[:,1:3] if (is_uv_input == False) else xyzw[:,0:2] # xyz contained uv !!! (needed to efficiently determine f_corr)
-    
-    # prepare split of input data to speed up calculation:
-    n = xyzw.shape[0]
-    ccts = np.zeros((n,1))
-    duvs = np.zeros((n,1))
-    n_ii = split_calculation_at_N if split_calculation_at_N is not None else n
-    N_ii = n//n_ii + 1*((n%n_ii)>0)
+    return _xyz_to_cct(xyzw, mode = 'li2016', cieobs = cieobs, out = out, wl = wl, is_uv_input = is_uv_input, 
+                       cspace = cspace, cspace_kwargs = cspace_kwargs,
+                       atol = atol, rtol = rtol, max_iter = max_iter,  
+                       lut_resolution_reduction_factor = lut_resolution_reduction_factor,
+                       split_calculation_at_N = split_calculation_at_N, 
+                       lut = lut, luts_dict = luts_dict, 
+                       ignore_wl_diff = ignore_wl_diff, 
+                       first_guess_mode = first_guess_mode,
+                       fgm_kwargs = fgm_kwargs,
+                       **kwargs)
 
-    # loop of splitted data:
-    for ii in range(N_ii):
-        
-        # get data for split ii:
-        uv = uvw[n_ii*ii:n_ii*ii+n_ii] if (ii < (N_ii-1)) else uvw[n_ii*ii:]
-        # xyz = xyzw[n_ii*ii:n_ii*ii+n_ii] if (ii < (N_ii-1)) else xyzw[n_ii*ii:]
-        u, v = uv[:,0,None], uv[:,1,None]
-        
-        # get first estimate of Tx using recommended method = Robertson, 1968:
-        if 'force_tolerance' in fgm_kwargs: fgm_kwargs.pop('force_tolerance')
-        if first_guess_mode == 'robertson1968': 
-            
-            Tx0 = xyz_to_cct_robertson1968(uv, is_uv_input = True, out = 'cct', cieobs = cieobs,
-                                           wl = wl, cspace = cspace_dict, cspace_kwargs = None,
-                                           atol = atol, rtol = rtol, force_tolerance = False, 
-                                           max_iter = max_iter, **fgm_kwargs)
-        elif first_guess_mode == 'ohno2014': 
-            Tx0 = xyz_to_cct_ohno2014(uv, is_uv_input = True, out = 'cct', cieobs = cieobs,
-                                      wl = wl, cspace = cspace_dict, cspace_kwargs = None,
-                                      atol = atol, rtol = rtol, force_tolerance = False,
-                                      max_iter = max_iter, **fgm_kwargs)
-        elif first_guess_mode == 'zhang2019':
-            Tx0 = xyz_to_cct_zhang2019(uv, is_uv_input = True, out = 'cct', cieobs = cieobs,
-                                       wl = wl, cspace = cspace_dict, cspace_kwargs = None,
-                                       atol = atol, rtol = rtol, force_tolerance = False,
-                                       max_iter = max_iter, **fgm_kwargs)
-        else:
-            raise Exception ('Request first_guess_mode = {:s} not implemented.'.format(first_guess_mode))
-        
-        # Apply Newton–Raphson's method (use abs(Tx0) as first_guess, as out_of_gamuts are encodes as negative CCTs):
-        Tx, Duvx = _get_newton_raphson_estimated_Tc(u, v, np.abs(Tx0), wl = wl, atol = atol, rtol = rtol,
-                                                    cieobs = cieobs, xyzbar = xyzbar, uvwbar = uvwbar,
-                                                    cspace_dict = cspace_dict, max_iter = max_iter)
-       
-        Tx = Tx*np.sign(Tx0) # put out_of_gamut encoding back in.
-        
-        # Add freshly calculated Tx, Duvx to storage array:
-        if (ii < (N_ii-1)): 
-            ccts[n_ii*ii:n_ii*ii+n_ii] = Tx
-            duvs[n_ii*ii:n_ii*ii+n_ii] = Duvx
-        else: 
-            ccts[n_ii*ii:] = Tx
-            duvs[n_ii*ii:] = Duvx
 
-    # Regulate output:
-    if (out == 'cct') | (out == 1):
-        return ccts
-    elif (out == 'duv') | (out == -1):
-        return duvs
-    elif (out == 'cct,duv') | (out == 2):
-        return ccts, duvs
-    elif (out == "[cct,duv]") | (out == -2):
-        return np.hstack((ccts,duvs))   
-    else:
-        raise Exception('Unknown output requested')
-  
 
 #==============================================================================
 # General wrapper function for the various methods: xyz_to_cct()
@@ -3198,7 +3028,7 @@ def xyz_to_cct(xyzw, mode = 'ohno2014',
             | (Additional) method to try and achieve set tolerances. 
             | Options: 
             | - 'cl', 'cascading-lut': use increasingly higher CCT-resolution
-            |       to 'zoom-in' on the ground-truth.
+            |       to 'zoom-in' on the ground-truth. (not for mode == 'li2016')
             | - 'nr', 'newton-raphson': use the method as described in Li, 2016.
         :lut_resolution_reduction_factor:
             | _CCT_LUT_RESOLUTION_REDUCTION_FACTOR, optional
@@ -3261,8 +3091,6 @@ def xyz_to_cct(xyzw, mode = 'ohno2014',
             | Method used to get an approximate (first guess) estimate of the cct,
             | after which the newton-raphson method is started.
             | Options: 'robertson1968', 'ohno2014', 'zhang2019'
-        :fgm_kwargs:
-            | Dict with keyword arguments for the selected first_guess_mode in Li's 2016 method.
             
     Returns:
         :returns: 
@@ -3315,60 +3143,28 @@ def xyz_to_cct(xyzw, mode = 'ohno2014',
         Applied Optics. 38 (27), 5703–5709. P
         <https://www.osapublishing.org/ao/abstract.cfm?uri=ao-38-27-5703>`_
     """  
-    # get first estimate of Tx using recommended method = Robertson, 1968:
-    if mode == 'robertson1968': 
-        return xyz_to_cct_robertson1968(xyzw, cieobs = cieobs, out = out, wl = wl, is_uv_input = is_uv_input, 
-                                        cspace = cspace, cspace_kwargs = cspace_kwargs,
-                                        atol = atol, rtol = rtol, force_tolerance = force_tolerance,
-                                        tol_method = tol_method, max_iter = max_iter,  
-                                        lut_resolution_reduction_factor = lut_resolution_reduction_factor,
-                                        split_calculation_at_N = split_calculation_at_N, 
-                                        lut = lut, luts_dict = luts_dict, 
-                                        ignore_wl_diff = ignore_wl_diff, 
-                                        **kwargs)
-    elif mode == 'ohno2014': 
-        return xyz_to_cct_ohno2014(xyzw, cieobs = cieobs, out = out, wl = wl, is_uv_input = is_uv_input, 
-                                   cspace = cspace, cspace_kwargs = cspace_kwargs,
-                                   atol = atol, rtol = rtol, force_tolerance = force_tolerance,
-                                   tol_method = tol_method, max_iter = max_iter,  
-                                   lut_resolution_reduction_factor = lut_resolution_reduction_factor,
-                                   split_calculation_at_N = split_calculation_at_N, 
-                                   lut = lut, luts_dict = luts_dict, 
-                                   ignore_wl_diff = ignore_wl_diff, 
-                                   duv_parabolic_threshold = duv_parabolic_threshold,
-                                   **kwargs)
-    elif mode == 'zhang2019':
-        return xyz_to_cct_zhang2019(xyzw, cieobs = cieobs, out = out, wl = wl, is_uv_input = is_uv_input, 
-                                    cspace = cspace, cspace_kwargs = cspace_kwargs,
-                                    atol = atol, rtol = rtol, force_tolerance = force_tolerance,
-                                    tol_method = tol_method, max_iter = max_iter,  
-                                    lut_resolution_reduction_factor = lut_resolution_reduction_factor,
-                                    split_calculation_at_N = split_calculation_at_N, 
-                                    lut = lut, luts_dict = luts_dict, 
-                                    ignore_wl_diff = ignore_wl_diff, 
-                                    **kwargs)
-    elif  'li2016' in mode:
-        if ':' in mode:
-            p = mode.index(':')
-            first_guess_mode = mode[p+1:]
-            mode = mode[:p]
-        return xyz_to_cct_li2016(xyzw, cieobs = cieobs, out = out, wl = wl, is_uv_input = is_uv_input, 
-                                 cspace = cspace, cspace_kwargs = cspace_kwargs,
-                                 atol = atol, rtol = rtol, force_tolerance = force_tolerance,
-                                 tol_method = tol_method, max_iter = max_iter,  
-                                 lut_resolution_reduction_factor = lut_resolution_reduction_factor,
-                                 split_calculation_at_N = split_calculation_at_N, 
-                                 lut = lut, luts_dict = luts_dict, 
-                                 ignore_wl_diff = ignore_wl_diff, 
-                                 first_guess_mode = first_guess_mode,
-                                 fgm_kwargs = fgm_kwargs,
-                                 **kwargs)
+    if (mode is not 'mcamy1992') & (mode is not 'hernandez1999'):
+        
+        return _xyz_to_cct(xyzw, mode, cieobs = cieobs, out = out, wl = wl, is_uv_input = is_uv_input, 
+                           cspace = cspace, cspace_kwargs = cspace_kwargs,
+                           atol = atol, rtol = rtol, force_tolerance = force_tolerance,
+                           tol_method = tol_method, max_iter = max_iter,  
+                           lut_resolution_reduction_factor = lut_resolution_reduction_factor,
+                           split_calculation_at_N = split_calculation_at_N, 
+                           lut = lut, luts_dict = luts_dict, 
+                           ignore_wl_diff = ignore_wl_diff, 
+                           duv_parabolic_threshold = duv_parabolic_threshold,
+                           first_guess_mode = first_guess_mode,
+                           **kwargs)
+    
     elif mode == 'mcamy1992':
         return xyz_to_cct_mcamy1992(xyzw,cieobs = cieobs,wl = wl,out = out,
                                     cspace = cspace,cspace_kwargs = cspace_kwargs)
+    
     elif mode == 'hernandez1999':
         return xyz_to_cct_hernandez1999(xyzw,cieobs = cieobs,wl = wl,out = out,
                                     cspace = cspace,cspace_kwargs = cspace_kwargs)
+    
     else:
         raise Exception ('Request mode = {:s} not implemented.'.format(mode))
 
@@ -3530,7 +3326,7 @@ if __name__ == '__main__':
     
     xyz = spd_to_xyz(BB, cieobs = cieobs)
     
-    cct = 5000
+    cct = 5500
     duvs = np.array([[0.05,0.025,0,-0.025,-0.05]]).T
     duvs = np.array([[-0.03,0.03]]).T
     ccts = np.array([[cct]*duvs.shape[0]]).T
@@ -3556,7 +3352,8 @@ if __name__ == '__main__':
 
     # xyz = np.array([[100,100,100]])
     cctsduvs = xyz_to_cct(xyz, rtol = 1e-6,cieobs = cieobs, out = '[cct,duv]', wl = _WL3, 
-                          mode='li2016:zhang2019',force_tolerance=True,tol_method='cl',lut=[(1000.0, 50000.0, 1.0, '%'),{'f_corr':None}])
+                          mode='zhang2019',force_tolerance=True,tol_method='cl',lut=[(1000.0, 50000.0, 1.0, '%'),{'f_corr':None}],caller = 'main')
+    
     # cctsduvs2 = xyz_to_cct_li2016(xyz, rtol=1e-6, cieobs = cieobs, out = '[cct,duv]',force_tolerance=True)
     cctsduvs_ = cctsduvs.copy();cctsduvs_[:,0] = np.abs(cctsduvs_[:,0]) # outof gamut ccts are encoded as negative!!
     xyz_ = cct_to_xyz(cctsduvs_, cieobs = cieobs, wl = _WL3,cct_offset = cct_offset)
