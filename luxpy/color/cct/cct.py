@@ -155,7 +155,8 @@ _CCT_LUT_CALC = False
 _CCT_LUT = {}
 _CCT_UV_TO_TX_FCNS = {}
 _CCT_LUT_RESOLUTION_REDUCTION_FACTOR = 4 # for when cascading luts are used (d(Tm1,Tp1)-->divide in _CCT_LUT_RESOLUTION_REDUCTION_FACTOR segments)
-
+_CCT_MAX_ITER = 10
+_CCT_SPLIT_CALC_AT_N = 25 # some tests show that this seems to be the fastest
 verbosity_lut_generation = 1
 
 #==============================================================================
@@ -1615,7 +1616,7 @@ def _get_uv_uvp_uvpp(T, uvwbar, wl, dl, out = 'BB,BBp,BBpp'):
 
 def _get_newton_raphson_estimated_Tc(u, v, T0, wl = _WL3, atol = 0.1, rtol = 1e-5,
                                      cieobs = None, xyzbar = None, uvwbar = None,
-                                     cspace_dict = None, max_iter = 100):
+                                     cspace_dict = None, max_iter = _CCT_MAX_ITER):
     """
     Get an estimate of the CCT using the Newton-Raphson method (as specified in 
     Li et al., 2016). (u,v) are the test coordinates. T0 is a first estimate of the Tc.
@@ -1746,7 +1747,7 @@ def _get_loop_i_lut_for_cascading_lut(Tx, TBB_m1, TBB_p1, out_of_lut,
 
 def _get_cascading_lut_Tx(mode, u, v, lut, lut_n_cols, lut_char, lut_resolution_reduction_factor,
                           luts_dict, cieobs, wl, cspace_str, cspace_dict, ignore_wl_diff,
-                          max_iter = 100, mode_kwargs = {}, atol = 0.1, rtol = 1e-5, 
+                          max_iter = _CCT_MAX_ITER, mode_kwargs = {}, atol = 0.1, rtol = 1e-5, 
                           Tx = None, Duvx = None, out_of_lut = None, TBB_l = None, TBB_r = None,
                           **kwargs):
     """
@@ -1814,8 +1815,8 @@ def _get_cascading_lut_Tx(mode, u, v, lut, lut_n_cols, lut_char, lut_resolution_
 def _xyz_to_cct(xyzw, mode, is_uv_input = False, cieobs = _CIEOBS, wl = _WL3, out = 'cct',
                 lut = None, luts_dict = None, ignore_wl_diff = False,
                 force_tolerance = True, tol_method = 'newton-raphson', atol = 0.1, rtol = 1e-5, 
-                max_iter = 100, force_au = False, 
-                split_calculation_at_N = 10, lut_resolution_reduction_factor = _CCT_LUT_RESOLUTION_REDUCTION_FACTOR,
+                max_iter = _CCT_MAX_ITER, force_au = False, 
+                split_calculation_at_N = _CCT_SPLIT_CALC_AT_N, lut_resolution_reduction_factor = _CCT_LUT_RESOLUTION_REDUCTION_FACTOR,
                 cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS,
                 duv_parabolic_threshold = 0.002, 
                 first_guess_mode = 'robertson1968',
@@ -1988,7 +1989,7 @@ _CCT_UV_TO_TX_FCNS['robertson1968'] = _uv_to_Tx_robertson1968
 def xyz_to_cct_robertson1968(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = False, wl = _WL3, 
                             atol = 0.1, rtol = 1e-5, force_tolerance = True, tol_method = 'newton-raphson', 
                             lut_resolution_reduction_factor = _CCT_LUT_RESOLUTION_REDUCTION_FACTOR,
-                            split_calculation_at_N = 10, max_iter = 100,
+                            split_calculation_at_N = _CCT_SPLIT_CALC_AT_N, max_iter = _CCT_MAX_ITER,
                             cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS,
                             lut = None, luts_dict = None, ignore_wl_diff = False,
                             **kwargs):
@@ -2048,10 +2049,10 @@ def xyz_to_cct_robertson1968(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = 
             | Number of times the interval spanned by the adjacent Tc in a search or lut
             | method is downsampled (the search process will then start again)
         :max_iter:
-            | 100, optional
+            | _CCT_MAX_ITER, optional
             | Maximum number of iterations used by the cascading-lut or newton-raphson methods.
         :split_calculation_at_N:
-            | 10, optional
+            | _CCT_SPLIT_CALC_AT_N, optional
             | Split calculation when xyzw.shape[0] > split_calculation_at_N. 
             | Splitting speeds up the calculation. If None: no splitting is done.
         :lut:
@@ -2180,7 +2181,7 @@ _CCT_LUT['zhang2019']['_generate_lut'] = _generate_lut
 
 
 def _uv_to_Tx_zhang2019(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None, 
-                        max_iter = 100, uvwbar = None, wl = None, dl = None, 
+                        max_iter = _CCT_MAX_ITER, uvwbar = None, wl = None, dl = None, 
                         atol = 0.1, rtol = 1e-5,
                         **kwargs):
     """ 
@@ -2286,7 +2287,7 @@ _CCT_UV_TO_TX_FCNS['zhang2019'] = _uv_to_Tx_zhang2019
 def xyz_to_cct_zhang2019(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = False, wl = None, 
                         atol = 0.1, rtol = 1e-5, force_tolerance = True, tol_method = 'newton-raphson', 
                         lut_resolution_reduction_factor = _CCT_LUT_RESOLUTION_REDUCTION_FACTOR,
-                        split_calculation_at_N = 10, max_iter = 100,
+                        split_calculation_at_N = _CCT_SPLIT_CALC_AT_N, max_iter = _CCT_MAX_ITER,
                         cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS,
                         lut = None, luts_dict = None, ignore_wl_diff = False,
                         **kwargs):
@@ -2346,10 +2347,10 @@ def xyz_to_cct_zhang2019(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = Fals
             | Number of times the interval spanned by the adjacent Tc in a search or lut
             | method is downsampled (the search process will then start again)
         :max_iter:
-            | 100, optional
+            | _CCT_MAX_ITER, optional
             | Maximum number of iterations used by the cascading-lut or newton-raphson methods.
         :split_calculation_at_N:
-            | 10, optional
+            | _CCT_SPLIT_CALC_AT_N, optional
             | Split calculation when xyzw.shape[0] > split_calculation_at_N. 
             | Splitting speeds up the calculation. If None: no splitting is done.
         :lut:
@@ -2674,7 +2675,7 @@ def xyz_to_cct_ohno2014(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = False
                         atol = 0.1, rtol = 1e-5, force_tolerance = True, tol_method = 'newton-raphson', 
                         lut_resolution_reduction_factor = _CCT_LUT_RESOLUTION_REDUCTION_FACTOR,
                         duv_parabolic_threshold = 0.002,
-                        split_calculation_at_N = 10, max_iter = 100,
+                        split_calculation_at_N = _CCT_SPLIT_CALC_AT_N, max_iter = _CCT_MAX_ITER,
                         cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS,
                         lut = None, luts_dict = None, ignore_wl_diff = False,
                          **kwargs):
@@ -2738,10 +2739,10 @@ def xyz_to_cct_ohno2014(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = False
             | Threshold for use of the parabolic solution 
             |  (if larger then use parabolic, else use triangular solution)
         :max_iter:
-            | 100, optional
+            | _CCT_MAX_ITER, optional
             | Maximum number of iterations used by the cascading-lut or newton-raphson methods.
         :split_calculation_at_N:
-            | 10, optional
+            | _CCT_SPLIT_CALC_AT_N, optional
             | Split calculation when xyzw.shape[0] > split_calculation_at_N. 
             | Splitting speeds up the calculation. If None: no splitting is done.
         :lut:
@@ -2871,7 +2872,7 @@ _CCT_LUT['li2016'] = {'lut_vars': None, 'lut_type_def': None, 'luts':None,'_gene
 # _CCT_UV_TO_TX_FCNS['li2016'] = _uv_to_Tx_li2016
 
 def xyz_to_cct_li2016(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = False, wl = None, 
-                      atol = 0.1, rtol = 1e-5, max_iter = 100, split_calculation_at_N = 10, 
+                      atol = 0.1, rtol = 1e-5, max_iter = _CCT_MAX_ITER, split_calculation_at_N = _CCT_SPLIT_CALC_AT_N, 
                       cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS,
                       first_guess_mode = 'robertson1968', fgm_kwargs = {}, **kwargs):
     """
@@ -2906,7 +2907,7 @@ def xyz_to_cct_li2016(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = False, 
             | 0.1, optional
             | Stop method when cct a absolute tolerance (K) is reached.
         :max_iter:
-            | 100, optional
+            | _CCT_MAX_ITER, optional
             | Maximum number of iterations used newton-raphson methods.
         :cspace:
             | _CCT_SPACE, optional
@@ -2974,7 +2975,7 @@ def xyz_to_cct(xyzw, mode = 'li2016',
                cieobs = _CIEOBS, out = 'cct', is_uv_input = False, wl = None, 
                atol = 0.1, rtol = 1e-5, force_tolerance = True, tol_method = 'newton-raphson', 
                lut_resolution_reduction_factor = _CCT_LUT_RESOLUTION_REDUCTION_FACTOR,
-               split_calculation_at_N = 10, max_iter = 100,
+               split_calculation_at_N = _CCT_SPLIT_CALC_AT_N, max_iter = _CCT_MAX_ITER,
                cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS,
                lut = None, luts_dict = None, ignore_wl_diff = False,
                duv_parabolic_threshold = 0.002,
@@ -3043,10 +3044,10 @@ def xyz_to_cct(xyzw, mode = 'li2016',
             | Number of times the interval spanned by the adjacent Tc in a search or lut
             | method is downsampled (the search process will then start again)
         :max_iter:
-            | 100, optional
+            | _CCT_MAX_ITER, optional
             | Maximum number of iterations used by the cascading-lut or newton-raphson methods.
         :split_calculation_at_N:
-            | 10, optional
+            | _CCT_SPLIT_CALC_AT_N, optional
             | Split calculation when xyzw.shape[0] > split_calculation_at_N. 
             | Splitting speeds up the calculation. If None: no splitting is done.
         :lut:
