@@ -149,14 +149,14 @@ _CCT_CSPACE_KWARGS = {'fwtf':{}, 'bwtf':{}}
 
 _CCT_FALLBACK_N = 50
 _CCT_FALLBACK_UNIT = 'K-1'
+_CCT_MAX_ITER = 20
+_CCT_SPLIT_CALC_AT_N = 25 # some tests show that this seems to be the fastest
 
 _CCT_LUT_PATH = _PKG_PATH + _SEP + 'data'+ _SEP + 'cctluts' + _SEP #folder with cct lut data
 _CCT_LUT_CALC = False
 _CCT_LUT = {}
 _CCT_UV_TO_TX_FCNS = {}
 _CCT_LUT_RESOLUTION_REDUCTION_FACTOR = 4 # for when cascading luts are used (d(Tm1,Tp1)-->divide in _CCT_LUT_RESOLUTION_REDUCTION_FACTOR segments)
-_CCT_MAX_ITER = 10
-_CCT_SPLIT_CALC_AT_N = 25 # some tests show that this seems to be the fastest
 verbosity_lut_generation = 1
 
 #==============================================================================
@@ -666,7 +666,7 @@ def calculate_lut(ccts, cieobs, wl = _WL3, lut_vars = ['T','uv','uvp','uvpp','is
         :lut_vars:
             | ['T','uv','uvp','uvpp','iso-T-slope'], optional
             | Data the lut should contain. Must follow this order 
-            | and minimum should be ['T','uv']
+            | and minimum should be ['T']
         :cspace:
             | _CCT_SPACE, optional
             | Color space to do calculations in. 
@@ -687,16 +687,21 @@ def calculate_lut(ccts, cieobs, wl = _WL3, lut_vars = ['T','uv','uvp','uvpp','is
             :lut:
                 | ndarray with T, u, v, u', v', u", v", slope (note ':1st deriv., ":2nd deriv.).
                                             
-    """
+    """    
+    if isinstance(ccts, str):
+        ccts = getdata(ccts)
+    
+        
+    if ('uv' not in lut_vars) & ('uvp' not in lut_vars) & ('uvpp' not in lut_vars) & ('iso-T-slope' not in lut_vars):
+        # no need to calculate anything, only Tcs needed
+        return np2d(ccts)
+    
     # Determine what to calculate:
     outBB = 'BB'
     if ('uvp' in lut_vars) | ('iso-T-slope' in lut_vars): 
         outBB = outBB + 'uvp'
     if ('uvpp' in lut_vars): outBB = outBB + 'uvpp'
  
-    
-    if isinstance(ccts, str):
-        ccts = getdata(ccts)
 
     # get requested cmf set:
     xyzbar, wl, dl = _get_xyzbar_wl_dl(cieobs, wl)
@@ -828,7 +833,7 @@ def _generate_lut(tc4, uin = None, seamless_stitch = True,
         :lut_vars:
             | ['T','uv','uvp','uvpp','iso-T-slope'], optional
             | Data the lut should contain. Must follow this order 
-            | and minimum should be ['T','uv']
+            | and minimum should be ['T']
         :cspace,cspace_kwargs:
             | Lists with the cspace and cspace_kwargs for which luts will be generated.
             | Default is single chromaticity diagram in _CCT_CSPACE.
@@ -855,24 +860,28 @@ def _generate_lut(tc4, uin = None, seamless_stitch = True,
                        fallback_n = fallback_n,
                        cct_min = cct_min, cct_max = cct_max,
                        resample_nd_array = resample_nd_array)
+     
+    if (len(lut_vars) == 1) & (lut_vars[0] == 'T'):
+        return list([Ts,{}]) #no need to do anythin, except output lut containining Tcs only
+    else:
         
-    # reshape for input in calculate_luts:
-    n_sources = Ts.shape[-1]
+        # reshape for input in calculate_luts:
+        n_sources = Ts.shape[-1]
+        
+        if n_sources > 1:
+            Ts = np.reshape(Ts,(-1,1))
     
-    if n_sources > 1:
-        Ts = np.reshape(Ts,(-1,1))
-
-    # calculate lut:
-    lut = calculate_lut(ccts = Ts, wl = wl, cieobs = cieobs, lut_vars = lut_vars,
-                        cspace = cspace, cspace_kwargs = cspace_kwargs)
-
+        # calculate lut:
+        lut = calculate_lut(ccts = Ts, wl = wl, cieobs = cieobs, lut_vars = lut_vars,
+                            cspace = cspace, cspace_kwargs = cspace_kwargs)
     
-    # reshape lut back:
-    if n_sources > 1:
-        lut = np.reshape(lut,(-1,lut.shape[-1]*n_sources))
-      
-    
-    return list([lut, {}])
+        
+        # reshape lut back:
+        if n_sources > 1:
+            lut = np.reshape(lut,(-1,lut.shape[-1]*n_sources))
+          
+        
+        return list([lut, {}])
 
     
 def _get_lut(lut, 
@@ -968,7 +977,7 @@ def _get_lut(lut,
         :lut_vars:
             | ['T','uv','uvp','uvpp','iso-T-slope'], optional
             | Data the lut should contain. Must follow this order 
-            | and minimum should be ['T','uv']
+            | and minimum should be ['T']
         :cspace,cspace_kwargs:
             | Lists with the cspace and cspace_kwargs for which luts will be generated.
             | Default is single chromaticity diagram in _CCT_CSPACE.
@@ -1005,7 +1014,6 @@ def _get_lut(lut,
             | lut.
             
     """  
-    
     # get cspace info:
     cspace_dict, cspace_str = _process_cspace(cspace, cspace_kwargs)
 
@@ -1174,7 +1182,7 @@ def generate_luts(types = [None], seamless_stitch = True,
         :lut_vars:
             | ['T','uv','uvp','uvpp','iso-T-slope'], optional
             | Data the lut should contain. Must follow this order 
-            | and minimum should be ['T','uv']
+            | and minimum should be ['T']
         :cspace,cspace_kwargs:
             | Lists with the cspace and cspace_kwargs for which luts will be generated.
             | Default is single chromaticity diagram in _CCT_CSPACE.
@@ -1323,11 +1331,13 @@ def _get_pns_from_x(x, idx):
     Get idx-1, idx and idx +1 from array. 
     Returns [Nx1] ndarray with N = len(idx).
     """
+    idx_m1 = idx-1
+    idx_m1[idx_m1 == -1] = 0 # otherwise wraparound error happens
     if x.shape[-1]==1:
-        return x[idx-1], x[idx], x[idx+1]
+        return x[idx_m1], x[idx], x[idx+1]
     else:
         diag = np.diag
-        return diag(x[idx-1])[:,None], diag(x[idx])[:,None], diag(x[idx+1])[:,None]
+        return diag(x[idx_m1])[:,None], diag(x[idx])[:,None], diag(x[idx+1])[:,None]
     
 def _deal_with_lut_end_points(pn, TBB, out_of_lut = None):
     ce = pn == (TBB.shape[0]-1) # end point
@@ -1702,7 +1712,7 @@ def _get_loop_i_lut_for_cascading_lut(Tx, TBB_m1, TBB_p1, out_of_lut,
     """
 
     # cl cannot recover from out-of-lut, so if all are out-of-lut, no use continuing!
-    if out_of_lut.all(): 
+    if (out_of_lut is not None) and (out_of_lut.all()): 
         return "break", None # ,None because expected output (from _generate_lut is 2):
 
     # get overall min, max Ts over all xyzw test points:
@@ -1769,20 +1779,24 @@ def _get_cascading_lut_Tx(mode, u, v, lut, lut_n_cols, lut_char, lut_resolution_
     _uv_to_Tx_mode = _CCT_UV_TO_TX_FCNS[mode]
     lut_generator_fcn = _CCT_LUT[mode]['_generate_lut']
     lut_generator_kwargs = copy.copy(mode_kwargs[mode])
+    
+    # some mode specific processing to prepare lut_generator_kwargs:
     lut_generator_kwargs.update({'f_corr':1}) # only required when mode = 'ohno2014'
-    if 'wl' in lut_generator_kwargs: lut_generator_kwargs.pop('wl') # for mode == 'hang2019': 'wl' is also part of this dict!
+    if 'wl' in lut_generator_kwargs: lut_generator_kwargs.pop('wl') # for mode == 'zhang2019': 'wl' is also part of this dict!
+    if 'lut_vars' in lut_generator_kwargs: lut_generator_kwargs.pop('lut_vars') # for mode == 'zhang2019': 'wl' is also part of this dict!
+    
     while True & (cascade_i < max_iter):
         
         # needed to get correct columns from updated lut_i:
         N = lut_i.shape[-1]//lut_n_cols
         ns = np.arange(0,N*lut_n_cols,lut_n_cols,dtype=int)
-        
+
         # get Tx estimate, out_of_lut boolean array, and (TBB_m1, TBB_p1 or equivalent):
         if ((Tx is None) & (out_of_lut is None) & (TBB_l is None) & (TBB_r is None)) | (cascade_i > 0):
             Tx, Duvx, out_of_lut, (TBB_l,TBB_r) = _uv_to_Tx_mode(u, v, lut_i, lut_n_cols, 
                                                                  ns = ns, out_of_lut = out_of_lut, 
                                                                  **mode_kwargs[mode])
-        
+
         if cascade_i == 0: Tx0 = Tx.copy() # keep copy of first estimate
         
         # Update lut for next cascade (ie decrease min-max range):
@@ -1885,7 +1899,7 @@ def _xyz_to_cct(xyzw, mode, is_uv_input = False, cieobs = _CIEOBS, wl = _WL3, ou
 
     # prepare mode_kwargs (i.e. extra kwargs for _uv_to_Tx_mode() required by specific modes):
     mode_kwargs = {'robertson1968': {},
-                   'zhang2019' : {'uvwbar' : uvwbar, 'wl' : wl, 'dl' : dl, 
+                   'zhang2019' : {'uvwbar' : uvwbar, 'wl' : wl, 'dl' : dl, 'lut_vars' : _CCT_LUT[mode]['lut_vars'],
                                   'max_iter' : max_iter, 'atol' : atol, 'rtol' : rtol},
                    'ohno2014' : {**lut_kwargs, **{'duv_parabolic_threshold' : duv_parabolic_threshold}}
                    } 
@@ -1924,7 +1938,7 @@ def _xyz_to_cct(xyzw, mode, is_uv_input = False, cieobs = _CIEOBS, wl = _WL3, ou
         if Duvx is None:
             Duvx = _get_Duv_for_T(u,v, Tx, wl, cieobs, cspace_dict, uvwbar = uvwbar, dl = dl)
 
-        Tx = Tx*(-1)**out_of_lut
+        if out_of_lut is not None: Tx = Tx*(-1)**out_of_lut
 
         # Add freshly calculated Tx, Duvx to storage array:
         if (ii < (N_ii-1)): 
@@ -1976,8 +1990,8 @@ def _uv_to_Tx_robertson1968(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None,**k
     pn, out_of_lut = _deal_with_lut_end_points(pn, TBB, out_of_lut)
   
     TBB_m1, TBB_0, TBB_p1 = _get_pns_from_x(TBB, pn)
-    uBB_m1, uBB_0, uBB_p1 = _get_pns_from_x(uBB, pn)
-    vBB_m1, vBB0, vBB_p1 = _get_pns_from_x(vBB, pn)
+    # uBB_m1, uBB_0, uBB_p1 = _get_pns_from_x(uBB, pn)
+    # vBB_m1, vBB0, vBB_p1 = _get_pns_from_x(vBB, pn)
     di_m1, di_0, di_p1 = _get_pns_from_x(di, pn)
 
     # Estimate Tc (Robertson, 1968): 
@@ -2176,9 +2190,8 @@ _CCT_LUT['robertson1968']['luts'] = generate_luts(types = [_CCT_LUT['robertson19
 #------------------------------------------------------------------------------
 _CCT_LUT['zhang2019'] = {} 
 _CCT_LUT['zhang2019']['lut_type_def'] = ((1,1,1,'K-1'),(25,1025,25,'K-1'),False)
-_CCT_LUT['zhang2019']['lut_vars'] = ['T','uv']
+_CCT_LUT['zhang2019']['lut_vars'] = ['T','uv'] # use a lut with 'uv', without it the speed is not much different and ability to more finely tuned detect out-of-luts is gone, which causes error in cascading the lut
 _CCT_LUT['zhang2019']['_generate_lut'] = _generate_lut 
-
 
 def _uv_to_Tx_zhang2019(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None, 
                         max_iter = _CCT_MAX_ITER, uvwbar = None, wl = None, dl = None, 
@@ -2187,10 +2200,10 @@ def _uv_to_Tx_zhang2019(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None,
     """ 
     Calculate Tx from u,v and lut using Zhang 2019.
     """
-
+    s = (5.0**0.5 - 1.0)/2.0
+    
     # get uBB, vBB from lut:
     TBB, uBB, vBB  = lut[:,ns], lut[:,ns+1], lut[:,ns+2]
-    # MKBB = cct_to_mired(TBB)
 
     # calculate distances to coordinates in lut (Eq. 4 in Robertson, 1968):
     di = (((v.T - vBB)**2 + (u.T - uBB)**2)**0.5)
@@ -2201,18 +2214,14 @@ def _uv_to_Tx_zhang2019(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None,
     pn, out_of_lut = _deal_with_lut_end_points(pn, TBB, out_of_lut = out_of_lut)
   
     TBB_m1, TBB_0, TBB_p1 = _get_pns_from_x(TBB, pn)
-    uBB_m1, uBB_0, uBB_p1 = _get_pns_from_x(uBB, pn)
-    vBB_m1, vBB0, vBB_p1 = _get_pns_from_x(vBB, pn)
-
 
     # get RTm-1 (RTl) and RTm+1 (RTr):
     RTl = 1e6/TBB_m1
     RTr = 1e6/TBB_p1
 
     # calculate RTa, RTb:
-    s = (5.0**0.5 - 1.0)/2.0
     RTa = RTl + (1.0 - s) * (RTr - RTl)
-    RTb = RTl + s * (RTr - RTl)
+    RTb = RTl + s * (RTr - RTl) 
     
     Tx_a, Tx_b = 1e6/RTa, 1e6/RTb
     # RTx = ((RTa+RTb)/2)
@@ -2225,8 +2234,8 @@ def _uv_to_Tx_zhang2019(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None,
         # BBab = cri_ref(np.vstack([cct_to_mired(RTa), cct_to_mired(RTx), cct_to_mired(RTb)]), ref_type = ['BB'], wl3 = wl)
         # BBab = cri_ref(np.vstack([cct_to_mired(RTa), cct_to_mired(RTb)]), ref_type = ['BB'], wl3 = wl)
         if (uvwbar is not None) & (wl is not None) & (dl is not None):
-            _,UVWBBab,_,_ = _get_tristim_of_BB_BBp_BBpp(np.vstack([1e6/RTa, 1e6/RTb]), 
-                                                    uvwbar, wl, dl, out='BB')
+            TBB = np.vstack([Tx_a, Tx_b])
+            _,UVWBBab,_,_ = _get_tristim_of_BB_BBp_BBpp(TBB, uvwbar, wl, dl, out='BB')
         else:
             raise Exception('uvwbar, wl & dl must all be not None !!!')
         
@@ -2243,20 +2252,20 @@ def _uv_to_Tx_zhang2019(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None,
         # uBBb, vBBb = uvBBab[2*N:,0:1], uvBBab[2*N:,1:2]
        
         N = uvBBab.shape[0]//2 
-        uBBa, vBBa = uvBBab[:N,0:1], uvBBab[:N,1:2]
-        uBBb, vBBb = uvBBab[N:,0:1], uvBBab[N:,1:2]
+        # uBBa, vBBa = uvBBab[:N,0:1], uvBBab[:N,1:2]
+        # uBBb, vBBb = uvBBab[N:,0:1], uvBBab[N:,1:2]
         
         # find distance in UCD of BBab to input:
-        DEuv_a = ((uBBa - u)**2 + (vBBa - v)**2)**0.5
-        DEuv_b = ((uBBb - u)**2 + (vBBb - v)**2)**0.5
-        
+        DEuv = ((uvBBab[...,0:1] - u.T)**2 + (uvBBab[...,1:2] - v.T)**2) # no need for **0.5
+        DEuv_a, DEuv_b = DEuv[:N], DEuv[N:] 
+
         c = (DEuv_a < DEuv_b)[:,0]
         
         # when DEuv_a < DEuv_b:
         RTr[c] = RTb[c]
         RTb[c] = RTa[c]
         DEuv_b[c] = DEuv_a[c]
-        RTa[c] = (RTl[c] + (1.0 - s) * (RTr[c] - RTl[c])).copy()
+        RTa[c] = (RTl[c] + (1.0 - s) * (RTr[c] - RTl[c]))
         
         # when DEuv_a >= DEuv_b:
         RTl[~c] = RTa[~c]
@@ -2266,10 +2275,8 @@ def _uv_to_Tx_zhang2019(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None,
         
         # Calculate CCTs from RTa and RTb:
         Tx_a, Tx_b = 1e6/RTa, 1e6/RTb
-
         Tx = 1e6/((RTa+RTb)/2)
         dTx = np.abs(Tx_a - Tx_b)
-        # print(j,Tx, dTx,RTx,RTa-RTb)
         if (((dTx <= atol).all() | ((dTx/Tx) <= rtol).all())):
             break
         j+=1
@@ -2280,7 +2287,7 @@ def _uv_to_Tx_zhang2019(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None,
     # pn = np.array([1])
     # _plot_triangular_solution(u,v,uBB,vBB,TBB,pn)
     
-    return Tx, None, out_of_lut, (Tx_a,Tx_b) 
+    return Tx, None, out_of_lut, (1e6/RTl,1e6/RTr)
 
 _CCT_UV_TO_TX_FCNS['zhang2019'] = _uv_to_Tx_zhang2019
 
@@ -3361,7 +3368,7 @@ if __name__ == '__main__':
 
     # xyz = np.array([[100,100,100]])
     cctsduvs = xyz_to_cct(xyz, rtol = 1e-6,cieobs = cieobs, out = '[cct,duv]', wl = _WL3, 
-                          mode='zhang2019',force_tolerance=True,tol_method='cl',lut=None)
+                          mode='zhang2019',force_tolerance=False,tol_method='cl',lut=None,max_iter = 20)
     
     # cctsduvs2 = xyz_to_cct_li2016(xyz, rtol=1e-6, cieobs = cieobs, out = '[cct,duv]',force_tolerance=True)
     cctsduvs_ = cctsduvs.copy();cctsduvs_[:,0] = np.abs(cctsduvs_[:,0]) # outof gamut ccts are encoded as negative!!
