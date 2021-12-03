@@ -1862,7 +1862,8 @@ def _xyz_to_cct(xyzw, mode, is_uv_input = False, cieobs = _CIEOBS, wl = _WL3, ou
     # Get or generate requested lut
     # (if wl doesn't match those in _CCT_LUT[mode] , 
     # a new recalculated lut will be generated):
-    if luts_dict is None: luts_dict = _CCT_LUT[mode]['luts']
+    if (luts_dict is None): 
+        luts_dict = _CCT_LUT[mode]['luts']
 
     lut, lut_kwargs = _get_lut(lut, 
                                fallback_unit = _CCT_FALLBACK_UNIT, 
@@ -2844,6 +2845,7 @@ _CCT_LUT['ohno2014']['luts'] = generate_luts(types = [_CCT_LUT['ohno2014']['lut_
                                                      ((1000.0, 50000.0, 15, '%'),),
                                                      ((1000.0, 50000.0, 0.25, '%'),),
                                                      ((1000.0, 50000.0, 100.0, 'K'),),
+                                                     ((1000.0, 50000.0, 10.0, 'K'),),
                                                      ],
                                              lut_file = 'ohno2014_luts.npy', 
                                              load = (ohno2014_luts_exist & (_CCT_LUT_CALC==False)), 
