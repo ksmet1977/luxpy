@@ -1783,8 +1783,7 @@ def _get_cascading_lut_Tx(mode, u, v, lut, lut_n_cols, lut_char, lut_resolution_
     # some mode specific processing to prepare lut_generator_kwargs:
     lut_generator_kwargs.update({'f_corr':1}) # only required when mode = 'ohno2014'
     if 'wl' in lut_generator_kwargs: lut_generator_kwargs.pop('wl') # for mode == 'zhang2019': 'wl' is also part of this dict!
-    if 'lut_vars' in lut_generator_kwargs: lut_generator_kwargs.pop('lut_vars') # for mode == 'zhang2019': 'wl' is also part of this dict!
-    
+        
     while True & (cascade_i < max_iter):
         
         # needed to get correct columns from updated lut_i:
@@ -1899,7 +1898,7 @@ def _xyz_to_cct(xyzw, mode, is_uv_input = False, cieobs = _CIEOBS, wl = _WL3, ou
 
     # prepare mode_kwargs (i.e. extra kwargs for _uv_to_Tx_mode() required by specific modes):
     mode_kwargs = {'robertson1968': {},
-                   'zhang2019' : {'uvwbar' : uvwbar, 'wl' : wl, 'dl' : dl, 'lut_vars' : _CCT_LUT[mode]['lut_vars'],
+                   'zhang2019' : {'uvwbar' : uvwbar, 'wl' : wl, 'dl' : dl,
                                   'max_iter' : max_iter, 'atol' : atol, 'rtol' : rtol},
                    'ohno2014' : {**lut_kwargs, **{'duv_parabolic_threshold' : duv_parabolic_threshold}}
                    } 
