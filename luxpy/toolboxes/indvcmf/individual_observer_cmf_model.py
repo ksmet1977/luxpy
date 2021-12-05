@@ -317,6 +317,7 @@ def _load_asano_lms_and_odensities(wl=None, path=None):
             | - LMS absorbances ('LMSa') 
             | - relative macular pigment density ('rmd') 
             | - ocular media optical density ('docul')
+            | - LMSa absorbance interpolators ('LMSa_interps') for use in _get_LMSa_absorbance ('pre-calculation increases speed')
     """
     if path is None:
         path = _DATA_PATH 
@@ -332,6 +333,7 @@ def _load_asano_lms_and_odensities(wl=None, path=None):
     for key in data.keys():
         if key != 'wls':
             data[key] = cie_interp(np.vstack((wls,data[key])), wl, kind='linear',negative_values_allowed=True)
+    data['LMSa_interps'] = _create_LMSa_interpolators(data['LSMa'].copy(), kind = 3)
     return data
     
 def _docul_fine(ocular_sum_32, docul2):
@@ -384,6 +386,8 @@ def _load_cietc197_lms_and_odensities(wl=None, path = None):
             | - LMS absorbances ('LMSa') 
             | - relative macular pigment density ('rmd') 
             | - ocular media optical density ('docul')
+            | - LMSa absorbance interpolators ('LMSa_interps') for use in _get_LMSa_absorbance ('pre-calculation increases speed')
+
     """
     if path is None:
         path = _DATA_PATH 
@@ -404,8 +408,26 @@ def _load_cietc197_lms_and_odensities(wl=None, path = None):
     ocular_sum_32 = tmp[[0, 4],:].T  # 32 years only!
     docul2 = _docul_fine(ocular_sum_32, docul2)
     docul2 = cie_interp(docul2.T,wl, kind = 'linear',negative_values_allowed = True, extrap_values = 'ext')
-    data = {'wls': wl, 'rmd': macula_rel, 'docul':docul2, 'LMSa': absorbance}
+    absorbance_interps = _create_LMSa_interpolators(absorbance.copy(), kind = 3)
+    data = {'wls': wl, 'rmd': macula_rel, 'docul':docul2, 'LMSa': absorbance,'LMSa_interps':absorbance_interps}
     return data
+
+def _create_LMSa_interpolators(LMSa, kind = 3):
+    _peak_shft = []
+    for i in range(3):
+        if i < 2: 
+            # L, M:
+            _peak_shft.append(sp.interpolate.InterpolatedUnivariateSpline(LMSa[0],LMSa[i+1], k = kind, ext = "extrapolate"))
+        else:
+            # S:
+            LMSa[i + 1,np.isinf(LMSa[i + 1,:])] = np.nan
+            non_nan_indices = np.logical_not(np.isnan(LMSa[i + 1]))
+            _peak_shft.append(sp.interpolate.InterpolatedUnivariateSpline(LMSa[0][non_nan_indices],LMSa[i+1][non_nan_indices], k = kind, ext = "extrapolate"))
+    return _peak_shft
+
+# Create the interpolators in advance for speed:
+# _LMS_ABSORBANCE_INTERPOLATORS = get_LMSa_interpolators(odata = _DATA['odata'], kind = 3)
+
 
 def load_database(wl = None, dsrc_std = None, dsrc_lms_odens = None, path = None):
     """
@@ -706,7 +728,85 @@ def _d_S_max(fieldsize = 10, var_od = 0):
         var_od = -100
     return my_round((0.30 + 0.45*np.exp(-fieldsize/1.333)) * (1 + var_od/100), 3)
 
-def _LMS_absorptance(fieldsize = 10, var_shft_LMS = [0,0,0], var_od_LMS = [0, 0, 0], LMSa0 = None):
+# def _LMS_absorptance_old(fieldsize = 10, var_shft_LMS = [0,0,0], var_od_LMS = [0, 0, 0], LMSa0 = None,**kwargs):
+#     """
+#     Calculate the quantal absorptance of the L, M and S cones for a given field size.
+    
+#     Args:
+#         :fieldsize: 
+#             | 10, float, optional
+#             | Field size in degrees.
+#         :var_shft_LMS:
+#             | [0, 0, 0] optional
+#             | Variation (shift) of LMS peak absorptance.
+#         :var_od_LMS:
+#             | [0, 0, 0] optional
+#             | Variation of LMS optical densities.
+#         :LMSa0: 
+#             | None, optional
+#             | Uncorrected LMS absorptance functions
+#             | None defaults to the ones stored in _DATA
+
+#     Returns:
+#         alpha_lms: 
+#             | ndarray with the calculated quantal absorptances of the L, M and S cones; row 0 are wavelenghts.
+#     """
+    
+#     if LMSa0 is None:
+#         LMSa = _DATA['odata']['LMSa'].copy()
+#     else:
+#         LMSa = LMSa0.copy()
+  
+#     wls = LMSa[:1,:].copy() # wavelengths
+#     LMSa = LMSa[1:,:] # get rid of wavelengths
+
+#     # Peak Wavelength Shift:
+#     wl_shifted = np.empty(LMSa.shape)
+#     wl_shifted[0] = wls + var_shft_LMS[0] 
+#     wl_shifted[1] = wls + var_shft_LMS[1] 
+#     wl_shifted[2] = wls + var_shft_LMS[2] 
+    
+#     LMSa_shft = np.empty(LMSa.shape)
+#     kind = 3 # ->'cubic'
+#     if var_shft_LMS[0] == 0:
+#         LMSa_shft[0] = LMSa[0]
+#     else:
+#         LMSa_shft[0] = sp.interpolate.InterpolatedUnivariateSpline(wl_shifted[0],LMSa[0], k = kind, ext = "extrapolate")(wls)
+#     if var_shft_LMS[1] == 0:
+#         LMSa_shft[1] = LMSa[1]
+#     else:
+#         LMSa_shft[1] = sp.interpolate.InterpolatedUnivariateSpline(wl_shifted[1],LMSa[1], k = kind, ext = "extrapolate")(wls)
+    
+#     if var_shft_LMS[2] == 0:
+#         LMSa_shft[2] = LMSa[2]
+#     else:
+#         LMSa[2,np.isinf(LMSa[2,:])] = np.nan
+#         non_nan_indices = np.logical_not(np.isnan(LMSa[2]))
+#         LMSa_shft[2] = sp.interpolate.InterpolatedUnivariateSpline(wl_shifted[2][non_nan_indices],LMSa[2][non_nan_indices], k = kind, ext = "extrapolate")(wls)
+
+#         # Detect poor interpolation (sign switch due to instability):
+#         ssw = np.hstack((0,np.sign(np.diff(LMSa_shft[2,:])))) 
+#         cond = ((ssw >= 0) & (wls > 560))
+#         if cond.any():
+#             wl_min = wls[np.where(cond)].min()
+#             LMSa_shft[2,np.where((wls >= wl_min))] = np.nan
+
+#     # corrected LMS (no age correction):
+#     pkOd_L = _d_LM_max(fieldsize, var_od_LMS[0])  # varied peak optical density of L-cone
+#     pkOd_M = _d_LM_max(fieldsize, var_od_LMS[1])  # varied peak optical density of M-cone
+#     pkOd_S = _d_S_max(fieldsize, var_od_LMS[2])   # varied peak optical density of S-cone
+    
+#     alpha_lms = 1. * LMSa_shft
+#     alpha_lms[0] = 1 - 10**(-pkOd_L*(10**LMSa_shft[0]))
+#     alpha_lms[1] = 1 - 10**(-pkOd_M*(10**LMSa_shft[1]))
+#     alpha_lms[2] = 1 - 10**(-pkOd_S*(10**LMSa_shft[2]))
+# #    alpha_lms[np.isnan(alpha_lms)] = 0
+#     # this fix is required because the above math fails for alpha_lms[2,:]==0
+#     #alpha_lms[2,np.where(wls >= _WL_CRIT)] = 0 
+
+#     return np.vstack((wls,alpha_lms))
+
+def _LMS_absorptance(fieldsize = 10, var_shft_LMS = [0,0,0], var_od_LMS = [0, 0, 0], LMSa0 = None, LMSa0_interps = None):
     """
     Calculate the quantal absorptance of the L, M and S cones for a given field size.
     
@@ -724,6 +824,10 @@ def _LMS_absorptance(fieldsize = 10, var_shft_LMS = [0,0,0], var_od_LMS = [0, 0,
             | None, optional
             | Uncorrected LMS absorptance functions
             | None defaults to the ones stored in _DATA
+        :LMSa0_interps:
+            | None, optional
+            | Pre-calculated interpolators for uncorrected LMS absorbance functions
+            | None defaults to the ones stored in _DATA
 
     Returns:
         alpha_lms: 
@@ -734,55 +838,42 @@ def _LMS_absorptance(fieldsize = 10, var_shft_LMS = [0,0,0], var_od_LMS = [0, 0,
         LMSa = _DATA['odata']['LMSa'].copy()
     else:
         LMSa = LMSa0.copy()
+    if LMSa0_interps is None:
+        LMSa_interps = _DATA['odata']['LMSa_interps']
+    else:
+        LMSa_interps = LMSa0_interps
   
     wls = LMSa[:1,:].copy() # wavelengths
     LMSa = LMSa[1:,:] # get rid of wavelengths
-
+    
     # Peak Wavelength Shift:
-    wl_shifted = np.empty(LMSa.shape)
-    wl_shifted[0] = wls + var_shft_LMS[0] 
-    wl_shifted[1] = wls + var_shft_LMS[1] 
-    wl_shifted[2] = wls + var_shft_LMS[2] 
-    
-    LMSa_shft = np.empty(LMSa.shape)
-    kind = 3 # ->'cubic'
-    if var_shft_LMS[0] == 0:
-        LMSa_shft[0] = LMSa[0]
-    else:
-        LMSa_shft[0] = sp.interpolate.InterpolatedUnivariateSpline(wl_shifted[0],LMSa[0], k = kind, ext = "extrapolate")(wls)
-    if var_shft_LMS[1] == 0:
-        LMSa_shft[1] = LMSa[1]
-    else:
-        LMSa_shft[1] = sp.interpolate.InterpolatedUnivariateSpline(wl_shifted[1],LMSa[1], k = kind, ext = "extrapolate")(wls)
-    
-    if var_shft_LMS[2] == 0:
-        LMSa_shft[2] = LMSa[2]
-    else:
-        LMSa[2,np.isinf(LMSa[2,:])] = np.nan
-        non_nan_indices = np.logical_not(np.isnan(LMSa[2]))
-        LMSa_shft[2] = sp.interpolate.InterpolatedUnivariateSpline(wl_shifted[2][non_nan_indices],LMSa[2][non_nan_indices], k = kind, ext = "extrapolate")(wls)
+    wl_shifted = (wls - np.array(var_shft_LMS)[:,None])
 
-        # Detect poor interpolation (sign switch due to instability):
-        ssw = np.hstack((0,np.sign(np.diff(LMSa_shft[2,:])))) 
-        cond = ((ssw >= 0) & (wls > 560))
-        if cond.any():
-            wl_min = wls[np.where(cond)].min()
-            LMSa_shft[2,np.where((wls >= wl_min))] = np.nan
+    alpha_lms = np.empty(LMSa.shape)
+    # kind = 3 # ->'cubic'
+    for i in range(3): 
+        if var_shft_LMS[i] == 0:
+            _peak_shft = LMSa[i]
+        else:
+            _peak_shft = LMSa_interps[i](wl_shifted[i])
+            if i == 2: 
+                # S: Detect poor interpolation (sign switch due to instability):
+                ssw = np.hstack((0,np.sign(np.diff(_peak_shft)))) 
+                cond = ((ssw >= 0) & (wls > 560))
+                if cond.any():
+                    wl_min = wls[np.where(cond)].min()
+                    _peak_shft[i,np.where((wls >= wl_min))] = np.nan
+        
+        if i < 2: # L,M:
+            _pkOd = _d_LM_max(fieldsize, var_od_LMS[i])  # varied peak optical density of L,M-cone
+        else: # S:
+            _pkOd = _d_S_max(fieldsize, var_od_LMS[i])  # varied peak optical density of S-cone
+            
+        alpha_lms[i] = 1 - 10**(-_pkOd*(10**_peak_shft)) 
 
-    # corrected LMS (no age correction):
-    pkOd_L = _d_LM_max(fieldsize, var_od_LMS[0])  # varied peak optical density of L-cone
-    pkOd_M = _d_LM_max(fieldsize, var_od_LMS[1])  # varied peak optical density of M-cone
-    pkOd_S = _d_S_max(fieldsize, var_od_LMS[2])   # varied peak optical density of S-cone
-    
-    alpha_lms = 1. * LMSa_shft
-    alpha_lms[0] = 1 - 10**(-pkOd_L*(10**LMSa_shft[0]))
-    alpha_lms[1] = 1 - 10**(-pkOd_M*(10**LMSa_shft[1]))
-    alpha_lms[2] = 1 - 10**(-pkOd_S*(10**LMSa_shft[2]))
-#    alpha_lms[np.isnan(alpha_lms)] = 0
-    # this fix is required because the above math fails for alpha_lms[2,:]==0
-    #alpha_lms[2,np.where(wls >= _WL_CRIT)] = 0 
 
     return np.vstack((wls,alpha_lms))
+
 
 def _LMS_quantal(fieldsize = 10, age = 32, var_od_lens = 0, var_od_mac = 0, 
                  var_shft_LMS = [0,0,0], var_od_LMS = [0, 0, 0], 
@@ -835,7 +926,7 @@ def _LMS_quantal(fieldsize = 10, age = 32, var_od_lens = 0, var_od_mac = 0,
     docul = _d_ocular(age = age, var_od_lens = var_od_lens, docul0 = odata['docul'])
     
     # corrected LMS (no age correction):
-    alpha_lms = _LMS_absorptance(fieldsize = fieldsize, var_shft_LMS = var_shft_LMS, var_od_LMS = var_od_LMS, LMSa0 = odata['LMSa'])
+    alpha_lms = _LMS_absorptance(fieldsize = fieldsize, var_shft_LMS = var_shft_LMS, var_od_LMS = var_od_LMS, LMSa0 = odata['LMSa'], LMSa0_interps = odata['LMSa_interps'])
     
     # Corrected to Corneal Incidence:
     LMSq = alpha_lms.copy()
@@ -1021,7 +1112,7 @@ def _relative_L_cone_weight_Vl_quantal(fieldsize = 10, age = 32, strategy_2 = Tr
         LMSa_fs = LMSa
         LMSq_fs_age = LMSq
 
-    LMSa_2 = _LMS_absorptance(fieldsize = 2.0, LMSa0 = odata['LMSa'])
+    LMSa_2 = _LMS_absorptance(fieldsize = 2.0, LMSa0 = odata['LMSa'], LMSa0_interps = odata['LMSa_interps'])
     LMSq_2_32 = _LMS_quantal(fieldsize = 2.0, age = 32, odata0 = odata)
     
     const_fs_age = (LMSa_fs[1, 0] * LMSq_fs_age[2, 0] / (LMSa_fs[2, 0] * LMSq_fs_age[1, 0]))

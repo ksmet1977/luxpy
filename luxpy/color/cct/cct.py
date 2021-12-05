@@ -1785,6 +1785,7 @@ def _get_cascading_lut_Tx(mode, u, v, lut, lut_n_cols, lut_char, lut_resolution_
     lut_generator_kwargs.update({'f_corr':1}) # only required when mode = 'ohno2014'
     if 'wl' in lut_generator_kwargs: lut_generator_kwargs.pop('wl') # for mode == 'zhang2019': 'wl' is also part of this dict!
     # if 'lut_vars' in lut_generator_kwargs: lut_generator_kwargs.pop('lut_vars') # for mode == 'zhang2019': 'wl' is also part of this dict!
+    
     while True & (cascade_i < max_iter):
         
         # needed to get correct columns from updated lut_i:
@@ -1794,8 +1795,8 @@ def _get_cascading_lut_Tx(mode, u, v, lut, lut_n_cols, lut_char, lut_resolution_
         # get Tx estimate, out_of_lut boolean array, and (TBB_m1, TBB_p1 or equivalent):
         if ((Tx is None) & (out_of_lut is None) & (TBB_l is None) & (TBB_r is None)) | (cascade_i > 0):
             Tx, Duvx, out_of_lut, (TBB_l,TBB_r) = _uv_to_Tx_mode(u, v, lut_i, lut_n_cols, 
-                                                                 ns = ns, out_of_lut = out_of_lut, 
-                                                                 **mode_kwargs[mode])
+                                                                 ns = ns, out_of_lut = out_of_lut,
+                                                                 **{**mode_kwargs[mode],**{'max_iter':1}}) # cl takes over, so max_iter should be 1
 
         if cascade_i == 0: Tx0 = Tx.copy() # keep copy of first estimate
 
@@ -3416,7 +3417,7 @@ if __name__ == '__main__':
 
     # xyz = np.array([[100,100,100]])
     cctsduvs = xyz_to_cct(xyz, rtol = 1e-6,cieobs = cieobs, out = '[cct,duv]', wl = _WL3, 
-                          mode='zhang2019',force_tolerance=False,
+                          mode='zhang2019',force_tolerance=True,
                           tol_method='cl',lut=None)
     
     # cctsduvs2 = xyz_to_cct_li2016(xyz, rtol=1e-6, cieobs = cieobs, out = '[cct,duv]',force_tolerance=True)
