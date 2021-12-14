@@ -128,8 +128,8 @@ def getwlr(wl3 = None):
     if wl3 is None: wl3 = _WL3
     
     # Wavelength definition:
-    wl = wl3 if (len(wl3) != 3) else np.linspace(wl3[0],wl3[1],int(np.floor((wl3[1]-wl3[0]+wl3[2])/wl3[2]))) # define wavelengths from [start = l0, stop = ln, spacing = dl]
-    
+    #wl = wl3 if (len(wl3) != 3) else np.linspace(wl3[0],wl3[1],int(np.floor((wl3[1]-wl3[0]+wl3[2])/wl3[2]))) # define wavelengths from [start = l0, stop = ln, spacing = dl]
+    wl = wl3 if (len(wl3) != 3) else np.arange(wl3[0], wl3[1] + wl3[2], wl3[2]) # define wavelengths from [start = l0, stop = ln, spacing = dl]
     return wl
 
 #------------------------------------------------------------------------------
@@ -147,8 +147,9 @@ def getwld(wl):
             | - ndarray (.shape = (n,)): for unequal wavelength spacings
     """
     d = np.diff(wl)
-    dl = (np.hstack((d[0],d[0:-1]/2.0,d[-1]))+np.hstack((0.0,d[1:]/2.0,0.0)))
-    if np.array_equal(dl,dl.mean()*np.ones(dl.shape)): dl = dl[0]
+    dl = (np.hstack((d[0],d[0:-1]/2.0,d[-1])) + np.hstack((0.0,d[1:]/2.0,0.0)))
+    #if np.array_equal(dl,dl.mean()*np.ones(dl.shape)): dl = dl[0]
+    if (dl == dl.mean()).all(): dl = dl[0]
     return dl
 
 
