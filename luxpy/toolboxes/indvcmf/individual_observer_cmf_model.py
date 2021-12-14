@@ -333,7 +333,7 @@ def _load_asano_lms_and_odensities(wl=None, path=None):
     for key in data.keys():
         if key != 'wls':
             data[key] = cie_interp(np.vstack((wls,data[key])), wl, kind='linear',negative_values_allowed=True)
-    data['LMSa_interps'] = _create_LMSa_interpolators(data['LSMa'].copy(), kind = 3)
+    data['LMSa_interps'] = _create_LMSa_interpolators(data['LMSa'].copy(), kind = 3)
     return data
     
 def _docul_fine(ocular_sum_32, docul2):
