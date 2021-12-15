@@ -4,8 +4,8 @@ LuxPy: a package for lighting and color science
 ===============================================
 
     * Author: K.A.G. Smet (ksmet1977 at gmail.com)
-    * Version: 1.9.3
-    * Date: November 27, 2021
+    * Version: 1.9.4
+    * Date: December 20, 2021
     * License: GPLv3
 
     * DOI: https://doi.org/10.5281/zenodo.1298963
@@ -35,7 +35,7 @@ run: luxpy.utils.show_luxpy_tree()
 
 Imported core packages/modules/functions:
 ----------------------------------------
- * os, warnings, colorsys, itertools, copy, time, tkinter, ctypes, platform, subprocess, pathlib, importlib, sys
+ * os, warnings, colorsys, itertools, copy, time, tkinter, ctypes, platform, subprocess, pathlib, importlib, sys, pickle, requests
  * collections.OrderedDict.odict
  * mpl_toolkits.mplot3d.Axes3D
  
@@ -68,9 +68,9 @@ E.g.:
 # Initialze LuxPy
 ###############################################################################
 # Package info:
-__VERSION__ = 'v1.9.3'; """Current version"""
+__VERSION__ = 'v1.9.4'; """Current version"""
 __version__ = __VERSION__
-__DATE__ = '27-Nov-2021'; """release date"""
+__DATE__ = '20-Dec-2021'; """release date"""
 
 __COPYRIGHT__ = 'Copyright (C) 2017-2021 - Kevin A.G. Smet'; """copyright info"""
 
@@ -96,7 +96,7 @@ __REQUIRED__={'core':['os','warnings','pathlib','importlib','sys',
                       'collections.OrderedDict.odict','mpl_toolkits.mplot3d.Axes3D',
                       'colorsys','itertools','copy','time','tkinter','ctypes',
                       'platform','subprocess',
-                      'cProfile', 'pstats', 'io'],
+                      'cProfile', 'pstats', 'io','requests','pickle'],
               'other':['numpy','scipy','matplotlib.pyplot','pandas','imageio'],
               'special':['seabreeze', 'seabreeze.spectrometers','pyswarms']}
 # (some imports for spectro toolbox are done there to avoid dependency 
