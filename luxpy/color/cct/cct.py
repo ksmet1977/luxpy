@@ -1238,9 +1238,13 @@ def generate_luts(types = [None], seamless_stitch = True,
             |  (e.g. {'f_corr':0.9991} for _generate_lut_ohno2014())
             
         Returns:
-            :[lut]:
-                | List of 1 ndarray with the lut.
-                | The lut contains as data specified in lut_vars:
+            :dict:
+                | Dictionary with luts for the specified mode, cieobs(s) and cspace(s).
+                | Structure: lut[cspace][cieobs][lut type]
+                | At the upper dict level there is also a key 'wl' which contains a dict with keys 
+                | the cieobs and with values the wavelengths used to calculate the Planckians for
+                | each lut for the specified cieobs; as well as a key with the lut_vars
+                | The luts contains as data the variables as specified in lut_vars:
                 | - T: (in K)
                 | - uv: chromaticity coordinates of planckians
                 | - uvp: chromaticity coordinates of 1st derivative of the planckians.
@@ -1265,7 +1269,7 @@ def generate_luts(types = [None], seamless_stitch = True,
             
             for j,cieobs_j in enumerate(cieobs):
                 
-                luts['wl'][cieobs_j] = _CMF[cieobs]['bar'][0] if (wl is None) else getwlr(wl) # store wavelengths
+                luts['wl'][cieobs_j] = _CMF[cieobs_j]['bar'][0] if (wl is None) else getwlr(wl) # store wavelengths
                 
                 ftmp = lambda lut: lut_generator_fcn(lut, 
                                                      seamless_stitch = seamless_stitch, 
