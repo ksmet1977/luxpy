@@ -669,7 +669,7 @@ def _get_lut_characteristics(lut, force_au = True, tuple_depth_2 = True):
 # LUT generation functions:
 #------------------------------------------------------------------------------
 
-def calculate_lut(ccts, cieobs, wl = _WL3, lut_vars = ['T','uv','uvp','uvpp','iso-T-slope'],
+def calculate_lut(ccts, cieobs, wl = None, lut_vars = ['T','uv','uvp','uvpp','iso-T-slope'],
                   cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS):
     """
     Function that calculates a LUT for the specified calculation method 
@@ -685,8 +685,9 @@ def calculate_lut(ccts, cieobs, wl = _WL3, lut_vars = ['T','uv','uvp','uvpp','is
             | None or str, optional
             | str specifying cmf set.
         :wl: 
-            | _WL3, optional
+            | None, optional
             | Generate luts based on Planckians with wavelengths (range). 
+            | If None: use same wavelengths as CMFs in :cieobs:.
         :lut_vars:
             | ['T','uv','uvp','uvpp','iso-T-slope'], optional
             | Data the lut should contain. Must follow this order 
@@ -789,7 +790,7 @@ def _generate_lut(tc4, uin = None, seamless_stitch = True,
                   fallback_unit = _CCT_FALLBACK_UNIT, fallback_n = _CCT_FALLBACK_UNIT,
                   resample_ndarray = False,
                   cct_max = _CCT_MAX, cct_min = _CCT_MIN,
-                  wl = _WL3, cieobs = _CIEOBS, lut_vars = ['T','uv','uvp','uvpp','iso-T-slope'],
+                  wl = None, cieobs = _CIEOBS, lut_vars = ['T','uv','uvp','uvpp','iso-T-slope'],
                   cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS,
                   **kwargs):
     """ 
@@ -848,8 +849,9 @@ def _generate_lut(tc4, uin = None, seamless_stitch = True,
             | else: divide min-max range in fallback_n intervals. Uses fallback_unit
             | to determine the scale for the resampling.
         :wl:
-            | _WL3, optional
+            | None, optional
             | Wavelength for Planckian spectrum generation.
+            | If None: use same wavelengths as CMFs in :cieobs:.
         :cieobs:
             | [_CIEOBS] or list, optional
             | Generate a LUT for each one in the list.
@@ -913,7 +915,7 @@ def _get_lut(lut,
              fallback_unit = _CCT_FALLBACK_UNIT, fallback_n = _CCT_FALLBACK_N,
              resample_ndarray = False, cct_max = _CCT_MAX, cct_min = _CCT_MIN,
              luts_dict = None, lut_type_def = None, lut_vars = ['T','uv','uvp','uvpp','iso-T-slope'],
-             cieobs =  _CIEOBS, cspace_str = None, wl = _WL3, ignore_unequal_wl = False, 
+             cieobs =  _CIEOBS, cspace_str = None, wl = None, ignore_unequal_wl = False, 
              lut_generator_fcn = _generate_lut, lut_generator_kwargs = {},
              cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS,
              **kwargs):
@@ -981,8 +983,9 @@ def _get_lut(lut,
             | else: divide min-max range in fallback_n intervals. Uses fallback_unit
             | to determine the scale for the resampling.
         :wl:
-            | _WL3, optional
+            | None, optional
             | Wavelength for Planckian spectrum generation.
+            | If None: use same wavelengths as CMFs in :cieobs:.
         :cieobs:
             | _CIEOBS, optional
             | CMF set used to convert Planckian spectra to chromaticity coordinates
@@ -1076,9 +1079,12 @@ should be a dictionary 'lut_kwargs'.""")
         lut_tuple = lut # keep copy to use later as key
 
         if luts_dict is not None: # luts_dict is None: generate a new lut from scratch
-            if ('wl' not in luts_dict): luts_dict_empty = True # if not present luts_dict must be empty 
-            #luts_dict_empty = luts_dict['empty'] 
-
+            if ('wl' not in luts_dict): 
+                luts_dict_empty = True # if not present luts_dict must be empty 
+            else:
+                if cieobs not in luts_dict['wl']:
+                    luts_dict_empty = True # is empty for this cieobs
+                    
             if cieobs in luts_dict[cspace_str]:
                 if lut in luts_dict[cspace_str][cieobs]: # read from luts_dict
                     lut, lut_kwargs = copy.deepcopy(luts_dict[cspace_str][cieobs][lut])
@@ -1097,13 +1103,8 @@ should be a dictionary 'lut_kwargs'.""")
     # so assume unequal_wl==False:
     if ignore_unequal_wl == False:
         if (luts_dict is not None) & (luts_dict_empty == False):
-            if cieobs in luts_dict[cspace_str]:
-                if not np.array_equal(luts_dict[cspace_str][cieobs]['wl'], wl):
-                    unequal_wl = True
-    print('hh')
-    if cieobs in luts_dict[cspace_str]:
-        print(luts_dict[cspace_str][cieobs]['wl'].shape)
-    print(wl.shape, unequal_wl)    
+            if not np.array_equal(luts_dict['wl'][cieobs], wl):
+                unequal_wl = True    
 
     if (unequal_wl  | luts_dict_empty| lut_from_tuple | lut_from_Tcs | resample_ndarray):
     
@@ -1128,6 +1129,8 @@ should be a dictionary 'lut_kwargs'.""")
                                                 **lut_kwargs)
             
             if luts_dict is not None:
+                if cieobs not in luts_dict['wl']:
+                    luts_dict['wl'][cieobs] = wl
                 if cieobs not in luts_dict[cspace_str]:
                     luts_dict[cspace_str][cieobs] = {} # create empty dict for new cieobs
                 if lut_tuple is not None: 
@@ -1166,8 +1169,9 @@ def generate_luts(types = [None], seamless_stitch = True,
             | _CCT_LUT_PATH, optional
             | Path to file.
         :wl:
-            | _WL3, optional
+            | None, optional
             | Wavelength for Planckian spectrum generation.
+            | If None: use same wavelengths as CMFs in :cieobs:.
         :cieobs:
             | [_CIEOBS] or list, optional
             | Generate a LUT for each one in the list.
@@ -1249,7 +1253,7 @@ def generate_luts(types = [None], seamless_stitch = True,
     # Calculate luts:
     if (load == False):
         #luts['wl'] = wl
-        luts['empty'] = True
+        luts['wl'] = {} # store wavelengths of the cieobs
         
         for i, (cspace_i,cspace_kwargs_i) in enumerate(zip(cspace,cspace_kwargs)):
             
@@ -1261,13 +1265,15 @@ def generate_luts(types = [None], seamless_stitch = True,
             
             for j,cieobs_j in enumerate(cieobs):
                 
+                luts['wl'][cieobs_j] = _CMF[cieobs]['bar'][0] if (wl is None) else getwlr(wl) # store wavelengths
+                
                 ftmp = lambda lut: lut_generator_fcn(lut, 
                                                      seamless_stitch = seamless_stitch, 
                                                      fallback_unit = fallback_unit, 
                                                      fallback_n = fallback_n,
                                                      cct_max = cct_max, 
                                                      cct_min = cct_min,
-                                                     wl = wl, 
+                                                     wl = luts['wl'][cieobs_j], 
                                                      cieobs = cieobs_j, 
                                                      cspace =  cspace_dict_i, 
                                                      cspace_kwargs = None,
@@ -1315,7 +1321,8 @@ def _copy_luts(mode, cspace = _CCT_CSPACE, cieobs = ['2006_2','2006_10'],
     """ Copy luts for specific cieobs keys to equivalent cieobs keys"""
     cieobs_in_lut = list(lut[mode]['luts'][cspace].keys())
     for cieobs_i, cieobs_src_i in zip(cieobs, cieobs_src):
-        if cieobs_src_i in cieobs_in_lut: 
+        if cieobs_src_i in cieobs_in_lut:
+            lut[mode]['luts']['wl'][cieobs_i] = lut[mode]['luts']['wl'][cieobs_src_i]
             lut[mode]['luts'][cspace][cieobs_i] = lut[mode]['luts'][cspace][cieobs_src_i]
 
 def _unique_types(lut_types):
@@ -1369,11 +1376,11 @@ def _download_luts_from_github(modes = None, url = _CCT_LUT_PATH_LX_REPO):
         save_pkl(os.path.join(_CCT_LUT_PATH,mode+'_luts.pkl'),lut)
     
         
-def _initialize_lut(mode, lut_types):
+def _initialize_lut(mode, lut_types, force_calc = _CCT_LUT_CALC, wl = None):
     """ Pre-generate / load from disk / download from github some LUTs for a specific mode """
     if (mode in _CCT_LIST_OF_MODE_LUTS) & _CCT_LUT_ONE_NPY_PER_MODE:
         lut_exists = os.path.exists(os.path.join(_CCT_LUT_PATH,'{:s}_luts.pkl'.format(mode)))
-        if (not lut_exists) & (_CCT_LUT_CALC == False):
+        if (not lut_exists) & (force_calc == False):
             try:
                 print("LUT pickle file for mode '{:s}' doesn't exist. Trying download from luxpy github repo.".format(mode))
                 _download_luts_from_github(modes=[mode])
@@ -1383,9 +1390,9 @@ def _initialize_lut(mode, lut_types):
                 print("Couldn't download LUTs from luxpy github repo. Will generate from scratch. This might take a while.")
         _CCT_LUT[mode]['luts'] = generate_luts(types = lut_types,
                                                 lut_file = '{:s}_luts.pkl'.format(mode), 
-                                                load =  (lut_exists & (_CCT_LUT_CALC==False)), 
+                                                load =  (lut_exists & (force_calc==False)), 
                                                 lut_path = _CCT_LUT_PATH, 
-                                                wl = _WL3, cieobs = _CCT_LIST_OF_CIEOBS_LUTS,
+                                                wl = wl, cieobs = _CCT_LIST_OF_CIEOBS_LUTS,
                                                 cspace = [_CCT_CSPACE], cspace_kwargs = [_CCT_CSPACE_KWARGS],
                                                 lut_vars = _CCT_LUT[mode]['lut_vars'],
                                                 verbosity = _CCT_VERBOSITY_LUT_GENERATION,
@@ -1541,7 +1548,7 @@ def _xyz_to_cct_mcamy(xyzw):
     n = (Yxy[:,1]-0.3320)/(Yxy[:,2]-0.1858)
     return  np2d(-449.0*(n**3) + 3525.0*(n**2) - 6823.3*n + 5520.33).T
 
-def xyz_to_cct_mcamy1992(xyzw, cieobs = '1931_2', wl = _WL3, out = 'cct',
+def xyz_to_cct_mcamy1992(xyzw, cieobs = '1931_2', wl = None, out = 'cct',
                          cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS):
     """
     Convert XYZ tristimulus values to correlated color temperature (CCT) using 
@@ -1672,7 +1679,7 @@ def _xyz_to_cct_HA(xyzw, verbosity = 1):
         print("Warning: xyz_to_cct_HA(): one or more CCTs out of range! --> (CCT < 3 kK,  CCT >800 kK) coded as (-1, NaN) 's")
     return CCT.T
 
-def xyz_to_cct_hernandez1999(xyzw, cieobs = '1931_2', wl = _WL3, out = 'cct',
+def xyz_to_cct_hernandez1999(xyzw, cieobs = '1931_2', wl = None, out = 'cct',
                              cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS):
     """
     Convert XYZ tristimulus values to correlated color temperature (CCT) using 
@@ -1781,7 +1788,7 @@ def _get_uv_uvp_uvpp(T, uvwbar, wl, dl, out = 'BB,BBp,BBpp'):
     return T, u, v, up, vp, upp, vpp
 
 
-def _get_newton_raphson_estimated_Tc(u, v, T0, wl = _WL3, atol = 0.1, rtol = 1e-5,
+def _get_newton_raphson_estimated_Tc(u, v, T0, wl = None, atol = 0.1, rtol = 1e-5,
                                      cieobs = None, xyzbar = None, uvwbar = None,
                                      cspace_dict = None, max_iter = _CCT_MAX_ITER,
                                      fast_duv = _CCT_FAST_DUV):
@@ -1813,7 +1820,7 @@ def _get_newton_raphson_estimated_Tc(u, v, T0, wl = _WL3, atol = 0.1, rtol = 1e-
                 xyzbar, wl, dl = _get_xyzbar_wl_dl(cieobs, wl)
             elif (xyzbar is None) & (cieobs is None):
                 raise Exception('Must supply xyzbar or cieobs or uvwbar !!!')
-            uvwbar, wl, dl = _convert_xyzbar_to_uvwbar(xyzbar, cspace_dict)
+            uvwbar = _convert_xyzbar_to_uvwbar(xyzbar, cspace_dict)
         else:
             raise Exception('Must supply cspace_dict if uvwbar is None. How to convert xyzbar if not supplied ?')
 
@@ -1980,7 +1987,7 @@ def _get_cascading_lut_Tx(mode, u, v, lut, lut_n_cols, lut_char, lut_resolution_
 #------------------------------------------------------------------------------
 # General _xyz_to_cct structure:
 #------------------------------------------------------------------------------
-def _xyz_to_cct(xyzw, mode, is_uv_input = False, cieobs = _CIEOBS, wl = _WL3, out = 'cct',
+def _xyz_to_cct(xyzw, mode, is_uv_input = False, cieobs = _CIEOBS, wl = None, out = 'cct',
                 lut = None, luts_dict = None, ignore_wl_diff = False,
                 force_tolerance = True, tol_method = 'newton-raphson', atol = 0.1, rtol = 1e-5, 
                 max_iter = _CCT_MAX_ITER, force_au = False, 
@@ -2208,6 +2215,7 @@ def xyz_to_cct_robertson1968(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = 
         :wl: 
             | None, optional
             | Wavelengths used when calculating Planckian radiators.
+            | If None: use same wavelengths as CMFs in :cieobs:.
         :rtol: 
             | 1e-5, float, optional
             | Stop search when cct a relative tolerance is reached.
@@ -2524,6 +2532,7 @@ def xyz_to_cct_zhang2019(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = Fals
         :wl: 
             | None, optional
             | Wavelengths used when calculating Planckian radiators.
+            | If None: use same wavelengths as CMFs in :cieobs:.
         :rtol: 
             | 1e-5, float, optional
             | Stop search when cct a relative tolerance is reached.
@@ -2676,7 +2685,7 @@ def _generate_lut_ohno2014(lut,
                            resample_ndarray = False,
                            cct_max = _CCT_MAX, cct_min = _CCT_MIN,
                            luts_dict = None, lut_type_def = None, lut_vars = ['T','uv'],
-                           cieobs =  _CIEOBS, cspace_str = None, wl = _WL3, ignore_unequal_wl = False, 
+                           cieobs =  _CIEOBS, cspace_str = None, wl = None, ignore_unequal_wl = False, 
                            lut_generator_fcn = _generate_lut, lut_generator_kwargs = {},
                            cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS,
                            f_corr = None, ignore_f_corr_is_None = False,
@@ -2744,7 +2753,7 @@ def get_correction_factor_for_Tx(lut, lut_fine = None,
                                  resample_ndarray = True,
                                  cct_max = _CCT_MAX, cct_min = _CCT_MIN,
                                  luts_dict = None, lut_type_def = None, lut_vars = ['T','uv'],
-                                 cieobs =  _CIEOBS, cspace_str = None, wl = _WL3, ignore_unequal_wl = False, 
+                                 cieobs =  _CIEOBS, cspace_str = None, wl = None, ignore_unequal_wl = False, 
                                  lut_generator_fcn = _generate_lut, lut_generator_kwargs = {},
                                  cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS,
                                  f_corr = None, ignore_f_corr_is_None = False,
@@ -2931,6 +2940,7 @@ def xyz_to_cct_ohno2014(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = False
         :wl: 
             | None, optional
             | Wavelengths used when calculating Planckian radiators.
+            | If None: use same wavelengths as CMFs in :cieobs:.
         :rtol: 
             | 1e-5, float, optional
             | Stop search when cct a relative tolerance is reached.
@@ -3080,7 +3090,7 @@ _initialize_lut(mode = 'ohno2014', lut_types = _unique_types([_CCT_LUT['ohno2014
 _CCT_LUT['li2016'] = {'lut_vars': None, 'lut_type_def': None, 'luts':None,'_generate_lut':None}
 
 
-def xyz_to_cct_li2016(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = False, wl = _WL3, 
+def xyz_to_cct_li2016(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = False, wl = None, 
                       atol = 0.1, rtol = 1e-5, max_iter = _CCT_MAX_ITER, 
                       split_calculation_at_N = _CCT_SPLIT_CALC_AT_N,
                       lut = None, luts_dict = None, ignore_wl_diff = False,
@@ -3110,6 +3120,7 @@ def xyz_to_cct_li2016(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = False, 
         :wl: 
             | None, optional
             | Wavelengths used when calculating Planckian radiators.
+            | If None: use same wavelengths as CMFs in :cieobs:.
         :rtol: 
             | 1e-5, float, optional
             | Stop method when cct a relative tolerance is reached.
@@ -3321,7 +3332,7 @@ def _uv_to_Tx_fibonacci(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None,
 
 _CCT_UV_TO_TX_FCNS['fibonacci'] = _uv_to_Tx_fibonacci
 
-def xyz_to_cct_fibonacci(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = False, wl = _WL3, 
+def xyz_to_cct_fibonacci(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = False, wl = None, 
                         atol = 0.1, rtol = 1e-5, force_tolerance = True, tol_method = 'newton-raphson', 
                         lut_resolution_reduction_factor = _CCT_LUT_RESOLUTION_REDUCTION_FACTOR,
                         split_calculation_at_N = _CCT_SPLIT_CALC_AT_N, max_iter = _CCT_MAX_ITER,
@@ -3350,6 +3361,7 @@ def xyz_to_cct_fibonacci(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = Fals
         :wl: 
             | None, optional
             | Wavelengths used when calculating Planckian radiators.
+            | If None: use same wavelengths as CMFs in :cieobs:.
         :rtol: 
             | 1e-5, float, optional
             | Stop search when cct a relative tolerance is reached.
@@ -3529,7 +3541,7 @@ if _CCT_LUT_ONE_NPY_PER_MODE == False:
                                                   lut_file ='all_modes_luts.pkl', 
                                                   load =  (all_modes_luts_exist & (_CCT_LUT_CALC==False)), 
                                                   lut_path = _CCT_LUT_PATH, 
-                                                  wl = _WL3, cieobs = _CCT_LIST_OF_CIEOBS_LUTS,
+                                                  wl = None, cieobs = _CCT_LIST_OF_CIEOBS_LUTS,
                                                   cspace = [_CCT_CSPACE], cspace_kwargs = [_CCT_CSPACE_KWARGS],
                                                   lut_vars = _CCT_LUT['all_modes']['lut_vars'],
                                                   verbosity = _CCT_VERBOSITY_LUT_GENERATION,
@@ -3551,8 +3563,8 @@ if _CCT_LUT_ONE_NPY_PER_MODE == False:
 # General wrapper function for the various methods: xyz_to_cct()
 #==============================================================================
 
-def xyz_to_cct(xyzw, mode = 'li2016',
-               cieobs = _CIEOBS, out = 'cct', is_uv_input = False, wl = _WL3, 
+def xyz_to_cct(xyzw, mode = 'ohno2014',
+               cieobs = _CIEOBS, out = 'cct', is_uv_input = False, wl = None, 
                atol = 0.1, rtol = 1e-5, force_tolerance = True, tol_method = 'newton-raphson', 
                lut_resolution_reduction_factor = _CCT_LUT_RESOLUTION_REDUCTION_FACTOR,
                split_calculation_at_N = _CCT_SPLIT_CALC_AT_N, max_iter = _CCT_MAX_ITER,
@@ -3590,6 +3602,7 @@ def xyz_to_cct(xyzw, mode = 'li2016',
         :wl: 
             | None, optional
             | Wavelengths used when calculating Planckian radiators.
+            | If None: use same wavelengths as CMFs in :cieobs:.
         :rtol: 
             | 1e-5, float, optional
             | Stop search when cct a relative tolerance is reached.
@@ -3808,6 +3821,7 @@ def cct_to_xyz(ccts, duv = None, cct_offset = None, cieobs = _CIEOBS, wl = None,
         :wl: 
             | None, optional
             | Wavelengths used when calculating Planckian radiators.
+            | If None: use same wavelengths as CMFs in :cieobs:.
         :cspace:
             | _CCT_SPACE, optional
             | Color space to do calculations in. 
